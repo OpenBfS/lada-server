@@ -109,6 +109,21 @@ CREATE FUNCTION update_tree_modified_probe() RETURNS trigger
 $$;
 
 
+CREATE FUNCTION mark_deleted() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        OLD.deleted = true;
+        -- XXX: Avoid audit-trail entry for INSERT
+        EXECUTE format('INSERT INTO %I.%I VALUES ($1.*)',
+                TG_TABLE_SCHEMA, TG_TABLE_NAME)
+            USING OLD;
+        return OLD;
+    END;
+    $$
+    SECURITY DEFINER;
+
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -168,6 +183,7 @@ CREATE TABLE messprogramm (
     kta_gruppe_id integer REFERENCES stamm.kta_gruppe,
     meh_id smallint REFERENCES stamm.mess_einheit,
     letzte_aenderung timestamp without time zone DEFAULT now() NOT NULL,
+    deleted boolean NOT NULL DEFAULT false,
     CHECK (probenintervall = 'J'
                AND teilintervall_von BETWEEN gueltig_von AND gueltig_bis
                AND teilintervall_bis BETWEEN gueltig_von AND gueltig_bis
@@ -204,6 +220,11 @@ CREATE TABLE messprogramm (
     CHECK (teilintervall_von <= teilintervall_bis)
 );
 CREATE TRIGGER letzte_aenderung_messprogramm BEFORE UPDATE ON messprogramm FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
+CREATE TRIGGER delete_messprogramm AFTER DELETE ON messprogramm FOR EACH ROW
+    WHEN (NOT has_database_privilege(current_catalog, 'CREATE'))
+    EXECUTE PROCEDURE mark_deleted();
+CREATE POLICY no_deleted ON messprogramm USING (NOT deleted);
+ALTER TABLE messprogramm ENABLE ROW LEVEL SECURITY;
 
 
 --
@@ -253,11 +274,17 @@ CREATE TABLE probe (
     tree_modified timestamp without time zone DEFAULT now(),
     rei_progpunkt_grp_id integer REFERENCES stamm.rei_progpunkt_gruppe,
     kta_gruppe_id integer REFERENCES stamm.kta_gruppe,
+    deleted boolean NOT NULL DEFAULT false,
     UNIQUE (mst_id, hauptproben_nr),
     CHECK(solldatum_beginn <= solldatum_ende)
 );
 CREATE TRIGGER letzte_aenderung_probe BEFORE UPDATE ON probe FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 CREATE TRIGGER tree_modified_probe BEFORE UPDATE ON probe FOR EACH ROW EXECUTE PROCEDURE update_tree_modified_probe();
+CREATE TRIGGER delete_probe AFTER DELETE ON probe FOR EACH ROW
+    WHEN (NOT has_database_privilege(current_catalog, 'CREATE'))
+    EXECUTE PROCEDURE mark_deleted();
+CREATE POLICY no_deleted ON probe USING (NOT deleted);
+ALTER TABLE probe ENABLE ROW LEVEL SECURITY;
 
 
 --
