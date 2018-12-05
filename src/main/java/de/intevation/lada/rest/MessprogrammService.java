@@ -489,8 +489,9 @@ public class MessprogrammService {
         ) {
             return new Response(false, 699, null);
         }
-        /* Delete the messprogramm object*/
-        Response response = repository.delete(messprogrammObj, Strings.LAND);
+        /* Mark the messprogramm object as deleted */
+        messprogrammObj.setDeleted(true);
+        Response response = repository.update(messprogrammObj, Strings.LAND);
         return response;
     }
 }
