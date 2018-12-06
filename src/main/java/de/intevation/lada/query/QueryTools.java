@@ -143,21 +143,26 @@ public class QueryTools
                 }
 
                 if (filter.getFilterType().getMultiselect() == false) {
-                    if (filter.getFilterType().getType().equals("number")) {
-                        String[] params = filter.getParameter().split(",");
-                        Matcher matcher = multiselectPattern.matcher(filterValue);
-                        if (matcher.find()) {
-                            String[] values = matcher.group(0).split(",", -1);
-                            //Get filter values and convert to seconds
-                            double from = values[0].equals("") ? 0: Double.valueOf(values[0]);
-                            double to = values[1].equals("") ? Double.MAX_VALUE: Double.valueOf(values[1]);
-                            //Add parameters and values to filter map
-                            filterValues.add(params[0], from);
-                            filterValues.add(params[1], to);
-                        }
-                    }
-                    else {
-                        filterValues.add(currentFilterParam, filterValue);
+                    String filterTypeString = filter.getFilterType().getType();
+                    switch (filterTypeString) {
+                        case "number":
+                            String[] params = filter.getParameter().split(",");
+                            Matcher matcher = multiselectPattern.matcher(filterValue);
+                            if (matcher.find()) {
+                                String[] values = matcher.group(0).split(",", -1);
+                                //Get filter values and convert to seconds
+                                double from = values[0].equals("") ? 0: Double.valueOf(values[0]);
+                                double to = values[1].equals("") ? Double.MAX_VALUE: Double.valueOf(values[1]);
+                                //Add parameters and values to filter map
+                                filterValues.add(params[0], from);
+                                filterValues.add(params[1], to);
+                            }
+                            break;
+                        case "bool":
+                            filterValues.add(currentFilterParam, Boolean.valueOf(filterValue));
+                            break;
+                        default:
+                            filterValues.add(currentFilterParam, filterValue);
                     }
                 }
                 else {
