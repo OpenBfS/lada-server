@@ -202,6 +202,7 @@ SELECT audit_table('kommentar_p', true, false, '{id, probe_id, tree_modified, le
 SELECT audit_table('kommentar_m', true, false, '{id, messungs_id, tree_modified, letzte_aenderung}'::text[]);
 SELECT audit_table('zusatz_wert', true, false, '{id, probe_id, tree_modified, letzte_aenderung}'::text[]);
 SELECT audit_table('ortszuordnung', true, false, '{id, probe_id, tree_modified, letzte_aenderung}'::text[]);
+SELECT audit_table('ortszuordnung_mp', true, false, '{id, messprogramm_id, tree_modified, letzte_aenderung}'::text[]);
 SELECT audit_table('messprogramm', true, false, '{id, tree_modified, letzte_aenderung}'::text[]);
 SELECT audit_table('messprogramm_mmt', true, false, '{id, messprogramm_id, tree_modified, letzte_aenderung}'::text[]);
 
