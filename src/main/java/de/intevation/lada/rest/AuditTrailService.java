@@ -26,8 +26,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import de.intevation.lada.model.land.AuditTrailMessprogramm;
 import de.intevation.lada.model.land.AuditTrailMessung;
 import de.intevation.lada.model.land.AuditTrailProbe;
+import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Probe;
@@ -379,6 +381,74 @@ public class AuditTrailService extends LadaService {
         }
         return node;
     }
+
+
+    /**
+     * Service to generate audit trail for messung objects.
+     */
+    @GET
+    @Path("/messprogramm/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getMessprogramm(
+        @Context HttpServletRequest request,
+        @PathParam("id") String id
+    ) {
+        if (id == null || "".equals(id)) {
+            String ret = "{\"success\": false," +
+                "\"message\":698,\"data\":null}";
+            return ret;
+        }
+
+        Integer mId = null;
+        String ret = "{\"success\": false," +
+            "\"message\":600,\"data\":null}";
+        try {
+            mId = Integer.valueOf(id);
+        }
+        catch(NumberFormatException nfe) {
+            return ret;
+        }
+        Messprogramm messprogramm = repository.getByIdPlain(Messprogramm.class, mId, Strings.LAND);
+        if (messprogramm == null) {
+            return ret;
+        }
+
+        QueryBuilder<AuditTrailMessprogramm> builder =
+            new QueryBuilder<AuditTrailMessprogramm>(
+                repository.entityManager(Strings.LAND),
+                AuditTrailMessprogramm.class);
+        builder.and("objectId", mId);
+        builder.and("tableName", "messprogramm");
+        builder.or("mpId", mId);
+        builder.orderBy("tstamp", true);
+        List<AuditTrailMessprogramm> audit =
+            repository.filterPlain(builder.getQuery(), Strings.LAND);
+
+        // Create an empty JsonObject
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode responseNode = mapper.createObjectNode();
+        responseNode.put("success", true);
+        responseNode.put("message", 200);
+        ObjectNode auditJson = responseNode.putObject("data");
+        ArrayNode entries = auditJson.putArray("audit");
+        auditJson.put("id", messprogramm.getId());
+        for (AuditTrailMessprogramm a : audit) {
+            entries.add(createEntry(a, mapper));
+        }
+        return responseNode.toString();
+    }
+
+    private ObjectNode createEntry(AuditTrailMessprogramm audit, ObjectMapper mapper) {
+        ObjectNode node = mapper.createObjectNode();
+        node.put("timestamp", audit.getTstamp().getTime());
+        node.put("type", audit.getTableName());
+        node.put("action", audit.getAction());
+        ObjectNode data = (ObjectNode)audit.getChangedFields();
+        node.putPOJO("changedFields", data);
+        //TODO related tables
+        return node;
+    }
+
 
     /**
      * Translate a foreign key into the associated value.

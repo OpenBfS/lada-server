@@ -165,5 +165,18 @@ SELECT audit_trail.id,
 FROM audit_trail;
 
 SELECT audit_table('ort', true, false, '{id, ort_id, tree_modified, letzte_aenderung}'::text[]);
+-- View for messprogramm audit trail
+CREATE OR REPLACE VIEW audit_trail_messprogramm AS
+SELECT audit_trail.id,
+    audit_trail.table_name,
+    audit_trail.tstamp,
+    audit_trail.action,
+    audit_trail.object_id,
+    audit_trail.row_data,
+    audit_trail.changed_fields,
+    cast(row_data ->> 'messprogramm_id' AS int) AS mp_id
+FROM audit_trail;
+
+SELECT audit_table('messprogramm', true, false, '{id, tree_modified, letzte_aenderung}'::text[]);
 
 SET search_path TO public;
