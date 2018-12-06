@@ -34,6 +34,7 @@ import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.model.land.Messprogramm;
+import de.intevation.lada.model.land.MessprogrammMmt;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.annotation.RepositoryConfig;
@@ -492,6 +493,14 @@ public class MessprogrammService {
         /* Mark the messprogramm object as deleted */
         messprogrammObj.setDeleted(true);
         Response response = repository.update(messprogrammObj, Strings.LAND);
+
+        /* Delete  messmethode references */
+        QueryBuilder<MessprogrammMmt> builder = new QueryBuilder<>(repository.entityManager(Strings.LAND), MessprogrammMmt.class);
+        builder.and("messprogrammId", messprogrammObj.getId());
+        List<MessprogrammMmt> result = repository.filterPlain(builder.getQuery(), Strings.LAND);
+        for (MessprogrammMmt mpmmt: result) {
+            repository.delete(mpmmt, Strings.LAND);
+        }
         return response;
     }
 }
