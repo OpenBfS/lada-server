@@ -177,6 +177,7 @@ SELECT audit_trail.id,
     cast(row_data ->> 'messprogramm_id' AS int) AS mp_id
 FROM audit_trail;
 
+SELECT audit_table('ortszuordnung_mp', true, false, '{id, messprogramm_id, tree_modified, letzte_aenderung}'::text[]);
 SELECT audit_table('messprogramm', true, false, '{id, tree_modified, letzte_aenderung}'::text[]);
 SELECT audit_table('messprogramm_mmt', true, false, '{id, messprogramm_id, tree_modified, letzte_aenderung}'::text[]);
 
