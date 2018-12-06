@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.intevation.lada.model.land.AuditTrailMessprogramm;
@@ -151,6 +152,8 @@ public class AuditTrailService {
             new TableMapper("kta_gruppe", "kta_gruppe"));
         mappings.put("rei_progpunkt_grp_id",
             new TableMapper("rei_progpunkt_gruppe", "rei_prog_punkt_gruppe"));
+        mappings.put("messgroessen",
+            new TableMapper("messgroesse", "messgroesse"));
     }
 
     /**
@@ -411,9 +414,12 @@ public class AuditTrailService {
         node.put("timestamp", audit.getTstamp().getTime());
         node.put("type", audit.getTableName());
         node.put("action", audit.getAction());
-        ObjectNode data = (ObjectNode)audit.getChangedFields();
+        ObjectNode data = translateValues((ObjectNode) audit.getChangedFields());
         node.putPOJO("changedFields", data);
         //TODO related tables
+        if ("messprogramm_mmt".equals(audit.getTableName())) {
+            node.put("identifier", audit.getRowData().get("mmt_id").toString());
+        }
         return node;
     }
 
@@ -467,13 +473,32 @@ public class AuditTrailService {
                     node.put(key, value);
                 }
                 else {
-                    String value = translateId(
-                        m.getMappingTable(),
-                        m.getValueField(),
-                        !node.get(key).isNull() ? node.get(key).asText() : null,
-                        "id",
-                        Strings.STAMM);
-                    node.put(key, value);
+                    //Check for values as array
+                    if (node.get(key).getNodeType().equals(JsonNodeType.ARRAY)) {
+                        String idsString = node.get(key).toString().replace("[","").replace("]", "");
+                        String[] ids = idsString.split(",");
+                        if (idsString.length() > 0 && ids.length > 0) {
+                            String value = "";
+                            for (String id: ids) {
+                                if (value.length() > 0) {
+                                    value += "," + translateId(m.getMappingTable(), m.getValueField(), id, "id", Strings.STAMM);
+                                } else {
+                                    value += translateId(m.getMappingTable(), m.getValueField(), id, "id", Strings.STAMM);
+                                }
+                            }
+                            node.put(key, value);
+                        } else {
+                            node.put(key, "[]");
+                        }
+                    } else {
+                        String value = translateId(
+                            m.getMappingTable(),
+                            m.getValueField(),
+                            !node.get(key).isNull() ? node.get(key).asText() : null,
+                            "id",
+                            Strings.STAMM);
+                        node.put(key, value);
+                    }
                 }
             }
         }
