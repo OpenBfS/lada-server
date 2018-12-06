@@ -454,6 +454,16 @@ public class AuditTrailService extends LadaService {
         if ("messprogramm_mmt".equals(audit.getTableName())) {
             node.put("identifier", audit.getRowData().get("mmt_id").toString());
         }
+        if ("ortszuordnung_mp".equals(audit.getTableName())) {
+            String value = translateId(
+                "ort",
+                "ort_id",
+                audit.getRowData().get("ort_id").toString(),
+                "id",
+                Strings.STAMM);
+            node.put("identifier", value);
+        }
+
         return node;
     }
 
