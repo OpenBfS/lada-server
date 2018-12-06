@@ -178,5 +178,7 @@ SELECT audit_trail.id,
 FROM audit_trail;
 
 SELECT audit_table('messprogramm', true, false, '{id, tree_modified, letzte_aenderung}'::text[]);
+SELECT audit_table('messprogramm_mmt', true, false, '{id, messprogramm_id, tree_modified, letzte_aenderung}'::text[]);
+
 
 SET search_path TO public;

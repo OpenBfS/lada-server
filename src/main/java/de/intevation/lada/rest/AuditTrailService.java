@@ -18,12 +18,17 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.intevation.lada.model.land.AuditTrailMessprogramm;
@@ -147,6 +152,8 @@ public class AuditTrailService extends LadaService {
             new TableMapper("kta_gruppe", "kta_gruppe"));
         mappings.put("rei_progpunkt_grp_id",
             new TableMapper("rei_progpunkt_gruppe", "rei_prog_punkt_gruppe"));
+        mappings.put("messgroessen",
+            new TableMapper("messgroesse", "messgroesse"));
     }
 
     /**
@@ -408,21 +415,19 @@ public class AuditTrailService extends LadaService {
         catch(NumberFormatException nfe) {
             return ret;
         }
-        Messprogramm messprogramm = repository.getByIdPlain(Messprogramm.class, mId, Strings.LAND);
+        Messprogramm messprogramm = repository.getByIdPlain(Messprogramm.class, mId);
         if (messprogramm == null) {
             return ret;
         }
 
         QueryBuilder<AuditTrailMessprogramm> builder =
-            new QueryBuilder<AuditTrailMessprogramm>(
-                repository.entityManager(Strings.LAND),
-                AuditTrailMessprogramm.class);
+            repository.queryBuilder(AuditTrailMessprogramm.class);
         builder.and("objectId", mId);
         builder.and("tableName", "messprogramm");
         builder.or("mpId", mId);
         builder.orderBy("tstamp", true);
         List<AuditTrailMessprogramm> audit =
-            repository.filterPlain(builder.getQuery(), Strings.LAND);
+            repository.filterPlain(builder.getQuery());
 
         // Create an empty JsonObject
         ObjectMapper mapper = new ObjectMapper();
@@ -443,9 +448,12 @@ public class AuditTrailService extends LadaService {
         node.put("timestamp", audit.getTstamp().getTime());
         node.put("type", audit.getTableName());
         node.put("action", audit.getAction());
-        ObjectNode data = (ObjectNode)audit.getChangedFields();
+        ObjectNode data = translateValues((ObjectNode) audit.getChangedFields());
         node.putPOJO("changedFields", data);
         //TODO related tables
+        if ("messprogramm_mmt".equals(audit.getTableName())) {
+            node.put("identifier", audit.getRowData().get("mmt_id").toString());
+        }
         return node;
     }
 
@@ -506,14 +514,42 @@ public class AuditTrailService extends LadaService {
                     Long value =
                         formatDate(m.getValueField(), node.get(key).asText());
                     node.put(key, value);
-                } else {
-                    String value = translateId(
-                        m.getMappingTable(),
-                        m.getValueField(),
-                        !node.get(key).isNull() ? node.get(key).asText() : null,
-                        "id",
-                        de.intevation.lada.model.stammdaten.SchemaName.NAME);
-                    node.put(key, value);
+                }
+                else {
+                    //Check for values as array
+                    if (node.get(key).getNodeType().equals(JsonNodeType.ARRAY)) {
+                        String idsString = node.get(key).toString().replace("[","").replace("]", "");
+                        String[] ids = idsString.split(",");
+                        if (idsString.length() > 0 && ids.length > 0) {
+                            String value = "";
+                            for (String id: ids) {
+                                if (value.length() > 0) {
+                                    value += "," + translateId(
+                                            m.getMappingTable(),
+                                            m.getValueField(),
+                                            id, "id",
+                                            de.intevation.lada.model.stammdaten.SchemaName.NAME);
+                                } else {
+                                    value += translateId(
+                                            m.getMappingTable(),
+                                            m.getValueField(),
+                                            id, "id",
+                                            de.intevation.lada.model.stammdaten.SchemaName.NAME);
+                                }
+                            }
+                            node.put(key, value);
+                        } else {
+                            node.put(key, "[]");
+                        }
+                    } else {
+                        String value = translateId(
+                            m.getMappingTable(),
+                            m.getValueField(),
+                            !node.get(key).isNull() ? node.get(key).asText() : null,
+                            "id",
+                            de.intevation.lada.model.stammdaten.SchemaName.NAME);
+                        node.put(key, value);
+                    }
                 }
             }
         }
