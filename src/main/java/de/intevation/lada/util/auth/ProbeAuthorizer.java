@@ -78,7 +78,8 @@ public class ProbeAuthorizer extends BaseAuthorizer {
      */
     private Probe setAuthData(UserInfo userInfo, Probe probe) {
         MessStelle mst = repository.getByIdPlain(MessStelle.class, probe.getMstId(), Strings.STAMM);
-        if (!userInfo.getNetzbetreiber().contains(mst.getNetzbetreiberId())) {
+        if (!userInfo.getNetzbetreiber().contains(mst.getNetzbetreiberId())
+            || probe.isDeleted()) {
             probe.setOwner(false);
             probe.setReadonly(true);
             return probe;
