@@ -42,7 +42,8 @@ public class MessprogrammIdAuthorizer extends BaseAuthorizer {
         }
         Messprogramm messprogramm =
             repository.getByIdPlain(Messprogramm.class, id, Strings.LAND);
-        if (userInfo.getMessstellen().contains(messprogramm.getMstId())) {
+        if (userInfo.getMessstellen().contains(messprogramm.getMstId())
+            && !messprogramm.isDeleted()) {
             return true;
         }
         return false;

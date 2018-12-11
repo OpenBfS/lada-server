@@ -104,7 +104,8 @@ public class MessungAuthorizer extends BaseAuthorizer {
                 Probe.class, messung.getProbeId(), Strings.LAND).getData();
         MessStelle mst = repository.getByIdPlain(MessStelle.class, probe.getMstId(), Strings.STAMM);
         if (!userInfo.getNetzbetreiber().contains(mst.getNetzbetreiberId()) &&
-            !userInfo.getFunktionen().contains(3)) {
+            !userInfo.getFunktionen().contains(3) ||
+            messung.isDeleted()) {
             messung.setOwner(false);
             messung.setReadonly(true);
             messung.setStatusEdit(false);

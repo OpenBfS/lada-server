@@ -214,7 +214,8 @@ public class MessungService {
     ) {
         for (int i = 0; i < messungen.size(); i++) {
             if (id.equals(messungen.get(i).getId())) {
-                entry.put("readonly", messungen.get(i).isReadonly());
+                entry.put("readonly", messungen.get(i).isReadonly()
+                        || messungen.get(i).isDeleted());
                 entry.put("owner", messungen.get(i).isOwner());
                 entry.put("statusEdit", messungen.get(i).getStatusEdit());
                 return;
@@ -363,6 +364,11 @@ public class MessungService {
         if (lock.isLocked(messung)) {
             return new Response(false, 697, null);
         }
+
+        Messung dbMessung = repository.getByIdPlain(Messung.class, id, Strings.LAND);
+        if (dbMessung.isDeleted()) {
+            return new Response(false, 699, "Messung is deleted");
+        }
         Violation violation = validator.validate(messung);
         if (violation.hasErrors()) {
             Response response = new Response(false, 604, messung);
@@ -421,9 +427,6 @@ public class MessungService {
 
         /* Delete the messung object*/
         messungObj.setDeleted(true);
-        //TODO: delete references
-
-
         Response response =  repository.update(messungObj, Strings.LAND);
 
         if (response.getSuccess()) {

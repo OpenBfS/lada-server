@@ -57,7 +57,8 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
     ) {
         Probe probe =
             repository.getByIdPlain(Probe.class, id, Strings.LAND);
-        return !isProbeReadOnly((Integer) id) && getAuthorization(userInfo, probe);
+        return !isProbeReadOnly((Integer) id) && getAuthorization(userInfo, probe)
+                && !probe.isDeleted();
     }
 
     @SuppressWarnings("unchecked")

@@ -57,7 +57,8 @@ public class MessprogrammAuthorizer implements Authorizer {
             MessStelle mst = repository.getByIdPlain(
                 MessStelle.class, mstId, Strings.STAMM);
             if (userInfo.getFunktionenForNetzbetreiber(
-                    mst.getNetzbetreiberId()).contains(4)) {
+                    mst.getNetzbetreiberId()).contains(4)
+                && !messprogramm.isDeleted()) {
                 return true;
             }
         }
