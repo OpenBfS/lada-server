@@ -215,7 +215,7 @@ public class UniversalService {
                 readonly = !authorization.isAuthorizedById(
                     request,
                     idToAuthorize,
-                    RequestMethod.POST,
+                    RequestMethod.PUT,
                     authorizationColumnType);
             } else {
                 readonly = true;

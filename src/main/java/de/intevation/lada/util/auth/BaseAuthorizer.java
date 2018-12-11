@@ -58,6 +58,10 @@ public abstract class BaseAuthorizer implements Authorizer {
      */
     public boolean isProbeReadOnly(Integer probeId) {
         EntityManager manager = repository.entityManager(Strings.LAND);
+        Probe probe = repository.getByIdPlain(Probe.class, probeId, Strings.LAND);
+        if (probe.isDeleted()) {
+            return true;
+        }
         QueryBuilder<Messung> builder =
             new QueryBuilder<Messung>(
                 manager,
@@ -85,6 +89,9 @@ public abstract class BaseAuthorizer implements Authorizer {
     public boolean isMessungReadOnly(Integer messungsId) {
         Messung messung =
             repository.getByIdPlain(Messung.class, messungsId, Strings.LAND);
+        if (messung.isDeleted()) {
+            return true;
+        }
         if (messung.getStatus() == null) {
             return false;
         }
