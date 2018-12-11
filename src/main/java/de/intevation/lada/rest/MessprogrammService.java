@@ -35,6 +35,7 @@ import javax.ws.rs.core.UriInfo;
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.MessprogrammMmt;
+import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.annotation.RepositoryConfig;
@@ -494,12 +495,23 @@ public class MessprogrammService {
         messprogrammObj.setDeleted(true);
         Response response = repository.update(messprogrammObj, Strings.LAND);
 
-        /* Delete  messmethode references */
-        QueryBuilder<MessprogrammMmt> builder = new QueryBuilder<>(repository.entityManager(Strings.LAND), MessprogrammMmt.class);
-        builder.and("messprogrammId", messprogrammObj.getId());
-        List<MessprogrammMmt> result = repository.filterPlain(builder.getQuery(), Strings.LAND);
-        for (MessprogrammMmt mpmmt: result) {
-            repository.delete(mpmmt, Strings.LAND);
+        if (response.getSuccess()) {
+            /* Delete  messmethode references */
+            QueryBuilder<MessprogrammMmt> messprogrammMmtBuilder =
+                    new QueryBuilder<>(repository.entityManager(Strings.LAND), MessprogrammMmt.class);
+            messprogrammMmtBuilder.and("messprogrammId", messprogrammObj.getId());
+            List<MessprogrammMmt> messprogrammResult = repository.filterPlain(messprogrammMmtBuilder.getQuery(), Strings.LAND);
+            for (MessprogrammMmt mpmmt: messprogrammResult) {
+                repository.delete(mpmmt, Strings.LAND);
+            }
+            /* Delete Ort references */
+            QueryBuilder<OrtszuordnungMp> ortszuordnungbuilder =
+                    new QueryBuilder<OrtszuordnungMp>(repository.entityManager(Strings.LAND), OrtszuordnungMp.class);
+                    ortszuordnungbuilder.and("messprogrammId", messprogrammObj.getId());
+            List<OrtszuordnungMp> ortszuOrdnungResult = repository.filterPlain(ortszuordnungbuilder.getQuery(), Strings.LAND);
+            for (OrtszuordnungMp mpmmt: ortszuOrdnungResult) {
+                repository.delete(mpmmt, Strings.LAND);
+            }
         }
         return response;
     }

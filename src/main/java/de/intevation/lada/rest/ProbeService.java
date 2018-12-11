@@ -37,16 +37,23 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
+import com.vividsolutions.jts.geomgraph.Label;
+
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
+import de.intevation.lada.model.land.KommentarM;
+import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.MessprogrammMmt;
+import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -583,14 +590,77 @@ public class ProbeService {
             return new Response(false, 699, null);
         }
         /* Mark the probe object as deleted */
+        Response response;
         try {
             probeObj.setDeleted(true);
-            Response response = repository.update(probeObj, Strings.LAND);
-            return response;
+            response = repository.update(probeObj, Strings.LAND);
         }
         catch(IllegalArgumentException | EJBTransactionRolledbackException |
             TransactionRequiredException e) {
             return new Response(false, 600, "");
         }
+
+        //Delete References
+        if (response.getSuccess() == true) {
+            //TODO: Mark messung objects as deleted and delete subobjects
+            QueryBuilder<Messung> messungBuilder = 
+                new QueryBuilder<Messung>(repository.entityManager(Strings.LAND), Messung.class);
+            messungBuilder.and("probeId", probeObj.getId());
+            List<Messung> messungResult = repository.filterPlain(messungBuilder.getQuery(), Strings.LAND);
+            for (Messung messungObj: messungResult) {
+                /* Delete the messung object*/
+                messungObj.setDeleted(true);
+                //TODO: delete references
+                Response messungResponse =  repository.update(messungObj, Strings.LAND);
+    
+                if (messungResponse.getSuccess()) {
+                    //Delete Messwert objects
+                    QueryBuilder<Messwert> messwertBuilder =
+                        new QueryBuilder<Messwert>(repository.entityManager(Strings.LAND), Messwert.class);
+                    messwertBuilder.and("messungsId", messungObj.getId());
+                    List<Messwert> messwertResult = repository.filterPlain(messwertBuilder.getQuery(), Strings.LAND);
+                    for (Messwert wert: messwertResult) {
+                        repository.delete(wert, Strings.LAND);
+                    }
+    
+                    //Delete kommentar objects
+                    QueryBuilder<KommentarM> kommentarMBuilder =
+                        new QueryBuilder<KommentarM>(repository.entityManager(Strings.LAND), KommentarM.class);
+                    kommentarMBuilder.and("messungsId", messungObj.getId());
+                    List<KommentarM> kommentarMResult = repository.filterPlain(kommentarMBuilder.getQuery(), Strings.LAND);
+                    for (KommentarM kom: kommentarMResult) {
+                        repository.delete(kom, Strings.LAND);
+                    }
+                }
+            }
+
+            //Delete Ortszuordnung references
+            QueryBuilder<Ortszuordnung> ortszuordnungbuilder =
+                new QueryBuilder<Ortszuordnung>(repository.entityManager(Strings.LAND), Ortszuordnung.class);
+            ortszuordnungbuilder.and("probeId", probeObj.getId());
+            List<Ortszuordnung> ortszuOrdnungResult = repository.filterPlain(ortszuordnungbuilder.getQuery(), Strings.LAND);
+            for (Ortszuordnung mpmmt: ortszuOrdnungResult) {
+                repository.delete(mpmmt, Strings.LAND);
+            }
+
+            //Delete Zusatzwert Objects
+            QueryBuilder<ZusatzWert> zusatzwertBuilder =
+                new QueryBuilder<ZusatzWert>(repository.entityManager(Strings.LAND), ZusatzWert.class);
+            zusatzwertBuilder.and("probeId", probeObj.getId());
+            List<ZusatzWert> zusatzwertResult = repository.filterPlain(zusatzwertBuilder.getQuery(), Strings.LAND);
+            for (ZusatzWert wert: zusatzwertResult) {
+                repository.delete(wert, Strings.LAND);
+            }
+
+            //Delete Kommentar Objects
+            QueryBuilder<KommentarP> kommentarBuilder =
+                new QueryBuilder<KommentarP>(repository.entityManager(Strings.LAND), KommentarP.class);
+            kommentarBuilder.and("probeId", probeObj.getId());
+            List<KommentarP> kommentarResult = repository.filterPlain(kommentarBuilder.getQuery(), Strings.LAND);
+            for (KommentarP kom: kommentarResult) {
+                repository.delete(kom, Strings.LAND);
+            }
+        }
+        return response;
     }
 }

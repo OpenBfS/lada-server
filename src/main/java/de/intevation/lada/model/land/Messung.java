@@ -75,6 +75,8 @@ public class Messung implements Serializable {
     @Transient
     private boolean readonly;
 
+    private boolean deleted;
+
     public Messung() {
     }
 
@@ -231,6 +233,14 @@ public class Messung implements Serializable {
      */
     public void setReadonly(boolean readonly) {
         this.readonly = readonly;
+    }
+
+    public boolean getDeleted() {
+        return this.deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
 }
