@@ -67,7 +67,8 @@ RUN useradd jetty -U -s /bin/false \
     && ln -s ${BASE_DIR}/shibboleth-idp /opt/shibboleth-idp \
     && rm ${BASE_DIR}/shibboleth-idp/conf/metadata-providers.xml \
     && ln -s ${BASE_DIR}/sources/metadata-providers.xml ${BASE_DIR}/shibboleth-idp/conf/metadata-providers.xml \
-    && ln -s ${BASE_DIR}/sources/sp-metadata.xml ${BASE_DIR}/shibboleth-idp/metadata/sp-metadata.xml
+    && ln -s ${BASE_DIR}/sources/sp-metadata.xml ${BASE_DIR}/shibboleth-idp/metadata/sp-metadata.xml \ 
+    && ln -s ${BASE_DIR}/sources/ldap.properties ${BASE_DIR}/shibboleth-idp/conf/ldap.properties
 
 
 RUN echo \
