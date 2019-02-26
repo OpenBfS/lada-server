@@ -41,7 +41,7 @@ RUN wget https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/$je
     && mv jetty-distribution-${jetty_version} $JETTY_HOME \
     && mkdir ${JETTY_BASE} \
     && cd $JETTY_HOME \
-    && keytool -genkey -noprompt -alias jetty -dname "CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown" -keystore keystore -storepass password -keypass password \
+    && keytool -genkey -noprompt -alias jetty -dname "CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown" -keystore keystore -storepass password -keypass password -keyalg RSA\
     && java -jar $JETTY_HOME/start.jar --create-startd --add-to-start=http,https,deploy,ext,annotations,jstl,rewrite,ssl
 
 #RUN rm ${JETTY_HOME}/etc/jetty-ssl-context.xml && cp ${BASE_DIR}/sources/jetty-ssl-context.xml ${JETTY_HOME}/etc/
@@ -51,10 +51,7 @@ RUN cp ${BASE_DIR}/sources/ssl.ini ${JETTY_HOME}/start.d/
 #Shibboleth IDP
 RUN wget https://shibboleth.net/downloads/identity-provider/latest/shibboleth-identity-provider-$shib_idp_version.tar.gz \
     && tar -xvzf shibboleth-identity-provider-$shib_idp_version.tar.gz \
-    && mv shibboleth-identity-provider-$shib_idp_version/ ${BASE_DIR}/shibboleth-sources \
-    && rm ${BASE_DIR}/shibboleth-idp/conf/metadata-providers.xml \
-    && ln -s ${BASE_DIR}/sources/metadata-providers.xml ${BASE_DIR}/shibboleth-idp/conf/metadata-providers.xml \
-    && ln -s ${BASE_DIR}/sources/sp-metadata.xml ${BASE_DIR}/shibboleth-idp/metadata/sp-metadata.xml
+    && mv shibboleth-identity-provider-$shib_idp_version/ ${BASE_DIR}/shibboleth-sources 
 
 #Jetty user
 RUN useradd jetty -U -s /bin/false \
@@ -67,7 +64,10 @@ RUN useradd jetty -U -s /bin/false \
     && sh ${BASE_DIR}/shibboleth-sources/bin/install.sh \
         -Didp.sealer.password="password" -Didp.keystore.password="password" -Didp.target.dir="${BASE_DIR}/shibboleth-idp"  -Didp.host.name="lada-idp"\
     && chown -R jetty:jetty ${BASE_DIR}/shibboleth-idp \
-    && ln -s ${BASE_DIR}/shibboleth-idp /opt/shibboleth-idp 
+    && ln -s ${BASE_DIR}/shibboleth-idp /opt/shibboleth-idp \
+    && rm ${BASE_DIR}/shibboleth-idp/conf/metadata-providers.xml \
+    && ln -s ${BASE_DIR}/sources/metadata-providers.xml ${BASE_DIR}/shibboleth-idp/conf/metadata-providers.xml \
+    && ln -s ${BASE_DIR}/sources/sp-metadata.xml ${BASE_DIR}/shibboleth-idp/metadata/sp-metadata.xml
 
 
 RUN echo \
@@ -78,4 +78,4 @@ RUN echo \
 RUN /usr/sbin/ns-slapd -D /etc/dirsrv/slapd-dir
 USER jetty
 RUN cp ${BASE_DIR}/sources/idp.xml ${JETTY_HOME}/webapps
-CMD java -jar  ${JETTY_HOME}/start.jar
+CMD cd ${JETTY_HOME} && java -jar  ${JETTY_HOME}/start.jar
