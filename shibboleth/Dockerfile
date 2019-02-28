@@ -67,8 +67,12 @@ RUN useradd jetty -U -s /bin/false \
     && ln -s ${BASE_DIR}/shibboleth-idp /opt/shibboleth-idp \
     && rm ${BASE_DIR}/shibboleth-idp/conf/metadata-providers.xml \
     && ln -s ${BASE_DIR}/sources/metadata-providers.xml ${BASE_DIR}/shibboleth-idp/conf/metadata-providers.xml \
-    && ln -s ${BASE_DIR}/sources/sp-metadata.xml ${BASE_DIR}/shibboleth-idp/metadata/sp-metadata.xml \ 
-    && ln -s ${BASE_DIR}/sources/ldap.properties ${BASE_DIR}/shibboleth-idp/conf/ldap.properties
+    && ln -s ${BASE_DIR}/sources/sp-metadata.xml ${BASE_DIR}/shibboleth-idp/metadata/sp-metadata.xml \
+    && rm ${BASE_DIR}/shibboleth-idp/metadata/idp-metadata.xml \
+    && ln -s ${BASE_DIR}/sources/idp-metadata.xml ${BASE_DIR}/shibboleth-idp/metadata/idp-metadata.xml \
+    && rm ${BASE_DIR}/shibboleth-idp/conf/ldap.properties \
+    && ln -s ${BASE_DIR}/sources/ldap.properties ${BASE_DIR}/shibboleth-idp/conf/ldap.properties \
+    && cp -r ${BASE_DIR}/sources/credentials ${BASE_DIR}/shibboleth-idp/credentials
 
 
 RUN echo \
@@ -80,3 +84,4 @@ RUN /usr/sbin/ns-slapd -D /etc/dirsrv/slapd-dir
 USER jetty
 RUN cp ${BASE_DIR}/sources/idp.xml ${JETTY_HOME}/webapps
 CMD cd ${JETTY_HOME} && java -jar  ${JETTY_HOME}/start.jar
+#CMD tail -f /dev/null
