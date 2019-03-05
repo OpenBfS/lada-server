@@ -1,31 +1,25 @@
-dn: cn=admin,dc=idptestbed
-objectClass: simpleSecurityObject
+dn: cn=users,dc=ladaidp
+cn: users
+objectClass: top
 objectClass: organizationalRole
-cn: admin
-userPassword: password
-description: LDAP administrator
 
-
-dn: uid=student1,ou=People,dc=idptestbed
-objectClass: organizationalPerson
-objectClass: person
+dn: cn=groups,dc=ladaidp
+cn: users
 objectClass: top
-objectClass: inetOrgPerson
-givenName: Stud
-uid: student1
-sn: Ent
-cn: Stud Ent
-mail: student1@idptestbed.edu
-userPassword: password
+objectClass: organizationalRole
 
-dn: uid=staff1,ou=People,dc=idptestbed
-objectClass: organizationalPerson
-objectClass: person
+dn: cn=mst_06060,ou=Groups,dc=ladaidp
+cn: mst_06060
 objectClass: top
+objectClass: groupOfNames
+member: uid=testnull,cn=users,dc=ladaidp
+
+dn: uid=testnull,cn=users,dc=ladaidp
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
 objectClass: inetOrgPerson
-givenName: St
-uid: staff1
-sn: aff
-cn: St aff
-mail: staff1@idptestbed.edu
 userPassword: password
+uid: testnull
+cn: Null
+sn: Testbenutzer
