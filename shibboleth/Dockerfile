@@ -72,6 +72,8 @@ RUN useradd jetty -U -s /bin/false \
     && ln -s ${BASE_DIR}/sources/idp-metadata.xml ${BASE_DIR}/shibboleth-idp/metadata/idp-metadata.xml \
     && rm ${BASE_DIR}/shibboleth-idp/conf/ldap.properties \
     && ln -s ${BASE_DIR}/sources/ldap.properties ${BASE_DIR}/shibboleth-idp/conf/ldap.properties \
+    && rm ${BASE_DIR}/shibboleth-idp/conf/idp.properties \
+    && ln -s ${BASE_DIR}/sources/idp.properties ${BASE_DIR}/shibboleth-idp/conf/idp.properties \
     && rm -rf ${BASE_DIR}/shibboleth-idp/credentials \
     && cp -r ${BASE_DIR}/sources/credentials ${BASE_DIR}/shibboleth-idp/ \
     && chown -R jetty:jetty ${BASE_DIR} \
