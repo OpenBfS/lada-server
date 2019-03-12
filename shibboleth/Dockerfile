@@ -72,6 +72,10 @@ RUN useradd jetty -U -s /bin/false \
     && ln -s ${BASE_DIR}/sources/idp-metadata.xml ${BASE_DIR}/shibboleth-idp/metadata/idp-metadata.xml \
     && rm ${BASE_DIR}/shibboleth-idp/conf/ldap.properties \
     && ln -s ${BASE_DIR}/sources/ldap.properties ${BASE_DIR}/shibboleth-idp/conf/ldap.properties \
+    && rm ${BASE_DIR}/shibboleth-idp/conf/attribute-resolver.xml \
+    && ln -s ${BASE_DIR}/sources/attribute-resolver.xml ${BASE_DIR}/shibboleth-idp/conf/attribute-resolver.xml \
+    && rm ${BASE_DIR}/shibboleth-idp/conf/attribute-filter.xml \
+    && ln -s ${BASE_DIR}/sources/attribute-filter.xml ${BASE_DIR}/shibboleth-idp/conf/attribute-filter.xml \
     && rm ${BASE_DIR}/shibboleth-idp/conf/idp.properties \
     && ln -s ${BASE_DIR}/sources/idp.properties ${BASE_DIR}/shibboleth-idp/conf/idp.properties \
     && rm -rf ${BASE_DIR}/shibboleth-idp/credentials \
@@ -89,8 +93,8 @@ RUN echo \
         * This image is for testing purposes only.*\
         * Do not use in productive enviroments!   *\
         *******************************************"
-RUN /usr/sbin/ns-slapd -D /etc/dirsrv/slapd-dir
 USER jetty
 RUN cp ${BASE_DIR}/sources/idp.xml ${JETTY_HOME}/webapps
-CMD cd ${JETTY_HOME} && java -jar  ${JETTY_HOME}/start.jar
-#CMD tail -f /dev/null
+#CMD cd ${JETTY_HOME} && java -jar  ${JETTY_HOME}/start.jar
+#CMD /usr/sbin/ns-slapd -D /etc/dirsrv/slapd-dir
+CMD tail -f /dev/null

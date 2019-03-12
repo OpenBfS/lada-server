@@ -87,6 +87,8 @@ durchgeführte Änderungen leicht innerhalb der Container getestet werden könne
 Bauen der Images:
  $ cd ./db_schema
  $ docker build -t koala/lada_db .
+ $ cd ../shibboleth
+ $ docker build -t koala/lada_idp .
  $ cd ..
  $ docker build -t koala/lada_wildfly .
  $ cd your/repo/of/lada-client
@@ -99,15 +101,21 @@ Starten der Container:
  $ cd db_schema
  $ docker run --name your_lada_db --net=lada_network -v $PWD:/opt/lada_sql/ \
           -d koala/lada_db:latest
+ $ cd ../shibboleth
+$ docker run --name your_lada_idp --net=lada_network \
+             -p20080:80 -p28080:8080 -p 20443:443 -p 28443:8443
+             -v $PWD:/usr/local/lada_shib/sources
+             -d koala/lada_idp
  $ cd ..
  $ docker run --name lada_wildfly --net=lada_network \
-          --link your_lada_db:lada_db -v $PWD:/usr/src/lada-server \
+          --link your_lada_db:lada_db --link your_lada_idp:lada-idp
+          -v $PWD:/usr/src/lada-server \
           -d koala/lada_wildfly
  $ cd your/repo/of/lada-client
  $ docker run --name lada_client --net=lada_network \
               -v $PWD:/usr/local/apache2/htdocs \
               --link lada_wildfly:lada-server \
-              -p 8180-8184:80-84 -d koala/lada_client
+              -p 8180-8185:80-85 -d koala/lada_client
 
 Innerhalb des Client-Containers muss dann noch folgendes ausgeführt werden,
 wenn zum ersten mal your/repo/of/lada-client als Volume in einen Container
@@ -118,10 +126,27 @@ eingebunden wurde:
  $ ln -s $PWD/ext-6.2.0 ext
  $ sencha app install --framework=ext
  $ sencha app build development
+ $ shibd
+
+Innerhalb des IDP-Containers muss zuerst als root-Benutzer der LDAP-Service gestartet werden:
+ $ /usr/sbin/ns-slapd -D /etc/dirsrv/slapd-dir
+Daraufhin kann als Benutzer "jetty" der IDP gestartet werden:
+ $ cd jetty-home && java -jar start.jar
 
 Die LADA-Anwendung kann dann unter den angegebenen Ports mit verschiedenen
-Rollen im Browser ausgeführt werden.
+Rollen im Browser ausgeführt werden. Die Ports 8180 - 8184 verwenden dabei festgelegte Benutzer/Rollen,
+während der Client unter Port 8185 eine Authentifizierung mit Shibboleth verwendet.
+Um Shibboleth zu verwenden muss vorher noch die Erreichbarkeit des IDP-Dienstes sichergestellt werden:
 
+Variante 1: Als Standardeinstellung versucht der Client den IDP-Dienst unter https://lada-idp/... zu erreichen.
+Daher kann diese Adresse in die Hosts-Datei des Client-Systems eingetragen werden. Diese ist unter Windows in der Regel
+unter "C:\system32\drivers\etc" zu finden, auf Linux-Systemen befindet sich diese unter "/etc/hosts".
+
+Variante 2: Kann die Hosts-Datei nicht verändert werden, kann die Adresse modifiziert werden, unter der der Client den IDP
+zu erreichen versucht. Dazu müssen in den Dateien Dateien {Server-Repository}/shibboleth/idp-metadata.xml und
+{Client-Repository}/shibboleth/partner-metadata.xml die Attribute Location="https://lada-idp/..." zu einer Adresse verändert
+werden, die vom Client-System erreichbar ist, etwa die lokale IP-Adresse des IDP-Systems oder "localhost" falls alle Container
+auf dem selben System laufen. 
 Tests
 -----
 Die auf Arquillian basierenden Tests erfordern einen vollständig konfigurierten
