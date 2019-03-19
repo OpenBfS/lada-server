@@ -3,53 +3,12 @@ cn: users
 objectClass: top
 objectClass: organizationalRole
 
-dn: cn=groups,dc=ladaidp
-cn: users
-objectClass: top
-objectClass: organizationalRole
-
-dn: cn=Imis_world,cn=groups,dc=ladaidp
-cn: Imis_world
-objectClass: top
-objectClass: groupOfNames
-member: uid=testeins,cn=users,dc=ladaidp
-member: uid=testzwei,cn=users,dc=ladaidp
-member: uid=testdrei,cn=users,dc=ladaidp
-member: uid=testvier,cn=users,dc=ladaidp
-
-dn: cn=mst_06010,cn=groups,dc=ladaidp
-cn: mst_06010
-objectClass: top
-objectClass: groupOfNames
-member: uid=testeins,cn=users,dc=ladaidp
-member: uid=testzwei,cn=users,dc=ladaidp
-
-dn: cn=mst_06060,cn=groups,dc=ladaidp
-cn: mst_06060
-objectClass: top
-objectClass: groupOfNames
-member: uid=testdrei,cn=users,dc=ladaidp
-member: uid=testvier,cn=users,dc=ladaidp
-
-dn: cn=mst_11010,cn=groups,dc=ladaidp
-cn: mst_11010
-objectClass: top
-objectClass: groupOfNames
-member: uid=testeins,cn=users,dc=ladaidp
-member: uid=testdrei,cn=users,dc=ladaidp
-
-dn: cn=mst_12010,cn=groups,dc=ladaidp
-cn: mst_12010
-objectClass: top
-objectClass: groupOfNames
-member: uid=testzwei,cn=users,dc=ladaidp
-member: uid=testvier,cn=users,dc=ladaidp
-
 dn: uid=testnull,cn=users,dc=ladaidp
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+objectClass: inetUser
 userPassword: password
 uid: testnull
 cn: Eins
@@ -57,19 +16,16 @@ sn: Testbenutzer
 
 dn: uid=testeins,cn=users,dc=ladaidp
 objectClass: top
-objectClass: person
-objectClass: organizationalPerson
-objectClass: inetOrgPerson
+objectClass: inetUser
 userPassword: password
 uid: testeins
-cn: Eins
-sn: Testbenutzer
 
 dn: uid=testzwei,cn=users,dc=ladaidp
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+objectClass: inetUser
 userPassword: password
 uid: testzwei
 cn: Eins
@@ -80,6 +36,7 @@ objectClass: top
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+objectClass: inetUser
 userPassword: password
 uid: testdrei
 cn: Eins
@@ -90,7 +47,39 @@ objectClass: top
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+objectClass: inetUser
 userPassword: password
 uid: testvier
 cn: Eins
 sn: Testbenutzer
+
+dn: cn=groups,dc=ladaidp
+cn: users
+objectClass: top
+objectClass: organizationalRole
+
+dn: cn=Imis_world,cn=groups,dc=ladaidp
+cn: Imis_world
+objectClass: top
+objectClass: groupOfNames
+
+dn: cn=mst_06010,cn=groups,dc=ladaidp
+cn: mst_06010
+objectClass: top
+objectClass: groupOfNames
+
+dn: cn=mst_06060,cn=groups,dc=ladaidp
+cn: mst_06060
+objectClass: top
+objectClass: groupOfNames
+
+dn: cn=mst_11010,cn=groups,dc=ladaidp
+cn: mst_11010
+objectClass: top
+objectClass: groupOfNames
+
+dn: cn=mst_12010,cn=groups,dc=ladaidp
+cn: mst_12010
+objectClass: top
+objectClass: groupOfNames
+

@@ -128,25 +128,19 @@ eingebunden wurde:
  $ sencha app build development
  $ shibd
 
-Innerhalb des IDP-Containers muss zuerst als root-Benutzer der LDAP-Service gestartet werden:
+Innerhalb des IDP-Containers muss zuerst als root-Benutzer der LDAP-Service gestartet werden und die Benutzer ihren
+entsprechenden Gruppen zugeordnet werden:
  $ /usr/sbin/ns-slapd -D /etc/dirsrv/slapd-dir
+ $ sh $BASE_DIR/sources/updateMembers.sh
 Daraufhin kann als Benutzer "jetty" der IDP gestartet werden:
  $ cd jetty-home && java -jar start.jar
 
 Die LADA-Anwendung kann dann unter den angegebenen Ports mit verschiedenen
 Rollen im Browser ausgeführt werden. Die Ports 8180 - 8184 verwenden dabei festgelegte Benutzer/Rollen,
 während der Client unter Port 8185 eine Authentifizierung mit Shibboleth verwendet.
-Um Shibboleth zu verwenden muss vorher noch die Erreichbarkeit des IDP-Dienstes sichergestellt werden:
+Um Shibboleth zu verwenden muss vorher noch die Erreichbarkeit des IDP-Dienstes sichergestellt werden. In der Standardkonfiguration müssen alle Dienste auf der selben Maschine laufen auf der auch der Client-Browser gestartet wird.
+Ist dies nicht der Fall muss die Adresse des IDPs angepasst werden. Dazu können in den Dateien Dateien {Server-Repository}/shibboleth/idp-metadata.xml und {Client-Repository}/shibboleth/partner-metadata.xml die Attribute Location="https://localhost:28443/..." zu einer Adresse verändert werden, die vom Client-System erreichbar ist, etwa die lokale IP-Adresse des IDP-Systems. 
 
-Variante 1: Als Standardeinstellung versucht der Client den IDP-Dienst unter https://lada-idp/... zu erreichen.
-Daher kann diese Adresse in die Hosts-Datei des Client-Systems eingetragen werden. Diese ist unter Windows in der Regel
-unter "C:\system32\drivers\etc" zu finden, auf Linux-Systemen befindet sich diese unter "/etc/hosts".
-
-Variante 2: Kann die Hosts-Datei nicht verändert werden, kann die Adresse modifiziert werden, unter der der Client den IDP
-zu erreichen versucht. Dazu müssen in den Dateien Dateien {Server-Repository}/shibboleth/idp-metadata.xml und
-{Client-Repository}/shibboleth/partner-metadata.xml die Attribute Location="https://lada-idp/..." zu einer Adresse verändert
-werden, die vom Client-System erreichbar ist, etwa die lokale IP-Adresse des IDP-Systems oder "localhost" falls alle Container
-auf dem selben System laufen. 
 Tests
 -----
 Die auf Arquillian basierenden Tests erfordern einen vollständig konfigurierten
