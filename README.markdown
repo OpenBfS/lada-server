@@ -139,7 +139,7 @@ Die LADA-Anwendung kann dann unter den angegebenen Ports mit verschiedenen
 Rollen im Browser ausgeführt werden. Die Ports 8180 - 8184 verwenden dabei festgelegte Benutzer/Rollen,
 während der Client unter Port 8185 eine Authentifizierung mit Shibboleth verwendet.
 Um Shibboleth zu verwenden muss vorher noch die Erreichbarkeit des IDP-Dienstes sichergestellt werden. In der Standardkonfiguration müssen alle Dienste auf der selben Maschine laufen auf der auch der Client-Browser gestartet wird.
-Ist dies nicht der Fall muss die Adresse des IDPs angepasst werden. Dazu können in den Dateien Dateien {Server-Repository}/shibboleth/idp-metadata.xml und {Client-Repository}/shibboleth/partner-metadata.xml die Attribute Location="https://localhost:28443/..." zu einer Adresse verändert werden, die vom Client-System erreichbar ist, etwa die lokale IP-Adresse des IDP-Systems. 
+Ist dies nicht der Fall muss die Adresse des IDPs angepasst werden. Dazu können in den Dateien {Server-Repository}/shibboleth/idp-metadata.xml und {Client-Repository}/shibboleth/partner-metadata.xml die Attribute Location="https://localhost:28443/..." zu einer Adresse verändert werden, die vom Client-System erreichbar ist, etwa die lokale IP-Adresse des IDP-Systems. 
 
 Tests
 -----
