@@ -100,22 +100,20 @@ Aufbau eines Netzwerks für die LADA-Komponenten:
 
 Starten der Container:
  $ cd db_schema
- $ docker run --name your_lada_db --net=lada_network -v $PWD:/opt/lada_sql/ \
+ $ docker run --name lada_db --net=lada_network -v $PWD:/opt/lada_sql/ \
           -d koala/lada_db:latest
  $ cd ../shibboleth
-$ docker run --name your_lada_idp --net=lada_network \
-             -p20080:80 -p28080:8080 -p 20443:443 -p 28443:8443
-             -v $PWD:/usr/local/lada_shib/sources
+$ docker run --name lada-idp --net=lada_network \
+             -p 20080:80 -p 28080:8080 -p 20443:443 -p 28443:8443 \
+             -v $PWD:/usr/local/lada_shib/sources \
              -d koala/lada_idp
  $ cd ..
- $ docker run --name lada_wildfly --net=lada_network \
-          --link your_lada_db:lada_db --link your_lada_idp:lada-idp
+ $ docker run --name lada-server --net=lada_network \
           -v $PWD:/usr/src/lada-server \
           -d koala/lada_wildfly
  $ cd your/repo/of/lada-client
  $ docker run --name lada_client --net=lada_network \
               -v $PWD:/usr/local/apache2/htdocs \
-              --link lada_wildfly:lada-server \
               -p 8180-8185:80-85 -d koala/lada_client
 
 Innerhalb des Client-Containers muss dann noch folgendes ausgeführt werden,
