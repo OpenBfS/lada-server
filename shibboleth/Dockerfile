@@ -49,11 +49,13 @@ RUN useradd ldapadmin \
     && sed -i '/if (@errs = startServer($inf))/,/}/d' /usr/lib64/dirsrv/perl/* \
     && setup-ds.pl --silent --file ${BASE_DIR}/sources/ds-setup.inf \
     && /usr/sbin/ns-slapd -D /etc/dirsrv/slapd-dir \
-    && while ! curl -s ldap://localhost:389 > /dev/null; do echo waiting for ldap to start; sleep 1; done; \
+    && while ! curl -s ldap://localhost:389 > /dev/null; do \
+           echo waiting for ldap to start; sleep 1; done; \
     #enable memberOf plugin
     ldapmodify -H ldap:/// -f ${BASE_DIR}/sources/memberOf.ldif -x -D "cn=Directory Manager" -w password \
     #Add users and groups
     && ldapadd -H ldap:/// -f ${BASE_DIR}/sources/users.ldif -x -D "cn=Directory Manager" -w password
+
 
 # Configure Jetty
 RUN cp ${BASE_DIR}/sources/ssl.ini ${JETTY_HOME}/start.d/
@@ -67,7 +69,14 @@ RUN useradd jetty -U -s /bin/false \
     && chmod -R 750 ${JETTY_BASE} \
     && chmod -R 0775 ${BASE_DIR}/shibboleth-sources/bin \
     && sh ${BASE_DIR}/shibboleth-sources/bin/install.sh \
-        -Didp.sealer.password="password" -Didp.keystore.password="password" -Didp.target.dir="${BASE_DIR}/shibboleth-idp"  -Didp.host.name="lada-idp"\
+        -Didp.merge.properties="${BASE_DIR}/sources/idp.properties" \
+        -Didp.noprompt="true" \
+        -Didp.no.tidy="true" \
+        -Didp.sealer.password="password" \
+        -Didp.keystore.password="password" \
+        -Didp.src.dir="${BASE_DIR}/shibboleth-sources" \
+        -Didp.target.dir="${BASE_DIR}/shibboleth-idp" \
+        -Didp.host.name="lada-idp" \
     && chown -R jetty:jetty ${BASE_DIR}/shibboleth-idp \
     && ln -s ${BASE_DIR}/shibboleth-idp /opt/shibboleth-idp \
     && rm ${BASE_DIR}/shibboleth-idp/conf/metadata-providers.xml \
@@ -98,8 +107,11 @@ RUN echo \
         * This image is for testing purposes only.*\
         * Do not use in productive enviroments!   *\
         *******************************************"
-USER jetty
+
 RUN cp ${BASE_DIR}/sources/idp.xml ${JETTY_HOME}/webapps
-#CMD cd ${JETTY_HOME} && java -jar  ${JETTY_HOME}/start.jar
-#CMD /usr/sbin/ns-slapd -D /etc/dirsrv/slapd-dir
-CMD tail -f /dev/null
+WORKDIR ${JETTY_HOME}
+CMD /usr/sbin/ns-slapd -D /etc/dirsrv/slapd-dir && \
+    while ! curl -s ldap://localhost:389 > /dev/null; do \
+        echo waiting for ldap to start; sleep 1; done && \
+    sh /usr/local/lada_shib/sources/updateMembers.sh && \
+    java -jar ./start.jar

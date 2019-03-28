@@ -102,17 +102,15 @@ Starten der Container:
  $ cd db_schema
  $ docker run --name lada_db --net=lada_network -v $PWD:/opt/lada_sql/ \
           -d koala/lada_db:latest
- $ cd ../shibboleth
-$ docker run --name lada-idp --net=lada_network \
+ $ docker run --name lada-idp --net=lada_network \
              -p 20080:80 -p 28080:8080 -p 20443:443 -p 28443:8443 \
-             -v $PWD:/usr/local/lada_shib/sources \
+             -v $PWD/shibboleth:/usr/local/lada_shib/sources \
              -d koala/lada_idp
- $ cd ..
  $ docker run --name lada-server --net=lada_network \
           -v $PWD:/usr/src/lada-server \
           -d koala/lada_wildfly
  $ cd your/repo/of/lada-client
- $ docker run --name lada_client --net=lada_network \
+ $ docker run --name lada-client --net=lada_network \
               -v $PWD:/usr/local/apache2/htdocs \
               -p 8180-8185:80-85 -d koala/lada_client
 
@@ -126,13 +124,6 @@ eingebunden wurde:
  $ sencha app install --framework=ext
  $ sencha app build development
  $ shibd
-
-Innerhalb des IDP-Containers muss zuerst als root-Benutzer der LDAP-Service gestartet werden und die Benutzer ihren
-entsprechenden Gruppen zugeordnet werden:
- $ /usr/sbin/ns-slapd -D /etc/dirsrv/slapd-dir
- $ sh $BASE_DIR/sources/updateMembers.sh
-Daraufhin kann als Benutzer "jetty" der IDP gestartet werden:
- $ cd jetty-home && java -jar start.jar
 
 Die LADA-Anwendung kann dann unter den angegebenen Ports mit verschiedenen
 Rollen im Browser ausgeführt werden. Die Ports 8180 - 8184 verwenden dabei
