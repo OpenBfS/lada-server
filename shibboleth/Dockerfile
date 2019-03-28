@@ -19,6 +19,25 @@ ADD . ${BASE_DIR}/sources
 
 WORKDIR ${BASE_DIR}
 
+# Install Jetty
+RUN wget https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/$jetty_version/jetty-distribution-$jetty_version.tar.gz \
+    && tar -xvzf jetty-distribution-$jetty_version.tar.gz \
+    && mv jetty-distribution-${jetty_version} $JETTY_HOME \
+    && mkdir ${JETTY_BASE} \
+    && cd $JETTY_HOME \
+    && keytool -genkey -noprompt -alias jetty \
+               -dname "CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown" \
+               -keystore keystore -storepass password -keypass password \
+               -keyalg RSA \
+    && java -jar $JETTY_HOME/start.jar --create-startd \
+            --add-to-start=http,https,deploy,ext,annotations,jstl,rewrite,ssl
+
+# Download Shibboleth IDP
+RUN wget https://shibboleth.net/downloads/identity-provider/latest/shibboleth-identity-provider-$shib_idp_version.tar.gz \
+    && tar -xvzf shibboleth-identity-provider-$shib_idp_version.tar.gz \
+    && mv shibboleth-identity-provider-$shib_idp_version/ \
+          ${BASE_DIR}/shibboleth-sources
+
 #LDAP, see https://github.com/UniconLabs/dockerized-idp-testbed/tree/master/ldap
 RUN useradd ldapadmin \
     && rm -fr /var/lock /usr/lib/systemd/system \
@@ -36,24 +55,8 @@ RUN useradd ldapadmin \
     #Add users and groups
     && ldapadd -H ldap:/// -f ${BASE_DIR}/sources/users.ldif -x -D "cn=Directory Manager" -w password
 
-
-#Jetty
-RUN wget https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/$jetty_version/jetty-distribution-$jetty_version.tar.gz \
-    && tar -xvzf jetty-distribution-$jetty_version.tar.gz \
-    && mv jetty-distribution-${jetty_version} $JETTY_HOME \
-    && mkdir ${JETTY_BASE} \
-    && cd $JETTY_HOME \
-    && keytool -genkey -noprompt -alias jetty -dname "CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown" -keystore keystore -storepass password -keypass password -keyalg RSA\
-    && java -jar $JETTY_HOME/start.jar --create-startd --add-to-start=http,https,deploy,ext,annotations,jstl,rewrite,ssl
-
-#RUN rm ${JETTY_HOME}/etc/jetty-ssl-context.xml && cp ${BASE_DIR}/sources/jetty-ssl-context.xml ${JETTY_HOME}/etc/
-
+# Configure Jetty
 RUN cp ${BASE_DIR}/sources/ssl.ini ${JETTY_HOME}/start.d/
-
-#Shibboleth IDP
-RUN wget https://shibboleth.net/downloads/identity-provider/latest/shibboleth-identity-provider-$shib_idp_version.tar.gz \
-    && tar -xvzf shibboleth-identity-provider-$shib_idp_version.tar.gz \
-    && mv shibboleth-identity-provider-$shib_idp_version/ ${BASE_DIR}/shibboleth-sources 
 
 #Jetty user
 RUN useradd jetty -U -s /bin/false \
