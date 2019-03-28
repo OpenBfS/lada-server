@@ -66,14 +66,15 @@ Details zur Installation können den Dateien `Dockerfile` und
 
 ### Transformation von Ortskoordinaten
 
-Die Transformation von Koordinaten aus dem CRS `EPSG:3146[6,7,8,9]` in das für intern
-genutzte Geometrien CRS `EPSG:4326` kann optional mit einem ShiftGrid erfolgen.
-Dies erhöht die Genauigkeit der resultierenden Koordinaten.
+Die Transformation von Koordinaten aus dem CRS `EPSG:3146[6,7,8,9]` in das für
+intern genutzte Geometrien CRS `EPSG:4326` kann optional mit einem ShiftGrid
+erfolgen. Dies erhöht die Genauigkeit der resultierenden Koordinaten.
 Das ShiftGrid ist dazu vor dem Compilieren (s.o.) folgendermaßen zu einzufügen:
 
  $ curl -O http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007.gsb
  $ mkdir -p src/main/resources/org/geotools/referencing/factory/gridshift
- $ mv BETA2007.gsb src/main/resources/org/geotools/referencing/factory/gridshift
+ $ mv BETA2007.gsb \
+     src/main/resources/org/geotools/referencing/factory/gridshift
 
 Docker
 ------
@@ -136,10 +137,17 @@ Daraufhin kann als Benutzer "jetty" der IDP gestartet werden:
  $ cd jetty-home && java -jar start.jar
 
 Die LADA-Anwendung kann dann unter den angegebenen Ports mit verschiedenen
-Rollen im Browser ausgeführt werden. Die Ports 8180 - 8184 verwenden dabei festgelegte Benutzer/Rollen,
-während der Client unter Port 8185 eine Authentifizierung mit Shibboleth verwendet.
-Um Shibboleth zu verwenden muss vorher noch die Erreichbarkeit des IDP-Dienstes sichergestellt werden. In der Standardkonfiguration müssen alle Dienste auf der selben Maschine laufen auf der auch der Client-Browser gestartet wird.
-Ist dies nicht der Fall muss die Adresse des IDPs angepasst werden. Dazu können in den Dateien {Server-Repository}/shibboleth/idp-metadata.xml und {Client-Repository}/shibboleth/partner-metadata.xml die Attribute Location="https://localhost:28443/..." zu einer Adresse verändert werden, die vom Client-System erreichbar ist, etwa die lokale IP-Adresse des IDP-Systems. 
+Rollen im Browser ausgeführt werden. Die Ports 8180 - 8184 verwenden dabei
+festgelegte Benutzer/Rollen, während der Client unter Port 8185 eine
+Authentifizierung mit Shibboleth verwendet.
+Um Shibboleth zu verwenden muss vorher noch die Erreichbarkeit des IDP-Dienstes
+sichergestellt werden. In der Standardkonfiguration müssen alle Dienste auf der
+selben Maschine laufen auf der auch der Client-Browser gestartet wird.
+Ist dies nicht der Fall muss die Adresse des IDPs angepasst werden. Dazu können
+in den Dateien {Server-Repository}/shibboleth/idp-metadata.xml und
+{Client-Repository}/shibboleth/partner-metadata.xml die Attribute
+Location="https://localhost:28443/..." zu einer Adresse verändert werden, die
+vom Client-System erreichbar ist, etwa die lokale IP-Adresse des IDP-Systems.
 
 Tests
 -----
@@ -171,9 +179,10 @@ Erstellen von Queries
 ---------------------
 
 Basequeries enthalten die grundlegenden Definitionen für Abfragen. Diese werden
-fest in der Datenbank vorgegeben und sind in der Tabelle stamm.base_query definiert.
-Die SQL-Abfrage in der Tabelle muss zumindest das SELECT- und FROM-Statement enthalten.
-Den Ergebnisspalten der Abfrage sollte zudem mithilfe des AS-Ausdrucks ein Alias zugewiesen werden.
+fest in der Datenbank vorgegeben und sind in der Tabelle stamm.base_query
+definiert. Die SQL-Abfrage in der Tabelle muss zumindest das SELECT- und
+FROM-Statement enthalten. Den Ergebnisspalten der Abfrage sollte zudem
+mithilfe des AS-Ausdrucks ein Alias zugewiesen werden.
 
 Der Basequery zugeordnete Spalten werden zusätzlich in der Tabelle
 stamm.grid_column festgelegt, wobei der gegebene DataIndex einem Alias der
@@ -182,9 +191,13 @@ das Verhalten des Clients und den dort angezeigten Filterwidgets mit (siehe
 unten). Die Position gibt die Stellung innerhalb der Basequery an, name ist die
 im Ergebnisgrid anzuzeigende Spaltenbeschriftung.
 
-Die Spalte filter innerhalb einer stamm.grid_column verweist auf einen Eintrag in der Tabelle stamm.filter.
-Diese enthält Filter-Typ, das entsprechende SQL-Statement und den Namen des Parameters.
-Neben einfachen Text-, Zahlen- oder boolschen- Filtern existieren auch Filter-Typen für von-bis-Datums-Filter, Multiselect-Filter und generische Text-Filter. Multiselect- und Datums-Filter akzeptieren dabei einen String mit Komma-separierten Werten.
+Die Spalte filter innerhalb einer stamm.grid_column verweist auf einen Eintrag
+in der Tabelle stamm.filter. Diese enthält Filter-Typ, das entsprechende
+SQL-Statement und den Namen des Parameters.
+Neben einfachen Text-, Zahlen- oder boolschen- Filtern existieren auch
+Filter-Typen für von-bis-Datums-Filter, Multiselect-Filter und generische
+Text-Filter. Multiselect- und Datums-Filter akzeptieren dabei einen String mit
+Komma-separierten Werten.
 Für die Definition der Filter mit SQL-Statement und Paramter gilt:
   * Datums-Filter: 2 Parameter. Beispielsweise:
     * SQL: probe.probeentnahme_beginn BETWEEN :fromTime AND :toTime
@@ -198,9 +211,11 @@ Für die Definition der Filter mit SQL-Statement und Paramter gilt:
 
 Einzelne Nutzer können aus bereits bestehenden Queries Kopien erstellen.
 Hierfür gibt es zwei Speicherorte: In query_user werden die grundsätzlichen
-Parameter festgelegt, wie etwa eine eigene Beschreibung oder ein eigener Namen der kopierten Query.
+Parameter festgelegt, wie etwa eine eigene Beschreibung oder ein eigener Namen
+der kopierten Query.
 In grid_column_values werden die Definitionen der
-einzelnen Spalten (z.B. Sichtbarkeit, derzeitig gespeicherter Filter) persistiert.
+einzelnen Spalten (z.B. Sichtbarkeit, derzeitig gespeicherter Filter)
+persistiert.
 
 ### Datentypen
 
@@ -272,9 +287,9 @@ Eine Konfiguration wird in der Datenbanktabelle 'importer_config' im Schema
   z.B. bei einer Probe "probe". Die Zeitbasis hat den Namen "zeitbasis".
 * attribute (character varying(30)): Name des Attributes das bearbeitet werden
   soll in CamelCase-Schreibweise. (Zeitbasis hat hier einen "dummy"-Eintrag)
-  Tabellenspalten, die als Foreign-Key auf andere Tabellen verweisen, werden mit
-  dem Tabellennamen referenziert und können so im Falle der Aktion 'convert' mit
-  den sprechenden Bezeichnung genutzt werden.
+  Tabellenspalten, die als Foreign-Key auf andere Tabellen verweisen, werden
+  mit dem Tabellennamen referenziert und können so im Falle der Aktion
+  'convert' mit den sprechenden Bezeichnung genutzt werden.
 * mst_id (Foreign-Key auf mess_stelle): Enthält die Messstelle, für die diese
   Konfiguration gültig ist.
 * from_value (character varying(100)): Für "default" bleibt diese Spalte leer,
