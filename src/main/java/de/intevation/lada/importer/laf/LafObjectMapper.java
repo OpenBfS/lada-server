@@ -48,6 +48,7 @@ import de.intevation.lada.model.stammdaten.Datenbasis;
 import de.intevation.lada.model.stammdaten.ImporterConfig;
 import de.intevation.lada.model.stammdaten.KoordinatenArt;
 import de.intevation.lada.model.stammdaten.MessEinheit;
+import de.intevation.lada.model.stammdaten.MessMethode;
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
@@ -56,6 +57,7 @@ import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Ortszusatz;
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
 import de.intevation.lada.model.stammdaten.Probenart;
+import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGruppe;
 import de.intevation.lada.model.stammdaten.Staat;
 import de.intevation.lada.model.stammdaten.StatusKombi;
@@ -149,10 +151,10 @@ public class LafObjectMapper {
             }
         }
         if (object.getAttributes().containsKey("ZEITBASIS")) {
-            ImporterConfig cfg = getImporterConfigByAttributeUpper("ZEITBASIS");
+            List<ImporterConfig> cfg = getImporterConfigByAttributeUpper("ZEITBASIS");
             String attribute = object.getAttributes().get("ZEITBASIS");
-            if (cfg != null && attribute.equals(cfg.getFromValue())) {
-                attribute = cfg.getToValue();
+            if (cfg.size()>0 && attribute.equals(cfg.get(0).getFromValue())) {
+                attribute = cfg.get(0).getToValue();
             }
             QueryBuilder<Zeitbasis> builder =
                 new QueryBuilder<Zeitbasis>(
@@ -513,15 +515,16 @@ public class LafObjectMapper {
         }
     }
 
-    private ImporterConfig getImporterConfigByAttributeUpper(String attribute) {
+    private List<ImporterConfig> getImporterConfigByAttributeUpper(String attribute) {
         Iterator<ImporterConfig> i = config.iterator();
+        List<ImporterConfig> result = new ArrayList<ImporterConfig>();
         while (i.hasNext()) {
             ImporterConfig current = i.next();
             if (current.getAttribute().toUpperCase().equals(attribute)) {
-                return current;
+                result.add(current);
             }
         }
-        return null;
+        return result;
     }
 
     private <T> void doConverts(Object object, Class<T> clazz, String table) {
@@ -724,6 +727,14 @@ public class LafObjectMapper {
     }
 
     private KommentarP createProbeKommentar(Map<String, String> attributes, Probe probe) {
+        if (attributes.get("TEXT").equals("")) {
+            ReportItem warn = new ReportItem();
+            warn.setCode(631);
+            warn.setKey("Proben Kommentar: ");
+            warn.setValue("Text");
+            currentWarnings.add(warn);
+            return null;
+        };
         KommentarP kommentar = new KommentarP();
         kommentar.setProbeId(probe.getId());
         kommentar.setText(attributes.get("TEXT"));
@@ -757,20 +768,29 @@ public class LafObjectMapper {
     private ZusatzWert createZusatzwert(Map<String, String> attributes, int probeId) {
         ZusatzWert zusatzwert = new ZusatzWert();
         zusatzwert.setProbeId(probeId);
-        zusatzwert.setMessfehler(Float.valueOf(attributes.get("MESSFEHLER")));
-        zusatzwert.setMesswertPzs(Double.valueOf(attributes.get("MESSWERT_PZS")));
-        ImporterConfig cfg = getImporterConfigByAttributeUpper("ZUSATZWERT");
-        String attribute = attributes.get("PZS");
-        if (cfg != null &&
-            cfg.getAction().equals("convert") &&
-            cfg.getFromValue().equals(attribute)
-        ) {
-            attribute = cfg.getToValue();
+        if (attributes.containsKey("MESSFEHLER")) {
+            zusatzwert.setMessfehler(Float.valueOf(attributes.get("MESSFEHLER")));
         }
-        if (cfg != null && cfg.getAction().equals("transform")) {
-            char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
-            char to = (char) Integer.parseInt(cfg.getToValue(), 16);
-            attribute = attribute.replaceAll("[" + String.valueOf(from) + "]", String.valueOf(to));
+        String wert = attributes.get("MESSWERT_PZS");
+        if (wert.startsWith("<")) {
+            wert = wert.substring(1);
+            zusatzwert.setKleinerAls("<");
+        }
+        zusatzwert.setMesswertPzs(Double.valueOf(wert.replaceAll(",", ".")));
+        List<ImporterConfig> cfgs = getImporterConfigByAttributeUpper("ZUSATZWERT");
+        String attribute = attributes.get("PZS");
+        for (int i = 0; i < cfgs.size(); i++) {
+            ImporterConfig cfg = cfgs.get(i);
+            if (cfg.getAction().equals("convert") &&
+                cfg.getFromValue().equals(attribute)
+            ) {
+                attribute = cfg.getToValue();
+            }
+            if (cfg.getAction().equals("transform")) {
+                char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
+                char to = (char) Integer.parseInt(cfg.getToValue(), 16);
+                attribute = attribute.replaceAll("[" + String.valueOf(from) + "]", String.valueOf(to));
+            }
         }
         QueryBuilder<ProbenZusatz> builder =
             new QueryBuilder<ProbenZusatz>(
@@ -804,24 +824,36 @@ public class LafObjectMapper {
             messwert.setMessgroesseId(Integer.valueOf(attributes.get("MESSGROESSE_ID")));
         }
         else if (attributes.containsKey("MESSGROESSE")) {
-            ImporterConfig cfg = getImporterConfigByAttributeUpper("MESSGROESSE");
+            List<ImporterConfig> cfgs = getImporterConfigByAttributeUpper("MESSGROESSE");
             String attribute = attributes.get("MESSGROESSE");
-            if (cfg != null &&
-                cfg.getAction().equals("convert") &&
-                cfg.getFromValue().equals(attribute)
-            ) {
-                attribute = cfg.getToValue();
-            }
-            if (cfg != null && cfg.getAction().equals("transform")) {
-                char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
-                char to = (char) Integer.parseInt(cfg.getToValue(), 16);
-                attribute = attribute.replaceAll("[" + String.valueOf(from) + "]", String.valueOf(to));
+            for (int i = 0; i< cfgs.size(); i++) {
+                ImporterConfig cfg = cfgs.get(i);
+                if (cfg != null &&
+                    cfg.getAction().equals("convert") &&
+                    cfg.getFromValue().equals(attribute)
+                ) {
+                    attribute = cfg.getToValue();
+                }
+                if (cfg != null && cfg.getAction().equals("transform")) {
+                    char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
+                    char to = (char) Integer.parseInt(cfg.getToValue(), 16);
+                    attribute = attribute.replaceAll("[" + String.valueOf(from) + "]", String.valueOf(to));
+                }
             }
             QueryBuilder<Messgroesse> builder =
                 new QueryBuilder<Messgroesse>(
                     repository.entityManager(Strings.STAMM),
                     Messgroesse.class);
-            builder.and("messgroesse", attribute);
+            // accept various nuclide notations (e.g. "Cs-134", "CS 134", "Cs134", "SC134", ...)
+            String messgroesseString = attribute;
+            if (attribute.matches("^[A-Za-z]+( |-)?[0-9].*")) {
+                messgroesseString = attribute.substring(0,1).toUpperCase() +
+                                    attribute.replaceAll("(-| )?[0-9].*","").substring(1).toLowerCase() +
+                                    '-' +
+                                    attribute.replaceFirst("^[A-Za-z]*(-| )?","").toLowerCase();
+            }
+
+            builder.and("messgroesse", messgroesseString);
             List<Messgroesse> groesse =
                 (List<Messgroesse>)repository.filter(
                     builder.getQuery(),
@@ -841,18 +873,21 @@ public class LafObjectMapper {
             messwert.setMehId(Integer.valueOf(attributes.get("MESSEINHEIT_ID")));
         }
         else if (attributes.containsKey("MESSEINHEIT")) {
-            ImporterConfig cfg = getImporterConfigByAttributeUpper("MESSEINHEIT");
+            List<ImporterConfig> cfgs = getImporterConfigByAttributeUpper("MESSEINHEIT");
             String attribute = attributes.get("MESSEINHEIT");
-            if (cfg != null &&
-                cfg.getAction().equals("convert") &&
-                cfg.getFromValue().equals(attribute)
-            ) {
-                attribute = cfg.getToValue();
-            }
-            if (cfg != null && cfg.getAction().equals("transform")) {
-                char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
-                char to = (char) Integer.parseInt(cfg.getToValue(), 16);
-                attribute = attribute.replaceAll("[" + String.valueOf(from) + "]", String.valueOf(to));
+            for (int i = 0; i < cfgs.size(); i++) {
+                ImporterConfig cfg = cfgs.get(i);
+                if (cfg != null &&
+                    cfg.getAction().equals("convert") &&
+                    cfg.getFromValue().equals(attribute)
+                ) {
+                    attribute = cfg.getToValue();
+                }
+                if (cfg != null && cfg.getAction().equals("transform")) {
+                    char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
+                    char to = (char) Integer.parseInt(cfg.getToValue(), 16);
+                    attribute = attribute.replaceAll("[" + String.valueOf(from) + "]", String.valueOf(to));
+                }
             }
             QueryBuilder<MessEinheit> builder =
                 new QueryBuilder<MessEinheit>(
@@ -881,7 +916,9 @@ public class LafObjectMapper {
             messwert.setMesswertNwg("<");
         }
         messwert.setMesswert(Double.valueOf(wert.replaceAll(",", ".")));
-        messwert.setMessfehler(Double.valueOf(attributes.get("MESSFEHLER").replaceAll(",", ".")).floatValue());
+        if (attributes.containsKey("MESSFEHLER")) {
+            messwert.setMessfehler(Double.valueOf(attributes.get("MESSFEHLER").replaceAll(",", ".")).floatValue());
+        }
         if (attributes.containsKey("NWG")) {
             messwert.setNwgZuMesswert(Double.valueOf(attributes.get("NWG").replaceAll(",", ".")));
         }
@@ -895,10 +932,22 @@ public class LafObjectMapper {
             messwert.setNwgZuMesswert(messwert.getMesswert());
             messwert.setMesswert(null);
         }
+        else if (messwert.getMesswertNwg() != null && messwert.getNwgZuMesswert() == messwert.getMesswert() ||
+                 messwert.getMesswertNwg() != null && messwert.getMesswert() == 0.0) {
+            messwert.setMesswert(null);
+        }
         return messwert;
     }
 
     private KommentarM createMessungKommentar(Map<String, String> attributes, int messungsId, Probe probe) {
+        if (attributes.get("TEXT").equals("")) {
+            ReportItem warn = new ReportItem();
+            warn.setCode(631);
+            warn.setKey("Messungs Kommentar: ");
+            warn.setValue("Text");
+            currentWarnings.add(warn);
+            return null;
+        };
         KommentarM kommentar = new KommentarM();
         kommentar.setMessungsId(messungsId);
         if (attributes.containsKey("MST_ID")) {
@@ -1490,18 +1539,21 @@ public class LafObjectMapper {
 
 
         if ("DATENBASIS".equals(key) && probe.getDatenbasisId() == null) {
-            ImporterConfig cfg = getImporterConfigByAttributeUpper("DATENBASIS");
+            List<ImporterConfig> cfgs = getImporterConfigByAttributeUpper("DATENBASIS");
             String attr = value.toString();
-            if (cfg != null &&
-                cfg.getAction().equals("convert") &&
-                cfg.getFromValue().equals(attribute)
-            ) {
-                attr = cfg.getToValue();
-            }
-            if (cfg != null && cfg.getAction().equals("transform")) {
-                char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
-                char to = (char) Integer.parseInt(cfg.getToValue(), 16);
-                attr = attr.replaceAll("[" + String.valueOf(from) + "]", String.valueOf(to));
+            for (int i = 0; i < cfgs.size(); i++) {
+                ImporterConfig cfg = cfgs.get(i);
+                if (cfg != null &&
+                    cfg.getAction().equals("convert") &&
+                    cfg.getFromValue().equals(attr)
+                ) {
+                    attr = cfg.getToValue();
+                }
+                if (cfg != null && cfg.getAction().equals("transform")) {
+                    char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
+                    char to = (char) Integer.parseInt(cfg.getToValue(), 16);
+                    attr = attr.replaceAll("[" + String.valueOf(from) + "]", String.valueOf(to));
+                }
             }
             QueryBuilder<Datenbasis> builder =
                 new QueryBuilder<Datenbasis>(
@@ -1617,6 +1669,28 @@ public class LafObjectMapper {
             probe.setMplId(kategorie.get(0).getId());
         }
 
+        if ("PROBENAHMEINSTITUTION".equals(key)) {
+            QueryBuilder<Probenehmer> builder =
+                new QueryBuilder<Probenehmer>(
+                    repository.entityManager(Strings.STAMM),
+                    Probenehmer.class);
+            builder.or("netzbetreiberId", userInfo.getNetzbetreiber());
+            builder.and("prnId", value);
+            List<Probenehmer> prn =
+                (List<Probenehmer>)repository.filter(
+                    builder.getQuery(),
+                    Strings.STAMM).getData();
+            if (prn == null || prn.isEmpty()) {
+                ReportItem warn = new ReportItem();
+                warn.setCode(673);
+                warn.setKey("probenahmeinstitution");
+                warn.setValue(key);
+                currentWarnings.add(warn);
+                return;
+            }
+            probe.setProbeNehmerId(prn.get(0).getId());
+        }
+
         if ("SOLL_DATUM_UHRZEIT_A".equals(key)) {
             probe.setSolldatumBeginn(getDate(value.toString()));
         }
@@ -1630,13 +1704,19 @@ public class LafObjectMapper {
             probe.setProbeentnahmeEnde(getDate(value.toString()));
         }
 
-        if ("UMWELTBEREICH_S".equals(key) && probe.getUmwId() == null) {
+        if ("UMWELTBEREICH_S".equals(key) &&
+            probe.getUmwId() == null &&
+            value != null
+        ) {
             probe.setUmwId(value.toString());
         }
         else if ("UMWELTBEREICH_S".equals(key) && probe.getUmwId() != null){
             currentWarnings.add(new ReportItem(key, value.toString(), 672));
         }
-        if ("UMWELTBEREICH_C".equals(key) && probe.getUmwId() == null) {
+        if ("UMWELTBEREICH_C".equals(key) &&
+            probe.getUmwId() == null &&
+            value != null
+        ) {
             QueryBuilder<Umwelt> builder =
                 new QueryBuilder<Umwelt>(
                     repository.entityManager(Strings.STAMM),
@@ -1707,18 +1787,21 @@ public class LafObjectMapper {
         }
 
         if ("PROBENART".equals(key)) {
-            ImporterConfig cfg = getImporterConfigByAttributeUpper("PROBENART");
+            List<ImporterConfig> cfgs = getImporterConfigByAttributeUpper("PROBENART");
             String attr = value.toString();
-            if (cfg != null &&
-                cfg.getAction().equals("convert") &&
-                cfg.getFromValue().equals(attribute)
-            ) {
-                attr = cfg.getToValue();
-            }
-            if (cfg != null && cfg.getAction().equals("transform")) {
-                char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
-                char to = (char) Integer.parseInt(cfg.getToValue(), 16);
-                attr = attr.replaceAll("[" + String.valueOf(from) + "]", String.valueOf(to));
+            for (int i = 0; i < cfgs.size(); i++) {
+                ImporterConfig cfg = cfgs.get(i);
+                if (cfg != null &&
+                    cfg.getAction().equals("convert") &&
+                    cfg.getFromValue().equals(attribute)
+                ) {
+                    attr = cfg.getToValue();
+                }
+                if (cfg != null && cfg.getAction().equals("transform")) {
+                    char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
+                    char to = (char) Integer.parseInt(cfg.getToValue(), 16);
+                    attr = attr.replaceAll("[" + String.valueOf(from) + "]", String.valueOf(to));
+                }
             }
             QueryBuilder<Probenart> builder =
                 new QueryBuilder<Probenart>(
@@ -1769,6 +1852,27 @@ public class LafObjectMapper {
         }
         else if ("MESSMETHODE_S".equals(key)) {
             messung.setMmtId(value.toString());
+        }
+        else if ("MESSMETHODE_C".equals(key)) {
+            QueryBuilder<MessMethode> builder =
+                new QueryBuilder<MessMethode>(
+                    repository.entityManager(Strings.STAMM),
+                    MessMethode.class);
+            builder.and("messmethode", value.toString());
+            List<MessMethode> mm =
+                (List<MessMethode>)repository.filterPlain(
+                    builder.getQuery(),
+                    Strings.STAMM);
+            if (mm == null || mm.isEmpty()) {
+                ReportItem warn = new ReportItem();
+                warn.setCode(673);
+                warn.setKey("messmethode");
+                warn.setValue(key);
+                currentWarnings.add(warn);
+            }
+            else {
+                messung.setMmtId(mm.get(0).getId());
+            }
         }
         else if ("ERFASSUNG_ABGESCHLOSSEN".equals(key)) {
             if(!value.toString().equals("0")) {

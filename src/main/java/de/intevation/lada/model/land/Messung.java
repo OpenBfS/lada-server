@@ -149,7 +149,7 @@ public class Messung implements Serializable {
     }
 
     public void setNebenprobenNr(String nebenprobenNr) {
-        this.nebenprobenNr = nebenprobenNr;
+        this.nebenprobenNr = (nebenprobenNr == "") ? null : nebenprobenNr;
     }
 
     public Integer getProbeId() {

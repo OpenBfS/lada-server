@@ -441,7 +441,7 @@ public class LafObjectListener extends LafBaseListener {
         }
         String value = ctx.getChild(1).toString();
         // Trim double qoutes.
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C1) ||
             !value.equals("7")
         ) {
@@ -474,7 +474,7 @@ public class LafObjectListener extends LafBaseListener {
         }
         String value = ctx.getChild(1).toString();
         // Trim double qoutes.
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C4) ||
             !value.equals("0084")
         ) {
@@ -506,7 +506,7 @@ public class LafObjectListener extends LafBaseListener {
         }
         String value = ctx.getChild(1).toString();
         // Trim double qoutes.
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C6)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -537,7 +537,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.I2)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -565,7 +565,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C2)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -592,7 +592,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C2)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -619,7 +619,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -646,7 +646,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C5)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -673,7 +673,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.I8)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -700,7 +700,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C5)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -727,7 +727,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C5)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -754,7 +754,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C16)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -781,7 +781,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.I2)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -811,7 +811,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -845,7 +845,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C20)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -872,7 +872,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C4)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -905,7 +905,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -936,7 +936,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C1)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -964,7 +964,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C3)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -991,7 +991,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C9)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1018,7 +1018,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C1)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1048,7 +1048,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1079,7 +1079,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.I1)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1160,7 +1160,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String time = ctx.getChild(2).toString();
-        time = time.replaceAll("\"", "");
+        time = time.replaceAll("\"", "").trim();
         if (!time.matches(LafDataTypes.T4)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1279,7 +1279,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1287,6 +1287,9 @@ public class LafObjectListener extends LafBaseListener {
             err.setCode(670);
             currentErrors.add(err);;
             return;
+        }
+        if (value.equals("")) {
+            value = null;
         }
         currentProbe.addAttribute(ctx.getChild(0).toString().toUpperCase(), value);
         this.hasUmwelt = true;
@@ -1310,7 +1313,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C3)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1318,6 +1321,9 @@ public class LafObjectListener extends LafBaseListener {
             err.setCode(670);
             currentErrors.add(err);;
             return;
+        }
+        if (value.equals("")) {
+            value = null;
         }
         currentProbe.addAttribute(ctx.getChild(0).toString().toUpperCase(), value);
         this.hasUmwelt = true;
@@ -1338,7 +1344,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C26)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1365,7 +1371,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C21)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1392,7 +1398,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C21)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1459,7 +1465,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.BOOL)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1486,7 +1492,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C20)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1513,7 +1519,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1540,7 +1546,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.I2)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1567,7 +1573,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1597,7 +1603,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C5)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1627,7 +1633,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.I8)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1657,7 +1663,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.I8)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1687,7 +1693,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1717,7 +1723,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.I3)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1741,7 +1747,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String art = ctx.getChild(1).toString();
-        art = art.replaceAll("\"", "");
+        art = art.replaceAll("\"", "").trim();
         if (!art.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1751,7 +1757,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String koord1 = ctx.getChild(2).toString();
-        koord1 = koord1.replaceAll("\"", "");
+        koord1 = koord1.replaceAll("\"", "").trim();
         if (!koord1.matches(LafDataTypes.C22)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1761,7 +1767,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String koord2 = ctx.getChild(3).toString();
-        koord2 = koord2.replaceAll("\"", "");
+        koord2 = koord2.replaceAll("\"", "").trim();
         if (!koord2.matches(LafDataTypes.C22)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1798,7 +1804,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String koord1 = ctx.getChild(2).toString();
-        koord1 = koord1.replaceAll("\"", "");
+        koord1 = koord1.replaceAll("\"", "").trim();
         if (!koord1.matches(LafDataTypes.C22)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1808,7 +1814,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String koord2 = ctx.getChild(3).toString();
-        koord2 = koord2.replaceAll("\"", "");
+        koord2 = koord2.replaceAll("\"", "").trim();
         if (!koord2.matches(LafDataTypes.C22)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1840,7 +1846,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C8)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1869,7 +1875,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.MC50)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1898,7 +1904,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C10)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1930,7 +1936,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1963,7 +1969,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C5)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -1996,7 +2002,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.I8)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2029,7 +2035,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.I8)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2062,7 +2068,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2092,7 +2098,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.I3)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2119,7 +2125,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String art = ctx.getChild(1).toString();
-        art = art.replaceAll("\"", "");
+        art = art.replaceAll("\"", "").trim();
         if (!art.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2129,7 +2135,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String koord1 = ctx.getChild(2).toString();
-        koord1 = koord1.replaceAll("\"", "");
+        koord1 = koord1.replaceAll("\"", "").trim();
         if (!koord1.matches(LafDataTypes.C22)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2139,7 +2145,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String koord2 = ctx.getChild(3).toString();
-        koord2 = koord2.replaceAll("\"", "");
+        koord2 = koord2.replaceAll("\"", "").trim();
         if (!koord2.matches(LafDataTypes.C22)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2179,7 +2185,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String koord1 = ctx.getChild(2).toString();
-        koord1 = koord1.replaceAll("\"", "");
+        koord1 = koord1.replaceAll("\"", "").trim();
         if (!koord1.matches(LafDataTypes.C22)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2189,7 +2195,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String koord2 = ctx.getChild(3).toString();
-        koord2 = koord2.replaceAll("\"", "");
+        koord2 = koord2.replaceAll("\"", "").trim();
         if (!koord2.matches(LafDataTypes.C22)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2221,7 +2227,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C8)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2250,7 +2256,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.MC50)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2279,7 +2285,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C10)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2308,7 +2314,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C8)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2337,7 +2343,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2366,7 +2372,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.F9_10_12)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2395,7 +2401,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.F9_10_12)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2424,7 +2430,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.MC300)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2486,7 +2492,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.I8)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2516,7 +2522,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2546,7 +2552,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C2)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2576,7 +2582,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.C4)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2606,7 +2612,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.BOOL)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2636,7 +2642,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String value = ctx.getChild(1).toString();
-        value = value.replaceAll("\"", "");
+        value = value.replaceAll("\"", "").trim();
         if (!value.matches(LafDataTypes.BOOL)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2658,11 +2664,11 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterProbenzusatzbeschreibung(LafParser.ProbenzusatzbeschreibungContext ctx) {
         // c7* f12 c9 f9
-        if (ctx.getChildCount() < 8) {
+        if (ctx.getChildCount() < 5) {
             return;
         }
         String groesse = ctx.getChild(1).toString();
-        groesse = groesse.replaceAll("\"", "");
+        groesse = groesse.replaceAll("\"", "").trim();
         if (!groesse.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2671,7 +2677,7 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);;
             return;
         }
-        String wert = ctx.getChild(3).toString();
+        String wert = ctx.getChild(2).toString();
         wert = wert.replaceAll("\"", "");
         if (!wert.matches(LafDataTypes.F9_10_12)) {
             ReportItem err = new ReportItem();
@@ -2681,8 +2687,8 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);;
             return;
         }
-        String einheit = ctx.getChild(5).toString();
-        einheit = einheit.replaceAll("\"", "");
+        String einheit = ctx.getChild(3).toString();
+        einheit = einheit.replaceAll("\"", "").trim();
         if (!einheit.matches(LafDataTypes.C9)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2691,21 +2697,23 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);;
             return;
         }
-        String fehler = ctx.getChild(7).toString();
-        fehler = fehler.replaceAll("\"", "");
-        if (!fehler.matches(LafDataTypes.F9_10_12)) {
-            ReportItem err = new ReportItem();
-            err.setKey(ctx.getChild(0).toString());
-            err.setValue(fehler);
-            err.setCode(670);
-            currentErrors.add(err);;
-            return;
-        }
         Map<String, String> zusatzwert = new HashMap<String, String>();
+        if (ctx.getChildCount() >= 6) {
+            String fehler = ctx.getChild(4).toString();
+            fehler = fehler.replaceAll("\"", "");
+            if (!fehler.matches(LafDataTypes.F9_10_12)) {
+                ReportItem err = new ReportItem();
+                err.setKey(ctx.getChild(0).toString());
+                err.setValue(fehler);
+                err.setCode(670);
+                currentErrors.add(err);;
+                return;
+            }
+            zusatzwert.put("MESSFEHLER", fehler);
+        }
         zusatzwert.put("PZS", groesse);
         zusatzwert.put("MESSWERT_PZS", wert);
         zusatzwert.put("EINHEIT", einheit);
-        zusatzwert.put("MESSFEHLER", fehler);
         currentProbe.addZusatzwert(zusatzwert);
     }
 
@@ -2716,11 +2724,11 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterPzb_s(LafParser.Pzb_sContext ctx) {
         // sc8* f12 si3 f9
-        if (ctx.getChildCount() < 8) {
+        if (ctx.getChildCount() < 5) {
             return;
         }
         String groesse = ctx.getChild(1).toString();
-        groesse = groesse.replaceAll("\"", "");
+        groesse = groesse.replaceAll("\"", "").trim();
         if (!groesse.matches(LafDataTypes.C8)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2729,7 +2737,7 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);;
             return;
         }
-        String wert = ctx.getChild(3).toString();
+        String wert = ctx.getChild(2).toString();
         wert = wert.replaceAll("\"", "");
         if (!wert.matches(LafDataTypes.F9_10_12)) {
             ReportItem err = new ReportItem();
@@ -2739,7 +2747,7 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);;
             return;
         }
-        String einheit = ctx.getChild(5).toString();
+        String einheit = ctx.getChild(3).toString();
         einheit = einheit.replaceAll("\"", "");
         if (!einheit.matches(LafDataTypes.I3)) {
             ReportItem err = new ReportItem();
@@ -2749,21 +2757,23 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);;
             return;
         }
-        String fehler = ctx.getChild(7).toString();
-        fehler = fehler.replaceAll("\"", "");
-        if (!fehler.matches(LafDataTypes.F9_10_12)) {
-            ReportItem err = new ReportItem();
-            err.setKey(ctx.getChild(0).toString());
-            err.setValue(fehler);
-            err.setCode(670);
-            currentErrors.add(err);;
-            return;
-        }
         Map<String, String> zusatzwert = new HashMap<String, String>();
+        if (ctx.getChildCount() >= 6) {
+            String fehler = ctx.getChild(4).toString();
+            fehler = fehler.replaceAll("\"", "");
+            if (!fehler.matches(LafDataTypes.F9_10_12)) {
+                ReportItem err = new ReportItem();
+                err.setKey(ctx.getChild(0).toString());
+                err.setValue(fehler);
+                err.setCode(670);
+                currentErrors.add(err);;
+                return;
+            }
+            zusatzwert.put("MESSFEHLER", fehler);
+        }
         zusatzwert.put("PZS_ID", groesse);
         zusatzwert.put("MESSWERT_PZS", wert);
         zusatzwert.put("EINHEIT_ID", einheit);
-        zusatzwert.put("MESSFEHLER", fehler);
         currentProbe.addZusatzwert(zusatzwert);
     }
 
@@ -2784,7 +2794,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String groesse = children.get(1);
-        groesse = groesse.replaceAll("\"", "");
+        groesse = groesse.replaceAll("\"", "").trim();
         if (!groesse.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2804,7 +2814,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String einheit = children.get(3);
-        einheit = einheit.replaceAll("\"", "");
+        einheit = einheit.replaceAll("\"", "").trim();
         if (!einheit.matches(LafDataTypes.C9)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2813,8 +2823,9 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);;
             return;
         }
+        Map<String, String> messwert = new HashMap<String, String>();
         String fehler = null;
-        if (ctx.getChildCount() >= 5) {
+        if (ctx.getChildCount() >= 6) {
             fehler = children.get(4);
             fehler = fehler.replaceAll("\"", "");
             if (!fehler.matches(LafDataTypes.F9_10_12)) {
@@ -2825,12 +2836,11 @@ public class LafObjectListener extends LafBaseListener {
                 currentErrors.add(err);;
                 return;
             }
+            messwert.put("MESSFEHLER", fehler);
         }
-        Map<String, String> messwert = new HashMap<String, String>();
         messwert.put("MESSGROESSE", groesse);
         messwert.put("MESSWERT", wert);
         messwert.put("MESSEINHEIT", einheit);
-        messwert.put("MESSFEHLER", fehler);
         if (currentMessung == null) {
             currentMessung = data.new Messung();
         }
@@ -2883,21 +2893,23 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);;
             return;
         }
-        String fehler = children.get(4);
-        fehler = fehler.replaceAll("\"", "");
-        if (!fehler.matches(LafDataTypes.F9_10_12)) {
-            ReportItem err = new ReportItem();
-            err.setKey(ctx.getChild(0).toString());
-            err.setValue(fehler);
-            err.setCode(670);
-            currentErrors.add(err);;
-            return;
-        }
         Map<String, String> messwert = new HashMap<String, String>();
+        if (ctx.getChildCount() >= 6) {
+            String fehler = children.get(4);
+            fehler = fehler.replaceAll("\"", "");
+            if (!fehler.matches(LafDataTypes.F9_10_12)) {
+                ReportItem err = new ReportItem();
+                err.setKey(ctx.getChild(0).toString());
+                err.setValue(fehler);
+                err.setCode(670);
+                currentErrors.add(err);;
+                return;
+            }
+            messwert.put("MESSFEHLER", fehler);
+        }
         messwert.put("MESSGROESSE_ID", groesse);
         messwert.put("MESSWERT", wert);
         messwert.put("MESSEINHEIT_ID", einheit);
-        messwert.put("MESSFEHLER", fehler);
         if (currentMessung == null) {
             currentMessung = data.new Messung();
         }
@@ -2921,7 +2933,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String groesse = children.get(1);
-        groesse = groesse.replaceAll("\"", "");
+        groesse = groesse.replaceAll("\"", "").trim();
         if (!groesse.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2941,7 +2953,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String einheit = children.get(3);
-        einheit = einheit.replaceAll("\"", "");
+        einheit = einheit.replaceAll("\"", "").trim();
         if (!einheit.matches(LafDataTypes.C9)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -2950,22 +2962,24 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);;
             return;
         }
-        String fehler = children.get(4);
-        fehler = fehler.replaceAll("\"", "");
-        if (!fehler.matches(LafDataTypes.F9_10_12)) {
-            ReportItem err = new ReportItem();
-            err.setKey(ctx.getChild(0).toString());
-            err.setValue(fehler);
-            err.setCode(670);
-            currentErrors.add(err);;
-            return;
+        Map<String, String> messwert = new HashMap<String, String>();
+        if (ctx.getChildCount() >= 6) {
+            String fehler = children.get(4);
+            fehler = fehler.replaceAll("\"", "");
+            if (!fehler.matches(LafDataTypes.F9_10_12)) {
+                ReportItem err = new ReportItem();
+                err.setKey(ctx.getChild(0).toString());
+                err.setValue(fehler);
+                err.setCode(670);
+                currentErrors.add(err);;
+                return;
+            }
+            messwert.put("MESSFEHLER", fehler);
         }
         // TODO: handle all values
-        Map<String, String> messwert = new HashMap<String, String>();
         messwert.put("MESSGROESSE", groesse);
         messwert.put("MESSWERT", wert);
         messwert.put("MESSEINHEIT", einheit);
-        messwert.put("MESSFEHLER", fehler);
         if (currentMessung == null) {
             currentMessung = data.new Messung();
         }
@@ -2989,7 +3003,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String groesse = children.get(1);
-        groesse = groesse.replaceAll("\"", "");
+        groesse = groesse.replaceAll("\"", "").trim();
         if (!groesse.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -3009,7 +3023,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String einheit = children.get(3);
-        einheit = einheit.replaceAll("\"", "");
+        einheit = einheit.replaceAll("\"", "").trim();
         if (!einheit.matches(LafDataTypes.C9)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -3018,6 +3032,7 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);;
             return;
         }
+        Map<String, String> messwert = new HashMap<String, String>();
         String fehler = null;
         if (ctx.getChildCount() >= 8) {
             fehler = children.get(4);
@@ -3030,13 +3045,12 @@ public class LafObjectListener extends LafBaseListener {
                 currentErrors.add(err);;
                 return;
             }
+            messwert.put("MESSFEHLER", fehler);
         }
         // TODO: handle all values
-        Map<String, String> messwert = new HashMap<String, String>();
         messwert.put("MESSGROESSE", groesse);
         messwert.put("MESSWERT", wert);
         messwert.put("MESSEINHEIT", einheit);
-        messwert.put("MESSFEHLER", fehler);
         if (currentMessung == null) {
             currentMessung = data.new Messung();
         }
@@ -3056,11 +3070,11 @@ public class LafObjectListener extends LafBaseListener {
                 children.add(ctx.getChild(i).toString());
             }
         }
-        if (children.size() < 6) {
+        if (children.size() < 5) {
             return;
         }
         String groesse = children.get(1);
-        groesse = groesse.replaceAll("\"", "");
+        groesse = groesse.replaceAll("\"", "").trim();
         if (!groesse.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -3080,7 +3094,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String einheit = children.get(3);
-        einheit = einheit.replaceAll("\"", "");
+        einheit = einheit.replaceAll("\"", "").trim();
         if (!einheit.matches(LafDataTypes.C9)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -3089,32 +3103,36 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);;
             return;
         }
-        String fehler = children.get(4);
-        fehler = fehler.replaceAll("\"", "");
-        if (!fehler.matches(LafDataTypes.F9_10_12)) {
-            ReportItem err = new ReportItem();
-            err.setKey(ctx.getChild(0).toString());
-            err.setValue(fehler);
-            err.setCode(670);
-            currentErrors.add(err);;
-            return;
-        }
-        String nwg = children.get(5);
-        nwg = nwg.replaceAll("\"", "");
-        if (!nwg.matches(LafDataTypes.F9_10_12)) {
-            ReportItem err = new ReportItem();
-            err.setKey(ctx.getChild(0).toString());
-            err.setValue(nwg);
-            err.setCode(670);
-            currentErrors.add(err);;
-            return;
-        }
         Map<String, String> messwert = new HashMap<String, String>();
+        if (ctx.getChildCount() >= 6) {
+            String fehler = children.get(4);
+            fehler = fehler.replaceAll("\"", "");
+            if (!fehler.matches(LafDataTypes.F9_10_12)) {
+                ReportItem err = new ReportItem();
+                err.setKey(ctx.getChild(0).toString());
+                err.setValue(fehler);
+                err.setCode(670);
+                currentErrors.add(err);;
+                return;
+            }
+            messwert.put("MESSFEHLER", fehler);
+        }
+        if (ctx.getChildCount() >= 7) {
+            String nwg = children.get(5);
+            nwg = nwg.replaceAll("\"", "");
+            if (!nwg.matches(LafDataTypes.F9_10_12)) {
+                ReportItem err = new ReportItem();
+                err.setKey(ctx.getChild(0).toString());
+                err.setValue(nwg);
+                err.setCode(670);
+                currentErrors.add(err);;
+                return;
+            }
+            messwert.put("NWG", nwg);
+        }
         messwert.put("MESSGROESSE", groesse);
         messwert.put("MESSWERT", wert);
         messwert.put("MESSEINHEIT", einheit);
-        messwert.put("MESSFEHLER", fehler);
-        messwert.put("NWG", nwg);
         if (currentMessung == null) {
             currentMessung = data.new Messung();
         }
@@ -3166,33 +3184,37 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);;
             return;
         }
-        String fehler = children.get(4);
-        fehler = fehler.replaceAll("\"", "");
-        if (!fehler.matches(LafDataTypes.F9_10_12)) {
-            ReportItem err = new ReportItem();
-            err.setKey(ctx.getChild(0).toString());
-            err.setValue(fehler);
-            err.setCode(670);
-            currentErrors.add(err);;
-            return;
+        Map<String, String> messwert = new HashMap<String, String>();
+        if (ctx.getChildCount() >= 6) {
+            String fehler = children.get(4);
+            fehler = fehler.replaceAll("\"", "");
+            if (!fehler.matches(LafDataTypes.F9_10_12)) {
+                ReportItem err = new ReportItem();
+                err.setKey(ctx.getChild(0).toString());
+                err.setValue(fehler);
+                err.setCode(670);
+                currentErrors.add(err);;
+                return;
+            }
+            messwert.put("MESSFEHLER", fehler);
         }
-        String nwg = children.get(5);
-        nwg = nwg.replaceAll("\"", "");
-        if (!nwg.matches(LafDataTypes.F9_10_12)) {
-            ReportItem err = new ReportItem();
-            err.setKey(ctx.getChild(0).toString());
-            err.setValue(nwg);
-            err.setCode(670);
-            currentErrors.add(err);;
-            return;
+        if (ctx.getChildCount() >= 7) {
+            String nwg = children.get(5);
+            nwg = nwg.replaceAll("\"", "");
+            if (!nwg.matches(LafDataTypes.F9_10_12)) {
+                ReportItem err = new ReportItem();
+                err.setKey(ctx.getChild(0).toString());
+                err.setValue(nwg);
+                err.setCode(670);
+                currentErrors.add(err);;
+                return;
+            }
+            messwert.put("NWG", nwg);
         }
         // TODO: handle all values
-        Map<String, String> messwert = new HashMap<String, String>();
         messwert.put("MESSGROESSE_ID", groesse);
         messwert.put("MESSWERT", wert);
         messwert.put("MESSEINHEIT_ID", einheit);
-        messwert.put("MESSFEHLER", fehler);
-        messwert.put("NWG", nwg);
         if (currentMessung == null) {
             currentMessung = data.new Messung();
         }
@@ -3215,7 +3237,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String groesse = children.get(1);
-        groesse = groesse.replaceAll("\"", "");
+        groesse = groesse.replaceAll("\"", "").trim();
         if (!groesse.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -3235,7 +3257,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String einheit = children.get(3);
-        einheit = einheit.replaceAll("\"", "");
+        einheit = einheit.replaceAll("\"", "").trim();
         if (!einheit.matches(LafDataTypes.C9)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -3244,33 +3266,37 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);;
             return;
         }
-        String fehler = children.get(4);
-        fehler = fehler.replaceAll("\"", "");
-        if (!fehler.matches(LafDataTypes.F9_10_12)) {
-            ReportItem err = new ReportItem();
-            err.setKey(ctx.getChild(0).toString());
-            err.setValue(fehler);
-            err.setCode(670);
-            currentErrors.add(err);;
-            return;
+        Map<String, String> messwert = new HashMap<String, String>();
+        if (ctx.getChildCount() >= 6) {
+            String fehler = children.get(4);
+            fehler = fehler.replaceAll("\"", "");
+            if (!fehler.matches(LafDataTypes.F9_10_12)) {
+                ReportItem err = new ReportItem();
+                err.setKey(ctx.getChild(0).toString());
+                err.setValue(fehler);
+                err.setCode(670);
+                currentErrors.add(err);;
+                return;
+            }
+            messwert.put("MESSFEHLER", fehler);
         }
-        String nwg = children.get(5);
-        nwg = nwg.replaceAll("\"", "");
-        if (!nwg.matches(LafDataTypes.F9_10_12)) {
-            ReportItem err = new ReportItem();
-            err.setKey(ctx.getChild(0).toString());
-            err.setValue(nwg);
-            err.setCode(670);
-            currentErrors.add(err);;
-            return;
+        if (ctx.getChildCount() >= 7) {
+            String nwg = children.get(5);
+            nwg = nwg.replaceAll("\"", "");
+            if (!nwg.matches(LafDataTypes.F9_10_12)) {
+                ReportItem err = new ReportItem();
+                err.setKey(ctx.getChild(0).toString());
+                err.setValue(nwg);
+                err.setCode(670);
+                currentErrors.add(err);;
+                return;
+            }
+            messwert.put("NWG", nwg);
         }
         // TODO: handle all values
-        Map<String, String> messwert = new HashMap<String, String>();
         messwert.put("MESSGROESSE", groesse);
         messwert.put("MESSWERT", wert);
         messwert.put("MESSEINHEIT", einheit);
-        messwert.put("MESSFEHLER", fehler);
-        messwert.put("NWG", nwg);
         if (currentMessung == null) {
             currentMessung = data.new Messung();
         }
@@ -3294,7 +3320,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String groesse = children.get(1);
-        groesse = groesse.replaceAll("\"", "");
+        groesse = groesse.replaceAll("\"", "").trim();
         if (!groesse.matches(LafDataTypes.C_STAR)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -3314,7 +3340,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String einheit = children.get(3);
-        einheit = einheit.replaceAll("\"", "");
+        einheit = einheit.replaceAll("\"", "").trim();
         if (!einheit.matches(LafDataTypes.C9)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -3323,44 +3349,50 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);;
             return;
         }
-        String fehler = children.get(4);
-        fehler = fehler.replaceAll("\"", "");
-        if (!fehler.matches(LafDataTypes.F9_10_12)) {
-            ReportItem err = new ReportItem();
-            err.setKey(ctx.getChild(0).toString());
-            err.setValue(fehler);
-            err.setCode(670);
-            currentErrors.add(err);;
-            return;
+        Map<String, String> messwert = new HashMap<String, String>();
+        if (ctx.getChildCount() >= 6) {
+            String fehler = children.get(4);
+            fehler = fehler.replaceAll("\"", "");
+            if (!fehler.matches(LafDataTypes.F9_10_12)) {
+                ReportItem err = new ReportItem();
+                err.setKey(ctx.getChild(0).toString());
+                err.setValue(fehler);
+                err.setCode(670);
+                currentErrors.add(err);;
+                return;
+            }
+            messwert.put("MESSFEHLER", fehler);
         }
-        String nwg = children.get(5);
-        nwg = nwg.replaceAll("\"", "");
-        if (!nwg.matches(LafDataTypes.F9_10_12)) {
-            ReportItem err = new ReportItem();
-            err.setKey(ctx.getChild(0).toString());
-            err.setValue(nwg);
-            err.setCode(670);
-            currentErrors.add(err);;
-            return;
+        if (ctx.getChildCount() >= 6) {
+            String nwg = children.get(5);
+            nwg = nwg.replaceAll("\"", "");
+            if (!nwg.matches(LafDataTypes.F9_10_12)) {
+                ReportItem err = new ReportItem();
+                err.setKey(ctx.getChild(0).toString());
+                err.setValue(nwg);
+                err.setCode(670);
+                currentErrors.add(err);;
+                return;
+            }
+            messwert.put("NWG", nwg);
         }
-        String gw = children.get(8);
-        gw = gw.replaceAll("\"", "");
-        if (!gw.matches(LafDataTypes.F9_10_12)) {
-            ReportItem err = new ReportItem();
-            err.setKey(ctx.getChild(0).toString());
-            err.setValue(gw);
-            err.setCode(670);
-            currentErrors.add(err);;
-            return;
+        if (ctx.getChildCount() >= 6) {
+            String gw = children.get(8);
+            gw = gw.replaceAll("\"", "");
+            if (!gw.matches(LafDataTypes.F9_10_12)) {
+                ReportItem err = new ReportItem();
+                err.setKey(ctx.getChild(0).toString());
+                err.setValue(gw);
+                err.setCode(670);
+                currentErrors.add(err);;
+                return;
+            }
+            messwert.put("GRENZWERT", gw);
         }
         // TODO: handle all values
-        Map<String, String> messwert = new HashMap<String, String>();
         messwert.put("MESSGROESSE", groesse);
         messwert.put("MESSWERT", wert);
         messwert.put("MESSEINHEIT", einheit);
-        messwert.put("MESSFEHLER", fehler);
-        messwert.put("NWG", nwg);
-        messwert.put("GRENZWERT", gw);
         if (currentMessung == null) {
             currentMessung = data.new Messung();
         }
@@ -3378,7 +3410,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         String mst = ctx.getChild(1).toString();
-        mst = mst.replaceAll("\"", "");
+        mst = mst.replaceAll("\"", "").trim();
         if (!mst.matches(LafDataTypes.C5)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
@@ -3472,7 +3504,7 @@ public class LafObjectListener extends LafBaseListener {
         }
 
         String mst = ctx.getChild(1).toString();
-        mst = mst.replaceAll("\"", "");
+        mst = mst.replaceAll("\"", "").trim();
         if (!mst.matches(LafDataTypes.C5)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());

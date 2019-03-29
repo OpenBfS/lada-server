@@ -2,9 +2,9 @@ grammar Laf;
 
 probendatei : probe* end? EOF;
 
-end : '%ENDE%' (NEWLINE)?;
+end : ENDOFLAF;
 
-probe : '%PROBE%' NEWLINE probedaten+ ;
+probe : '%PROBE%' (WS)* NEWLINE probedaten+ ;
 
 probedaten: db
   | version
@@ -48,7 +48,7 @@ messung:
   messungdaten+
 ;
 
-mess_header : '%MESSUNG%' NEWLINE ;
+mess_header : '%MESSUNG%' (WS)* NEWLINE ;
 
 messungdaten: messungs_id
   | pn
@@ -157,7 +157,7 @@ ursprungsort:
   ursprungsortdaten+)
 ;
 
-ursprungsort_header : '%URSPRUNGSORT%' NEWLINE ;
+ursprungsort_header : '%URSPRUNGSORT%' (WS)* NEWLINE ;
 
 ursprungsortdaten : uh
   | ug
@@ -259,7 +259,7 @@ messmethode_s : MESSMETHODE_S (STRING_ESC | STRING)? NEWLINE ; // SC2
 bearbeitungsstatus : BEARBEITUNGSSTATUS (STRING_ESC | STRING)? NEWLINE ; // C4
 pep_flag : PEP_FLAG (STRING_ESC | STRING)? NEWLINE ; // I1
 erfassung_abgeschlossen : ERFASSUNG_ABGESCHLOSSEN (STRING_ESC | STRING)? NEWLINE ; // I1
-probenzusatzbeschreibung : PROBENZUSATZBESCHREIBUNG ((STRING_ESC | STRING) (STRING_ESC | STRING) (STRING_ESC | STRING) (STRING_ESC | STRING))? NEWLINE ; // C7* F12 C9 F9
+probenzusatzbeschreibung : PROBENZUSATZBESCHREIBUNG ((STRING_ESC | STRING) (STRING_ESC | STRING) (STRING_ESC | STRING) (STRING_ESC | STRING)?)? NEWLINE ; // C7* F12 C9 F9
 pzb_s : PZB_S ((STRING_ESC | STRING) (STRING_ESC | STRING) (STRING_ESC | STRING) (STRING_ESC | STRING))? NEWLINE ; // SC8 F12 SI3 F9
 messwert : MESSWERT ((STRING_ESC | STRING) (STRING_ESC | STRING) (STRING_ESC | STRING) (STRING_ESC | STRING)?)? NEWLINE ; // C50* F12 C9 F9**
 messwert_s : MESSWERT_S ((STRING_ESC | STRING) (STRING_ESC | STRING) (STRING_ESC | STRING) (STRING_ESC | STRING)?)? NEWLINE ; // SI8 F12 SI3 F9**
@@ -362,9 +362,10 @@ PROBENKOMMENTAR : ('P'|'p')('R'|'r')('O'|'o')('B'|'b')('E'|'e')('N'|'n')('K'|'k'
 PROBENKOMMENTAR_T : ('P'|'p')('R'|'r')('O'|'o')('B'|'b')('E'|'e')('N'|'n')('K'|'k')('O'|'o')('M'|'m')('M'|'m')('E'|'e')('N'|'n')('T'|'t')('A'|'a')('R'|'r')('_')('T'|'t') ;
 
 
-WS : (' ') -> skip;
+WS : (' ' | '\t') -> skip;
 NEWLINE : ('\r\n' | '\r' | '\n') ;
 STRING_ESC : ('"'(~('"'))*'"') ;
 STRING : C+ ;
 C : CHAR ;
-fragment CHAR : ~[ "\r\n] ;
+fragment CHAR : ~[ \t"\r\n] ;
+ENDOFLAF : '%ENDE%' .* ;

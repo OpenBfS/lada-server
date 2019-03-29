@@ -85,6 +85,7 @@ psql $DB_CONNECT_STRING -d $DB_NAME --command \
 if [ "$NO_DATA" != "true" ]; then
     echo "load data:"
     for file in \
+        stammdaten_data_status_reihenfolge.sql \
         stammdaten_data_verwaltungseinheit.sql \
         stammdaten_data_netzbetreiber.sql \
         stammdaten_data_mess_stelle.sql \
@@ -120,7 +121,8 @@ if [ "$NO_DATA" != "true" ]; then
         stammdaten_data_user_context.sql \
         stammdaten_data_importer_config.sql \
         lada_data.sql \
-        lada_messprogramm.sql
+        lada_messprogramm.sql \
+        lada_views.sql
     do
         [ -f private_${file} ] && file=private_${file}
         echo "  ${file%.sql}"

@@ -113,6 +113,9 @@ public class Messprogramm implements Serializable {
 
     private boolean deleted;
 
+    @Column(name="probenahmemenge")
+    private String probenahmeMenge;
+
     @Transient
     private boolean readonly;
 
@@ -325,6 +328,14 @@ public class Messprogramm implements Serializable {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public String getProbenahmeMenge() {
+        return this.probenahmeMenge;
+    }
+
+    public void setProbenahmeMenge(String probenahmeMenge) {
+        this.probenahmeMenge = probenahmeMenge;
     }
 
     public boolean isReadonly() {

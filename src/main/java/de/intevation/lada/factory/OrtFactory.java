@@ -224,6 +224,9 @@ public class OrtFactory {
         if (errors == null) {
             errors = new ArrayList<ReportItem>();
         }
+        else {
+            errors.clear();
+        }
         QueryBuilder<Ort> builder =
             new QueryBuilder<Ort>(
                 repository.entityManager(Strings.STAMM),
@@ -290,19 +293,29 @@ public class OrtFactory {
                 Verwaltungseinheit.class,
                 ort.getGemId(),
                 Strings.STAMM);
-            if (!hasKoord) {
-                ort.setKdaId(4);
-                ort.setKoordYExtern(String.valueOf(v.getMittelpunkt().getY()));
-                ort.setKoordXExtern(String.valueOf(v.getMittelpunkt().getX()));
+            if (v == null) {
+                ReportItem err = new ReportItem();
+                err.setCode(675);
+                err.setKey("gem_id");
+                err.setValue(ort.getGemId());
+                errors.add(err);
+                return null;
             }
-            if (ort.getLangtext() == null || ort.getLangtext().equals("")) {
-                ort.setLangtext(v.getBezeichnung());
+            else {
+                if (!hasKoord) {
+                    ort.setKdaId(4);
+                    ort.setKoordYExtern(String.valueOf(v.getMittelpunkt().getY()));
+                    ort.setKoordXExtern(String.valueOf(v.getMittelpunkt().getX()));
+                }
+                if (ort.getLangtext() == null || ort.getLangtext().equals("")) {
+                    ort.setLangtext(v.getBezeichnung());
+                }
+                if (ort.getBerichtstext() == null || ort.getBerichtstext().equals("")) {
+                    ort.setBerichtstext(v.getBezeichnung());
+                }
+                transformCoordinates(ort);
+                hasGem = true;
             }
-            if (ort.getBerichtstext() == null || ort.getBerichtstext().equals("")) {
-                ort.setBerichtstext(v.getBezeichnung());
-            }
-            transformCoordinates(ort);
-            hasGem = true;
         }
         if (ort.getStaatId() != null &&
             !hasKoord &&

@@ -143,7 +143,7 @@ public class Probe implements Serializable {
     }
 
     public void setHauptprobenNr(String hauptprobenNr) {
-        this.hauptprobenNr = hauptprobenNr;
+        this.hauptprobenNr = (hauptprobenNr == "") ? null : hauptprobenNr;
     }
 
     public String getExterneProbeId() {
@@ -151,7 +151,7 @@ public class Probe implements Serializable {
     }
 
     public void setExterneProbeId(String externeProbeId) {
-        this.externeProbeId = externeProbeId;
+        this.externeProbeId = (externeProbeId == "") ? null : externeProbeId;
     }
 
     public String getLaborMstId() {

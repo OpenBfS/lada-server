@@ -24,7 +24,7 @@ CREATE FUNCTION set_messung_ext_id() RETURNS trigger
     BEGIN
         IF NEW.ext_id IS NULL THEN
             NEW.ext_id = (
-                SELECT count(*)
+                SELECT coalesce(max(ext_id),0)
                    FROM land.messung
                    WHERE probe_id = NEW.probe_id) + 1;
         END IF;
@@ -167,6 +167,7 @@ CREATE TABLE messprogramm (
     rei_progpunkt_grp_id integer REFERENCES stamm.rei_progpunkt_gruppe,
     kta_gruppe_id integer REFERENCES stamm.kta_gruppe,
     meh_id smallint REFERENCES stamm.mess_einheit,
+    probenahmemenge character varying(90),
     letzte_aenderung timestamp without time zone DEFAULT now() NOT NULL,
     deleted boolean NOT NULL DEFAULT false,
     CHECK (probenintervall = 'J'
@@ -237,7 +238,7 @@ CREATE TABLE probe (
     hauptproben_nr character varying(20),
     datenbasis_id smallint REFERENCES stamm.datenbasis,
     ba_id integer REFERENCES stamm.betriebsart,
-    probenart_id smallint NOT NULL REFERENCES stamm.probenart,
+    probenart_id smallint REFERENCES stamm.probenart,
     media_desk character varying(100) CHECK(media_desk LIKE '% %'),
     media character varying(100),
     umw_id character varying(3) REFERENCES stamm.umwelt,
@@ -255,7 +256,7 @@ CREATE TABLE probe (
     rei_progpunkt_grp_id integer REFERENCES stamm.rei_progpunkt_gruppe,
     kta_gruppe_id integer REFERENCES stamm.kta_gruppe,
     deleted boolean NOT NULL DEFAULT false,
-    UNIQUE (mst_id, hauptproben_nr),
+    UNIQUE (test, mst_id, hauptproben_nr),
     CHECK(solldatum_beginn <= solldatum_ende)
 );
 CREATE TRIGGER letzte_aenderung_probe BEFORE UPDATE ON probe FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
@@ -320,6 +321,7 @@ CREATE TABLE zusatz_wert (
     messfehler real,
     letzte_aenderung timestamp without time zone DEFAULT now(),
     nwg_zu_messwert double precision,
+    kleiner_als character varying(1),
     tree_modified timestamp without time zone DEFAULT now(),
     UNIQUE (probe_id, pzs_id)
 );

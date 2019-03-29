@@ -42,10 +42,12 @@ import de.intevation.lada.model.land.AuditTrailProbe;
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
+import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
@@ -148,6 +150,12 @@ public class AuditTrailService {
             new TableMapper("date", "dd.MM.yy HH:mm"));
         mappings.put("probeentnahme_ende",
             new TableMapper("date", "dd.MM.yy HH:mm"));
+        mappings.put("solldatum_beginn",
+                new TableMapper("date", "dd.MM.yy HH:mm"));
+        mappings.put("solldatum_ende",
+                new TableMapper("date", "dd.MM.yy HH:mm"));
+        mappings.put("messzeitpunkt",
+                new TableMapper("date", "dd.MM.yy HH:mm"));
         mappings.put("kta_gruppe_id",
             new TableMapper("kta_gruppe", "kta_gruppe"));
         mappings.put("rei_progpunkt_grp_id",
@@ -186,6 +194,8 @@ public class AuditTrailService {
         if (probe == null) {
             return ret;
         }
+        UserInfo userInfo = authorization.getInfo(request);
+
 
         // Get all entries for the probe and its sub objects.
         QueryBuilder<AuditTrailProbe> builder =
@@ -207,8 +217,23 @@ public class AuditTrailService {
         ObjectNode auditJson = responseNode.putObject("data");
         ArrayNode entries = auditJson.putArray("audit");
         auditJson.put("id", probe.getId());
-        auditJson.put("identifier", probe.getHauptprobenNr());
+        auditJson.put(
+            "identifier",
+            (probe.getHauptprobenNr() == null) ? probe.getExterneProbeId() : probe.getHauptprobenNr()
+            );
         for (AuditTrailProbe a : audit) {
+            //If audit entry shows a messwert, do not show if:
+            // - StatusKombi is 1 (MST - nicht vergeben)
+            // - User is not owner of the messung
+            if (a.getTableName().equals("messwert")) {
+                Messung messung = repository.getByIdPlain(Messung.class, a.getMessungsId(), Strings.LAND);
+                StatusProtokoll status = repository.getByIdPlain(StatusProtokoll.class, messung.getStatus(), Strings.LAND);
+                if(status.getStatusKombi() == 1
+                        && !userInfo.getMessstellen().contains(probe.getMstId())) {
+                    continue;
+                }       
+        
+            }
             entries.add(createEntry(a, mapper));
         }
         return responseNode.toString();
@@ -223,8 +248,11 @@ public class AuditTrailService {
     private ObjectNode createEntry(AuditTrailProbe audit, ObjectMapper mapper) {
         ObjectNode node = mapper.createObjectNode();
         node.put("timestamp", audit.getTstamp().getTime());
+        logger.debug("timestamp: " + audit.getTstamp().getTime());
         node.put("type", audit.getTableName());
+        logger.debug("type: " + audit.getTableName());
         node.put("action", audit.getAction());
+        logger.debug("action: " + audit.getAction());
         ObjectNode data = translateValues((ObjectNode)audit.getChangedFields());
         node.putPOJO("changedFields", data);
         if ("kommentar_p".equals(audit.getTableName())) {
@@ -243,15 +271,22 @@ public class AuditTrailService {
             node.put("identifier", value);
         }
         if ("messung".equals(audit.getTableName())) {
+            Messung m = repository.getByIdPlain(
+                Messung.class, audit.getObjectId(), Strings.LAND);
             node.put("identifier",
-                audit.getRowData()
-                    .get("nebenproben_nr").toString().replaceAll("\"", ""));
+                (m == null) ? 
+                    "(deleted)" : 
+                    (m.getNebenprobenNr() == null) ? 
+                        m.getExterneMessungsId().toString() : 
+                        m.getNebenprobenNr()
+                );
         }
         if (audit.getMessungsId() != null) {
             Messung m = repository.getByIdPlain(
                 Messung.class, audit.getMessungsId(), Strings.LAND);
             ObjectNode identifier = node.putObject("identifier");
-            identifier.put("messung", m.getNebenprobenNr());
+            identifier.put("messung",
+                (m.getNebenprobenNr() == null) ? m.getExterneMessungsId().toString() : m.getNebenprobenNr());
             if ("kommentar_m".equals(audit.getTableName())) {
                 identifier.put("identifier",
                     audit.getRowData().get("datum").toString());
@@ -298,7 +333,9 @@ public class AuditTrailService {
         if (messung == null) {
             return ret;
         }
-
+        StatusProtokoll status = repository.getByIdPlain(StatusProtokoll.class, messung.getStatus(), Strings.LAND);
+        Probe probe = repository.getByIdPlain(Probe.class, messung.getProbeId(), Strings.LAND);
+        UserInfo userInfo = authorization.getInfo(request);
         QueryBuilder<AuditTrailMessung> builder =
             new QueryBuilder<AuditTrailMessung>(
                 repository.entityManager(Strings.LAND),
@@ -318,9 +355,21 @@ public class AuditTrailService {
         ObjectNode auditJson = responseNode.putObject("data");
         ArrayNode entries = auditJson.putArray("audit");
         auditJson.put("id", messung.getId());
-        auditJson.put("identifier", messung.getNebenprobenNr());
+        auditJson.put(
+            "identifier",
+            (messung.getNebenprobenNr() == null) ? messung.getExterneMessungsId().toString() : messung.getNebenprobenNr()
+            );
         for (AuditTrailMessung a : audit) {
+            //If audit entry shows a messwert, do not show if:
+            // - StatusKombi is 1 (MST - nicht vergeben)
+            // - User is not owner of the messung
+            if (a.getTableName().equals("messwert")
+                    && status.getStatusKombi() == 1
+                    && !userInfo.getMessstellen().contains(probe.getMstId())) {
+                continue;
+            }
             entries.add(createEntry(a, mapper));
+
         }
         return responseNode.toString();
     }
@@ -462,7 +511,7 @@ public class AuditTrailService {
     }
 
     private Long formatDate(String format, String date) {
-        DateFormat inFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssXXX");
+        DateFormat inFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
         try {
             return inFormat.parse(date).getTime();
         } catch (ParseException e) {
