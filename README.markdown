@@ -111,7 +111,7 @@ Starten der Container:
           -d koala/lada_wildfly
  $ cd your/repo/of/lada-client
  $ docker run --name lada-client --net=lada_network \
-              -v $PWD:/usr/local/apache2/htdocs \
+              -v $PWD:/usr/local/lada \
               -p 8180-8185:80-85 -d koala/lada_client
 
 Innerhalb des Client-Containers muss dann noch folgendes ausgeführt werden,
