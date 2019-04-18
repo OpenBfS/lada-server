@@ -172,6 +172,8 @@ fest in der Datenbank vorgegeben und sind in der Tabelle stamm.base_query
 definiert. Die SQL-Abfrage in der Tabelle muss zumindest das SELECT- und
 FROM-Statement enthalten. Den Ergebnisspalten der Abfrage sollte zudem
 mithilfe des AS-Ausdrucks ein Alias zugewiesen werden.
+Der Spaltenname 'extjs_id' wird intern vom Client genutzt und sollte nicht
+vergeben werden.
 
 Der Basequery zugeordnete Spalten werden zusätzlich in der Tabelle
 stamm.grid_column festgelegt, wobei der gegebene DataIndex einem Alias der

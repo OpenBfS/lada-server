@@ -346,7 +346,9 @@ CREATE TABLE messung (
     letzte_aenderung timestamp without time zone DEFAULT now(),
     geplant boolean DEFAULT false NOT NULL,
     tree_modified timestamp without time zone DEFAULT now(),
-    deleted boolean DEFAULT false NOT NULL
+    deleted boolean DEFAULT false NOT NULL,
+    UNIQUE (id, ext_id),
+    UNIQUE (id, nebenproben_nr)
 );
 CREATE TRIGGER letzte_aenderung_messung BEFORE UPDATE ON messung FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 CREATE TRIGGER tree_modified_messung BEFORE UPDATE ON messung FOR EACH ROW EXECUTE PROCEDURE update_tree_modified_messung();
