@@ -99,8 +99,8 @@ Aufbau eines Netzwerks für die LADA-Komponenten:
  $ docker network create lada_network
 
 Starten der Container:
- $ cd db_schema
- $ docker run --name lada_db --net=lada_network -v $PWD:/opt/lada_sql/ \
+ $ docker run --name lada_db --net=lada_network \
+          -v $PWD/db_schema:/opt/lada_sql/ \
           -d koala/lada_db:latest
  $ docker run --name lada-idp --net=lada_network \
              -p 20080:80 -p 28080:8080 -p 20443:443 -p 28443:8443 \
