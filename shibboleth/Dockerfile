@@ -33,10 +33,15 @@ RUN wget https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/$je
             --add-to-start=http,https,deploy,ext,annotations,jstl,rewrite,ssl
 
 # Download Shibboleth IDP
-RUN wget https://shibboleth.net/downloads/identity-provider/latest/shibboleth-identity-provider-$shib_idp_version.tar.gz \
+RUN wget https://shibboleth.net/downloads/identity-provider/$shib_idp_version/shibboleth-identity-provider-$shib_idp_version.tar.gz \
     && tar -xvzf shibboleth-identity-provider-$shib_idp_version.tar.gz \
     && mv shibboleth-identity-provider-$shib_idp_version/ \
           ${BASE_DIR}/shibboleth-sources
+
+# Copy modified web.xml and dependencies
+RUN cp ${BASE_DIR}/sources/web.xml ${BASE_DIR}/shibboleth-sources/webapp/WEB-INF/ \
+    && cp ${JETTY_HOME}/lib/jetty-servlets-${jetty_version}.jar ${BASE_DIR}/shibboleth-sources/webapp/WEB-INF/lib \
+    && cp ${JETTY_HOME}/lib/jetty-util-${jetty_version}.jar ${BASE_DIR}/shibboleth-sources/webapp/WEB-INF/lib
 
 #LDAP, see https://github.com/UniconLabs/dockerized-idp-testbed/tree/master/ldap
 RUN useradd ldapadmin \
