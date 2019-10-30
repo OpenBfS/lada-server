@@ -178,11 +178,6 @@ public class StatusService {
             Integer.valueOf(id),
             Strings.LAND);
         StatusProtokoll status = (StatusProtokoll)response.getData();
-        Violation violation = validator.validate(status);
-        if (violation.hasErrors() || violation.hasWarnings()) {
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-        }
 
         return authorization.filter(
             request,
@@ -304,6 +299,8 @@ public class StatusService {
         else if (newKombi.getStatusWert().getId() == 4) {
             messung.setFertig(false);
         }
+        //Set datum to null to use database timestamp
+        status.setDatum(null);
         Response response = defaultRepo.create(status, Strings.LAND);
         StatusProtokoll created = (StatusProtokoll)response.getData();
         messung.setStatus(created.getId());
