@@ -485,5 +485,5 @@
             <url>https://repo.osgeo.org/repository/release</url>
         </repository>
     </repositories>
-    <version>4.0.1-SNAPSHOT</version>
+    <version>3.3.23</version>
 </project>
