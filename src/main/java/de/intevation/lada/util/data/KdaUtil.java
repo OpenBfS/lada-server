@@ -37,6 +37,7 @@ public class KdaUtil {
             case 2: t = this.new Transform_2(); break;
             case 4: t = this.new Transform_4(); break;
             case 5: t = this.new Transform_5(); break;
+            case 6: t = this.new Transform_6(); break;
             case 8: t = this.new Transform_8(); break;
             default: return null;
         }
@@ -49,6 +50,7 @@ public class KdaUtil {
         public ObjectNode transformTo2(String x, String y);
         public ObjectNode transformTo4(String x, String y);
         public ObjectNode transformTo5(String x, String y);
+        public ObjectNode transformTo6(String x, String y);
         public ObjectNode transformTo8(String x, String y);
     }
 
@@ -59,6 +61,7 @@ public class KdaUtil {
                 case 2: return transformTo2(x, y);
                 case 4: return transformTo4(x, y);
                 case 5: return transformTo5(x, y);
+                case 6: return transformTo6(x, y);
                 case 8: return transformTo8(x, y);
             }
             return null;
@@ -121,6 +124,33 @@ public class KdaUtil {
                 return null;
             }
             coord.put("x", epsgWGS.substring(epsgWGS.length()-2, epsgWGS.length())+coord.get("x").asText());
+            String coordX = coord.get("x").asText();
+            String coordY = coord.get("y").asText();
+            int maxLenX = coordX.length() - coordX.indexOf(".");
+            int precX = maxLenX < 3 ? maxLenX : 3;
+            int maxLenY = coordY.length() - coordY.indexOf(".");
+            int precY = maxLenY < 3 ? maxLenY : 3;
+            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
+            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            coord.put("x", coordX);
+            coord.put("y", coordY);
+            return coord;
+        }
+
+        @Override
+        public ObjectNode transformTo6(String x, String y) {
+            String epsgGK = getEpsgForGK(x);
+            ObjectNode degrees = jtsTransform(epsgGK, "EPSG:4326", y, x);
+            String epsgEtrs = getEpsgForEtrs89FromDegree(
+                degrees.get("x").asText());
+            ObjectNode coord = jtsTransform(epsgGK,
+                epsgEtrs,
+                y,
+                x);
+            if (coord == null) {
+                return null;
+            }
+            coord.put("x", epsgEtrs.substring(epsgEtrs.length()-2, epsgEtrs.length())+coord.get("x").asText());
             String coordX = coord.get("x").asText();
             String coordY = coord.get("y").asText();
             int maxLenX = coordX.length() - coordX.indexOf(".");
@@ -229,6 +259,33 @@ public class KdaUtil {
         }
 
         @Override
+        public ObjectNode transformTo6(String x, String y) {
+            ObjectNode degrees = arcToDegree(x, y);
+            String epsgEtrs = getEtrsEpsg(
+                degrees.get("x").asDouble(),
+                degrees.get("y").asDouble());
+            ObjectNode coord = jtsTransform("EPSG:4326",
+                epsgEtrs,
+                degrees.get("y").asText(),
+                degrees.get("x").asText());
+            if (coord == null) {
+                return null;
+            }
+            coord.put("x", epsgEtrs.substring(epsgEtrs.length()-2, epsgEtrs.length())+coord.get("x").asText());
+            String coordX = coord.get("x").asText();
+            String coordY = coord.get("y").asText();
+            int maxLenX = coordX.length() - coordX.indexOf(".");
+            int precX = maxLenX < 3 ? maxLenX : 3;
+            int maxLenY = coordY.length() - coordY.indexOf(".");
+            int precY = maxLenY < 3 ? maxLenY : 3;
+            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
+            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            coord.put("x", coordX);
+            coord.put("y", coordY);
+            return coord;
+        }
+
+        @Override
         public ObjectNode transformTo8(String x, String y) {
             ObjectNode degrees = arcToDegree(x, y);
             String epsgEd50 = getEpsgForEd50UtmFromDegree(
@@ -302,6 +359,29 @@ public class KdaUtil {
                 return null;
             }
             coord.put("x", epsgWgs.substring(epsgWgs.length()-2, epsgWgs.length())+coord.get("x").asText());
+            String coordX = coord.get("x").asText();
+            String coordY = coord.get("y").asText();
+            int maxLenX = coordX.length() - coordX.indexOf(".");
+            int precX = maxLenX < 3 ? maxLenX : 3;
+            int maxLenY = coordY.length() - coordY.indexOf(".");
+            int precY = maxLenY < 3 ? maxLenY : 3;
+            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
+            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            coord.put("x", coordX);
+            coord.put("y", coordY);
+            return coord;
+        }
+
+        @Override
+        public ObjectNode transformTo6(String x, String y) {
+            x = x.replaceAll(",", ".");
+            y = y.replaceAll(",", ".");
+            String epsgEtrs = getEtrsEpsg(Double.valueOf(x), Double.valueOf(y));
+            ObjectNode coord = jtsTransform("EPSG:4326", epsgEtrs, y, x);
+            if (coord == null) {
+                return null;
+            }
+            coord.put("x", epsgEtrs.substring(epsgEtrs.length()-2, epsgEtrs.length())+coord.get("x").asText());
             String coordX = coord.get("x").asText();
             String coordY = coord.get("y").asText();
             int maxLenX = coordX.length() - coordX.indexOf(".");
@@ -408,6 +488,14 @@ public class KdaUtil {
         }
 
         @Override
+        public ObjectNode transformTo6(String x, String y) {
+            ObjectNode response = builder.createObjectNode();
+            response.put("x", x);
+            response.put("y", y);
+            return response;
+        }
+
+        @Override
         public ObjectNode transformTo8(String x, String y) {
             String epsgWgs = getEpsgForWgsUtm(x);
             x = x.substring(2, x.length());
@@ -434,6 +522,113 @@ public class KdaUtil {
             return coords;
         }
     }
+
+    private class Transform_6 extends AbstractTransform {
+
+        @Override
+        public ObjectNode transformTo1(String x, String y) {
+            String epsgEtrs = getEpsgForEtrs89(x);
+            x = x.substring(2, x.length());
+            ObjectNode degrees = jtsTransform(epsgEtrs, "EPSG:4326", x, y);
+            if (degrees == null) {
+                return null;
+            }
+            String epsgGk = getGkEpsg(
+                degrees.get("y").asDouble(),
+                degrees.get("x").asDouble());
+            ObjectNode coords = jtsTransform(epsgEtrs, epsgGk, x, y);
+            if (coords == null) {
+                return null;
+            }
+            String coordX = coords.get("x").asText();
+            String coordY = coords.get("y").asText();
+            int maxLenX = coordX.length() - coordX.indexOf(".");
+            int precX = maxLenX < 2 ? maxLenX : 2;
+            int maxLenY = coordY.length() - coordY.indexOf(".");
+            int precY = maxLenY < 2 ? maxLenY : 2;
+            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
+            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            coords.put("x", coordY);
+            coords.put("y", coordX);
+            return coords;
+        }
+
+        @Override
+        public ObjectNode transformTo2(String x, String y) {
+            String epsgEtrs = getEpsgForEtrs89(x);
+            x = x.substring(2, x.length());
+            ObjectNode degrees = jtsTransform(epsgEtrs, "EPSG:4326", x, y);
+            ObjectNode coords = degreeToArc(
+                degrees.get("y").asText(),
+                degrees.get("x").asText());
+            return coords;
+        }
+
+        @Override
+        public ObjectNode transformTo4(String x, String y) {
+            String epsgEtrs = getEpsgForEtrs89(x);
+            x = x.substring(2, x.length());
+            ObjectNode coords = jtsTransform(epsgEtrs, "EPSG:4326", x, y);
+            if (coords == null) {
+                return null;
+            }
+            String coordX = coords.get("x").asText();
+            String coordY = coords.get("y").asText();
+            int maxLenX = coordX.length() - coordX.indexOf(".");
+            int precX = maxLenX < 7 ? maxLenX : 7;
+            int maxLenY = coordY.length() - coordY.indexOf(".");
+            int precY = maxLenY < 7 ? maxLenY : 7;
+            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
+            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            coords.put("x", coordY);
+            coords.put("y", coordX);
+            return coords;
+        }
+
+        @Override
+        public ObjectNode transformTo5(String x, String y) {
+            ObjectNode response = builder.createObjectNode();
+            response.put("x", x);
+            response.put("y", y);
+            return response;
+        }
+
+        @Override
+        public ObjectNode transformTo6(String x, String y) {
+            ObjectNode response = builder.createObjectNode();
+            response.put("x", x);
+            response.put("y", y);
+            return response;
+        }
+
+        @Override
+        public ObjectNode transformTo8(String x, String y) {
+            String epsgEtrs = getEpsgForEtrs89(x);
+            x = x.substring(2, x.length());
+            ObjectNode coords4326 = jtsTransform(epsgEtrs, "EPSG:4326", x, y);
+            if (coords4326 == null) {
+                return null;
+            }
+            String epsgEd50 = getEpsgForEd50UtmFromDegree(coords4326.get("y").asText());
+            ObjectNode coords = jtsTransform(epsgEtrs, epsgEd50, x, y);
+            if (coords == null) {
+                return null;
+            }
+            String coordX = coords.get("x").asText();
+            String coordY = coords.get("y").asText();
+            int maxLenX = coordX.length() - coordX.indexOf(".");
+            int precX = maxLenX < 7 ? maxLenX : 7;
+            int maxLenY = coordY.length() - coordY.indexOf(".");
+            int precY = maxLenY < 7 ? maxLenY : 7;
+            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
+            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            String zone = epsgEd50.substring(epsgEd50.length() -2, epsgEd50.length());
+            coords.put("x", zone+coordX);
+            coords.put("y", coordY);
+            return coords;
+        }
+    }
+
     private class Transform_8 extends AbstractTransform {
 
         @Override
@@ -518,6 +713,33 @@ public class KdaUtil {
             coordX = coordX.substring(0, coordX.indexOf(".") + precX);
             coordY = coordY.substring(0, coordY.indexOf(".") + precY);
             String zone = epsgWgs.substring(epsgWgs.length() -2, epsgWgs.length());
+            coords.put("x", zone+coordY);
+            coords.put("y", coordX);
+            return coords;
+        }
+
+        @Override
+        public ObjectNode transformTo6(String x, String y) {
+            String epsgEd50 = getEpsgForEd50Utm(x);
+            if (epsgEd50.equals("")) {
+                return null;
+            }
+            String x1 = x.substring(2, x.length());
+            ObjectNode coords4326 = jtsTransform(epsgEd50, "EPSG:4326", x1, y);
+            String epsgEtrs = getEpsgForEtrs89FromDegree(coords4326.get("y").asText());
+            ObjectNode coords = jtsTransform(epsgEd50, epsgEtrs, y, x1);
+            if (coords == null) {
+                return null;
+            }
+            String coordX = coords.get("x").asText();
+            String coordY = coords.get("y").asText();
+            int maxLenX = coordX.length() - coordX.indexOf(".");
+            int precX = maxLenX < 7 ? maxLenX : 7;
+            int maxLenY = coordY.length() - coordY.indexOf(".");
+            int precY = maxLenY < 7 ? maxLenY : 7;
+            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
+            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            String zone = epsgEtrs.substring(epsgEtrs.length() -2, epsgEtrs.length());
             coords.put("x", zone+coordY);
             coords.put("y", coordX);
             return coords;
@@ -787,4 +1009,55 @@ public class KdaUtil {
 
         return "EPSG:230" + zone;
     }
+
+    private String getEpsgForEtrs89(String x) {
+        String epsg = "EPSG:258";
+        x = x.replaceAll(",", ".");
+        String part = x.split("\\.")[0];
+        String zone = part.length() == 7 ? ("0" + part.substring(0, 1)) :
+            part.substring(0, 2);
+        if (Integer.parseInt(zone) < 27 || Integer.parseInt(zone) > 38) {
+            return "";
+        }
+        return epsg + zone;
+    }
+
+    private String getEpsgForEtrs89FromDegree(String x) {
+        x = x.replaceAll(",", ".");
+        Double xCoord;
+        try {
+            xCoord = Double.valueOf(x);
+        }
+        catch(NumberFormatException nfe) {
+            return "";
+        }
+        String zone;
+        if (xCoord < -12 && xCoord > -18) zone = "28";
+        else if (xCoord <= -6 && xCoord > -12) zone = "29";
+        else if (xCoord <= 0 && xCoord > -6) zone = "30";
+        else if (xCoord <= 6 && xCoord > 0) zone = "31";
+        else if (xCoord <= 12 && xCoord > 6) zone = "32";
+        else if (xCoord <= 18 && xCoord > 12) zone = "33";
+        else if (xCoord <= 24 && xCoord > 18) zone = "34";
+        else if (xCoord <= 30 && xCoord > 24) zone = "35";
+        else if (xCoord <= 36 && xCoord > 30) zone = "36";
+        else if (xCoord <= 42 && xCoord > 36) zone = "37";
+        else if (xCoord <= 48 && xCoord > 42) zone = "38";
+        else return "";
+        return "EPSG:326" + zone;
+    }
+
+    private String getEtrsEpsg(double x, double y) {
+        int pref;
+        if (y > 0) {
+            pref = 32600;
+        }
+        else {
+            pref = 32700;
+        }
+        int zone = (int)Math.floor((x+180)/6)+1;
+        zone += pref;
+        return "EPSG:" + zone;
+    }
+
 }
