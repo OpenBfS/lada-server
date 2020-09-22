@@ -1,0 +1,1 @@
+INSERT INTO stamm.koordinaten_art VALUES (6, 'ETRS89', '');
