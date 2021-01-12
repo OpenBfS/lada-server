@@ -211,14 +211,13 @@ public class MessprogrammService {
     }
 
     private void setAuthData(
-        List<Messprogramm> messprogramme,
+        List<Messprogramm> messprogamme,
         Map<String, Object> entry,
         Integer id
     ) {
-        for (int i = 0; i < messprogramme.size(); i++) {
-            if (id.equals(messprogramme.get(i).getId())) {
-                entry.put("readonly", messprogramme.get(i).isReadonly()
-                    || messprogramme.get(i).isDeleted());
+        for (int i = 0; i < messprogamme.size(); i++) {
+            if (id.equals(messprogamme.get(i).getId())) {
+                entry.put("readonly", messprogamme.get(i).isReadonly());
                 return;
             }
         }
@@ -365,11 +364,6 @@ public class MessprogrammService {
                 Messprogramm.class)
         ) {
             return new Response(false, 699, null);
-        }
-
-        Messprogramm dbMessprogramm = repository.getByIdPlain(Messprogramm.class, id, Strings.LAND);
-        if (dbMessprogramm.isDeleted()) {
-            return new Response(false, 699, "Messprogramm is deleted");
         }
 
         Violation violation = validator.validate(messprogramm);

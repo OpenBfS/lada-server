@@ -33,8 +33,7 @@ public class ProbeAuthorizer extends BaseAuthorizer {
             return !isProbeReadOnly(probe.getId()) &&
                 getAuthorization(userInfo, probe);
         }
-        return getAuthorization(userInfo, probe)
-                && !probe.isDeleted();
+        return getAuthorization(userInfo, probe);
     }
 
     @Override

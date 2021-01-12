@@ -235,7 +235,7 @@ public class Messung implements Serializable {
         this.readonly = readonly;
     }
 
-    public boolean isDeleted() {
+    public boolean getDeleted() {
         return this.deleted;
     }
 
