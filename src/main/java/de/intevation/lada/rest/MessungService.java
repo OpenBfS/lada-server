@@ -30,9 +30,7 @@ import javax.ws.rs.core.UriInfo;
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
-import de.intevation.lada.model.land.KommentarM;
 import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.annotation.RepositoryConfig;
@@ -420,31 +418,6 @@ public class MessungService {
         }
 
         /* Delete the messung object*/
-        messungObj.setDeleted(true);
-        //TODO: delete references
-
-
-        Response response =  repository.update(messungObj, Strings.LAND);
-
-        if (response.getSuccess()) {
-            //Delete Messwert objects
-            QueryBuilder<Messwert> messwertBuilder =
-                new QueryBuilder<>(repository.entityManager(Strings.LAND), Messwert.class);
-            messwertBuilder.and("messungsId", messungObj.getId());
-            List<Messwert> messwertResult = repository.filterPlain(messwertBuilder.getQuery(), Strings.LAND);
-            for (Messwert wert: messwertResult) {
-                repository.delete(wert, Strings.LAND);
-            }
-
-            //Delete kommentar objects
-            QueryBuilder<KommentarM> kommentarBuilder =
-                new QueryBuilder<>(repository.entityManager(Strings.LAND), KommentarM.class);
-            kommentarBuilder.and("messungsId", messungObj.getId());
-            List<KommentarM> kommentarResult = repository.filterPlain(kommentarBuilder.getQuery(), Strings.LAND);
-            for (KommentarM kom: kommentarResult) {
-                repository.delete(kom, Strings.LAND);
-            }
-        }
-        return response;
+        return repository.delete(messungObj, Strings.LAND);
     }
 }
