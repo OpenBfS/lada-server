@@ -346,7 +346,6 @@ CREATE TABLE messung (
     letzte_aenderung timestamp without time zone DEFAULT now(),
     geplant boolean DEFAULT false NOT NULL,
     tree_modified timestamp without time zone DEFAULT now(),
-    deleted boolean DEFAULT false NOT NULL,
     UNIQUE (id, ext_id),
     UNIQUE (id, nebenproben_nr)
 );
