@@ -1,3 +1,10 @@
+/* Copyright (C) 2015 by Bundesamt fuer Strahlenschutz
+ * Software engineering by Intevation GmbH
+ *
+ * This file is Free Software under the GNU GPL (v>=3)
+ * and comes with ABSOLUTELY NO WARRANTY! Check out
+ * the documentation coming with IMIS-Labordaten-Application for details.
+ */
 package de.intevation.lada.model.land;
 
 import java.io.Serializable;
@@ -10,64 +17,95 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.ws.rs.core.MultivaluedMap;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hibernate.annotations.DynamicInsert;
 
 
 /**
  * The persistent class for the messung database table.
- * 
+ *
  */
 // The DynamicInsert Annotation has the effect, that the persisted object still
 // has all the "null"-values. There is no reloading after the persistence
 // process!
 @Entity
 @DynamicInsert(true)
+@Table(name = "messung", schema = "land")
 public class Messung implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private Boolean fertig;
 
     private Boolean geplant;
 
-    @Column(name="ext_id")
+    @Column(name = "ext_id")
     private Integer externeMessungsId;
 
-    @Column(name="letzte_aenderung", insertable=false)
+    @Column(name = "letzte_aenderung", insertable = false)
     private Timestamp letzteAenderung;
 
     private Integer messdauer;
 
     private Timestamp messzeitpunkt;
 
-    @Column(name="mmt_id")
+    @Column(name = "mmt_id")
     private String mmtId;
 
-    @Column(name="nebenproben_nr")
+    @Column(name = "nebenproben_nr")
     private String nebenprobenNr;
 
-    @Column(name="probe_id")
+    @Column(name = "probe_id")
     private Integer probeId;
 
     @OneToOne
-    @JoinColumn(name="probe_id", insertable=false, updatable=false)
+    @JoinColumn(name = "probe_id", insertable = false, updatable = false)
     private Probe probe;
 
     private Integer status;
 
-    @Column(name="tree_modified", insertable=false, updatable=false)
+    @OneToOne
+    @JoinColumn(name = "status", insertable = false, updatable = false)
+    private StatusProtokoll statusProtokoll;
+
+    @Column(name = "tree_modified", insertable = false, updatable = false)
     private Timestamp treeModified;
 
     @Transient
     private Boolean statusEdit;
 
     @Transient
+    private Boolean statusEditMst;
+
+    @Transient
+    private Boolean statusEditLand;
+
+    @Transient
+    private Boolean statusEditLst;
+
+    @Transient
     private Timestamp parentModified;
+
+    @Transient
+    @JsonIgnore
+    private MultivaluedMap<String, Integer> errors;
+
+    @Transient
+    @JsonIgnore
+    private MultivaluedMap<String, Integer> warnings;
+
+    @Transient
+    @JsonIgnore
+    private MultivaluedMap<String, Integer> notifications;
 
     @Transient
     private boolean owner;
@@ -150,6 +188,11 @@ public class Messung implements Serializable {
         this.nebenprobenNr = (nebenprobenNr == "") ? null : nebenprobenNr;
     }
 
+    @JsonIgnore
+    public Probe getProbe() {
+        return this.probe;
+    }
+
     public Integer getProbeId() {
         return this.probeId;
     }
@@ -180,12 +223,30 @@ public class Messung implements Serializable {
     public Boolean getStatusEdit() {
         return statusEdit;
     }
+    public Boolean getStatusEditMst() {
+        return statusEditMst;
+    }
+    public Boolean getStatusEditLand() {
+        return statusEditLand;
+    }
+    public Boolean getStatusEditLst() {
+        return statusEditLst;
+    }
 
     /**
      * @param statusEdit the statusEdit to set
      */
     public void setStatusEdit(Boolean statusEdit) {
         this.statusEdit = statusEdit;
+    }
+    public void setStatusEditMst(Boolean statusEditMst) {
+        this.statusEditMst = statusEditMst;
+    }
+    public void setStatusEditLand(Boolean statusEditLand) {
+        this.statusEditLand = statusEditLand;
+    }
+    public void setStatusEditLst(Boolean statusEditLst) {
+        this.statusEditLst = statusEditLst;
     }
 
     /**
@@ -219,6 +280,38 @@ public class Messung implements Serializable {
         this.owner = owner;
     }
 
+    @JsonProperty
+    public MultivaluedMap<String, Integer> getErrors() {
+        return this.errors;
+    }
+
+    @JsonIgnore
+    public void setErrors(MultivaluedMap<String, Integer> errors) {
+        this.errors = errors;
+    }
+
+    @JsonProperty
+    public MultivaluedMap<String, Integer> getWarnings() {
+        return this.warnings;
+    }
+
+    @JsonIgnore
+    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
+        this.warnings = warnings;
+    }
+
+    @JsonProperty
+    public MultivaluedMap<String, Integer> getNotifications() {
+      return this.notifications;
+    }
+
+    @JsonIgnore
+    public void setNotifications(
+        MultivaluedMap<String, Integer> notifications
+    ) {
+      this.notifications = notifications;
+    }
+
     /**
      * @return the readonly
      */
@@ -231,6 +324,14 @@ public class Messung implements Serializable {
      */
     public void setReadonly(boolean readonly) {
         this.readonly = readonly;
+    }
+
+    public StatusProtokoll getStatusProtokoll() {
+        return this.statusProtokoll;
+    }
+
+    public void setStatusProtokoll(StatusProtokoll statusProtokoll) {
+        this.statusProtokoll = statusProtokoll;
     }
 
 }

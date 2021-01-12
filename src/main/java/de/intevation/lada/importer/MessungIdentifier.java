@@ -19,38 +19,35 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.Strings;
 
-import org.apache.log4j.Logger;
-
-@IdentifierConfig(type="Messung")
+/**
+ * Identifier for messung objects.
+ */
+@IdentifierConfig(type = "Messung")
 public class MessungIdentifier implements Identifier {
 
     @Inject
-    private Logger logger; 
-
-    @Inject
-    @RepositoryConfig(type=RepositoryType.RO)
+    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     private Messung found;
 
     @Override
     public Identified find(Object object)
-    throws InvalidTargetObjectTypeException
-    {
+    throws InvalidTargetObjectTypeException {
         found = null;
         if (!(object instanceof Messung)) {
             throw new InvalidTargetObjectTypeException(
                 "Object is not of type Messung");
         }
-        Messung messung = (Messung)object;
+        Messung messung = (Messung) object;
         QueryBuilder<Messung> builder = new QueryBuilder<Messung>(
             repository.entityManager(Strings.LAND),
             Messung.class
         );
 
         // extermeMessungsId null and hauptprobenNr not null and mstId not null.
-        if (messung.getExterneMessungsId() == null &&
-            messung.getNebenprobenNr() != null
+        if (messung.getExterneMessungsId() == null
+            && messung.getNebenprobenNr() != null
         ) {
             builder.and("probeId", messung.getProbeId());
             builder.and("nebenprobenNr", messung.getNebenprobenNr());
@@ -62,18 +59,34 @@ public class MessungIdentifier implements Identifier {
                 return Identified.REJECT;
             }
             if (messungen.isEmpty()) {
-                return Identified.NEW;
+                builder = builder.getEmptyBuilder();
+                builder.and("probeId", messung.getProbeId());
+                builder.and("mmtId", messung.getMmtId());
+                messungen =
+                    repository.filterPlain(builder.getQuery(), Strings.LAND);
+                if (messungen.isEmpty()) {
+                    return Identified.NEW;
+                }
+                if (messungen.size() > 1) {
+                    return Identified.NEW;
+                }
+                if (messungen.get(0).getNebenprobenNr() == null) {
+                    found = messungen.get(0);
+                    return Identified.UPDATE;
+                } else {
+                    return Identified.NEW;
+                }
             }
             found = messungen.get(0);
             return Identified.UPDATE;
-        }
-        else if (messung.getExterneMessungsId() != null) {
+        } else if (messung.getExterneMessungsId() != null) {
             builder.and("probeId", messung.getProbeId());
             builder.and("externeMessungsId", messung.getExterneMessungsId());
             List<Messung> messungen =
                 repository.filterPlain(builder.getQuery(), Strings.LAND);
             if (messungen.size() > 1) {
-                // Should never happen. DB has unique constraint for "externeMessungsId"
+                // Should never happen. DB has unique constraint for
+                // "externeMessungsId"
                 return Identified.REJECT;
             }
             if (messungen.isEmpty()) {
@@ -81,8 +94,7 @@ public class MessungIdentifier implements Identifier {
             }
             found = messungen.get(0);
             return Identified.UPDATE;
-        }
-        else if (messung.getMmtId() != null) {
+        } else if (messung.getMmtId() != null) {
             builder.and("probeId", messung.getProbeId());
             builder.and("mmtId", messung.getMmtId());
             List<Messung> messungen =
@@ -95,8 +107,7 @@ public class MessungIdentifier implements Identifier {
             }
             found = messungen.get(0);
             return Identified.UPDATE;
-        }
-        else {
+        } else {
             return Identified.REJECT;
         }
     }

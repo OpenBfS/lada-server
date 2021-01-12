@@ -27,23 +27,24 @@ import de.intevation.lada.validation.rules.Rule;
 public class IsReiComplete implements Rule {
 
     @Inject
-    @RepositoryConfig(type=RepositoryType.RO)
+    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Override
     public Violation execute(Object object) {
-        Probe probe = (Probe)object;
+        Probe probe = (Probe) object;
         Violation violation = new Violation();
         if (probe.getDatenbasisId() == null) {
             return null;
         }
-        if (probe.getDatenbasisId() != 3 &&
-            probe.getDatenbasisId() != 4) {
+        if (probe.getDatenbasisId() != 3
+            && probe.getDatenbasisId() != 4
+        ) {
             if (probe.getReiProgpunktGrpId() != null) {
-                violation.addError("reiProgpunktGruppe", 632);
+                violation.addError("reiProgpunktGrpId", 632);
             }
             if (probe.getKtaGruppeId() != null) {
-                violation.addError("ktaGruppe", 632);
+                violation.addError("ktaGruppeId", 632);
             }
             if (violation.hasErrors()) {
                 return violation;
@@ -51,10 +52,10 @@ public class IsReiComplete implements Rule {
             return null;
         }
         if (probe.getReiProgpunktGrpId() == null) {
-            violation.addWarning("reiProgpunktGruppe", 631);
+            violation.addWarning("reiProgpunktGrpId", 631);
         }
         if (probe.getKtaGruppeId() == null) {
-            violation.addWarning("ktaGruppe", 631);
+            violation.addWarning("ktaGruppeId", 631);
         }
         if (violation.hasWarnings()) {
             return violation;

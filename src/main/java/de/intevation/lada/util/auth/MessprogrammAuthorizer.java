@@ -22,10 +22,10 @@ import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
-public class MessprogrammAuthorizer implements Authorizer {
+public class MessprogrammAuthorizer extends BaseAuthorizer {
 
     @Inject
-    @RepositoryConfig(type=RepositoryType.RO)
+    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Override
@@ -41,15 +41,13 @@ public class MessprogrammAuthorizer implements Authorizer {
         }
         Messprogramm messprogramm;
         if (data instanceof Messprogramm) {
-            messprogramm = (Messprogramm)data;
-        }
-        else if (data instanceof MessprogrammMmt) {
+            messprogramm = (Messprogramm) data;
+        } else if (data instanceof MessprogrammMmt) {
             messprogramm = repository.getByIdPlain(
                 Messprogramm.class,
-                ((MessprogrammMmt)data).getMessprogrammId(),
+                ((MessprogrammMmt) data).getMessprogrammId(),
                 Strings.LAND);
-        }
-        else {
+        } else {
             return false;
         }
         String mstId = messprogramm.getMstId();
@@ -57,7 +55,8 @@ public class MessprogrammAuthorizer implements Authorizer {
             MessStelle mst = repository.getByIdPlain(
                 MessStelle.class, mstId, Strings.STAMM);
             if (userInfo.getFunktionenForNetzbetreiber(
-                    mst.getNetzbetreiberId()).contains(4)) {
+                    mst.getNetzbetreiberId()).contains(4)
+            ) {
                 return true;
             }
         }
@@ -65,27 +64,35 @@ public class MessprogrammAuthorizer implements Authorizer {
     }
 
     @Override
-    public <T> boolean isAuthorizedById(Object id, RequestMethod method, UserInfo userInfo, Class<T> clazz) {
-        Messprogramm mp = repository.getByIdPlain(Messprogramm.class, id, Strings.LAND);
+    public <T> boolean isAuthorizedById(
+        Object id,
+        RequestMethod method,
+        UserInfo userInfo,
+        Class<T> clazz
+    ) {
+        Messprogramm mp =
+            repository.getByIdPlain(Messprogramm.class, id, Strings.LAND);
         return isAuthorized(mp, method, userInfo, Messprogramm.class);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> Response filter(
         Response data,
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        if (data.getData() instanceof List<?> &&
-            !clazz.isAssignableFrom(MessprogrammMmt.class)) {
+        if (data.getData() instanceof List<?>
+            && !clazz.isAssignableFrom(MessprogrammMmt.class)
+        ) {
             List<Messprogramm> messprogramme = new ArrayList<Messprogramm>();
-            for (Messprogramm messprogramm :(List<Messprogramm>)data.getData()) {
+            for (Messprogramm messprogramm
+                : (List<Messprogramm>) data.getData()) {
                 messprogramme.add(setAuthData(userInfo, messprogramm));
             }
             data.setData(messprogramme);
-        }
-        else if (data.getData() instanceof Messprogramm) {
-            Messprogramm messprogramm = (Messprogramm)data.getData();
+        } else if (data.getData() instanceof Messprogramm) {
+            Messprogramm messprogramm = (Messprogramm) data.getData();
             data.setData(setAuthData(userInfo, messprogramm));
         }
         return data;
@@ -98,14 +105,19 @@ public class MessprogrammAuthorizer implements Authorizer {
      * @param probe     The probe object.
      * @return The probe.
      */
-    private Messprogramm setAuthData(UserInfo userInfo, Messprogramm messprogramm) {
-        MessStelle mst = repository.getByIdPlain(MessStelle.class, messprogramm.getMstId(), Strings.STAMM);
+    private Messprogramm setAuthData(
+        UserInfo userInfo,
+        Messprogramm messprogramm
+    ) {
+        MessStelle mst =
+            repository.getByIdPlain(
+                MessStelle.class, messprogramm.getMstId(), Strings.STAMM);
         if (userInfo.getFunktionenForNetzbetreiber(
-                mst.getNetzbetreiberId()).contains(4)) {
+                mst.getNetzbetreiberId()).contains(4)
+        ) {
             messprogramm.setReadonly(false);
             return messprogramm;
-        }
-        else {
+        } else {
             messprogramm.setReadonly(true);
         }
         return messprogramm;

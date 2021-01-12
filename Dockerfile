@@ -12,7 +12,7 @@
 # http://yourdockerhost:8181/lada-server
 #
 
-FROM debian:stretch
+FROM debian:buster
 MAINTAINER raimund.renkert@intevation.de
 
 #
@@ -20,8 +20,23 @@ MAINTAINER raimund.renkert@intevation.de
 #
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
-            curl openjdk-8-jdk libpostgis-java libjts-java \
+            curl openjdk-11-jdk libpostgis-java libjts-java \
             git maven lighttpd
+
+
+#
+# Set ENV for pacakge versions
+ENV WILDFLY_VERSION 16.0.0.Final
+# see wildfly pom.xml for hibernate_spatial_version
+# Note: Hibernate spatial > 5.4.0.Final is no longer compatible with jts < 1.15
+#       as the jts package root changed
+ENV HIBERNATE_SPATIAL_VERSION 5.4.0.Final
+# Note: geolatte-geom > 1.4.0 is no longer compatible with jts < 1.15
+#       as the jts package root changed
+ENV GEOLATTE_GEOM_VERSION 1.4.0
+ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
+
+RUN echo "Building Image using WILDFLY_VERSION=${WILDFLY_VERSION}, HIBERNATE_SPATIAL_VERSION=${HIBERNATE_SPATIAL_VERSION}, GEOLATTE_GEOM_VERSION=${GEOLATTE_GEOM_VERSION}."
 
 #
 # Set up Wildfly
@@ -29,8 +44,8 @@ RUN apt-get update -y && \
 RUN mkdir /opt/jboss
 
 RUN curl \
-    https://download.jboss.org/wildfly/8.2.1.Final/wildfly-8.2.1.Final.tar.gz \
-    | tar zx && mv wildfly-8.2.1.Final /opt/jboss/wildfly
+    https://download.jboss.org/wildfly/${WILDFLY_VERSION}/wildfly-${WILDFLY_VERSION}.tar.gz\
+    | tar zx && mv wildfly-${WILDFLY_VERSION} /opt/jboss/wildfly
 
 ENV JBOSS_HOME /opt/jboss/wildfly
 
@@ -43,17 +58,23 @@ EXPOSE 8080 9990 80
 #
 RUN mkdir -p $JBOSS_HOME/modules/org/postgres/main
 
-RUN curl https://jdbc.postgresql.org/download/postgresql-9.4-1200.jdbc4.jar >\
-         $JBOSS_HOME/modules/org/postgres/main/postgresql.jar
+RUN curl https://repo1.maven.org/maven2/org/hibernate/hibernate-spatial/${HIBERNATE_SPATIAL_VERSION}/hibernate-spatial-${HIBERNATE_SPATIAL_VERSION}.jar >\
+        $JBOSS_HOME/modules/system/layers/base/org/hibernate/main/hibernate-spatial.jar
 
-RUN ln -s /usr/share/java/postgis-jdbc-2.2.1.jar \
+RUN curl https://repo1.maven.org/maven2/org/geolatte/geolatte-geom/${GEOLATTE_GEOM_VERSION}/geolatte-geom-${GEOLATTE_GEOM_VERSION}.jar >\
+        $JBOSS_HOME/modules/system/layers/base/org/hibernate/main/geolatte-geom.jar
+
+RUN ln -s /usr/share/java/postgresql.jar \
        $JBOSS_HOME/modules/org/postgres/main/
-RUN ln -s /usr/share/java/jts-1.14.jar \
-       $JBOSS_HOME/modules/system/layers/base/org/hibernate/main/
+RUN ln -s /usr/share/java/postgis-jdbc.jar \
+       $JBOSS_HOME/modules/org/postgres/main/
+RUN ln -s /usr/share/java/jts-core.jar \
+       $JBOSS_HOME/modules/system/layers/base/org/hibernate/main/jts-core.jar
+RUN ln -s $JBOSS_HOME/modules/system/layers/base/org/hibernate/main/hibernate-core-*.jar $JBOSS_HOME/modules/system/layers/base/org/hibernate/main/hibernate-core.jar
+RUN ln -s $JBOSS_HOME/modules/system/layers/base/org/hibernate/main/hibernate-envers-*.jar $JBOSS_HOME/modules/system/layers/base/org/hibernate/main/hibernate-envers.jar
 
-RUN curl \
-    http://www.hibernatespatial.org/repository/org/hibernate/hibernate-spatial/4.3/hibernate-spatial-4.3.jar > \
-    $JBOSS_HOME/modules/system/layers/base/org/hibernate/main/hibernate-spatial-4.3.jar
+RUN ls -hal $JBOSS_HOME/modules/system/layers/base/org/hibernate/main/
+
 
 #
 # Add LADA-server repo
@@ -72,14 +93,11 @@ RUN ln -fs $PWD/wildfly/standalone.conf $JBOSS_HOME/bin/
 
 RUN wildfly/execute.sh
 
-RUN rm $JBOSS_HOME/standalone/configuration/standalone_xml_history/current/*
-
 #
 # Build and deploy LADA-server
 #
-ENV LADA_VERSION 3.3.8
-RUN mvn clean compile package && \
-    mv target/lada-server-$LADA_VERSION.war \
+RUN mvn clean && mvn compile package && \
+    mv target/lada-server-*.war \
        $JBOSS_HOME/standalone/deployments/lada-server.war && \
     touch $JBOSS_HOME/standalone/deployments/lada-server.war.dodeploy
 

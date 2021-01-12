@@ -17,37 +17,49 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.ws.rs.core.MultivaluedMap;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 /**
  * The persistent class for the ortszuordnung_mp database table.
- * 
+ *
  */
 @Entity
-@Table(name="ortszuordnung_mp")
+@Table(name = "ortszuordnung_mp", schema = "land")
 public class OrtszuordnungMp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name="letzte_aenderung", insertable=false)
+    @Column(name = "letzte_aenderung", insertable = false)
     private Timestamp letzteAenderung;
 
-    @Column(name="messprogramm_id")
+    @Column(name = "messprogramm_id")
     private Integer messprogrammId;
 
-    @Column(name="ort_id")
+    @Column(name = "ort_id")
     private Integer ortId;
 
-    @Column(name="ortszuordnung_typ")
+    @Column(name = "ortszuordnung_typ")
     private String ortszuordnungTyp;
 
     private String ortszusatztext;
 
-    @Column(name="tree_modified", insertable=false, updatable=false)
+    @Column(name = "tree_modified", insertable = false, updatable = false)
     private Timestamp treeModified;
+
+    @Transient
+    @JsonIgnore
+    private MultivaluedMap<String, Integer> errors;
+
+    @Transient
+    @JsonIgnore
+    private MultivaluedMap<String, Integer> warnings;
 
     @Transient
     private boolean owner;
@@ -112,6 +124,26 @@ public class OrtszuordnungMp implements Serializable {
 
     public void setTreeModified(Timestamp treeModified) {
         this.treeModified = treeModified;
+    }
+
+    @JsonProperty
+    public MultivaluedMap<String, Integer> getErrors() {
+        return this.errors;
+    }
+
+    @JsonIgnore
+    public void setErrors(MultivaluedMap<String, Integer> errors) {
+        this.errors = errors;
+    }
+
+    @JsonProperty
+    public MultivaluedMap<String, Integer> getWarnings() {
+        return this.warnings;
+    }
+
+    @JsonIgnore
+    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
+        this.warnings = warnings;
     }
 
     /**

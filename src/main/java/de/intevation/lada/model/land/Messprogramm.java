@@ -16,14 +16,20 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.ws.rs.core.MultivaluedMap;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 /**
  * The persistent class for the messprogramm database table.
- * 
+ *
  */
 @Entity
+@Table(name = "messprogramm", schema = "land")
 public class Messprogramm implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -39,80 +45,91 @@ public class Messprogramm implements Serializable {
     }
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name="ba_id")
+    @Column(name = "ba_id")
     private Integer baId;
 
-    @Column(name="datenbasis_id")
+    @Column(name = "datenbasis_id")
     private Integer datenbasisId;
 
-    @Column(name="gem_id")
+    @Column(name = "gem_id")
     private String gemId;
 
-    @Column(name="gueltig_bis")
+    @Column(name = "gueltig_bis")
     private Integer gueltigBis;
 
-    @Column(name="gueltig_von")
+    @Column(name = "gueltig_von")
     private Integer gueltigVon;
 
-    @Column(name="intervall_offset")
+    @Column(name = "intervall_offset")
     private Integer intervallOffset;
 
     private String kommentar;
 
-    @Column(name="labor_mst_id")
+    @Column(name = "labor_mst_id")
     private String laborMstId;
 
-    @Column(name="letzte_aenderung", insertable=false)
+    @Column(name = "letzte_aenderung", insertable = false)
     private Timestamp letzteAenderung;
 
-    @Column(name="media_desk")
+    @Column(name = "media_desk")
     private String mediaDesk;
 
-    @Column(name="mst_id")
+    @Column(name = "mst_id")
     private String mstId;
 
-    @Column(name="mpl_id")
+    @Column(name = "mpl_id")
     private Integer mplId;
 
-    @Column(name="probe_kommentar")
+    @Column(name = "probe_kommentar")
     private String probeKommentar;
 
-    @Column(name="probe_nehmer_id")
+    @Column(name = "probe_nehmer_id")
     private Integer probeNehmerId;
 
-    @Column(name="probenart_id")
+    @Column(name = "probenart_id")
     private Integer probenartId;
 
     private String probenintervall;
 
-    @Column(name="teilintervall_bis")
+    @Column(name = "teilintervall_bis")
     private Integer teilintervallBis;
 
-    @Column(name="teilintervall_von")
+    @Column(name = "teilintervall_von")
     private Integer teilintervallVon;
 
     private Boolean test;
 
-    @Column(name="umw_id")
+    @Column(name = "umw_id")
     private String umwId;
 
-    @Column(name="rei_progpunkt_grp_id")
+    @Column(name = "rei_progpunkt_grp_id")
     private Integer reiProgpunktGrpId;
 
-    @Column(name="kta_gruppe_id")
+    @Column(name = "kta_gruppe_id")
     private Integer ktaGruppeId;
 
-    @Column(name="aktiv")
+    @Column(name = "aktiv")
     private Boolean aktiv;
 
-    @Column(name="meh_id")
+    @Column(name = "meh_id")
     private Integer mehId;
 
-    @Column(name="probenahmemenge")
+    @Column(name = "probenahmemenge")
     private String probenahmeMenge;
+
+    @Transient
+    private Integer referenceCount;
+
+    @Transient
+    @JsonIgnore
+    private MultivaluedMap<String, Integer> errors;
+
+    @Transient
+    @JsonIgnore
+    private MultivaluedMap<String, Integer> warnings;
 
     @Transient
     private boolean readonly;
@@ -326,6 +343,34 @@ public class Messprogramm implements Serializable {
 
     public void setProbenahmeMenge(String probenahmeMenge) {
         this.probenahmeMenge = probenahmeMenge;
+    }
+
+    public Integer getReferenceCount() {
+        return this.referenceCount;
+    }
+
+    public void setReferenceCount(Integer referenceCount) {
+        this.referenceCount = referenceCount;
+    }
+
+    @JsonProperty
+    public MultivaluedMap<String, Integer> getErrors() {
+        return this.errors;
+    }
+
+    @JsonIgnore
+    public void setErrors(MultivaluedMap<String, Integer> errors) {
+        this.errors = errors;
+    }
+
+    @JsonProperty
+    public MultivaluedMap<String, Integer> getWarnings() {
+        return this.warnings;
+    }
+
+    @JsonIgnore
+    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
+        this.warnings = warnings;
     }
 
     public boolean isReadonly() {

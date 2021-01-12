@@ -37,7 +37,7 @@ CREATE FUNCTION update_letzte_aenderung() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN
-        NEW.letzte_aenderung = now();
+        NEW.letzte_aenderung = now() AT TIME ZONE 'utc';
         RETURN NEW;
     END;
 $$;
@@ -120,11 +120,22 @@ CREATE TABLE mess_einheit (
 );
 
 
+CREATE TABLE mass_einheit_umrechnung
+(
+    id serial PRIMARY KEY,
+    meh_id_von integer NOT NULL REFERENCES mess_einheit,
+    meh_id_zu integer NOT NULL REFERENCES mess_einheit,
+    faktor float NOT NULL,
+    UNIQUE( meh_id_von, meh_id_zu)
+);
+
+
 CREATE TABLE umwelt (
     id character varying(3) PRIMARY KEY,
     beschreibung character varying(300),
     umwelt_bereich character varying(80) NOT NULL,
     meh_id integer REFERENCES mess_einheit,
+    meh_id_2 integer REFERENCES mess_einheit,
     UNIQUE (umwelt_bereich)
 );
 
@@ -225,7 +236,7 @@ CREATE TABLE datensatz_erzeuger (
     datensatz_erzeuger_id character varying(2) NOT NULL,
     mst_id character varying(5) NOT NULL REFERENCES mess_stelle,
     bezeichnung character varying(120) NOT NULL,
-    letzte_aenderung timestamp without time zone DEFAULT now(),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE(datensatz_erzeuger_id, netzbetreiber_id, mst_id)
 
 );
@@ -302,6 +313,7 @@ INSERT INTO filter_type VALUES(4, 'listtext', true);
 INSERT INTO filter_type VALUES(5, 'listnumber', true);
 INSERT INTO filter_type VALUES(6, 'listdatetime', true);
 INSERT INTO filter_type VALUES(7, 'generictext', false);
+INSERT INTO filter_type VALUES(8, 'tag', true);
 
 CREATE TABLE filter (
     id serial PRIMARY KEY,
@@ -344,7 +356,7 @@ CREATE TABLE messprogramm_kategorie (
     netzbetreiber_id character varying(2) NOT NULL REFERENCES netz_betreiber,
     code character varying(3) NOT NULL,
     bezeichnung character varying(120) NOT NULL,
-    letzte_aenderung timestamp without time zone DEFAULT now(),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE(code, netzbetreiber_id)
 );
 CREATE TRIGGER letzte_aenderung_messprogramm_kategorie BEFORE UPDATE ON messprogramm_kategorie FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
@@ -450,7 +462,7 @@ CREATE TABLE gemeindeuntergliederung (
     koord_y_extern character varying(22),
     geom public.geometry(Point,4326),
     shape public.geometry(MultiPolygon,4326),
-    letzte_aenderung timestamp without time zone DEFAULT now()
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER letzte_aenderung_gemeindeuntergliederung BEFORE UPDATE ON gemeindeuntergliederung FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
@@ -467,7 +479,7 @@ CREATE TABLE ort (
     koord_x_extern character varying(22) NOT NULL,
     koord_y_extern character varying(22) NOT NULL,
     hoehe_land real,
-    letzte_aenderung timestamp without time zone DEFAULT now(),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     geom public.geometry(Point,4326) NOT NULL,
     shape public.geometry(MultiPolygon,4326),
     ort_typ smallint REFERENCES ort_typ,
@@ -539,7 +551,7 @@ CREATE TABLE probenehmer (
     telefon character varying(20),
     tp character varying(3),
     typ character(1),
-    letzte_aenderung timestamp without time zone DEFAULT now(),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE(prn_id, netzbetreiber_id)
 );
 CREATE TRIGGER letzte_aenderung_probenehmer BEFORE UPDATE ON probenehmer FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
@@ -734,9 +746,22 @@ CREATE TABLE grid_column_values (
     sort_index integer,
     filter_value text,
     filter_active boolean,
+    filter_negate boolean,
+    filter_regex boolean,
+    filter_is_null boolean,
     visible boolean,
     column_index integer,
     width integer
 );
+
+CREATE TABLE tag (
+    id serial PRIMARY KEY,
+    tag text COLLATE pg_catalog."default",
+    mst_id character varying REFERENCES mess_stelle(id),
+    generated boolean,
+    UNIQUE(tag, mst_id)
+);
+
+CREATE UNIQUE INDEX gen_tag_unique_idx ON stamm.tag (tag) WHERE generated = true;
 
 COMMIT;

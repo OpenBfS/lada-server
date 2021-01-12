@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -28,10 +30,13 @@ import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.stammdaten.Umwelt;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
+import de.intevation.lada.util.data.MesswertNormalizer;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
@@ -88,25 +93,25 @@ public class MesswertService {
      * The data repository granting read/write access.
      */
     @Inject
-    @RepositoryConfig(type=RepositoryType.RW)
+    @RepositoryConfig(type = RepositoryType.RW)
     private Repository defaultRepo;
 
     /**
      * The object lock mechanism.
      */
     @Inject
-    @LockConfig(type=LockType.TIMESTAMP)
+    @LockConfig(type = LockType.TIMESTAMP)
     private ObjectLocker lock;
 
     /**
      * The authorization module.
      */
     @Inject
-    @AuthorizationConfig(type=AuthorizationType.HEADER)
+    @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
 
     @Inject
-    @ValidationConfig(type="Messwert")
+    @ValidationConfig(type = "Messwert")
     private Validator validator;
 
     /**
@@ -137,8 +142,7 @@ public class MesswertService {
         int id;
         try {
             id = Integer.valueOf(messungId);
-        }
-        catch(NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             return new Response(false, 698, null);
         }
         Messung messung = defaultRepo.getByIdPlain(
@@ -158,10 +162,26 @@ public class MesswertService {
                 defaultRepo.entityManager(Strings.LAND),
                 Messwert.class);
         builder.and("messungsId", messungId);
-        return authorization.filter(
+
+        Response r = authorization.filter(
             request,
             defaultRepo.filter(builder.getQuery(), Strings.LAND),
             Messwert.class);
+        if (r.getSuccess()) {
+            @SuppressWarnings("unchecked")
+            List<Messwert> messwerts = (List<Messwert>) r.getData();
+            for (Messwert messwert: messwerts) {
+                Violation violation = validator.validate(messwert);
+                if (violation.hasErrors() || violation.hasWarnings()) {
+                    messwert.setErrors(violation.getErrors());
+                    messwert.setWarnings(violation.getWarnings());
+                    messwert.setNotifications(violation.getNotifications());
+                }
+            }
+            return new Response(true, 200, messwerts);
+        } else {
+            return r;
+        }
     }
 
     /**
@@ -182,8 +202,9 @@ public class MesswertService {
         @PathParam("id") String id
     ) {
         Response response =
-            defaultRepo.getById(Messwert.class, Integer.valueOf(id), Strings.LAND);
-        Messwert messwert = (Messwert)response.getData();
+            defaultRepo.getById(
+                Messwert.class, Integer.valueOf(id), Strings.LAND);
+        Messwert messwert = (Messwert) response.getData();
         Messung messung = defaultRepo.getByIdPlain(
             Messung.class,
             messwert.getMessungsId(),
@@ -200,6 +221,7 @@ public class MesswertService {
         if (violation.hasErrors() || violation.hasWarnings()) {
             response.setErrors(violation.getErrors());
             response.setWarnings(violation.getWarnings());
+            response.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
             request,
@@ -254,13 +276,17 @@ public class MesswertService {
             Response response = new Response(false, 604, messwert);
             response.setErrors(violation.getErrors());
             response.setWarnings(violation.getWarnings());
+            response.setNotifications(violation.getNotifications());
             return response;
         }
 
         /* Persist the new messung object*/
         Response response = defaultRepo.create(messwert, Strings.LAND);
-        if(violation.hasWarnings()) {
+        if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
+        }
+        if (violation.hasNotifications()) {
+           response.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
             request,
@@ -319,6 +345,7 @@ public class MesswertService {
             Response response = new Response(false, 604, messwert);
             response.setErrors(violation.getErrors());
             response.setWarnings(violation.getWarnings());
+            response.setNotifications(violation.getNotifications());
             return response;
         }
 
@@ -328,15 +355,115 @@ public class MesswertService {
         }
         Response updated = defaultRepo.getById(
             Messwert.class,
-            ((Messwert)response.getData()).getId(), Strings.LAND);
-        if(violation.hasWarnings()) {
+            ((Messwert) response.getData()).getId(), Strings.LAND);
+        if (violation.hasWarnings()) {
             updated.setWarnings(violation.getWarnings());
         }
-
+        if (violation.hasNotifications()) {
+           updated.setNotifications(violation.getNotifications());
+        }
         return authorization.filter(
             request,
             updated,
             Messwert.class);
+    }
+
+    /**
+     * Normalise all Messwert objects connected to the given Messung.
+     * The messung id needs to be given as url parameter 'messungsId'.
+     * @return Response object containing the updated Messwert objects.
+     */
+    @PUT
+    @Path("/normalize")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response normalize(
+        @Context HttpHeaders headers,
+        @Context UriInfo info,
+        @Context HttpServletRequest request
+    ) {
+        MultivaluedMap<String, String> params = info.getQueryParameters();
+        if (params.isEmpty() || !params.containsKey("messungsId")) {
+            return new Response(false, 699, null);
+        }
+        String messungId = params.getFirst("messungsId");
+        int messungIdInt;
+        try {
+            messungIdInt = Integer.valueOf(messungId);
+        } catch (NumberFormatException nfe) {
+            return new Response(false, 698, null);
+        }
+        //Load messung, probe and umwelt to get MessEinheit to convert to
+        Messung messung = defaultRepo.getByIdPlain(
+            Messung.class,
+            messungIdInt,
+            Strings.LAND);
+        if (!authorization.isAuthorized(
+            request,
+            messung,
+            RequestMethod.PUT,
+            Messung.class)
+        ) {
+            return new Response(false, 699, null);
+        }
+
+        Probe probe =
+            defaultRepo.getByIdPlain(
+                Probe.class, messung.getProbeId(), Strings.LAND);
+        if (probe.getUmwId() == null || probe.getUmwId().equals("")) {
+            return new Response(true, 696, null);
+        }
+        Umwelt umwelt =
+            defaultRepo.getByIdPlain(
+                Umwelt.class, probe.getUmwId(), Strings.STAMM);
+        //Get all Messwert objects to convert
+        QueryBuilder<Messwert> messwertBuilder =
+                new QueryBuilder<Messwert>(
+                    defaultRepo.entityManager(Strings.LAND),
+                    Messwert.class);
+        messwertBuilder.and("messungsId", messungIdInt);
+        List<Messwert> messwerte = MesswertNormalizer.normalizeMesswerte(
+            defaultRepo.filterPlain(messwertBuilder.getQuery(), Strings.LAND),
+                umwelt.getId(), defaultRepo);
+
+        for (Messwert messwert: messwerte) {
+            if (!authorization.isAuthorized(
+                request,
+                messwert,
+                RequestMethod.PUT,
+                Messwert.class)
+            ) {
+                return new Response(false, 699, null);
+            }
+            if (lock.isLocked(messwert)) {
+                return new Response(false, 697, null);
+            }
+            Violation violation = validator.validate(messwert);
+            if (violation.hasErrors()) {
+                Response response = new Response(false, 604, messwert);
+                response.setErrors(violation.getErrors());
+                response.setWarnings(violation.getWarnings());
+                response.setNotifications(violation.getNotifications());
+                return response;
+            }
+            Response response = defaultRepo.update(messwert, Strings.LAND);
+            if (!response.getSuccess()) {
+                return response;
+            }
+            Response updated = defaultRepo.getById(
+                Messwert.class,
+                ((Messwert) response.getData()).getId(), Strings.LAND);
+            if (violation.hasWarnings()) {
+                updated.setWarnings(violation.getWarnings());
+            }
+            if (violation.hasNotifications()) {
+                updated.setNotifications(violation.getNotifications());
+            }
+            authorization.filter(
+                    request,
+                    updated,
+                    Messwert.class);
+        }
+        return new Response(true, 200, messwerte);
     }
 
     /**
@@ -358,8 +485,9 @@ public class MesswertService {
     ) {
         /* Get the messwert object by id*/
         Response messwert =
-            defaultRepo.getById(Messwert.class, Integer.valueOf(id), Strings.LAND);
-        Messwert messwertObj = (Messwert)messwert.getData();
+            defaultRepo.getById(
+                Messwert.class, Integer.valueOf(id), Strings.LAND);
+        Messwert messwertObj = (Messwert) messwert.getData();
         if (!authorization.isAuthorized(
                 request,
                 messwertObj,

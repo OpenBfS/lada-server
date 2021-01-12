@@ -1,3 +1,10 @@
+/* Copyright (C) 2015 by Bundesamt fuer Strahlenschutz
+ * Software engineering by Intevation GmbH
+ *
+ * This file is Free Software under the GNU GPL (v>=3)
+ * and comes with ABSOLUTELY NO WARRANTY! Check out
+ * the documentation coming with IMIS-Labordaten-Application for details.
+ */
 package de.intevation.lada.model.land;
 
 import java.io.Serializable;
@@ -8,9 +15,18 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.ws.rs.core.MultivaluedMap;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hibernate.annotations.DynamicInsert;
+
+import de.intevation.lada.model.stammdaten.Umwelt;
 
 
 /**
@@ -19,80 +35,88 @@ import org.hibernate.annotations.DynamicInsert;
  */
 @Entity
 @DynamicInsert(true)
+@Table(name = "probe", schema = "land")
 public class Probe implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name="ba_id")
+    @Column(name = "ba_id")
     private Integer baId;
 
-    @Column(name="datenbasis_id")
+    @Column(name = "datenbasis_id")
     private Integer datenbasisId;
 
-    @Column(name="erzeuger_id")
+    @Column(name = "erzeuger_id")
     private Integer erzeugerId;
 
-    @Column(name="hauptproben_nr")
+    @Column(name = "hauptproben_nr")
     private String hauptprobenNr;
 
-    @Column(name="ext_id")
+    @Column(name = "ext_id")
     private String externeProbeId;
 
-    @Column(name="labor_mst_id")
+    @Column(name = "labor_mst_id")
     private String laborMstId;
 
-    @Column(name="letzte_aenderung", insertable=false)
+    @Column(name = "letzte_aenderung", insertable = false)
     private Timestamp letzteAenderung;
 
     private String media;
 
-    @Column(name="media_desk")
+    @Column(name = "media_desk")
     private String mediaDesk;
 
     private Long mittelungsdauer;
 
-    @Column(name="mpl_id")
+    @Column(name = "mpl_id")
     private Integer mplId;
 
-    @Column(name="mpr_id")
+    @Column(name = "mpr_id")
     private Integer mprId;
 
-    @Column(name="mst_id")
+    @Column(name = "mst_id")
     private String mstId;
 
-    @Column(name="probe_nehmer_id")
+    @Column(name = "probe_nehmer_id")
     private Integer probeNehmerId;
 
-    @Column(name="probeentnahme_beginn")
+    @Column(name = "probeentnahme_beginn")
     private Timestamp probeentnahmeBeginn;
 
-    @Column(name="probeentnahme_ende")
+    @Column(name = "probeentnahme_ende")
     private Timestamp probeentnahmeEnde;
 
-    @Column(name="probenart_id")
+    @Column(name = "probenart_id")
     private Integer probenartId;
 
-    @Column(name="solldatum_beginn")
+    @Column(name = "solldatum_beginn")
     private Timestamp solldatumBeginn;
 
-    @Column(name="solldatum_ende")
+    @Column(name = "solldatum_ende")
     private Timestamp solldatumEnde;
+
+    @Column(name = "ursprungszeit")
+    private Timestamp ursprungszeit;
 
     private Boolean test;
 
-    @Column(name="tree_modified", insertable=false, updatable=false)
+    @Column(name = "tree_modified", insertable = false, updatable = false)
     private Timestamp treeModified;
 
-    @Column(name="umw_id")
+    @OneToOne
+    @JoinColumn(name = "umw_id", insertable = false, updatable = false)
+    private Umwelt umwelt;
+
+    @Column(name = "umw_id")
     private String umwId;
 
-    @Column(name="rei_progpunkt_grp_id")
+    @Column(name = "rei_progpunkt_grp_id")
     private Integer reiProgpunktGrpId;
 
-    @Column(name="kta_gruppe_id")
+    @Column(name = "kta_gruppe_id")
     private Integer ktaGruppeId;
 
     @Transient
@@ -100,6 +124,18 @@ public class Probe implements Serializable {
 
     @Transient
     private boolean owner;
+
+    @Transient
+    @JsonIgnore
+    private MultivaluedMap<String, Integer> errors;
+
+    @Transient
+    @JsonIgnore
+    private MultivaluedMap<String, Integer> warnings;
+
+    @Transient
+    @JsonIgnore
+    private MultivaluedMap<String, Integer> notifications;
 
     public Probe() {
     }
@@ -264,6 +300,14 @@ public class Probe implements Serializable {
         this.solldatumEnde = solldatumEnde;
     }
 
+    public Timestamp getUrsprungszeit() {
+        return this.ursprungszeit;
+    }
+
+    public void setUrsprungszeit(Timestamp ursprungszeit) {
+        this.ursprungszeit = ursprungszeit;
+    }
+
     public Boolean getTest() {
         return this.test;
     }
@@ -278,6 +322,11 @@ public class Probe implements Serializable {
 
     public void setTreeModified(Timestamp treeModified) {
         this.treeModified = treeModified;
+    }
+
+    @JsonIgnore
+    public Umwelt getUmwelt() {
+        return this.umwelt;
     }
 
     public String getUmwId() {
@@ -318,5 +367,37 @@ public class Probe implements Serializable {
 
     public void setOwner(boolean owner) {
         this.owner = owner;
+    }
+
+    @JsonProperty
+    public MultivaluedMap<String, Integer> getErrors() {
+        return this.errors;
+    }
+
+    @JsonIgnore
+    public void setErrors(MultivaluedMap<String, Integer> errors) {
+        this.errors = errors;
+    }
+
+    @JsonProperty
+    public MultivaluedMap<String, Integer> getWarnings() {
+        return this.warnings;
+    }
+
+    @JsonIgnore
+    public void setNotifications(
+        MultivaluedMap<String, Integer> notifications
+    ) {
+      this.notifications = notifications;
+    }
+
+    @JsonProperty
+    public MultivaluedMap<String, Integer> getNotifications() {
+       return this.notifications;
+    }
+
+    @JsonIgnore
+    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
+        this.warnings = warnings;
     }
 }

@@ -7,9 +7,7 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -36,6 +34,7 @@ import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
+import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
@@ -92,37 +91,38 @@ public class MessungService {
      * The data repository granting read/write access.
      */
     @Inject
-    @RepositoryConfig(type=RepositoryType.RW)
+    @RepositoryConfig(type = RepositoryType.RW)
     private Repository repository;
 
     /**
      * The object lock mechanism.
      */
     @Inject
-    @LockConfig(type=LockType.TIMESTAMP)
+    @LockConfig(type = LockType.TIMESTAMP)
     private ObjectLocker lock;
 
     /**
      * The authorization module.
      */
     @Inject
-    @AuthorizationConfig(type=AuthorizationType.HEADER)
+    @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
 
     @Inject
-    @ValidationConfig(type="Messung")
+    @ValidationConfig(type = "Messung")
     private Validator validator;
-
-    @Inject
-    private QueryTools queryTools;
 
     /**
      * Get all Messung objects.
      * <p>
-     * The requested objects can be filtered using a URL parameter named
-     * probeId.
+     * The requested objects can be filtered using the following URL parameters:
+     * parameters:<br>
+     * probeId: probeId to use as filter
+     * page: The page to display in a paginated result grid.<br>
+     * start: The first Probe item.<br>
+     * limit: The count of Probe items.<br>
      * <p>
-     * Example: http://example.com/messung?probeId=[ID]
+     * Example: http://example.com/messung?probeId=[ID]&page=[PAGE]&start=[START]&limit=[LIMIT]
      *
      * @return Response object containing all Messung objects.
      */
@@ -135,91 +135,91 @@ public class MessungService {
         @Context HttpServletRequest request
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() ||
-            (!params.containsKey("probeId") && !params.containsKey("qid"))) {
-            return repository.getAll(Messung.class, Strings.LAND);
-        }
-        if (params.containsKey("probeId")) {
+        //If no params are given: return all messung records
+        if (params.isEmpty()
+            || (!params.containsKey("probeId"))
+        ) {
+            List<Messung> messungs =
+                repository.getAllPlain(Messung.class, Strings.LAND);
+            int size = messungs.size();
+            if (params.containsKey("start") && params.containsKey("limit")) {
+                int start = Integer.valueOf(params.getFirst("start"));
+                int limit = Integer.valueOf(params.getFirst("limit"));
+                int end = limit + start;
+                if (start + limit > size) {
+                    end = size;
+                }
+                messungs = messungs.subList(start, end);
+            }
+            for (Messung m: messungs) {
+                m.setReadonly(authorization.isMessungReadOnly(m.getId()));
+                Violation violation = validator.validate(m);
+                if (violation.hasErrors()
+                    || violation.hasWarnings()
+                    || violation.hasNotifications()
+                ) {
+                    m.setErrors(violation.getErrors());
+                    m.setWarnings(violation.getWarnings());
+                    m.setNotifications(violation.getNotifications());
+                }
+            }
+            return new Response(true, 200, messungs);
+        } else {
+            //Filter by probeId
             String probeId = params.getFirst("probeId");
             QueryBuilder<Messung> builder =
                 new QueryBuilder<Messung>(
                     repository.entityManager(Strings.LAND),
                     Messung.class);
             builder.and("probeId", probeId);
-            return authorization.filter(
+            Response r = authorization.filter(
                 request,
                 repository.filter(builder.getQuery(), Strings.LAND),
                 Messung.class);
-        }
-        else if (params.containsKey("qid")) {
-            Integer id = null;
-            try {
-                id = Integer.valueOf(params.getFirst("qid"));
-            }
-            catch (NumberFormatException e) {
-                return new Response(false, 603, "Not a valid filter id");
-            }
-            List<Map<String, Object>> result =
-                queryTools.getResultForQuery(params, id);
-
-            List<Map<String, Object>> filtered;
-            if (params.containsKey("filter")) {
-                filtered = queryTools.filterResult(params.getFirst("filter"), result);
-            }
-            else {
-                filtered = result;
-            }
-
-            if (filtered.isEmpty()) {
-                return new Response(true, 200, filtered, 0);
-            }
-
-            int size = filtered.size();
-            if (params.containsKey("start") && params.containsKey("limit")) {
-                int start = Integer.valueOf(params.getFirst("start"));
-                int limit = Integer.valueOf(params.getFirst("limit"));
-                int end = limit + start;
-                if (start + limit > filtered.size()) {
-                    end = filtered.size();
+            if (r.getSuccess()) {
+                @SuppressWarnings("unchecked")
+                List<Messung> messungs = (List<Messung>) r.getData();
+                int size = messungs.size();
+                if (params.containsKey("start")
+                    && params.containsKey("limit")
+                ) {
+                    int start = Integer.valueOf(params.getFirst("start"));
+                    int limit = Integer.valueOf(params.getFirst("limit"));
+                    int end = limit + start;
+                    if (start + limit > size) {
+                        end = size;
+                    }
+                    messungs = messungs.subList(start, end);
                 }
-                filtered = filtered.subList(start, end);
-            }
-
-            QueryBuilder<Messung> pBuilder = new QueryBuilder<Messung>(
-                repository.entityManager(Strings.LAND), Messung.class);
-            List<Integer> list = new ArrayList<Integer>();
-            for (Map<String, Object> entry: filtered) {
-                list.add((Integer)entry.get("id"));
-            }
-            pBuilder.orIn("id", list);
-            Response r = repository.filter(pBuilder.getQuery(), Strings.LAND);
-            r = authorization.filter(request, r, Messung.class);
-            @SuppressWarnings("unchecked")
-            List<Messung> messungen= (List<Messung>)r.getData();
-            for (Map<String, Object> entry: filtered) {
-                Integer pId = Integer.valueOf(entry.get("id").toString());
-                setAuthData(messungen, entry, pId);
-            }
-            return new Response(true, 200, filtered, size);
-        }
-        return new Response(false, 603, "No valid paramter given.");
-    }
-
-    private void setAuthData(
-        List<Messung> messungen,
-        Map<String, Object> entry,
-        Integer id
-    ) {
-        for (int i = 0; i < messungen.size(); i++) {
-            if (id.equals(messungen.get(i).getId())) {
-                entry.put("readonly", messungen.get(i).isReadonly());
-                entry.put("owner", messungen.get(i).isOwner());
-                entry.put("statusEdit", messungen.get(i).getStatusEdit());
-                return;
+                if (messungs.size() > 0) {
+                    for (Messung messung: messungs) {
+                        messung.setReadonly(
+                            !authorization.isAuthorized(
+                                request,
+                                messung,
+                                RequestMethod.PUT,
+                                Messung.class));
+                        Violation violation = validator.validate(messung);
+                        if (violation.hasErrors()
+                            || violation.hasWarnings()
+                            || violation.hasNotifications()
+                        ) {
+                            messung.setErrors(violation.getErrors());
+                            messung.setWarnings(violation.getWarnings());
+                            messung.setNotifications(
+                                violation.getNotifications());
+                        }
+                    }
+                }
+                return new Response(true, 200, messungs);
+                //return authorization.filter(
+                //    request, new Response(
+                //        true, 200, messungs), Messung.class);
+            } else {
+                return r;
             }
         }
     }
-
 
     /**
      * Get a Messung object by id.
@@ -239,12 +239,17 @@ public class MessungService {
         @PathParam("id") String id
     ) {
         Response response =
-            repository.getById(Messung.class, Integer.valueOf(id), Strings.LAND);
-        Messung messung = (Messung)response.getData();
+            repository.getById(
+                Messung.class, Integer.valueOf(id), Strings.LAND);
+        Messung messung = (Messung) response.getData();
         Violation violation = validator.validate(messung);
-        if (violation.hasErrors() || violation.hasWarnings()) {
+        if (violation.hasErrors()
+            || violation.hasWarnings()
+            || violation.hasNotifications()
+        ) {
             response.setErrors(violation.getErrors());
             response.setWarnings(violation.getWarnings());
+            response.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
             request,
@@ -300,15 +305,18 @@ public class MessungService {
             Response response = new Response(false, 604, messung);
             response.setErrors(violation.getErrors());
             response.setWarnings(violation.getWarnings());
+            response.setNotifications(violation.getNotifications());
             return response;
         }
 
         /* Persist the new messung object*/
         Response response = repository.create(messung, Strings.LAND);
-        if(violation.hasWarnings()) {
+        if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
         }
-
+        if (violation.hasNotifications()) {
+            response.setNotifications(violation.getNotifications());
+        }
         return authorization.filter(
             request,
             response,
@@ -366,6 +374,7 @@ public class MessungService {
             Response response = new Response(false, 604, messung);
             response.setErrors(violation.getErrors());
             response.setWarnings(violation.getWarnings());
+            response.setNotifications(violation.getNotifications());
             return response;
         }
         Response response = repository.update(messung, Strings.LAND);
@@ -374,9 +383,12 @@ public class MessungService {
         }
         Response updated = repository.getById(
             Messung.class,
-            ((Messung)response.getData()).getId(), Strings.LAND);
-        if(violation.hasWarnings()) {
+            ((Messung) response.getData()).getId(), Strings.LAND);
+        if (violation.hasWarnings()) {
             updated.setWarnings(violation.getWarnings());
+        }
+        if (violation.hasNotifications()) {
+            updated.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
             request,
@@ -403,8 +415,9 @@ public class MessungService {
     ) {
         /* Get the messung object by id*/
         Response messung =
-            repository.getById(Messung.class, Integer.valueOf(id), Strings.LAND);
-        Messung messungObj = (Messung)messung.getData();
+            repository.getById(
+                Messung.class, Integer.valueOf(id), Strings.LAND);
+        Messung messungObj = (Messung) messung.getData();
         if (!authorization.isAuthorized(
                 request,
                 messungObj,

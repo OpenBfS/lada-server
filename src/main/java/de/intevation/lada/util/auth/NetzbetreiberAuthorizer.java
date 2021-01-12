@@ -10,8 +10,6 @@ package de.intevation.lada.util.auth;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import de.intevation.lada.model.stammdaten.NetzBetreiber;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -33,9 +31,9 @@ public class NetzbetreiberAuthorizer extends BaseAuthorizer {
         }
         try {
             id = (String) m.invoke(data);
-        } catch (IllegalAccessException |
-            IllegalArgumentException |
-            InvocationTargetException e
+        } catch (IllegalAccessException
+            | IllegalArgumentException
+            | InvocationTargetException e
         ) {
             return false;
         }
@@ -50,16 +48,28 @@ public class NetzbetreiberAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         String netId = (String) id;
-        return (method == RequestMethod.POST
-            || method == RequestMethod.PUT
+        /* If model is an ort instance check:
+           - If user tries to edit: Has user function 4 and the same mstId
+             as the ort? OR
+           - If user tries to create: Can user edit probe objects?
+        */
+        if (clazz.isAssignableFrom(
+                de.intevation.lada.model.stammdaten.Ort.class)
+        ) {
+            return
+            ((method == RequestMethod.PUT
+              || method == RequestMethod.DELETE
+            ) && userInfo.getFunktionenForNetzbetreiber(netId).contains(4)
+              && userInfo.getNetzbetreiber().contains(netId))
+            || method == RequestMethod.POST
+            && userInfo.getNetzbetreiber().contains(netId);
+        } else {
+            return
+            ((method == RequestMethod.PUT
+            || method == RequestMethod.POST
             || method == RequestMethod.DELETE
-        ) && (
-            userInfo.getFunktionenForNetzbetreiber(netId).contains(4)
-            // XXX: this currently allows any user, regardless of function,
-            // to manipulate and delete any ort of his own netzbetreiber!
-            || clazz.isAssignableFrom(de.intevation.lada.model.stammdaten.Ort.class)
-            && userInfo.getNetzbetreiber().contains(netId)
-        );
+            ) && userInfo.getFunktionenForNetzbetreiber(netId).contains(4));
+        }
     }
 
     @Override

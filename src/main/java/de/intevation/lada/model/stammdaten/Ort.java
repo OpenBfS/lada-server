@@ -1,3 +1,10 @@
+/* Copyright (C) 2015 by Bundesamt fuer Strahlenschutz
+ * Software engineering by Intevation GmbH
+ *
+ * This file is Free Software under the GNU GPL (v>=3)
+ * and comes with ABSOLUTELY NO WARRANTY! Check out
+ * the documentation coming with IMIS-Labordaten-Application for details.
+ */
 package de.intevation.lada.model.stammdaten;
 
 import java.io.Serializable;
@@ -8,13 +15,18 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.Type;
+import javax.ws.rs.core.MultivaluedMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.vividsolutions.jts.geom.Point;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.locationtech.jts.algorithm.BoundaryNodeRule.MultiValentEndPointBoundaryNodeRule;
+import org.locationtech.jts.geom.Point;
+
+import org.hibernate.annotations.Type;
 
 
 
@@ -23,67 +35,71 @@ import com.vividsolutions.jts.geom.Point;
  *
  */
 @Entity
-@Table(name="ort")
+@Table(name = "ort")
 public class Ort implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private Boolean aktiv;
 
-    @Column(name="kta_gruppe_id")
+    @Column(name = "kta_gruppe_id")
     private Integer ktaGruppeId;
 
     private String berichtstext;
 
-    @Column(name="gem_id")
+    @ManyToOne
+    @JoinColumn(name = "gem_id", updatable = false, insertable = false)
+    private Verwaltungseinheit gemeinde;
+
+    @Column(name = "gem_id")
     private String gemId;
 
-    @Column(name="gem_unt_id")
+    @Column(name = "gem_unt_id")
     private Integer gemUntId;
 
-    @Column(name="hoehe_ueber_nn")
+    @Column(name = "hoehe_ueber_nn")
     private Float hoeheUeberNn;
 
-    @Column(name="hoehe_land")
+    @Column(name = "hoehe_land")
     private Float hoeheLand;
 
-    @Column(name="koord_x_extern")
+    @Column(name = "koord_x_extern")
     private String koordXExtern;
 
-    @Column(name="koord_y_extern")
+    @Column(name = "koord_y_extern")
     private String koordYExtern;
 
     private String kurztext;
 
     private String langtext;
 
-    @Column(name="letzte_aenderung", insertable=false)
+    @Column(name = "letzte_aenderung", insertable = false)
     private Timestamp letzteAenderung;
 
-    @Column(name="mp_art")
+    @Column(name = "mp_art")
     private String mpArt;
 
-    @Column(name="netzbetreiber_id")
+    @Column(name = "netzbetreiber_id")
     private String netzbetreiberId;
 
-    @Column(name="nuts_code")
+    @Column(name = "nuts_code")
     private String nutsCode;
 
-    @Column(name="ort_id")
+    @Column(name = "ort_id")
     private String ortId;
 
-    @Column(name="ort_typ")
+    @Column(name = "ort_typ")
     private Integer ortTyp;
 
-    @Column(name="oz_id")
+    @Column(name = "oz_id")
     private String ozId;
 
     private String sektor;
 
-    @Column(name="staat_id")
+    @Column(name = "staat_id")
     private Integer staatId;
 
     private Boolean unscharf;
@@ -92,11 +108,11 @@ public class Ort implements Serializable {
 
     private String zustaendigkeit;
 
-    @Column(name="kda_id")
+    @Column(name = "kda_id")
     private Integer kdaId;
 
-    @Column(columnDefinition="geometry(Point, 4326)")
-    @Type(type = "org.hibernate.spatial.GeometryType")
+    @Type(type = "jts_geometry")
+    @Column(columnDefinition = "geometry(Point, 4326)")
     private Point geom;
 
     @Transient
@@ -107,6 +123,20 @@ public class Ort implements Serializable {
 
     @Transient
     private Double latitude;
+
+    @Transient
+    private Integer referenceCount;
+
+    @Transient
+    private Integer plausibleReferenceCount;
+
+    @Transient
+    @JsonIgnore
+    private MultivaluedMap<String, Integer> errors;
+
+    @Transient
+    @JsonIgnore
+    private MultivaluedMap<String, Integer> warnings;
 
     public Ort() {
     }
@@ -143,6 +173,15 @@ public class Ort implements Serializable {
         this.berichtstext = berichtstext;
     }
 
+    @JsonIgnore
+    public Verwaltungseinheit getGemeinde() {
+        return this.gemeinde;
+    }
+
+    public void setGemeinde(Verwaltungseinheit gemeinde) {
+        this.gemeinde = gemeinde;
+    }
+
     public String getGemId() {
         return this.gemId;
     }
@@ -155,7 +194,7 @@ public class Ort implements Serializable {
         return this.gemUntId;
     }
 
-    public void setGemUntId(Integer gemId) {
+    public void setGemUntId(Integer gemUntId) {
         this.gemUntId = gemUntId;
     }
 
@@ -207,6 +246,10 @@ public class Ort implements Serializable {
         this.langtext = langtext;
     }
 
+    /**
+     * Get the lat.
+     * @return the lat
+     */
     public Double getLatitude() {
         // We might want to serialize an object without geom
         return this.geom != null
@@ -222,6 +265,10 @@ public class Ort implements Serializable {
         this.letzteAenderung = letzteAenderung;
     }
 
+    /**
+     * Get the lon.
+     * @return the lon
+     */
     public Double getLongitude() {
         // We might want to serialize an object without geom
         return this.geom != null
@@ -343,4 +390,39 @@ public class Ort implements Serializable {
         this.readonly = readonly;
     }
 
+    public Integer getReferenceCount() {
+        return this.referenceCount;
+    }
+
+    public void setReferenceCount(Integer referenceCount) {
+        this.referenceCount = referenceCount;
+    }
+
+    public Integer getPlausibleReferenceCount() {
+        return this.plausibleReferenceCount;
+    }
+
+    public void setPlausibleReferenceCount(Integer plausibleReferenceCount) {
+        this.plausibleReferenceCount = plausibleReferenceCount;
+    }
+
+    @JsonProperty
+    public MultivaluedMap<String, Integer> getErrors() {
+        return this.errors;
+    }
+
+    @JsonIgnore
+    public void setErrors(MultivaluedMap<String, Integer> errors) {
+        this.errors = errors;
+    }
+
+    @JsonProperty
+    public MultivaluedMap<String, Integer> getWarnings() {
+        return this.warnings;
+    }
+
+    @JsonIgnore
+    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
+        this.warnings = warnings;
+    }
 }

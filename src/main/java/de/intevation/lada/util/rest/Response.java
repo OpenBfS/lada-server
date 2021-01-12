@@ -30,22 +30,24 @@ public class Response implements Serializable {
     private Object data;
     private MultivaluedMap<String, Integer> errors;
     private MultivaluedMap<String, Integer> warnings;
+    private MultivaluedMap<String, Integer> notifications;
     private Boolean readonly;
     private int totalCount;
 
     /**
      * Constructor to create a basic Response object.
      *
-     * @param success   Information if the operation was successful.
+     * @param s   Information if the operation was successful.
      * @param code      The return code.
-     * @param data      The data object wrapped by the response.
+     * @param d      The data object wrapped by the response.
      */
-    public Response(boolean success, int code, Object data) {
-        this.success = success;
+    public Response(boolean s, int code, Object d) {
+        this.success = s;
         this.message = Integer.toString(code);
-        this.data = data;
+        this.data = d;
         this.errors = new MultivaluedHashMap<String, Integer>();
         this.warnings = new MultivaluedHashMap<String, Integer>();
+        this.notifications = new MultivaluedHashMap<String, Integer>();
         this.readonly = Boolean.FALSE;
         this.totalCount = 0;
     }
@@ -53,18 +55,19 @@ public class Response implements Serializable {
     /**
      * Constructor to create a basic Response object.
      *
-     * @param success   Information if the operation was successful.
+     * @param s         Information if the operation was successful.
      * @param code      The return code.
-     * @param data      The data object wrapped by the response.
+     * @param d      The data object wrapped by the response.
      */
-    public Response(boolean success, int code, Object data, int totalCount) {
-        this.success = success;
+    public Response(boolean s, int code, Object d, int count) {
+        this.success = s;
         this.message = Integer.toString(code);
-        this.data = data;
+        this.data = d;
         this.errors = new MultivaluedHashMap<String, Integer>();
         this.warnings = new MultivaluedHashMap<String, Integer>();
+        this.notifications = new MultivaluedHashMap<String, Integer>();
         this.readonly = Boolean.FALSE;
-        this.totalCount = totalCount;
+        this.totalCount = count;
     }
 
     public Boolean getSuccess() {
@@ -107,6 +110,16 @@ public class Response implements Serializable {
     public void setWarnings(MultivaluedMap<String, Integer> warnings) {
         this.warnings.putAll(warnings);
         //this.warnings = this.convertCodes(warnings);
+    }
+
+    public MultivaluedMap<String, Integer> getNotifications() {
+      return notifications;
+    }
+
+    public void setNotifications(
+        MultivaluedMap<String, Integer> notifications
+    ) {
+      this.notifications.putAll(notifications);
     }
 
     public Boolean getReadonly() {
@@ -154,7 +167,7 @@ public class Response implements Serializable {
         boolean first = true;
         for (Map.Entry<String, Integer> entry: codes.entrySet()) {
             if (!first) {
-                response +=",";
+                response += ",";
             }
             response += entry.getKey() + ":" + "\"" + entry.getValue() + "\"";
             first = false;

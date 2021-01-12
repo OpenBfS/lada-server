@@ -21,9 +21,12 @@ public class Violation {
 
     private MultivaluedMap<String, Integer> errors;
 
+    private MultivaluedMap<String, Integer> notifications;
+
     public Violation() {
         this.warnings = new MultivaluedHashMap<String, Integer>();
         this.errors = new MultivaluedHashMap<String, Integer>();
+        this.notifications = new MultivaluedHashMap<String, Integer>();
     }
 
     public MultivaluedMap<String, Integer> getWarnings() {
@@ -34,6 +37,10 @@ public class Violation {
         return this.errors;
     }
 
+    public MultivaluedMap<String, Integer> getNotifications() {
+      return this.notifications;
+    }
+
     public void addWarning(String key, Integer value) {
         this.warnings.add(key, value);
     }
@@ -42,16 +49,26 @@ public class Violation {
         this.errors.add(key, value);
     }
 
-    public void addWarnings(MultivaluedMap<String, Integer> warnings) {
-        for (String key: warnings.keySet()) {
-            this.warnings.addAll(key, warnings.get(key));
+    public void addNotification(String key, Integer value) {
+      this.notifications.add(key, value);
+    }
+
+    public void addWarnings(MultivaluedMap<String, Integer> w) {
+        for (String key: w.keySet()) {
+            this.warnings.addAll(key, w.get(key));
         }
     }
 
-    public void addErrors(MultivaluedMap<String, Integer> errors) {
-        for (String key: errors.keySet()) {
-            this.errors.addAll(key, errors.get(key));
+    public void addErrors(MultivaluedMap<String, Integer> e) {
+        for (String key: e.keySet()) {
+            this.errors.addAll(key, e.get(key));
         }
+    }
+
+    public void addNotifications(MultivaluedMap<String, Integer> n) {
+     for (String key: n.keySet()) {
+       this.notifications.addAll(key, n.get(key));
+     }
     }
 
     public boolean hasWarnings() {
@@ -61,4 +78,9 @@ public class Violation {
     public boolean hasErrors() {
         return this.errors.size() > 0;
     }
+
+    public boolean hasNotifications() {
+      return this.notifications.size() > 0;
+    }
+
 }

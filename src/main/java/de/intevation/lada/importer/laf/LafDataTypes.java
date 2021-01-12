@@ -1,6 +1,18 @@
+/* Copyright (C) 2016 by Bundesamt fuer Strahlenschutz
+ * Software engineering by Intevation GmbH
+ *
+ * This file is Free Software under the GNU GPL (v>=3)
+ * and comes with ABSOLUTELY NO WARRANTY! Check out
+ * the documentation coming with IMIS-Labordaten-Application for details.
+ */
 package de.intevation.lada.importer.laf;
 
-public class LafDataTypes {
+/**
+ * Helper class to define constants and data types for LAF.
+ */
+class LafDataTypes {
+
+    private LafDataTypes() { }
 
     public static final String BOOL = "[01]";
 
@@ -14,6 +26,8 @@ public class LafDataTypes {
     public static final String C8 = "[\\S ]{0,8}";
     public static final String C9 = "[\\S ]{0,9}";
     public static final String C10 = "[\\S ]{0,10}";
+    public static final String C12 = "[\\S ]{0,12}";
+    public static final String C13 = "[\\S ]{0,13}";
     public static final String C16 = "[\\S ]{0,16}";
     public static final String C20 = "[\\S ]{0,20}";
     public static final String C21 = "[\\S ]{0,21}";
@@ -46,7 +60,8 @@ public class LafDataTypes {
     public static final String I9 = "\\d{0,9}";
     public static final String I10 = "\\d{0,10}";
 
-    public static final String F9_10_12  = "<?[-+]?[0-9]*[.,]?[0-9]+([eE][-+]?[0-9]+)?";
+    public static final String F9_10_12  =
+        "<?[-+]?[0-9]*[.,]?[0-9]+([eE][-+]?[0-9]+)?";
 
     public static final String SI1 = "\\d{1}";
     public static final String SI2 = "\\d{2}";

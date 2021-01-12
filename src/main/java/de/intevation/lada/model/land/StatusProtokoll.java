@@ -1,3 +1,10 @@
+/* Copyright (C) 2015 by Bundesamt fuer Strahlenschutz
+ * Software engineering by Intevation GmbH
+ *
+ * This file is Free Software under the GNU GPL (v>=3)
+ * and comes with ABSOLUTELY NO WARRANTY! Check out
+ * the documentation coming with IMIS-Labordaten-Application for details.
+ */
 package de.intevation.lada.model.land;
 
 import java.io.Serializable;
@@ -10,35 +17,40 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.ws.rs.core.MultivaluedMap;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 /**
  * The persistent class for the status_protokoll database table.
- * 
+ *
  */
 @Entity
-@Table(name="status_protokoll")
+@Table(name = "status_protokoll", schema = "land")
 public class StatusProtokoll implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "datum", insertable = false, updatable = false)
     private Timestamp datum;
 
-    @Column(name="messungs_id")
+    @Column(name = "messungs_id")
     private Integer messungsId;
 
-    @Column(name="mst_id")
+    @Column(name = "mst_id")
     private String mstId;
 
-    @Column(name="status_kombi")
+    @Column(name = "status_kombi")
     private Integer statusKombi;
 
     private String text;
 
-    @Column(name="tree_modified", insertable=false, updatable=false)
+    @Column(name = "tree_modified", insertable = false, updatable = false)
     private Timestamp treeModified;
 
     @Transient
@@ -55,6 +67,18 @@ public class StatusProtokoll implements Serializable {
 
     @Transient
     private Integer statusWert;
+
+    @Transient
+    @JsonIgnore
+    private MultivaluedMap<String, Integer> errors;
+
+    @Transient
+    @JsonIgnore
+    private MultivaluedMap<String, Integer> warnings;
+
+    @Transient
+    @JsonIgnore
+    private MultivaluedMap<String, Integer> notifications;
 
     public StatusProtokoll() {
     }
@@ -184,4 +208,34 @@ public class StatusProtokoll implements Serializable {
     public void setStatusWert(Integer statusWert) {
         this.statusWert = statusWert;
     }
+
+    @JsonProperty
+    public MultivaluedMap<String, Integer> getErrors() {
+        return this.errors;
+    }
+
+    @JsonIgnore
+    public void setErrors(MultivaluedMap<String, Integer> errors) {
+        this.errors = errors;
+    }
+
+    @JsonProperty
+    public MultivaluedMap<String, Integer> getWarnings() {
+        return this.warnings;
+    }
+
+    @JsonIgnore
+    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
+        this.warnings = warnings;
+    }
+
+   @JsonProperty
+   public MultivaluedMap<String, Integer> getNotifications() {
+     return this.notifications;
+   }
+
+   @JsonIgnore
+   public void setNotifications(MultivaluedMap<String, Integer> notifications) {
+     this.notifications = notifications;
+   }
 }

@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.rest.stamm;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -16,8 +19,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
+import de.intevation.lada.model.stammdaten.MassEinheitUmrechnung;
 import de.intevation.lada.model.stammdaten.MessEinheit;
 import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
@@ -60,12 +65,20 @@ public class MesseinheitService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type=RepositoryType.RO)
+    @RepositoryConfig(type = RepositoryType.RO)
     private Repository defaultRepo;
 
     /**
      * Get all MessEinheit objects.
      * <p>
+     * The requested Objects can be filtered using an two URL parameters named
+     * mehId and secMehId.
+     * If these parameters are used, the filter only returns records that are
+     * convertable into one of these units.
+     * Records, convertable into the primary messeinheit (mehId) will have the
+     * attribute 'primary' set to true.
+     * Records convertable into the secondary messeinheit (secMehId) will have
+     * the attribute 'primary' set to false.
      * Example: http://example.com/messeinheit
      *
      * @return Response object containing all MessEinheit objects.
@@ -77,7 +90,52 @@ public class MesseinheitService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(MessEinheit.class, Strings.STAMM);
+        MultivaluedMap<String, String> params = info.getQueryParameters();
+        if (params.isEmpty()
+            || !params.containsKey("mehId")
+            || params.getFirst("mehId").equals("")
+        ) {
+            return defaultRepo.getAll(MessEinheit.class, Strings.STAMM);
+        }
+        String mehId = params.getFirst("mehId");
+
+
+        MessEinheit meh = defaultRepo.getByIdPlain(
+            MessEinheit.class, Integer.parseInt(mehId), Strings.STAMM);
+        MessEinheit secMeh = null;
+        if (params.containsKey("secMehId")) {
+            String secMehId = params.getFirst("secMehId");
+            secMeh = defaultRepo.getByIdPlain(
+                MessEinheit.class, Integer.parseInt(secMehId), Strings.STAMM);
+        }
+        List<MessEinheit> einheits =
+            new ArrayList<MessEinheit>(
+                meh.getMassEinheitUmrechnungZus().size());
+        meh.setPrimary(true);
+        einheits.add(meh);
+        if (secMeh != null) {
+            secMeh.setPrimary(false);
+            einheits.add(secMeh);
+        }
+        for (MassEinheitUmrechnung umrechnung
+            : meh.getMassEinheitUmrechnungZus()
+        ) {
+            MessEinheit einheit = umrechnung.getMehVon();
+            einheit.setPrimary(true);
+            einheits.add(einheit);
+        }
+        if (secMeh != null) {
+            secMeh.getMassEinheitUmrechnungZus().forEach(umrechnung -> {
+                MessEinheit einheit = umrechnung.getMehVon();
+                //If unit was not already added
+                if (!einheits.contains(einheit)) {
+                    //Add as secondary unit
+                    einheit.setPrimary(false);
+                    einheits.add(einheit);
+                }
+            });
+        }
+        return new Response(true, 200, einheits);
     }
 
     /**

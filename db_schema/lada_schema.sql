@@ -42,7 +42,7 @@ CREATE FUNCTION set_messung_status() RETURNS trigger
         VALUES ((SELECT mst_id
                      FROM land.probe
                      WHERE id = NEW.probe_id),
-                now(), '', NEW.id, 1)
+                now() AT TIME ZONE 'utc', '', NEW.id, 1)
         RETURNING id into status_id;
         UPDATE land.messung SET status = status_id where id = NEW.id;
         RETURN NEW;
@@ -53,7 +53,7 @@ CREATE FUNCTION update_letzte_aenderung() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN
-        NEW.letzte_aenderung = now();
+        NEW.letzte_aenderung = now() AT TIME ZONE 'utc';
         RETURN NEW;
     END;
 $$;
@@ -67,7 +67,7 @@ CREATE FUNCTION update_tree_modified() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN
-        NEW.tree_modified = now();
+        NEW.tree_modified = now() AT TIME ZONE 'utc';
         RETURN NEW;
     END;
 $$;
@@ -82,9 +82,9 @@ CREATE FUNCTION update_tree_modified_messung() RETURNS trigger
     AS $$
     BEGIN
         RAISE NOTICE 'messung is %',NEW.id;
-        NEW.tree_modified = now();
-        UPDATE land.messwert SET tree_modified = now() WHERE messungs_id = NEW.id;
-        UPDATE land.status_protokoll SET tree_modified = now() WHERE messungs_id = NEW.id;
+        NEW.tree_modified = now() AT TIME ZONE 'utc';
+        UPDATE land.messwert SET tree_modified = now() AT TIME ZONE 'utc' WHERE messungs_id = NEW.id;
+		UPDATE land.status_protokoll SET tree_modified = now() AT TIME ZONE 'utc' WHERE messungs_id = NEW.id;
         RETURN NEW;
     END;
 $$;
@@ -99,13 +99,35 @@ CREATE FUNCTION update_tree_modified_probe() RETURNS trigger
     AS $$
     BEGIN
         RAISE NOTICE 'probe is %',NEW.id;
-        NEW.tree_modified = now();
+        NEW.tree_modified = now() AT TIME ZONE 'utc';
         RAISE NOTICE 'updating other rows';
-        UPDATE land.messung SET tree_modified = now() WHERE probe_id = NEW.id;
-        UPDATE land.ortszuordnung SET tree_modified = now() WHERE probe_id = NEW.id;
-        UPDATE land.zusatz_wert SET tree_modified = now() WHERE probe_id = NEW.id;
+        UPDATE land.messung SET tree_modified = now() AT TIME ZONE 'utc' WHERE probe_id = NEW.id;
+        UPDATE land.ortszuordnung SET tree_modified = now() AT TIME ZONE 'utc' WHERE probe_id = NEW.id;
+        UPDATE land.zusatz_wert SET tree_modified = now() AT TIME ZONE 'utc' WHERE probe_id = NEW.id;
         RETURN NEW;
     END;
+$$;
+
+--
+-- Name: update_status_messung(); Type: FUNCTION; Schema: land; Owner: -
+--
+
+CREATE OR REPLACE FUNCTION update_status_messung() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        CASE
+            WHEN new.status_kombi in (2, 3, 4, 5, 6, 7, 8, 10, 11, 12)
+            THEN
+                UPDATE land.messung SET fertig = true, status = NEW.id WHERE id = NEW.messungs_id;
+            WHEN new.status_kombi in (1, 9, 13)
+            THEN
+                UPDATE land.messung SET fertig = false, status = NEW.id WHERE id = NEW.messungs_id;
+            ELSE
+                UPDATE land.messung SET status = NEW.id WHERE id = NEW.messungs_id;
+        END CASE;
+        RETURN NEW;
+    END
 $$;
 
 
@@ -183,8 +205,7 @@ CREATE TABLE messprogramm (
     kta_gruppe_id integer REFERENCES stamm.kta_gruppe,
     meh_id smallint REFERENCES stamm.mess_einheit,
     probenahmemenge character varying(90),
-    letzte_aenderung timestamp without time zone DEFAULT now() NOT NULL,
-    deleted boolean NOT NULL DEFAULT false,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc') NOT NULL,
     CHECK (probenintervall = 'J'
                AND teilintervall_von BETWEEN gueltig_von AND gueltig_bis
                AND teilintervall_bis BETWEEN gueltig_von AND gueltig_bis
@@ -237,7 +258,7 @@ CREATE TABLE messprogramm_mmt (
     messprogramm_id integer NOT NULL REFERENCES messprogramm ON DELETE CASCADE,
     mmt_id character varying(2) NOT NULL REFERENCES stamm.mess_methode,
     messgroessen integer[],
-    letzte_aenderung timestamp without time zone DEFAULT now()
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER letzte_aenderung_messprogramm_mmt BEFORE UPDATE ON messprogramm_mmt FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
@@ -265,14 +286,15 @@ CREATE TABLE probe (
     probeentnahme_beginn timestamp without time zone,
     probeentnahme_ende timestamp without time zone,
     mittelungsdauer bigint,
-    letzte_aenderung timestamp without time zone DEFAULT now(),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     erzeuger_id integer REFERENCES stamm.datensatz_erzeuger,
     probe_nehmer_id integer REFERENCES stamm.probenehmer,
     mpl_id integer REFERENCES stamm.messprogramm_kategorie,
     mpr_id integer REFERENCES messprogramm,
     solldatum_beginn timestamp without time zone,
     solldatum_ende timestamp without time zone,
-    tree_modified timestamp without time zone DEFAULT now(),
+    ursprungszeit timestamp without time zone,
+    tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     rei_progpunkt_grp_id integer REFERENCES stamm.rei_progpunkt_gruppe,
     kta_gruppe_id integer REFERENCES stamm.kta_gruppe,
     deleted boolean NOT NULL DEFAULT false,
@@ -295,7 +317,7 @@ ALTER TABLE probe ENABLE ROW LEVEL SECURITY;
 CREATE TABLE kommentar_p (
     id serial PRIMARY KEY,
     mst_id character varying(5) NOT NULL REFERENCES stamm.mess_stelle,
-    datum timestamp without time zone DEFAULT now(),
+    datum timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     text character varying(1024),
     probe_id integer NOT NULL REFERENCES probe ON DELETE CASCADE
 );
@@ -311,8 +333,8 @@ CREATE TABLE ortszuordnung (
     ort_id integer NOT NULL REFERENCES stamm.ort,
     ortszuordnung_typ character varying(1) REFERENCES stamm.ortszuordnung_typ,
     ortszusatztext character varying(100),
-    letzte_aenderung timestamp without time zone DEFAULT now(),
-    tree_modified timestamp without time zone DEFAULT now(),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     EXCLUDE (probe_id WITH =) WHERE (ortszuordnung_typ = 'E')
 );
 CREATE TRIGGER letzte_aenderung_ortszuordnung BEFORE UPDATE ON ortszuordnung FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
@@ -328,8 +350,8 @@ CREATE TABLE ortszuordnung_mp (
     ort_id integer NOT NULL REFERENCES stamm.ort,
     ortszuordnung_typ character varying(1) REFERENCES stamm.ortszuordnung_typ,
     ortszusatztext character varying(100),
-    letzte_aenderung timestamp without time zone DEFAULT now(),
-    tree_modified timestamp without time zone DEFAULT now(),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     EXCLUDE (messprogramm_id WITH =) WHERE (ortszuordnung_typ = 'E')
 );
 CREATE TRIGGER letzte_aenderung_ortszuordnung_mp BEFORE UPDATE ON ortszuordnung_mp FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
@@ -344,10 +366,10 @@ CREATE TABLE zusatz_wert (
     pzs_id character varying(3) NOT NULL REFERENCES stamm.proben_zusatz,
     messwert_pzs double precision,
     messfehler real,
-    letzte_aenderung timestamp without time zone DEFAULT now(),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     nwg_zu_messwert double precision,
     kleiner_als character varying(1),
-    tree_modified timestamp without time zone DEFAULT now(),
+    tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE (probe_id, pzs_id)
 );
 CREATE TRIGGER letzte_aenderung_zusatzwert BEFORE UPDATE ON zusatz_wert FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
@@ -368,9 +390,9 @@ CREATE TABLE messung (
     messzeitpunkt timestamp without time zone,
     fertig boolean DEFAULT false NOT NULL,
     status integer,
-    letzte_aenderung timestamp without time zone DEFAULT now(),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     geplant boolean DEFAULT false NOT NULL,
-    tree_modified timestamp without time zone DEFAULT now(),
+    tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE (id, ext_id),
     UNIQUE (id, nebenproben_nr)
 );
@@ -386,7 +408,7 @@ CREATE TRIGGER status_messung AFTER INSERT ON land.messung FOR EACH ROW EXECUTE 
 CREATE TABLE kommentar_m (
     id serial PRIMARY KEY,
     mst_id character varying(5) NOT NULL REFERENCES stamm.mess_stelle,
-    datum timestamp without time zone DEFAULT now(),
+    datum timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     text character varying(1024),
     messungs_id integer NOT NULL REFERENCES messung ON DELETE CASCADE
 );
@@ -406,8 +428,8 @@ CREATE TABLE messwert (
     nwg_zu_messwert double precision,
     meh_id smallint NOT NULL REFERENCES stamm.mess_einheit,
     grenzwertueberschreitung boolean DEFAULT false,
-    letzte_aenderung timestamp without time zone DEFAULT now(),
-    tree_modified timestamp without time zone DEFAULT now(),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE (messungs_id, messgroesse_id)
 );
 CREATE TRIGGER letzte_aenderung_messwert BEFORE UPDATE ON messwert FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
@@ -420,18 +442,37 @@ CREATE TRIGGER tree_modified_messwert BEFORE UPDATE ON messwert FOR EACH ROW EXE
 CREATE TABLE status_protokoll (
     id serial PRIMARY KEY,
     mst_id character varying(5) NOT NULL REFERENCES stamm.mess_stelle,
-    datum timestamp without time zone DEFAULT now(),
+    datum timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     text character varying(1024),
     messungs_id integer NOT NULL REFERENCES messung ON DELETE CASCADE,
     status_kombi integer NOT NULL REFERENCES stamm.status_kombi,
-    tree_modified timestamp without time zone DEFAULT now()
+    tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER tree_modified_status_protokoll BEFORE UPDATE ON status_protokoll FOR EACH ROW EXECUTE PROCEDURE update_tree_modified();
+CREATE TRIGGER update_messung_after_status_protokoll_created AFTER INSERT ON status_protokoll FOR EACH ROW EXECUTE PROCEDURE update_status_messung();
 
 ALTER TABLE ONLY messung
     ADD CONSTRAINT messung_status_protokoll_id_fkey FOREIGN KEY (status) REFERENCES status_protokoll(id);
 
-
+CREATE TABLE tagzuordnung
+(
+    id serial PRIMARY KEY,
+    probe_id integer,
+    messung_id integer,
+    tag_id integer,
+    datum timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    CONSTRAINT tagzuordnung_tag_fkey FOREIGN KEY (tag_id)
+        REFERENCES stamm.tag (id) MATCH SIMPLE
+        ON DELETE CASCADE,
+    CONSTRAINT tagzuordnung_probe_fkey FOREIGN KEY (probe_id)
+        REFERENCES land.probe (id) MATCH SIMPLE
+        ON DELETE CASCADE,
+    CONSTRAINT tagzuordnung_messung_fkey FOREIGN KEY (messung_id)
+        REFERENCES land.messung (id) MATCH SIMPLE
+        ON DELETE CASCADE,
+    UNIQUE (probe_id, tag_id),
+    UNIQUE (messung_id, tag_id)
+);
 --
 -- Name: messung_probe_id_idx; Type: INDEX; Schema: land; Owner: -; Tablespace:
 --
