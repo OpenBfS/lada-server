@@ -251,8 +251,7 @@ public class ProbeService {
     ) {
         for (int i = 0; i < proben.size(); i++) {
             if (id.equals(proben.get(i).getId())) {
-                entry.put("readonly", proben.get(i).isReadonly()
-                        || proben.get(i).isDeleted());
+                entry.put("readonly", proben.get(i).isReadonly());
                 entry.put("owner", proben.get(i).isOwner());
                 return;
             }
@@ -539,12 +538,6 @@ public class ProbeService {
         if (probe.getUmwId() == null || probe.getUmwId() == "") {
             factory.findUmweltId(probe);
         }
-
-        Probe dbProbe = repository.getByIdPlain(Probe.class, id, Strings.LAND);
-        if (dbProbe.isDeleted()) {
-            return new Response(false, 699, "Probe is deleted");
-        }
-
         Violation violation = validator.validate(probe);
         if (violation.hasErrors()) {
             Response response = new Response(false, 604, null);
@@ -600,24 +593,6 @@ public class ProbeService {
         ) {
             return new Response(false, 699, null);
         }
-
-        /* Check if probe has readonly messung objects */
-        QueryBuilder<Messung> messungBuilder = 
-                new QueryBuilder<Messung>(repository.entityManager(Strings.LAND), Messung.class);
-        messungBuilder.and("probeId", probeObj.getId());
-        List<Messung> messungResult = repository.filterPlain(messungBuilder.getQuery(), Strings.LAND);
-        boolean messungSuccess = true;
-        for (Messung messungObj: messungResult) {
-            Response messungResponse =  repository.update(messungObj, Strings.LAND);
-            if (messungResponse.getSuccess() == false) {
-                messungSuccess = false;
-            }
-        }
-
-        if (messungSuccess == false) {
-            return new Response(false, 699, "Readonly messung");
-        }
-
         /* Mark the probe object as deleted */
         Response response;
         try {
@@ -631,16 +606,17 @@ public class ProbeService {
 
         //Delete References
         if (response.getSuccess() == true) {
-            /* Mark messung objects as deleted, delete subobjects */
+            //TODO: Mark messung objects as deleted and delete subobjects
+            QueryBuilder<Messung> messungBuilder = 
+                new QueryBuilder<Messung>(repository.entityManager(Strings.LAND), Messung.class);
+            messungBuilder.and("probeId", probeObj.getId());
+            List<Messung> messungResult = repository.filterPlain(messungBuilder.getQuery(), Strings.LAND);
             for (Messung messungObj: messungResult) {
                 /* Delete the messung object*/
                 messungObj.setDeleted(true);
                 //TODO: delete references
                 Response messungResponse =  repository.update(messungObj, Strings.LAND);
-                if (messungResponse.getSuccess() == false) {
-                    messungSuccess = false;
-                }
-
+    
                 if (messungResponse.getSuccess()) {
                     //Delete Messwert objects
                     QueryBuilder<Messwert> messwertBuilder =
@@ -650,7 +626,7 @@ public class ProbeService {
                     for (Messwert wert: messwertResult) {
                         repository.delete(wert, Strings.LAND);
                     }
-
+    
                     //Delete kommentar objects
                     QueryBuilder<KommentarM> kommentarMBuilder =
                         new QueryBuilder<KommentarM>(repository.entityManager(Strings.LAND), KommentarM.class);
@@ -661,7 +637,6 @@ public class ProbeService {
                     }
                 }
             }
-
 
             //Delete Ortszuordnung references
             QueryBuilder<Ortszuordnung> ortszuordnungbuilder =
