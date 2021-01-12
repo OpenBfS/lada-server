@@ -95,8 +95,6 @@ public class Probe implements Serializable {
     @Column(name="kta_gruppe_id")
     private Integer ktaGruppeId;
 
-    private boolean deleted;
-
     @Transient
     private boolean readonly;
 
@@ -304,14 +302,6 @@ public class Probe implements Serializable {
 
     public void setKtaGruppeId(Integer ktaGruppeId) {
         this.ktaGruppeId = ktaGruppeId;
-    }
-
-    public Boolean isDeleted() {
-        return this.deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public boolean isReadonly() {

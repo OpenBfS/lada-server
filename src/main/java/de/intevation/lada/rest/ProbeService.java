@@ -586,10 +586,9 @@ public class ProbeService {
         ) {
             return new Response(false, 699, null);
         }
-        /* Mark the probe object as deleted */
+        /* Delete the probe object*/
         try {
-            probeObj.setDeleted(true);
-            Response response = repository.update(probeObj, Strings.LAND);
+            Response response = repository.delete(probeObj, Strings.LAND);
             return response;
         }
         catch(IllegalArgumentException | EJBTransactionRolledbackException |

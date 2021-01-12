@@ -111,8 +111,6 @@ public class Messprogramm implements Serializable {
     @Column(name="meh_id")
     private Integer mehId;
 
-    private boolean deleted;
-
     @Column(name="probenahmemenge")
     private String probenahmeMenge;
 
@@ -320,14 +318,6 @@ public class Messprogramm implements Serializable {
 
     public void setMehId(Integer mehId) {
         this.mehId = mehId;
-    }
-
-    public Boolean isDeleted() {
-        return this.deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public String getProbenahmeMenge() {
