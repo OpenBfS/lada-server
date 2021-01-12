@@ -171,7 +171,7 @@ COPY stamm.grid_column (id, base_query, name, data_index, "position", filter, da
 125	1	Anlage-Beschr	anlagebeschr	25	\N	1
 126	1	REI-Prog-PG	reiprogpg	26	\N	1
 127	1	REI-Prog-PG-Beschr	reiprogpgbeschr	27	\N	1
-128	1	Gelöscht	deleted	28	36	11
+128	1	Deleted	deleted	28	36	11
 1101	11	ID	id	1	\N	5
 1102	11	interne PID	probeId	2	\N	4
 1103	11	HP-Nr	hpNr	3	2	1
@@ -215,7 +215,7 @@ COPY stamm.grid_column (id, base_query, name, data_index, "position", filter, da
 1141	11	Status	statusK	41	34	24
 1142	11	Umweltbereich	umw	42	4	12
 1143	11	Netzbetreiber	netzbetreiber	43	13	18
-1144	11	Gelöscht	deleted	44	37	11
+1144	11	Deleted	deleted	44	37	11
 2101	21	MPR-ID	mpNr	1	\N	8
 2102	21	Netz-ID	netzId 	2	\N	18
 2103	21	MST/Labor ID	mstLaborId	3	\N	10
@@ -233,7 +233,7 @@ COPY stamm.grid_column (id, base_query, name, data_index, "position", filter, da
 2115	21	MST/Labor	mstLabor	15	27	10
 2116	21	Aktiv	aktiv	16	\N	11
 2117	21	Netzbetreiber	netzbetreiber 	17	13	18
-2118	21	Gelöscht	deleted	18	38	11
+2118	21	Deleted	deleted	18	38	11
 3101	31	ID	id	1	\N	6
 3102	31	Netz-ID	netzId	2	\N	18
 3103	31	Ort-ID	ortId	3	11	1
