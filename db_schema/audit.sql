@@ -203,7 +203,5 @@ SELECT audit_table('kommentar_m', true, false, '{id, messungs_id, tree_modified,
 SELECT audit_table('zusatz_wert', true, false, '{id, probe_id, tree_modified, letzte_aenderung}'::text[]);
 SELECT audit_table('ortszuordnung', true, false, '{id, probe_id, tree_modified, letzte_aenderung}'::text[]);
 SELECT audit_table('messprogramm', true, false, '{id, tree_modified, letzte_aenderung}'::text[]);
-SELECT audit_table('messprogramm_mmt', true, false, '{id, messprogramm_id, tree_modified, letzte_aenderung}'::text[]);
-
 
 SET search_path TO public;
