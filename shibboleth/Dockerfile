@@ -6,7 +6,7 @@ ENV jetty_version=9.4.14.v20181114 \
     BASE_DIR=/usr/local/lada_shib \
     JETTY_HOME=/usr/local/lada_shib/jetty-home \
     JETTY_BASE=/usr/local/lada_shib/jetty-base \
-    shib_idp_version=3.4.3 \
+    shib_idp_version=3.4.8 \
     JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
 
 RUN yum -y update && \
