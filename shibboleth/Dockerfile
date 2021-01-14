@@ -11,7 +11,7 @@ ENV jetty_version=9.4.14.v20181114 \
 
 RUN yum -y update && \
     yum -y install yum-plugin-ovl && \
-    yum -y install wget tar which java-1.8.0-openjdk-devel epel-release \
+    yum -y install curl wget tar which java-1.8.0-openjdk-devel epel-release \
                    389-ds-base 389-adminutil && \
     yum -y clean all
 
