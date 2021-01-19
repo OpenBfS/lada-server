@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
@@ -28,30 +28,30 @@ import org.opengis.referencing.operation.TransformException;
 public class KdaUtil {
     ObjectMapper builder;
     public ObjectNode transform(int kdaFrom, int kdaTo, String x, String y) {
-        x = x.replace(',','.');
-        y = y.replace(',','.');
+        x = x.replace(',', '.');
+        y = y.replace(',', '.');
         builder = new ObjectMapper();
         Transform t;
         switch (kdaFrom) {
-            case 1: t = this.new Transform_1(); break;
-            case 2: t = this.new Transform_2(); break;
-            case 4: t = this.new Transform_4(); break;
-            case 5: t = this.new Transform_5(); break;
-            case 6: t = this.new Transform_6(); break;
-            case 8: t = this.new Transform_8(); break;
+            case 1: t = this.new Transform1(); break;
+            case 2: t = this.new Transform2(); break;
+            case 4: t = this.new Transform4(); break;
+            case 5: t = this.new Transform5(); break;
+            case 6: t = this.new Transform6(); break;
+            case 8: t = this.new Transform8(); break;
             default: return null;
         }
         return t.transform(kdaTo, x, y);
     }
 
     private interface Transform {
-        public ObjectNode transform(int to, String x, String y);
-        public ObjectNode transformTo1(String x, String y);
-        public ObjectNode transformTo2(String x, String y);
-        public ObjectNode transformTo4(String x, String y);
-        public ObjectNode transformTo5(String x, String y);
-        public ObjectNode transformTo6(String x, String y);
-        public ObjectNode transformTo8(String x, String y);
+        ObjectNode transform(int to, String x, String y);
+        ObjectNode transformTo1(String x, String y);
+        ObjectNode transformTo2(String x, String y);
+        ObjectNode transformTo4(String x, String y);
+        ObjectNode transformTo5(String x, String y);
+        ObjectNode transformTo6(String x, String y);
+        ObjectNode transformTo8(String x, String y);
     }
 
     private abstract class AbstractTransform implements Transform {
@@ -63,12 +63,12 @@ public class KdaUtil {
                 case 5: return transformTo5(x, y);
                 case 6: return transformTo6(x, y);
                 case 8: return transformTo8(x, y);
+                default: return null;
             }
-            return null;
         }
     }
 
-    private class Transform_1 extends AbstractTransform {
+    private class Transform1 extends AbstractTransform {
         @Override
         public ObjectNode transformTo1(String x, String y) {
             ObjectNode response = builder.createObjectNode();
@@ -123,7 +123,9 @@ public class KdaUtil {
             if (coord == null) {
                 return null;
             }
-            coord.put("x", epsgWGS.substring(epsgWGS.length()-2, epsgWGS.length())+coord.get("x").asText());
+            coord.put("x", epsgWGS.substring(
+                epsgWGS.length() - 2,
+                epsgWGS.length()) + coord.get("x").asText());
             String coordX = coord.get("x").asText();
             String coordY = coord.get("y").asText();
             int maxLenX = coordX.length() - coordX.indexOf(".");
@@ -182,14 +184,15 @@ public class KdaUtil {
             int precY = maxLenY < 3 ? maxLenY : 3;
             coordX = coordX.substring(0, coordX.indexOf(".") + precX);
             coordY = coordY.substring(0, coordY.indexOf(".") + precY);
-            String zone = epsgEd50.substring(epsgEd50.length() -2, epsgEd50.length());
-            coord.put("x", zone+coordX);
+            String zone = epsgEd50.substring(
+                epsgEd50.length() - 2, epsgEd50.length());
+            coord.put("x", zone + coordX);
             coord.put("y", coordY);
             return coord;
         }
     }
 
-    private class Transform_2 extends AbstractTransform {
+    private class Transform2 extends AbstractTransform {
         @Override
         public ObjectNode transformTo1(String x, String y) {
             ObjectNode degrees = arcToDegree(x, y);
@@ -244,7 +247,9 @@ public class KdaUtil {
             if (coord == null) {
                 return null;
             }
-            coord.put("x", epsgWgs.substring(epsgWgs.length()-2, epsgWgs.length())+coord.get("x").asText());
+            coord.put("x", epsgWgs.substring(
+                epsgWgs.length() - 2,
+                epsgWgs.length()) + coord.get("x").asText());
             String coordX = coord.get("x").asText();
             String coordY = coord.get("y").asText();
             int maxLenX = coordX.length() - coordX.indexOf(".");
@@ -305,14 +310,15 @@ public class KdaUtil {
             int precY = maxLenY < 3 ? maxLenY : 3;
             coordX = coordX.substring(0, coordX.indexOf(".") + precX);
             coordY = coordY.substring(0, coordY.indexOf(".") + precY);
-            String zone = epsgEd50.substring(epsgEd50.length() -2, epsgEd50.length());
-            coord.put("x", zone+coordX);
+            String zone = epsgEd50.substring(
+                epsgEd50.length() - 2, epsgEd50.length());
+            coord.put("x", zone + coordX);
             coord.put("y", coordY);
             return coord;
         }
     }
 
-    private class Transform_4 extends AbstractTransform {
+    private class Transform4 extends AbstractTransform {
 
         @Override
         public ObjectNode transformTo1(String x, String y) {
@@ -353,12 +359,15 @@ public class KdaUtil {
         public ObjectNode transformTo5(String x, String y) {
             x = x.replaceAll(",", ".");
             y = y.replaceAll(",", ".");
-            String epsgWgs = getWgsUtmEpsg(Double.valueOf(x), Double.valueOf(y));
+            String epsgWgs = getWgsUtmEpsg(
+                Double.valueOf(x), Double.valueOf(y));
             ObjectNode coord = jtsTransform("EPSG:4326", epsgWgs, y, x);
             if (coord == null) {
                 return null;
             }
-            coord.put("x", epsgWgs.substring(epsgWgs.length()-2, epsgWgs.length())+coord.get("x").asText());
+            coord.put("x", epsgWgs.substring(
+                epsgWgs.length() - 2,
+                epsgWgs.length()) + coord.get("x").asText());
             String coordX = coord.get("x").asText();
             String coordY = coord.get("y").asText();
             int maxLenX = coordX.length() - coordX.indexOf(".");
@@ -410,14 +419,15 @@ public class KdaUtil {
             int precY = maxLenY < 3 ? maxLenY : 3;
             coordX = coordX.substring(0, coordX.indexOf(".") + precX);
             coordY = coordY.substring(0, coordY.indexOf(".") + precY);
-            String zone = epsgEd50.substring(epsgEd50.length() -2, epsgEd50.length());
-            coord.put("x", zone+coordX);
+            String zone = epsgEd50.substring(
+                epsgEd50.length() - 2, epsgEd50.length());
+            coord.put("x", zone + coordX);
             coord.put("y", coordY);
             return coord;
         }
     }
 
-    private class Transform_5 extends AbstractTransform {
+    private class Transform5 extends AbstractTransform {
 
         @Override
         public ObjectNode transformTo1(String x, String y) {
@@ -503,7 +513,8 @@ public class KdaUtil {
             if (coords4326 == null) {
                 return null;
             }
-            String epsgEd50 = getEpsgForEd50UtmFromDegree(coords4326.get("y").asText());
+            String epsgEd50 =
+                getEpsgForEd50UtmFromDegree(coords4326.get("y").asText());
             ObjectNode coords = jtsTransform(epsgWgs, epsgEd50, x, y);
             if (coords == null) {
                 return null;
@@ -516,14 +527,15 @@ public class KdaUtil {
             int precY = maxLenY < 7 ? maxLenY : 7;
             coordX = coordX.substring(0, coordX.indexOf(".") + precX);
             coordY = coordY.substring(0, coordY.indexOf(".") + precY);
-            String zone = epsgEd50.substring(epsgEd50.length() -2, epsgEd50.length());
-            coords.put("x", zone+coordX);
+            String zone = epsgEd50.substring(
+                epsgEd50.length() - 2, epsgEd50.length());
+            coords.put("x", zone + coordX);
             coords.put("y", coordY);
             return coords;
         }
     }
 
-    private class Transform_6 extends AbstractTransform {
+    private class Transform6 extends AbstractTransform {
 
         @Override
         public ObjectNode transformTo1(String x, String y) {
@@ -629,7 +641,7 @@ public class KdaUtil {
         }
     }
 
-    private class Transform_8 extends AbstractTransform {
+    private class Transform8 extends AbstractTransform {
 
         @Override
         public ObjectNode transformTo1(String x, String y) {
@@ -699,7 +711,8 @@ public class KdaUtil {
             }
             String x1 = x.substring(2, x.length());
             ObjectNode coords4326 = jtsTransform(epsgEd50, "EPSG:4326", x1, y);
-            String epsgWgs = getEpsgForWgsUtmFromDegree(coords4326.get("y").asText());
+            String epsgWgs = getEpsgForWgsUtmFromDegree(
+                coords4326.get("y").asText());
             ObjectNode coords = jtsTransform(epsgEd50, epsgWgs, y, x1);
             if (coords == null) {
                 return null;
@@ -712,8 +725,9 @@ public class KdaUtil {
             int precY = maxLenY < 7 ? maxLenY : 7;
             coordX = coordX.substring(0, coordX.indexOf(".") + precX);
             coordY = coordY.substring(0, coordY.indexOf(".") + precY);
-            String zone = epsgWgs.substring(epsgWgs.length() -2, epsgWgs.length());
-            coords.put("x", zone+coordY);
+            String zone = epsgWgs.substring(
+                epsgWgs.length() - 2, epsgWgs.length());
+            coords.put("x", zone + coordY);
             coords.put("y", coordX);
             return coords;
         }
@@ -755,7 +769,12 @@ public class KdaUtil {
 
     }
 
-    private ObjectNode jtsTransform(String epsgFrom, String epsgTo, String x, String y) {
+    private ObjectNode jtsTransform(
+        String epsgFrom,
+        String epsgTo,
+        String x,
+        String y
+    ) {
         try {
             CoordinateReferenceSystem src = CRS.decode(epsgFrom);
             CoordinateReferenceSystem target = CRS.decode(epsgTo);
@@ -786,33 +805,31 @@ public class KdaUtil {
         double wsY = 0;
         try {
             if (xParts.length == 2) {
-                wsX = Double.parseDouble("0."+xParts[1])*factorX;
+                wsX = Double.parseDouble("0." + xParts[1]) * factorX;
             }
             if (yParts.length == 2) {
-                wsY = Double.parseDouble("0."+yParts[1])*factorY;
+                wsY = Double.parseDouble("0." + yParts[1]) * factorY;
             }
         } catch (NumberFormatException nfe) {
             return null;
         }
 
-        String xRes = xParts[0] +
-            String.format("%02d", (int)Math.floor(wsX/60)) +
-            String.format("%02.5f", wsX%60);
-        String yRes = yParts[0] +
-            String.format("%02d", (int)Math.floor(wsY/60)) +
-            String.format("%02.5f", wsY%60);
+        String xRes = xParts[0]
+            + String.format("%02d", (int) Math.floor(wsX / 60))
+            + String.format("%02.5f", wsX % 60);
+        String yRes = yParts[0]
+            + String.format("%02d", (int) Math.floor(wsY / 60))
+            + String.format("%02.5f", wsY % 60);
         xRes = xRes.replaceAll("\\.", ",");
         yRes = yRes.replaceAll("\\.", ",");
         if (xParts[0].startsWith("-")) {
             xRes = xRes.replace("-", "W");
-        }
-        else {
+        } else {
             xRes = "E" + xRes;
         }
         if (yParts[0].startsWith("-")) {
             yRes = yRes.replace("-", "S");
-        }
-        else {
+        } else {
             yRes = "N" + yRes;
         }
         ObjectNode response = builder.createObjectNode();
@@ -838,7 +855,8 @@ public class KdaUtil {
         try {
             if (x.contains(",")) {
                 // with decimal separator
-                Pattern p = Pattern.compile("([+|-|W|E]?)(\\d{1,3})(\\d{2})(\\d{2}),(\\d{1,5})([W|E]?)");
+                Pattern p = Pattern.compile(
+                    "([+|-|W|E]?)(\\d{1,3})(\\d{2})(\\d{2}),(\\d{1,5})([W|E]?)");
                 Matcher m = p.matcher(x);
                 m.matches();
                 xPrefix = m.group(1);
@@ -846,21 +864,24 @@ public class KdaUtil {
                 xMin = Integer.valueOf(m.group(3));
                 xSec = Double.valueOf(m.group(4) + "." + m.group(5));
                 xSuffix = m.group(6);
-            }
-            else {
+            } else {
                 //Without decimal separator, can include leading zeros
-                Pattern p = Pattern.compile("([+|-|W|E]?)(\\d{3})(\\d{0,2})(\\d{0,2})([W|E]?)");
+                Pattern p = Pattern.compile(
+                    "([+|-|W|E]?)(\\d{3})(\\d{0,2})(\\d{0,2})([W|E]?)");
                 Matcher m = p.matcher(x);
                 m.matches();
                 xPrefix = m.group(1);
                 xDegree = Integer.valueOf(m.group(2));
-                xMin = Integer.valueOf(!m.group(3).isEmpty()? m.group(3): "0");
-                xSec = Double.valueOf(!m.group(4).isEmpty()? m.group(4): "0.0");
+                xMin = Integer.valueOf(
+                    !m.group(3).isEmpty() ? m.group(3) : "0");
+                xSec = Double.valueOf(
+                    !m.group(4).isEmpty() ? m.group(4) : "0.0");
                 xSuffix = m.group(5);
             }
-            if(y.contains(",")) {
+            if (y.contains(",")) {
                 // with decimal separator
-                Pattern p = Pattern.compile("([+|-|N|S]?)(\\d{1,2})(\\d{2})(\\d{2}),(\\d{1,5})([N|S]?)");
+                Pattern p = Pattern.compile(
+                    "([+|-|N|S]?)(\\d{1,2})(\\d{2})(\\d{2}),(\\d{1,5})([N|S]?)");
                 Matcher m = p.matcher(y);
                 m.matches();
                 yPrefix = m.group(1);
@@ -868,32 +889,35 @@ public class KdaUtil {
                 yMin = Integer.valueOf(m.group(3));
                 ySec = Double.valueOf(m.group(4) + "." + m.group(5));
                 ySuffix = m.group(6);
-            }
-            else {
+            } else {
                 //Without decimal separator, can include leading zeros
-                Pattern p = Pattern.compile("([+|-|N|S]?)(\\d{2})(\\d{0,2})(\\d{0,2})([N|S]?)");
+                Pattern p = Pattern.compile(
+                    "([+|-|N|S]?)(\\d{2})(\\d{0,2})(\\d{0,2})([N|S]?)");
                 Matcher m = p.matcher(y);
                 m.matches();
                 yPrefix = m.group(1);
                 yDegree = Integer.valueOf(m.group(2));
-                yMin = Integer.valueOf(!m.group(3).isEmpty()? m.group(3): "0");
-                ySec = Double.valueOf(!m.group(4).isEmpty()? m.group(4): "0.0");
+                yMin = Integer.valueOf(
+                    !m.group(3).isEmpty() ? m.group(3) : "0");
+                ySec = Double.valueOf(
+                    !m.group(4).isEmpty() ? m.group(4) : "0.0");
                 ySuffix = m.group(5);
             }
-        }
-        catch(IllegalStateException e) {
+        } catch (IllegalStateException e) {
             return null;
         }
 
-        double ddX = xDegree + ((xMin/60d) + (xSec/3600d));
-        double ddY = yDegree + ((yMin/60d) + (ySec/3600d));
+        double ddX = xDegree + ((xMin / 60d) + (xSec / 3600d));
+        double ddY = yDegree + ((yMin / 60d) + (ySec / 3600d));
 
-        if ((xPrefix != null && (xPrefix.equals("-") || xPrefix.equals("W"))) ||
-            (xSuffix != null && xSuffix.equals("W"))) {
+        if ((xPrefix != null && (xPrefix.equals("-") || xPrefix.equals("W")))
+            || (xSuffix != null && xSuffix.equals("W"))
+        ) {
             ddX = ddX * -1;
         }
-        if ((yPrefix != null && (yPrefix.equals("-") || yPrefix.equals("S"))) ||
-            (ySuffix != null && (ySuffix.equals("S")))) {
+        if ((yPrefix != null && (yPrefix.equals("-") || yPrefix.equals("S")))
+            || (ySuffix != null && (ySuffix.equals("S")))
+        ) {
             ddY = ddY * -1;
         }
         ObjectNode response = builder.createObjectNode();
@@ -906,23 +930,23 @@ public class KdaUtil {
         int pref;
         if (y > 0) {
             pref = 32600;
-        }
-        else {
+        } else {
             pref = 32700;
         }
-        int zone = (int)Math.floor((x+180)/6)+1;
+        int zone = (int) Math.floor((x + 180) / 6) + 1;
         zone += pref;
         return "EPSG:" + zone;
     }
 
     private String getGkEpsg(double x, double y) {
         int code = 31460;
-        int ref = (int)Math.round(x/3);
-        switch(ref) {
-            case 2: code+=6;break;
-            case 3: code+=7;break;
-            case 4: code+=8;break;
-            case 5: code+=9;break;
+        int ref = (int) Math.round(x / 3);
+        switch (ref) {
+            case 2: code += 6; break;
+            case 3: code += 7; break;
+            case 4: code += 8; break;
+            case 5: code += 9; break;
+            default: break;
         }
         return "EPSG:" + code;
     }
@@ -931,8 +955,9 @@ public class KdaUtil {
         String epsg = "EPSG:326";
         x = x.replaceAll(",", ".");
         String part = x.split("\\.")[0];
-        String zone = part.length() == 7 ? ("0" + part.substring(0, 1)) :
-            part.substring(0, 2);
+        String zone = part.length() == 7
+            ? ("0" + part.substring(0, 1))
+            : part.substring(0, 2);
         return epsg + zone;
     }
 
@@ -941,19 +966,27 @@ public class KdaUtil {
         Double xCoord;
         try {
             xCoord = Double.valueOf(x);
-        }
-        catch(NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             return "";
         }
         String zone;
-        if (xCoord < -12 && xCoord > -18) zone = "28";
-        else if (xCoord <= -6 && xCoord > -12) zone = "29";
-        else if (xCoord <= 0 && xCoord > -6) zone = "30";
-        else if (xCoord <= 6 && xCoord > 0) zone = "31";
-        else if (xCoord <= 12 && xCoord > 6) zone = "32";
-        else if (xCoord <= 18 && xCoord > 12) zone = "33";
-        else if (xCoord <= 24 && xCoord > 18) zone = "34";
-        else return "";
+        if (xCoord < -12 && xCoord > -18) {
+            zone = "28";
+        } else if (xCoord <= -6 && xCoord > -12) {
+            zone = "29";
+        } else if (xCoord <= 0 && xCoord > -6) {
+            zone = "30";
+        } else if (xCoord <= 6 && xCoord > 0) {
+            zone = "31";
+        } else if (xCoord <= 12 && xCoord > 6) {
+            zone = "32";
+        } else if (xCoord <= 18 && xCoord > 12) {
+            zone = "33";
+        } else if (xCoord <= 24 && xCoord > 18) {
+            zone = "34";
+        } else {
+            return "";
+        }
         return "EPSG:326" + zone;
     }
 
@@ -967,15 +1000,14 @@ public class KdaUtil {
         try {
             Integer iZone = Integer.valueOf(zone);
             String epsg = "EPSG:3146";
-            switch(iZone) {
+            switch (iZone) {
                 case 2: return epsg + "6";
                 case 3: return epsg + "7";
                 case 4: return epsg + "8";
                 case 5: return epsg + "9";
                 default: return "";
             }
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return "";
         }
     }
@@ -983,8 +1015,8 @@ public class KdaUtil {
     private String getEpsgForEd50Utm(String x) {
         String epsg = "EPSG:230";
         String part = x.split(",")[0];
-        String zone = part.length() == 7 ? ("0" + part.substring(0, 1)) :
-            part.substring(0, 2);
+        String zone = part.length() == 7 ? ("0" + part.substring(0, 1))
+            : part.substring(0, 2);
         return epsg + zone;
     }
 
@@ -993,19 +1025,27 @@ public class KdaUtil {
         Double xCoord;
         try {
             xCoord = Double.valueOf(x);
-        }
-        catch(NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             return "";
         }
         String zone;
-        if (xCoord <= -12 && xCoord > -18) zone = "28";
-        else if (xCoord <= -6 && xCoord > -12) zone = "29";
-        else if (xCoord <= 0 && xCoord > -6) zone = "30";
-        else if (xCoord <= 6 && xCoord > 0) zone = "31";
-        else if (xCoord <= 12 && xCoord > 6) zone = "32";
-        else if (xCoord <= 18 && xCoord > 12) zone = "33";
-        else if (xCoord <= 24 && xCoord > 18) zone = "34";
-        else return "";
+        if (xCoord <= -12 && xCoord > -18) {
+            zone = "28";
+        } else if (xCoord <= -6 && xCoord > -12) {
+            zone = "29";
+        } else if (xCoord <= 0 && xCoord > -6) {
+            zone = "30";
+        } else if (xCoord <= 6 && xCoord > 0) {
+            zone = "31";
+        } else if (xCoord <= 12 && xCoord > 6) {
+            zone = "32";
+        } else if (xCoord <= 18 && xCoord > 12) {
+            zone = "33";
+        } else if (xCoord <= 24 && xCoord > 18) {
+            zone = "34";
+        } else {
+            return "";
+        }
 
         return "EPSG:230" + zone;
     }
