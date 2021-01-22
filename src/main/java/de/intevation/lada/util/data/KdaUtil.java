@@ -26,6 +26,14 @@ import org.opengis.referencing.operation.TransformException;
  *
  */
 public class KdaUtil {
+
+    /*
+     * UTM zone number with given prefix gives the EPSG code for CRS
+     * 'ETRS89 / UTM zone <zone number>N'
+     */
+    private static final String EPSG_UTM_ETRS89_PREFIX = "EPSG:258";
+
+
     ObjectMapper builder;
     public ObjectNode transform(int kdaFrom, int kdaTo, String x, String y) {
         x = x.replace(',', '.');
@@ -780,6 +788,10 @@ public class KdaUtil {
 
     }
 
+    /*
+     * Transform given coordinates from epsgFrom to epsgTo.
+     * Returns null in case a given EPSG code is invalid.
+     */
     private ObjectNode jtsTransform(
         String epsgFrom,
         String epsgTo,
@@ -1062,16 +1074,17 @@ public class KdaUtil {
         return "EPSG:230" + zone;
     }
 
+    /*
+     * Get EPSG code for CRS 'ETRS89 / UTM zone <zone number>N'
+     * from easting with zone prefix for use with jtsTransform().
+     * Does not guarantee to return a valid EPSG code.
+     */
     private String getEpsgForEtrs89(String x) {
-        String epsg = "EPSG:258";
         x = x.replaceAll(",", ".");
         String part = x.split("\\.")[0];
         String zone = part.length() == 7 ? ("0" + part.substring(0, 1)) :
             part.substring(0, 2);
-        if (Integer.parseInt(zone) < 27 || Integer.parseInt(zone) > 38) {
-            return "";
-        }
-        return epsg + zone;
+        return EPSG_UTM_ETRS89_PREFIX + zone;
     }
 
     private String getEpsgForEtrs89FromDegree(String x) {
