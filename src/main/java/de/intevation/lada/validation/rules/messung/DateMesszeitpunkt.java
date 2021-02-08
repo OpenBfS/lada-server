@@ -9,6 +9,7 @@ package de.intevation.lada.validation.rules.messung;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -17,6 +18,7 @@ import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
+import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
@@ -31,37 +33,53 @@ import de.intevation.lada.validation.rules.Rule;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @ValidationRule("Messung")
-public class Date implements Rule {
+public class DateMesszeitpunkt implements Rule {
 
     @Inject
-    @RepositoryConfig(type=RepositoryType.RO)
+    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Override
     public Violation execute(Object object) {
-        Messung messung = (Messung)object;
+        Messung messung = (Messung) object;
         Integer probeId = messung.getProbeId();
-        Response response = repository.getById(Probe.class, probeId, Strings.LAND);
+        Response response =
+            repository.getById(Probe.class, probeId, Strings.LAND);
         Probe probe = (Probe) response.getData();
 
         if (probe == null) {
             Map<String, Integer> errors = new HashMap<String, Integer>();
-            errors.put("lprobe", 604);
+            errors.put("lprobe", StatusCodes.ERROR_VALIDATION);
             return null;
         }
 
-        if (messung.getMesszeitpunkt() == null) return null;
+        if (messung.getMesszeitpunkt() == null) {
+            return null;
+        }
 
-        if (probe.getProbeentnahmeBeginn() == null && probe.getProbeentnahmeEnde() == null) return null;
+        if (messung.getMesszeitpunkt().after(new Date())) {
+            Violation violation = new Violation();
+            violation.addWarning("messzeitpunkt", StatusCodes.DATE_IN_FUTURE);
+            return violation;
+        }
 
-        if ( (probe.getProbeentnahmeBeginn() != null && probe.getProbeentnahmeBeginn().after(messung.getMesszeitpunkt()) ||
-            probe.getProbeentnahmeEnde() != null && probe.getProbeentnahmeEnde().after(messung.getMesszeitpunkt()))
-              && (probe.getProbenartId()!=null && ( probe.getProbenartId() == 3 || probe.getProbenartId() == 9))
+        if (probe.getProbeentnahmeBeginn() == null
+            && probe.getProbeentnahmeEnde() == null) {
+            return null;
+        }
+
+        if ((probe.getProbeentnahmeBeginn() != null
+            && probe.getProbeentnahmeBeginn().after(messung.getMesszeitpunkt())
+            || probe.getProbeentnahmeEnde() != null
+            && probe.getProbeentnahmeEnde().after(messung.getMesszeitpunkt()))
+            && (probe.getProbenartId() != null
+                && (probe.getProbenartId() == 3
+                    || probe.getProbenartId() == 9))
         ) {
             Violation violation = new Violation();
             violation.addWarning(
                 "messzeitpunkt#" + messung.getNebenprobenNr(),
-                632);
+                StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
         return null;

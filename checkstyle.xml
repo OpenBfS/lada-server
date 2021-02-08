@@ -24,9 +24,7 @@ Maven Checkstyle plugin. Some design related checks where removed.
 
   <!-- Checks whether files end with a new line.                        -->
   <!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
-  <module name="NewlineAtEndOfFile">
-    <property name="severity" value="warning"/>
-  </module>
+  <module name="NewlineAtEndOfFile"/>
 
   <!-- Checks that property files contain the same keys.         -->
   <!-- See http://checkstyle.sf.net/config_misc.html#Translation -->
@@ -42,7 +40,6 @@ Maven Checkstyle plugin. Some design related checks where removed.
   </module>
 
   <module name="FileTabCharacter">
-    <property name="severity" value="warning"/>
     <property name="eachLine" value="true"/>
   </module>
 
@@ -126,9 +123,7 @@ Maven Checkstyle plugin. Some design related checks where removed.
     </module>
     <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
     <module name="RedundantImport"/>
-    <module name="UnusedImports">
-      <property name="severity" value="warning"/>
-    </module>
+    <module name="UnusedImports"/>
 
 
     <!-- Checks for Size Violations.                    -->
@@ -182,15 +177,11 @@ Maven Checkstyle plugin. Some design related checks where removed.
     <!-- Checks for blocks. You know, those {}'s         -->
     <!-- See http://checkstyle.sf.net/config_blocks.html -->
     <module name="AvoidNestedBlocks"/>
-    <module name="EmptyBlock">
-      <property name="severity" value="warning"/>
-    </module>
+    <module name="EmptyBlock"/>
     <module name="LeftCurly">
       <property name="severity" value="warning"/>
     </module>
-    <module name="NeedBraces">
-      <property name="severity" value="warning"/>
-    </module>
+    <module name="NeedBraces"/>
     <module name="RightCurly">
       <property name="severity" value="warning"/>
     </module>
@@ -218,15 +209,11 @@ Maven Checkstyle plugin. Some design related checks where removed.
       <property name="constantWaiverParentToken" value="ASSIGN,ARRAY_INIT,EXPR,
       UNARY_PLUS, UNARY_MINUS, TYPECAST, ELIST, DIV, PLUS "/>
     </module>
-    <module name="MissingSwitchDefault">
-      <property name="severity" value="warning"/>
-    </module>
+    <module name="MissingSwitchDefault"/>
     <module name="SimplifyBooleanExpression">
       <property name="severity" value="warning"/>
     </module>
-    <module name="SimplifyBooleanReturn">
-      <property name="severity" value="warning"/>
-    </module>
+    <module name="SimplifyBooleanReturn"/>
 
     <!-- Checks for class design                         -->
     <!-- See http://checkstyle.sf.net/config_design.html -->

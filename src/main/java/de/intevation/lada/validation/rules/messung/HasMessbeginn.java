@@ -5,33 +5,32 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.validation.rules.probe;
+package de.intevation.lada.validation.rules.messung;
 
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
 
 /**
- * Validation rule for probe.
- * Validates if the probe has a "umwelt bereich".
+ * Validation rule for messung.
+ * Validates if the messung has a "messbeginn".
  *
- * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
+ *
  */
-@ValidationRule("Probe")
-public class HasUmwelt implements Rule {
+@ValidationRule("Messung")
+public class HasMessbeginn implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Probe probe = (Probe) object;
-        if (probe.getUmwId() == null
-            || probe.getUmwId().equals("")
-        ) {
+        Messung messung = (Messung) object;
+        if (messung.getMesszeitpunkt() == null) {
             Violation violation = new Violation();
-            violation.addWarning("umwId", StatusCodes.VALUE_MISSING);
+            violation.addWarning("messzeitpunkt", StatusCodes.VALUE_MISSING);
             return violation;
         }
         return null;
     }
+
 }
