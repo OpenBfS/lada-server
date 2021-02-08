@@ -161,8 +161,8 @@ public class KdaUtil {
                 return null;
             }
             coord.put("x", epsgEtrs.substring(
-                    epsgEtrs.length()-2,
-                    epsgEtrs.length())+coord.get("x").asText());
+                    epsgEtrs.length() - 2,
+                    epsgEtrs.length()) + coord.get("x").asText());
             String coordX = coord.get("x").asText();
             String coordY = coord.get("y").asText();
             int maxLenX = coordX.length() - coordX.indexOf(".");
@@ -287,8 +287,8 @@ public class KdaUtil {
                 return null;
             }
             coord.put("x", epsgEtrs.substring(
-                    epsgEtrs.length()-2,
-                    epsgEtrs.length())+coord.get("x").asText());
+                    epsgEtrs.length() - 2,
+                    epsgEtrs.length()) + coord.get("x").asText());
             String coordX = coord.get("x").asText();
             String coordY = coord.get("y").asText();
             int maxLenX = coordX.length() - coordX.indexOf(".");
@@ -404,8 +404,8 @@ public class KdaUtil {
                 return null;
             }
             coord.put("x", epsgEtrs.substring(
-                    epsgEtrs.length()-2,
-                    epsgEtrs.length())+coord.get("x").asText());
+                    epsgEtrs.length() - 2,
+                    epsgEtrs.length()) + coord.get("x").asText());
             String coordX = coord.get("x").asText();
             String coordY = coord.get("y").asText();
             int maxLenX = coordX.length() - coordX.indexOf(".");
@@ -651,8 +651,8 @@ public class KdaUtil {
             coordX = coordX.substring(0, coordX.indexOf(".") + precX);
             coordY = coordY.substring(0, coordY.indexOf(".") + precY);
             String zone = epsgEd50.substring(
-                epsgEd50.length() -2, epsgEd50.length());
-            coords.put("x", zone+coordX);
+                epsgEd50.length() - 2, epsgEd50.length());
+            coords.put("x", zone + coordX);
             coords.put("y", coordY);
             return coords;
         }
@@ -772,8 +772,8 @@ public class KdaUtil {
             coordX = coordX.substring(0, coordX.indexOf(".") + precX);
             coordY = coordY.substring(0, coordY.indexOf(".") + precY);
             String zone = epsgEtrs.substring(
-                epsgEtrs.length() -2, epsgEtrs.length());
-            coords.put("x", zone+coordY);
+                epsgEtrs.length() - 2, epsgEtrs.length());
+            coords.put("x", zone + coordY);
             coords.put("y", coordX);
             return coords;
         }
@@ -1082,8 +1082,8 @@ public class KdaUtil {
     private String getEpsgForEtrs89(String x) {
         x = x.replaceAll(",", ".");
         String part = x.split("\\.")[0];
-        String zone = part.length() == 7 ? ("0" + part.substring(0, 1)) :
-            part.substring(0, 2);
+        String zone = part.length() == 7 ? ("0" + part.substring(0, 1))
+            : part.substring(0, 2);
         return EPSG_UTM_ETRS89_PREFIX + zone;
     }
 
@@ -1092,23 +1092,35 @@ public class KdaUtil {
         Double xCoord;
         try {
             xCoord = Double.valueOf(x);
-        }
-        catch(NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             return "";
         }
         String zone;
-        if (xCoord < -12 && xCoord > -18) zone = "28";
-        else if (xCoord <= -6 && xCoord > -12) zone = "29";
-        else if (xCoord <= 0 && xCoord > -6) zone = "30";
-        else if (xCoord <= 6 && xCoord > 0) zone = "31";
-        else if (xCoord <= 12 && xCoord > 6) zone = "32";
-        else if (xCoord <= 18 && xCoord > 12) zone = "33";
-        else if (xCoord <= 24 && xCoord > 18) zone = "34";
-        else if (xCoord <= 30 && xCoord > 24) zone = "35";
-        else if (xCoord <= 36 && xCoord > 30) zone = "36";
-        else if (xCoord <= 42 && xCoord > 36) zone = "37";
-        else if (xCoord <= 48 && xCoord > 42) zone = "38";
-        else return "";
+        if (xCoord < -12 && xCoord > -18) {
+            zone = "28";
+        } else if (xCoord <= -6 && xCoord > -12) {
+            zone = "29";
+        } else if (xCoord <= 0 && xCoord > -6) {
+            zone = "30";
+        } else if (xCoord <= 6 && xCoord > 0) {
+            zone = "31";
+        } else if (xCoord <= 12 && xCoord > 6) {
+            zone = "32";
+        } else if (xCoord <= 18 && xCoord > 12) {
+            zone = "33";
+        } else if (xCoord <= 24 && xCoord > 18) {
+            zone = "34";
+        } else if (xCoord <= 30 && xCoord > 24) {
+            zone = "35";
+        } else if (xCoord <= 36 && xCoord > 30) {
+            zone = "36";
+        } else if (xCoord <= 42 && xCoord > 36) {
+            zone = "37";
+        } else if (xCoord <= 48 && xCoord > 42) {
+            zone = "38";
+        } else {
+            return "";
+        }
         return "EPSG:326" + zone;
     }
 
@@ -1116,11 +1128,10 @@ public class KdaUtil {
         int pref;
         if (y > 0) {
             pref = 32600;
-        }
-        else {
+        } else {
             pref = 32700;
         }
-        int zone = (int)Math.floor((x+180)/6)+1;
+        int zone = (int) Math.floor((x + 180) / 6) + 1;
         zone += pref;
         return "EPSG:" + zone;
     }
