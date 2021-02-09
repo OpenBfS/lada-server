@@ -1091,16 +1091,12 @@ public class KdaUtil {
         return EPSG_UTM_ETRS89_PREFIX + zone;
     }
 
-    private String getEtrsEpsg(double x, double y) {
-        int pref;
-        if (y > 0) {
-            pref = 32600;
-        } else {
-            pref = 32700;
+    private String getEtrsEpsg(double lon, double lat) {
+        if (lat < 0) {
+            // No CRS with ETRS89 available for the southern hemisphere
+            return "";
         }
-        int zone = (int) Math.floor((x + 180) / 6) + 1;
-        zone += pref;
-        return "EPSG:" + zone;
+        int zone = (int) Math.floor((lon + 180) / 6) + 1;
+        return EPSG_UTM_ETRS89_PREFIX + zone;
     }
-
 }
