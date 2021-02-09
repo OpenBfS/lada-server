@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.util.data;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +35,22 @@ public class KdaUtil {
      * 'ETRS89 / UTM zone <zone number>N'
      */
     private static final String EPSG_UTM_ETRS89_PREFIX = "EPSG:258";
+
+    /*
+     * If eastings should be prefixed with a zone number, multiply zone
+     * number with this value and add it to the easting
+     */
+    private static final double ZONE_PREFIX_MULTIPLIER = 1e6;
+
+    /*
+     * DecimalFormat pattern for eastings including zone prefix
+     */
+    private static final String EASTING_PATTERN = "0000000.###";
+
+    /*
+     * DecimalFormat pattern for northings
+     */
+    private static final String NORTHING_PATTERN = "0.###";
 
 
     ObjectMapper builder;
@@ -516,9 +535,25 @@ public class KdaUtil {
 
         @Override
         public ObjectNode transformTo6(String x, String y) {
-            ObjectNode response = builder.createObjectNode();
-            response.put("x", x);
-            response.put("y", y);
+            String epsgWgs = getEpsgForWgsUtm(x);
+            x = x.substring(2, x.length());
+            ObjectNode degrees = jtsTransform(epsgWgs, "EPSG:4326", x, y);
+            if (degrees == null) {
+                return null;
+            }
+            String epsgEtrs = getEtrsEpsg(
+                degrees.get("y").asDouble(),
+                degrees.get("x").asDouble());
+            ObjectNode response = jtsTransform(epsgWgs, epsgEtrs, x, y);
+            if (response == null) {
+                return response;
+            }
+
+            // Format output
+            int zone = getUTMZone(
+                degrees.get("y").asDouble(),
+                degrees.get("x").asDouble());
+            formatUTM(response, zone);
             return response;
         }
 
@@ -616,9 +651,25 @@ public class KdaUtil {
 
         @Override
         public ObjectNode transformTo5(String x, String y) {
-            ObjectNode response = builder.createObjectNode();
-            response.put("x", x);
-            response.put("y", y);
+            String epsgEtrs = getEpsgForEtrs89(x);
+            x = x.substring(2, x.length());
+            ObjectNode degrees = jtsTransform(epsgEtrs, "EPSG:4326", x, y);
+            if (degrees == null) {
+                return null;
+            }
+            String epsgWgs = getWgsUtmEpsg(
+                degrees.get("y").asDouble(),
+                degrees.get("x").asDouble());
+            ObjectNode response = jtsTransform(epsgEtrs, epsgWgs, x, y);
+            if (response == null) {
+                return null;
+            }
+
+            // Format output
+            int zone = getUTMZone(
+                degrees.get("y").asDouble(),
+                degrees.get("x").asDouble());
+            formatUTM(response, zone);
             return response;
         }
 
@@ -961,9 +1012,8 @@ public class KdaUtil {
         } else {
             pref = 32700;
         }
-        int zone = (int) Math.floor((x + 180) / 6) + 1;
-        zone += pref;
-        return "EPSG:" + zone;
+        int code = pref + getUTMZone(x, y);
+        return "EPSG:" + code;
     }
 
     private String getGkEpsg(double x, double y) {
@@ -1101,7 +1151,31 @@ public class KdaUtil {
             // No CRS with ETRS89 available for the southern hemisphere
             return "";
         }
-        int zone = (int) Math.floor((lon + 180) / 6) + 1;
-        return EPSG_UTM_ETRS89_PREFIX + zone;
+        return EPSG_UTM_ETRS89_PREFIX + getUTMZone(lon, lat);
+    }
+
+    /*
+     * Get UTM zone for given geodetic coordinates
+     */
+    private static int getUTMZone(double lon, double lat) {
+        return (int) Math.floor((lon + 180) / 6) + 1;
+    }
+
+    /*
+     * Format UTM coordinates in ObjectNode o with zone prefix
+     */
+    private void formatUTM(ObjectNode o, int zone) {
+        // Output is supposed to have "," as decimal separator
+        DecimalFormat df = (DecimalFormat) NumberFormat
+            .getNumberInstance(Locale.GERMAN);
+
+        df.applyPattern(EASTING_PATTERN);
+        o.put("x",
+            df.format((double) zone * ZONE_PREFIX_MULTIPLIER
+                + o.get("x").asDouble()));
+
+        df.applyPattern(NORTHING_PATTERN);
+        o.put("y",
+            df.format(o.get("y").asDouble()));
     }
 }
