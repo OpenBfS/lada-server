@@ -152,7 +152,7 @@ public class KdaUtil {
             String epsgGK = getEpsgForGK(x);
             ObjectNode degrees = jtsTransform(epsgGK, "EPSG:4326", y, x);
             String epsgEtrs = getEpsgForEtrs89FromDegree(
-                degrees.get("x").asText());
+                degrees.get("y").asText());
             ObjectNode coord = jtsTransform(epsgGK,
                 epsgEtrs,
                 y,
