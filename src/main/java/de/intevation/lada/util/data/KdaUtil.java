@@ -1091,6 +1091,11 @@ public class KdaUtil {
         return EPSG_UTM_ETRS89_PREFIX + zone;
     }
 
+    /*
+     * Get EPSG code for CRS 'ETRS89 / UTM zone <zone number>N'
+     * from geodetic coordinates for use with jtsTransform().
+     * Does not guarantee to return a valid EPSG code.
+     */
     private String getEtrsEpsg(double lon, double lat) {
         if (lat < 0) {
             // No CRS with ETRS89 available for the southern hemisphere
