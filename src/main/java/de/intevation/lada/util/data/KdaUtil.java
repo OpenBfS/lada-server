@@ -151,8 +151,10 @@ public class KdaUtil {
         public ObjectNode transformTo6(String x, String y) {
             String epsgGK = getEpsgForGK(x);
             ObjectNode degrees = jtsTransform(epsgGK, "EPSG:4326", y, x);
-            String epsgEtrs = getEpsgForEtrs89FromDegree(
-                degrees.get("y").asText());
+            // TODO: explain why x and y are interchanged here
+            String epsgEtrs = getEtrsEpsg(
+                degrees.get("y").asDouble(),
+                degrees.get("x").asDouble());
             ObjectNode coord = jtsTransform(epsgGK,
                 epsgEtrs,
                 y,
@@ -757,8 +759,10 @@ public class KdaUtil {
             }
             String x1 = x.substring(2, x.length());
             ObjectNode coords4326 = jtsTransform(epsgEd50, "EPSG:4326", x1, y);
-            String epsgEtrs = getEpsgForEtrs89FromDegree(
-                coords4326.get("y").asText());
+            // TODO: explain why x and y are interchanged here
+            String epsgEtrs = getEtrsEpsg(
+                coords4326.get("y").asDouble(),
+                coords4326.get("x").asDouble());
             ObjectNode coords = jtsTransform(epsgEd50, epsgEtrs, y, x1);
             if (coords == null) {
                 return null;
@@ -1085,43 +1089,6 @@ public class KdaUtil {
         String zone = part.length() == 7 ? ("0" + part.substring(0, 1))
             : part.substring(0, 2);
         return EPSG_UTM_ETRS89_PREFIX + zone;
-    }
-
-    private String getEpsgForEtrs89FromDegree(String x) {
-        x = x.replaceAll(",", ".");
-        Double xCoord;
-        try {
-            xCoord = Double.valueOf(x);
-        } catch (NumberFormatException nfe) {
-            return "";
-        }
-        String zone;
-        if (xCoord < -12 && xCoord > -18) {
-            zone = "28";
-        } else if (xCoord <= -6 && xCoord > -12) {
-            zone = "29";
-        } else if (xCoord <= 0 && xCoord > -6) {
-            zone = "30";
-        } else if (xCoord <= 6 && xCoord > 0) {
-            zone = "31";
-        } else if (xCoord <= 12 && xCoord > 6) {
-            zone = "32";
-        } else if (xCoord <= 18 && xCoord > 12) {
-            zone = "33";
-        } else if (xCoord <= 24 && xCoord > 18) {
-            zone = "34";
-        } else if (xCoord <= 30 && xCoord > 24) {
-            zone = "35";
-        } else if (xCoord <= 36 && xCoord > 30) {
-            zone = "36";
-        } else if (xCoord <= 42 && xCoord > 36) {
-            zone = "37";
-        } else if (xCoord <= 48 && xCoord > 42) {
-            zone = "38";
-        } else {
-            return "";
-        }
-        return "EPSG:326" + zone;
     }
 
     private String getEtrsEpsg(double x, double y) {
