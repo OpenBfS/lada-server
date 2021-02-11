@@ -30,6 +30,12 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class KdaUtil {
 
+    /* Represents coordinates in Gauß-Krüger CRS */
+    public static final int KDA_GK = 1;
+
+    /* Represents geodetic coordinates in decimal notation */
+    public static final int KDA_GD = 4;
+
     /*
      * UTM zone number with given prefix gives the EPSG code for CRS
      * 'ETRS89 / UTM zone <zone number>N'
@@ -60,9 +66,9 @@ public class KdaUtil {
         builder = new ObjectMapper();
         Transform t;
         switch (kdaFrom) {
-            case 1: t = this.new Transform1(); break;
+            case KDA_GK: t = this.new Transform1(); break;
             case 2: t = this.new Transform2(); break;
-            case 4: t = this.new Transform4(); break;
+            case KDA_GD: t = this.new Transform4(); break;
             case 5: t = this.new Transform5(); break;
             case 6: t = this.new Transform6(); break;
             case 8: t = this.new Transform8(); break;
@@ -84,9 +90,9 @@ public class KdaUtil {
     private abstract class AbstractTransform implements Transform {
         public ObjectNode transform(int to, String x, String y) {
             switch (to) {
-                case 1: return transformTo1(x, y);
+                case KDA_GK: return transformTo1(x, y);
                 case 2: return transformTo2(x, y);
-                case 4: return transformTo4(x, y);
+                case KDA_GD: return transformTo4(x, y);
                 case 5: return transformTo5(x, y);
                 case 6: return transformTo6(x, y);
                 case 8: return transformTo8(x, y);
