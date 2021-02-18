@@ -121,7 +121,6 @@ eingebunden wurde:
  $ ./install-sencha2opt.sh
  $ ./install-dependencies.sh
  $ ./docker-build-app.sh
- $ shibd
 
 Die LADA-Anwendung kann dann unter den angegebenen Ports mit verschiedenen
 Rollen im Browser ausgeführt werden. Die Ports 8180 - 8184 verwenden dabei
@@ -135,6 +134,13 @@ in den Dateien {Server-Repository}/shibboleth/idp-metadata.xml und
 {Client-Repository}/shibboleth/partner-metadata.xml die Attribute
 Location="https://localhost:28443/..." zu einer Adresse verändert werden, die
 vom Client-System erreichbar ist, etwa die lokale IP-Adresse des IDP-Systems.
+Alternativ können auch die LADA-Anwendung und der IDP auf dem lokalen Rechner
+mittels Port-Forwarding erreichbar gemacht werden, z.B.:
+
+ $ ssh -L28443:docker-host:28443 -L8185:docker-host:8185 remote-host
+
+Die Shibboleth-authentifizierte Anwendung ist dann unter
+"http://localhost:8185" im lokalen Browser erreichbar.
 
 Tests
 -----
