@@ -252,7 +252,7 @@ implements Creator {
             ? ""
             : lafLine("DESKRIPTOREN",
                 probe.getMediaDesk().replaceAll(" ", "").substring(2), CN);
-        laf += probe.getTest() == Boolean.TRUE
+        laf += probe.getTest()
             ? lafLine("TESTDATEN", "1")
             : lafLine("TESTDATEN", "0");
         if (probe.getErzeugerId() != null) {
@@ -460,7 +460,6 @@ implements Creator {
      */
     @SuppressWarnings("unchecked")
     private String writeMessung(Probe probe, List<Integer> messungen) {
-        List<Messung> mess = new ArrayList<>();
         QueryBuilder<Messung> builder =
             new QueryBuilder<Messung>(
                 repository.entityManager(Strings.LAND),
@@ -471,7 +470,8 @@ implements Creator {
         } else {
             builder.andIn("id", messungen);
         }
-        mess = repository.filterPlain(builder.getQuery(), Strings.LAND);
+        List<Messung> mess = repository.filterPlain(
+            builder.getQuery(), Strings.LAND);
 
         String laf = "";
         for (Messung m : mess) {

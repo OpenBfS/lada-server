@@ -40,6 +40,7 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
+import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
@@ -135,7 +136,7 @@ public class StatusKombiService {
         for (JsonNumber id : idList) {
             intList.add(id.intValue());
         }
-        return new Response(true, 200, getReachable(intList, user));
+        return new Response(true, StatusCodes.OK, getReachable(intList, user));
     }
 
     /**
@@ -148,8 +149,6 @@ public class StatusKombiService {
         List<Integer> messIds,
         UserInfo user
     ) {
-        List<StatusKombi> list = new ArrayList<StatusKombi>();
-
         QueryBuilder<Messung> messungQuery = new QueryBuilder<Messung>(
             repository.entityManager(Strings.LAND),
             Messung.class);
@@ -196,7 +195,6 @@ public class StatusKombiService {
                 kombiFilter.or(tmp);
         }
 
-        list = repository.filterPlain(kombiFilter.getQuery(), Strings.STAMM);
-        return list;
+        return repository.filterPlain(kombiFilter.getQuery(), Strings.STAMM);
     }
 }

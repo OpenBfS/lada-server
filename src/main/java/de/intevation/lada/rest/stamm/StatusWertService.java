@@ -36,6 +36,7 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
+import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
@@ -71,11 +72,11 @@ public class StatusWertService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type=RepositoryType.RO)
+    @RepositoryConfig(type = RepositoryType.RO)
     private Repository defaultRepo;
 
     @Inject
-    @AuthorizationConfig(type=AuthorizationType.HEADER)
+    @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
 
     /**
@@ -103,12 +104,13 @@ public class StatusWertService {
             try {
                 mIds.add(Integer.valueOf(messId));
             } catch (NumberFormatException nfe) {
-                return new Response(false, 612, null);
+                return
+                    new Response(false, StatusCodes.VALUE_OUTSIDE_RANGE, null);
             }
         }
         UserInfo user = authorization.getInfo(request);
         List<StatusWert> werte = getReachable(mIds, user);
-        Response response = new Response(true, 200, werte);
+        Response response = new Response(true, StatusCodes.OK, werte);
         return response;
     }
 
@@ -144,8 +146,6 @@ public class StatusWertService {
         List<Integer> messIds,
         UserInfo user
     ) {
-        List<StatusWert> list = new ArrayList<StatusWert>();
-
         QueryBuilder<Messung> messungQuery = new QueryBuilder<Messung>(
             defaultRepo.entityManager(Strings.LAND),
             Messung.class);
@@ -178,7 +178,7 @@ public class StatusWertService {
         for (int i = 0; i < erreichbare.size(); i++) {
             werteFilter.or("id", erreichbare.get(i).getWertId());
         }
-        list = defaultRepo.filterPlain(werteFilter.getQuery(), Strings.STAMM);
-        return list;
+
+        return defaultRepo.filterPlain(werteFilter.getQuery(), Strings.STAMM);
     }
 }

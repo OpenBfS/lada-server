@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.rest.stamm;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +28,7 @@ import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
+import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
@@ -113,13 +113,12 @@ public class DeskriptorService {
             builder.and("ebene", params.getFirst("layer"));
             if (params.containsKey("parents")) {
                 String parents = params.getFirst("parents");
-                List<String> parentList = new ArrayList<String>();
                 String[] parentArray = parents.split(", ");
-                parentList = Arrays.asList(parentArray);
+                List<String> parentList = Arrays.asList(parentArray);
                 builder.andIn("vorgaenger", parentList);
             }
         } catch (NumberFormatException nfe) {
-            return new Response(false, 612, null);
+            return new Response(false, StatusCodes.VALUE_OUTSIDE_RANGE, null);
         }
         return repository.filter(builder.getQuery(), Strings.STAMM);
     }
