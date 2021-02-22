@@ -149,7 +149,7 @@ public abstract class ExportJob extends Thread {
         try {
             this.setCurrentStatus(Status.error);
             this.setDone(true);
-            this.message = message != null ? message : "";
+            this.message = m;
         } catch (IllegalStatusTransitionException iste) {
             this.currentStatus = Status.error;
             this.message = "Internal server errror";
