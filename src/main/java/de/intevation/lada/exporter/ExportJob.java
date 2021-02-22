@@ -117,6 +117,7 @@ public abstract class ExportJob extends Thread {
         this.done = false;
         this.jobId = jId;
         this.currentStatus = Status.waiting;
+        // TODO: Use e.g. Files.createTempFile() to make it more portable
         this.outputFileLocation = "/tmp/lada-server/";
         if (!outputFileLocation.endsWith("/")) {
             outputFileLocation += "/";
