@@ -831,52 +831,9 @@ public class LafObjectMapper {
         }
 
         // Compare with messung objects in the db
-        Messung newMessung = null;
-        boolean oldMessungIsReadonly = false;
+        Identified ident;
         try {
-            Identified i = messungIdentifier.find(messung);
-            Messung old = (Messung) messungIdentifier.getExisting();
-            if (i == Identified.UPDATE) {
-                oldMessungIsReadonly =
-                    authorizer.isMessungReadOnly(old.getId());
-                if (oldMessungIsReadonly) {
-                    currentNotifications.add(
-                        new ReportItem(
-                            "messung",
-                            old.getExterneMessungsId(),
-                            StatusCodes.IMP_UNCHANGABLE));
-                    return;
-                } else {
-                    merger.mergeMessung(old, messung);
-                    newMessung = old;
-                }
-            } else if (i == Identified.REJECT) {
-                ReportItem err = new ReportItem();
-                err.setCode(StatusCodes.VALUE_MISSING);
-                err.setKey("identification");
-                err.setValue("Messung");
-                currentErrors.add(err);
-                return;
-            } else if (i == Identified.NEW) {
-                // Check if Messung has all fields that have db constraints
-                // (validation rule?)
-                if (messung.getMmtId() == null) {
-                    ReportItem err = new ReportItem();
-                    err.setCode(StatusCodes.VALUE_MISSING);
-                    err.setKey("not valid (missing Messmethode)");
-                    err.setValue("Messung: " + messung.getNebenprobenNr());
-                    currentErrors.add(err);
-                    return;
-                }
-
-                // Create a new messung and the first status
-                Response created = repository.create(messung, Strings.LAND);
-                newMessung = ((Messung) created.getData());
-                created =
-                    repository.getById(
-                        Messung.class, newMessung.getId(), Strings.LAND);
-                newMessung = ((Messung) created.getData());
-            }
+            ident = messungIdentifier.find(messung);
         } catch (InvalidTargetObjectTypeException e) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.ERROR_VALIDATION);
@@ -885,6 +842,57 @@ public class LafObjectMapper {
             currentErrors.add(err);
             return;
         }
+        Messung newMessung;
+        boolean oldMessungIsReadonly = false;
+        Messung old = (Messung) messungIdentifier.getExisting();
+        switch (ident) {
+        case UPDATE:
+            oldMessungIsReadonly =
+                authorizer.isMessungReadOnly(old.getId());
+            if (oldMessungIsReadonly) {
+                currentNotifications.add(
+                    new ReportItem(
+                        "messung",
+                        old.getExterneMessungsId(),
+                        StatusCodes.IMP_UNCHANGABLE));
+                return;
+            } else {
+                merger.mergeMessung(old, messung);
+                newMessung = old;
+            }
+            break;
+        case REJECT:
+            ReportItem err = new ReportItem();
+            err.setCode(StatusCodes.VALUE_MISSING);
+            err.setKey("identification");
+            err.setValue("Messung");
+            currentErrors.add(err);
+            return;
+        case NEW:
+            // Check if Messung has all fields that have db constraints
+            // (validation rule?)
+            if (messung.getMmtId() == null) {
+                ReportItem err2 = new ReportItem();
+                err2.setCode(StatusCodes.VALUE_MISSING);
+                err2.setKey("not valid (missing Messmethode)");
+                err2.setValue("Messung: " + messung.getNebenprobenNr());
+                currentErrors.add(err2);
+                return;
+            }
+
+            // Create a new messung and the first status
+            Response created = repository.create(messung, Strings.LAND);
+            newMessung = ((Messung) created.getData());
+            created =
+                repository.getById(
+                    Messung.class, newMessung.getId(), Strings.LAND);
+            newMessung = ((Messung) created.getData());
+            break;
+        default:
+            throw new IllegalArgumentException(
+                "Identified with unexpected enum constant");
+        }
+
         List<KommentarM> kommentare = new ArrayList<KommentarM>();
         for (int i = 0; i < object.getKommentare().size(); i++) {
             KommentarM tmp =
@@ -1252,7 +1260,7 @@ public class LafObjectMapper {
         }
         if (attributes.containsKey("GRENZWERT")) {
             messwert.setGrenzwertueberschreitung(
-                attributes.get("GRENZWERT").toUpperCase() == "J"
+                attributes.get("GRENZWERT").toUpperCase().equals("J")
                     ? true : false);
         }
         doDefaults(messwert);
@@ -1492,7 +1500,7 @@ public class LafObjectMapper {
             newStatus.setMessungsId(messung.getId());
             newStatus.setMstId(mstId);
             newStatus.setStatusKombi(newKombi);
-            Response r = repository.create(newStatus, Strings.LAND);
+            repository.create(newStatus, Strings.LAND);
             if (newKombi == 0 || newKombi == 9 || newKombi == 13) {
                 messung.setFertig(false);
             } else {
@@ -1797,7 +1805,7 @@ public class LafObjectMapper {
             if (staat == null || staat.size() == 0) {
                 currentWarnings.add(
                     new ReportItem(key, hLand, StatusCodes.IMP_INVALID_VALUE));
-            } else if (staat != null && staat.size() > 0) {
+            } else if (staat.size() > 0) {
                 o.setStaatId(staat.get(0).getId());
             }
         }

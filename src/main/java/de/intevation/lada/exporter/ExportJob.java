@@ -117,6 +117,7 @@ public abstract class ExportJob extends Thread {
         this.done = false;
         this.jobId = jId;
         this.currentStatus = Status.waiting;
+        // TODO: Use e.g. Files.createTempFile() to make it more portable
         this.outputFileLocation = "/tmp/lada-server/";
         if (!outputFileLocation.endsWith("/")) {
             outputFileLocation += "/";
@@ -149,7 +150,7 @@ public abstract class ExportJob extends Thread {
         try {
             this.setCurrentStatus(Status.error);
             this.setDone(true);
-            this.message = message != null ? message : "";
+            this.message = m;
         } catch (IllegalStatusTransitionException iste) {
             this.currentStatus = Status.error;
             this.message = "Internal server errror";
@@ -381,7 +382,7 @@ public abstract class ExportJob extends Thread {
         } catch (IOException ioe) {
             logger.error(String.format(
                 "Cannot delete result file. IOException: %s",
-                ioe.getStackTrace().toString()));
+                ioe.getMessage()));
         }
     }
 
@@ -402,12 +403,12 @@ public abstract class ExportJob extends Thread {
             } catch (IOException ioe) {
                 logger.error(String.format(
                     "JCannot create export folder. IOException: %s",
-                    ioe.getStackTrace().toString()));
+                    ioe.getMessage()));
                 return false;
             } catch (SecurityException se) {
                 logger.error(String.format(
                     "Security Exception during directory creation %s",
-                    se.getStackTrace().toString()));
+                    se.getMessage()));
                 return false;
             }
         }
@@ -421,12 +422,12 @@ public abstract class ExportJob extends Thread {
         } catch (IOException ioe) {
             logger.error(String.format(
                 "Cannot create export file. IOException: %s",
-                ioe.getStackTrace().toString()));
+                ioe.getMessage()));
             return false;
         } catch (SecurityException se) {
             logger.error(String.format(
                 "Security Exception during file creation %s",
-                se.getStackTrace().toString()));
+                se.getMessage()));
             return false;
         }
 
@@ -438,7 +439,7 @@ public abstract class ExportJob extends Thread {
         } catch (IOException ioe) {
             logger.error(String.format(
                 "Cannot write to export file. IOException: %s",
-                ioe.getStackTrace().toString()));
+                ioe.getMessage()));
             return false;
         }
 

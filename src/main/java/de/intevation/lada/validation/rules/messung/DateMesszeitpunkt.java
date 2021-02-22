@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.validation.rules.messung;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Date;
 
 import javax.inject.Inject;
@@ -48,9 +46,9 @@ public class DateMesszeitpunkt implements Rule {
         Probe probe = (Probe) response.getData();
 
         if (probe == null) {
-            Map<String, Integer> errors = new HashMap<String, Integer>();
-            errors.put("lprobe", StatusCodes.ERROR_VALIDATION);
-            return null;
+            Violation violation = new Violation();
+            violation.addError("lprobe", StatusCodes.ERROR_VALIDATION);
+            return violation;
         }
 
         if (messung.getMesszeitpunkt() == null) {
@@ -73,8 +71,7 @@ public class DateMesszeitpunkt implements Rule {
             || probe.getProbeentnahmeEnde() != null
             && probe.getProbeentnahmeEnde().after(messung.getMesszeitpunkt()))
             && (probe.getProbenartId() != null
-                && (probe.getProbenartId() == 3
-                    || probe.getProbenartId() == 9))
+                && probe.getProbenartId() == 3)
         ) {
             Violation violation = new Violation();
             violation.addWarning(
