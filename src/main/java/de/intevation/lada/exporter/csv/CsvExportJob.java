@@ -243,7 +243,7 @@ public class CsvExportJob extends QueryExportJob {
         super.run();
 
         logger.debug(
-            String.format("Starting LAF export %s (%s)", jobId, encoding));
+            String.format("Starting CSV export %s (%s)", jobId, encoding));
         //Check encoding
         if (!isEncodingValid()) {
             String error = String.format("Invalid encoding: %s", this.encoding);
