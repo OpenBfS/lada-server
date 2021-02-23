@@ -787,6 +787,9 @@ public class KdaUtil {
             }
             String x1 = x.substring(2, x.length());
             ObjectNode coords4326 = jtsTransform(epsgEd50, "EPSG:4326", x1, y);
+            if (coords4326 == null) {
+                return null;
+            }
             String epsgWgs = getEpsgForWgsUtmFromDegree(
                 coords4326.get("y").asText());
             ObjectNode coords = jtsTransform(epsgEd50, epsgWgs, y, x1);
@@ -816,6 +819,9 @@ public class KdaUtil {
             }
             String x1 = x.substring(2, x.length());
             ObjectNode coords4326 = jtsTransform(epsgEd50, "EPSG:4326", x1, y);
+            if (coords4326 == null) {
+                return null;
+            }
             // TODO: explain why x and y are interchanged here
             String epsgEtrs = getEtrsEpsg(
                 coords4326.get("y").asDouble(),
