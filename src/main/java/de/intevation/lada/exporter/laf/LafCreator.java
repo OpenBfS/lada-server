@@ -63,17 +63,17 @@ public class LafCreator
 implements Creator {
     // @Inject private Logger logger;
 
-    private static final int KOMBI15 = 15;
-    private static final int KOMBI14 = 14;
-    private static final int KOMBI9 = 9;
-    private static final int KOMBI8 = 8;
-    private static final int KOMBI7 = 7;
-    private static final int KOMBI6 = 6;
-    private static final int KOMBI5 = 5;
-    private static final int KOMBI4 = 4;
-    private static final int KOMBI3 = 3;
-    private static final int KOMBI2 = 2;
-    private static final int KOMBI1 = 1;
+    private static final int LAND_RESET = 15;
+    private static final int MST_RESET = 14;
+    private static final int LAND_QUERY = 9;
+    private static final int LAND_UNPLAUS = 8;
+    private static final int LAND_NOT_REPR = 7;
+    private static final int LAND_PLAUS = 6;
+    private static final int MST_NOT_DELIV = 5;
+    private static final int MST_NOT_PLAUS = 4;
+    private static final int MST_NOT_REPR = 3;
+    private static final int MST_PLAUS = 2;
+    private static final int NOT_SET = 1;
     private static final int MP6 = 6;
     private static final int BAID3 = 3;
     private static final int MP5 = 5;
@@ -508,7 +508,6 @@ implements Creator {
             laf += lafLine(
                 "ERFASSUNG_ABGESCHLOSSEN",
                 (m.getFertig() ? "1" : "0"));
-//            laf += lafLine("PEP_FLAG", (m.getGeplant() ? "1" : "0"));
             laf += lafLine("BEARBEITUNGSSTATUS", writeStatus(m));
             if (this.userInfo != null
                 && authorization.isAuthorized(this.userInfo, m, Messung.class)
@@ -555,8 +554,11 @@ implements Creator {
             builder.and("messungsId", messung.getId());
             builder.andIn(
                 "statusKombi",
-                Arrays.asList(KOMBI1, KOMBI2, KOMBI3, KOMBI4, KOMBI5, KOMBI14));
+                Arrays.asList(NOT_SET, MST_PLAUS, MST_NOT_REPR, MST_NOT_PLAUS, MST_NOT_DELIV, MST_RESET));
             builder.orderBy("datum", false);
+            StatusProtokoll mst = repository.filterPlain(builder.getQuery(), Strings.LAND).get(0);
+            Integer mstKombi = mst.getStatusKombi();
+            StatusKombi kombi = repository.getByIdPlain(StatusKombi.class, mstKombi, Strings.STAMM);
             if (currenStufe == 2) {
                 status[1] = currentKombi.getStatusWert().getId();
             } else {
@@ -564,7 +566,7 @@ implements Creator {
                 builder.and("messungsId", messung.getId());
                 builder.andIn(
                     "statusKombi",
-                    Arrays.asList(KOMBI6, KOMBI7, KOMBI8, KOMBI9, KOMBI15));
+                    Arrays.asList(LAND_PLAUS, LAND_NOT_REPR, LAND_UNPLAUS, LAND_QUERY, LAND_RESET));
                 builder.orderBy("datum", false);
                 List<StatusProtokoll> land =
                     repository.filterPlain(builder.getQuery(), Strings.LAND);
