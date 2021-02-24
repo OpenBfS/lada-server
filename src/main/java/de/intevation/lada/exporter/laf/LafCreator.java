@@ -245,6 +245,10 @@ implements Creator {
             ? ""
             : lafLine("PROBENAHME_DATUM_UHRZEIT_E",
                 toUTCString(probe.getProbeentnahmeEnde()));
+        laf += probe.getUrsprungszeit() == null
+            ? ""
+            : lafLine("URSPRUNGS_DATUM_UHRZEIT",
+                toUTCString(probe.getUrsprungszeit()));
         laf += probe.getUmwId() == null
             ? ""
             : lafLine("UMWELTBEREICH_S", probe.getUmwId(), CN);
