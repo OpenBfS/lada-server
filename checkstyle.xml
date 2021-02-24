@@ -205,7 +205,7 @@ Maven Checkstyle plugin. Some design related checks where removed.
     <module name="MagicNumber">
       <property name="severity" value="warning"/>
       <property name="constantWaiverParentToken" value="ASSIGN,ARRAY_INIT,EXPR,
-      UNARY_PLUS, UNARY_MINUS, TYPECAST, ELIST, DIV, PLUS "/>
+      UNARY_PLUS, UNARY_MINUS, TYPECAST, ELIST, DIV, PLUS, METHOD_CALL "/>
     </module>
     <module name="MissingSwitchDefault"/>
     <module name="SimplifyBooleanExpression">
