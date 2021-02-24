@@ -792,7 +792,7 @@ public class KdaUtil {
             }
             String epsgWgs = getEpsgForWgsUtmFromDegree(
                 coords4326.get("y").asText());
-            ObjectNode coords = jtsTransform(epsgEd50, epsgWgs, y, x1);
+            ObjectNode coords = jtsTransform(epsgEd50, epsgWgs, x1, y);
             if (coords == null) {
                 return null;
             }
@@ -806,8 +806,8 @@ public class KdaUtil {
             coordY = coordY.substring(0, coordY.indexOf(".") + precY);
             String zone = epsgWgs.substring(
                 epsgWgs.length() - 2, epsgWgs.length());
-            coords.put("x", zone + coordY);
-            coords.put("y", coordX);
+            coords.put("x", zone + coordX);
+            coords.put("y", coordY);
             return coords;
         }
 
@@ -826,7 +826,7 @@ public class KdaUtil {
             String epsgEtrs = getEtrsEpsg(
                 coords4326.get("y").asDouble(),
                 coords4326.get("x").asDouble());
-            ObjectNode coords = jtsTransform(epsgEd50, epsgEtrs, y, x1);
+            ObjectNode coords = jtsTransform(epsgEd50, epsgEtrs, x1, y);
             if (coords == null) {
                 return null;
             }
@@ -840,8 +840,8 @@ public class KdaUtil {
             coordY = coordY.substring(0, coordY.indexOf(".") + precY);
             String zone = epsgEtrs.substring(
                 epsgEtrs.length() - 2, epsgEtrs.length());
-            coords.put("x", zone + coordY);
-            coords.put("y", coordX);
+            coords.put("x", zone + coordX);
+            coords.put("y", coordY);
             return coords;
         }
 
