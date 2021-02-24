@@ -36,6 +36,15 @@ public class KdaUtil {
     /* Represents geodetic coordinates in decimal notation */
     public static final int KDA_GD = 4;
 
+    /* Represents coordinates in UTM CRS with WGS84 datum */
+    public static final int KDA_UTM_WGS84 = 5;
+
+    /* Represents coordinates in UTM CRS with ETRS89 datum */
+    public static final int KDA_UTM_ETRS89 = 6;
+
+    /* Represents coordinates in UTM CRS with ED50 datum (Hayford ellipsoid) */
+    public static final int KDA_UTM_ED50 = 8;
+
     /*
      * UTM zone number with given prefix gives the EPSG code for CRS
      * 'ETRS89 / UTM zone <zone number>N'
@@ -69,9 +78,9 @@ public class KdaUtil {
             case KDA_GK: t = this.new Transform1(); break;
             case 2: t = this.new Transform2(); break;
             case KDA_GD: t = this.new Transform4(); break;
-            case 5: t = this.new Transform5(); break;
-            case 6: t = this.new Transform6(); break;
-            case 8: t = this.new Transform8(); break;
+            case KDA_UTM_WGS84: t = this.new Transform5(); break;
+            case KDA_UTM_ETRS89: t = this.new Transform6(); break;
+            case KDA_UTM_ED50: t = this.new Transform8(); break;
             default: return null;
         }
         return t.transform(kdaTo, x, y);
@@ -93,9 +102,9 @@ public class KdaUtil {
                 case KDA_GK: return transformTo1(x, y);
                 case 2: return transformTo2(x, y);
                 case KDA_GD: return transformTo4(x, y);
-                case 5: return transformTo5(x, y);
-                case 6: return transformTo6(x, y);
-                case 8: return transformTo8(x, y);
+                case KDA_UTM_WGS84: return transformTo5(x, y);
+                case KDA_UTM_ETRS89: return transformTo6(x, y);
+                case KDA_UTM_ED50: return transformTo8(x, y);
                 default: return null;
             }
         }
