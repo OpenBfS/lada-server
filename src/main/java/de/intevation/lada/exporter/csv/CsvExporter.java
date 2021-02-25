@@ -238,12 +238,9 @@ public class CsvExporter implements Exporter {
                     //Value is a status kombi
                     if (keys[i].equals("statusK")) {
                         rowItems.add(getStatusStringByid((Integer) value));
-                        continue;
-                    }
-                    if (value instanceof Double) {
+                    } else if (value instanceof Double) {
                         rowItems.add(decimalFormat.format((Double) value));
-                    }
-                    if (value instanceof Timestamp) {
+                    } else if (value instanceof Timestamp) {
                         //Convert to target timezone
                         Timestamp time = (Timestamp) value;
                         Calendar calendar = Calendar.getInstance();
