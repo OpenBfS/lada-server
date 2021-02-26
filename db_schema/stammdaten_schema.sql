@@ -104,6 +104,169 @@ end;
 $$;
 
 
+CREATE OR REPLACE FUNCTION get_desk_beschreibung(
+	media_desk character varying,
+	stufe integer)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+DECLARE
+    d_xx character varying;
+  BEGIN
+    IF substr(media_desk, 4+stufe*3, 2) = '00' THEN 
+      RETURN NULL; 
+    END IF;
+
+    IF stufe = 0 THEN
+      SELECT d00.beschreibung
+      INTO d_xx
+      FROM stamm.deskriptoren d00
+      WHERE d00.ebene = 0
+        AND d00.sn = cast(substr(media_desk, 4, 2) AS SMALLINT);
+
+    ELSEIF stufe = 1 THEN
+      SELECT d01.beschreibung
+      INTO d_xx
+      FROM stamm.deskriptoren d01
+      JOIN stamm.deskriptoren d00 ON d00.id = d01.vorgaenger
+        AND d00.ebene = 0
+        AND d00.sn = cast(substr(media_desk, 4, 2) AS SMALLINT)
+      WHERE d01.ebene = 1
+        AND d01.sn = cast(substr(media_desk, 7, 2) AS SMALLINT);
+
+    ELSEIF stufe = 2 THEN
+      SELECT d02.beschreibung
+      INTO d_xx
+      FROM stamm.deskriptoren d02
+      JOIN stamm.deskriptoren d01 ON d01.id = d02.vorgaenger
+        AND d01.ebene = 1
+        AND d01.sn = cast(substr(media_desk, 7, 2) AS SMALLINT)
+      JOIN stamm.deskriptoren d00 ON d00.id = d01.vorgaenger
+        AND d00.ebene = 0
+        AND d00.sn = cast(substr(media_desk, 4, 2) AS SMALLINT)
+      WHERE d02.ebene = 2
+        AND d02.sn = cast(substr(media_desk, 10, 2) AS SMALLINT);
+
+    ELSEIF stufe = 3 AND substr(media_desk, 4, 2) = '01' THEN
+      SELECT d03.beschreibung
+      INTO d_xx
+      FROM stamm.deskriptoren d03
+      JOIN stamm.deskriptoren d02 ON d02.id = d03.vorgaenger
+        AND d02.ebene = 2
+        AND d02.sn = cast(substr(media_desk , 10, 2) AS SMALLINT)
+      JOIN stamm.deskriptoren d01 ON d01.id = d02.vorgaenger
+        AND d01.ebene = 1
+        AND d01.sn = cast(substr(media_desk, 7, 2) AS SMALLINT)
+      JOIN stamm.deskriptoren d00 ON d00.id = d01.vorgaenger
+        AND d00.ebene = 0
+        AND d00.sn = cast(substr(media_desk, 4, 2) AS SMALLINT)
+      WHERE d03.ebene = 3
+        AND d03.sn = cast(substr(media_desk, 13, 2) AS SMALLINT);
+
+    ELSEIF stufe = 3 AND substr(media_desk, 4, 2) <> '01' OR stufe > 3 THEN
+      SELECT dxx.beschreibung
+      INTO d_xx
+      FROM stamm.deskriptoren dxx
+      JOIN stamm.deskriptoren d01 ON d01.id = dxx.vorgaenger
+        AND d01.ebene = 1
+        AND d01.sn = cast(substr(media_desk, 7, 2) AS SMALLINT)
+      JOIN stamm.deskriptoren d00 ON d00.id = d01.vorgaenger
+        AND d00.ebene = 0
+        AND d00.sn = cast(substr(media_desk, 4, 2) AS SMALLINT)
+      WHERE dxx.ebene = stufe
+        AND dxx.sn = cast(substr(media_desk, (stufe * 3 + 4), 2) AS SMALLINT);
+
+    ELSE
+      d_xx := NULL;
+    END IF;
+    return d_xx;
+  END;
+$BODY$;
+
+
+CREATE OR REPLACE FUNCTION get_desk_sxx(
+	media_desk character varying,
+	stufe integer)
+    RETURNS integer
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+DECLARE
+    s_xx INTEGER;
+  BEGIN
+    IF substr(media_desk, 4+stufe*3, 2) = '00' THEN 
+      RETURN NULL; 
+    END IF;
+    IF stufe = 0 THEN
+      SELECT d00.s_xx
+      INTO s_xx
+      FROM stamm.deskriptoren d00
+      WHERE d00.ebene = 0
+        AND d00.sn = cast(substr(media_desk, 4, 2) AS SMALLINT);
+
+    ELSEIF stufe = 1 THEN
+      SELECT d01.s_xx
+      INTO s_xx
+      FROM stamm.deskriptoren d01
+      JOIN stamm.deskriptoren d00 ON d00.id = d01.vorgaenger
+        AND d00.ebene = 0
+        AND d00.sn = cast(substr(media_desk, 4, 2) AS SMALLINT)
+      WHERE d01.ebene = 1
+        AND d01.sn = cast(substr(media_desk, 7, 2) AS SMALLINT);
+
+    ELSEIF stufe = 2 THEN
+      SELECT d02.s_xx
+      INTO s_xx
+      FROM stamm.deskriptoren d02
+      JOIN stamm.deskriptoren d01 ON d01.id = d02.vorgaenger
+        AND d01.ebene = 1
+        AND d01.sn = cast(substr(media_desk, 7, 2) AS SMALLINT)
+      JOIN stamm.deskriptoren d00 ON d00.id = d01.vorgaenger
+        AND d00.ebene = 0
+        AND d00.sn = cast(substr(media_desk, 4, 2) AS SMALLINT)
+      WHERE d02.ebene = 2
+        AND d02.sn = cast(substr(media_desk, 10, 2) AS SMALLINT);
+
+    ELSEIF stufe = 3 AND substr(media_desk, 4, 2) = '01' THEN
+      SELECT d03.s_xx
+      INTO s_xx
+      FROM stamm.deskriptoren d03
+      JOIN stamm.deskriptoren d02 ON d02.id = d03.vorgaenger
+        AND d02.ebene = 2
+        AND d02.sn = cast(substr(media_desk , 10, 2) AS SMALLINT)
+      JOIN stamm.deskriptoren d01 ON d01.id = d02.vorgaenger
+        AND d01.ebene = 1
+        AND d01.sn = cast(substr(media_desk, 7, 2) AS SMALLINT)
+      JOIN stamm.deskriptoren d00 ON d00.id = d01.vorgaenger
+        AND d00.ebene = 0
+        AND d00.sn = cast(substr(media_desk, 4, 2) AS SMALLINT)
+      WHERE d03.ebene = 3
+        AND d03.sn = cast(substr(media_desk, 13, 2) AS SMALLINT);
+
+    ELSEIF stufe = 3 AND substr(media_desk, 4, 2) <> '01' OR stufe > 3 THEN
+      SELECT dxx.s_xx
+      INTO s_xx
+      FROM stamm.deskriptoren dxx
+      JOIN stamm.deskriptoren d01 ON d01.id = dxx.vorgaenger
+        AND d01.ebene = 1
+        AND d01.sn = cast(substr(media_desk, 7, 2) AS SMALLINT)
+      JOIN stamm.deskriptoren d00 ON d00.id = d01.vorgaenger
+        AND d00.ebene = 0
+        AND d00.sn = cast(substr(media_desk, 4, 2) AS SMALLINT)
+      WHERE dxx.ebene = stufe
+        AND dxx.sn = cast(substr(media_desk, (stufe * 3 + 4), 2) AS SMALLINT);
+
+    ELSE
+      s_xx := NULL;
+    END IF;
+    return s_xx;
+  END;
+$BODY$;
+
+
 CREATE TABLE koordinaten_art (
     id serial PRIMARY KEY,
     koordinatenart character varying(50),
