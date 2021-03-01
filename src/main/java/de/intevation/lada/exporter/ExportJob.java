@@ -19,20 +19,14 @@ import java.nio.file.Paths;
 
 import javax.json.JsonObject;
 
-import org.apache.log4j.Logger;
-
 import de.intevation.lada.util.auth.UserInfo;
+import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.Repository;
 
 /**
  * Abstract class for an export job.
  */
-public abstract class ExportJob extends Thread {
-
-    /**
-     * True if job has finished and will not change it's status anymore.
-     */
-    private boolean done;
+public abstract class ExportJob extends Job {
 
     /**
      * Result encoding.
@@ -55,16 +49,6 @@ public abstract class ExportJob extends Thread {
     protected String format;
 
     /**
-     * Logger instance.
-     */
-    protected Logger logger;
-
-    /**
-     * Message String, used in case of an error.
-     */
-    protected String message;
-
-    /**
      * Filename set by the users request.
      */
     protected String downloadFileName;
@@ -85,29 +69,9 @@ public abstract class ExportJob extends Thread {
     protected Path outputFilePath;
 
     /**
-     * Id of this export job.
-     */
-    protected String jobId;
-
-    /**
      * Repository used for loading data.
      */
     protected Repository repository;
-
-    /**
-     * UserInfo.
-     */
-    protected UserInfo userInfo;
-
-    /**
-     * Possible status values for export jobs.
-     */
-    public enum Status { waiting, running, finished, error }
-
-    /**
-     * The current job status.
-     */
-    private Status currentStatus;
 
     /**
      * Create a new job with the given id.
@@ -215,22 +179,6 @@ public abstract class ExportJob extends Thread {
     }
 
     /**
-     * Return the job identifier.
-     * @return Identifier as String
-     */
-    public String getJobId() {
-        return jobId;
-    }
-
-    /**
-     * Return the message String.
-     * @return message as String
-     */
-    public String getMessage() {
-        return message;
-    }
-
-    /**
      * Get the output file name.
      * @return Output file name String
      */
@@ -247,33 +195,6 @@ public abstract class ExportJob extends Thread {
     }
 
     /**
-     * Return the current job status.
-     * @return Job status
-     */
-    public Status getStatus() {
-        return currentStatus;
-    }
-    /**
-     * Return the current status as String.
-     * @return Status as String
-     */
-    public String getStatusName() {
-        return currentStatus.name();
-    }
-
-    public UserInfo getUserInfo() {
-        return userInfo;
-    }
-
-    /**
-     * Check if job is done and will no longer change its status.
-     * @return True if done, else false
-     */
-    public boolean isDone() {
-        return done;
-    }
-
-    /**
      * Checks if given charset is valid.
      *
      * Note that charset names are not case sensitive.
@@ -283,30 +204,6 @@ public abstract class ExportJob extends Thread {
      */
     protected boolean isEncodingValid() {
         return Charset.isSupported(this.encoding);
-    }
-
-    /**
-     * Run the ExportJob.
-     * Should be overwritten in child classes.
-     */
-    public void run() {
-        currentStatus = Status.running;
-    }
-
-    /**
-     * Set the current status.
-     *
-     * @param status New status
-     * @throws IllegalStatusTransitionException Thrown if job is already done
-     */
-    private void setCurrentStatus(
-        Status status
-    ) throws IllegalStatusTransitionException {
-        if (isDone()) {
-            throw new IllegalStatusTransitionException(
-                "Invalid job status transition: Job is already done");
-        }
-        this.currentStatus = status;
     }
 
     /**
@@ -444,23 +341,5 @@ public abstract class ExportJob extends Thread {
         }
 
         return true;
-    }
-
-    /**
-     * Exception thrown if an unfished ExportJob is about to be removed
-     * while still runnning.
-     */
-    public static class JobNotFinishedException extends Exception {
-        private static final long serialVersionUID = 1L;
-    }
-
-    /**
-     * Exception thrown if an illegal status transition was done.
-     */
-    public static class IllegalStatusTransitionException extends Exception {
-        private static final long serialVersionUID = 2L;
-        public IllegalStatusTransitionException(String msg) {
-            super(msg);
-        }
     }
 }

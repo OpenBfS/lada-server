@@ -28,12 +28,12 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.log4j.Logger;
 
 import de.intevation.lada.exporter.ExportJobManager;
-import de.intevation.lada.exporter.ExportJobManager.JobNotFoundException;
-import de.intevation.lada.exporter.ExportJobManager.JobStatus;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
+import de.intevation.lada.util.data.JobManager.JobNotFoundException;
+import de.intevation.lada.util.data.JobManager.JobStatus;
 
 /**
  * REST service to export data into files using a polling mechanism.
