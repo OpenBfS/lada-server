@@ -29,7 +29,7 @@ public class CheckUrsprungszeit implements Rule {
         Probe probe = (Probe) object;
         Timestamp uZeit = probe.getUrsprungszeit();
         Timestamp begin = probe.getProbeentnahmeBeginn();
-        if (uZeit != null && uZeit.after(begin)
+        if (uZeit != null && begin != null && uZeit.after(begin)
         ) {
             Violation violation = new Violation();
             violation.addWarning(
