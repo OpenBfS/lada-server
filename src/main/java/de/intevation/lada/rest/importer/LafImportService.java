@@ -24,11 +24,14 @@ import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.servlet.http.HttpServletRequest;
+import javax.websocket.server.PathParam;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -50,11 +53,14 @@ import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
+import de.intevation.lada.util.data.JobManager;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.data.TagUtil;
+import de.intevation.lada.util.data.JobManager.JobNotFoundException;
+import de.intevation.lada.util.data.JobManager.JobStatus;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.util.data.StatusCodes;
 
@@ -84,6 +90,89 @@ public class LafImportService {
     @Inject
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
+
+    @Inject
+    private Logger logger;
+
+    @Inject
+    JobManager importJobManager;
+
+    @POST
+    @Path("/async/laf")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public javax.ws.rs.core.Response createAsyncImport(
+        JsonObject jsonInput,
+        @Context HttpServletRequest request
+    ) {
+        String encoding = request.getHeader("X-FILE-ENCODING");
+        if (encoding == null || encoding.equals("")) {
+            encoding = "iso-8859-15";
+        }
+        UserInfo userInfo = authorization.getInfo(request);
+        String newJobId = "";
+        JsonObject responseJson = Json.createObjectBuilder()
+            .add("refId", newJobId)
+            .build();
+        return javax.ws.rs.core.Response.ok(responseJson.toString()).build();
+    }
+
+    /**
+     * Get the status of an export job.
+     *
+     * Output format:
+     *
+     * <pre>
+     * {
+     *    done: boolean
+     *    status: 'waiting' | 'running' | 'finished' | 'error'
+     *    message: string (optional)
+     *  }
+     * </pre>
+     *
+     * @param id Job id to check
+     * @return Json object containing the status information, status
+     *         403 if the requesting user has not created the request
+     *         or status 404 if job was not found
+     */
+    @GET
+    @Path("/async/status/{id}")
+    @Produces("application/json")
+    public javax.ws.rs.core.Response getStatus(
+        @PathParam("id") String id,
+        @Context HttpServletRequest request) {
+
+        JobStatus status;
+        UserInfo originalCreator;
+        UserInfo requestingUser = authorization.getInfo(request);
+
+        try {
+            originalCreator = importJobManager.getJobUserInfo(id);
+            if (!originalCreator.getUserId().equals(
+                    requestingUser.getUserId())
+            ) {
+                logger.warn(String.format(
+                    "Rejected status request by user "
+                    + "#%s for job %s created by user #%s",
+                    requestingUser.getUserId(),
+                    id,
+                    originalCreator.getUserId()));
+                return javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.FORBIDDEN).build();
+            }
+
+            status = importJobManager.getJobStatus(id);
+        } catch (JobNotFoundException jnfe) {
+            logger.info(String.format("Could not find status for job %s", id));
+            return javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.NOT_FOUND).build();
+        }
+        JsonObject responseJson = Json.createObjectBuilder()
+            .add("status", status.getStatus())
+            .add("message", status.getMessage())
+            .add("done", status.isDone())
+            .build();
+
+        return javax.ws.rs.core.Response.ok(responseJson.toString()).build();
+    }
 
     /**
      * Import a given list of files, generate a tag and set it to all
