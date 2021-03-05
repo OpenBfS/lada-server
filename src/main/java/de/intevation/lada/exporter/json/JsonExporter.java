@@ -111,10 +111,6 @@ public class JsonExporter implements Exporter {
         JsonObject options,
         ArrayList<String> columnsToInclude
     ) {
-        if (!options.containsKey("id")) {
-            logger.error("No id column given");
-            return null;
-        }
         String subDataKey = options.getString("subData", "");
 
         final JsonObjectBuilder builder = Json.createObjectBuilder();
