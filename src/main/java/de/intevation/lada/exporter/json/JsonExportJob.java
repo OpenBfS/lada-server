@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import org.apache.log4j.Logger;
 
@@ -250,11 +251,13 @@ public class JsonExportJob extends QueryExportJob {
             return;
         }
         InputStream exported;
-        JsonObject exportOptions = Json.createObjectBuilder()
-            .add("id", idColumn)
+        JsonObjectBuilder optionBuilder = Json.createObjectBuilder()
             .add("subData", exportSubdata ? subDataJsonKey : "")
-            .add("timezone", timezone)
-            .build();
+            .add("timezone", timezone);
+        if (idColumn != null) {
+            optionBuilder.add("id", idColumn);
+        }
+        JsonObject exportOptions = optionBuilder.build();
         try {
             exported = exporter.export(
                 exportData, encoding, exportOptions, exportColumns);
