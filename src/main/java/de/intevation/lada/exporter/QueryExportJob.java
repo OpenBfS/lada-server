@@ -320,7 +320,8 @@ public abstract class QueryExportJob extends ExportJob {
         //Check if subdata shall be exported
         exportSubdata = exportParameters.getBoolean("exportSubData");
         //Get identifier type
-        idColumn = exportParameters.getString("idField");
+        idColumn = exportParameters.isNull("idField")
+            ? null : exportParameters.getString("idField");
         //Get target timezone
         timezone = exportParameters.getString("timezone");
 
@@ -342,13 +343,14 @@ public abstract class QueryExportJob extends ExportJob {
                 subDataColumns.add(columnJson.getString(i));
             }
         }
+
+        // Get IDs to filter result
         ArrayList<Integer> idFilterList = new ArrayList<Integer>();
         JsonArray idJsonArray = exportParameters.getJsonArray("idFilter");
         int idJsonArrayCount = idJsonArray.size();
         for (int i = 0; i < idJsonArrayCount; i++) {
             idFilterList.add(idJsonArray.getInt(i));
         }
-
         idsToExport = new Integer[idFilterList.size()];
         idFilterList.toArray(idsToExport);
 

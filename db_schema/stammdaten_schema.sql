@@ -266,6 +266,26 @@ DECLARE
   END;
 $BODY$;
 
+/* Check whether a given SQL statement can be executed in this database
+ *
+ * To be used as a check constraint for SQL statements stored in the database.
+ * Be careful to not use it with any DML or DDL statements!
+ */
+CREATE OR REPLACE FUNCTION check_sql(stmt text)
+    RETURNS boolean
+    LANGUAGE 'plpgsql'
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+  BEGIN
+    EXECUTE stmt;
+    RETURN true;
+  EXCEPTION
+    WHEN OTHERS THEN
+      RAISE NOTICE USING MESSAGE = SQLERRM, ERRCODE = SQLSTATE;
+      RETURN false;
+  END;
+$BODY$;
+
 
 CREATE TABLE koordinaten_art (
     id serial PRIMARY KEY,
@@ -445,7 +465,7 @@ INSERT INTO lada_user VALUES(0, 'Default');
 
 CREATE TABLE base_query (
     id serial PRIMARY KEY,
-    sql text NOT NULL
+    sql text NOT NULL CHECK(check_sql(sql))
 );
 
 CREATE TABLE query_user (
