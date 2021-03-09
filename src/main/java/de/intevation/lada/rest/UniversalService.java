@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +24,8 @@ import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.QueryColumns;
 import de.intevation.lada.model.land.Messprogramm;
+import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
 import de.intevation.lada.model.stammdaten.GridColumn;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
@@ -113,16 +115,20 @@ public class UniversalService {
             //TODO Error code if no columns are given
             return new Response(false, StatusCodes.NOT_EXISTING, null);
         }
-        ArrayList<String> hierarchy = new ArrayList<String>();
-        hierarchy.add("messungId");
-        hierarchy.add("probeId");
-        hierarchy.add("mpId");
-        hierarchy.add("ortId");
-        hierarchy.add("probenehmer");
-        hierarchy.add("dsatzerz");
-        hierarchy.add("mprkat");
+
+        /**
+         * Determines the class used for authorizing result entries:
+         * Later entries overrule earlier ones.
+         */
+        final LinkedHashMap<String, Class<?>> hierarchy = new LinkedHashMap();
+        hierarchy.put("mprkat",      MessprogrammKategorie.class);
+        hierarchy.put("dsatzerz",    DatensatzErzeuger.class);
+        hierarchy.put("probenehmer", Probenehmer.class);
+        hierarchy.put("ortId",       Ort.class);
+        hierarchy.put("mpId",        Messprogramm.class);
+        hierarchy.put("probeId",     Probe.class);
+        hierarchy.put("messungId",   Messung.class);
         int resultNdx = hierarchy.size();
-        String authType = "";
         for (GridColumnValue columnValue : gridColumnValues) {
             GridColumn gridColumn = repository.getByIdPlain(
                 GridColumn.class,
@@ -135,42 +141,21 @@ public class UniversalService {
                     gridColumn.getDataType().getId(),
                     Strings.STAMM);
             if (resultType != null) {
-                int ndx = hierarchy.indexOf(resultType.getName());
+                int ndx = -1, i = 0;
+                for (String authType: hierarchy.keySet()) {
+                    if (authType.equals(resultType.getName())) {
+                        ndx = i;
+                    }
+                    i++;
+                }
                 if (ndx > -1 && ndx < resultNdx) {
                     resultNdx = ndx;
                     authorizationColumnIndex = gridColumn.getDataIndex();
-                    authType = resultType.getName();
+                    authorizationColumnType = hierarchy.get(
+                        resultType.getName());
                 }
             }
             columnValue.setGridColumn(gridColumn);
-        }
-
-        switch (authType) {
-            case "probeId":
-                authorizationColumnType =
-                    de.intevation.lada.model.land.Probe.class;
-                break;
-            case "messungId":
-                authorizationColumnType =
-                    de.intevation.lada.model.land.Messung.class;
-                break;
-            case "mpId":
-                authorizationColumnType = Messprogramm.class;
-                break;
-            case "ortId":
-                authorizationColumnType = Ort.class;
-                break;
-            case "probenehmer":
-                authorizationColumnType = Probenehmer.class;
-                break;
-            case "dsatzerz":
-                authorizationColumnType = DatensatzErzeuger.class;
-                break;
-            case "mprkat":
-                authorizationColumnType = MessprogrammKategorie.class;
-                break;
-            default:
-                break;
         }
 
         GridColumn gridColumn = repository.getByIdPlain(
