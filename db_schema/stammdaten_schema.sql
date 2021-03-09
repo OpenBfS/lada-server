@@ -915,7 +915,7 @@ CREATE TABLE grid_column (
     base_query integer REFERENCES base_query,
     name character varying(80) NOT NULL,
     data_index character varying(80) NOT NULL,
-    position integer NOT NULL,
+    position integer NOT NULL CHECK(position > 0),
     filter integer REFERENCES filter,
     data_type integer NOT NULL REFERENCES result_type
 );
