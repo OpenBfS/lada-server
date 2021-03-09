@@ -75,6 +75,13 @@ public class LafImportJob extends Job {
         //Intentionally left blank
     }
 
+    /**
+     * Create a result json using a status code and message
+     * @param success True if import was successful
+     * @param status Status code
+     * @param data Message String
+     * @return Result as JsonObject
+     */
     private JsonObject createResult(boolean success, int status, String data) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         builder.add("success", success)
@@ -180,10 +187,8 @@ public class LafImportJob extends Job {
             importedProbeids.addAll(((LafImporter) importer).getImportedIds());
         });
 
-        boolean success = false;
         // If import created at least a new record
         if (importedProbeids.size() > 0) {
-            success = true;
             //Generate a tag for the imported probe records
             Response tagCreation =
                 TagUtil.generateTag("IMP", mstId, repository);

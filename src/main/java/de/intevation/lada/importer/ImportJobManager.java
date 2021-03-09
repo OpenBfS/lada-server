@@ -8,13 +8,22 @@
 
 package de.intevation.lada.importer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.json.JsonObject;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.log4j.Logger;
+
 import de.intevation.lada.importer.laf.LafImportJob;
 import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.UserInfo;
+import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.JobManager;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
@@ -39,6 +48,12 @@ public class ImportJobManager extends JobManager {
     @RepositoryConfig(type = RepositoryType.RW)
     protected Repository repository;
 
+    public ImportJobManager() {
+        activeJobs = new HashMap<String, Job>();
+        logger = Logger.getLogger("ImportJobManager");
+        logger.debug("Creating ImportJobManager");
+    };
+
     public String createImportJob(UserInfo userInfo, JsonObject params, String mstId) {
         String id = getNextIdentifier();
         logger.debug(String.format("Creating new job: %s", id));
@@ -50,5 +65,25 @@ public class ImportJobManager extends JobManager {
         newJob.start();
         activeJobs.put(id, newJob);
         return id;
+    }
+
+    public String getImportResult(String id) throws JobNotFoundException {
+        LafImportJob job = (LafImportJob) getJobById(id);
+        String jsonString = "";
+        if (job == null) {
+            throw new JobNotFoundException();
+        }
+        logger.debug(String.format("Returning result for job %s", id));
+        try {
+            Map<String, Map<String, Object>> importData = job.getImportData();
+            ObjectMapper objectMapper = new ObjectMapper();
+            jsonString = objectMapper.writeValueAsString(importData);
+        } catch (JsonProcessingException jpe) {
+            logger.error(String.format("Error returning result for job %s:", id));
+            jpe.printStackTrace();
+        } finally {
+            removeJob(job);
+        }
+        return jsonString;
     }
 }
