@@ -199,7 +199,8 @@ public abstract class QueryExportJob extends ExportJob {
             List<Map<String, Object>> result =
                 queryTools.getResultForQuery(columns, qId);
             logger.debug(String.format(
-                "Fetched %d primary records", result.size()));
+                "Fetched %d primary records",
+                result == null ? 0 : result.size()));
             return result;
         } catch (Exception e) {
             logger.error("Failed loading query result");
