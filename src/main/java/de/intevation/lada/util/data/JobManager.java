@@ -86,6 +86,17 @@ abstract public class JobManager {
     }
 
     /**
+     * Calculates and returns the next job identifier.
+     *
+     * The new identifier will be stored in lastIdentifier.
+     * @return New identifier as String
+     */
+    protected synchronized String getNextIdentifier() {
+        identifier.next();
+        return identifier.toString();
+    }
+
+    /**
      * Remove the given job from the active job list and trigger its
      * cleanup function.
      * @param job Job to remove

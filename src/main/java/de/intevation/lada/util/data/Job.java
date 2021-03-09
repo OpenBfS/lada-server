@@ -21,7 +21,7 @@ abstract public class Job extends Thread {
     /**
      * True if job has finished and will not change it's status anymore.
      */
-    protected boolean done;
+    protected boolean done = false;
 
     /**
      * Logger instance.
@@ -34,7 +34,7 @@ abstract public class Job extends Thread {
     protected String message;
 
     /**
-     * Id of this export job.
+     * Id of this job.
      */
     protected String jobId;
 
@@ -44,20 +44,53 @@ abstract public class Job extends Thread {
     protected UserInfo userInfo;
 
     /**
-     * Possible status values for export jobs.
+     * Possible status values for jobs.
      */
     public enum Status { waiting, running, finished, error }
 
     /**
      * The current job status.
      */
-    protected Status currentStatus;
+    protected Status currentStatus = Status.waiting;
 
     /**
      * Cleanup method triggered when the job has finished
      * @throws JobNotFinishedException Thrown if job is still running
      */
     abstract public void cleanup() throws JobNotFinishedException;
+
+    /**
+     * Set this job to failed state.
+     * @param m Optional message
+     */
+    protected void fail(String m) {
+        try {
+            this.setCurrentStatus(Status.error);
+            this.setDone(true);
+            this.message = m;
+        } catch (IllegalStatusTransitionException iste) {
+            this.currentStatus = Status.error;
+            this.message = "Internal server errror";
+            this.done = true;
+        } finally {
+            logger.error(
+                String.format("Export failed with message: %s", message));
+        }
+    }
+
+    /**
+     * Set this job to finished state.
+     */
+    protected void finish() {
+        try {
+            this.setCurrentStatus(Status.finished);
+            this.setDone(true);
+        } catch (IllegalStatusTransitionException iste) {
+            this.currentStatus = Status.error;
+            this.message = "Internal server errror";
+            this.done = true;
+        }
+    }
 
     /**
      * Return the job identifier.
@@ -125,6 +158,28 @@ abstract public class Job extends Thread {
                 "Invalid job status transition: Job is already done");
         }
         this.currentStatus = status;
+    }
+
+    /**
+     * Set the done state.
+     * @param done New done status
+     * @throws IllegalArgumentException Thrown if argument is false and
+     *                                  job is already done
+     */
+    protected void setDone(boolean done) throws IllegalArgumentException {
+        if (!done && this.done) {
+            throw new IllegalArgumentException(
+                "Job is already done, can not reset done to false");
+        }
+        this.done = done;
+    }
+
+    /**
+     * Set user info.
+     * @param userInfo New userInfo
+     */
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
     }
 
     /**

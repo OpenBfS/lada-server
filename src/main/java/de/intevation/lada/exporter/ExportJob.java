@@ -19,7 +19,6 @@ import java.nio.file.Paths;
 
 import javax.json.JsonObject;
 
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.Repository;
 
@@ -105,42 +104,6 @@ public abstract class ExportJob extends Job {
         removeResultFile();
     }
 
-
-    /**
-     * Set this job to failed state.
-     * @param m Optional message
-     */
-    protected void fail(String m) {
-        try {
-            this.setCurrentStatus(Status.error);
-            this.setDone(true);
-            this.message = m;
-        } catch (IllegalStatusTransitionException iste) {
-            this.currentStatus = Status.error;
-            this.message = "Internal server errror";
-            this.done = true;
-        } finally {
-            logger.error(
-                String.format("Export failed with message: %s", message));
-        }
-    }
-
-
-    /**
-     * Set this job to finished state.
-     */
-    protected void finish() {
-        try {
-            this.setCurrentStatus(Status.finished);
-            this.setDone(true);
-        } catch (IllegalStatusTransitionException iste) {
-            this.currentStatus = Status.error;
-            this.message = "Internal server errror";
-            this.done = true;
-        }
-    }
-
-
     /**
      * Set this job to a running state.
      */
@@ -207,20 +170,6 @@ public abstract class ExportJob extends Job {
     }
 
     /**
-     * Set the done state.
-     * @param done New done status
-     * @throws IllegalArgumentException Thrown if argument is false and
-     *                                  job is already done
-     */
-    protected void setDone(boolean done) throws IllegalArgumentException {
-        if (!done && this.done) {
-            throw new IllegalArgumentException(
-                "Job is already done, can not reset done to false");
-        }
-        this.done = done;
-    }
-
-    /**
      * Set the filename used for downloading the result file.
      * @param downloadFileName File name
      */
@@ -258,14 +207,6 @@ public abstract class ExportJob extends Job {
      */
     public void setRepository(Repository repository) {
         this.repository = repository;
-    }
-
-    /**
-     * Set user info.
-     * @param userInfo New userInfo
-     */
-    public void setUserInfo(UserInfo userInfo) {
-        this.userInfo = userInfo;
     }
 
     /**

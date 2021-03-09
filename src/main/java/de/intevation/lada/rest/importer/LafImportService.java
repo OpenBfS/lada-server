@@ -26,6 +26,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +45,7 @@ import org.apache.log4j.Logger;
 
 import de.intevation.lada.importer.ImportConfig;
 import de.intevation.lada.importer.ImportFormat;
+import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.importer.Importer;
 import de.intevation.lada.importer.laf.LafImporter;
 import de.intevation.lada.model.stammdaten.ImporterConfig;
@@ -53,7 +55,6 @@ import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
-import de.intevation.lada.util.data.JobManager;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
@@ -95,7 +96,7 @@ public class LafImportService {
     private Logger logger;
 
     @Inject
-    JobManager importJobManager;
+    ImportJobManager importJobManager;
 
     @POST
     @Path("/async/laf")
@@ -105,12 +106,16 @@ public class LafImportService {
         JsonObject jsonInput,
         @Context HttpServletRequest request
     ) {
-        String encoding = request.getHeader("X-FILE-ENCODING");
-        if (encoding == null || encoding.equals("")) {
-            encoding = "iso-8859-15";
+        String mstId = request.getHeader("X-LADA-MST");
+        if (mstId == null) {
+            JsonObjectBuilder builder = Json.createObjectBuilder();
+            builder.add("success", false)
+            .add("status", StatusCodes.NOT_ALLOWED)
+            .add("data", "Missing header for messtelle.");
+            return javax.ws.rs.core.Response.ok(builder.build().toString()).build();
         }
         UserInfo userInfo = authorization.getInfo(request);
-        String newJobId = "";
+        String newJobId = importJobManager.createImportJob(userInfo, jsonInput, mstId);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();

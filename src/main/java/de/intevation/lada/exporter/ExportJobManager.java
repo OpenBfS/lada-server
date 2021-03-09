@@ -66,7 +66,7 @@ public class ExportJobManager extends JobManager{
      */
     @Inject
     @RepositoryConfig(type = RepositoryType.RO)
-    private Repository repository;
+    protected Repository repository;
 
     @Inject
     private QueryTools queryTools;
@@ -169,17 +169,6 @@ public class ExportJobManager extends JobManager{
     ) throws JobNotFoundException {
         ExportJob job = getJobById(id);
         return job.getDownloadFileName();
-    }
-
-    /**
-     * Calculates and returns the next job identifier.
-     *
-     * The new identifier will be stored in lastIdentifier.
-     * @return New identifier as String
-     */
-    private synchronized String getNextIdentifier() {
-        identifier.next();
-        return identifier.toString();
     }
 
     /**
