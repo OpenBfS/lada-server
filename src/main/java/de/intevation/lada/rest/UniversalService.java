@@ -120,7 +120,8 @@ public class UniversalService {
          * Determines the class used for authorizing result entries:
          * Later entries overrule earlier ones.
          */
-        final LinkedHashMap<String, Class<?>> hierarchy = new LinkedHashMap();
+        final LinkedHashMap<String, Class<?>> hierarchy
+            = new LinkedHashMap<String, Class<?>>();
         hierarchy.put("mprkat",      MessprogrammKategorie.class);
         hierarchy.put("dsatzerz",    DatensatzErzeuger.class);
         hierarchy.put("probenehmer", Probenehmer.class);
@@ -169,6 +170,7 @@ public class UniversalService {
         if (result == null) {
             return new Response(true, StatusCodes.OK, null);
         }
+
         for (Map<String, Object> row: result) {
             Object idToAuthorize = row.get(authorizationColumnIndex);
             boolean readonly;
@@ -215,7 +217,6 @@ public class UniversalService {
                 readonly = true;
             }
             row.put("readonly", readonly);
-
         }
         int size = result.size();
 
