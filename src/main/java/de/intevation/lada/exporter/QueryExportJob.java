@@ -85,19 +85,15 @@ public abstract class QueryExportJob extends ExportJob {
     /**
      * Map id result types to filter sql statements for the id columns.
      */
-    private Map<String, String> dataTypeToIdFilterQuery =
-        new HashMap<String, String>() {
-            private static final long serialVersionUID = 1L;
-            {
-                put("probeId", "probe.id");
-                put("messungId", "messung.id");
-                put("mpId", "messprogramm.id");
-                put("ortId", "ort.id");
-                put("dsatzerz", "datensatz_erzeuger.id");
-                put("mprkat", "messprogramm_kategorie.id");
-                put("probenehmer", "probenehmer.id");
-            }
-        };;
+    private Map<String, String> dataTypeToIdFilterQuery = Map.of(
+        "probeId", "probe.id",
+        "messungId", "messung.id",
+        "mpId", "messprogramm.id",
+        "ortId", "ort.id",
+        "dsatzerz", "datensatz_erzeuger.id",
+        "mprkat", "messprogramm_kategorie.id",
+        "probenehmer", "probenehmer.id"
+    );
 
     /**
      * Query id.
@@ -133,11 +129,17 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-     * Creates a id list filter for the given dataIndex.
+     * Creates an ID list filter for the given dataType.
      * @param dataType ID column data type, e.g. mpId
      * @return Filter object
      */
     private Filter createIdListFilter(String dataType) {
+        String sqlId = dataTypeToIdFilterQuery.get(dataType);
+        if (sqlId == null) {
+            throw new IllegalArgumentException(
+                "No SQL field mapping available for dataType '" + dataType + "'"
+            );
+        }
 
         //Get Filter type from db
         QueryBuilder<FilterType> builder =
@@ -152,8 +154,7 @@ public abstract class QueryExportJob extends ExportJob {
         Filter filter = new Filter();
         filter.setFilterType(filterType);
         filter.setParameter(parameter);
-        filter.setSql(String.format(
-            "%s in ( :%s )", dataTypeToIdFilterQuery.get(dataType), parameter));
+        filter.setSql(String.format("%s IN ( :%s )", sqlId, parameter));
         return filter;
     }
 
