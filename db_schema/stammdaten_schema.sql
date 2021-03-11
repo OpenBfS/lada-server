@@ -917,7 +917,10 @@ CREATE TABLE grid_column (
     data_index character varying(80) NOT NULL,
     position integer NOT NULL CHECK(position > 0),
     filter integer REFERENCES filter,
-    data_type integer NOT NULL REFERENCES result_type
+    data_type integer NOT NULL REFERENCES result_type,
+    UNIQUE(base_query, name),
+    UNIQUE(base_query, data_index),
+    UNIQUE(base_query, position)
 );
 
 CREATE TABLE grid_column_values (
