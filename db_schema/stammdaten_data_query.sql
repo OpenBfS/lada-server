@@ -1139,7 +1139,7 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 270	0	1217	10	\N	\N	\N	f	t	15	55
 275	0	1212	10	\N	\N	\N	f	t	11	120
 280	0	1240	10	\N	\N	\N	f	t	20	46
-293	0	1226	10	\N	\N	false	t	f	\N	40
+293	0	1226	10	\N	\N	true	t	f	\N	40
 296	0	1238	10	\N	\N	\N	f	t	13	100
 210	1	10116	8	\N	\N	\N	f	t	16	40
 213	1	10138	8	\N	\N	\N	f	t	38	200
@@ -1199,7 +1199,7 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 192	0	4104	9	\N	\N	\N	f	t	3	53
 195	0	4118	9	\N	\N	\N	f	t	15	120
 202	0	4140	9	\N	\N	\N	f	f	-1	125
-205	0	4135	9	\N	\N	false	t	f	-1	40
+205	0	4135	9	\N	\N	true	t	f	-1	40
 208	0	4125	9	\N	\N	\N	t	t	20	150
 253	0	1222	10	\N	\N	\N	f	t	10	70
 261	0	1202	10	\N	\N	\N	f	t	3	92
@@ -1220,7 +1220,7 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 16	0	104	1	\N	\N	\N	f	f	-1	52
 17	0	108	1	\N	\N	\N	f	f	-1	125
 18	0	114	1	\N	\N	\N	f	f	-1	150
-21	0	126	1	\N	\N	false	t	f	-1	40
+21	0	126	1	\N	\N	true	t	f	-1	40
 23	0	107	1	\N	\N	\N	f	t	9	69
 24	0	111	1	\N	\N	\N	f	t	11	125
 25	0	119	1	\N	\N	\N	t	t	8	150
@@ -1256,7 +1256,7 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 64	0	1107	2	\N	\N	\N	f	f	-1	52
 65	0	1106	2	\N	\N	\N	f	t	4	77
 66	0	1101	2	\N	\N	\N	f	f	-1	92
-67	0	1150	2	\N	\N	false	t	f	-1	40
+67	0	1150	2	\N	\N	true	t	f	-1	40
 68	0	1122	2	\N	\N	\N	f	f	-1	75
 69	0	1114	2	\N	\N	\N	f	t	12	150
 70	0	1142	2	\N	\N	\N	f	f	-1	76
@@ -1426,7 +1426,7 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 454	0	4230	11	asc	2	\N	t	t	3	69
 455	0	4231	11	\N	\N	\N	f	t	4	200
 456	0	4232	11	asc	4	\N	f	t	6	200
-457	0	4233	11	\N	\N	false	t	f	-1	40
+457	0	4233	11	\N	\N	true	t	f	-1	40
 458	0	4234	11	\N	\N	\N	f	f	-1	150
 459	0	4235	11	\N	\N	\N	t	t	2	154
 460	0	4236	11	\N	\N	\N	f	f	-1	70
@@ -1618,7 +1618,7 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 667	1	10225	24	\N	\N	\N	t	f	\N	100
 668	1	10226	24	\N	\N	\N	t	t	2	150
 669	1	10227	24	\N	\N	\N	f	t	35	100
-670	1	10228	24	\N	\N	false	t	f	\N	100
+670	1	10228	24	\N	\N	true	t	f	\N	100
 671	1	10229	24	\N	\N	\N	f	f	\N	100
 672	1	10230	24	\N	\N	\N	f	t	3	150
 673	1	10231	24	\N	\N	\N	f	t	4	100
@@ -1695,7 +1695,7 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 746	1	10351	25	\N	\N	\N	f	f	\N	100
 747	1	10352	25	\N	\N	\N	t	t	1	100
 748	1	10353	25	\N	\N	\N	f	f	\N	100
-749	1	10354	25	\N	\N	false	t	f	\N	100
+749	1	10354	25	\N	\N	true	t	f	\N	100
 750	1	10355	25	\N	\N	\N	f	f	\N	100
 751	1	10356	25	\N	\N	\N	f	f	\N	100
 752	1	10357	25	\N	\N	\N	f	t	11	150
@@ -1727,7 +1727,7 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 777	1	10416	26	\N	\N	\N	t	f	\N	100
 778	1	10417	26	\N	\N	\N	t	f	\N	100
 779	1	10418	26	\N	\N	\N	f	t	31	100
-780	1	10419	26	\N	\N	false	t	f	\N	100
+780	1	10419	26	\N	\N	true	t	f	\N	100
 781	1	10420	26	\N	\N	\N	f	f	\N	100
 782	1	10421	26	\N	\N	\N	f	t	2	100
 783	1	10422	26	\N	\N	\N	f	t	5	100
@@ -1763,7 +1763,7 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 813	0	1404	27	\N	\N	\N	t	f	\N	200
 814	0	1405	27	\N	\N	\N	f	t	2	80
 815	0	1406	27	\N	\N	\N	f	t	3	100
-816	0	1407	27	\N	\N	false	t	f	\N	80
+816	0	1407	27	\N	\N	true	t	f	\N	80
 817	0	1408	27	\N	\N	\N	f	t	4	100
 818	0	1409	27	\N	\N	\N	f	t	5	100
 819	0	1410	27	\N	\N	\N	t	t	6	150
@@ -1820,7 +1820,7 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 886	1	1543	31	\N	\N	\N	f	f	\N	55
 887	1	1544	31	\N	\N	\N	f	f	\N	55
 888	1	1545	31	\N	\N	\N	f	f	\N	150
-889	1	1546	31	\N	\N	false	t	f	\N	40
+889	1	1546	31	\N	\N	true	t	f	\N	40
 890	1	1547	31	\N	\N	\N	f	f	\N	150
 891	1	1548	31	\N	\N	\N	f	f	\N	70
 892	1	1549	31	\N	\N	\N	f	f	\N	164
