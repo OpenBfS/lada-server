@@ -83,19 +83,6 @@ public abstract class QueryExportJob extends ExportJob {
     protected String timezone;
 
     /**
-     * Map id result types to filter sql statements for the id columns.
-     */
-    private Map<String, String> dataTypeToIdFilterQuery = Map.of(
-        "probeId", "probe.id",
-        "messungId", "messung.id",
-        "mpId", "messprogramm.id",
-        "ortId", "ort.id",
-        "dsatzerz", "datensatz_erzeuger.id",
-        "mprkat", "messprogramm_kategorie.id",
-        "probenehmer", "probenehmer.id"
-    );
-
-    /**
      * Query id.
      */
     private Integer qId;
@@ -129,32 +116,25 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-     * Creates an ID list filter for the given dataType.
-     * @param dataType ID column data type, e.g. mpId
+     * Creates an ID list filter for the given dataIndex.
+     * @param dataIndex ID column name
      * @return Filter object
      */
-    private Filter createIdListFilter(String dataType) {
-        String sqlId = dataTypeToIdFilterQuery.get(dataType);
-        if (sqlId == null) {
-            throw new IllegalArgumentException(
-                "No SQL field mapping available for dataType '" + dataType + "'"
-            );
-        }
-
+    private Filter createIdListFilter(String dataIndex) {
         //Get Filter type from db
         QueryBuilder<FilterType> builder =
             new QueryBuilder<FilterType>(
                 repository.entityManager(Strings.STAMM), FilterType.class);
-        builder.and("type", "listnumber");
+        builder.and("type", "genericid");
         FilterType filterType =
             repository.filterPlain(builder.getQuery(), Strings.STAMM).get(0);
 
         //Create filter object
-        String parameter = dataType + "s";
         Filter filter = new Filter();
         filter.setFilterType(filterType);
-        filter.setParameter(parameter);
-        filter.setSql(String.format("%s IN ( :%s )", sqlId, parameter));
+        filter.setParameter(dataIndex);
+        filter.setSql(String.format(
+                "CAST(%1$s AS text) IN ( :%1$s )", dataIndex));
         return filter;
     }
 
@@ -386,8 +366,8 @@ public abstract class QueryExportJob extends ExportJob {
                 idType = gridColumn.getDataType().getName();
                 if (idsToExport != null && idsToExport.length > 0) {
                     //Get query result type
-                    String dataType = gridColumn.getDataType().getName();
-                    Filter filter = createIdListFilter(dataType);
+                    Filter filter = createIdListFilter(
+                        gridColumn.getDataIndex());
                     gridColumn.setFilter(filter);
                     columnValue.setFilterActive(true);
                     StringBuilder filterValue = new StringBuilder();
