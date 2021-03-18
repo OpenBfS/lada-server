@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class KdaUtilTest {
 
     /* Tolerance in meter for coordinate comparison */
-    private static final double EPSILON = 1e-2;
+    private static final double EPSILON = 1;
 
     /* Expected coordinates for KdaUtil.KDA_* retrieved with PostGIS using
      * SELECT ST_AsText(ST_Transform(ST_SetSRID(
