@@ -11,11 +11,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.json.JsonArray;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
+import javax.json.JsonString;
+import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
 import de.intevation.lada.model.land.Messung;
@@ -56,11 +60,6 @@ public abstract class QueryExportJob extends ExportJob {
      * Identifier type.
      */
     protected String idType;
-
-    /**
-     * Ids of record that shall be exported.
-     */
-    private Integer[] idsToExport;
 
     /**
      * Query result.
@@ -326,16 +325,6 @@ public abstract class QueryExportJob extends ExportJob {
             }
         }
 
-        // Get IDs to filter result
-        ArrayList<Integer> idFilterList = new ArrayList<Integer>();
-        JsonArray idJsonArray = exportParameters.getJsonArray("idFilter");
-        int idJsonArrayCount = idJsonArray.size();
-        for (int i = 0; i < idJsonArrayCount; i++) {
-            idFilterList.add(idJsonArray.getInt(i));
-        }
-        idsToExport = new Integer[idFilterList.size()];
-        idFilterList.toArray(idsToExport);
-
         exportParameters.getJsonArray("columns").forEach(jsonValue -> {
             JsonObject columnObj = (JsonObject) jsonValue;
             GridColumnValue columnValue = new GridColumnValue();
@@ -360,24 +349,47 @@ public abstract class QueryExportJob extends ExportJob {
                 Strings.STAMM);
 
             columnValue.setGridColumn(gridColumn);
+
             //Check if the column contains the id
             if (columnValue.getGridColumn().getDataIndex().equals(idColumn)) {
-                //Get the column type
+                // Get the column type
                 idType = gridColumn.getDataType().getName();
-                if (idsToExport != null && idsToExport.length > 0) {
-                    //Get query result type
+
+                // Get IDs to filter result
+                JsonArray idsToExport = exportParameters
+                    .getJsonArray("idFilter");
+
+                if (idsToExport != null && idsToExport.size() > 0) {
+                    // Prepare filtering by IDs
                     Filter filter = createIdListFilter(
                         gridColumn.getDataIndex());
                     gridColumn.setFilter(filter);
-                    columnValue.setFilterActive(true);
+
                     StringBuilder filterValue = new StringBuilder();
-                    for (int i = 0; i < idsToExport.length; i++) {
-                        filterValue.append(idsToExport[i]);
-                        if (i != idsToExport.length - 1) {
+                    for (
+                        Iterator<JsonValue> ids = idsToExport.iterator();
+                        ids.hasNext();
+                    ) {
+                        JsonValue id = ids.next();
+                        switch (id.getValueType()) {
+                        case NUMBER:
+                            filterValue.append(
+                                ((JsonNumber) id).toString());
+                            break;
+                        case STRING:
+                            filterValue.append(
+                                ((JsonString) id).getString());
+                            break;
+                        default:
+                            throw new IllegalArgumentException(
+                                "IDs must be number or string");
+                        }
+                        if (ids.hasNext()) {
                             filterValue.append(",");
                         }
                     }
                     columnValue.setFilterValue(filterValue.toString());
+                    columnValue.setFilterActive(true);
                     columnValue.setFilterIsNull(false);
                     columnValue.setFilterNegate(false);
                     columnValue.setFilterRegex(false);
