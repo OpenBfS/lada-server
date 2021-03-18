@@ -7,23 +7,15 @@
  */
 package de.intevation.lada.rest.stamm;
 
-import java.util.List;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.GridColumn;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -32,8 +24,8 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.Strings;
+import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -86,33 +78,18 @@ public class ColumnService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getQueries(
         @Context HttpServletRequest request,
-        @Context UriInfo info
+        @QueryParam("qid") Integer qid
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
         //If no qid is given, return all grid_column objects
-        if (params.isEmpty() || !params.containsKey("qid")) {
+        if (qid == null) {
             return repository.getAll(GridColumn.class, Strings.STAMM);
         }
-        Integer id = null;
-        try {
-            id = Integer.valueOf(params.getFirst("qid"));
-        } catch (NumberFormatException e) {
-            return new Response(
-                false,
-                StatusCodes.ERROR_DB_CONNECTION,
-                "Not a valid filter id");
-        }
-        EntityManager em = repository.entityManager(Strings.STAMM);
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<GridColumn> criteriaQuery =
-            builder.createQuery(GridColumn.class);
-        Root<GridColumn> root = criteriaQuery.from(GridColumn.class);
-        Predicate filter = builder.equal(root.get("baseQuery"), id);
-        criteriaQuery.where(filter);
 
-        List<GridColumn> queries =
-            repository.filterPlain(criteriaQuery, Strings.STAMM);
+        QueryBuilder<GridColumn> builder = new QueryBuilder<GridColumn>(
+            repository.entityManager(Strings.STAMM),
+            GridColumn.class);
+        builder.and("baseQuery", qid);
 
-        return new Response(true, StatusCodes.OK, queries);
+        return repository.filter(builder.getQuery(), Strings.STAMM);
     }
 }

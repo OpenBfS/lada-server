@@ -97,7 +97,6 @@ public class AsyncExportService {
      *   "exportSubData": [boolean],
      *   "subDataColumns": [ [string] ]
      *   "idField": [string],
-     *   "idType": [string],
      *   idFilter: [ [number] ],
      *   "timezone": [string],
      *   "subDataColumnNames": {

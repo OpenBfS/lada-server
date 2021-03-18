@@ -212,6 +212,7 @@ Maven Checkstyle plugin. Some design related checks where removed.
       <property name="severity" value="warning"/>
     </module>
     <module name="SimplifyBooleanReturn"/>
+    <module name="StringLiteralEquality"/>
 
     <!-- Checks for class design                         -->
     <!-- See http://checkstyle.sf.net/config_design.html -->

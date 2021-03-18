@@ -34,18 +34,18 @@ CREATE VIEW public.lada_messwert AS
    FROM ((land.messwert
      JOIN land.messung ON ((messwert.messungs_id = messung.id)))
      JOIN land.status_protokoll ON (((messung.status = status_protokoll.id) AND (status_protokoll.status_kombi <> 1))));
-
-
 ALTER TABLE public.lada_messwert OWNER TO postgres;
-
---
--- Name: TABLE lada_messwert; Type: ACL; Schema: public; Owner: postgres
---
-
 GRANT SELECT ON TABLE public.lada_messwert TO lada;
 
-
 --
--- PostgreSQL database dump complete
+-- Name: rueckfrage_messung; Type: VIEW; Schema: land; Owner: postgres
 --
 
+CREATE OR REPLACE VIEW land.rueckfrage_messung
+ AS
+ SELECT DISTINCT status_protokoll.messungs_id
+   FROM land.status_protokoll
+  WHERE (status_protokoll.status_kombi = ANY (ARRAY[9, 13]));
+ALTER TABLE land.rueckfrage_messung
+    OWNER TO postgres;
+GRANT SELECT ON TABLE land.rueckfrage_messung TO lada;

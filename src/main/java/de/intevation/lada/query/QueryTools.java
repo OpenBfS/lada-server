@@ -120,6 +120,12 @@ public class QueryTools {
                 ) {
                     currentFilterString = "NOT(" + currentFilterString + ")";
                 }
+                if (filterType.equals("generictext")
+                    || filterType.equals("genericid")
+                ) {
+                    subquery = true;
+                    generic = true;
+                }
                 if (filterType.equals("generictext")) {
                     String genTextParam = ":" + filter.getParameter() + "Param";
                     String genTextValue = filter.getParameter() + "Value";
@@ -132,10 +138,7 @@ public class QueryTools {
                     currentFilterString =
                         currentFilterString.replace(
                             ":" + genTextValue, ":" + currentFilterParam);
-                    subquery = true;
-                    generic = true;
-                }
-                if (filterType.equals("tag")) {
+                } else if (filterType.equals("tag")) {
                     String[] tagIds = filterValue.split(",");
                     int tagNumber = tagIds.length;
                     String paramlist = "";

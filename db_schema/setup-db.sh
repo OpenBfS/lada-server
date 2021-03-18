@@ -81,8 +81,13 @@ echo create lada schema
 psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/lada_schema.sql
 
 echo create audit-trail table/trigger/views
-psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/audit_stamm.sql
-psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/audit_land.sql
+for file in \
+    audit_stamm.sql \
+    audit_land.sql \
+    lada_views.sql
+do
+    psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/$file
+done
 
 echo set grants
 psql $DB_CONNECT_STRING -d $DB_NAME --command \
@@ -92,7 +97,28 @@ psql $DB_CONNECT_STRING -d $DB_NAME --command \
       GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES
             ON ALL TABLES IN SCHEMA stamm, land TO $ROLE_NAME;"
 
+echo create schema geo
+psql $DB_CONNECT_STRING -d $DB_NAME --command \
+     "CREATE SCHEMA geo AUTHORIZATION $ROLE_NAME"
+
 if [ "$NO_DATA" != "true" ]; then
+    echo download and import german administrative borders
+    TS="0101"
+    cd /tmp
+    if [ ! -f vg250_${TS}.utm32s.shape.ebenen.zip ]; then
+        curl -fO \
+            http://sg.geodatenzentrum.de/web_download/vg/vg250_${TS}/utm32s/shape/vg250_${TS}.utm32s.shape.ebenen.zip
+    fi
+    unzip -u vg250_${TS}.utm32s.shape.ebenen.zip "*VG250_*"
+
+    shp2pgsql -s 25832:4326 vg250_${TS}.utm32s.shape.ebenen/vg250_ebenen/VG250_GEM geo.vg250_gem | psql -q $DB_CONNECT_STRING -d $DB_NAME
+    shp2pgsql -s 25832:4326 vg250_${TS}.utm32s.shape.ebenen/vg250_ebenen/VG250_KRS geo.vg250_kr | psql -q $DB_CONNECT_STRING -d $DB_NAME
+    shp2pgsql -s 25832:4326 vg250_${TS}.utm32s.shape.ebenen/vg250_ebenen/VG250_RBZ geo.vg250_rb | psql -q $DB_CONNECT_STRING -d $DB_NAME
+    shp2pgsql -s 25832:4326 vg250_${TS}.utm32s.shape.ebenen/vg250_ebenen/VG250_LAN geo.vg250_bl | psql -q $DB_CONNECT_STRING -d $DB_NAME
+
+    echo create verwaltungsgrenze view
+    psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/stammdaten_verwaltungsgrenze_view.sql
+
     echo "load data:"
     for file in \
         stammdaten_data_status_reihenfolge.sql \
@@ -132,8 +158,7 @@ if [ "$NO_DATA" != "true" ]; then
         stammdaten_data_user_context.sql \
         stammdaten_data_importer_config.sql \
         lada_data.sql \
-        lada_messprogramm.sql \
-        lada_views.sql
+        lada_messprogramm.sql
     do
         [ -f private_${file} ] && file=private_${file}
         echo "  ${file%.sql}"
@@ -143,23 +168,4 @@ if [ "$NO_DATA" != "true" ]; then
     echo init sequences
     psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/stammdaten_init_sequences.sql
 
-    echo create schema geo
-    psql $DB_CONNECT_STRING -d $DB_NAME --command "CREATE SCHEMA geo AUTHORIZATION $ROLE_NAME"
-
-    echo download and import german administrative borders
-    TS="0101"
-    cd /tmp
-    if [ ! -f vg250_${TS}.utm32s.shape.ebenen.zip ]; then
-        curl -fO \
-            http://sg.geodatenzentrum.de/web_download/vg/vg250_${TS}/utm32s/shape/vg250_${TS}.utm32s.shape.ebenen.zip
-    fi
-    unzip -u vg250_${TS}.utm32s.shape.ebenen.zip "*VG250_*"
-
-    shp2pgsql -s 25832:4326 vg250_${TS}.utm32s.shape.ebenen/vg250_ebenen/VG250_GEM geo.vg250_gem | psql -q $DB_CONNECT_STRING -d $DB_NAME
-    shp2pgsql -s 25832:4326 vg250_${TS}.utm32s.shape.ebenen/vg250_ebenen/VG250_KRS geo.vg250_kr | psql -q $DB_CONNECT_STRING -d $DB_NAME
-    shp2pgsql -s 25832:4326 vg250_${TS}.utm32s.shape.ebenen/vg250_ebenen/VG250_RBZ geo.vg250_rb | psql -q $DB_CONNECT_STRING -d $DB_NAME
-    shp2pgsql -s 25832:4326 vg250_${TS}.utm32s.shape.ebenen/vg250_ebenen/VG250_LAN geo.vg250_bl | psql -q $DB_CONNECT_STRING -d $DB_NAME
-
-    echo create verwaltungsgrenze view
-    psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/stammdaten_verwaltungsgrenze_view.sql
 fi
