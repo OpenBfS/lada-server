@@ -7,12 +7,17 @@
  */
 package de.intevation.lada.validation.rules.messung;
 
+import javax.inject.Inject;
+
 import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
-
+import de.intevation.lada.util.annotation.RepositoryConfig;
+import de.intevation.lada.util.data.Repository;
+import de.intevation.lada.util.data.RepositoryType;
 /**
  * Validation rule for messung.
  * Validates if the messung has a "messbeginn".
@@ -22,15 +27,28 @@ import de.intevation.lada.validation.rules.Rule;
 @ValidationRule("Messung")
 public class HasMessbeginn implements Rule {
 
+    @Inject
+    @RepositoryConfig(type = RepositoryType.RO)
+    private Repository repository;
+
     @Override
     public Violation execute(Object object) {
         Messung messung = (Messung) object;
-        if (messung.getMesszeitpunkt() == null) {
+        Probe probe =
+            repository.getByIdPlain(Probe.class, messung.getProbeId(), "land");
+        if (messung.getMesszeitpunkt() == null
+            &&(
+            probe.getDatenbasisId() != null
+            && probe.getDatenbasisId() != 1
+            )){
             Violation violation = new Violation();
             violation.addWarning("messzeitpunkt", StatusCodes.VALUE_MISSING);
             return violation;
+        } else {
+             Violation violation = new Violation();
+            violation.addNotification("messzeitpunkt", StatusCodes.VALUE_MISSING);
+            return violation;
         }
-        return null;
     }
 
 }
