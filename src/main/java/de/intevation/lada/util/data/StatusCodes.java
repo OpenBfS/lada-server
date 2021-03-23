@@ -38,8 +38,10 @@ public class StatusCodes {
     public static final int GEO_NOT_MATCHING = 652;
     public static final int GEO_UNCHANGEABLE_COORD = 653;
     public static final int STATUS_RO = 654;
+    public static final int ORT_SINGLE_UORT = 655;
     public static final int DATE_IN_FUTURE = 661;
     public static final int DATE_BEGIN_AFTER_END = 662;
+    public static final int URSPR_Date_BEFORE_BEGIN = 663;
     public static final int IMP_PARSER_ERROR = 670;
     public static final int IMP_PRESENT = 671;
     public static final int IMP_DUPLICATE = 672;
