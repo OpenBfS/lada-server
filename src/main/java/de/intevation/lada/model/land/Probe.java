@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.DynamicInsert;
 
 import de.intevation.lada.model.stammdaten.Umwelt;
+import de.intevation.lada.util.data.EmptyStringConverter;
 
 
 /**
@@ -53,9 +55,11 @@ public class Probe implements Serializable {
     private Integer erzeugerId;
 
     @Column(name = "hauptproben_nr")
+    @Convert(converter = EmptyStringConverter.class)
     private String hauptprobenNr;
 
     @Column(name = "ext_id")
+    @Convert(converter = EmptyStringConverter.class)
     private String externeProbeId;
 
     @Column(name = "labor_mst_id")
@@ -127,6 +131,10 @@ public class Probe implements Serializable {
 
     @Transient
     @JsonIgnore
+    private boolean found;
+
+    @Transient
+    @JsonIgnore
     private MultivaluedMap<String, Integer> errors;
 
     @Transient
@@ -177,7 +185,7 @@ public class Probe implements Serializable {
     }
 
     public void setHauptprobenNr(String hauptprobenNr) {
-        this.hauptprobenNr = (hauptprobenNr == "") ? null : hauptprobenNr;
+        this.hauptprobenNr = hauptprobenNr;
     }
 
     public String getExterneProbeId() {
@@ -185,7 +193,7 @@ public class Probe implements Serializable {
     }
 
     public void setExterneProbeId(String externeProbeId) {
-        this.externeProbeId = (externeProbeId == "") ? null : externeProbeId;
+        this.externeProbeId = externeProbeId;
     }
 
     public String getLaborMstId() {
@@ -399,5 +407,13 @@ public class Probe implements Serializable {
     @JsonIgnore
     public void setWarnings(MultivaluedMap<String, Integer> warnings) {
         this.warnings = warnings;
+    }
+
+    public boolean isFound() {
+        return found;
+    }
+
+    public void setFound(boolean found) {
+        this.found = found;
     }
 }

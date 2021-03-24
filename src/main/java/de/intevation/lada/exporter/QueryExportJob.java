@@ -11,11 +11,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.json.JsonArray;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
+import javax.json.JsonString;
+import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
 import de.intevation.lada.model.land.Messung;
@@ -58,11 +62,6 @@ public abstract class QueryExportJob extends ExportJob {
     protected String idType;
 
     /**
-     * Ids of record that shall be exported.
-     */
-    private Integer[] idsToExport;
-
-    /**
      * Query result.
      */
     protected List<GridColumnValue> columns;
@@ -81,23 +80,6 @@ public abstract class QueryExportJob extends ExportJob {
      * Timezone to convert timestamps to.
      */
     protected String timezone;
-
-    /**
-     * Map id result types to filter sql statements for the id columns.
-     */
-    private Map<String, String> dataTypeToIdFilterQuery =
-        new HashMap<String, String>() {
-            private static final long serialVersionUID = 1L;
-            {
-                put("probeId", "probe.id");
-                put("messungId", "messung.id");
-                put("mpId", "messprogramm.id");
-                put("ortId", "ort.id");
-                put("dsatzerz", "datensatz_erzeuger.id");
-                put("mprkat", "messprogramm_kategorie.id");
-                put("probenehmer", "probenehmer.id");
-            }
-        };;
 
     /**
      * Query id.
@@ -133,27 +115,25 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-     * Creates a id list filter for the given dataIndex.
-     * @param dataType ID column data type, e.g. mpId
+     * Creates an ID list filter for the given dataIndex.
+     * @param dataIndex ID column name
      * @return Filter object
      */
-    private Filter createIdListFilter(String dataType) {
-
+    private Filter createIdListFilter(String dataIndex) {
         //Get Filter type from db
         QueryBuilder<FilterType> builder =
             new QueryBuilder<FilterType>(
                 repository.entityManager(Strings.STAMM), FilterType.class);
-        builder.and("type", "listnumber");
+        builder.and("type", "genericid");
         FilterType filterType =
             repository.filterPlain(builder.getQuery(), Strings.STAMM).get(0);
 
         //Create filter object
-        String parameter = dataType + "s";
         Filter filter = new Filter();
         filter.setFilterType(filterType);
-        filter.setParameter(parameter);
+        filter.setParameter(dataIndex);
         filter.setSql(String.format(
-            "%s in ( :%s )", dataTypeToIdFilterQuery.get(dataType), parameter));
+                "CAST(%1$s AS text) IN ( :%1$s )", dataIndex));
         return filter;
     }
 
@@ -199,7 +179,8 @@ public abstract class QueryExportJob extends ExportJob {
             List<Map<String, Object>> result =
                 queryTools.getResultForQuery(columns, qId);
             logger.debug(String.format(
-                "Fetched %d primary records", result.size()));
+                "Fetched %d primary records",
+                result == null ? 0 : result.size()));
             return result;
         } catch (Exception e) {
             logger.error("Failed loading query result");
@@ -320,7 +301,8 @@ public abstract class QueryExportJob extends ExportJob {
         //Check if subdata shall be exported
         exportSubdata = exportParameters.getBoolean("exportSubData");
         //Get identifier type
-        idColumn = exportParameters.getString("idField");
+        idColumn = exportParameters.isNull("idField")
+            ? null : exportParameters.getString("idField");
         //Get target timezone
         timezone = exportParameters.getString("timezone");
 
@@ -342,15 +324,6 @@ public abstract class QueryExportJob extends ExportJob {
                 subDataColumns.add(columnJson.getString(i));
             }
         }
-        ArrayList<Integer> idFilterList = new ArrayList<Integer>();
-        JsonArray idJsonArray = exportParameters.getJsonArray("idFilter");
-        int idJsonArrayCount = idJsonArray.size();
-        for (int i = 0; i < idJsonArrayCount; i++) {
-            idFilterList.add(idJsonArray.getInt(i));
-        }
-
-        idsToExport = new Integer[idFilterList.size()];
-        idFilterList.toArray(idsToExport);
 
         exportParameters.getJsonArray("columns").forEach(jsonValue -> {
             JsonObject columnObj = (JsonObject) jsonValue;
@@ -376,24 +349,47 @@ public abstract class QueryExportJob extends ExportJob {
                 Strings.STAMM);
 
             columnValue.setGridColumn(gridColumn);
+
             //Check if the column contains the id
             if (columnValue.getGridColumn().getDataIndex().equals(idColumn)) {
-                //Get the column type
+                // Get the column type
                 idType = gridColumn.getDataType().getName();
-                if (idsToExport != null && idsToExport.length > 0) {
-                    //Get query result type
-                    String dataType = gridColumn.getDataType().getName();
-                    Filter filter = createIdListFilter(dataType);
+
+                // Get IDs to filter result
+                JsonArray idsToExport = exportParameters
+                    .getJsonArray("idFilter");
+
+                if (idsToExport != null && idsToExport.size() > 0) {
+                    // Prepare filtering by IDs
+                    Filter filter = createIdListFilter(
+                        gridColumn.getDataIndex());
                     gridColumn.setFilter(filter);
-                    columnValue.setFilterActive(true);
+
                     StringBuilder filterValue = new StringBuilder();
-                    for (int i = 0; i < idsToExport.length; i++) {
-                        filterValue.append(idsToExport[i]);
-                        if (i != idsToExport.length - 1) {
+                    for (
+                        Iterator<JsonValue> ids = idsToExport.iterator();
+                        ids.hasNext();
+                    ) {
+                        JsonValue id = ids.next();
+                        switch (id.getValueType()) {
+                        case NUMBER:
+                            filterValue.append(
+                                ((JsonNumber) id).toString());
+                            break;
+                        case STRING:
+                            filterValue.append(
+                                ((JsonString) id).getString());
+                            break;
+                        default:
+                            throw new IllegalArgumentException(
+                                "IDs must be number or string");
+                        }
+                        if (ids.hasNext()) {
                             filterValue.append(",");
                         }
                     }
                     columnValue.setFilterValue(filterValue.toString());
+                    columnValue.setFilterActive(true);
                     columnValue.setFilterIsNull(false);
                     columnValue.setFilterNegate(false);
                     columnValue.setFilterRegex(false);

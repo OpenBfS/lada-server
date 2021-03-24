@@ -7,13 +7,10 @@
  */
 package de.intevation.lada.rest.stamm;
 
-import java.util.List;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
@@ -22,7 +19,6 @@ import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.SollistMmtGrp;
 import de.intevation.lada.util.annotation.RepositoryConfig;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.Strings;
@@ -62,7 +58,7 @@ public class SollistMmtGruppeService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type=RepositoryType.RO)
+    @RepositoryConfig(type = RepositoryType.RO)
     private Repository defaultRepo;
 
     /**

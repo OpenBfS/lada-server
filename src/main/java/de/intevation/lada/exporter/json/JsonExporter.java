@@ -10,6 +10,7 @@ package de.intevation.lada.exporter.json;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -90,7 +91,7 @@ public class JsonExporter implements Exporter {
      * @param queryResult Result to export as list of maps. Every list item
      *                    represents a row,
      *                    while every map key represents a column
-     * @param encoding Encoding to use
+     * @param encoding Ignored. Result is always UTF_8.
      * @param options Export options as JSON Object. Options are: <p>
      *        <ul>
      *          <li> id: Name of the id column, mandatory </li>
@@ -110,10 +111,6 @@ public class JsonExporter implements Exporter {
         JsonObject options,
         ArrayList<String> columnsToInclude
     ) {
-        if (!options.containsKey("id")) {
-            logger.error("No id column given");
-            return null;
-        }
         String subDataKey = options.getString("subData", "");
 
         final JsonObjectBuilder builder = Json.createObjectBuilder();
@@ -191,11 +188,19 @@ public class JsonExporter implements Exporter {
         return arrayBuilder.build();
     }
 
+    /**
+     * Export Probe objects as JSON.
+     * @param proben List of Probe IDs to export.
+     * @param messungen Ignored. All associated Messung objects are exported.
+     * @param encoding Ignored. Result is always UTF_8.
+     * @param userInfo UserInfo
+     * @return Export result as InputStream or null if the export failed
+     */
     @Override
     public InputStream exportProben(
         List<Integer> proben,
         List<Integer> messungen,
-        String encoding,
+        Charset encoding,
         UserInfo userInfo
     ) {
         //Create json.
@@ -204,7 +209,8 @@ public class JsonExporter implements Exporter {
             return null;
         }
 
-        InputStream in = new ByteArrayInputStream(json.getBytes());
+        InputStream in = new ByteArrayInputStream(
+            json.getBytes(StandardCharsets.UTF_8));
         try {
             in.close();
         } catch (IOException e) {

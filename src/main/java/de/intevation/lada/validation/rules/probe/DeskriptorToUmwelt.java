@@ -19,6 +19,7 @@ import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
+import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
@@ -86,8 +87,8 @@ public class DeskriptorToUmwelt implements Rule {
                 String deskript = "";
                 deskript = "s" + Integer.toString(i - 1);
                 Violation violation = new Violation();
-                violation.addWarning("mediaDesk", 633);
-                violation.addWarning(deskript, 632);
+                violation.addWarning("mediaDesk", StatusCodes.VAL_DESK);
+                violation.addWarning(deskript, StatusCodes.VALUE_NOT_MATCHING);
                 return violation;
             }
             hdParent = data.get(0).getId();
@@ -108,7 +109,8 @@ public class DeskriptorToUmwelt implements Rule {
     ) {
         if (media.size() == 0) {
             Violation violation = new Violation();
-            violation.addWarning("umwId#" + umwId, 632);
+            violation.addWarning(
+                "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
 
@@ -137,7 +139,8 @@ public class DeskriptorToUmwelt implements Rule {
             (List<DeskriptorUmwelt>) response.getData();
         if (data.isEmpty()) {
             Violation violation = new Violation();
-            violation.addWarning("umwId#" + umwId, 632);
+            violation.addWarning(
+                "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
 
@@ -149,14 +152,16 @@ public class DeskriptorToUmwelt implements Rule {
             && datenbasisId != 4
         ) {
             Violation violation = new Violation();
-            violation.addWarning("umwId#" + umwId, 632);
+            violation.addWarning(
+                "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         } else if (!unique && (datenbasisId == 4 || datenbasisId == 1)) {
             if (data.size() != data.stream().filter(
                     element -> element.getUmwId().equals(umwId)).count()
             ) {
                 Violation violation = new Violation();
-                violation.addNotification("umwId#" + umwId, 632);
+                violation.addNotification(
+                    "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
                 return violation;
             } else {
                 return null;
@@ -173,7 +178,8 @@ public class DeskriptorToUmwelt implements Rule {
                                     && data.get(i).getS00() == null
                                 ) {
                                     matches += 1;
-                                } else if (!media.get(0).equals(-1) && data.get(i).getS00() == null) {
+                                } else if (!media.get(0).equals(-1)
+                                    && data.get(i).getS00() == null) {
                                     break;
                                 } else {
                                     j = 12;
@@ -185,7 +191,8 @@ public class DeskriptorToUmwelt implements Rule {
                                     && data.get(i).getS01() == null
                                 ) {
                                     matches += 1;
-                                } else if (!media.get(1).equals(-1) && data.get(i).getS01() == null) {
+                                } else if (!media.get(1).equals(-1)
+                                    && data.get(i).getS01() == null) {
                                     break;
                                 } else {
                                     j = 12;
@@ -197,7 +204,8 @@ public class DeskriptorToUmwelt implements Rule {
                                     && data.get(i).getS02() == null
                                 ) {
                                     matches += 1;
-                                } else if (!media.get(2).equals(-1) && data.get(i).getS02() == null) {
+                                } else if (!media.get(2).equals(-1)
+                                    && data.get(i).getS02() == null) {
                                     break;
                                 } else {
                                     j = 12;
@@ -209,7 +217,8 @@ public class DeskriptorToUmwelt implements Rule {
                                     && data.get(i).getS03() == null
                                 ) {
                                     matches += 1;
-                                } else if (!media.get(3).equals(-1) && data.get(i).getS03() == null) {
+                                } else if (!media.get(3).equals(-1)
+                                    && data.get(i).getS03() == null) {
                                     break;
                                 } else {
                                     j = 12; matches = -12;
@@ -220,7 +229,8 @@ public class DeskriptorToUmwelt implements Rule {
                                     && data.get(i).getS04() == null
                                 ) {
                                     matches += 1;
-                                } else if (!media.get(4).equals(-1) && data.get(i).getS04() == null) {
+                                } else if (!media.get(4).equals(-1)
+                                    && data.get(i).getS04() == null) {
                                     break;
                                 } else {
                                     j = 12;
@@ -231,8 +241,9 @@ public class DeskriptorToUmwelt implements Rule {
                                     || media.get(5).equals(-1)
                                     && data.get(i).getS05() == null
                                 ) {
-                                    matches +=1;
-                                } else if (!media.get(5).equals(-1) && data.get(i).getS05() == null) {
+                                    matches += 1;
+                                } else if (!media.get(5).equals(-1)
+                                    && data.get(i).getS05() == null) {
                                     break;
                                 } else {
                                     j = 12;
@@ -244,7 +255,8 @@ public class DeskriptorToUmwelt implements Rule {
                                     && data.get(i).getS06() == null
                                 ) {
                                     matches += 1;
-                                } else if (!media.get(6).equals(-1) && data.get(i).getS06() == null) {
+                                } else if (!media.get(6).equals(-1)
+                                    && data.get(i).getS06() == null) {
                                     break;
                                 } else {
                                     j = 12;
@@ -256,7 +268,8 @@ public class DeskriptorToUmwelt implements Rule {
                                     && data.get(i).getS07() == null
                                 ) {
                                     matches += 1;
-                                } else if (!media.get(7).equals(-1) && data.get(i).getS07() == null) {
+                                } else if (!media.get(7).equals(-1)
+                                    && data.get(i).getS07() == null) {
                                     break;
                                 } else {
                                     j = 12;
@@ -268,7 +281,8 @@ public class DeskriptorToUmwelt implements Rule {
                                     && data.get(i).getS08() == null
                                 ) {
                                     matches += 1;
-                                } else if (!media.get(8).equals(-1) && data.get(i).getS08() == null) {
+                                } else if (!media.get(8).equals(-1)
+                                    && data.get(i).getS08() == null) {
                                     break;
                                 } else {
                                     j = 12;
@@ -280,7 +294,8 @@ public class DeskriptorToUmwelt implements Rule {
                                     && data.get(i).getS09() == null
                                 ) {
                                     matches += 1;
-                                } else if (!media.get(9).equals(-1) && data.get(i).getS09() == null) {
+                                } else if (!media.get(9).equals(-1)
+                                    && data.get(i).getS09() == null) {
                                     break;
                                 } else  {
                                     j = 12;
@@ -292,7 +307,8 @@ public class DeskriptorToUmwelt implements Rule {
                                     && data.get(i).getS10() == null
                                 ) {
                                     matches += 1;
-                                } else if (!media.get(10).equals(-1) && data.get(i).getS10() == null) {
+                                } else if (!media.get(10).equals(-1)
+                                    && data.get(i).getS10() == null) {
                                     break;
                                 } else {
                                     j = 12; matches = -12;
@@ -303,13 +319,17 @@ public class DeskriptorToUmwelt implements Rule {
                                     && data.get(i).getS11() == null
                                 ) {
                                     matches += 1;
-                                } else if (!media.get(11).equals(-1) && data.get(i).getS11() == null) {
+                                } else if (!media.get(11).equals(-1)
+                                    && data.get(i).getS11() == null) {
                                     break;
                                 } else {
                                     j = 12;
                                     matches = -12;
                                 }
                                 break;
+                        default:
+                            // Should not happen
+                            throw new IndexOutOfBoundsException();
                     }
                 }
                 if (matches > lastMatch) {
@@ -321,7 +341,8 @@ public class DeskriptorToUmwelt implements Rule {
                 return null;
             }
             Violation violation = new Violation();
-            violation.addWarning("umwId#" + umwId, 632);
+            violation.addWarning(
+                "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
     }

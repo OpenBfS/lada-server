@@ -9,6 +9,7 @@ package de.intevation.lada.rest.exporter;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
+import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -75,8 +77,7 @@ public class JsonExportService {
      * exports the Probe objects filtered by these ids.
      *
      * @param proben    JSON formatted string with an array of probe ids.
-     * @param header    The HTTP header containing authorization information.
-     * @return The LAF file to export.
+     * @return The JSON to export.
      */
     @POST
     @Path("/json")
@@ -95,15 +96,19 @@ public class JsonExportService {
         }
         InputStream exported =
             exporter.exportProben(
-                probeIds, new ArrayList<Integer>(), "utf-8", userInfo);
+                probeIds,
+                new ArrayList<Integer>(),
+                StandardCharsets.UTF_8,
+                userInfo);
         if (exported == null) {
-            return new Response(false, 600, null).toString();
+            return new Response(
+                false, StatusCodes.NOT_EXISTING, null).toString();
         }
         try {
-            return IOUtils.toString(exported, "utf-8");
+            return IOUtils.toString(exported, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            return new Response(false, 600, null).toString();
+            return new Response(
+                false, StatusCodes.NOT_EXISTING, null).toString();
         }
     }
 }
-

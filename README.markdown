@@ -130,9 +130,9 @@ Das Ausführen der Tests erfolgt durch das Kommando
 
  $ mvn -Premote-test clean test
 
-und benötigt eine leere Datenbank, die z.B. mit
+und benötigt eine leere Datenbank mit dem Namen "lada_test", die z.B. mit
 
- $ ./setup-db.sh -cn
+ $ ./db_schema/setup-db.sh -cn lada_test
 
 angelegt werden kann.
 
@@ -188,7 +188,7 @@ Den einzelnen Spalten können verschiedene Datentypen zugeordnet werden. Dies
 dient im Client zum einen der Darstellung von passenden Filtern und Spalten.
 Einige Datentypen bieten zusätzliche Funktionalität.
 
-Der Gesamttype eines Ergebnisgrids leitet sich ebenfalls aus Datentypen in der
+Der Typ eines Ergebnisgrids leitet sich ebenfalls aus Datentypen in der
 Basequery ab, welche Datenbankeinträge eindeutig identifizieren.
 Hierbei existiert eine Hierarchie: weiter oben stehende Elemente ersetzen
 das weiter unten stehende.
@@ -201,8 +201,12 @@ Datentypen mit ID-Funktionalität, in absteigender Hierarchie:
   5. 'pnehmer' - Zeile enthält einen Probenehmer
   6. 'dsatzerz'- Zeile enthält einen Datensatzerzeuger
   7. 'mprkat'- Zeile enthält eine Messprogrammkategorie
+  8. 'id' - Zeile enthält beliebige Daten, die an Hand dieser Spalte
+            identifiziert werden können (z.B. für den Export einzeln
+            selektierter Zeilen).
 
-Diese Datentypen sollten jeweils eine Datenbank-ID enthalten. Mehrere IDs von
+Diese Datentypen sollten jeweils eine entsprechende Datenbank-ID enthalten,
+bzw. im Fall von 'id' einen eindeutigen Wert (Zahl oder Text). Mehrere IDs von
 verschiedenen Typen sind zulässig, und sind dann im Grid direkt auswähl- und
 gegebenenfalls in eigenen Dialogen bearbeitbar.
 

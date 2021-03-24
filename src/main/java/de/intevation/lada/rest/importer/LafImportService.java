@@ -10,10 +10,13 @@ package de.intevation.lada.rest.importer;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +25,8 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.json.JsonObject;
+import javax.json.JsonString;
+import javax.json.JsonValue;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -30,7 +35,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
@@ -52,6 +56,7 @@ import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.util.data.StatusCodes;
 
 /**
  * This class produces a RESTful service to interact with probe objects.
@@ -109,7 +114,15 @@ public class LafImportService {
         //Get file content strings from input object
         JsonObject filesObject = jsonInput.getJsonObject("files");
 
-        String encoding = jsonInput.getString("encoding");
+        Charset charset;
+        try {
+            charset = Charset.forName(jsonInput.getString("encoding"));
+        } catch (IllegalArgumentException e) {
+            return new Response(
+                false,
+                StatusCodes.IMP_INVALID_VALUE,
+                "No valid encoding name given");
+        }
 
         //Contains: fileName: fileContent as String
         Map<String, String> files = new HashMap<String, String>();
@@ -121,20 +134,37 @@ public class LafImportService {
 
         String mstId = request.getHeader("X-LADA-MST");
         if (mstId == null) {
-            return new Response(false, 699, "Missing header for messtelle.");
+            return new Response(
+                false,
+                StatusCodes.NOT_ALLOWED,
+                "Missing header for messtelle.");
         }
 
-        filesObject.forEach((fileName, fileContent) -> {
-            String encodedString = fileContent.toString();
-            byte[] decodedBytes = Base64.decodeBase64(encodedString);
-            String decodedContent =
-                new String(decodedBytes, Charset.forName(encoding));
-            files.put(fileName, decodedContent);
-        });
+        try {
+            for (Map.Entry<String, JsonValue> e : filesObject.entrySet()) {
+                String base64String = ((JsonString) e.getValue()).getString();
+                ByteBuffer decodedBytes = ByteBuffer.wrap(
+                    Base64.getDecoder().decode(base64String));
+                String decodedContent = new String(
+                    new StringBuffer(charset.newDecoder()
+                        .decode(decodedBytes)));
+                files.put(e.getKey(), decodedContent);
+            }
+        } catch (IllegalArgumentException iae) {
+            return new Response(
+                false,
+                StatusCodes.IMP_INVALID_VALUE,
+                "File content not in valid Base64 scheme");
+        } catch (CharacterCodingException cce) {
+            return new Response(
+                false,
+                StatusCodes.IMP_INVALID_VALUE,
+                "File content not in valid " + charset.name());
+        }
 
         //Import each file
         files.forEach((fileName, content) -> {
-            logLAFFile(mstId, content);
+            logLAFFile(mstId, content, charset);
             List<ImporterConfig> config = new ArrayList<ImporterConfig>();
             if (!"".equals(mstId)) {
                 QueryBuilder<ImporterConfig> builder =
@@ -175,7 +205,10 @@ public class LafImportService {
                 TagUtil.generateTag("IMP", mstId, repository);
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
-                return new Response(success, 200, importResponseData);
+                return new Response(
+                    success,
+                    StatusCodes.OK,
+                    importResponseData);
             }
             Tag newTag = (Tag) tagCreation.getData();
             TagUtil.setTagsByProbeIds(
@@ -186,7 +219,7 @@ public class LafImportService {
                 responseData.put("tag", newTag.getTag());
             });
         }
-        return new Response(success, 200, importResponseData);
+        return new Response(success, StatusCodes.OK, importResponseData);
     }
 
     /**
@@ -195,7 +228,9 @@ public class LafImportService {
      * @param input     String containing file content.
      * @param header    The HTTP header containing authorization information.
      * @return Response object.
+     * @deprecated This endpoint will be removed. Use multiUpload() instead.
      */
+    @Deprecated(since = "2021-02-10", forRemoval = true)
     @POST
     @Path("/laf")
     @Produces(MediaType.APPLICATION_JSON)
@@ -214,7 +249,13 @@ public class LafImportService {
          *}
          */
 
-        logLAFFile(mstId, content);
+        String encoding = request.getCharacterEncoding();
+        if (encoding == null) {
+            encoding = "iso-8859-15";
+        }
+        logLAFFile(mstId, content,
+            // Validation of encoding name is already done by the framework
+            Charset.forName(encoding));
         List<ImporterConfig> config = new ArrayList<ImporterConfig>();
         if (!"".equals(mstId)) {
             QueryBuilder<ImporterConfig> builder =
@@ -247,7 +288,7 @@ public class LafImportService {
                 TagUtil.generateTag("IMP", mstId, repository);
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
-                return new Response(true, 200, respData);
+                return new Response(true, StatusCodes.OK, respData);
             }
             Tag newTag = (Tag) tagCreation.getData();
             TagUtil.setTagsByProbeIds(
@@ -256,7 +297,7 @@ public class LafImportService {
             respData.put("tag", newTag.getTag());
         }
 
-        return new Response(true, 200, respData);
+        return new Response(true, StatusCodes.OK, respData);
     }
 
     /**
@@ -265,7 +306,7 @@ public class LafImportService {
      * @param mstId Id from Header
      * @param content The laf file content
      */
-    private void logLAFFile(String mstId, String content) {
+    private void logLAFFile(String mstId, String content, Charset enc) {
         DateFormat df = new SimpleDateFormat("yyyyMMddHHmmssS");
         Date now = new Date();
         // Create filename for imported laf
@@ -286,10 +327,9 @@ public class LafImportService {
             lafLogger.debug("X-LADA-MST: " + mstId);
             lafLogger.debug(
                 "Imported file logged to: " + filePath + "/" + fileName);
-            try {
-                FileWriter f = new FileWriter(filePath + "/" + fileName);
+            try (FileWriter f = new FileWriter(
+                    filePath + "/" + fileName, enc)) {
                 f.write(content);
-                f.close();
             } catch (IOException e) {
                 lafLogger.debug("Could not write import file to " + filePath);
             }

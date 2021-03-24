@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.rest.stamm;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,13 +15,8 @@ import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.json.Json;
 import javax.json.JsonArray;
-import javax.json.JsonException;
 import javax.json.JsonNumber;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.JsonString;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -62,6 +56,7 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
+import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
@@ -70,7 +65,7 @@ import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
- * REST service for SOrt objects.
+ * REST service for Ort objects.
  * <p>
  * The services produce data in the application/json media type.
  * A typical response holds information about the action performed and the data.
@@ -133,15 +128,14 @@ public class OrtService {
     private Validator validator;
 
     /**
-     * Get all SOrt objects.
+     * Get Ort objects.
      * <p>
-     * The requested objects can be filtered using a URL parameter named
+     * The requested objects can be filtered e.g. using a URL parameter named
      * ortId.
-     * To return all objects, the URL paramter query=all can be used.
      * <p>
-     * Example: http://example.com/location?ortId=[ID]
+     * Example: http://example.com/rest/ort?ortId=[ID]
      *
-     * @return Response object containing all (filtered) SOrt objects.
+     * @return Response object containing all (filtered) Ort objects.
      */
     @GET
     @Path("/")
@@ -158,7 +152,9 @@ public class OrtService {
             try {
                 id = Integer.valueOf(params.getFirst("ortId"));
             } catch (NumberFormatException e) {
-                return new Response(false, 603, "Not a valid filter id");
+                return new Response(
+                    false,
+                    StatusCodes.ERROR_DB_CONNECTION, "Not a valid filter id");
             }
 
             Ort o = repository.getByIdPlain(Ort.class, id, Strings.STAMM);
@@ -176,7 +172,7 @@ public class OrtService {
                 o.setErrors(violation.getErrors());
                 o.setWarnings(violation.getWarnings());
             }
-            return new Response(true, 200, o);
+            return new Response(true, StatusCodes.OK, o);
         }
 
         List<Ort> orte = new ArrayList<>();
@@ -214,44 +210,6 @@ public class OrtService {
                 filter == null
                 ? searchFilter : builder.and(filter, searchFilter);
         }
-        if (params.containsKey("filter")) {
-            String json = params.getFirst("filter");
-            JsonReader jsonReader = Json.createReader(new StringReader(json));
-            try {
-                //Parse json filters
-                JsonArray jsonFilters = jsonReader.readArray();
-                List<Predicate> jsonPredicates = new ArrayList<Predicate>();
-                jsonReader.close();
-                jsonFilters.forEach(jsonFilter -> {
-                    JsonObject filterObj = (JsonObject) jsonFilter;
-                    JsonString operator = filterObj.getJsonString("operator");
-                    JsonString value = filterObj.getJsonString("value");
-                    JsonString property = filterObj.getJsonString("property");
-                    if (property == null || value == null) {
-                        return;
-                    }
-                    if ("like".equals(operator.getString())) {
-                        Predicate f = builder.like(
-                            root.get(
-                                property.getString()),
-                                "%" + value.getString() + "%");
-                        jsonPredicates.add(f);
-                    }
-                });
-                if (jsonPredicates.size() > 0) {
-                    Predicate jsonFilterPredicate =
-                        builder.and((Predicate[]) jsonPredicates.toArray());
-                    filter =
-                        filter == null
-                        ? jsonFilterPredicate
-                        : builder.and(filter, jsonFilterPredicate);
-                }
-            } catch (JsonException
-                | IllegalStateException e
-            ) {
-                logger.warn("Use JSON filter at this place.", e);
-            }
-        }
         if (filter != null) {
             query.where(filter);
         }
@@ -283,28 +241,28 @@ public class OrtService {
                 o.setWarnings(violation.getWarnings());
             }
         }
-        return new Response(true, 200, orte, size);
+        return new Response(true, StatusCodes.OK, orte, size);
     }
 
     /**
-     * Get a single SOrt object by id.
+     * Get a single Ort object by id.
      * <p>
      * The id is appended to the URL as a path parameter.
      * <p>
-     * Example: http://example.com/location/{id}
+     * Example: http://example.com/rest/ort/{id}
      *
-     * @return Response object containing a single SOrt.
+     * @return Response object containing a single Ort.
      */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getById(
         @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") int id
     ) {
         Ort ort = repository.getByIdPlain(
             Ort.class,
-            Integer.valueOf(id),
+            id,
             Strings.STAMM
         );
 
@@ -324,7 +282,7 @@ public class OrtService {
                 Ort.class
             )
         );
-        return new Response(true, 200, ort);
+        return new Response(true, StatusCodes.OK, ort);
     }
 
     /**
@@ -373,13 +331,13 @@ public class OrtService {
                         RequestMethod.PUT,
                         Ort.class));
             }
-            return new Response(true, 200, orte, orte.size());
+            return new Response(true, StatusCodes.OK, orte, orte.size());
         }
-        return new Response(true, 200, null, 0);
+        return new Response(true, StatusCodes.OK, null, 0);
     }
 
     /**
-     * Create a SOrt object.
+     * Create a Ort object.
      * <p>
      * The new object is embedded in the post data as JSON formatted string.
      * <p>
@@ -402,7 +360,7 @@ public class OrtService {
      * }
      * </code>
      * </pre>
-     * @return A response object containing the created SOrt.
+     * @return A response object containing the created Ort.
      */
     @POST
     @Path("/")
@@ -417,7 +375,7 @@ public class OrtService {
             RequestMethod.POST,
             Ort.class)
         ) {
-            return new Response(false, 699, ort);
+            return new Response(false, StatusCodes.NOT_ALLOWED, ort);
         }
 
         ort = ortFactory.completeOrt(ort);
@@ -426,20 +384,22 @@ public class OrtService {
             for (ReportItem err : ortFactory.getErrors()) {
                 factoryErrs.addError(err.getKey(), err.getCode());
             }
-            Response response = new Response(false, 604, ort);
+            Response response =
+                new Response(false, StatusCodes.ERROR_VALIDATION, ort);
             response.setErrors(factoryErrs.getErrors());
             return response;
         }
 
         Violation violation = validator.validate(ort);
         if (violation.hasErrors()) {
-            Response response = new Response(false, 604, ort);
+            Response response =
+                new Response(false, StatusCodes.ERROR_VALIDATION, ort);
             response.setErrors(violation.getErrors());
             response.setWarnings(violation.getWarnings());
             return response;
         }
 
-        Response response = new Response(true, 201, ort);
+        Response response = new Response(true, StatusCodes.OK, ort);
         if (ort.getId() == null) {
             response = repository.create(ort, Strings.STAMM);
         }
@@ -451,7 +411,7 @@ public class OrtService {
     }
 
     /**
-     * Update an existing SOrt object.
+     * Update an existing Ort object.
      * <p>
      * The object to update should come as JSON formatted string.
      * <pre>
@@ -475,7 +435,7 @@ public class OrtService {
      * </code>
      * </pre>
      *
-     * @return Response object containing the updated SOrt object.
+     * @return Response object containing the updated Ort object.
      */
     @PUT
     @Path("/{id}")
@@ -491,13 +451,13 @@ public class OrtService {
             RequestMethod.PUT,
             Ort.class)
         ) {
-            return new Response(false, 699, ort);
+            return new Response(false, StatusCodes.NOT_ALLOWED, ort);
         }
 
         Ort dbOrt = repository.getByIdPlain(
             Ort.class, ort.getId(), Strings.STAMM);
         if (dbOrt == null) {
-            return new Response(false, 600, ort);
+            return new Response(false, StatusCodes.NOT_EXISTING, ort);
         }
         String dbCoordX = dbOrt.getKoordXExtern();
         String dbCoordY = dbOrt.getKoordYExtern();
@@ -508,12 +468,13 @@ public class OrtService {
             MultivaluedMap<String, Integer> error =
                 new MultivaluedHashMap<String, Integer>();
             if (!dbCoordX.equals(ort.getKoordXExtern())) {
-                error.add("koordXExtern", 653);
+                error.add("koordXExtern", StatusCodes.GEO_UNCHANGEABLE_COORD);
             }
             if (!dbCoordY.equals(ort.getKoordYExtern())) {
-                error.add("koordYExtern", 653);
+                error.add("koordYExtern", StatusCodes.GEO_UNCHANGEABLE_COORD);
             }
-            Response response =  new Response(false, 604, ort);
+            Response response =
+                new Response(false, StatusCodes.ERROR_VALIDATION, ort);
             response.setErrors(error);
             return response;
         }
@@ -524,14 +485,16 @@ public class OrtService {
             for (ReportItem err : ortFactory.getErrors()) {
                 factoryErrs.addError(err.getKey(), err.getCode());
             }
-            Response response = new Response(false, 604, ort);
+            Response response =
+                new Response(false, StatusCodes.ERROR_VALIDATION, ort);
             response.setErrors(factoryErrs.getErrors());
             return response;
         }
 
         Violation violation = validator.validate(ort);
         if (violation.hasErrors()) {
-            Response response = new Response(false, 604, ort);
+            Response response =
+                new Response(false, StatusCodes.ERROR_VALIDATION, ort);
             response.setErrors(violation.getErrors());
             response.setWarnings(violation.getWarnings());
             return response;
@@ -546,11 +509,11 @@ public class OrtService {
     }
 
     /**
-     * Delete an existing SOrt object by id.
+     * Delete an existing Ort object by id.
      * <p>
      * The id is appended to the URL as a path parameter.
      * <p>
-     * Example: http://example.com/location/{id}
+     * Example: http://example.com/rest/ort/{id}
      *
      * @return Response object.
      */
@@ -568,7 +531,7 @@ public class OrtService {
         }
         Ort ort = (Ort) response.getData();
         if (getOrtsZuordnungs(ort).size() > 0) {
-            return new Response(false, 606, ort);
+            return new Response(false, StatusCodes.ERROR_DELETE, ort);
         }
         if (!authorization.isAuthorized(
             request,
@@ -576,7 +539,7 @@ public class OrtService {
             RequestMethod.DELETE,
             Ort.class)
         ) {
-            return new Response(false, 699, ort);
+            return new Response(false, StatusCodes.NOT_ALLOWED, ort);
         }
 
         return repository.delete(ort, Strings.STAMM);
