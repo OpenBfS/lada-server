@@ -242,6 +242,9 @@ public class KdaUtil {
         @Override
         public ObjectNode transformTo1(String x, String y) {
             ObjectNode degrees = arcToDegree(x, y);
+            if (degrees == null) {
+                return null;
+            }
             String epsgGk = getGkEpsg(
                 degrees.get("x").asDouble(),
                 degrees.get("y").asDouble());
@@ -283,6 +286,9 @@ public class KdaUtil {
         @Override
         public ObjectNode transformTo5(String x, String y) {
             ObjectNode degrees = arcToDegree(x, y);
+            if (degrees == null) {
+                return null;
+            }
             String epsgWgs = getWgsUtmEpsg(
                 degrees.get("x").asDouble(),
                 degrees.get("y").asDouble());
@@ -312,6 +318,9 @@ public class KdaUtil {
         @Override
         public ObjectNode transformTo6(String x, String y) {
             ObjectNode degrees = arcToDegree(x, y);
+            if (degrees == null) {
+                return null;
+            }
             String epsgEtrs = getEtrsEpsg(
                 degrees.get("x").asDouble(),
                 degrees.get("y").asDouble());
@@ -341,6 +350,9 @@ public class KdaUtil {
         @Override
         public ObjectNode transformTo8(String x, String y) {
             ObjectNode degrees = arcToDegree(x, y);
+            if (degrees == null) {
+                return null;
+            }
             String epsgEd50 = getEpsgForEd50UtmFromDegree(
                 degrees.get("x").asText());
             ObjectNode coord = jtsTransform("EPSG:4326",
