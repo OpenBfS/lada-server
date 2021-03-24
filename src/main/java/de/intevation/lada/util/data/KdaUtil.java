@@ -911,27 +911,29 @@ public class KdaUtil {
         y = y.replaceAll(",", ".");
         String[] xParts = x.split("\\.");
         String[] yParts = y.split("\\.");
-        double factorX = 3600;
-        double factorY = 3600;
+
+        // Convert fractions of degrees to arc seconds
+        final double secondsPerDegree = 3600;
         double wsX = 0;
         double wsY = 0;
         try {
             if (xParts.length == 2) {
-                wsX = Double.parseDouble("0." + xParts[1]) * factorX;
+                wsX = Double.parseDouble("0." + xParts[1]) * secondsPerDegree;
             }
             if (yParts.length == 2) {
-                wsY = Double.parseDouble("0." + yParts[1]) * factorY;
+                wsY = Double.parseDouble("0." + yParts[1]) * secondsPerDegree;
             }
         } catch (NumberFormatException nfe) {
             return null;
         }
 
+        // Append arc minutes and seconds as MMSS.sssss to degrees
+        final String minSecFormat = "%02d%08.5f";
         String xRes = xParts[0]
-            + String.format("%02d", (int) Math.floor(wsX / 60))
-            + String.format("%02.5f", wsX % 60);
+            + String.format(minSecFormat, (int) Math.floor(wsX / 60), wsX % 60);
         String yRes = yParts[0]
-            + String.format("%02d", (int) Math.floor(wsY / 60))
-            + String.format("%02.5f", wsY % 60);
+            + String.format(minSecFormat, (int) Math.floor(wsY / 60), wsY % 60);
+
         xRes = xRes.replaceAll("\\.", ",");
         yRes = yRes.replaceAll("\\.", ",");
         if (xParts[0].startsWith("-")) {
