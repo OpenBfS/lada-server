@@ -25,40 +25,48 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-
+/**
+ * Test accuracy of coordinate transformations
+ */
 @RunWith(Parameterized.class)
 public class KdaUtilTest {
 
     /* Tolerance in meter for coordinate comparison */
     private static final double EPSILON = 1;
 
-    /* Expected coordinates for KdaUtil.KDA_* retrieved with PostGIS using
+    /* Expected coordinates for KdaUtil.KDA_* (except KdaUtil.KDA_GS)
+     * retrieved with PostGIS using
      * SELECT ST_AsText(ST_Transform(ST_SetSRID(
      *     'POINT(7.0998138888889 50.733991666667)'::geometry, 4326), <CRS>))
      */
-    private static final Map<Integer, Map<String, Double>> COORDS = Map.of(
+    private static final Map<Integer, Map<String, String>> COORDS = Map.of(
         // 1: CRS = 31466
         KdaUtil.KDA_GK,
-        Map.of("x", 2577686.36896957, "y", 5622631.76328874),
+        Map.of("x", "2577686.36896957", "y", "5622631.76328874"),
 
         // 2:
-        // TODO: Add geodetic coordinates in degrees-minutes-seconds notation
+        // SELECT ST_AsLatLonText(ST_SetSRID(
+        //     'POINT(7.0998138888889 50.733991666667)'::geometry, 4326))
+        // with non-digit characters removed and leading zeros complemented
+        // in the resulting 50°44'2.370"N 7°5'59.330"E
+        KdaUtil.KDA_GS,
+        Map.of("x", "70559.330", "y", "504402.370"),
 
         // 4: CRS = 4326
         KdaUtil.KDA_GD,
-        Map.of("x", 7.0998138888889, "y", 50.733991666667),
+        Map.of("x", "7.0998138888889", "y", "50.733991666667"),
 
         // 5: CRS = 32632, zone prepended to "x"
         KdaUtil.KDA_UTM_WGS84,
-        Map.of("x", 32365908.607704498, "y", 5621966.21754899),
+        Map.of("x", "32365908.607704498", "y", "5621966.21754899"),
 
         // 6: CRS = 25832, zone prepended to "x"
         KdaUtil.KDA_UTM_ETRS89,
-        Map.of("x", 32365908.607703176, "y", 5621966.21742558),
+        Map.of("x", "32365908.607703176", "y", "5621966.21742558"),
 
         // 8: CRS = 23032, zone prepended to "x"
         KdaUtil.KDA_UTM_ED50,
-        Map.of("x", 32365990.950936107, "y", 5622168.57949754)
+        Map.of("x", "32365990.950936107", "y", "5622168.57949754")
     );
 
     @Parameters(name = "from {0} to {1}")
@@ -81,27 +89,45 @@ public class KdaUtilTest {
 
     @Test
     public void transformTest() {
-        ObjectNode result = new KdaUtil().transform(
+        KdaUtil kdaUtil = new KdaUtil();
+        ObjectNode result = kdaUtil.transform(
             fromKda,
             toKda,
-            String.format("%f", COORDS.get(fromKda).get("x")),
-            String.format("%f", COORDS.get(fromKda).get("y"))
+            COORDS.get(fromKda).get("x"),
+            COORDS.get(fromKda).get("y")
         );
         assertNotNull("Transformation result is null", result);
 
         // Expected coordinates
-        double eX = COORDS.get(toKda).get("x");
-        double eY = COORDS.get(toKda).get("y");
+        int compareWith = toKda;
+        if (compareWith == KdaUtil.KDA_GS) {
+            // result will be converted to decimal notation before comparison
+            compareWith = KdaUtil.KDA_GD;
+        }
+        double eX = Double.parseDouble(COORDS.get(compareWith).get("x"));
+        double eY = Double.parseDouble(COORDS.get(compareWith).get("y"));
+
 
         // Transformation result coordinates
-        double rX = Double.parseDouble(
-            result.get("x").asText().replace(',', '.'));
-        double rY = Double.parseDouble(
-            result.get("y").asText().replace(',', '.'));
+        double rX, rY;
+        switch (toKda) {
+        case KdaUtil.KDA_GS:
+            result = kdaUtil.arcToDegree(
+                result.get("x").asText(),
+                result.get("y").asText());
+            assertNotNull("Conversion of transformation result "
+                + "to decimal notation failed", result);
+        default:
+            rX = Double.parseDouble(
+                result.get("x").asText().replace(',', '.'));
+            rY = Double.parseDouble(
+                result.get("y").asText().replace(',', '.'));
+        }
 
         // Distance between expected and result
         double d;
         switch (toKda) {
+        case KdaUtil.KDA_GS:
         case KdaUtil.KDA_GD:
             GeodeticCalculator gc = new GeodeticCalculator(
                 DefaultGeographicCRS.WGS84);

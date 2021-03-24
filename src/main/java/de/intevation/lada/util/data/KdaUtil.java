@@ -33,6 +33,9 @@ public class KdaUtil {
     /* Represents coordinates in Gauß-Krüger CRS */
     public static final int KDA_GK = 1;
 
+    /* Represents geodetic coordinates in sexagesimal notation */
+    public static final int KDA_GS = 2;
+
     /* Represents geodetic coordinates in decimal notation */
     public static final int KDA_GD = 4;
 
@@ -76,7 +79,7 @@ public class KdaUtil {
         Transform t;
         switch (kdaFrom) {
             case KDA_GK: t = this.new Transform1(); break;
-            case 2: t = this.new Transform2(); break;
+            case KDA_GS: t = this.new Transform2(); break;
             case KDA_GD: t = this.new Transform4(); break;
             case KDA_UTM_WGS84: t = this.new Transform5(); break;
             case KDA_UTM_ETRS89: t = this.new Transform6(); break;
@@ -100,7 +103,7 @@ public class KdaUtil {
         public ObjectNode transform(int to, String x, String y) {
             switch (to) {
                 case KDA_GK: return transformTo1(x, y);
-                case 2: return transformTo2(x, y);
+                case KDA_GS: return transformTo2(x, y);
                 case KDA_GD: return transformTo4(x, y);
                 case KDA_UTM_WGS84: return transformTo5(x, y);
                 case KDA_UTM_ETRS89: return transformTo6(x, y);
@@ -952,7 +955,10 @@ public class KdaUtil {
         return response;
     }
 
-    private ObjectNode arcToDegree(String x, String y) {
+    /*
+     * Convert degrees in sexagesimal notation into decimal notation
+     */
+    protected ObjectNode arcToDegree(String x, String y) {
         //Replace decimal separator
         x = x.replaceAll("\\.", ",");
         y = y.replaceAll("\\.", ",");
