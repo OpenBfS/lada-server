@@ -9,13 +9,16 @@ package de.intevation.lada.util.data;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assume.assumeTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.GeodeticCalculator;
+import org.opengis.referencing.FactoryException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,14 +38,22 @@ public class KdaUtilTest {
     private static final double EPSILON = 1;
 
     /* Expected coordinates for KdaUtil.KDA_* (except KdaUtil.KDA_GS)
-     * retrieved with PostGIS using
+     * retrieved with PostGIS (2.5.5 with Proj 4.9.3) using
      * SELECT ST_AsText(ST_Transform(ST_SetSRID(
      *     'POINT(7.0998138888889 50.733991666667)'::geometry, 4326), <CRS>))
      */
     private static final Map<Integer, Map<String, String>> COORDS = Map.of(
         // 1: CRS = 31466
+        /*
+         * Before transformation, put datum shift grid from
+         * http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007.gsb
+         * into /usr/share/proj/ and updated spatial_ref_sys accordingly:
+         * UPDATE spatial_ref_sys
+         *     SET proj4text = proj4text || ' +nadgrids=BETA2007.gsb'
+         *     WHERE srid = 31466
+         */
         KdaUtil.KDA_GK,
-        Map.of("x", "2577686.36896957", "y", "5622631.76328874"),
+        Map.of("x", "2577687.65820815", "y", "5622631.72513064"),
 
         // 2:
         // SELECT ST_AsLatLonText(ST_SetSRID(
@@ -88,7 +99,18 @@ public class KdaUtilTest {
     public int toKda;
 
     @Test
-    public void transformTest() {
+    public void transformTest() throws FactoryException {
+        if (fromKda == 1 || toKda == 1) {
+            assumeTrue(
+                "Missing BETA2007.gsb datum shift grid in "
+                + "src/main/resources/org/geotools/referencing/"
+                + "factory/gridshift",
+                CRS.findMathTransform(
+                    CRS.decode("EPSG:31466"), CRS.decode("EPSG:4326"))
+                .toString().contains("BETA2007.gsb")
+            );
+        }
+
         KdaUtil kdaUtil = new KdaUtil();
         ObjectNode result = kdaUtil.transform(
             fromKda,
