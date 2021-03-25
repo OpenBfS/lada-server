@@ -141,9 +141,10 @@ public class KdaUtilTest {
         }
         assertTrue(
             String.format(
-                "Distance %.2f m between result POINT(%.10g %.10g) and "
+                "from %d to %d: "
+                + "Distance %.2f m between result POINT(%.10g %.10g) and "
                 + "expected POINT(%.10g %.10g) > %.2f m",
-                d, rX, rY, eX, eY, EPSILON),
+                fromKda, toKda, d, rX, rY, eX, eY, EPSILON),
             d <= EPSILON
         );
     }
