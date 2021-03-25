@@ -21,7 +21,7 @@ MAINTAINER raimund.renkert@intevation.de
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
             curl openjdk-11-jdk-headless libpostgis-java libjts-java \
-            git maven lighttpd
+            git maven
 
 
 #
@@ -96,13 +96,6 @@ RUN mvn clean && mvn compile package && \
     mv target/lada-server-*.war \
        $JBOSS_HOME/standalone/deployments/lada-server.war && \
     touch $JBOSS_HOME/standalone/deployments/lada-server.war.dodeploy
-
-##configure lighttpd for apidoc
-RUN mvn javadoc:javadoc
-RUN sed -i 's|server.document-root        = "/var/www/html"|server.document-root        = "/usr/src/lada-server/target/site/apidocs"|' /etc/lighttpd/lighttpd.conf
-
-## Start the webserver manually, when the container is started
-# service lighttpd start
 
 #
 # This will boot WildFly in the standalone mode and bind to all interface
