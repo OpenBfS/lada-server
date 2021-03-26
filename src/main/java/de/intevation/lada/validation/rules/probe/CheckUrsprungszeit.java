@@ -33,7 +33,7 @@ public class CheckUrsprungszeit implements Rule {
         ) {
             Violation violation = new Violation();
             violation.addWarning(
-                "ursprungszeit", StatusCodes.VALUE_NOT_MATCHING);
+                "ursprungszeit", StatusCodes.URSPR_Date_BEFORE_BEGIN);
             return violation;
         }
         return null;
