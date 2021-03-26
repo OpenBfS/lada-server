@@ -580,10 +580,7 @@ public class KdaUtil {
             }
 
             // Format output
-            int zone = getUTMZone(
-                degrees.get("y").asDouble(),
-                degrees.get("x").asDouble());
-            formatUTM(response, zone);
+            formatUTM(response, getUTMZone(degrees.get("y").asDouble()));
             return response;
         }
 
@@ -696,10 +693,7 @@ public class KdaUtil {
             }
 
             // Format output
-            int zone = getUTMZone(
-                degrees.get("y").asDouble(),
-                degrees.get("x").asDouble());
-            formatUTM(response, zone);
+            formatUTM(response, getUTMZone(degrees.get("y").asDouble()));
             return response;
         }
 
@@ -1053,7 +1047,7 @@ public class KdaUtil {
         } else {
             pref = 32700;
         }
-        int code = pref + getUTMZone(x, y);
+        int code = pref + getUTMZone(x);
         return "EPSG:" + code;
     }
 
@@ -1192,13 +1186,13 @@ public class KdaUtil {
             // No CRS with ETRS89 available for the southern hemisphere
             return "";
         }
-        return EPSG_UTM_ETRS89_PREFIX + getUTMZone(lon, lat);
+        return EPSG_UTM_ETRS89_PREFIX + getUTMZone(lon);
     }
 
     /*
-     * Get UTM zone for given geodetic coordinates
+     * Get UTM zone for given longitude
      */
-    private static int getUTMZone(double lon, double lat) {
+    private static int getUTMZone(double lon) {
         return (int) Math.floor((lon + 180) / 6) + 1;
     }
 
