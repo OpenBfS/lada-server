@@ -100,7 +100,7 @@ public class KdaUtilTest {
 
     @Test
     public void transformTest() throws FactoryException {
-        if (fromKda == 1 || toKda == 1) {
+        if (fromKda == KdaUtil.KDA_GK || toKda == KdaUtil.KDA_GK) {
             assumeTrue(
                 "Missing BETA2007.gsb datum shift grid in "
                 + "src/main/resources/org/geotools/referencing/"
