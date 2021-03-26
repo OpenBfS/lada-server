@@ -321,8 +321,8 @@ public class StatusService {
         Messung messung,
         HttpServletRequest request
     ) {
-        Violation violation = null;
-        Violation violationCollection = null;
+        Violation violation = new Violation();
+        Violation violationCollection = new Violation();
         int newStatusWert = newKombi.getStatusWert().getId();
         if (newStatusWert == 1
             || newStatusWert == 2
@@ -331,7 +331,10 @@ public class StatusService {
             Probe probe = readOnlyRepo.getByIdPlain(
                 Probe.class, messung.getProbeId(), "land");
             // init violation_collection with probe validation
-            violationCollection = probeValidator.validate(probe);
+            Violation probeViolation = probeValidator.validate(probe);
+            violationCollection.addErrors(probeViolation.getErrors());
+            violationCollection.addWarnings(probeViolation.getWarnings());
+            violationCollection.addNotifications(probeViolation.getNotifications());
 
             //validate messung object
             violation  = messungValidator.validate(messung);
@@ -393,11 +396,23 @@ public class StatusService {
             violationCollection.addWarnings(violation.getWarnings());
             violationCollection.addNotifications(violation.getNotifications());
 
-            if (violationCollection.hasErrors()
-                || violationCollection.hasWarnings()
+            if (newStatusWert != 7
+                && (violationCollection.hasErrors()
+                || violationCollection.hasWarnings())
             ) {
                 Response response =
                     new Response(false, StatusCodes.ERROR_MERGING, status);
+                response.setErrors(violationCollection.getErrors());
+                response.setWarnings(violationCollection.getWarnings());
+                response.setNotifications(
+                    violationCollection.getNotifications());
+                return response;
+            } else if (newStatusWert == 7
+                && (probeViolation.hasErrors()
+                || probeViolation.hasWarnings())
+            ){
+                Response response =
+                new Response(false, StatusCodes.ERROR_MERGING, status);
                 response.setErrors(violationCollection.getErrors());
                 response.setWarnings(violationCollection.getWarnings());
                 response.setNotifications(
