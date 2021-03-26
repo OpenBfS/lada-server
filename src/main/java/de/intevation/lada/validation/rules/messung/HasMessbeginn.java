@@ -44,10 +44,12 @@ public class HasMessbeginn implements Rule {
             Violation violation = new Violation();
             violation.addWarning("messzeitpunkt", StatusCodes.VALUE_MISSING);
             return violation;
-        } else {
+        } else if (messung.getMesszeitpunkt() == null) {
              Violation violation = new Violation();
             violation.addNotification("messzeitpunkt", StatusCodes.VALUE_MISSING);
             return violation;
+        } else {
+            return null;
         }
     }
 
