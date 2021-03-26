@@ -199,7 +199,7 @@ public class CsvExporter implements Exporter {
             }
         }
 
-        DecimalFormat decimalFormat = new DecimalFormat();
+        DecimalFormat decimalFormat = new DecimalFormat("0.###E00");
         DecimalFormatSymbols symbols = decimalFormat.getDecimalFormatSymbols();
         symbols.setDecimalSeparator(decimalSeparator);
         decimalFormat.setDecimalFormatSymbols(symbols);
@@ -239,7 +239,11 @@ public class CsvExporter implements Exporter {
                     if (keys[i].equals("statusK")) {
                         rowItems.add(getStatusStringByid((Integer) value));
                     } else if (value instanceof Double) {
+                        decimalFormat.applyPattern("0.###E00");
                         rowItems.add(decimalFormat.format((Double) value));
+                    } else if (value instanceof Float) {
+                        decimalFormat.applyPattern("###0.0#");
+                        rowItems.add(decimalFormat.format((Float) value));
                     } else if (value instanceof Timestamp) {
                         //Convert to target timezone
                         Timestamp time = (Timestamp) value;
