@@ -367,7 +367,7 @@ public class QueryTools {
             }
             return prepareResult(q.getResultList(), columns);
         } catch (Exception e) {
-            logger.debug("Exceptiont", e);
+            logger.debug("Exception", e);
             logger.debug("SQL: \n" + sql);
             logger.debug("filterValues:  " + filterValues);
             throw e;
