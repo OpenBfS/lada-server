@@ -177,9 +177,25 @@ public class QueryTools {
                     }
                     filterSql += currentFilterString;
                 }
+            } else if (customColumn.getFilterActive() != null
+                       && customColumn.getFilterActive() == true
+                       && customColumn.getFilterIsNull() != null
+                       && customColumn.getFilterIsNull() == true
+            ) {
+                String currentFilterString = customColumn.getGridColumn().getFilter().getSql();
+                currentFilterString = currentFilterString.replaceAll(" .*", " IS NULL ");
+                currentFilterString = currentFilterString.replaceAll(".*\\(", "");
+                if (customColumn.getFilterNegate()) {
+                    currentFilterString = "NOT(" + currentFilterString + ")";
+                }
+                if (filterSql.isEmpty()) {
+                    filterSql += " WHERE ";
+                } else {
+                    filterSql += " AND ";
+                }
+                filterSql += currentFilterString;
             }
         }
-
 
         if (sortIndMap.size() > 0) {
             NavigableMap <Integer, String> orderedSorts =
@@ -358,6 +374,8 @@ public class QueryTools {
         List<GridColumn> columns
     ) {
         try {
+            logger.debug("SQL: \n" + sql);
+            logger.debug("filterValues:  " + filterValues);
             javax.persistence.Query q = prepareQuery(
                     sql,
                     filterValues,
