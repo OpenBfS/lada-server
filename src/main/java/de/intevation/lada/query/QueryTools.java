@@ -374,8 +374,6 @@ public class QueryTools {
         List<GridColumn> columns
     ) {
         try {
-            logger.debug("SQL: \n" + sql);
-            logger.debug("filterValues:  " + filterValues);
             javax.persistence.Query q = prepareQuery(
                     sql,
                     filterValues,
