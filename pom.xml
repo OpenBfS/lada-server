@@ -548,6 +548,7 @@
                     <excludeFilterFile>
                         spotbugs_excludes.xml
                     </excludeFilterFile>
+                    <threshold>Low</threshold>
                 </configuration>
             </plugin>
         </plugins>

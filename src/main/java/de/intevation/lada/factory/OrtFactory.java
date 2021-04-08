@@ -34,8 +34,6 @@ import de.intevation.lada.util.data.Strings;
  */
 public class OrtFactory {
 
-    private static final int LEN7 = 7;
-
     private static final int EPSG4326 = 4326;
 
     private static final int ERR611 = 611;
@@ -47,10 +45,7 @@ public class OrtFactory {
     private static final int KDA4 = 4;
 
     private static final int ERR675 = 675;
-    private static final int ZONE2 = 2;
-    private static final int ZONE3 = 3;
-    private static final int ZONE4 = 4;
-    private static final int ZONE5 = 5;
+
 
     @Inject
     @RepositoryConfig(type = RepositoryType.RO)
@@ -275,43 +270,6 @@ public class OrtFactory {
         Point geom = geomFactory.createPoint(coord);
         geom.setSRID(EPSG4326);
         return geom;
-    }
-
-    private String getEpsgForWgsUtm(String x) {
-        String epsg = "EPSG:326";
-        String part = x.split(",")[0];
-        String zone = part.length() == LEN7 ? ("0" + part.substring(0, 1))
-            : part.substring(0, 2);
-        return epsg + zone;
-    }
-
-    private String getEpsgForEd50Utm(String x) {
-        String epsg = "EPSG:230";
-        String part = x.split(",")[0];
-        String zone = part.length() == LEN7 ? ("0" + part.substring(0, 1))
-            : part.substring(0, 2);
-        return epsg + zone;
-    }
-
-    private String getEpsgForGK(String koordXExtern) {
-        String part = koordXExtern.split(",")[0];
-        String zone = part.length() == LEN7 ? (part.substring(0, 1)) : null;
-        if (zone == null) {
-            return "";
-        }
-        try {
-            Integer iZone = Integer.valueOf(zone);
-            String epsg = "EPSG:3146";
-            switch (iZone) {
-                case ZONE2: return epsg + "6";
-                case ZONE3: return epsg + "7";
-                case ZONE4: return epsg + "8";
-                case ZONE5: return epsg + "9";
-                default: return "";
-            }
-        } catch (NumberFormatException e) {
-            return "";
-        }
     }
 
     public List<ReportItem> getErrors() {
