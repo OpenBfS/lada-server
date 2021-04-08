@@ -10,4 +10,3 @@ CREATE TABLE stamm.tm_fm_umrechnung(
 ALTER TABLE stamm.tm_fm_umrechnung OWNER to postgres;
 GRANT INSERT, SELECT, UPDATE, DELETE, REFERENCES ON TABLE stamm.tm_fm_umrechnung TO lada;
 GRANT ALL ON TABLE stamm.tm_fm_umrechnung TO postgres;
-GRANT SELECT ON TABLE stamm.tm_fm_umrechnung TO readonly;
