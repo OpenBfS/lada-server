@@ -39,8 +39,6 @@ public class OrtFactory {
 
     private static final int ORTTYP5 = 5;
 
-    private static final int KDA4 = 4;
-
 
     @Inject
     @RepositoryConfig(type = RepositoryType.RO)
@@ -74,7 +72,7 @@ public class OrtFactory {
         String yCoord = ort.getKoordYExtern();
 
         KdaUtil util = new KdaUtil();
-        ObjectNode coords = util.transform(kda, KDA4, xCoord, yCoord);
+        ObjectNode coords = util.transform(kda, KdaUtil.KDA_GD, xCoord, yCoord);
         if (coords == null) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.GEO_NOT_MATCHING);
@@ -184,7 +182,7 @@ public class OrtFactory {
                 return null;
             } else {
                 if (!hasKoord) {
-                    ort.setKdaId(KDA4);
+                    ort.setKdaId(KdaUtil.KDA_GD);
                     ort.setKoordYExtern(
                         String.valueOf(v.getMittelpunkt().getY()));
                     ort.setKoordXExtern(
