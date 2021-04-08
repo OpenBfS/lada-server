@@ -27,6 +27,7 @@ import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
+import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.Strings;
 
 /**
@@ -36,15 +37,9 @@ public class OrtFactory {
 
     private static final int EPSG4326 = 4326;
 
-    private static final int ERR611 = 611;
-
     private static final int ORTTYP5 = 5;
 
-    private static final int ERR652 = 652;
-
     private static final int KDA4 = 4;
-
-    private static final int ERR675 = 675;
 
 
     @Inject
@@ -67,7 +62,7 @@ public class OrtFactory {
             || ort.getKoordYExtern() == null
             || ort.getKoordYExtern().equals("")) {
             ReportItem err = new ReportItem();
-            err.setCode(ERR675);
+            err.setCode(StatusCodes.IMP_INVALID_VALUE);
             err.setKey("coordinates");
             err.setValue(ort.getKdaId()
                 + " " + ort.getKoordXExtern() + " " + ort.getKoordYExtern());
@@ -82,7 +77,7 @@ public class OrtFactory {
         ObjectNode coords = util.transform(kda, KDA4, xCoord, yCoord);
         if (coords == null) {
             ReportItem err = new ReportItem();
-            err.setCode(ERR652);
+            err.setCode(StatusCodes.GEO_NOT_MATCHING);
             err.setKey("kdaId");
             err.setValue(ort.getKdaId()
                 + " " + ort.getKoordXExtern() + " " + ort.getKoordYExtern());
@@ -182,7 +177,7 @@ public class OrtFactory {
                 Strings.STAMM);
             if (v == null) {
                 ReportItem err = new ReportItem();
-                err.setCode(ERR675);
+                err.setCode(StatusCodes.IMP_INVALID_VALUE);
                 err.setKey("gem_id");
                 err.setValue(ort.getGemId());
                 errors.add(err);
@@ -231,7 +226,7 @@ public class OrtFactory {
         }
         if (!hasKoord && !hasGem && !hasStaat) {
             ReportItem err = new ReportItem();
-            err.setCode(ERR611);
+            err.setCode(StatusCodes.VALUE_AMBIGOUS);
             err.setKey("ort");
             err.setValue("");
             errors.add(err);
