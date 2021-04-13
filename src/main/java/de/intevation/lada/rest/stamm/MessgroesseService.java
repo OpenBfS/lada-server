@@ -93,7 +93,7 @@ public class MessgroesseService {
 
         Query query =
             defaultRepo.queryFromString(
-                "SELECT messgroesse_id FROM mmt_messgroesse "
+                "SELECT messgroesse_id FROM stamm.mmt_messgroesse "
                 + "WHERE mmt_id = :mmt",
                 Strings.STAMM)
             .setParameter("mmt", mmtId);

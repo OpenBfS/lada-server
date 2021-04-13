@@ -444,7 +444,7 @@ public class AuditTrailService {
         String sql = "SELECT "
             + field
             + " FROM "
-            + table
+            + source + "." + table
             + " WHERE "
             + idField
             + " = :id ;";
