@@ -26,7 +26,7 @@ public class EntityManagerProducer {
     @Resource
     private SessionContext ctx;
 
-    private String jndiPath = "java:app/entitymanager/";
+    private String jndiPath = "java:app/entitymanager/lada";
 
     /**
      * Constructor for multi-tenancy entity manager delegate.
@@ -52,14 +52,15 @@ public class EntityManagerProducer {
      * @param dataSourceName The jndi name of the datasource.
      * @return The entity manager for the datasource.
      */
+    // TODO: get rid of unused argument or directly the whole class
     public EntityManager entityManager(String dataSourceName) {
 
         EntityManager entityManager =
-            (EntityManager) this.ctx.lookup(this.jndiPath + dataSourceName);
+            (EntityManager) this.ctx.lookup(this.jndiPath);
 
         if (entityManager == null) {
             throw new UnexpectedTypeException("Unknown data source name '"
-                + dataSourceName + "'.");
+                + this.jndiPath + "'.");
         }
 
         return entityManager;
