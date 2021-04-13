@@ -30,7 +30,7 @@ import org.locationtech.jts.geom.Point;
  *
  */
 @Entity
-@Table(name = "gemeindeuntergliederung")
+@Table(name = "gemeindeuntergliederung", schema = "stamm")
 public class GemeindeUntergliederung implements Serializable {
     private static final long serialVersionUID = 1L;
 

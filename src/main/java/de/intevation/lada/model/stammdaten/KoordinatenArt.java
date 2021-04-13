@@ -20,7 +20,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "koordinaten_art")
+@Table(name = "koordinaten_art", schema = "stamm")
 public class KoordinatenArt implements Serializable {
     private static final long serialVersionUID = 1L;
 

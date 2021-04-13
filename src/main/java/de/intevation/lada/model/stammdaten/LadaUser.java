@@ -21,7 +21,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "lada_user")
+@Table(name = "lada_user", schema = "stamm")
 public class LadaUser implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -24,7 +24,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "grid_column")
+@Table(name = "grid_column", schema = "stamm")
 public class GridColumn implements Serializable {
     private static final long serialVersionUID = 1L;
 

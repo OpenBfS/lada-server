@@ -24,7 +24,7 @@ import javax.persistence.Transient;
  *
  */
 @Entity
-@Table(name = "datensatz_erzeuger")
+@Table(name = "datensatz_erzeuger", schema = "stamm")
 public class DatensatzErzeuger implements Serializable {
     private static final long serialVersionUID = 1L;
 

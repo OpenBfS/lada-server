@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  *
  */
 @Entity
-@Table(name = "query_user")
+@Table(name = "query_user", schema = "stamm")
 public class QueryUser implements Serializable {
     private static final long serialVersionUID = 1L;
 

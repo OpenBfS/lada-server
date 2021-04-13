@@ -21,7 +21,7 @@ import javax.persistence.Table;
  * The persistent class for the mess_einheit_umrechung database table.
  */
 @Entity
-@Table(name = "mass_einheit_umrechnung")
+@Table(name = "mass_einheit_umrechnung", schema = "stamm")
 public class MassEinheitUmrechnung implements Serializable {
     private static final long serialVersionUID = 1L;
 

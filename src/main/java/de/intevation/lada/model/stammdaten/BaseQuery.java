@@ -19,7 +19,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "base_query")
+@Table(name = "base_query", schema = "stamm")
 public class BaseQuery implements Serializable {
 
     private static final long serialVersionUID = 1L;

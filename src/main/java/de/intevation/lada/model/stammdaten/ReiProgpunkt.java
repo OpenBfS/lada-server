@@ -20,7 +20,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "rei_progpunkt")
+@Table(name = "rei_progpunkt", schema = "stamm")
 public class ReiProgpunkt implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -20,7 +20,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "importer_config")
+@Table(name = "importer_config", schema = "stamm")
 public class ImporterConfig implements Serializable {
     private static final long serialVersionUID = 1L;
 
