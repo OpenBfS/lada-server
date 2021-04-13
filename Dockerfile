@@ -102,7 +102,7 @@ RUN wildfly/execute.sh
 #
 # Build and deploy LADA-server
 #
-RUN mvn clean && mvn compile package && \
+RUN mvn compile package && \
     mv target/lada-server-*.war \
        $JBOSS_HOME/standalone/deployments/lada-server.war && \
     touch $JBOSS_HOME/standalone/deployments/lada-server.war.dodeploy
