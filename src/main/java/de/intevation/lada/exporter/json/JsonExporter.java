@@ -139,7 +139,7 @@ public class JsonExporter implements Exporter {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date(time.getTime()));
                     SimpleDateFormat sdf =
-                        new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     sdf.setTimeZone(TimeZone.getTimeZone(timezone));
                     rowBuilder.add(key, sdf.format(calendar.getTime()));
                 } else {
