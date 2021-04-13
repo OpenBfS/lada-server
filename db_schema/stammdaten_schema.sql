@@ -769,6 +769,7 @@ INSERT INTO status_wert VALUES (1, 'plausibel');
 INSERT INTO status_wert VALUES (2, 'nicht repräsentativ');
 INSERT INTO status_wert VALUES (3, 'nicht plausibel');
 INSERT INTO status_wert VALUES (4, 'Rückfrage');
+INSERT INTO status_wert VALUES (5, 'ungeprüft');
 INSERT INTO status_wert VALUES (7, 'nicht lieferbar');
 INSERT INTO status_wert VALUES (8, 'zurückgesetzt');
 
@@ -795,6 +796,7 @@ INSERT INTO status_kombi VALUES (13, 3, 4);
 INSERT INTO status_kombi VALUES (14, 1, 8);
 INSERT INTO status_kombi VALUES (15, 2, 8);
 INSERT INTO status_kombi VALUES (16, 3, 8);
+INSERT INTO status_kombi VALUES (17, 1, 5);
 
 
 CREATE TABLE status_reihenfolge (
