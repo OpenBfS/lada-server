@@ -43,7 +43,6 @@ import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 
 /**
  * Exporter class for writing query results to CSV.
@@ -84,7 +83,7 @@ public class CsvExporter implements Exporter {
 
     private String getStatusStringByid(Integer id) {
         StatusKombi kombi =
-            repository.getByIdPlain(StatusKombi.class, id, Strings.STAMM);
+            repository.getByIdPlain(StatusKombi.class, id);
         StatusStufe stufe = kombi.getStatusStufe();
         StatusWert wert = kombi.getStatusWert();
 
@@ -108,11 +107,11 @@ public class CsvExporter implements Exporter {
         ArrayList<String> keysList = new ArrayList<String>(Arrays.asList(keys));
         keysList.forEach(key -> {
             QueryBuilder<GridColumn> builder = new QueryBuilder<GridColumn>(
-                repository.entityManager(Strings.STAMM),
+                repository.entityManager(),
                 GridColumn.class);
             builder.and("dataIndex", key);
             List<GridColumn> result =
-                repository.filterPlain(builder.getQuery(), Strings.STAMM);
+                repository.filterPlain(builder.getQuery());
             String name = key;
             if (result.size() > 0) {
                 GridColumn column = result.get(0);

@@ -27,7 +27,6 @@ import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -88,7 +87,7 @@ public class MessstellenkombiService {
         MultivaluedMap<String, String> params = info.getQueryParameters();
 
         QueryBuilder<Auth> mstMlQuery = new QueryBuilder<Auth>(
-            defaultRepo.entityManager(Strings.STAMM),
+            defaultRepo.entityManager(),
             Auth.class);
         mstMlQuery.orIntList("funktionId", Arrays.asList(0, 1));
 
@@ -98,6 +97,6 @@ public class MessstellenkombiService {
                 Arrays.asList(params.getFirst("netzbetreiberId").split(",")));
         }
 
-        return defaultRepo.filter(mstMlQuery.getQuery(), Strings.STAMM);
+        return defaultRepo.filter(mstMlQuery.getQuery());
    }
 }

@@ -17,7 +17,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -42,11 +41,11 @@ public class UniqueNebenprobenNr implements Rule {
         Messung messung = (Messung) object;
         if (messung.getNebenprobenNr() != null) {
             QueryBuilder<Messung> builder = new QueryBuilder<Messung>(
-                repo.entityManager(Strings.LAND),
+                repo.entityManager(),
                 Messung.class);
             builder.and("nebenprobenNr", messung.getNebenprobenNr());
             builder.and("probeId", messung.getProbeId());
-            Response response = repo.filter(builder.getQuery(), Strings.LAND);
+            Response response = repo.filter(builder.getQuery());
             if (!((List<Messung>) response.getData()).isEmpty()) {
                 Messung found = ((List<Messung>) response.getData()).get(0);
                 // The messung found in the db equals the new messung. (Update)

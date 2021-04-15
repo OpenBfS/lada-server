@@ -41,7 +41,6 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -133,14 +132,14 @@ public class UniversalService {
         for (GridColumnValue columnValue : gridColumnValues) {
             GridColumn gridColumn = repository.getByIdPlain(
                 GridColumn.class,
-                Integer.valueOf(columnValue.getGridColumnId()),
-                Strings.STAMM);
+                Integer.valueOf(columnValue.getGridColumnId())
+            );
             //Check if column can be used for authorization
             ResultType resultType =
                 repository.getByIdPlain(
                     ResultType.class,
-                    gridColumn.getDataType().getId(),
-                    Strings.STAMM);
+                    gridColumn.getDataType().getId()
+                );
             if (resultType != null) {
                 int ndx = -1, i = 0;
                 for (String authType: hierarchy.keySet()) {
@@ -161,8 +160,8 @@ public class UniversalService {
 
         GridColumn gridColumn = repository.getByIdPlain(
             GridColumn.class,
-            Integer.valueOf(gridColumnValues.get(0).getGridColumnId()),
-        Strings.STAMM);
+            Integer.valueOf(gridColumnValues.get(0).getGridColumnId())
+        );
 
         qid = gridColumn.getBaseQuery();
         List<Map<String, Object>> result =
@@ -179,32 +178,24 @@ public class UniversalService {
                 //If column is an ort, get Netzbetreiberid
                 if (authorizationColumnType == Ort.class) {
                     Ort ort = (Ort) repository.getByIdPlain(
-                        Ort.class,
-                        idToAuthorize,
-                        Strings.STAMM);
+                        Ort.class, idToAuthorize);
                     idToAuthorize = ort.getNetzbetreiberId();
                 }
                 if (authorizationColumnType == DatensatzErzeuger.class) {
                     DatensatzErzeuger de =
                         (DatensatzErzeuger) repository.getByIdPlain(
-                            DatensatzErzeuger.class,
-                            idToAuthorize,
-                            Strings.STAMM);
+                            DatensatzErzeuger.class, idToAuthorize);
                     idToAuthorize = de.getNetzbetreiberId();
                 }
                 if (authorizationColumnType == Probenehmer.class) {
                     Probenehmer pn = (Probenehmer) repository.getByIdPlain(
-                        Probenehmer.class,
-                        idToAuthorize,
-                        Strings.STAMM);
+                        Probenehmer.class, idToAuthorize);
                     idToAuthorize = pn.getNetzbetreiberId();
                 }
                 if (authorizationColumnType == MessprogrammKategorie.class) {
                     MessprogrammKategorie mk =
                         (MessprogrammKategorie) repository.getByIdPlain(
-                            MessprogrammKategorie.class,
-                            idToAuthorize,
-                            Strings.STAMM);
+                            MessprogrammKategorie.class, idToAuthorize);
                     idToAuthorize = mk.getNetzbetreiberId();
                 }
 

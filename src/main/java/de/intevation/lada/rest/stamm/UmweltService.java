@@ -29,7 +29,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -85,7 +84,7 @@ public class UmweltService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("reiprogpunktgruppe")) {
-            return repository.getAll(Umwelt.class, "stamm");
+            return repository.getAll(Umwelt.class);
         }
         Integer id = null;
         try {
@@ -98,18 +97,18 @@ public class UmweltService {
         }
         QueryBuilder<ReiProgpunktGrpUmwZuord> builder =
             new QueryBuilder<ReiProgpunktGrpUmwZuord>(
-                repository.entityManager("stamm"),
+                repository.entityManager(),
                 ReiProgpunktGrpUmwZuord.class
             );
         builder.and("reiProgpunktGrpId", id);
         List<ReiProgpunktGrpUmwZuord> zuord =
-            repository.filterPlain(builder.getQuery(), "stamm");
+            repository.filterPlain(builder.getQuery());
         if (zuord.isEmpty()) {
             return new Response(true, StatusCodes.OK, null);
         }
         QueryBuilder<Umwelt> builder1 =
             new QueryBuilder<Umwelt>(
-                repository.entityManager("stamm"),
+                repository.entityManager(),
                 Umwelt.class
             );
         List<String> ids = new ArrayList<String>();
@@ -117,7 +116,7 @@ public class UmweltService {
             ids.add(zuord.get(i).getUmwId());
         }
         builder1.orIn("id", ids);
-        return repository.filter(builder1.getQuery(), "stamm");
+        return repository.filter(builder1.getQuery());
     }
 
     /**
@@ -136,9 +135,6 @@ public class UmweltService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return repository.getById(
-            Umwelt.class,
-            id,
-            Strings.STAMM);
+        return repository.getById(Umwelt.class, id);
     }
 }

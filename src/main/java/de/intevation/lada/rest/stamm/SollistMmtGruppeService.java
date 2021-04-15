@@ -21,7 +21,6 @@ import de.intevation.lada.model.stammdaten.SollistMmtGrp;
 import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -75,6 +74,6 @@ public class SollistMmtGruppeService {
             @Context HttpHeaders headers,
             @Context UriInfo info
     ) {
-        return defaultRepo.getAll(SollistMmtGrp.class, Strings.STAMM);
+        return defaultRepo.getAll(SollistMmtGrp.class);
     }
 }

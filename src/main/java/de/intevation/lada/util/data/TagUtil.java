@@ -53,8 +53,8 @@ public class TagUtil {
         String today = date.format(formatter);
 
         //Get latest generated tag
-        EntityManager stammEm = repository.entityManager(Strings.STAMM);
-        CriteriaBuilder builder = stammEm.getCriteriaBuilder();
+        CriteriaBuilder builder =
+            repository.entityManager().getCriteriaBuilder();
         CriteriaQuery<Tag> criteriaQuery = builder.createQuery(Tag.class);
         Root<Tag> tagRoot = criteriaQuery.from(Tag.class);
         Predicate nameFilter =
@@ -62,7 +62,7 @@ public class TagUtil {
         Order nameOrder = builder.asc(tagRoot.get("tag"));
         criteriaQuery.where(nameFilter);
         criteriaQuery.orderBy(nameOrder);
-        List<Tag> tags = repository.filterPlain(criteriaQuery, Strings.STAMM);
+        List<Tag> tags = repository.filterPlain(criteriaQuery);
 
         Integer serNumber = 1;
         //If tags were found, find next serial number
@@ -89,7 +89,7 @@ public class TagUtil {
         currentTag.setMstId(mstId);
         currentTag.setTag(prefix + "_" + today + "_" + serNumber);
 
-        return repository.create(currentTag, Strings.STAMM);
+        return repository.create(currentTag);
     }
 
     /**
@@ -118,19 +118,19 @@ public class TagUtil {
      */
     public static List<TagZuordnung> setTagsByProbeIds(
             List<Integer> probeIds, Integer tagId, Repository repository) {
-        Tag tag = repository.getByIdPlain(Tag.class, tagId, Strings.STAMM);
+        Tag tag = repository.getByIdPlain(Tag.class, tagId);
 
         //Get given probe and messung records
-        EntityManager landEm = repository.entityManager(Strings.LAND);
-        CriteriaBuilder probeBuilder = landEm.getCriteriaBuilder();
+        EntityManager em = repository.entityManager();
+        CriteriaBuilder probeBuilder = em.getCriteriaBuilder();
         CriteriaQuery<Probe> probeQuery = probeBuilder.createQuery(Probe.class);
         Root<Probe> probeRoot = probeQuery.from(Probe.class);
         Predicate pidFilter =
             probeBuilder.in(probeRoot.get("id")).value(probeIds);
         probeQuery.where(pidFilter);
-        List<Probe> probes = repository.filterPlain(probeQuery, Strings.LAND);
+        List<Probe> probes = repository.filterPlain(probeQuery);
 
-        CriteriaBuilder messungBuilder = landEm.getCriteriaBuilder();
+        CriteriaBuilder messungBuilder = em.getCriteriaBuilder();
         CriteriaQuery<Messung> messungQuery =
             messungBuilder.createQuery(Messung.class);
         Root<Messung> messungRoot = messungQuery.from(Messung.class);
@@ -138,7 +138,7 @@ public class TagUtil {
             messungBuilder.in(messungRoot.get("probeId")).value(probeIds);
         messungQuery.where(messungPidFilter);
         List<Messung> messungs =
-            repository.filterPlain(messungQuery, Strings.LAND);
+            repository.filterPlain(messungQuery);
 
         //Set tags
         List<TagZuordnung> zuordnungs = new ArrayList<TagZuordnung>();
@@ -146,7 +146,7 @@ public class TagUtil {
             TagZuordnung zuordnung = new TagZuordnung();
             zuordnung.setTag(tag);
             zuordnung.setProbeId(probe.getId());
-            repository.create(zuordnung, Strings.LAND);
+            repository.create(zuordnung);
             zuordnungs.add(zuordnung);
         });
 
@@ -154,7 +154,7 @@ public class TagUtil {
             TagZuordnung zuordnung = new TagZuordnung();
             zuordnung.setTag(tag);
             zuordnung.setMessungId(messung.getId());
-            repository.create(zuordnung, Strings.LAND);
+            repository.create(zuordnung);
             zuordnungs.add(zuordnung);
         });
         return zuordnungs;

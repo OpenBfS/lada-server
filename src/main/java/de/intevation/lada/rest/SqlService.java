@@ -32,7 +32,6 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -100,9 +99,7 @@ public class SqlService {
         }
         for (GridColumnValue columnValue : gridColumnValues) {
             GridColumn gridColumn = repository.getByIdPlain(
-                GridColumn.class,
-                columnValue.getGridColumnId(),
-                Strings.STAMM);
+                GridColumn.class, columnValue.getGridColumnId());
             columnValue.setGridColumn(gridColumn);
         }
 

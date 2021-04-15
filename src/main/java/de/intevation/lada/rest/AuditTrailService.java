@@ -19,7 +19,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -28,12 +27,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-//import org.apache.log4j.Logger;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import de.intevation.lada.model.Schema;
 import de.intevation.lada.model.land.AuditTrailMessung;
 import de.intevation.lada.model.land.AuditTrailProbe;
 import de.intevation.lada.model.land.Messung;
@@ -49,7 +47,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 
 /**
  * REST service for AuditTrail.
@@ -185,7 +182,7 @@ public class AuditTrailService {
             return ret;
         }
         // Get the plain probe object to have the hauptproben_nr.
-        Probe probe = repository.getByIdPlain(Probe.class, pId, Strings.LAND);
+        Probe probe = repository.getByIdPlain(Probe.class, pId);
         if (probe == null) {
             return ret;
         }
@@ -194,11 +191,11 @@ public class AuditTrailService {
         //Get ort ids connected to this probe
         QueryBuilder<Ortszuordnung> refBuilder =
             new QueryBuilder<Ortszuordnung>(
-                repository.entityManager(Strings.LAND), Ortszuordnung.class);
+                repository.entityManager(), Ortszuordnung.class);
         refBuilder.and("probeId", id);
         List<Integer> ortIds = new LinkedList<Integer>();
         for (Ortszuordnung zuordnung
-            : repository.filterPlain(refBuilder.getQuery(), Strings.LAND)
+            : repository.filterPlain(refBuilder.getQuery())
         ) {
             ortIds.add(zuordnung.getOrtId());
         }
@@ -206,8 +203,7 @@ public class AuditTrailService {
         // Get all entries for the probe and its sub objects.
         QueryBuilder<AuditTrailProbe> builder =
             new QueryBuilder<AuditTrailProbe>(
-                repository.entityManager(Strings.LAND),
-                AuditTrailProbe.class);
+                repository.entityManager(), AuditTrailProbe.class);
         builder.and("objectId", id);
         builder.and("tableName", "probe");
         builder.or("probeId", id);
@@ -216,7 +212,7 @@ public class AuditTrailService {
         }
         builder.orderBy("tstamp", true);
         List<AuditTrailProbe> audit =
-            repository.filterPlain(builder.getQuery(), Strings.LAND);
+            repository.filterPlain(builder.getQuery());
 
         // Create an empty JsonObject
         ObjectMapper mapper = new ObjectMapper();
@@ -238,12 +234,10 @@ public class AuditTrailService {
             if (a.getTableName().equals("messwert")) {
                 Messung messung =
                     repository.getByIdPlain(
-                        Messung.class, a.getMessungsId(), Strings.LAND);
+                        Messung.class, a.getMessungsId());
                 StatusProtokoll status =
                     repository.getByIdPlain(
-                        StatusProtokoll.class,
-                        messung.getStatus(),
-                        Strings.LAND);
+                        StatusProtokoll.class, messung.getStatus());
                 if (status.getStatusKombi() == 1
                     && !userInfo.getMessstellen().contains(probe.getMstId())
                 ) {
@@ -285,12 +279,12 @@ public class AuditTrailService {
                 "ort_id",
                 audit.getRowData().get("ort_id").toString(),
                 "id",
-                Strings.STAMM);
+                Schema.STAMM);
             node.put("identifier", value);
         }
         if ("messung".equals(audit.getTableName())) {
             Messung m = repository.getByIdPlain(
-                Messung.class, audit.getObjectId(), Strings.LAND);
+                Messung.class, audit.getObjectId());
             node.put("identifier",
                 (m == null)
                 ? "(deleted)"
@@ -301,7 +295,7 @@ public class AuditTrailService {
         }
         if (audit.getMessungsId() != null) {
             Messung m = repository.getByIdPlain(
-                Messung.class, audit.getMessungsId(), Strings.LAND);
+                Messung.class, audit.getMessungsId());
             ObjectNode identifier = node.putObject("identifier");
             identifier.put("messung",
                 (m.getNebenprobenNr() == null)
@@ -316,7 +310,7 @@ public class AuditTrailService {
                     "messgroesse",
                     audit.getRowData().get("messgroesse_id").toString(),
                     "id",
-                    Strings.STAMM);
+                    Schema.STAMM);
                 identifier.put("identifier", value);
             }
         }
@@ -347,28 +341,24 @@ public class AuditTrailService {
         } catch (NumberFormatException nfe) {
             return ret;
         }
-        Messung messung =
-            repository.getByIdPlain(Messung.class, mId, Strings.LAND);
+        Messung messung = repository.getByIdPlain(Messung.class, mId);
         if (messung == null) {
             return ret;
         }
         StatusProtokoll status =
-            repository.getByIdPlain(
-                StatusProtokoll.class, messung.getStatus(), Strings.LAND);
+            repository.getByIdPlain(StatusProtokoll.class, messung.getStatus());
         Probe probe =
-            repository.getByIdPlain(
-                Probe.class, messung.getProbeId(), Strings.LAND);
+            repository.getByIdPlain(Probe.class, messung.getProbeId());
         UserInfo userInfo = authorization.getInfo(request);
         QueryBuilder<AuditTrailMessung> builder =
             new QueryBuilder<AuditTrailMessung>(
-                repository.entityManager(Strings.LAND),
-                AuditTrailMessung.class);
+                repository.entityManager(), AuditTrailMessung.class);
         builder.and("objectId", mId);
         builder.and("tableName", "messung");
         builder.or("messungsId", mId);
         builder.orderBy("tstamp", true);
         List<AuditTrailMessung> audit =
-            repository.filterPlain(builder.getQuery(), Strings.LAND);
+            repository.filterPlain(builder.getQuery());
 
         // Create an empty JsonObject
         ObjectMapper mapper = new ObjectMapper();
@@ -424,7 +414,7 @@ public class AuditTrailService {
                 "messgroesse",
                 audit.getRowData().get("messgroesse_id").toString(),
                 "id",
-                Strings.STAMM);
+                Schema.STAMM);
             node.put("identifier", value);
         }
         return node;
@@ -438,17 +428,17 @@ public class AuditTrailService {
         String field,
         String id,
         String idField,
-        String source
+        String schema
     ) {
-        EntityManager manager = repository.entityManager(source);
         String sql = "SELECT "
             + field
             + " FROM "
-            + source + "." + table
+            + schema + "." + table
             + " WHERE "
             + idField
             + " = :id ;";
-        javax.persistence.Query query = manager.createNativeQuery(sql);
+        javax.persistence.Query query =
+            repository.entityManager().createNativeQuery(sql);
         if (id == null) {
             return "";
         }
@@ -489,7 +479,7 @@ public class AuditTrailService {
                         m.getValueField(),
                         !node.get(key).isNull() ? node.get(key).asText() : null,
                         "id",
-                        Strings.STAMM);
+                        Schema.STAMM);
                     node.put(key, value);
                 }
             }

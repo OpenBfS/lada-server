@@ -18,7 +18,6 @@ import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -47,9 +46,7 @@ public class TimestampLocker implements ObjectLocker {
         if (o instanceof Probe) {
             Probe newProbe = (Probe) o;
             Probe oldProbe = (Probe) repository.getById(
-                Probe.class,
-                newProbe.getId(),
-                Strings.LAND).getData();
+                Probe.class, newProbe.getId()).getData();
             if (oldProbe.getTreeModified().getTime()
                 > newProbe.getTreeModified().getTime()) {
                 return true;
@@ -66,7 +63,7 @@ public class TimestampLocker implements ObjectLocker {
                         return true;
                     }
                     Response response =
-                        repository.getById(Probe.class, id, Strings.LAND);
+                        repository.getById(Probe.class, id);
                     Probe probe = (Probe) response.getData();
                     return isNewer(o, probe.getTreeModified());
                 }
@@ -79,7 +76,7 @@ public class TimestampLocker implements ObjectLocker {
                         return true;
                     }
                     Response mResponse =
-                        repository.getById(Messung.class, id, Strings.LAND);
+                        repository.getById(Messung.class, id);
                     Messung messung = (Messung) mResponse.getData();
                     boolean newerMessung =
                         isNewer(o, messung.getTreeModified());

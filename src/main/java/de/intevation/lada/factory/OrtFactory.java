@@ -28,7 +28,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 
 /**
  * Class to create, transform and complete ort objects.
@@ -108,7 +107,7 @@ public class OrtFactory {
         }
         QueryBuilder<Ort> builder =
             new QueryBuilder<>(
-                repository.entityManager(Strings.STAMM),
+                repository.entityManager(),
                 Ort.class);
         if (ort.getKdaId() != null
             && ort.getKoordXExtern() != null
@@ -120,7 +119,7 @@ public class OrtFactory {
             builder.and("ozId", ort.getOzId());
             builder.and("netzbetreiberId", ort.getNetzbetreiberId());
             List<Ort> orte =
-                repository.filterPlain(builder.getQuery(), Strings.STAMM);
+                repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
                 return orte.get(0);
             }
@@ -129,7 +128,7 @@ public class OrtFactory {
             builder.and("ozId", ort.getOzId());
             builder.and("netzbetreiberId", ort.getNetzbetreiberId());
             List<Ort> orte =
-                repository.filterPlain(builder.getQuery(), Strings.STAMM);
+                repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
                 return orte.get(0);
             }
@@ -139,7 +138,7 @@ public class OrtFactory {
             builder.and("ozId", ort.getOzId());
             builder.and("netzbetreiberId", ort.getNetzbetreiberId());
             List<Ort> orte =
-                repository.filterPlain(builder.getQuery(), Strings.STAMM);
+                repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
                 return orte.get(0);
             }
@@ -170,9 +169,7 @@ public class OrtFactory {
                 ort.setStaatId(0);
             }
             Verwaltungseinheit v = repository.getByIdPlain(
-                Verwaltungseinheit.class,
-                ort.getGemId(),
-                Strings.STAMM);
+                Verwaltungseinheit.class, ort.getGemId());
             if (v == null) {
                 ReportItem err = new ReportItem();
                 err.setCode(StatusCodes.IMP_INVALID_VALUE);
@@ -206,7 +203,7 @@ public class OrtFactory {
         ) {
             Staat staat =
                 repository.getByIdPlain(
-                    Staat.class, ort.getStaatId(), Strings.STAMM);
+                    Staat.class, ort.getStaatId());
             ort.setKdaId(staat.getKdaId());
             ort.setKoordXExtern(staat.getKoordXExtern());
             ort.setKoordYExtern(staat.getKoordYExtern());
@@ -243,7 +240,7 @@ public class OrtFactory {
         if (ort.getGeom() == null) {
             return;
         }
-        Query q = repository.entityManager(Strings.STAMM)
+        Query q = repository.entityManager()
             .createQuery("SELECT vg.gemId "
                 + "FROM Verwaltungsgrenze vg "
                 + "WHERE is_gemeinde = TRUE "

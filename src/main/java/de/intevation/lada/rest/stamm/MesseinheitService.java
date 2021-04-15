@@ -28,7 +28,6 @@ import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -96,18 +95,18 @@ public class MesseinheitService {
             || !params.containsKey("mehId")
             || params.getFirst("mehId").equals("")
         ) {
-            return defaultRepo.getAll(MessEinheit.class, Strings.STAMM);
+            return defaultRepo.getAll(MessEinheit.class);
         }
         String mehId = params.getFirst("mehId");
 
 
         MessEinheit meh = defaultRepo.getByIdPlain(
-            MessEinheit.class, Integer.parseInt(mehId), Strings.STAMM);
+            MessEinheit.class, Integer.parseInt(mehId));
         MessEinheit secMeh = null;
         if (params.containsKey("secMehId")) {
             String secMehId = params.getFirst("secMehId");
             secMeh = defaultRepo.getByIdPlain(
-                MessEinheit.class, Integer.parseInt(secMehId), Strings.STAMM);
+                MessEinheit.class, Integer.parseInt(secMehId));
         }
         List<MessEinheit> einheits =
             new ArrayList<MessEinheit>(
@@ -155,9 +154,6 @@ public class MesseinheitService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            MessEinheit.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+        return defaultRepo.getById(MessEinheit.class, Integer.valueOf(id));
     }
 }

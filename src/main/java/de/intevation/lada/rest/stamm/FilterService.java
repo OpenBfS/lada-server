@@ -52,28 +52,28 @@ public class FilterService {
         String value = filter.getValue();
         Filter f =
             repository.getByIdPlain(
-                Filter.class, filter.getId(), Strings.STAMM);
+                Filter.class, filter.getId());
         QueryBuilder<FilterValue> builder = new QueryBuilder<FilterValue>(
-            repository.entityManager(Strings.STAMM),
+            repository.entityManager(),
             FilterValue.class
         );
         builder.and("userId", userInfo.getUserId());
         builder.and("filterId", f.getId());
         List<FilterValue> values =
-            repository.filterPlain(builder.getQuery(), Strings.STAMM);
+            repository.filterPlain(builder.getQuery());
         if (values == null || values.isEmpty()) {
             FilterValue newValue = new FilterValue();
             newValue.setFilterId(f.getId());
             newValue.setUserId(userInfo.getUserId());
             newValue.setValue(value);
-            repository.create(newValue, Strings.STAMM);
+            repository.create(newValue);
             f.setValue(value);
             return new Response(true, 200, f);
         }
         else {
             FilterValue fv = values.get(0);
             fv.setValue(value);
-            repository.update(fv, Strings.STAMM);
+            repository.update(fv);
             f.setValue(value);
             return new Response(true, 200, f);
         }
@@ -91,24 +91,24 @@ public class FilterService {
         /*
         UserInfo userInfo = authorization.getInfo(request);
         Integer fId = Integer.valueOf(id);
-        Filter f = repository.getByIdPlain(Filter.class, fId, Strings.STAMM);
+        Filter f = repository.getByIdPlain(Filter.class, fId);
         QueryBuilder<FilterValue> builder = new QueryBuilder<FilterValue>(
-            repository.entityManager(Strings.STAMM),
+            repository.entityManager(),
             FilterValue.class
         );
         builder.and("userId", userInfo.getUserId());
         builder.and("filterId", f.getId());
         List<FilterValue> values =
-            repository.filterPlain(builder.getQuery(), Strings.STAMM);
+            repository.filterPlain(builder.getQuery());
         if (values == null || values.isEmpty()) {
             return new Response(false, 618, "not existing");
         }
-        repository.delete(values.get(0), Strings.STAMM);
+        repository.delete(values.get(0));
         QueryBuilder<FilterValue> fvBuilder = builder.getEmptyBuilder();
         fvBuilder.and("userId", 0);
         fvBuilder.and("filterId", f.getId());
         List<FilterValue> basicValues =
-            repository.filterPlain(fvBuilder.getQuery(), Strings.STAMM);
+            repository.filterPlain(fvBuilder.getQuery());
         if (basicValues == null || basicValues.isEmpty()) {
             f.setValue(null);
             return new Response(true, 200, f);

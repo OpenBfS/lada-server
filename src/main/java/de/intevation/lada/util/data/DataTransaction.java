@@ -27,9 +27,6 @@ public class DataTransaction {
     @PersistenceContext
     EntityManager em;
 
-    // TODO: get rid of unused arguments that used to be passed to
-    // EntityManagerProducer
-
     /**
      * Create object in the database.
      * This operation can not be undone.
@@ -42,7 +39,7 @@ public class DataTransaction {
      * @throws TransactionRequiredException
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void persistInDatabase(Object object, String dataSource)
+    public void persistInDatabase(Object object)
     throws EntityExistsException,
         IllegalArgumentException,
         EJBTransactionRolledbackException,
@@ -68,7 +65,7 @@ public class DataTransaction {
      * @throws TransactionRequiredException
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void updateInDatabase(Object object, String dataSource)
+    public void updateInDatabase(Object object)
     throws EntityExistsException,
         IllegalArgumentException,
         EJBTransactionRolledbackException,
@@ -86,7 +83,7 @@ public class DataTransaction {
      * @throws TransactionRequiredException
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void removeFromDatabase(Object object, String dataSource)
+    public void removeFromDatabase(Object object)
     throws IllegalArgumentException,
         TransactionRequiredException,
         EJBTransactionRolledbackException {
@@ -96,7 +93,7 @@ public class DataTransaction {
         em.flush();
     }
 
-    public EntityManager entityManager(String dataSource) {
+    public EntityManager entityManager() {
         return this.em;
     }
 }

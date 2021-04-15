@@ -18,7 +18,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -53,9 +52,9 @@ public class HasEntnahmeOrt implements Rule {
         }
         QueryBuilder<Ortszuordnung> builder =
             new QueryBuilder<Ortszuordnung>(
-                repo.entityManager(Strings.LAND), Ortszuordnung.class);
+                repo.entityManager(), Ortszuordnung.class);
         builder.and("probeId", id);
-        Response response = repo.filter(builder.getQuery(), Strings.LAND);
+        Response response = repo.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<Ortszuordnung> orte = (List<Ortszuordnung>) response.getData();
         for (Ortszuordnung ort: orte) {

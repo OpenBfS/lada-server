@@ -45,7 +45,6 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
@@ -116,7 +115,7 @@ import de.intevation.lada.util.rest.Response;
         }
 
         UserInfo userInfo = authorization.getInfo(request);
-        EntityManager em = repository.entityManager(Strings.STAMM);
+        EntityManager em = repository.entityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Tag> criteriaQuery = builder.createQuery(Tag.class);
         Root<Tag> root = criteriaQuery.from(Tag.class);
@@ -142,7 +141,7 @@ import de.intevation.lada.util.rest.Response;
             filter = builder.and(filter, messungFilter);
         }
         criteriaQuery.where(filter);
-        List<Tag> tags = repository.filterPlain(criteriaQuery, Strings.STAMM);
+        List<Tag> tags = repository.filterPlain(criteriaQuery);
         return new Response(true, StatusCodes.OK, tags);
     }
 
@@ -324,7 +323,7 @@ import de.intevation.lada.util.rest.Response;
         //Use existing tag
         if (tag == null) {
             //Check if tag is already assigned to the probe
-            EntityManager em = repository.entityManager(Strings.STAMM);
+            EntityManager em = repository.entityManager();
             CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<TagZuordnung> criteriaQuery =
                 builder.createQuery(TagZuordnung.class);
@@ -350,7 +349,7 @@ import de.intevation.lada.util.rest.Response;
             }
             criteriaQuery.where(filter);
             List<TagZuordnung> zuordnungs =
-                repository.filterPlain(criteriaQuery, Strings.STAMM);
+                repository.filterPlain(criteriaQuery);
             if (zuordnungs.size() > 0) {
                 return new Response(
                     false,
@@ -358,7 +357,7 @@ import de.intevation.lada.util.rest.Response;
                     "Tag is already assigned to probe");
             }
 
-            tag = repository.getByIdPlain(Tag.class, tagId, Strings.STAMM);
+            tag = repository.getByIdPlain(Tag.class, tagId);
             String mstId = tag.getMstId();
             //If user tries to assign a global tag: authorize
             if (mstId == null) {
@@ -366,7 +365,7 @@ import de.intevation.lada.util.rest.Response;
                 boolean authorized = false;
                 if (zuordnung.getMessungId() != null) {
                     data = repository.getByIdPlain(
-                        Messung.class, zuordnung.getMessungId(), Strings.LAND);
+                        Messung.class, zuordnung.getMessungId());
                     authorized = authorization.isAuthorized(
                         request,
                         data,
@@ -375,7 +374,7 @@ import de.intevation.lada.util.rest.Response;
                     );
                 } else {
                     data = repository.getByIdPlain(
-                        Probe.class, zuordnung.getProbeId(), Strings.LAND);
+                        Probe.class, zuordnung.getProbeId());
                     authorized = authorization.isAuthorized(
                         request,
                         data,
@@ -395,9 +394,9 @@ import de.intevation.lada.util.rest.Response;
                     false, StatusCodes.ERROR_DB_CONNECTION, "Invalid mstId");
             }
 
-            repository.create(zuordnung, Strings.LAND);
+            repository.create(zuordnung);
             zuordnung.setTag(tag);
-            return repository.update(zuordnung, Strings.LAND);
+            return repository.update(zuordnung);
         //Create new
         } else {
             String mstId = zuordnung.getTag().getMstId();
@@ -410,8 +409,8 @@ import de.intevation.lada.util.rest.Response;
                     StatusCodes.ERROR_DB_CONNECTION,
                     "Invalid/empty mstId");
             }
-            if (repository.create(tag, Strings.STAMM).getSuccess()) {
-                return repository.create(zuordnung, Strings.LAND);
+            if (repository.create(tag).getSuccess()) {
+                return repository.create(zuordnung);
             } else {
                 //TODO Proper response code?
                 return new Response(
@@ -443,13 +442,13 @@ import de.intevation.lada.util.rest.Response;
         boolean global = false;
         //Check if its a global tag
         Tag tag = repository.getByIdPlain(
-            Tag.class, tagZuordnung.getTagId(), Strings.STAMM);
+            Tag.class, tagZuordnung.getTagId());
         if (tag.getMstId() == null) {
             Object data;
             boolean authorized = false;
             if (tagZuordnung.getMessungId() != null) {
                 data = repository.getByIdPlain(
-                    Messung.class, tagZuordnung.getMessungId(), Strings.LAND);
+                    Messung.class, tagZuordnung.getMessungId());
                 authorized = authorization.isAuthorized(
                     request,
                     data,
@@ -458,7 +457,7 @@ import de.intevation.lada.util.rest.Response;
                 );
             } else {
                 data = repository.getByIdPlain(
-                    Probe.class, tagZuordnung.getProbeId(), Strings.LAND);
+                    Probe.class, tagZuordnung.getProbeId());
                 authorized = authorization.isAuthorized(
                     request,
                     data,
@@ -477,7 +476,7 @@ import de.intevation.lada.util.rest.Response;
         }
 
         UserInfo userInfo = authorization.getInfo(request);
-        EntityManager em = repository.entityManager(Strings.STAMM);
+        EntityManager em = repository.entityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<TagZuordnung> criteriaQuery =
             builder.createQuery(TagZuordnung.class);
@@ -508,14 +507,14 @@ import de.intevation.lada.util.rest.Response;
 
         criteriaQuery.where(filter);
         List<TagZuordnung> zuordnungs =
-            repository.filterPlain(criteriaQuery, Strings.STAMM);
+            repository.filterPlain(criteriaQuery);
 
         // TODO Error code if no zuordnung is found?
         if (zuordnungs.size() == 0) {
             return new Response(
                 false, StatusCodes.NOT_ALLOWED, "No valid Tags found");
         } else {
-            return repository.delete(zuordnungs.get(0), Strings.LAND);
+            return repository.delete(zuordnungs.get(0));
         }
     }
 }

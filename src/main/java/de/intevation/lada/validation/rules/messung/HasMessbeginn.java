@@ -35,7 +35,7 @@ public class HasMessbeginn implements Rule {
     public Violation execute(Object object) {
         Messung messung = (Messung) object;
         Probe probe =
-            repository.getByIdPlain(Probe.class, messung.getProbeId(), "land");
+            repository.getByIdPlain(Probe.class, messung.getProbeId());
         if (messung.getMesszeitpunkt() == null
             &&(
             probe.getDatenbasisId() != null

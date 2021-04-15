@@ -68,7 +68,6 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 
 /**
  * Exporter class for writing query results to JSON.
@@ -222,14 +221,14 @@ public class JsonExporter implements Exporter {
 
     private String createJsonString(List<Integer> probeIds, UserInfo userInfo) {
         QueryBuilder<Probe> builder = new QueryBuilder<Probe>(
-                repository.entityManager(Strings.LAND),
+                repository.entityManager(),
                 Probe.class
             );
         for (Integer id : probeIds) {
             builder.or("id", id);
         }
         List<Probe> proben =
-            repository.filterPlain(builder.getQuery(), Strings.LAND);
+            repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(proben);
@@ -247,16 +246,16 @@ public class JsonExporter implements Exporter {
             ObjectNode probe = (ObjectNode) proben.get(i);
             Probenart art = repository.getByIdPlain(
                 Probenart.class,
-                probe.get("probenartId").asInt(),
-                Strings.STAMM);
+                probe.get("probenartId").asInt()
+            );
             Datenbasis datenbasis = repository.getByIdPlain(
                 Datenbasis.class,
-                probe.get("datenbasisId").asInt(),
-                Strings.STAMM);
+                probe.get("datenbasisId").asInt()
+            );
             Umwelt umw = repository.getByIdPlain(
                 Umwelt.class,
-                probe.get("umwId").asText(),
-                Strings.STAMM);
+                probe.get("umwId").asText()
+            );
             probe.put("probenart",
                 art == null ? "" : art.getProbenart());
             probe.put("datenbasis",
@@ -265,23 +264,23 @@ public class JsonExporter implements Exporter {
             if (probe.get("baId").asInt() != 0) {
                 Betriebsart ba = repository.getByIdPlain(
                     Betriebsart.class,
-                    probe.get("baId").asInt(),
-                    Strings.STAMM);
+                    probe.get("baId").asInt()
+                );
                 probe.put("messRegime", ba.getName());
             }
             if (probe.get("mplId").asInt() != 0) {
                 MessprogrammKategorie mpl = repository.getByIdPlain(
                     MessprogrammKategorie.class,
-                    probe.get("mplId").asInt(),
-                    Strings.STAMM);
+                    probe.get("mplId").asInt()
+                );
                 probe.put("mplCode", mpl.getCode());
                 probe.put("mpl", mpl.getBezeichnung());
             }
             if (probe.get("probeNehmerId").asInt() != 0) {
                 Probenehmer probenehmer = repository.getByIdPlain(
                     Probenehmer.class,
-                    probe.get("probeNehmerId").asInt(),
-                    Strings.STAMM);
+                    probe.get("probeNehmerId").asInt()
+                );
                 probe.put("prnId", probenehmer.getPrnId());
                 probe.put("prnBezeichnung", probenehmer.getBezeichnung());
                 probe.put(
@@ -301,12 +300,12 @@ public class JsonExporter implements Exporter {
     private void addMessstelle(JsonNode node) {
         MessStelle messstelle = repository.getByIdPlain(
             MessStelle.class,
-            node.get("mstId").asText(),
-            Strings.STAMM);
+            node.get("mstId").asText()
+        );
         MessStelle laborMessstelle = repository.getByIdPlain(
             MessStelle.class,
-            node.get("laborMstId").asText(),
-            Strings.STAMM);
+            node.get("laborMstId").asText()
+        );
         final ObjectMapper mapper = new ObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(messstelle);
@@ -323,12 +322,12 @@ public class JsonExporter implements Exporter {
 
     private void addMessungen(JsonNode probe) {
         QueryBuilder<Messung> builder = new QueryBuilder<Messung>(
-                repository.entityManager(Strings.LAND),
+                repository.entityManager(),
                 Messung.class
             );
         builder.and("probeId", probe.get("id").asInt());
         List<Messung> messungen =
-            repository.filterPlain(builder.getQuery(), Strings.LAND);
+            repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(messungen);
@@ -336,8 +335,8 @@ public class JsonExporter implements Exporter {
             for (int i = 0; i < nodes.size(); i++) {
                 MessMethode mmt = repository.getByIdPlain(
                     MessMethode.class,
-                    nodes.get(i).get("mmtId").asText(),
-                    Strings.STAMM);
+                    nodes.get(i).get("mmtId").asText()
+                );
                 ((ObjectNode) nodes.get(i)).put("mmt",
                     mmt == null ? "" : mmt.getMessmethode());
                 addMesswerte(nodes.get(i));
@@ -353,12 +352,12 @@ public class JsonExporter implements Exporter {
 
     private void addKommentare(JsonNode probe) {
         QueryBuilder<KommentarP> builder = new QueryBuilder<KommentarP>(
-                repository.entityManager(Strings.LAND),
+                repository.entityManager(),
                 KommentarP.class
             );
         builder.and("probeId", probe.get("id").asInt());
         List<KommentarP> kommentare =
-            repository.filterPlain(builder.getQuery(), Strings.LAND);
+            repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(kommentare);
@@ -366,8 +365,8 @@ public class JsonExporter implements Exporter {
             for (int i = 0; i < nodes.size(); i++) {
                 MessStelle mst = repository.getByIdPlain(
                     MessStelle.class,
-                    nodes.get(i).get("mstId").asText(),
-                    Strings.STAMM);
+                    nodes.get(i).get("mstId").asText()
+                );
                 ((ObjectNode) nodes.get(i)).put(
                     "mst",
                     mst.getMessStelle());
@@ -381,12 +380,12 @@ public class JsonExporter implements Exporter {
 
     private void addZusatzwerte(JsonNode probe) {
         QueryBuilder<ZusatzWert> builder = new QueryBuilder<ZusatzWert>(
-                repository.entityManager(Strings.LAND),
+                repository.entityManager(),
                 ZusatzWert.class
             );
         builder.and("probeId", probe.get("id").asInt());
         List<ZusatzWert> zusatzwerte =
-            repository.filterPlain(builder.getQuery(), Strings.LAND);
+            repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(zusatzwerte);
@@ -394,15 +393,13 @@ public class JsonExporter implements Exporter {
             for (int i = 0; i < nodes.size(); i++) {
                 ProbenZusatz pz = repository.getByIdPlain(
                     ProbenZusatz.class,
-                    nodes.get(i).get("pzsId").asText(),
-                    Strings.STAMM);
+                    nodes.get(i).get("pzsId").asText()
+                );
                 ((ObjectNode) nodes.get(i)).put(
                     "pzwGroesse", pz.getBeschreibung());
                 Integer mehId = pz.getMessEinheitId();
                 MessEinheit meh = repository.getByIdPlain(
-                    MessEinheit.class,
-                    mehId,
-                    Strings.STAMM);
+                    MessEinheit.class, mehId);
                 ((ObjectNode) nodes.get(i)).put(
                     "meh", meh.getEinheit());
             }
@@ -421,7 +418,7 @@ public class JsonExporter implements Exporter {
         }
 
         QueryBuilder<Deskriptoren> builder = new QueryBuilder<Deskriptoren>(
-                repository.entityManager(Strings.STAMM),
+                repository.entityManager(),
                 Deskriptoren.class
             );
         int vorgaenger = 0;
@@ -438,7 +435,7 @@ public class JsonExporter implements Exporter {
                     builder.and("vorgaenger", vorgaenger);
                 }
                 List<Deskriptoren> found =
-                    repository.filterPlain(builder.getQuery(), Strings.STAMM);
+                    repository.filterPlain(builder.getQuery());
                 if (!found.isEmpty()) {
                     beschreibung = found.get(0).getBeschreibung();
                     if ((isZebs && i < ZEBS_COUNTER)
@@ -467,12 +464,12 @@ public class JsonExporter implements Exporter {
 
     private void addMesswerte(JsonNode node) {
         QueryBuilder<Messwert> builder = new QueryBuilder<Messwert>(
-                repository.entityManager(Strings.LAND),
+                repository.entityManager(),
                 Messwert.class
             );
         builder.and("messungsId", node.get("id").asInt());
         List<Messwert> messwerte =
-            repository.filterPlain(builder.getQuery(), Strings.LAND);
+            repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(messwerte);
@@ -480,14 +477,14 @@ public class JsonExporter implements Exporter {
             for (int i = 0; i < nodes.size(); i++) {
                 MessEinheit meh = repository.getByIdPlain(
                     MessEinheit.class,
-                    nodes.get(i).get("mehId").asInt(),
-                    Strings.STAMM);
+                    nodes.get(i).get("mehId").asInt()
+                );
                 ((ObjectNode) nodes.get(i)).put("meh",
                     meh == null ? "" : meh.getEinheit());
                 Messgroesse mg = repository.getByIdPlain(
                     Messgroesse.class,
-                    nodes.get(i).get("messgroesseId").asInt(),
-                    Strings.STAMM);
+                    nodes.get(i).get("messgroesseId").asInt()
+                );
                 ((ObjectNode) nodes.get(i)).put("messgroesse",
                     mg == null ? "" : mg.getMessgroesse());
             }
@@ -500,12 +497,12 @@ public class JsonExporter implements Exporter {
 
     private void addMessungsKommentare(JsonNode node) {
         QueryBuilder<KommentarM> builder = new QueryBuilder<KommentarM>(
-                repository.entityManager(Strings.LAND),
+                repository.entityManager(),
                 KommentarM.class
             );
         builder.and("messungsId", node.get("id").asInt());
         List<KommentarM> kommentare =
-            repository.filterPlain(builder.getQuery(), Strings.LAND);
+            repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(kommentare);
@@ -513,8 +510,8 @@ public class JsonExporter implements Exporter {
             for (int i = 0; i < nodes.size(); i++) {
                 MessStelle mst = repository.getByIdPlain(
                     MessStelle.class,
-                    nodes.get(i).get("mstId").asText(),
-                    Strings.STAMM);
+                    nodes.get(i).get("mstId").asText()
+                );
                 ((ObjectNode) nodes.get(i)).put(
                     "mst",
                     mst.getMessStelle());
@@ -529,12 +526,12 @@ public class JsonExporter implements Exporter {
     private void addStatusProtokoll(JsonNode node) {
         QueryBuilder<StatusProtokoll> builder =
             new QueryBuilder<StatusProtokoll>(
-                repository.entityManager(Strings.LAND),
+                repository.entityManager(),
                 StatusProtokoll.class
             );
         builder.and("messungsId", node.get("id").asInt());
         List<StatusProtokoll> status =
-            repository.filterPlain(builder.getQuery(), Strings.LAND);
+            repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(status);
@@ -542,8 +539,8 @@ public class JsonExporter implements Exporter {
             for (int i = 0; i < nodes.size(); i++) {
                 StatusKombi kombi = repository.getByIdPlain(
                     StatusKombi.class,
-                    nodes.get(i).get("statusKombi").asInt(),
-                    Strings.STAMM);
+                    nodes.get(i).get("statusKombi").asInt()
+                );
                 ((ObjectNode) nodes.get(i)).put(
                     "statusStufe",
                     kombi.getStatusStufe().getStufe());
@@ -552,8 +549,8 @@ public class JsonExporter implements Exporter {
                     kombi.getStatusWert().getWert());
                 MessStelle mst = repository.getByIdPlain(
                     MessStelle.class,
-                    nodes.get(i).get("mstId").asText(),
-                    Strings.STAMM);
+                    nodes.get(i).get("mstId").asText()
+                );
                 ((ObjectNode) nodes.get(i)).put(
                     "mst",
                     mst.getMessStelle());
@@ -567,12 +564,12 @@ public class JsonExporter implements Exporter {
 
     private void addOrtszuordung(JsonNode node) {
         QueryBuilder<Ortszuordnung> builder = new QueryBuilder<Ortszuordnung>(
-                repository.entityManager(Strings.LAND),
+                repository.entityManager(),
                 Ortszuordnung.class
             );
         builder.and("probeId", node.get("id").asInt());
         List<Ortszuordnung> ortszuordnung =
-            repository.filterPlain(builder.getQuery(), Strings.LAND);
+            repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(ortszuordnung);
@@ -588,27 +585,24 @@ public class JsonExporter implements Exporter {
     }
 
     private void addOrt(JsonNode node) {
-        Ort ort = repository.getByIdPlain(
-            Ort.class,
-            node.get("ortId").asInt(),
-            Strings.STAMM);
+        Ort ort = repository.getByIdPlain(Ort.class, node.get("ortId").asInt());
         final ObjectMapper mapper = new ObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(ort);
             JsonNode oNode = mapper.readTree(tmp);
             Verwaltungseinheit ve = repository.getByIdPlain(
                 Verwaltungseinheit.class,
-                oNode.get("gemId").asText(),
-                Strings.STAMM);
+                oNode.get("gemId").asText()
+            );
             ((ObjectNode) oNode).put("gem",
                 ve == null ? "" : ve.getBezeichnung());
             if (oNode.get("staatId").isNull()) {
                 ((ObjectNode) oNode).put("staat", "");
             } else {
                 Staat staat = repository.getByIdPlain(
-                        Staat.class,
-                        oNode.get("staatId").asInt(),
-                        Strings.STAMM);
+                    Staat.class,
+                    oNode.get("staatId").asInt()
+                );
                 ((ObjectNode) oNode).put("staat", staat.getStaat());
             }
             ((ObjectNode) node).set("ort", oNode);

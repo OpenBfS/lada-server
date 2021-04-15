@@ -35,7 +35,6 @@ import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -408,7 +407,7 @@ public class ProbeFactory {
         currentProtocol = new HashMap<>();
         QueryBuilder<Probe> builderProbe =
             new QueryBuilder<Probe>(
-                repository.entityManager(Strings.LAND),
+                repository.entityManager(),
                 Probe.class);
         builderProbe.and("mprId", messprogramm.getId());
         builderProbe.and("solldatumBeginn", startDate);
@@ -416,23 +415,23 @@ public class ProbeFactory {
 
         QueryBuilder<MessprogrammMmt> builder =
             new QueryBuilder<MessprogrammMmt>(
-                    repository.entityManager(Strings.LAND),
+                    repository.entityManager(),
                     MessprogrammMmt.class);
         builder.and("messprogrammId", messprogramm.getId());
-        Response response = repository.filter(builder.getQuery(), Strings.LAND);
+        Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<MessprogrammMmt> mmts = (List<MessprogrammMmt>) response.getData();
         List<String> messungProtocol = new ArrayList<>();
         List<Probe> proben =
-            repository.filterPlain(builderProbe.getQuery(), Strings.LAND);
+            repository.filterPlain(builderProbe.getQuery());
 
         QueryBuilder<OrtszuordnungMp> builderOrt =
             new QueryBuilder<OrtszuordnungMp>(
-                repository.entityManager(Strings.LAND),
+                repository.entityManager(),
                 OrtszuordnungMp.class);
         builderOrt.and("messprogrammId", messprogramm.getId());
         List<OrtszuordnungMp> orte =
-            repository.filterPlain(builderOrt.getQuery(), Strings.LAND);
+            repository.filterPlain(builderOrt.getQuery());
 
         if (!proben.isEmpty()) {
             proben.get(0).setFound(true);
@@ -445,7 +444,7 @@ public class ProbeFactory {
             currentProtocol.put("mmt", messungProtocol);
             for (OrtszuordnungMp ort : orte) {
                 Ort o = repository.getByIdPlain(
-                    Ort.class, ort.getOrtId(), "stamm");
+                    Ort.class, ort.getOrtId());
                 currentProtocol.put("gemId", o.getGemId());
             }
             return proben.get(0);
@@ -513,13 +512,13 @@ public class ProbeFactory {
             ortP.setOrtszusatztext(ort.getOrtszusatztext());
             createObject(ortP, dryrun);
             Ort o = repository.getByIdPlain(
-                Ort.class, ortP.getOrtId(), "stamm");
+                Ort.class, ortP.getOrtId());
             currentProtocol.put("gemId", o.getGemId());
         }
         // Reolad the probe to have the old id
         if (!dryrun) {
             probe = (Probe) repository.getById(
-                Probe.class, probe.getId(), Strings.LAND).getData();
+                Probe.class, probe.getId()).getData();
         }
         protocol.add(currentProtocol);
         return probe;
@@ -545,7 +544,7 @@ public class ProbeFactory {
     private void createObject(Object item, boolean dryrun) {
         if (!dryrun) {
             // TODO: Do not rely on this being successful
-            repository.create(item, Strings.LAND);
+            repository.create(item);
         }
     }
 
@@ -579,8 +578,7 @@ public class ProbeFactory {
         String mediaDesk = probe.getMediaDesk();
         if (mediaDesk != null) {
             Object result = repository.queryFromString(
-                "SELECT get_media_from_media_desk( :mediaDesk );",
-                 Strings.STAMM)
+                "SELECT get_media_from_media_desk( :mediaDesk );")
                     .setParameter("mediaDesk", mediaDesk)
                     .getSingleResult();
             probe.setMedia(result != null ? result.toString() : "");
@@ -637,14 +635,14 @@ public class ProbeFactory {
                 parent = ndParent;
             }
             QueryBuilder<Deskriptoren> builder = new QueryBuilder<Deskriptoren>(
-                repository.entityManager(Strings.STAMM), Deskriptoren.class);
+                repository.entityManager(), Deskriptoren.class);
             if (parent != null) {
                 builder.and("vorgaenger", parent);
             }
             builder.and("sn", mediaDesk[i]);
             builder.and("ebene", i - 1);
             Response response =
-                repository.filter(builder.getQuery(), Strings.STAMM);
+                repository.filter(builder.getQuery());
             @SuppressWarnings("unchecked")
             List<Deskriptoren> data = (List<Deskriptoren>) response.getData();
             if (data.isEmpty()) {
@@ -670,7 +668,7 @@ public class ProbeFactory {
     private String getUmwelt(List<Integer> media, boolean isZebs) {
         QueryBuilder<DeskriptorUmwelt> builder =
             new QueryBuilder<DeskriptorUmwelt>(
-                repository.entityManager(Strings.STAMM),
+                repository.entityManager(),
                 DeskriptorUmwelt.class);
 
         if (media.size() == 0) {
@@ -690,7 +688,7 @@ public class ProbeFactory {
             }
         }
         Response response =
-            repository.filter(builder.getQuery(), Strings.STAMM);
+            repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<DeskriptorUmwelt> data =
             (List<DeskriptorUmwelt>) response.getData();

@@ -25,7 +25,6 @@ import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -109,7 +108,7 @@ public class ObjectMerger {
         if (src.getUmwId() != null) {
             target.setUmwId(src.getUmwId());
         }
-        Response r = repository.update(target, Strings.LAND);
+        Response r = repository.update(target);
         return r.getSuccess();
     }
 
@@ -146,7 +145,7 @@ public class ObjectMerger {
         if (src.getMmtId() != null) {
             target.setMmtId(src.getMmtId());
         }
-        repository.update(target, Strings.LAND);
+        repository.update(target);
         return this;
     }
 
@@ -161,15 +160,15 @@ public class ObjectMerger {
         List<ZusatzWert> zusatzwerte
     ) {
         QueryBuilder<ZusatzWert> builder = new QueryBuilder<ZusatzWert>(
-            repository.entityManager(Strings.LAND),
+            repository.entityManager(),
             ZusatzWert.class);
         for (int i = 0; i < zusatzwerte.size(); i++) {
             builder.and("probeId", target.getId());
             builder.and("pzsId", zusatzwerte.get(i).getPzsId());
             List<ZusatzWert> found =
-                repository.filterPlain(builder.getQuery(), Strings.LAND);
+                repository.filterPlain(builder.getQuery());
             if (found.isEmpty()) {
-                repository.create(zusatzwerte.get(i), Strings.LAND);
+                repository.create(zusatzwerte.get(i));
                 continue;
             } else if (found.size() > 1) {
                 // something is wrong (probeId and pzsId should be unique).
@@ -184,7 +183,7 @@ public class ObjectMerger {
             // Remove all db objects to be able to create new ones.
             found.get(0).setMessfehler(zusatzwerte.get(i).getMessfehler());
             found.get(0).setMesswertPzs(zusatzwerte.get(i).getMesswertPzs());
-            repository.update(found.get(0), Strings.LAND);
+            repository.update(found.get(0));
             builder = builder.getEmptyBuilder();
         }
         return this;
@@ -201,16 +200,16 @@ public class ObjectMerger {
         List<KommentarP> kommentare
     ) {
         QueryBuilder<KommentarP> builder = new QueryBuilder<KommentarP>(
-            repository.entityManager(Strings.LAND),
+            repository.entityManager(),
             KommentarP.class);
         for (int i = 0; i < kommentare.size(); i++) {
             builder.and("probeId", target.getId());
             builder.and("mstId", kommentare.get(i).getMstId());
             builder.and("datum", kommentare.get(i).getDatum());
             List<KommentarP> found =
-                repository.filterPlain(builder.getQuery(), Strings.LAND);
+                repository.filterPlain(builder.getQuery());
             if (found.isEmpty()) {
-                repository.create(kommentare.get(i), Strings.LAND);
+                repository.create(kommentare.get(i));
                 continue;
             } else if (found.size() > 1) {
                 // something is wrong (probeId and mstId and datum should
@@ -234,16 +233,16 @@ public class ObjectMerger {
         List<KommentarM> kommentare
     ) {
         QueryBuilder<KommentarM> builder = new QueryBuilder<KommentarM>(
-            repository.entityManager(Strings.LAND),
+            repository.entityManager(),
             KommentarM.class);
         for (int i = 0; i < kommentare.size(); i++) {
             builder.and("messungsId", target.getId());
             builder.and("mstId", kommentare.get(i).getMstId());
             builder.and("datum", kommentare.get(i).getDatum());
             List<KommentarM> found =
-                repository.filterPlain(builder.getQuery(), Strings.LAND);
+                repository.filterPlain(builder.getQuery());
             if (found.isEmpty()) {
-                repository.create(kommentare.get(i), Strings.LAND);
+                repository.create(kommentare.get(i));
                 continue;
             } else if (found.size() > 1) {
                 // something is wrong (probeId and mstId and datum should
@@ -267,23 +266,23 @@ public class ObjectMerger {
         List<Messwert> messwerte
     ) {
         QueryBuilder<Messwert> builder = new QueryBuilder<Messwert>(
-            repository.entityManager(Strings.LAND),
+            repository.entityManager(),
             Messwert.class);
         builder.and("messungsId", target.getId());
         List<Messwert> found =
-            repository.filterPlain(builder.getQuery(), Strings.LAND);
+            repository.filterPlain(builder.getQuery());
         if (found.isEmpty()) {
             for (int i = 0; i < messwerte.size(); i++) {
-                repository.create(messwerte.get(i), Strings.LAND);
+                repository.create(messwerte.get(i));
             }
             return this;
         }
         try {
             for (int i = 0; i < found.size(); i++) {
-                repository.delete(found.get(i), Strings.LAND);
+                repository.delete(found.get(i));
             }
             for (int i = 0; i < messwerte.size(); i++) {
-                repository.create(messwerte.get(i), Strings.LAND);
+                repository.create(messwerte.get(i));
             }
         } catch (SecurityException
             | IllegalStateException
@@ -292,7 +291,7 @@ public class ObjectMerger {
             // Restore messwerte.
             logger.debug("exception: ", e);
             for (int i = 0; i < found.size(); i++) {
-                repository.update(found.get(i), Strings.LAND);
+                repository.update(found.get(i));
             }
         }
         return this;
@@ -309,21 +308,21 @@ public class ObjectMerger {
         Ortszuordnung ort
     ) {
         QueryBuilder<Ortszuordnung> builder = new QueryBuilder<Ortszuordnung>(
-            repository.entityManager(Strings.LAND),
+            repository.entityManager(),
             Ortszuordnung.class);
         builder.and("probeId", probeId);
         builder.and("ortszuordnungTyp", "E");
         List<Ortszuordnung> found =
-            repository.filterPlain(builder.getQuery(), Strings.LAND);
+            repository.filterPlain(builder.getQuery());
         if (found.isEmpty()) {
-            repository.create(ort, Strings.LAND);
+            repository.create(ort);
             return this;
         }
         try {
             for (int i = 0; i < found.size(); i++) {
-                repository.delete(found.get(i), Strings.LAND);
+                repository.delete(found.get(i));
             }
-            repository.create(ort, Strings.LAND);
+            repository.create(ort);
         } catch (SecurityException
             | IllegalStateException
             | PersistenceException e
@@ -331,7 +330,7 @@ public class ObjectMerger {
             // Restore orte.
             logger.debug("exception: ", e);
             for (int i = 0; i < found.size(); i++) {
-                repository.update(found.get(i), Strings.LAND);
+                repository.update(found.get(i));
             }
         }
         return this;
@@ -348,16 +347,16 @@ public class ObjectMerger {
         List<Ortszuordnung> orte
     ) {
         QueryBuilder<Ortszuordnung> builder = new QueryBuilder<Ortszuordnung>(
-            repository.entityManager(Strings.LAND),
+            repository.entityManager(),
             Ortszuordnung.class);
         for (int i = 0; i < orte.size(); i++) {
             builder.and("probeId", probeId);
             builder.and("ortszuordnungTyp", "U");
             builder.and("ortId", orte.get(i).getOrtId());
             List<Ortszuordnung> found =
-                repository.filterPlain(builder.getQuery(), Strings.LAND);
+                repository.filterPlain(builder.getQuery());
             if (found.isEmpty()) {
-                repository.create(orte.get(i), Strings.LAND);
+                repository.create(orte.get(i));
             }
             builder = builder.getEmptyBuilder();
         }

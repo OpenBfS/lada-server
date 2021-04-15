@@ -53,7 +53,6 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.util.data.StatusCodes;
@@ -169,12 +168,12 @@ public class LafImportService {
             if (!"".equals(mstId)) {
                 QueryBuilder<ImporterConfig> builder =
                     new QueryBuilder<ImporterConfig>(
-                        repository.entityManager(Strings.STAMM),
+                        repository.entityManager(),
                         ImporterConfig.class);
                 builder.and("mstId", mstId);
                 config =
                     (List<ImporterConfig>) repository.filterPlain(
-                        builder.getQuery(), Strings.STAMM);
+                        builder.getQuery());
             }
             importer.doImport(content, userInfo, config);
             Map<String, Object> fileResponseData =
@@ -260,11 +259,11 @@ public class LafImportService {
         if (!"".equals(mstId)) {
             QueryBuilder<ImporterConfig> builder =
                 new QueryBuilder<ImporterConfig>(
-                    repository.entityManager(Strings.STAMM),
+                    repository.entityManager(),
                     ImporterConfig.class);
             builder.and("mstId", mstId);
             config = (List<ImporterConfig>) repository.filterPlain(
-                builder.getQuery(), Strings.STAMM);
+                builder.getQuery());
         }
         importer.doImport(content, userInfo, config);
         Map<String, Object> respData = new HashMap<String, Object>();

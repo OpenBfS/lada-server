@@ -20,7 +20,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -43,11 +42,11 @@ public class StatusKombination implements Rule {
     public Violation execute(Object object) {
         StatusProtokoll status = (StatusProtokoll) object;
         QueryBuilder<StatusKombi> kombi = new QueryBuilder<StatusKombi>(
-            repository.entityManager(Strings.STAMM),
+            repository.entityManager(),
             StatusKombi.class);
         kombi.and("id", status.getStatusKombi());
         List<StatusKombi> result =
-            repository.filterPlain(kombi.getQuery(), Strings.STAMM);
+            repository.filterPlain(kombi.getQuery());
         if (result.isEmpty()) {
             Violation violation = new Violation();
             violation.addError("kombi", StatusCodes.VALUE_NOT_MATCHING);

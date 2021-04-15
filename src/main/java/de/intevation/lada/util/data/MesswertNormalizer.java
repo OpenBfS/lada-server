@@ -31,12 +31,12 @@ public class MesswertNormalizer {
         Repository defaultRepo
     ) {
         QueryBuilder<MassEinheitUmrechnung> builder = new QueryBuilder<>(
-            defaultRepo.entityManager(Strings.STAMM),
+            defaultRepo.entityManager(),
             MassEinheitUmrechnung.class
         );
         builder.and("mehIdZu", mehIdTo);
         builder.and("mehVon", mehIdFrom);
-        return defaultRepo.filterPlain(builder.getQuery(), Strings.STAMM);
+        return defaultRepo.filterPlain(builder.getQuery());
     }
 
     /**
@@ -54,7 +54,7 @@ public class MesswertNormalizer {
             return messwerte;
         }
         Umwelt umwelt =
-            defaultRepo.getByIdPlain(Umwelt.class, umwId, Strings.STAMM);
+            defaultRepo.getByIdPlain(Umwelt.class, umwId);
         Integer mehIdToConvertTo = umwelt.getMehId();
         Integer secMehIdToConvertTo = umwelt.getSecMehId();
 

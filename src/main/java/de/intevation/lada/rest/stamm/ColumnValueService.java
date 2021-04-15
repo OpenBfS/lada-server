@@ -43,7 +43,6 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 
@@ -93,7 +92,7 @@ public class ColumnValueService {
                 "Not a valid filter id");
         }
         UserInfo userInfo = authorization.getInfo(request);
-        EntityManager em = repository.entityManager(Strings.STAMM);
+        EntityManager em = repository.entityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<GridColumnValue> criteriaQuery =
             builder.createQuery(GridColumnValue.class);
@@ -116,7 +115,7 @@ public class ColumnValueService {
         filter = builder.and(filter, userFilter);
         criteriaQuery.where(filter).distinct(true);
         List<GridColumnValue> queries =
-            repository.filterPlain(criteriaQuery, Strings.STAMM);
+            repository.filterPlain(criteriaQuery);
 
         for (GridColumnValue gcv : queries) {
             gcv.setgridColumnId(gcv.getGridColumn().getId());
@@ -151,12 +150,10 @@ public class ColumnValueService {
 
 
             QueryUser queryUser = repository.getByIdPlain(
-                QueryUser.class,
-                gridColumnValue.getQueryUserId(),
-                Strings.STAMM);
+                QueryUser.class, gridColumnValue.getQueryUserId());
             gridColumnValue.setQueryUser(queryUser);
 
-            return repository.create(gridColumnValue, Strings.STAMM);
+            return repository.create(gridColumnValue);
         }
 
     }
@@ -182,19 +179,15 @@ public class ColumnValueService {
             gridColumnValue.setUserId(userInfo.getUserId());
 
             GridColumn gridColumn = repository.getByIdPlain(
-                GridColumn.class,
-                 gridColumnValue.getGridColumnId(),
-                 Strings.STAMM);
+                GridColumn.class, gridColumnValue.getGridColumnId());
             gridColumnValue.setGridColumn(gridColumn);
 
             QueryUser queryUser = repository.getByIdPlain(
-                QueryUser.class,
-                gridColumnValue.getQueryUserId(),
-                Strings.STAMM);
+                QueryUser.class, gridColumnValue.getQueryUserId());
 
             gridColumnValue.setQueryUser(queryUser);
 
-            return repository.update(gridColumnValue, Strings.STAMM);
+            return repository.update(gridColumnValue);
         }
     }
 
@@ -211,11 +204,9 @@ public class ColumnValueService {
     ) {
         UserInfo userInfo = authorization.getInfo(request);
         GridColumnValue gridColumnValue = repository.getByIdPlain(
-            GridColumnValue.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+            GridColumnValue.class, Integer.valueOf(id));
         if (gridColumnValue.getUserId().equals(userInfo.getUserId())) {
-            return repository.delete(gridColumnValue, Strings.STAMM);
+            return repository.delete(gridColumnValue);
         }
         return new Response(false, StatusCodes.NOT_ALLOWED, null);
     }

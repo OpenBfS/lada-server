@@ -37,7 +37,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
@@ -139,7 +138,7 @@ public class MessungService {
             || (!params.containsKey("probeId"))
         ) {
             List<Messung> messungs =
-                repository.getAllPlain(Messung.class, Strings.LAND);
+                repository.getAllPlain(Messung.class);
             int size = messungs.size();
             if (params.containsKey("start") && params.containsKey("limit")) {
                 int start = Integer.valueOf(params.getFirst("start"));
@@ -168,12 +167,12 @@ public class MessungService {
             String probeId = params.getFirst("probeId");
             QueryBuilder<Messung> builder =
                 new QueryBuilder<Messung>(
-                    repository.entityManager(Strings.LAND),
+                    repository.entityManager(),
                     Messung.class);
             builder.and("probeId", probeId);
             Response r = authorization.filter(
                 request,
-                repository.filter(builder.getQuery(), Strings.LAND),
+                repository.filter(builder.getQuery()),
                 Messung.class);
             if (r.getSuccess()) {
                 @SuppressWarnings("unchecked")
@@ -239,7 +238,7 @@ public class MessungService {
     ) {
         Response response =
             repository.getById(
-                Messung.class, Integer.valueOf(id), Strings.LAND);
+                Messung.class, Integer.valueOf(id));
         Messung messung = (Messung) response.getData();
         Violation violation = validator.validate(messung);
         if (violation.hasErrors()
@@ -310,7 +309,7 @@ public class MessungService {
         }
 
         /* Persist the new messung object*/
-        Response response = repository.create(messung, Strings.LAND);
+        Response response = repository.create(messung);
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
         }
@@ -378,13 +377,13 @@ public class MessungService {
             response.setNotifications(violation.getNotifications());
             return response;
         }
-        Response response = repository.update(messung, Strings.LAND);
+        Response response = repository.update(messung);
         if (!response.getSuccess()) {
             return response;
         }
         Response updated = repository.getById(
             Messung.class,
-            ((Messung) response.getData()).getId(), Strings.LAND);
+            ((Messung) response.getData()).getId());
         if (violation.hasWarnings()) {
             updated.setWarnings(violation.getWarnings());
         }
@@ -417,7 +416,7 @@ public class MessungService {
         /* Get the messung object by id*/
         Response messung =
             repository.getById(
-                Messung.class, Integer.valueOf(id), Strings.LAND);
+                Messung.class, Integer.valueOf(id));
         Messung messungObj = (Messung) messung.getData();
         if (!authorization.isAuthorized(
                 request,
@@ -432,6 +431,6 @@ public class MessungService {
         }
 
         /* Delete the messung object*/
-        return repository.delete(messungObj, Strings.LAND);
+        return repository.delete(messungObj);
     }
 }

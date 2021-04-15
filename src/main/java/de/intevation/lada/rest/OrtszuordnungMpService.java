@@ -37,7 +37,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
@@ -128,17 +127,17 @@ public class OrtszuordnungMpService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("messprogrammId")) {
-            return defaultRepo.getAll(OrtszuordnungMp.class, Strings.LAND);
+            return defaultRepo.getAll(OrtszuordnungMp.class);
         }
         String messprogrammId = params.getFirst("messprogrammId");
         QueryBuilder<OrtszuordnungMp> builder =
             new QueryBuilder<OrtszuordnungMp>(
-                defaultRepo.entityManager(Strings.LAND),
+                defaultRepo.entityManager(),
                 OrtszuordnungMp.class);
         builder.and("messprogrammId", messprogrammId);
         Response r =  authorization.filter(
             request,
-            defaultRepo.filter(builder.getQuery(), Strings.LAND),
+            defaultRepo.filter(builder.getQuery()),
             OrtszuordnungMp.class);
             if (r.getSuccess()) {
                 @SuppressWarnings("unchecked")
@@ -176,7 +175,7 @@ public class OrtszuordnungMpService {
     ) {
         Response response =
             defaultRepo.getById(
-                OrtszuordnungMp.class, Integer.valueOf(id), Strings.LAND);
+                OrtszuordnungMp.class, Integer.valueOf(id));
         OrtszuordnungMp ort = (OrtszuordnungMp) response.getData();
         Violation violation = validator.validate(ort);
         if (violation.hasErrors() || violation.hasWarnings()) {
@@ -236,7 +235,7 @@ public class OrtszuordnungMpService {
         }
 
         /* Persist the new object*/
-        Response response = defaultRepo.create(ort, Strings.LAND);
+        Response response = defaultRepo.create(ort);
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
         }
@@ -294,13 +293,13 @@ public class OrtszuordnungMpService {
             return response;
         }
 
-        Response response = defaultRepo.update(ort, Strings.LAND);
+        Response response = defaultRepo.update(ort);
         if (!response.getSuccess()) {
             return response;
         }
         Response updated = defaultRepo.getById(
             OrtszuordnungMp.class,
-            ((OrtszuordnungMp) response.getData()).getId(), Strings.LAND);
+            ((OrtszuordnungMp) response.getData()).getId());
         if (violation.hasWarnings()) {
             updated.setWarnings(violation.getWarnings());
         }
@@ -330,7 +329,7 @@ public class OrtszuordnungMpService {
     ) {
         Response object =
             defaultRepo.getById(
-                OrtszuordnungMp.class, Integer.valueOf(id), Strings.LAND);
+                OrtszuordnungMp.class, Integer.valueOf(id));
         OrtszuordnungMp ortObj = (OrtszuordnungMp) object.getData();
         if (!authorization.isAuthorized(
                 request,
@@ -340,6 +339,6 @@ public class OrtszuordnungMpService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
-        return defaultRepo.delete(ortObj, Strings.LAND);
+        return defaultRepo.delete(ortObj);
     }
 }

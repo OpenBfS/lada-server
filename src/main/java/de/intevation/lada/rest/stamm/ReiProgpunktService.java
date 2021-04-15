@@ -83,7 +83,7 @@ public class ReiProgpunktService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("reiprogpunktgruppe")) {
-            return repository.getAll(ReiProgpunkt.class, "stamm");
+            return repository.getAll(ReiProgpunkt.class);
         }
         Integer id = null;
         try {
@@ -96,18 +96,18 @@ public class ReiProgpunktService {
         }
         QueryBuilder<ReiProgpunktGrpZuord> builder =
             new QueryBuilder<ReiProgpunktGrpZuord>(
-                repository.entityManager("stamm"),
+                repository.entityManager(),
                 ReiProgpunktGrpZuord.class
             );
         builder.and("reiProgpunktGrpId", id);
         List<ReiProgpunktGrpZuord> zuord =
-            repository.filterPlain(builder.getQuery(), "stamm");
+            repository.filterPlain(builder.getQuery());
         if (zuord.isEmpty()) {
             return new Response(true, StatusCodes.OK, null);
         }
         QueryBuilder<ReiProgpunkt> builder1 =
             new QueryBuilder<ReiProgpunkt>(
-                repository.entityManager("stamm"),
+                repository.entityManager(),
                 ReiProgpunkt.class
             );
         List<Integer> ids = new ArrayList<Integer>();
@@ -115,7 +115,7 @@ public class ReiProgpunktService {
             ids.add(zuord.get(i).getReiProgpunktId());
         }
         builder1.orIn("id", ids);
-        return repository.filter(builder1.getQuery(), "stamm");
+        return repository.filter(builder1.getQuery());
     }
 
     /**
@@ -134,9 +134,6 @@ public class ReiProgpunktService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return repository.getById(
-            ReiProgpunkt.class,
-            Integer.valueOf(id),
-            "stamm");
+        return repository.getById(ReiProgpunkt.class, Integer.valueOf(id));
     }
 }

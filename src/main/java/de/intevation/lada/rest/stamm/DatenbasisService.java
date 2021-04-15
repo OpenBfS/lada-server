@@ -22,7 +22,6 @@ import de.intevation.lada.model.stammdaten.Datenbasis;
 import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -75,7 +74,7 @@ public class DatenbasisService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(Datenbasis.class, Strings.STAMM);
+        return defaultRepo.getAll(Datenbasis.class);
     }
 
     /**
@@ -94,9 +93,6 @@ public class DatenbasisService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            Datenbasis.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+        return defaultRepo.getById(Datenbasis.class, Integer.valueOf(id));
     }
 }

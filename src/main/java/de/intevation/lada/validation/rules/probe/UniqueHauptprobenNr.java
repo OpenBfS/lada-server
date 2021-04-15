@@ -17,7 +17,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -46,11 +45,11 @@ public class UniqueHauptprobenNr implements Rule {
         Probe probe = (Probe) object;
         if (probe.getHauptprobenNr() != null) {
             QueryBuilder<Probe> builder = new QueryBuilder<Probe>(
-               repo.entityManager(Strings.LAND),
+               repo.entityManager(),
                 Probe.class);
             builder.and("hauptprobenNr", probe.getHauptprobenNr());
             builder.and("mstId", probe.getMstId());
-            Response response = repo.filter(builder.getQuery(), Strings.LAND);
+            Response response = repo.filter(builder.getQuery());
             if (!((List<Probe>) response.getData()).isEmpty()) {
                 Probe found = ((List<Probe>) response.getData()).get(0);
                 // The probe found in the db equals the new probe. (Update)

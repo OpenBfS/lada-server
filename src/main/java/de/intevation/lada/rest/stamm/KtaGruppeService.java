@@ -83,7 +83,7 @@ public class KtaGruppeService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("kta")) {
-            return repository.getAll(KtaGruppe.class, "stamm");
+            return repository.getAll(KtaGruppe.class);
         }
         Integer id = null;
         try {
@@ -96,18 +96,18 @@ public class KtaGruppeService {
         }
         QueryBuilder<KtaGrpZuord> builder =
             new QueryBuilder<KtaGrpZuord>(
-                repository.entityManager("stamm"),
+                repository.entityManager(),
                 KtaGrpZuord.class
             );
         builder.and("ktaId", id);
         List<KtaGrpZuord> zuord =
-            repository.filterPlain(builder.getQuery(), "stamm");
+            repository.filterPlain(builder.getQuery());
         if (zuord.isEmpty()) {
             return new Response(true, StatusCodes.OK, null);
         }
         QueryBuilder<KtaGruppe> builder1 =
             new QueryBuilder<KtaGruppe>(
-                repository.entityManager("stamm"),
+                repository.entityManager(),
                 KtaGruppe.class
             );
         List<Integer> ids = new ArrayList<Integer>();
@@ -115,7 +115,7 @@ public class KtaGruppeService {
             ids.add(zuord.get(i).getKtaGrpId());
         }
         builder1.orIn("id", ids);
-        return repository.filter(builder1.getQuery(), "stamm");
+        return repository.filter(builder1.getQuery());
     }
 
     /**
@@ -134,9 +134,6 @@ public class KtaGruppeService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return repository.getById(
-            KtaGruppe.class,
-            Integer.valueOf(id),
-            "stamm");
+        return repository.getById(KtaGruppe.class, Integer.valueOf(id));
     }
 }

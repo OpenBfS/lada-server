@@ -43,7 +43,6 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 
 /**
  * REST service to export probe objects and the child objects associated with
@@ -124,10 +123,10 @@ public class LafExportService {
         List<Integer> pIds = new ArrayList<Integer>();
         if (!probeIds.isEmpty()) {
             QueryBuilder<Probe> pBuilder = new QueryBuilder<Probe>(
-                repository.entityManager(Strings.LAND), Probe.class);
+                repository.entityManager(), Probe.class);
             pBuilder.andIn("id", probeIds);
             List<Probe> pObjects = repository.filterPlain(
-                pBuilder.getQuery(), Strings.LAND);
+                pBuilder.getQuery());
             for (Probe p : pObjects) {
                 pIds.add(p.getId());
             }
@@ -136,10 +135,10 @@ public class LafExportService {
         List<Integer> mIds = new ArrayList<Integer>();
         if (!messungIds.isEmpty()) {
             QueryBuilder<Messung> mBuilder = new QueryBuilder<Messung>(
-                repository.entityManager(Strings.LAND), Messung.class);
+                repository.entityManager(), Messung.class);
             mBuilder.andIn("id", messungIds);
             List<Messung> mObjects = repository.filterPlain(
-                mBuilder.getQuery(), Strings.LAND);
+                mBuilder.getQuery());
             for (Messung m : mObjects) {
                 mIds.add(m.getId());
             }

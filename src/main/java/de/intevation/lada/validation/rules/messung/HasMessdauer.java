@@ -35,7 +35,7 @@ public class HasMessdauer implements Rule {
     public Violation execute(Object object) {
         Messung messung = (Messung) object;
         Probe probe =
-            repository.getByIdPlain(Probe.class, messung.getProbeId(), "land");
+            repository.getByIdPlain(Probe.class, messung.getProbeId());
 
         if (messung.getMessdauer() == null) {
             //Exception for continous samples or Datenbasis = §161

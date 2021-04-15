@@ -17,7 +17,6 @@ import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -42,7 +41,7 @@ public class DateMesszeitpunkt implements Rule {
         Messung messung = (Messung) object;
         Integer probeId = messung.getProbeId();
         Response response =
-            repository.getById(Probe.class, probeId, Strings.LAND);
+            repository.getById(Probe.class, probeId);
         Probe probe = (Probe) response.getData();
 
         if (probe == null) {

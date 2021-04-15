@@ -29,7 +29,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -101,10 +100,10 @@ public class DeskriptorService {
         if (params.isEmpty()
             || !params.containsKey("layer")
         ) {
-            return repository.getAll(Deskriptoren.class, Strings.STAMM);
+            return repository.getAll(Deskriptoren.class);
         }
         QueryBuilder<Deskriptoren> builder = new QueryBuilder<Deskriptoren>(
-            repository.entityManager(Strings.STAMM),
+            repository.entityManager(),
             Deskriptoren.class);
         builder.and("sn", 0).not();
         try {
@@ -120,7 +119,7 @@ public class DeskriptorService {
         } catch (NumberFormatException nfe) {
             return new Response(false, StatusCodes.VALUE_OUTSIDE_RANGE, null);
         }
-        return repository.filter(builder.getQuery(), Strings.STAMM);
+        return repository.filter(builder.getQuery());
     }
 
     /**
@@ -141,6 +140,6 @@ public class DeskriptorService {
         @Context HttpServletRequest request
     ) {
         return repository.getById(
-            Deskriptoren.class, Integer.valueOf(id), Strings.STAMM);
+            Deskriptoren.class, Integer.valueOf(id));
     }
 }

@@ -22,7 +22,6 @@ import de.intevation.lada.model.stammdaten.Staat;
 import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -81,7 +80,7 @@ public class StaatService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(Staat.class, Strings.STAMM);
+        return defaultRepo.getAll(Staat.class);
     }
 
     /**
@@ -100,9 +99,6 @@ public class StaatService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            Staat.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+        return defaultRepo.getById(Staat.class, Integer.valueOf(id));
     }
 }

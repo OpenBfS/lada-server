@@ -18,7 +18,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -41,13 +40,12 @@ public class HasEntnahmeOrt implements Rule {
             id = ort.getProbeId();
             QueryBuilder<Ortszuordnung> builder =
                 new QueryBuilder<Ortszuordnung>(
-                    repository.entityManager(Strings.LAND),
+                    repository.entityManager(),
                     Ortszuordnung.class);
 
             builder.and("probeId", id);
             List<Ortszuordnung> orte = repository.filterPlain(
-                builder.getQuery(),
-                Strings.LAND);
+                builder.getQuery());
             for (Ortszuordnung o : orte) {
                 if ("E".equals(o.getOrtszuordnungTyp())
                     && !o.getId().equals(ort.getId())
@@ -66,13 +64,12 @@ public class HasEntnahmeOrt implements Rule {
             id = ort.getMessprogrammId();
             QueryBuilder<OrtszuordnungMp> builder =
                 new QueryBuilder<OrtszuordnungMp>(
-                    repository.entityManager(Strings.LAND),
+                    repository.entityManager(),
                     OrtszuordnungMp.class);
 
             builder.and("messprogrammId", id);
             List<OrtszuordnungMp> orte = repository.filterPlain(
-                builder.getQuery(),
-                Strings.LAND);
+                builder.getQuery());
             for (OrtszuordnungMp o : orte) {
                 if ("E".equals(o.getOrtszuordnungTyp())
                     && !o.getId().equals(ort.getId())

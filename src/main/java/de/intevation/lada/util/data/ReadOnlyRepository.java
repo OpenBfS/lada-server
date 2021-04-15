@@ -44,7 +44,7 @@ public class ReadOnlyRepository implements Repository {
      * @return null
      */
     @Override
-    public Response create(Object object, String dataSource) {
+    public Response create(Object object) {
         return null;
     }
 
@@ -54,7 +54,7 @@ public class ReadOnlyRepository implements Repository {
      * @return null
      */
     @Override
-    public Response update(Object object, String dataSource) {
+    public Response update(Object object) {
         return null;
     }
 
@@ -64,7 +64,7 @@ public class ReadOnlyRepository implements Repository {
      * @return null
      */
     @Override
-    public Response delete(Object object, String dataSource) {
+    public Response delete(Object object) {
         return null;
     }
 
@@ -72,14 +72,13 @@ public class ReadOnlyRepository implements Repository {
      * Get objects from database using the given filter.
      *
      * @param filter Filter used to request objects.
-     * @param datasource The datasource.
      *
      * @return Response object containing the filtered list of objects.
      */
     @Override
-    public <T> Response filter(CriteriaQuery<T> filter, String dataSource) {
+    public <T> Response filter(CriteriaQuery<T> filter) {
         List<T> result =
-            transaction.entityManager(dataSource)
+            transaction.entityManager()
                 .createQuery(filter).getResultList();
         return new Response(true, StatusCodes.OK, result);
     }
@@ -91,7 +90,6 @@ public class ReadOnlyRepository implements Repository {
      * @param filter Filter used to request objects.
      * @param size The maximum amount of objects.
      * @param start The start index.
-     * @param datasource The datasource.
      *
      * @return Response object containing the filtered list of objects.
      */
@@ -99,11 +97,10 @@ public class ReadOnlyRepository implements Repository {
     public <T> Response filter(
         CriteriaQuery<T> filter,
         int size,
-        int start,
-        String dataSource
+        int start
     ) {
         List<T> result =
-            transaction.entityManager(dataSource)
+            transaction.entityManager()
                 .createQuery(filter).getResultList();
         if (size > 0 && start > -1) {
             List<T> newList = result.subList(start, size + start);
@@ -116,12 +113,11 @@ public class ReadOnlyRepository implements Repository {
      * Get all objects.
      *
      * @param clazz The type of the objects.
-     * @param dataSource The datasource.
      *
      * @return Response object containg all requested objects.
      */
-    public <T> Response getAll(Class<T> clazz, String dataSource) {
-        EntityManager manager = transaction.entityManager(dataSource);
+    public <T> Response getAll(Class<T> clazz) {
+        EntityManager manager = transaction.entityManager();
         QueryBuilder<T> builder =
             new QueryBuilder<T>(manager, clazz);
         List<T> result =
@@ -134,13 +130,12 @@ public class ReadOnlyRepository implements Repository {
      *
      * @param clazz The type of the object.
      * @param id The id of the object.
-     * @param dataSource The datasource.
      *
      * @return Response object containg the requested object.
      */
     @Override
-    public <T> Response getById(Class<T> clazz, Object id, String dataSource) {
-        T item = transaction.entityManager(dataSource).find(clazz, id);
+    public <T> Response getById(Class<T> clazz, Object id) {
+        T item = transaction.entityManager().find(clazz, id);
         if (item == null) {
             return new Response(false, StatusCodes.NOT_EXISTING, null);
         }
@@ -148,27 +143,26 @@ public class ReadOnlyRepository implements Repository {
     }
 
     @Override
-    public Query queryFromString(String sql, String dataSource) {
-        EntityManager em = transaction.entityManager(dataSource);
+    public Query queryFromString(String sql) {
+        EntityManager em = transaction.entityManager();
         return em.createNativeQuery(sql);
     }
 
     @Override
-    public EntityManager entityManager(String dataSource) {
-        return transaction.entityManager(dataSource);
+    public EntityManager entityManager() {
+        return transaction.entityManager();
     }
 
     @Override
-    public <T> List<T> filterPlain(CriteriaQuery<T> filter, String dataSource) {
-        return transaction.entityManager(dataSource)
+    public <T> List<T> filterPlain(CriteriaQuery<T> filter) {
+        return transaction.entityManager()
             .createQuery(filter).getResultList();
     }
 
     @Override
     public <T> List<T> filterPlain(
         QueryBuilder<T> query,
-        JsonArray filter,
-        String dataSource
+        JsonArray filter
     ) {
         for (JsonValue object : filter) {
             JsonObject f = (JsonObject) object;
@@ -183,15 +177,16 @@ public class ReadOnlyRepository implements Repository {
                     property.getString(), "%" + value.getString() + "%");
             }
         }
-        return transaction.entityManager(dataSource)
+        return transaction.entityManager()
             .createQuery(query.getQuery()).getResultList();
     }
 
     @Override
-    public <T> List<T> filterPlain(CriteriaQuery<T> filter, int size,
-            int start, String dataSource) {
+    public <T> List<T> filterPlain(
+        CriteriaQuery<T> filter, int size, int start
+    ) {
         List<T> result =
-            transaction.entityManager(dataSource)
+            transaction.entityManager()
                 .createQuery(filter).getResultList();
         if (size > 0 && start > -1) {
             return result.subList(start, size + start);
@@ -200,15 +195,15 @@ public class ReadOnlyRepository implements Repository {
     }
 
     @Override
-    public <T> List<T> getAllPlain(Class<T> clazz, String dataSource) {
-        EntityManager manager = transaction.entityManager(dataSource);
+    public <T> List<T> getAllPlain(Class<T> clazz) {
+        EntityManager manager = transaction.entityManager();
         QueryBuilder<T> builder =
             new QueryBuilder<T>(manager, clazz);
         return manager.createQuery(builder.getQuery()).getResultList();
     }
 
     @Override
-    public <T> T getByIdPlain(Class<T> clazz, Object id, String dataSource) {
-        return transaction.entityManager(dataSource).find(clazz, id);
+    public <T> T getByIdPlain(Class<T> clazz, Object id) {
+        return transaction.entityManager().find(clazz, id);
     }
 }

@@ -17,7 +17,6 @@ import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 
 /**
  * Class to identify a probe object.
@@ -41,7 +40,7 @@ public class ProbeIdentifier implements Identifier {
         }
         Probe probe = (Probe) object;
         QueryBuilder<Probe> builder = new QueryBuilder<Probe>(
-            repository.entityManager(Strings.LAND),
+            repository.entityManager(),
             Probe.class
         );
 
@@ -53,7 +52,7 @@ public class ProbeIdentifier implements Identifier {
             builder.and("mstId", probe.getMstId());
             builder.and("hauptprobenNr", probe.getHauptprobenNr());
             List<Probe> proben =
-                repository.filterPlain(builder.getQuery(), Strings.LAND);
+                repository.filterPlain(builder.getQuery());
             if (proben.size() > 1) {
                 // Should never happen. DB has unique constraint for
                 // "hauptprobenNr"
@@ -70,7 +69,7 @@ public class ProbeIdentifier implements Identifier {
         ) {
             builder.and("externeProbeId", probe.getExterneProbeId());
             List<Probe> proben =
-                repository.filterPlain(builder.getQuery(), Strings.LAND);
+                repository.filterPlain(builder.getQuery());
             if (proben.size() > 1) {
                 // Should never happen. DB has unique constraint for
                 // "externeProbeId"
@@ -84,7 +83,7 @@ public class ProbeIdentifier implements Identifier {
         } else {
             builder.and("externeProbeId", probe.getExterneProbeId());
             List<Probe> proben =
-                repository.filterPlain(builder.getQuery(), Strings.LAND);
+                repository.filterPlain(builder.getQuery());
             if (proben.size() > 1) {
                 // Should never happen. DB has unique constraint for
                 // "externeProbeId"

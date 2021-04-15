@@ -24,42 +24,42 @@ import de.intevation.lada.util.rest.Response;
  */
 public interface Repository {
 
-     Response create(Object object, String dataSource);
+     Response create(Object object);
 
-     Response update(Object object, String dataSource);
+     Response update(Object object);
 
-     Response delete(Object object, String dataSource);
+     Response delete(Object object);
 
-     <T> Response filter(CriteriaQuery<T> filter, String dataSource);
+     <T> Response filter(CriteriaQuery<T> filter);
 
-     <T> List<T> filterPlain(CriteriaQuery<T> filter, String dataSource);
+     <T> List<T> filterPlain(CriteriaQuery<T> filter);
 
      <T> List<T> filterPlain(
          QueryBuilder<T> query,
-         JsonArray filter,
-         String dataSource);
+         JsonArray filter
+     );
 
      <T> Response filter(
         CriteriaQuery<T> filter,
         int size,
-        int start,
-        String dataSource);
+        int start
+     );
 
     <T> List<T> filterPlain(
         CriteriaQuery<T> filter,
         int size,
-        int start,
-        String dataSource);
+        int start
+    );
 
-    <T> Response getAll(Class<T> clazz, String dataSource);
+    <T> Response getAll(Class<T> clazz);
 
-    <T> List<T> getAllPlain(Class<T> clazz, String dataSource);
+    <T> List<T> getAllPlain(Class<T> clazz);
 
-    <T> Response getById(Class<T> clazz, Object id, String dataSource);
+    <T> Response getById(Class<T> clazz, Object id);
 
-    <T> T getByIdPlain(Class<T> clazz, Object id, String dataSource);
+    <T> T getByIdPlain(Class<T> clazz, Object id);
 
-    Query queryFromString(String sql, String dataSource);
+    Query queryFromString(String sql);
 
-    EntityManager entityManager(String dataSource);
+    EntityManager entityManager();
 }

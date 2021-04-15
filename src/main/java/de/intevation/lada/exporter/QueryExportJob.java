@@ -34,7 +34,6 @@ import de.intevation.lada.model.stammdaten.StatusStufe;
 import de.intevation.lada.model.stammdaten.StatusWert;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Strings;
 
 /**
  * Abstract class for an export of query results.
@@ -123,10 +122,10 @@ public abstract class QueryExportJob extends ExportJob {
         //Get Filter type from db
         QueryBuilder<FilterType> builder =
             new QueryBuilder<FilterType>(
-                repository.entityManager(Strings.STAMM), FilterType.class);
+                repository.entityManager(), FilterType.class);
         builder.and("type", "genericid");
         FilterType filterType =
-            repository.filterPlain(builder.getQuery(), Strings.STAMM).get(0);
+            repository.filterPlain(builder.getQuery()).get(0);
 
         //Create filter object
         Filter filter = new Filter();
@@ -224,9 +223,9 @@ public abstract class QueryExportJob extends ExportJob {
      */
     private List<Messung> getMessungSubData(List<Integer> primaryDataIds) {
         QueryBuilder<Messung> messungBuilder = new QueryBuilder<Messung>(
-            repository.entityManager(Strings.LAND), Messung.class);
+            repository.entityManager(), Messung.class);
         messungBuilder.andIn("probeId", primaryDataIds);
-        return repository.filterPlain(messungBuilder.getQuery(), Strings.LAND);
+        return repository.filterPlain(messungBuilder.getQuery());
     }
 
     /**
@@ -236,9 +235,9 @@ public abstract class QueryExportJob extends ExportJob {
      */
     private List<Messwert> getMesswertSubData(List<Integer> primaryDataIds) {
         QueryBuilder<Messwert> messwertBuilder = new QueryBuilder<Messwert>(
-            repository.entityManager(Strings.LAND), Messwert.class);
+            repository.entityManager(), Messwert.class);
         messwertBuilder.andIn("messungsId", primaryDataIds);
-        return repository.filterPlain(messwertBuilder.getQuery(), Strings.LAND);
+        return repository.filterPlain(messwertBuilder.getQuery());
     }
 
     /**
@@ -250,10 +249,10 @@ public abstract class QueryExportJob extends ExportJob {
     protected String getStatusString(Messung messung) {
         StatusProtokoll protokoll =
             repository.getByIdPlain(
-                StatusProtokoll.class, messung.getStatus(), Strings.LAND);
+                StatusProtokoll.class, messung.getStatus());
         StatusKombi kombi =
             repository.getByIdPlain(
-                StatusKombi.class, protokoll.getStatusKombi(), Strings.STAMM);
+                StatusKombi.class, protokoll.getStatusKombi());
         StatusStufe stufe = kombi.getStatusStufe();
         StatusWert wert = kombi.getStatusWert();
         return String.format("%s - %s", stufe.getStufe(), wert.getWert());
@@ -266,10 +265,10 @@ public abstract class QueryExportJob extends ExportJob {
      */
     protected int getMesswertCount(Messung messung) {
         QueryBuilder<Messwert> builder = new QueryBuilder<Messwert>(
-            repository.entityManager(Strings.LAND), Messwert.class
+            repository.entityManager(), Messwert.class
         );
         builder.and("messungsId", messung.getId());
-        return repository.filterPlain(builder.getQuery(), Strings.LAND).size();
+        return repository.filterPlain(builder.getQuery()).size();
     }
 
     /**
@@ -344,9 +343,7 @@ public abstract class QueryExportJob extends ExportJob {
             columnValue.setFilterNegate(columnObj.getBoolean("filterNegate"));
             columnValue.setFilterRegex(columnObj.getBoolean("filterRegex"));
             gridColumn = repository.getByIdPlain(
-                GridColumn.class,
-                columnValue.getGridColumnId(),
-                Strings.STAMM);
+                GridColumn.class, columnValue.getGridColumnId());
 
             columnValue.setGridColumn(gridColumn);
 
@@ -409,8 +406,8 @@ public abstract class QueryExportJob extends ExportJob {
         //Get query id
         GridColumn gridColumn = repository.getByIdPlain(
             GridColumn.class,
-            Integer.valueOf(columns.get(0).getGridColumnId()),
-        Strings.STAMM);
+            Integer.valueOf(columns.get(0).getGridColumnId())
+        );
         qId = gridColumn.getBaseQuery();
     }
 

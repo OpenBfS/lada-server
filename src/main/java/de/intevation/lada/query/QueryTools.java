@@ -33,7 +33,6 @@ import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 
 
 /**
@@ -74,12 +73,12 @@ public class QueryTools {
 
     public String prepareSql(List<GridColumnValue> customColumns, Integer qId) {
         QueryBuilder<BaseQuery> builder = new QueryBuilder<BaseQuery>(
-            repository.entityManager(Strings.STAMM),
+            repository.entityManager(),
             BaseQuery.class
         );
         builder.and("id", qId);
         BaseQuery query =
-            repository.filterPlain(builder.getQuery(), Strings.STAMM).get(0);
+            repository.filterPlain(builder.getQuery()).get(0);
 
         String sql = query.getSql();
         String filterSql = "";
@@ -277,8 +276,8 @@ public class QueryTools {
                         String tag =
                             repository.getByIdPlain(
                                 Tag.class,
-                                Integer.parseInt(tagIds[i]),
-                                Strings.STAMM).getTag();
+                                Integer.parseInt(tagIds[i])
+                            ).getTag();
                         filterValues.add(param + i, tag);
                     }
                     continue;
@@ -377,7 +376,7 @@ public class QueryTools {
             javax.persistence.Query q = prepareQuery(
                     sql,
                     filterValues,
-                    repository.entityManager(Strings.LAND));
+                    repository.entityManager());
             if (q == null) {
                 return new ArrayList<>();
             }

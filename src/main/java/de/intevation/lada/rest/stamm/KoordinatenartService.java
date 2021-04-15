@@ -28,7 +28,6 @@ import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -81,7 +80,7 @@ public class KoordinatenartService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(KoordinatenArt.class, Strings.STAMM);
+        return defaultRepo.getAll(KoordinatenArt.class);
     }
 
     /**
@@ -100,10 +99,7 @@ public class KoordinatenartService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            KoordinatenArt.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+        return defaultRepo.getById(KoordinatenArt.class, Integer.valueOf(id));
     }
 
     @POST

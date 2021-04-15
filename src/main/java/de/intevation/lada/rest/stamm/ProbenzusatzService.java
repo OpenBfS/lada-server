@@ -22,7 +22,6 @@ import de.intevation.lada.model.stammdaten.ProbenZusatz;
 import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -77,7 +76,7 @@ public class ProbenzusatzService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(ProbenZusatz.class, Strings.STAMM);
+        return defaultRepo.getAll(ProbenZusatz.class);
     }
 
     /**
@@ -96,9 +95,6 @@ public class ProbenzusatzService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            ProbenZusatz.class,
-            id,
-            Strings.STAMM);
+        return defaultRepo.getById(ProbenZusatz.class, id);
     }
 }

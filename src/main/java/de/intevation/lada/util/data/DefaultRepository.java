@@ -39,15 +39,14 @@ public class DefaultRepository extends ReadOnlyRepository {
      * Create and persist a new object in the database.
      *
      * @param object The new object.
-     * @param dataSource The datasource.
      *
      * @return Response object containing the new object, potentially
      *         modified by the database.
      */
     @Override
-    public Response create(Object object, String dataSource) {
+    public Response create(Object object) {
         try {
-            transaction.persistInDatabase(object, dataSource);
+            transaction.persistInDatabase(object);
         } catch (EntityExistsException eee) {
             logger.error("Could not persist " + object.getClass().getName()
                 + ". Reason: " + eee.getClass().getName() + " - "
@@ -77,15 +76,14 @@ public class DefaultRepository extends ReadOnlyRepository {
      * Update an existing object in the database.
      *
      * @param object The object.
-     * @param dataSource The datasource.
      *
      * @return Response object containing the upadted object.
      */
     @Override
-    public Response update(Object object, String dataSource) {
+    public Response update(Object object) {
         Response response = new Response(true, StatusCodes.OK, object);
         try {
-            transaction.updateInDatabase(object, dataSource);
+            transaction.updateInDatabase(object);
         } catch (EntityExistsException eee) {
             return new Response(false, StatusCodes.PRESENT, object);
         } catch (IllegalArgumentException iae) {
@@ -104,15 +102,14 @@ public class DefaultRepository extends ReadOnlyRepository {
      * Delete an object from the database.
      *
      * @param object The object.
-     * @param dataSource The datasource.
      *
      * @return Response object.
      */
     @Override
-    public Response delete(Object object, String dataSource) {
+    public Response delete(Object object) {
         Response response = new Response(true, StatusCodes.OK, "");
         try {
-            transaction.removeFromDatabase(object, dataSource);
+            transaction.removeFromDatabase(object);
         } catch (IllegalArgumentException iae) {
             return new Response(false, StatusCodes.NOT_A_PROBE, object);
         } catch (TransactionRequiredException tre) {

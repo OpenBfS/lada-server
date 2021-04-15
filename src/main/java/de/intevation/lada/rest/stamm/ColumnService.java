@@ -24,7 +24,6 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.rest.Response;
 
@@ -82,14 +81,14 @@ public class ColumnService {
     ) {
         //If no qid is given, return all grid_column objects
         if (qid == null) {
-            return repository.getAll(GridColumn.class, Strings.STAMM);
+            return repository.getAll(GridColumn.class);
         }
 
         QueryBuilder<GridColumn> builder = new QueryBuilder<GridColumn>(
-            repository.entityManager(Strings.STAMM),
+            repository.entityManager(),
             GridColumn.class);
         builder.and("baseQuery", qid);
 
-        return repository.filter(builder.getQuery(), Strings.STAMM);
+        return repository.filter(builder.getQuery());
     }
 }

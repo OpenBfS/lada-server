@@ -24,7 +24,6 @@ import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 
 /**
 * The LAF exporter implements {@link Exporter} to produce a LAF file.
@@ -71,7 +70,7 @@ implements Exporter {
         }
         for (Integer messungId: messungen) {
             Messung m = repository.getByIdPlain(
-                Messung.class, messungId, Strings.LAND);
+                Messung.class, messungId);
             List<Integer> mList = new ArrayList<>();
             mList.add(messungId);
             laf += creator.createMessung(

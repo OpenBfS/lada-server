@@ -30,7 +30,6 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -95,7 +94,7 @@ public class NetzbetreiberService {
         @Context HttpServletRequest request,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(NetzBetreiber.class, Strings.STAMM);
+        return defaultRepo.getAll(NetzBetreiber.class);
     }
 
     /**
@@ -117,7 +116,7 @@ public class NetzbetreiberService {
     ) {
         UserInfo userInfo = authorization.getInfo(request);
         if (userInfo.getNetzbetreiber().contains(id)) {
-            return defaultRepo.getById(NetzBetreiber.class, id, Strings.STAMM);
+            return defaultRepo.getById(NetzBetreiber.class, id);
         }
         return new Response(
             false, StatusCodes.CHANGED_VALUE, new ArrayList<NetzBetreiber>());

@@ -22,7 +22,6 @@ import de.intevation.lada.model.stammdaten.Ortszusatz;
 import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -74,7 +73,7 @@ public class OrtszusatzService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(Ortszusatz.class, Strings.STAMM);
+        return defaultRepo.getAll(Ortszusatz.class);
     }
 
     /**
@@ -93,9 +92,6 @@ public class OrtszusatzService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            Ortszusatz.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+        return defaultRepo.getById(Ortszusatz.class, Integer.valueOf(id));
     }
 }

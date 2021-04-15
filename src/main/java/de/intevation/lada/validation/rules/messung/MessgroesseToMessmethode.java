@@ -21,7 +21,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -46,20 +45,18 @@ public class MessgroesseToMessmethode implements Rule {
         String mmt = messung.getMmtId();
         QueryBuilder<Messwert> builder =
             new QueryBuilder<Messwert>(
-                repository.entityManager(Strings.LAND), Messwert.class);
+                repository.entityManager(), Messwert.class);
         builder.and("messungsId", messung.getId());
-        Response response = repository.filter(builder.getQuery(), Strings.LAND);
+        Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<Messwert> messwerte = (List<Messwert>) response.getData();
 
         QueryBuilder<MmtMessgroesse> mmtBuilder =
             new QueryBuilder<MmtMessgroesse>(
-                    repository.entityManager(
-                        Strings.STAMM),
-                        MmtMessgroesse.class);
+                repository.entityManager(), MmtMessgroesse.class);
 
         Response results =
-            repository.filter(mmtBuilder.getQuery(), Strings.STAMM);
+            repository.filter(mmtBuilder.getQuery());
         @SuppressWarnings("unchecked")
         List<MmtMessgroesse> messgroessen =
             (List<MmtMessgroesse>) results.getData();
@@ -80,9 +77,7 @@ public class MessgroesseToMessmethode implements Rule {
             }
             if (!hit) {
                 Messgroesse mg = repository.getByIdPlain(
-                    Messgroesse.class,
-                    messwert.getMessgroesseId(),
-                    Strings.STAMM);
+                    Messgroesse.class, messwert.getMessgroesseId());
                 violation.addError(
                     "messgroesse#" + mmt + " " + mg.getMessgroesse(),
                     StatusCodes.VALUE_NOT_MATCHING);

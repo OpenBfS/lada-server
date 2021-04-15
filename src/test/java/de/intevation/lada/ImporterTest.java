@@ -497,7 +497,7 @@ public class ImporterTest extends BaseTest {
         probe.setSolldatumBeginn(Timestamp.valueOf("2013-05-01 16:00:00"));
         probe.setSolldatumEnde(Timestamp.valueOf("2013-05-05 16:00:00"));
         probe.setProbeentnahmeBeginn(Timestamp.valueOf("2012-05-03 13:07:00"));
-        Probe dbProbe = repository.getByIdPlain(Probe.class, PID1000, "land");
+        Probe dbProbe = repository.getByIdPlain(Probe.class, PID1000);
         merger.merge(dbProbe, probe);
 
         protocol.setPassed(true);
@@ -532,7 +532,7 @@ public class ImporterTest extends BaseTest {
         messung.setMmtId("A3");
         messung.setMesszeitpunkt(Timestamp.valueOf("2012-05-06 14:00:00"));
         Messung dbMessung =
-            repository.getByIdPlain(Messung.class, MID1200, "land");
+            repository.getByIdPlain(Messung.class, MID1200);
         merger.mergeMessung(dbMessung, messung);
 
         protocol.setPassed(true);
@@ -562,7 +562,7 @@ public class ImporterTest extends BaseTest {
         protocol.setType("merge zusatzwert");
         protocol.addInfo("import", "Merge objects");
 
-        Probe probe = repository.getByIdPlain(Probe.class, PID1000, "land");
+        Probe probe = repository.getByIdPlain(Probe.class, PID1000);
         List<ZusatzWert> zusatzwerte = new ArrayList<ZusatzWert>();
         ZusatzWert wert1 = new ZusatzWert();
         wert1.setProbeId(PID1000);
@@ -613,7 +613,7 @@ public class ImporterTest extends BaseTest {
         protocol.setType("merge probe kommentar");
         protocol.addInfo("import", "Merge objects");
 
-        Probe probe = repository.getByIdPlain(Probe.class, PID1000, "land");
+        Probe probe = repository.getByIdPlain(Probe.class, PID1000);
         List<KommentarP> kommentare = new ArrayList<KommentarP>();
         KommentarP komm1 = new KommentarP();
         komm1.setProbeId(PID1000);
@@ -658,7 +658,7 @@ public class ImporterTest extends BaseTest {
         protocol.addInfo("import", "Merge objects");
 
         Messung messung =
-            repository.getByIdPlain(Messung.class, MID1200, "land");
+            repository.getByIdPlain(Messung.class, MID1200);
         List<KommentarM> kommentare = new ArrayList<KommentarM>();
         KommentarM komm1 = new KommentarM();
         komm1.setMessungsId(MID1200);
@@ -703,7 +703,7 @@ public class ImporterTest extends BaseTest {
         protocol.addInfo("import", "Merge objects");
 
         Messung messung =
-            repository.getByIdPlain(Messung.class, MID1200, "land");
+            repository.getByIdPlain(Messung.class, MID1200);
         List<Messwert> messwerte = new ArrayList<Messwert>();
         Messwert wert1 = new Messwert();
         wert1.setMessungsId(MID1200);
@@ -714,12 +714,12 @@ public class ImporterTest extends BaseTest {
 
         merger.mergeMesswerte(messung, messwerte);
         QueryBuilder<Messwert> builder = new QueryBuilder<Messwert>(
-            repository.entityManager("land"),
+            repository.entityManager(),
             Messwert.class
         );
         builder.and("messungsId", messung.getId());
         List<Messwert> dbWerte =
-            repository.filterPlain(builder.getQuery(), "land");
+            repository.filterPlain(builder.getQuery());
         Assert.assertEquals(1, dbWerte.size());
 
         protocol.setPassed(true);

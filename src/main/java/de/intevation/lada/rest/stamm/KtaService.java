@@ -29,7 +29,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -84,7 +83,7 @@ public class KtaService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("ktagruppe")) {
-            return repository.getAll(Kta.class, "stamm");
+            return repository.getAll(Kta.class);
         }
         Integer id = null;
         try {
@@ -97,18 +96,18 @@ public class KtaService {
         }
         QueryBuilder<KtaGrpZuord> builder =
             new QueryBuilder<KtaGrpZuord>(
-                repository.entityManager("stamm"),
+                repository.entityManager(),
                 KtaGrpZuord.class
             );
         builder.and("ktaGrpId", id);
         List<KtaGrpZuord> zuord =
-            repository.filterPlain(builder.getQuery(), "stamm");
+            repository.filterPlain(builder.getQuery());
         if (zuord.isEmpty()) {
             return new Response(true, StatusCodes.OK, null);
         }
         QueryBuilder<Kta> builder1 =
             new QueryBuilder<Kta>(
-                repository.entityManager("stamm"),
+                repository.entityManager(),
                 Kta.class
             );
         List<Integer> ids = new ArrayList<Integer>();
@@ -116,7 +115,7 @@ public class KtaService {
             ids.add(zuord.get(i).getKtaId());
         }
         builder1.orIn("id", ids);
-        return repository.filter(builder1.getQuery(), "stamm");
+        return repository.filter(builder1.getQuery());
     }
 
     /**
@@ -135,9 +134,6 @@ public class KtaService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return repository.getById(
-            Kta.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+        return repository.getById(Kta.class, Integer.valueOf(id));
     }
 }

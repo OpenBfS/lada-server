@@ -18,7 +18,6 @@ import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -45,15 +44,15 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         } else if (data instanceof MessprogrammMmt) {
             messprogramm = repository.getByIdPlain(
                 Messprogramm.class,
-                ((MessprogrammMmt) data).getMessprogrammId(),
-                Strings.LAND);
+                ((MessprogrammMmt) data).getMessprogrammId()
+            );
         } else {
             return false;
         }
         String mstId = messprogramm.getMstId();
         if (mstId != null) {
             MessStelle mst = repository.getByIdPlain(
-                MessStelle.class, mstId, Strings.STAMM);
+                MessStelle.class, mstId);
             if (userInfo.getFunktionenForNetzbetreiber(
                     mst.getNetzbetreiberId()).contains(4)
             ) {
@@ -71,7 +70,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         Messprogramm mp =
-            repository.getByIdPlain(Messprogramm.class, id, Strings.LAND);
+            repository.getByIdPlain(Messprogramm.class, id);
         return isAuthorized(mp, method, userInfo, Messprogramm.class);
     }
 
@@ -111,7 +110,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
     ) {
         MessStelle mst =
             repository.getByIdPlain(
-                MessStelle.class, messprogramm.getMstId(), Strings.STAMM);
+                MessStelle.class, messprogramm.getMstId());
         if (userInfo.getFunktionenForNetzbetreiber(
                 mst.getNetzbetreiberId()).contains(4)
         ) {

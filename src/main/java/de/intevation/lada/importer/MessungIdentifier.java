@@ -17,7 +17,6 @@ import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 
 /**
  * Identifier for messung objects.
@@ -41,7 +40,7 @@ public class MessungIdentifier implements Identifier {
         }
         Messung messung = (Messung) object;
         QueryBuilder<Messung> builder = new QueryBuilder<Messung>(
-            repository.entityManager(Strings.LAND),
+            repository.entityManager(),
             Messung.class
         );
 
@@ -52,7 +51,7 @@ public class MessungIdentifier implements Identifier {
             builder.and("probeId", messung.getProbeId());
             builder.and("nebenprobenNr", messung.getNebenprobenNr());
             List<Messung> messungen =
-                repository.filterPlain(builder.getQuery(), Strings.LAND);
+                repository.filterPlain(builder.getQuery());
             if (messungen.size() > 1) {
                 // Should never happen. DB has unique constraint for
                 // "nebenprobenNr"
@@ -63,7 +62,7 @@ public class MessungIdentifier implements Identifier {
                 builder.and("probeId", messung.getProbeId());
                 builder.and("mmtId", messung.getMmtId());
                 messungen =
-                    repository.filterPlain(builder.getQuery(), Strings.LAND);
+                    repository.filterPlain(builder.getQuery());
                 if (messungen.isEmpty()) {
                     return Identified.NEW;
                 }
@@ -83,7 +82,7 @@ public class MessungIdentifier implements Identifier {
             builder.and("probeId", messung.getProbeId());
             builder.and("externeMessungsId", messung.getExterneMessungsId());
             List<Messung> messungen =
-                repository.filterPlain(builder.getQuery(), Strings.LAND);
+                repository.filterPlain(builder.getQuery());
             if (messungen.size() > 1) {
                 // Should never happen. DB has unique constraint for
                 // "externeMessungsId"
@@ -98,7 +97,7 @@ public class MessungIdentifier implements Identifier {
             builder.and("probeId", messung.getProbeId());
             builder.and("mmtId", messung.getMmtId());
             List<Messung> messungen =
-                repository.filterPlain(builder.getQuery(), Strings.LAND);
+                repository.filterPlain(builder.getQuery());
             if (messungen.isEmpty()) {
                 return Identified.NEW;
             }

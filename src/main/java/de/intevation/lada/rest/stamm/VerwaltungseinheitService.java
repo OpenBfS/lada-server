@@ -24,7 +24,6 @@ import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -95,15 +94,14 @@ public class VerwaltungseinheitService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("query")) {
-            return defaultRepo.getAll(Verwaltungseinheit.class, Strings.STAMM);
+            return defaultRepo.getAll(Verwaltungseinheit.class);
         }
         String filter = params.getFirst("query");
         QueryBuilder<Verwaltungseinheit> builder =
             new QueryBuilder<Verwaltungseinheit>(
-                defaultRepo.entityManager(
-                    Strings.STAMM), Verwaltungseinheit.class);
+                defaultRepo.entityManager(), Verwaltungseinheit.class);
         builder.andLike("bezeichnung", filter + "%");
-        return defaultRepo.filter(builder.getQuery(), Strings.STAMM);
+        return defaultRepo.filter(builder.getQuery());
     }
 
     /**
@@ -122,9 +120,6 @@ public class VerwaltungseinheitService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            Verwaltungseinheit.class,
-            id,
-            Strings.STAMM);
+        return defaultRepo.getById(Verwaltungseinheit.class, id);
     }
 }

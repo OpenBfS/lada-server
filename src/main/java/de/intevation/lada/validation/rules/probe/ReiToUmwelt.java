@@ -52,12 +52,12 @@ public class ReiToUmwelt implements Rule {
         }
         QueryBuilder<ReiProgpunktGrpUmwZuord> builder =
             new QueryBuilder<ReiProgpunktGrpUmwZuord>(
-                repository.entityManager("stamm"),
+                repository.entityManager(),
                 ReiProgpunktGrpUmwZuord.class
             );
         builder.and("reiProgpunktGrpId", probe.getReiProgpunktGrpId());
         List<ReiProgpunktGrpUmwZuord> zuord =
-            repository.filterPlain(builder.getQuery(), "stamm");
+            repository.filterPlain(builder.getQuery());
         for (ReiProgpunktGrpUmwZuord entry : zuord) {
             if (entry.getUmwId().equals(probe.getUmwId())) {
                 return null;
