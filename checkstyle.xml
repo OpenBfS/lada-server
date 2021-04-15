@@ -59,10 +59,10 @@ Maven Checkstyle plugin. Some design related checks where removed.
 
     <!-- Checks for Javadoc comments.                     -->
     <!-- See http://checkstyle.sf.net/config_javadoc.html -->
-    <!-- <module name="JavadocType">
+    <module name="JavadocType">
       <property name="severity" value="warning"/>
     </module>
-    <module name="JavadocMethod">
+    <!-- <module name="JavadocMethod">
       <property name="severity" value="warning"/>
       <property name="scope" value="protected"/>
       <property name="validateThrows" value="true"/>
@@ -72,10 +72,10 @@ Maven Checkstyle plugin. Some design related checks where removed.
     <module name="JavadocVariable">
       <property name="severity" value="warning"/>
       <property name="scope" value="protected"/>
-    </module>
+    </module> -->
     <module name="JavadocStyle">
       <property name="severity" value="warning"/>
-    </module> -->
+    </module>
 
 
     <!-- Checks for Naming Conventions.                  -->
