@@ -14,7 +14,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TransactionRequiredException;
 
 /**
@@ -95,10 +94,6 @@ public class DataTransaction {
             em.contains(object)
             ? object : em.merge(object));
         em.flush();
-    }
-
-    public Query queryFromString(String sql, String dataSource) {
-        return em.createNativeQuery(sql);
     }
 
     public EntityManager entityManager(String dataSource) {
