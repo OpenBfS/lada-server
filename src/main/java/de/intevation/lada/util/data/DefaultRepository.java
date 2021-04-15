@@ -7,15 +7,11 @@
  */
 package de.intevation.lada.util.data;
 
-import java.util.List;
-
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
 import javax.persistence.TransactionRequiredException;
-import javax.persistence.criteria.CriteriaQuery;
 
 import org.apache.log4j.Logger;
 import org.hibernate.TransactionException;
@@ -125,84 +121,5 @@ public class DefaultRepository extends ReadOnlyRepository {
             return new Response(false, StatusCodes.OP_NOT_POSSIBLE, object);
         }
         return response;
-    }
-
-    /**
-     * Get objects from database using the given filter.
-     *
-     * @param filter Filter used to request objects.
-     * @param datasource The datasource.
-     *
-     * @return Response object containing the filtered list of objects.
-     */
-    @Override
-    public <T> Response filter(CriteriaQuery<T> filter, String dataSource) {
-        List<T> result =
-            transaction.entityManager(dataSource)
-                .createQuery(filter).getResultList();
-        return new Response(true, StatusCodes.OK, result);
-    }
-
-
-    /**
-     * Get objects from database using the given filter.
-     *
-     * @param filter Filter used to request objects.
-     * @param size The maximum amount of objects.
-     * @param start The start index.
-     * @param datasource The datasource.
-     *
-     * @return Response object containing the filtered list of objects.
-     */
-    @Override
-    public <T> Response filter(
-        CriteriaQuery<T> filter,
-        int size,
-        int start,
-        String dataSource
-    ) {
-        List<T> result =
-            transaction.entityManager(dataSource)
-                .createQuery(filter).getResultList();
-        if (size > 0 && start > -1) {
-            List<T> newList = result.subList(start, size + start);
-            return new Response(true, StatusCodes.OK, newList, result.size());
-        }
-        return new Response(true, StatusCodes.OK, result);
-    }
-
-    /**
-     * Get all objects.
-     *
-     * @param clazz The type of the objects.
-     * @param dataSource The datasource.
-     *
-     * @return Response object containg all requested objects.
-     */
-    public <T> Response getAll(Class<T> clazz, String dataSource) {
-        EntityManager manager = transaction.entityManager(dataSource);
-        QueryBuilder<T> builder =
-            new QueryBuilder<T>(manager, clazz);
-        List<T> result =
-            manager.createQuery(builder.getQuery()).getResultList();
-        return new Response(true, StatusCodes.OK, result);
-    }
-
-    /**
-     * Get an object by its id.
-     *
-     * @param clazz The type of the object.
-     * @param id The id of the object.
-     * @param dataSource The datasource.
-     *
-     * @return Response object containg the requested object.
-     */
-    @Override
-    public <T> Response getById(Class<T> clazz, Object id, String dataSource) {
-        T item = transaction.entityManager(dataSource).find(clazz, id);
-        if (item == null) {
-            return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
-        return new Response(true, StatusCodes.OK, item);
     }
 }
