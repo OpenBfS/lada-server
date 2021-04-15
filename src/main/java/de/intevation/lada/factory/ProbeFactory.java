@@ -72,19 +72,19 @@ public class ProbeFactory {
         new Hashtable<String, int[]>();
 
     public ProbeFactory() {
-        int[] t  = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR, 1 };
-        int[] w  = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR,
+        final int[] t  = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR, 1 };
+        final int[] w  = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR,
                      N_WEEK_DAYS };
-        int[] w2 = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR,
+        final int[] w2 = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR,
                      N_WEEK_DAYS * 2 };
-        int[] w4 = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR,
+        final int[] w4 = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR,
                      N_WEEK_DAYS * 4 };
 
-        int[] m = {Calendar.MONTH, Calendar.DAY_OF_MONTH, 1 };
-        int[] q = {Calendar.MONTH, Calendar.DAY_OF_MONTH, 3 };
-        int[] h = {Calendar.MONTH, Calendar.DAY_OF_MONTH, 6 };
+        final int[] m = {Calendar.MONTH, Calendar.DAY_OF_MONTH, 1 };
+        final int[] q = {Calendar.MONTH, Calendar.DAY_OF_MONTH, 3 };
+        final int[] h = {Calendar.MONTH, Calendar.DAY_OF_MONTH, 6 };
 
-        int[] j = {Calendar.YEAR, Calendar.DAY_OF_YEAR, 1 };
+        final int[] j = {Calendar.YEAR, Calendar.DAY_OF_YEAR, 1 };
 
         fieldsTable.put("T", t);
         fieldsTable.put("W", w);
@@ -317,7 +317,9 @@ public class ProbeFactory {
      *
      * @return List of probe objects.
      */
-    public List<Probe> create(Messprogramm messprogramm, Long from, Long to, boolean dryrun) {
+    public List<Probe> create(
+        Messprogramm messprogramm, Long from, Long to, boolean dryrun
+    ) {
         protocol = new ArrayList<>();
         Calendar start = Calendar.getInstance();
         start.setTimeInMillis(from);
@@ -419,7 +421,7 @@ public class ProbeFactory {
         builder.and("messprogrammId", messprogramm.getId());
         Response response = repository.filter(builder.getQuery(), Strings.LAND);
         @SuppressWarnings("unchecked")
-        List<MessprogrammMmt> mmts = (List<MessprogrammMmt>)response.getData();
+        List<MessprogrammMmt> mmts = (List<MessprogrammMmt>) response.getData();
         List<String> messungProtocol = new ArrayList<>();
         List<Probe> proben =
             repository.filterPlain(builderProbe.getQuery(), Strings.LAND);
@@ -442,7 +444,8 @@ public class ProbeFactory {
             }
             currentProtocol.put("mmt", messungProtocol);
             for (OrtszuordnungMp ort : orte) {
-                Ort o = repository.getByIdPlain(Ort.class, ort.getOrtId(), "stamm");
+                Ort o = repository.getByIdPlain(
+                    Ort.class, ort.getOrtId(), "stamm");
                 currentProtocol.put("gemId", o.getGemId());
             }
             return proben.get(0);
@@ -509,12 +512,13 @@ public class ProbeFactory {
             ortP.setOrtId(ort.getOrtId());
             ortP.setOrtszusatztext(ort.getOrtszusatztext());
             createObject(ortP, dryrun);
-            Ort o = repository.getByIdPlain(Ort.class, ortP.getOrtId(), "stamm");
+            Ort o = repository.getByIdPlain(
+                Ort.class, ortP.getOrtId(), "stamm");
             currentProtocol.put("gemId", o.getGemId());
         }
         // Reolad the probe to have the old id
         if (!dryrun) {
-            probe = (Probe)repository.getById(
+            probe = (Probe) repository.getById(
                 Probe.class, probe.getId(), Strings.LAND).getData();
         }
         protocol.add(currentProtocol);
@@ -540,6 +544,7 @@ public class ProbeFactory {
 
     private void createObject(Object item, boolean dryrun) {
         if (!dryrun) {
+            // TODO: Do not rely on this being successful
             repository.create(item, Strings.LAND);
         }
     }
