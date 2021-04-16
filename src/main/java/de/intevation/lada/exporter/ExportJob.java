@@ -102,7 +102,7 @@ public abstract class ExportJob extends Thread {
     /**
      * Possible status values for export jobs.
      */
-    public enum Status { waiting, running, finished, error }
+    public enum Status { WAITING, RUNNING, FINISHED, ERROR }
 
     /**
      * The current job status.
@@ -116,7 +116,7 @@ public abstract class ExportJob extends Thread {
     public ExportJob(String jId) {
         this.done = false;
         this.jobId = jId;
-        this.currentStatus = Status.waiting;
+        this.currentStatus = Status.WAITING;
         // TODO: Use e.g. Files.createTempFile() to make it more portable
         this.outputFileLocation = "/tmp/lada-server/";
         if (!outputFileLocation.endsWith("/")) {
@@ -148,11 +148,11 @@ public abstract class ExportJob extends Thread {
      */
     protected void fail(String m) {
         try {
-            this.setCurrentStatus(Status.error);
+            this.setCurrentStatus(Status.ERROR);
             this.setDone(true);
             this.message = m;
         } catch (IllegalStatusTransitionException iste) {
-            this.currentStatus = Status.error;
+            this.currentStatus = Status.ERROR;
             this.message = "Internal server errror";
             this.done = true;
         } finally {
@@ -167,10 +167,10 @@ public abstract class ExportJob extends Thread {
      */
     protected void finish() {
         try {
-            this.setCurrentStatus(Status.finished);
+            this.setCurrentStatus(Status.FINISHED);
             this.setDone(true);
         } catch (IllegalStatusTransitionException iste) {
-            this.currentStatus = Status.error;
+            this.currentStatus = Status.ERROR;
             this.message = "Internal server errror";
             this.done = true;
         }
@@ -182,9 +182,9 @@ public abstract class ExportJob extends Thread {
      */
     protected void runnning() {
         try {
-            this.setCurrentStatus(Status.running);
+            this.setCurrentStatus(Status.RUNNING);
         } catch (IllegalStatusTransitionException iste) {
-            this.currentStatus = Status.error;
+            this.currentStatus = Status.ERROR;
             this.message = "Internal server errror";
             this.done = true;
         }
@@ -283,7 +283,7 @@ public abstract class ExportJob extends Thread {
      * Should be overwritten in child classes.
      */
     public void run() {
-        currentStatus = Status.running;
+        currentStatus = Status.RUNNING;
     }
 
     /**

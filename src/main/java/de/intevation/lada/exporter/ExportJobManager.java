@@ -202,7 +202,7 @@ public class ExportJobManager {
         String message = job.getMessage();
         boolean done = job.isDone();
         JobStatus statusObject = new JobStatus(jobStatus, message, done);
-        if (jobStatus.equals(Status.error) && done) {
+        if (jobStatus.equals(Status.ERROR) && done) {
             removeExportJob(job);
         }
         return statusObject;
@@ -300,7 +300,7 @@ public class ExportJobManager {
         }
 
         public String getStatus() {
-            return status.name();
+            return status.name().toLowerCase();
         }
 
         public String getMessage() {
