@@ -198,11 +198,11 @@ public class ExportJobManager {
         String id
     ) throws JobNotFoundException {
         ExportJob job = getJobById(id);
-        String jobStatus = job.getStatusName();
+        Status jobStatus = job.getStatus();
         String message = job.getMessage();
         boolean done = job.isDone();
         JobStatus statusObject = new JobStatus(jobStatus, message, done);
-        if (jobStatus.equals(Status.error.name()) && done) {
+        if (jobStatus.equals(Status.error) && done) {
             removeExportJob(job);
         }
         return statusObject;
@@ -285,11 +285,11 @@ public class ExportJobManager {
      * Stores job status and message
      */
     public static class JobStatus {
-        private String status;
+        private Status status;
         private String message;
         private boolean done;
 
-        public JobStatus(String s, String m, boolean d) {
+        public JobStatus(Status s, String m, boolean d) {
             this.status = s;
             this.message = m;
             this.done = d;
@@ -300,7 +300,7 @@ public class ExportJobManager {
         }
 
         public String getStatus() {
-            return status;
+            return status.name();
         }
 
         public String getMessage() {

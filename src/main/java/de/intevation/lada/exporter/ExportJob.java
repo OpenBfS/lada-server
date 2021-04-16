@@ -253,13 +253,6 @@ public abstract class ExportJob extends Thread {
     public Status getStatus() {
         return currentStatus;
     }
-    /**
-     * Return the current status as String.
-     * @return Status as String
-     */
-    public String getStatusName() {
-        return currentStatus.name();
-    }
 
     public UserInfo getUserInfo() {
         return userInfo;
