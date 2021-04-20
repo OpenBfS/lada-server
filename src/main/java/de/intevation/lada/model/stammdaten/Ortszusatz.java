@@ -20,7 +20,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "ortszusatz", schema = "stamm")
+@Table(name = "ortszusatz", schema = SchemaName.NAME)
 public class Ortszusatz implements Serializable {
     private static final long serialVersionUID = 1L;
 

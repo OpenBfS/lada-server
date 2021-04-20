@@ -20,7 +20,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "ort_typ", schema = "stamm")
+@Table(name = "ort_typ", schema = SchemaName.NAME)
 public class OrtTyp implements Serializable {
     private static final long serialVersionUID = 1L;
 

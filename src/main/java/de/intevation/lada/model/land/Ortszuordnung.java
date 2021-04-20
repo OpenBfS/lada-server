@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @Entity
-@Table(name = "ortszuordnung", schema = "land")
+@Table(name = "ortszuordnung", schema = SchemaName.NAME)
 public class Ortszuordnung implements Serializable {
     private static final long serialVersionUID = 1L;
 

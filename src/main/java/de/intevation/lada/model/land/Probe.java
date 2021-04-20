@@ -37,7 +37,7 @@ import de.intevation.lada.util.data.EmptyStringConverter;
  */
 @Entity
 @DynamicInsert(true)
-@Table(name = "probe", schema = "land")
+@Table(name = "probe", schema = SchemaName.NAME)
 public class Probe implements Serializable {
     private static final long serialVersionUID = 1L;
 

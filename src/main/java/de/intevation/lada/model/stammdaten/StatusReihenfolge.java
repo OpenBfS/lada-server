@@ -20,7 +20,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "status_reihenfolge", schema = "stamm")
+@Table(name = "status_reihenfolge", schema = SchemaName.NAME)
 public class StatusReihenfolge implements Serializable {
     private static final long serialVersionUID = 1L;
 

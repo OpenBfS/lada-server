@@ -20,7 +20,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "pflicht_messgroesse", schema = "stamm")
+@Table(name = "pflicht_messgroesse", schema = SchemaName.NAME)
 public class PflichtMessgroesse implements Serializable {
     private static final long serialVersionUID = 1L;
 

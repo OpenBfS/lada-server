@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * The persistent class for the tag database table.
  */
 @Entity
-@Table(name = "tag", schema = "stamm")
+@Table(name = "tag", schema = SchemaName.NAME)
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

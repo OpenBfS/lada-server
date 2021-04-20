@@ -28,7 +28,7 @@ import de.intevation.lada.util.data.JsonObjectType;
  *
  */
 @Entity
-@Table(name = "audit_trail_probe", schema = "land")
+@Table(name = "audit_trail_probe", schema = SchemaName.NAME)
 @TypeDefs({ @TypeDef(name = "JsonObject", typeClass = JsonObjectType.class) })
 public class AuditTrailProbe implements Serializable {
     private static final long serialVersionUID = 1L;

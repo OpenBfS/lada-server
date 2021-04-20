@@ -5,16 +5,15 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.model;
+package de.intevation.lada.model.land;
 
 /**
- * A class providing constants holding names that can be used to schema-qualify
- * database object names.
+ * Provide a constant holding the name to be used to schema-qualify
+ * database object names represented by classes in this package.
  *
  */
-public class Schema {
-    public static final String STAMM = "stamm";
-    public static final String LAND = "land";
+public class SchemaName {
+    public static final String NAME = "land";
 
-    private Schema() { };
+    private SchemaName() { };
 }

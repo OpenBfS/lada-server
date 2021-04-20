@@ -21,7 +21,7 @@ import javax.persistence.Table;
  */
 @Entity
 @NamedQuery(name = "Zeitbasis.findAll", query = "SELECT z FROM Zeitbasis z")
-@Table(name = "zeitbasis", schema = "stamm")
+@Table(name = "zeitbasis", schema = SchemaName.NAME)
 public class Zeitbasis implements Serializable {
     private static final long serialVersionUID = 1L;
 

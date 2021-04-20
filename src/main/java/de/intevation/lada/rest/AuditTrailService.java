@@ -31,7 +31,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import de.intevation.lada.model.Schema;
 import de.intevation.lada.model.land.AuditTrailMessung;
 import de.intevation.lada.model.land.AuditTrailProbe;
 import de.intevation.lada.model.land.Messung;
@@ -279,7 +278,7 @@ public class AuditTrailService {
                 "ort_id",
                 audit.getRowData().get("ort_id").toString(),
                 "id",
-                Schema.STAMM);
+                de.intevation.lada.model.stammdaten.SchemaName.NAME);
             node.put("identifier", value);
         }
         if ("messung".equals(audit.getTableName())) {
@@ -310,7 +309,7 @@ public class AuditTrailService {
                     "messgroesse",
                     audit.getRowData().get("messgroesse_id").toString(),
                     "id",
-                    Schema.STAMM);
+                    de.intevation.lada.model.stammdaten.SchemaName.NAME);
                 identifier.put("identifier", value);
             }
         }
@@ -414,7 +413,7 @@ public class AuditTrailService {
                 "messgroesse",
                 audit.getRowData().get("messgroesse_id").toString(),
                 "id",
-                Schema.STAMM);
+                de.intevation.lada.model.stammdaten.SchemaName.NAME);
             node.put("identifier", value);
         }
         return node;
@@ -479,7 +478,7 @@ public class AuditTrailService {
                         m.getValueField(),
                         !node.get(key).isNull() ? node.get(key).asText() : null,
                         "id",
-                        Schema.STAMM);
+                        de.intevation.lada.model.stammdaten.SchemaName.NAME);
                     node.put(key, value);
                 }
             }

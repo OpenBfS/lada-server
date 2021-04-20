@@ -34,7 +34,7 @@ import org.hibernate.annotations.Type;
  *
  */
 @Entity
-@Table(name = "ort", schema = "stamm")
+@Table(name = "ort", schema = SchemaName.NAME)
 public class Ort implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -20,7 +20,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "filter_type", schema = "stamm")
+@Table(name = "filter_type", schema = SchemaName.NAME)
 @NamedQuery(name = "FilterType.findAll", query = "SELECT f FROM FilterType f")
 public class FilterType implements Serializable {
     private static final long serialVersionUID = 1L;

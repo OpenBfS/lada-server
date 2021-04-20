@@ -19,7 +19,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "datenbasis", schema = "stamm")
+@Table(name = "datenbasis", schema = SchemaName.NAME)
 public class Datenbasis implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -19,7 +19,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "betriebsart", schema = "stamm")
+@Table(name = "betriebsart", schema = SchemaName.NAME)
 public class Betriebsart implements Serializable {
     private static final long serialVersionUID = 1L;
 

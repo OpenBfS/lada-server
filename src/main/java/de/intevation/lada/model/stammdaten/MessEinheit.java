@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  *
  */
 @Entity
-@Table(name = "mess_einheit", schema = "stamm")
+@Table(name = "mess_einheit", schema = SchemaName.NAME)
 public class MessEinheit implements Serializable {
     private static final long serialVersionUID = 1L;
 

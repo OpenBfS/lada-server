@@ -20,7 +20,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "probenart", schema = "stamm")
+@Table(name = "probenart", schema = SchemaName.NAME)
 public class Probenart implements Serializable {
     private static final long serialVersionUID = 1L;
 

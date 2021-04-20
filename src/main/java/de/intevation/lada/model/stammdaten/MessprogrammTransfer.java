@@ -22,7 +22,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "messprogramm_transfer", schema = "stamm")
+@Table(name = "messprogramm_transfer", schema = SchemaName.NAME)
 public class MessprogrammTransfer implements Serializable {
     private static final long serialVersionUID = 1L;
 
