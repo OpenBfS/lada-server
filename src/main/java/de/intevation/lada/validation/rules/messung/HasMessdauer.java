@@ -15,9 +15,7 @@ import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 /**
  * Validation rule for messungen.
  * Validates if the messung has a "nebenprobennummer"
@@ -28,7 +26,6 @@ import de.intevation.lada.util.annotation.RepositoryConfig;
 public class HasMessdauer implements Rule {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Override

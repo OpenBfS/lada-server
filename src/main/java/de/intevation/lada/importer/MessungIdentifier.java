@@ -13,10 +13,8 @@ import javax.inject.Inject;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
 import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 
 /**
  * Identifier for messung objects.
@@ -25,7 +23,6 @@ import de.intevation.lada.util.data.RepositoryType;
 public class MessungIdentifier implements Identifier {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     private Messung found;

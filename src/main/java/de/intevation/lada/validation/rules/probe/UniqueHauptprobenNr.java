@@ -12,10 +12,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
@@ -36,7 +34,6 @@ public class UniqueHauptprobenNr implements Rule {
 //    private Logger logger;
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repo;
 
     @SuppressWarnings("unchecked")

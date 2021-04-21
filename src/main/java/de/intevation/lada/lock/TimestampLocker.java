@@ -15,9 +15,7 @@ import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -32,7 +30,6 @@ public class TimestampLocker implements ObjectLocker {
      * The repository used to read data.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     Repository repository;
 
     /**

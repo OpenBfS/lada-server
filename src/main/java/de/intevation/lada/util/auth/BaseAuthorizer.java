@@ -16,10 +16,8 @@ import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.StatusKombi;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.rest.Response;
 
 public abstract class BaseAuthorizer implements Authorizer {
@@ -28,7 +26,6 @@ public abstract class BaseAuthorizer implements Authorizer {
      * The Repository used to read from Database.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     protected Repository repository;
 
     /**

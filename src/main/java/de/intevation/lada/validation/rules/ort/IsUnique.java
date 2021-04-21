@@ -10,10 +10,8 @@ package de.intevation.lada.validation.rules.ort;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.stammdaten.Ort;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -23,7 +21,6 @@ import de.intevation.lada.validation.rules.Rule;
 public class IsUnique implements Rule {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Override

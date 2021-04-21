@@ -13,10 +13,8 @@ import javax.inject.Inject;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
 import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 
 /**
  * Class to identify a probe object.
@@ -25,7 +23,6 @@ import de.intevation.lada.util.data.RepositoryType;
 public class ProbeIdentifier implements Identifier {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     private Probe found;

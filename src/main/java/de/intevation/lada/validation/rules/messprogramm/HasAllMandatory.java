@@ -10,9 +10,7 @@ package de.intevation.lada.validation.rules.messprogramm;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Messprogramm;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -26,7 +24,6 @@ import de.intevation.lada.validation.rules.Rule;
 public class HasAllMandatory implements Rule {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     Repository repository;
 
     @Override

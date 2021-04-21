@@ -24,10 +24,8 @@ import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.Kta;
 import de.intevation.lada.model.stammdaten.KtaGrpZuord;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 
@@ -64,7 +62,6 @@ public class KtaService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     /**

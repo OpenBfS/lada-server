@@ -23,10 +23,8 @@ import javax.ws.rs.core.UriInfo;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.intevation.lada.model.stammdaten.KoordinatenArt;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 
@@ -63,7 +61,6 @@ public class KoordinatenartService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository defaultRepo;
 
     /**

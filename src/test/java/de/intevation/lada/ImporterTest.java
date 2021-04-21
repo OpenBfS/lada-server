@@ -40,10 +40,8 @@ import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.ZusatzWert;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 
 /**
  * Class to test the Lada-Importer.
@@ -98,7 +96,6 @@ public class ImporterTest extends BaseTest {
     Identifier messungIdentifier;
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
     Repository repository;
 
     @Inject

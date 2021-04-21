@@ -22,11 +22,9 @@ import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Staat;
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
 
 /**
@@ -40,7 +38,6 @@ public class OrtFactory {
 
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     private List<ReportItem> errors;
