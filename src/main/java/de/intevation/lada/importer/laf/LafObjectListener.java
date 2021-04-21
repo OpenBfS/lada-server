@@ -2878,7 +2878,7 @@ public class LafObjectListener extends LafBaseListener {
     @Override public void enterProbenzusatzbeschreibung(
         LafParser.ProbenzusatzbeschreibungContext ctx
     ) {
-        // c7* f12 c9 f9
+        // c7* f12 c12 f9
         if (ctx.getChildCount() < 5) {
             return;
         }
@@ -2904,7 +2904,7 @@ public class LafObjectListener extends LafBaseListener {
         }
         String einheit = ctx.getChild(3).toString();
         einheit = einheit.replaceAll("\"", "").trim();
-        if (!einheit.matches(LafDataTypes.C9)) {
+        if (!einheit.matches(LafDataTypes.C12)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
             err.setValue(einheit);
@@ -2998,7 +2998,7 @@ public class LafObjectListener extends LafBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterMesswert(LafParser.MesswertContext ctx) {
-        // c50* f12 c9 f9**
+        // c50* f12 c12 f9**
         List<String> children = new ArrayList<String>();
         for (int i = 0; i < ctx.getChildCount(); i++) {
             if (!ctx.getChild(i).toString().startsWith(" ")) {
@@ -3033,7 +3033,7 @@ public class LafObjectListener extends LafBaseListener {
         }
         String einheit = children.get(3);
         einheit = einheit.replaceAll("\"", "").trim();
-        if (!einheit.matches(LafDataTypes.C9)) {
+        if (!einheit.matches(LafDataTypes.C12)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
             err.setValue(einheit);
@@ -3149,7 +3149,7 @@ public class LafObjectListener extends LafBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterMesswert_i(LafParser.Messwert_iContext ctx) {
-        // C50* f12 c9 f9** f9** f9** c50*
+        // C50* f12 c12 f9** f9** f9** c50*
         List<String> children = new ArrayList<String>();
         for (int i = 0; i < ctx.getChildCount(); i++) {
             if (!ctx.getChild(i).toString().startsWith(" ")) {
@@ -3184,7 +3184,7 @@ public class LafObjectListener extends LafBaseListener {
         }
         String einheit = children.get(3);
         einheit = einheit.replaceAll("\"", "").trim();
-        if (!einheit.matches(LafDataTypes.C9)) {
+        if (!einheit.matches(LafDataTypes.C12)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
             err.setValue(einheit);
@@ -3225,7 +3225,7 @@ public class LafObjectListener extends LafBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterMesswert_g(LafParser.Messwert_gContext ctx) {
-        // C50* f12 c9 f9** f9** f9** c1
+        // C50* f12 c12 f9** f9** f9** c1
         if (currentMessung == null) {
             currentMessung = data.new Messung();
             currentMessung.setHasErrors(false);
@@ -3264,7 +3264,7 @@ public class LafObjectListener extends LafBaseListener {
         }
         String einheit = children.get(3);
         einheit = einheit.replaceAll("\"", "").trim();
-        if (!einheit.matches(LafDataTypes.C9)) {
+        if (!einheit.matches(LafDataTypes.C12)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
             err.setValue(einheit);
@@ -3302,7 +3302,7 @@ public class LafObjectListener extends LafBaseListener {
      * <p>The default implementation does nothing.</p>
      */
     @Override public void enterMesswert_nwg(LafParser.Messwert_nwgContext ctx) {
-        // C50* f12 c9 f9** f12
+        // C50* f12 c12 f9** f12
         if (currentMessung == null) {
             currentMessung = data.new Messung();
             currentMessung.setHasErrors(false);
@@ -3341,7 +3341,7 @@ public class LafObjectListener extends LafBaseListener {
         }
         String einheit = children.get(3);
         einheit = einheit.replaceAll("\"", "").trim();
-        if (!einheit.matches(LafDataTypes.C9)) {
+        if (!einheit.matches(LafDataTypes.C12)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
             err.setValue(einheit);
@@ -3509,7 +3509,7 @@ public class LafObjectListener extends LafBaseListener {
         }
         String einheit = children.get(3);
         einheit = einheit.replaceAll("\"", "").trim();
-        if (!einheit.matches(LafDataTypes.C9)) {
+        if (!einheit.matches(LafDataTypes.C12)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
             err.setValue(einheit);
@@ -3597,7 +3597,7 @@ public class LafObjectListener extends LafBaseListener {
         }
         String einheit = children.get(3);
         einheit = einheit.replaceAll("\"", "").trim();
-        if (!einheit.matches(LafDataTypes.C9)) {
+        if (!einheit.matches(LafDataTypes.C12)) {
             ReportItem err = new ReportItem();
             err.setKey(ctx.getChild(0).toString());
             err.setValue(einheit);
