@@ -69,7 +69,7 @@ public class StatusWertService {
      * The data repository granting read access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     @Inject
     @AuthorizationConfig(type = AuthorizationType.HEADER)
@@ -92,7 +92,7 @@ public class StatusWertService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("messungsId")) {
-            return defaultRepo.getAll(StatusWert.class);
+            return repository.getAll(StatusWert.class);
         }
 
         List<Integer> mIds = new ArrayList<Integer>();
@@ -126,7 +126,7 @@ public class StatusWertService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
+        return repository.getById(
             StatusWert.class,
             Integer.valueOf(id)
         );
@@ -143,38 +143,38 @@ public class StatusWertService {
         UserInfo user
     ) {
         QueryBuilder<Messung> messungQuery = new QueryBuilder<Messung>(
-            defaultRepo.entityManager(),
+            repository.entityManager(),
             Messung.class);
         messungQuery.orIn("id", messIds);
-        List<Messung> messungen = defaultRepo.filterPlain(
+        List<Messung> messungen = repository.filterPlain(
             messungQuery.getQuery());
 
         List<StatusErreichbar> erreichbare = new ArrayList<StatusErreichbar>();
         for (Messung messung : messungen) {
-            StatusProtokoll status = defaultRepo.getByIdPlain(
+            StatusProtokoll status = repository.getByIdPlain(
                 StatusProtokoll.class, messung.getStatus());
-            StatusKombi kombi = defaultRepo.getByIdPlain(
+            StatusKombi kombi = repository.getByIdPlain(
                 StatusKombi.class, status.getStatusKombi());
 
             QueryBuilder<StatusErreichbar> errFilter =
                 new QueryBuilder<StatusErreichbar>(
-                    defaultRepo.entityManager(),
+                    repository.entityManager(),
                     StatusErreichbar.class);
             errFilter.andIn("stufeId", user.getFunktionen());
             errFilter.and("curStufe", kombi.getStatusStufe().getId());
             errFilter.and("curWert", kombi.getStatusWert().getId());
-            erreichbare.addAll(defaultRepo.filterPlain(
+            erreichbare.addAll(repository.filterPlain(
                     errFilter.getQuery()));
         }
 
         QueryBuilder<StatusWert> werteFilter =
             new QueryBuilder<StatusWert>(
-                defaultRepo.entityManager(),
+                repository.entityManager(),
                 StatusWert.class);
         for (int i = 0; i < erreichbare.size(); i++) {
             werteFilter.or("id", erreichbare.get(i).getWertId());
         }
 
-        return defaultRepo.filterPlain(werteFilter.getQuery());
+        return repository.filterPlain(werteFilter.getQuery());
     }
 }

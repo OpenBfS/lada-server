@@ -62,7 +62,7 @@ public class MessstelleService {
      * The data repository granting read access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * The authorization module.
@@ -86,7 +86,7 @@ public class MessstelleService {
         @Context HttpServletRequest request,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(MessStelle.class);
+        return repository.getAll(MessStelle.class);
     }
 
     /**
@@ -106,6 +106,6 @@ public class MessstelleService {
         @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(MessStelle.class, id);
+        return repository.getById(MessStelle.class, id);
     }
 }

@@ -80,7 +80,7 @@ public class KommentarPService {
      * The data repository granting read/write access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * The authorization module.
@@ -109,17 +109,17 @@ public class KommentarPService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("probeId")) {
-            return defaultRepo.getAll(KommentarP.class);
+            return repository.getAll(KommentarP.class);
         }
         String probeId = params.getFirst("probeId");
         QueryBuilder<KommentarP> builder =
             new QueryBuilder<KommentarP>(
-                defaultRepo.entityManager(),
+                repository.entityManager(),
                 KommentarP.class);
         builder.and("probeId", probeId);
         return authorization.filter(
             request,
-            defaultRepo.filter(builder.getQuery()),
+            repository.filter(builder.getQuery()),
             KommentarP.class);
     }
 
@@ -142,7 +142,7 @@ public class KommentarPService {
     ) {
         return authorization.filter(
             request,
-            defaultRepo.getById(
+            repository.getById(
                 KommentarP.class, Integer.valueOf(id)),
             KommentarP.class);
     }
@@ -185,7 +185,7 @@ public class KommentarPService {
         /* Persist the new object*/
         return authorization.filter(
             request,
-            defaultRepo.create(kommentar),
+            repository.create(kommentar),
             KommentarP.class);
     }
 
@@ -228,7 +228,7 @@ public class KommentarPService {
         }
         return authorization.filter(
             request,
-            defaultRepo.update(kommentar),
+            repository.update(kommentar),
             KommentarP.class);
     }
 
@@ -251,7 +251,7 @@ public class KommentarPService {
     ) {
         /* Get the object by id*/
         Response kommentar =
-            defaultRepo.getById(
+            repository.getById(
                 KommentarP.class, Integer.valueOf(id));
         KommentarP kommentarObj = (KommentarP) kommentar.getData();
         if (!authorization.isAuthorized(
@@ -263,6 +263,6 @@ public class KommentarPService {
             logger.debug("User is not authorized!");
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        return defaultRepo.delete(kommentarObj);
+        return repository.delete(kommentarObj);
     }
 }

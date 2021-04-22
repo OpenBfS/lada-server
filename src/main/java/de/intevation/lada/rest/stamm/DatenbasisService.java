@@ -55,7 +55,7 @@ public class DatenbasisService {
      * The data repository granting read access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all Datenbasis objects.
@@ -71,7 +71,7 @@ public class DatenbasisService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(Datenbasis.class);
+        return repository.getAll(Datenbasis.class);
     }
 
     /**
@@ -90,6 +90,6 @@ public class DatenbasisService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(Datenbasis.class, Integer.valueOf(id));
+        return repository.getById(Datenbasis.class, Integer.valueOf(id));
     }
 }

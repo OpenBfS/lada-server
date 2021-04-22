@@ -73,7 +73,7 @@ public class KommentarMService {
      * The data repository granting read/write access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * The authorization module.
@@ -113,7 +113,7 @@ public class KommentarMService {
         } catch (NumberFormatException nfe) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        Messung messung = defaultRepo.getByIdPlain(Messung.class, id);
+        Messung messung = repository.getByIdPlain(Messung.class, id);
         if (!authorization.isAuthorized(
                 request, messung, RequestMethod.GET, Messung.class)
         ) {
@@ -122,12 +122,12 @@ public class KommentarMService {
 
         QueryBuilder<KommentarM> builder =
             new QueryBuilder<KommentarM>(
-                defaultRepo.entityManager(),
+                repository.entityManager(),
                 KommentarM.class);
         builder.and("messungsId", messungId);
         return authorization.filter(
             request,
-            defaultRepo.filter(builder.getQuery()),
+            repository.filter(builder.getQuery()),
             KommentarM.class);
     }
 
@@ -149,10 +149,10 @@ public class KommentarMService {
         @PathParam("id") String id
     ) {
         Response response =
-            defaultRepo.getById(
+            repository.getById(
                 KommentarM.class, Integer.valueOf(id));
         KommentarM kommentar = (KommentarM) response.getData();
-        Messung messung = defaultRepo.getByIdPlain(
+        Messung messung = repository.getByIdPlain(
             Messung.class, kommentar.getMessungsId());
         if (!authorization.isAuthorized(
                 request, messung, RequestMethod.GET, Messung.class)
@@ -203,7 +203,7 @@ public class KommentarMService {
         /* Persist the new object*/
         return authorization.filter(
             request,
-            defaultRepo.create(kommentar),
+            repository.create(kommentar),
             KommentarM.class);
     }
 
@@ -245,7 +245,7 @@ public class KommentarMService {
         }
         return authorization.filter(
             request,
-            defaultRepo.update(kommentar),
+            repository.update(kommentar),
             KommentarM.class);
     }
 
@@ -268,7 +268,7 @@ public class KommentarMService {
     ) {
         /* Get the object by id*/
         Response kommentar =
-            defaultRepo.getById(
+            repository.getById(
                 KommentarM.class, Integer.valueOf(id));
         KommentarM kommentarObj = (KommentarM) kommentar.getData();
         if (!authorization.isAuthorized(
@@ -279,6 +279,6 @@ public class KommentarMService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        return defaultRepo.delete(kommentarObj);
+        return repository.delete(kommentarObj);
     }
 }

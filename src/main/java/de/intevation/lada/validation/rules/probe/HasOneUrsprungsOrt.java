@@ -30,7 +30,7 @@ import de.intevation.lada.validation.rules.Rule;
 public class HasOneUrsprungsOrt implements Rule {
 
     @Inject
-    private Repository repo;
+    private Repository repository;
 
     @Override
     public Violation execute(Object object) {
@@ -48,10 +48,10 @@ public class HasOneUrsprungsOrt implements Rule {
         }
         QueryBuilder<Ortszuordnung> builder =
             new QueryBuilder<Ortszuordnung>(
-                repo.entityManager(), Ortszuordnung.class);
+                repository.entityManager(), Ortszuordnung.class);
         builder.and("probeId", id);
         builder.and("ortszuordnungTyp", "U");
-        Response response = repo.filter(builder.getQuery());
+        Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<Ortszuordnung> orte = (List<Ortszuordnung>) response.getData();
         if (orte.size()>1) {

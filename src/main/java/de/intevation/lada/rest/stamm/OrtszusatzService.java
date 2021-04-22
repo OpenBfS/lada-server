@@ -54,7 +54,7 @@ public class OrtszusatzService {
      * The data repository granting read access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all Ortszusatz objects.
@@ -70,7 +70,7 @@ public class OrtszusatzService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(Ortszusatz.class);
+        return repository.getAll(Ortszusatz.class);
     }
 
     /**
@@ -89,6 +89,6 @@ public class OrtszusatzService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(Ortszusatz.class, Integer.valueOf(id));
+        return repository.getById(Ortszusatz.class, Integer.valueOf(id));
     }
 }

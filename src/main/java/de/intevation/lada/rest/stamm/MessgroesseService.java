@@ -65,7 +65,7 @@ public class MessgroesseService {
      * The data repository granting read access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all Messgroesse objects.
@@ -83,12 +83,12 @@ public class MessgroesseService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("mmtId")) {
-            return defaultRepo.getAll(Messgroesse.class);
+            return repository.getAll(Messgroesse.class);
         }
         String mmtId = params.getFirst("mmtId");
 
         Query query =
-            defaultRepo.queryFromString(
+            repository.queryFromString(
                 "SELECT messgroesse_id FROM "
                 + de.intevation.lada.model.stammdaten.SchemaName.NAME
                 + ".mmt_messgroesse "
@@ -98,10 +98,10 @@ public class MessgroesseService {
         List<Integer> ids = query.getResultList();
         QueryBuilder<Messgroesse> builder2 =
             new QueryBuilder<Messgroesse>(
-                defaultRepo.entityManager(),
+                repository.entityManager(),
                 Messgroesse.class);
         builder2.orIntList("id", ids);
-        return defaultRepo.filter(builder2.getQuery());
+        return repository.filter(builder2.getQuery());
     }
 
     /**
@@ -120,6 +120,6 @@ public class MessgroesseService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(Messgroesse.class, Integer.valueOf(id));
+        return repository.getById(Messgroesse.class, Integer.valueOf(id));
     }
 }

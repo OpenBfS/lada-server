@@ -61,7 +61,7 @@ public class KoordinatenartService {
      * The data repository granting read access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all KoordinatenArt objects.
@@ -77,7 +77,7 @@ public class KoordinatenartService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(KoordinatenArt.class);
+        return repository.getAll(KoordinatenArt.class);
     }
 
     /**
@@ -96,7 +96,7 @@ public class KoordinatenartService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(KoordinatenArt.class, Integer.valueOf(id));
+        return repository.getById(KoordinatenArt.class, Integer.valueOf(id));
     }
 
     @POST

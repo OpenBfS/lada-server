@@ -67,7 +67,7 @@ public class NetzbetreiberService {
      * The data repository granting read access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * The authorization module.
@@ -91,7 +91,7 @@ public class NetzbetreiberService {
         @Context HttpServletRequest request,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(NetzBetreiber.class);
+        return repository.getAll(NetzBetreiber.class);
     }
 
     /**
@@ -113,7 +113,7 @@ public class NetzbetreiberService {
     ) {
         UserInfo userInfo = authorization.getInfo(request);
         if (userInfo.getNetzbetreiber().contains(id)) {
-            return defaultRepo.getById(NetzBetreiber.class, id);
+            return repository.getById(NetzBetreiber.class, id);
         }
         return new Response(
             false, StatusCodes.CHANGED_VALUE, new ArrayList<NetzBetreiber>());

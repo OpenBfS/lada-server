@@ -61,7 +61,7 @@ public class StaatService {
      * The data repository granting read access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all Staat objects.
@@ -77,7 +77,7 @@ public class StaatService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(Staat.class);
+        return repository.getAll(Staat.class);
     }
 
     /**
@@ -96,6 +96,6 @@ public class StaatService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(Staat.class, Integer.valueOf(id));
+        return repository.getById(Staat.class, Integer.valueOf(id));
     }
 }

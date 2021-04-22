@@ -28,17 +28,17 @@ import de.intevation.lada.validation.rules.Rule;
 public class UniqueExterneProbeId implements Rule {
 
     @Inject
-    private Repository repo;
+    private Repository repository;
 
     @Override
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
         QueryBuilder<Probe> builder = new QueryBuilder<Probe>(
-            repo.entityManager(),
+            repository.entityManager(),
             Probe.class);
         builder.and("externeProbeId", probe.getExterneProbeId());
         List<Probe> existing =
-            repo.filterPlain(builder.getQuery());
+            repository.filterPlain(builder.getQuery());
         if (!existing.isEmpty()) {
             Probe found = existing.get(0);
             // The probe found in the db equals the new probe. (Update)

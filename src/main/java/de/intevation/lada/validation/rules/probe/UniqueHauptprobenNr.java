@@ -34,7 +34,7 @@ public class UniqueHauptprobenNr implements Rule {
 //    private Logger logger;
 
     @Inject
-    private Repository repo;
+    private Repository repository;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -42,11 +42,11 @@ public class UniqueHauptprobenNr implements Rule {
         Probe probe = (Probe) object;
         if (probe.getHauptprobenNr() != null) {
             QueryBuilder<Probe> builder = new QueryBuilder<Probe>(
-               repo.entityManager(),
+               repository.entityManager(),
                 Probe.class);
             builder.and("hauptprobenNr", probe.getHauptprobenNr());
             builder.and("mstId", probe.getMstId());
-            Response response = repo.filter(builder.getQuery());
+            Response response = repository.filter(builder.getQuery());
             if (!((List<Probe>) response.getData()).isEmpty()) {
                 Probe found = ((List<Probe>) response.getData()).get(0);
                 // The probe found in the db equals the new probe. (Update)

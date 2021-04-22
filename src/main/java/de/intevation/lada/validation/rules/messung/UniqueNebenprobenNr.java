@@ -30,7 +30,7 @@ import de.intevation.lada.validation.rules.Rule;
 public class UniqueNebenprobenNr implements Rule {
 
     @Inject
-    private Repository repo;
+    private Repository repository;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -38,11 +38,11 @@ public class UniqueNebenprobenNr implements Rule {
         Messung messung = (Messung) object;
         if (messung.getNebenprobenNr() != null) {
             QueryBuilder<Messung> builder = new QueryBuilder<Messung>(
-                repo.entityManager(),
+                repository.entityManager(),
                 Messung.class);
             builder.and("nebenprobenNr", messung.getNebenprobenNr());
             builder.and("probeId", messung.getProbeId());
-            Response response = repo.filter(builder.getQuery());
+            Response response = repository.filter(builder.getQuery());
             if (!((List<Messung>) response.getData()).isEmpty()) {
                 Messung found = ((List<Messung>) response.getData()).get(0);
                 // The messung found in the db equals the new messung. (Update)

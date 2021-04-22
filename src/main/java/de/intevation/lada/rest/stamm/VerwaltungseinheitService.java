@@ -70,7 +70,7 @@ public class VerwaltungseinheitService {
      * The data repository granting read access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all Verwaltungseinheit objects.
@@ -91,14 +91,14 @@ public class VerwaltungseinheitService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("query")) {
-            return defaultRepo.getAll(Verwaltungseinheit.class);
+            return repository.getAll(Verwaltungseinheit.class);
         }
         String filter = params.getFirst("query");
         QueryBuilder<Verwaltungseinheit> builder =
             new QueryBuilder<Verwaltungseinheit>(
-                defaultRepo.entityManager(), Verwaltungseinheit.class);
+                repository.entityManager(), Verwaltungseinheit.class);
         builder.andLike("bezeichnung", filter + "%");
-        return defaultRepo.filter(builder.getQuery());
+        return repository.filter(builder.getQuery());
     }
 
     /**
@@ -117,6 +117,6 @@ public class VerwaltungseinheitService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(Verwaltungseinheit.class, id);
+        return repository.getById(Verwaltungseinheit.class, id);
     }
 }

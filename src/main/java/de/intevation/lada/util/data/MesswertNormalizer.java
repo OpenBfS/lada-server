@@ -22,21 +22,21 @@ public class MesswertNormalizer {
      * Get the list of conversion for the given meh ids.
      * @param mehIdTo MehId to convert to
      * @param mehIdFrom MehId to convert from
-     * @param defaultRepo Repository to use
+     * @param repository Repository to use
      * @return Conversions as list
      */
     private static List<MassEinheitUmrechnung> getConversions(
         Integer mehIdTo,
         Integer mehIdFrom,
-        Repository defaultRepo
+        Repository repository
     ) {
         QueryBuilder<MassEinheitUmrechnung> builder = new QueryBuilder<>(
-            defaultRepo.entityManager(),
+            repository.entityManager(),
             MassEinheitUmrechnung.class
         );
         builder.and("mehIdZu", mehIdTo);
         builder.and("mehVon", mehIdFrom);
-        return defaultRepo.filterPlain(builder.getQuery());
+        return repository.filterPlain(builder.getQuery());
     }
 
     /**
@@ -48,13 +48,13 @@ public class MesswertNormalizer {
     public static List<Messwert> normalizeMesswerte(
         List<Messwert> messwerte,
         String umwId,
-        Repository defaultRepo
+        Repository repository
     ) {
         if (umwId == null || umwId.equals("")) {
             return messwerte;
         }
         Umwelt umwelt =
-            defaultRepo.getByIdPlain(Umwelt.class, umwId);
+            repository.getByIdPlain(Umwelt.class, umwId);
         Integer mehIdToConvertTo = umwelt.getMehId();
         Integer secMehIdToConvertTo = umwelt.getSecMehId();
 
@@ -69,9 +69,9 @@ public class MesswertNormalizer {
             }
             //Get the conversion factors
             List<MassEinheitUmrechnung> primaryMeu = getConversions(
-                    mehIdToConvertTo, messwert.getMehId(), defaultRepo);
+                    mehIdToConvertTo, messwert.getMehId(), repository);
             List<MassEinheitUmrechnung> secondaryMeu = getConversions(
-                    secMehIdToConvertTo, messwert.getMehId(), defaultRepo);
+                    secMehIdToConvertTo, messwert.getMehId(), repository);
             if (primaryMeu.size() == 0 && secondaryMeu.size() == 0) {
                 //No suitable conversion found: continue
                 continue;

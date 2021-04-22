@@ -55,7 +55,7 @@ public class OrtTypService {
      * The data repository granting read access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all OrtTyp objects.
@@ -71,7 +71,7 @@ public class OrtTypService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(OrtTyp.class);
+        return repository.getAll(OrtTyp.class);
     }
 
     /**
@@ -90,6 +90,6 @@ public class OrtTypService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(OrtTyp.class, Integer.valueOf(id));
+        return repository.getById(OrtTyp.class, Integer.valueOf(id));
     }
 }

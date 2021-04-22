@@ -70,7 +70,7 @@ public class MessprogrammMmtService {
      * The data repository granting read/write access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * The authorization module.
@@ -98,17 +98,17 @@ public class MessprogrammMmtService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("messprogrammId")) {
-            return defaultRepo.getAll(MessprogrammMmt.class);
+            return repository.getAll(MessprogrammMmt.class);
         }
         String messprogrammId = params.getFirst("messprogrammId");
         QueryBuilder<MessprogrammMmt> builder =
             new QueryBuilder<MessprogrammMmt>(
-                defaultRepo.entityManager(),
+                repository.entityManager(),
                 MessprogrammMmt.class);
         builder.and("messprogrammId", messprogrammId);
         return authorization.filter(
             request,
-            defaultRepo.filter(builder.getQuery()),
+            repository.filter(builder.getQuery()),
             MessprogrammMmt.class);
     }
 
@@ -130,7 +130,7 @@ public class MessprogrammMmtService {
     ) {
         return authorization.filter(
             request,
-            defaultRepo.getById(
+            repository.getById(
                 MessprogrammMmt.class, Integer.valueOf(id)),
             MessprogrammMmt.class);
     }
@@ -170,10 +170,10 @@ public class MessprogrammMmtService {
         }
 
         /* Persist the new messprogrammmmt object*/
-        Response response = defaultRepo.create(messprogrammmmt);
+        Response response = repository.create(messprogrammmmt);
         MessprogrammMmt ret = (MessprogrammMmt) response.getData();
         Response created =
-            defaultRepo.getById(
+            repository.getById(
                 MessprogrammMmt.class, ret.getId());
         return authorization.filter(
             request,
@@ -216,11 +216,11 @@ public class MessprogrammMmtService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
-        Response response = defaultRepo.update(messprogrammmmt);
+        Response response = repository.update(messprogrammmmt);
         if (!response.getSuccess()) {
             return response;
         }
-        Response updated = defaultRepo.getById(
+        Response updated = repository.getById(
             MessprogrammMmt.class,
             ((MessprogrammMmt) response.getData()).getId());
         return authorization.filter(
@@ -247,7 +247,7 @@ public class MessprogrammMmtService {
     ) {
         /* Get the messprogrammmmt object by id*/
         Response messprogrammmmt =
-            defaultRepo.getById(
+            repository.getById(
                 MessprogrammMmt.class, Integer.valueOf(id));
         MessprogrammMmt messprogrammmmtObj =
             (MessprogrammMmt) messprogrammmmt.getData();
@@ -260,6 +260,6 @@ public class MessprogrammMmtService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         /* Delete the messprogrammmmt object*/
-        return defaultRepo.delete(messprogrammmmtObj);
+        return repository.delete(messprogrammmmtObj);
     }
 }

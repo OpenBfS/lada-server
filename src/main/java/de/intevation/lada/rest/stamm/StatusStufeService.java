@@ -54,7 +54,7 @@ public class StatusStufeService {
      * The data repository granting read access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all StatusStufe objects.
@@ -70,7 +70,7 @@ public class StatusStufeService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(StatusStufe.class);
+        return repository.getAll(StatusStufe.class);
     }
 
     /**
@@ -89,6 +89,6 @@ public class StatusStufeService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(StatusStufe.class, Integer.valueOf(id));
+        return repository.getById(StatusStufe.class, Integer.valueOf(id));
     }
 }

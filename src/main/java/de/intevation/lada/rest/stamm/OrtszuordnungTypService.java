@@ -54,7 +54,7 @@ public class OrtszuordnungTypService {
      * The data repository granting read access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all OrtszuordnungTyp objects.
@@ -70,7 +70,7 @@ public class OrtszuordnungTypService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(OrtszuordnungTyp.class);
+        return repository.getAll(OrtszuordnungTyp.class);
     }
 
     /**
@@ -89,6 +89,6 @@ public class OrtszuordnungTypService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(OrtszuordnungTyp.class, Integer.valueOf(id));
+        return repository.getById(OrtszuordnungTyp.class, Integer.valueOf(id));
     }
 }

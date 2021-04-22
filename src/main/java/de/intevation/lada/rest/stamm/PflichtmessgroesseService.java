@@ -61,7 +61,7 @@ public class PflichtmessgroesseService {
      * The data repository granting read access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all PflichtMessgroesse objects.
@@ -77,7 +77,7 @@ public class PflichtmessgroesseService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(PflichtMessgroesse.class);
+        return repository.getAll(PflichtMessgroesse.class);
     }
 
     /**
@@ -98,12 +98,12 @@ public class PflichtmessgroesseService {
     ) {
         QueryBuilder<PflichtMessgroesse> builder =
             new QueryBuilder<PflichtMessgroesse>(
-                defaultRepo.entityManager(),
+                repository.entityManager(),
                 PflichtMessgroesse.class
             );
         builder.and("messMethodeId", id);
         List<PflichtMessgroesse> result =
-            defaultRepo.filterPlain(builder.getQuery());
+            repository.filterPlain(builder.getQuery());
         if (!result.isEmpty()) {
             return new Response(true, StatusCodes.OK, result.get(0));
         }

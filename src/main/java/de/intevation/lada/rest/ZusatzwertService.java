@@ -79,7 +79,7 @@ public class ZusatzwertService {
      * The data repository granting read/write access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * The object lock mechanism.
@@ -116,17 +116,17 @@ public class ZusatzwertService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("probeId")) {
-            return defaultRepo.getAll(ZusatzWert.class);
+            return repository.getAll(ZusatzWert.class);
         }
         String probeId = params.getFirst("probeId");
         QueryBuilder<ZusatzWert> builder =
             new QueryBuilder<ZusatzWert>(
-                defaultRepo.entityManager(),
+                repository.entityManager(),
                 ZusatzWert.class);
         builder.and("probeId", probeId);
         return authorization.filter(
             request,
-            defaultRepo.filter(builder.getQuery()),
+            repository.filter(builder.getQuery()),
             ZusatzWert.class);
     }
 
@@ -149,7 +149,7 @@ public class ZusatzwertService {
     ) {
         return authorization.filter(
             request,
-            defaultRepo.getById(
+            repository.getById(
                 ZusatzWert.class, Integer.valueOf(id)),
             ZusatzWert.class);
     }
@@ -196,7 +196,7 @@ public class ZusatzwertService {
         /* Persist the new object*/
         return authorization.filter(
             request,
-            defaultRepo.create(zusatzwert),
+            repository.create(zusatzwert),
             ZusatzWert.class);
     }
 
@@ -243,11 +243,11 @@ public class ZusatzwertService {
         if (lock.isLocked(zusatzwert)) {
             return new Response(false, StatusCodes.CHANGED_VALUE, null);
         }
-        Response response = defaultRepo.update(zusatzwert);
+        Response response = repository.update(zusatzwert);
         if (!response.getSuccess()) {
             return response;
         }
-        Response updated = defaultRepo.getById(
+        Response updated = repository.getById(
             ZusatzWert.class,
             ((ZusatzWert) response.getData()).getId());
         return authorization.filter(
@@ -275,7 +275,7 @@ public class ZusatzwertService {
     ) {
         /* Get the object by id*/
         Response object =
-            defaultRepo.getById(
+            repository.getById(
                 ZusatzWert.class, Integer.valueOf(id));
         ZusatzWert obj = (ZusatzWert) object.getData();
         if (!authorization.isAuthorized(
@@ -290,6 +290,6 @@ public class ZusatzwertService {
             return new Response(false, StatusCodes.CHANGED_VALUE, null);
         }
         /* Delete the object*/
-        return defaultRepo.delete(obj);
+        return repository.delete(obj);
     }
 }

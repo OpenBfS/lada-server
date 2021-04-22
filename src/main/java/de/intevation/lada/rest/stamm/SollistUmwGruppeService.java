@@ -55,7 +55,7 @@ public class SollistUmwGruppeService {
      * The data repository granting read access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all SollistUmwGruppe objects.
@@ -71,6 +71,6 @@ public class SollistUmwGruppeService {
             @Context HttpHeaders headers,
             @Context UriInfo info
     ) {
-        return defaultRepo.getAll(SollistUmwGrp.class);
+        return repository.getAll(SollistUmwGrp.class);
     }
 }

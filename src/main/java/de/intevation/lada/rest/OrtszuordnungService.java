@@ -91,7 +91,7 @@ public class OrtszuordnungService {
      * The data repository granting read/write access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * The object lock mechanism.
@@ -133,17 +133,17 @@ public class OrtszuordnungService {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("probeId")) {
             logger.debug("get all");
-            return defaultRepo.getAll(Ortszuordnung.class);
+            return repository.getAll(Ortszuordnung.class);
         }
         String probeId = params.getFirst("probeId");
         QueryBuilder<Ortszuordnung> builder =
             new QueryBuilder<Ortszuordnung>(
-                defaultRepo.entityManager(),
+                repository.entityManager(),
                 Ortszuordnung.class);
         builder.and("probeId", probeId);
         Response r = authorization.filter(
             request,
-            defaultRepo.filter(builder.getQuery()),
+            repository.filter(builder.getQuery()),
             Ortszuordnung.class);
         if (r.getSuccess()) {
             @SuppressWarnings("unchecked")
@@ -180,7 +180,7 @@ public class OrtszuordnungService {
         @PathParam("id") String id
     ) {
         Response response =
-            defaultRepo.getById(
+            repository.getById(
                 Ortszuordnung.class, Integer.valueOf(id));
         Ortszuordnung ort = (Ortszuordnung) response.getData();
         Violation violation = validator.validate(ort);
@@ -241,7 +241,7 @@ public class OrtszuordnungService {
         }
 
         /* Persist the new object*/
-        Response response = defaultRepo.create(ort);
+        Response response = repository.create(ort);
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
         }
@@ -302,11 +302,11 @@ public class OrtszuordnungService {
             return response;
         }
 
-        Response response = defaultRepo.update(ort);
+        Response response = repository.update(ort);
         if (!response.getSuccess()) {
             return response;
         }
-        Response updated = defaultRepo.getById(
+        Response updated = repository.getById(
             Ortszuordnung.class,
             ((Ortszuordnung) response.getData()).getId());
         if (violation.hasWarnings()) {
@@ -337,7 +337,7 @@ public class OrtszuordnungService {
         @PathParam("id") String id
     ) {
         Response object =
-            defaultRepo.getById(
+            repository.getById(
                 Ortszuordnung.class, Integer.valueOf(id));
         Ortszuordnung ortObj = (Ortszuordnung) object.getData();
         if (!authorization.isAuthorized(
@@ -351,6 +351,6 @@ public class OrtszuordnungService {
             return new Response(false, StatusCodes.CHANGED_VALUE, null);
         }
 
-        return defaultRepo.delete(ortObj);
+        return repository.delete(ortObj);
     }
 }

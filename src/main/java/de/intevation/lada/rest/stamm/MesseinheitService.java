@@ -63,7 +63,7 @@ public class MesseinheitService {
      * The data repository granting read access.
      */
     @Inject
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all MessEinheit objects.
@@ -92,17 +92,17 @@ public class MesseinheitService {
             || !params.containsKey("mehId")
             || params.getFirst("mehId").equals("")
         ) {
-            return defaultRepo.getAll(MessEinheit.class);
+            return repository.getAll(MessEinheit.class);
         }
         String mehId = params.getFirst("mehId");
 
 
-        MessEinheit meh = defaultRepo.getByIdPlain(
+        MessEinheit meh = repository.getByIdPlain(
             MessEinheit.class, Integer.parseInt(mehId));
         MessEinheit secMeh = null;
         if (params.containsKey("secMehId")) {
             String secMehId = params.getFirst("secMehId");
-            secMeh = defaultRepo.getByIdPlain(
+            secMeh = repository.getByIdPlain(
                 MessEinheit.class, Integer.parseInt(secMehId));
         }
         List<MessEinheit> einheits =
@@ -151,6 +151,6 @@ public class MesseinheitService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(MessEinheit.class, Integer.valueOf(id));
+        return repository.getById(MessEinheit.class, Integer.valueOf(id));
     }
 }
