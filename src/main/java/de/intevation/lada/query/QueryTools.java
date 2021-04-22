@@ -125,15 +125,20 @@ public class QueryTools {
                 if (filterType.equals("generictext")) {
                     String genTextParam = ":" + filter.getParameter() + "Param";
                     String genTextValue = filter.getParameter() + "Value";
-                    currentFilterString =
-                        currentFilterString.replace(
-                            genTextParam,
-                            customColumn.getGridColumn().getDataIndex());
-                    currentFilterParam =
-                        genTextValue + customColumn.getGridColumnId();
-                    currentFilterString =
-                        currentFilterString.replace(
-                            ":" + genTextValue, ":" + currentFilterParam);
+                    if (!customColumn.getFilterIsNull()) {
+                        currentFilterString =
+                            currentFilterString.replace(
+                                genTextParam,
+                                customColumn.getGridColumn().getDataIndex());
+                        currentFilterParam =
+                            genTextValue + customColumn.getGridColumnId();
+                        currentFilterString =
+                            currentFilterString.replace(
+                                ":" + genTextValue, ":" + currentFilterParam);
+                    } else {
+                        currentFilterString =
+                            customColumn.getGridColumn().getDataIndex() + " IS NULL";
+                    }
                 } else if (filterType.equals("tag")) {
                     String[] tagIds = filterValue.split(",");
                     int tagNumber = tagIds.length;
@@ -170,6 +175,9 @@ public class QueryTools {
                         filterSql += " WHERE ";
                     } else {
                         filterSql += " AND ";
+                    }
+                    if (customColumn.getFilterNegate()) {
+                        currentFilterString = "NOT(" + currentFilterString + ")";
                     }
                     filterSql += currentFilterString;
                 }

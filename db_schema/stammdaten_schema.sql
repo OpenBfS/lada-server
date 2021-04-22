@@ -735,7 +735,7 @@ CREATE TABLE probenehmer (
     plz character varying(5),
     strasse character varying(30),
     telefon character varying(20),
-    tp character varying(3),
+    tourenplan character varying(3),
     typ character(1),
     letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE(prn_id, netzbetreiber_id)
