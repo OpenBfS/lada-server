@@ -62,14 +62,14 @@ Maven Checkstyle plugin. Some design related checks where removed.
     <module name="JavadocType">
       <property name="severity" value="warning"/>
     </module>
-    <!-- <module name="JavadocMethod">
+    <module name="JavadocMethod">
       <property name="severity" value="warning"/>
       <property name="scope" value="protected"/>
       <property name="validateThrows" value="true"/>
       <property name="allowMissingPropertyJavadoc" value="true"/>
       <property name="tokens" value="METHOD_DEF"/>
     </module>
-    <module name="JavadocVariable">
+    <!-- <module name="JavadocVariable">
       <property name="severity" value="warning"/>
       <property name="scope" value="protected"/>
     </module> -->
