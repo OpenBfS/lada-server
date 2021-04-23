@@ -123,43 +123,40 @@ public class Repository {
     /**
      * Get objects from database using the given filter.
      *
+     * @param <T> The type of the objects.
      * @param filter Filter used to request objects.
      *
      * @return Response object containing the filtered list of objects.
      */
     public <T> Response filter(CriteriaQuery<T> filter) {
-        List<T> result =
-            transaction.entityManager()
-                .createQuery(filter).getResultList();
+        List<T> result = filterPlain(filter);
         return new Response(true, StatusCodes.OK, result);
     }
 
     /**
      * Get all objects.
      *
+     * @param <T> The type of the objects.
      * @param clazz The type of the objects.
      *
      * @return Response object containg all requested objects.
      */
     public <T> Response getAll(Class<T> clazz) {
-        EntityManager manager = transaction.entityManager();
-        QueryBuilder<T> builder =
-            new QueryBuilder<T>(manager, clazz);
-        List<T> result =
-            manager.createQuery(builder.getQuery()).getResultList();
+        List<T> result = getAllPlain(clazz);
         return new Response(true, StatusCodes.OK, result);
     }
 
     /**
      * Get an object by its id.
      *
+     * @param <T> The type of the objects.
      * @param clazz The type of the object.
      * @param id The id of the object.
      *
      * @return Response object containg the requested object.
      */
     public <T> Response getById(Class<T> clazz, Object id) {
-        T item = transaction.entityManager().find(clazz, id);
+        T item = getByIdPlain(clazz, id);
         if (item == null) {
             return new Response(false, StatusCodes.NOT_EXISTING, null);
         }
@@ -175,11 +172,27 @@ public class Repository {
         return transaction.entityManager();
     }
 
+    /**
+     * Get objects from database using the given filter.
+     *
+     * @param <T> The type of the objects.
+     * @param filter Filter used to request objects.
+     *
+     * @return List<T> with the requested objects.
+     */
     public <T> List<T> filterPlain(CriteriaQuery<T> filter) {
         return transaction.entityManager()
             .createQuery(filter).getResultList();
     }
 
+    /**
+     * Get all objects.
+     *
+     * @param <T> The type of the objects.
+     * @param clazz The type of the objects.
+     *
+     * @return List<T> with the objects of the requested type.
+     */
     public <T> List<T> getAllPlain(Class<T> clazz) {
         EntityManager manager = transaction.entityManager();
         QueryBuilder<T> builder =
@@ -187,6 +200,15 @@ public class Repository {
         return manager.createQuery(builder.getQuery()).getResultList();
     }
 
+    /**
+     * Get an object by its id.
+     *
+     * @param <T> The type of the objects.
+     * @param clazz The type of the object.
+     * @param id The id of the object.
+     *
+     * @return The requested object or null if not found.
+     */
     public <T> T getByIdPlain(Class<T> clazz, Object id) {
         return transaction.entityManager().find(clazz, id);
     }
