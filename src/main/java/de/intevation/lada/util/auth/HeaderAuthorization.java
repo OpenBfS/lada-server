@@ -14,7 +14,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import de.intevation.lada.model.land.KommentarM;
@@ -101,10 +100,8 @@ public class HeaderAuthorization implements Authorization {
                 request.getAttribute("lada.user.roles").toString();
             UserInfo info = getGroupsFromDB(roleString);
             info.setName(request.getAttribute("lada.user.name").toString());
-            QueryBuilder<LadaUser> builder = new QueryBuilder<LadaUser>(
-                repository.entityManager(),
-                LadaUser.class
-            );
+            QueryBuilder<LadaUser> builder =
+                repository.queryBuilder(LadaUser.class);
             builder.and("name", info.getName());
             List<LadaUser> user =
                 repository.filterPlain(builder.getQuery());
@@ -206,9 +203,7 @@ public class HeaderAuthorization implements Authorization {
      * @return The UserInfo contianing roles and user name.
      */
     private UserInfo getGroupsFromDB(String roles) {
-        QueryBuilder<Auth> builder = new QueryBuilder<Auth>(
-            repository.entityManager(),
-            Auth.class);
+        QueryBuilder<Auth> builder = repository.queryBuilder(Auth.class);
         roles = roles.replace("[", "");
         roles = roles.replace("]", "");
         roles = roles.replace(" ", "");
@@ -231,11 +226,7 @@ public class HeaderAuthorization implements Authorization {
      */
     @Override
     public boolean isReadOnly(Integer probeId) {
-        EntityManager manager = repository.entityManager();
-        QueryBuilder<Messung> builder =
-            new QueryBuilder<Messung>(
-                manager,
-                Messung.class);
+        QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
         builder.and("probeId", probeId);
         Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")

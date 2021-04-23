@@ -81,9 +81,8 @@ public class ColumnService {
             return repository.getAll(GridColumn.class);
         }
 
-        QueryBuilder<GridColumn> builder = new QueryBuilder<GridColumn>(
-            repository.entityManager(),
-            GridColumn.class);
+        QueryBuilder<GridColumn> builder =
+            repository.queryBuilder(GridColumn.class);
         builder.and("baseQuery", qid);
 
         return repository.filter(builder.getQuery());

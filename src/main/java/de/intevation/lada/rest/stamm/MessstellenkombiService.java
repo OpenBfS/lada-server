@@ -83,9 +83,7 @@ public class MessstellenkombiService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
 
-        QueryBuilder<Auth> mstMlQuery = new QueryBuilder<Auth>(
-            repository.entityManager(),
-            Auth.class);
+        QueryBuilder<Auth> mstMlQuery = repository.queryBuilder(Auth.class);
         mstMlQuery.orIntList("funktionId", Arrays.asList(0, 1));
 
         if (params.containsKey("netzbetreiberId")) {

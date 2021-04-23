@@ -212,9 +212,7 @@ public class LafObjectMapper {
                 attribute = cfg.get(0).getToValue();
             }
             QueryBuilder<Zeitbasis> builder =
-                new QueryBuilder<>(
-                    repository.entityManager(),
-                    Zeitbasis.class);
+                repository.queryBuilder(Zeitbasis.class);
             builder.and("bezeichnung", attribute);
             List<Zeitbasis> zb = repository.filterPlain(builder.getQuery());
             if (zb == null || zb.isEmpty()) {
@@ -955,8 +953,7 @@ public class LafObjectMapper {
         }
         // ... and messwerte
         QueryBuilder<Messwert> messwBuilder =
-            new QueryBuilder<Messwert>(
-                repository.entityManager(), Messwert.class);
+            repository.queryBuilder(Messwert.class);
         messwBuilder.and("messungsId", newMessung.getId());
         Response response =
             repository.filter(messwBuilder.getQuery());
@@ -1082,9 +1079,7 @@ public class LafObjectMapper {
             }
         }
         QueryBuilder<ProbenZusatz> builder =
-            new QueryBuilder<ProbenZusatz>(
-                repository.entityManager(),
-                ProbenZusatz.class);
+            repository.queryBuilder(ProbenZusatz.class);
         if (isId) {
             builder.and("id", attribute);
         } else {
@@ -1148,9 +1143,7 @@ public class LafObjectMapper {
                 }
             }
             QueryBuilder<Messgroesse> builder =
-                new QueryBuilder<Messgroesse>(
-                    repository.entityManager(),
-                    Messgroesse.class);
+                repository.queryBuilder(Messgroesse.class);
             // accept various nuclide notations (e.g.
             // "Cs-134", "CS 134", "Cs134", "SC134", ...)
             String messgroesseString = attribute;
@@ -1211,9 +1204,7 @@ public class LafObjectMapper {
                 }
             }
             QueryBuilder<MessEinheit> builder =
-                new QueryBuilder<MessEinheit>(
-                    repository.entityManager(),
-                    MessEinheit.class);
+                repository.queryBuilder(MessEinheit.class);
             builder.and("einheit", attribute);
             List<MessEinheit> einheit =
                 (List<MessEinheit>) repository.filterPlain(builder.getQuery());
@@ -1352,9 +1343,7 @@ public class LafObjectMapper {
         // validation check of new status entries
         int newKombi = 0;
         QueryBuilder<StatusKombi> builder =
-            new QueryBuilder<StatusKombi>(
-                repository.entityManager(),
-                StatusKombi.class);
+            repository.queryBuilder(StatusKombi.class);
         builder.and("statusWert", statusWert);
         builder.and("statusStufe", statusStufe);
         List<StatusKombi> kombi =
@@ -1376,9 +1365,7 @@ public class LafObjectMapper {
             StatusKombi.class, currentStatus.getStatusKombi());
         // check if erreichbar
         QueryBuilder<StatusErreichbar> errFilter =
-            new QueryBuilder<StatusErreichbar>(
-                repository.entityManager(),
-                StatusErreichbar.class);
+            repository.queryBuilder(StatusErreichbar.class);
         errFilter.and("stufeId", statusStufe);
         errFilter.and("wertId", statusWert);
         errFilter.and("curStufe", currentKombi.getStatusStufe().getId());
@@ -1394,8 +1381,8 @@ public class LafObjectMapper {
             return false;
         }
         //Cleanup Messwerte for Status 7
-            QueryBuilder<Messwert> builderMW = new QueryBuilder<Messwert>(
-                    repository.entityManager(), Messwert.class);
+            QueryBuilder<Messwert> builderMW =
+                repository.queryBuilder(Messwert.class);
             builderMW.and("messungsId", messung.getId());
             Response messwertQry =
                 repository.filter(builderMW.getQuery());
@@ -1505,9 +1492,8 @@ public class LafObjectMapper {
 
     private void createReiMesspunkt(LafRawData.Probe object, Probe probe) {
 
-        QueryBuilder<Ortszuordnung> builder = new QueryBuilder<Ortszuordnung>(
-            repository.entityManager(),
-            Ortszuordnung.class);
+        QueryBuilder<Ortszuordnung> builder =
+            repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", probe.getId());
         List<Ortszuordnung> zuordnungen =
             repository.filterPlain(builder.getQuery());
@@ -1523,9 +1509,7 @@ public class LafObjectMapper {
             // WE HAVE A REI-MESSPUNKT!
             // Search for the ort in db
             Map<String, String> uo = uort.get(0);
-            QueryBuilder<Ort> builder1 = new QueryBuilder<Ort>(
-                repository.entityManager(),
-                Ort.class);
+            QueryBuilder<Ort> builder1 = repository.queryBuilder(Ort.class);
             builder1.and("ortId", uo.get("U_ORTS_ZUSATZCODE"));
             List<Ort> messpunkte =
                 repository.filterPlain(builder1.getQuery());
@@ -1542,9 +1526,7 @@ public class LafObjectMapper {
                 repository.update(probe);
             } else if (uo.get("U_ORTS_ZUSATZCODE").length() == 4) {
                 QueryBuilder<KtaGruppe> builderKta =
-                    new QueryBuilder<KtaGruppe>(
-                        repository.entityManager(),
-                        KtaGruppe.class);
+                    repository.queryBuilder(KtaGruppe.class);
                 builderKta.and("ktaGruppe", uo.get("U_ORTS_ZUSATZCODE"));
                 List<KtaGruppe> ktaGrp =
                     repository.filterPlain(builderKta.getQuery());
@@ -1697,9 +1679,7 @@ public class LafObjectMapper {
                 }
             } else {
                 QueryBuilder<KoordinatenArt> kdaBuilder =
-                    new QueryBuilder<KoordinatenArt>(
-                        repository.entityManager(),
-                        KoordinatenArt.class);
+                    repository.queryBuilder(KoordinatenArt.class);
                 kdaBuilder.and(
                     "koordinatenart", attributes.get(type + "KOORDINATEN_ART"));
                 List<KoordinatenArt> arten =
@@ -1725,9 +1705,7 @@ public class LafObjectMapper {
             && !attributes.get(type + "GEMEINDENAME").equals("")
         ) {
             QueryBuilder<Verwaltungseinheit> builder =
-                new QueryBuilder<Verwaltungseinheit>(
-                    repository.entityManager(),
-                    Verwaltungseinheit.class);
+                repository.queryBuilder(Verwaltungseinheit.class);
             builder.and("bezeichnung", attributes.get(type + "GEMEINDENAME"));
             List<Verwaltungseinheit> ves =
                 repository.filterPlain(builder.getQuery());
@@ -1778,9 +1756,7 @@ public class LafObjectMapper {
 
         if (staatFilter.length() > 0) {
             QueryBuilder<Staat> builderStaat =
-                new QueryBuilder<Staat>(
-                    repository.entityManager(),
-                    Staat.class);
+                repository.queryBuilder(Staat.class);
             builderStaat.and(staatFilter, hLand);
             List<Staat> staat =
                 repository.filterPlain(builderStaat.getQuery());
@@ -1952,9 +1928,7 @@ public class LafObjectMapper {
                 }
             }
             QueryBuilder<Datenbasis> builder =
-                new QueryBuilder<Datenbasis>(
-                    repository.entityManager(),
-                    Datenbasis.class);
+                repository.queryBuilder(Datenbasis.class);
             builder.and("datenbasis", attr);
             List<Datenbasis> datenbasis =
                 (List<Datenbasis>) repository.filterPlain(builder.getQuery());
@@ -2004,9 +1978,7 @@ public class LafObjectMapper {
             && probe.getBaId() == null
         ) {
             QueryBuilder<MessprogrammTransfer> builder =
-                new QueryBuilder<MessprogrammTransfer>(
-                    repository.entityManager(),
-                    MessprogrammTransfer.class);
+                repository.queryBuilder(MessprogrammTransfer.class);
             builder.and("messprogrammS", value);
             List<MessprogrammTransfer> transfer =
                 (List<MessprogrammTransfer>) repository.filterPlain(
@@ -2024,9 +1996,7 @@ public class LafObjectMapper {
         }
         if ("MESSPROGRAMM_C".equals(key) && !value.equals("")) {
             QueryBuilder<MessprogrammTransfer> builder =
-                new QueryBuilder<MessprogrammTransfer>(
-                    repository.entityManager(),
-                    MessprogrammTransfer.class);
+                repository.queryBuilder(MessprogrammTransfer.class);
             builder.and("messprogrammC", value);
             List<MessprogrammTransfer> transfer =
                 (List<MessprogrammTransfer>) repository.filterPlain(
@@ -2045,9 +2015,7 @@ public class LafObjectMapper {
 
         if ("ERZEUGER".equals(key) && !value.equals("")) {
             QueryBuilder<DatensatzErzeuger> builder =
-                    new QueryBuilder<DatensatzErzeuger>(
-                            repository.entityManager(),
-                            DatensatzErzeuger.class);
+                repository.queryBuilder(DatensatzErzeuger.class);
             builder.and("netzbetreiberId", netzbetreiberId);
             builder.and("datensatzErzeugerId", value);
             List<DatensatzErzeuger> datensatzErzeuger =
@@ -2064,9 +2032,7 @@ public class LafObjectMapper {
 
         if ("MESSPROGRAMM_LAND".equals(key) && !value.equals("")) {
             QueryBuilder<MessprogrammKategorie> builder =
-                    new QueryBuilder<MessprogrammKategorie>(
-                            repository.entityManager(),
-                            MessprogrammKategorie.class);
+                repository.queryBuilder(MessprogrammKategorie.class);
             builder.and("netzbetreiberId", netzbetreiberId);
             builder.and("code", value);
             List<MessprogrammKategorie> kategorie =
@@ -2083,9 +2049,7 @@ public class LafObjectMapper {
 
         if ("PROBENAHMEINSTITUTION".equals(key) && !value.equals("")) {
             QueryBuilder<Probenehmer> builder =
-                    new QueryBuilder<Probenehmer>(
-                            repository.entityManager(),
-                            Probenehmer.class);
+                repository.queryBuilder(Probenehmer.class);
             builder.and("netzbetreiberId", netzbetreiberId);
             builder.and("prnId", value);
             List<Probenehmer> prn =
@@ -2120,7 +2084,8 @@ public class LafObjectMapper {
             && probe.getUmwId() == null
             && !value.equals("")
         ) {
-            Umwelt umw = repository.getByIdPlain(Umwelt.class, value.toString());
+            Umwelt umw = repository.getByIdPlain(
+                Umwelt.class, value.toString());
             if (umw == null) {
                 currentWarnings.add(
                     new ReportItem(
@@ -2138,9 +2103,7 @@ public class LafObjectMapper {
             && !value.equals("")
         ) {
             QueryBuilder<Umwelt> builder =
-                new QueryBuilder<Umwelt>(
-                    repository.entityManager(),
-                    Umwelt.class);
+                repository.queryBuilder(Umwelt.class);
             int length = value.toString().length() > 80
                 ? 80
                 : value.toString().length();
@@ -2195,9 +2158,7 @@ public class LafObjectMapper {
         if ("REI_PROGRAMMPUNKTGRUPPE".equals(key) && !value.equals("")
             || "REI_PROGRAMMPUNKT".equals(key) && !value.equals("")) {
             QueryBuilder<ReiProgpunktGruppe> builder =
-                new QueryBuilder<ReiProgpunktGruppe>(
-                    repository.entityManager(),
-                    ReiProgpunktGruppe.class);
+                repository.queryBuilder(ReiProgpunktGruppe.class);
             builder.and("reiProgPunktGruppe", value.toString());
             List<ReiProgpunktGruppe> list =
                 repository.filterPlain(builder.getQuery());
@@ -2234,9 +2195,7 @@ public class LafObjectMapper {
                 }
             }
             QueryBuilder<Probenart> builder =
-                new QueryBuilder<Probenart>(
-                    repository.entityManager(),
-                    Probenart.class);
+                repository.queryBuilder(Probenart.class);
             builder.and("probenart", attr);
             List<Probenart> probenart =
                 (List<Probenart>) repository.filterPlain(builder.getQuery());
@@ -2284,9 +2243,7 @@ public class LafObjectMapper {
             }
         } else if ("MESSMETHODE_C".equals(key) && !value.equals("")) {
             QueryBuilder<MessMethode> builder =
-                new QueryBuilder<MessMethode>(
-                    repository.entityManager(),
-                    MessMethode.class);
+                repository.queryBuilder(MessMethode.class);
             builder.and("messmethode", value.toString());
             List<MessMethode> mm =
                 (List<MessMethode>) repository.filterPlain(builder.getQuery());

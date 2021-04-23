@@ -36,10 +36,7 @@ public class MessungIdentifier implements Identifier {
                 "Object is not of type Messung");
         }
         Messung messung = (Messung) object;
-        QueryBuilder<Messung> builder = new QueryBuilder<Messung>(
-            repository.entityManager(),
-            Messung.class
-        );
+        QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
 
         // extermeMessungsId null and hauptprobenNr not null and mstId not null.
         if (messung.getExterneMessungsId() == null

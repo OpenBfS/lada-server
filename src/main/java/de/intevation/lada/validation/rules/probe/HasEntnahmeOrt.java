@@ -48,8 +48,7 @@ public class HasEntnahmeOrt implements Rule {
                 return null;
         }
         QueryBuilder<Ortszuordnung> builder =
-            new QueryBuilder<Ortszuordnung>(
-                repository.entityManager(), Ortszuordnung.class);
+            repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", id);
         Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")

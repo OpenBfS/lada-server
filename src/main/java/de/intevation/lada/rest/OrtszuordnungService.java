@@ -137,9 +137,7 @@ public class OrtszuordnungService {
         }
         String probeId = params.getFirst("probeId");
         QueryBuilder<Ortszuordnung> builder =
-            new QueryBuilder<Ortszuordnung>(
-                repository.entityManager(),
-                Ortszuordnung.class);
+            repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", probeId);
         Response r = authorization.filter(
             request,

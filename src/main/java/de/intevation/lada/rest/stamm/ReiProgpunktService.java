@@ -92,10 +92,7 @@ public class ReiProgpunktService {
                 "Not a valid filter id");
         }
         QueryBuilder<ReiProgpunktGrpZuord> builder =
-            new QueryBuilder<ReiProgpunktGrpZuord>(
-                repository.entityManager(),
-                ReiProgpunktGrpZuord.class
-            );
+            repository.queryBuilder(ReiProgpunktGrpZuord.class);
         builder.and("reiProgpunktGrpId", id);
         List<ReiProgpunktGrpZuord> zuord =
             repository.filterPlain(builder.getQuery());
@@ -103,10 +100,7 @@ public class ReiProgpunktService {
             return new Response(true, StatusCodes.OK, null);
         }
         QueryBuilder<ReiProgpunkt> builder1 =
-            new QueryBuilder<ReiProgpunkt>(
-                repository.entityManager(),
-                ReiProgpunkt.class
-            );
+            repository.queryBuilder(ReiProgpunkt.class);
         List<Integer> ids = new ArrayList<Integer>();
         for (int i = 0; i < zuord.size(); i++) {
             ids.add(zuord.get(i).getReiProgpunktId());

@@ -217,10 +217,7 @@ public class JsonExporter implements Exporter {
     }
 
     private String createJsonString(List<Integer> probeIds, UserInfo userInfo) {
-        QueryBuilder<Probe> builder = new QueryBuilder<Probe>(
-                repository.entityManager(),
-                Probe.class
-            );
+        QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
         for (Integer id : probeIds) {
             builder.or("id", id);
         }
@@ -318,10 +315,7 @@ public class JsonExporter implements Exporter {
     }
 
     private void addMessungen(JsonNode probe) {
-        QueryBuilder<Messung> builder = new QueryBuilder<Messung>(
-                repository.entityManager(),
-                Messung.class
-            );
+        QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
         builder.and("probeId", probe.get("id").asInt());
         List<Messung> messungen =
             repository.filterPlain(builder.getQuery());
@@ -348,10 +342,8 @@ public class JsonExporter implements Exporter {
     }
 
     private void addKommentare(JsonNode probe) {
-        QueryBuilder<KommentarP> builder = new QueryBuilder<KommentarP>(
-                repository.entityManager(),
-                KommentarP.class
-            );
+        QueryBuilder<KommentarP> builder =
+            repository.queryBuilder(KommentarP.class);
         builder.and("probeId", probe.get("id").asInt());
         List<KommentarP> kommentare =
             repository.filterPlain(builder.getQuery());
@@ -376,10 +368,8 @@ public class JsonExporter implements Exporter {
     }
 
     private void addZusatzwerte(JsonNode probe) {
-        QueryBuilder<ZusatzWert> builder = new QueryBuilder<ZusatzWert>(
-                repository.entityManager(),
-                ZusatzWert.class
-            );
+        QueryBuilder<ZusatzWert> builder =
+            repository.queryBuilder(ZusatzWert.class);
         builder.and("probeId", probe.get("id").asInt());
         List<ZusatzWert> zusatzwerte =
             repository.filterPlain(builder.getQuery());
@@ -414,10 +404,8 @@ public class JsonExporter implements Exporter {
             return;
         }
 
-        QueryBuilder<Deskriptoren> builder = new QueryBuilder<Deskriptoren>(
-                repository.entityManager(),
-                Deskriptoren.class
-            );
+        QueryBuilder<Deskriptoren> builder =
+            repository.queryBuilder(Deskriptoren.class);
         int vorgaenger = 0;
         ObjectNode node = new ObjectNode(JsonNodeFactory.instance);
         boolean isZebs = Integer.parseInt(parts[1]) == 1;
@@ -460,10 +448,8 @@ public class JsonExporter implements Exporter {
     }
 
     private void addMesswerte(JsonNode node) {
-        QueryBuilder<Messwert> builder = new QueryBuilder<Messwert>(
-                repository.entityManager(),
-                Messwert.class
-            );
+        QueryBuilder<Messwert> builder =
+            repository.queryBuilder(Messwert.class);
         builder.and("messungsId", node.get("id").asInt());
         List<Messwert> messwerte =
             repository.filterPlain(builder.getQuery());
@@ -493,10 +479,8 @@ public class JsonExporter implements Exporter {
     }
 
     private void addMessungsKommentare(JsonNode node) {
-        QueryBuilder<KommentarM> builder = new QueryBuilder<KommentarM>(
-                repository.entityManager(),
-                KommentarM.class
-            );
+        QueryBuilder<KommentarM> builder =
+            repository.queryBuilder(KommentarM.class);
         builder.and("messungsId", node.get("id").asInt());
         List<KommentarM> kommentare =
             repository.filterPlain(builder.getQuery());
@@ -522,10 +506,7 @@ public class JsonExporter implements Exporter {
 
     private void addStatusProtokoll(JsonNode node) {
         QueryBuilder<StatusProtokoll> builder =
-            new QueryBuilder<StatusProtokoll>(
-                repository.entityManager(),
-                StatusProtokoll.class
-            );
+            repository.queryBuilder(StatusProtokoll.class);
         builder.and("messungsId", node.get("id").asInt());
         List<StatusProtokoll> status =
             repository.filterPlain(builder.getQuery());
@@ -560,10 +541,8 @@ public class JsonExporter implements Exporter {
     }
 
     private void addOrtszuordung(JsonNode node) {
-        QueryBuilder<Ortszuordnung> builder = new QueryBuilder<Ortszuordnung>(
-                repository.entityManager(),
-                Ortszuordnung.class
-            );
+        QueryBuilder<Ortszuordnung> builder =
+            repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", node.get("id").asInt());
         List<Ortszuordnung> ortszuordnung =
             repository.filterPlain(builder.getQuery());

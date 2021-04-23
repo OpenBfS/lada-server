@@ -193,9 +193,7 @@ public class MessprogrammService {
                     Messprogramm.class, Integer.valueOf(id)),
                 Messprogramm.class);
         Messprogramm mp = (Messprogramm) response.getData();
-        QueryBuilder<Probe> builder =
-             new QueryBuilder<Probe>(
-                 repository.entityManager(), Probe.class);
+        QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
         builder.and("mprId", mp.getId());
         List<Probe> probes =
             repository.filterPlain(builder.getQuery());
@@ -399,10 +397,8 @@ public class MessprogrammService {
             return new Response(false, StatusCodes.NOT_EXISTING, null);
         }
 
-        QueryBuilder<Messprogramm> builder = new QueryBuilder<>(
-            repository.entityManager(),
-            Messprogramm.class
-        );
+        QueryBuilder<Messprogramm> builder =
+            repository.queryBuilder(Messprogramm.class);
         builder.orIn("id", idList);
         List<Messprogramm> messprogramme =
             repository.filterPlain(builder.getQuery());
@@ -450,9 +446,7 @@ public class MessprogrammService {
                 Messprogramm.class, Integer.valueOf(id));
         Messprogramm messprogrammObj = (Messprogramm) messprogramm.getData();
         /* check if probe references to the messprogramm exists */
-        QueryBuilder<Probe> builder =
-                new QueryBuilder<Probe>(
-                    repository.entityManager(), Probe.class);
+        QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
         builder.and("mprId",  ((Messprogramm) messprogramm.getData()).getId());
         List<Probe> probes =
             repository.filterPlain(builder.getQuery());

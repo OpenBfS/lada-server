@@ -156,9 +156,8 @@ public class ObjectMerger {
         Probe target,
         List<ZusatzWert> zusatzwerte
     ) {
-        QueryBuilder<ZusatzWert> builder = new QueryBuilder<ZusatzWert>(
-            repository.entityManager(),
-            ZusatzWert.class);
+        QueryBuilder<ZusatzWert> builder =
+            repository.queryBuilder(ZusatzWert.class);
         for (int i = 0; i < zusatzwerte.size(); i++) {
             builder.and("probeId", target.getId());
             builder.and("pzsId", zusatzwerte.get(i).getPzsId());
@@ -196,9 +195,8 @@ public class ObjectMerger {
         Probe target,
         List<KommentarP> kommentare
     ) {
-        QueryBuilder<KommentarP> builder = new QueryBuilder<KommentarP>(
-            repository.entityManager(),
-            KommentarP.class);
+        QueryBuilder<KommentarP> builder =
+            repository.queryBuilder(KommentarP.class);
         for (int i = 0; i < kommentare.size(); i++) {
             builder.and("probeId", target.getId());
             builder.and("mstId", kommentare.get(i).getMstId());
@@ -229,9 +227,8 @@ public class ObjectMerger {
         Messung target,
         List<KommentarM> kommentare
     ) {
-        QueryBuilder<KommentarM> builder = new QueryBuilder<KommentarM>(
-            repository.entityManager(),
-            KommentarM.class);
+        QueryBuilder<KommentarM> builder =
+            repository.queryBuilder(KommentarM.class);
         for (int i = 0; i < kommentare.size(); i++) {
             builder.and("messungsId", target.getId());
             builder.and("mstId", kommentare.get(i).getMstId());
@@ -262,9 +259,8 @@ public class ObjectMerger {
         Messung target,
         List<Messwert> messwerte
     ) {
-        QueryBuilder<Messwert> builder = new QueryBuilder<Messwert>(
-            repository.entityManager(),
-            Messwert.class);
+        QueryBuilder<Messwert> builder =
+            repository.queryBuilder(Messwert.class);
         builder.and("messungsId", target.getId());
         List<Messwert> found =
             repository.filterPlain(builder.getQuery());
@@ -304,9 +300,8 @@ public class ObjectMerger {
         int probeId,
         Ortszuordnung ort
     ) {
-        QueryBuilder<Ortszuordnung> builder = new QueryBuilder<Ortszuordnung>(
-            repository.entityManager(),
-            Ortszuordnung.class);
+        QueryBuilder<Ortszuordnung> builder =
+            repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", probeId);
         builder.and("ortszuordnungTyp", "E");
         List<Ortszuordnung> found =
@@ -343,9 +338,8 @@ public class ObjectMerger {
         int probeId,
         List<Ortszuordnung> orte
     ) {
-        QueryBuilder<Ortszuordnung> builder = new QueryBuilder<Ortszuordnung>(
-            repository.entityManager(),
-            Ortszuordnung.class);
+        QueryBuilder<Ortszuordnung> builder =
+            repository.queryBuilder(Ortszuordnung.class);
         for (int i = 0; i < orte.size(); i++) {
             builder.and("probeId", probeId);
             builder.and("ortszuordnungTyp", "U");

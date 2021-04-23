@@ -99,9 +99,8 @@ public class DeskriptorService {
         ) {
             return repository.getAll(Deskriptoren.class);
         }
-        QueryBuilder<Deskriptoren> builder = new QueryBuilder<Deskriptoren>(
-            repository.entityManager(),
-            Deskriptoren.class);
+        QueryBuilder<Deskriptoren> builder =
+            repository.queryBuilder(Deskriptoren.class);
         builder.and("sn", 0).not();
         try {
             builder.and("ebene",

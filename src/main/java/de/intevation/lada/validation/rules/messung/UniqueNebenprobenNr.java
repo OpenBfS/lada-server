@@ -37,9 +37,8 @@ public class UniqueNebenprobenNr implements Rule {
     public Violation execute(Object object) {
         Messung messung = (Messung) object;
         if (messung.getNebenprobenNr() != null) {
-            QueryBuilder<Messung> builder = new QueryBuilder<Messung>(
-                repository.entityManager(),
-                Messung.class);
+            QueryBuilder<Messung> builder =
+                repository.queryBuilder(Messung.class);
             builder.and("nebenprobenNr", messung.getNebenprobenNr());
             builder.and("probeId", messung.getProbeId());
             Response response = repository.filter(builder.getQuery());

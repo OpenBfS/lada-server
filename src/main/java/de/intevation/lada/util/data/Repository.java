@@ -163,6 +163,13 @@ public class Repository {
         return new Response(true, StatusCodes.OK, item);
     }
 
+    /**
+     * Get Query from SQL statement.
+     *
+     * @param sql String representing a native SQL statement.
+     *
+     * @return Query representing the native SQL statement.
+     */
     public Query queryFromString(String sql) {
         EntityManager em = transaction.entityManager();
         return em.createNativeQuery(sql);
@@ -170,6 +177,18 @@ public class Repository {
 
     public EntityManager entityManager() {
         return transaction.entityManager();
+    }
+
+    /**
+     * Get QueryBuilder for given class.
+     *
+     * @param <T> The class for which a QueryBuilder is requested.
+     * @param c The class for which a QueryBuilder is requested.
+     *
+     * @return QueryBuilder for given class.
+     */
+    public <T> QueryBuilder<T> queryBuilder(Class<T> c) {
+        return new QueryBuilder<T>(transaction.entityManager(), c);
     }
 
     /**
@@ -195,8 +214,7 @@ public class Repository {
      */
     public <T> List<T> getAllPlain(Class<T> clazz) {
         EntityManager manager = transaction.entityManager();
-        QueryBuilder<T> builder =
-            new QueryBuilder<T>(manager, clazz);
+        QueryBuilder<T> builder = queryBuilder(clazz);
         return manager.createQuery(builder.getQuery()).getResultList();
     }
 

@@ -36,9 +36,7 @@ public class HasEntnahmeOrt implements Rule {
             }
             id = ort.getProbeId();
             QueryBuilder<Ortszuordnung> builder =
-                new QueryBuilder<Ortszuordnung>(
-                    repository.entityManager(),
-                    Ortszuordnung.class);
+                repository.queryBuilder(Ortszuordnung.class);
 
             builder.and("probeId", id);
             List<Ortszuordnung> orte = repository.filterPlain(
@@ -60,9 +58,7 @@ public class HasEntnahmeOrt implements Rule {
             }
             id = ort.getMessprogrammId();
             QueryBuilder<OrtszuordnungMp> builder =
-                new QueryBuilder<OrtszuordnungMp>(
-                    repository.entityManager(),
-                    OrtszuordnungMp.class);
+                repository.queryBuilder(OrtszuordnungMp.class);
 
             builder.and("messprogrammId", id);
             List<OrtszuordnungMp> orte = repository.filterPlain(

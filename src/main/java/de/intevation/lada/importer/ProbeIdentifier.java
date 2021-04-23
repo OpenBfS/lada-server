@@ -36,10 +36,7 @@ public class ProbeIdentifier implements Identifier {
                 "Object is not of type Probe");
         }
         Probe probe = (Probe) object;
-        QueryBuilder<Probe> builder = new QueryBuilder<Probe>(
-            repository.entityManager(),
-            Probe.class
-        );
+        QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
 
         // externeProbeId null and hauptprobenNr not null and mstId not null.
         if (probe.getExterneProbeId() == null

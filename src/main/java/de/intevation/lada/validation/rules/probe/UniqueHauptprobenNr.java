@@ -41,9 +41,7 @@ public class UniqueHauptprobenNr implements Rule {
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
         if (probe.getHauptprobenNr() != null) {
-            QueryBuilder<Probe> builder = new QueryBuilder<Probe>(
-               repository.entityManager(),
-                Probe.class);
+            QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
             builder.and("hauptprobenNr", probe.getHauptprobenNr());
             builder.and("mstId", probe.getMstId());
             Response response = repository.filter(builder.getQuery());

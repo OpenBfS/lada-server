@@ -259,8 +259,7 @@ public class OrtService {
         Ort ort = repository.getByIdPlain(Ort.class, id);
 
         QueryBuilder<Ortszuordnung> builder =
-            new QueryBuilder<Ortszuordnung>(
-                repository.entityManager(), Ortszuordnung.class);
+            repository.queryBuilder(Ortszuordnung.class);
         builder.and("ortId", ort.getId());
         List<Ortszuordnung> zuordnungs =
             repository.filterPlain(builder.getQuery());
@@ -295,11 +294,7 @@ public class OrtService {
         @Context HttpServletRequest request,
         JsonArray ids
     ) {
-        QueryBuilder<Ort> builder =
-            new QueryBuilder<Ort>(
-                repository.entityManager(),
-                Ort.class
-            );
+        QueryBuilder<Ort> builder = repository.queryBuilder(Ort.class);
         List<JsonNumber> idList = ids.getValuesAs(JsonNumber.class);
         if (idList.size() > 0) {
             List<Integer> intList = new ArrayList<>();
@@ -544,8 +539,7 @@ public class OrtService {
      */
     public List<Ortszuordnung> getOrtsZuordnungs(Ort o) {
         QueryBuilder<Ortszuordnung> refBuilder =
-            new QueryBuilder<Ortszuordnung>(
-                repository.entityManager(), Ortszuordnung.class);
+            repository.queryBuilder(Ortszuordnung.class);
         refBuilder.and("ortId", o.getId());
         List<Ortszuordnung> zuordnungs =
             repository.filterPlain(refBuilder.getQuery());

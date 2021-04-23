@@ -155,9 +155,7 @@ public class StatusService {
         }
 
         QueryBuilder<StatusProtokoll> builder =
-            new QueryBuilder<StatusProtokoll>(
-                repository.entityManager(),
-                StatusProtokoll.class);
+            repository.queryBuilder(StatusProtokoll.class);
         builder.and("messungsId", id);
         Response r = authorization.filter(
             request,
@@ -331,8 +329,8 @@ public class StatusService {
             violationCollection.addNotifications(violation.getNotifications());
 
             //validate messwert objects
-            QueryBuilder<Messwert> builder = new QueryBuilder<Messwert>(
-                    repository.entityManager(), Messwert.class);
+            QueryBuilder<Messwert> builder =
+                repository.queryBuilder(Messwert.class);
             builder.and("messungsId", messung.getId());
             Response messwertQry =
                 repository.filter(builder.getQuery());
@@ -499,9 +497,7 @@ public class StatusService {
     ) {
         // Create a new Status with value = 8.
         QueryBuilder<StatusKombi> kombiFilter =
-            new QueryBuilder<StatusKombi>(
-                    repository.entityManager(),
-                    StatusKombi.class);
+            repository.queryBuilder(StatusKombi.class);
         StatusKombi oldKombi =
             repository.getByIdPlain(
                 StatusKombi.class, oldStatus.getStatusKombi());
@@ -534,9 +530,7 @@ public class StatusService {
             retValue = repository.create(nV);
         } else {
             QueryBuilder<StatusProtokoll> lastFilter =
-                new QueryBuilder<StatusProtokoll>(
-                        repository.entityManager(),
-                        StatusProtokoll.class);
+                repository.queryBuilder(StatusProtokoll.class);
             lastFilter.and("messungsId", newStatus.getMessungsId());
             lastFilter.orderBy("datum", true);
             List<StatusProtokoll> proto =

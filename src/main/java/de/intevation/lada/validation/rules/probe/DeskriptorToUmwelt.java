@@ -68,8 +68,8 @@ public class DeskriptorToUmwelt implements Rule {
             } else {
                 parent = ndParent;
             }
-            QueryBuilder<Deskriptoren> builder = new QueryBuilder<Deskriptoren>(
-                repository.entityManager(), Deskriptoren.class);
+            QueryBuilder<Deskriptoren> builder =
+                repository.queryBuilder(Deskriptoren.class);
             if (parent != null) {
                 builder.and("vorgaenger", parent);
             }
@@ -111,8 +111,7 @@ public class DeskriptorToUmwelt implements Rule {
         }
 
         QueryBuilder<DeskriptorUmwelt> builder =
-            new QueryBuilder<DeskriptorUmwelt>(
-                repository.entityManager(), DeskriptorUmwelt.class);
+            repository.queryBuilder(DeskriptorUmwelt.class);
 
         for (int i = 0; i < media.size(); i++) {
             String field = "s" + (i > 9 ? i : "0" + i);

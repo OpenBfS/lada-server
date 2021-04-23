@@ -710,10 +710,8 @@ public class ImporterTest extends BaseTest {
         messwerte.add(wert1);
 
         merger.mergeMesswerte(messung, messwerte);
-        QueryBuilder<Messwert> builder = new QueryBuilder<Messwert>(
-            repository.entityManager(),
-            Messwert.class
-        );
+        QueryBuilder<Messwert> builder =
+            repository.queryBuilder(Messwert.class);
         builder.and("messungsId", messung.getId());
         List<Messwert> dbWerte =
             repository.filterPlain(builder.getQuery());

@@ -41,9 +41,7 @@ public class StatusFolge implements Rule {
 
         // Get the previous status
         QueryBuilder<StatusProtokoll> lastFilter =
-            new QueryBuilder<StatusProtokoll>(
-                    repository.entityManager(),
-                    StatusProtokoll.class);
+            repository.queryBuilder(StatusProtokoll.class);
 
         lastFilter.and("messungsId", status.getMessungsId());
         lastFilter.orderBy("datum", true);
@@ -54,9 +52,7 @@ public class StatusFolge implements Rule {
         }
         StatusProtokoll last = protos.get(protos.size() - 1);
         QueryBuilder<StatusReihenfolge> folgeFilter =
-            new QueryBuilder<StatusReihenfolge>(
-                repository.entityManager(),
-                StatusReihenfolge.class);
+            repository.queryBuilder(StatusReihenfolge.class);
         folgeFilter.and("vonId", last.getStatusKombi());
         folgeFilter.and("zuId", status.getStatusKombi());
         List<StatusReihenfolge> reihenfolge =

@@ -37,9 +37,7 @@ public class OrtTypExists implements Rule {
 
         if (ort.getOrtTyp() != null) {
             QueryBuilder<OrtTyp> builder =
-                new QueryBuilder<OrtTyp>(
-                    repository.entityManager(),
-                    OrtTyp.class);
+                repository.queryBuilder(OrtTyp.class);
             builder.and("id", ort.getOrtTyp());
             List<OrtTyp> ots = repository.filterPlain(
                 builder.getQuery());

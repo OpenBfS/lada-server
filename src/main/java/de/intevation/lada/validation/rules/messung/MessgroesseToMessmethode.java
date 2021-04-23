@@ -41,16 +41,14 @@ public class MessgroesseToMessmethode implements Rule {
         Messung messung = (Messung) object;
         String mmt = messung.getMmtId();
         QueryBuilder<Messwert> builder =
-            new QueryBuilder<Messwert>(
-                repository.entityManager(), Messwert.class);
+            repository.queryBuilder(Messwert.class);
         builder.and("messungsId", messung.getId());
         Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<Messwert> messwerte = (List<Messwert>) response.getData();
 
         QueryBuilder<MmtMessgroesse> mmtBuilder =
-            new QueryBuilder<MmtMessgroesse>(
-                repository.entityManager(), MmtMessgroesse.class);
+            repository.queryBuilder(MmtMessgroesse.class);
 
         Response results =
             repository.filter(mmtBuilder.getQuery());

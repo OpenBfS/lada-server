@@ -97,10 +97,7 @@ public class PflichtmessgroesseService {
         @PathParam("id") String id
     ) {
         QueryBuilder<PflichtMessgroesse> builder =
-            new QueryBuilder<PflichtMessgroesse>(
-                repository.entityManager(),
-                PflichtMessgroesse.class
-            );
+            repository.queryBuilder(PflichtMessgroesse.class);
         builder.and("messMethodeId", id);
         List<PflichtMessgroesse> result =
             repository.filterPlain(builder.getQuery());

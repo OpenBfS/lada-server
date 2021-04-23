@@ -103,9 +103,8 @@ public class CsvExporter implements Exporter {
         String[] names = new String[keys.length];
         ArrayList<String> keysList = new ArrayList<String>(Arrays.asList(keys));
         keysList.forEach(key -> {
-            QueryBuilder<GridColumn> builder = new QueryBuilder<GridColumn>(
-                repository.entityManager(),
-                GridColumn.class);
+            QueryBuilder<GridColumn> builder =
+                repository.queryBuilder(GridColumn.class);
             builder.and("dataIndex", key);
             List<GridColumn> result =
                 repository.filterPlain(builder.getQuery());

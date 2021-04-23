@@ -93,10 +93,7 @@ public class UmweltService {
                 "Not a valid filter id");
         }
         QueryBuilder<ReiProgpunktGrpUmwZuord> builder =
-            new QueryBuilder<ReiProgpunktGrpUmwZuord>(
-                repository.entityManager(),
-                ReiProgpunktGrpUmwZuord.class
-            );
+            repository.queryBuilder(ReiProgpunktGrpUmwZuord.class);
         builder.and("reiProgpunktGrpId", id);
         List<ReiProgpunktGrpUmwZuord> zuord =
             repository.filterPlain(builder.getQuery());
@@ -104,10 +101,7 @@ public class UmweltService {
             return new Response(true, StatusCodes.OK, null);
         }
         QueryBuilder<Umwelt> builder1 =
-            new QueryBuilder<Umwelt>(
-                repository.entityManager(),
-                Umwelt.class
-            );
+            repository.queryBuilder(Umwelt.class);
         List<String> ids = new ArrayList<String>();
         for (int i = 0; i < zuord.size(); i++) {
             ids.add(zuord.get(i).getUmwId());

@@ -142,9 +142,8 @@ public class StatusWertService {
         List<Integer> messIds,
         UserInfo user
     ) {
-        QueryBuilder<Messung> messungQuery = new QueryBuilder<Messung>(
-            repository.entityManager(),
-            Messung.class);
+        QueryBuilder<Messung> messungQuery =
+            repository.queryBuilder(Messung.class);
         messungQuery.orIn("id", messIds);
         List<Messung> messungen = repository.filterPlain(
             messungQuery.getQuery());
@@ -157,9 +156,7 @@ public class StatusWertService {
                 StatusKombi.class, status.getStatusKombi());
 
             QueryBuilder<StatusErreichbar> errFilter =
-                new QueryBuilder<StatusErreichbar>(
-                    repository.entityManager(),
-                    StatusErreichbar.class);
+                repository.queryBuilder(StatusErreichbar.class);
             errFilter.andIn("stufeId", user.getFunktionen());
             errFilter.and("curStufe", kombi.getStatusStufe().getId());
             errFilter.and("curWert", kombi.getStatusWert().getId());
@@ -168,9 +165,7 @@ public class StatusWertService {
         }
 
         QueryBuilder<StatusWert> werteFilter =
-            new QueryBuilder<StatusWert>(
-                repository.entityManager(),
-                StatusWert.class);
+            repository.queryBuilder(StatusWert.class);
         for (int i = 0; i < erreichbare.size(); i++) {
             werteFilter.or("id", erreichbare.get(i).getWertId());
         }

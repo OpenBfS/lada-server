@@ -50,10 +50,8 @@ public class FilterService {
         Filter f =
             repository.getByIdPlain(
                 Filter.class, filter.getId());
-        QueryBuilder<FilterValue> builder = new QueryBuilder<FilterValue>(
-            repository.entityManager(),
-            FilterValue.class
-        );
+        QueryBuilder<FilterValue> builder =
+            repository.queryBuilder(FilterValue.class);
         builder.and("userId", userInfo.getUserId());
         builder.and("filterId", f.getId());
         List<FilterValue> values =
@@ -89,10 +87,8 @@ public class FilterService {
         UserInfo userInfo = authorization.getInfo(request);
         Integer fId = Integer.valueOf(id);
         Filter f = repository.getByIdPlain(Filter.class, fId);
-        QueryBuilder<FilterValue> builder = new QueryBuilder<FilterValue>(
-            repository.entityManager(),
-            FilterValue.class
-        );
+        QueryBuilder<FilterValue> builder =
+            repository.queryBuilder(FilterValue.class);
         builder.and("userId", userInfo.getUserId());
         builder.and("filterId", f.getId());
         List<FilterValue> values =

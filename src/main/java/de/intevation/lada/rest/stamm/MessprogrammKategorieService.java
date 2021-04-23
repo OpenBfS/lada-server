@@ -148,10 +148,7 @@ public class MessprogrammKategorieService {
             return new Response(false, StatusCodes.NOT_ALLOWED, kategorie);
         }
         QueryBuilder<MessprogrammKategorie> builder =
-            new QueryBuilder<MessprogrammKategorie>(
-                repository.entityManager(),
-                MessprogrammKategorie.class
-            );
+            repository.queryBuilder(MessprogrammKategorie.class);
         builder.and("code", kategorie.getCode());
         builder.and("netzbetreiberId", kategorie.getNetzbetreiberId());
 

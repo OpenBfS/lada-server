@@ -32,9 +32,8 @@ public class UniqueMessungMessgroesse implements Rule {
     @Override
     public Violation execute(Object object) {
         Messwert messwert = (Messwert) object;
-        QueryBuilder<Messwert> messwertQuery = new QueryBuilder<Messwert>(
-            repository.entityManager(),
-            Messwert.class);
+        QueryBuilder<Messwert> messwertQuery =
+            repository.queryBuilder(Messwert.class);
         messwertQuery.and("messungsId", messwert.getMessungsId());
         messwertQuery.and("messgroesseId", messwert.getMessgroesseId());
         List<Messwert> result =

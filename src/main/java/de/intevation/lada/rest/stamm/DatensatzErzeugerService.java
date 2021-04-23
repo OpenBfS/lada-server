@@ -150,10 +150,7 @@ public class DatensatzErzeugerService {
                 false, StatusCodes.NOT_ALLOWED, datensatzerzeuger);
         }
         QueryBuilder<DatensatzErzeuger> builder =
-            new QueryBuilder<DatensatzErzeuger>(
-                repository.entityManager(),
-                DatensatzErzeuger.class
-            );
+            repository.queryBuilder(DatensatzErzeuger.class);
         builder.and(
             "datensatzErzeugerId", datensatzerzeuger.getDatensatzErzeugerId());
         builder.and("netzbetreiberId", datensatzerzeuger.getNetzbetreiberId());

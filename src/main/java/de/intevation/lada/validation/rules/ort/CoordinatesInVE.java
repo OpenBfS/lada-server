@@ -48,9 +48,7 @@ public class CoordinatesInVE implements Rule {
         if (gemId != null && ort.getGeom() != null) {
 
             QueryBuilder<Verwaltungsgrenze> vg =
-                new QueryBuilder<Verwaltungsgrenze>(
-                    repository.entityManager(),
-                    Verwaltungsgrenze.class);
+                repository.queryBuilder(Verwaltungsgrenze.class);
             vg.and("gemId", gemId);
             List<Verwaltungsgrenze> vgs = repository.filterPlain(
                 vg.getQuery());

@@ -98,10 +98,7 @@ public class ReiProgpunktGruppeService {
                     "Not a valid filter id");
             }
             QueryBuilder<ReiProgpunktGrpZuord> builder =
-                new QueryBuilder<ReiProgpunktGrpZuord>(
-                    repository.entityManager(),
-                    ReiProgpunktGrpZuord.class
-                );
+                repository.queryBuilder(ReiProgpunktGrpZuord.class);
             builder.and("reiProgpunktId", id);
             List<ReiProgpunktGrpZuord> zuord =
                 repository.filterPlain(builder.getQuery());
@@ -109,10 +106,7 @@ public class ReiProgpunktGruppeService {
                 return new Response(true, StatusCodes.OK, null);
             }
             QueryBuilder<ReiProgpunktGruppe> builder1 =
-                new QueryBuilder<ReiProgpunktGruppe>(
-                    repository.entityManager(),
-                    ReiProgpunktGruppe.class
-                );
+                repository.queryBuilder(ReiProgpunktGruppe.class);
             List<Integer> ids = new ArrayList<Integer>();
             for (int i = 0; i < zuord.size(); i++) {
                 ids.add(zuord.get(i).getReiProgpunktGrpId());
@@ -121,10 +115,7 @@ public class ReiProgpunktGruppeService {
             list = repository.filterPlain(builder1.getQuery());
         } else if (params.containsKey("umwelt")) {
             QueryBuilder<ReiProgpunktGrpUmwZuord> builder =
-                new QueryBuilder<ReiProgpunktGrpUmwZuord>(
-                    repository.entityManager(),
-                    ReiProgpunktGrpUmwZuord.class
-                );
+                repository.queryBuilder(ReiProgpunktGrpUmwZuord.class);
             builder.and("umwId", params.getFirst("umwelt"));
             List<ReiProgpunktGrpUmwZuord> zuord =
                 repository.filterPlain(builder.getQuery());
@@ -132,10 +123,7 @@ public class ReiProgpunktGruppeService {
                 return new Response(true, StatusCodes.OK, null);
             }
             QueryBuilder<ReiProgpunktGruppe> builder1 =
-                new QueryBuilder<ReiProgpunktGruppe>(
-                    repository.entityManager(),
-                    ReiProgpunktGruppe.class
-                );
+                repository.queryBuilder(ReiProgpunktGruppe.class);
             List<Integer> ids = new ArrayList<Integer>();
             for (int i = 0; i < zuord.size(); i++) {
                 ids.add(zuord.get(i).getReiProgpunktGrpId());

@@ -92,10 +92,7 @@ public class KtaService {
                 "Not a valid filter id");
         }
         QueryBuilder<KtaGrpZuord> builder =
-            new QueryBuilder<KtaGrpZuord>(
-                repository.entityManager(),
-                KtaGrpZuord.class
-            );
+            repository.queryBuilder(KtaGrpZuord.class);
         builder.and("ktaGrpId", id);
         List<KtaGrpZuord> zuord =
             repository.filterPlain(builder.getQuery());
@@ -103,10 +100,7 @@ public class KtaService {
             return new Response(true, StatusCodes.OK, null);
         }
         QueryBuilder<Kta> builder1 =
-            new QueryBuilder<Kta>(
-                repository.entityManager(),
-                Kta.class
-            );
+            repository.queryBuilder(Kta.class);
         List<Integer> ids = new ArrayList<Integer>();
         for (int i = 0; i < zuord.size(); i++) {
             ids.add(zuord.get(i).getKtaId());

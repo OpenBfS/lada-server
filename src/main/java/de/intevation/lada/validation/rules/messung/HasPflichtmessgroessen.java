@@ -44,9 +44,7 @@ public class HasPflichtmessgroessen implements Rule {
             Probe.class, messung.getProbeId());
 
         QueryBuilder<PflichtMessgroesse> builder =
-            new QueryBuilder<PflichtMessgroesse>(
-                repository.entityManager(),
-                PflichtMessgroesse.class);
+            repository.queryBuilder(PflichtMessgroesse.class);
         builder.and("messMethodeId", messung.getMmtId());
         builder.and("umwId", probe.getUmwId());
         builder.and("datenbasisId", probe.getDatenbasisId());
@@ -58,9 +56,7 @@ public class HasPflichtmessgroessen implements Rule {
 
         if (pflicht.isEmpty()) {
             QueryBuilder<PflichtMessgroesse> builderGrp =
-                new QueryBuilder<PflichtMessgroesse>(
-                    repository.entityManager(),
-                    PflichtMessgroesse.class);
+                repository.queryBuilder(PflichtMessgroesse.class);
             builderGrp.and("messMethodeId", messung.getMmtId());
             builderGrp.and(
                 "umwId", probe.getUmwId() == null
@@ -76,9 +72,7 @@ public class HasPflichtmessgroessen implements Rule {
 
         if (pflicht.isEmpty()) {
             QueryBuilder<PflichtMessgroesse> builderGrpS2 =
-                new QueryBuilder<PflichtMessgroesse>(
-                    repository.entityManager(),
-                    PflichtMessgroesse.class);
+                repository.queryBuilder(PflichtMessgroesse.class);
             builderGrpS2.and("messMethodeId", messung.getMmtId());
             builderGrpS2.and(
                 "umwId", probe.getUmwId() == null
@@ -94,8 +88,7 @@ public class HasPflichtmessgroessen implements Rule {
         }
 
         QueryBuilder<Messwert> wertBuilder =
-            new QueryBuilder<Messwert>(
-                repository.entityManager(), Messwert.class);
+            repository.queryBuilder(Messwert.class);
         wertBuilder.and("messungsId", messung.getId());
         Response wertResponse =
             repository.filter(wertBuilder.getQuery());

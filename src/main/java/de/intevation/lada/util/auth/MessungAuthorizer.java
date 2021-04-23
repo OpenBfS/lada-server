@@ -169,9 +169,8 @@ public class MessungAuthorizer extends BaseAuthorizer {
                 || stufe == 2
                 || stufe == 3)
         ) {
-            QueryBuilder<AuthLstUmw> lstFilter = new QueryBuilder<AuthLstUmw>(
-                repository.entityManager(),
-                AuthLstUmw.class);
+            QueryBuilder<AuthLstUmw> lstFilter =
+                repository.queryBuilder(AuthLstUmw.class);
             lstFilter.or("mstId", userInfo.getMessstellen());
             List<AuthLstUmw> lsts =
                 repository.filterPlain(lstFilter.getQuery());

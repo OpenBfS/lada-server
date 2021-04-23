@@ -10,7 +10,6 @@ package de.intevation.lada.util.auth;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Probe;
@@ -46,11 +45,7 @@ public abstract class BaseAuthorizer implements Authorizer {
      * @return True if the probe is readonly.
      */
     public boolean isProbeReadOnly(Integer probeId) {
-        EntityManager manager = repository.entityManager();
-        QueryBuilder<Messung> builder =
-            new QueryBuilder<Messung>(
-                manager,
-                Messung.class);
+        QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
         builder.and("probeId", probeId);
         Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")

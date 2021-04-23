@@ -47,8 +47,7 @@ public class HasOneUrsprungsOrt implements Rule {
                 return null;
         }
         QueryBuilder<Ortszuordnung> builder =
-            new QueryBuilder<Ortszuordnung>(
-                repository.entityManager(), Ortszuordnung.class);
+            repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", id);
         builder.and("ortszuordnungTyp", "U");
         Response response = repository.filter(builder.getQuery());

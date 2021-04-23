@@ -27,8 +27,7 @@ public class IsUnique implements Rule {
     public Violation execute(Object object) {
         Ort ort = (Ort) object;
 
-        QueryBuilder<Ort> builder = new QueryBuilder<Ort>(
-            repository.entityManager(), Ort.class);
+        QueryBuilder<Ort> builder = repository.queryBuilder(Ort.class);
         if (ort.getId() != null) {
             // Consider UPDATE
             builder.and("id", ort.getId()).not();

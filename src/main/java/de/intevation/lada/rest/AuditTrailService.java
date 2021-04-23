@@ -186,8 +186,7 @@ public class AuditTrailService {
 
         //Get ort ids connected to this probe
         QueryBuilder<Ortszuordnung> refBuilder =
-            new QueryBuilder<Ortszuordnung>(
-                repository.entityManager(), Ortszuordnung.class);
+            repository.queryBuilder(Ortszuordnung.class);
         refBuilder.and("probeId", id);
         List<Integer> ortIds = new LinkedList<Integer>();
         for (Ortszuordnung zuordnung
@@ -198,8 +197,7 @@ public class AuditTrailService {
 
         // Get all entries for the probe and its sub objects.
         QueryBuilder<AuditTrailProbe> builder =
-            new QueryBuilder<AuditTrailProbe>(
-                repository.entityManager(), AuditTrailProbe.class);
+            repository.queryBuilder(AuditTrailProbe.class);
         builder.and("objectId", id);
         builder.and("tableName", "probe");
         builder.or("probeId", id);
@@ -347,8 +345,7 @@ public class AuditTrailService {
             repository.getByIdPlain(Probe.class, messung.getProbeId());
         UserInfo userInfo = authorization.getInfo(request);
         QueryBuilder<AuditTrailMessung> builder =
-            new QueryBuilder<AuditTrailMessung>(
-                repository.entityManager(), AuditTrailMessung.class);
+            repository.queryBuilder(AuditTrailMessung.class);
         builder.and("objectId", mId);
         builder.and("tableName", "messung");
         builder.or("messungsId", mId);

@@ -185,9 +185,8 @@ public class QueryService {
         }
 
         query.setUserId(userInfo.getUserId());
-        QueryBuilder<QueryMessstelle> builder = new QueryBuilder<>(
-                repository.entityManager(),
-                QueryMessstelle.class);
+        QueryBuilder<QueryMessstelle> builder =
+            repository.queryBuilder(QueryMessstelle.class);
         builder.and("queryUser", query.getId());
         List<QueryMessstelle> qms =
             repository.filterPlain(builder.getQuery());

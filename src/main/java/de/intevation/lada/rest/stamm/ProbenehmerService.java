@@ -145,10 +145,7 @@ public class ProbenehmerService {
             return new Response(false, StatusCodes.NOT_ALLOWED, probenehmer);
         }
         QueryBuilder<Probenehmer> builder =
-            new QueryBuilder<Probenehmer>(
-                repository.entityManager(),
-                Probenehmer.class
-            );
+            repository.queryBuilder(Probenehmer.class);
         builder.and("prnId", probenehmer.getPrnId());
         builder.and("netzbetreiberId", probenehmer.getNetzbetreiberId());
 

@@ -102,10 +102,7 @@ public class OrtFactory {
         } else {
             errors.clear();
         }
-        QueryBuilder<Ort> builder =
-            new QueryBuilder<>(
-                repository.entityManager(),
-                Ort.class);
+        QueryBuilder<Ort> builder = repository.queryBuilder(Ort.class);
         if (ort.getKdaId() != null
             && ort.getKoordXExtern() != null
             && ort.getKoordYExtern() != null

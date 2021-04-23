@@ -97,9 +97,7 @@ public class MessgroesseService {
         @SuppressWarnings("unchecked")
         List<Integer> ids = query.getResultList();
         QueryBuilder<Messgroesse> builder2 =
-            new QueryBuilder<Messgroesse>(
-                repository.entityManager(),
-                Messgroesse.class);
+            repository.queryBuilder(Messgroesse.class);
         builder2.orIntList("id", ids);
         return repository.filter(builder2.getQuery());
     }

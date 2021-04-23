@@ -403,17 +403,13 @@ public class ProbeFactory {
     ) {
         currentProtocol = new HashMap<>();
         QueryBuilder<Probe> builderProbe =
-            new QueryBuilder<Probe>(
-                repository.entityManager(),
-                Probe.class);
+            repository.queryBuilder(Probe.class);
         builderProbe.and("mprId", messprogramm.getId());
         builderProbe.and("solldatumBeginn", startDate);
         builderProbe.and("solldatumEnde", endDate);
 
         QueryBuilder<MessprogrammMmt> builder =
-            new QueryBuilder<MessprogrammMmt>(
-                    repository.entityManager(),
-                    MessprogrammMmt.class);
+            repository.queryBuilder(MessprogrammMmt.class);
         builder.and("messprogrammId", messprogramm.getId());
         Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
@@ -423,9 +419,7 @@ public class ProbeFactory {
             repository.filterPlain(builderProbe.getQuery());
 
         QueryBuilder<OrtszuordnungMp> builderOrt =
-            new QueryBuilder<OrtszuordnungMp>(
-                repository.entityManager(),
-                OrtszuordnungMp.class);
+            repository.queryBuilder(OrtszuordnungMp.class);
         builderOrt.and("messprogrammId", messprogramm.getId());
         List<OrtszuordnungMp> orte =
             repository.filterPlain(builderOrt.getQuery());
@@ -631,8 +625,8 @@ public class ProbeFactory {
             } else {
                 parent = ndParent;
             }
-            QueryBuilder<Deskriptoren> builder = new QueryBuilder<Deskriptoren>(
-                repository.entityManager(), Deskriptoren.class);
+            QueryBuilder<Deskriptoren> builder =
+                repository.queryBuilder(Deskriptoren.class);
             if (parent != null) {
                 builder.and("vorgaenger", parent);
             }
@@ -664,9 +658,7 @@ public class ProbeFactory {
      */
     private String getUmwelt(List<Integer> media, boolean isZebs) {
         QueryBuilder<DeskriptorUmwelt> builder =
-            new QueryBuilder<DeskriptorUmwelt>(
-                repository.entityManager(),
-                DeskriptorUmwelt.class);
+            repository.queryBuilder(DeskriptorUmwelt.class);
 
         if (media.size() == 0) {
             return null;

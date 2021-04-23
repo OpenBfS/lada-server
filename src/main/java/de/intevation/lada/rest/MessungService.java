@@ -163,9 +163,7 @@ public class MessungService {
             //Filter by probeId
             String probeId = params.getFirst("probeId");
             QueryBuilder<Messung> builder =
-                new QueryBuilder<Messung>(
-                    repository.entityManager(),
-                    Messung.class);
+                repository.queryBuilder(Messung.class);
             builder.and("probeId", probeId);
             Response r = authorization.filter(
                 request,

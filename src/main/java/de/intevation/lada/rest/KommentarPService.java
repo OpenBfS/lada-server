@@ -113,9 +113,7 @@ public class KommentarPService {
         }
         String probeId = params.getFirst("probeId");
         QueryBuilder<KommentarP> builder =
-            new QueryBuilder<KommentarP>(
-                repository.entityManager(),
-                KommentarP.class);
+            repository.queryBuilder(KommentarP.class);
         builder.and("probeId", probeId);
         return authorization.filter(
             request,

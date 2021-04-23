@@ -33,9 +33,7 @@ public class UniqueExterneProbeId implements Rule {
     @Override
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
-        QueryBuilder<Probe> builder = new QueryBuilder<Probe>(
-            repository.entityManager(),
-            Probe.class);
+        QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
         builder.and("externeProbeId", probe.getExterneProbeId());
         List<Probe> existing =
             repository.filterPlain(builder.getQuery());

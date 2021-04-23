@@ -30,10 +30,8 @@ public class MesswertNormalizer {
         Integer mehIdFrom,
         Repository repository
     ) {
-        QueryBuilder<MassEinheitUmrechnung> builder = new QueryBuilder<>(
-            repository.entityManager(),
-            MassEinheitUmrechnung.class
-        );
+        QueryBuilder<MassEinheitUmrechnung> builder =
+            repository.queryBuilder(MassEinheitUmrechnung.class);
         builder.and("mehIdZu", mehIdTo);
         builder.and("mehVon", mehIdFrom);
         return repository.filterPlain(builder.getQuery());

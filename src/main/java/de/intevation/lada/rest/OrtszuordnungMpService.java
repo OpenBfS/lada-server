@@ -128,9 +128,7 @@ public class OrtszuordnungMpService {
         }
         String messprogrammId = params.getFirst("messprogrammId");
         QueryBuilder<OrtszuordnungMp> builder =
-            new QueryBuilder<OrtszuordnungMp>(
-                repository.entityManager(),
-                OrtszuordnungMp.class);
+            repository.queryBuilder(OrtszuordnungMp.class);
         builder.and("messprogrammId", messprogrammId);
         Response r =  authorization.filter(
             request,

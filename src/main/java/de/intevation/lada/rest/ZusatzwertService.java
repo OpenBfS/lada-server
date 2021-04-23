@@ -120,9 +120,7 @@ public class ZusatzwertService {
         }
         String probeId = params.getFirst("probeId");
         QueryBuilder<ZusatzWert> builder =
-            new QueryBuilder<ZusatzWert>(
-                repository.entityManager(),
-                ZusatzWert.class);
+            repository.queryBuilder(ZusatzWert.class);
         builder.and("probeId", probeId);
         return authorization.filter(
             request,

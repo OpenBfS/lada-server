@@ -152,9 +152,7 @@ public class MesswertService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         QueryBuilder<Messwert> builder =
-            new QueryBuilder<Messwert>(
-                repository.entityManager(),
-                Messwert.class);
+            repository.queryBuilder(Messwert.class);
         builder.and("messungsId", messungId);
 
         Response r = authorization.filter(
@@ -408,9 +406,7 @@ public class MesswertService {
                 Umwelt.class, probe.getUmwId());
         //Get all Messwert objects to convert
         QueryBuilder<Messwert> messwertBuilder =
-                new QueryBuilder<Messwert>(
-                    repository.entityManager(),
-                    Messwert.class);
+            repository.queryBuilder(Messwert.class);
         messwertBuilder.and("messungsId", messungIdInt);
         List<Messwert> messwerte = MesswertNormalizer.normalizeMesswerte(
             repository.filterPlain(messwertBuilder.getQuery()),

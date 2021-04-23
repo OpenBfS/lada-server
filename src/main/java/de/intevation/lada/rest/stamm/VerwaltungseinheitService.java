@@ -95,8 +95,7 @@ public class VerwaltungseinheitService {
         }
         String filter = params.getFirst("query");
         QueryBuilder<Verwaltungseinheit> builder =
-            new QueryBuilder<Verwaltungseinheit>(
-                repository.entityManager(), Verwaltungseinheit.class);
+            repository.queryBuilder(Verwaltungseinheit.class);
         builder.andLike("bezeichnung", filter + "%");
         return repository.filter(builder.getQuery());
     }

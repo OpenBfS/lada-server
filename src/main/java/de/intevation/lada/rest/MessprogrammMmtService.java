@@ -102,9 +102,7 @@ public class MessprogrammMmtService {
         }
         String messprogrammId = params.getFirst("messprogrammId");
         QueryBuilder<MessprogrammMmt> builder =
-            new QueryBuilder<MessprogrammMmt>(
-                repository.entityManager(),
-                MessprogrammMmt.class);
+            repository.queryBuilder(MessprogrammMmt.class);
         builder.and("messprogrammId", messprogrammId);
         return authorization.filter(
             request,

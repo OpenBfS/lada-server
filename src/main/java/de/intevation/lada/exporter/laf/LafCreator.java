@@ -146,8 +146,7 @@ implements Creator {
     @SuppressWarnings("unchecked")
     private String writeAttributes(Probe probe, List<Integer> messungen) {
         QueryBuilder<KommentarP> kommBuilder =
-            new QueryBuilder<KommentarP>(
-                repository.entityManager(), KommentarP.class);
+            repository.queryBuilder(KommentarP.class);
         kommBuilder.and("probeId", probe.getId());
         Response kommentar =
             repository.filter(kommBuilder.getQuery());
@@ -156,9 +155,7 @@ implements Creator {
         String probenart = null;
         if (probe.getProbenartId() != null) {
             QueryBuilder<Probenart> builder =
-                new QueryBuilder<Probenart>(
-                    repository.entityManager(),
-                    Probenart.class);
+                repository.queryBuilder(Probenart.class);
             builder.and("id", probe.getProbenartId());
             List<Probenart> probenarten =
                 (List<Probenart>) repository.filter(
@@ -172,8 +169,7 @@ implements Creator {
                 MessStelle.class, probe.getMstId());
 
         QueryBuilder<ZusatzWert> zusatzBuilder =
-            new QueryBuilder<ZusatzWert>(
-                repository.entityManager(), ZusatzWert.class);
+            repository.queryBuilder(ZusatzWert.class);
         zusatzBuilder.and("probeId", probe.getId());
         Response zusatz =
             repository.filter(zusatzBuilder.getQuery());
@@ -298,9 +294,7 @@ implements Creator {
     @SuppressWarnings("unchecked")
     private String writeZusatzwert(ZusatzWert zw) {
         QueryBuilder<ProbenZusatz> builder =
-            new QueryBuilder<ProbenZusatz>(
-                repository.entityManager(),
-                ProbenZusatz.class);
+            repository.queryBuilder(ProbenZusatz.class);
         builder.and("id", zw.getPzsId());
         List<ProbenZusatz> zusatz =
             (List<ProbenZusatz>) repository.filter(
@@ -327,9 +321,7 @@ implements Creator {
     @SuppressWarnings("unchecked")
     private String writeOrt(Probe probe) {
         QueryBuilder<Ortszuordnung> builder =
-            new QueryBuilder<Ortszuordnung>(
-                repository.entityManager(),
-                Ortszuordnung.class);
+            repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", probe.getId());
         Response objects = repository.filter(builder.getQuery());
         List<Ortszuordnung> orte =
@@ -367,10 +359,7 @@ implements Creator {
             laf += lafLine(typePrefix + "ORTS_ZUSATZTEXT",
                 o.getOrtszusatztext(), CN);
         }
-        QueryBuilder<Ort> oBuilder =
-            new QueryBuilder<Ort>(
-                repository.entityManager(),
-                Ort.class);
+        QueryBuilder<Ort> oBuilder = repository.queryBuilder(Ort.class);
         oBuilder.and("id", o.getOrtId());
         List<Ort> sOrte =
             (List<Ort>) repository.filter(
@@ -458,10 +447,7 @@ implements Creator {
      */
     @SuppressWarnings("unchecked")
     private String writeMessung(Probe probe, List<Integer> messungen) {
-        QueryBuilder<Messung> builder =
-            new QueryBuilder<Messung>(
-                repository.entityManager(),
-                Messung.class);
+        QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
         if (messungen.isEmpty()) {
             // Get all messungen
             builder.and("probeId", probe.getId());
@@ -475,15 +461,13 @@ implements Creator {
         for (Messung m : mess) {
             laf += "%MESSUNG%\n";
             QueryBuilder<Messwert> wertBuilder =
-                new QueryBuilder<Messwert>(
-                    repository.entityManager(), Messwert.class);
+                repository.queryBuilder(Messwert.class);
             wertBuilder.and("messungsId", m.getId());
             Response messw =
                 repository.filter(wertBuilder.getQuery());
             List<Messwert> werte = (List<Messwert>) messw.getData();
             QueryBuilder<KommentarM> kommBuilder =
-                new QueryBuilder<KommentarM>(
-                    repository.entityManager(), KommentarM.class);
+                repository.queryBuilder(KommentarM.class);
             kommBuilder.and("messungsId", m.getId());
             Response kommentar =
                 repository.filter(kommBuilder.getQuery());
@@ -546,9 +530,7 @@ implements Creator {
             status[0] = currentKombi.getStatusWert().getId();
         } else {
             QueryBuilder<StatusProtokoll> builder =
-                new QueryBuilder<StatusProtokoll>(
-                    repository.entityManager(
-                        ), StatusProtokoll.class);
+                repository.queryBuilder(StatusProtokoll.class);
             builder.and("messungsId", messung.getId());
             builder.andIn(
                 "statusKombi",
@@ -617,18 +599,14 @@ implements Creator {
     @SuppressWarnings("unchecked")
     private String writeMesswert(Messwert mw) {
         QueryBuilder<Messgroesse> builder =
-            new QueryBuilder<Messgroesse>(
-                repository.entityManager(),
-                Messgroesse.class);
+            repository.queryBuilder(Messgroesse.class);
         builder.and("id", mw.getMessgroesseId());
         List<Messgroesse> groessen =
             (List<Messgroesse>) repository.filter(
                 builder.getQuery()).getData();
 
         QueryBuilder<MessEinheit> eBuilder =
-            new QueryBuilder<MessEinheit>(
-                repository.entityManager(),
-                MessEinheit.class);
+            repository.queryBuilder(MessEinheit.class);
         eBuilder.and("id", mw.getMehId());
         List<MessEinheit> einheiten =
             (List<MessEinheit>) repository.filter(

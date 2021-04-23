@@ -48,10 +48,7 @@ public class ReiToUmwelt implements Rule {
             return null;
         }
         QueryBuilder<ReiProgpunktGrpUmwZuord> builder =
-            new QueryBuilder<ReiProgpunktGrpUmwZuord>(
-                repository.entityManager(),
-                ReiProgpunktGrpUmwZuord.class
-            );
+            repository.queryBuilder(ReiProgpunktGrpUmwZuord.class);
         builder.and("reiProgpunktGrpId", probe.getReiProgpunktGrpId());
         List<ReiProgpunktGrpUmwZuord> zuord =
             repository.filterPlain(builder.getQuery());

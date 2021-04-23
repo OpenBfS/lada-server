@@ -121,8 +121,7 @@ public abstract class QueryExportJob extends ExportJob {
     private Filter createIdListFilter(String dataIndex) {
         //Get Filter type from db
         QueryBuilder<FilterType> builder =
-            new QueryBuilder<FilterType>(
-                repository.entityManager(), FilterType.class);
+            repository.queryBuilder(FilterType.class);
         builder.and("type", "genericid");
         FilterType filterType =
             repository.filterPlain(builder.getQuery()).get(0);
@@ -222,8 +221,8 @@ public abstract class QueryExportJob extends ExportJob {
      * @return Messwert records as list
      */
     private List<Messung> getMessungSubData(List<Integer> primaryDataIds) {
-        QueryBuilder<Messung> messungBuilder = new QueryBuilder<Messung>(
-            repository.entityManager(), Messung.class);
+        QueryBuilder<Messung> messungBuilder = repository.queryBuilder(
+            Messung.class);
         messungBuilder.andIn("probeId", primaryDataIds);
         return repository.filterPlain(messungBuilder.getQuery());
     }
@@ -234,8 +233,8 @@ public abstract class QueryExportJob extends ExportJob {
      * @return Messwert records as list
      */
     private List<Messwert> getMesswertSubData(List<Integer> primaryDataIds) {
-        QueryBuilder<Messwert> messwertBuilder = new QueryBuilder<Messwert>(
-            repository.entityManager(), Messwert.class);
+        QueryBuilder<Messwert> messwertBuilder = repository.queryBuilder(
+            Messwert.class);
         messwertBuilder.andIn("messungsId", primaryDataIds);
         return repository.filterPlain(messwertBuilder.getQuery());
     }
@@ -264,9 +263,8 @@ public abstract class QueryExportJob extends ExportJob {
      * @return Number of messwert records
      */
     protected int getMesswertCount(Messung messung) {
-        QueryBuilder<Messwert> builder = new QueryBuilder<Messwert>(
-            repository.entityManager(), Messwert.class
-        );
+        QueryBuilder<Messwert> builder = repository.queryBuilder(
+            Messwert.class);
         builder.and("messungsId", messung.getId());
         return repository.filterPlain(builder.getQuery()).size();
     }

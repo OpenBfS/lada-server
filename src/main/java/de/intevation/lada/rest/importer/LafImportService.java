@@ -164,9 +164,7 @@ public class LafImportService {
             List<ImporterConfig> config = new ArrayList<ImporterConfig>();
             if (!"".equals(mstId)) {
                 QueryBuilder<ImporterConfig> builder =
-                    new QueryBuilder<ImporterConfig>(
-                        repository.entityManager(),
-                        ImporterConfig.class);
+                    repository.queryBuilder(ImporterConfig.class);
                 builder.and("mstId", mstId);
                 config =
                     (List<ImporterConfig>) repository.filterPlain(
@@ -255,9 +253,7 @@ public class LafImportService {
         List<ImporterConfig> config = new ArrayList<ImporterConfig>();
         if (!"".equals(mstId)) {
             QueryBuilder<ImporterConfig> builder =
-                new QueryBuilder<ImporterConfig>(
-                    repository.entityManager(),
-                    ImporterConfig.class);
+                repository.queryBuilder(ImporterConfig.class);
             builder.and("mstId", mstId);
             config = (List<ImporterConfig>) repository.filterPlain(
                 builder.getQuery());

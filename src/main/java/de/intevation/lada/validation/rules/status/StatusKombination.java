@@ -38,9 +38,8 @@ public class StatusKombination implements Rule {
     @Override
     public Violation execute(Object object) {
         StatusProtokoll status = (StatusProtokoll) object;
-        QueryBuilder<StatusKombi> kombi = new QueryBuilder<StatusKombi>(
-            repository.entityManager(),
-            StatusKombi.class);
+        QueryBuilder<StatusKombi> kombi =
+            repository.queryBuilder(StatusKombi.class);
         kombi.and("id", status.getStatusKombi());
         List<StatusKombi> result =
             repository.filterPlain(kombi.getQuery());

@@ -121,9 +121,7 @@ public class KommentarMService {
         }
 
         QueryBuilder<KommentarM> builder =
-            new QueryBuilder<KommentarM>(
-                repository.entityManager(),
-                KommentarM.class);
+            repository.queryBuilder(KommentarM.class);
         builder.and("messungsId", messungId);
         return authorization.filter(
             request,
