@@ -12,10 +12,6 @@ import java.util.List;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.JsonValue;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -138,31 +134,6 @@ public class Repository {
         return new Response(true, StatusCodes.OK, result);
     }
 
-
-    /**
-     * Get objects from database using the given filter.
-     *
-     * @param filter Filter used to request objects.
-     * @param size The maximum amount of objects.
-     * @param start The start index.
-     *
-     * @return Response object containing the filtered list of objects.
-     */
-    public <T> Response filter(
-        CriteriaQuery<T> filter,
-        int size,
-        int start
-    ) {
-        List<T> result =
-            transaction.entityManager()
-                .createQuery(filter).getResultList();
-        if (size > 0 && start > -1) {
-            List<T> newList = result.subList(start, size + start);
-            return new Response(true, StatusCodes.OK, newList, result.size());
-        }
-        return new Response(true, StatusCodes.OK, result);
-    }
-
     /**
      * Get all objects.
      *
@@ -207,39 +178,6 @@ public class Repository {
     public <T> List<T> filterPlain(CriteriaQuery<T> filter) {
         return transaction.entityManager()
             .createQuery(filter).getResultList();
-    }
-
-    public <T> List<T> filterPlain(
-        QueryBuilder<T> query,
-        JsonArray filter
-    ) {
-        for (JsonValue object : filter) {
-            JsonObject f = (JsonObject) object;
-            JsonString operator = f.getJsonString("operator");
-            JsonString value = f.getJsonString("value");
-            JsonString property = f.getJsonString("property");
-            if (property == null || value == null) {
-                continue;
-            }
-            if ("like".equals(operator.getString())) {
-                query.andLike(
-                    property.getString(), "%" + value.getString() + "%");
-            }
-        }
-        return transaction.entityManager()
-            .createQuery(query.getQuery()).getResultList();
-    }
-
-    public <T> List<T> filterPlain(
-        CriteriaQuery<T> filter, int size, int start
-    ) {
-        List<T> result =
-            transaction.entityManager()
-                .createQuery(filter).getResultList();
-        if (size > 0 && start > -1) {
-            return result.subList(start, size + start);
-        }
-        return result;
     }
 
     public <T> List<T> getAllPlain(Class<T> clazz) {
