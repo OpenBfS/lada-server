@@ -433,8 +433,7 @@ public class AuditTrailService {
             + " WHERE "
             + idField
             + " = :id ;";
-        javax.persistence.Query query =
-            repository.entityManager().createNativeQuery(sql);
+        javax.persistence.Query query = repository.queryFromString(sql);
         if (id == null) {
             return "";
         }

@@ -18,7 +18,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -29,7 +28,6 @@ import de.intevation.lada.model.stammdaten.GridColumn;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
 import de.intevation.lada.model.stammdaten.BaseQuery;
 import de.intevation.lada.model.stammdaten.Tag;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
 
@@ -69,13 +67,7 @@ public class QueryTools {
     }
 
     public String prepareSql(List<GridColumnValue> customColumns, Integer qId) {
-        QueryBuilder<BaseQuery> builder = new QueryBuilder<BaseQuery>(
-            repository.entityManager(),
-            BaseQuery.class
-        );
-        builder.and("id", qId);
-        BaseQuery query =
-            repository.filterPlain(builder.getQuery()).get(0);
+        BaseQuery query = repository.getByIdPlain(BaseQuery.class, qId);
 
         String sql = query.getSql();
         String filterSql = "";
@@ -378,10 +370,7 @@ public class QueryTools {
         List<GridColumn> columns
     ) {
         try {
-            javax.persistence.Query q = prepareQuery(
-                    sql,
-                    filterValues,
-                    repository.entityManager());
+            javax.persistence.Query q = prepareQuery(sql, filterValues);
             if (q == null) {
                 return new ArrayList<>();
             }
@@ -403,10 +392,9 @@ public class QueryTools {
      */
     public javax.persistence.Query prepareQuery(
         String sql,
-        MultivaluedMap<String, Object> params,
-        EntityManager manager
+        MultivaluedMap<String, Object> params
     ) {
-        javax.persistence.Query query = manager.createNativeQuery(sql);
+        javax.persistence.Query query = repository.queryFromString(sql);
         Set<String> keys = params.keySet();
         for (String key : keys) {
             List<Object> values = new ArrayList<>();
