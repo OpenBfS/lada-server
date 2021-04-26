@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
@@ -121,24 +120,12 @@ public class TagUtil {
         Tag tag = repository.getByIdPlain(Tag.class, tagId);
 
         //Get given probe and messung records
-        EntityManager em = repository.entityManager();
-        CriteriaBuilder probeBuilder = em.getCriteriaBuilder();
-        CriteriaQuery<Probe> probeQuery = probeBuilder.createQuery(Probe.class);
-        Root<Probe> probeRoot = probeQuery.from(Probe.class);
-        Predicate pidFilter =
-            probeBuilder.in(probeRoot.get("id")).value(probeIds);
-        probeQuery.where(pidFilter);
-        List<Probe> probes = repository.filterPlain(probeQuery);
-
-        CriteriaBuilder messungBuilder = em.getCriteriaBuilder();
-        CriteriaQuery<Messung> messungQuery =
-            messungBuilder.createQuery(Messung.class);
-        Root<Messung> messungRoot = messungQuery.from(Messung.class);
-        Predicate messungPidFilter =
-            messungBuilder.in(messungRoot.get("probeId")).value(probeIds);
-        messungQuery.where(messungPidFilter);
-        List<Messung> messungs =
-            repository.filterPlain(messungQuery);
+        List<Probe> probes = repository.filterPlain(
+            repository.queryBuilder(Probe.class).andIn("id", probeIds)
+            .getQuery());
+        List<Messung> messungs = repository.filterPlain(
+            repository.queryBuilder(Messung.class).andIn("probeId", probeIds)
+            .getQuery());
 
         //Set tags
         List<TagZuordnung> zuordnungs = new ArrayList<TagZuordnung>();
