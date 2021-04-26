@@ -106,7 +106,7 @@ public class QueryBuilder<T> {
     }
 
     /**
-     * Logical AND with like operation.
+     * Logical AND with case insensitive LIKE operation.
      *
      * @param id    The database column name.
      * @param value The filter value
@@ -147,7 +147,7 @@ public class QueryBuilder<T> {
     }
 
     /**
-     * Logical OR with like operation.
+     * Logical OR with case insensitive LIKE operation.
      *
      * @param id    The database column name.
      * @param value The filter value.
