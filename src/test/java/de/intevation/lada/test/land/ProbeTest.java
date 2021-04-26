@@ -75,7 +75,6 @@ public class ProbeTest extends ServiceTest {
     public final void execute() {
         getAll("probe", "rest/probe");
         getById("probe", "rest/probe/1000", expectedById);
-        filter("probe", "rest/probe?qid=4&mst_id=11010&umw_id=N24");
         JsonObject created = create("probe", "rest/probe", create);
         update(
             "probe",
