@@ -51,9 +51,9 @@ public class MesswertTest extends ServiceTest {
 
         // Prepare expected probe object
         JsonObject content = readJsonResource("/datasets/dbUnit_messwert.json");
-        JsonObject messung =
+        JsonObject messwert =
             content.getJsonArray("land.messwert").getJsonObject(0);
-        JsonObjectBuilder builder = convertObject(messung);
+        JsonObjectBuilder builder = convertObject(messwert);
         builder.add("parentModified", TS1);
         builder.add("readonly", JsonValue.FALSE);
         builder.add("owner", JsonValue.TRUE);
@@ -69,7 +69,7 @@ public class MesswertTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("messwert", "rest/messwert?messungsId=1000");
+        getAll("messwert", "rest/messwert?messungsId=1200");
         getById("messwert", "rest/messwert/10000", expectedById);
         JsonObject created = create("messwert", "rest/messwert", create);
         update("messwert", "rest/messwert/10000", "messwertNwg", "<", ">");

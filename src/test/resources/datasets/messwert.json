@@ -1,8 +1,8 @@
 {
     "messungsId": 1200,
-    "messgroesseId": 242,
+    "messgroesseId": 57,
     "messwert":1,
-    "messwertNwg":"",
+    "messwertNwg": null,
     "messfehler":1,
     "nwgZuMesswert":3,
     "mehId":207,
