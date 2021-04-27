@@ -25,7 +25,7 @@ SET search_path = stamm, pg_catalog;
 -- Data for Name: probenehmer; Type: TABLE DATA; Schema: stamm; Owner: lada
 --
 
-COPY probenehmer (id, netzbetreiber_id, prn_id, bearbeiter, bemerkung, betrieb, bezeichnung, kurz_bezeichnung, ort, plz, strasse, telefon, tp, typ, letzte_aenderung) FROM stdin;
+COPY probenehmer (id, netzbetreiber_id, prn_id, bearbeiter, bemerkung, betrieb, bezeichnung, kurz_bezeichnung, ort, plz, strasse, telefon, tourenplan, typ, letzte_aenderung) FROM stdin;
 724	06	AV18	\N	\N	\N	Stadt Kassel - Veterinärdienst und Lebensmittelüberwachung	AVV Kassel	Kassel	34117	Kurt Schumacher Straße 31	\N	\N	\N	2000-01-01 00:00:00
 726	06	AV24	\N	\N	\N	Stadt Wiesbaden - Amt f. Veterinärwesen u. Verbraucherschutz	AVV Wiesb	Wiesbaden	65187	Teutonenstraße 1	\N	\N	\N	2000-01-01 00:00:00
 727	06	AV0	\N	\N	\N	Rheingau-Taunus Kreis - RD III.8 Verbraucherschutz u. Veterinärwesen	AVV RhgTns	Bad Schwalbach	65307	Heimbacher Straße 7	\N	\N	\N	2000-01-01 00:00:00
