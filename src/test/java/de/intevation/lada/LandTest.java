@@ -282,6 +282,7 @@ public class LandTest extends BaseTest {
      */
     @Test
     @InSequence(T1)
+    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @UsingDataSet("datasets/dbUnit_probe.json")
     @DataSource("java:jboss/lada-land-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
