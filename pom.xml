@@ -560,5 +560,5 @@
             <url>https://repo.osgeo.org/repository/release</url>
         </repository>
     </repositories>
-    <version>4.1.1</version>
+    <version>4.1.2</version>
 </project>
