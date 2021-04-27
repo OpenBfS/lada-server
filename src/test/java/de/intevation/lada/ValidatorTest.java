@@ -86,7 +86,8 @@ public class ValidatorTest {
     @Deployment(testable = true)
     public static WebArchive createDeployment() throws Exception {
         WebArchive archive = ShrinkWrap.create(WebArchive.class, archiveName)
-            .addPackages(true, Package.getPackage("de.intevation.lada"))
+            .addPackages(true, ClassLoader.getSystemClassLoader()
+                .getDefinedPackage("de.intevation.lada"))
             .addAsResource("log4j.properties", "log4j.properties")
             .addAsResource("shibboleth.properties", "shibboleth.properties")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
