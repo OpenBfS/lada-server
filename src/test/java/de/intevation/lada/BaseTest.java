@@ -7,8 +7,14 @@
  */
 package de.intevation.lada;
 
+import java.io.StringReader;
 import java.io.File;
 import java.util.List;
+
+import javax.json.Json;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -18,6 +24,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 
 /**
  * Base class for Lada server tests.
@@ -115,5 +122,36 @@ public class BaseTest {
         for (File f : files) {
             archive.addAsLibrary(f);
         }
+    }
+
+    /**
+     * Utility method to parse JSON in a Response object.
+     *
+     * Asserts that the response has HTTP status code 200 and a parseable
+     * JSON body.
+     *
+     * @param response The response to be parsed.
+     * @param protocol Protocol to add exception info in case of failure
+     * @return Parsed JsonObject or null in case of failure
+     */
+    // TODO: Use in more tests to reduce code duplication
+    public static JsonObject parseResponse(
+        Response response,
+        Protocol protocol
+    ) {
+        int status = response.getStatus();
+        Assert.assertEquals(
+            "Unexpected response status code",
+            Response.Status.OK.getStatusCode(),
+            status);
+        try {
+            return Json.createReader(
+                new StringReader(response.readEntity(String.class)))
+                .readObject();
+        } catch (JsonException je) {
+            protocol.addInfo("exception", je.getMessage());
+            Assert.fail(je.getMessage());
+        }
+        return null;
     }
 }
