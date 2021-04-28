@@ -17,6 +17,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>11</java.version>
         <!-- GeoTools Version
              Note: GeoTools >= 20 is no longer compatible with JTS < 1.15 -->
         <geotools.version>20.0</geotools.version>
@@ -310,8 +311,8 @@
                         <configuration>
                             <showDeprecation>true</showDeprecation>
                             <showWarnings>true</showWarnings>
-                            <source>11</source>
-                            <target>11</target>
+                            <source>${java.version}</source>
+                            <target>${java.version}</target>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -402,8 +403,8 @@
                             <showDeprecation>true</showDeprecation>
                             <showWarnings>true</showWarnings>
                             <compilerArguments>
-                                <source>1.8</source>
-                                <target>1.8</target>
+                                <source>${java.version}</source>
+                                <target>${java.version}</target>
                             </compilerArguments>
                         </configuration>
                     </plugin>
@@ -478,8 +479,8 @@
                             <showDeprecation>true</showDeprecation>
                             <showWarnings>true</showWarnings>
                             <compilerArguments>
-                                <source>1.8</source>
-                                <target>1.8</target>
+                                <source>${java.version}</source>
+                                <target>${java.version}</target>
                             </compilerArguments>
                         </configuration>
                     </plugin>

@@ -4,7 +4,7 @@
         "probe_id": 1000,
         "nebenproben_nr": "T100",
         "ext_id": 453,
-        "mmt_id": "G1",
+        "mmt_id": "A3",
         "messdauer": 3600,
         "messzeitpunkt": "2012-05-06 14:00:00",
         "fertig": false,
@@ -14,7 +14,7 @@
     }],
     "land.status_protokoll": [{
         "id": 1000,
-        "erzeuger": "06010",
+        "mst_id": "06010",
         "datum": "2012-05-08 11:00:00",
         "text": "Initialer Status",
         "messungs_id": 1200,

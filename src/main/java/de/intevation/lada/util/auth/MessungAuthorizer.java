@@ -29,8 +29,10 @@ public class MessungAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Messung messung;
-        messung = (Messung) data;
+        Messung messung = (Messung) data;
+        if (messung == null) {
+            return false;
+        }
         Probe probe =
             repository.getByIdPlain(
                 Probe.class, messung.getProbeId());

@@ -117,20 +117,15 @@ public class QueryTools {
                 if (filterType.equals("generictext")) {
                     String genTextParam = ":" + filter.getParameter() + "Param";
                     String genTextValue = filter.getParameter() + "Value";
-                    if (!customColumn.getFilterIsNull()) {
-                        currentFilterString =
-                            currentFilterString.replace(
-                                genTextParam,
-                                customColumn.getGridColumn().getDataIndex());
-                        currentFilterParam =
-                            genTextValue + customColumn.getGridColumnId();
-                        currentFilterString =
-                            currentFilterString.replace(
-                                ":" + genTextValue, ":" + currentFilterParam);
-                    } else {
-                        currentFilterString =
-                            customColumn.getGridColumn().getDataIndex() + " IS NULL";
-                    }
+                    currentFilterString =
+                        currentFilterString.replace(
+                            genTextParam,
+                            customColumn.getGridColumn().getDataIndex());
+                    currentFilterParam =
+                        genTextValue + customColumn.getGridColumnId();
+                    currentFilterString =
+                        currentFilterString.replace(
+                            ":" + genTextValue, ":" + currentFilterParam);
                 } else if (filterType.equals("tag")) {
                     String[] tagIds = filterValue.split(",");
                     int tagNumber = tagIds.length;
@@ -178,18 +173,34 @@ public class QueryTools {
                        && customColumn.getFilterIsNull() != null
                        && customColumn.getFilterIsNull() == true
             ) {
-                String currentFilterString = customColumn.getGridColumn().getFilter().getSql();
-                currentFilterString = currentFilterString.replaceAll(" .*", " IS NULL ");
-                currentFilterString = currentFilterString.replaceAll(".*\\(", "");
-                if (customColumn.getFilterNegate()) {
-                    currentFilterString = "NOT(" + currentFilterString + ")";
+                Filter filter = customColumn.getGridColumn().getFilter();
+                String currentFilterString = filter.getSql();
+                String filterType = filter.getFilterType().getType();
+                if (filterType.equals("generictext")) {
+                    currentFilterString =
+                            customColumn.getGridColumn().getDataIndex() + " IS NULL";
+                    if (customColumn.getFilterNegate()) {
+                        currentFilterString = "NOT(" + currentFilterString + ")";
+                    }
+                    if (genericFilterSql.isEmpty()) {
+                        genericFilterSql += " WHERE " + currentFilterString;
+                    } else {
+                        genericFilterSql += " AND " + currentFilterString;
+                    }
+                    subquery = true;
+                    generic = true;
+                 } else {
+                    currentFilterString = currentFilterString.replaceAll(" .*", " IS NULL ");
+                    currentFilterString = currentFilterString.replaceAll(".*\\(", "");
+                    if (customColumn.getFilterNegate()) {
+                        currentFilterString = "NOT(" + currentFilterString + ")";
+                    }
+                    if (filterSql.isEmpty()) {
+                        filterSql += " WHERE " + currentFilterString;
+                    } else {
+                        filterSql += " AND + currentFilterString";
+                    }
                 }
-                if (filterSql.isEmpty()) {
-                    filterSql += " WHERE ";
-                } else {
-                    filterSql += " AND ";
-                }
-                filterSql += currentFilterString;
             }
         }
 
