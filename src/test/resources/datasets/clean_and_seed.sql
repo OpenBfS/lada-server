@@ -11,6 +11,8 @@ DELETE FROM land.messprogramm;
 DELETE FROM land.messung;
 DELETE FROM pflicht_messgroesse;
 DELETE FROM datenbasis;
+DELETE FROM umwelt;
+DELETE FROM mass_einheit_umrechnung;
 DELETE FROM mess_einheit;
 DELETE FROM messgroesse;
 DELETE FROM mess_methode;
@@ -23,7 +25,6 @@ DELETE FROM probenart;
 DELETE FROM proben_zusatz;
 DELETE FROM koordinaten_art;
 DELETE FROM staat;
-DELETE FROM umwelt;
 DELETE FROM verwaltungseinheit;
 DELETE FROM deskriptoren;
 DELETE FROM betriebsart;
@@ -36,6 +37,8 @@ INSERT INTO datenbasis (id) VALUES (9);
 INSERT INTO datenbasis (id) VALUES (2);
 INSERT INTO mess_einheit (id) VALUES (207);
 INSERT INTO mess_einheit (id) VALUES (208);
+INSERT INTO mass_einheit_umrechnung (meh_id_von, meh_id_zu, faktor)
+       VALUES (207, 208, 2);
 INSERT INTO messgroesse (id, messgroesse) VALUES (56, 'Mangan');
 INSERT INTO messgroesse (id, messgroesse) VALUES (57, 'Mangan');
 INSERT INTO mess_methode (id) VALUES ('A3');
@@ -55,8 +58,9 @@ INSERT INTO proben_zusatz (id, beschreibung, zusatzwert)
 INSERT INTO koordinaten_art (id) VALUES (5);
 INSERT INTO staat (id, staat, hkl_id, staat_iso)
        VALUES (0, 'Deutschland', 0, 'DE');
-INSERT INTO umwelt (id, umwelt_bereich) VALUES ('L6', 'Spurenmessung Luft');
-INSERT INTO umwelt (id, umwelt_bereich) VALUES ('A6', 'Umweltbereich für test');
+INSERT INTO umwelt (id, umwelt_bereich, meh_id) VALUES
+    ('L6', 'Spurenmessung Luft', 208),
+    ('A6', 'Umweltbereich für test', null);
 INSERT INTO verwaltungseinheit (
             id, bundesland, bezeichnung,
             is_bundesland, is_gemeinde, is_landkreis, is_regbezirk)

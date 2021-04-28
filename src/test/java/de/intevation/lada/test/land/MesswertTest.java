@@ -7,16 +7,22 @@
  */
 package de.intevation.lada.test.land;
 
+import java.io.StringReader;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Response;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.Protocol;
 import de.intevation.lada.test.ServiceTest;
 
@@ -71,10 +77,74 @@ public class MesswertTest extends ServiceTest {
     public final void execute() {
         getAll("messwert", "rest/messwert?messungsId=1200");
         getById("messwert", "rest/messwert/10000", expectedById);
+        normalize(expectedById);
         JsonObject created = create("messwert", "rest/messwert", create);
         update("messwert", "rest/messwert/10000", "messwertNwg", "<", ">");
         delete(
             "messwert",
             "rest/messwert/" + created.getJsonObject("data").get("id"));
+    }
+
+    /**
+     * Test messwert normalization
+     */
+    private void normalize(JsonObject oldValue) {
+        System.out.print(".");
+        Protocol prot = new Protocol();
+        prot.setName("messwert" + " service");
+        prot.setType("normalize");
+        prot.setPassed(false);
+        protocol.add(prot);
+
+        Response normalized = ClientBuilder.newClient().target(
+            baseUrl + "rest/messwert/normalize?messungsId=1200")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .put(null);
+
+        /* Try to parse the response*/
+        JsonObject normalizedObject;
+        try {
+            normalizedObject = Json.createReader(
+                new StringReader(normalized.readEntity(String.class)))
+                .readObject();
+        } catch (JsonException je) {
+            prot.addInfo("exception", je.getMessage());
+            Assert.fail(je.getMessage());
+            return;
+        }
+
+        /* Verify the response*/
+        boolean success = normalizedObject.getBoolean("success");
+        Assert.assertTrue(
+            "Unsuccessful response object:\n" + normalizedObject,
+            success);
+        prot.addInfo("success", success);
+        String message = normalizedObject.getString("message");
+        Assert.assertEquals("200", message);
+        prot.addInfo("message", message);
+
+        // The following makes assumptions about the first entry only
+        JsonObject normalizedMesswert =
+            normalizedObject.getJsonArray("data").getJsonObject(0);
+
+        /* Verify normalized unit */
+        final String unitK = "mehId";
+        final int unitV = 208; // converted from 207
+        Assert.assertEquals(
+            unitV,
+            normalizedMesswert.getInt(unitK));
+
+        /* Verify normalized value */
+        final String valueK = "nwgZuMesswert";
+        final double valueFactor = 2; // factor for 207 -> 208
+        final double epsilon = 1e-10;
+        Assert.assertEquals(
+            oldValue.getJsonNumber(valueK).doubleValue() * valueFactor,
+            normalizedMesswert.getJsonNumber(valueK).doubleValue(),
+            epsilon);
+
+        prot.setPassed(true);
     }
 }
