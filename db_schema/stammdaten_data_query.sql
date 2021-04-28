@@ -574,7 +574,7 @@ COPY stamm.grid_column (id, base_query, name, data_index, "position", filter, da
 3210	32	PLZ	plz	10	18	1
 3211	32	Strasse	strasse	11	\N	1
 3212	32	Telefon	telefon	12	\N	1
-3213	32	TP	tourenplan	13	\N	1
+3213	32	Tourenplan	tourenplan	13	\N	1
 3214	32	Typ	typ	14	\N	1
 3215	32	letzte Änderung	letzteAenderung	15	\N	2
 3216	32	Netzbetreiber	netzbetreiber	16	24	18
