@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 
 import de.intevation.lada.exporter.ExportJobManager;
 import de.intevation.lada.exporter.ExportJobManager.JobNotFoundException;
-import de.intevation.lada.exporter.ExportJobManager.JobStatus;
+import de.intevation.lada.exporter.ExportJob.JobStatus;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -296,8 +296,8 @@ public class AsyncExportService {
     @Produces("application/json")
     public Response getStatus(
         @PathParam("id") String id,
-        @Context HttpServletRequest request) {
-
+        @Context HttpServletRequest request
+    ) {
         JobStatus status;
         UserInfo originalCreator;
         UserInfo requestingUser = authorization.getInfo(request);
@@ -322,7 +322,7 @@ public class AsyncExportService {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         JsonObject responseJson = Json.createObjectBuilder()
-            .add("status", status.getStatus())
+            .add("status", status.getStatus().name().toLowerCase())
             .add("message", status.getMessage())
             .add("done", status.isDone())
             .build();
