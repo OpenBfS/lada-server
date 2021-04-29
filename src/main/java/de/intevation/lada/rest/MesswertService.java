@@ -173,7 +173,7 @@ public class MesswertService {
             List<Messwert> messwerts = (List<Messwert>) r.getData();
             for (Messwert messwert: messwerts) {
                 Violation violation = validator.validate(messwert);
-                if (violation.hasErrors() || violation.hasWarnings()) {
+                if (violation.hasErrors() || violation.hasWarnings() || violation.hasNotifications()) {
                     messwert.setErrors(violation.getErrors());
                     messwert.setWarnings(violation.getWarnings());
                     messwert.setNotifications(violation.getNotifications());
