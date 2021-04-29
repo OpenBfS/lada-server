@@ -80,7 +80,7 @@ ENV GRIDSHIFT $SRC/src/main/resources/org/geotools/referencing/factory/gridshift
 RUN curl -s --create-dirs \
         -o $GRIDSHIFT/BETA2007.gsb \
         http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007.gsb
-VOLUME $GRIDSHIFT
+# VOLUME $GRIDSHIFT
 
 #
 # Add LADA-server repo
