@@ -115,11 +115,6 @@ public class QueryTools {
                 String currentFilterString = filter.getSql();
                 String currentFilterParam = filter.getParameter();
                 String filterType = filter.getFilterType().getType();
-                if (customColumn.getFilterNegate() != null
-                    && customColumn.getFilterNegate()
-                ) {
-                    currentFilterString = "NOT(" + currentFilterString + ")";
-                }
                 if (filterType.equals("generictext")
                     || filterType.equals("genericid")
                 ) {
@@ -155,12 +150,15 @@ public class QueryTools {
                         tagFilterSql.replace(
                             ":" + filter.getParameter(), paramlist);
                     if (filterSql.isEmpty()) {
-                        filterSql += " WHERE ";
+                        filterSql += " WHERE " + tagFilterSql;
                     } else {
-                        filterSql += " AND ";
+                        filterSql += " AND " + tagFilterSql;
                     }
-                    filterSql += tagFilterSql;
                     continue;
+                }
+                if (customColumn.getFilterNegate() != null
+                     && customColumn.getFilterNegate()) {
+                    currentFilterString = "NOT(" + currentFilterString + ")";
                 }
                 if (generic) {
                     if (genericFilterSql.isEmpty()) {
@@ -171,14 +169,10 @@ public class QueryTools {
                 } else {
                     //Build WHERE clause
                     if (filterSql.isEmpty()) {
-                        filterSql += " WHERE ";
+                        filterSql += " WHERE " + currentFilterString;
                     } else {
-                        filterSql += " AND ";
+                        filterSql += " AND " + currentFilterString;
                     }
-                    if (customColumn.getFilterNegate()) {
-                        currentFilterString = "NOT(" + currentFilterString + ")";
-                    }
-                    filterSql += currentFilterString;
                 }
             } else if (customColumn.getFilterActive() != null
                        && customColumn.getFilterActive() == true
@@ -191,7 +185,8 @@ public class QueryTools {
                 if (filterType.equals("generictext")) {
                     currentFilterString =
                             customColumn.getGridColumn().getDataIndex() + " IS NULL";
-                    if (customColumn.getFilterNegate()) {
+                    if (customColumn.getFilterNegate() != null
+                        && customColumn.getFilterNegate()) {
                         currentFilterString = "NOT(" + currentFilterString + ")";
                     }
                     if (genericFilterSql.isEmpty()) {
@@ -204,13 +199,14 @@ public class QueryTools {
                  } else {
                     currentFilterString = currentFilterString.replaceAll(" .*", " IS NULL ");
                     currentFilterString = currentFilterString.replaceAll(".*\\(", "");
-                    if (customColumn.getFilterNegate()) {
+                    if (customColumn.getFilterNegate() != null
+                        && customColumn.getFilterNegate()) {
                         currentFilterString = "NOT(" + currentFilterString + ")";
                     }
                     if (filterSql.isEmpty()) {
                         filterSql += " WHERE " + currentFilterString;
                     } else {
-                        filterSql += " AND + currentFilterString";
+                        filterSql += " AND " + currentFilterString;
                     }
                 }
             }
