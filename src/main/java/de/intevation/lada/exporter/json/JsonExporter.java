@@ -399,12 +399,15 @@ public class JsonExporter implements Exporter {
                 ((ObjectNode) nodes.get(i)).put(
                     "pzwGroesse", pz.getBeschreibung());
                 Integer mehId = pz.getMessEinheitId();
+                if (mehId != null) {
                 MessEinheit meh = repository.getByIdPlain(
                     MessEinheit.class,
                     mehId,
                     Strings.STAMM);
                 ((ObjectNode) nodes.get(i)).put(
                     "meh", meh.getEinheit());
+                } else {
+                    continue;}
             }
             ((ObjectNode) probe).set("zusatzwerte", nodes);
         } catch (IOException e) {
