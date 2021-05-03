@@ -21,6 +21,8 @@ import javax.json.JsonObject;
 
 import org.apache.log4j.Logger;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 
@@ -92,7 +94,14 @@ public abstract class ExportJob extends Thread {
     /**
      * Possible status values for export jobs.
      */
-    public enum Status { WAITING, RUNNING, FINISHED, ERROR }
+    public enum Status {
+        WAITING, RUNNING, FINISHED, ERROR;
+
+        @JsonValue
+        public String getName() {
+            return this.name().toLowerCase();
+        }
+    }
 
     /**
      * The current job status.

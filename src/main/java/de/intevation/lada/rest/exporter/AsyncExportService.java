@@ -22,6 +22,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
@@ -321,13 +322,7 @@ public class AsyncExportService {
             logger.info(String.format("Could not find status for job %s", id));
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        JsonObject responseJson = Json.createObjectBuilder()
-            .add("status", status.getStatus().name().toLowerCase())
-            .add("message", status.getMessage())
-            .add("done", status.isDone())
-            .build();
-
-        return Response.ok(responseJson.toString()).build();
+        return Response.ok(status, MediaType.APPLICATION_JSON).build();
     }
 
     /**
