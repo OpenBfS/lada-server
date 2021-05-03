@@ -86,6 +86,18 @@ public class ExportJobManager {
         logger.debug("Creating ExportJobManager");
     };
 
+    private class ExportJobExceptionHandler
+        implements Thread.UncaughtExceptionHandler {
+        public void uncaughtException(Thread t, Throwable e) {
+            String errMsg = e.getMessage();
+            logger.error("ExportJob failed with:");
+            logger.error(errMsg);
+            e.printStackTrace();
+
+            ((ExportJob) t).fail(errMsg);
+        }
+    }
+
     /**
      * Creates a new export job using the given format and parameters.
      * @param format Export format
@@ -134,6 +146,7 @@ public class ExportJobManager {
         newJob.setEncoding(encoding);
         newJob.setExportParameter(params);
         newJob.setUserInfo(userInfo);
+        newJob.setUncaughtExceptionHandler(new ExportJobExceptionHandler());
         newJob.start();
         activeJobs.put(id, newJob);
 
