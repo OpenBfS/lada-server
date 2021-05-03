@@ -358,7 +358,7 @@ public abstract class ExportJob extends Thread {
                 Files.createDirectories(tmpPath);
             } catch (IOException ioe) {
                 logger.error(String.format(
-                    "JCannot create export folder. IOException: %s",
+                    "Cannot create export folder. IOException: %s",
                     ioe.getMessage()));
                 return false;
             } catch (SecurityException se) {
