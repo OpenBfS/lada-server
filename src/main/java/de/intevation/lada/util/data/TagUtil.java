@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.inject.Inject;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
@@ -31,20 +32,23 @@ import de.intevation.lada.util.rest.Response;
  */
 public class TagUtil {
 
-    private TagUtil() { }
+    private final Repository repository;
+
+    @Inject
+    private TagUtil(Repository repository) {
+        this.repository = repository;
+    }
 
     /**
      * Creates an auto generated tag using the current date and a given prefix.
      * Format is: {prefix}_yyyyMMdd_{serialNumber}
      * @param prefix Prefix to set
      * @param mstId mstId to set in the tag
-     * @param repository Repository to use
      * @return Response of tag creation
      */
-    public static synchronized Response generateTag(
+    public synchronized Response generateTag(
         String prefix,
-        String mstId,
-        Repository repository
+        String mstId
     ) {
         //Get current date
         LocalDate date = LocalDate.now();
@@ -95,11 +99,11 @@ public class TagUtil {
      * Sets tags for the given probe records an connected messung records.
      * @param probeIds Probe ids to set tags for
      * @param tagId Tag id to set
-     * @param repository Repository to use
      * @return List of created tag references
      */
-    public static List<TagZuordnung> setTagsByProbeIds(
-            List<Integer> probeIds, Integer tagId, Repository repository) {
+    public List<TagZuordnung> setTagsByProbeIds(
+            List<Integer> probeIds, Integer tagId
+    ) {
         // TODO: Instead of using IDs as parameters, pass the objects directly
         // instead of fetching them from the database again, whenever possible.
         Tag tag = repository.getByIdPlain(Tag.class, tagId);

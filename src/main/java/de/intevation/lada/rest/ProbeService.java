@@ -139,6 +139,9 @@ public class ProbeService {
     @Inject
     private ProbeFactory factory;
 
+    @Inject
+    private TagUtil tagUtil;
+
     /**
      * Get all Probe objects.
      * <p>
@@ -340,8 +343,7 @@ public class ProbeService {
         boolean dryrun;
         if (object.containsKey("dryrun")) {
             dryrun = object.getBoolean("dryrun");
-        }
-        else {
+        } else {
             dryrun = false;
         }
 
@@ -427,12 +429,10 @@ public class ProbeService {
             // TODO: Pick the correct instead of the first Messstelle
             String mstId = authorization.getInfo(request)
                 .getMessstellen().get(0);
-            Response tagCreation =
-                TagUtil.generateTag("PEP", mstId, repository);
+            Response tagCreation = tagUtil.generateTag("PEP", mstId);
             if (tagCreation.getSuccess()) {
                 Tag newTag = (Tag) tagCreation.getData();
-                TagUtil.setTagsByProbeIds(
-                    generatedProbeIds, newTag.getId(), repository);
+                tagUtil.setTagsByProbeIds(generatedProbeIds, newTag.getId());
                 responseData.put("tag", newTag.getTag());
             } else {
                 /* TODO: The whole request should be handled in one

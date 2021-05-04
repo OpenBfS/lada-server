@@ -131,6 +131,9 @@ public class LafObjectMapper {
 
     @Inject OrtFactory ortFactory;
 
+    @Inject
+    private MesswertNormalizer messwertNormalizer;
+
     private Map<String, List<ReportItem>> errors;
     private Map<String, List<ReportItem>> warnings;
     private Map<String, List<ReportItem>> notifications;
@@ -921,8 +924,8 @@ public class LafObjectMapper {
                 }
             }
         }
-        messwerte = MesswertNormalizer.normalizeMesswerte(
-            messwerte, probe.getUmwId(), repository);
+        messwerte = messwertNormalizer.normalizeMesswerte(
+            messwerte, probe.getUmwId());
         //persist messwerte
         merger.mergeMesswerte(newMessung, messwerte);
         // Check for warnings and errors for messung ...

@@ -111,6 +111,9 @@ public class MesswertService {
     @ValidationConfig(type = "Messwert")
     private Validator validator;
 
+    @Inject
+    private MesswertNormalizer messwertNormalizer;
+
     /**
      * Get all Messwert objects.
      * <p>
@@ -408,9 +411,9 @@ public class MesswertService {
         QueryBuilder<Messwert> messwertBuilder =
             repository.queryBuilder(Messwert.class);
         messwertBuilder.and("messungsId", messungIdInt);
-        List<Messwert> messwerte = MesswertNormalizer.normalizeMesswerte(
+        List<Messwert> messwerte = messwertNormalizer.normalizeMesswerte(
             repository.filterPlain(messwertBuilder.getQuery()),
-                umwelt.getId(), repository);
+            umwelt.getId());
 
         for (Messwert messwert: messwerte) {
             if (!authorization.isAuthorized(

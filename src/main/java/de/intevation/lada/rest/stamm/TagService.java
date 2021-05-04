@@ -62,6 +62,9 @@ import de.intevation.lada.util.rest.Response;
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
 
+    @Inject
+    private TagUtil tagUtil;
+
     /**
      * Get all tags for a Probe or Messung instance,
      * filtered by the users messstelle id.
@@ -192,15 +195,13 @@ import de.intevation.lada.util.rest.Response;
                 false, StatusCodes.NOT_ALLOWED, "Invalid probe id(s)");
         }
         Response resp =
-            TagUtil.generateTag(
-                "PEP", userInfo.getMessstellen().get(0), repository);
+            tagUtil.generateTag("PEP", userInfo.getMessstellen().get(0));
         Tag currentTag = (Tag) resp.getData();
 
         return new Response(
             true,
             StatusCodes.OK,
-            TagUtil.setTagsByProbeIds(
-                probeIds, currentTag.getId(), repository));
+            tagUtil.setTagsByProbeIds(probeIds, currentTag.getId()));
     }
 
     /**
@@ -253,15 +254,13 @@ import de.intevation.lada.util.rest.Response;
                 false, StatusCodes.NOT_ALLOWED, "Invalid probe id(s)");
         }
         Response resp =
-            TagUtil.generateTag(
-                "IMP", userInfo.getMessstellen().get(0), repository);
+            tagUtil.generateTag("IMP", userInfo.getMessstellen().get(0));
         Tag currentTag = (Tag) resp.getData();
 
         return new Response(
             true,
             StatusCodes.OK,
-            TagUtil.setTagsByProbeIds(
-                probeIds, currentTag.getId(), repository));
+            tagUtil.setTagsByProbeIds(probeIds, currentTag.getId()));
     }
 
 

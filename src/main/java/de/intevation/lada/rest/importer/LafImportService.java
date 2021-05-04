@@ -81,6 +81,9 @@ public class LafImportService {
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
 
+    @Inject
+    private TagUtil tagUtil;
+
     /**
      * Import a given list of files, generate a tag and set it to all
      * imported records.
@@ -195,8 +198,7 @@ public class LafImportService {
         if (importedProbeids.size() > 0) {
             success = true;
             //Generate a tag for the imported probe records
-            Response tagCreation =
-                TagUtil.generateTag("IMP", mstId, repository);
+            Response tagCreation = tagUtil.generateTag("IMP", mstId);
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
                 return new Response(
@@ -205,8 +207,7 @@ public class LafImportService {
                     importResponseData);
             }
             Tag newTag = (Tag) tagCreation.getData();
-            TagUtil.setTagsByProbeIds(
-                importedProbeids, newTag.getId(), repository);
+            tagUtil.setTagsByProbeIds(importedProbeids, newTag.getId());
 
             //Put new tag in import response
             importResponseData.forEach((file, responseData) -> {
@@ -276,15 +277,13 @@ public class LafImportService {
         // If import created at least a new record
         if (importedProbeids.size() > 0 && !mstId.equals("null")) {
             //Generate a tag for the imported probe records
-            Response tagCreation =
-                TagUtil.generateTag("IMP", mstId, repository);
+            Response tagCreation = tagUtil.generateTag("IMP", mstId);
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
                 return new Response(true, StatusCodes.OK, respData);
             }
             Tag newTag = (Tag) tagCreation.getData();
-            TagUtil.setTagsByProbeIds(
-                importedProbeids, newTag.getId(), repository);
+            tagUtil.setTagsByProbeIds(importedProbeids, newTag.getId());
 
             respData.put("tag", newTag.getTag());
         }

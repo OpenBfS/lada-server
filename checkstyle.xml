@@ -197,6 +197,7 @@ Maven Checkstyle plugin. Some design related checks where removed.
     <module name="HiddenField">
       <property name="severity" value="warning"/>
       <property name="ignoreSetter" value="true"/>
+      <property name="ignoreConstructorParameter" value="true"/>
     </module>
     <module name="IllegalInstantiation"/>
     <module name="InnerAssignment">

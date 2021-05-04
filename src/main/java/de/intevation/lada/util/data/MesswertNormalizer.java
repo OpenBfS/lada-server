@@ -9,6 +9,8 @@ package de.intevation.lada.util.data;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.stammdaten.MassEinheitUmrechnung;
 import de.intevation.lada.model.stammdaten.Umwelt;
@@ -16,19 +18,22 @@ import de.intevation.lada.model.stammdaten.Umwelt;
 
 public class MesswertNormalizer {
 
-    private MesswertNormalizer() { }
+    private final Repository repository;
+
+    @Inject
+    private MesswertNormalizer(Repository repository) {
+        this.repository = repository;
+    }
 
     /**
      * Get the list of conversion for the given meh ids.
      * @param mehIdTo MehId to convert to
      * @param mehIdFrom MehId to convert from
-     * @param repository Repository to use
      * @return Conversions as list
      */
-    private static List<MassEinheitUmrechnung> getConversions(
+    private List<MassEinheitUmrechnung> getConversions(
         Integer mehIdTo,
-        Integer mehIdFrom,
-        Repository repository
+        Integer mehIdFrom
     ) {
         QueryBuilder<MassEinheitUmrechnung> builder =
             repository.queryBuilder(MassEinheitUmrechnung.class);
@@ -39,14 +44,14 @@ public class MesswertNormalizer {
 
     /**
      * Converts the given messwert list into the standard unit of the
-     * given UmweltId
+     * given UmweltId.
      * @param messwerte Messwerte to convert
      * @param umwId UmweltId to get the standard unit from
+     * @return List<Messwert> with converted units.
      */
-    public static List<Messwert> normalizeMesswerte(
+    public List<Messwert> normalizeMesswerte(
         List<Messwert> messwerte,
-        String umwId,
-        Repository repository
+        String umwId
     ) {
         if (umwId == null || umwId.equals("")) {
             return messwerte;
@@ -67,9 +72,9 @@ public class MesswertNormalizer {
             }
             //Get the conversion factors
             List<MassEinheitUmrechnung> primaryMeu = getConversions(
-                    mehIdToConvertTo, messwert.getMehId(), repository);
+                    mehIdToConvertTo, messwert.getMehId());
             List<MassEinheitUmrechnung> secondaryMeu = getConversions(
-                    secMehIdToConvertTo, messwert.getMehId(), repository);
+                    secMehIdToConvertTo, messwert.getMehId());
             if (primaryMeu.size() == 0 && secondaryMeu.size() == 0) {
                 //No suitable conversion found: continue
                 continue;
