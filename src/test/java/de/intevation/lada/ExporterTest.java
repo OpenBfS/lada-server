@@ -41,7 +41,6 @@ import org.junit.runner.RunWith;
 
 import de.intevation.lada.exporter.ExportJob;
 import de.intevation.lada.model.stammdaten.BaseQuery;
-import de.intevation.lada.util.data.Strings;
 
 /**
  * Test export services.
@@ -52,7 +51,7 @@ public class ExporterTest extends BaseTest {
 
     private static Logger logger = Logger.getLogger(ExporterTest.class);
 
-    @PersistenceContext(unitName = Strings.STAMM)
+    @PersistenceContext
     EntityManager em;
 
     public ExporterTest() {
@@ -66,7 +65,7 @@ public class ExporterTest extends BaseTest {
     @InSequence(1)
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @UsingDataSet("datasets/dbUnit_probe_query.json")
-    @DataSource("java:jboss/lada-stamm-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareCsvExportProbe() {
         Protocol protocol = new Protocol();
