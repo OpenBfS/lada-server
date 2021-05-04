@@ -83,6 +83,18 @@ public class ExportJobManager {
         logger.debug("Creating ExportJobManager");
     };
 
+    private class ExportJobExceptionHandler
+        implements Thread.UncaughtExceptionHandler {
+        public void uncaughtException(Thread t, Throwable e) {
+            String errMsg = e.getMessage();
+            logger.error("ExportJob failed with:");
+            logger.error(errMsg);
+            e.printStackTrace();
+
+            ((ExportJob) t).fail(errMsg);
+        }
+    }
+
     /**
      * Creates a new export job using the given format and parameters.
      * @param format Export format
@@ -131,6 +143,7 @@ public class ExportJobManager {
         newJob.setEncoding(encoding);
         newJob.setExportParameter(params);
         newJob.setUserInfo(userInfo);
+        newJob.setUncaughtExceptionHandler(new ExportJobExceptionHandler());
         newJob.start();
         activeJobs.put(id, newJob);
 
@@ -191,18 +204,15 @@ public class ExportJobManager {
      * @throws JobNotFoundException Thrown if a job with the given can not
      *                              be found
      */
-    public JobStatus getJobStatus(
+    public ExportJob.JobStatus getJobStatus(
         String id
     ) throws JobNotFoundException {
         ExportJob job = getJobById(id);
-        Status jobStatus = job.getStatus();
-        String message = job.getMessage();
-        boolean done = job.isDone();
-        JobStatus statusObject = new JobStatus(jobStatus, message, done);
-        if (jobStatus.equals(Status.ERROR) && done) {
+        ExportJob.JobStatus jobStatus = job.getStatus();
+        if (jobStatus.getStatus().equals(Status.ERROR) && jobStatus.isDone()) {
             removeExportJob(job);
         }
-        return statusObject;
+        return jobStatus;
     }
 
     /**
@@ -275,34 +285,6 @@ public class ExportJobManager {
                 "Tried to remove unfinished job %s", job.getJobId()));
         }
         activeJobs.remove(job.getJobId());
-    }
-
-    /**
-     * Class modeling a job status.
-     * Stores job status and message
-     */
-    public static class JobStatus {
-        private Status status;
-        private String message;
-        private boolean done;
-
-        public JobStatus(Status s, String m, boolean d) {
-            this.status = s;
-            this.message = m;
-            this.done = d;
-        }
-
-        public boolean isDone() {
-            return done;
-        }
-
-        public String getStatus() {
-            return status.name().toLowerCase();
-        }
-
-        public String getMessage() {
-            return message;
-        }
     }
 
     /**

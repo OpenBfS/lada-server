@@ -7,13 +7,10 @@
  */
 package de.intevation.lada.test.land;
 
-import java.io.StringReader;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.json.Json;
-import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
@@ -102,18 +99,7 @@ public class MesswertTest extends ServiceTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .put(null);
-
-        /* Try to parse the response*/
-        JsonObject normalizedObject;
-        try {
-            normalizedObject = Json.createReader(
-                new StringReader(normalized.readEntity(String.class)))
-                .readObject();
-        } catch (JsonException je) {
-            prot.addInfo("exception", je.getMessage());
-            Assert.fail(je.getMessage());
-            return;
-        }
+        JsonObject normalizedObject = BaseTest.parseResponse(normalized, prot);
 
         /* Verify the response*/
         boolean success = normalizedObject.getBoolean("success");
