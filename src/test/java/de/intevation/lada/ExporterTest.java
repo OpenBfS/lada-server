@@ -103,7 +103,6 @@ public class ExporterTest extends BaseTest {
             .add("exportSubData", false)
             .add("idField", JsonValue.NULL)
             .add("timezone", "UTC")
-            .add("csvOptions", Json.createObjectBuilder())
             .add("columns", Json.createArrayBuilder()
                 .add(Json.createObjectBuilder()
                     .add("columnIndex", 0)
