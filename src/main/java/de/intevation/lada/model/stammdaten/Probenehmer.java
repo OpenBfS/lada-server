@@ -176,7 +176,7 @@ public class Probenehmer implements Serializable {
         return this.tourenplan;
     }
 
-    public void setTourenplan(String ttourenplanp) {
+    public void setTourenplan(String tourenplan) {
         this.tourenplan = tourenplan;
     }
 
