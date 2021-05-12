@@ -260,7 +260,7 @@ public class JsonExportJob extends QueryExportJob {
         JsonObject exportOptions = optionBuilder.build();
         try {
             exported = exporter.export(
-                exportData, encoding, exportOptions, exportColumns);
+                exportData, encoding, exportOptions, exportColumns, qId);
         } catch (Exception e) {
             logger.error("Error creating json");
             e.printStackTrace();

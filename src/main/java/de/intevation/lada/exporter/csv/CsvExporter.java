@@ -98,7 +98,8 @@ public class CsvExporter implements Exporter {
      */
     private String[] getReadableColumnNames(
         String[] keys,
-        JsonObject subDataColumnNames
+        JsonObject subDataColumnNames,
+        Integer qId
     ) {
         String[] names = new String[keys.length];
         ArrayList<String> keysList = new ArrayList<String>(Arrays.asList(keys));
@@ -106,6 +107,7 @@ public class CsvExporter implements Exporter {
             QueryBuilder<GridColumn> builder =
                 repository.queryBuilder(GridColumn.class);
             builder.and("dataIndex", key);
+            builder.and("baseQuery", qId);
             List<GridColumn> result =
                 repository.filterPlain(builder.getQuery());
             String name = key;
@@ -146,13 +148,15 @@ public class CsvExporter implements Exporter {
      *
      * @param columnsToInclude List of column names to include in the export.
      *                         If not set, all columns will be exported
+     * @param qId
      * @return Export result as input stream or null if the export failed
      */
     public InputStream export(
         List<Map<String, Object>> queryResult,
         String encoding,
         JsonObject options,
-        ArrayList<String> columnsToInclude
+        ArrayList<String> columnsToInclude,
+        Integer qId
     ) {
         if (queryResult == null || queryResult.size() == 0) {
             return null;
@@ -211,7 +215,7 @@ public class CsvExporter implements Exporter {
             columnsToInclude.toArray(keys);
         }
 
-        String[] header = getReadableColumnNames(keys, subDataColumnNames);
+        String[] header = getReadableColumnNames(keys, subDataColumnNames, qId);
         //Create CSV format
         CSVFormat format = CSVFormat.DEFAULT
             .withDelimiter(fieldSeparator)

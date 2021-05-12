@@ -61,7 +61,8 @@ public interface Exporter {
         List<Map<String, Object>> result,
         String encoding,
         JsonObject options,
-        ArrayList<String> columnsToInclude
+        ArrayList<String> columnsToInclude,
+        Integer qId
     ) {
         return null;
     }

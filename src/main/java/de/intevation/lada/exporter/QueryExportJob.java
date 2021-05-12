@@ -83,7 +83,7 @@ public abstract class QueryExportJob extends ExportJob {
     /**
      * Query id.
      */
-    private Integer qId;
+    protected Integer qId;
 
     /**
      * Query tools used to load query data.

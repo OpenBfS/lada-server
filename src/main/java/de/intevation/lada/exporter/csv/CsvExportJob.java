@@ -261,6 +261,7 @@ public class CsvExportJob extends QueryExportJob {
         //Fetch primary records
         try {
             primaryData = getQueryResult();
+            Integer test = qId;
         } catch (QueryExportException qee) {
             fail("Fetching primary data failed");
             return;
@@ -311,7 +312,7 @@ public class CsvExportJob extends QueryExportJob {
         InputStream exported;
         try {
             exported = exporter.export(
-                exportData, encoding, exportOptions.build(), exportColumns);
+                exportData, encoding, exportOptions.build(), exportColumns, qId);
         } catch (Exception e) {
             logger.error("Error writing csv");
             e.printStackTrace();

@@ -105,7 +105,8 @@ public class JsonExporter implements Exporter {
         List<Map<String, Object>> queryResult,
         String encoding,
         JsonObject options,
-        ArrayList<String> columnsToInclude
+        ArrayList<String> columnsToInclude,
+        Integer qId
     ) {
         String subDataKey = options.getString("subData", "");
 
