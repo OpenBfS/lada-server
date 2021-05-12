@@ -32,6 +32,8 @@ import de.intevation.lada.model.stammdaten.GridColumnValue;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.model.stammdaten.StatusStufe;
 import de.intevation.lada.model.stammdaten.StatusWert;
+import de.intevation.lada.model.stammdaten.MessEinheit;
+import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.data.QueryBuilder;
 
@@ -267,6 +269,32 @@ public abstract class QueryExportJob extends ExportJob {
             Messwert.class);
         builder.and("messungsId", messung.getId());
         return repository.filterPlain(builder.getQuery()).size();
+    }
+
+    /**
+    * Get the messeinheit for messwert values using given messwert
+    * @param messwert messwertId sungId to get messeinheit for
+    * @return messeinheit
+     */
+    protected String getMesseinheit(Messwert messwert) {
+        QueryBuilder<MessEinheit> builder = repository.queryBuilder(
+            MessEinheit.class);
+        builder.and("id", messwert.getMehId());
+        List<MessEinheit> messeinheit = repository.filterPlain(builder.getQuery());
+        return messeinheit.get(0).getEinheit();
+    }
+
+    /**
+    * Get the messgroesse for messwert values using given messwert
+    * @param messwert messwertId sungId to get messgroesse for
+    * @return messgroesse
+     */
+    protected String getMessgroesse(Messwert messwert) {
+        QueryBuilder<Messgroesse> builder = repository.queryBuilder(
+            Messgroesse.class);
+        builder.and("id", messwert.getMessgroesseId());
+        List<Messgroesse> messgroesse = repository.filterPlain(builder.getQuery());
+        return messgroesse.get(0).getMessgroesse();
     }
 
     /**
