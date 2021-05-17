@@ -130,6 +130,9 @@ public class Ort implements Serializable {
     private Integer plausibleReferenceCount;
 
     @Transient
+    private Integer referenceCountMp;
+
+    @Transient
     @JsonIgnore
     private MultivaluedMap<String, Integer> errors;
 
@@ -403,6 +406,14 @@ public class Ort implements Serializable {
 
     public void setPlausibleReferenceCount(Integer plausibleReferenceCount) {
         this.plausibleReferenceCount = plausibleReferenceCount;
+    }
+
+    public Integer getReferenceCountMp() {
+        return this.referenceCountMp;
+    }
+
+    public void setReferenceCountMp(Integer referenceCountMp) {
+        this.referenceCountMp = referenceCountMp;
     }
 
     @JsonProperty

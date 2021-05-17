@@ -45,6 +45,7 @@ import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
@@ -73,26 +74,42 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  *  "message": [string],
  *  "data":[{
  *      "id": [number],
- *      "beschreibung": [string],
- *      "bezeichnung": [string],
+ *      "aktiv": [boolean],
+ *      "berichtstext": [string],
+ *      "gemId": [string],
+ *      "gemUntId": [string],
  *      "hoeheLand": [number],
+ *      "hoeheUeberNn": [number],
+ *      "kdaId": [number],
  *      "koordXExtern": [string],
  *      "koordYExtern": [string],
+ *      "ktaGruppeId": [number],
+ *      "kurztext": [string],
+ *      "langtext": [string],
  *      "latitude": [number],
  *      "letzteAenderung": [timestamp],
  *      "longitude": [number],
+ *      "mpArt": [string],
+ *      "netzbetreiberId": [string],
  *      "nutsCode": [string],
- *      "unscharf": [boolean],
- *      "koordinatenartId": [number],
- *      "netzbetreiberId": [number],
+ *      "ortId": [string],
+ *      "ortTyp": [number],
+ *      "ozId": [string],
+ *      "plausibleReferenceCount": [number],
+ *      "readonly": [boolean],
+ *      "referenceCount": [number],
+ *      "referenceCountMp": [number],
+ *      "sektor": [string],
  *      "staatId": [number],
- *      "verwaltungseinheitId": [string],
- *      "otyp": [string]
+ *      "unscharf": [boolean],
+ *      "zone": [string],
+ *      "zustaendigkeit": [string]
  *  }],
  *  "errors": [object],
- *  "warnings": [object],
+ *  "notifications": [object],
  *  "readonly": [boolean],
- *  "totalCount": [number]
+ *  "totalCount": [number],
+ *  "warnings": [object]
  * }
  * </code>
  * </pre>
@@ -157,6 +174,8 @@ public class OrtService {
             List<Ortszuordnung> zuordnungs = getOrtsZuordnungs(o);
             o.setReferenceCount(zuordnungs.size());
             o.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
+            List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(o);
+            o.setReferenceCountMp(zuordnungsMp.size());
             o.setReadonly(
                 !authorization.isAuthorized(
                     request,
@@ -225,6 +244,8 @@ public class OrtService {
             List<Ortszuordnung> zuordnungs = getOrtsZuordnungs(o);
             o.setReferenceCount(zuordnungs.size());
             o.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
+            List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(o);
+            o.setReferenceCountMp(zuordnungsMp.size());
             o.setReadonly(
                 !authorization.isAuthorized(
                     request,
@@ -265,6 +286,8 @@ public class OrtService {
             repository.filterPlain(builder.getQuery());
         ort.setReferenceCount(zuordnungs.size());
         ort.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
+        List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(ort);
+        ort.setReferenceCountMp(zuordnungsMp.size());
         ort.setReadonly(
             !authorization.isAuthorized(
                 request,
@@ -310,6 +333,8 @@ public class OrtService {
                 List<Ortszuordnung> zuordnungs = getOrtsZuordnungs(o);
                 o.setReferenceCount(zuordnungs.size());
                 o.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
+                List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(o);
+                o.setReferenceCountMp(zuordnungsMp.size());
 
                 o.setReadonly(
                     !authorization.isAuthorized(
@@ -517,7 +542,8 @@ public class OrtService {
             return response;
         }
         Ort ort = (Ort) response.getData();
-        if (getOrtsZuordnungs(ort).size() > 0) {
+        if (getOrtsZuordnungs(ort).size() > 0
+                || getOrtsZuordnungsMp(ort).size() > 0) {
             return new Response(false, StatusCodes.ERROR_DELETE, ort);
         }
         if (!authorization.isAuthorized(
@@ -541,9 +567,7 @@ public class OrtService {
         QueryBuilder<Ortszuordnung> refBuilder =
             repository.queryBuilder(Ortszuordnung.class);
         refBuilder.and("ortId", o.getId());
-        List<Ortszuordnung> zuordnungs =
-            repository.filterPlain(refBuilder.getQuery());
-        return zuordnungs;
+        return repository.filterPlain(refBuilder.getQuery());
     }
 
     /**
@@ -577,4 +601,17 @@ public class OrtService {
         }
         return plausibleMap.size();
     }
+
+    /**
+     * Return the OrtszuordnungMp instances referencing the given ort
+     * @param o Ort instance
+     * @return Ortszuordnung instances as list
+     */
+    public List<OrtszuordnungMp> getOrtsZuordnungsMp(Ort o) {
+        QueryBuilder<OrtszuordnungMp> refBuilder =
+            repository.queryBuilder(OrtszuordnungMp.class);
+        refBuilder.and("ortId", o.getId());
+        return repository.filterPlain(refBuilder.getQuery());
+    }
+
 }
