@@ -41,18 +41,18 @@ import de.intevation.lada.util.rest.Response;
  * <pre>
  * <code>
  * {
- *  "success": [boolean];
+ *  "success": [boolean],
  *  "message": [string],
  *  "data":[{
  *      "id": [number],
  *      "bezeichnung": [string],
- *      "daErzeugerId": [string],
  *      "letzteAenderung": [timestamp],
- *      "mstId": [string],
- *      "netzbetreiberId": [string]
+ *      "netzbetreiberId": [string],
+ *      "readonly": [boolean]
  *  }],
  *  "errors": [object],
  *  "warnings": [object],
+ *  "notifications": [object],
  *  "readonly": [boolean],
  *  "totalCount": [number]
  * }
@@ -151,12 +151,9 @@ public class MessprogrammKategorieService {
             repository.queryBuilder(MessprogrammKategorie.class);
         builder.and("code", kategorie.getCode());
         builder.and("netzbetreiberId", kategorie.getNetzbetreiberId());
-
         List<MessprogrammKategorie> kategorien =
             repository.filterPlain(builder.getQuery());
-        if (kategorien.isEmpty()
-            || kategorien.get(0).getId().equals(kategorie.getId())
-        ) {
+        if (kategorien.isEmpty()) {
             return repository.create(kategorie);
         }
         return new Response(false, StatusCodes.IMP_DUPLICATE, null);
@@ -177,6 +174,17 @@ public class MessprogrammKategorieService {
             MessprogrammKategorie.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, kategorie);
+        }
+        QueryBuilder<MessprogrammKategorie> builder =
+            repository.queryBuilder(MessprogrammKategorie.class);
+        builder.and("code", kategorie.getCode());
+        builder.and("netzbetreiberId", kategorie.getNetzbetreiberId());
+        List<MessprogrammKategorie> kategorien =
+            repository.filterPlain(builder.getQuery());
+        if (kategorien.isEmpty()) {
+            return repository.update(kategorie);
+        } else if (kategorien.get(0).getId() != kategorie.getId()) {
+            return new Response(false, StatusCodes.IMP_DUPLICATE, null);
         }
         return repository.update(kategorie);
     }

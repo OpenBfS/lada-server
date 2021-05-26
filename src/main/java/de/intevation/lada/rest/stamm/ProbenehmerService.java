@@ -41,15 +41,29 @@ import de.intevation.lada.util.rest.Response;
  * <pre>
  * <code>
  * {
- *  "success": [boolean];
+ *  "success": [boolean],
  *  "message": [string],
  *  "data":[{
  *      "id": [number],
- *      "mstId": [string],
+ *      "bearbeiter": [string],
+ *      "bemerkung": [string],
+ *      "betrieb": [string],
+ *      "bezeichnung": [string]",
+ *      "kurzBezeichnung": [string],
+ *      "letzteAenderung": [timestamp],
  *      "netzbetreiberId": [string]
+ *      "ort": [string],
+ *      "plz": [string],
+ *      "prnId": [string],
+ *      "strasse": [string],
+ *      "telefon": [string],
+ *      "tourenplan": [string],
+ *      "typ": [string],
+ *      "readonly": [boolean]
  *  }],
  *  "errors": [object],
  *  "warnings": [object],
+ *  "notifications": [object],
  *  "readonly": [boolean],
  *  "totalCount": [number]
  * }
@@ -148,7 +162,6 @@ public class ProbenehmerService {
             repository.queryBuilder(Probenehmer.class);
         builder.and("prnId", probenehmer.getPrnId());
         builder.and("netzbetreiberId", probenehmer.getNetzbetreiberId());
-
         List<Probenehmer> nehmer =
             repository.filterPlain(builder.getQuery());
         if (nehmer.isEmpty()) {
@@ -173,7 +186,17 @@ public class ProbenehmerService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, probenehmer);
         }
-
+        QueryBuilder<Probenehmer> builder =
+            repository.queryBuilder(Probenehmer.class);
+        builder.and("prnId", probenehmer.getPrnId());
+        builder.and("netzbetreiberId", probenehmer.getNetzbetreiberId());
+        List<Probenehmer> nehmer =
+            repository.filterPlain(builder.getQuery());
+        if (nehmer.isEmpty()) {
+            return repository.update(probenehmer);
+        } else if (nehmer.get(0).getId() != probenehmer.getId()) {
+            return new Response(false, StatusCodes.IMP_DUPLICATE, null);
+        }
         return repository.update(probenehmer);
     }
 
