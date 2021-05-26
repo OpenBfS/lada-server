@@ -53,6 +53,7 @@ import de.intevation.lada.util.rest.Response;
  *  }],
  *  "errors": [object],
  *  "warnings": [object],
+ *  "notifications": [object],
  *  "readonly": [boolean],
  *  "totalCount": [number]
  * }
@@ -154,7 +155,7 @@ public class DatensatzErzeugerService {
         builder.and(
             "datensatzErzeugerId", datensatzerzeuger.getDatensatzErzeugerId());
         builder.and("netzbetreiberId", datensatzerzeuger.getNetzbetreiberId());
-
+        builder.and("mstId", datensatzerzeuger.getMstId());
         List<DatensatzErzeuger> erzeuger =
             repository.filterPlain(builder.getQuery());
         if (erzeuger.isEmpty()) {
@@ -179,6 +180,19 @@ public class DatensatzErzeugerService {
         ) {
             return new Response(
                 false, StatusCodes.NOT_ALLOWED, datensatzerzeuger);
+        }
+        QueryBuilder<DatensatzErzeuger> builder =
+            repository.queryBuilder(DatensatzErzeuger.class);
+        builder.and(
+            "datensatzErzeugerId", datensatzerzeuger.getDatensatzErzeugerId());
+        builder.and("netzbetreiberId", datensatzerzeuger.getNetzbetreiberId());
+        builder.and("mstId", datensatzerzeuger.getMstId());
+        List<DatensatzErzeuger> erzeuger =
+            repository.filterPlain(builder.getQuery());
+        if (erzeuger.isEmpty()) {
+            return repository.update(datensatzerzeuger);
+        } else if (erzeuger.get(0).getId() != datensatzerzeuger.getId()) {
+            return new Response(false, StatusCodes.IMP_DUPLICATE, null);
         }
         return repository.update(datensatzerzeuger);
     }

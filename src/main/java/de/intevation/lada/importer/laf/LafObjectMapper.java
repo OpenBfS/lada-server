@@ -2020,6 +2020,7 @@ public class LafObjectMapper {
             QueryBuilder<DatensatzErzeuger> builder =
                 repository.queryBuilder(DatensatzErzeuger.class);
             builder.and("netzbetreiberId", netzbetreiberId);
+            builder.and("mstId", probe.getMstId());
             builder.and("datensatzErzeugerId", value);
             List<DatensatzErzeuger> datensatzErzeuger =
                     (List<DatensatzErzeuger>) repository.filterPlain(
