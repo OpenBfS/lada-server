@@ -232,7 +232,6 @@ public class JsonExportJob extends QueryExportJob {
         if (exportSubdata) {
             try {
                 exportData = mergeSubData(getSubData());
-                exportColumns.addAll(subDataColumns);
             } catch (QueryExportException ee) {
                 logger.error(ee.getMessage());
                 fail("Fetching export sub data failed");
