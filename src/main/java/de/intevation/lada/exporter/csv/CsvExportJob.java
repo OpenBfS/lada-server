@@ -201,7 +201,6 @@ public class CsvExportJob extends QueryExportJob {
                 Object fieldValue = null;
                 // Check if column needs seperate handling or is a valid
                 // messwert field
-                logger.debug(String.format("SubColName - %s", subDataColumn));
                 switch (subDataColumn) {
                     case "messungId":
                         fieldValue = getFieldByName("messungsId", messwert);
