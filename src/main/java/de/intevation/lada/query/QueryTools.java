@@ -172,10 +172,12 @@ public class QueryTools {
                 String filterType = filter.getFilterType().getType();
                 if (filterType.equals("generictext")) {
                     currentFilterString =
-                            customColumn.getGridColumn().getDataIndex() + " IS NULL";
+                        customColumn.getGridColumn().getDataIndex()
+                        + " IS NULL";
                     if (customColumn.getFilterNegate() != null
                         && customColumn.getFilterNegate()) {
-                        currentFilterString = "NOT(" + currentFilterString + ")";
+                        currentFilterString =
+                            "NOT(" + currentFilterString + ")";
                     }
                     if (genericFilterSql.isEmpty()) {
                         genericFilterSql += " WHERE " + currentFilterString;
@@ -185,11 +187,14 @@ public class QueryTools {
                     subquery = true;
                     generic = true;
                  } else {
-                    currentFilterString = currentFilterString.replaceAll(" .*", " IS NULL ");
-                    currentFilterString = currentFilterString.replaceAll(".*\\(", "");
+                    currentFilterString =
+                        currentFilterString.replaceAll(" .*", " IS NULL ");
+                    currentFilterString =
+                        currentFilterString.replaceAll(".*\\(", "");
                     if (customColumn.getFilterNegate() != null
                         && customColumn.getFilterNegate()) {
-                        currentFilterString = "NOT(" + currentFilterString + ")";
+                        currentFilterString =
+                            "NOT(" + currentFilterString + ")";
                     }
                     if (filterSql.isEmpty()) {
                         filterSql += " WHERE " + currentFilterString;
@@ -221,7 +226,6 @@ public class QueryTools {
             }
 
         }
-
 
         if (!filterSql.isEmpty()) {
             sql += filterSql + " ";
