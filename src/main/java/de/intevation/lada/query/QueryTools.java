@@ -163,9 +163,9 @@ public class QueryTools {
                     }
                 }
             } else if (customColumn.getFilterActive() != null
-                       && customColumn.getFilterActive() == true
+                       && customColumn.getFilterActive()
                        && customColumn.getFilterIsNull() != null
-                       && customColumn.getFilterIsNull() == true
+                       && customColumn.getFilterIsNull()
             ) {
                 Filter filter = customColumn.getGridColumn().getFilter();
                 String currentFilterString = filter.getSql();
