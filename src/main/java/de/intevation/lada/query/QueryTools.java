@@ -233,7 +233,6 @@ public class QueryTools {
             sql = "SELECT * FROM ( " + sql + " ) AS inner_query ";
             sql += genericFilterSql;
         }
-        sql += " ;";
         return sql;
     }
 
