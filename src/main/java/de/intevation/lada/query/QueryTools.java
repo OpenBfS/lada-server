@@ -66,10 +66,25 @@ public class QueryTools {
 
     }
 
+    /**
+     * Complement SQL statement from base query with filter and sort settings.
+     *
+     * @param customColumns List<GridColumnValue> with filter and sort settings.
+     * @param qId Database ID of the base query.
+     * @return The completed query string.
+     */
     public String prepareSql(List<GridColumnValue> customColumns, Integer qId) {
         BaseQuery query = repository.getByIdPlain(BaseQuery.class, qId);
 
-        String sql = query.getSql();
+        return prepareSql(customColumns, query.getSql());
+    }
+
+    /**
+     * Generate SQL statement from base query and filter and sort settings.
+     *
+     * Static method for unit testing.
+     */
+    static String prepareSql(List<GridColumnValue> customColumns, String sql) {
         String filterSql = "";
         String genericFilterSql = "";
         String sortSql = "";
