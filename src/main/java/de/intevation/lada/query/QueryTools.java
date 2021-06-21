@@ -224,28 +224,20 @@ public class QueryTools {
             NavigableMap <Integer, String> orderedSorts =
                 sortIndMap.tailMap(0, true);
             String unorderedSorts = sortIndMap.get(-1);
-            sortSql += "";
-            for (String sortString : orderedSorts.values()) {
-                if (sortSql.isEmpty()) {
-                    sortSql += " ORDER BY " + sortString;
-                } else {
-                    sortSql += ", " + sortString;
-                }
-            }
+
+            sortSql = String.join(", ", orderedSorts.values());
             if (unorderedSorts != null && !unorderedSorts.isEmpty()) {
-                if (sortSql.isEmpty()) {
-                    sortSql += " ORDER BY " + unorderedSorts;
-                } else {
-                    sortSql += ", " + unorderedSorts;
+                if (!sortSql.isEmpty()) {
+                    sortSql += ", ";
                 }
+                sortSql += unorderedSorts;
             }
-
+            sortSql = " ORDER BY " + sortSql;
         }
 
-        if (!filterSql.isEmpty()) {
-            sql += filterSql + " ";
-        }
-        sql += sortSql;
+        // Append (possibly empty) WHERE and ORDER BY clause
+        sql += filterSql + sortSql;
+
         //TODO Avoid using subqueries to use aliases in the where clause
         //Append generic and/or tag filter sql seperated from other filters
         if (subquery) {
