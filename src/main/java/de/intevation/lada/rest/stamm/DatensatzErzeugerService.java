@@ -189,9 +189,9 @@ public class DatensatzErzeugerService {
         builder.and("mstId", datensatzerzeuger.getMstId());
         List<DatensatzErzeuger> erzeuger =
             repository.filterPlain(builder.getQuery());
-        if (erzeuger.isEmpty()) {
-            return repository.update(datensatzerzeuger);
-        } else if (erzeuger.get(0).getId() != datensatzerzeuger.getId()) {
+        if (!erzeuger.isEmpty()
+            && !erzeuger.get(0).getId().equals(datensatzerzeuger.getId())
+        ) {
             return new Response(false, StatusCodes.IMP_DUPLICATE, null);
         }
         return repository.update(datensatzerzeuger);

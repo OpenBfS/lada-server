@@ -192,9 +192,9 @@ public class ProbenehmerService {
         builder.and("netzbetreiberId", probenehmer.getNetzbetreiberId());
         List<Probenehmer> nehmer =
             repository.filterPlain(builder.getQuery());
-        if (nehmer.isEmpty()) {
-            return repository.update(probenehmer);
-        } else if (nehmer.get(0).getId() != probenehmer.getId()) {
+        if (!nehmer.isEmpty()
+            && !nehmer.get(0).getId().equals(probenehmer.getId())
+        ) {
             return new Response(false, StatusCodes.IMP_DUPLICATE, null);
         }
         return repository.update(probenehmer);

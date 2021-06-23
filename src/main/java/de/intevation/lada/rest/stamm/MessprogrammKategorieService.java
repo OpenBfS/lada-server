@@ -181,9 +181,9 @@ public class MessprogrammKategorieService {
         builder.and("netzbetreiberId", kategorie.getNetzbetreiberId());
         List<MessprogrammKategorie> kategorien =
             repository.filterPlain(builder.getQuery());
-        if (kategorien.isEmpty()) {
-            return repository.update(kategorie);
-        } else if (kategorien.get(0).getId() != kategorie.getId()) {
+        if (!kategorien.isEmpty()
+            && !kategorien.get(0).getId().equals(kategorie.getId())
+        ) {
             return new Response(false, StatusCodes.IMP_DUPLICATE, null);
         }
         return repository.update(kategorie);
