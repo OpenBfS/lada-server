@@ -139,14 +139,15 @@ public class BaseTest {
         Response response,
         Protocol protocol
     ) {
+        String responseBody = response.readEntity(String.class);
+        logger.debug(responseBody);
         int status = response.getStatus();
         Assert.assertEquals(
             "Unexpected response status code",
             Response.Status.OK.getStatusCode(),
             status);
         try {
-            return Json.createReader(
-                new StringReader(response.readEntity(String.class)))
+            return Json.createReader(new StringReader(responseBody))
                 .readObject();
         } catch (JsonException je) {
             protocol.addInfo("exception", je.getMessage());
