@@ -178,16 +178,9 @@ public class ExporterTest extends BaseTest {
             download.getStatus());
         Assert.assertEquals(
             "Unexpected CSV content",
-            "hauptprobenNr,umwId\r\n120510002,L6\r\n",
+            "hauptprobenNr,umwId\r\n120510002,L6\r\n120510001,L6\r\n",
             download.readEntity(String.class));
 
         prot.setPassed(true);
-    }
-
-    private static void assertContains(JsonObject json, String key) {
-        Assert.assertTrue(
-            "Response does not contain expected key '" + key + "': "
-            + json.toString(),
-            json.containsKey(key));
     }
 }

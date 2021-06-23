@@ -155,4 +155,11 @@ public class BaseTest {
         }
         return null;
     }
+
+    static void assertContains(JsonObject json, String key) {
+        Assert.assertTrue(
+            "Response does not contain expected key '" + key + "': "
+            + json.toString(),
+            json.containsKey(key));
+    }
 }
