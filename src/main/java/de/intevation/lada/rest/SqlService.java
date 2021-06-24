@@ -107,7 +107,7 @@ public class SqlService {
             return new Response(true, StatusCodes.OK, null);
         }
         MultivaluedMap<String, Object> filterValues =
-            queryTools.prepareFilters(gridColumnValues, qid);
+            queryTools.prepareFilters(gridColumnValues);
 
         String statement = prepareStatement(sql, filterValues);
         return new Response(true, StatusCodes.OK, statement);

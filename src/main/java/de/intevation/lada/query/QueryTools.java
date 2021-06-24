@@ -57,7 +57,7 @@ public class QueryTools {
     ) {
         String sql = prepareSql(customColumns, qId);
         MultivaluedMap<String, Object> filterValues =
-            prepareFilters(customColumns, qId);
+            prepareFilters(customColumns);
         List<GridColumn> columns = new ArrayList<GridColumn>();
         for (GridColumnValue customColumn : customColumns) {
             columns.add(customColumn.getGridColumn());
@@ -247,9 +247,15 @@ public class QueryTools {
         return sql;
     }
 
+    /**
+     * Generate map of parameter names and values to be interpolated into
+     * the queries WHERE clause.
+     *
+     * @param customColumns List of GridColumnValues containing filter settings
+     * @return The generated map
+     */
     public MultivaluedMap<String, Object> prepareFilters(
-        List<GridColumnValue> customColumns,
-        Integer qId
+        List<GridColumnValue> customColumns
     ) {
         //A pattern for finding multiselect date filter values
         Pattern multiselectPattern = Pattern.compile("[0-9]*,[0-9]*");
