@@ -13,11 +13,11 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.servlet.http.HttpServletRequest;
-import javax.websocket.server.PathParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -125,7 +125,6 @@ public class AsyncImportService {
         JobStatus status;
         UserInfo originalCreator;
         UserInfo requestingUser = authorization.getInfo(request);
-
         try {
             originalCreator = importJobManager.getJobUserInfo(id);
             if (!originalCreator.getUserId().equals(
@@ -155,7 +154,7 @@ public class AsyncImportService {
     }
 
     @GET
-    @Path("/result/{id}}")
+    @Path("/result/{id}")
     @Produces("application/json")
     public Response getResult(
         @PathParam("id") String id,

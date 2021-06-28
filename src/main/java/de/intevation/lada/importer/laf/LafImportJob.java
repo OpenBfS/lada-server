@@ -153,6 +153,10 @@ public class LafImportJob extends Job {
             return;
         }
 
+        if(files.size() == 0) {
+            fail("No valid file given");
+        }
+
         //Import each file
         files.forEach((fileName, content) -> {
             logLAFFile(mstId, content, charset);

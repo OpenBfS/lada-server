@@ -61,10 +61,29 @@ public class ImportJobManager extends JobManager {
         LafImportJob newJob = new LafImportJob(id);
         newJob.setImporter(importer);
         newJob.setJsonInput(params);
+        newJob.setRepository(repository);
         newJob.setUserInfo(userInfo);
         newJob.start();
         activeJobs.put(id, newJob);
         return id;
+    }
+
+    /**
+     * Get the status of a job by identifier.
+     * @param id Id to look for
+     * @return Job status
+     * @throws JobNotFoundException Thrown if a job with the given can not
+     *                              be found
+     */
+    public JobStatus getJobStatus(
+        String id
+    ) throws JobNotFoundException {
+        Job job = getJobById(id);
+        String jobStatus = job.getStatusName();
+        String message = job.getMessage();
+        boolean done = job.isDone();
+        JobStatus statusObject = new JobStatus(jobStatus, message, done);
+        return statusObject;
     }
 
     public String getImportResult(String id) throws JobNotFoundException {

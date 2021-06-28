@@ -42,6 +42,7 @@ abstract public class JobManager {
     ) throws JobNotFoundException {
         Job job = activeJobs.get(id);
         if (job == null) {
+            logger.debug(String.format("No active job found: %s", id));
             throw new JobNotFoundException();
         }
         return job;
@@ -209,7 +210,7 @@ abstract public class JobManager {
 
         public JobStatus(String s, String m, boolean d) {
             this.status = s;
-            this.message = m;
+            this.message = m != null? m: "";
             this.done = d;
         }
 
