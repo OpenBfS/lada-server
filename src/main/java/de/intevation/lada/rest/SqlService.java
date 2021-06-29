@@ -159,7 +159,7 @@ public class SqlService {
         }
 
         return "PREPARE request AS \n"
-            + sql + "\n"
+            + sql + ";\n"
             + "EXECUTE request" + parameters + ";\n"
             + "DEALLOCATE request;";
     }
