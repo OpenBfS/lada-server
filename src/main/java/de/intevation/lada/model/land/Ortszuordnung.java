@@ -52,6 +52,9 @@ public class Ortszuordnung implements Serializable {
     @Column(name = "probe_id")
     private Integer probeId;
 
+    @Column(name = "oz_id")
+    private String ozId;
+
     @Column(name = "tree_modified", insertable = false, updatable = false)
     private Timestamp treeModified;
 
@@ -125,6 +128,14 @@ public class Ortszuordnung implements Serializable {
 
     public void setProbeId(Integer probeId) {
         this.probeId = probeId;
+    }
+
+    public String getOzId() {
+        return this.ozId;
+    }
+
+    public void setOzId(String ozId) {
+        this.ozId = ozId;
     }
 
     public Timestamp getTreeModified() {
