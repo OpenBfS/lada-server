@@ -48,6 +48,8 @@ public class UniversalServiceTest extends BaseTest {
     @PersistenceContext
     EntityManager em;
 
+    private Client client;
+
     // The size of the "land.probe" array in dbUnit_probe_query.json
     private final int totalCount = 2;
 
@@ -77,6 +79,7 @@ public class UniversalServiceTest extends BaseTest {
 
     public UniversalServiceTest() {
         testProtocol = new ArrayList<Protocol>();
+        this.client = ClientBuilder.newClient();
     }
 
     /**
@@ -116,8 +119,6 @@ public class UniversalServiceTest extends BaseTest {
         prot.setPassed(false);
         testProtocol.add(prot);
 
-        Client client = ClientBuilder.newClient();
-
         Response response = client.target(
             baseUrl + "rest/universal")
             .request()
@@ -154,8 +155,6 @@ public class UniversalServiceTest extends BaseTest {
         prot.setPassed(false);
         testProtocol.add(prot);
 
-        Client client = ClientBuilder.newClient();
-
         final int limit = 1;
         Response response = client.target(
             baseUrl + "rest/universal?start=1&limit=" + limit)
@@ -173,6 +172,41 @@ public class UniversalServiceTest extends BaseTest {
         assertContains(responseJson, dataKey);
         Assert.assertEquals(
             limit, responseJson.getJsonArray(dataKey).size());
+
+        prot.setPassed(true);
+    }
+
+    /**
+     * Test interface to retrieve SQL statement.
+     *
+     * @param baseUrl The server url used for the request.
+     */
+    @Test
+    @InSequence(4)
+    @RunAsClient
+    public final void testGetSql(@ArquillianResource URL baseUrl) {
+        System.out.print(".");
+        Protocol prot = new Protocol();
+        prot.setName("SQL service");
+        prot.setType("SQL service");
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        Response response = client.target(
+            baseUrl + "rest/sql")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .post(Entity.entity(this.requestJson.toString(),
+                    MediaType.APPLICATION_JSON));
+        JsonObject responseJson = parseResponse(response, prot);
+
+        assertContains(responseJson, dataKey);
+        Assert.assertEquals(
+            "PREPARE request AS \n"
+            + "SELECT hauptproben_nr, umw_id FROM land.probe;\n"
+            + "EXECUTE request;\nDEALLOCATE request;",
+            responseJson.getString(dataKey));
 
         prot.setPassed(true);
     }
