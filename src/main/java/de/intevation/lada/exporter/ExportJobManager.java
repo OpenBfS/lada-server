@@ -36,7 +36,7 @@ import de.intevation.lada.util.data.Repository;
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
 @ApplicationScoped
-public class ExportJobManager extends JobManager{
+public class ExportJobManager extends JobManager {
 
     /**
      * The csv exporter.
@@ -73,18 +73,6 @@ public class ExportJobManager extends JobManager{
         logger = Logger.getLogger("ExportJobManager");
         logger.debug("Creating ExportJobManager");
     };
-
-    private class ExportJobExceptionHandler
-        implements Thread.UncaughtExceptionHandler {
-        public void uncaughtException(Thread t, Throwable e) {
-            String errMsg = e.getMessage();
-            logger.error("ExportJob failed with:");
-            logger.error(errMsg);
-            e.printStackTrace();
-
-            ((ExportJob) t).fail(errMsg);
-        }
-    }
 
     /**
      * Creates a new export job using the given format and parameters.
@@ -134,7 +122,7 @@ public class ExportJobManager extends JobManager{
         newJob.setEncoding(encoding);
         newJob.setExportParameter(params);
         newJob.setUserInfo(userInfo);
-        newJob.setUncaughtExceptionHandler(new ExportJobExceptionHandler());
+        newJob.setUncaughtExceptionHandler(new JobExceptionHandler());
         newJob.start();
         activeJobs.put(id, newJob);
 
@@ -146,6 +134,7 @@ public class ExportJobManager extends JobManager{
      * @param id Id to look for
      * @throws JobNotFoundException Thrown if a job with the given can not
      *                              be found
+     * @return Job instance with given id
      */
     protected ExportJob getJobById(
         String id

@@ -19,10 +19,10 @@ import de.intevation.lada.util.data.Job.JobStatus;
 import de.intevation.lada.util.data.Job.Status;
 
 /**
- * Abstract class for managing jobs
+ * Abstract class for managing jobs.
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
-abstract public class JobManager {
+public abstract class JobManager {
 
     protected static JobIdentifier identifier =
         new JobManager.JobIdentifier();
@@ -37,6 +37,7 @@ abstract public class JobManager {
      * @param id Id to look for
      * @throws JobNotFoundException Thrown if a job with the given can not
      *                              be found
+     * @return Job instance with given id
      */
     protected Job getJobById(
         String id
@@ -184,6 +185,7 @@ abstract public class JobManager {
         /**
          * Return the hexadecimal string representation of this identifier.
          * The string will include padding zeroes.
+         * @return String representation
          */
         public String toString() {
             return String.format(hexFormat, timestamp, seqNo, randomPart);
@@ -195,5 +197,31 @@ abstract public class JobManager {
      */
     public static class JobNotFoundException extends Exception {
         private static final long serialVersionUID = 1L;
+    }
+
+    /**
+     * Exception handler for job threads.
+     */
+    protected class JobExceptionHandler
+    implements Thread.UncaughtExceptionHandler {
+
+        /**
+         * Constructor.
+         */
+        public JobExceptionHandler() { }
+
+        /**
+         * Exception handler function.
+         * @param t Thread
+         * @param e Throwable
+         */
+        public void uncaughtException(Thread t, Throwable e) {
+            String errMsg = e.getMessage();
+            logger.error("Job failed with:");
+            logger.error(errMsg);
+            e.printStackTrace();
+
+            ((Job) t).fail(errMsg);
+        }
     }
 }

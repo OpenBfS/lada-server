@@ -76,7 +76,7 @@ abstract public class Job extends Thread {
             this.currentStatus.setDone(true);
         } finally {
             logger.error(
-                String.format("Export failed with message: %s", getMessage()));
+                String.format("Job failed with message: %s", getMessage()));
         }
     }
 

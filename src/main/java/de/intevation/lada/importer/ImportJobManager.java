@@ -29,13 +29,13 @@ import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.data.Job.JobStatus;
 
 /**
- * Class managing import jobs
+ * Class managing import jobs.
  */
 @ApplicationScoped
 public class ImportJobManager extends JobManager {
 
     /**
-     * The importer
+     * The importer.
      */
     @Inject
     @ImportConfig(format = ImportFormat.LAF)
@@ -45,7 +45,7 @@ public class ImportJobManager extends JobManager {
     private TagUtil tagUtil;
 
     /**
-     * The data repository
+     * The data repository.
      */
     @Inject
     protected Repository repository;
@@ -56,7 +56,15 @@ public class ImportJobManager extends JobManager {
         logger.debug("Creating ImportJobManager");
     };
 
-    public String createImportJob(UserInfo userInfo, JsonObject params, String mstId) {
+    /**
+     * Create a new import job.
+     * @param userInfo User info
+     * @param params Parameters
+     * @param mstId mstId
+     * @return New job refId
+     */
+    public String createImportJob(
+        UserInfo userInfo, JsonObject params, String mstId) {
         String id = getNextIdentifier();
         logger.debug(String.format("Creating new job: %s", id));
 
@@ -66,7 +74,7 @@ public class ImportJobManager extends JobManager {
         newJob.setRepository(repository);
         newJob.setUserInfo(userInfo);
         newJob.setTagutil(tagUtil);
-        newJob.setUncaughtExceptionHandler(new ImportJobExceptionHandler());
+        newJob.setUncaughtExceptionHandler(new JobExceptionHandler());
         newJob.start();
         activeJobs.put(id, newJob);
         return id;
@@ -86,6 +94,12 @@ public class ImportJobManager extends JobManager {
         return job.getStatus();
     }
 
+    /**
+     * Get the import result for the job with given refId.
+     * @param id Refid
+     * @return Result as json string
+     * @throws JobNotFoundException Thrown if job with given id was not found
+     */
     public String getImportResult(String id) throws JobNotFoundException {
         LafImportJob job = (LafImportJob) getJobById(id);
         String jsonString = "";
@@ -98,23 +112,12 @@ public class ImportJobManager extends JobManager {
             ObjectMapper objectMapper = new ObjectMapper();
             jsonString = objectMapper.writeValueAsString(importData);
         } catch (JsonProcessingException jpe) {
-            logger.error(String.format("Error returning result for job %s:", id));
+            logger.error(
+                String.format("Error returning result for job %s:", id));
             jpe.printStackTrace();
         } finally {
             removeJob(job);
         }
         return jsonString;
-    }
-
-    private class ImportJobExceptionHandler
-        implements Thread.UncaughtExceptionHandler {
-        public void uncaughtException(Thread t, Throwable e) {
-            String errMsg = e.getMessage();
-            logger.error("ImportJob failed with:");
-            logger.error(errMsg);
-            e.printStackTrace();
-
-            ((LafImportJob) t).fail(errMsg);
-        }
     }
 }
