@@ -11,10 +11,9 @@ import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TransactionRequiredException;
 
 /**
@@ -24,8 +23,9 @@ import javax.persistence.TransactionRequiredException;
  */
 @Stateless
 public class DataTransaction {
-    @Inject
-    protected EntityManagerProducer emp;
+
+    @PersistenceContext
+    EntityManager em;
 
     /**
      * Create object in the database.
@@ -39,19 +39,18 @@ public class DataTransaction {
      * @throws TransactionRequiredException
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void persistInDatabase(Object object, String dataSource)
+    public void persistInDatabase(Object object)
     throws EntityExistsException,
         IllegalArgumentException,
         EJBTransactionRolledbackException,
         TransactionRequiredException {
-        EntityManager manager = emp.entityManager(dataSource);
-        manager.persist(object);
-        manager.flush();
+        em.persist(object);
+        em.flush();
         /* Refreshing the object is necessary because some objects use
            dynamic-insert, meaning null-valued columns are not INSERTed
            to the DB to take advantage of DB DEFAULT values, or triggers
            modify the object during INSERT. */
-        manager.refresh(object);
+        em.refresh(object);
     }
 
     /**
@@ -66,12 +65,12 @@ public class DataTransaction {
      * @throws TransactionRequiredException
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void updateInDatabase(Object object, String dataSource)
+    public void updateInDatabase(Object object)
     throws EntityExistsException,
         IllegalArgumentException,
         EJBTransactionRolledbackException,
         TransactionRequiredException {
-        emp.entityManager(dataSource).merge(object);
+        em.merge(object);
     }
 
     /**
@@ -84,23 +83,17 @@ public class DataTransaction {
      * @throws TransactionRequiredException
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void removeFromDatabase(Object object, String dataSource)
+    public void removeFromDatabase(Object object)
     throws IllegalArgumentException,
         TransactionRequiredException,
         EJBTransactionRolledbackException {
-        EntityManager em = emp.entityManager(dataSource);
         em.remove(
             em.contains(object)
             ? object : em.merge(object));
         em.flush();
     }
 
-    public Query queryFromString(String sql, String dataSource) {
-        EntityManager em = emp.entityManager(dataSource);
-        return em.createNativeQuery(sql);
-    }
-
-    public EntityManager entityManager(String dataSource) {
-        return emp.entityManager(dataSource);
+    public EntityManager entityManager() {
+        return this.em;
     }
 }

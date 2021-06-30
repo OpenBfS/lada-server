@@ -19,10 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.Probenart;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -59,8 +56,7 @@ public class ProbenartService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all Probenart objects.
@@ -76,7 +72,7 @@ public class ProbenartService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(Probenart.class, Strings.STAMM);
+        return repository.getAll(Probenart.class);
     }
 
     /**
@@ -95,9 +91,6 @@ public class ProbenartService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            Probenart.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+        return repository.getById(Probenart.class, Integer.valueOf(id));
     }
 }

@@ -29,7 +29,7 @@ import de.intevation.lada.util.data.EmptyStringConverter;
  *
  */
 @Entity
-@Table(name = "zusatz_wert", schema = "land")
+@Table(name = "zusatz_wert", schema = SchemaName.NAME)
 public class ZusatzWert implements Serializable {
     private static final long serialVersionUID = 1L;
 

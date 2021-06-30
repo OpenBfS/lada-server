@@ -21,6 +21,13 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 /**
+ * A builder for criteria queries to query objects of a specified class.
+ *
+ * Use Repository.queryBuilder(Class<T> c) to create new builders, e.g.
+ * in service implementations.
+ *
+ * @param <T> Class for which queries will be build
+ *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class QueryBuilder<T> {
@@ -35,10 +42,13 @@ public class QueryBuilder<T> {
     /**
      * Create a new QueryBuilder for the specified class.
      *
-     * @param m
-     * @param c
-     */
-    public QueryBuilder(EntityManager m, Class<T> c) {
+     * @param <T> The class for which a QueryBuilder is requested.
+     * @param m EntityManager used to get a CriteriaBuilder.
+     * @param c The class for which a QueryBuilder is requested.
+     *
+     * @return QueryBuilder for the given class.
+    */
+    QueryBuilder(EntityManager m, Class<T> c) {
         this.manager = m;
         this.clazz = c;
         this.builder = this.manager.getCriteriaBuilder();
@@ -85,6 +95,7 @@ public class QueryBuilder<T> {
     /**
      * Negate filter.
      *
+     * @return The builder itself.
      */
     public QueryBuilder<T> not() {
         if (this.filter == null) {
@@ -95,7 +106,7 @@ public class QueryBuilder<T> {
     }
 
     /**
-     * Logical AND with like operation.
+     * Logical AND with case insensitive LIKE operation.
      *
      * @param id    The database column name.
      * @param value The filter value
@@ -136,10 +147,10 @@ public class QueryBuilder<T> {
     }
 
     /**
-     * Logical OR with like operation.
+     * Logical OR with case insensitive LIKE operation.
      *
-     * @param column    The database column name.
-     * @param value     The filter value
+     * @param id    The database column name.
+     * @param value The filter value.
      * @return The builder itself.
      */
     public QueryBuilder<T> orLike(String id, String value) {
@@ -255,6 +266,7 @@ public class QueryBuilder<T> {
      * IN operation combined as logical OR.
      * Test whether result of 'key' is in a list of values.
      *
+     * @param <M>   The type of the values.
      * @param key   The database column.
      * @param values    The list of values.
      *
@@ -275,6 +287,7 @@ public class QueryBuilder<T> {
      * IN operation combined as logical AND.
      * Test whether result of 'key' is in a list of values.
      *
+     * @param <M>   The type of the values.
      * @param key   The database column.
      * @param values    The list of values.
      *
@@ -299,7 +312,7 @@ public class QueryBuilder<T> {
     }
 
     /**
-     * Order result by the specified column name
+     * Order result by the specified column name.
      *
      * @param id    The column name.
      * @param asc   Ascending(true), Descending(false).
@@ -313,7 +326,7 @@ public class QueryBuilder<T> {
     }
 
     /**
-     * Order result by the specified column name
+     * Order result by the specified column name.
      *
      * @param ids   Map of column names and boolean for asc/desc.
      */

@@ -12,12 +12,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -30,19 +27,17 @@ import de.intevation.lada.validation.rules.Rule;
 public class UniqueMessungMessgroesse implements Rule {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Override
     public Violation execute(Object object) {
         Messwert messwert = (Messwert) object;
-        QueryBuilder<Messwert> messwertQuery = new QueryBuilder<Messwert>(
-            repository.entityManager(Strings.LAND),
-            Messwert.class);
+        QueryBuilder<Messwert> messwertQuery =
+            repository.queryBuilder(Messwert.class);
         messwertQuery.and("messungsId", messwert.getMessungsId());
         messwertQuery.and("messgroesseId", messwert.getMessgroesseId());
         List<Messwert> result =
-            repository.filterPlain(messwertQuery.getQuery(), Strings.LAND);
+            repository.filterPlain(messwertQuery.getQuery());
         if (!result.isEmpty()
             && !result.get(0).getId().equals(messwert.getId())
         ) {

@@ -24,7 +24,7 @@ import de.intevation.lada.model.stammdaten.Tag;
  * The persistent class for the tagzuordnung database table.
  */
 @Entity
-@Table(name = "tagzuordnung", schema = "land")
+@Table(name = "tagzuordnung", schema = SchemaName.NAME)
 public class TagZuordnung {
     public static final long serialVersionUID = 1L;
 

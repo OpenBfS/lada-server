@@ -13,12 +13,9 @@ import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.OrtszuordnungMp;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -27,7 +24,6 @@ import de.intevation.lada.validation.rules.Rule;
 public class HasEntnahmeOrt implements Rule {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Override
@@ -40,14 +36,11 @@ public class HasEntnahmeOrt implements Rule {
             }
             id = ort.getProbeId();
             QueryBuilder<Ortszuordnung> builder =
-                new QueryBuilder<Ortszuordnung>(
-                    repository.entityManager(Strings.LAND),
-                    Ortszuordnung.class);
+                repository.queryBuilder(Ortszuordnung.class);
 
             builder.and("probeId", id);
             List<Ortszuordnung> orte = repository.filterPlain(
-                builder.getQuery(),
-                Strings.LAND);
+                builder.getQuery());
             for (Ortszuordnung o : orte) {
                 if ("E".equals(o.getOrtszuordnungTyp())
                     && !o.getId().equals(ort.getId())
@@ -65,14 +58,11 @@ public class HasEntnahmeOrt implements Rule {
             }
             id = ort.getMessprogrammId();
             QueryBuilder<OrtszuordnungMp> builder =
-                new QueryBuilder<OrtszuordnungMp>(
-                    repository.entityManager(Strings.LAND),
-                    OrtszuordnungMp.class);
+                repository.queryBuilder(OrtszuordnungMp.class);
 
             builder.and("messprogrammId", id);
             List<OrtszuordnungMp> orte = repository.filterPlain(
-                builder.getQuery(),
-                Strings.LAND);
+                builder.getQuery());
             for (OrtszuordnungMp o : orte) {
                 if ("E".equals(o.getOrtszuordnungTyp())
                     && !o.getId().equals(ort.getId())

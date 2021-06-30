@@ -19,10 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.StatusStufe;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -57,8 +54,7 @@ public class StatusStufeService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all StatusStufe objects.
@@ -74,7 +70,7 @@ public class StatusStufeService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(StatusStufe.class, Strings.STAMM);
+        return repository.getAll(StatusStufe.class);
     }
 
     /**
@@ -93,9 +89,6 @@ public class StatusStufeService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            StatusStufe.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+        return repository.getById(StatusStufe.class, Integer.valueOf(id));
     }
 }

@@ -13,12 +13,9 @@ import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -34,8 +31,7 @@ import de.intevation.lada.validation.rules.Rule;
 public class HasEntnahmeOrt implements Rule {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository repo;
+    private Repository repository;
 
     @Override
     public Violation execute(Object object) {
@@ -52,10 +48,9 @@ public class HasEntnahmeOrt implements Rule {
                 return null;
         }
         QueryBuilder<Ortszuordnung> builder =
-            new QueryBuilder<Ortszuordnung>(
-                repo.entityManager(Strings.LAND), Ortszuordnung.class);
+            repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", id);
-        Response response = repo.filter(builder.getQuery(), Strings.LAND);
+        Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<Ortszuordnung> orte = (List<Ortszuordnung>) response.getData();
         for (Ortszuordnung ort: orte) {

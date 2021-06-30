@@ -24,10 +24,8 @@ import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.ReiProgpunkt;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGrpZuord;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 
@@ -64,7 +62,6 @@ public class ReiProgpunktService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     /**
@@ -83,7 +80,7 @@ public class ReiProgpunktService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("reiprogpunktgruppe")) {
-            return repository.getAll(ReiProgpunkt.class, "stamm");
+            return repository.getAll(ReiProgpunkt.class);
         }
         Integer id = null;
         try {
@@ -95,27 +92,21 @@ public class ReiProgpunktService {
                 "Not a valid filter id");
         }
         QueryBuilder<ReiProgpunktGrpZuord> builder =
-            new QueryBuilder<ReiProgpunktGrpZuord>(
-                repository.entityManager("stamm"),
-                ReiProgpunktGrpZuord.class
-            );
+            repository.queryBuilder(ReiProgpunktGrpZuord.class);
         builder.and("reiProgpunktGrpId", id);
         List<ReiProgpunktGrpZuord> zuord =
-            repository.filterPlain(builder.getQuery(), "stamm");
+            repository.filterPlain(builder.getQuery());
         if (zuord.isEmpty()) {
             return new Response(true, StatusCodes.OK, null);
         }
         QueryBuilder<ReiProgpunkt> builder1 =
-            new QueryBuilder<ReiProgpunkt>(
-                repository.entityManager("stamm"),
-                ReiProgpunkt.class
-            );
+            repository.queryBuilder(ReiProgpunkt.class);
         List<Integer> ids = new ArrayList<Integer>();
         for (int i = 0; i < zuord.size(); i++) {
             ids.add(zuord.get(i).getReiProgpunktId());
         }
         builder1.orIn("id", ids);
-        return repository.filter(builder1.getQuery(), "stamm");
+        return repository.filter(builder1.getQuery());
     }
 
     /**
@@ -134,9 +125,6 @@ public class ReiProgpunktService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return repository.getById(
-            ReiProgpunkt.class,
-            Integer.valueOf(id),
-            "stamm");
+        return repository.getById(ReiProgpunkt.class, Integer.valueOf(id));
     }
 }

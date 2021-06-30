@@ -25,14 +25,11 @@ import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -44,15 +41,29 @@ import de.intevation.lada.util.rest.Response;
  * <pre>
  * <code>
  * {
- *  "success": [boolean];
+ *  "success": [boolean],
  *  "message": [string],
  *  "data":[{
  *      "id": [number],
- *      "mstId": [string],
+ *      "bearbeiter": [string],
+ *      "bemerkung": [string],
+ *      "betrieb": [string],
+ *      "bezeichnung": [string]",
+ *      "kurzBezeichnung": [string],
+ *      "letzteAenderung": [timestamp],
  *      "netzbetreiberId": [string]
+ *      "ort": [string],
+ *      "plz": [string],
+ *      "prnId": [string],
+ *      "strasse": [string],
+ *      "telefon": [string],
+ *      "tourenplan": [string],
+ *      "typ": [string],
+ *      "readonly": [boolean]
  *  }],
  *  "errors": [object],
  *  "warnings": [object],
+ *  "notifications": [object],
  *  "readonly": [boolean],
  *  "totalCount": [number]
  * }
@@ -69,7 +80,6 @@ public class ProbenehmerService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
     private Repository repository;
 
     @Inject
@@ -91,7 +101,7 @@ public class ProbenehmerService {
         @Context UriInfo info
     ) {
         List<Probenehmer> nehmer =
-            repository.getAllPlain(Probenehmer.class, Strings.STAMM);
+            repository.getAllPlain(Probenehmer.class);
         for (Probenehmer p : nehmer) {
             // TODO Do not iterate all the objects if its not necessary
             p.setReadonly(true);
@@ -121,10 +131,7 @@ public class ProbenehmerService {
         @PathParam("id") String id
     ) {
         Probenehmer p = repository.getByIdPlain(
-            Probenehmer.class,
-            Integer.valueOf(id),
-            Strings.STAMM
-        );
+            Probenehmer.class, Integer.valueOf(id));
         p.setReadonly(
             !authorization.isAuthorized(
                 request,
@@ -152,17 +159,13 @@ public class ProbenehmerService {
             return new Response(false, StatusCodes.NOT_ALLOWED, probenehmer);
         }
         QueryBuilder<Probenehmer> builder =
-            new QueryBuilder<Probenehmer>(
-                repository.entityManager(Strings.STAMM),
-                Probenehmer.class
-            );
+            repository.queryBuilder(Probenehmer.class);
         builder.and("prnId", probenehmer.getPrnId());
         builder.and("netzbetreiberId", probenehmer.getNetzbetreiberId());
-
         List<Probenehmer> nehmer =
-            repository.filterPlain(builder.getQuery(), Strings.STAMM);
+            repository.filterPlain(builder.getQuery());
         if (nehmer.isEmpty()) {
-            return repository.create(probenehmer, Strings.STAMM);
+            return repository.create(probenehmer);
         }
         return new Response(false, StatusCodes.IMP_DUPLICATE, null);
     }
@@ -183,8 +186,18 @@ public class ProbenehmerService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, probenehmer);
         }
-
-        return repository.update(probenehmer, Strings.STAMM);
+        QueryBuilder<Probenehmer> builder =
+            repository.queryBuilder(Probenehmer.class);
+        builder.and("prnId", probenehmer.getPrnId());
+        builder.and("netzbetreiberId", probenehmer.getNetzbetreiberId());
+        List<Probenehmer> nehmer =
+            repository.filterPlain(builder.getQuery());
+        if (nehmer.isEmpty()) {
+            return repository.update(probenehmer);
+        } else if (nehmer.get(0).getId() != probenehmer.getId()) {
+            return new Response(false, StatusCodes.IMP_DUPLICATE, null);
+        }
+        return repository.update(probenehmer);
     }
 
     @DELETE
@@ -195,7 +208,7 @@ public class ProbenehmerService {
         @PathParam("id") String id
     ) {
         Probenehmer probenehmer = repository.getByIdPlain(
-            Probenehmer.class, Integer.valueOf(id), Strings.STAMM);
+            Probenehmer.class, Integer.valueOf(id));
         if (probenehmer == null
             || !authorization.isAuthorized(
                 request,
@@ -206,6 +219,6 @@ public class ProbenehmerService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        return repository.delete(probenehmer, Strings.STAMM);
+        return repository.delete(probenehmer);
     }
 }

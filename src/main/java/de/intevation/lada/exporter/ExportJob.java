@@ -77,9 +77,8 @@ public abstract class ExportJob extends Job {
      * @param jobId Job identifier
      */
     public ExportJob(String jId) {
-        this.done = false;
         this.jobId = jId;
-        this.currentStatus = Status.waiting;
+        this.currentStatus = new JobStatus(Status.WAITING, "", false);
         // TODO: Use e.g. Files.createTempFile() to make it more portable
         this.outputFileLocation = "/tmp/lada-server/";
         if (!outputFileLocation.endsWith("/")) {
@@ -87,8 +86,6 @@ public abstract class ExportJob extends Job {
         }
         this.outputFileName = jobId;
         this.outputFilePath = Paths.get(outputFileLocation + outputFileName);
-
-        this.message = "";
     }
 
     /**
@@ -98,7 +95,7 @@ public abstract class ExportJob extends Job {
      * @throws JobNotFinishedException Thrown if job is still running
      */
     public void cleanup() throws JobNotFinishedException {
-        if (!isDone()) {
+        if (!currentStatus.isDone()) {
             throw new JobNotFinishedException();
         }
         removeResultFile();
@@ -109,11 +106,11 @@ public abstract class ExportJob extends Job {
      */
     protected void runnning() {
         try {
-            this.setCurrentStatus(Status.running);
+            this.setCurrentStatus(Status.RUNNING);
         } catch (IllegalStatusTransitionException iste) {
-            this.currentStatus = Status.error;
-            this.message = "Internal server errror";
-            this.done = true;
+            this.currentStatus.setStatus(Status.ERROR);
+            this.currentStatus.setMessage("Internal server errror");
+            this.currentStatus.setDone(true);
         }
     }
 
@@ -240,7 +237,7 @@ public abstract class ExportJob extends Job {
                 Files.createDirectories(tmpPath);
             } catch (IOException ioe) {
                 logger.error(String.format(
-                    "JCannot create export folder. IOException: %s",
+                    "Cannot create export folder. IOException: %s",
                     ioe.getMessage()));
                 return false;
             } catch (SecurityException se) {

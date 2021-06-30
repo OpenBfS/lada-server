@@ -40,13 +40,10 @@ import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
@@ -112,7 +109,6 @@ public class ProbeService {
      * The data repository granting read/write access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
     private Repository repository;
 
     /**
@@ -143,6 +139,9 @@ public class ProbeService {
     @Inject
     private ProbeFactory factory;
 
+    @Inject
+    private TagUtil tagUtil;
+
     /**
      * Get all Probe objects.
      * <p>
@@ -169,7 +168,7 @@ public class ProbeService {
         @Context HttpServletRequest request
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
-        List<Probe> probes = repository.getAllPlain(Probe.class, Strings.LAND);
+        List<Probe> probes = repository.getAllPlain(Probe.class);
 
         int size = probes.size();
         if (params.containsKey("start") && params.containsKey("limit")) {
@@ -215,7 +214,7 @@ public class ProbeService {
         @Context HttpServletRequest request
     ) {
         Response response =
-            repository.getById(Probe.class, id, Strings.LAND);
+            repository.getById(Probe.class, id);
         Violation violation = validator.validate(response.getData());
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
@@ -294,7 +293,7 @@ public class ProbeService {
         probe = factory.findMediaDesk(probe);
 
         /* Persist the new probe object*/
-        Response newProbe = repository.create(probe, Strings.LAND);
+        Response newProbe = repository.create(probe);
 
         if (violation.hasWarnings()) {
             newProbe.setWarnings(violation.getWarnings());
@@ -344,8 +343,7 @@ public class ProbeService {
         boolean dryrun;
         if (object.containsKey("dryrun")) {
             dryrun = object.getBoolean("dryrun");
-        }
-        else {
+        } else {
             dryrun = false;
         }
 
@@ -357,7 +355,7 @@ public class ProbeService {
             int id = Integer.parseInt(mpId.toString());
             HashMap<String, Object> data = new HashMap<String, Object>();
             Messprogramm messprogramm = repository.getByIdPlain(
-                Messprogramm.class, id, Strings.LAND);
+                Messprogramm.class, id);
             if (messprogramm == null) {
                 data.put("success", false);
                 data.put("message", StatusCodes.NOT_EXISTING);
@@ -431,12 +429,10 @@ public class ProbeService {
             // TODO: Pick the correct instead of the first Messstelle
             String mstId = authorization.getInfo(request)
                 .getMessstellen().get(0);
-            Response tagCreation =
-                TagUtil.generateTag("PEP", mstId, repository);
+            Response tagCreation = tagUtil.generateTag("PEP", mstId);
             if (tagCreation.getSuccess()) {
                 Tag newTag = (Tag) tagCreation.getData();
-                TagUtil.setTagsByProbeIds(
-                    generatedProbeIds, newTag.getId(), repository);
+                tagUtil.setTagsByProbeIds(generatedProbeIds, newTag.getId());
                 responseData.put("tag", newTag.getTag());
             } else {
                 /* TODO: The whole request should be handled in one
@@ -519,13 +515,13 @@ public class ProbeService {
             response.setNotifications(violation.getNotifications());
             return response;
         }
-        Response response = repository.update(probe, Strings.LAND);
+        Response response = repository.update(probe);
         if (!response.getSuccess()) {
             return response;
         }
         Response updated = repository.getById(
             Probe.class,
-            ((Probe) response.getData()).getId(), Strings.LAND);
+            ((Probe) response.getData()).getId());
         if (violation.hasWarnings()) {
             updated.setWarnings(violation.getWarnings());
         }
@@ -557,7 +553,7 @@ public class ProbeService {
     ) {
         /* Get the probe object by id*/
         Response probe =
-            repository.getById(Probe.class, Integer.valueOf(id), Strings.LAND);
+            repository.getById(Probe.class, Integer.valueOf(id));
         if (!probe.getSuccess()) {
             return probe;
         }
@@ -572,7 +568,7 @@ public class ProbeService {
         }
         /* Delete the probe object*/
         try {
-            Response response = repository.delete(probeObj, Strings.LAND);
+            Response response = repository.delete(probeObj);
             return response;
         } catch (IllegalArgumentException
             | EJBTransactionRolledbackException

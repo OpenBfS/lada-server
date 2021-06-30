@@ -21,12 +21,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.PflichtMessgroesse;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -64,8 +61,7 @@ public class PflichtmessgroesseService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all PflichtMessgroesse objects.
@@ -81,7 +77,7 @@ public class PflichtmessgroesseService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(PflichtMessgroesse.class, Strings.STAMM);
+        return repository.getAll(PflichtMessgroesse.class);
     }
 
     /**
@@ -101,13 +97,10 @@ public class PflichtmessgroesseService {
         @PathParam("id") String id
     ) {
         QueryBuilder<PflichtMessgroesse> builder =
-            new QueryBuilder<PflichtMessgroesse>(
-                defaultRepo.entityManager(Strings.STAMM),
-                PflichtMessgroesse.class
-            );
+            repository.queryBuilder(PflichtMessgroesse.class);
         builder.and("messMethodeId", id);
         List<PflichtMessgroesse> result =
-            defaultRepo.filterPlain(builder.getQuery(), Strings.STAMM);
+            repository.filterPlain(builder.getQuery());
         if (!result.isEmpty()) {
             return new Response(true, StatusCodes.OK, result.get(0));
         }

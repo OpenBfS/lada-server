@@ -39,11 +39,8 @@ import de.intevation.lada.model.stammdaten.GridColumn;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.model.stammdaten.StatusStufe;
 import de.intevation.lada.model.stammdaten.StatusWert;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 
 /**
  * Exporter class for writing query results to CSV.
@@ -56,7 +53,6 @@ public class CsvExporter implements Exporter {
     @Inject Logger logger;
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     /**
@@ -84,7 +80,7 @@ public class CsvExporter implements Exporter {
 
     private String getStatusStringByid(Integer id) {
         StatusKombi kombi =
-            repository.getByIdPlain(StatusKombi.class, id, Strings.STAMM);
+            repository.getByIdPlain(StatusKombi.class, id);
         StatusStufe stufe = kombi.getStatusStufe();
         StatusWert wert = kombi.getStatusWert();
 
@@ -102,17 +98,18 @@ public class CsvExporter implements Exporter {
      */
     private String[] getReadableColumnNames(
         String[] keys,
-        JsonObject subDataColumnNames
+        JsonObject subDataColumnNames,
+        Integer qId
     ) {
         String[] names = new String[keys.length];
         ArrayList<String> keysList = new ArrayList<String>(Arrays.asList(keys));
         keysList.forEach(key -> {
-            QueryBuilder<GridColumn> builder = new QueryBuilder<GridColumn>(
-                repository.entityManager(Strings.STAMM),
-                GridColumn.class);
+            QueryBuilder<GridColumn> builder =
+                repository.queryBuilder(GridColumn.class);
             builder.and("dataIndex", key);
+            builder.and("baseQuery", qId);
             List<GridColumn> result =
-                repository.filterPlain(builder.getQuery(), Strings.STAMM);
+                repository.filterPlain(builder.getQuery());
             String name = key;
             if (result.size() > 0) {
                 GridColumn column = result.get(0);
@@ -151,13 +148,15 @@ public class CsvExporter implements Exporter {
      *
      * @param columnsToInclude List of column names to include in the export.
      *                         If not set, all columns will be exported
+     * @param qId
      * @return Export result as input stream or null if the export failed
      */
     public InputStream export(
         List<Map<String, Object>> queryResult,
         String encoding,
         JsonObject options,
-        ArrayList<String> columnsToInclude
+        ArrayList<String> columnsToInclude,
+        Integer qId
     ) {
         if (queryResult == null || queryResult.size() == 0) {
             return null;
@@ -199,7 +198,7 @@ public class CsvExporter implements Exporter {
             }
         }
 
-        DecimalFormat decimalFormat = new DecimalFormat();
+        DecimalFormat decimalFormat = new DecimalFormat("0.###E00");
         DecimalFormatSymbols symbols = decimalFormat.getDecimalFormatSymbols();
         symbols.setDecimalSeparator(decimalSeparator);
         decimalFormat.setDecimalFormatSymbols(symbols);
@@ -216,7 +215,7 @@ public class CsvExporter implements Exporter {
             columnsToInclude.toArray(keys);
         }
 
-        String[] header = getReadableColumnNames(keys, subDataColumnNames);
+        String[] header = getReadableColumnNames(keys, subDataColumnNames, qId);
         //Create CSV format
         CSVFormat format = CSVFormat.DEFAULT
             .withDelimiter(fieldSeparator)
@@ -239,14 +238,18 @@ public class CsvExporter implements Exporter {
                     if (keys[i].equals("statusK")) {
                         rowItems.add(getStatusStringByid((Integer) value));
                     } else if (value instanceof Double) {
+                        decimalFormat.applyPattern("0.###E00");
                         rowItems.add(decimalFormat.format((Double) value));
+                    } else if (value instanceof Float) {
+                        decimalFormat.applyPattern("###0.0#");
+                        rowItems.add(decimalFormat.format((Float) value));
                     } else if (value instanceof Timestamp) {
                         //Convert to target timezone
                         Timestamp time = (Timestamp) value;
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(new Date(time.getTime()));
                         SimpleDateFormat sdf =
-                            new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         sdf.setTimeZone(TimeZone.getTimeZone(timezone));
                         rowItems.add(sdf.format(calendar.getTime()));
                     } else {

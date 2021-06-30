@@ -17,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -29,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @Entity
+@Table(name = "ortszuordnung", schema = SchemaName.NAME)
 public class Ortszuordnung implements Serializable {
     private static final long serialVersionUID = 1L;
 

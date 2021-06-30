@@ -14,7 +14,6 @@ import java.util.List;
 
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.stammdaten.MessStelle;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -52,7 +51,7 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         Probe probe =
-            repository.getByIdPlain(Probe.class, id, Strings.LAND);
+            repository.getByIdPlain(Probe.class, id);
         return !isProbeReadOnly((Integer) id)
             && getAuthorization(userInfo, probe);
     }
@@ -94,13 +93,13 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
             Integer id = (Integer) getProbeId.invoke(data);
             Probe probe =
                 (Probe) repository.getById(
-                    Probe.class, id, Strings.LAND).getData();
+                    Probe.class, id).getData();
 
             boolean readOnly = true;
             boolean owner = false;
             MessStelle mst =
                 repository.getByIdPlain(
-                    MessStelle.class, probe.getMstId(), Strings.STAMM);
+                    MessStelle.class, probe.getMstId());
             if (!userInfo.getNetzbetreiber().contains(
                     mst.getNetzbetreiberId())) {
                 owner = false;

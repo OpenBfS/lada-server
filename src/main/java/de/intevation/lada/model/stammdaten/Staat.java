@@ -12,6 +12,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 
 /**
@@ -19,6 +20,7 @@ import javax.persistence.Id;
  *
  */
 @Entity
+@Table(name = "staat", schema = SchemaName.NAME)
 public class Staat implements Serializable {
     private static final long serialVersionUID = 1L;
 

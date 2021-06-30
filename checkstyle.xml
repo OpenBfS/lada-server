@@ -59,7 +59,7 @@ Maven Checkstyle plugin. Some design related checks where removed.
 
     <!-- Checks for Javadoc comments.                     -->
     <!-- See http://checkstyle.sf.net/config_javadoc.html -->
-    <!-- <module name="JavadocType">
+    <module name="JavadocType">
       <property name="severity" value="warning"/>
     </module>
     <module name="JavadocMethod">
@@ -69,13 +69,13 @@ Maven Checkstyle plugin. Some design related checks where removed.
       <property name="allowMissingPropertyJavadoc" value="true"/>
       <property name="tokens" value="METHOD_DEF"/>
     </module>
-    <module name="JavadocVariable">
+    <!-- <module name="JavadocVariable">
       <property name="severity" value="warning"/>
       <property name="scope" value="protected"/>
-    </module>
+    </module> -->
     <module name="JavadocStyle">
       <property name="severity" value="warning"/>
-    </module> -->
+    </module>
 
 
     <!-- Checks for Naming Conventions.                  -->
@@ -197,6 +197,7 @@ Maven Checkstyle plugin. Some design related checks where removed.
     <module name="HiddenField">
       <property name="severity" value="warning"/>
       <property name="ignoreSetter" value="true"/>
+      <property name="ignoreConstructorParameter" value="true"/>
     </module>
     <module name="IllegalInstantiation"/>
     <module name="InnerAssignment">
@@ -205,13 +206,17 @@ Maven Checkstyle plugin. Some design related checks where removed.
     <module name="MagicNumber">
       <property name="severity" value="warning"/>
       <property name="constantWaiverParentToken" value="ASSIGN,ARRAY_INIT,EXPR,
-      UNARY_PLUS, UNARY_MINUS, TYPECAST, ELIST, DIV, PLUS "/>
+      UNARY_PLUS, UNARY_MINUS, TYPECAST, ELIST, DIV, PLUS, STAR, METHOD_CALL "/>
+    </module>
+    <module name="MultipleStringLiterals">
+      <property name="severity" value="warning"/>
     </module>
     <module name="MissingSwitchDefault"/>
     <module name="SimplifyBooleanExpression">
       <property name="severity" value="warning"/>
     </module>
     <module name="SimplifyBooleanReturn"/>
+    <module name="StringLiteralEquality"/>
 
     <!-- Checks for class design                         -->
     <!-- See http://checkstyle.sf.net/config_design.html -->

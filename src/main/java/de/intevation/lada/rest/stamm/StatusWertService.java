@@ -29,15 +29,12 @@ import de.intevation.lada.model.stammdaten.StatusErreichbar;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.model.stammdaten.StatusWert;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -72,8 +69,7 @@ public class StatusWertService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository defaultRepo;
+    private Repository repository;
 
     @Inject
     @AuthorizationConfig(type = AuthorizationType.HEADER)
@@ -96,7 +92,7 @@ public class StatusWertService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("messungsId")) {
-            return defaultRepo.getAll(StatusWert.class, Strings.STAMM);
+            return repository.getAll(StatusWert.class);
         }
 
         List<Integer> mIds = new ArrayList<Integer>();
@@ -130,10 +126,10 @@ public class StatusWertService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
+        return repository.getById(
             StatusWert.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+            Integer.valueOf(id)
+        );
     }
 
     /**
@@ -146,39 +142,34 @@ public class StatusWertService {
         List<Integer> messIds,
         UserInfo user
     ) {
-        QueryBuilder<Messung> messungQuery = new QueryBuilder<Messung>(
-            defaultRepo.entityManager(Strings.LAND),
-            Messung.class);
+        QueryBuilder<Messung> messungQuery =
+            repository.queryBuilder(Messung.class);
         messungQuery.orIn("id", messIds);
-        List<Messung> messungen = defaultRepo.filterPlain(
-            messungQuery.getQuery(), Strings.LAND);
+        List<Messung> messungen = repository.filterPlain(
+            messungQuery.getQuery());
 
         List<StatusErreichbar> erreichbare = new ArrayList<StatusErreichbar>();
         for (Messung messung : messungen) {
-            StatusProtokoll status = defaultRepo.getByIdPlain(
-                StatusProtokoll.class, messung.getStatus(), Strings.LAND);
-            StatusKombi kombi = defaultRepo.getByIdPlain(
-                StatusKombi.class, status.getStatusKombi(), Strings.STAMM);
+            StatusProtokoll status = repository.getByIdPlain(
+                StatusProtokoll.class, messung.getStatus());
+            StatusKombi kombi = repository.getByIdPlain(
+                StatusKombi.class, status.getStatusKombi());
 
             QueryBuilder<StatusErreichbar> errFilter =
-                new QueryBuilder<StatusErreichbar>(
-                    defaultRepo.entityManager(Strings.STAMM),
-                    StatusErreichbar.class);
+                repository.queryBuilder(StatusErreichbar.class);
             errFilter.andIn("stufeId", user.getFunktionen());
             errFilter.and("curStufe", kombi.getStatusStufe().getId());
             errFilter.and("curWert", kombi.getStatusWert().getId());
-            erreichbare.addAll(defaultRepo.filterPlain(
-                    errFilter.getQuery(), Strings.STAMM));
+            erreichbare.addAll(repository.filterPlain(
+                    errFilter.getQuery()));
         }
 
         QueryBuilder<StatusWert> werteFilter =
-            new QueryBuilder<StatusWert>(
-                defaultRepo.entityManager(Strings.STAMM),
-                StatusWert.class);
+            repository.queryBuilder(StatusWert.class);
         for (int i = 0; i < erreichbare.size(); i++) {
             werteFilter.or("id", erreichbare.get(i).getWertId());
         }
 
-        return defaultRepo.filterPlain(werteFilter.getQuery(), Strings.STAMM);
+        return repository.filterPlain(werteFilter.getQuery());
     }
 }

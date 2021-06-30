@@ -17,12 +17,9 @@ import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.model.stammdaten.PflichtMessgroesse;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -38,40 +35,35 @@ import de.intevation.lada.validation.rules.Rule;
 public class HasPflichtmessgroessen implements Rule {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Override
     public Violation execute(Object object) {
         Messung messung = (Messung) object;
         Probe probe = repository.getByIdPlain(
-            Probe.class, messung.getProbeId(), Strings.LAND);
+            Probe.class, messung.getProbeId());
 
         QueryBuilder<PflichtMessgroesse> builder =
-            new QueryBuilder<PflichtMessgroesse>(
-                repository.entityManager(Strings.STAMM),
-                PflichtMessgroesse.class);
+            repository.queryBuilder(PflichtMessgroesse.class);
         builder.and("messMethodeId", messung.getMmtId());
         builder.and("umwId", probe.getUmwId());
         builder.and("datenbasisId", probe.getDatenbasisId());
         Response response =
-            repository.filter(builder.getQuery(), Strings.STAMM);
+            repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<PflichtMessgroesse> pflicht =
             (List<PflichtMessgroesse>) response.getData();
 
         if (pflicht.isEmpty()) {
             QueryBuilder<PflichtMessgroesse> builderGrp =
-                new QueryBuilder<PflichtMessgroesse>(
-                    repository.entityManager(Strings.STAMM),
-                    PflichtMessgroesse.class);
+                repository.queryBuilder(PflichtMessgroesse.class);
             builderGrp.and("messMethodeId", messung.getMmtId());
             builderGrp.and(
                 "umwId", probe.getUmwId() == null
                     ? null : probe.getUmwId().substring(0, 1));
             builderGrp.and("datenbasisId", probe.getDatenbasisId());
             Response responseGrp =
-                repository.filter(builderGrp.getQuery(), Strings.STAMM);
+                repository.filter(builderGrp.getQuery());
             @SuppressWarnings("unchecked")
             List<PflichtMessgroesse> pflichtGrp =
                 (List<PflichtMessgroesse>) responseGrp.getData();
@@ -80,9 +72,7 @@ public class HasPflichtmessgroessen implements Rule {
 
         if (pflicht.isEmpty()) {
             QueryBuilder<PflichtMessgroesse> builderGrpS2 =
-                new QueryBuilder<PflichtMessgroesse>(
-                    repository.entityManager(Strings.STAMM),
-                    PflichtMessgroesse.class);
+                repository.queryBuilder(PflichtMessgroesse.class);
             builderGrpS2.and("messMethodeId", messung.getMmtId());
             builderGrpS2.and(
                 "umwId", probe.getUmwId() == null
@@ -90,7 +80,7 @@ public class HasPflichtmessgroessen implements Rule {
                         ? null : probe.getUmwId().substring(0, 2));
             builderGrpS2.and("datenbasisId", probe.getDatenbasisId());
             Response responseGrpS2 =
-                repository.filter(builderGrpS2.getQuery(), Strings.STAMM);
+                repository.filter(builderGrpS2.getQuery());
             @SuppressWarnings("unchecked")
             List<PflichtMessgroesse> pflichtGrpS2 =
                 (List<PflichtMessgroesse>) responseGrpS2.getData();
@@ -98,11 +88,10 @@ public class HasPflichtmessgroessen implements Rule {
         }
 
         QueryBuilder<Messwert> wertBuilder =
-            new QueryBuilder<Messwert>(
-                repository.entityManager(Strings.LAND), Messwert.class);
+            repository.queryBuilder(Messwert.class);
         wertBuilder.and("messungsId", messung.getId());
         Response wertResponse =
-            repository.filter(wertBuilder.getQuery(), Strings.LAND);
+            repository.filter(wertBuilder.getQuery());
         @SuppressWarnings("unchecked")
         List<Messwert> messwerte = (List<Messwert>) wertResponse.getData();
         Violation violation = new Violation();
@@ -119,9 +108,7 @@ public class HasPflichtmessgroessen implements Rule {
             for (PflichtMessgroesse p : pflicht) {
                 Messgroesse mg =
                     repository.getByIdPlain(
-                        Messgroesse.class,
-                        p.getMessgroesseId(),
-                        Strings.STAMM);
+                        Messgroesse.class, p.getMessgroesseId());
                 violation.addNotification(
                     "messgroesse#" + mg.getMessgroesse(),
                     StatusCodes.VAL_OBL_MEASURE);

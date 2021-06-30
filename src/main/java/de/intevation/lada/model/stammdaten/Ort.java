@@ -34,7 +34,7 @@ import org.hibernate.annotations.Type;
  *
  */
 @Entity
-@Table(name = "ort")
+@Table(name = "ort", schema = SchemaName.NAME)
 public class Ort implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -128,6 +128,9 @@ public class Ort implements Serializable {
 
     @Transient
     private Integer plausibleReferenceCount;
+
+    @Transient
+    private Integer referenceCountMp;
 
     @Transient
     @JsonIgnore
@@ -403,6 +406,14 @@ public class Ort implements Serializable {
 
     public void setPlausibleReferenceCount(Integer plausibleReferenceCount) {
         this.plausibleReferenceCount = plausibleReferenceCount;
+    }
+
+    public Integer getReferenceCountMp() {
+        return this.referenceCountMp;
+    }
+
+    public void setReferenceCountMp(Integer referenceCountMp) {
+        this.referenceCountMp = referenceCountMp;
     }
 
     @JsonProperty

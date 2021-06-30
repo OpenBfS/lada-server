@@ -19,10 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.MessMethode;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -58,8 +55,7 @@ public class MessmethodeService {
      * The data repository granting read/write access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all MessMethode objects.
@@ -75,7 +71,7 @@ public class MessmethodeService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(MessMethode.class, Strings.STAMM);
+        return repository.getAll(MessMethode.class);
     }
 
     /**
@@ -94,9 +90,6 @@ public class MessmethodeService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            MessMethode.class,
-            id,
-            Strings.STAMM);
+        return repository.getById(MessMethode.class, id);
     }
 }

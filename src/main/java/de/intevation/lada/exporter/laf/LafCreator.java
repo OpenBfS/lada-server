@@ -39,14 +39,11 @@ import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGruppe;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 // import org.apache.log4j.Logger;
@@ -92,7 +89,6 @@ implements Creator {
      * The repository used to read data.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     private UserInfo userInfo;
@@ -132,7 +128,7 @@ implements Creator {
      */
     private String probeToLAF(String probeId, List<Integer> messungen) {
         Response found = repository.getById(
-            Probe.class, Integer.valueOf(probeId), Strings.LAND);
+            Probe.class, Integer.valueOf(probeId));
         if (found.getData() == null) {
             return null;
         }
@@ -150,37 +146,33 @@ implements Creator {
     @SuppressWarnings("unchecked")
     private String writeAttributes(Probe probe, List<Integer> messungen) {
         QueryBuilder<KommentarP> kommBuilder =
-            new QueryBuilder<KommentarP>(
-                repository.entityManager(Strings.LAND), KommentarP.class);
+            repository.queryBuilder(KommentarP.class);
         kommBuilder.and("probeId", probe.getId());
         Response kommentar =
-            repository.filter(kommBuilder.getQuery(), Strings.LAND);
+            repository.filter(kommBuilder.getQuery());
         List<KommentarP> kommentare = (List<KommentarP>) kommentar.getData();
 
         String probenart = null;
         if (probe.getProbenartId() != null) {
             QueryBuilder<Probenart> builder =
-                new QueryBuilder<Probenart>(
-                    repository.entityManager(Strings.STAMM),
-                    Probenart.class);
+                repository.queryBuilder(Probenart.class);
             builder.and("id", probe.getProbenartId());
             List<Probenart> probenarten =
                 (List<Probenart>) repository.filter(
-                    builder.getQuery(),
-                    Strings.STAMM).getData();
+                    builder.getQuery()
+                ).getData();
             probenart = probenarten.get(0).getProbenart();
         }
 
         MessStelle messstelle =
             repository.getByIdPlain(
-                MessStelle.class, probe.getMstId(), Strings.STAMM);
+                MessStelle.class, probe.getMstId());
 
         QueryBuilder<ZusatzWert> zusatzBuilder =
-            new QueryBuilder<ZusatzWert>(
-                repository.entityManager(Strings.LAND), ZusatzWert.class);
+            repository.queryBuilder(ZusatzWert.class);
         zusatzBuilder.and("probeId", probe.getId());
         Response zusatz =
-            repository.filter(zusatzBuilder.getQuery(), Strings.LAND);
+            repository.filter(zusatzBuilder.getQuery());
         List<ZusatzWert> zusatzwerte = (List<ZusatzWert>) zusatz.getData();
 
         String laf = "";
@@ -261,23 +253,23 @@ implements Creator {
             : lafLine("TESTDATEN", "0");
         if (probe.getErzeugerId() != null) {
             DatensatzErzeuger erz = repository.getByIdPlain(
-                DatensatzErzeuger.class, probe.getErzeugerId(), "stamm");
+                DatensatzErzeuger.class, probe.getErzeugerId());
             laf += lafLine("ERZEUGER", erz.getDatensatzErzeugerId(), CN);
         }
         if (probe.getMplId() != null) {
             MessprogrammKategorie mpkat = repository.getByIdPlain(
-                MessprogrammKategorie.class, probe.getMplId(), "stamm");
+                MessprogrammKategorie.class, probe.getMplId());
             laf += lafLine("MESSPROGRAMM_LAND", mpkat.getCode(), CN);
         }
         if (probe.getProbeNehmerId() != null) {
             Probenehmer prn = repository.getByIdPlain(
-                Probenehmer.class, probe.getProbeNehmerId(), "stamm");
+                Probenehmer.class, probe.getProbeNehmerId());
             laf += lafLine("PROBENAHMEINSTITUTION", prn.getPrnId(), CN);
         }
         if (probe.getReiProgpunktGrpId() != null) {
             ReiProgpunktGruppe rpg = repository.getByIdPlain(
                 ReiProgpunktGruppe.class,
-                probe.getReiProgpunktGrpId(), "stamm");
+                probe.getReiProgpunktGrpId());
             laf += lafLine(
                 "REI_PROGRAMMPUNKTGRUPPE",
                 rpg.getReiProgPunktGruppe(), CN);
@@ -302,14 +294,12 @@ implements Creator {
     @SuppressWarnings("unchecked")
     private String writeZusatzwert(ZusatzWert zw) {
         QueryBuilder<ProbenZusatz> builder =
-            new QueryBuilder<ProbenZusatz>(
-                repository.entityManager(Strings.STAMM),
-                ProbenZusatz.class);
+            repository.queryBuilder(ProbenZusatz.class);
         builder.and("id", zw.getPzsId());
         List<ProbenZusatz> zusatz =
             (List<ProbenZusatz>) repository.filter(
-                builder.getQuery(),
-                Strings.STAMM).getData();
+                builder.getQuery()
+            ).getData();
 
         String value = "\"" + zusatz.get(0).getId() + "\"";
         value += ((zw.getKleinerAls() == null)
@@ -331,11 +321,9 @@ implements Creator {
     @SuppressWarnings("unchecked")
     private String writeOrt(Probe probe) {
         QueryBuilder<Ortszuordnung> builder =
-            new QueryBuilder<Ortszuordnung>(
-                repository.entityManager(Strings.LAND),
-                Ortszuordnung.class);
+            repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", probe.getId());
-        Response objects = repository.filter(builder.getQuery(), Strings.LAND);
+        Response objects = repository.filter(builder.getQuery());
         List<Ortszuordnung> orte =
             (List<Ortszuordnung>) objects.getData();
 
@@ -371,15 +359,12 @@ implements Creator {
             laf += lafLine(typePrefix + "ORTS_ZUSATZTEXT",
                 o.getOrtszusatztext(), CN);
         }
-        QueryBuilder<Ort> oBuilder =
-            new QueryBuilder<Ort>(
-                repository.entityManager(Strings.STAMM),
-                Ort.class);
+        QueryBuilder<Ort> oBuilder = repository.queryBuilder(Ort.class);
         oBuilder.and("id", o.getOrtId());
         List<Ort> sOrte =
             (List<Ort>) repository.filter(
-                oBuilder.getQuery(),
-                Strings.STAMM).getData();
+                oBuilder.getQuery()
+            ).getData();
 
         if (sOrte.get(0).getStaatId() != null) {
             laf += lafLine(typePrefix + "HERKUNFTSLAND_S",
@@ -402,9 +387,7 @@ implements Creator {
 
         if (sOrte.get(0).getGemUntId() != null) {
             GemeindeUntergliederung gu = repository.getByIdPlain(
-                GemeindeUntergliederung.class,
-                sOrte.get(0).getGemUntId(),
-                "stamm");
+                GemeindeUntergliederung.class, sOrte.get(0).getGemUntId());
             laf += lafLine(typePrefix + "ORTS_ZUSATZKENNZAHL",
                 gu.getOzkId(), CN);
         }
@@ -464,10 +447,7 @@ implements Creator {
      */
     @SuppressWarnings("unchecked")
     private String writeMessung(Probe probe, List<Integer> messungen) {
-        QueryBuilder<Messung> builder =
-            new QueryBuilder<Messung>(
-                repository.entityManager(Strings.LAND),
-                Messung.class);
+        QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
         if (messungen.isEmpty()) {
             // Get all messungen
             builder.and("probeId", probe.getId());
@@ -475,24 +455,22 @@ implements Creator {
             builder.andIn("id", messungen);
         }
         List<Messung> mess = repository.filterPlain(
-            builder.getQuery(), Strings.LAND);
+            builder.getQuery());
 
         String laf = "";
         for (Messung m : mess) {
             laf += "%MESSUNG%\n";
             QueryBuilder<Messwert> wertBuilder =
-                new QueryBuilder<Messwert>(
-                    repository.entityManager(Strings.LAND), Messwert.class);
+                repository.queryBuilder(Messwert.class);
             wertBuilder.and("messungsId", m.getId());
             Response messw =
-                repository.filter(wertBuilder.getQuery(), Strings.LAND);
+                repository.filter(wertBuilder.getQuery());
             List<Messwert> werte = (List<Messwert>) messw.getData();
             QueryBuilder<KommentarM> kommBuilder =
-                new QueryBuilder<KommentarM>(
-                    repository.entityManager(Strings.LAND), KommentarM.class);
+                repository.queryBuilder(KommentarM.class);
             kommBuilder.and("messungsId", m.getId());
             Response kommentar =
-                repository.filter(kommBuilder.getQuery(), Strings.LAND);
+                repository.filter(kommBuilder.getQuery());
             List<KommentarM> kommentare =
                 (List<KommentarM>) kommentar.getData();
             laf += lafLine("MESSUNGS_ID", m.getExterneMessungsId().toString());
@@ -541,28 +519,34 @@ implements Creator {
         Integer[] status = {0, 0, 0};
         StatusProtokoll currentStatus = repository.getByIdPlain(
             StatusProtokoll.class,
-            messung.getStatus(),
-            Strings.LAND);
+            messung.getStatus()
+        );
         StatusKombi currentKombi = repository.getByIdPlain(
             StatusKombi.class,
-            currentStatus.getStatusKombi(),
-            Strings.STAMM);
+            currentStatus.getStatusKombi()
+        );
         Integer currenStufe = currentKombi.getStatusStufe().getId();
         if (currenStufe == 1) {
             status[0] = currentKombi.getStatusWert().getId();
         } else {
             QueryBuilder<StatusProtokoll> builder =
-                new QueryBuilder<StatusProtokoll>(
-                    repository.entityManager(
-                        Strings.LAND), StatusProtokoll.class);
+                repository.queryBuilder(StatusProtokoll.class);
             builder.and("messungsId", messung.getId());
             builder.andIn(
                 "statusKombi",
-                Arrays.asList(NOT_SET, MST_PLAUS, MST_NOT_REPR, MST_NOT_PLAUS, MST_NOT_DELIV, MST_RESET));
+                Arrays.asList(
+                    NOT_SET,
+                    MST_PLAUS,
+                    MST_NOT_REPR,
+                    MST_NOT_PLAUS,
+                    MST_NOT_DELIV,
+                    MST_RESET));
             builder.orderBy("datum", false);
-            StatusProtokoll mst = repository.filterPlain(builder.getQuery(), Strings.LAND).get(0);
+            StatusProtokoll mst = repository.filterPlain(
+                builder.getQuery()).get(0);
             Integer mstKombi = mst.getStatusKombi();
-            StatusKombi kombi = repository.getByIdPlain(StatusKombi.class, mstKombi, Strings.STAMM);
+            StatusKombi kombi = repository.getByIdPlain(
+                StatusKombi.class, mstKombi);
             if (currenStufe == 2) {
                 status[1] = currentKombi.getStatusWert().getId();
             } else {
@@ -570,15 +554,20 @@ implements Creator {
                 builder.and("messungsId", messung.getId());
                 builder.andIn(
                     "statusKombi",
-                    Arrays.asList(LAND_PLAUS, LAND_NOT_REPR, LAND_UNPLAUS, LAND_QUERY, LAND_RESET));
+                    Arrays.asList(
+                        LAND_PLAUS,
+                        LAND_NOT_REPR,
+                        LAND_UNPLAUS,
+                        LAND_QUERY,
+                        LAND_RESET));
                 builder.orderBy("datum", false);
                 List<StatusProtokoll> land =
-                    repository.filterPlain(builder.getQuery(), Strings.LAND);
+                    repository.filterPlain(builder.getQuery());
                 if (!land.isEmpty()) {
                     Integer landKombi = land.get(0).getStatusKombi();
                     StatusKombi lKombi =
                         repository.getByIdPlain(
-                            StatusKombi.class, landKombi, Strings.STAMM);
+                            StatusKombi.class, landKombi);
                     status[1] = lKombi.getStatusWert().getId();
                 }
                 status[2] = currentKombi.getStatusWert().getId();
@@ -610,24 +599,18 @@ implements Creator {
     @SuppressWarnings("unchecked")
     private String writeMesswert(Messwert mw) {
         QueryBuilder<Messgroesse> builder =
-            new QueryBuilder<Messgroesse>(
-                repository.entityManager(Strings.STAMM),
-                Messgroesse.class);
+            repository.queryBuilder(Messgroesse.class);
         builder.and("id", mw.getMessgroesseId());
         List<Messgroesse> groessen =
             (List<Messgroesse>) repository.filter(
-                builder.getQuery(),
-                Strings.STAMM).getData();
+                builder.getQuery()).getData();
 
         QueryBuilder<MessEinheit> eBuilder =
-            new QueryBuilder<MessEinheit>(
-                repository.entityManager(Strings.STAMM),
-                MessEinheit.class);
+            repository.queryBuilder(MessEinheit.class);
         eBuilder.and("id", mw.getMehId());
         List<MessEinheit> einheiten =
             (List<MessEinheit>) repository.filter(
-                eBuilder.getQuery(),
-                Strings.STAMM).getData();
+                eBuilder.getQuery()).getData();
 
         String tag = "MESSWERT";
         String value = "\"" + groessen.get(0).getMessgroesse() + "\"";

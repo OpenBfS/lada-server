@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Job.JobNotFinishedException;
+import de.intevation.lada.util.data.Job.JobStatus;
 import de.intevation.lada.util.data.Job.Status;
 
 /**
@@ -62,11 +63,8 @@ abstract public class JobManager {
         String id
     ) throws JobNotFoundException {
         Job job = getJobById(id);
-        String jobStatus = job.getStatusName();
-        String message = job.getMessage();
-        boolean done = job.isDone();
-        JobStatus statusObject = new JobStatus(jobStatus, message, done);
-        if (jobStatus.equals(Status.error.name()) && done) {
+        JobStatus statusObject = job.getStatus();
+        if (statusObject.getStatus() == Status.ERROR && statusObject.isDone()) {
             removeJob(job);
         }
         return statusObject;
@@ -197,33 +195,5 @@ abstract public class JobManager {
      */
     public static class JobNotFoundException extends Exception {
         private static final long serialVersionUID = 1L;
-    }
-
-    /**
-     * Class modeling a job status.
-     * Stores job status and message
-     */
-    public static class JobStatus {
-        private String status;
-        private String message;
-        private boolean done;
-
-        public JobStatus(String s, String m, boolean d) {
-            this.status = s;
-            this.message = m != null? m: "";
-            this.done = d;
-        }
-
-        public boolean isDone() {
-            return done;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public String getMessage() {
-            return message;
-        }
     }
 }

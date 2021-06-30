@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  *
  */
 @Entity
-@Table(name = "grid_column_values")
+@Table(name = "grid_column_values", schema = SchemaName.NAME)
 public class GridColumnValue implements Serializable {
     private static final long serialVersionUID = 1L;
 

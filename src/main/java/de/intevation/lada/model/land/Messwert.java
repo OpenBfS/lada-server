@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @Entity
-@Table(name = "messwert", schema = "land")
+@Table(name = "messwert", schema = SchemaName.NAME)
 public class Messwert implements Serializable {
     private static final long serialVersionUID = 1L;
 

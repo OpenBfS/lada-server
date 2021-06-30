@@ -24,7 +24,6 @@ import de.intevation.lada.exporter.ExportJob;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Strings;
 
 /**
  * Job class for exporting records to a laf file.
@@ -89,11 +88,11 @@ public class LafExportJob extends ExportJob {
         //Get probe and messung records
         List<Integer> pIds = new ArrayList<Integer>();
         if (!probeIds.isEmpty()) {
-            QueryBuilder<Probe> pBuilder = new QueryBuilder<Probe>(
-                repository.entityManager(Strings.LAND), Probe.class);
+            QueryBuilder<Probe> pBuilder = repository.queryBuilder(
+                Probe.class);
             pBuilder.andIn("id", probeIds);
             List<Probe> pObjects = repository.filterPlain(
-                pBuilder.getQuery(), Strings.LAND);
+                pBuilder.getQuery());
             for (Probe p : pObjects) {
                 pIds.add(p.getId());
             }
@@ -101,11 +100,11 @@ public class LafExportJob extends ExportJob {
 
         List<Integer> mIds = new ArrayList<Integer>();
         if (!messungIds.isEmpty()) {
-            QueryBuilder<Messung> mBuilder = new QueryBuilder<Messung>(
-                repository.entityManager(Strings.LAND), Messung.class);
+            QueryBuilder<Messung> mBuilder = repository.queryBuilder(
+                Messung.class);
             mBuilder.andIn("id", messungIds);
             List<Messung> mObjects = repository.filterPlain(
-                mBuilder.getQuery(), Strings.LAND);
+                mBuilder.getQuery());
             for (Messung m : mObjects) {
                 mIds.add(m.getId());
             }

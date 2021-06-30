@@ -19,10 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.Staat;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -64,8 +61,7 @@ public class StaatService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all Staat objects.
@@ -81,7 +77,7 @@ public class StaatService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(Staat.class, Strings.STAMM);
+        return repository.getAll(Staat.class);
     }
 
     /**
@@ -100,9 +96,6 @@ public class StaatService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            Staat.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+        return repository.getById(Staat.class, Integer.valueOf(id));
     }
 }

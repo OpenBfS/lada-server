@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.json.Json;
-import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.apache.log4j.Logger;
@@ -206,6 +205,12 @@ public class CsvExportJob extends QueryExportJob {
                     case "messungId":
                         fieldValue = getFieldByName("messungsId", messwert);
                         break;
+                    case "mehId":
+                        fieldValue = getMesseinheit(messwert);
+                        break;
+                    case "messgroesseId":
+                        fieldValue = getMessgroesse(messwert);
+                        break;
                     default:
                         fieldValue = getFieldByName(subDataColumn, messwert);
                 }
@@ -262,6 +267,7 @@ public class CsvExportJob extends QueryExportJob {
         //Fetch primary records
         try {
             primaryData = getQueryResult();
+            Integer test = qId;
         } catch (QueryExportException qee) {
             fail("Fetching primary data failed");
             return;
@@ -289,12 +295,15 @@ public class CsvExportJob extends QueryExportJob {
 
         //Export data to csv
         JsonObjectBuilder exportOptions = Json.createObjectBuilder();
-        JsonObject csvOptions = exportParameters.getJsonObject("csvOptions");
-
         exportOptions.add("timezone", exportParameters.get("timezone"));
-        csvOptions.forEach((key, value) -> {
-            exportOptions.add(key, value);
-        });
+
+        if (exportParameters.containsKey("csvOptions")) {
+            exportParameters.getJsonObject("csvOptions")
+                .forEach((key, value) -> {
+                    exportOptions.add(key, value);
+                });
+        }
+
         if (exportSubdata
             && exportParameters.containsKey("subDataColumnNames")
         ) {
@@ -309,7 +318,7 @@ public class CsvExportJob extends QueryExportJob {
         InputStream exported;
         try {
             exported = exporter.export(
-                exportData, encoding, exportOptions.build(), exportColumns);
+                exportData, encoding, exportOptions.build(), exportColumns, qId);
         } catch (Exception e) {
             logger.error("Error writing csv");
             e.printStackTrace();

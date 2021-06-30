@@ -31,11 +31,8 @@ import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.stammdaten.DeskriptorUmwelt;
 import de.intevation.lada.model.stammdaten.Deskriptoren;
 import de.intevation.lada.model.stammdaten.Ort;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -72,19 +69,19 @@ public class ProbeFactory {
         new Hashtable<String, int[]>();
 
     public ProbeFactory() {
-        int[] t  = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR, 1 };
-        int[] w  = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR,
+        final int[] t  = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR, 1 };
+        final int[] w  = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR,
                      N_WEEK_DAYS };
-        int[] w2 = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR,
+        final int[] w2 = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR,
                      N_WEEK_DAYS * 2 };
-        int[] w4 = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR,
+        final int[] w4 = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR,
                      N_WEEK_DAYS * 4 };
 
-        int[] m = {Calendar.MONTH, Calendar.DAY_OF_MONTH, 1 };
-        int[] q = {Calendar.MONTH, Calendar.DAY_OF_MONTH, 3 };
-        int[] h = {Calendar.MONTH, Calendar.DAY_OF_MONTH, 6 };
+        final int[] m = {Calendar.MONTH, Calendar.DAY_OF_MONTH, 1 };
+        final int[] q = {Calendar.MONTH, Calendar.DAY_OF_MONTH, 3 };
+        final int[] h = {Calendar.MONTH, Calendar.DAY_OF_MONTH, 6 };
 
-        int[] j = {Calendar.YEAR, Calendar.DAY_OF_YEAR, 1 };
+        final int[] j = {Calendar.YEAR, Calendar.DAY_OF_YEAR, 1 };
 
         fieldsTable.put("T", t);
         fieldsTable.put("W", w);
@@ -301,7 +298,6 @@ public class ProbeFactory {
      * The data repository.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
     private Repository repository;
 
     private List<Map<String, Object>> protocol;
@@ -317,7 +313,9 @@ public class ProbeFactory {
      *
      * @return List of probe objects.
      */
-    public List<Probe> create(Messprogramm messprogramm, Long from, Long to, boolean dryrun) {
+    public List<Probe> create(
+        Messprogramm messprogramm, Long from, Long to, boolean dryrun
+    ) {
         protocol = new ArrayList<>();
         Calendar start = Calendar.getInstance();
         start.setTimeInMillis(from);
@@ -405,32 +403,26 @@ public class ProbeFactory {
     ) {
         currentProtocol = new HashMap<>();
         QueryBuilder<Probe> builderProbe =
-            new QueryBuilder<Probe>(
-                repository.entityManager(Strings.LAND),
-                Probe.class);
+            repository.queryBuilder(Probe.class);
         builderProbe.and("mprId", messprogramm.getId());
         builderProbe.and("solldatumBeginn", startDate);
         builderProbe.and("solldatumEnde", endDate);
 
         QueryBuilder<MessprogrammMmt> builder =
-            new QueryBuilder<MessprogrammMmt>(
-                    repository.entityManager(Strings.LAND),
-                    MessprogrammMmt.class);
+            repository.queryBuilder(MessprogrammMmt.class);
         builder.and("messprogrammId", messprogramm.getId());
-        Response response = repository.filter(builder.getQuery(), Strings.LAND);
+        Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
-        List<MessprogrammMmt> mmts = (List<MessprogrammMmt>)response.getData();
+        List<MessprogrammMmt> mmts = (List<MessprogrammMmt>) response.getData();
         List<String> messungProtocol = new ArrayList<>();
         List<Probe> proben =
-            repository.filterPlain(builderProbe.getQuery(), Strings.LAND);
+            repository.filterPlain(builderProbe.getQuery());
 
         QueryBuilder<OrtszuordnungMp> builderOrt =
-            new QueryBuilder<OrtszuordnungMp>(
-                repository.entityManager(Strings.LAND),
-                OrtszuordnungMp.class);
+            repository.queryBuilder(OrtszuordnungMp.class);
         builderOrt.and("messprogrammId", messprogramm.getId());
         List<OrtszuordnungMp> orte =
-            repository.filterPlain(builderOrt.getQuery(), Strings.LAND);
+            repository.filterPlain(builderOrt.getQuery());
 
         if (!proben.isEmpty()) {
             proben.get(0).setFound(true);
@@ -442,7 +434,8 @@ public class ProbeFactory {
             }
             currentProtocol.put("mmt", messungProtocol);
             for (OrtszuordnungMp ort : orte) {
-                Ort o = repository.getByIdPlain(Ort.class, ort.getOrtId(), "stamm");
+                Ort o = repository.getByIdPlain(
+                    Ort.class, ort.getOrtId());
                 currentProtocol.put("gemId", o.getGemId());
             }
             return proben.get(0);
@@ -509,13 +502,14 @@ public class ProbeFactory {
             ortP.setOrtId(ort.getOrtId());
             ortP.setOrtszusatztext(ort.getOrtszusatztext());
             createObject(ortP, dryrun);
-            Ort o = repository.getByIdPlain(Ort.class, ortP.getOrtId(), "stamm");
+            Ort o = repository.getByIdPlain(
+                Ort.class, ortP.getOrtId());
             currentProtocol.put("gemId", o.getGemId());
         }
         // Reolad the probe to have the old id
         if (!dryrun) {
-            probe = (Probe)repository.getById(
-                Probe.class, probe.getId(), Strings.LAND).getData();
+            probe = (Probe) repository.getById(
+                Probe.class, probe.getId()).getData();
         }
         protocol.add(currentProtocol);
         return probe;
@@ -540,7 +534,8 @@ public class ProbeFactory {
 
     private void createObject(Object item, boolean dryrun) {
         if (!dryrun) {
-            repository.create(item, Strings.LAND);
+            // TODO: Do not rely on this being successful
+            repository.create(item);
         }
     }
 
@@ -574,8 +569,7 @@ public class ProbeFactory {
         String mediaDesk = probe.getMediaDesk();
         if (mediaDesk != null) {
             Object result = repository.queryFromString(
-                "SELECT get_media_from_media_desk( :mediaDesk );",
-                 Strings.STAMM)
+                "SELECT get_media_from_media_desk( :mediaDesk );")
                     .setParameter("mediaDesk", mediaDesk)
                     .getSingleResult();
             probe.setMedia(result != null ? result.toString() : "");
@@ -631,15 +625,15 @@ public class ProbeFactory {
             } else {
                 parent = ndParent;
             }
-            QueryBuilder<Deskriptoren> builder = new QueryBuilder<Deskriptoren>(
-                repository.entityManager(Strings.STAMM), Deskriptoren.class);
+            QueryBuilder<Deskriptoren> builder =
+                repository.queryBuilder(Deskriptoren.class);
             if (parent != null) {
                 builder.and("vorgaenger", parent);
             }
             builder.and("sn", mediaDesk[i]);
             builder.and("ebene", i - 1);
             Response response =
-                repository.filter(builder.getQuery(), Strings.STAMM);
+                repository.filter(builder.getQuery());
             @SuppressWarnings("unchecked")
             List<Deskriptoren> data = (List<Deskriptoren>) response.getData();
             if (data.isEmpty()) {
@@ -664,9 +658,7 @@ public class ProbeFactory {
      */
     private String getUmwelt(List<Integer> media, boolean isZebs) {
         QueryBuilder<DeskriptorUmwelt> builder =
-            new QueryBuilder<DeskriptorUmwelt>(
-                repository.entityManager(Strings.STAMM),
-                DeskriptorUmwelt.class);
+            repository.queryBuilder(DeskriptorUmwelt.class);
 
         if (media.size() == 0) {
             return null;
@@ -685,7 +677,7 @@ public class ProbeFactory {
             }
         }
         Response response =
-            repository.filter(builder.getQuery(), Strings.STAMM);
+            repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<DeskriptorUmwelt> data =
             (List<DeskriptorUmwelt>) response.getData();

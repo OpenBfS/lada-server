@@ -21,7 +21,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "netz_betreiber")
+@Table(name = "netz_betreiber", schema = SchemaName.NAME)
 @NamedQuery(
     name = "NetzBetreiber.findAll",
     query = "SELECT n FROM NetzBetreiber n")

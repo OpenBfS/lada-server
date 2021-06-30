@@ -23,11 +23,8 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.log4j.Logger;
 
 import de.intevation.lada.model.stammdaten.Auth;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -65,8 +62,7 @@ public class MessstellenkombiService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all MessStellenKombi objects.
@@ -87,9 +83,7 @@ public class MessstellenkombiService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
 
-        QueryBuilder<Auth> mstMlQuery = new QueryBuilder<Auth>(
-            defaultRepo.entityManager(Strings.STAMM),
-            Auth.class);
+        QueryBuilder<Auth> mstMlQuery = repository.queryBuilder(Auth.class);
         mstMlQuery.orIntList("funktionId", Arrays.asList(0, 1));
 
         if (params.containsKey("netzbetreiberId")) {
@@ -98,6 +92,6 @@ public class MessstellenkombiService {
                 Arrays.asList(params.getFirst("netzbetreiberId").split(",")));
         }
 
-        return defaultRepo.filter(mstMlQuery.getQuery(), Strings.STAMM);
+        return repository.filter(mstMlQuery.getQuery());
    }
 }

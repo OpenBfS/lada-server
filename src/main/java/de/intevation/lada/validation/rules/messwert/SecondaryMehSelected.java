@@ -14,11 +14,8 @@ import javax.inject.Inject;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.stammdaten.MessEinheit;
 import de.intevation.lada.model.stammdaten.Umwelt;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -35,7 +32,6 @@ public class SecondaryMehSelected implements Rule {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Override
@@ -66,10 +62,10 @@ public class SecondaryMehSelected implements Rule {
             not into the primary */
             MessEinheit meh =
                 repository.getByIdPlain(
-                    MessEinheit.class, mehId, Strings.STAMM);
+                    MessEinheit.class, mehId);
             MessEinheit secMeh =
                 repository.getByIdPlain(
-                    MessEinheit.class, secMehId, Strings.STAMM);
+                    MessEinheit.class, secMehId);
             AtomicBoolean primary = new AtomicBoolean(false);
             meh.getMassEinheitUmrechnungZus().forEach(umrechnung -> {
                 if (umrechnung.getMehVon().getId()

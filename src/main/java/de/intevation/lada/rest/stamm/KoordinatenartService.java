@@ -23,12 +23,9 @@ import javax.ws.rs.core.UriInfo;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.intevation.lada.model.stammdaten.KoordinatenArt;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -64,8 +61,7 @@ public class KoordinatenartService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all KoordinatenArt objects.
@@ -81,7 +77,7 @@ public class KoordinatenartService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(KoordinatenArt.class, Strings.STAMM);
+        return repository.getAll(KoordinatenArt.class);
     }
 
     /**
@@ -100,10 +96,7 @@ public class KoordinatenartService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            KoordinatenArt.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+        return repository.getById(KoordinatenArt.class, Integer.valueOf(id));
     }
 
     @POST

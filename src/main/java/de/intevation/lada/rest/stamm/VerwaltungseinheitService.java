@@ -20,11 +20,8 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -73,8 +70,7 @@ public class VerwaltungseinheitService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all Verwaltungseinheit objects.
@@ -95,15 +91,13 @@ public class VerwaltungseinheitService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("query")) {
-            return defaultRepo.getAll(Verwaltungseinheit.class, Strings.STAMM);
+            return repository.getAll(Verwaltungseinheit.class);
         }
         String filter = params.getFirst("query");
         QueryBuilder<Verwaltungseinheit> builder =
-            new QueryBuilder<Verwaltungseinheit>(
-                defaultRepo.entityManager(
-                    Strings.STAMM), Verwaltungseinheit.class);
+            repository.queryBuilder(Verwaltungseinheit.class);
         builder.andLike("bezeichnung", filter + "%");
-        return defaultRepo.filter(builder.getQuery(), Strings.STAMM);
+        return repository.filter(builder.getQuery());
     }
 
     /**
@@ -122,9 +116,6 @@ public class VerwaltungseinheitService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            Verwaltungseinheit.class,
-            id,
-            Strings.STAMM);
+        return repository.getById(Verwaltungseinheit.class, id);
     }
 }

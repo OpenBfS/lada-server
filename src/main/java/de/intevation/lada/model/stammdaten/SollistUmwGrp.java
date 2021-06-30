@@ -20,7 +20,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name="sollist_umwgrp")
+@Table(name="sollist_umwgrp", schema = SchemaName.NAME)
 public class SollistUmwGrp implements Serializable {
     private static final long serialVersionUID = 1L;
 

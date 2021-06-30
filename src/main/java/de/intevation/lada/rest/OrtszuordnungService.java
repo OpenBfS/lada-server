@@ -32,14 +32,11 @@ import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
@@ -94,8 +91,7 @@ public class OrtszuordnungService {
      * The data repository granting read/write access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * The object lock mechanism.
@@ -137,17 +133,15 @@ public class OrtszuordnungService {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("probeId")) {
             logger.debug("get all");
-            return defaultRepo.getAll(Ortszuordnung.class, Strings.LAND);
+            return repository.getAll(Ortszuordnung.class);
         }
         String probeId = params.getFirst("probeId");
         QueryBuilder<Ortszuordnung> builder =
-            new QueryBuilder<Ortszuordnung>(
-                defaultRepo.entityManager(Strings.LAND),
-                Ortszuordnung.class);
+            repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", probeId);
         Response r = authorization.filter(
             request,
-            defaultRepo.filter(builder.getQuery(), Strings.LAND),
+            repository.filter(builder.getQuery()),
             Ortszuordnung.class);
         if (r.getSuccess()) {
             @SuppressWarnings("unchecked")
@@ -184,8 +178,8 @@ public class OrtszuordnungService {
         @PathParam("id") String id
     ) {
         Response response =
-            defaultRepo.getById(
-                Ortszuordnung.class, Integer.valueOf(id), Strings.LAND);
+            repository.getById(
+                Ortszuordnung.class, Integer.valueOf(id));
         Ortszuordnung ort = (Ortszuordnung) response.getData();
         Violation violation = validator.validate(ort);
         if (violation.hasErrors() || violation.hasWarnings()) {
@@ -245,7 +239,7 @@ public class OrtszuordnungService {
         }
 
         /* Persist the new object*/
-        Response response = defaultRepo.create(ort, Strings.LAND);
+        Response response = repository.create(ort);
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
         }
@@ -306,13 +300,13 @@ public class OrtszuordnungService {
             return response;
         }
 
-        Response response = defaultRepo.update(ort, Strings.LAND);
+        Response response = repository.update(ort);
         if (!response.getSuccess()) {
             return response;
         }
-        Response updated = defaultRepo.getById(
+        Response updated = repository.getById(
             Ortszuordnung.class,
-            ((Ortszuordnung) response.getData()).getId(), Strings.LAND);
+            ((Ortszuordnung) response.getData()).getId());
         if (violation.hasWarnings()) {
             updated.setWarnings(violation.getWarnings());
         }
@@ -341,8 +335,8 @@ public class OrtszuordnungService {
         @PathParam("id") String id
     ) {
         Response object =
-            defaultRepo.getById(
-                Ortszuordnung.class, Integer.valueOf(id), Strings.LAND);
+            repository.getById(
+                Ortszuordnung.class, Integer.valueOf(id));
         Ortszuordnung ortObj = (Ortszuordnung) object.getData();
         if (!authorization.isAuthorized(
                 request,
@@ -355,6 +349,6 @@ public class OrtszuordnungService {
             return new Response(false, StatusCodes.CHANGED_VALUE, null);
         }
 
-        return defaultRepo.delete(ortObj, Strings.LAND);
+        return repository.delete(ortObj);
     }
 }

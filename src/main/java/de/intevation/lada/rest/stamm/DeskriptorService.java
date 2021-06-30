@@ -24,12 +24,9 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.Deskriptoren;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -71,7 +68,6 @@ public class DeskriptorService {
      * The data repository granting read/write access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     /**
@@ -101,11 +97,10 @@ public class DeskriptorService {
         if (params.isEmpty()
             || !params.containsKey("layer")
         ) {
-            return repository.getAll(Deskriptoren.class, Strings.STAMM);
+            return repository.getAll(Deskriptoren.class);
         }
-        QueryBuilder<Deskriptoren> builder = new QueryBuilder<Deskriptoren>(
-            repository.entityManager(Strings.STAMM),
-            Deskriptoren.class);
+        QueryBuilder<Deskriptoren> builder =
+            repository.queryBuilder(Deskriptoren.class);
         builder.and("sn", 0).not();
         try {
             builder.and("ebene",
@@ -120,7 +115,7 @@ public class DeskriptorService {
         } catch (NumberFormatException nfe) {
             return new Response(false, StatusCodes.VALUE_OUTSIDE_RANGE, null);
         }
-        return repository.filter(builder.getQuery(), Strings.STAMM);
+        return repository.filter(builder.getQuery());
     }
 
     /**
@@ -141,6 +136,6 @@ public class DeskriptorService {
         @Context HttpServletRequest request
     ) {
         return repository.getById(
-            Deskriptoren.class, Integer.valueOf(id), Strings.STAMM);
+            Deskriptoren.class, Integer.valueOf(id));
     }
 }

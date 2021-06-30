@@ -22,6 +22,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
@@ -32,8 +33,8 @@ import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
+import de.intevation.lada.util.data.Job.JobStatus;
 import de.intevation.lada.util.data.JobManager.JobNotFoundException;
-import de.intevation.lada.util.data.JobManager.JobStatus;
 
 /**
  * REST service to export data into files using a polling mechanism.
@@ -296,8 +297,8 @@ public class AsyncExportService {
     @Produces("application/json")
     public Response getStatus(
         @PathParam("id") String id,
-        @Context HttpServletRequest request) {
-
+        @Context HttpServletRequest request
+    ) {
         JobStatus status;
         UserInfo originalCreator;
         UserInfo requestingUser = authorization.getInfo(request);
@@ -321,13 +322,7 @@ public class AsyncExportService {
             logger.info(String.format("Could not find status for job %s", id));
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        JsonObject responseJson = Json.createObjectBuilder()
-            .add("status", status.getStatus())
-            .add("message", status.getMessage())
-            .add("done", status.isDone())
-            .build();
-
-        return Response.ok(responseJson.toString()).build();
+        return Response.ok(status.toJsonObject(), MediaType.APPLICATION_JSON).build();
     }
 
     /**

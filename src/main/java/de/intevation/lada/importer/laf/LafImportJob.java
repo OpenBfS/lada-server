@@ -40,7 +40,6 @@ import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.Response;
 
@@ -63,9 +62,10 @@ public class LafImportJob extends Job {
 
     private JsonObject result;
 
+    private TagUtil tagUtil;
+
     public LafImportJob(String jobId) {
-        this.done = false;
-        this.currentStatus = Status.waiting;
+        this.currentStatus = new JobStatus(Status.WAITING);
         this.jobId = jobId;
         this.logger =
             Logger.getLogger(String.format("LafImportJob[%s]", jobId));
@@ -157,19 +157,19 @@ public class LafImportJob extends Job {
             fail("No valid file given");
         }
 
+        logger.debug(String.format("Starting import of %d files", files.size()));
+
         //Import each file
         files.forEach((fileName, content) -> {
             logLAFFile(mstId, content, charset);
             List<ImporterConfig> config = new ArrayList<ImporterConfig>();
             if (!"".equals(mstId)) {
                 QueryBuilder<ImporterConfig> builder =
-                    new QueryBuilder<ImporterConfig>(
-                        repository.entityManager(Strings.STAMM),
-                        ImporterConfig.class);
+                    repository.queryBuilder(ImporterConfig.class);
                 builder.and("mstId", mstId);
                 config =
                     (List<ImporterConfig>) repository.filterPlain(
-                        builder.getQuery(), Strings.STAMM);
+                        builder.getQuery());
             }
             importer.doImport(content, userInfo, config);
             Map<String, Object> fileResponseData =
@@ -189,13 +189,14 @@ public class LafImportJob extends Job {
                 "probeIds", ((LafImporter) importer).getImportedIds());
             importResponseData.put(fileName, fileResponseData);
             importedProbeids.addAll(((LafImporter) importer).getImportedIds());
+            logger.debug(String.format("Finished import of file \"%s\"", fileName));
         });
 
         // If import created at least a new record
         if (importedProbeids.size() > 0) {
             //Generate a tag for the imported probe records
             Response tagCreation =
-                TagUtil.generateTag("IMP", mstId, repository);
+                tagUtil.generateTag("IMP", mstId);
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
                 importData = importResponseData;
@@ -203,8 +204,8 @@ public class LafImportJob extends Job {
                 return;
             }
             Tag newTag = (Tag) tagCreation.getData();
-            TagUtil.setTagsByProbeIds(
-                importedProbeids, newTag.getId(), repository);
+            tagUtil.setTagsByProbeIds(
+                importedProbeids, newTag.getId());
 
             //Put new tag in import response
             importResponseData.forEach((file, responseData) -> {
@@ -230,6 +231,10 @@ public class LafImportJob extends Job {
 
     public void setRepository(Repository repository) {
         this.repository = repository;
+    }
+
+    public void setTagutil(TagUtil tagUtil) {
+        this.tagUtil = tagUtil;
     }
 
     /**

@@ -25,14 +25,11 @@ import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -56,6 +53,7 @@ import de.intevation.lada.util.rest.Response;
  *  }],
  *  "errors": [object],
  *  "warnings": [object],
+ *  "notifications": [object],
  *  "readonly": [boolean],
  *  "totalCount": [number]
  * }
@@ -72,7 +70,6 @@ public class DatensatzErzeugerService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
     private Repository repository;
 
     @Inject
@@ -94,7 +91,7 @@ public class DatensatzErzeugerService {
         @Context UriInfo info
     ) {
         List<DatensatzErzeuger> erzeuger =
-            repository.getAllPlain(DatensatzErzeuger.class, Strings.STAMM);
+            repository.getAllPlain(DatensatzErzeuger.class);
 
         for (DatensatzErzeuger erz : erzeuger) {
             // TODO Do not iterate all the objects if its not necessary
@@ -125,10 +122,7 @@ public class DatensatzErzeugerService {
         @PathParam("id") String id
     ) {
         DatensatzErzeuger erzeuger = repository.getByIdPlain(
-            DatensatzErzeuger.class,
-            Integer.valueOf(id),
-            Strings.STAMM
-        );
+            DatensatzErzeuger.class, Integer.valueOf(id));
         erzeuger.setReadonly(
             !authorization.isAuthorized(
                 request,
@@ -157,18 +151,15 @@ public class DatensatzErzeugerService {
                 false, StatusCodes.NOT_ALLOWED, datensatzerzeuger);
         }
         QueryBuilder<DatensatzErzeuger> builder =
-            new QueryBuilder<DatensatzErzeuger>(
-                repository.entityManager(Strings.STAMM),
-                DatensatzErzeuger.class
-            );
+            repository.queryBuilder(DatensatzErzeuger.class);
         builder.and(
             "datensatzErzeugerId", datensatzerzeuger.getDatensatzErzeugerId());
         builder.and("netzbetreiberId", datensatzerzeuger.getNetzbetreiberId());
-
+        builder.and("mstId", datensatzerzeuger.getMstId());
         List<DatensatzErzeuger> erzeuger =
-            repository.filterPlain(builder.getQuery(), Strings.STAMM);
+            repository.filterPlain(builder.getQuery());
         if (erzeuger.isEmpty()) {
-            return repository.create(datensatzerzeuger, Strings.STAMM);
+            return repository.create(datensatzerzeuger);
         }
         return new Response(false, StatusCodes.IMP_DUPLICATE, null);
     }
@@ -190,7 +181,20 @@ public class DatensatzErzeugerService {
             return new Response(
                 false, StatusCodes.NOT_ALLOWED, datensatzerzeuger);
         }
-        return repository.update(datensatzerzeuger, Strings.STAMM);
+        QueryBuilder<DatensatzErzeuger> builder =
+            repository.queryBuilder(DatensatzErzeuger.class);
+        builder.and(
+            "datensatzErzeugerId", datensatzerzeuger.getDatensatzErzeugerId());
+        builder.and("netzbetreiberId", datensatzerzeuger.getNetzbetreiberId());
+        builder.and("mstId", datensatzerzeuger.getMstId());
+        List<DatensatzErzeuger> erzeuger =
+            repository.filterPlain(builder.getQuery());
+        if (erzeuger.isEmpty()) {
+            return repository.update(datensatzerzeuger);
+        } else if (erzeuger.get(0).getId() != datensatzerzeuger.getId()) {
+            return new Response(false, StatusCodes.IMP_DUPLICATE, null);
+        }
+        return repository.update(datensatzerzeuger);
     }
 
     @DELETE
@@ -201,7 +205,7 @@ public class DatensatzErzeugerService {
         @PathParam("id") String id
     ) {
         DatensatzErzeuger datensatzerzeuger = repository.getByIdPlain(
-            DatensatzErzeuger.class, Integer.valueOf(id), Strings.STAMM);
+            DatensatzErzeuger.class, Integer.valueOf(id));
         if (datensatzerzeuger == null
             || !authorization.isAuthorized(
                 request,
@@ -212,6 +216,6 @@ public class DatensatzErzeugerService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        return repository.delete(datensatzerzeuger, Strings.STAMM);
+        return repository.delete(datensatzerzeuger);
     }
 }

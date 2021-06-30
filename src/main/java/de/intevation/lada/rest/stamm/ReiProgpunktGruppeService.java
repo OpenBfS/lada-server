@@ -25,10 +25,8 @@ import javax.ws.rs.core.UriInfo;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGrpUmwZuord;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGrpZuord;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGruppe;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 
@@ -65,7 +63,6 @@ public class ReiProgpunktGruppeService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     /**
@@ -87,7 +84,7 @@ public class ReiProgpunktGruppeService {
             || (!params.containsKey("reiprogpunkt")
             && !params.containsKey("umwelt"))
         ) {
-            return repository.getAll(ReiProgpunktGruppe.class, "stamm");
+            return repository.getAll(ReiProgpunktGruppe.class);
         }
         List<ReiProgpunktGruppe> list = new ArrayList<ReiProgpunktGruppe>();
         if (params.containsKey("reiprogpunkt")) {
@@ -101,50 +98,38 @@ public class ReiProgpunktGruppeService {
                     "Not a valid filter id");
             }
             QueryBuilder<ReiProgpunktGrpZuord> builder =
-                new QueryBuilder<ReiProgpunktGrpZuord>(
-                    repository.entityManager("stamm"),
-                    ReiProgpunktGrpZuord.class
-                );
+                repository.queryBuilder(ReiProgpunktGrpZuord.class);
             builder.and("reiProgpunktId", id);
             List<ReiProgpunktGrpZuord> zuord =
-                repository.filterPlain(builder.getQuery(), "stamm");
+                repository.filterPlain(builder.getQuery());
             if (zuord.isEmpty()) {
                 return new Response(true, StatusCodes.OK, null);
             }
             QueryBuilder<ReiProgpunktGruppe> builder1 =
-                new QueryBuilder<ReiProgpunktGruppe>(
-                    repository.entityManager("stamm"),
-                    ReiProgpunktGruppe.class
-                );
+                repository.queryBuilder(ReiProgpunktGruppe.class);
             List<Integer> ids = new ArrayList<Integer>();
             for (int i = 0; i < zuord.size(); i++) {
                 ids.add(zuord.get(i).getReiProgpunktGrpId());
             }
             builder1.orIn("id", ids);
-            list = repository.filterPlain(builder1.getQuery(), "stamm");
+            list = repository.filterPlain(builder1.getQuery());
         } else if (params.containsKey("umwelt")) {
             QueryBuilder<ReiProgpunktGrpUmwZuord> builder =
-                new QueryBuilder<ReiProgpunktGrpUmwZuord>(
-                    repository.entityManager("stamm"),
-                    ReiProgpunktGrpUmwZuord.class
-                );
+                repository.queryBuilder(ReiProgpunktGrpUmwZuord.class);
             builder.and("umwId", params.getFirst("umwelt"));
             List<ReiProgpunktGrpUmwZuord> zuord =
-                repository.filterPlain(builder.getQuery(), "stamm");
+                repository.filterPlain(builder.getQuery());
             if (zuord.isEmpty()) {
                 return new Response(true, StatusCodes.OK, null);
             }
             QueryBuilder<ReiProgpunktGruppe> builder1 =
-                new QueryBuilder<ReiProgpunktGruppe>(
-                    repository.entityManager("stamm"),
-                    ReiProgpunktGruppe.class
-                );
+                repository.queryBuilder(ReiProgpunktGruppe.class);
             List<Integer> ids = new ArrayList<Integer>();
             for (int i = 0; i < zuord.size(); i++) {
                 ids.add(zuord.get(i).getReiProgpunktGrpId());
             }
             builder1.orIn("id", ids);
-            list = repository.filterPlain(builder1.getQuery(), "stamm");
+            list = repository.filterPlain(builder1.getQuery());
         }
 
         return new Response(true, StatusCodes.OK, list);
@@ -166,9 +151,6 @@ public class ReiProgpunktGruppeService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return repository.getById(
-            ReiProgpunktGruppe.class,
-            Integer.valueOf(id),
-            "stamm");
+        return repository.getById(ReiProgpunktGruppe.class, Integer.valueOf(id));
     }
 }

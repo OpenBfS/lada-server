@@ -19,10 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.OrtTyp;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -58,8 +55,7 @@ public class OrtTypService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all OrtTyp objects.
@@ -75,7 +71,7 @@ public class OrtTypService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(OrtTyp.class, Strings.STAMM);
+        return repository.getAll(OrtTyp.class);
     }
 
     /**
@@ -94,9 +90,6 @@ public class OrtTypService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            OrtTyp.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+        return repository.getById(OrtTyp.class, Integer.valueOf(id));
     }
 }

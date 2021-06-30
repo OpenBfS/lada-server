@@ -12,7 +12,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-
+import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,6 +23,7 @@ import org.locationtech.jts.geom.Point;
  *
  */
 @Entity
+@Table(name = "verwaltungseinheit", schema = SchemaName.NAME)
 public class Verwaltungseinheit implements Serializable {
     private static final long serialVersionUID = 1L;
 

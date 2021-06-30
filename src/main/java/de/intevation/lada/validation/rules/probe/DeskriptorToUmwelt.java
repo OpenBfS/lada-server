@@ -15,12 +15,9 @@ import javax.inject.Inject;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.stammdaten.DeskriptorUmwelt;
 import de.intevation.lada.model.stammdaten.Deskriptoren;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -36,7 +33,6 @@ import de.intevation.lada.validation.rules.Rule;
 public class DeskriptorToUmwelt implements Rule {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Override
@@ -72,15 +68,15 @@ public class DeskriptorToUmwelt implements Rule {
             } else {
                 parent = ndParent;
             }
-            QueryBuilder<Deskriptoren> builder = new QueryBuilder<Deskriptoren>(
-                repository.entityManager(Strings.STAMM), Deskriptoren.class);
+            QueryBuilder<Deskriptoren> builder =
+                repository.queryBuilder(Deskriptoren.class);
             if (parent != null) {
                 builder.and("vorgaenger", parent);
             }
             builder.and("sn", mediaDesk[i]);
             builder.and("ebene", i - 1);
             Response response =
-            repository.filter(builder.getQuery(), Strings.STAMM);
+            repository.filter(builder.getQuery());
             @SuppressWarnings("unchecked")
             List<Deskriptoren> data = (List<Deskriptoren>) response.getData();
             if (data.isEmpty()) {
@@ -115,9 +111,7 @@ public class DeskriptorToUmwelt implements Rule {
         }
 
         QueryBuilder<DeskriptorUmwelt> builder =
-            new QueryBuilder<DeskriptorUmwelt>(
-                repository.entityManager(
-                    Strings.STAMM), DeskriptorUmwelt.class);
+            repository.queryBuilder(DeskriptorUmwelt.class);
 
         for (int i = 0; i < media.size(); i++) {
             String field = "s" + (i > 9 ? i : "0" + i);
@@ -133,7 +127,7 @@ public class DeskriptorToUmwelt implements Rule {
             }
         }
         Response response =
-        repository.filter(builder.getQuery(), Strings.STAMM);
+        repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<DeskriptorUmwelt> data =
             (List<DeskriptorUmwelt>) response.getData();

@@ -37,15 +37,12 @@ import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.QueryMessstelle;
 import de.intevation.lada.model.stammdaten.QueryUser;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 
@@ -84,7 +81,6 @@ import de.intevation.lada.util.rest.Response;
 public class QueryService {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
     private Repository repository;
 
     @Inject
@@ -108,7 +104,7 @@ public class QueryService {
         @Context HttpServletRequest request
     ) {
         UserInfo userInfo = authorization.getInfo(request);
-        EntityManager em = repository.entityManager(Strings.STAMM);
+        EntityManager em = repository.entityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<QueryUser> criteriaQuery =
             builder.createQuery(QueryUser.class);
@@ -127,7 +123,7 @@ public class QueryService {
         criteriaQuery.where(filter);
 
         List<QueryUser> queries =
-            repository.filterPlain(criteriaQuery, Strings.STAMM);
+            repository.filterPlain(criteriaQuery);
         for (QueryUser query: queries) {
             if (query.getMessStelles() != null
                 && query.getMessStelles().size() > 0
@@ -167,7 +163,7 @@ public class QueryService {
                 qms.setQueryUser(query);
                 query.addMessStelle(qms);
             }
-            return repository.create(query, Strings.STAMM);
+            return repository.create(query);
         }
     }
 
@@ -189,12 +185,11 @@ public class QueryService {
         }
 
         query.setUserId(userInfo.getUserId());
-        QueryBuilder<QueryMessstelle> builder = new QueryBuilder<>(
-                repository.entityManager(Strings.STAMM),
-                QueryMessstelle.class);
+        QueryBuilder<QueryMessstelle> builder =
+            repository.queryBuilder(QueryMessstelle.class);
         builder.and("queryUser", query.getId());
         List<QueryMessstelle> qms =
-            repository.filterPlain(builder.getQuery(), Strings.STAMM);
+            repository.filterPlain(builder.getQuery());
         List<QueryMessstelle> delete = new ArrayList<>();
         List<String> create = new ArrayList<>();
         for (String mst : query.getMessStellesIds()) {
@@ -221,7 +216,7 @@ public class QueryService {
         }
         List<QueryMessstelle> dbMesstelles =
             repository.getByIdPlain(
-                QueryUser.class, query.getId(), Strings.STAMM).getMessStelles();
+                QueryUser.class, query.getId()).getMessStelles();
         query.setMessStelles(dbMesstelles);
 
         for (QueryMessstelle qm : delete) {
@@ -230,7 +225,7 @@ public class QueryService {
             while (qmIter.hasNext()) {
                 QueryMessstelle qmi = qmIter.next();
                 if (qmi.getId().equals(qm.getId())) {
-                    repository.delete(qmi, Strings.STAMM);
+                    repository.delete(qmi);
                     qmIter.remove();
                     break;
                 }
@@ -243,7 +238,7 @@ public class QueryService {
             query.addMessStelle(qm);
         }
 
-        return repository.update(query, Strings.STAMM);
+        return repository.update(query);
     }
 
     @DELETE
@@ -255,11 +250,9 @@ public class QueryService {
     ) {
         UserInfo userInfo = authorization.getInfo(request);
         QueryUser query = repository.getByIdPlain(
-            QueryUser.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+            QueryUser.class, Integer.valueOf(id));
         if (query.getUserId().equals(userInfo.getUserId())) {
-            return repository.delete(query, Strings.STAMM);
+            return repository.delete(query);
         }
         return new Response(false, StatusCodes.NOT_ALLOWED, null);
     }

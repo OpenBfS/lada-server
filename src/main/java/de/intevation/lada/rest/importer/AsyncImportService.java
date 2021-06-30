@@ -30,15 +30,13 @@ import de.intevation.lada.importer.ImportFormat;
 import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.importer.Importer;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.JobManager.JobNotFoundException;
-import de.intevation.lada.util.data.JobManager.JobStatus;
 import de.intevation.lada.util.data.StatusCodes;
+import de.intevation.lada.util.data.Job.JobStatus;
 
 /**
  * This class produces a RESTful service to interact with probe objects.
@@ -57,7 +55,6 @@ public class AsyncImportService {
     private Importer importer;
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
     private Repository repository;
 
     /**
@@ -145,7 +142,7 @@ public class AsyncImportService {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         JsonObject responseJson = Json.createObjectBuilder()
-            .add("status", status.getStatus())
+            .add("status", status.getStatusString())
             .add("message", status.getMessage())
             .add("done", status.isDone())
             .build();

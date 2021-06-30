@@ -16,12 +16,9 @@ import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Verwaltungsgrenze;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -39,7 +36,6 @@ public class CoordinatesInVE implements Rule {
     private Logger logger;
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Override
@@ -52,12 +48,10 @@ public class CoordinatesInVE implements Rule {
         if (gemId != null && ort.getGeom() != null) {
 
             QueryBuilder<Verwaltungsgrenze> vg =
-                new QueryBuilder<Verwaltungsgrenze>(
-                    repository.entityManager(Strings.STAMM),
-                    Verwaltungsgrenze.class);
+                repository.queryBuilder(Verwaltungsgrenze.class);
             vg.and("gemId", gemId);
             List<Verwaltungsgrenze> vgs = repository.filterPlain(
-                vg.getQuery(), Strings.STAMM);
+                vg.getQuery());
             if (vgs == null || vgs.isEmpty()) {
                 Violation violation = new Violation();
                 violation.addWarning("gemId", StatusCodes.GEO_COORD_UNCHECKED);

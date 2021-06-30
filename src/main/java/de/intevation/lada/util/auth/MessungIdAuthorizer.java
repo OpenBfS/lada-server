@@ -17,7 +17,6 @@ import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.StatusKombi;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -57,22 +56,16 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         Messung messung =
-            repository.getByIdPlain(Messung.class, id, Strings.LAND);
+            repository.getByIdPlain(Messung.class, id);
         Probe probe = repository.getByIdPlain(
-            Probe.class,
-            messung.getProbeId(),
-            Strings.LAND);
+            Probe.class, messung.getProbeId());
         if (messung.getStatus() == null) {
             return false;
         }
         StatusProtokoll status = repository.getByIdPlain(
-            StatusProtokoll.class,
-            messung.getStatus(),
-            Strings.LAND);
+            StatusProtokoll.class, messung.getStatus());
         StatusKombi kombi = repository.getByIdPlain(
-            StatusKombi.class,
-            status.getStatusKombi(),
-            Strings.STAMM);
+            StatusKombi.class, status.getStatusKombi());
         if (method == RequestMethod.DELETE
             && (kombi.getId() == 1
             || kombi.getId() == 9
@@ -122,19 +115,14 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
             Method getMessungsId = clazz.getMethod("getMessungsId");
             Integer id = (Integer) getMessungsId.invoke(data);
             Messung messung = repository.getByIdPlain(
-                Messung.class,
-                id,
-                Strings.LAND);
+                Messung.class, id);
             Probe probe = repository.getByIdPlain(
-                Probe.class,
-                messung.getProbeId(),
-                Strings.LAND);
+                Probe.class, messung.getProbeId());
 
             boolean readOnly = true;
             boolean owner = false;
             MessStelle mst =
-                repository.getByIdPlain(
-                    MessStelle.class, probe.getMstId(), Strings.STAMM);
+                repository.getByIdPlain(MessStelle.class, probe.getMstId());
             if (!userInfo.getNetzbetreiber().contains(
                     mst.getNetzbetreiberId())) {
                 owner = false;

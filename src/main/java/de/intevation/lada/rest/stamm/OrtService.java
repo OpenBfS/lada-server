@@ -45,19 +45,17 @@ import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
@@ -76,26 +74,42 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  *  "message": [string],
  *  "data":[{
  *      "id": [number],
- *      "beschreibung": [string],
- *      "bezeichnung": [string],
+ *      "aktiv": [boolean],
+ *      "berichtstext": [string],
+ *      "gemId": [string],
+ *      "gemUntId": [string],
  *      "hoeheLand": [number],
+ *      "hoeheUeberNn": [number],
+ *      "kdaId": [number],
  *      "koordXExtern": [string],
  *      "koordYExtern": [string],
+ *      "ktaGruppeId": [number],
+ *      "kurztext": [string],
+ *      "langtext": [string],
  *      "latitude": [number],
  *      "letzteAenderung": [timestamp],
  *      "longitude": [number],
+ *      "mpArt": [string],
+ *      "netzbetreiberId": [string],
  *      "nutsCode": [string],
- *      "unscharf": [boolean],
- *      "koordinatenartId": [number],
- *      "netzbetreiberId": [number],
+ *      "ortId": [string],
+ *      "ortTyp": [number],
+ *      "ozId": [string],
+ *      "plausibleReferenceCount": [number],
+ *      "readonly": [boolean],
+ *      "referenceCount": [number],
+ *      "referenceCountMp": [number],
+ *      "sektor": [string],
  *      "staatId": [number],
- *      "verwaltungseinheitId": [string],
- *      "otyp": [string]
+ *      "unscharf": [boolean],
+ *      "zone": [string],
+ *      "zustaendigkeit": [string]
  *  }],
  *  "errors": [object],
- *  "warnings": [object],
+ *  "notifications": [object],
  *  "readonly": [boolean],
- *  "totalCount": [number]
+ *  "totalCount": [number],
+ *  "warnings": [object]
  * }
  * </code>
  * </pre>
@@ -113,7 +127,6 @@ public class OrtService {
      * The data repository granting read/write access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
     private Repository repository;
 
     @Inject
@@ -157,10 +170,12 @@ public class OrtService {
                     StatusCodes.ERROR_DB_CONNECTION, "Not a valid filter id");
             }
 
-            Ort o = repository.getByIdPlain(Ort.class, id, Strings.STAMM);
+            Ort o = repository.getByIdPlain(Ort.class, id);
             List<Ortszuordnung> zuordnungs = getOrtsZuordnungs(o);
             o.setReferenceCount(zuordnungs.size());
             o.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
+            List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(o);
+            o.setReferenceCountMp(zuordnungsMp.size());
             o.setReadonly(
                 !authorization.isAuthorized(
                     request,
@@ -177,7 +192,7 @@ public class OrtService {
 
         List<Ort> orte = new ArrayList<>();
         UserInfo user = authorization.getInfo(request);
-        EntityManager em = repository.entityManager(Strings.STAMM);
+        EntityManager em = repository.entityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Ort> query = builder.createQuery(Ort.class);
         Root<Ort> root = query.from(Ort.class);
@@ -213,7 +228,7 @@ public class OrtService {
         if (filter != null) {
             query.where(filter);
         }
-        orte = repository.filterPlain(query, Strings.STAMM);
+        orte = repository.filterPlain(query);
 
         int size = orte.size();
         if (params.containsKey("start") && params.containsKey("limit")) {
@@ -229,6 +244,8 @@ public class OrtService {
             List<Ortszuordnung> zuordnungs = getOrtsZuordnungs(o);
             o.setReferenceCount(zuordnungs.size());
             o.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
+            List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(o);
+            o.setReferenceCountMp(zuordnungsMp.size());
             o.setReadonly(
                 !authorization.isAuthorized(
                     request,
@@ -260,20 +277,17 @@ public class OrtService {
         @Context HttpServletRequest request,
         @PathParam("id") int id
     ) {
-        Ort ort = repository.getByIdPlain(
-            Ort.class,
-            id,
-            Strings.STAMM
-        );
+        Ort ort = repository.getByIdPlain(Ort.class, id);
 
         QueryBuilder<Ortszuordnung> builder =
-            new QueryBuilder<Ortszuordnung>(
-                repository.entityManager(Strings.LAND), Ortszuordnung.class);
+            repository.queryBuilder(Ortszuordnung.class);
         builder.and("ortId", ort.getId());
         List<Ortszuordnung> zuordnungs =
-            repository.filterPlain(builder.getQuery(), Strings.LAND);
+            repository.filterPlain(builder.getQuery());
         ort.setReferenceCount(zuordnungs.size());
         ort.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
+        List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(ort);
+        ort.setReferenceCountMp(zuordnungsMp.size());
         ort.setReadonly(
             !authorization.isAuthorized(
                 request,
@@ -303,11 +317,7 @@ public class OrtService {
         @Context HttpServletRequest request,
         JsonArray ids
     ) {
-        QueryBuilder<Ort> builder =
-            new QueryBuilder<Ort>(
-                repository.entityManager(Strings.STAMM),
-                Ort.class
-            );
+        QueryBuilder<Ort> builder = repository.queryBuilder(Ort.class);
         List<JsonNumber> idList = ids.getValuesAs(JsonNumber.class);
         if (idList.size() > 0) {
             List<Integer> intList = new ArrayList<>();
@@ -318,11 +328,13 @@ public class OrtService {
             builder.andIn("id", intList);
 
             List<Ort> orte =
-                repository.filterPlain(builder.getQuery(), Strings.STAMM);
+                repository.filterPlain(builder.getQuery());
             for (Ort o : orte) {
                 List<Ortszuordnung> zuordnungs = getOrtsZuordnungs(o);
                 o.setReferenceCount(zuordnungs.size());
                 o.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
+                List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(o);
+                o.setReferenceCountMp(zuordnungsMp.size());
 
                 o.setReadonly(
                     !authorization.isAuthorized(
@@ -401,7 +413,7 @@ public class OrtService {
 
         Response response = new Response(true, StatusCodes.OK, ort);
         if (ort.getId() == null) {
-            response = repository.create(ort, Strings.STAMM);
+            response = repository.create(ort);
         }
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
@@ -455,7 +467,7 @@ public class OrtService {
         }
 
         Ort dbOrt = repository.getByIdPlain(
-            Ort.class, ort.getId(), Strings.STAMM);
+            Ort.class, ort.getId());
         if (dbOrt == null) {
             return new Response(false, StatusCodes.NOT_EXISTING, ort);
         }
@@ -500,7 +512,7 @@ public class OrtService {
             return response;
         }
 
-        Response response = repository.update(ort, Strings.STAMM);
+        Response response = repository.update(ort);
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
         }
@@ -525,12 +537,13 @@ public class OrtService {
         @PathParam("id") String id
     ) {
         Response response =
-            repository.getById(Ort.class, Integer.valueOf(id), Strings.STAMM);
+            repository.getById(Ort.class, Integer.valueOf(id));
         if (!response.getSuccess()) {
             return response;
         }
         Ort ort = (Ort) response.getData();
-        if (getOrtsZuordnungs(ort).size() > 0) {
+        if (getOrtsZuordnungs(ort).size() > 0
+                || getOrtsZuordnungsMp(ort).size() > 0) {
             return new Response(false, StatusCodes.ERROR_DELETE, ort);
         }
         if (!authorization.isAuthorized(
@@ -542,7 +555,7 @@ public class OrtService {
             return new Response(false, StatusCodes.NOT_ALLOWED, ort);
         }
 
-        return repository.delete(ort, Strings.STAMM);
+        return repository.delete(ort);
     }
 
     /**
@@ -552,12 +565,9 @@ public class OrtService {
      */
     public List<Ortszuordnung> getOrtsZuordnungs(Ort o) {
         QueryBuilder<Ortszuordnung> refBuilder =
-            new QueryBuilder<Ortszuordnung>(
-                repository.entityManager(Strings.LAND), Ortszuordnung.class);
+            repository.queryBuilder(Ortszuordnung.class);
         refBuilder.and("ortId", o.getId());
-        List<Ortszuordnung> zuordnungs =
-            repository.filterPlain(refBuilder.getQuery(), Strings.LAND);
-        return zuordnungs;
+        return repository.filterPlain(refBuilder.getQuery());
     }
 
     /**
@@ -569,7 +579,7 @@ public class OrtService {
     public int getPlausibleRefCount(List<Ortszuordnung> zuordnungs) {
         Map<Integer, Integer> plausibleMap = new HashMap<Integer, Integer>();
         for (Ortszuordnung zuordnung: zuordnungs) {
-            EntityManager em = repository.entityManager(Strings.LAND);
+            EntityManager em = repository.entityManager();
 
             CriteriaBuilder mesBuilder = em.getCriteriaBuilder();
             CriteriaQuery<Messung> criteriaQuery =
@@ -584,11 +594,24 @@ public class OrtService {
                 .in(Arrays.asList("2", "6", "10")));
             criteriaQuery.where(filter);
             List<Messung> messungs =
-                repository.filterPlain(criteriaQuery, Strings.LAND);
+                repository.filterPlain(criteriaQuery);
             if (messungs.size() > 0) {
                 plausibleMap.put(zuordnung.getProbeId(), 1);
             }
         }
         return plausibleMap.size();
     }
+
+    /**
+     * Return the OrtszuordnungMp instances referencing the given ort
+     * @param o Ort instance
+     * @return Ortszuordnung instances as list
+     */
+    public List<OrtszuordnungMp> getOrtsZuordnungsMp(Ort o) {
+        QueryBuilder<OrtszuordnungMp> refBuilder =
+            repository.queryBuilder(OrtszuordnungMp.class);
+        refBuilder.and("ortId", o.getId());
+        return repository.filterPlain(refBuilder.getQuery());
+    }
+
 }

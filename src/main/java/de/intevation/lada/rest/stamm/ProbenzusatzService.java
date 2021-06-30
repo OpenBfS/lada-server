@@ -19,10 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -60,8 +57,7 @@ public class ProbenzusatzService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all ProbenZusatz objects.
@@ -77,7 +73,7 @@ public class ProbenzusatzService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(ProbenZusatz.class, Strings.STAMM);
+        return repository.getAll(ProbenZusatz.class);
     }
 
     /**
@@ -96,9 +92,6 @@ public class ProbenzusatzService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            ProbenZusatz.class,
-            id,
-            Strings.STAMM);
+        return repository.getById(ProbenZusatz.class, id);
     }
 }

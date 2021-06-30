@@ -47,14 +47,11 @@ import de.intevation.lada.importer.laf.LafImporter;
 import de.intevation.lada.model.stammdaten.ImporterConfig;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.util.data.StatusCodes;
@@ -76,7 +73,6 @@ public class LafImportService {
     private Importer importer;
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
     private Repository repository;
 
     /**
@@ -88,6 +84,8 @@ public class LafImportService {
 
     @Inject
     ImportJobManager importJobManager;
+
+    private TagUtil tagUtil;
 
     /**
      * Import a given list of files, generate a tag and set it to all
@@ -172,13 +170,11 @@ public class LafImportService {
             List<ImporterConfig> config = new ArrayList<ImporterConfig>();
             if (!"".equals(mstId)) {
                 QueryBuilder<ImporterConfig> builder =
-                    new QueryBuilder<ImporterConfig>(
-                        repository.entityManager(Strings.STAMM),
-                        ImporterConfig.class);
+                    repository.queryBuilder(ImporterConfig.class);
                 builder.and("mstId", mstId);
                 config =
                     (List<ImporterConfig>) repository.filterPlain(
-                        builder.getQuery(), Strings.STAMM);
+                        builder.getQuery());
             }
             importer.doImport(content, userInfo, config);
             Map<String, Object> fileResponseData =
@@ -205,8 +201,7 @@ public class LafImportService {
         if (importedProbeids.size() > 0) {
             success = true;
             //Generate a tag for the imported probe records
-            Response tagCreation =
-                TagUtil.generateTag("IMP", mstId, repository);
+            Response tagCreation = tagUtil.generateTag("IMP", mstId);
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
                 return new Response(
@@ -215,8 +210,7 @@ public class LafImportService {
                     importResponseData);
             }
             Tag newTag = (Tag) tagCreation.getData();
-            TagUtil.setTagsByProbeIds(
-                importedProbeids, newTag.getId(), repository);
+            tagUtil.setTagsByProbeIds(importedProbeids, newTag.getId());
 
             //Put new tag in import response
             importResponseData.forEach((file, responseData) -> {
@@ -263,12 +257,10 @@ public class LafImportService {
         List<ImporterConfig> config = new ArrayList<ImporterConfig>();
         if (!"".equals(mstId)) {
             QueryBuilder<ImporterConfig> builder =
-                new QueryBuilder<ImporterConfig>(
-                    repository.entityManager(Strings.STAMM),
-                    ImporterConfig.class);
+                repository.queryBuilder(ImporterConfig.class);
             builder.and("mstId", mstId);
             config = (List<ImporterConfig>) repository.filterPlain(
-                builder.getQuery(), Strings.STAMM);
+                builder.getQuery());
         }
         importer.doImport(content, userInfo, config);
         Map<String, Object> respData = new HashMap<String, Object>();
@@ -288,15 +280,13 @@ public class LafImportService {
         // If import created at least a new record
         if (importedProbeids.size() > 0 && !mstId.equals("null")) {
             //Generate a tag for the imported probe records
-            Response tagCreation =
-                TagUtil.generateTag("IMP", mstId, repository);
+            Response tagCreation = tagUtil.generateTag("IMP", mstId);
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
                 return new Response(true, StatusCodes.OK, respData);
             }
             Tag newTag = (Tag) tagCreation.getData();
-            TagUtil.setTagsByProbeIds(
-                importedProbeids, newTag.getId(), repository);
+            tagUtil.setTagsByProbeIds(importedProbeids, newTag.getId());
 
             respData.put("tag", newTag.getTag());
         }

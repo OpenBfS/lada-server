@@ -4,7 +4,7 @@ CREATE OR REPLACE FUNCTION stamm.check_sql(stmt text)
     VOLATILE PARALLEL UNSAFE
 AS $BODY$
   BEGIN
-    EXECUTE stmt;
+    EXECUTE stmt || ' LIMIT 0';
     RETURN true;
   EXCEPTION
     WHEN OTHERS THEN

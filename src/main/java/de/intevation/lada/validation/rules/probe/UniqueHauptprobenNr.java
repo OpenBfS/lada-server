@@ -12,12 +12,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -37,20 +34,17 @@ public class UniqueHauptprobenNr implements Rule {
 //    private Logger logger;
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository repo;
+    private Repository repository;
 
     @SuppressWarnings("unchecked")
     @Override
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
         if (probe.getHauptprobenNr() != null) {
-            QueryBuilder<Probe> builder = new QueryBuilder<Probe>(
-               repo.entityManager(Strings.LAND),
-                Probe.class);
+            QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
             builder.and("hauptprobenNr", probe.getHauptprobenNr());
             builder.and("mstId", probe.getMstId());
-            Response response = repo.filter(builder.getQuery(), Strings.LAND);
+            Response response = repository.filter(builder.getQuery());
             if (!((List<Probe>) response.getData()).isEmpty()) {
                 Probe found = ((List<Probe>) response.getData()).get(0);
                 // The probe found in the db equals the new probe. (Update)

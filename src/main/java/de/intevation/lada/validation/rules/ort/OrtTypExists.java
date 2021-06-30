@@ -13,12 +13,9 @@ import javax.inject.Inject;
 
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.OrtTyp;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -32,7 +29,6 @@ import de.intevation.lada.validation.rules.Rule;
 public class OrtTypExists implements Rule {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Override
@@ -41,12 +37,10 @@ public class OrtTypExists implements Rule {
 
         if (ort.getOrtTyp() != null) {
             QueryBuilder<OrtTyp> builder =
-                new QueryBuilder<OrtTyp>(
-                    repository.entityManager(Strings.STAMM),
-                    OrtTyp.class);
+                repository.queryBuilder(OrtTyp.class);
             builder.and("id", ort.getOrtTyp());
             List<OrtTyp> ots = repository.filterPlain(
-                builder.getQuery(), Strings.STAMM);
+                builder.getQuery());
             if (ots == null || ots.isEmpty()) {
                 Violation violation = new Violation();
                 violation.addError("ortTyp", StatusCodes.VALUE_OUTSIDE_RANGE);

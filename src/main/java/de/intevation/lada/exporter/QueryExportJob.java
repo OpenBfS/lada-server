@@ -11,11 +11,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.json.JsonArray;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
+import javax.json.JsonString;
+import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
 import de.intevation.lada.model.land.Messung;
@@ -28,9 +32,10 @@ import de.intevation.lada.model.stammdaten.GridColumnValue;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.model.stammdaten.StatusStufe;
 import de.intevation.lada.model.stammdaten.StatusWert;
+import de.intevation.lada.model.stammdaten.MessEinheit;
+import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Strings;
 
 /**
  * Abstract class for an export of query results.
@@ -58,11 +63,6 @@ public abstract class QueryExportJob extends ExportJob {
     protected String idType;
 
     /**
-     * Ids of record that shall be exported.
-     */
-    private Integer[] idsToExport;
-
-    /**
      * Query result.
      */
     protected List<GridColumnValue> columns;
@@ -83,26 +83,9 @@ public abstract class QueryExportJob extends ExportJob {
     protected String timezone;
 
     /**
-     * Map id result types to filter sql statements for the id columns.
-     */
-    private Map<String, String> dataTypeToIdFilterQuery =
-        new HashMap<String, String>() {
-            private static final long serialVersionUID = 1L;
-            {
-                put("probeId", "probe.id");
-                put("messungId", "messung.id");
-                put("mpId", "messprogramm.id");
-                put("ortId", "ort.id");
-                put("dsatzerz", "datensatz_erzeuger.id");
-                put("mprkat", "messprogramm_kategorie.id");
-                put("probenehmer", "probenehmer.id");
-            }
-        };;
-
-    /**
      * Query id.
      */
-    private Integer qId;
+    protected Integer qId;
 
     /**
      * Query tools used to load query data.
@@ -133,27 +116,24 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-     * Creates a id list filter for the given dataIndex.
-     * @param dataType ID column data type, e.g. mpId
+     * Creates an ID list filter for the given dataIndex.
+     * @param dataIndex ID column name
      * @return Filter object
      */
-    private Filter createIdListFilter(String dataType) {
-
+    private Filter createIdListFilter(String dataIndex) {
         //Get Filter type from db
         QueryBuilder<FilterType> builder =
-            new QueryBuilder<FilterType>(
-                repository.entityManager(Strings.STAMM), FilterType.class);
-        builder.and("type", "listnumber");
+            repository.queryBuilder(FilterType.class);
+        builder.and("type", "genericid");
         FilterType filterType =
-            repository.filterPlain(builder.getQuery(), Strings.STAMM).get(0);
+            repository.filterPlain(builder.getQuery()).get(0);
 
         //Create filter object
-        String parameter = dataType + "s";
         Filter filter = new Filter();
         filter.setFilterType(filterType);
-        filter.setParameter(parameter);
+        filter.setParameter(dataIndex);
         filter.setSql(String.format(
-            "%s in ( :%s )", dataTypeToIdFilterQuery.get(dataType), parameter));
+                "CAST(%1$s AS text) IN ( :%1$s )", dataIndex));
         return filter;
     }
 
@@ -199,7 +179,8 @@ public abstract class QueryExportJob extends ExportJob {
             List<Map<String, Object>> result =
                 queryTools.getResultForQuery(columns, qId);
             logger.debug(String.format(
-                "Fetched %d primary records", result.size()));
+                "Fetched %d primary records",
+                result == null ? 0 : result.size()));
             return result;
         } catch (Exception e) {
             logger.error("Failed loading query result");
@@ -242,10 +223,10 @@ public abstract class QueryExportJob extends ExportJob {
      * @return Messwert records as list
      */
     private List<Messung> getMessungSubData(List<Integer> primaryDataIds) {
-        QueryBuilder<Messung> messungBuilder = new QueryBuilder<Messung>(
-            repository.entityManager(Strings.LAND), Messung.class);
+        QueryBuilder<Messung> messungBuilder = repository.queryBuilder(
+            Messung.class);
         messungBuilder.andIn("probeId", primaryDataIds);
-        return repository.filterPlain(messungBuilder.getQuery(), Strings.LAND);
+        return repository.filterPlain(messungBuilder.getQuery());
     }
 
     /**
@@ -254,10 +235,10 @@ public abstract class QueryExportJob extends ExportJob {
      * @return Messwert records as list
      */
     private List<Messwert> getMesswertSubData(List<Integer> primaryDataIds) {
-        QueryBuilder<Messwert> messwertBuilder = new QueryBuilder<Messwert>(
-            repository.entityManager(Strings.LAND), Messwert.class);
+        QueryBuilder<Messwert> messwertBuilder = repository.queryBuilder(
+            Messwert.class);
         messwertBuilder.andIn("messungsId", primaryDataIds);
-        return repository.filterPlain(messwertBuilder.getQuery(), Strings.LAND);
+        return repository.filterPlain(messwertBuilder.getQuery());
     }
 
     /**
@@ -269,10 +250,10 @@ public abstract class QueryExportJob extends ExportJob {
     protected String getStatusString(Messung messung) {
         StatusProtokoll protokoll =
             repository.getByIdPlain(
-                StatusProtokoll.class, messung.getStatus(), Strings.LAND);
+                StatusProtokoll.class, messung.getStatus());
         StatusKombi kombi =
             repository.getByIdPlain(
-                StatusKombi.class, protokoll.getStatusKombi(), Strings.STAMM);
+                StatusKombi.class, protokoll.getStatusKombi());
         StatusStufe stufe = kombi.getStatusStufe();
         StatusWert wert = kombi.getStatusWert();
         return String.format("%s - %s", stufe.getStufe(), wert.getWert());
@@ -284,11 +265,36 @@ public abstract class QueryExportJob extends ExportJob {
      * @return Number of messwert records
      */
     protected int getMesswertCount(Messung messung) {
-        QueryBuilder<Messwert> builder = new QueryBuilder<Messwert>(
-            repository.entityManager(Strings.LAND), Messwert.class
-        );
+        QueryBuilder<Messwert> builder = repository.queryBuilder(
+            Messwert.class);
         builder.and("messungsId", messung.getId());
-        return repository.filterPlain(builder.getQuery(), Strings.LAND).size();
+        return repository.filterPlain(builder.getQuery()).size();
+    }
+
+    /**
+    * Get the messeinheit for messwert values using given messwert
+    * @param messwert messwertId sungId to get messeinheit for
+    * @return messeinheit
+     */
+    protected String getMesseinheit(Messwert messwert) {
+        QueryBuilder<MessEinheit> builder = repository.queryBuilder(
+            MessEinheit.class);
+        builder.and("id", messwert.getMehId());
+        List<MessEinheit> messeinheit = repository.filterPlain(builder.getQuery());
+        return messeinheit.get(0).getEinheit();
+    }
+
+    /**
+    * Get the messgroesse for messwert values using given messwert
+    * @param messwert messwertId sungId to get messgroesse for
+    * @return messgroesse
+     */
+    protected String getMessgroesse(Messwert messwert) {
+        QueryBuilder<Messgroesse> builder = repository.queryBuilder(
+            Messgroesse.class);
+        builder.and("id", messwert.getMessgroesseId());
+        List<Messgroesse> messgroesse = repository.filterPlain(builder.getQuery());
+        return messgroesse.get(0).getMessgroesse();
     }
 
     /**
@@ -344,16 +350,6 @@ public abstract class QueryExportJob extends ExportJob {
             }
         }
 
-        // Get IDs to filter result
-        ArrayList<Integer> idFilterList = new ArrayList<Integer>();
-        JsonArray idJsonArray = exportParameters.getJsonArray("idFilter");
-        int idJsonArrayCount = idJsonArray.size();
-        for (int i = 0; i < idJsonArrayCount; i++) {
-            idFilterList.add(idJsonArray.getInt(i));
-        }
-        idsToExport = new Integer[idFilterList.size()];
-        idFilterList.toArray(idsToExport);
-
         exportParameters.getJsonArray("columns").forEach(jsonValue -> {
             JsonObject columnObj = (JsonObject) jsonValue;
             GridColumnValue columnValue = new GridColumnValue();
@@ -373,29 +369,50 @@ public abstract class QueryExportJob extends ExportJob {
             columnValue.setFilterNegate(columnObj.getBoolean("filterNegate"));
             columnValue.setFilterRegex(columnObj.getBoolean("filterRegex"));
             gridColumn = repository.getByIdPlain(
-                GridColumn.class,
-                columnValue.getGridColumnId(),
-                Strings.STAMM);
+                GridColumn.class, columnValue.getGridColumnId());
 
             columnValue.setGridColumn(gridColumn);
+
             //Check if the column contains the id
             if (columnValue.getGridColumn().getDataIndex().equals(idColumn)) {
-                //Get the column type
+                // Get the column type
                 idType = gridColumn.getDataType().getName();
-                if (idsToExport != null && idsToExport.length > 0) {
-                    //Get query result type
-                    String dataType = gridColumn.getDataType().getName();
-                    Filter filter = createIdListFilter(dataType);
+
+                // Get IDs to filter result
+                JsonArray idsToExport = exportParameters
+                    .getJsonArray("idFilter");
+
+                if (idsToExport != null && idsToExport.size() > 0) {
+                    // Prepare filtering by IDs
+                    Filter filter = createIdListFilter(
+                        gridColumn.getDataIndex());
                     gridColumn.setFilter(filter);
-                    columnValue.setFilterActive(true);
+
                     StringBuilder filterValue = new StringBuilder();
-                    for (int i = 0; i < idsToExport.length; i++) {
-                        filterValue.append(idsToExport[i]);
-                        if (i != idsToExport.length - 1) {
+                    for (
+                        Iterator<JsonValue> ids = idsToExport.iterator();
+                        ids.hasNext();
+                    ) {
+                        JsonValue id = ids.next();
+                        switch (id.getValueType()) {
+                        case NUMBER:
+                            filterValue.append(
+                                ((JsonNumber) id).toString());
+                            break;
+                        case STRING:
+                            filterValue.append(
+                                ((JsonString) id).getString());
+                            break;
+                        default:
+                            throw new IllegalArgumentException(
+                                "IDs must be number or string");
+                        }
+                        if (ids.hasNext()) {
                             filterValue.append(",");
                         }
                     }
                     columnValue.setFilterValue(filterValue.toString());
+                    columnValue.setFilterActive(true);
                     columnValue.setFilterIsNull(false);
                     columnValue.setFilterNegate(false);
                     columnValue.setFilterRegex(false);
@@ -415,8 +432,8 @@ public abstract class QueryExportJob extends ExportJob {
         //Get query id
         GridColumn gridColumn = repository.getByIdPlain(
             GridColumn.class,
-            Integer.valueOf(columns.get(0).getGridColumnId()),
-        Strings.STAMM);
+            Integer.valueOf(columns.get(0).getGridColumnId())
+        );
         qId = gridColumn.getBaseQuery();
     }
 

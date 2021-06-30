@@ -40,10 +40,8 @@ import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.ZusatzWert;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 
 /**
  * Class to test the Lada-Importer.
@@ -86,7 +84,7 @@ public class ImporterTest extends BaseTest {
     @Inject
     Logger internalLogger;
 
-    @PersistenceContext(unitName = "land")
+    @PersistenceContext
     EntityManager em;
 
     @Inject
@@ -98,7 +96,6 @@ public class ImporterTest extends BaseTest {
     Identifier messungIdentifier;
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
     Repository repository;
 
     @Inject
@@ -117,7 +114,7 @@ public class ImporterTest extends BaseTest {
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(0)
     @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void identifyProbeByHPNrMST() throws Exception {
@@ -146,7 +143,7 @@ public class ImporterTest extends BaseTest {
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T1)
     @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void identifyProbeByHPNrMSTNew() throws Exception {
@@ -176,7 +173,7 @@ public class ImporterTest extends BaseTest {
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T2)
     @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void identifyProbeByExterneProbeId() throws Exception {
@@ -204,7 +201,7 @@ public class ImporterTest extends BaseTest {
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T3)
     @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void identifyProbeByExterneProbeIdNew() throws Exception {
@@ -232,7 +229,7 @@ public class ImporterTest extends BaseTest {
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T4)
     @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void identifyProbeByExterneProbeIdReject() throws Exception {
@@ -262,7 +259,7 @@ public class ImporterTest extends BaseTest {
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T5)
     @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void identifyProbeByExterneProbeIdUpdate() throws Exception {
@@ -292,7 +289,7 @@ public class ImporterTest extends BaseTest {
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T6)
     @UsingDataSet("datasets/dbUnit_messung_import.json")
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void identifyMessungByNpNr() throws Exception {
@@ -321,7 +318,7 @@ public class ImporterTest extends BaseTest {
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T7)
     @UsingDataSet("datasets/dbUnit_messung_import.json")
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void identifyMessungByNpNrNew() throws Exception {
@@ -348,7 +345,7 @@ public class ImporterTest extends BaseTest {
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T8)
     @UsingDataSet("datasets/dbUnit_messung_import.json")
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void identifyMessungByExterneMessungsId() throws Exception {
@@ -377,7 +374,7 @@ public class ImporterTest extends BaseTest {
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T9)
     @UsingDataSet("datasets/dbUnit_messung_import.json")
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void identifyMessungByExterneMessungsIdNew() throws Exception {
@@ -406,7 +403,7 @@ public class ImporterTest extends BaseTest {
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @Ignore
     @InSequence(T10)
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void identifyMessungByExterneMessungsIdReject()
@@ -437,7 +434,7 @@ public class ImporterTest extends BaseTest {
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T11)
     @UsingDataSet("datasets/dbUnit_messung_import.json")
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void identifyMessungByExterneMessungsIdUpdate()
@@ -470,7 +467,7 @@ public class ImporterTest extends BaseTest {
     @UsingDataSet("datasets/dbUnit_import_merge.json")
     @ShouldMatchDataSet(value = "datasets/dbUnit_import_merge_match.json",
         excludeColumns = {"letzte_aenderung", "tree_modified"})
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeProbe() throws Exception {
@@ -497,7 +494,7 @@ public class ImporterTest extends BaseTest {
         probe.setSolldatumBeginn(Timestamp.valueOf("2013-05-01 16:00:00"));
         probe.setSolldatumEnde(Timestamp.valueOf("2013-05-05 16:00:00"));
         probe.setProbeentnahmeBeginn(Timestamp.valueOf("2012-05-03 13:07:00"));
-        Probe dbProbe = repository.getByIdPlain(Probe.class, PID1000, "land");
+        Probe dbProbe = repository.getByIdPlain(Probe.class, PID1000);
         merger.merge(dbProbe, probe);
 
         protocol.setPassed(true);
@@ -515,7 +512,7 @@ public class ImporterTest extends BaseTest {
     @ShouldMatchDataSet(
         value = "datasets/dbUnit_import_merge_match_messung.json",
         excludeColumns = {"letzte_aenderung", "tree_modified"})
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeMessung() throws Exception {
@@ -532,7 +529,7 @@ public class ImporterTest extends BaseTest {
         messung.setMmtId("A3");
         messung.setMesszeitpunkt(Timestamp.valueOf("2012-05-06 14:00:00"));
         Messung dbMessung =
-            repository.getByIdPlain(Messung.class, MID1200, "land");
+            repository.getByIdPlain(Messung.class, MID1200);
         merger.mergeMessung(dbMessung, messung);
 
         protocol.setPassed(true);
@@ -553,7 +550,7 @@ public class ImporterTest extends BaseTest {
     @ShouldMatchDataSet(
         value = "datasets/dbUnit_import_merge_match_zusatzwert.json",
         excludeColumns = {"id", "letzte_aenderung", "tree_modified"})
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeZusatzwert() throws Exception {
@@ -562,7 +559,7 @@ public class ImporterTest extends BaseTest {
         protocol.setType("merge zusatzwert");
         protocol.addInfo("import", "Merge objects");
 
-        Probe probe = repository.getByIdPlain(Probe.class, PID1000, "land");
+        Probe probe = repository.getByIdPlain(Probe.class, PID1000);
         List<ZusatzWert> zusatzwerte = new ArrayList<ZusatzWert>();
         ZusatzWert wert1 = new ZusatzWert();
         wert1.setProbeId(PID1000);
@@ -604,7 +601,7 @@ public class ImporterTest extends BaseTest {
     @ShouldMatchDataSet(
         value = "datasets/dbUnit_import_merge_match_kommentar.json",
         excludeColumns = {"id"})
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeProbeKommentar() throws Exception {
@@ -613,7 +610,7 @@ public class ImporterTest extends BaseTest {
         protocol.setType("merge probe kommentar");
         protocol.addInfo("import", "Merge objects");
 
-        Probe probe = repository.getByIdPlain(Probe.class, PID1000, "land");
+        Probe probe = repository.getByIdPlain(Probe.class, PID1000);
         List<KommentarP> kommentare = new ArrayList<KommentarP>();
         KommentarP komm1 = new KommentarP();
         komm1.setProbeId(PID1000);
@@ -648,7 +645,7 @@ public class ImporterTest extends BaseTest {
     @ShouldMatchDataSet(
         value = "datasets/dbUnit_import_merge_match_kommentarm.json",
         excludeColumns = {"id"})
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeMessungKommentar() throws Exception {
@@ -658,7 +655,7 @@ public class ImporterTest extends BaseTest {
         protocol.addInfo("import", "Merge objects");
 
         Messung messung =
-            repository.getByIdPlain(Messung.class, MID1200, "land");
+            repository.getByIdPlain(Messung.class, MID1200);
         List<KommentarM> kommentare = new ArrayList<KommentarM>();
         KommentarM komm1 = new KommentarM();
         komm1.setMessungsId(MID1200);
@@ -693,7 +690,7 @@ public class ImporterTest extends BaseTest {
     @ShouldMatchDataSet(
         value = "datasets/dbUnit_import_merge_match_messwert.json",
         excludeColumns = {"id"})
-    @DataSource("java:jboss/lada-land-test")
+    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeMesswerte() throws Exception {
@@ -703,7 +700,7 @@ public class ImporterTest extends BaseTest {
         protocol.addInfo("import", "Merge objects");
 
         Messung messung =
-            repository.getByIdPlain(Messung.class, MID1200, "land");
+            repository.getByIdPlain(Messung.class, MID1200);
         List<Messwert> messwerte = new ArrayList<Messwert>();
         Messwert wert1 = new Messwert();
         wert1.setMessungsId(MID1200);
@@ -713,13 +710,11 @@ public class ImporterTest extends BaseTest {
         messwerte.add(wert1);
 
         merger.mergeMesswerte(messung, messwerte);
-        QueryBuilder<Messwert> builder = new QueryBuilder<Messwert>(
-            repository.entityManager("land"),
-            Messwert.class
-        );
+        QueryBuilder<Messwert> builder =
+            repository.queryBuilder(Messwert.class);
         builder.and("messungsId", messung.getId());
         List<Messwert> dbWerte =
-            repository.filterPlain(builder.getQuery(), "land");
+            repository.filterPlain(builder.getQuery());
         Assert.assertEquals(1, dbWerte.size());
 
         protocol.setPassed(true);

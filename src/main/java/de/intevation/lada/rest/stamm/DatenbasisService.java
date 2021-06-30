@@ -19,10 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.Datenbasis;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -58,8 +55,7 @@ public class DatenbasisService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all Datenbasis objects.
@@ -75,7 +71,7 @@ public class DatenbasisService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(Datenbasis.class, Strings.STAMM);
+        return repository.getAll(Datenbasis.class);
     }
 
     /**
@@ -94,9 +90,6 @@ public class DatenbasisService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            Datenbasis.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+        return repository.getById(Datenbasis.class, Integer.valueOf(id));
     }
 }

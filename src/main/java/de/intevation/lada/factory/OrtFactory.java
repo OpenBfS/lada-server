@@ -22,38 +22,22 @@ import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Staat;
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
+import de.intevation.lada.util.data.StatusCodes;
 
 /**
  * Class to create, transform and complete ort objects.
  */
 public class OrtFactory {
 
-    private static final int LEN7 = 7;
-
     private static final int EPSG4326 = 4326;
-
-    private static final int ERR611 = 611;
 
     private static final int ORTTYP5 = 5;
 
-    private static final int ERR652 = 652;
-
-    private static final int KDA4 = 4;
-
-    private static final int ERR675 = 675;
-    private static final int ZONE2 = 2;
-    private static final int ZONE3 = 3;
-    private static final int ZONE4 = 4;
-    private static final int ZONE5 = 5;
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     private List<ReportItem> errors;
@@ -72,7 +56,7 @@ public class OrtFactory {
             || ort.getKoordYExtern() == null
             || ort.getKoordYExtern().equals("")) {
             ReportItem err = new ReportItem();
-            err.setCode(ERR675);
+            err.setCode(StatusCodes.IMP_INVALID_VALUE);
             err.setKey("coordinates");
             err.setValue(ort.getKdaId()
                 + " " + ort.getKoordXExtern() + " " + ort.getKoordYExtern());
@@ -84,10 +68,10 @@ public class OrtFactory {
         String yCoord = ort.getKoordYExtern();
 
         KdaUtil util = new KdaUtil();
-        ObjectNode coords = util.transform(kda, KDA4, xCoord, yCoord);
+        ObjectNode coords = util.transform(kda, KdaUtil.KDA_GD, xCoord, yCoord);
         if (coords == null) {
             ReportItem err = new ReportItem();
-            err.setCode(ERR652);
+            err.setCode(StatusCodes.GEO_NOT_MATCHING);
             err.setKey("kdaId");
             err.setValue(ort.getKdaId()
                 + " " + ort.getKoordXExtern() + " " + ort.getKoordYExtern());
@@ -118,10 +102,7 @@ public class OrtFactory {
         } else {
             errors.clear();
         }
-        QueryBuilder<Ort> builder =
-            new QueryBuilder<>(
-                repository.entityManager(Strings.STAMM),
-                Ort.class);
+        QueryBuilder<Ort> builder = repository.queryBuilder(Ort.class);
         if (ort.getKdaId() != null
             && ort.getKoordXExtern() != null
             && ort.getKoordYExtern() != null
@@ -132,7 +113,7 @@ public class OrtFactory {
             builder.and("ozId", ort.getOzId());
             builder.and("netzbetreiberId", ort.getNetzbetreiberId());
             List<Ort> orte =
-                repository.filterPlain(builder.getQuery(), Strings.STAMM);
+                repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
                 return orte.get(0);
             }
@@ -141,7 +122,7 @@ public class OrtFactory {
             builder.and("ozId", ort.getOzId());
             builder.and("netzbetreiberId", ort.getNetzbetreiberId());
             List<Ort> orte =
-                repository.filterPlain(builder.getQuery(), Strings.STAMM);
+                repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
                 return orte.get(0);
             }
@@ -151,7 +132,7 @@ public class OrtFactory {
             builder.and("ozId", ort.getOzId());
             builder.and("netzbetreiberId", ort.getNetzbetreiberId());
             List<Ort> orte =
-                repository.filterPlain(builder.getQuery(), Strings.STAMM);
+                repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
                 return orte.get(0);
             }
@@ -182,19 +163,17 @@ public class OrtFactory {
                 ort.setStaatId(0);
             }
             Verwaltungseinheit v = repository.getByIdPlain(
-                Verwaltungseinheit.class,
-                ort.getGemId(),
-                Strings.STAMM);
+                Verwaltungseinheit.class, ort.getGemId());
             if (v == null) {
                 ReportItem err = new ReportItem();
-                err.setCode(ERR675);
+                err.setCode(StatusCodes.IMP_INVALID_VALUE);
                 err.setKey("gem_id");
                 err.setValue(ort.getGemId());
                 errors.add(err);
                 return null;
             } else {
                 if (!hasKoord) {
-                    ort.setKdaId(KDA4);
+                    ort.setKdaId(KdaUtil.KDA_GD);
                     ort.setKoordYExtern(
                         String.valueOf(v.getMittelpunkt().getY()));
                     ort.setKoordXExtern(
@@ -218,7 +197,7 @@ public class OrtFactory {
         ) {
             Staat staat =
                 repository.getByIdPlain(
-                    Staat.class, ort.getStaatId(), Strings.STAMM);
+                    Staat.class, ort.getStaatId());
             ort.setKdaId(staat.getKdaId());
             ort.setKoordXExtern(staat.getKoordXExtern());
             ort.setKoordYExtern(staat.getKoordYExtern());
@@ -236,7 +215,7 @@ public class OrtFactory {
         }
         if (!hasKoord && !hasGem && !hasStaat) {
             ReportItem err = new ReportItem();
-            err.setCode(ERR611);
+            err.setCode(StatusCodes.VALUE_AMBIGOUS);
             err.setKey("ort");
             err.setValue("");
             errors.add(err);
@@ -255,7 +234,7 @@ public class OrtFactory {
         if (ort.getGeom() == null) {
             return;
         }
-        Query q = repository.entityManager(Strings.STAMM)
+        Query q = repository.entityManager()
             .createQuery("SELECT vg.gemId "
                 + "FROM Verwaltungsgrenze vg "
                 + "WHERE is_gemeinde = TRUE "
@@ -275,43 +254,6 @@ public class OrtFactory {
         Point geom = geomFactory.createPoint(coord);
         geom.setSRID(EPSG4326);
         return geom;
-    }
-
-    private String getEpsgForWgsUtm(String x) {
-        String epsg = "EPSG:326";
-        String part = x.split(",")[0];
-        String zone = part.length() == LEN7 ? ("0" + part.substring(0, 1))
-            : part.substring(0, 2);
-        return epsg + zone;
-    }
-
-    private String getEpsgForEd50Utm(String x) {
-        String epsg = "EPSG:230";
-        String part = x.split(",")[0];
-        String zone = part.length() == LEN7 ? ("0" + part.substring(0, 1))
-            : part.substring(0, 2);
-        return epsg + zone;
-    }
-
-    private String getEpsgForGK(String koordXExtern) {
-        String part = koordXExtern.split(",")[0];
-        String zone = part.length() == LEN7 ? (part.substring(0, 1)) : null;
-        if (zone == null) {
-            return "";
-        }
-        try {
-            Integer iZone = Integer.valueOf(zone);
-            String epsg = "EPSG:3146";
-            switch (iZone) {
-                case ZONE2: return epsg + "6";
-                case ZONE3: return epsg + "7";
-                case ZONE4: return epsg + "8";
-                case ZONE5: return epsg + "9";
-                default: return "";
-            }
-        } catch (NumberFormatException e) {
-            return "";
-        }
     }
 
     public List<ReportItem> getErrors() {

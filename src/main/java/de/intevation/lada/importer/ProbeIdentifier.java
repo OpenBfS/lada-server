@@ -13,11 +13,8 @@ import javax.inject.Inject;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
 import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 
 /**
  * Class to identify a probe object.
@@ -26,7 +23,6 @@ import de.intevation.lada.util.data.Strings;
 public class ProbeIdentifier implements Identifier {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     private Probe found;
@@ -40,10 +36,7 @@ public class ProbeIdentifier implements Identifier {
                 "Object is not of type Probe");
         }
         Probe probe = (Probe) object;
-        QueryBuilder<Probe> builder = new QueryBuilder<Probe>(
-            repository.entityManager(Strings.LAND),
-            Probe.class
-        );
+        QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
 
         // externeProbeId null and hauptprobenNr not null and mstId not null.
         if (probe.getExterneProbeId() == null
@@ -53,7 +46,7 @@ public class ProbeIdentifier implements Identifier {
             builder.and("mstId", probe.getMstId());
             builder.and("hauptprobenNr", probe.getHauptprobenNr());
             List<Probe> proben =
-                repository.filterPlain(builder.getQuery(), Strings.LAND);
+                repository.filterPlain(builder.getQuery());
             if (proben.size() > 1) {
                 // Should never happen. DB has unique constraint for
                 // "hauptprobenNr"
@@ -70,7 +63,7 @@ public class ProbeIdentifier implements Identifier {
         ) {
             builder.and("externeProbeId", probe.getExterneProbeId());
             List<Probe> proben =
-                repository.filterPlain(builder.getQuery(), Strings.LAND);
+                repository.filterPlain(builder.getQuery());
             if (proben.size() > 1) {
                 // Should never happen. DB has unique constraint for
                 // "externeProbeId"
@@ -84,7 +77,7 @@ public class ProbeIdentifier implements Identifier {
         } else {
             builder.and("externeProbeId", probe.getExterneProbeId());
             List<Probe> proben =
-                repository.filterPlain(builder.getQuery(), Strings.LAND);
+                repository.filterPlain(builder.getQuery());
             if (proben.size() > 1) {
                 // Should never happen. DB has unique constraint for
                 // "externeProbeId"

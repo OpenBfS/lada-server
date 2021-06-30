@@ -21,12 +21,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 
 import de.intevation.lada.importer.laf.LafImportJob;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.JobManager;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
+import de.intevation.lada.util.data.TagUtil;
+import de.intevation.lada.util.data.Job.JobStatus;
 
 /**
  * Class managing import jobs
@@ -41,11 +41,13 @@ public class ImportJobManager extends JobManager {
     @ImportConfig(format = ImportFormat.LAF)
     private Importer importer;
 
+    @Inject
+    private TagUtil tagUtil;
+
     /**
      * The data repository
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
     protected Repository repository;
 
     public ImportJobManager() {
@@ -63,6 +65,7 @@ public class ImportJobManager extends JobManager {
         newJob.setJsonInput(params);
         newJob.setRepository(repository);
         newJob.setUserInfo(userInfo);
+        newJob.setTagutil(tagUtil);
         newJob.start();
         activeJobs.put(id, newJob);
         return id;
@@ -79,11 +82,7 @@ public class ImportJobManager extends JobManager {
         String id
     ) throws JobNotFoundException {
         Job job = getJobById(id);
-        String jobStatus = job.getStatusName();
-        String message = job.getMessage();
-        boolean done = job.isDone();
-        JobStatus statusObject = new JobStatus(jobStatus, message, done);
-        return statusObject;
+        return job.getStatus();
     }
 
     public String getImportResult(String id) throws JobNotFoundException {

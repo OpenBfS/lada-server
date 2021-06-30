@@ -25,14 +25,11 @@ import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -44,18 +41,18 @@ import de.intevation.lada.util.rest.Response;
  * <pre>
  * <code>
  * {
- *  "success": [boolean];
+ *  "success": [boolean],
  *  "message": [string],
  *  "data":[{
  *      "id": [number],
  *      "bezeichnung": [string],
- *      "daErzeugerId": [string],
  *      "letzteAenderung": [timestamp],
- *      "mstId": [string],
- *      "netzbetreiberId": [string]
+ *      "netzbetreiberId": [string],
+ *      "readonly": [boolean]
  *  }],
  *  "errors": [object],
  *  "warnings": [object],
+ *  "notifications": [object],
  *  "readonly": [boolean],
  *  "totalCount": [number]
  * }
@@ -72,7 +69,6 @@ public class MessprogrammKategorieService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
     private Repository repository;
 
     @Inject
@@ -94,7 +90,7 @@ public class MessprogrammKategorieService {
         @Context UriInfo info
     ) {
         List<MessprogrammKategorie> kategorie =
-            repository.getAllPlain(MessprogrammKategorie.class, Strings.STAMM);
+            repository.getAllPlain(MessprogrammKategorie.class);
         for (MessprogrammKategorie kat: kategorie) {
             // TODO Do not iterate all the objects if its not necessary
             kat.setReadonly(true);
@@ -124,10 +120,7 @@ public class MessprogrammKategorieService {
         @PathParam("id") String id
     ) {
         MessprogrammKategorie mpk = repository.getByIdPlain(
-            MessprogrammKategorie.class,
-            Integer.valueOf(id),
-            Strings.STAMM
-        );
+            MessprogrammKategorie.class, Integer.valueOf(id));
         mpk.setReadonly(
             !authorization.isAuthorized(
                 request,
@@ -155,19 +148,13 @@ public class MessprogrammKategorieService {
             return new Response(false, StatusCodes.NOT_ALLOWED, kategorie);
         }
         QueryBuilder<MessprogrammKategorie> builder =
-            new QueryBuilder<MessprogrammKategorie>(
-                repository.entityManager(Strings.STAMM),
-                MessprogrammKategorie.class
-            );
+            repository.queryBuilder(MessprogrammKategorie.class);
         builder.and("code", kategorie.getCode());
         builder.and("netzbetreiberId", kategorie.getNetzbetreiberId());
-
         List<MessprogrammKategorie> kategorien =
-            repository.filterPlain(builder.getQuery(), Strings.STAMM);
-        if (kategorien.isEmpty()
-            || kategorien.get(0).getId().equals(kategorie.getId())
-        ) {
-            return repository.create(kategorie, Strings.STAMM);
+            repository.filterPlain(builder.getQuery());
+        if (kategorien.isEmpty()) {
+            return repository.create(kategorie);
         }
         return new Response(false, StatusCodes.IMP_DUPLICATE, null);
     }
@@ -188,7 +175,18 @@ public class MessprogrammKategorieService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, kategorie);
         }
-        return repository.update(kategorie, Strings.STAMM);
+        QueryBuilder<MessprogrammKategorie> builder =
+            repository.queryBuilder(MessprogrammKategorie.class);
+        builder.and("code", kategorie.getCode());
+        builder.and("netzbetreiberId", kategorie.getNetzbetreiberId());
+        List<MessprogrammKategorie> kategorien =
+            repository.filterPlain(builder.getQuery());
+        if (kategorien.isEmpty()) {
+            return repository.update(kategorie);
+        } else if (kategorien.get(0).getId() != kategorie.getId()) {
+            return new Response(false, StatusCodes.IMP_DUPLICATE, null);
+        }
+        return repository.update(kategorie);
     }
 
     @DELETE
@@ -199,7 +197,7 @@ public class MessprogrammKategorieService {
         @PathParam("id") String id
     ) {
         MessprogrammKategorie kategorie = repository.getByIdPlain(
-            MessprogrammKategorie.class, Integer.valueOf(id), Strings.STAMM);
+            MessprogrammKategorie.class, Integer.valueOf(id));
         if (kategorie == null
             || !authorization.isAuthorized(
                 request,
@@ -210,6 +208,6 @@ public class MessprogrammKategorieService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        return repository.delete(kategorie, Strings.STAMM);
+        return repository.delete(kategorie);
     }
 }

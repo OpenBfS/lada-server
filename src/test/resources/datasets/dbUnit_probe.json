@@ -1,8 +1,7 @@
 {
     "land.probe": [{
         "id": 1000,
-        "ext_id": "T001",
-        "ba_id": "1",
+        "ba_id": 1,
         "datenbasis_id": 9,
         "letzte_aenderung": "2012-05-05 11:12:00",
         "media": "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet",
@@ -14,7 +13,6 @@
         "test": false,
         "umw_id":"L6",
         "hauptproben_nr": "120510002",
-        "mpr_id": 1000,
         "probe_nehmer_id": 726,
         "solldatum_beginn": "2012-05-01 16:00:00",
         "solldatum_ende": "2012-05-05 16:00:00",

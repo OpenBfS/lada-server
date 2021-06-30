@@ -26,14 +26,11 @@ import javax.ws.rs.core.UriInfo;
 import de.intevation.lada.model.land.KommentarM;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -76,8 +73,7 @@ public class KommentarMService {
      * The data repository granting read/write access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * The authorization module.
@@ -117,10 +113,7 @@ public class KommentarMService {
         } catch (NumberFormatException nfe) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        Messung messung = defaultRepo.getByIdPlain(
-            Messung.class,
-            id,
-            Strings.LAND);
+        Messung messung = repository.getByIdPlain(Messung.class, id);
         if (!authorization.isAuthorized(
                 request, messung, RequestMethod.GET, Messung.class)
         ) {
@@ -128,13 +121,11 @@ public class KommentarMService {
         }
 
         QueryBuilder<KommentarM> builder =
-            new QueryBuilder<KommentarM>(
-                defaultRepo.entityManager(Strings.LAND),
-                KommentarM.class);
+            repository.queryBuilder(KommentarM.class);
         builder.and("messungsId", messungId);
         return authorization.filter(
             request,
-            defaultRepo.filter(builder.getQuery(), Strings.LAND),
+            repository.filter(builder.getQuery()),
             KommentarM.class);
     }
 
@@ -156,13 +147,11 @@ public class KommentarMService {
         @PathParam("id") String id
     ) {
         Response response =
-            defaultRepo.getById(
-                KommentarM.class, Integer.valueOf(id), Strings.LAND);
+            repository.getById(
+                KommentarM.class, Integer.valueOf(id));
         KommentarM kommentar = (KommentarM) response.getData();
-        Messung messung = defaultRepo.getByIdPlain(
-            Messung.class,
-            kommentar.getMessungsId(),
-            Strings.LAND);
+        Messung messung = repository.getByIdPlain(
+            Messung.class, kommentar.getMessungsId());
         if (!authorization.isAuthorized(
                 request, messung, RequestMethod.GET, Messung.class)
         ) {
@@ -212,7 +201,7 @@ public class KommentarMService {
         /* Persist the new object*/
         return authorization.filter(
             request,
-            defaultRepo.create(kommentar, Strings.LAND),
+            repository.create(kommentar),
             KommentarM.class);
     }
 
@@ -254,7 +243,7 @@ public class KommentarMService {
         }
         return authorization.filter(
             request,
-            defaultRepo.update(kommentar, Strings.LAND),
+            repository.update(kommentar),
             KommentarM.class);
     }
 
@@ -277,8 +266,8 @@ public class KommentarMService {
     ) {
         /* Get the object by id*/
         Response kommentar =
-            defaultRepo.getById(
-                KommentarM.class, Integer.valueOf(id), Strings.LAND);
+            repository.getById(
+                KommentarM.class, Integer.valueOf(id));
         KommentarM kommentarObj = (KommentarM) kommentar.getData();
         if (!authorization.isAuthorized(
                 request,
@@ -288,6 +277,6 @@ public class KommentarMService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        return defaultRepo.delete(kommentarObj, Strings.LAND);
+        return repository.delete(kommentarObj);
     }
 }

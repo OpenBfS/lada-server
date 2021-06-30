@@ -21,12 +21,9 @@ import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -65,8 +62,7 @@ public class MessstelleService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * The authorization module.
@@ -90,7 +86,7 @@ public class MessstelleService {
         @Context HttpServletRequest request,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(MessStelle.class, Strings.STAMM);
+        return repository.getAll(MessStelle.class);
     }
 
     /**
@@ -110,6 +106,6 @@ public class MessstelleService {
         @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(MessStelle.class, id, Strings.STAMM);
+        return repository.getById(MessStelle.class, id);
     }
 }

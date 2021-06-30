@@ -26,13 +26,10 @@ import de.intevation.lada.model.stammdaten.GridColumn;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -48,7 +45,6 @@ public class SqlService {
      * The data repository granting read/write access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
     private Repository repository;
 
     /**
@@ -63,8 +59,8 @@ public class SqlService {
 
 
     /**
-     * Execute query, using the given result columns.
-     * The query can contain the following post data:
+     * Return SQL as would be executed for the given query.
+     * The request can contain the following post data:
      * <pre>
      * <code>
      * {
@@ -78,7 +74,7 @@ public class SqlService {
      * }
      * </code>
      * </pre>
-     * @return JSON encoded query results
+     * @return JSON object with query string as data element
      */
     @POST
     @Path("/")
@@ -91,7 +87,6 @@ public class SqlService {
     ) {
         // There is nothing to authorize and it is ensured
         // that a user is authenticated.
-        Integer qid;
         List<GridColumnValue> gridColumnValues = columns.getColumns();
 
         if (gridColumnValues == null
@@ -101,25 +96,18 @@ public class SqlService {
         }
         for (GridColumnValue columnValue : gridColumnValues) {
             GridColumn gridColumn = repository.getByIdPlain(
-                GridColumn.class,
-                Integer.valueOf(columnValue.getGridColumnId()),
-                Strings.STAMM);
+                GridColumn.class, columnValue.getGridColumnId());
             columnValue.setGridColumn(gridColumn);
         }
 
-        GridColumn gridColumn = repository.getByIdPlain(
-            GridColumn.class,
-            Integer.valueOf(gridColumnValues.get(0).getGridColumnId()),
-        Strings.STAMM);
-
-        qid = gridColumn.getBaseQuery();
+        Integer qid = gridColumnValues.get(0).getGridColumn().getBaseQuery();
         String sql =
-            queryTools.prepareSql(columns.getColumns(), qid);
+            queryTools.prepareSql(gridColumnValues, qid);
         if (sql == null) {
             return new Response(true, StatusCodes.OK, null);
         }
         MultivaluedMap<String, Object> filterValues =
-            queryTools.prepareFilters(columns.getColumns(), qid);
+            queryTools.prepareFilters(gridColumnValues, qid);
 
         String statement = prepareStatement(sql, filterValues);
         return new Response(true, StatusCodes.OK, statement);
@@ -129,41 +117,50 @@ public class SqlService {
         String sql,
         MultivaluedMap<String, Object> filters
     ) {
-        String stmt1 = "PREPARE request AS \n";
-        String stmt2 = "\nEXECUTE request";
-        String stmt3 = ";\nDEALLOCATE request;";
-
+        String parameters = "";
         Set<String> filterKeys = filters.keySet();
         if (!filterKeys.isEmpty()) {
-            stmt2 += "(";
-            stmt3 = ")" + stmt3;
-        }
-        int i = 1;
-        for (String key : filterKeys) {
-            List<Object> v = filters.get(key);
-            if (v.size() == 1) {
-                if (v.get(0) instanceof String) {
-                    stmt2 += "'" + v.get(0).toString() + "'";
-                } else {
-                    stmt2 += v.get(0).toString();
+            parameters += "(";
+
+            // Counter for total number of resulting parameters
+            int nparams = 1;
+
+            for (String key : filterKeys) {
+                if (nparams > 1) {
+                    // separate next parameter in list
+                    parameters += ", ";
                 }
-            } else {
-                stmt2 += "'{";
-                for (Object value: filters.get(key)) {
-                    stmt2 += value.toString();
-                    stmt2 += ",";
+
+                // Possibly a list of scalar values for 'IN (...)'
+                List<Object> values = filters.get(key);
+                int j = 1;
+                String paramNumbers = "";
+                for (Object value: values) {
+                    if (j > 1) {
+                        // separate next parameter in list
+                        parameters += ", ";
+                        paramNumbers += ", ";
+                    }
+                    if (value instanceof String) {
+                        parameters += "'" + value.toString() + "'";
+                    } else {
+                        parameters += value.toString();
+                    }
+                    paramNumbers += "$" + nparams;
+                    j++;
+                    nparams++;
                 }
-                stmt2 = stmt2.substring(0, stmt2.length() - 1);
-                stmt2 += "}'";
+
+                // Replace named parameter with parameter numbers
+                sql = sql.replace(":" + key, paramNumbers);
+
             }
-            stmt2 += ",";
-            sql = sql.replace(":" + key, "$" + i);
-            i++;
-        }
-        if (stmt2.endsWith(",")) {
-            stmt2 = stmt2.substring(0, stmt2.length() - 1);
+            parameters += ")";
         }
 
-        return stmt1 + sql + stmt2 + stmt3;
+        return "PREPARE request AS \n"
+            + sql + "\n"
+            + "EXECUTE request" + parameters + ";\n"
+            + "DEALLOCATE request;";
     }
 }

@@ -10,12 +10,9 @@ package de.intevation.lada.validation.rules.ort;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.stammdaten.Ort;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -24,15 +21,13 @@ import de.intevation.lada.validation.rules.Rule;
 public class IsUnique implements Rule {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Override
     public Violation execute(Object object) {
         Ort ort = (Ort) object;
 
-        QueryBuilder<Ort> builder = new QueryBuilder<Ort>(
-            repository.entityManager(Strings.STAMM), Ort.class);
+        QueryBuilder<Ort> builder = repository.queryBuilder(Ort.class);
         if (ort.getId() != null) {
             // Consider UPDATE
             builder.and("id", ort.getId()).not();
@@ -40,7 +35,7 @@ public class IsUnique implements Rule {
         builder.and("netzbetreiberId", ort.getNetzbetreiberId());
         builder.and("ortId", ort.getOrtId());
         if (!repository.filterPlain(
-                builder.getQuery(), Strings.STAMM).isEmpty()
+                builder.getQuery()).isEmpty()
         ) {
             Violation violation = new Violation();
             violation.addError("ortId", StatusCodes.IMP_DUPLICATE);

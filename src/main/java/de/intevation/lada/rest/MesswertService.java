@@ -33,15 +33,12 @@ import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.stammdaten.Umwelt;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.MesswertNormalizer;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
@@ -94,8 +91,7 @@ public class MesswertService {
      * The data repository granting read/write access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * The object lock mechanism.
@@ -114,6 +110,9 @@ public class MesswertService {
     @Inject
     @ValidationConfig(type = "Messwert")
     private Validator validator;
+
+    @Inject
+    private MesswertNormalizer messwertNormalizer;
 
     /**
      * Get all Messwert objects.
@@ -146,10 +145,7 @@ public class MesswertService {
         } catch (NumberFormatException nfe) {
             return new Response(false, StatusCodes.NO_ACCESS, null);
         }
-        Messung messung = defaultRepo.getByIdPlain(
-            Messung.class,
-            id,
-            Strings.LAND);
+        Messung messung = repository.getByIdPlain(Messung.class, id);
         if (!authorization.isAuthorized(
                 request,
                 messung,
@@ -159,21 +155,19 @@ public class MesswertService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         QueryBuilder<Messwert> builder =
-            new QueryBuilder<Messwert>(
-                defaultRepo.entityManager(Strings.LAND),
-                Messwert.class);
+            repository.queryBuilder(Messwert.class);
         builder.and("messungsId", messungId);
 
         Response r = authorization.filter(
             request,
-            defaultRepo.filter(builder.getQuery(), Strings.LAND),
+            repository.filter(builder.getQuery()),
             Messwert.class);
         if (r.getSuccess()) {
             @SuppressWarnings("unchecked")
             List<Messwert> messwerts = (List<Messwert>) r.getData();
             for (Messwert messwert: messwerts) {
                 Violation violation = validator.validate(messwert);
-                if (violation.hasErrors() || violation.hasWarnings()) {
+                if (violation.hasErrors() || violation.hasWarnings() || violation.hasNotifications()) {
                     messwert.setErrors(violation.getErrors());
                     messwert.setWarnings(violation.getWarnings());
                     messwert.setNotifications(violation.getNotifications());
@@ -203,13 +197,11 @@ public class MesswertService {
         @PathParam("id") String id
     ) {
         Response response =
-            defaultRepo.getById(
-                Messwert.class, Integer.valueOf(id), Strings.LAND);
+            repository.getById(
+                Messwert.class, Integer.valueOf(id));
         Messwert messwert = (Messwert) response.getData();
-        Messung messung = defaultRepo.getByIdPlain(
-            Messung.class,
-            messwert.getMessungsId(),
-            Strings.LAND);
+        Messung messung = repository.getByIdPlain(
+            Messung.class, messwert.getMessungsId());
         if (!authorization.isAuthorized(
             request,
             messung,
@@ -283,7 +275,7 @@ public class MesswertService {
         }
 
         /* Persist the new messung object*/
-        Response response = defaultRepo.create(messwert, Strings.LAND);
+        Response response = repository.create(messwert);
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
         }
@@ -352,13 +344,13 @@ public class MesswertService {
             return response;
         }
 
-        Response response = defaultRepo.update(messwert, Strings.LAND);
+        Response response = repository.update(messwert);
         if (!response.getSuccess()) {
             return response;
         }
-        Response updated = defaultRepo.getById(
+        Response updated = repository.getById(
             Messwert.class,
-            ((Messwert) response.getData()).getId(), Strings.LAND);
+            ((Messwert) response.getData()).getId());
         if (violation.hasWarnings()) {
             updated.setWarnings(violation.getWarnings());
         }
@@ -396,10 +388,7 @@ public class MesswertService {
             return new Response(false, StatusCodes.NO_ACCESS, null);
         }
         //Load messung, probe and umwelt to get MessEinheit to convert to
-        Messung messung = defaultRepo.getByIdPlain(
-            Messung.class,
-            messungIdInt,
-            Strings.LAND);
+        Messung messung = repository.getByIdPlain(Messung.class, messungIdInt);
         if (!authorization.isAuthorized(
             request,
             messung,
@@ -410,23 +399,21 @@ public class MesswertService {
         }
 
         Probe probe =
-            defaultRepo.getByIdPlain(
-                Probe.class, messung.getProbeId(), Strings.LAND);
+            repository.getByIdPlain(
+                Probe.class, messung.getProbeId());
         if (probe.getUmwId() == null || probe.getUmwId().equals("")) {
             return new Response(true, StatusCodes.OP_NOT_POSSIBLE, null);
         }
         Umwelt umwelt =
-            defaultRepo.getByIdPlain(
-                Umwelt.class, probe.getUmwId(), Strings.STAMM);
+            repository.getByIdPlain(
+                Umwelt.class, probe.getUmwId());
         //Get all Messwert objects to convert
         QueryBuilder<Messwert> messwertBuilder =
-                new QueryBuilder<Messwert>(
-                    defaultRepo.entityManager(Strings.LAND),
-                    Messwert.class);
+            repository.queryBuilder(Messwert.class);
         messwertBuilder.and("messungsId", messungIdInt);
-        List<Messwert> messwerte = MesswertNormalizer.normalizeMesswerte(
-            defaultRepo.filterPlain(messwertBuilder.getQuery(), Strings.LAND),
-                umwelt.getId(), defaultRepo);
+        List<Messwert> messwerte = messwertNormalizer.normalizeMesswerte(
+            repository.filterPlain(messwertBuilder.getQuery()),
+            umwelt.getId());
 
         for (Messwert messwert: messwerte) {
             if (!authorization.isAuthorized(
@@ -449,13 +436,13 @@ public class MesswertService {
                 response.setNotifications(violation.getNotifications());
                 return response;
             }
-            Response response = defaultRepo.update(messwert, Strings.LAND);
+            Response response = repository.update(messwert);
             if (!response.getSuccess()) {
                 return response;
             }
-            Response updated = defaultRepo.getById(
+            Response updated = repository.getById(
                 Messwert.class,
-                ((Messwert) response.getData()).getId(), Strings.LAND);
+                ((Messwert) response.getData()).getId());
             if (violation.hasWarnings()) {
                 updated.setWarnings(violation.getWarnings());
             }
@@ -489,8 +476,8 @@ public class MesswertService {
     ) {
         /* Get the messwert object by id*/
         Response messwert =
-            defaultRepo.getById(
-                Messwert.class, Integer.valueOf(id), Strings.LAND);
+            repository.getById(
+                Messwert.class, Integer.valueOf(id));
         Messwert messwertObj = (Messwert) messwert.getData();
         if (!authorization.isAuthorized(
                 request,
@@ -504,6 +491,6 @@ public class MesswertService {
             return new Response(false, StatusCodes.NO_ACCESS, null);
         }
         /* Delete the messwert object*/
-        return defaultRepo.delete(messwertObj, Strings.LAND);
+        return repository.delete(messwertObj);
     }
 }

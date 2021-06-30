@@ -277,7 +277,7 @@ CREATE OR REPLACE FUNCTION check_sql(stmt text)
     VOLATILE PARALLEL UNSAFE
 AS $BODY$
   BEGIN
-    EXECUTE stmt;
+    EXECUTE stmt || ' LIMIT 0';
     RETURN true;
   EXCEPTION
     WHEN OTHERS THEN
@@ -497,6 +497,9 @@ INSERT INTO filter_type VALUES(5, 'listnumber', true);
 INSERT INTO filter_type VALUES(6, 'listdatetime', true);
 INSERT INTO filter_type VALUES(7, 'generictext', false);
 INSERT INTO filter_type VALUES(8, 'tag', true);
+/* Used to filter result returned from base_query.sql by any unique identifier,
+ * e.g. for export of selected entries (see QueryExportJob.createIdListFilter): */
+INSERT INTO filter_type VALUES(9, 'genericid', true);
 
 CREATE TABLE filter (
     id serial PRIMARY KEY,
@@ -732,7 +735,7 @@ CREATE TABLE probenehmer (
     plz character varying(5),
     strasse character varying(30),
     telefon character varying(20),
-    tp character varying(3),
+    tourenplan character varying(3),
     typ character(1),
     letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE(prn_id, netzbetreiber_id)
@@ -766,6 +769,7 @@ INSERT INTO status_wert VALUES (1, 'plausibel');
 INSERT INTO status_wert VALUES (2, 'nicht repräsentativ');
 INSERT INTO status_wert VALUES (3, 'nicht plausibel');
 INSERT INTO status_wert VALUES (4, 'Rückfrage');
+INSERT INTO status_wert VALUES (5, 'ungeprüft');
 INSERT INTO status_wert VALUES (7, 'nicht lieferbar');
 INSERT INTO status_wert VALUES (8, 'zurückgesetzt');
 
@@ -792,6 +796,7 @@ INSERT INTO status_kombi VALUES (13, 3, 4);
 INSERT INTO status_kombi VALUES (14, 1, 8);
 INSERT INTO status_kombi VALUES (15, 2, 8);
 INSERT INTO status_kombi VALUES (16, 3, 8);
+INSERT INTO status_kombi VALUES (17, 1, 5);
 
 
 CREATE TABLE status_reihenfolge (
@@ -915,9 +920,12 @@ CREATE TABLE grid_column (
     base_query integer REFERENCES base_query,
     name character varying(80) NOT NULL,
     data_index character varying(80) NOT NULL,
-    position integer NOT NULL,
+    position integer NOT NULL CHECK(position > 0),
     filter integer REFERENCES filter,
-    data_type integer NOT NULL REFERENCES result_type
+    data_type integer NOT NULL REFERENCES result_type,
+    UNIQUE(base_query, name),
+    UNIQUE(base_query, data_index),
+    UNIQUE(base_query, position)
 );
 
 CREATE TABLE grid_column_values (
@@ -946,5 +954,14 @@ CREATE TABLE tag (
 );
 
 CREATE UNIQUE INDEX gen_tag_unique_idx ON stamm.tag (tag) WHERE generated = true;
+
+CREATE TABLE stamm.tm_fm_umrechnung(
+  id serial NOT NULL PRIMARY KEY,	
+  meh_id smallint NOT NULL REFERENCES stamm.mess_einheit(id),
+  meh_id_nach smallint NOT NULL REFERENCES stamm.mess_einheit(id),
+  umw_id character varying(3) NOT NULL REFERENCES stamm.umwelt(id),
+  media_desk_pattern character varying(100),	
+  faktor numeric(25,12) NOT NULL
+);
 
 COMMIT;

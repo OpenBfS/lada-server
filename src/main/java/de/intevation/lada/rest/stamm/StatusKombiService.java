@@ -33,15 +33,12 @@ import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.StatusErreichbar;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -77,7 +74,6 @@ public class StatusKombiService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Inject
@@ -98,7 +94,7 @@ public class StatusKombiService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return repository.getAll(StatusKombi.class, Strings.STAMM);
+        return repository.getAll(StatusKombi.class);
     }
 
     /**
@@ -117,10 +113,7 @@ public class StatusKombiService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return repository.getById(
-            StatusKombi.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+        return repository.getById(StatusKombi.class, Integer.valueOf(id));
     }
 
     @POST
@@ -149,30 +142,27 @@ public class StatusKombiService {
         List<Integer> messIds,
         UserInfo user
     ) {
-        QueryBuilder<Messung> messungQuery = new QueryBuilder<Messung>(
-            repository.entityManager(Strings.LAND),
-            Messung.class);
+        QueryBuilder<Messung> messungQuery =
+            repository.queryBuilder(Messung.class);
         messungQuery.orIn("id", messIds);
         List<Messung> messungen = repository.filterPlain(
-            messungQuery.getQuery(), Strings.LAND);
+            messungQuery.getQuery());
 
         Map<Integer, StatusErreichbar> erreichbare =
             new HashMap<Integer, StatusErreichbar>();
         for (Messung messung : messungen) {
             StatusProtokoll status = repository.getByIdPlain(
-                StatusProtokoll.class, messung.getStatus(), Strings.LAND);
+                StatusProtokoll.class, messung.getStatus());
             StatusKombi kombi = repository.getByIdPlain(
-                StatusKombi.class, status.getStatusKombi(), Strings.STAMM);
+                StatusKombi.class, status.getStatusKombi());
 
             QueryBuilder<StatusErreichbar> errFilter =
-                new QueryBuilder<StatusErreichbar>(
-                    repository.entityManager(Strings.STAMM),
-                    StatusErreichbar.class);
+                repository.queryBuilder(StatusErreichbar.class);
             errFilter.andIn("stufeId", user.getFunktionen());
             errFilter.and("curStufe", kombi.getStatusStufe().getId());
             errFilter.and("curWert", kombi.getStatusWert().getId());
             List<StatusErreichbar> err = repository.filterPlain(
-                    errFilter.getQuery(), Strings.STAMM);
+                    errFilter.getQuery());
             for (StatusErreichbar e : err) {
                 erreichbare.put(e.getId(), e);
             }
@@ -183,9 +173,7 @@ public class StatusKombiService {
         }
 
         QueryBuilder<StatusKombi> kombiFilter =
-            new QueryBuilder<StatusKombi>(
-                repository.entityManager(Strings.STAMM),
-                StatusKombi.class);
+            repository.queryBuilder(StatusKombi.class);
         for (Entry<Integer, StatusErreichbar> erreichbar
             : erreichbare.entrySet()
         ) {
@@ -195,6 +183,6 @@ public class StatusKombiService {
                 kombiFilter.or(tmp);
         }
 
-        return repository.filterPlain(kombiFilter.getQuery(), Strings.STAMM);
+        return repository.filterPlain(kombiFilter.getQuery());
     }
 }

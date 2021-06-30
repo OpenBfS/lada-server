@@ -26,12 +26,10 @@ import de.intevation.lada.exporter.csv.CsvExportJob;
 import de.intevation.lada.exporter.json.JsonExportJob;
 import de.intevation.lada.exporter.laf.LafExportJob;
 import de.intevation.lada.query.QueryTools;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.JobManager;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 
 /**
  * Class creating and managing ExportJobs.
@@ -65,7 +63,6 @@ public class ExportJobManager extends JobManager{
      * The data repository granting read-only access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     protected Repository repository;
 
     @Inject
@@ -76,6 +73,18 @@ public class ExportJobManager extends JobManager{
         logger = Logger.getLogger("ExportJobManager");
         logger.debug("Creating ExportJobManager");
     };
+
+    private class ExportJobExceptionHandler
+        implements Thread.UncaughtExceptionHandler {
+        public void uncaughtException(Thread t, Throwable e) {
+            String errMsg = e.getMessage();
+            logger.error("ExportJob failed with:");
+            logger.error(errMsg);
+            e.printStackTrace();
+
+            ((ExportJob) t).fail(errMsg);
+        }
+    }
 
     /**
      * Creates a new export job using the given format and parameters.
@@ -125,6 +134,7 @@ public class ExportJobManager extends JobManager{
         newJob.setEncoding(encoding);
         newJob.setExportParameter(params);
         newJob.setUserInfo(userInfo);
+        newJob.setUncaughtExceptionHandler(new ExportJobExceptionHandler());
         newJob.start();
         activeJobs.put(id, newJob);
 

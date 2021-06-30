@@ -18,7 +18,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -29,11 +28,7 @@ import de.intevation.lada.model.stammdaten.GridColumn;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
 import de.intevation.lada.model.stammdaten.BaseQuery;
 import de.intevation.lada.model.stammdaten.Tag;
-import de.intevation.lada.util.annotation.RepositoryConfig;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 
 
 /**
@@ -44,7 +39,6 @@ import de.intevation.lada.util.data.Strings;
 public class QueryTools {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Inject
@@ -73,13 +67,7 @@ public class QueryTools {
     }
 
     public String prepareSql(List<GridColumnValue> customColumns, Integer qId) {
-        QueryBuilder<BaseQuery> builder = new QueryBuilder<BaseQuery>(
-            repository.entityManager(Strings.STAMM),
-            BaseQuery.class
-        );
-        builder.and("id", qId);
-        BaseQuery query =
-            repository.filterPlain(builder.getQuery(), Strings.STAMM).get(0);
+        BaseQuery query = repository.getByIdPlain(BaseQuery.class, qId);
 
         String sql = query.getSql();
         String filterSql = "";
@@ -115,10 +103,11 @@ public class QueryTools {
                 String currentFilterString = filter.getSql();
                 String currentFilterParam = filter.getParameter();
                 String filterType = filter.getFilterType().getType();
-                if (customColumn.getFilterNegate() != null
-                    && customColumn.getFilterNegate()
+                if (filterType.equals("generictext")
+                    || filterType.equals("genericid")
                 ) {
-                    currentFilterString = "NOT(" + currentFilterString + ")";
+                    subquery = true;
+                    generic = true;
                 }
                 if (filterType.equals("generictext")) {
                     String genTextParam = ":" + filter.getParameter() + "Param";
@@ -132,10 +121,7 @@ public class QueryTools {
                     currentFilterString =
                         currentFilterString.replace(
                             ":" + genTextValue, ":" + currentFilterParam);
-                    subquery = true;
-                    generic = true;
-                }
-                if (filterType.equals("tag")) {
+                } else if (filterType.equals("tag")) {
                     String[] tagIds = filterValue.split(",");
                     int tagNumber = tagIds.length;
                     String paramlist = "";
@@ -152,12 +138,15 @@ public class QueryTools {
                         tagFilterSql.replace(
                             ":" + filter.getParameter(), paramlist);
                     if (filterSql.isEmpty()) {
-                        filterSql += " WHERE ";
+                        filterSql += " WHERE " + tagFilterSql;
                     } else {
-                        filterSql += " AND ";
+                        filterSql += " AND " + tagFilterSql;
                     }
-                    filterSql += tagFilterSql;
                     continue;
+                }
+                if (customColumn.getFilterNegate() != null
+                     && customColumn.getFilterNegate()) {
+                    currentFilterString = "NOT(" + currentFilterString + ")";
                 }
                 if (generic) {
                     if (genericFilterSql.isEmpty()) {
@@ -168,15 +157,53 @@ public class QueryTools {
                 } else {
                     //Build WHERE clause
                     if (filterSql.isEmpty()) {
-                        filterSql += " WHERE ";
+                        filterSql += " WHERE " + currentFilterString;
                     } else {
-                        filterSql += " AND ";
+                        filterSql += " AND " + currentFilterString;
                     }
-                    filterSql += currentFilterString;
+                }
+            } else if (customColumn.getFilterActive() != null
+                       && customColumn.getFilterActive()
+                       && customColumn.getFilterIsNull() != null
+                       && customColumn.getFilterIsNull()
+            ) {
+                Filter filter = customColumn.getGridColumn().getFilter();
+                String currentFilterString = filter.getSql();
+                String filterType = filter.getFilterType().getType();
+                if (filterType.equals("generictext")) {
+                    currentFilterString =
+                        customColumn.getGridColumn().getDataIndex()
+                        + " IS NULL";
+                    if (customColumn.getFilterNegate() != null
+                        && customColumn.getFilterNegate()) {
+                        currentFilterString =
+                            "NOT(" + currentFilterString + ")";
+                    }
+                    if (genericFilterSql.isEmpty()) {
+                        genericFilterSql += " WHERE " + currentFilterString;
+                    } else {
+                        genericFilterSql += " AND " + currentFilterString;
+                    }
+                    subquery = true;
+                    generic = true;
+                 } else {
+                    currentFilterString =
+                        currentFilterString.replaceAll(" .*", " IS NULL ");
+                    currentFilterString =
+                        currentFilterString.replaceAll(".*\\(", "");
+                    if (customColumn.getFilterNegate() != null
+                        && customColumn.getFilterNegate()) {
+                        currentFilterString =
+                            "NOT(" + currentFilterString + ")";
+                    }
+                    if (filterSql.isEmpty()) {
+                        filterSql += " WHERE " + currentFilterString;
+                    } else {
+                        filterSql += " AND " + currentFilterString;
+                    }
                 }
             }
         }
-
 
         if (sortIndMap.size() > 0) {
             NavigableMap <Integer, String> orderedSorts =
@@ -200,7 +227,6 @@ public class QueryTools {
 
         }
 
-
         if (!filterSql.isEmpty()) {
             sql += filterSql + " ";
         }
@@ -211,7 +237,6 @@ public class QueryTools {
             sql = "SELECT * FROM ( " + sql + " ) AS inner_query ";
             sql += genericFilterSql;
         }
-        sql += " ;";
         return sql;
     }
 
@@ -258,8 +283,8 @@ public class QueryTools {
                         String tag =
                             repository.getByIdPlain(
                                 Tag.class,
-                                Integer.parseInt(tagIds[i]),
-                                Strings.STAMM).getTag();
+                                Integer.parseInt(tagIds[i])
+                            ).getTag();
                         filterValues.add(param + i, tag);
                     }
                     continue;
@@ -355,16 +380,13 @@ public class QueryTools {
         List<GridColumn> columns
     ) {
         try {
-            javax.persistence.Query q = prepareQuery(
-                    sql,
-                    filterValues,
-                    repository.entityManager(Strings.LAND));
+            javax.persistence.Query q = prepareQuery(sql, filterValues);
             if (q == null) {
                 return new ArrayList<>();
             }
             return prepareResult(q.getResultList(), columns);
         } catch (Exception e) {
-            logger.debug("Exceptiont", e);
+            logger.debug("Exception", e);
             logger.debug("SQL: \n" + sql);
             logger.debug("filterValues:  " + filterValues);
             throw e;
@@ -380,10 +402,9 @@ public class QueryTools {
      */
     public javax.persistence.Query prepareQuery(
         String sql,
-        MultivaluedMap<String, Object> params,
-        EntityManager manager
+        MultivaluedMap<String, Object> params
     ) {
-        javax.persistence.Query query = manager.createNativeQuery(sql);
+        javax.persistence.Query query = repository.queryFromString(sql);
         Set<String> keys = params.keySet();
         for (String key : keys) {
             List<Object> values = new ArrayList<>();

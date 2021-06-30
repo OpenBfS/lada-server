@@ -19,10 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.OrtszuordnungTyp;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -57,8 +54,7 @@ public class OrtszuordnungTypService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all OrtszuordnungTyp objects.
@@ -74,7 +70,7 @@ public class OrtszuordnungTypService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return defaultRepo.getAll(OrtszuordnungTyp.class, Strings.STAMM);
+        return repository.getAll(OrtszuordnungTyp.class);
     }
 
     /**
@@ -93,9 +89,6 @@ public class OrtszuordnungTypService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            OrtszuordnungTyp.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+        return repository.getById(OrtszuordnungTyp.class, Integer.valueOf(id));
     }
 }

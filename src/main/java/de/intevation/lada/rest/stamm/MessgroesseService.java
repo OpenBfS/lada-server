@@ -23,11 +23,8 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.Messgroesse;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -68,8 +65,7 @@ public class MessgroesseService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
-    private Repository defaultRepo;
+    private Repository repository;
 
     /**
      * Get all Messgroesse objects.
@@ -87,24 +83,23 @@ public class MessgroesseService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("mmtId")) {
-            return defaultRepo.getAll(Messgroesse.class, Strings.STAMM);
+            return repository.getAll(Messgroesse.class);
         }
         String mmtId = params.getFirst("mmtId");
 
         Query query =
-            defaultRepo.queryFromString(
-                "SELECT messgroesse_id FROM mmt_messgroesse "
-                + "WHERE mmt_id = :mmt",
-                Strings.STAMM)
-            .setParameter("mmt", mmtId);
+            repository.queryFromString(
+                "SELECT messgroesse_id FROM "
+                + de.intevation.lada.model.stammdaten.SchemaName.NAME
+                + ".mmt_messgroesse "
+                + "WHERE mmt_id = :mmt"
+            ).setParameter("mmt", mmtId);
         @SuppressWarnings("unchecked")
         List<Integer> ids = query.getResultList();
         QueryBuilder<Messgroesse> builder2 =
-            new QueryBuilder<Messgroesse>(
-                defaultRepo.entityManager(Strings.STAMM),
-                Messgroesse.class);
+            repository.queryBuilder(Messgroesse.class);
         builder2.orIntList("id", ids);
-        return defaultRepo.filter(builder2.getQuery(), Strings.STAMM);
+        return repository.filter(builder2.getQuery());
     }
 
     /**
@@ -123,9 +118,6 @@ public class MessgroesseService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return defaultRepo.getById(
-            Messgroesse.class,
-            Integer.valueOf(id),
-            Strings.STAMM);
+        return repository.getById(Messgroesse.class, Integer.valueOf(id));
     }
 }

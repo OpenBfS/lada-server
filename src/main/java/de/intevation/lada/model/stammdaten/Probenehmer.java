@@ -15,6 +15,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
 
@@ -23,6 +24,7 @@ import javax.persistence.Transient;
  *
  */
 @Entity
+@Table(name = "probenehmer", schema = SchemaName.NAME)
 public class Probenehmer implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -58,7 +60,7 @@ public class Probenehmer implements Serializable {
 
     private String telefon;
 
-    private String tp;
+    private String tourenplan;
 
     private String typ;
 
@@ -172,12 +174,12 @@ public class Probenehmer implements Serializable {
         this.telefon = telefon;
     }
 
-    public String getTp() {
-        return this.tp;
+    public String getTourenplan() {
+        return this.tourenplan;
     }
 
-    public void setTp(String tp) {
-        this.tp = tp;
+    public void setTourenplan(String tourenplan) {
+        this.tourenplan = tourenplan;
     }
 
     public String getTyp() {

@@ -232,7 +232,6 @@ public class JsonExportJob extends QueryExportJob {
         if (exportSubdata) {
             try {
                 exportData = mergeSubData(getSubData());
-                exportColumns.addAll(subDataColumns);
             } catch (QueryExportException ee) {
                 logger.error(ee.getMessage());
                 fail("Fetching export sub data failed");
@@ -260,7 +259,7 @@ public class JsonExportJob extends QueryExportJob {
         JsonObject exportOptions = optionBuilder.build();
         try {
             exported = exporter.export(
-                exportData, encoding, exportOptions, exportColumns);
+                exportData, encoding, exportOptions, exportColumns, qId);
         } catch (Exception e) {
             logger.error("Error creating json");
             e.printStackTrace();

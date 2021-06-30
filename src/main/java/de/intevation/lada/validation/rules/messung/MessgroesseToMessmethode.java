@@ -16,12 +16,9 @@ import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.model.stammdaten.MmtMessgroesse;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -37,7 +34,6 @@ import de.intevation.lada.validation.rules.Rule;
 public class MessgroesseToMessmethode implements Rule {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Override
@@ -45,21 +41,17 @@ public class MessgroesseToMessmethode implements Rule {
         Messung messung = (Messung) object;
         String mmt = messung.getMmtId();
         QueryBuilder<Messwert> builder =
-            new QueryBuilder<Messwert>(
-                repository.entityManager(Strings.LAND), Messwert.class);
+            repository.queryBuilder(Messwert.class);
         builder.and("messungsId", messung.getId());
-        Response response = repository.filter(builder.getQuery(), Strings.LAND);
+        Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<Messwert> messwerte = (List<Messwert>) response.getData();
 
         QueryBuilder<MmtMessgroesse> mmtBuilder =
-            new QueryBuilder<MmtMessgroesse>(
-                    repository.entityManager(
-                        Strings.STAMM),
-                        MmtMessgroesse.class);
+            repository.queryBuilder(MmtMessgroesse.class);
 
         Response results =
-            repository.filter(mmtBuilder.getQuery(), Strings.STAMM);
+            repository.filter(mmtBuilder.getQuery());
         @SuppressWarnings("unchecked")
         List<MmtMessgroesse> messgroessen =
             (List<MmtMessgroesse>) results.getData();
@@ -80,9 +72,7 @@ public class MessgroesseToMessmethode implements Rule {
             }
             if (!hit) {
                 Messgroesse mg = repository.getByIdPlain(
-                    Messgroesse.class,
-                    messwert.getMessgroesseId(),
-                    Strings.STAMM);
+                    Messgroesse.class, messwert.getMessgroesseId());
                 violation.addError(
                     "messgroesse#" + mmt + " " + mg.getMessgroesse(),
                     StatusCodes.VALUE_NOT_MATCHING);

@@ -24,12 +24,9 @@ import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.ReiProgpunktGrpUmwZuord;
 import de.intevation.lada.model.stammdaten.Umwelt;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -66,7 +63,6 @@ public class UmweltService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     /**
@@ -85,7 +81,7 @@ public class UmweltService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("reiprogpunktgruppe")) {
-            return repository.getAll(Umwelt.class, "stamm");
+            return repository.getAll(Umwelt.class);
         }
         Integer id = null;
         try {
@@ -97,27 +93,21 @@ public class UmweltService {
                 "Not a valid filter id");
         }
         QueryBuilder<ReiProgpunktGrpUmwZuord> builder =
-            new QueryBuilder<ReiProgpunktGrpUmwZuord>(
-                repository.entityManager("stamm"),
-                ReiProgpunktGrpUmwZuord.class
-            );
+            repository.queryBuilder(ReiProgpunktGrpUmwZuord.class);
         builder.and("reiProgpunktGrpId", id);
         List<ReiProgpunktGrpUmwZuord> zuord =
-            repository.filterPlain(builder.getQuery(), "stamm");
+            repository.filterPlain(builder.getQuery());
         if (zuord.isEmpty()) {
             return new Response(true, StatusCodes.OK, null);
         }
         QueryBuilder<Umwelt> builder1 =
-            new QueryBuilder<Umwelt>(
-                repository.entityManager("stamm"),
-                Umwelt.class
-            );
+            repository.queryBuilder(Umwelt.class);
         List<String> ids = new ArrayList<String>();
         for (int i = 0; i < zuord.size(); i++) {
             ids.add(zuord.get(i).getUmwId());
         }
         builder1.orIn("id", ids);
-        return repository.filter(builder1.getQuery(), "stamm");
+        return repository.filter(builder1.getQuery());
     }
 
     /**
@@ -136,9 +126,6 @@ public class UmweltService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return repository.getById(
-            Umwelt.class,
-            id,
-            Strings.STAMM);
+        return repository.getById(Umwelt.class, id);
     }
 }

@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  *
  */
 @Entity
-@Table(name = "query_messstelle")
+@Table(name = "query_messstelle", schema = SchemaName.NAME)
 public class QueryMessstelle implements Serializable {
     private static final long serialVersionUID = 1L;
 

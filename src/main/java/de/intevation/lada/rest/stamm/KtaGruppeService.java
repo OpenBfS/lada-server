@@ -24,10 +24,8 @@ import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.KtaGrpZuord;
 import de.intevation.lada.model.stammdaten.KtaGruppe;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 
@@ -64,7 +62,6 @@ public class KtaGruppeService {
      * The data repository granting read access.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     /**
@@ -83,7 +80,7 @@ public class KtaGruppeService {
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("kta")) {
-            return repository.getAll(KtaGruppe.class, "stamm");
+            return repository.getAll(KtaGruppe.class);
         }
         Integer id = null;
         try {
@@ -95,27 +92,21 @@ public class KtaGruppeService {
                 "Not a valid filter id");
         }
         QueryBuilder<KtaGrpZuord> builder =
-            new QueryBuilder<KtaGrpZuord>(
-                repository.entityManager("stamm"),
-                KtaGrpZuord.class
-            );
+            repository.queryBuilder(KtaGrpZuord.class);
         builder.and("ktaId", id);
         List<KtaGrpZuord> zuord =
-            repository.filterPlain(builder.getQuery(), "stamm");
+            repository.filterPlain(builder.getQuery());
         if (zuord.isEmpty()) {
             return new Response(true, StatusCodes.OK, null);
         }
         QueryBuilder<KtaGruppe> builder1 =
-            new QueryBuilder<KtaGruppe>(
-                repository.entityManager("stamm"),
-                KtaGruppe.class
-            );
+            repository.queryBuilder(KtaGruppe.class);
         List<Integer> ids = new ArrayList<Integer>();
         for (int i = 0; i < zuord.size(); i++) {
             ids.add(zuord.get(i).getKtaGrpId());
         }
         builder1.orIn("id", ids);
-        return repository.filter(builder1.getQuery(), "stamm");
+        return repository.filter(builder1.getQuery());
     }
 
     /**
@@ -134,9 +125,6 @@ public class KtaGruppeService {
         @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
-        return repository.getById(
-            KtaGruppe.class,
-            Integer.valueOf(id),
-            "stamm");
+        return repository.getById(KtaGruppe.class, Integer.valueOf(id));
     }
 }

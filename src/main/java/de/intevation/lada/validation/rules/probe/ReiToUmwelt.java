@@ -13,10 +13,8 @@ import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGrpUmwZuord;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -32,7 +30,6 @@ import de.intevation.lada.validation.rules.Rule;
 public class ReiToUmwelt implements Rule {
 
     @Inject
-    @RepositoryConfig(type = RepositoryType.RO)
     private Repository repository;
 
     @Override
@@ -51,13 +48,10 @@ public class ReiToUmwelt implements Rule {
             return null;
         }
         QueryBuilder<ReiProgpunktGrpUmwZuord> builder =
-            new QueryBuilder<ReiProgpunktGrpUmwZuord>(
-                repository.entityManager("stamm"),
-                ReiProgpunktGrpUmwZuord.class
-            );
+            repository.queryBuilder(ReiProgpunktGrpUmwZuord.class);
         builder.and("reiProgpunktGrpId", probe.getReiProgpunktGrpId());
         List<ReiProgpunktGrpUmwZuord> zuord =
-            repository.filterPlain(builder.getQuery(), "stamm");
+            repository.filterPlain(builder.getQuery());
         for (ReiProgpunktGrpUmwZuord entry : zuord) {
             if (entry.getUmwId().equals(probe.getUmwId())) {
                 return null;

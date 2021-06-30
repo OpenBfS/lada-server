@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.stammdaten.MessStelle;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -47,11 +46,11 @@ public class MessprogrammIdAuthorizer extends BaseAuthorizer {
             return false;
         }
         Messprogramm messprogramm =
-            repository.getByIdPlain(Messprogramm.class, id, Strings.LAND);
+            repository.getByIdPlain(Messprogramm.class, id);
         String mstId = messprogramm.getMstId();
         if (mstId != null) {
             MessStelle mst = repository.getByIdPlain(
-                MessStelle.class, mstId, Strings.STAMM);
+                MessStelle.class, mstId);
             if (userInfo.getFunktionenForNetzbetreiber(
                     mst.getNetzbetreiberId()).contains(4)
             ) {
@@ -108,12 +107,12 @@ public class MessprogrammIdAuthorizer extends BaseAuthorizer {
             Method getMessprogrammId = clazz.getMethod("getMessprogrammId");
             Integer id = (Integer) getMessprogrammId.invoke(data);
             Messprogramm messprogramm = repository.getByIdPlain(
-                Messprogramm.class, id, Strings.LAND);
+                Messprogramm.class, id);
             String mstId = messprogramm.getMstId();
             boolean owner = false;
             if (mstId != null) {
                 MessStelle mst = repository.getByIdPlain(
-                    MessStelle.class, mstId, Strings.STAMM);
+                    MessStelle.class, mstId);
                 if (userInfo.getFunktionenForNetzbetreiber(
                         mst.getNetzbetreiberId()).contains(4)
                 ) {

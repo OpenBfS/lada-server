@@ -14,7 +14,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import de.intevation.lada.model.land.KommentarM;
@@ -36,12 +35,9 @@ import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.annotation.RepositoryConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.RepositoryType;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.Strings;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -57,7 +53,6 @@ public class HeaderAuthorization implements Authorization {
      * The Repository used to read from Database.
      */
     @Inject
-    @RepositoryConfig(type = RepositoryType.RW)
     private Repository repository;
 
     @SuppressWarnings("rawtypes")
@@ -105,19 +100,17 @@ public class HeaderAuthorization implements Authorization {
                 request.getAttribute("lada.user.roles").toString();
             UserInfo info = getGroupsFromDB(roleString);
             info.setName(request.getAttribute("lada.user.name").toString());
-            QueryBuilder<LadaUser> builder = new QueryBuilder<LadaUser>(
-                repository.entityManager(Strings.STAMM),
-                LadaUser.class
-            );
+            QueryBuilder<LadaUser> builder =
+                repository.queryBuilder(LadaUser.class);
             builder.and("name", info.getName());
             List<LadaUser> user =
-                repository.filterPlain(builder.getQuery(), Strings.STAMM);
+                repository.filterPlain(builder.getQuery());
             if (user == null || user.isEmpty()) {
                 LadaUser newUser = new LadaUser();
                 newUser.setName(info.getName());
-                repository.create(newUser, Strings.STAMM);
+                repository.create(newUser);
                 user =
-                    repository.filterPlain(builder.getQuery(), Strings.STAMM);
+                    repository.filterPlain(builder.getQuery());
             }
             info.setUserId(user.get(0).getId());
             return info;
@@ -210,16 +203,14 @@ public class HeaderAuthorization implements Authorization {
      * @return The UserInfo contianing roles and user name.
      */
     private UserInfo getGroupsFromDB(String roles) {
-        QueryBuilder<Auth> builder = new QueryBuilder<Auth>(
-            repository.entityManager(Strings.STAMM),
-            Auth.class);
+        QueryBuilder<Auth> builder = repository.queryBuilder(Auth.class);
         roles = roles.replace("[", "");
         roles = roles.replace("]", "");
         roles = roles.replace(" ", "");
         String[] mst = roles.split(",");
         builder.andIn("ldapGroup", Arrays.asList(mst));
         Response response =
-            repository.filter(builder.getQuery(), Strings.STAMM);
+            repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<Auth> auth = (List<Auth>) response.getData();
         UserInfo userInfo = new UserInfo();
@@ -235,13 +226,9 @@ public class HeaderAuthorization implements Authorization {
      */
     @Override
     public boolean isReadOnly(Integer probeId) {
-        EntityManager manager = repository.entityManager(Strings.LAND);
-        QueryBuilder<Messung> builder =
-            new QueryBuilder<Messung>(
-                manager,
-                Messung.class);
+        QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
         builder.and("probeId", probeId);
-        Response response = repository.filter(builder.getQuery(), Strings.LAND);
+        Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<Messung> messungen = (List<Messung>) response.getData();
         for (int i = 0; i < messungen.size(); i++) {
@@ -251,10 +238,10 @@ public class HeaderAuthorization implements Authorization {
             StatusProtokoll status =
                 repository.getByIdPlain(
                     StatusProtokoll.class,
-                    messungen.get(i).getStatus(),
-                    Strings.LAND);
+                    messungen.get(i).getStatus()
+                );
             StatusKombi kombi = repository.getByIdPlain(
-                StatusKombi.class, status.getStatusKombi(), Strings.STAMM);
+                StatusKombi.class, status.getStatusKombi());
             if (kombi.getStatusWert().getId() != 0
                 && kombi.getStatusWert().getId() != 4
             ) {

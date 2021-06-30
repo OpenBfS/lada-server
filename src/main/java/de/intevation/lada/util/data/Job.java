@@ -8,6 +8,9 @@
 
 package de.intevation.lada.util.data;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import org.apache.log4j.Logger;
 
 import de.intevation.lada.util.auth.UserInfo;
@@ -19,19 +22,9 @@ import de.intevation.lada.util.auth.UserInfo;
 abstract public class Job extends Thread {
 
     /**
-     * True if job has finished and will not change it's status anymore.
-     */
-    protected boolean done = false;
-
-    /**
      * Logger instance.
      */
     protected Logger logger;
-
-    /**
-     * Message String, used in case of an error.
-     */
-    protected String message;
 
     /**
      * Id of this job.
@@ -46,12 +39,12 @@ abstract public class Job extends Thread {
     /**
      * Possible status values for jobs.
      */
-    public enum Status { waiting, running, finished, error }
+    public enum Status { WAITING, RUNNING, FINISHED, ERROR }
 
     /**
      * The current job status.
      */
-    protected Status currentStatus = Status.waiting;
+    protected JobStatus currentStatus = new JobStatus(Status.WAITING);
 
     /**
      * Cleanup method triggered when the job has finished
@@ -63,18 +56,18 @@ abstract public class Job extends Thread {
      * Set this job to failed state.
      * @param m Optional message
      */
-    protected void fail(String m) {
+    public void fail(String m) {
         try {
-            this.setCurrentStatus(Status.error);
+            this.setCurrentStatus(Status.ERROR);
             this.setDone(true);
-            this.message = m;
+            this.setMessage(m);
         } catch (IllegalStatusTransitionException iste) {
-            this.currentStatus = Status.error;
-            this.message = "Internal server errror";
-            this.done = true;
+            this.currentStatus.setStatus(Status.ERROR);
+            this.currentStatus.setMessage("Internal server errror");
+            this.currentStatus.setDone(true);
         } finally {
             logger.error(
-                String.format("Export failed with message: %s", message));
+                String.format("Export failed with message: %s", getMessage()));
         }
     }
 
@@ -83,12 +76,12 @@ abstract public class Job extends Thread {
      */
     protected void finish() {
         try {
-            this.setCurrentStatus(Status.finished);
+            this.setCurrentStatus(Status.FINISHED);
             this.setDone(true);
         } catch (IllegalStatusTransitionException iste) {
-            this.currentStatus = Status.error;
-            this.message = "Internal server errror";
-            this.done = true;
+            this.currentStatus.setStatus(Status.ERROR);
+            this.currentStatus.setMessage("Internal server errror");
+            this.currentStatus.setDone(true);
         }
     }
 
@@ -105,14 +98,14 @@ abstract public class Job extends Thread {
      * @return message as String
      */
     public String getMessage() {
-        return message;
+        return currentStatus.getMessage();
     }
 
     /**
      * Return the current job status.
      * @return Job status
      */
-    public Status getStatus() {
+    public JobStatus getStatus() {
         return currentStatus;
     }
 
@@ -121,7 +114,7 @@ abstract public class Job extends Thread {
      * @return Status as String
      */
     public String getStatusName() {
-        return currentStatus.name();
+        return currentStatus.getStatus().name().toLowerCase();
     }
 
     public UserInfo getUserInfo() {
@@ -133,7 +126,7 @@ abstract public class Job extends Thread {
     * @return True if done, else false
     */
    public boolean isDone() {
-       return done;
+       return currentStatus.isDone();
    }
 
     /**
@@ -141,7 +134,7 @@ abstract public class Job extends Thread {
      * Should be overwritten in child classes.
      */
     public void run() {
-        currentStatus = Status.running;
+        currentStatus.setStatus(Status.RUNNING);
     }
 
     /**
@@ -157,7 +150,7 @@ abstract public class Job extends Thread {
             throw new IllegalStatusTransitionException(
                 "Invalid job status transition: Job is already done");
         }
-        this.currentStatus = status;
+        this.currentStatus.setStatus(status);
     }
 
     /**
@@ -167,11 +160,15 @@ abstract public class Job extends Thread {
      *                                  job is already done
      */
     protected void setDone(boolean done) throws IllegalArgumentException {
-        if (!done && this.done) {
+        if (!done && this.isDone()) {
             throw new IllegalArgumentException(
                 "Job is already done, can not reset done to false");
         }
-        this.done = done;
+        this.currentStatus.setDone(done);
+    }
+
+    protected void setMessage(String message) {
+        this.currentStatus.setMessage(message);
     }
 
     /**
@@ -200,4 +197,64 @@ abstract public class Job extends Thread {
         }
     }
 
+    /**
+     * Class modeling a job status.
+     * Stores job status and message
+     */
+    public static class JobStatus {
+        private Status status;
+        private String message;
+        private boolean done;
+
+        public JobStatus(Status s) {
+            this(s, "", false);
+        }
+
+        public JobStatus(Status s, String m, boolean d) {
+            this.status = s;
+            this.message = m != null? m: "";
+            this.done = d;
+        }
+
+        public boolean isDone() {
+            return done;
+        }
+
+        public Status getStatus() {
+            return status;
+        }
+
+        /**
+         * Return status string as lower case
+         * @return Status string
+         */
+        public String getStatusString() {
+            return status.name().toLowerCase();
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setDone(boolean done) {
+            this.done = done;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public void setStatus(Status status) {
+            this.status = status;
+        }
+
+        public JsonObject toJsonObject() {
+            JsonObject object = Json.createObjectBuilder()
+                .add("status", getStatusString())
+                .add("message", getMessage())
+                .add("done", isDone())
+                .build();
+            return object;
+        }
+    }
 }
