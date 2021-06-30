@@ -322,7 +322,7 @@ public class AsyncExportService {
             logger.info(String.format("Could not find status for job %s", id));
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        return Response.ok(status.toJsonObject(), MediaType.APPLICATION_JSON).build();
+        return Response.ok(status, MediaType.APPLICATION_JSON).build();
     }
 
     /**

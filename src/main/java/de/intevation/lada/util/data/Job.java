@@ -11,6 +11,9 @@ package de.intevation.lada.util.data;
 import javax.json.Json;
 import javax.json.JsonObject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import org.apache.log4j.Logger;
 
 import de.intevation.lada.util.auth.UserInfo;
@@ -39,7 +42,13 @@ abstract public class Job extends Thread {
     /**
      * Possible status values for jobs.
      */
-    public enum Status { WAITING, RUNNING, FINISHED, ERROR }
+    public enum Status {
+        WAITING, RUNNING, FINISHED, ERROR;
+        @JsonValue
+        public String getName() {
+            return this.name().toLowerCase();
+        }
+    }
 
     /**
      * The current job status.
@@ -228,6 +237,7 @@ abstract public class Job extends Thread {
          * Return status string as lower case
          * @return Status string
          */
+        @JsonIgnore
         public String getStatusString() {
             return status.name().toLowerCase();
         }

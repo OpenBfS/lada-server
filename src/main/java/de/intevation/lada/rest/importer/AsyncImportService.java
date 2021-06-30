@@ -141,13 +141,7 @@ public class AsyncImportService {
             logger.info(String.format("Could not find status for job %s", id));
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        JsonObject responseJson = Json.createObjectBuilder()
-            .add("status", status.getStatusString())
-            .add("message", status.getMessage())
-            .add("done", status.isDone())
-            .build();
-
-        return Response.ok(responseJson.toString()).build();
+        return Response.ok(status, MediaType.APPLICATION_JSON).build();
     }
 
     @GET
