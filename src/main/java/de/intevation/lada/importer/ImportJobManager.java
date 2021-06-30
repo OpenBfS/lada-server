@@ -66,6 +66,7 @@ public class ImportJobManager extends JobManager {
         newJob.setRepository(repository);
         newJob.setUserInfo(userInfo);
         newJob.setTagutil(tagUtil);
+        newJob.setUncaughtExceptionHandler(new ImportJobExceptionHandler());
         newJob.start();
         activeJobs.put(id, newJob);
         return id;
@@ -103,5 +104,17 @@ public class ImportJobManager extends JobManager {
             removeJob(job);
         }
         return jsonString;
+    }
+
+    private class ImportJobExceptionHandler
+        implements Thread.UncaughtExceptionHandler {
+        public void uncaughtException(Thread t, Throwable e) {
+            String errMsg = e.getMessage();
+            logger.error("ImportJob failed with:");
+            logger.error(errMsg);
+            e.printStackTrace();
+
+            ((LafImportJob) t).fail(errMsg);
+        }
     }
 }
