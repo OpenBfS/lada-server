@@ -37,7 +37,7 @@ import org.junit.runner.RunWith;
 import de.intevation.lada.model.stammdaten.BaseQuery;
 
 /**
- * Class to test the Lada server 'universal' service.
+ * Class to test the Lada server 'universal' service and related SqlService.
  *
  */
 @RunWith(Arquillian.class)
@@ -63,6 +63,35 @@ public class UniversalServiceTest extends BaseTest {
                 .add("columnIndex", 0)
                 .add("filterValue", "")
                 .add("filterActive", false)
+                .add("filterIsNull", false)
+                .add("filterNegate", false)
+                .add("filterRegex", false)
+                .add("gridColumnId", 1))
+            .add(Json.createObjectBuilder()
+                .add("columnIndex", 1)
+                .add("filterValue", "")
+                .add("filterActive", false)
+                .add("filterIsNull", false)
+                .add("filterNegate", false)
+                .add("filterRegex", false)
+                .add("gridColumnId", 2))
+        ).build();
+
+    // Expected statement according to stamm.base_query.sql
+    // in dbUnit_probe_query.json
+    private final String sqlTemplate = "PREPARE request AS \n"
+        + "SELECT hauptproben_nr, umw_id FROM land.probe%s;\n"
+        + "EXECUTE request%s;\nDEALLOCATE request;";
+
+    // A 'hauptproben_nr' from land.probe in dbUnit_probe_query.json
+    private final String filterValue = "120510001";
+
+    private JsonObject filteredRequestJson = Json.createObjectBuilder()
+        .add("columns", Json.createArrayBuilder()
+            .add(Json.createObjectBuilder()
+                .add("columnIndex", 0)
+                .add("filterValue", filterValue)
+                .add("filterActive", true)
                 .add("filterIsNull", false)
                 .add("filterNegate", false)
                 .add("filterRegex", false)
@@ -203,9 +232,84 @@ public class UniversalServiceTest extends BaseTest {
 
         assertContains(responseJson, dataKey);
         Assert.assertEquals(
-            "PREPARE request AS \n"
-            + "SELECT hauptproben_nr, umw_id FROM land.probe;\n"
-            + "EXECUTE request;\nDEALLOCATE request;",
+            String.format(this.sqlTemplate, "", ""),
+            responseJson.getString(dataKey));
+
+        prot.setPassed(true);
+    }
+
+    /**
+     * Test fetching data returned by a query with filter.
+     *
+     * @param baseUrl The server url used for the request.
+     */
+    @Test
+    @InSequence(5)
+    @RunAsClient
+    public final void testGetFiltered(@ArquillianResource URL baseUrl) {
+        System.out.print(".");
+        Protocol prot = new Protocol();
+        prot.setName("universal service");
+        prot.setType("universal get filtered");
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        Response response = client.target(
+            baseUrl + "rest/universal")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .post(Entity.entity(this.filteredRequestJson.toString(),
+                    MediaType.APPLICATION_JSON));
+        JsonObject responseJson = parseResponse(response, prot);
+
+        assertContains(responseJson, totalCountKey);
+
+        // Filtered for a unique hauptproben_nr
+        Assert.assertEquals(
+            1, responseJson.getInt(totalCountKey));
+
+        assertContains(responseJson, dataKey);
+        Assert.assertEquals(
+            this.filterValue,
+            responseJson.getJsonArray(dataKey)
+                .getJsonObject(0).getString("hauptproben_nr"));
+
+        prot.setPassed(true);
+    }
+
+    /**
+     * Test interface to retrieve SQL statement with parameters.
+     *
+     * @param baseUrl The server url used for the request.
+     */
+    @Test
+    @InSequence(6)
+    @RunAsClient
+    public final void testGetSqlWithParameter(@ArquillianResource URL baseUrl) {
+        System.out.print(".");
+        Protocol prot = new Protocol();
+        prot.setName("SQL service");
+        prot.setType("SQL service with parameters");
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        Response response = client.target(
+            baseUrl + "rest/sql")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .post(Entity.entity(this.filteredRequestJson.toString(),
+                    MediaType.APPLICATION_JSON));
+        JsonObject responseJson = parseResponse(response, prot);
+
+        assertContains(responseJson, dataKey);
+        Assert.assertEquals(
+            String.format(
+                this.sqlTemplate,
+                // Corresponds to stamm.filter.sql in dbUnit_probe_query.json
+                " WHERE hauptproben_nr ~ $1",
+                "('^" + filterValue + ".*$')"),
             responseJson.getString(dataKey));
 
         prot.setPassed(true);
