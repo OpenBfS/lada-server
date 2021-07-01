@@ -170,7 +170,7 @@ public abstract class QueryExportJob extends ExportJob {
     throws QueryExportException {
         try {
             QueryTools queryTools = new QueryTools(
-                repository, qId, columns);
+                repository, columns);
             List<Map<String, Object>> result = queryTools.getResultForQuery();
             logger.debug(String.format(
                 "Fetched %d primary records",
@@ -347,7 +347,6 @@ public abstract class QueryExportJob extends ExportJob {
         exportParameters.getJsonArray("columns").forEach(jsonValue -> {
             JsonObject columnObj = (JsonObject) jsonValue;
             GridColumnValue columnValue = new GridColumnValue();
-            GridColumn gridColumn;
             columnValue.setgridColumnId(columnObj.getInt("gridColumnId"));
             String sort = columnObj.get("sort") != null
                 && columnObj.get("sort").getValueType() == ValueType.STRING
@@ -362,7 +361,7 @@ public abstract class QueryExportJob extends ExportJob {
             columnValue.setFilterIsNull(columnObj.getBoolean("filterIsNull"));
             columnValue.setFilterNegate(columnObj.getBoolean("filterNegate"));
             columnValue.setFilterRegex(columnObj.getBoolean("filterRegex"));
-            gridColumn = repository.getByIdPlain(
+            GridColumn gridColumn = repository.getByIdPlain(
                 GridColumn.class, columnValue.getGridColumnId());
 
             columnValue.setGridColumn(gridColumn);

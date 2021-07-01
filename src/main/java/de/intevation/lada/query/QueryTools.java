@@ -56,7 +56,6 @@ public class QueryTools {
      */
     public QueryTools(
         Repository repository,
-        Integer qId,
         List<GridColumnValue> customColumns
     ) {
         this.repository = repository;
@@ -64,7 +63,10 @@ public class QueryTools {
 
         this.sql = prepareSql(
             customColumns,
-            repository.getByIdPlain(BaseQuery.class, qId).getSql());
+            repository.getByIdPlain(
+                BaseQuery.class,
+                customColumns.get(0).getGridColumn().getBaseQuery()
+            ).getSql());
 
         // Initialize this.filterValues
         prepareFilters();

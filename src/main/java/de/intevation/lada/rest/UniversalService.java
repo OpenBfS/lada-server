@@ -151,13 +151,8 @@ public class UniversalService {
             columnValue.setGridColumn(gridColumn);
         }
 
-        GridColumn gridColumn = repository.getByIdPlain(
-            GridColumn.class,
-            Integer.valueOf(gridColumnValues.get(0).getGridColumnId())
-        );
-
         QueryTools queryTools = new QueryTools(
-            repository, gridColumn.getBaseQuery(), columns.getColumns());
+            repository, columns.getColumns());
         List<Map<String, Object>> result = queryTools.getResultForQuery();
         if (result == null) {
             return new Response(true, StatusCodes.OK, null);

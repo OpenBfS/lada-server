@@ -96,9 +96,7 @@ public class SqlService {
             columnValue.setGridColumn(gridColumn);
         }
 
-        Integer qid = gridColumnValues.get(0).getGridColumn().getBaseQuery();
-        QueryTools queryTools = new QueryTools(
-            repository, qid, gridColumnValues);
+        QueryTools queryTools = new QueryTools(repository, gridColumnValues);
         String sql = queryTools.getSql();
         if (sql == null) {
             return new Response(true, StatusCodes.OK, null);
