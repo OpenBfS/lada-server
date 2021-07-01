@@ -88,11 +88,6 @@ public abstract class QueryExportJob extends ExportJob {
     protected Integer qId;
 
     /**
-     * Query tools used to load query data.
-     */
-    private QueryTools queryTools;
-
-    /**
      * Primary data query result.
      */
     protected List<Map<String, Object>> primaryData;
@@ -100,11 +95,9 @@ public abstract class QueryExportJob extends ExportJob {
     /**
      * Constructor.
      * @param jobId Job id
-     * @param queryTools Query tools instance
      */
-    public QueryExportJob(String jobId, QueryTools qTools) {
+    public QueryExportJob(String jobId) {
         super(jobId);
-        this.queryTools = qTools;
         columns = new ArrayList <GridColumnValue>();
         columnsToExport = new ArrayList<String>();
 
@@ -176,8 +169,9 @@ public abstract class QueryExportJob extends ExportJob {
     protected List<Map<String, Object>> getQueryResult()
     throws QueryExportException {
         try {
-            List<Map<String, Object>> result =
-                queryTools.getResultForQuery(columns, qId);
+            QueryTools queryTools = new QueryTools(
+                repository, qId, columns);
+            List<Map<String, Object>> result = queryTools.getResultForQuery();
             logger.debug(String.format(
                 "Fetched %d primary records",
                 result == null ? 0 : result.size()));

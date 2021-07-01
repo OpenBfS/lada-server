@@ -25,7 +25,6 @@ import org.apache.log4j.Logger;
 import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.query.QueryTools;
 
 /**
  * Job class for exporting records to a JSON file.
@@ -37,8 +36,8 @@ public class JsonExportJob extends QueryExportJob {
     private static final int LENGTH = 1024;
     private String subDataJsonKey;
 
-    public JsonExportJob(String jobId, QueryTools queryTools) {
-        super(jobId, queryTools);
+    public JsonExportJob(String jobId) {
+        super(jobId);
         this.format = "json";
         this.downloadFileName = "export.json";
         this.logger =

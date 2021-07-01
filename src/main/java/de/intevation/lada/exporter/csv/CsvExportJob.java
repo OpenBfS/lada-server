@@ -24,7 +24,6 @@ import org.apache.log4j.Logger;
 import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.query.QueryTools;
 
 /**
  * Job class for exporting records to a CSV file.
@@ -35,8 +34,8 @@ public class CsvExportJob extends QueryExportJob {
 
     private static final int SIZE = 1024;
 
-    public CsvExportJob(String jobId, QueryTools queryTools) {
-        super(jobId, queryTools);
+    public CsvExportJob(String jobId) {
+        super(jobId);
         this.format = "csv";
         this.downloadFileName = "export.csv";
         this.logger =

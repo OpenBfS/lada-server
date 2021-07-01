@@ -69,10 +69,6 @@ public class UniversalService {
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
 
-    @Inject
-    private QueryTools queryTools;
-
-
     /**
      * Execute query, using the given result columns.
      * The query can contain the following post data:
@@ -160,9 +156,9 @@ public class UniversalService {
             Integer.valueOf(gridColumnValues.get(0).getGridColumnId())
         );
 
-        qid = gridColumn.getBaseQuery();
-        List<Map<String, Object>> result =
-            queryTools.getResultForQuery(columns.getColumns(), qid);
+        QueryTools queryTools = new QueryTools(
+            repository, gridColumn.getBaseQuery(), columns.getColumns());
+        List<Map<String, Object>> result = queryTools.getResultForQuery();
         if (result == null) {
             return new Response(true, StatusCodes.OK, null);
         }

@@ -54,10 +54,6 @@ public class SqlService {
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
 
-    @Inject
-    private QueryTools queryTools;
-
-
     /**
      * Return SQL as would be executed for the given query.
      * The request can contain the following post data:
@@ -101,15 +97,14 @@ public class SqlService {
         }
 
         Integer qid = gridColumnValues.get(0).getGridColumn().getBaseQuery();
-        String sql =
-            queryTools.prepareSql(gridColumnValues, qid);
+        QueryTools queryTools = new QueryTools(
+            repository, qid, gridColumnValues);
+        String sql = queryTools.getSql();
         if (sql == null) {
             return new Response(true, StatusCodes.OK, null);
         }
-        MultivaluedMap<String, Object> filterValues =
-            queryTools.prepareFilters(gridColumnValues);
 
-        String statement = prepareStatement(sql, filterValues);
+        String statement = prepareStatement(sql, queryTools.getFilterValues());
         return new Response(true, StatusCodes.OK, statement);
     }
 

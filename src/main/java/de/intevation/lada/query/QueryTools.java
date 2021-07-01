@@ -17,7 +17,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
+import javax.persistence.Query;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -38,51 +38,65 @@ import de.intevation.lada.util.data.Repository;
  */
 public class QueryTools {
 
-    @Inject
+    private final Logger logger = Logger.getLogger(QueryTools.class);
+
     private Repository repository;
 
-    @Inject
-    private Logger logger;
+    private String sql;
+
+    private List<GridColumnValue> customColumns;
+
+    private MultivaluedMap<String, Object> filterValues;
 
     /**
-     * Execute query and return the filtered and sorted results.
+     * @param repository Repository for database access.
      * @param customColumns Customized column configs, containing
      *      filter, sorting and references to the respective column.
      * @param qId Query id.
+     */
+    public QueryTools(
+        Repository repository,
+        Integer qId,
+        List<GridColumnValue> customColumns
+    ) {
+        this.repository = repository;
+        this.customColumns = customColumns;
+
+        this.sql = prepareSql(
+            customColumns,
+            repository.getByIdPlain(BaseQuery.class, qId).getSql());
+
+        // Initialize this.filterValues
+        prepareFilters();
+    };
+
+    public String getSql() {
+        return this.sql;
+    }
+
+    public MultivaluedMap<String, Object> getFilterValues() {
+        return this.filterValues;
+    }
+
+    /**
+     * Execute query and return the filtered and sorted results.
+     *
      * @return List of result maps.
      */
-    public List<Map<String, Object>> getResultForQuery(
-        List<GridColumnValue> customColumns,
-        Integer qId
-    ) {
-        String sql = prepareSql(customColumns, qId);
-        MultivaluedMap<String, Object> filterValues =
-            prepareFilters(customColumns);
+    public List<Map<String, Object>> getResultForQuery() {
         List<GridColumn> columns = new ArrayList<GridColumn>();
-        for (GridColumnValue customColumn : customColumns) {
+        for (GridColumnValue customColumn : this.customColumns) {
             columns.add(customColumn.getGridColumn());
         }
-        return execQuery(sql, filterValues, columns);
-
+        return execQuery(columns);
     }
 
     /**
      * Complement SQL statement from base query with filter and sort settings.
      *
      * @param customColumns List<GridColumnValue> with filter and sort settings.
-     * @param qId Database ID of the base query.
+     * @param sql The base query without WHERE and ORDER BY clause.
      * @return The completed query string.
-     */
-    public String prepareSql(List<GridColumnValue> customColumns, Integer qId) {
-        BaseQuery query = repository.getByIdPlain(BaseQuery.class, qId);
-
-        return prepareSql(customColumns, query.getSql());
-    }
-
-    /**
-     * Generate SQL statement from base query and filter and sort settings.
-     *
-     * Static method for unit testing.
      */
     static String prepareSql(List<GridColumnValue> customColumns, String sql) {
         String filterSql = "";
@@ -251,21 +265,17 @@ public class QueryTools {
      * Generate map of parameter names and values to be interpolated into
      * the queries WHERE clause.
      *
-     * @param customColumns List of GridColumnValues containing filter settings
-     * @return The generated map
+     * The result is stored as this.filterValues.
      */
-    public MultivaluedMap<String, Object> prepareFilters(
-        List<GridColumnValue> customColumns
-    ) {
+    private void prepareFilters() {
         //A pattern for finding multiselect date filter values
         Pattern multiselectPattern = Pattern.compile("[0-9]*,[0-9]*");
         Pattern multiselectNumberPattern = Pattern.compile("[0-9.]*,[0-9.]*");
 
         //Map containing all filters and filter values
-        MultivaluedMap<String, Object> filterValues =
-            new MultivaluedHashMap<String, Object>();
+        this.filterValues = new MultivaluedHashMap<String, Object>();
 
-        for (GridColumnValue customColumn : customColumns) {
+        for (GridColumnValue customColumn : this.customColumns) {
             if (customColumn.getFilterActive() != null
                 && customColumn.getFilterActive()
                 && customColumn.getFilterValue() != null
@@ -298,7 +308,7 @@ public class QueryTools {
                                 Tag.class,
                                 Integer.parseInt(tagIds[i])
                             ).getTag();
-                        filterValues.add(param + i, tag);
+                        this.filterValues.add(param + i, tag);
                     }
                     continue;
                 }
@@ -316,7 +326,8 @@ public class QueryTools {
                     try {
                         Pattern.compile(filterValue);
                     } catch (IllegalArgumentException e) {
-                        return null;
+                        this.filterValues = null;
+                        return;
                     }
                 }
 
@@ -334,11 +345,11 @@ public class QueryTools {
                                 values[1].equals("")
                                 ? Double.MAX_VALUE : Double.valueOf(values[1]);
                             //Add parameters and values to filter map
-                            filterValues.add(params[0], from);
-                            filterValues.add(params[1], to);
+                            this.filterValues.add(params[0], from);
+                            this.filterValues.add(params[1], to);
                         }
                     } else {
-                        filterValues.add(currentFilterParam, filterValue);
+                        this.filterValues.add(currentFilterParam, filterValue);
                     }
                 } else {
                     //If filter is a multiselect date filter
@@ -359,8 +370,10 @@ public class QueryTools {
                                 ? Integer.MAX_VALUE
                                 : Long.valueOf(values[1]) / 1000;
                             //Add parameters and values to filter map
-                            filterValues.add(params[0], String.valueOf(from));
-                            filterValues.add(params[1], String.valueOf(to));
+                            this.filterValues.add(
+                                params[0], String.valueOf(from));
+                            this.filterValues.add(
+                                params[1], String.valueOf(to));
                         }
                     } else {
                         //else add all filtervalues to the same parameter name
@@ -371,63 +384,54 @@ public class QueryTools {
                             for (Object value : multiselect) {
                                 Integer vNumber =
                                     Integer.valueOf(value.toString());
-                                filterValues.add(
+                                this.filterValues.add(
                                     filter.getParameter(), vNumber);
                             }
                         } else {
                             for (String value : multiselect) {
-                                filterValues.add(filter.getParameter(), value);
+                                this.filterValues.add(
+                                    filter.getParameter(), value);
                             }
                         }
                     }
                 }
             }
         }
-
-        return filterValues;
     }
 
     private List<Map<String, Object>> execQuery(
-        String sql,
-        MultivaluedMap<String, Object> filterValues,
         List<GridColumn> columns
     ) {
         try {
-            javax.persistence.Query q = prepareQuery(sql, filterValues);
+            Query q = prepareQuery();
             if (q == null) {
                 return new ArrayList<>();
             }
             return prepareResult(q.getResultList(), columns);
         } catch (Exception e) {
             logger.debug("Exception", e);
-            logger.debug("SQL: \n" + sql);
-            logger.debug("filterValues:  " + filterValues);
+            logger.debug("SQL: \n" + this.sql);
+            logger.debug("filterValues:  " + this.filterValues);
             throw e;
         }
     }
 
     /**
      * Creates a query from a given sql and inserts the given parameters.
-     * @param sql The query sql string
-     * @param params A map containing parameter names and values
-     * @param manager Entity manager
+     *
      * @return The query
      */
-    public javax.persistence.Query prepareQuery(
-        String sql,
-        MultivaluedMap<String, Object> params
-    ) {
-        javax.persistence.Query query = repository.queryFromString(sql);
-        Set<String> keys = params.keySet();
+    private Query prepareQuery() {
+        Query query = repository.queryFromString(this.sql);
+        Set<String> keys = this.filterValues.keySet();
         for (String key : keys) {
             List<Object> values = new ArrayList<>();
-            for (Object value: params.get(key)) {
+            for (Object value: this.filterValues.get(key)) {
                 values.add(value);
             }
             query.setParameter(key, values);
         }
         return query;
-
     }
 
     /**
@@ -436,7 +440,7 @@ public class QueryTools {
      * @param names The columns queried by the client
      * @return List of result maps, containing only the configured columns
      */
-    public List<Map<String, Object>> prepareResult(
+    private List<Map<String, Object>> prepareResult(
         List<Object[]> result,
         List<GridColumn> names
     ) {

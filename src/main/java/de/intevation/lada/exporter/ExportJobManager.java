@@ -29,7 +29,6 @@ import de.intevation.lada.exporter.ExportJob.Status;
 import de.intevation.lada.exporter.csv.CsvExportJob;
 import de.intevation.lada.exporter.json.JsonExportJob;
 import de.intevation.lada.exporter.laf.LafExportJob;
-import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 
@@ -75,9 +74,6 @@ public class ExportJobManager {
     @Inject
     private Repository repository;
 
-    @Inject
-    private QueryTools queryTools;
-
     public ExportJobManager() {
         logger = Logger.getLogger("ExportJobManager");
         logger.debug("Creating ExportJobManager");
@@ -116,7 +112,7 @@ public class ExportJobManager {
 
         switch (format) {
             case "csv":
-                newJob = new CsvExportJob(id, queryTools);
+                newJob = new CsvExportJob(id);
                 newJob.setExporter(csvExporter);
                 break;
             case "laf":
@@ -124,7 +120,7 @@ public class ExportJobManager {
                 newJob.setExporter(lafExporter);
                 break;
             case "json":
-                newJob = new JsonExportJob(id, queryTools);
+                newJob = new JsonExportJob(id);
                 newJob.setExporter(jsonExporter);
                 break;
             default:
