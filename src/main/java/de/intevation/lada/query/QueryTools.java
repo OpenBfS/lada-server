@@ -105,11 +105,7 @@ public class QueryTools {
      * @return List of result maps.
      */
     public List<Map<String, Object>> getResultForQuery() {
-        List<GridColumn> columns = new ArrayList<GridColumn>();
-        for (GridColumnValue customColumn : this.customColumns) {
-            columns.add(customColumn.getGridColumn());
-        }
-        return execQuery(columns);
+        return prepareResult(prepareQuery().getResultList());
     }
 
     /**
@@ -432,23 +428,6 @@ public class QueryTools {
         }
     }
 
-    private List<Map<String, Object>> execQuery(
-        List<GridColumn> columns
-    ) {
-        try {
-            Query q = prepareQuery();
-            if (q == null) {
-                return new ArrayList<>();
-            }
-            return prepareResult(q.getResultList(), columns);
-        } catch (Exception e) {
-            logger.debug("Exception", e);
-            logger.debug("SQL: \n" + getSql());
-            logger.debug("filterValues:  " + this.filterValues);
-            throw e;
-        }
-    }
-
     /**
      * Creates a query from a given sql and inserts the given parameters.
      *
@@ -474,19 +453,19 @@ public class QueryTools {
      * @return List of result maps, containing only the configured columns
      */
     private List<Map<String, Object>> prepareResult(
-        List<Object[]> result,
-        List<GridColumn> names
+        List<Object[]> result
     ) {
         if (result.size() == 0) {
             return null;
         }
+
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
         for (Object[] row: result) {
             Map<String, Object> set = new HashMap<String, Object>();
-            for (int i = 0; i < names.size(); i++) {
+            for (GridColumnValue column: this.customColumns) {
                 set.put(
-                    names.get(i).getDataIndex(),
-                    row[names.get(i).getPosition() - 1]);
+                    column.getGridColumn().getDataIndex(),
+                    row[column.getGridColumn().getPosition() - 1]);
             }
             ret.add(set);
         }
