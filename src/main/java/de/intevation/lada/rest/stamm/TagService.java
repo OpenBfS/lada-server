@@ -120,9 +120,14 @@ import de.intevation.lada.util.rest.Response;
         CriteriaQuery<Tag> criteriaQuery = builder.createQuery(Tag.class);
         Root<Tag> root = criteriaQuery.from(Tag.class);
         Predicate zeroMstfilter = builder.isNull(root.get("mstId"));
-        Predicate userMstFilter =
+        Predicate filter;
+        if (userInfo.getMessstellen().isEmpty()) {
+            filter = zeroMstfilter;
+        } else {
+            Predicate userMstFilter =
             builder.in(root.get("mstId")).value(userInfo.getMessstellen());
-        Predicate filter = builder.or(zeroMstfilter, userMstFilter);
+            filter = builder.or(zeroMstfilter, userMstFilter);
+        }
         if (probeId != null) {
             Join<Tag, TagZuordnung> joinTagZuordnung =
                 root.join(
