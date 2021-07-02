@@ -314,4 +314,61 @@ public class UniversalServiceTest extends BaseTest {
 
         prot.setPassed(true);
     }
+
+    /**
+     * Test fetching data returned by a query with empty result set.
+     *
+     * @param baseUrl The server url used for the request.
+     */
+    @Test
+    @InSequence(7)
+    @RunAsClient
+    public final void testGetEmpty(@ArquillianResource URL baseUrl) {
+        System.out.print(".");
+        Protocol prot = new Protocol();
+        prot.setName("universal service");
+        prot.setType("universal get empty");
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        JsonObject requestEmpty = Json.createObjectBuilder()
+            .add("columns", Json.createArrayBuilder()
+                .add(Json.createObjectBuilder()
+                    .add("columnIndex", 0)
+                    .add("filterValue", "not existing value")
+                    .add("filterActive", true)
+                    .add("filterIsNull", false)
+                    .add("filterNegate", false)
+                    .add("filterRegex", false)
+                    .add("gridColumnId", 1))
+                .add(Json.createObjectBuilder()
+                    .add("columnIndex", 1)
+                    .add("filterValue", "")
+                    .add("filterActive", false)
+                    .add("filterIsNull", false)
+                    .add("filterNegate", false)
+                    .add("filterRegex", false)
+                    .add("gridColumnId", 2))
+        ).build();
+
+        Response response = client.target(
+            baseUrl + "rest/universal")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .post(Entity.entity(requestEmpty.toString(),
+                    MediaType.APPLICATION_JSON));
+        JsonObject responseJson = parseResponse(response, prot);
+
+        assertContains(responseJson, totalCountKey);
+
+        // Filtered for a unique hauptproben_nr
+        Assert.assertEquals(
+            0, responseJson.getInt(totalCountKey));
+
+        assertContains(responseJson, dataKey);
+        Assert.assertTrue(responseJson.isNull(dataKey));
+
+        prot.setPassed(true);
+    }
 }
