@@ -460,7 +460,6 @@ CREATE TABLE lada_user (
     name character varying(80) NOT NULL,
     UNIQUE (name)
 );
-INSERT INTO lada_user VALUES(0, 'Default');
 
 
 CREATE TABLE base_query (
@@ -471,15 +470,15 @@ CREATE TABLE base_query (
 CREATE TABLE query_user (
     id serial PRIMARY KEY,
     name character varying(80) NOT NULL,
-    user_id integer REFERENCES lada_user,
-    base_query integer REFERENCES base_query,
-    description text
+    user_id integer NOT NULL REFERENCES lada_user,
+    base_query integer NOT NULL REFERENCES base_query,
+    description text NOT NULL
 );
 
 CREATE TABLE query_messstelle (
     id serial PRIMARY KEY,
-    query integer REFERENCES query_user ON DELETE CASCADE,
-    mess_stelle character varying(5) REFERENCES mess_stelle
+    query integer NOT NULL REFERENCES query_user ON DELETE CASCADE,
+    mess_stelle character varying(5) NOT NULL REFERENCES mess_stelle
 );
 
 
@@ -917,7 +916,7 @@ CREATE TABLE importer_config (
 
 CREATE TABLE grid_column (
     id serial PRIMARY KEY,
-    base_query integer REFERENCES base_query,
+    base_query integer NOT NULL REFERENCES base_query ON DELETE CASCADE,
     name character varying(80) NOT NULL,
     data_index character varying(80) NOT NULL,
     position integer NOT NULL CHECK(position > 0),
@@ -930,7 +929,7 @@ CREATE TABLE grid_column (
 
 CREATE TABLE grid_column_values (
     id serial PRIMARY KEY,
-    user_id integer REFERENCES lada_user,
+    user_id integer NOT NULL REFERENCES lada_user,
     grid_column integer NOT NULL REFERENCES grid_column,
     query_user integer NOT NULL REFERENCES query_user ON DELETE CASCADE,
     sort character varying(4),
