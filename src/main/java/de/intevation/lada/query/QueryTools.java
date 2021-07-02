@@ -40,6 +40,11 @@ public class QueryTools {
 
     private final Logger logger = Logger.getLogger(QueryTools.class);
 
+    static final String GENERICID_FILTER_TYPE = "genericid";
+    static final String GENERICTEXT_FILTER_TYPE = "generictext";
+    static final String TAG_FILTER_TYPE = "tag";
+    static final String TEXT_FILTER_TYPE = "text";
+
     private Repository repository;
 
     private String sql;
@@ -142,13 +147,13 @@ public class QueryTools {
                 String currentFilterString = filter.getSql();
                 String currentFilterParam = filter.getParameter();
                 String filterType = filter.getFilterType().getType();
-                if (filterType.equals("generictext")
-                    || filterType.equals("genericid")
+                if (GENERICTEXT_FILTER_TYPE.equals(filterType)
+                    || GENERICID_FILTER_TYPE.equals(filterType)
                 ) {
                     subquery = true;
                     generic = true;
                 }
-                if (filterType.equals("generictext")) {
+                if (GENERICTEXT_FILTER_TYPE.equals(filterType)) {
                     String genTextParam = ":" + filter.getParameter() + "Param";
                     String genTextValue = filter.getParameter() + "Value";
                     currentFilterString =
@@ -160,7 +165,7 @@ public class QueryTools {
                     currentFilterString =
                         currentFilterString.replace(
                             ":" + genTextValue, ":" + currentFilterParam);
-                } else if (filterType.equals("tag")) {
+                } else if (TAG_FILTER_TYPE.equals(filterType)) {
                     String[] tagIds = filterValue.split(",");
                     int tagNumber = tagIds.length;
                     String paramlist = "";
@@ -209,7 +214,7 @@ public class QueryTools {
                 Filter filter = customColumn.getGridColumn().getFilter();
                 String currentFilterString = filter.getSql();
                 String filterType = filter.getFilterType().getType();
-                if (filterType.equals("generictext")) {
+                if (GENERICTEXT_FILTER_TYPE.equals(filterType)) {
                     currentFilterString =
                         customColumn.getGridColumn().getDataIndex()
                         + " IS NULL";
@@ -265,7 +270,7 @@ public class QueryTools {
         //TODO Avoid using subqueries to use aliases in the where clause
         //Append generic and/or tag filter sql seperated from other filters
         if (subquery) {
-            sql = "SELECT * FROM ( " + sql + " ) AS inner_query ";
+            sql = "SELECT * FROM (" + sql + ") AS inner_query";
             sql += genericFilterSql;
         }
         return sql;
@@ -300,7 +305,7 @@ public class QueryTools {
                 String filterType = filter.getFilterType().getType();
 
                 //Check if filter is generic and replace param and value param
-                if (filterType.equals("generictext")) {
+                if (GENERICTEXT_FILTER_TYPE.equals(filterType)) {
                     String genTextValue = filter.getParameter() + "Value";
                     currentFilterParam =
                         genTextValue + customColumn.getGridColumnId();
@@ -308,7 +313,7 @@ public class QueryTools {
 
                 // If a tag filter is applied, split param into n
                 // numbered params for n tags to filter
-                if (filterType.equals("tag")) {
+                if (TAG_FILTER_TYPE.equals(filterType)) {
                     String[] tagIds = filterValue.split(",");
                     int tagNumber = tagIds.length;
                     String param = filter.getParameter();
@@ -324,8 +329,8 @@ public class QueryTools {
                 }
 
                 //Check if Filter is an in filter
-                if (filterType.equals("generictext")
-                    || filterType.equals("text")
+                if (GENERICTEXT_FILTER_TYPE.equals(filterType)
+                    || TEXT_FILTER_TYPE.equals(filterType)
                 ) {
                     if (customColumn.getFilterRegex() != null
                         && !customColumn.getFilterRegex()

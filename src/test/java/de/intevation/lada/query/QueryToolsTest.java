@@ -13,6 +13,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import de.intevation.lada.model.stammdaten.Filter;
+import de.intevation.lada.model.stammdaten.FilterType;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
 import de.intevation.lada.model.stammdaten.GridColumn;
 
@@ -23,15 +25,24 @@ public class QueryToolsTest {
 
     private static final String TEST_QUERY_BASE = "Would be SQL in real life";
 
+    private FilterType filterType = new FilterType();
+    private Filter filter = new Filter();
+    private final String filterSql = "test = :param";
+
+    private GridColumn column1 = new GridColumn(),
+        column2 = new GridColumn(),
+        column3 = new GridColumn();
+
     private GridColumnValue columnValue1 = new GridColumnValue(),
         columnValue2 = new GridColumnValue(),
         columnValue3 = new GridColumnValue();
+    private final String filterValue = "'test'";
 
     private List<GridColumnValue> columnValues = List.of(
         columnValue1, columnValue2, columnValue3);
 
     /**
-     * Test preparation of ORDER BY clause if no specific sorting is requested.
+     * Test preparation of SQL statement if no filter and sorting is requested.
      */
     @Test
     public void prepareSqlNoSortTest() {
@@ -46,9 +57,8 @@ public class QueryToolsTest {
      */
     @Test
     public void prepareSqlOneColSortTest() {
-        GridColumn column = new GridColumn();
-        column.setDataIndex("test");
-        columnValue1.setGridColumn(column);
+        column1.setDataIndex("test");
+        columnValue1.setGridColumn(column1);
         // TODO: Schema should allow only ASC/DESC or just make it a boolean!
         columnValue1.setSort("xxx");
         assertEquals(
@@ -62,13 +72,11 @@ public class QueryToolsTest {
      */
     @Test
     public void prepareSqlTwoColSortTest() {
-        GridColumn column1 = new GridColumn();
         column1.setDataIndex("test");
         columnValue1.setGridColumn(column1);
         // TODO: Schema should allow only ASC/DESC or just make it a boolean!
         columnValue1.setSort("xxx");
 
-        GridColumn column2 = new GridColumn();
         column2.setDataIndex("another");
         columnValue2.setGridColumn(column2);
         // TODO: Schema should allow only ASC/DESC or just make it a boolean!
@@ -85,20 +93,17 @@ public class QueryToolsTest {
      */
     @Test
     public void prepareSqlOrderedColSortTest() {
-        GridColumn column1 = new GridColumn();
         column1.setDataIndex("test");
         columnValue1.setGridColumn(column1);
         // TODO: Schema should allow only ASC/DESC or just make it a boolean!
         columnValue1.setSort("xxx");
 
-        GridColumn column2 = new GridColumn();
         column2.setDataIndex("second");
         columnValue2.setGridColumn(column2);
         // TODO: Schema should allow only ASC/DESC or just make it a boolean!
         columnValue2.setSort("yyy");
         columnValue2.setSortIndex(2);
 
-        GridColumn column3 = new GridColumn();
         column3.setDataIndex("first");
         columnValue3.setGridColumn(column3);
         // TODO: Schema should allow only ASC/DESC or just make it a boolean!
@@ -109,5 +114,46 @@ public class QueryToolsTest {
             TEST_QUERY_BASE + " ORDER BY first zzz , second yyy , test xxx ",
             QueryTools.prepareSql(columnValues, TEST_QUERY_BASE)
         );
+    }
+
+    /**
+     * Test preparation of WHERE clause for filtering by one column.
+     */
+    @Test
+    public void prepareSqlOneColFilterTest() {
+        setFilterWithType("test");
+
+        assertEquals(
+            TEST_QUERY_BASE + " WHERE " + filterSql,
+            QueryTools.prepareSql(columnValues, TEST_QUERY_BASE)
+        );
+    }
+
+    /**
+     * Test preparation of WHERE clause for one "generic" filter.
+     */
+    @Test
+    public void prepareSqlOneColGenericFilterTest() {
+        setFilterWithType(QueryTools.GENERICID_FILTER_TYPE);
+
+        assertEquals(
+            "SELECT * FROM (" + TEST_QUERY_BASE
+            + ") AS inner_query WHERE " + filterSql,
+            QueryTools.prepareSql(columnValues, TEST_QUERY_BASE)
+        );
+    }
+
+    private void setFilterWithType(String type) {
+        filterType.setType(type);
+
+        filter.setFilterType(filterType);
+        filter.setSql(filterSql);
+
+        column1.setFilter(filter);
+
+        columnValue1.setGridColumn(column1);
+        columnValue1.setFilterValue(filterValue);
+        columnValue1.setFilterActive(true);
+        columnValue1.setFilterIsNull(false);
     }
 }
