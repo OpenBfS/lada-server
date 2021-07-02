@@ -266,7 +266,6 @@ public class CsvExportJob extends QueryExportJob {
         //Fetch primary records
         try {
             primaryData = getQueryResult();
-            Integer test = qId;
         } catch (QueryExportException qee) {
             fail("Fetching primary data failed");
             return;
