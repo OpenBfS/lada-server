@@ -47,7 +47,11 @@ public class QueryTools {
 
     private Repository repository;
 
+    // Base query and WHERE clause
     private String sql;
+
+    // ORDER BY clause
+    private String sortSql;
 
     private List<GridColumnValue> customColumns;
 
@@ -81,12 +85,14 @@ public class QueryTools {
                 customColumns.get(0).getGridColumn().getBaseQuery()
             ).getSql());
 
+        this.sortSql = prepareSortSql(customColumns);
+
         // Initialize this.filterValues
         prepareFilters();
     };
 
     public String getSql() {
-        return this.sql;
+        return this.sql + this.sortSql;
     }
 
     public MultivaluedMap<String, Object> getFilterValues() {
@@ -107,33 +113,18 @@ public class QueryTools {
     }
 
     /**
-     * Complement SQL statement from base query with filter and sort settings.
+     * Complement SQL statement from base query with filter settings.
      *
      * @param customColumns List<GridColumnValue> with filter and sort settings.
      * @param sql The base query without WHERE and ORDER BY clause.
-     * @return The completed query string.
+     * @return The query including WHERE clause.
      */
     static String prepareSql(List<GridColumnValue> customColumns, String sql) {
         String filterSql = "";
         String genericFilterSql = "";
-        String sortSql = "";
         boolean subquery = false;
-        TreeMap<Integer, String> sortIndMap = new TreeMap<Integer, String>();
 
         for (GridColumnValue customColumn : customColumns) {
-            if (customColumn.getSort() != null
-                && !customColumn.getSort().isEmpty()) {
-                    String sortValue =
-                        customColumn.getGridColumn().getDataIndex() + " "
-                        + customColumn.getSort() + " ";
-                Integer key =
-                    customColumn.getSortIndex() != null
-                    ? customColumn.getSortIndex() : -1;
-                String value = sortIndMap.get(key);
-                value = value != null ? value + ", "  + sortValue : sortValue;
-                sortIndMap.put(key, value);
-            }
-
             boolean generic = false;
             if (customColumn.getFilterActive() != null
                 && customColumn.getFilterActive()
@@ -249,6 +240,42 @@ public class QueryTools {
             }
         }
 
+        // Append (possibly empty) WHERE clause
+        sql += filterSql;
+
+        //Append generic and/or tag filter sql seperated from other filters
+        if (subquery) {
+            sql = "SELECT * FROM (" + sql + ") AS inner_query";
+            sql += genericFilterSql;
+        }
+        return sql;
+    }
+
+    /**
+     * Generate "ORDER BY" clause from query configuration.
+     *
+     * @param customColumns List<GridColumnValue> with filter and sort settings.
+     * @return The "ORDER BY" clause
+     */
+    static String prepareSortSql(List<GridColumnValue> customColumns) {
+        TreeMap<Integer, String> sortIndMap = new TreeMap<Integer, String>();
+        String sortSql = "";
+
+        for (GridColumnValue customColumn : customColumns) {
+            if (customColumn.getSort() != null
+                && !customColumn.getSort().isEmpty()) {
+                    String sortValue =
+                        customColumn.getGridColumn().getDataIndex() + " "
+                        + customColumn.getSort() + " ";
+                Integer key =
+                    customColumn.getSortIndex() != null
+                    ? customColumn.getSortIndex() : -1;
+                String value = sortIndMap.get(key);
+                value = value != null ? value + ", "  + sortValue : sortValue;
+                sortIndMap.put(key, value);
+            }
+        }
+
         if (sortIndMap.size() > 0) {
             NavigableMap <Integer, String> orderedSorts =
                 sortIndMap.tailMap(0, true);
@@ -264,16 +291,7 @@ public class QueryTools {
             sortSql = " ORDER BY " + sortSql;
         }
 
-        // Append (possibly empty) WHERE and ORDER BY clause
-        sql += filterSql + sortSql;
-
-        //TODO Avoid using subqueries to use aliases in the where clause
-        //Append generic and/or tag filter sql seperated from other filters
-        if (subquery) {
-            sql = "SELECT * FROM (" + sql + ") AS inner_query";
-            sql += genericFilterSql;
-        }
-        return sql;
+        return sortSql;
     }
 
     /**
@@ -425,7 +443,7 @@ public class QueryTools {
             return prepareResult(q.getResultList(), columns);
         } catch (Exception e) {
             logger.debug("Exception", e);
-            logger.debug("SQL: \n" + this.sql);
+            logger.debug("SQL: \n" + getSql());
             logger.debug("filterValues:  " + this.filterValues);
             throw e;
         }
@@ -437,7 +455,7 @@ public class QueryTools {
      * @return The query
      */
     private Query prepareQuery() {
-        Query query = repository.queryFromString(this.sql);
+        Query query = repository.queryFromString(getSql());
         Set<String> keys = this.filterValues.keySet();
         for (String key : keys) {
             List<Object> values = new ArrayList<>();
