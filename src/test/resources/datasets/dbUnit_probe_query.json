@@ -8,6 +8,12 @@
         "name": "Proben",
         "base_query": 1
     }],
+    "stamm.filter": [{
+        "id": 1,
+        "sql": "hauptproben_nr ~ :hauptprobenNr",
+        "parameter": "hauptprobenNr",
+        "type": 0
+    }],
     "stamm.result_type": [{
         "id": 1
     }],
@@ -17,6 +23,7 @@
         "name": "hauptprobenNr",
         "data_index": "hauptproben_nr",
         "position": 1,
+        "filter": 1,
         "data_type": 1
     }, {
         "id": 2,

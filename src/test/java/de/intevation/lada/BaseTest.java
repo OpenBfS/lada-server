@@ -131,6 +131,20 @@ public class BaseTest {
      * JSON body.
      *
      * @param response The response to be parsed.
+     * @return Parsed JsonObject or null in case of failure
+     */
+    // TODO: Use in more tests to reduce code duplication
+    public static JsonObject parseResponse(Response response) {
+        return parseResponse(response, null);
+    }
+
+    /**
+     * Utility method to parse JSON in a Response object.
+     *
+     * Asserts that the response has HTTP status code 200 and a parseable
+     * JSON body.
+     *
+     * @param response The response to be parsed.
      * @param protocol Protocol to add exception info in case of failure
      * @return Parsed JsonObject or null in case of failure
      */
@@ -150,7 +164,9 @@ public class BaseTest {
             return Json.createReader(new StringReader(responseBody))
                 .readObject();
         } catch (JsonException je) {
-            protocol.addInfo("exception", je.getMessage());
+            if (protocol != null) {
+                protocol.addInfo("exception", je.getMessage());
+            }
             Assert.fail(je.getMessage());
         }
         return null;
