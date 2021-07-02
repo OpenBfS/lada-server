@@ -59,6 +59,14 @@ public class QueryTools {
         List<GridColumnValue> customColumns
     ) {
         this.repository = repository;
+
+        for (GridColumnValue columnValue : customColumns) {
+            if (columnValue.getGridColumn() == null) {
+                GridColumn gridColumn = repository.getByIdPlain(
+                    GridColumn.class, columnValue.getGridColumnId());
+                columnValue.setGridColumn(gridColumn);
+            }
+        }
         this.customColumns = customColumns;
 
         this.sql = prepareSql(

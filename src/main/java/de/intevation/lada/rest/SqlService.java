@@ -22,7 +22,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.QueryColumns;
-import de.intevation.lada.model.stammdaten.GridColumn;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -89,11 +88,6 @@ public class SqlService {
             || gridColumnValues.isEmpty()) {
             //TODO Error code if no columns are given
             return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
-        for (GridColumnValue columnValue : gridColumnValues) {
-            GridColumn gridColumn = repository.getByIdPlain(
-                GridColumn.class, columnValue.getGridColumnId());
-            columnValue.setGridColumn(gridColumn);
         }
 
         QueryTools queryTools = new QueryTools(repository, gridColumnValues);
