@@ -122,9 +122,27 @@ public class QueryTools {
         int offset,
         int limit
     ) {
-        return prepareResult(
-            prepareQuery(getSql()).setFirstResult(offset).setMaxResults(limit)
-                .getResultList());
+        List result = prepareQuery(getSql())
+            .setFirstResult(offset).setMaxResults(limit).getResultList();
+
+        if (result.size() == 0) {
+            return null;
+        }
+
+        List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
+        for (Object row: result) {
+            Map<String, Object> set = new HashMap<String, Object>();
+            for (GridColumnValue column: this.customColumns) {
+                set.put(
+                    column.getGridColumn().getDataIndex(),
+                    row instanceof Object[]
+                        ? ((Object[]) row)[
+                            column.getGridColumn().getPosition() - 1]
+                        : row);
+            }
+            ret.add(set);
+        }
+        return ret;
     }
 
     /**
@@ -472,35 +490,6 @@ public class QueryTools {
             query.setParameter(key, values);
         }
         return query;
-    }
-
-    /**
-     * Prepares the query result for the client.
-     * @param result A list of query results
-     * @param names The columns queried by the client
-     * @return List of result maps, containing only the configured columns
-     */
-    private List<Map<String, Object>> prepareResult(
-        List result
-    ) {
-        if (result.size() == 0) {
-            return null;
-        }
-
-        List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
-        for (Object row: result) {
-            Map<String, Object> set = new HashMap<String, Object>();
-            for (GridColumnValue column: this.customColumns) {
-                set.put(
-                    column.getGridColumn().getDataIndex(),
-                    row instanceof Object[]
-                        ? ((Object[]) row)[
-                            column.getGridColumn().getPosition() - 1]
-                        : row);
-            }
-            ret.add(set);
-        }
-        return ret;
     }
 
     private String translateToRegex(String value) {
