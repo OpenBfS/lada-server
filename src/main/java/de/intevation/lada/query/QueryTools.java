@@ -481,19 +481,22 @@ public class QueryTools {
      * @return List of result maps, containing only the configured columns
      */
     private List<Map<String, Object>> prepareResult(
-        List<Object[]> result
+        List result
     ) {
         if (result.size() == 0) {
             return null;
         }
 
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
-        for (Object[] row: result) {
+        for (Object row: result) {
             Map<String, Object> set = new HashMap<String, Object>();
             for (GridColumnValue column: this.customColumns) {
                 set.put(
                     column.getGridColumn().getDataIndex(),
-                    row[column.getGridColumn().getPosition() - 1]);
+                    row instanceof Object[]
+                        ? ((Object[]) row)[
+                            column.getGridColumn().getPosition() - 1]
+                        : row);
             }
             ret.add(set);
         }
