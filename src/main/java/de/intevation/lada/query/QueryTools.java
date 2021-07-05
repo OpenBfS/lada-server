@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.query;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -105,7 +106,36 @@ public class QueryTools {
      * @return List of result maps.
      */
     public List<Map<String, Object>> getResultForQuery() {
-        return prepareResult(prepareQuery().getResultList());
+        return getResultForQuery(0, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Execute query and return a subset defined by offset and limit
+     * of the filtered and sorted results.
+     *
+     * @param offset The position of the first result to retrieve,
+     * numbered from 0.
+     * @param limit The maximum number of results to retrieve.
+     * @return List of result maps.
+     */
+    public List<Map<String, Object>> getResultForQuery(
+        int offset,
+        int limit
+    ) {
+        return prepareResult(
+            prepareQuery(getSql()).setFirstResult(offset).setMaxResults(limit)
+                .getResultList());
+    }
+
+    /**
+     * Get total count of entries a filtered query would return.
+     *
+     * @return Number of entries the given query would return.
+     */
+    public int getTotalCountForQuery() {
+        Query q = prepareQuery(
+            "SELECT count(*) FROM (" + this.sql + ") as query");
+        return ((BigInteger) q.getSingleResult()).intValueExact();
     }
 
     /**
@@ -429,12 +459,10 @@ public class QueryTools {
     }
 
     /**
-     * Creates a query from a given sql and inserts the given parameters.
-     *
-     * @return The query
+     * Create query from given SQL and set parameters from this.filterValues.
      */
-    private Query prepareQuery() {
-        Query query = repository.queryFromString(getSql());
+    private Query prepareQuery(String queryString) {
+        Query query = repository.queryFromString(queryString);
         Set<String> keys = this.filterValues.keySet();
         for (String key : keys) {
             List<Object> values = new ArrayList<>();

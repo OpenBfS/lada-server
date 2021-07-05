@@ -96,7 +96,6 @@ public class UniversalService {
         @Context UriInfo info,
         QueryColumns columns
     ) {
-        Integer qid;
         MultivaluedMap<String, String> params = info.getQueryParameters();
         List<GridColumnValue> gridColumnValues = columns.getColumns();
 
@@ -151,12 +150,24 @@ public class UniversalService {
             columnValue.setGridColumn(gridColumn);
         }
 
+        int offset = 0, limit = Integer.MAX_VALUE;
+        if (params.containsKey("start") && params.containsKey("limit")) {
+            offset = Integer.valueOf(params.getFirst("start"));
+            limit = Integer.valueOf(params.getFirst("limit"));
+        }
+
         QueryTools queryTools = new QueryTools(
             repository, columns.getColumns());
-        List<Map<String, Object>> result = queryTools.getResultForQuery();
+        List<Map<String, Object>> result = queryTools.getResultForQuery(
+            offset, limit);
+
         if (result == null) {
             return new Response(true, StatusCodes.OK, null);
         }
+
+        // TODO: This issues a potentially costly 'SELECT count(*)'
+        // for every request. Better not to rely on total count at client side?
+        int size = queryTools.getTotalCountForQuery();
 
         for (Map<String, Object> row: result) {
             Object idToAuthorize = row.get(authorizationColumnIndex);
@@ -196,17 +207,6 @@ public class UniversalService {
                 readonly = true;
             }
             row.put("readonly", readonly);
-        }
-        int size = result.size();
-
-        if (params.containsKey("start") && params.containsKey("limit")) {
-            int start = Integer.valueOf(params.getFirst("start"));
-            int limit = Integer.valueOf(params.getFirst("limit"));
-            int end = limit + start;
-            if (start + limit > result.size()) {
-                end = result.size();
-            }
-            result = result.subList(start, end);
         }
 
         return new Response(true, StatusCodes.OK, result, size);
