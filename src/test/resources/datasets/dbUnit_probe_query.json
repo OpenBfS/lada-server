@@ -2,6 +2,9 @@
     "stamm.base_query": [{
         "id": 1,
         "sql": "SELECT hauptproben_nr, umw_id FROM land.probe"
+    }, {
+        "id": 2,
+        "sql": "SELECT hauptproben_nr FROM land.probe"
     }],
     "stamm.query_user": [{
         "id": 1,
@@ -31,6 +34,14 @@
         "name": "umwId",
         "data_index": "umw_id",
         "position": 2,
+        "data_type": 1
+    }, {
+        "id": 3,
+        "base_query": 2,
+        "name": "hauptprobenNr",
+        "data_index": "hauptproben_nr",
+        "position": 1,
+        "filter": 1,
         "data_type": 1
     }],
     "stamm.grid_column_values": [{

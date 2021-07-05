@@ -56,6 +56,7 @@ public class UniversalServiceTest extends BaseTest {
     // Expected keys in JSON response
     private final String totalCountKey = "totalCount";
     private final String dataKey = "data";
+    private final String hpNrKey = "hauptproben_nr";
 
     private JsonObject requestJson = Json.createObjectBuilder()
         .add("columns", Json.createArrayBuilder()
@@ -273,7 +274,7 @@ public class UniversalServiceTest extends BaseTest {
         Assert.assertEquals(
             this.filterValue,
             responseJson.getJsonArray(dataKey)
-                .getJsonObject(0).getString("hauptproben_nr"));
+                .getJsonObject(0).getString(hpNrKey));
 
         prot.setPassed(true);
     }
@@ -368,6 +369,55 @@ public class UniversalServiceTest extends BaseTest {
 
         assertContains(responseJson, dataKey);
         Assert.assertTrue(responseJson.isNull(dataKey));
+
+        prot.setPassed(true);
+    }
+
+    /**
+     * Test fetching data returned by a single-column query.
+     *
+     * @param baseUrl The server url used for the request.
+     */
+    @Test
+    @InSequence(8)
+    @RunAsClient
+    public final void testGetSingleColumn(@ArquillianResource URL baseUrl) {
+        System.out.print(".");
+        Protocol prot = new Protocol();
+        prot.setName("universal service");
+        prot.setType("universal get single column");
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        JsonObject request = Json.createObjectBuilder()
+            .add("columns", Json.createArrayBuilder()
+                .add(Json.createObjectBuilder()
+                    .add("columnIndex", 0)
+                    .add("filterValue", "")
+                    .add("filterActive", false)
+                    .add("filterIsNull", false)
+                    .add("filterNegate", false)
+                    .add("filterRegex", false)
+                    .add("gridColumnId", 3))
+        ).build();
+
+        Response response = client.target(
+            baseUrl + "rest/universal")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .post(Entity.entity(request.toString(),
+                    MediaType.APPLICATION_JSON));
+        JsonObject responseJson = parseResponse(response, prot);
+
+        // single-column query should result in JSON objects with
+        // key-value pairs representing "readonly" flag and a single data column
+        assertContains(responseJson, dataKey);
+        JsonObject respObj = (JsonObject)
+            responseJson.getJsonArray(dataKey).get(0);
+        Assert.assertEquals(2, respObj.size());
+        assertContains(respObj, "readonly");
+        assertContains(respObj, hpNrKey);
 
         prot.setPassed(true);
     }
