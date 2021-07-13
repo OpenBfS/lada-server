@@ -1082,7 +1082,6 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 270	0	1217	10	\N	\N	\N	f	t	15	55	\N	\N	\N
 275	0	1212	10	\N	\N	\N	f	t	11	120	\N	\N	\N
 280	0	1240	10	\N	\N	\N	f	t	20	46	\N	\N	\N
-293	0	1226	10	\N	\N	false	t	f	\N	40	\N	\N	\N
 296	0	1238	10	\N	\N	\N	f	t	13	100	\N	\N	\N
 178	0	4119	9	\N	\N	\N	f	t	17	141	\N	\N	\N
 179	0	4122	9	\N	\N	\N	t	t	0	145	\N	\N	\N
@@ -1107,7 +1106,6 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 192	0	4104	9	\N	\N	\N	f	t	3	53	\N	\N	\N
 195	0	4118	9	\N	\N	\N	f	t	15	120	\N	\N	\N
 202	0	4140	9	\N	\N	\N	f	f	-1	125	\N	\N	\N
-205	0	4135	9	\N	\N	false	t	f	-1	40	\N	\N	\N
 208	0	4125	9	\N	\N	\N	t	t	20	150	\N	\N	\N
 253	0	1222	10	\N	\N	\N	f	t	10	70	\N	\N	\N
 261	0	1202	10	\N	\N	\N	t	t	3	92	\N	\N	\N
@@ -1128,7 +1126,6 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 16	0	104	1	\N	\N	\N	f	f	-1	52	\N	\N	\N
 17	0	108	1	\N	\N	\N	f	f	-1	125	\N	\N	\N
 18	0	114	1	\N	\N	\N	f	f	-1	150	\N	\N	\N
-21	0	126	1	\N	\N	false	t	f	-1	40	\N	\N	\N
 23	0	107	1	\N	\N	\N	f	t	9	69	\N	\N	\N
 24	0	111	1	\N	\N	\N	f	t	11	125	\N	\N	\N
 25	0	119	1	\N	\N	\N	t	t	8	150	\N	\N	\N
@@ -1164,7 +1161,6 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 64	0	1107	2	\N	\N	\N	f	f	-1	52	\N	\N	\N
 65	0	1106	2	\N	\N	\N	f	t	4	77	\N	\N	\N
 66	0	1101	2	\N	\N	\N	f	f	-1	92	\N	\N	\N
-67	0	1150	2	\N	\N	false	t	f	-1	40	\N	\N	\N
 68	0	1122	2	\N	\N	\N	f	f	-1	75	\N	\N	\N
 69	0	1114	2	\N	\N	\N	f	t	12	150	\N	\N	\N
 70	0	1142	2	\N	\N	\N	f	f	-1	76	\N	\N	\N
@@ -1194,7 +1190,6 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 113	0	2117	3	\N	\N	\N	t	t	1	120	\N	\N	\N
 115	0	2121	3	\N	\N	\N	f	f	\N	69	\N	\N	\N
 116	0	2122	3	\N	\N	\N	f	f	\N	200	\N	\N	\N
-117	0	2123	3	\N	\N	\N	f	f	\N	40	\N	\N	\N
 118	0	2118	3	\N	\N	\N	f	f	\N	150	\N	\N	\N
 125	0	3107	4	\N	\N	\N	f	t	5	120	\N	\N	\N
 126	0	3105	4	\N	\N	\N	f	t	3	200	\N	\N	\N
@@ -1334,7 +1329,6 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 454	0	4230	11	asc	1	\N	t	t	3	69	\N	\N	\N
 455	0	4231	11	\N	\N	\N	f	t	4	200	\N	\N	\N
 456	0	4232	11	asc	3	\N	f	t	6	200	\N	\N	\N
-457	0	4233	11	\N	\N	false	t	f	-1	40	\N	\N	\N
 458	0	4234	11	\N	\N	\N	f	f	-1	150	\N	\N	\N
 459	0	4235	11	\N	\N	\N	t	t	2	154	\N	\N	\N
 460	0	4236	11	\N	\N	\N	f	f	-1	70	\N	\N	\N
@@ -1508,7 +1502,6 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 813	0	1404	27	\N	\N	\N	t	f	\N	200	\N	\N	\N
 814	0	1405	27	\N	\N	\N	f	t	2	80	\N	\N	\N
 815	0	1406	27	\N	\N	\N	f	t	3	100	\N	\N	\N
-816	0	1407	27	\N	\N	false	t	f	\N	80	\N	\N	\N
 817	0	1408	27	\N	\N	\N	f	t	4	100	\N	\N	\N
 818	0	1409	27	\N	\N	\N	f	t	5	100	\N	\N	\N
 819	0	1410	27	\N	\N	\N	t	t	6	150	\N	\N	\N
@@ -1565,7 +1558,6 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 886	0	1543	31	\N	\N	\N	f	f	\N	100	\N	\N	\N
 887	0	1544	31	\N	\N	\N	f	f	\N	55	\N	\N	\N
 888	0	1545	31	\N	\N	\N	f	f	\N	150	\N	\N	\N
-889	0	1546	31	\N	\N	false	t	f	\N	40	\N	\N	\N
 890	0	1547	31	\N	\N	\N	f	f	\N	150	\N	\N	\N
 891	0	1548	31	\N	\N	\N	f	f	\N	70	\N	\N	\N
 892	0	1549	31	\N	\N	\N	f	f	\N	164	\N	\N	\N
@@ -1646,7 +1638,6 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 968	1	4332	35	\N	\N	\N	f	f	-1	100	\N	\N	\N
 969	1	4333	35	\N	\N	\N	f	f	-1	55	\N	\N	\N
 970	1	4334	35	\N	\N	\N	f	f	-1	150	\N	\N	\N
-971	1	4335	35	\N	\N	false	t	f	-1	40	\N	\N	\N
 972	1	4336	35	\N	\N	\N	f	f	-1	150	\N	\N	\N
 973	1	4337	35	\N	\N	\N	f	t	4	154	\N	\N	\N
 974	1	4338	35	\N	\N	\N	f	f	-1	70	\N	\N	\N
@@ -1723,7 +1714,6 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 1045	0	1647	36	\N	\N	\N	f	f	-1	100	\N	\N	\N
 1046	0	1648	36	\N	\N	\N	f	f	-1	55	\N	\N	\N
 1047	0	1649	36	\N	\N	\N	f	f	-1	150	\N	\N	\N
-1048	0	1650	36	\N	\N	false	t	f	-1	40	\N	\N	\N
 1049	0	1651	36	\N	\N	\N	f	f	-1	150	\N	\N	\N
 1050	0	1652	36	\N	\N	\N	f	f	-1	164	\N	\N	\N
 1051	0	1653	36	\N	\N	\N	f	f	\N	70	\N	\N	\N
@@ -1757,6 +1747,16 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 1079	0	4162	9	\N	\N	\N	f	f	\N	100	\N	\N	\N
 1080	0	4257	11	\N	\N	\N	f	f	-1	100	\N	\N	\N
 1081	1	4365	35	\N	\N	\N	f	f	-1	100	\N	\N	\N
+293	0	1226	10	\N	\N	\N	t	f	\N	40	\N	\N	\N
+205	0	4135	9	\N	\N	\N	t	f	-1	40	\N	\N	\N
+21	0	126	1	\N	\N	\N	t	f	-1	40	\N	\N	\N
+67	0	1150	2	\N	\N	\N	t	f	-1	40	\N	\N	\N
+117	0	2123	3	\N	\N	\N	f	f	\N	40	\N	\N	\N
+457	0	4233	11	\N	\N	\N	t	f	-1	40	\N	\N	\N
+816	0	1407	27	\N	\N	\N	t	f	\N	80	\N	\N	\N
+889	0	1546	31	\N	\N	\N	t	f	\N	40	\N	\N	\N
+971	1	4335	35	\N	\N	\N	t	f	-1	40	\N	\N	\N
+1048	0	1650	36	\N	\N	\N	t	f	-1	40	\N	\N	\N
 \.
 
 
