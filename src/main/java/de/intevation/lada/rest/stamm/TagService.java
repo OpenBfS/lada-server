@@ -395,9 +395,8 @@ import de.intevation.lada.util.rest.Response;
                     false, StatusCodes.ERROR_DB_CONNECTION, "Invalid mstId");
             }
 
-            repository.create(zuordnung);
             zuordnung.setTag(tag);
-            return repository.update(zuordnung);
+            return repository.create(zuordnung);
         //Create new
         } else {
             String mstId = zuordnung.getTag().getMstId();

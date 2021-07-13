@@ -41,7 +41,7 @@ public class Tag {
     @JsonIgnore
     private Set<TagZuordnung> tagZuordnungs;
 
-    private Boolean generated;
+    private boolean generated;
 
 
     public Tag() { }
@@ -78,11 +78,11 @@ public class Tag {
         this.tagZuordnungs = tagZuordnungs;
     }
 
-    public Boolean getGenerated() {
+    public boolean getGenerated() {
         return this.generated;
     }
 
-    public void setGenerated(Boolean generated) {
+    public void setGenerated(boolean generated) {
         this.generated = generated;
     }
 }

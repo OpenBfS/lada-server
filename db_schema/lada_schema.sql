@@ -431,19 +431,12 @@ ALTER TABLE ONLY messung
 CREATE TABLE tagzuordnung
 (
     id serial PRIMARY KEY,
-    probe_id integer,
-    messung_id integer,
-    tag_id integer,
-    datum timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    CONSTRAINT tagzuordnung_tag_fkey FOREIGN KEY (tag_id)
-        REFERENCES stamm.tag (id) MATCH SIMPLE
-        ON DELETE CASCADE,
-    CONSTRAINT tagzuordnung_probe_fkey FOREIGN KEY (probe_id)
-        REFERENCES land.probe (id) MATCH SIMPLE
-        ON DELETE CASCADE,
-    CONSTRAINT tagzuordnung_messung_fkey FOREIGN KEY (messung_id)
-        REFERENCES land.messung (id) MATCH SIMPLE
-        ON DELETE CASCADE,
+    probe_id integer REFERENCES probe ON DELETE CASCADE,
+    messung_id integer REFERENCES messung ON DELETE CASCADE,
+    tag_id integer NOT NULL REFERENCES stamm.tag ON DELETE CASCADE,
+    datum timestamp without time zone
+        NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
+    CHECK(probe_id IS NOT NULL OR messung_id IS NOT NULL),
     UNIQUE (probe_id, tag_id),
     UNIQUE (messung_id, tag_id)
 );
