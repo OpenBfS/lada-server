@@ -6,4 +6,4 @@ ALTER TABLE stamm.grid_column
     ADD CONSTRAINT grid_column_base_query_fkey FOREIGN KEY (base_query)
     REFERENCES stamm.base_query (id) MATCH SIMPLE
     ON UPDATE NO ACTION
-    ON DELETE NO CASCADE;
+    ON DELETE CASCADE;
