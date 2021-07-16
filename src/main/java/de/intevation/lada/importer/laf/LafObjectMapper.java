@@ -1620,6 +1620,7 @@ public class LafObjectMapper {
             return null;
         }
         ort.setOrtId(o.getId());
+        ort.setOzId(o.getOzId());
         if (ursprungsOrt.containsKey("U_ORTS_ZUSATZCODE")
             && !ursprungsOrt.get("U_ORTS_ZUSATZCODE").equals("")) {
             Ortszusatz zusatz = repository.getByIdPlain(
@@ -1661,6 +1662,7 @@ public class LafObjectMapper {
             return;
         }
         ort.setOrtId(o.getId());
+        ort.setOzId(o.getOzId());
         if (entnahmeOrt.containsKey("P_ORTS_ZUSATZCODE")
             && !entnahmeOrt.get("P_ORTS_ZUSATZCODE").equals("")) {
             Ortszusatz zusatz = repository.getByIdPlain(
@@ -1811,8 +1813,7 @@ public class LafObjectMapper {
         // checkk if all attributes are empty
         if (o.getKdaId() == null
             && o.getGemId() == null
-            && o.getStaatId() == null
-            && o.getOzId() == null) {
+            && o.getStaatId() == null) {
             return null;
         }
 
