@@ -290,7 +290,7 @@ public class ProbeService {
         if (probe.getUmwId() == null || probe.getUmwId().equals("")) {
             probe = factory.findUmweltId(probe);
         }
-        probe = factory.findMediaDesk(probe);
+        probe = factory.findMedia(probe);
 
         /* Persist the new probe object*/
         Response newProbe = repository.create(probe);
@@ -501,7 +501,7 @@ public class ProbeService {
             return new Response(false, StatusCodes.CHANGED_VALUE, null);
         }
         if (probe.getMediaDesk() == null || probe.getMediaDesk().isEmpty()) {
-            probe = factory.findMediaDesk(probe);
+            probe = factory.findMedia(probe);
         }
         if (probe.getUmwId() == null || probe.getUmwId().isEmpty()) {
             factory.findUmweltId(probe);

@@ -256,7 +256,7 @@ public class LafObjectMapper {
             probe.setLaborMstId(probe.getMstId());
         }
         // Use the deskriptor string to find the medium
-        probe = factory.findMediaDesk(probe);
+        probe = factory.findMedia(probe);
         if (probe.getUmwId() == null) {
             factory.findUmweltId(probe);
         }

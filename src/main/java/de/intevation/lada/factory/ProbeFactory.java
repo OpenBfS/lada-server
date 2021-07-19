@@ -444,7 +444,7 @@ public class ProbeFactory {
         probe.setBaId(messprogramm.getBaId());
         probe.setDatenbasisId(messprogramm.getDatenbasisId());
         probe.setMediaDesk(messprogramm.getMediaDesk());
-        probe = findMediaDesk(probe);
+        probe = findMedia(probe);
         probe.setMstId(messprogramm.getMstId());
         probe.setLaborMstId(messprogramm.getLaborMstId());
         probe.setProbenartId(messprogramm.getProbenartId());
@@ -565,7 +565,7 @@ public class ProbeFactory {
      *
      * @return The updated probe object.
      */
-    public Probe findMediaDesk(Probe probe) {
+    public Probe findMedia(Probe probe) {
         String mediaDesk = probe.getMediaDesk();
         if (mediaDesk != null) {
             Object result = repository.queryFromString(
