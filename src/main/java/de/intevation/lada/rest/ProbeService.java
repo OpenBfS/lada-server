@@ -289,6 +289,12 @@ public class ProbeService {
         }
         if (probe.getUmwId() == null || probe.getUmwId().equals("")) {
             probe = factory.findUmweltId(probe);
+        } else {
+            if (probe.getMediaDesk() == null ||
+                probe.getMediaDesk().isEmpty() ||
+                probe.getMediaDesk().equals("D: 00 00 00 00 00 00 00 00 00 00 00 00")) {
+                probe = factory.getInitialMediaDesk(probe);
+            }
         }
         probe = factory.findMedia(probe);
 
@@ -500,12 +506,16 @@ public class ProbeService {
         if (lock.isLocked(probe)) {
             return new Response(false, StatusCodes.CHANGED_VALUE, null);
         }
-        if (probe.getMediaDesk() == null || probe.getMediaDesk().isEmpty()) {
-            probe = factory.findMedia(probe);
-        }
         if (probe.getUmwId() == null || probe.getUmwId().isEmpty()) {
             factory.findUmweltId(probe);
+        } else {
+            if (probe.getMediaDesk() == null ||
+                probe.getMediaDesk().isEmpty() ||
+                probe.getMediaDesk().equals("D: 00 00 00 00 00 00 00 00 00 00 00 00")) {
+                factory.getInitialMediaDesk(probe);
+            }
         }
+        probe = factory.findMedia(probe);
         Violation violation = validator.validate(probe);
         if (violation.hasErrors()) {
             Response response =

@@ -264,6 +264,8 @@ public class MessprogrammService {
             || messprogramm.getUmwId().length() == 0
         ) {
             messprogramm = factory.findUmweltId(messprogramm);
+        } else {
+            messprogramm = factory.getInitialMediaDesk(messprogramm);
         }
         /* Persist the new messprogramm object*/
         Response response = repository.create(messprogramm);
@@ -339,6 +341,8 @@ public class MessprogrammService {
             || messprogramm.getUmwId().equals("")
         ) {
             messprogramm = factory.findUmweltId(messprogramm);
+        } else {
+            messprogramm = factory.getInitialMediaDesk(messprogramm);
         }
         Response response = repository.update(messprogramm);
         if (!response.getSuccess()) {
