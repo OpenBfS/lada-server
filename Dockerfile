@@ -76,13 +76,6 @@ RUN ln -s /usr/share/java/jts-core.jar \
 # Add volume with datum shift grid
 #
 ENV SRC /usr/src/lada-server
-ENV GRIDSHIFT $SRC/src/main/resources/org/geotools/referencing/factory/gridshift
-RUN curl -s --create-dirs \
-        -o $GRIDSHIFT/BETA2007.gsb \
-        http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007.gsb
-# Create volume to prevent shift grid from being obscured by bind-mounting
-# a repository checkout into $SRC, which is a usual development setup:
-VOLUME $GRIDSHIFT
 
 #
 # Add LADA-server repo

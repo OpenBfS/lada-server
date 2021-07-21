@@ -69,11 +69,10 @@ Details zur Installation können den Dateien `Dockerfile` und
 Die Transformation von Koordinaten aus dem CRS `EPSG:3146[6,7,8,9]` in das für intern
 genutzte Geometrien CRS `EPSG:4326` kann optional mit einem ShiftGrid erfolgen.
 Dies erhöht die Genauigkeit der resultierenden Koordinaten.
-Das ShiftGrid ist dazu vor dem Compilieren (s.o.) folgendermaßen zu einzufügen:
-
- $ curl -O http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007.gsb
- $ mkdir -p src/main/resources/org/geotools/referencing/factory/gridshift
- $ mv BETA2007.gsb src/main/resources/org/geotools/referencing/factory/gridshift
+Hierfür wurde unter src/main/resources/org/geotools/referencing/factory/gridshift 
+das ShiftGrid BETA2007.gsb eingefügt.
+Quelle ist http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007.gsb 
+(Siehe auch http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/de_dhdn2etrs_beta.php)
 
 Docker
 ------
