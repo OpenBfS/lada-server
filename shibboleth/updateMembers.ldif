@@ -1,0 +1,60 @@
+dn: cn=Imis_world,cn=groups,dc=ladaidp
+changetype: modify
+add: member
+member: uid=testeins,cn=users,dc=ladaidp
+
+dn: cn=Imis_world,cn=groups,dc=ladaidp
+changetype: modify
+add: member
+member: uid=testzwei,cn=users,dc=ladaidp
+
+dn: cn=Imis_world,cn=groups,dc=ladaidp
+changetype: modify
+add: member
+member: uid=testdrei,cn=users,dc=ladaidp
+
+dn: cn=Imis_world,cn=groups,dc=ladaidp
+changetype: modify
+add: member
+member: uid=testvier,cn=users,dc=ladaidp
+
+dn: cn=mst_06010,cn=groups,dc=ladaidp
+changetype: modify
+add: member
+member: uid=testeins,cn=users,dc=ladaidp
+
+dn: cn=mst_06010,cn=groups,dc=ladaidp
+changetype: modify
+add: member
+member: uid=testzwei,cn=users,dc=ladaidp
+
+dn: cn=mst_06060,cn=groups,dc=ladaidp
+changetype: modify
+add: member
+member: uid=testdrei,cn=users,dc=ladaidp
+
+dn: cn=mst_06060,cn=groups,dc=ladaidp
+changetype: modify
+add: member
+member: uid=testvier,cn=users,dc=ladaidp
+
+dn: cn=mst_11010,cn=groups,dc=ladaidp
+changetype: modify
+add: member
+member: uid=testeins,cn=users,dc=ladaidp
+
+dn: cn=mst_11010,cn=groups,dc=ladaidp
+changetype: modify
+add: member
+member: uid=testdrei,cn=users,dc=ladaidp
+
+dn: cn=mst_12010,cn=groups,dc=ladaidp
+changetype: modify
+add: member
+member: uid=testzwei,cn=users,dc=ladaidp
+
+dn: cn=mst_12010,cn=groups,dc=ladaidp
+changetype: modify
+add: member
+member: uid=testvier,cn=users,dc=ladaidp
+

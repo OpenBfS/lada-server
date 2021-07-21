@@ -86,6 +86,8 @@ durchgeführte Änderungen leicht innerhalb der Container getestet werden könne
 Bauen der Images:
  $ cd ./db_schema
  $ docker build -t koala/lada_db .
+ $ cd ../shibboleth
+ $ docker build -t koala/lada_idp .
  $ cd ..
  $ docker build -t koala/lada_wildfly .
  $ cd your/repo/of/lada-client
@@ -95,18 +97,20 @@ Aufbau eines Netzwerks für die LADA-Komponenten:
  $ docker network create lada_network
 
 Starten der Container:
- $ cd db_schema
- $ docker run --name your_lada_db --net=lada_network -v $PWD:/opt/lada_sql/ \
+ $ docker run --name lada_db --net=lada_network \
+          -v $PWD/db_schema:/opt/lada_sql/ \
           -d koala/lada_db:latest
- $ cd ..
- $ docker run --name lada_wildfly --net=lada_network \
-          --link your_lada_db:lada_db -v $PWD:/usr/src/lada-server \
+ $ docker run --name lada-idp --net=lada_network \
+             -p 20080:80 -p 28080:8080 -p 20443:443 -p 28443:8443 \
+             -v $PWD/shibboleth:/usr/local/lada_shib/sources \
+             -d koala/lada_idp
+ $ docker run --name lada-server --net=lada_network \
+          -v $PWD:/usr/src/lada-server \
           -d koala/lada_wildfly
  $ cd your/repo/of/lada-client
- $ docker run --name lada_client --net=lada_network \
-              -v $PWD:/usr/local/apache2/htdocs \
-              --link lada_wildfly:lada-server \
-              -p 8180-8184:80-84 -d koala/lada_client
+ $ docker run --name lada-client --net=lada_network \
+              -v $PWD:/usr/local/lada \
+              -p 8180-8185:80-85 -d koala/lada_client
 
 Innerhalb des Client-Containers muss dann noch folgendes ausgeführt werden,
 wenn zum ersten mal your/repo/of/lada-client als Volume in einen Container
@@ -117,7 +121,24 @@ eingebunden wurde:
  $ ./docker-build-app.sh
 
 Die LADA-Anwendung kann dann unter den angegebenen Ports mit verschiedenen
-Rollen im Browser ausgeführt werden.
+Rollen im Browser ausgeführt werden. Die Ports 8180 - 8184 verwenden dabei
+festgelegte Benutzer/Rollen, während der Client unter Port 8185 eine
+Authentifizierung mit Shibboleth verwendet.
+Um Shibboleth zu verwenden muss vorher noch die Erreichbarkeit des IDP-Dienstes
+sichergestellt werden. In der Standardkonfiguration müssen alle Dienste auf der
+selben Maschine laufen auf der auch der Client-Browser gestartet wird.
+Ist dies nicht der Fall muss die Adresse des IDPs angepasst werden. Dazu können
+in den Dateien {Server-Repository}/shibboleth/idp-metadata.xml und
+{Client-Repository}/shibboleth/partner-metadata.xml die Attribute
+Location="https://localhost:28443/..." zu einer Adresse verändert werden, die
+vom Client-System erreichbar ist, etwa die lokale IP-Adresse des IDP-Systems.
+Alternativ können auch die LADA-Anwendung und der IDP auf dem lokalen Rechner
+mittels Port-Forwarding erreichbar gemacht werden, z.B.:
+
+ $ ssh -L28443:docker-host:28443 -L8185:docker-host:8185 remote-host
+
+Die Shibboleth-authentifizierte Anwendung ist dann unter
+"http://localhost:8185" im lokalen Browser erreichbar.
 
 Tests
 -----
@@ -149,10 +170,12 @@ Erstellen von Queries
 ---------------------
 
 Basequeries enthalten die grundlegenden Definitionen für Abfragen. Diese werden
-fest in der Datenbank vorgegeben und sind in der Tabelle stamm.base_query definiert.
-Die SQL-Abfrage in der Tabelle muss zumindest das SELECT- und FROM-Statement enthalten.
-Den Ergebnisspalten der Abfrage sollte zudem mithilfe des AS-Ausdrucks ein Alias zugewiesen werden.
-Der Spaltenname 'extjs_id' wird intern vom Client genutzt und sollte nicht vergeben werden.
+fest in der Datenbank vorgegeben und sind in der Tabelle stamm.base_query
+definiert. Die SQL-Abfrage in der Tabelle muss zumindest das SELECT- und
+FROM-Statement enthalten. Den Ergebnisspalten der Abfrage sollte zudem
+mithilfe des AS-Ausdrucks ein Alias zugewiesen werden.
+Der Spaltenname 'extjs_id' wird intern vom Client genutzt und sollte nicht
+vergeben werden.
 
 Der Basequery zugeordnete Spalten werden zusätzlich in der Tabelle
 stamm.grid_column festgelegt, wobei der gegebene DataIndex einem Alias der
@@ -161,9 +184,13 @@ das Verhalten des Clients und den dort angezeigten Filterwidgets mit (siehe
 unten). Die Position gibt die Stellung innerhalb der Basequery an, name ist die
 im Ergebnisgrid anzuzeigende Spaltenbeschriftung.
 
-Die Spalte filter innerhalb einer stamm.grid_column verweist auf einen Eintrag in der Tabelle stamm.filter.
-Diese enthält Filter-Typ, das entsprechende SQL-Statement und den Namen des Parameters.
-Neben einfachen Text-, Zahlen- oder boolschen- Filtern existieren auch Filter-Typen für von-bis-Datums-Filter, Multiselect-Filter und generische Text-Filter. Multiselect- und Datums-Filter akzeptieren dabei einen String mit Komma-separierten Werten.
+Die Spalte filter innerhalb einer stamm.grid_column verweist auf einen Eintrag
+in der Tabelle stamm.filter. Diese enthält Filter-Typ, das entsprechende
+SQL-Statement und den Namen des Parameters.
+Neben einfachen Text-, Zahlen- oder boolschen- Filtern existieren auch
+Filter-Typen für von-bis-Datums-Filter, Multiselect-Filter und generische
+Text-Filter. Multiselect- und Datums-Filter akzeptieren dabei einen String mit
+Komma-separierten Werten.
 Für die Definition der Filter mit SQL-Statement und Paramter gilt:
   * Datums-Filter: 2 Parameter. Beispielsweise:
     * SQL: probe.probeentnahme_beginn BETWEEN :fromTime AND :toTime
@@ -177,9 +204,11 @@ Für die Definition der Filter mit SQL-Statement und Paramter gilt:
 
 Einzelne Nutzer können aus bereits bestehenden Queries Kopien erstellen.
 Hierfür gibt es zwei Speicherorte: In query_user werden die grundsätzlichen
-Parameter festgelegt, wie etwa eine eigene Beschreibung oder ein eigener Namen der kopierten Query.
+Parameter festgelegt, wie etwa eine eigene Beschreibung oder ein eigener Namen
+der kopierten Query.
 In grid_column_values werden die Definitionen der
-einzelnen Spalten (z.B. Sichtbarkeit, derzeitig gespeicherter Filter) persistiert.
+einzelnen Spalten (z.B. Sichtbarkeit, derzeitig gespeicherter Filter)
+persistiert.
 
 ### Datentypen
 
@@ -255,9 +284,9 @@ Eine Konfiguration wird in der Datenbanktabelle 'importer_config' im Schema
   z.B. bei einer Probe "probe". Die Zeitbasis hat den Namen "zeitbasis".
 * attribute (character varying(30)): Name des Attributes das bearbeitet werden
   soll in CamelCase-Schreibweise. (Zeitbasis hat hier einen "dummy"-Eintrag)
-  Tabellenspalten, die als Foreign-Key auf andere Tabellen verweisen, werden mit
-  dem Tabellennamen referenziert und können so im Falle der Aktion 'convert' mit
-  den sprechenden Bezeichnung genutzt werden.
+  Tabellenspalten, die als Foreign-Key auf andere Tabellen verweisen, werden
+  mit dem Tabellennamen referenziert und können so im Falle der Aktion
+  'convert' mit den sprechenden Bezeichnung genutzt werden.
 * mst_id (Foreign-Key auf mess_stelle): Enthält die Messstelle, für die diese
   Konfiguration gültig ist.
 * from_value (character varying(100)): Für "default" bleibt diese Spalte leer,
