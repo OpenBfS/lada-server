@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -324,34 +325,25 @@ import de.intevation.lada.util.rest.Response;
         //Use existing tag
         if (tag == null) {
             //Check if tag is already assigned to the probe
-            EntityManager em = repository.entityManager();
-            CriteriaBuilder builder = em.getCriteriaBuilder();
-            CriteriaQuery<TagZuordnung> criteriaQuery =
-                builder.createQuery(TagZuordnung.class);
-            Root<TagZuordnung> root = criteriaQuery.from(TagZuordnung.class);
-            Join<TagZuordnung, Tag> joinTagZuordnung =
-                root.join("tag", javax.persistence.criteria.JoinType.LEFT);
-            Predicate tagFilter =
-                builder.equal(root.get("tag").get("id"), zuordnung.getTagId());
-            Predicate userMstFilter =
-                builder.in(
-                    joinTagZuordnung.get("mstId")).value(
-                        userInfo.getMessstellen());
-            Predicate filter = builder.and(tagFilter, userMstFilter);
-            if (zuordnung.getProbeId() != null) {
-                Predicate probeFilter =
-                    builder.equal(root.get("probeId"), zuordnung.getProbeId());
-                filter = builder.and(filter, probeFilter);
-            } else {
-                Predicate messungFilter =
-                    builder.equal(
-                        root.get("messungId"), zuordnung.getMessungId());
-                filter = builder.and(filter, messungFilter);
-            }
-            criteriaQuery.where(filter);
-            List<TagZuordnung> zuordnungs =
-                repository.filterPlain(criteriaQuery);
-            if (zuordnungs.size() > 0) {
+            final String tagIdParam = "tagId",
+                mstIdsParam = "mstIds",
+                taggedIdParam = "taggedId";
+            String idField = zuordnung.getProbeId() != null
+                ? "probe_id" : "messung_id";
+            Query isAssigned = repository.queryFromString(
+                "SELECT EXISTS("
+                + "SELECT 1 FROM land.tagzuordnung "
+                + "JOIN stamm.tag ON tag_id=tag.id "
+                + "WHERE tag_id=:" + tagIdParam
+                + " AND (mst_id IS NULL OR mst_id IN (:" + mstIdsParam + "))"
+                + " AND " + idField + "=:" + taggedIdParam + ")");
+            isAssigned.setParameter(tagIdParam, zuordnung.getTagId());
+            isAssigned.setParameter(mstIdsParam, userInfo.getMessstellen());
+            isAssigned.setParameter(taggedIdParam,
+                zuordnung.getProbeId() != null
+                ? zuordnung.getProbeId()
+                : zuordnung.getMessungId());
+            if ((Boolean) isAssigned.getSingleResult()) {
                 return new Response(
                     false,
                     StatusCodes.ERROR_VALIDATION,
