@@ -49,7 +49,7 @@ import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
 /**
- * REST-Service for the probe tags
+ * REST-Service for the probe tags.
  */
 
  @Path("rest/tag")
@@ -306,9 +306,10 @@ import de.intevation.lada.util.rest.Response;
         @Context HttpServletRequest request,
         TagZuordnung zuordnung
     ) {
+        // Check if payload contains sensible information
         if (zuordnung == null) {
             return new Response(
-                false, StatusCodes.ERROR_DB_CONNECTION, "Not a valid tag");
+                false, StatusCodes.ERROR_VALIDATION, "Not a valid tag");
         }
         Tag tag = zuordnung.getTag();
         Integer tagId = zuordnung.getTagId();
@@ -318,12 +319,13 @@ import de.intevation.lada.util.rest.Response;
             && zuordnung.getMessungId() != null
         ) {
             return new Response(
-                false, StatusCodes.ERROR_DB_CONNECTION, "Not a valid tag");
+                false, StatusCodes.ERROR_VALIDATION, "Not a valid tag");
         }
 
-        UserInfo userInfo = authorization.getInfo(request);
-        //Use existing tag
-        if (tag == null) {
+        List<String> messstellen =
+            authorization.getInfo(request).getMessstellen();
+
+        if (tag == null) { // Use existing tag
             //Check if tag is already assigned to the probe
             final String tagIdParam = "tagId",
                 mstIdsParam = "mstIds",
@@ -338,7 +340,7 @@ import de.intevation.lada.util.rest.Response;
                 + " AND (mst_id IS NULL OR mst_id IN (:" + mstIdsParam + "))"
                 + " AND " + idField + "=:" + taggedIdParam + ")");
             isAssigned.setParameter(tagIdParam, zuordnung.getTagId());
-            isAssigned.setParameter(mstIdsParam, userInfo.getMessstellen());
+            isAssigned.setParameter(mstIdsParam, messstellen);
             isAssigned.setParameter(taggedIdParam,
                 zuordnung.getProbeId() != null
                 ? zuordnung.getProbeId()
@@ -382,28 +384,23 @@ import de.intevation.lada.util.rest.Response;
                         "Not authorized to set global tag");
                 }
             //Else check if it is the users private tag
-            } else if (!userInfo.getMessstellen().contains(mstId)) {
+            } else if (!messstellen.contains(mstId)) {
                 return new Response(
-                    false, StatusCodes.ERROR_DB_CONNECTION, "Invalid mstId");
+                    false, StatusCodes.NOT_ALLOWED, "Invalid mstId");
             }
 
             zuordnung.setTag(tag);
-            return repository.create(zuordnung);
-        //Create new
-        } else {
+
+        } else { // Create new tag
             String mstId = zuordnung.getTag().getMstId();
             //mstId may not be null, global tags cannot be created
-            if (mstId == null
-                || !userInfo.getMessstellen().contains(mstId)
-            ) {
+            if (mstId == null || !messstellen.contains(mstId)) {
                 return new Response(
                     false,
-                    StatusCodes.ERROR_DB_CONNECTION,
+                    StatusCodes.NOT_ALLOWED,
                     "Invalid/empty mstId");
             }
-            if (repository.create(tag).getSuccess()) {
-                return repository.create(zuordnung);
-            } else {
+            if (!repository.create(tag).getSuccess()) {
                 //TODO Proper response code?
                 return new Response(
                     false,
@@ -411,10 +408,11 @@ import de.intevation.lada.util.rest.Response;
                     "Failed to create Tag");
             }
         }
+        return repository.create(zuordnung);
     }
 
     /**
-     * Delete a reference between a tag and a probe
+     * Delete a reference between a tag and a probe.
      */
     @DELETE
     @Path("/")
