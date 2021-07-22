@@ -348,7 +348,7 @@ import de.intevation.lada.util.rest.Response;
             if ((Boolean) isAssigned.getSingleResult()) {
                 return new Response(
                     false,
-                    StatusCodes.ERROR_VALIDATION,
+                    StatusCodes.IMP_DUPLICATE,
                     "Tag is already assigned to probe");
             }
 
