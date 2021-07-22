@@ -1521,6 +1521,7 @@ public class LafObjectMapper {
                 ort.setOrtszuordnungTyp("R");
                 ort.setProbeId(probe.getId());
                 ort.setOrtId(messpunkte.get(0).getId());
+                ort.setOzId(messpunkte.get(0).getOzId());
                 if (uo.containsKey("U_ORTS_ZUSATZTEXT")) {
                     ort.setOrtszusatztext(uo.get("U_ORTS_ZUSATZTEXT"));
                 }
@@ -1545,6 +1546,7 @@ public class LafObjectMapper {
                         ort.setOrtId(o.getId());
                         ort.setOrtszuordnungTyp("R");
                         ort.setProbeId(probe.getId());
+                        ort.setOzId(o.getOzId());
 
                         repository.create(ort);
 
@@ -1618,6 +1620,23 @@ public class LafObjectMapper {
             return null;
         }
         ort.setOrtId(o.getId());
+        ort.setOzId(o.getOzId());
+        if (ursprungsOrt.containsKey("U_ORTS_ZUSATZCODE")
+            && !ursprungsOrt.get("U_ORTS_ZUSATZCODE").equals("")) {
+            Ortszusatz zusatz = repository.getByIdPlain(
+                Ortszusatz.class,
+                ursprungsOrt.get("U_ORTS_ZUSATZCODE")
+            );
+            if (zusatz == null) {
+                currentWarnings.add(
+                    new ReportItem(
+                        "U_ORTS_ZUSATZCODE",
+                        ursprungsOrt.get("U_ORTS_ZUSATZCODE"),
+                        StatusCodes.IMP_INVALID_VALUE));
+            } else {
+                ort.setOzId(zusatz.getOzsId());
+            }
+        }
         if (ursprungsOrt.containsKey("U_ORTS_ZUSATZTEXT")) {
             ort.setOrtszusatztext(ursprungsOrt.get("U_ORTS_ZUSATZTEXT"));
         }
@@ -1643,6 +1662,23 @@ public class LafObjectMapper {
             return;
         }
         ort.setOrtId(o.getId());
+        ort.setOzId(o.getOzId());
+        if (entnahmeOrt.containsKey("P_ORTS_ZUSATZCODE")
+            && !entnahmeOrt.get("P_ORTS_ZUSATZCODE").equals("")) {
+            Ortszusatz zusatz = repository.getByIdPlain(
+                Ortszusatz.class,
+                entnahmeOrt.get("P_ORTS_ZUSATZCODE")
+            );
+            if (zusatz == null) {
+                currentWarnings.add(
+                    new ReportItem(
+                        "P_ORTS_ZUSATZCODE",
+                        entnahmeOrt.get("P_ORTS_ZUSATZCODE"),
+                        StatusCodes.IMP_INVALID_VALUE));
+            } else {
+                ort.setOzId(zusatz.getOzsId());
+            }
+        }
         if (entnahmeOrt.containsKey("P_ORTS_ZUSATZTEXT")) {
             ort.setOrtszusatztext(entnahmeOrt.get("P_ORTS_ZUSATZTEXT"));
         }
@@ -1773,28 +1809,11 @@ public class LafObjectMapper {
         if (attributes.containsKey(type + "HOEHE_NN")) {
             o.setHoeheUeberNn(Float.valueOf(attributes.get(type + "HOEHE_NN")));
         }
-        if (attributes.containsKey(type + "ORTS_ZUSATZCODE")
-            && !attributes.get(type + "ORTS_ZUSATZCODE").equals("")) {
-            Ortszusatz zusatz = repository.getByIdPlain(
-                Ortszusatz.class,
-                attributes.get(type + "ORTS_ZUSATZCODE")
-            );
-            if (zusatz == null) {
-                currentWarnings.add(
-                    new ReportItem(
-                        type + "ORTS_ZUSATZCODE",
-                        attributes.get(type + "ORTS_ZUSATZCODE"),
-                        StatusCodes.IMP_INVALID_VALUE));
-            } else {
-                o.setOzId(zusatz.getOzsId());
-            }
-        }
 
         // checkk if all attributes are empty
         if (o.getKdaId() == null
             && o.getGemId() == null
-            && o.getStaatId() == null
-            && o.getOzId() == null) {
+            && o.getStaatId() == null) {
             return null;
         }
 

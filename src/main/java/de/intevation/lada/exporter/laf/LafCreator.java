@@ -398,10 +398,10 @@ implements Creator {
         koord += sOrte.get(0).getKoordYExtern() + "\"";
         laf += lafLine(typePrefix + "KOORDINATEN_S", koord);
 
-        if ("P_".equals(typePrefix) && sOrte.get(0).getOzId() != null) {
+        if ("P_".equals(typePrefix) && o.getOzId() != null) {
             laf += lafLine(
                 typePrefix + "ORTS_ZUSATZCODE",
-                sOrte.get(0).getOzId(),
+                o.getOzId(),
                 CN);
         } else if ("U_".equals(typePrefix)
             && "R".equals(o.getOrtszuordnungTyp())
@@ -411,11 +411,11 @@ implements Creator {
                 sOrte.get(0).getOrtId(),
                 CN);
         } else if ("U_".equals(typePrefix)
-            && sOrte.get(0).getOzId() != null
+            && o.getOzId() != null
         ) {
             laf += lafLine(
                 typePrefix + "ORTS_ZUSATZCODE",
-                sOrte.get(0).getOzId(),
+                o.getOzId(),
                 CN);
         }
 //        if (sOrte.get(0).getHoeheUeberNn() != null) {

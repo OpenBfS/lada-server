@@ -110,7 +110,6 @@ public class OrtFactory {
             builder.and("kdaId", ort.getKdaId());
             builder.and("koordXExtern", ort.getKoordXExtern());
             builder.and("koordYExtern", ort.getKoordYExtern());
-            builder.and("ozId", ort.getOzId());
             builder.and("netzbetreiberId", ort.getNetzbetreiberId());
             List<Ort> orte =
                 repository.filterPlain(builder.getQuery());

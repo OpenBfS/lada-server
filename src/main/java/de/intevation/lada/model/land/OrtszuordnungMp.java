@@ -50,6 +50,9 @@ public class OrtszuordnungMp implements Serializable {
 
     private String ortszusatztext;
 
+    @Column(name = "oz_id")
+    private String ozId;
+
     @Column(name = "tree_modified", insertable = false, updatable = false)
     private Timestamp treeModified;
 
@@ -116,6 +119,14 @@ public class OrtszuordnungMp implements Serializable {
 
     public void setOrtszusatztext(String ortszusatztext) {
         this.ortszusatztext = ortszusatztext;
+    }
+
+    public String getOzId() {
+        return this.ozId;
+    }
+
+    public void setOzId(String ozId) {
+        this.ozId = ozId;
     }
 
     public Timestamp getTreeModified() {

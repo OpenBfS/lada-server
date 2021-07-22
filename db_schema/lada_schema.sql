@@ -307,6 +307,7 @@ CREATE TABLE ortszuordnung (
     ort_id integer NOT NULL REFERENCES stamm.ort,
     ortszuordnung_typ character varying(1) REFERENCES stamm.ortszuordnung_typ,
     ortszusatztext character varying(100),
+    oz_id character varying(7) REFERENCES stamm.ortszusatz,
     letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     EXCLUDE (probe_id WITH =) WHERE (ortszuordnung_typ = 'E')
@@ -324,6 +325,7 @@ CREATE TABLE ortszuordnung_mp (
     ort_id integer NOT NULL REFERENCES stamm.ort,
     ortszuordnung_typ character varying(1) REFERENCES stamm.ortszuordnung_typ,
     ortszusatztext character varying(100),
+    oz_id character varying(7) REFERENCES stamm.ortszusatz,
     letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     EXCLUDE (messprogramm_id WITH =) WHERE (ortszuordnung_typ = 'E')
