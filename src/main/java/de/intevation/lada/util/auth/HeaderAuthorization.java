@@ -162,7 +162,7 @@ public class HeaderAuthorization implements Authorization {
         }
         Authorizer authorizer = authorizers.get(clazz);
         // Do not authorize anything unknown
-        if (authorizer == null) {
+        if (authorizer == null || data == null) {
             return false;
         }
         return authorizer.isAuthorized(data, method, userInfo, clazz);
