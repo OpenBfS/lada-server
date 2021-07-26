@@ -34,6 +34,7 @@ DELETE FROM filter;
 DELETE FROM result_type;
 DELETE FROM query_user;
 DELETE FROM base_query;
+DELETE FROM lada_user;
 
 -- seed
 -- minimal master data to make interface tests runnable

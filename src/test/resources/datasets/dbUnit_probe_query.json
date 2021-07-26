@@ -1,4 +1,8 @@
 {
+    "stamm.lada_user": [{
+        "id": 1,
+        "name": "test"
+    }],
     "stamm.base_query": [{
         "id": 1,
         "sql": "SELECT hauptproben_nr, umw_id FROM land.probe"
@@ -9,7 +13,9 @@
     "stamm.query_user": [{
         "id": 1,
         "name": "Proben",
-        "base_query": 1
+        "user_id": 1,
+        "base_query": 1,
+        "description": "test"
     }],
     "stamm.filter": [{
         "id": 1,
@@ -46,10 +52,12 @@
     }],
     "stamm.grid_column_values": [{
         "id": 1,
+        "user_id": 1,
         "query_user": 1,
         "grid_column": 1
     }, {
         "id": 2,
+        "user_id": 1,
         "query_user": 1,
         "grid_column": 2
     }],
