@@ -98,7 +98,6 @@ public class KdaUtilTest {
     @Parameter(1)
     public int toKda;
 
-    // TODO: Do not ignore
     @Test
     public void transformTest() throws FactoryException {
         if (fromKda == KdaUtil.KDA_GK || toKda == KdaUtil.KDA_GK) {
