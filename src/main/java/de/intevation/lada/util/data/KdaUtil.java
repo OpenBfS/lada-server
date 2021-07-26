@@ -25,7 +25,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * Utilities for kda transformations
+ * Utilities for coordinate transformations.
  *
  */
 public class KdaUtil {
@@ -385,8 +385,6 @@ public class KdaUtil {
 
         @Override
         public ObjectNode transformTo1(String x, String y) {
-            x = x.replaceAll(",", ".");
-            y = y.replaceAll(",", ".");
             String epsgGk = getGkEpsg(Double.valueOf(x), Double.valueOf(y));
             ObjectNode coord = jtsTransform("EPSG:4326", epsgGk, y, x);
             if (coord == null) {
@@ -420,8 +418,6 @@ public class KdaUtil {
 
         @Override
         public ObjectNode transformTo5(String x, String y) {
-            x = x.replaceAll(",", ".");
-            y = y.replaceAll(",", ".");
             String epsgWgs = getWgsUtmEpsg(
                 Double.valueOf(x), Double.valueOf(y));
             ObjectNode coord = jtsTransform("EPSG:4326", epsgWgs, y, x);
@@ -446,8 +442,6 @@ public class KdaUtil {
 
         @Override
         public ObjectNode transformTo6(String x, String y) {
-            x = x.replaceAll(",", ".");
-            y = y.replaceAll(",", ".");
             String epsgEtrs = getEtrsEpsg(
                 Double.valueOf(x), Double.valueOf(y));
             ObjectNode coord = jtsTransform("EPSG:4326", epsgEtrs, y, x);
@@ -889,8 +883,8 @@ public class KdaUtil {
 
             MathTransform transform = CRS.findMathTransform(src, target);
             Coordinate srcCoord = new Coordinate();
-            srcCoord.y = Double.valueOf(y.replace(",", "."));
-            srcCoord.x = Double.valueOf(x.replace(",", "."));
+            srcCoord.y = Double.valueOf(y);
+            srcCoord.x = Double.valueOf(x);
             Coordinate targetCoord = new Coordinate();
             JTS.transform(srcCoord, targetCoord, transform);
             ObjectNode response = builder.createObjectNode();
@@ -904,8 +898,6 @@ public class KdaUtil {
     }
 
     private ObjectNode degreeToArc(String x, String y) {
-        x = x.replaceAll(",", ".");
-        y = y.replaceAll(",", ".");
         String[] xParts = x.split("\\.");
         String[] yParts = y.split("\\.");
 
@@ -949,8 +941,8 @@ public class KdaUtil {
         return response;
     }
 
-    /*
-     * Convert degrees in sexagesimal notation into decimal notation
+    /**
+     * Convert degrees in sexagesimal notation into decimal notation.
      */
     protected ObjectNode arcToDegree(String x, String y) {
         //Replace decimal separator
@@ -1066,7 +1058,6 @@ public class KdaUtil {
 
     private String getEpsgForWgsUtm(String x) {
         String epsg = "EPSG:326";
-        x = x.replaceAll(",", ".");
         String part = x.split("\\.")[0];
         String zone = part.length() == 7
             ? ("0" + part.substring(0, 1))
@@ -1075,7 +1066,6 @@ public class KdaUtil {
     }
 
     private String getEpsgForWgsUtmFromDegree(String x) {
-        x = x.replaceAll(",", ".");
         Double xCoord;
         try {
             xCoord = Double.valueOf(x);
@@ -1104,7 +1094,6 @@ public class KdaUtil {
     }
 
     private String getEpsgForGK(String y) {
-        y = y.replaceAll(",", ".");
         String part = y.split("\\.")[0];
         String zone = part.length() == 7 ? (part.substring(0, 1)) : null;
         if (zone == null) {
@@ -1134,7 +1123,6 @@ public class KdaUtil {
     }
 
     private String getEpsgForEd50UtmFromDegree(String x) {
-        x = x.replaceAll(",", ".");
         Double xCoord;
         try {
             xCoord = Double.valueOf(x);
@@ -1169,7 +1157,6 @@ public class KdaUtil {
      * Does not guarantee to return a valid EPSG code.
      */
     private String getEpsgForEtrs89(String x) {
-        x = x.replaceAll(",", ".");
         String part = x.split("\\.")[0];
         String zone = part.length() == 7 ? ("0" + part.substring(0, 1))
             : part.substring(0, 2);

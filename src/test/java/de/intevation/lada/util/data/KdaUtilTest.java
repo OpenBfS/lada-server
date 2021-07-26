@@ -29,7 +29,7 @@ import org.junit.runners.Parameterized.Parameters;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
- * Test accuracy of coordinate transformations.
+ * Unit tests for KdaUtil.
  */
 @RunWith(Parameterized.class)
 public class KdaUtilTest {
@@ -80,9 +80,11 @@ public class KdaUtilTest {
         Map.of("x", "32365990.950936107", "y", "5622168.57949754")
     );
 
+    /**
+     * @return All combinations of KdaUtil.KDA_* as input and output.
+     */
     @Parameters(name = "from {0} to {1}")
     public static List<Object[]> fromToCombinations() {
-        // All combinations of KdaUtil.KDA_* as input and output
         List<Object[]> combinations = new ArrayList<Object[]>();
         for (Integer from : COORDS.keySet()) {
             for (Integer to : COORDS.keySet()) {
@@ -98,6 +100,9 @@ public class KdaUtilTest {
     @Parameter(1)
     public int toKda;
 
+    /**
+     * Accuracy of coordinate transformations.
+     */
     @Test
     public void transformTest() throws FactoryException {
         if (fromKda == KdaUtil.KDA_GK || toKda == KdaUtil.KDA_GK) {
@@ -174,5 +179,20 @@ public class KdaUtilTest {
                 fromKda, toKda, d, rX, rY, eX, eY, epsilon),
             d <= epsilon
         );
+    }
+
+    /**
+     * Input with comma as decimal separator.
+     */
+    @Test
+    public void commaInputTest() {
+        final String decimalPoint = ".", decimalComma = ",";
+        ObjectNode result = new KdaUtil().transform(
+            fromKda,
+            toKda,
+            COORDS.get(fromKda).get("x").replace(decimalPoint, decimalComma),
+            COORDS.get(fromKda).get("y").replace(decimalPoint, decimalComma)
+        );
+        assertNotNull("Transformation result is null", result);
     }
 }
