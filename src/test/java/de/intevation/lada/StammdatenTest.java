@@ -24,7 +24,6 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -230,20 +229,19 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Insert a probe object into the database.
-     * TODO Geometry field does not work using dbunit
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T7)
-    @UsingDataSet("datasets/dbUnit_ort.json")
+    // Use SQL because geometry field does not work with @UsingDataSet
+    @ApplyScriptBefore("datasets/dbUnit_ort.sql")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseOrt() throws Exception {
         Protocol protocol = new Protocol();
         protocol.setName("database");
         protocol.setType("insert ort");
-        protocol.addInfo("database", "Insert ortinto database");
+        protocol.addInfo("database", "Insert Ort into database");
         testProtocol.add(protocol);
         Ort ort = em.find(Ort.class, ID1000);
         Assert.assertNotNull(ort);
@@ -252,12 +250,10 @@ public class StammdatenTest extends BaseTest {
 
     /**
      * Tests for probe operations.
-     * TODO Geometry field does not work using dbunit
      * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T8)
     @RunAsClient
     public final void testOrt(@ArquillianResource URL baseUrl)
