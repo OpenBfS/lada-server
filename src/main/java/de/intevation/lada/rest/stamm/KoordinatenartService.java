@@ -137,6 +137,6 @@ public class KoordinatenartService {
         if (result == null) {
             return new Response(false, StatusCodes.GEO_NOT_MATCHING, null);
         }
-        return new Response(true, StatusCodes.OK, result.toString());
+        return new Response(true, StatusCodes.OK, result);
     }
 }
