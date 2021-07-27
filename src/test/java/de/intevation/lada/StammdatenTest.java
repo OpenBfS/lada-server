@@ -29,11 +29,13 @@ import org.junit.runner.RunWith;
 
 import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
 import de.intevation.lada.model.stammdaten.Deskriptoren;
+import de.intevation.lada.model.stammdaten.KoordinatenArt;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.test.stamm.DatensatzErzeugerTest;
 import de.intevation.lada.test.stamm.DeskriptorenTest;
+import de.intevation.lada.test.stamm.KoordinatenartTest;
 import de.intevation.lada.test.stamm.MessprogrammKategorieTest;
 import de.intevation.lada.test.stamm.OrtTest;
 import de.intevation.lada.test.stamm.ProbenehmerTest;
@@ -102,6 +104,7 @@ public class StammdatenTest extends BaseTest {
     private MessprogrammKategorieTest messprogrammkategorieTest;
     private OrtTest ortTest;
     private DeskriptorenTest deskriptorenTest;
+    private KoordinatenartTest kdaTest;
 
     public StammdatenTest() {
         stammdatenTest = new Stammdaten();
@@ -110,6 +113,7 @@ public class StammdatenTest extends BaseTest {
         messprogrammkategorieTest = new MessprogrammKategorieTest();
         ortTest = new OrtTest();
         deskriptorenTest = new DeskriptorenTest();
+        kdaTest = new KoordinatenartTest();
         verboseLogging = false;
     }
 
@@ -595,5 +599,39 @@ public class StammdatenTest extends BaseTest {
     throws Exception {
         deskriptorenTest.init(baseUrl, testProtocol);
         deskriptorenTest.execute();
+    }
+
+    /**
+     * Insert Koordinatenart into the database.
+     * @throws Exception that can occur during the test.
+     */
+    @Test
+    @InSequence(37)
+    @UsingDataSet("datasets/dbUnit_koordinatenart.json")
+    @DataSource("java:jboss/lada-test")
+    @Cleanup(phase = TestExecutionPhase.NONE)
+    public final void prepareDatabaseKoordinatenart() throws Exception {
+        Protocol protocol = new Protocol();
+        protocol.setName("database");
+        protocol.setType("insert koordinatenart");
+        protocol.addInfo("database", "Insert koordinatenart into database");
+        testProtocol.add(protocol);
+        KoordinatenArt kda = em.find(KoordinatenArt.class, 1);
+        Assert.assertNotNull(kda);
+        protocol.setPassed(true);
+    }
+
+    /**
+     * Tests KoordinatenartService.
+     * @param baseUrl The server url used for the request.
+     * @throws Exception that can occur during the test.
+     */
+    @Test
+    @InSequence(38)
+    @RunAsClient
+    public final void testKoordinatenart(@ArquillianResource URL baseUrl)
+    throws Exception {
+        kdaTest.init(baseUrl, testProtocol);
+        kdaTest.execute();
     }
 }

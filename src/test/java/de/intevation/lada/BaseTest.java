@@ -197,7 +197,13 @@ public class BaseTest {
         return null;
     }
 
-    static void assertContains(JsonObject json, String key) {
+    /**
+     * Assert that a JsonObject contains a given key.
+     *
+     * @param json The JSON object to test.
+     * @param key The key expected in the JSON object.
+     */
+    public static void assertContains(JsonObject json, String key) {
         Assert.assertTrue(
             "Response does not contain expected key '" + key + "': "
             + json.toString(),
