@@ -97,27 +97,48 @@ psql $DB_CONNECT_STRING -d $DB_NAME --command \
       GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES
             ON ALL TABLES IN SCHEMA stamm, land TO $ROLE_NAME;"
 
+echo download german administrative borders
+TS="0101"
+cd /tmp
+if [ ! -f vg250_${TS}.utm32s.shape.ebenen.zip ]; then
+    curl -fO \
+         http://sg.geodatenzentrum.de/web_download/vg/vg250_${TS}/utm32s/shape/vg250_${TS}.utm32s.shape.ebenen.zip
+fi
+unzip -u vg250_${TS}.utm32s.shape.ebenen.zip "*VG250_*"
+
 echo create schema geo
 psql $DB_CONNECT_STRING -d $DB_NAME --command \
      "CREATE SCHEMA geo AUTHORIZATION $ROLE_NAME"
+# Only create the tables without importing the data
+for file_table in "GEM gem" "KRS kr" "RBZ rb" "LAN bl"
+do
+    FILE=$(echo $file_table | awk '{print $1}')
+    TABLE=$(echo $file_table | awk '{print $2}')
+    shp2pgsql -p -s 25832:4326 \
+        vg250_${TS}.utm32s.shape.ebenen/vg250_ebenen/VG250_${FILE} \
+        geo.vg250_${TABLE} | psql -q $DB_CONNECT_STRING -d $DB_NAME
+done
+
+echo create verwaltungsgrenze view
+psql -q $DB_CONNECT_STRING -d $DB_NAME \
+    -f $DIR/stammdaten_verwaltungsgrenze_view.sql
+psql $DB_CONNECT_STRING -d $DB_NAME --command \
+     "GRANT SELECT, REFERENCES ON TABLE stamm.verwaltungsgrenze TO $ROLE_NAME;"
 
 if [ "$NO_DATA" != "true" ]; then
-    echo download and import german administrative borders
-    TS="0101"
-    cd /tmp
-    if [ ! -f vg250_${TS}.utm32s.shape.ebenen.zip ]; then
-        curl -fO \
-            http://sg.geodatenzentrum.de/web_download/vg/vg250_${TS}/utm32s/shape/vg250_${TS}.utm32s.shape.ebenen.zip
-    fi
-    unzip -u vg250_${TS}.utm32s.shape.ebenen.zip "*VG250_*"
+    echo import german administrative borders
+    for file_table in "GEM gem" "KRS kr" "RBZ rb" "LAN bl"
+    do
+        FILE=$(echo $file_table | awk '{print $1}')
+        TABLE=$(echo $file_table | awk '{print $2}')
+        shp2pgsql -a -s 25832:4326 \
+            vg250_${TS}.utm32s.shape.ebenen/vg250_ebenen/VG250_${FILE} \
+            geo.vg250_${TABLE} | psql -q $DB_CONNECT_STRING -d $DB_NAME
+    done
 
-    shp2pgsql -s 25832:4326 vg250_${TS}.utm32s.shape.ebenen/vg250_ebenen/VG250_GEM geo.vg250_gem | psql -q $DB_CONNECT_STRING -d $DB_NAME
-    shp2pgsql -s 25832:4326 vg250_${TS}.utm32s.shape.ebenen/vg250_ebenen/VG250_KRS geo.vg250_kr | psql -q $DB_CONNECT_STRING -d $DB_NAME
-    shp2pgsql -s 25832:4326 vg250_${TS}.utm32s.shape.ebenen/vg250_ebenen/VG250_RBZ geo.vg250_rb | psql -q $DB_CONNECT_STRING -d $DB_NAME
-    shp2pgsql -s 25832:4326 vg250_${TS}.utm32s.shape.ebenen/vg250_ebenen/VG250_LAN geo.vg250_bl | psql -q $DB_CONNECT_STRING -d $DB_NAME
-
-    echo create verwaltungsgrenze view
-    psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/stammdaten_verwaltungsgrenze_view.sql
+    echo refresh verwaltungsgrenze view
+    psql $DB_CONNECT_STRING -d $DB_NAME --command \
+         "REFRESH MATERIALIZED VIEW stamm.verwaltungsgrenze"
 
     echo "load data:"
     for file in \
