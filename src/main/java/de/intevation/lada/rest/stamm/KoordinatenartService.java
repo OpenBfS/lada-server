@@ -9,7 +9,6 @@ package de.intevation.lada.rest.stamm;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.json.JsonObject;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -64,6 +63,33 @@ public class KoordinatenartService {
     private Repository repository;
 
     /**
+     * Expected format for the payload in POST request to recalculate().
+     */
+    private static class PostData {
+        int from;
+        int to;
+        String x;
+        String y;
+
+        // Setters needed for JSON deserialization:
+        void setFrom(int from) {
+            this.from = from;
+        }
+
+        void setTo(int to) {
+            this.to = to;
+        }
+
+        void setX(String x) {
+            this.x = x;
+        }
+
+        void setY(String y) {
+            this.y = y;
+        }
+    }
+
+    /**
      * Get all KoordinatenArt objects.
      * <p>
      * Example: http://example.com/koordinatenart
@@ -104,14 +130,10 @@ public class KoordinatenartService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response recalculate(
         @Context HttpHeaders headers,
-        JsonObject object
+        PostData object
     ) {
-        int kdaFrom = object.getInt("from");
-        int kdaTo = object.getInt("to");
-        String x = object.getString("x");
-        String y = object.getString("y");
-        KdaUtil transformer = new KdaUtil();
-        ObjectNode result = transformer.transform(kdaFrom, kdaTo, x, y);
+        ObjectNode result = new KdaUtil().transform(
+            object.from, object.to, object.x, object.y);
         if (result == null) {
             return new Response(false, StatusCodes.GEO_NOT_MATCHING, null);
         }
