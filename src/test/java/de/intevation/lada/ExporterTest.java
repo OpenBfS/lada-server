@@ -11,15 +11,12 @@ import java.net.URL;
 import java.nio.charset.CharacterCodingException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.SyncInvoker;
 import javax.ws.rs.core.MediaType;
@@ -53,10 +50,6 @@ public class ExporterTest extends BaseTest {
 
     @PersistenceContext
     EntityManager em;
-
-    public ExporterTest() {
-        testProtocol = new ArrayList<Protocol>();
-    }
 
     /**
      * Prepare data for CSV export of a Probe object.
@@ -94,8 +87,6 @@ public class ExporterTest extends BaseTest {
         prot.setType("csv");
         prot.setPassed(false);
         testProtocol.add(prot);
-
-        Client client = ClientBuilder.newClient();
 
         /* Request asynchronous export */
         JsonObject requestJson = Json.createObjectBuilder()

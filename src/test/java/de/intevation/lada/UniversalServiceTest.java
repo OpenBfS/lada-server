@@ -8,14 +8,11 @@
 package de.intevation.lada;
 
 import java.net.URL;
-import java.util.ArrayList;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -47,8 +44,6 @@ public class UniversalServiceTest extends BaseTest {
 
     @PersistenceContext
     EntityManager em;
-
-    private Client client;
 
     // The size of the "land.probe" array in dbUnit_probe_query.json
     private final int totalCount = 2;
@@ -106,11 +101,6 @@ public class UniversalServiceTest extends BaseTest {
                 .add("filterRegex", false)
                 .add("gridColumnId", 2))
         ).build();
-
-    public UniversalServiceTest() {
-        testProtocol = new ArrayList<Protocol>();
-        this.client = ClientBuilder.newClient();
-    }
 
     /**
      * Prepare data to be requested via UniversalService.

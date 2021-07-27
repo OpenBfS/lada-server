@@ -9,11 +9,14 @@ package de.intevation.lada;
 
 import java.io.StringReader;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
@@ -25,6 +28,7 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 
 /**
  * Base class for Lada server tests.
@@ -57,9 +61,23 @@ public class BaseTest {
     protected static List<Protocol> testProtocol;
 
     /**
+     * The client to be used for interface tests.
+     */
+    protected Client client;
+
+    /**
      * Enable verbose output for tests.
      */
     protected static boolean verboseLogging = false;
+
+    /**
+     * Set up shared infrastructure for test methods.
+     */
+    @Before
+    public void setup() {
+        this.testProtocol = new ArrayList<Protocol>();
+        this.client = ClientBuilder.newClient();
+    }
 
     /**
      * Create a deployable WAR archive.
@@ -98,6 +116,14 @@ public class BaseTest {
         for (Protocol p : testProtocol) {
             logger.info(p.toString(verboseLogging));
         }
+    }
+
+    /**
+     * Tear down shared infrastructure for test methods.
+     */
+    @After
+    public void tearDown() {
+        this.client.close();
     }
 
     /**

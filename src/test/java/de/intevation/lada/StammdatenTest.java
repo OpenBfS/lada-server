@@ -8,7 +8,6 @@
 package de.intevation.lada;
 
 import java.net.URL;
-import java.util.ArrayList;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -112,7 +111,6 @@ public class StammdatenTest extends BaseTest {
         messprogrammkategorieTest = new MessprogrammKategorieTest();
         ortTest = new OrtTest();
         deskriptorenTest = new DeskriptorenTest();
-        testProtocol = new ArrayList<Protocol>();
         verboseLogging = false;
     }
 

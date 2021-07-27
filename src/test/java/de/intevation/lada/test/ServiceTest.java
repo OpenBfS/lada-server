@@ -67,6 +67,11 @@ public class ServiceTest {
     protected List<String> geomPointAttributes = new ArrayList<String>();
 
     /**
+     * The client to be used for interface tests.
+     */
+    protected Client client;
+
+    /**
      * Base url of the server.
      */
     protected URL baseUrl;
@@ -77,6 +82,8 @@ public class ServiceTest {
      * @param p The resulting test protocol
      */
     public void init(URL bUrl, List<Protocol> p) {
+        // TODO: Close this client when done
+        this.client = ClientBuilder.newClient();
         this.baseUrl = bUrl;
         this.protocol = p;
     }
@@ -162,8 +169,7 @@ public class ServiceTest {
         prot.setType("get all");
         prot.setPassed(false);
         protocol.add(prot);
-        /* Create a client*/
-        Client client = ClientBuilder.newClient();
+
         WebTarget target = client.target(baseUrl + parameter);
         /* Request all objects*/
         Response response = target.request()
@@ -210,8 +216,7 @@ public class ServiceTest {
         prot.setType("get by Id");
         prot.setPassed(false);
         protocol.add(prot);
-        /* Create a client*/
-        Client client = ClientBuilder.newClient();
+
         WebTarget target = client.target(baseUrl + parameter);
         prot.addInfo("parameter", parameter);
         /* Request a object by id*/
@@ -267,8 +272,7 @@ public class ServiceTest {
         prot.setType("filter");
         prot.setPassed(false);
         protocol.add(prot);
-        /* Create a client*/
-        Client client = ClientBuilder.newClient();
+
         WebTarget target =
             client.target(baseUrl + parameter);
         prot.addInfo("filter", parameter);
@@ -315,8 +319,7 @@ public class ServiceTest {
         prot.setType("create");
         prot.setPassed(false);
         protocol.add(prot);
-        /* Create a client*/
-        Client client = ClientBuilder.newClient();
+
         WebTarget target = client.target(baseUrl + parameter);
         /* Send a post request containing a new object*/
         Response response = target.request()
@@ -368,8 +371,6 @@ public class ServiceTest {
         prot.setPassed(false);
         protocol.add(prot);
         try {
-            /* Create a client*/
-            Client client = ClientBuilder.newClient();
             WebTarget target = client.target(baseUrl + parameter);
             /* Request object corresponding to id in URL */
             Response response = target.request()
@@ -430,8 +431,7 @@ public class ServiceTest {
         prot.setType("delete");
         prot.setPassed(false);
         protocol.add(prot);
-        /* Create a client*/
-        Client client = ClientBuilder.newClient();
+
         WebTarget target =
             client.target(baseUrl + parameter);
         prot.addInfo("parameter", parameter);
