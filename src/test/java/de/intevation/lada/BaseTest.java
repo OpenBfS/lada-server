@@ -181,11 +181,10 @@ public class BaseTest {
     ) {
         String responseBody = response.readEntity(String.class);
         logger.debug(responseBody);
-        int status = response.getStatus();
         Assert.assertEquals(
             "Unexpected response status code",
             Response.Status.OK.getStatusCode(),
-            status);
+            response.getStatus());
         try {
             return Json.createReader(new StringReader(responseBody))
                 .readObject();
