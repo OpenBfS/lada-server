@@ -26,8 +26,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 /**
  * Unit tests for KdaUtil.
  */
@@ -117,7 +115,7 @@ public class KdaUtilTest {
         }
 
         KdaUtil kdaUtil = new KdaUtil();
-        ObjectNode result = kdaUtil.transform(
+        KdaUtil.Result result = kdaUtil.transform(
             fromKda,
             toKda,
             COORDS.get(fromKda).get("x"),
@@ -139,16 +137,12 @@ public class KdaUtilTest {
         double rX, rY;
         switch (toKda) {
         case KdaUtil.KDA_GS:
-            result = kdaUtil.arcToDegree(
-                result.get("x").asText(),
-                result.get("y").asText());
+            result = kdaUtil.arcToDegree(result.getX(), result.getY());
             assertNotNull("Conversion of transformation result "
                 + "to decimal notation failed", result);
         default:
-            rX = Double.parseDouble(
-                result.get("x").asText().replace(',', '.'));
-            rY = Double.parseDouble(
-                result.get("y").asText().replace(',', '.'));
+            rX = Double.parseDouble(result.getX().replace(',', '.'));
+            rY = Double.parseDouble(result.getY().replace(',', '.'));
         }
 
         // Distance between expected and result
@@ -187,7 +181,7 @@ public class KdaUtilTest {
     @Test
     public void commaInputTest() {
         final String decimalPoint = ".", decimalComma = ",";
-        ObjectNode result = new KdaUtil().transform(
+        KdaUtil.Result result = new KdaUtil().transform(
             fromKda,
             toKda,
             COORDS.get(fromKda).get("x").replace(decimalPoint, decimalComma),

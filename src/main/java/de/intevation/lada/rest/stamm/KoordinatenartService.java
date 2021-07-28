@@ -19,8 +19,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import de.intevation.lada.model.stammdaten.KoordinatenArt;
 import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.Repository;
@@ -132,7 +130,7 @@ public class KoordinatenartService {
         @Context HttpHeaders headers,
         PostData object
     ) {
-        ObjectNode result = new KdaUtil().transform(
+        KdaUtil.Result result = new KdaUtil().transform(
             object.from, object.to, object.x, object.y);
         if (result == null) {
             return new Response(false, StatusCodes.GEO_NOT_MATCHING, null);

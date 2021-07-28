@@ -13,7 +13,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.Query;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -67,8 +66,8 @@ public class OrtFactory {
         String xCoord = ort.getKoordXExtern();
         String yCoord = ort.getKoordYExtern();
 
-        KdaUtil util = new KdaUtil();
-        ObjectNode coords = util.transform(kda, KdaUtil.KDA_GD, xCoord, yCoord);
+        KdaUtil.Result coords = new KdaUtil().transform(
+            kda, KdaUtil.KDA_GD, xCoord, yCoord);
         if (coords == null) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.GEO_NOT_MATCHING);
@@ -78,9 +77,9 @@ public class OrtFactory {
             errors.add(err);
             return;
         }
-        ort.setGeom(
-            generateGeom(coords.get("x").asDouble(),
-            coords.get("y").asDouble()));
+        ort.setGeom(generateGeom(
+                Double.parseDouble(coords.getX()),
+                Double.parseDouble(coords.getY())));
         return;
     }
 
