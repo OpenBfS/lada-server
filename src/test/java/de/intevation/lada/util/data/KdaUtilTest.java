@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.util.data;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assume.assumeTrue;
 
 import java.util.ArrayList;
@@ -20,6 +18,7 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.referencing.FactoryException;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -78,6 +77,8 @@ public class KdaUtilTest {
         Map.of("x", "32365990.950936107", "y", "5622168.57949754")
     );
 
+    private static final int NON_EXISTANT_KDA = 9999;
+
     /**
      * @return All combinations of KdaUtil.KDA_* as input and output.
      */
@@ -121,7 +122,7 @@ public class KdaUtilTest {
             COORDS.get(fromKda).get("x"),
             COORDS.get(fromKda).get("y")
         );
-        assertNotNull("Transformation result is null", result);
+        Assert.assertNotNull("Transformation result is null", result);
 
         // Expected coordinates
         int compareWith = toKda;
@@ -138,7 +139,7 @@ public class KdaUtilTest {
         switch (toKda) {
         case KdaUtil.KDA_GS:
             result = kdaUtil.arcToDegree(result.getX(), result.getY());
-            assertNotNull("Conversion of transformation result "
+            Assert.assertNotNull("Conversion of transformation result "
                 + "to decimal notation failed", result);
         default:
             rX = Double.parseDouble(result.getX().replace(',', '.'));
@@ -165,7 +166,7 @@ public class KdaUtilTest {
             * (toKda == KdaUtil.KDA_UTM_ED50
                 || fromKda == KdaUtil.KDA_UTM_ED50
                 ? 5 : 1);
-        assertTrue(
+        Assert.assertTrue(
             String.format(
                 "from %d to %d: "
                 + "Distance %.2f m between result POINT(%.10g %.10g) and "
@@ -187,6 +188,32 @@ public class KdaUtilTest {
             COORDS.get(fromKda).get("x").replace(decimalPoint, decimalComma),
             COORDS.get(fromKda).get("y").replace(decimalPoint, decimalComma)
         );
-        assertNotNull("Transformation result is null", result);
+        Assert.assertNotNull("Transformation result is null", result);
+    }
+
+    /**
+     * Invalid KDA of given coordinates.
+     */
+    @Test
+    public void invalidFromKdaTest() {
+        KdaUtil.Result result = new KdaUtil().transform(
+            NON_EXISTANT_KDA,
+            toKda,
+            COORDS.get(fromKda).get("x"),
+            COORDS.get(fromKda).get("y"));
+        Assert.assertNull(result);
+    }
+
+    /**
+     * Invalid KDA to transform into.
+     */
+    @Test
+    public void invalidToKdaTest() {
+        KdaUtil.Result result = new KdaUtil().transform(
+            fromKda,
+            NON_EXISTANT_KDA,
+            COORDS.get(fromKda).get("x"),
+            COORDS.get(fromKda).get("y"));
+        Assert.assertNull(result);
     }
 }
