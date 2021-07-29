@@ -229,6 +229,7 @@ COPY stamm.result_type (id, name, format) FROM stdin;
 39	number	########.########
 40	sollistUmwGr	\N
 41	sollistMmtGr	\N
+42	id	\N
 \.
 
 
@@ -772,7 +773,7 @@ COPY stamm.grid_column (id, base_query, name, data_index, "position", filter, da
 4159	41	U-Ort-ID	uOrtId	59	87	1
 4160	41	Ursprungszeit	uZeit	60	104	2
 4161	41	Tags	tags	61	59	38
-4162	41	interne MWID	id	62	\N	1
+4162	41	interne MWID	id	62	\N	42
 4201	42	interne MID	messungId	1	\N	1
 4202	42	interne PID	probeId	2	\N	1
 4203	42	HP-Nr	hpNr	3	2	1
