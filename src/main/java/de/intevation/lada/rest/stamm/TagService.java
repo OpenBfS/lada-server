@@ -347,8 +347,8 @@ import de.intevation.lada.util.rest.Response;
                 : zuordnung.getMessungId());
             if ((Boolean) isAssigned.getSingleResult()) {
                 return new Response(
-                    false,
-                    StatusCodes.IMP_DUPLICATE,
+                    true,
+                    StatusCodes.OK,
                     "Tag is already assigned to probe");
             }
 
