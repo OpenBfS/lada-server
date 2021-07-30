@@ -245,7 +245,15 @@ Berechtigung- alle drei Elemente bearbeitet werden. Die höchste Hierarchieebene
 ist hier Messung, weshalb ein "Löschen" für die entsprechende Messung einer
 Zeile gilt. Der 'Hinzufügen'- Button ist nicht verfügbar, da eine Messung nur
 aus dem Kontext einer Probe hinzugefügt werden kann, und Proben in diesem Grid
-nicht eindeutig sind)
+nicht eindeutig sind).
+
+Die eindeutige Identifizierung von Datensätzen für den Export richtet sich
+ebenfalls nach dem Datentyp mit der höchsten Hierarchiestufe: Der Inhalt der
+entsprechenden Spalte wird als eindeutig angenommen und dem Server zur
+Identifikation der Datensätze übermittelt. Es muss also darauf geachtet werden,
+dass in der Konfiguration einer Query die Verwendung des Datentyps mit der
+höchsten Hierarchiestufe tatsächlich einer Spalte mit eindeutigen Werten
+entspricht.
 
 Um neue Queries für die Suche von Proben, Messungen und Messprogrammen zu
 erstellen sind die folgenden Schritte erforderlich:
