@@ -713,6 +713,14 @@ CREATE TABLE proben_zusatz (
 );
 
 
+CREATE TABLE umwelt_zusatz (
+    id serial PRIMARY KEY,
+    pzs_id character varying(3) REFERENCES proben_zusatz,
+    umw_id character varying(3) REFERENCES umwelt,
+    UNIQUE (pzs_id, umw_id)
+);
+
+
 CREATE TABLE probenart (
     id serial PRIMARY KEY,
     beschreibung character varying(30),

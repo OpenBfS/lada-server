@@ -110,6 +110,7 @@ A55	\N	Reststoffe aus der Trinkwasseraufbereitung	65
 A11	\N	Abwasser aus Kläranlagenablauf	63
 A12	\N	Wasser aus Kanalisation, Kläranlagenzulauf, Regenrückhaltebecken	63
 A13	\N	Klärschlamm	65
+A14	\N	Feststoffe/Rückstände aus der Kanalisation 	65
 I21	\N	Tabakblätter	65
 I31	\N	Ausgangsstoffe für Arzneimittel	65
 Z31	\N	Bedarfsgegenstände mit Lebensmittelkontakt	64
