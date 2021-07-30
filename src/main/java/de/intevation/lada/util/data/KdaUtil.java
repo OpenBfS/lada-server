@@ -46,6 +46,26 @@ public class KdaUtil {
     /* Represents coordinates in UTM CRS with ED50 datum (Hayford ellipsoid) */
     public static final int KDA_UTM_ED50 = 8;
 
+    /* Expected format of projected input coordinates */
+    private static final Pattern X_GK = Pattern.compile(
+        "\\d{7,9}(\\.\\d*)?");
+    private static final Pattern X_UTM = Pattern.compile(
+        "\\d{7,8}(\\.\\d*)?");
+    private static final Pattern Y = Pattern.compile(
+        "(\\+|-)?\\d{1,7}(\\.\\d*)?");
+
+    /* Expected format of sexagesimal input coordinates */
+    // with decimal separator
+    private static final Pattern LON_DEC = Pattern.compile(
+        "([+|-|W|E]?)(\\d{1,3})(\\d{2})(\\d{2})\\.(\\d{1,5})([W|E]?)");
+    private static final Pattern LAT_DEC = Pattern.compile(
+        "([+|-|N|S]?)(\\d{1,2})(\\d{2})(\\d{2})\\.(\\d{1,5})([N|S]?)");
+    // Without decimal separator, can include leading zeros
+    private static final Pattern LON = Pattern.compile(
+        "([+|-|W|E]?)(\\d{3})(\\d{0,2})(\\d{0,2})([W|E]?)");
+    private static final Pattern LAT = Pattern.compile(
+        "([+|-|N|S]?)(\\d{2})(\\d{0,2})(\\d{0,2})([N|S]?)");
+
     /*
      * UTM zone number with given prefix gives the EPSG code for CRS
      * 'ETRS89 / UTM zone <zone number>N'
@@ -111,53 +131,97 @@ public class KdaUtil {
     public Result transform(
         int kdaFrom, int kdaTo, String x, String y
     ) {
+        if (x == null || y == null) {
+            return null;
+        }
         x = x.replace(',', '.');
         y = y.replace(',', '.');
         Transform t;
-        switch (kdaFrom) {
-            case KDA_GK: t = this.new Transform1(); break;
-            case KDA_GS: t = this.new Transform2(); break;
-            case KDA_GD: t = this.new Transform4(); break;
-            case KDA_UTM_WGS84: t = this.new Transform5(); break;
-            case KDA_UTM_ETRS89: t = this.new Transform6(); break;
-            case KDA_UTM_ED50: t = this.new Transform8(); break;
-            default: return null;
+        try {
+            switch (kdaFrom) {
+                case KDA_GK: t = new Transform1(x, y); break;
+                case KDA_GS: t = this.new Transform2(x, y); break;
+                case KDA_GD: t = this.new Transform4(x, y); break;
+                case KDA_UTM_WGS84: t = this.new Transform5(x, y); break;
+                case KDA_UTM_ETRS89: t = this.new Transform6(x, y); break;
+                case KDA_UTM_ED50: t = this.new Transform8(x, y); break;
+                default: return null;
+            }
+        } catch (ValidationException ve) {
+            return null;
         }
-        return t.transform(kdaTo, x, y);
+        return t.transform(kdaTo);
     }
 
+    /**
+     * Defines the methods to be implemented for coordinate transformation.
+     */
     private interface Transform {
-        Result transform(int to, String x, String y);
-        Result transformTo1(String x, String y);
-        Result transformTo2(String x, String y);
-        Result transformTo4(String x, String y);
-        Result transformTo5(String x, String y);
-        Result transformTo6(String x, String y);
-        Result transformTo8(String x, String y);
+        void isInputValid() throws ValidationException;
+        Result transform(int to);
+        Result transformTo1();
+        Result transformTo2();
+        Result transformTo4();
+        Result transformTo5();
+        Result transformTo6();
+        Result transformTo8();
     }
 
+    /**
+     * Exception to be thrown on invalid coordinate input.
+     */
+    private class ValidationException extends Exception { };
+
+    /**
+     * Delegates to a class per input KDA.
+     */
     private abstract class AbstractTransform implements Transform {
-        public Result transform(int to, String x, String y) {
+        // Input coordinates
+        protected String x;
+        protected String y;
+
+        AbstractTransform(String x, String y) throws ValidationException {
+            this.x = x;
+            this.y = y;
+            isInputValid();
+        }
+
+        public Result transform(int to) {
             switch (to) {
-                case KDA_GK: return transformTo1(x, y);
-                case KDA_GS: return transformTo2(x, y);
-                case KDA_GD: return transformTo4(x, y);
-                case KDA_UTM_WGS84: return transformTo5(x, y);
-                case KDA_UTM_ETRS89: return transformTo6(x, y);
-                case KDA_UTM_ED50: return transformTo8(x, y);
+                case KDA_GK: return transformTo1();
+                case KDA_GS: return transformTo2();
+                case KDA_GD: return transformTo4();
+                case KDA_UTM_WGS84: return transformTo5();
+                case KDA_UTM_ETRS89: return transformTo6();
+                case KDA_UTM_ED50: return transformTo8();
                 default: return null;
             }
         }
     }
 
+    /**
+     * Implements coordinate transformations for Gauß-Krüger input.
+     */
     private class Transform1 extends AbstractTransform {
+
+        Transform1(String x, String y) throws ValidationException {
+            super(x, y);
+        }
+
         @Override
-        public Result transformTo1(String x, String y) {
+        public void isInputValid() throws ValidationException {
+            if (!(X_GK.matcher(x).matches() && Y.matcher(y).matches())) {
+                throw new ValidationException();
+            }
+        }
+
+        @Override
+        public Result transformTo1() {
             return new Result(x, y);
         }
 
         @Override
-        public Result transformTo2(String x, String y) {
+        public Result transformTo2() {
             String epsg = getEpsgForGK(x);
             Result degrees = jtsTransform(epsg, "EPSG:4326", y, x);
             if (degrees == null) {
@@ -167,7 +231,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo4(String x, String y) {
+        public Result transformTo4() {
             String epsg = getEpsgForGK(x);
             Result coords = jtsTransform(epsg, "EPSG:4326", y, x);
             if (coords == null) {
@@ -185,7 +249,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo5(String x, String y) {
+        public Result transformTo5() {
             String epsgGK = getEpsgForGK(x);
             Result degrees = jtsTransform(epsgGK, "EPSG:4326", y, x);
             String epsgWGS = getWgsUtmEpsg(
@@ -215,7 +279,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo6(String x, String y) {
+        public Result transformTo6() {
             String epsgGK = getEpsgForGK(x);
             Result degrees = jtsTransform(epsgGK, "EPSG:4326", y, x);
             // TODO: explain why x and y are interchanged here
@@ -246,7 +310,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo8(String x, String y) {
+        public Result transformTo8() {
             String epsgGK = getEpsgForGK(x);
             Result degrees = jtsTransform(epsgGK, "EPSG:4326", y, x);
             String epsgEd50 = getEpsgForEd50UtmFromDegree(
@@ -271,9 +335,27 @@ public class KdaUtil {
         }
     }
 
+    /**
+     * Implements coordinate transformations for sexagesimal geodetic input.
+     */
     private class Transform2 extends AbstractTransform {
+
+        Transform2(String x, String y) throws ValidationException {
+            super(x, y);
+        }
+
         @Override
-        public Result transformTo1(String x, String y) {
+        public void isInputValid() throws ValidationException {
+            if (!(LON_DEC.matcher(x).matches()
+                    && LAT_DEC.matcher(y).matches()
+                    || LON.matcher(x).matches()
+                    && LAT.matcher(y).matches())) {
+                throw new ValidationException();
+            }
+        }
+
+        @Override
+        public Result transformTo1() {
             Result degrees = arcToDegree(x, y);
             if (degrees == null) {
                 return null;
@@ -304,17 +386,17 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo2(String x, String y) {
+        public Result transformTo2() {
             return new Result(x, y);
         }
 
         @Override
-        public Result transformTo4(String x, String y) {
+        public Result transformTo4() {
             return arcToDegree(x, y);
         }
 
         @Override
-        public Result transformTo5(String x, String y) {
+        public Result transformTo5() {
             Result degrees = arcToDegree(x, y);
             if (degrees == null) {
                 return null;
@@ -346,7 +428,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo6(String x, String y) {
+        public Result transformTo6() {
             Result degrees = arcToDegree(x, y);
             if (degrees == null) {
                 return null;
@@ -378,7 +460,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo8(String x, String y) {
+        public Result transformTo8() {
             Result degrees = arcToDegree(x, y);
             if (degrees == null) {
                 return null;
@@ -408,10 +490,30 @@ public class KdaUtil {
         }
     }
 
+    /**
+     * Implements coordinate transformations for decimal geodetic input.
+     */
     private class Transform4 extends AbstractTransform {
 
+        Transform4(String x, String y) throws ValidationException {
+            super(x, y);
+        }
+
         @Override
-        public Result transformTo1(String x, String y) {
+        public void isInputValid() throws ValidationException {
+            final double maxLon = 180, maxLat = 90;
+            try {
+                double dX = Double.parseDouble(x), dY = Double.parseDouble(y);
+                if (dX < 0 || dX > maxLon || dY < 0 || dY > maxLat) {
+                    throw new ValidationException();
+                }
+            } catch (NumberFormatException nfe) {
+                throw new ValidationException();
+            }
+        }
+
+        @Override
+        public Result transformTo1() {
             String epsgGk = getGkEpsg(Double.valueOf(x), Double.valueOf(y));
             Result coord = jtsTransform("EPSG:4326", epsgGk, y, x);
             if (coord == null) {
@@ -431,17 +533,17 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo2(String x, String y) {
+        public Result transformTo2() {
             return degreeToArc(x, y);
         }
 
         @Override
-        public Result transformTo4(String x, String y) {
+        public Result transformTo4() {
             return new Result(x, y);
         }
 
         @Override
-        public Result transformTo5(String x, String y) {
+        public Result transformTo5() {
             String epsgWgs = getWgsUtmEpsg(
                 Double.valueOf(x), Double.valueOf(y));
             Result coord = jtsTransform("EPSG:4326", epsgWgs, y, x);
@@ -465,7 +567,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo6(String x, String y) {
+        public Result transformTo6() {
             String epsgEtrs = getEtrsEpsg(
                 Double.valueOf(x), Double.valueOf(y));
             Result coord = jtsTransform("EPSG:4326", epsgEtrs, y, x);
@@ -489,7 +591,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo8(String x, String y) {
+        public Result transformTo8() {
             String epsgEd50 = getEpsgForEd50UtmFromDegree(x);
             Result coord = jtsTransform("EPSG:4326", epsgEd50, y, x);
             if (coord == null) {
@@ -511,10 +613,23 @@ public class KdaUtil {
         }
     }
 
+    /**
+     * Implements coordinate transformations for UTM-WGS84 input.
+     */
     private class Transform5 extends AbstractTransform {
+        Transform5(String x, String y) throws ValidationException {
+            super(x, y);
+        }
 
         @Override
-        public Result transformTo1(String x, String y) {
+        public void isInputValid() throws ValidationException {
+            if (!(X_UTM.matcher(x).matches() && Y.matcher(y).matches())) {
+                throw new ValidationException();
+            }
+        }
+
+        @Override
+        public Result transformTo1() {
             String epsgWgs = getEpsgForWgsUtm(x);
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(epsgWgs, "EPSG:4326", x, y);
@@ -542,7 +657,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo2(String x, String y) {
+        public Result transformTo2() {
             String epsgWgs = getEpsgForWgsUtm(x);
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(epsgWgs, "EPSG:4326", x, y);
@@ -551,7 +666,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo4(String x, String y) {
+        public Result transformTo4() {
             String epsgWgs = getEpsgForWgsUtm(x);
             x = x.substring(2, x.length());
             Result coords = jtsTransform(epsgWgs, "EPSG:4326", x, y);
@@ -572,12 +687,12 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo5(String x, String y) {
+        public Result transformTo5() {
             return new Result(x, y);
         }
 
         @Override
-        public Result transformTo6(String x, String y) {
+        public Result transformTo6() {
             String epsgWgs = getEpsgForWgsUtm(x);
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(epsgWgs, "EPSG:4326", x, y);
@@ -598,7 +713,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo8(String x, String y) {
+        public Result transformTo8() {
             String epsgWgs = getEpsgForWgsUtm(x);
             x = x.substring(2, x.length());
             Result coords4326 = jtsTransform(epsgWgs, "EPSG:4326", x, y);
@@ -627,10 +742,24 @@ public class KdaUtil {
         }
     }
 
+    /**
+     * Implements coordinate transformations for UTM-ETRS89 input.
+     */
     private class Transform6 extends AbstractTransform {
 
+        Transform6(String x, String y) throws ValidationException {
+            super(x, y);
+        }
+
         @Override
-        public Result transformTo1(String x, String y) {
+        public void isInputValid() throws ValidationException {
+            if (!(X_UTM.matcher(x).matches() && Y.matcher(y).matches())) {
+                throw new ValidationException();
+            }
+        }
+
+        @Override
+        public Result transformTo1() {
             String epsgEtrs = getEpsgForEtrs89(x);
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(epsgEtrs, "EPSG:4326", x, y);
@@ -658,7 +787,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo2(String x, String y) {
+        public Result transformTo2() {
             String epsgEtrs = getEpsgForEtrs89(x);
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(epsgEtrs, "EPSG:4326", x, y);
@@ -667,7 +796,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo4(String x, String y) {
+        public Result transformTo4() {
             String epsgEtrs = getEpsgForEtrs89(x);
             x = x.substring(2, x.length());
             Result coords = jtsTransform(epsgEtrs, "EPSG:4326", x, y);
@@ -688,7 +817,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo5(String x, String y) {
+        public Result transformTo5() {
             String epsgEtrs = getEpsgForEtrs89(x);
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(epsgEtrs, "EPSG:4326", x, y);
@@ -709,12 +838,12 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo6(String x, String y) {
+        public Result transformTo6() {
             return new Result(x, y);
         }
 
         @Override
-        public Result transformTo8(String x, String y) {
+        public Result transformTo8() {
             String epsgEtrs = getEpsgForEtrs89(x);
             x = x.substring(2, x.length());
             Result coords4326 = jtsTransform(epsgEtrs, "EPSG:4326", x, y);
@@ -743,10 +872,24 @@ public class KdaUtil {
         }
     }
 
+    /**
+     * Implements coordinate transformations for UTM-ED50 input.
+     */
     private class Transform8 extends AbstractTransform {
 
+        Transform8(String x, String y) throws ValidationException {
+            super(x, y);
+        }
+
         @Override
-        public Result transformTo1(String x, String y) {
+        public void isInputValid() throws ValidationException {
+            if (!(X_UTM.matcher(x).matches() && Y.matcher(y).matches())) {
+                throw new ValidationException();
+            }
+        }
+
+        @Override
+        public Result transformTo1() {
             String epsgEd50 = getEpsgForEd50Utm(x);
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(epsgEd50, "EPSG:4326", x, y);
@@ -774,7 +917,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo2(String x, String y) {
+        public Result transformTo2() {
             String epsgWgs = getEpsgForEd50Utm(x);
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(epsgWgs, "EPSG:4326", x, y);
@@ -783,7 +926,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo4(String x, String y) {
+        public Result transformTo4() {
             String epsgEd50 = getEpsgForEd50Utm(x);
             x = x.substring(2, x.length());
             Result coords = jtsTransform(epsgEd50, "EPSG:4326", x, y);
@@ -804,7 +947,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo5(String x, String y) {
+        public Result transformTo5() {
             String epsgEd50 = getEpsgForEd50Utm(x);
             if (epsgEd50.equals("")) {
                 return null;
@@ -836,7 +979,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo6(String x, String y) {
+        public Result transformTo6() {
             String epsgEd50 = getEpsgForEd50Utm(x);
             if (epsgEd50.equals("")) {
                 return null;
@@ -870,7 +1013,7 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo8(String x, String y) {
+        public Result transformTo8() {
             return new Result(x, y);
         }
 
@@ -952,9 +1095,6 @@ public class KdaUtil {
      * @return Result with coordinates in decimal notation.
      */
     protected Result arcToDegree(String x, String y) {
-        //Replace decimal separator
-        x = x.replaceAll("\\.", ",");
-        y = y.replaceAll("\\.", ",");
         int xDegree = 0;
         int xMin = 0;
         int yDegree = 0;
@@ -966,11 +1106,8 @@ public class KdaUtil {
         String yPrefix = "";
         String ySuffix = "";
         try {
-            if (x.contains(",")) {
-                // with decimal separator
-                Pattern p = Pattern.compile(
-                    "([+|-|W|E]?)(\\d{1,3})(\\d{2})(\\d{2}),(\\d{1,5})([W|E]?)");
-                Matcher m = p.matcher(x);
+            if (x.contains(".")) {
+                Matcher m = LON_DEC.matcher(x);
                 m.matches();
                 xPrefix = m.group(1);
                 xDegree = Integer.valueOf(m.group(2));
@@ -978,10 +1115,7 @@ public class KdaUtil {
                 xSec = Double.valueOf(m.group(4) + "." + m.group(5));
                 xSuffix = m.group(6);
             } else {
-                //Without decimal separator, can include leading zeros
-                Pattern p = Pattern.compile(
-                    "([+|-|W|E]?)(\\d{3})(\\d{0,2})(\\d{0,2})([W|E]?)");
-                Matcher m = p.matcher(x);
+                Matcher m = LON.matcher(x);
                 m.matches();
                 xPrefix = m.group(1);
                 xDegree = Integer.valueOf(m.group(2));
@@ -991,11 +1125,8 @@ public class KdaUtil {
                     !m.group(4).isEmpty() ? m.group(4) : "0.0");
                 xSuffix = m.group(5);
             }
-            if (y.contains(",")) {
-                // with decimal separator
-                Pattern p = Pattern.compile(
-                    "([+|-|N|S]?)(\\d{1,2})(\\d{2})(\\d{2}),(\\d{1,5})([N|S]?)");
-                Matcher m = p.matcher(y);
+            if (y.contains(".")) {
+                Matcher m = LAT_DEC.matcher(y);
                 m.matches();
                 yPrefix = m.group(1);
                 yDegree = Integer.valueOf(m.group(2));
@@ -1003,10 +1134,7 @@ public class KdaUtil {
                 ySec = Double.valueOf(m.group(4) + "." + m.group(5));
                 ySuffix = m.group(6);
             } else {
-                //Without decimal separator, can include leading zeros
-                Pattern p = Pattern.compile(
-                    "([+|-|N|S]?)(\\d{2})(\\d{0,2})(\\d{0,2})([N|S]?)");
-                Matcher m = p.matcher(y);
+                Matcher m = LAT.matcher(y);
                 m.matches();
                 yPrefix = m.group(1);
                 yDegree = Integer.valueOf(m.group(2));

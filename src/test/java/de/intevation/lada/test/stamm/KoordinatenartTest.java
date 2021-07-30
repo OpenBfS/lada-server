@@ -29,6 +29,8 @@ import de.intevation.lada.test.ServiceTest;
  */
 public class KoordinatenartTest extends ServiceTest {
 
+    public static final int KDA_ID = 4; // decimal geodetic
+
     private JsonObject expectedById;
 
     private final String name = "koordinatenart";
@@ -64,7 +66,7 @@ public class KoordinatenartTest extends ServiceTest {
      */
     public final void execute() {
         getAll(name, url);
-        getById(name, url + "1", expectedById);
+        getById(name, url + KDA_ID, expectedById);
         recalculate();
     }
 
@@ -78,8 +80,8 @@ public class KoordinatenartTest extends ServiceTest {
 
         final String xKey = "x", yKey = "y", coord = "1";
         JsonObject requestJson = Json.createObjectBuilder()
-            .add("from", 1)
-            .add("to", 1)
+            .add("from", KDA_ID)
+            .add("to", KDA_ID)
             .add(xKey, coord)
             .add(yKey, coord)
             .build();

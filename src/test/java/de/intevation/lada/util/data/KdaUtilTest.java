@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.GeodeticCalculator;
@@ -30,6 +32,8 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public class KdaUtilTest {
+
+    private static Logger logger = Logger.getLogger(KdaUtilTest.class);
 
     /* Tolerance in meter for coordinate comparison */
     private static final double EPSILON = 1.05;
@@ -79,6 +83,8 @@ public class KdaUtilTest {
 
     private static final int NON_EXISTANT_KDA = 9999;
 
+    final String decimalPoint = ".", decimalComma = ",";
+
     /**
      * @return All combinations of KdaUtil.KDA_* as input and output.
      */
@@ -123,6 +129,8 @@ public class KdaUtilTest {
             COORDS.get(fromKda).get("y")
         );
         Assert.assertNotNull("Transformation result is null", result);
+        logger.debug("Transformation result: x=" + result.getX()
+            + " y=" + result.getY());
 
         // Expected coordinates
         int compareWith = toKda;
@@ -138,12 +146,16 @@ public class KdaUtilTest {
         double rX, rY;
         switch (toKda) {
         case KdaUtil.KDA_GS:
-            result = kdaUtil.arcToDegree(result.getX(), result.getY());
+            result = kdaUtil.arcToDegree(
+                result.getX().replace(decimalComma, decimalPoint),
+                result.getY().replace(decimalComma, decimalPoint));
             Assert.assertNotNull("Conversion of transformation result "
                 + "to decimal notation failed", result);
         default:
-            rX = Double.parseDouble(result.getX().replace(',', '.'));
-            rY = Double.parseDouble(result.getY().replace(',', '.'));
+            rX = Double.parseDouble(
+                result.getX().replace(decimalComma, decimalPoint));
+            rY = Double.parseDouble(
+                result.getY().replace(decimalComma, decimalPoint));
         }
 
         // Distance between expected and result
@@ -181,7 +193,6 @@ public class KdaUtilTest {
      */
     @Test
     public void commaInputTest() {
-        final String decimalPoint = ".", decimalComma = ",";
         KdaUtil.Result result = new KdaUtil().transform(
             fromKda,
             toKda,
@@ -216,4 +227,39 @@ public class KdaUtilTest {
             COORDS.get(fromKda).get("y"));
         Assert.assertNull(result);
     }
+
+    /**
+     * Invalid null input.
+     */
+    @Test
+    public void nullInputTest() {
+        KdaUtil.Result result = new KdaUtil().transform(
+            fromKda, toKda, null, null);
+        Assert.assertNull(result);
+    }
+
+    /**
+     * Invalid string input.
+     */
+    @Test
+    public void invalidStringTest() {
+        KdaUtil.Result result = new KdaUtil().transform(
+            fromKda, toKda, "", "");
+        Assert.assertNull(result);
+    }
+
+    /**
+     * Invalid zone numbers.
+     */
+    // TODO: implement me
+
+    /**
+     * Out of range longitude/easting.
+     */
+    // TODO: implement me
+
+    /**
+     * Out of range latitude/northing.
+     */
+    // TODO: implement me
 }

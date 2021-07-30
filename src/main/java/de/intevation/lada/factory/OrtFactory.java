@@ -53,7 +53,10 @@ public class OrtFactory {
             || ort.getKoordXExtern() == null
             || ort.getKoordXExtern().equals("")
             || ort.getKoordYExtern() == null
-            || ort.getKoordYExtern().equals("")) {
+            || ort.getKoordYExtern().equals("")
+        ) {
+            /* TODO: The checked conditions are mostly also checked in KdaUtil.
+             * Do we really need a different StatusCode here? */
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.IMP_INVALID_VALUE);
             err.setKey("coordinates");

@@ -616,7 +616,8 @@ public class StammdatenTest extends BaseTest {
         protocol.setType("insert koordinatenart");
         protocol.addInfo("database", "Insert koordinatenart into database");
         testProtocol.add(protocol);
-        KoordinatenArt kda = em.find(KoordinatenArt.class, 1);
+        KoordinatenArt kda = em.find(
+            KoordinatenArt.class, KoordinatenartTest.KDA_ID);
         Assert.assertNotNull(kda);
         protocol.setPassed(true);
     }
