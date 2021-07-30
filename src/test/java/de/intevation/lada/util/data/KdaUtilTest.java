@@ -9,6 +9,7 @@ package de.intevation.lada.util.data;
 
 import static org.junit.Assume.assumeTrue;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +84,7 @@ public class KdaUtilTest {
 
     private static final int NON_EXISTANT_KDA = 9999;
 
-    final String decimalPoint = ".", decimalComma = ",";
+    private final String decimalPoint = ".", decimalComma = ",";
 
     /**
      * @return All combinations of KdaUtil.KDA_* as input and output.
@@ -251,7 +252,32 @@ public class KdaUtilTest {
     /**
      * Invalid zone numbers.
      */
-    // TODO: implement me
+    @Test
+    public void invalidZoneTest() {
+        double invalidZone;
+        final double invalidGKZone = 999, invalidUTMZone = 99;
+        switch (fromKda) {
+        case KdaUtil.KDA_GS:
+        case KdaUtil.KDA_GD:
+            // No zone number in input
+            return;
+        case KdaUtil.KDA_GK:
+            invalidZone = invalidGKZone;
+            break;
+        default:
+            invalidZone = invalidUTMZone;
+        }
+        String x = COORDS.get(fromKda).get("x");
+        x = new DecimalFormat(KdaUtil.EASTING_PATTERN).format(
+            invalidZone * KdaUtil.ZONE_PREFIX_MULTIPLIER
+            + Double.parseDouble(x) % KdaUtil.ZONE_PREFIX_MULTIPLIER);
+        KdaUtil.Result result = new KdaUtil().transform(
+            fromKda,
+            toKda,
+            x,
+            COORDS.get(fromKda).get("y"));
+        Assert.assertNull(result);
+    }
 
     /**
      * Out of range longitude/easting.
