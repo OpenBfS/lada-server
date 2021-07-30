@@ -166,6 +166,7 @@ if [ "$NO_DATA" != "true" ]; then
         stammdaten_data_ortszuordnung_typ.sql \
         stammdaten_data_pflicht_messgroesse.sql \
         stammdaten_data_proben_zusatz.sql \
+        stammdaten_data_umwelt_zusatz.sql \
         stammdaten_data_probenart.sql \
         stammdaten_data_messprogramm_transfer.sql \
         stammdaten_data_ortszusatz.sql \
