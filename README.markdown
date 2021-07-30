@@ -140,8 +140,8 @@ mittels Port-Forwarding erreichbar gemacht werden, z.B.:
 Die Shibboleth-authentifizierte Anwendung ist dann unter
 "http://localhost:8185" im lokalen Browser erreichbar.
 
-Tests
------
+Tests und Debugging
+-------------------
 Die auf Arquillian basierenden Tests erfordern einen vollständig konfigurierten
 und gestarteten Wildfly Application-Server, da für die Schnittstellentest eine
 Clientanwendung simuliert wird und HTTP-Requests ausgeführt werden.
@@ -155,6 +155,36 @@ und benötigt eine leere Datenbank mit dem Namen "lada_test", die z.B. mit
  $ ./db_schema/setup-db.sh -cn lada_test
 
 angelegt werden kann.
+
+Um die Tests selber mit einem Remote-Debugger (z.B. JDB) zu debuggen, die
+Tests folgendermaßen ausführen:
+
+ $ mvn -Dmaven.surefire.debug="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005" -P remote-test clean test
+
+Sobald die Ausgabe "[INFO] Listening for transport dt_socket at address: 5005"
+erscheint, kann die weitere Ausführung der Tests per mit dem genannten Port
+verbundenem Debugger gesteuert werden.
+
+Soll der durch die Schnittstellentest im LADA-Server ausgeführte
+Code per Remote-Debugger erreicht werden, zunächst falls vorhanden das
+Deployment des LADA-Servers entfernen
+
+ $ rm $JBOSS_HOME/standalone/deployments/lada-server.war.deployed && \
+   until ls $JBOSS_HOME/standalone/deployments/lada-server.war.undeployed
+   do sleep 1
+   done
+
+und Folgendes in wildfly/standalone.conf einfügen:
+
+ JAVA_OPTS="$JAVA_OPTS -agentlib:jdwp=transport=dt_socket,address=*:8787,server=y,suspend=n"
+
+Den Wildfly neu starten. Dann einen Debugger mit Port 8787 verbinden um z.B.
+einen Breakpoint zu setzen und anschließend die Tests starten.
+
+Natürlich kann man mit der genannten Einstellung in wildfly/standalone.conf
+auch den LADA-Server ohne die automatischen Tests deployen und debuggen. Auch
+hier vorher sicherstellen, dass nur ein Deployment vorhanden ist, und den
+Wildfly neu starten.
 
 Dokumenation
 ------------
