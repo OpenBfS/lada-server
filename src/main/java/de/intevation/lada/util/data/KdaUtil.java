@@ -86,7 +86,12 @@ public class KdaUtil {
     /*
      * DecimalFormat pattern for northings
      */
-    private static final String NORTHING_PATTERN = "0.###";
+    static final String NORTHING_PATTERN = "0.###";
+
+    /*
+     * Maximum allowed values for longitude and latitude
+     */
+    private static final double MAX_LON = 180, MAX_LAT = 90;
 
     /**
      * Representation of transformation result.
@@ -354,6 +359,22 @@ public class KdaUtil {
                     && LAT.matcher(y).matches())) {
                 throw new ValidationException();
             }
+
+            Result decimal = arcToDegree(x, y);
+            if (decimal == null) {
+                throw new ValidationException();
+            }
+            try {
+                double dX = Double.parseDouble(decimal.getX());
+                double dY = Double.parseDouble(decimal.getY());
+                if (dX < -MAX_LON || dX > MAX_LON
+                    || dY < -MAX_LAT || dY > MAX_LAT
+                ) {
+                    throw new ValidationException();
+                }
+            } catch (NumberFormatException nfe) {
+                throw new ValidationException();
+            }
         }
 
         @Override
@@ -503,10 +524,11 @@ public class KdaUtil {
 
         @Override
         public void isInputValid() throws ValidationException {
-            final double maxLon = 180, maxLat = 90;
             try {
                 double dX = Double.parseDouble(x), dY = Double.parseDouble(y);
-                if (dX < 0 || dX > maxLon || dY < 0 || dY > maxLat) {
+                if (dX < -MAX_LON || dX > MAX_LON
+                    || dY < -MAX_LAT || dY > MAX_LAT
+                ) {
                     throw new ValidationException();
                 }
             } catch (NumberFormatException nfe) {
@@ -1328,7 +1350,7 @@ public class KdaUtil {
      * Get UTM zone for given longitude
      */
     private static int getUTMZone(double lon) {
-        return (int) Math.floor((lon + 180) / 6) + 1;
+        return (int) Math.floor((lon + MAX_LON) / 6) + 1;
     }
 
     /*

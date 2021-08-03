@@ -303,10 +303,56 @@ public class KdaUtilTest {
     /**
      * Out of range longitude/easting.
      */
-    // TODO: implement me
+    @Test
+    public void invalidXTest() {
+        String x;
+        switch (fromKda) {
+        case KdaUtil.KDA_GS:
+            // Valid longitude is between -180 and 180 degrees
+            x = "-1810000.000";
+            break;
+        case KdaUtil.KDA_GD:
+            // Valid longitude is between -180 and 180 degrees
+            x = "-181";
+            break;
+        default:
+            x = new DecimalFormat(KdaUtil.EASTING_PATTERN).format(
+                // Negative easting is invalid
+                -Double.parseDouble(COORDS.get(fromKda).get("x")));
+        }
+        KdaUtil.Result result = new KdaUtil().transform(
+            fromKda,
+            toKda,
+            x,
+            COORDS.get(fromKda).get("y"));
+        Assert.assertNull(result);
+    }
 
     /**
      * Out of range latitude/northing.
      */
-    // TODO: implement me
+    @Test
+    public void invalidYTest() {
+        String y;
+        switch (fromKda) {
+        case KdaUtil.KDA_GS:
+            // Valid latitude is between -90 and 90 degrees
+            y = "990000.000";
+            break;
+        case KdaUtil.KDA_GD:
+            // Valid latitude is between -90 and 90 degrees
+            y = "99";
+            break;
+        default:
+            // Absolute value of northing is < 1e7
+            final double invalidN = 1e7;
+            y = new DecimalFormat(KdaUtil.NORTHING_PATTERN).format(invalidN);
+        }
+        KdaUtil.Result result = new KdaUtil().transform(
+            fromKda,
+            toKda,
+            COORDS.get(fromKda).get("x"),
+            y);
+        Assert.assertNull(result);
+    }
 }
