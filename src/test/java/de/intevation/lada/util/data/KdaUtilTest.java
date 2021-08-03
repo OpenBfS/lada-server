@@ -86,6 +86,8 @@ public class KdaUtilTest {
 
     private final String decimalPoint = ".", decimalComma = ",";
 
+    private final String messageAssertNotNull = "Transformation result is null";
+
     /**
      * @return All combinations of KdaUtil.KDA_* as input and output.
      */
@@ -129,7 +131,7 @@ public class KdaUtilTest {
             COORDS.get(fromKda).get("x"),
             COORDS.get(fromKda).get("y")
         );
-        Assert.assertNotNull("Transformation result is null", result);
+        Assert.assertNotNull(messageAssertNotNull, result);
         logger.debug("Transformation result: x=" + result.getX()
             + " y=" + result.getY());
 
@@ -200,7 +202,7 @@ public class KdaUtilTest {
             COORDS.get(fromKda).get("x").replace(decimalPoint, decimalComma),
             COORDS.get(fromKda).get("y").replace(decimalPoint, decimalComma)
         );
-        Assert.assertNotNull("Transformation result is null", result);
+        Assert.assertNotNull(messageAssertNotNull, result);
     }
 
     /**
@@ -277,6 +279,25 @@ public class KdaUtilTest {
             x,
             COORDS.get(fromKda).get("y"));
         Assert.assertNull(result);
+    }
+
+    /**
+     * Negative sexagesimal input.
+     */
+    @Test
+    public void sexagesimalNegativeInputTest() {
+        // Compare sexagesimal input with decimal geodetic output only
+        if (fromKda != KdaUtil.KDA_GS || toKda != KdaUtil.KDA_GD) {
+            return;
+        }
+        KdaUtil.Result result = new KdaUtil().transform(
+            fromKda,
+            toKda,
+            "-70000.000",
+            "-500000.000");
+        Assert.assertNotNull(messageAssertNotNull, result);
+        Assert.assertEquals("-7.0", result.getX());
+        Assert.assertEquals("-50.0", result.getY());
     }
 
     /**

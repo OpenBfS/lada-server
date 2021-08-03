@@ -57,14 +57,14 @@ public class KdaUtil {
     /* Expected format of sexagesimal input coordinates */
     // with decimal separator
     private static final Pattern LON_DEC = Pattern.compile(
-        "([+|-|W|E]?)(\\d{1,3})(\\d{2})(\\d{2})\\.(\\d{1,5})([W|E]?)");
+        "([+|\\-|W|E]?)(\\d{1,3})(\\d{2})(\\d{2})\\.(\\d{1,5})([W|E]?)");
     private static final Pattern LAT_DEC = Pattern.compile(
-        "([+|-|N|S]?)(\\d{1,2})(\\d{2})(\\d{2})\\.(\\d{1,5})([N|S]?)");
+        "([+|\\-|N|S]?)(\\d{1,2})(\\d{2})(\\d{2})\\.(\\d{1,5})([N|S]?)");
     // Without decimal separator, can include leading zeros
     private static final Pattern LON = Pattern.compile(
-        "([+|-|W|E]?)(\\d{3})(\\d{0,2})(\\d{0,2})([W|E]?)");
+        "([+|\\-|W|E]?)(\\d{3})(\\d{0,2})(\\d{0,2})([W|E]?)");
     private static final Pattern LAT = Pattern.compile(
-        "([+|-|N|S]?)(\\d{2})(\\d{0,2})(\\d{0,2})([N|S]?)");
+        "([+|\\-|N|S]?)(\\d{2})(\\d{0,2})(\\d{0,2})([N|S]?)");
 
     /*
      * UTM zone number with given prefix gives the EPSG code for CRS
