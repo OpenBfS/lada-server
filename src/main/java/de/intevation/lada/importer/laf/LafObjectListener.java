@@ -513,7 +513,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -546,7 +546,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -575,7 +575,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -603,7 +603,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -633,7 +633,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -663,7 +663,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -693,7 +693,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -721,7 +721,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -749,7 +749,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -777,7 +777,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -805,7 +805,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -836,7 +836,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -865,7 +865,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         currentProbe.addAttribute("HAUPTPROBENNUMMER", hnr);
@@ -885,7 +885,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -915,7 +915,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -951,7 +951,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -985,7 +985,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1016,7 +1016,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1046,7 +1046,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1074,7 +1074,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1105,7 +1105,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1137,7 +1137,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1168,7 +1168,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         if (ctx.getChildCount() < 4) {
@@ -1211,7 +1211,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         if (ctx.getChildCount() < 4) {
@@ -1255,7 +1255,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         if (ctx.getChildCount() < 4) {
@@ -1298,7 +1298,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         if (ctx.getChildCount() < 4) {
@@ -1341,7 +1341,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         if (ctx.getChildCount() < 4) {
@@ -1387,7 +1387,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1424,7 +1424,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1456,7 +1456,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1485,7 +1485,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1515,7 +1515,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1545,7 +1545,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         if (ctx.getChildCount() < 4) {
@@ -1586,7 +1586,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1614,7 +1614,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1644,7 +1644,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1674,7 +1674,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1704,7 +1704,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1735,7 +1735,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1767,7 +1767,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1799,7 +1799,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1831,7 +1831,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1863,7 +1863,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1993,7 +1993,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2025,7 +2025,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2055,7 +2055,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2090,7 +2090,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2126,7 +2126,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2162,7 +2162,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2198,7 +2198,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2234,7 +2234,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2267,7 +2267,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2405,7 +2405,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2437,7 +2437,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2467,7 +2467,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2497,7 +2497,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2527,7 +2527,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2557,7 +2557,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2587,7 +2587,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2619,7 +2619,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2687,7 +2687,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2720,7 +2720,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2753,7 +2753,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2786,7 +2786,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2817,7 +2817,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2850,7 +2850,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -3725,7 +3725,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String text = ctx.getChild(1).toString();
@@ -3820,7 +3820,7 @@ public class LafObjectListener extends LafBaseListener {
             warn.setKey(ctx.getChild(0).toString());
             warn.setValue("");
             warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            currentWarnings.add(warn);
+            //currentWarnings.add(warn);
             return;
         }
         String text = ctx.getChild(1).toString();
