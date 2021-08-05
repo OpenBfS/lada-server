@@ -84,14 +84,15 @@ vorhandene Quellcode in die Container gemounted wird, so dass auf dem Host
 durchgeführte Änderungen leicht innerhalb der Container getestet werden können.
 
 Bauen der Images:
- $ cd ./db_schema
- $ docker build -t koala/lada_db .
- $ cd ../shibboleth
- $ docker build -t koala/lada_idp .
- $ cd ..
+ $ docker build -f db_schema/Dockerfile -t koala/lada_db db_schema
+ $ docker build -f shibboleth/Dockerfile -t koala/lada_idp shibboleth
  $ docker build -t koala/lada_wildfly .
  $ cd your/repo/of/lada-client
  $ docker build -t koala/lada_client .
+
+Oder für ein Client-Image mit Shibboleth-Unterstützung:
+
+$ docker build -f Dockerfile.shibboleth -t koala/lada_client .
 
 Aufbau eines Netzwerks für die LADA-Komponenten:
  $ docker network create lada_network
