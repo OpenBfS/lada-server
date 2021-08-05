@@ -396,6 +396,10 @@ public class LafObjectMapper {
             }
             if (newProbe != null) {
                 importProbeIds.add(newProbe.getId());
+            }  else if (probe != null) {
+                importProbeIds.add(probe.getId());
+            } else {
+                importProbeIds.add(null);
             }
         } catch (InvalidTargetObjectTypeException e) {
             ReportItem err = new ReportItem();
