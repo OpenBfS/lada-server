@@ -371,7 +371,7 @@ public class LafObjectMapper {
                         for (Integer code : err.getValue()) {
                             currentErrors.add(
                                 new ReportItem(
-                                    "validation", err.getKey(), code));
+                                    "validation#probe", err.getKey(), code));
                         }
                     }
                     for (Entry<String, List<Integer>> warn
@@ -380,7 +380,7 @@ public class LafObjectMapper {
                         for (Integer code : warn.getValue()) {
                             currentWarnings.add(
                                 new ReportItem(
-                                    "validation", warn.getKey(), code));
+                                    "validation#probe", warn.getKey(), code));
                         }
                     }
                     for (Entry<String, List<Integer>> notes
@@ -389,7 +389,7 @@ public class LafObjectMapper {
                         for (Integer code :notes.getValue()) {
                             currentNotifications.add(
                                 new ReportItem(
-                                    "validation", notes.getKey(), code));
+                                    "validation#probe", notes.getKey(), code));
                         }
                     }
                 }
@@ -482,7 +482,7 @@ public class LafObjectMapper {
             ) {
                 for (Integer code : err.getValue()) {
                     currentErrors.add(
-                        new ReportItem("validation", err.getKey(), code));
+                        new ReportItem("validation#probe", err.getKey(), code));
                 }
             }
             for (Entry<String, List<Integer>> warn
@@ -490,7 +490,7 @@ public class LafObjectMapper {
             ) {
                 for (Integer code : warn.getValue()) {
                     currentWarnings.add(
-                        new ReportItem("validation", warn.getKey(), code));
+                        new ReportItem("validation#probe", warn.getKey(), code));
                 }
             }
             for (Entry<String, List<Integer>> notes
@@ -498,7 +498,7 @@ public class LafObjectMapper {
             ) {
               for (Integer code: notes.getValue()) {
                 currentNotifications.add(
-                    new ReportItem("validation", notes.getKey(), code));
+                    new ReportItem("validation#probe", notes.getKey(), code));
               }
             }
             // Create messung objects
@@ -939,7 +939,7 @@ public class LafObjectMapper {
         ) {
             for (Integer code : err.getValue()) {
                 currentErrors.add(
-                    new ReportItem("validation", err.getKey(), code));
+                    new ReportItem("validation#messung", err.getKey(), code));
             }
         }
         for (Entry<String, List<Integer>> warn
@@ -947,7 +947,7 @@ public class LafObjectMapper {
         ) {
             for (Integer code : warn.getValue()) {
                 currentWarnings.add(
-                    new ReportItem("validation", warn.getKey(), code));
+                    new ReportItem("validation#messung", warn.getKey(), code));
             }
         }
         for (Entry<String, List<Integer>> notes
@@ -955,7 +955,7 @@ public class LafObjectMapper {
         ) {
             for (Integer code : notes.getValue()) {
                 currentNotifications.add(
-                    new ReportItem("validation", notes.getKey(), code));
+                    new ReportItem("validation#messung", notes.getKey(), code));
             }
         }
         // ... and messwerte
@@ -972,7 +972,7 @@ public class LafObjectMapper {
                 messwViolation.getWarnings().forEach((k, v) -> {
                     v.forEach((value) -> {
                         currentWarnings.add(
-                            new ReportItem("validation ", k, value));
+                            new ReportItem("validation#messwert", k, value));
                     });
                 });
             }
@@ -981,7 +981,7 @@ public class LafObjectMapper {
                 messwViolation.getErrors().forEach((k, v) -> {
                     v.forEach((value) -> {
                         currentErrors.add(
-                            new ReportItem("validation ", k, value));
+                            new ReportItem("validation#messwert", k, value));
                     });
                 });
             }
@@ -990,7 +990,7 @@ public class LafObjectMapper {
                 messwViolation.getNotifications().forEach((k, v) -> {
                     v.forEach((value) -> {
                         currentNotifications.add(
-                            new ReportItem("validation ", k, value));
+                            new ReportItem("validation#messwert", k, value));
                     });
                 });
             }
@@ -1317,12 +1317,15 @@ public class LafObjectMapper {
         Messung messung,
         String mstId
     ) {
+        //check for warnings in Probeobject - if true prevent status 7
+        Boolean probeWarnings = true;
+        probeWarnings = currentWarnings.stream().anyMatch(elem -> (elem.getKey().equals("validation#probe")));
+
         for (int i = 1; i <= 3; i++) {
             if (status.substring(i - 1, i).equals("0")) {
                 // no further status settings
                 return;
             } else if (currentErrors.isEmpty() && currentWarnings.isEmpty()
-                       || status.substring(i - 1, i).equals("7")
               ) {
                 if (!addStatusProtokollEntry(
                         i,
@@ -1332,6 +1335,15 @@ public class LafObjectMapper {
                 ) {
                     return;
                 }
+                } else if (status.substring(i - 1, i).equals("7") && !probeWarnings) {
+                        if (!addStatusProtokollEntry(
+                            i,
+                            Integer.valueOf(status.substring(i - 1, i)),
+                            messung,
+                            mstId)
+                        ) {
+                            return;
+                        }
             } else {
              currentErrors.add(
                  new ReportItem(
