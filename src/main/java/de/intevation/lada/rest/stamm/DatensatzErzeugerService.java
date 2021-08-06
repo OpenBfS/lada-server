@@ -9,7 +9,6 @@ package de.intevation.lada.rest.stamm;
 
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -18,9 +17,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
@@ -32,6 +29,7 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.rest.LadaService;
 
 /**
  * REST service for DatensatzErzeuger objects.
@@ -63,8 +61,7 @@ import de.intevation.lada.util.rest.Response;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/datensatzerzeuger")
-@RequestScoped
-public class DatensatzErzeugerService {
+public class DatensatzErzeugerService extends LadaService {
 
     /**
      * The data repository granting read access.
@@ -85,7 +82,6 @@ public class DatensatzErzeugerService {
      */
     @GET
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response get(
         @Context HttpServletRequest request,
         @Context UriInfo info
@@ -116,7 +112,6 @@ public class DatensatzErzeugerService {
      */
     @GET
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getById(
         @Context HttpServletRequest request,
         @PathParam("id") String id
@@ -136,7 +131,6 @@ public class DatensatzErzeugerService {
 
     @POST
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response create(
         @Context HttpServletRequest request,
         DatensatzErzeuger datensatzerzeuger
@@ -166,7 +160,6 @@ public class DatensatzErzeugerService {
 
     @PUT
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response update(
         @Context HttpServletRequest request,
         @PathParam("id") String id,
@@ -199,7 +192,6 @@ public class DatensatzErzeugerService {
 
     @DELETE
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
         @Context HttpServletRequest request,
         @PathParam("id") String id

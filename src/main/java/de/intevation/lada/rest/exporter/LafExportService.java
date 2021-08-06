@@ -14,13 +14,11 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -41,6 +39,7 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
+import de.intevation.lada.rest.LadaService;
 
 /**
  * REST service to export probe objects and the child objects associated with
@@ -58,8 +57,7 @@ import de.intevation.lada.util.data.Repository;
  * @author <a href = "mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("data/export")
-@RequestScoped
-public class LafExportService {
+public class LafExportService extends LadaService {
 
     /**
      * The data repository granting read-only access.
@@ -94,7 +92,6 @@ public class LafExportService {
      */
     @POST
     @Path("/laf")
-    @Consumes("application/json")
     @Produces("application/octet-stream")
     public Response download(
         JsonObject objects,

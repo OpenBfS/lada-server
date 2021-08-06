@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.json.JsonString;
@@ -31,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
@@ -54,6 +52,7 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.util.data.StatusCodes;
+import de.intevation.lada.rest.LadaService;
 
 /**
  * This class produces a RESTful service to interact with probe objects.
@@ -61,11 +60,10 @@ import de.intevation.lada.util.data.StatusCodes;
  * @author <a href = "mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("data/import")
-@RequestScoped
-public class LafImportService {
+public class LafImportService extends LadaService {
 
     /**
-     * The importer
+     * The importer implementation.
      */
     @Inject
     @ImportConfig(format = ImportFormat.LAF)
@@ -103,8 +101,6 @@ public class LafImportService {
      */
     @POST
     @Path("/laf/list")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response multiUpload(
         JsonObject jsonInput,
         @Context HttpServletRequest request
@@ -228,7 +224,6 @@ public class LafImportService {
     @Deprecated(since = "2021-02-10", forRemoval = true)
     @POST
     @Path("/laf")
-    @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.TEXT_PLAIN)
     public Response upload(
         String content,

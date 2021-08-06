@@ -7,20 +7,18 @@
  */
 package de.intevation.lada.rest.stamm;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.Staat;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.rest.LadaService;
 
 /**
  * REST service for Staat objects.
@@ -54,8 +52,7 @@ import de.intevation.lada.util.rest.Response;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/staat")
-@RequestScoped
-public class StaatService {
+public class StaatService extends LadaService {
 
     /**
      * The data repository granting read access.
@@ -72,7 +69,6 @@ public class StaatService {
      */
     @GET
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response get(
         @Context HttpHeaders headers,
         @Context UriInfo info
@@ -91,7 +87,6 @@ public class StaatService {
      */
     @GET
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getById(
         @Context HttpHeaders headers,
         @PathParam("id") String id

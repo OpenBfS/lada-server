@@ -17,15 +17,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -69,8 +66,7 @@ import de.intevation.lada.util.data.StatusCodes;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/audit")
-@RequestScoped
-public class AuditTrailService {
+public class AuditTrailService extends LadaService {
 
     /**
      * Class to store tablename and value field for foreign key mappings.
@@ -158,7 +154,6 @@ public class AuditTrailService {
      */
     @GET
     @Path("/probe/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public String getProbe(
         @Context HttpServletRequest request,
         @PathParam("id") String id
@@ -316,7 +311,6 @@ public class AuditTrailService {
      */
     @GET
     @Path("/messung/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public String getMessung(
         @Context HttpServletRequest request,
         @PathParam("id") String id

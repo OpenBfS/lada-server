@@ -10,12 +10,10 @@ package de.intevation.lada.rest.exporter;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -35,6 +33,7 @@ import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
+import de.intevation.lada.rest.LadaService;
 
 /**
  * REST service to export data into files using a polling mechanism.
@@ -48,8 +47,7 @@ import de.intevation.lada.util.auth.UserInfo;
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
 @Path("data/asyncexport")
-@RequestScoped
-public class AsyncExportService {
+public class AsyncExportService extends LadaService {
 
     @Inject
     private Logger logger;
@@ -125,8 +123,6 @@ public class AsyncExportService {
      */
     @POST
     @Path("/csv")
-    @Consumes("application/json")
-    @Produces("application/json")
     public Response createCsvExportJob(
         JsonObject objects,
         @Context HttpServletRequest request
@@ -180,8 +176,6 @@ public class AsyncExportService {
      */
     @POST
     @Path("/laf")
-    @Consumes("application/json")
-    @Produces("application/json")
     public Response createLafExportJob(
         JsonObject objects,
         @Context HttpServletRequest request
@@ -256,8 +250,6 @@ public class AsyncExportService {
      */
     @POST
     @Path("/json")
-    @Consumes("application/json")
-    @Produces("application/json")
     public Response createJsonExportJob(
         JsonObject objects,
         @Context HttpServletRequest request
@@ -294,7 +286,6 @@ public class AsyncExportService {
      */
     @GET
     @Path("/status/{id}")
-    @Produces("application/json")
     public Response getStatus(
         @PathParam("id") String id,
         @Context HttpServletRequest request

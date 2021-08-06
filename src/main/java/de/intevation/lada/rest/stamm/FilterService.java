@@ -7,16 +7,13 @@
  */
 package de.intevation.lada.rest.stamm;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 
 import de.intevation.lada.model.stammdaten.Filter;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -25,10 +22,10 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.rest.LadaService;
 
 @Path("rest/filter")
-@RequestScoped
-public class FilterService {
+public class FilterService extends LadaService {
 
     @Inject
     @AuthorizationConfig(type = AuthorizationType.HEADER)
@@ -39,7 +36,6 @@ public class FilterService {
 
     @PUT
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response update(
         @Context HttpServletRequest request,
         Filter filter
@@ -78,7 +74,6 @@ public class FilterService {
 
     @DELETE
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
         @Context HttpServletRequest request,
         @PathParam("id") String id
