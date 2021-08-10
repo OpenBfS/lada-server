@@ -7,15 +7,19 @@
  */
 package de.intevation.lada.rest.stamm;
 
+import java.util.List;
 import javax.inject.Inject;
+import javax.persistence.Query;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
+import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
@@ -69,7 +73,24 @@ public class ProbenzusatzService extends LadaService {
         @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
-        return repository.getAll(ProbenZusatz.class);
+        MultivaluedMap<String, String> params = info.getQueryParameters();
+        if (params.isEmpty() || !params.containsKey("umwId")) {
+            return repository.getAll(ProbenZusatz.class);
+        }
+        String umwId = params.getFirst("umwId");
+        Query query =
+            repository.queryFromString(
+                "SELECT pzs_id FROM "
+                + de.intevation.lada.model.stammdaten.SchemaName.NAME
+                + ".umwelt_zusatz "
+                + "WHERE umw_id = :umw"
+            ).setParameter("umw", umwId);
+        @SuppressWarnings("unchecked")
+        List<String> ids = query.getResultList();
+        QueryBuilder<ProbenZusatz> builder2 =
+            repository.queryBuilder(ProbenZusatz.class);
+        builder2.orIn("id", ids);
+        return repository.filter(builder2.getQuery());
     }
 
     /**
