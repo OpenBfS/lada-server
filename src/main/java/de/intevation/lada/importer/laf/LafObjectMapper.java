@@ -2121,7 +2121,7 @@ public class LafObjectMapper {
 
         if ("UMWELTBEREICH_S".equals(key)
             && probe.getUmwId() == null
-            && !value.equals("")
+            && value != null
         ) {
             Umwelt umw = repository.getByIdPlain(
                 Umwelt.class, value.toString());
@@ -2139,7 +2139,7 @@ public class LafObjectMapper {
         }
         if ("UMWELTBEREICH_C".equals(key)
             && probe.getUmwId() == null
-            && !value.equals("")
+            && value != null
         ) {
             QueryBuilder<Umwelt> builder =
                 repository.queryBuilder(Umwelt.class);
@@ -2214,7 +2214,7 @@ public class LafObjectMapper {
             probe.setMedia(value.toString());
         }
 
-        if ("PROBENART".equals(key) && !value.equals("")) {
+        if ("PROBENART".equals(key) && value != null) {
             List<ImporterConfig> cfgs =
                 getImporterConfigByAttributeUpper("PROBENART");
             String attr = value.toString();

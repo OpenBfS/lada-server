@@ -1087,6 +1087,9 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
+        if (value.equals("")) {
+            value = null;
+        }
         currentProbe.addAttribute(
             ctx.getChild(0).toString().toUpperCase(), value);
     }
