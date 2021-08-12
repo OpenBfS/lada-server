@@ -253,16 +253,16 @@ Hierbei existiert eine Hierarchie: weiter oben stehende Elemente ersetzen
 das weiter unten stehende.
 
 Datentypen mit ID-Funktionalität, in absteigender Hierarchie:
-  1. 'messungId' - Zeile enthält eine Messung
-  2. 'probeId' - Zeile enthält eine Probe
-  3. 'mpId' - Zeile enthält ein Messprogramm
-  4. 'ortId' - Zeile enthält einen (Stammdaten-)Ort
-  5. 'pnehmer' - Zeile enthält einen Probenehmer
-  6. 'dsatzerz'- Zeile enthält einen Datensatzerzeuger
-  7. 'mprkat'- Zeile enthält eine Messprogrammkategorie
-  8. 'id' - Zeile enthält beliebige Daten, die an Hand dieser Spalte
+  1. 'id' - Zeile enthält beliebige Daten, die an Hand dieser Spalte
             identifiziert werden können (z.B. für den Export einzeln
             selektierter Zeilen).
+  2. 'messungId' - Zeile enthält eine Messung
+  3. 'probeId' - Zeile enthält eine Probe
+  4. 'mpId' - Zeile enthält ein Messprogramm
+  5. 'ortId' - Zeile enthält einen (Stammdaten-)Ort
+  6. 'pnehmer' - Zeile enthält einen Probenehmer
+  7. 'dsatzerz'- Zeile enthält einen Datensatzerzeuger
+  8. 'mprkat'- Zeile enthält eine Messprogrammkategorie
 
 Diese Datentypen sollten jeweils eine entsprechende Datenbank-ID enthalten,
 bzw. im Fall von 'id' einen eindeutigen Wert (Zahl oder Text). Mehrere IDs von
