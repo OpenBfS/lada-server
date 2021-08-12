@@ -182,7 +182,11 @@ public class LafImportService extends LadaService {
                 fileResponseData.put(
                     "notifications", importer.getNotifications());
             }
+            if(importer.getErrors().values().stream().anyMatch( elem -> elem.stream().anyMatch(ele -> ele.getKey().equals("validation#probe") == true))){
+                fileResponseData.put("success", false);
+            } else {
             fileResponseData.put("success", true);
+            }
             fileResponseData.put(
                 "probeIds", ((LafImporter) importer).getImportedIds());
             importResponseData.put(fileName, fileResponseData);
@@ -256,8 +260,12 @@ public class LafImportService extends LadaService {
         }
         importer.doImport(content, userInfo, config);
         Map<String, Object> respData = new HashMap<String, Object>();
+        Boolean success = true;
         if (!importer.getErrors().isEmpty()) {
             respData.put("errors", importer.getErrors());
+            if (importer.getErrors().values().stream().anyMatch( elem -> elem.stream().anyMatch(ele -> ele.getKey().equals("validation#probe") == true))){
+                success = false;
+            }
         }
         if (!importer.getWarnings().isEmpty()) {
             respData.put("warnings", importer.getWarnings());
@@ -270,12 +278,13 @@ public class LafImportService extends LadaService {
         respData.put("probeIds", importedProbeids);
 
         // If import created at least a new record
-        if (importedProbeids.size() > 0 && !mstId.equals("null")) {
+        if (importedProbeids.size() > 0 && !mstId.equals("null") && success == true) {
             //Generate a tag for the imported probe records
             Response tagCreation = tagUtil.generateTag("IMP", mstId);
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
-                return new Response(true, StatusCodes.OK, respData);
+                success = false;
+                return new Response(success, StatusCodes.OK, respData);
             }
             Tag newTag = (Tag) tagCreation.getData();
             tagUtil.setTagsByProbeIds(importedProbeids, newTag.getId());
@@ -283,7 +292,7 @@ public class LafImportService extends LadaService {
             respData.put("tag", newTag.getTag());
         }
 
-        return new Response(true, StatusCodes.OK, respData);
+        return new Response(success, StatusCodes.OK, respData);
     }
 
     /**
