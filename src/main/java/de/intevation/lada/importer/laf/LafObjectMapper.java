@@ -1016,6 +1016,19 @@ public class LafObjectMapper {
                     "PROBENKOMMENTAR", "Text", StatusCodes.VALUE_MISSING));
             return null;
         }
+        QueryBuilder<KommentarP> KommentarBuilder =
+            repository.queryBuilder(KommentarP.class);
+            KommentarBuilder.and("probeId", probe.getId());
+        Response responseKommentar =
+            repository.filter(KommentarBuilder.getQuery());
+        List<KommentarP> KommentarExist = (List<KommentarP>) responseKommentar.getData();
+
+        if (KommentarExist.stream().anyMatch(elem -> elem.getText().trim().replace(" ","").toUpperCase().equals(attributes.get("TEXT").trim().replace(" ", "").toUpperCase())==true)) {
+            currentNotifications.add(
+                new ReportItem(
+                    "PROBENKOMMENTAR", attributes.get("TEXT"), StatusCodes.IMP_DUPLICATE));
+            return null;
+        }
         KommentarP kommentar = new KommentarP();
         kommentar.setProbeId(probe.getId());
         kommentar.setText(attributes.get("TEXT"));
