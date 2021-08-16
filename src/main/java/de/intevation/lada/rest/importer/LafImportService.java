@@ -182,7 +182,8 @@ public class LafImportService extends LadaService {
                 fileResponseData.put(
                     "notifications", importer.getNotifications());
             }
-            if(importer.getErrors().values().stream().anyMatch( elem -> elem.stream().anyMatch(ele -> ele.getKey().equals("validation#probe") == true))){
+            if(importer.getErrors().values().stream().anyMatch( elem -> elem.stream().anyMatch(
+                            ele -> (ele.getKey().equals("validation#probe") || ele.getKey().equals("Parser")) == true))){
                 fileResponseData.put("success", false);
             } else {
             fileResponseData.put("success", true);
@@ -193,7 +194,7 @@ public class LafImportService extends LadaService {
             importedProbeids.addAll(((LafImporter) importer).getImportedIds());
         });
 
-        boolean success = false;
+        boolean success = true;
         // If import created at least a new record
         if (importedProbeids.size() > 0) {
             success = true;
@@ -201,6 +202,7 @@ public class LafImportService extends LadaService {
             Response tagCreation = tagUtil.generateTag("IMP", mstId);
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
+                success = false;
                 return new Response(
                     success,
                     StatusCodes.OK,
