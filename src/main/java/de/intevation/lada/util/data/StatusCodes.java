@@ -8,12 +8,15 @@
 
 package de.intevation.lada.util.data;
 
+//import jdk.javadoc.internal.doclets.formats.html.resources.standard;
+
 public class StatusCodes {
     private StatusCodes() { };
     public static final int OK = 200;
     public static final int NOT_EXISTING = 600;
     public static final int PRESENT = 601;
     public static final int NOT_A_PROBE = 602;
+    public static final int NOT_A_COMMENT = 607;
     public static final int ERROR_DB_CONNECTION = 603;
     public static final int ERROR_VALIDATION = 604;
     public static final int ERROR_MERGING = 605;
@@ -34,6 +37,7 @@ public class StatusCodes {
     public static final int VAL_END_BEFORE_BEGIN = 643;
     public static final int VAL_UNIT_NORMALIZE = 645;
     public static final int VAL_UNIT_UMW = 644;
+    public static final int VAL_EXISTS = 646;
     public static final int GEO_COORD_UNCHECKED = 650;
     public static final int GEO_POINT_OUTSIDE = 651;
     public static final int GEO_NOT_MATCHING = 652;
