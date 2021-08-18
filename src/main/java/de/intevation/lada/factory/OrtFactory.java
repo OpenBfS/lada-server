@@ -120,12 +120,25 @@ public class OrtFactory {
             }
         } else if (ort.getGemId() != null) {
             builder.and("gemId", ort.getGemId());
-            builder.and("ozId", ort.getOzId());
             builder.and("netzbetreiberId", ort.getNetzbetreiberId());
             List<Ort> orte =
                 repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
-                return orte.get(0);
+                if (orte.size() == 1) {
+                    return orte.get(0);
+                } else {
+                    //get verwaltungseinheiten
+                    Verwaltungseinheit v = repository.getByIdPlain(
+                        Verwaltungseinheit.class, ort.getGemId());
+                    if (v != null) {
+                        for (Ort oElem : orte) {
+                            if (oElem.getKoordXExtern().equals(String.valueOf(v.getMittelpunkt().getX()))
+                            && oElem.getKoordYExtern().equals(String.valueOf(v.getMittelpunkt().getY())) ){
+                                return oElem;
+                            }
+                        }
+                    }
+                }
             }
         } else  if (ort.getStaatId() != null) {
             builder.and("staatId", ort.getStaatId());
