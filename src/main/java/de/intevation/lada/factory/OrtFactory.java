@@ -202,6 +202,16 @@ public class OrtFactory {
                     ort.setBerichtstext(v.getBezeichnung());
                 }
                 transformCoordinates(ort);
+                //set ortId
+                if ( v.getIsGemeinde() ) {
+                    ort.setOrtId("GEM_"+ort.getGemId());
+                } else if ( !v.getIsGemeinde() && v.getIsLandkreis() ){
+                    ort.setOrtId("LK_"+ort.getGemId());
+                } else if ( !v.getIsGemeinde() && !v.getIsLandkreis() && v.getIsRegbezirk() ) {
+                    ort.setOrtId("RB_"+ort.getGemId());
+                } else if ( !v.getIsGemeinde() && !v.getIsLandkreis() && !v.getIsRegbezirk() && v.getIsBundesland() ) {
+                    ort.setOrtId("BL_"+ort.getGemId());
+                }
                 hasGem = true;
             }
         }
