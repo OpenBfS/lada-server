@@ -65,7 +65,8 @@ public class DateMesszeitpunkt implements Rule {
         if ((probe.getProbeentnahmeBeginn() != null
             && probe.getProbeentnahmeBeginn().after(messung.getMesszeitpunkt())
             || probe.getProbeentnahmeEnde() != null
-            && probe.getProbeentnahmeEnde().after(messung.getMesszeitpunkt()))
+            && (probe.getProbeentnahmeEnde().after(messung.getMesszeitpunkt())
+            || probe.getProbeentnahmeEnde().equals(messung.getMesszeitpunkt())))
             && (probe.getProbenartId() != null
                 && probe.getProbenartId() == 3)
         ) {
