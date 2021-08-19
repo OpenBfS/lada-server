@@ -752,7 +752,7 @@ CREATE TRIGGER letzte_aenderung_probenehmer BEFORE UPDATE ON probenehmer FOR EAC
 
 CREATE TABLE result_type (
     id  serial PRIMARY KEY,
-    name character varying(12),
+    name character varying(12) NOT NULL,
     format character varying(30)
 );
 
@@ -943,11 +943,11 @@ CREATE TABLE grid_column_values (
     sort character varying(4),
     sort_index integer,
     filter_value text,
-    filter_active boolean,
-    filter_negate boolean,
-    filter_regex boolean,
-    filter_is_null boolean,
-    visible boolean,
+    filter_active boolean NOT NULL DEFAULT false,
+    filter_negate boolean NOT NULL DEFAULT false,
+    filter_regex boolean NOT NULL DEFAULT false,
+    filter_is_null boolean NOT NULL DEFAULT false,
+    visible boolean NOT NULL DEFAULT false,
     column_index integer,
     width integer
 );
