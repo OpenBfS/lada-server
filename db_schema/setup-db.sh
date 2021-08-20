@@ -98,13 +98,14 @@ psql $DB_CONNECT_STRING -d $DB_NAME --command \
             ON ALL TABLES IN SCHEMA stamm, land TO $ROLE_NAME;"
 
 echo download german administrative borders
-TS="0101"
 cd /tmp
-if [ ! -f vg250_${TS}.utm32s.shape.ebenen.zip ]; then
-    curl -fO \
-         http://sg.geodatenzentrum.de/web_download/vg/vg250_${TS}/utm32s/shape/vg250_${TS}.utm32s.shape.ebenen.zip
+SRC_URI=https://daten.gdz.bkg.bund.de/produkte/vg/vg250_ebenen_0101/aktuell/vg250_01-01.utm32s.shape.ebenen.zip
+BASE_NAME=vg250_01-01.utm32s.shape.ebenen
+SHAPE_DIR=${BASE_NAME}/vg250_ebenen_0101
+if [ ! -f ${BASE_NAME}.zip ]; then
+    curl -fO ${SRC_URI}
 fi
-unzip -u vg250_${TS}.utm32s.shape.ebenen.zip "*VG250_*"
+unzip -u ${BASE_NAME}.zip "*VG250_*"
 
 echo create schema geo
 psql $DB_CONNECT_STRING -d $DB_NAME --command \
@@ -115,7 +116,7 @@ do
     FILE=$(echo $file_table | awk '{print $1}')
     TABLE=$(echo $file_table | awk '{print $2}')
     shp2pgsql -p -s 25832:4326 \
-        vg250_${TS}.utm32s.shape.ebenen/vg250_ebenen/VG250_${FILE} \
+        ${SHAPE_DIR}/VG250_${FILE} \
         geo.vg250_${TABLE} | psql -q $DB_CONNECT_STRING -d $DB_NAME
 done
 
@@ -132,10 +133,9 @@ if [ "$NO_DATA" != "true" ]; then
         FILE=$(echo $file_table | awk '{print $1}')
         TABLE=$(echo $file_table | awk '{print $2}')
         shp2pgsql -a -s 25832:4326 \
-            vg250_${TS}.utm32s.shape.ebenen/vg250_ebenen/VG250_${FILE} \
+            ${SHAPE_DIR}/VG250_${FILE} \
             geo.vg250_${TABLE} | psql -q $DB_CONNECT_STRING -d $DB_NAME
     done
-
     echo refresh verwaltungsgrenze view
     psql $DB_CONNECT_STRING -d $DB_NAME --command \
          "REFRESH MATERIALIZED VIEW stamm.verwaltungsgrenze"
