@@ -1,10 +1,6 @@
 UPDATE stamm.grid_column_values
 SET filter_active = false
 WHERE filter_active IS NULL;
-ALTER TABLE stamm.grid_column_values
-    ALTER COLUMN filter_active SET DEFAULT false;
-ALTER TABLE stamm.grid_column_values
-    ALTER COLUMN filter_active SET NOT NULL;
 
 UPDATE stamm.grid_column_values
 SET visible = false
@@ -23,6 +19,8 @@ SET filter_is_null = false
 WHERE filter_is_null IS NULL;
 
 ALTER TABLE stamm.grid_column_values
+    ALTER COLUMN filter_active SET DEFAULT false,
+    ALTER COLUMN filter_active SET NOT NULL,
     ALTER COLUMN visible SET DEFAULT false,
     ALTER COLUMN visible SET NOT NULL,
     ALTER COLUMN filter_negate SET DEFAULT false,
