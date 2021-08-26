@@ -462,9 +462,11 @@ public class LafObjectMapper {
 
                     // Create ursprungsOrte
                     //Check if ursprungsOrte present and clean up
+                    if (object.getUrsprungsOrte().size() > 0){
                     QueryBuilder<Ortszuordnung> builderUOrt =
                         repository.queryBuilder(Ortszuordnung.class);
                         builderUOrt.and("probeId", newProbe.getId());
+                        builderUOrt.and("ortszuordnungTyp", "U");
                     Response uOrtQuery =
                         repository.filter(builderUOrt.getQuery());
                     @SuppressWarnings("unchecked")
@@ -473,6 +475,7 @@ public class LafObjectMapper {
                         for (Ortszuordnung elemOrt : uOrteProbe){
                             repository.delete(elemOrt);
                         }
+                    }
                     }
                     //Add Ursprungsort from LAF
                     List<Ortszuordnung> uOrte = new ArrayList<>();
