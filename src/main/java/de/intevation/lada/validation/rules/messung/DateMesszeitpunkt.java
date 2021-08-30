@@ -67,7 +67,7 @@ public class DateMesszeitpunkt implements Rule {
             || probe.getProbeentnahmeEnde() != null
             && probe.getProbeentnahmeEnde().after(messung.getMesszeitpunkt()))
             && (probe.getProbenartId() != null
-                && probe.getProbenartId() == 3)
+                && (probe.getProbenartId() == 3 || probe.getProbenartId() == 9))
         ) {
             Violation violation = new Violation();
             violation.addWarning(
