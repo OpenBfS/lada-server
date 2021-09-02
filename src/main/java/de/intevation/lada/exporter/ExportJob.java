@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 import javax.json.JsonObject;
 
@@ -50,6 +51,11 @@ public abstract class ExportJob extends Thread {
      * The export format.
      */
     protected String format;
+
+    /**
+     * Export locale.
+     */
+    protected Locale locale;
 
     /**
      * Logger instance.
@@ -232,6 +238,14 @@ public abstract class ExportJob extends Thread {
     }
 
     /**
+     * Get the locale.
+     * @return Locale object
+     */
+    public Locale getLocale() {
+        return this.locale;
+    }
+
+    /**
      * Return the job identifier.
      * @return Identifier as String
      */
@@ -309,6 +323,14 @@ public abstract class ExportJob extends Thread {
      */
     public void setExportParameter(JsonObject exportParams) {
         this.exportParameters = exportParams;
+    }
+
+    /**
+     * Set the locale used for the export.
+     * @param locale Locale
+     */
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 
     /**

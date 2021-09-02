@@ -9,6 +9,10 @@ package de.intevation.lada.rest.exporter;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Locale.LanguageRange;
 
 import javax.inject.Inject;
 import javax.json.Json;
@@ -132,10 +136,15 @@ public class AsyncExportService extends LadaService {
         if (encoding == null || encoding.equals("")) {
             encoding = "iso-8859-15";
         }
+        String localeRange = request.getHeader("Accept-Language");
+        if (localeRange == null || localeRange.equals("")) {
+            localeRange = "de-DE";
+        }
+        Locale locale = getLocaleFromRequest(localeRange);
         UserInfo userInfo = authorization.getInfo(request);
         String newJobId =
             exportJobManager.createExportJob(
-                "csv", encoding, objects, userInfo);
+                "csv", encoding, objects, locale, userInfo);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
@@ -186,7 +195,11 @@ public class AsyncExportService extends LadaService {
             && objects.getJsonArray("messungen") == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-
+        String localeRange = request.getHeader("Accept-Language");
+        if (localeRange == null || localeRange.equals("")) {
+            localeRange = "de-DE";
+        }
+        Locale locale = getLocaleFromRequest(localeRange);
         String encoding = request.getHeader("X-FILE-ENCODING");
         if (encoding == null || encoding.equals("")) {
             encoding = "iso-8859-15";
@@ -194,7 +207,7 @@ public class AsyncExportService extends LadaService {
         UserInfo userInfo = authorization.getInfo(request);
         String newJobId =
             exportJobManager.createExportJob(
-                "laf", encoding, objects, userInfo);
+                "laf", encoding, objects, locale, userInfo);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
@@ -254,12 +267,16 @@ public class AsyncExportService extends LadaService {
         JsonObject objects,
         @Context HttpServletRequest request
     ) {
-
+        String localeRange = request.getHeader("Accept-Language");
+        if (localeRange == null || localeRange.equals("")) {
+            localeRange = "de-DE";
+        }
+        Locale locale = getLocaleFromRequest(localeRange);
         String encoding = "utf-8";
         UserInfo userInfo = authorization.getInfo(request);
         String newJobId =
             exportJobManager.createExportJob(
-                "json", encoding, objects, userInfo);
+                "json", encoding, objects, locale, userInfo);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
@@ -317,7 +334,7 @@ public class AsyncExportService extends LadaService {
     }
 
     /**
-     * Download a finished export file
+     * Download a finished export file.
      * @param id Job id to download file from
      * @return Export file, status 403 if the requesting user has not created
      *         the request or status 404 if job was not found
@@ -374,5 +391,18 @@ public class AsyncExportService extends LadaService {
                 "application/octet-stream; charset=" + encoding);
 
         return response.build();
+    }
+
+    private Locale getLocaleFromRequest(String localeRanges) {
+        List<Locale> supportedLocales = new LinkedList<Locale>();
+        supportedLocales.add(Locale.GERMAN);
+        supportedLocales.add(Locale.ENGLISH);
+        List<LanguageRange> ranges = Locale.LanguageRange.parse(localeRanges);
+        List<Locale> locales = Locale.filter(ranges, supportedLocales);
+        if (locales.size() == 0) {
+            return Locale.ENGLISH;
+        } else {
+            return locales.get(0);
+        }
     }
 }
