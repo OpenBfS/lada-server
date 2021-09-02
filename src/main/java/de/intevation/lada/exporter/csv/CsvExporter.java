@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -54,6 +56,13 @@ public class CsvExporter implements Exporter {
 
     @Inject
     private Repository repository;
+
+    ResourceBundle i18n;
+
+    public CsvExporter() {
+        Locale de = Locale.GERMAN;
+        i18n = ResourceBundle.getBundle("lada_server", de);
+    }
 
     /**
      * Enum storing all possible csv options.
@@ -234,6 +243,7 @@ public class CsvExporter implements Exporter {
                 for (int i = 0; i < keys.length; i++) {
                     Object value = row.get(keys[i]);
 
+
                     //Value is a status kombi
                     if (keys[i].equals("statusK")) {
                         rowItems.add(getStatusStringByid((Integer) value));
@@ -252,6 +262,9 @@ public class CsvExporter implements Exporter {
                             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         sdf.setTimeZone(TimeZone.getTimeZone(timezone));
                         rowItems.add(sdf.format(calendar.getTime()));
+                    } else if (value instanceof Boolean) {
+                        rowItems.add(value != null
+                            ? i18n.getString(value.toString()) : null);
                     } else {
                         rowItems.add(value != null ? value.toString() : null);
                     }
