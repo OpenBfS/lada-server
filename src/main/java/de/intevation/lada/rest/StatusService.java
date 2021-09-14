@@ -354,9 +354,7 @@ public class StatusService extends LadaService {
                 }
                 violationCollection.addNotifications(
                     violation.getNotifications());
-                if (hasValidMesswerte) {
-                    break;
-                }
+
             }
             } else if (newStatusWert != 7) {
                     Violation error = new Violation();
