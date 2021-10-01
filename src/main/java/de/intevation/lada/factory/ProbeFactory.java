@@ -572,7 +572,9 @@ public class ProbeFactory {
         String mediaDesk = probe.getMediaDesk();
         if (mediaDesk != null) {
             Object result = repository.queryFromString(
-                "SELECT get_media_from_media_desk( :mediaDesk );")
+                "SELECT "
+                + de.intevation.lada.model.stammdaten.SchemaName.NAME
+                + ".get_media_from_media_desk( :mediaDesk );")
                     .setParameter("mediaDesk", mediaDesk)
                     .getSingleResult();
             probe.setMedia(result != null ? result.toString() : "");
