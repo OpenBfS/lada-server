@@ -20,7 +20,8 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -81,7 +82,9 @@ public class LafImporter implements Importer {
                 lafString.getBytes(StandardCharsets.UTF_8)),
             StandardCharsets.UTF_8);
         try {
-            ANTLRInputStream ais = new ANTLRInputStream(is);
+            CharStream ais = CharStreams.fromStream(new ByteArrayInputStream(
+                lafString.getBytes(StandardCharsets.UTF_8)),
+                StandardCharsets.UTF_8);
             LafLexer lexer = new LafLexer(ais);
             CommonTokenStream cts = new CommonTokenStream(lexer);
             LafParser parser = new LafParser(cts);
