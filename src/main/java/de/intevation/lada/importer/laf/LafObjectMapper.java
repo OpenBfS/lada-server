@@ -1583,6 +1583,9 @@ public class LafObjectMapper {
                 if (!ktaGrp.isEmpty()) {
                     Ort o = null;
                     o = findOrCreateOrt(uort.get(0), "U_", probe);
+                    if (o == null) {
+                        o = findOrCreateOrt(uort.get(0), "P_", probe);
+                    }
                     if (o != null) {
                         o.setOrtTyp(1);
                         o.setKtaGruppeId(ktaGrp.get(0).getId());
