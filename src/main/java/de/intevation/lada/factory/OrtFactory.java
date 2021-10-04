@@ -102,14 +102,12 @@ public class OrtFactory {
      * @return The resulting ort.
      */
     public Ort completeOrt(Ort ort) {
-        logger.debug("complete ort- function");
         if (errors == null) {
             errors = new ArrayList<ReportItem>();
         } else {
             errors.clear();
         }
         QueryBuilder<Ort> builder = repository.queryBuilder(Ort.class);
-        logger.debug("Build Query");
         if (ort.getKdaId() != null
             && ort.getKoordXExtern() != null
             && ort.getKoordYExtern() != null
@@ -121,10 +119,8 @@ public class OrtFactory {
             List<Ort> orte =
                 repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
-                logger.debug("Orte not Empty");
                 return orte.get(0);
             }
-            logger.debug("Orte is Empty");
         } else if (ort.getGemId() != null) {
             builder.and("gemId", ort.getGemId());
             builder.and("netzbetreiberId", ort.getNetzbetreiberId());
@@ -132,7 +128,6 @@ public class OrtFactory {
                 repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
                 if (orte.size() == 1) {
-                    logger.debug("exactly 1 ort found");
                     return orte.get(0);
                 } else {
                     //get verwaltungseinheiten
@@ -140,6 +135,7 @@ public class OrtFactory {
                         Verwaltungseinheit.class, ort.getGemId());
                     if (v != null) {
                         for (Ort oElem : orte) {
+                            //Todo: Check for different kda-types
                             if (oElem.getKoordXExtern().equals(String.valueOf(v.getMittelpunkt().getX()))
                             && oElem.getKoordYExtern().equals(String.valueOf(v.getMittelpunkt().getY()))
                              ){
@@ -147,7 +143,7 @@ public class OrtFactory {
                             }
                         }
                     } else {
-                        logger.debug("we need an else here ...");
+                        logger.debug("1. we need an else here ...");
                     }
                 }
             }
@@ -162,7 +158,6 @@ public class OrtFactory {
                 return orte.get(0);
             }
         }
-        logger.debug("Create Ort");
 
         return createOrt(ort);
     }
@@ -194,9 +189,7 @@ public class OrtFactory {
             QueryBuilder<Ort> builderExists = repository.queryBuilder(Ort.class);
             builderExists.and("netzbetreiberId", ort.getNetzbetreiberId());
             builderExists.andLike("ortId", "%"+ort.getGemId());
-            //List<Ort> ortExists = repository.filterPlain(builderExists.getQuery());
             List<Ort> ortExists =  repository.filterPlain(builderExists.getQuery());
-            logger.debug("ort exists: " + ortExists.size());
             if (v == null) {
                 ReportItem err = new ReportItem();
                 err.setCode(StatusCodes.IMP_INVALID_VALUE);
@@ -220,7 +213,7 @@ public class OrtFactory {
                         ort.setOrtId("RB_"+ort.getGemId());
                     } else if ( !v.getIsGemeinde() && !v.getIsLandkreis() && !v.getIsRegbezirk() && v.getIsBundesland() ) {
                         ort.setOrtId("BL_"+ort.getGemId());
-                }
+                    }
                 }
                 if (ort.getLangtext() == null || ort.getLangtext().equals("")) {
                     ort.setLangtext(v.getBezeichnung());
@@ -233,8 +226,10 @@ public class OrtFactory {
                 transformCoordinates(ort);
 
                 hasGem = true;
-            } else {
+            } else if (ortExists.size() > 0 && hasKoord==false) {
                 return ortExists.get(0);
+            } else {
+                return ort;
             }
         }
         if (ort.getStaatId() != null
