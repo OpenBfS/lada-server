@@ -16,6 +16,7 @@
     </parent>
 
     <properties>
+        <antlr.version>4.9.2</antlr.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
         <!-- GeoTools Version
@@ -146,7 +147,7 @@
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
-            <version>4.5</version>
+            <version>${antlr.version}</version>
         </dependency>
 
         <dependency>
@@ -318,7 +319,7 @@
                     <plugin>
                         <groupId>org.antlr</groupId>
                         <artifactId>antlr4-maven-plugin</artifactId>
-                        <version>4.5</version>
+                        <version>${antlr.version}</version>
                         <configuration>
                             <outputDirectory>${basedir}/src/main/java</outputDirectory>
                         </configuration>
@@ -411,7 +412,7 @@
                     <plugin>
                         <groupId>org.antlr</groupId>
                         <artifactId>antlr4-maven-plugin</artifactId>
-                        <version>4.5</version>
+                        <version>${antlr.version}</version>
                         <configuration>
                             <outputDirectory>${basedir}/src/main/java</outputDirectory>
                         </configuration>
