@@ -9,7 +9,6 @@ package de.intevation.lada.importer.laf;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 import java.util.ArrayList;
@@ -77,10 +76,6 @@ public class LafImporter implements Importer {
 
         importProbeIds = new ArrayList<Integer>();
 
-        InputStreamReader is = new InputStreamReader(
-            new ByteArrayInputStream(
-                lafString.getBytes(StandardCharsets.UTF_8)),
-            StandardCharsets.UTF_8);
         try {
             CharStream ais = CharStreams.fromStream(new ByteArrayInputStream(
                 lafString.getBytes(StandardCharsets.UTF_8)),
