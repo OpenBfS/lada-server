@@ -206,11 +206,13 @@ public class LafImportService extends LadaService {
                 fileResponseData.put(
                     "notifications", importer.getNotifications());
             }
-            if(importer.getErrors().values().stream().anyMatch( elem -> elem.stream().anyMatch(
-                            ele -> (ele.getKey().equals("validation#probe") || ele.getKey().equals("Parser")) == true))){
+            if (importer.getErrors().values().stream().anyMatch(
+                    elem -> elem.stream().anyMatch(
+                        ele -> (ele.getKey().equals("validation#probe")
+                            || ele.getKey().equals("Parser"))))) {
                 fileResponseData.put("success", false);
             } else {
-            fileResponseData.put("success", true);
+                fileResponseData.put("success", true);
             }
             fileResponseData.put(
                 "probeIds", ((LafImporter) importer).getImportedIds());
@@ -289,7 +291,9 @@ public class LafImportService extends LadaService {
         Boolean success = true;
         if (!importer.getErrors().isEmpty()) {
             respData.put("errors", importer.getErrors());
-            if (importer.getErrors().values().stream().anyMatch( elem -> elem.stream().anyMatch(ele -> ele.getKey().equals("validation#probe") == true))){
+            if (importer.getErrors().values().stream().anyMatch(
+                    elem -> elem.stream().anyMatch(
+                        ele -> ele.getKey().equals("validation#probe")))) {
                 success = false;
             }
         }
@@ -304,7 +308,7 @@ public class LafImportService extends LadaService {
         respData.put("probeIds", importedProbeids);
 
         // If import created at least a new record
-        if (importedProbeids.size() > 0 && !mstId.equals("null") && success == true) {
+        if (importedProbeids.size() > 0 && !mstId.equals("null") && success) {
             //Generate a tag for the imported probe records
             Response tagCreation = tagUtil.generateTag("IMP", mstId);
             if (!tagCreation.getSuccess()) {
