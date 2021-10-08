@@ -23,9 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.JsonValue;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -83,6 +80,30 @@ public class LafImportService extends LadaService {
     private TagUtil tagUtil;
 
     /**
+     * Represents the expected JSON input for file upload.
+     */
+    private static class UploadJson {
+        private String encoding;
+        private Map<String, String> files;
+
+        String getEncoding() {
+            return this.encoding;
+        }
+
+        void setEncoding(String encoding) {
+            this.encoding = encoding;
+        }
+
+        Map<String, String> getFiles() {
+            return this.files;
+        }
+
+        void setFiles(Map<String, String> files) {
+            this.files = files;
+        }
+    }
+
+    /**
      * Import a given list of files, generate a tag and set it to all
      * imported records.
      * Expected input format:
@@ -102,16 +123,14 @@ public class LafImportService extends LadaService {
     @POST
     @Path("/laf/list")
     public Response multiUpload(
-        JsonObject jsonInput,
+        UploadJson jsonInput,
         @Context HttpServletRequest request
     ) {
         UserInfo userInfo = authorization.getInfo(request);
-        //Get file content strings from input object
-        JsonObject filesObject = jsonInput.getJsonObject("files");
 
         Charset charset;
         try {
-            charset = Charset.forName(jsonInput.getString("encoding"));
+            charset = Charset.forName(jsonInput.getEncoding());
         } catch (IllegalArgumentException e) {
             return new Response(
                 false,
@@ -135,11 +154,16 @@ public class LafImportService extends LadaService {
                 "Missing header for messtelle.");
         }
 
+        if (jsonInput.getFiles() == null) {
+            return new Response(
+                false,
+                StatusCodes.IMP_INVALID_VALUE,
+                "No import files given");
+        }
         try {
-            for (Map.Entry<String, JsonValue> e : filesObject.entrySet()) {
-                String base64String = ((JsonString) e.getValue()).getString();
+            for (Map.Entry<String, String> e: jsonInput.getFiles().entrySet()) {
                 ByteBuffer decodedBytes = ByteBuffer.wrap(
-                    Base64.getDecoder().decode(base64String));
+                    Base64.getDecoder().decode(e.getValue()));
                 String decodedContent = new String(
                     new StringBuffer(charset.newDecoder()
                         .decode(decodedBytes)));
