@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -143,6 +144,10 @@ public class LafImportService extends LadaService {
                 String decodedContent = new String(
                     new StringBuffer(charset.newDecoder()
                         .decode(decodedBytes)));
+                if (charset.equals(StandardCharsets.UTF_8)) {
+                    // Remove byte order mark if present
+                    decodedContent = decodedContent.replaceFirst("^\uFEFF", "");
+                }
                 files.put(e.getKey(), decodedContent);
             }
         } catch (IllegalArgumentException iae) {
