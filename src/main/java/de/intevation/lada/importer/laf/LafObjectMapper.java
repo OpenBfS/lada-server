@@ -1182,7 +1182,7 @@ public class LafObjectMapper {
             QueryBuilder<Messgroesse> builder =
                 repository.queryBuilder(Messgroesse.class);
             // accept various nuclide notations (e.g.
-            // "Cs-134", "CS 134", "Cs134", "SC134", ...)
+            // "Cs-134", "CS 134", "Cs134", "CS134", ...)
             String messgroesseString = attribute;
             if (attribute.matches("^[A-Za-z]+( |-)?[0-9].*")) {
                 messgroesseString = attribute.substring(0, 1).toUpperCase()
@@ -1274,7 +1274,7 @@ public class LafObjectMapper {
         }
         if (attributes.containsKey("GRENZWERT")) {
             messwert.setGrenzwertueberschreitung(
-                attributes.get("GRENZWERT").toUpperCase().equals("J")
+                attributes.get("GRENZWERT").equalsIgnoreCase("J")
                     ? true : false);
         }
         doDefaults(messwert);
@@ -1670,8 +1670,7 @@ public class LafObjectMapper {
         }
         ort.setOrtId(o.getId());
         ort.setOzId(o.getOzId());
-        if (ursprungsOrt.containsKey("U_ORTS_ZUSATZCODE")
-            && !ursprungsOrt.get("U_ORTS_ZUSATZCODE").equals("")) {
+        if (ursprungsOrt.containsKey("U_ORTS_ZUSATZCODE")) {
             Ortszusatz zusatz = repository.getByIdPlain(
                 Ortszusatz.class,
                 ursprungsOrt.get("U_ORTS_ZUSATZCODE")
@@ -1712,8 +1711,7 @@ public class LafObjectMapper {
         }
         ort.setOrtId(o.getId());
         ort.setOzId(o.getOzId());
-        if (entnahmeOrt.containsKey("P_ORTS_ZUSATZCODE")
-            && !entnahmeOrt.get("P_ORTS_ZUSATZCODE").equals("")) {
+        if (entnahmeOrt.containsKey("P_ORTS_ZUSATZCODE")) {
             Ortszusatz zusatz = repository.getByIdPlain(
                 Ortszusatz.class,
                 entnahmeOrt.get("P_ORTS_ZUSATZCODE")
@@ -1749,7 +1747,7 @@ public class LafObjectMapper {
             || attributes.get(type + "KOORDINATEN_ART_S") != null)
             && !attributes.get(type + "KOORDINATEN_X").equals("")
             && attributes.get(type + "KOORDINATEN_X") != null
-            && !attributes.get(type + "KOORDINATEN_X").equals("")
+            && !attributes.get(type + "KOORDINATEN_Y").equals("")
             && attributes.get(type + "KOORDINATEN_Y") != null
         ) {
             if (attributes.get(type + "KOORDINATEN_ART_S") != null) {
@@ -1789,9 +1787,7 @@ public class LafObjectMapper {
         }
         // If laf contains gemeinde attributes, find a ort with matching gemId
         // or create one.
-        if (attributes.get(type + "GEMEINDENAME") != null
-            && !attributes.get(type + "GEMEINDENAME").equals("")
-        ) {
+        if (attributes.get(type + "GEMEINDENAME") != null) {
             QueryBuilder<Verwaltungseinheit> builder =
                 repository.queryBuilder(Verwaltungseinheit.class);
             builder.and("bezeichnung", attributes.get(type + "GEMEINDENAME"));
@@ -1806,9 +1802,7 @@ public class LafObjectMapper {
             } else {
                 o.setGemId(ves.get(0).getId());
             }
-        } else if (attributes.get(type + "GEMEINDESCHLUESSEL") != null
-            && !attributes.get(type + "GEMEINDESCHLUESSEL").equals("")
-        ) {
+        } else if (attributes.get(type + "GEMEINDESCHLUESSEL") != null) {
             o.setGemId(attributes.get(type + "GEMEINDESCHLUESSEL"));
             Verwaltungseinheit v =
                 repository.getByIdPlain(
@@ -1824,19 +1818,15 @@ public class LafObjectMapper {
         String key = "";
         String hLand = "";
         String staatFilter = "";
-        if (attributes.get(type + "HERKUNFTSLAND_S") != null
-            && !attributes.get(type + "HERKUNFTSLAND_S").equals("")) {
+        if (attributes.get(type + "HERKUNFTSLAND_S") != null) {
             staatFilter = "id";
             key = "HERKUNFTSLAND_S";
             hLand = attributes.get(type + "HERKUNFTSLAND_S");
-        } else if (attributes.get(type + "HERKUNFTSLAND_KURZ") != null
-            && !attributes.get(type + "HERKUNFTSLAND_KURZ").equals("")
-        ) {
+        } else if (attributes.get(type + "HERKUNFTSLAND_KURZ") != null) {
             staatFilter = "staatKurz";
             key = "HERKUNFTSLAND_KURZ";
             hLand = attributes.get(type + "HERKUNFTSLAND_KURZ");
-        } else if (attributes.get(type + "HERKUNFTSLAND_LANG") != null
-            && !attributes.get(type + "HERKUNFTSLAND_LANG").equals("")) {
+        } else if (attributes.get(type + "HERKUNFTSLAND_LANG") != null) {
             staatFilter = "staat";
             key = "HERKUNFTSLAND_LANG";
             hLand = attributes.get(type + "HERKUNFTSLAND_LANG");
@@ -1953,7 +1943,6 @@ public class LafObjectMapper {
         String value = attribute.getValue();
 
         if ("DATENBASIS_S".equals(key)
-            && !value.equals("")
             && probe.getDatenbasisId() == null
         ) {
             Datenbasis datenbasis = repository.getByIdPlain(
@@ -1977,7 +1966,6 @@ public class LafObjectMapper {
 
 
         if ("DATENBASIS".equals(key)
-            && !value.equals("")
             && probe.getDatenbasisId() == null
         ) {
             List<ImporterConfig> cfgs =
@@ -2011,7 +1999,6 @@ public class LafObjectMapper {
             Integer v = datenbasis.get(0).getId();
             probe.setDatenbasisId(v);
         } else if ("DATENBASIS".equals(key)
-            && !value.equals("")
             && probe.getDatenbasisId() != null
         ) {
             currentWarnings.add(
@@ -2032,7 +2019,7 @@ public class LafObjectMapper {
             probe.setMprId(v);
         }
 
-        if ("MESSLABOR".equals(key) && !value.equals("")) {
+        if ("MESSLABOR".equals(key)) {
             MessStelle mst = repository.getByIdPlain(
                 MessStelle.class, value.toString());
             if (mst == null) {
@@ -2045,7 +2032,6 @@ public class LafObjectMapper {
         }
 
         if ("MESSPROGRAMM_S".equals(key)
-            && !value.equals("")
             && probe.getBaId() == null
         ) {
             QueryBuilder<MessprogrammTransfer> builder =
@@ -2065,7 +2051,7 @@ public class LafObjectMapper {
                 probe.setDatenbasisId(transfer.get(0).getDatenbasisId());
             }
         }
-        if ("MESSPROGRAMM_C".equals(key) && !value.equals("")) {
+        if ("MESSPROGRAMM_C".equals(key)) {
             QueryBuilder<MessprogrammTransfer> builder =
                 repository.queryBuilder(MessprogrammTransfer.class);
             builder.and("messprogrammC", value);
@@ -2084,7 +2070,7 @@ public class LafObjectMapper {
             }
         }
 
-        if ("ERZEUGER".equals(key) && !value.equals("")) {
+        if ("ERZEUGER".equals(key)) {
             QueryBuilder<DatensatzErzeuger> builder =
                 repository.queryBuilder(DatensatzErzeuger.class);
             builder.and("netzbetreiberId", netzbetreiberId);
@@ -2102,7 +2088,7 @@ public class LafObjectMapper {
             probe.setErzeugerId(datensatzErzeuger.get(0).getId());
         }
 
-        if ("MESSPROGRAMM_LAND".equals(key) && !value.equals("")) {
+        if ("MESSPROGRAMM_LAND".equals(key)) {
             QueryBuilder<MessprogrammKategorie> builder =
                 repository.queryBuilder(MessprogrammKategorie.class);
             builder.and("netzbetreiberId", netzbetreiberId);
@@ -2119,7 +2105,7 @@ public class LafObjectMapper {
             probe.setMplId(kategorie.get(0).getId());
         }
 
-        if ("PROBENAHMEINSTITUTION".equals(key) && !value.equals("")) {
+        if ("PROBENAHMEINSTITUTION".equals(key)) {
             QueryBuilder<Probenehmer> builder =
                 repository.queryBuilder(Probenehmer.class);
             builder.and("netzbetreiberId", netzbetreiberId);
@@ -2136,25 +2122,24 @@ public class LafObjectMapper {
             probe.setProbeNehmerId(prn.get(0).getId());
         }
 
-        if ("SOLL_DATUM_UHRZEIT_A".equals(key) && !value.equals("")) {
+        if ("SOLL_DATUM_UHRZEIT_A".equals(key)) {
             probe.setSolldatumBeginn(getDate(value.toString()));
         }
-        if ("SOLL_DATUM_UHRZEIT_E".equals(key) && !value.equals("")) {
+        if ("SOLL_DATUM_UHRZEIT_E".equals(key)) {
             probe.setSolldatumEnde(getDate(value.toString()));
         }
-        if ("PROBENAHME_DATUM_UHRZEIT_A".equals(key) && !value.equals("")) {
+        if ("PROBENAHME_DATUM_UHRZEIT_A".equals(key)) {
             probe.setProbeentnahmeBeginn(getDate(value.toString()));
         }
-        if ("PROBENAHME_DATUM_UHRZEIT_E".equals(key) && !value.equals("")) {
+        if ("PROBENAHME_DATUM_UHRZEIT_E".equals(key)) {
             probe.setProbeentnahmeEnde(getDate(value.toString()));
         }
-        if ("URSPRUNGS_DATUM_UHRZEIT".equals(key) && !value.equals("")) {
+        if ("URSPRUNGS_DATUM_UHRZEIT".equals(key)) {
             probe.setUrsprungszeit(getDate(value.toString()));
         }
 
         if ("UMWELTBEREICH_S".equals(key)
             && probe.getUmwId() == null
-            && value != null
         ) {
             Umwelt umw = repository.getByIdPlain(
                 Umwelt.class, value.toString());
@@ -2220,15 +2205,11 @@ public class LafObjectMapper {
                 probe.setTest(true);
             } else if (value.toString().equals("0")) {
                 probe.setTest(false);
-            } else if (!value.toString().equals("")) {
-                currentWarnings.add(
-                    new ReportItem(
-                        key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
             }
         }
 
-        if ("REI_PROGRAMMPUNKTGRUPPE".equals(key) && !value.equals("")
-            || "REI_PROGRAMMPUNKT".equals(key) && !value.equals("")) {
+        if ("REI_PROGRAMMPUNKTGRUPPE".equals(key)
+            || "REI_PROGRAMMPUNKT".equals(key)) {
             QueryBuilder<ReiProgpunktGruppe> builder =
                 repository.queryBuilder(ReiProgpunktGruppe.class);
             builder.and("reiProgPunktGruppe", value.toString());
@@ -2293,17 +2274,17 @@ public class LafObjectMapper {
     ) {
         String key = attribute.getKey();
         String value = attribute.getValue();
-        if ("MESSUNGS_ID".equals(key) && !value.equals("")) {
+        if ("MESSUNGS_ID".equals(key)) {
             messung.setExterneMessungsId(Integer.valueOf(value));
         }
-        if ("NEBENPROBENNUMMER".equals(key) && !value.equals("")) {
+        if ("NEBENPROBENNUMMER".equals(key)) {
             messung.setNebenprobenNr(value.toString());
-        } else if ("MESS_DATUM_UHRZEIT".equals(key) && !value.equals("")) {
+        } else if ("MESS_DATUM_UHRZEIT".equals(key)) {
             messung.setMesszeitpunkt(getDate(value.toString()));
-        } else if ("MESSZEIT_SEKUNDEN".equals(key) && !value.equals("")) {
+        } else if ("MESSZEIT_SEKUNDEN".equals(key)) {
             Integer i = Integer.valueOf(value.toString());
             messung.setMessdauer(i);
-        } else if ("MESSMETHODE_S".equals(key) && !value.equals("")) {
+        } else if ("MESSMETHODE_S".equals(key)) {
             MessMethode mmt = repository.getByIdPlain(
                 MessMethode.class, value.toString());
             if (mmt == null) {
@@ -2313,7 +2294,7 @@ public class LafObjectMapper {
             } else {
                 messung.setMmtId(value.toString());
             }
-        } else if ("MESSMETHODE_C".equals(key) && !value.equals("")) {
+        } else if ("MESSMETHODE_C".equals(key)) {
             QueryBuilder<MessMethode> builder =
                 repository.queryBuilder(MessMethode.class);
             builder.and("messmethode", value.toString());
@@ -2333,10 +2314,6 @@ public class LafObjectMapper {
                 messung.setFertig(true);
             } else if (value.toString().equals("0")) {
                 messung.setFertig(false);
-            } else if (!value.toString().equals("")) {
-                currentWarnings.add(
-                    new ReportItem(
-                        key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
             }
         }
         return messung;
