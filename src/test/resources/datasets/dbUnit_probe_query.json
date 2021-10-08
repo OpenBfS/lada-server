@@ -24,7 +24,8 @@
         "type": 0
     }],
     "stamm.result_type": [{
-        "id": 1
+        "id": 1,
+        "name": "test"
     }],
     "stamm.grid_column": [{
         "id": 1,
