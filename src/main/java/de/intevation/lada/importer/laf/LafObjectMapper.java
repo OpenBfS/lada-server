@@ -1582,7 +1582,18 @@ public class LafObjectMapper {
                     repository.filterPlain(builderKta.getQuery());
                 if (!ktaGrp.isEmpty()) {
                     Ort o = null;
-                    o = findOrCreateOrt(uort.get(0), "U_", probe);
+                    //check for Koordinates U_Ort (primary): If none are present, assume Koordinates
+                    //in P_Ort. If P_Ort is not valid - this import must fail.
+                    if (uort.get(0).get("U_KOORDINATEN_ART_S") != null
+                    && uort.get(0).get("U_KOORDINATEN_ART_S").equals("")
+                    && uort.get(0).get("U_KOORDINATEN_X") != null
+                    && uort.get(0).get("U_KOORDINATEN_X").equals("")
+                    && uort.get(0).get("U_KOORDINATEN_Y") != null
+                    && uort.get(0).get("U_KOORDINATEN_Y").equals("")
+                    ) {
+                        o = findOrCreateOrt(uort.get(0), "U_", probe);
+                    }
+
                         if (o == null) {
                             Ort oE = findOrCreateOrt(object.getEntnahmeOrt(), "P_", probe);
                             if (oE == null) {
