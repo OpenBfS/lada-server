@@ -111,11 +111,9 @@ public class QueryTools {
             }
 
             boolean generic = false;
-            if (customColumn.getFilterActive() != null
-                && customColumn.getFilterActive()
+            if (customColumn.getFilterActive()
                 && customColumn.getFilterValue() != null
                 && !customColumn.getFilterValue().isEmpty()
-                && customColumn.getFilterIsNull() != null
                 && !customColumn.getFilterIsNull()
             ) {
                 Filter filter = customColumn.getGridColumn().getFilter();
@@ -164,8 +162,7 @@ public class QueryTools {
                     }
                     continue;
                 }
-                if (customColumn.getFilterNegate() != null
-                     && customColumn.getFilterNegate()) {
+                if (customColumn.getFilterNegate()) {
                     currentFilterString = "NOT(" + currentFilterString + ")";
                 }
                 if (generic) {
@@ -182,9 +179,7 @@ public class QueryTools {
                         filterSql += " AND " + currentFilterString;
                     }
                 }
-            } else if (customColumn.getFilterActive() != null
-                       && customColumn.getFilterActive()
-                       && customColumn.getFilterIsNull() != null
+            } else if (customColumn.getFilterActive()
                        && customColumn.getFilterIsNull()
             ) {
                 Filter filter = customColumn.getGridColumn().getFilter();
@@ -194,8 +189,7 @@ public class QueryTools {
                     currentFilterString =
                         customColumn.getGridColumn().getDataIndex()
                         + " IS NULL";
-                    if (customColumn.getFilterNegate() != null
-                        && customColumn.getFilterNegate()) {
+                    if (customColumn.getFilterNegate()) {
                         currentFilterString =
                             "NOT(" + currentFilterString + ")";
                     }
@@ -211,8 +205,7 @@ public class QueryTools {
                         currentFilterString.replaceAll(" .*", " IS NULL ");
                     currentFilterString =
                         currentFilterString.replaceAll(".*\\(", "");
-                    if (customColumn.getFilterNegate() != null
-                        && customColumn.getFilterNegate()) {
+                    if (customColumn.getFilterNegate()) {
                         currentFilterString =
                             "NOT(" + currentFilterString + ")";
                     }
@@ -271,11 +264,9 @@ public class QueryTools {
             new MultivaluedHashMap<String, Object>();
 
         for (GridColumnValue customColumn : customColumns) {
-            if (customColumn.getFilterActive() != null
-                && customColumn.getFilterActive()
+            if (customColumn.getFilterActive()
                 && customColumn.getFilterValue() != null
                 && !customColumn.getFilterValue().isEmpty()
-                && customColumn.getFilterIsNull() != null
                 && !customColumn.getFilterIsNull()
             ) {
 
@@ -312,9 +303,7 @@ public class QueryTools {
                 if (GENERICTEXT_FILTER_TYPE.equals(filterType)
                     || TEXT_FILTER_TYPE.equals(filterType)
                 ) {
-                    if (customColumn.getFilterRegex() != null
-                        && !customColumn.getFilterRegex()
-                    ) {
+                    if (!customColumn.getFilterRegex()) {
                         filterValue += "%";
                         filterValue = translateToRegex(filterValue);
                     }
