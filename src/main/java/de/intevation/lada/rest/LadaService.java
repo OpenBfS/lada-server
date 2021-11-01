@@ -8,6 +8,7 @@
 package de.intevation.lada.rest;
 
 import javax.enterprise.context.RequestScoped;
+import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -21,6 +22,7 @@ import javax.ws.rs.core.MediaType;
  * annotations at this class.
  */
 @RequestScoped
+@Transactional
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public abstract class LadaService { }
