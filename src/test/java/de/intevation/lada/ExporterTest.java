@@ -14,6 +14,7 @@ import java.time.Instant;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -50,6 +51,29 @@ public class ExporterTest extends BaseTest {
 
     @PersistenceContext
     EntityManager em;
+
+    private JsonObjectBuilder requestJsonBuilder = Json.createObjectBuilder()
+        .add("exportSubData", false)
+        .add("timezone", "UTC")
+        .add("columns", Json.createArrayBuilder()
+            .add(Json.createObjectBuilder()
+                .add("columnIndex", 0)
+                .add("export", true)
+                .add("filterValue", "")
+                .add("filterActive", false)
+                .add("filterIsNull", false)
+                .add("filterNegate", false)
+                .add("filterRegex", false)
+                .add("gridColumnId", 1))
+            .add(Json.createObjectBuilder()
+                .add("columnIndex", 1)
+                .add("export", true)
+                .add("filterValue", "")
+                .add("filterActive", false)
+                .add("filterIsNull", false)
+                .add("filterNegate", false)
+                .add("filterRegex", false)
+                .add("gridColumnId", 2)));
 
     /**
      * Prepare data for CSV export of a Probe object.
@@ -89,31 +113,53 @@ public class ExporterTest extends BaseTest {
         testProtocol.add(prot);
 
         /* Request asynchronous export */
-        JsonObject requestJson = Json.createObjectBuilder()
-            .add("exportSubData", false)
+        JsonObject requestJson = requestJsonBuilder
             .add("idField", JsonValue.NULL)
-            .add("timezone", "UTC")
-            .add("columns", Json.createArrayBuilder()
-                .add(Json.createObjectBuilder()
-                    .add("columnIndex", 0)
-                    .add("export", true)
-                    .add("filterValue", "")
-                    .add("filterActive", false)
-                    .add("filterIsNull", false)
-                    .add("filterNegate", false)
-                    .add("filterRegex", false)
-                    .add("gridColumnId", 1))
-                .add(Json.createObjectBuilder()
-                    .add("columnIndex", 1)
-                    .add("export", true)
-                    .add("filterValue", "")
-                    .add("filterActive", false)
-                    .add("filterIsNull", false)
-                    .add("filterNegate", false)
-                    .add("filterRegex", false)
-                    .add("gridColumnId", 2))
-            ).build();
+            .build();
 
+        String result = runCsvExportTest(baseUrl, prot, requestJson);
+        Assert.assertEquals(
+            "Unexpected CSV content",
+            "hauptprobenNr,umwId\r\n120510002,L6\r\n120510001,L6\r\n",
+            result);
+
+        prot.setPassed(true);
+    }
+
+    /**
+     * Test asynchronous CSV export of a Probe identified by ID.
+     */
+    @Test
+    @InSequence(3)
+    @RunAsClient
+    public final void testCsvExportProbeById(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        System.out.print(".");
+        Protocol prot = new Protocol();
+        prot.setName("asyncexport service");
+        prot.setType("filtered csv");
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        /* Request asynchronous export */
+        JsonObject requestJson = requestJsonBuilder
+            .add("idField", "hauptproben_nr")
+            .add("idFilter", Json.createArrayBuilder().add("120510002"))
+            .build();
+
+        String result = runCsvExportTest(baseUrl, prot, requestJson);
+        Assert.assertEquals(
+            "Unexpected CSV content",
+            "hauptprobenNr,umwId\r\n120510002,L6\r\n",
+            result);
+
+        prot.setPassed(true);
+    }
+
+    private String runCsvExportTest(
+        URL baseUrl, Protocol prot, JsonObject requestJson
+    ) throws InterruptedException {
         Response exportCreated = client.target(
             baseUrl + "data/asyncexport/csv")
             .request()
@@ -167,11 +213,7 @@ public class ExporterTest extends BaseTest {
             "Unexpected response status code",
             Response.Status.OK.getStatusCode(),
             download.getStatus());
-        Assert.assertEquals(
-            "Unexpected CSV content",
-            "hauptprobenNr,umwId\r\n120510002,L6\r\n120510001,L6\r\n",
-            download.readEntity(String.class));
 
-        prot.setPassed(true);
+        return download.readEntity(String.class);
     }
 }
