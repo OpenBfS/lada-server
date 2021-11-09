@@ -696,7 +696,7 @@ CREATE TABLE ortszuordnung_typ (
 
 CREATE TABLE pflicht_messgroesse (
     id serial PRIMARY KEY,
-    messgroesse_id integer,
+    messgroesse_id integer NOT NULL REFERENCES messgroesse,
     mmt_id character varying(2) REFERENCES mess_methode,
     umw_id character varying(3) REFERENCES umwelt,
     datenbasis_id smallint NOT NULL REFERENCES datenbasis
