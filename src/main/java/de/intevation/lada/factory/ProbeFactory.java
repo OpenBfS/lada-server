@@ -503,6 +503,7 @@ public class ProbeFactory {
             ortP.setOrtszuordnungTyp(ort.getOrtszuordnungTyp());
             ortP.setProbeId(probe.getId());
             ortP.setOrtId(ort.getOrtId());
+            ortP.setOzId(ort.getOzId());
             ortP.setOrtszusatztext(ort.getOrtszusatztext());
             createObject(ortP, dryrun);
             Ort o = repository.getByIdPlain(
