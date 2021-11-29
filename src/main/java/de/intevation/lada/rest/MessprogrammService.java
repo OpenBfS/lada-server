@@ -257,7 +257,11 @@ public class MessprogrammService extends LadaService {
             || messprogramm.getUmwId().length() == 0
         ) {
             messprogramm = factory.findUmweltId(messprogramm);
-        } else {
+        } else if ((messprogramm.getUmwId() != null
+        || !messprogramm.getUmwId().equals(""))
+        && (messprogramm.getMediaDesk() == null
+        || messprogramm.getMediaDesk().equals(""))
+        ){
             messprogramm = factory.getInitialMediaDesk(messprogramm);
         }
         /* Persist the new messprogramm object*/
@@ -329,11 +333,17 @@ public class MessprogrammService extends LadaService {
             return response;
         }
 
-        if (messprogramm.getUmwId() == null
-            || messprogramm.getUmwId().equals("")
+        if ((messprogramm.getUmwId() == null
+            || messprogramm.getUmwId().equals(""))
+            && (messprogramm.getMediaDesk() != null
+            || !messprogramm.getMediaDesk().equals(""))
         ) {
             messprogramm = factory.findUmweltId(messprogramm);
-        } else {
+        } else if ((messprogramm.getUmwId() != null
+            || !messprogramm.getUmwId().equals(""))
+            && ( messprogramm.getMediaDesk() == null
+            || messprogramm.getMediaDesk().equals(""))
+            ){
             messprogramm = factory.getInitialMediaDesk(messprogramm);
         }
         Response response = repository.update(messprogramm);
