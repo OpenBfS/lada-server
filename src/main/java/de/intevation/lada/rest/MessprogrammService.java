@@ -335,12 +335,12 @@ public class MessprogrammService extends LadaService {
 
         if ((messprogramm.getUmwId() == null
             || messprogramm.getUmwId().equals(""))
-            && (messprogramm.getMediaDesk() != null
-            || !messprogramm.getMediaDesk().equals(""))
+            && !(messprogramm.getMediaDesk() == null
+            || messprogramm.getMediaDesk().equals(""))
         ) {
             messprogramm = factory.findUmweltId(messprogramm);
-        } else if ((messprogramm.getUmwId() != null
-            || !messprogramm.getUmwId().equals(""))
+        } else if (!(messprogramm.getUmwId() == null
+            || messprogramm.getUmwId().equals(""))
             && ( messprogramm.getMediaDesk() == null
             || messprogramm.getMediaDesk().equals(""))
             ){
