@@ -10,6 +10,7 @@ package de.intevation.lada.model.stammdaten;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,7 +21,6 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.locationtech.jts.geom.Point;
 
 
@@ -64,6 +64,7 @@ public class GemeindeUntergliederung implements Serializable {
 
     @Type(type = "jts_geometry")
     @Column(columnDefinition = "geometry(Point, 4326)")
+    @JsonbTransient
     private Point geom;
 
     @Transient
@@ -172,12 +173,10 @@ public class GemeindeUntergliederung implements Serializable {
             : null;
     }
 
-    @JsonIgnore
     public Point getGeom() {
         return geom;
     }
 
-    @JsonIgnore
     public void setGeom(Point geom) {
         this.geom = geom;
     }

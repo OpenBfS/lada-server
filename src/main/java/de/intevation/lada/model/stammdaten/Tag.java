@@ -10,6 +10,7 @@ package de.intevation.lada.model.stammdaten;
 import de.intevation.lada.model.land.TagZuordnung;
 import java.util.Set;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,8 +19,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * The persistent class for the tag database table.
@@ -38,7 +37,7 @@ public class Tag {
     private String mstId;
 
     @OneToMany(mappedBy = "tag", fetch = FetchType.EAGER)
-    @JsonIgnore
+    @JsonbTransient
     private Set<TagZuordnung> tagZuordnungs;
 
     private boolean generated;
