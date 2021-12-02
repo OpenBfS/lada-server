@@ -9,11 +9,14 @@ package de.intevation.lada;
 
 import java.io.StringReader;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
@@ -25,6 +28,7 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 
 /**
  * Base class for Lada server tests.
@@ -57,9 +61,23 @@ public class BaseTest {
     protected static List<Protocol> testProtocol;
 
     /**
+     * The client to be used for interface tests.
+     */
+    protected Client client;
+
+    /**
      * Enable verbose output for tests.
      */
     protected static boolean verboseLogging = false;
+
+    /**
+     * Set up shared infrastructure for test methods.
+     */
+    @Before
+    public void setup() {
+        this.testProtocol = new ArrayList<Protocol>();
+        this.client = ClientBuilder.newClient();
+    }
 
     /**
      * Create a deployable WAR archive.
@@ -78,6 +96,8 @@ public class BaseTest {
                 .getDefinedPackage("de.intevation.lada"))
             .addAsResource("log4j.properties", "log4j.properties")
             .addAsResource("shibboleth.properties", "shibboleth.properties")
+            .addAsResource("lada_server_en.properties", "lada_server_en.properties")
+            .addAsResource("lada_server_de.properties", "lada_server_de.properties")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsLibrary(antlr)
             .addAsResource("META-INF/test-persistence.xml",
@@ -98,6 +118,14 @@ public class BaseTest {
         for (Protocol p : testProtocol) {
             logger.info(p.toString(verboseLogging));
         }
+    }
+
+    /**
+     * Tear down shared infrastructure for test methods.
+     */
+    @After
+    public void tearDown() {
+        this.client.close();
     }
 
     /**
@@ -131,6 +159,20 @@ public class BaseTest {
      * JSON body.
      *
      * @param response The response to be parsed.
+     * @return Parsed JsonObject or null in case of failure
+     */
+    // TODO: Use in more tests to reduce code duplication
+    public static JsonObject parseResponse(Response response) {
+        return parseResponse(response, null);
+    }
+
+    /**
+     * Utility method to parse JSON in a Response object.
+     *
+     * Asserts that the response has HTTP status code 200 and a parseable
+     * JSON body.
+     *
+     * @param response The response to be parsed.
      * @param protocol Protocol to add exception info in case of failure
      * @return Parsed JsonObject or null in case of failure
      */
@@ -139,19 +181,34 @@ public class BaseTest {
         Response response,
         Protocol protocol
     ) {
-        int status = response.getStatus();
+        String responseBody = response.readEntity(String.class);
+        logger.debug(responseBody);
         Assert.assertEquals(
             "Unexpected response status code",
             Response.Status.OK.getStatusCode(),
-            status);
+            response.getStatus());
         try {
-            return Json.createReader(
-                new StringReader(response.readEntity(String.class)))
+            return Json.createReader(new StringReader(responseBody))
                 .readObject();
         } catch (JsonException je) {
-            protocol.addInfo("exception", je.getMessage());
+            if (protocol != null) {
+                protocol.addInfo("exception", je.getMessage());
+            }
             Assert.fail(je.getMessage());
         }
         return null;
+    }
+
+    /**
+     * Assert that a JsonObject contains a given key.
+     *
+     * @param json The JSON object to test.
+     * @param key The key expected in the JSON object.
+     */
+    public static void assertContains(JsonObject json, String key) {
+        Assert.assertTrue(
+            "Response does not contain expected key '" + key + "': "
+            + json.toString(),
+            json.containsKey(key));
     }
 }

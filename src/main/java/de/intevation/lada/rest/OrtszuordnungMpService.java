@@ -9,7 +9,6 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -18,10 +17,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
@@ -76,8 +73,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/ortszuordnungmp")
-@RequestScoped
-public class OrtszuordnungMpService {
+public class OrtszuordnungMpService extends LadaService {
 
     /**
      * The data repository granting read/write access.
@@ -116,7 +112,6 @@ public class OrtszuordnungMpService {
      */
     @GET
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response get(
         @Context HttpHeaders headers,
         @Context UriInfo info,
@@ -162,7 +157,6 @@ public class OrtszuordnungMpService {
      */
     @GET
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getById(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
@@ -207,7 +201,6 @@ public class OrtszuordnungMpService {
      */
     @POST
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response create(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
@@ -265,7 +258,6 @@ public class OrtszuordnungMpService {
      */
     @PUT
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response update(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
@@ -316,7 +308,6 @@ public class OrtszuordnungMpService {
      */
     @DELETE
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,

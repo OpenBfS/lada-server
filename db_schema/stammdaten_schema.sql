@@ -460,7 +460,6 @@ CREATE TABLE lada_user (
     name character varying(80) NOT NULL,
     UNIQUE (name)
 );
-INSERT INTO lada_user VALUES(0, 'Default');
 
 
 CREATE TABLE base_query (
@@ -471,15 +470,15 @@ CREATE TABLE base_query (
 CREATE TABLE query_user (
     id serial PRIMARY KEY,
     name character varying(80) NOT NULL,
-    user_id integer REFERENCES lada_user,
-    base_query integer REFERENCES base_query,
-    description text
+    user_id integer NOT NULL REFERENCES lada_user,
+    base_query integer NOT NULL REFERENCES base_query,
+    description text NOT NULL
 );
 
 CREATE TABLE query_messstelle (
     id serial PRIMARY KEY,
-    query integer REFERENCES query_user ON DELETE CASCADE,
-    mess_stelle character varying(5) REFERENCES mess_stelle
+    query integer NOT NULL REFERENCES query_user ON DELETE CASCADE,
+    mess_stelle character varying(5) NOT NULL REFERENCES mess_stelle
 );
 
 
@@ -697,7 +696,7 @@ CREATE TABLE ortszuordnung_typ (
 
 CREATE TABLE pflicht_messgroesse (
     id serial PRIMARY KEY,
-    messgroesse_id integer,
+    messgroesse_id integer NOT NULL REFERENCES messgroesse,
     mmt_id character varying(2) REFERENCES mess_methode,
     umw_id character varying(3) REFERENCES umwelt,
     datenbasis_id smallint NOT NULL REFERENCES datenbasis
@@ -711,6 +710,14 @@ CREATE TABLE proben_zusatz (
     zusatzwert character varying(7) NOT NULL,
     eudf_keyword character varying(40),
     UNIQUE (eudf_keyword)
+);
+
+
+CREATE TABLE umwelt_zusatz (
+    id serial PRIMARY KEY,
+    pzs_id character varying(3) REFERENCES proben_zusatz,
+    umw_id character varying(3) REFERENCES umwelt,
+    UNIQUE (pzs_id, umw_id)
 );
 
 
@@ -745,7 +752,7 @@ CREATE TRIGGER letzte_aenderung_probenehmer BEFORE UPDATE ON probenehmer FOR EAC
 
 CREATE TABLE result_type (
     id  serial PRIMARY KEY,
-    name character varying(12),
+    name character varying(12) NOT NULL,
     format character varying(30)
 );
 
@@ -917,7 +924,7 @@ CREATE TABLE importer_config (
 
 CREATE TABLE grid_column (
     id serial PRIMARY KEY,
-    base_query integer REFERENCES base_query,
+    base_query integer NOT NULL REFERENCES base_query ON DELETE CASCADE,
     name character varying(80) NOT NULL,
     data_index character varying(80) NOT NULL,
     position integer NOT NULL CHECK(position > 0),
@@ -930,29 +937,28 @@ CREATE TABLE grid_column (
 
 CREATE TABLE grid_column_values (
     id serial PRIMARY KEY,
-    user_id integer REFERENCES lada_user,
+    user_id integer NOT NULL REFERENCES lada_user,
     grid_column integer NOT NULL REFERENCES grid_column,
     query_user integer NOT NULL REFERENCES query_user ON DELETE CASCADE,
     sort character varying(4),
     sort_index integer,
     filter_value text,
-    filter_active boolean,
-    filter_negate boolean,
-    filter_regex boolean,
-    filter_is_null boolean,
-    visible boolean,
+    filter_active boolean NOT NULL DEFAULT false,
+    filter_negate boolean NOT NULL DEFAULT false,
+    filter_regex boolean NOT NULL DEFAULT false,
+    filter_is_null boolean NOT NULL DEFAULT false,
+    visible boolean NOT NULL DEFAULT false,
     column_index integer,
     width integer
 );
 
 CREATE TABLE tag (
     id serial PRIMARY KEY,
-    tag text COLLATE pg_catalog."default",
+    tag text NOT NULL,
     mst_id character varying REFERENCES mess_stelle(id),
-    generated boolean,
+    generated boolean NOT NULL DEFAULT false,
     UNIQUE(tag, mst_id)
 );
-
 CREATE UNIQUE INDEX gen_tag_unique_idx ON stamm.tag (tag) WHERE generated = true;
 
 CREATE TABLE stamm.tm_fm_umrechnung(

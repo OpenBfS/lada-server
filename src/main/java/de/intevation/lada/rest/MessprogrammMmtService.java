@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.rest;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -16,9 +15,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
@@ -63,8 +60,7 @@ import de.intevation.lada.util.rest.Response;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/messprogrammmmt")
-@RequestScoped
-public class MessprogrammMmtService {
+public class MessprogrammMmtService extends LadaService {
 
     /**
      * The data repository granting read/write access.
@@ -91,7 +87,6 @@ public class MessprogrammMmtService {
      */
     @GET
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response get(
         @Context UriInfo info,
         @Context HttpServletRequest request
@@ -121,7 +116,6 @@ public class MessprogrammMmtService {
      */
     @GET
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getById(
         @Context HttpServletRequest request,
         @PathParam("id") String id
@@ -153,7 +147,6 @@ public class MessprogrammMmtService {
      */
     @POST
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response create(
         @Context HttpServletRequest request,
         MessprogrammMmt messprogrammmmt
@@ -199,7 +192,6 @@ public class MessprogrammMmtService {
      */
     @PUT
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response update(
         @Context HttpServletRequest request,
         @PathParam("id") String id,
@@ -238,7 +230,6 @@ public class MessprogrammMmtService {
      */
     @DELETE
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
         @Context HttpServletRequest request,
         @PathParam("id") String id

@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
@@ -25,16 +24,13 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
@@ -61,6 +57,7 @@ import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationConfig;
+import de.intevation.lada.rest.LadaService;
 
 /**
  * REST service for Ort objects.
@@ -117,8 +114,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/ort")
-@RequestScoped
-public class OrtService {
+public class OrtService extends LadaService {
 
     @Inject
     private Logger logger;
@@ -152,7 +148,6 @@ public class OrtService {
      */
     @GET
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response get(
         @Context HttpServletRequest request,
         @Context UriInfo info
@@ -272,7 +267,6 @@ public class OrtService {
      */
     @GET
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getById(
         @Context HttpServletRequest request,
         @PathParam("id") int id
@@ -311,8 +305,6 @@ public class OrtService {
      */
     @POST
     @Path("/getbyids")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response getByIds(
         @Context HttpServletRequest request,
         JsonArray ids
@@ -376,7 +368,6 @@ public class OrtService {
      */
     @POST
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response create(
         @Context HttpServletRequest request,
         Ort ort
@@ -451,7 +442,6 @@ public class OrtService {
      */
     @PUT
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response update(
         @Context HttpServletRequest request,
         @PathParam("id") String id,
@@ -531,7 +521,6 @@ public class OrtService {
      */
     @DELETE
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
         @Context HttpServletRequest request,
         @PathParam("id") String id

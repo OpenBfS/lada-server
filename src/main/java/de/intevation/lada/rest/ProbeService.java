@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.EJBTransactionRolledbackException;
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -25,10 +24,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
@@ -102,8 +99,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/probe")
-@RequestScoped
-public class ProbeService {
+public class ProbeService extends LadaService {
 
     /**
      * The data repository granting read/write access.
@@ -161,7 +157,6 @@ public class ProbeService {
      */
     @GET
     @Path("/")
-    @Produces("application/json")
     public Response get(
         @Context HttpHeaders headers,
         @Context UriInfo info,
@@ -207,7 +202,6 @@ public class ProbeService {
      */
     @GET
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getById(
         @Context HttpHeaders headers,
         @PathParam("id") Integer id,
@@ -264,7 +258,6 @@ public class ProbeService {
      */
     @POST
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response create(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
@@ -289,8 +282,14 @@ public class ProbeService {
         }
         if (probe.getUmwId() == null || probe.getUmwId().equals("")) {
             probe = factory.findUmweltId(probe);
+        } else {
+            if (probe.getMediaDesk() == null ||
+                probe.getMediaDesk().isEmpty() ||
+                probe.getMediaDesk().equals("D: 00 00 00 00 00 00 00 00 00 00 00 00")) {
+                probe = factory.getInitialMediaDesk(probe);
+            }
         }
-        probe = factory.findMediaDesk(probe);
+        probe = factory.findMedia(probe);
 
         /* Persist the new probe object*/
         Response newProbe = repository.create(probe);
@@ -326,7 +325,6 @@ public class ProbeService {
      */
     @POST
     @Path("/messprogramm")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response createFromMessprogramm(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
@@ -482,7 +480,6 @@ public class ProbeService {
      */
     @PUT
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response update(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
@@ -500,12 +497,16 @@ public class ProbeService {
         if (lock.isLocked(probe)) {
             return new Response(false, StatusCodes.CHANGED_VALUE, null);
         }
-        if (probe.getMediaDesk() == null || probe.getMediaDesk().isEmpty()) {
-            probe = factory.findMediaDesk(probe);
-        }
         if (probe.getUmwId() == null || probe.getUmwId().isEmpty()) {
             factory.findUmweltId(probe);
+        } else {
+            if (probe.getMediaDesk() == null ||
+                probe.getMediaDesk().isEmpty() ||
+                probe.getMediaDesk().equals("D: 00 00 00 00 00 00 00 00 00 00 00 00")) {
+                factory.getInitialMediaDesk(probe);
+            }
         }
+        probe = factory.findMedia(probe);
         Violation violation = validator.validate(probe);
         if (violation.hasErrors()) {
             Response response =
@@ -545,7 +546,6 @@ public class ProbeService {
      */
     @DELETE
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,

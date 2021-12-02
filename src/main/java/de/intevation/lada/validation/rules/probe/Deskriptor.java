@@ -37,7 +37,9 @@ public class Deskriptor implements Rule {
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
         if (probe.getMediaDesk() == null) {
-            return null;
+            Violation violation = new Violation();
+            violation.addWarning("mediaDesk", StatusCodes.VALUE_MISSING);
+            return violation;
         }
         String[] mediaDesk = probe.getMediaDesk().split(" ");
         if (mediaDesk.length <= 1) {

@@ -16,9 +16,13 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 import javax.json.JsonObject;
 
+import org.apache.log4j.Logger;
+
+import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.Repository;
 
@@ -48,6 +52,16 @@ public abstract class ExportJob extends Job {
     protected String format;
 
     /**
+     * Export locale.
+     */
+    protected Locale locale;
+
+    /**
+     * Logger instance.
+     */
+    protected Logger logger;
+
+    /**
      * Filename set by the users request.
      */
     protected String downloadFileName;
@@ -71,6 +85,66 @@ public abstract class ExportJob extends Job {
      * Repository used for loading data.
      */
     protected Repository repository;
+
+    /**
+     * UserInfo.
+     */
+    protected UserInfo userInfo;
+
+    /**
+     * The current job status.
+     */
+    private JobStatus currentStatus;
+
+    /**
+     * Class modeling a job status.
+     * Stores job status and message
+     */
+    public static class JobStatus {
+        private Status status;
+        private String message;
+        private boolean done;
+
+        public JobStatus(Status s, String m, boolean d) {
+            this.status = s;
+            this.message = m;
+            this.done = d;
+        }
+
+        public boolean isDone() {
+            return done;
+        }
+        /**
+         * Set done.
+         * @param done New done state
+         * @throws IllegalStatusTransitionException Thrown if a done job
+         *  is set to done again
+         */
+        public void setDone(boolean done)
+            throws IllegalStatusTransitionException {
+            if (!done && this.done) {
+                throw new IllegalStatusTransitionException(
+                    "Invalid job status transition: Job is already done");
+            }
+            this.done = done;
+        }
+
+        public Status getStatus() {
+            return status;
+        }
+
+        public void setStatus(Status status) {
+            this.status = status;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
 
     /**
      * Create a new job with the given id.
@@ -108,9 +182,7 @@ public abstract class ExportJob extends Job {
         try {
             this.setCurrentStatus(Status.RUNNING);
         } catch (IllegalStatusTransitionException iste) {
-            this.currentStatus.setStatus(Status.ERROR);
-            this.currentStatus.setMessage("Internal server errror");
-            this.currentStatus.setDone(true);
+            fail("Internal server errror");
         }
     }
 
@@ -128,6 +200,14 @@ public abstract class ExportJob extends Job {
      */
     public String getEncoding() {
         return this.encoding;
+    }
+
+    /*
+     * Get the locale.
+     * @return Locale object
+     */
+    public Locale getLocale() {
+        return this.locale;
     }
 
     /**
@@ -196,6 +276,14 @@ public abstract class ExportJob extends Job {
      */
     public void setExportParameter(JsonObject exportParams) {
         this.exportParameters = exportParams;
+    }
+
+    /**
+     * Set the locale used for the export.
+     * @param locale Locale
+     */
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 
     /**

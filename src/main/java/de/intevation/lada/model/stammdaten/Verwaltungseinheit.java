@@ -9,13 +9,13 @@ package de.intevation.lada.model.stammdaten;
 
 import java.io.Serializable;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.locationtech.jts.geom.Point;
 
 /**
@@ -57,6 +57,7 @@ public class Verwaltungseinheit implements Serializable {
 
     @Type(type = "jts_geometry")
     @Column(columnDefinition = "geometry(Point, 4326)")
+    @JsonbTransient
     private Point mittelpunkt;
 
     public Verwaltungseinheit() {
@@ -162,12 +163,10 @@ public class Verwaltungseinheit implements Serializable {
         this.regbezirk = regbezirk;
     }
 
-    @JsonIgnore
     public Point getMittelpunkt() {
         return mittelpunkt;
     }
 
-    @JsonIgnore
     public void setMittelpunkt(Point mittelpunkt) {
         this.mittelpunkt = mittelpunkt;
     }

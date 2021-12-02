@@ -26,7 +26,7 @@ get_version()
 {
   local ver
   if ver=$(psql -qtA $DB_CONNECT_STRING -d $DB_NAME \
-                -c 'SELECT max(version) FROM lada_schema_version'
+                -c 'SELECT max(version) FROM public.lada_schema_version'
            2>/dev/null)
   then
     echo ${ver:--1}
@@ -47,7 +47,7 @@ for d in "$DIR"/updates/* ; do
     done
 
     psql -1q $DB_CONNECT_STRING -d $DB_NAME $file_args \
-      -c "INSERT INTO lada_schema_version(version) VALUES ($new_ver)"
+      -c "INSERT INTO public.lada_schema_version(version) VALUES ($new_ver)"
 
   fi
 done

@@ -11,12 +11,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
@@ -56,8 +54,7 @@ import org.apache.log4j.Logger;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/user")
-@RequestScoped
-public class UserService {
+public class UserService extends LadaService {
 
     @Inject
     private Logger logger = Logger.getLogger(UserService.class);
@@ -89,7 +86,6 @@ public class UserService {
      */
     @GET
     @Path("/")
-    @Produces("application/json")
     public Response get(
         @Context HttpHeaders headers,
         @Context UriInfo info,

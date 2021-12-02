@@ -210,6 +210,7 @@ Maven Checkstyle plugin. Some design related checks where removed.
     </module>
     <module name="MultipleStringLiterals">
       <property name="severity" value="warning"/>
+      <property name="ignoreStringsRegexp" value='^(("")|(" "))$'/>
     </module>
     <module name="MissingSwitchDefault"/>
     <module name="SimplifyBooleanExpression">

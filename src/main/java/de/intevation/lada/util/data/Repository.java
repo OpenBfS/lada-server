@@ -9,17 +9,14 @@ package de.intevation.lada.util.data;
 
 import java.util.List;
 
-import javax.ejb.EJBTransactionRolledbackException;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TransactionRequiredException;
 import javax.persistence.criteria.CriteriaQuery;
 
 import org.apache.log4j.Logger;
-import org.hibernate.TransactionException;
 
 import de.intevation.lada.util.rest.Response;
 
@@ -35,8 +32,8 @@ public class Repository {
     @Inject
     private Logger logger;
 
-    @Inject
-    private DataTransaction transaction;
+    @PersistenceContext
+    EntityManager em;
 
     /**
      * Create and persist a new object in the database.
@@ -47,31 +44,14 @@ public class Repository {
      *         modified by the database.
      */
     public Response create(Object object) {
-        try {
-            transaction.persistInDatabase(object);
-        } catch (EntityExistsException eee) {
-            logger.error("Could not persist " + object.getClass().getName()
-                + ". Reason: " + eee.getClass().getName() + " - "
-                + eee.getMessage());
-            return new Response(false, StatusCodes.PRESENT, object);
-        } catch (IllegalArgumentException iae) {
-            logger.error("Could not persist " + object.getClass().getName()
-                + ". Reason: " + iae.getClass().getName() + " - "
-                + iae.getMessage());
-            return new Response(false, StatusCodes.NOT_A_PROBE, object);
-        } catch (TransactionRequiredException tre) {
-            logger.error("Could not persist " + object.getClass().getName()
-                + ". Reason: " + tre.getClass().getName() + " - "
-                + tre.getMessage());
-            return new Response(false, StatusCodes.ERROR_DB_CONNECTION, object);
-        } catch (EJBTransactionRolledbackException ete) {
-            logger.error("Could not persist " + object.getClass().getName()
-                + ". Reason: " + ete.getClass().getName() + " - "
-                + ete.getMessage());
-            return new Response(false, StatusCodes.ERROR_VALIDATION, object);
-        }
-        Response response = new Response(true, StatusCodes.OK, object);
-        return response;
+        em.persist(object);
+        em.flush();
+        /* Refreshing the object is necessary because some objects use
+           dynamic-insert, meaning null-valued columns are not INSERTed
+           to the DB to take advantage of DB DEFAULT values, or triggers
+           modify the object during INSERT. */
+        em.refresh(object);
+        return new Response(true, StatusCodes.OK, object);
     }
 
     /**
@@ -82,21 +62,8 @@ public class Repository {
      * @return Response object containing the upadted object.
      */
     public Response update(Object object) {
-        Response response = new Response(true, StatusCodes.OK, object);
-        try {
-            transaction.updateInDatabase(object);
-        } catch (EntityExistsException eee) {
-            return new Response(false, StatusCodes.PRESENT, object);
-        } catch (IllegalArgumentException iae) {
-            return new Response(false, StatusCodes.NOT_A_PROBE, object);
-        } catch (TransactionRequiredException tre) {
-            return new Response(false, StatusCodes.ERROR_DB_CONNECTION, object);
-        } catch (EJBTransactionRolledbackException ete) {
-            return new Response(false, StatusCodes.ERROR_VALIDATION, object);
-        } catch (TransactionException te) {
-            return new Response(false, StatusCodes.ERROR_VALIDATION, object);
-        }
-        return response;
+        em.merge(object);
+        return new Response(true, StatusCodes.OK, object);
     }
 
     /**
@@ -107,17 +74,11 @@ public class Repository {
      * @return Response object.
      */
     public Response delete(Object object) {
-        Response response = new Response(true, StatusCodes.OK, "");
-        try {
-            transaction.removeFromDatabase(object);
-        } catch (IllegalArgumentException iae) {
-            return new Response(false, StatusCodes.NOT_A_PROBE, object);
-        } catch (TransactionRequiredException tre) {
-            return new Response(false, StatusCodes.ERROR_DB_CONNECTION, object);
-        } catch (EJBTransactionRolledbackException ete) {
-            return new Response(false, StatusCodes.OP_NOT_POSSIBLE, object);
-        }
-        return response;
+        em.remove(
+            em.contains(object)
+            ? object : em.merge(object));
+        em.flush();
+        return new Response(true, StatusCodes.OK, "");
     }
 
     /**
@@ -171,12 +132,14 @@ public class Repository {
      * @return Query representing the native SQL statement.
      */
     public Query queryFromString(String sql) {
-        EntityManager em = transaction.entityManager();
         return em.createNativeQuery(sql);
     }
 
+    /**
+     * @return EntityManager associated with this Repository.
+     */
     public EntityManager entityManager() {
-        return transaction.entityManager();
+        return em;
     }
 
     /**
@@ -188,7 +151,7 @@ public class Repository {
      * @return QueryBuilder for given class.
      */
     public <T> QueryBuilder<T> queryBuilder(Class<T> c) {
-        return new QueryBuilder<T>(transaction.entityManager(), c);
+        return new QueryBuilder<T>(em, c);
     }
 
     /**
@@ -200,8 +163,7 @@ public class Repository {
      * @return List<T> with the requested objects.
      */
     public <T> List<T> filterPlain(CriteriaQuery<T> filter) {
-        return transaction.entityManager()
-            .createQuery(filter).getResultList();
+        return em.createQuery(filter).getResultList();
     }
 
     /**
@@ -213,9 +175,8 @@ public class Repository {
      * @return List<T> with the objects of the requested type.
      */
     public <T> List<T> getAllPlain(Class<T> clazz) {
-        EntityManager manager = transaction.entityManager();
         QueryBuilder<T> builder = queryBuilder(clazz);
-        return manager.createQuery(builder.getQuery()).getResultList();
+        return em.createQuery(builder.getQuery()).getResultList();
     }
 
     /**
@@ -228,6 +189,6 @@ public class Repository {
      * @return The requested object or null if not found.
      */
     public <T> T getByIdPlain(Class<T> clazz, Object id) {
-        return transaction.entityManager().find(clazz, id);
+        return em.find(clazz, id);
     }
 }

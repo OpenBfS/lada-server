@@ -10,6 +10,7 @@ package de.intevation.lada.model.stammdaten;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,8 +22,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.locationtech.jts.geom.Point;
 
 import org.hibernate.annotations.Type;
@@ -133,11 +132,9 @@ public class Ort implements Serializable {
     private Integer referenceCountMp;
 
     @Transient
-    @JsonIgnore
     private MultivaluedMap<String, Integer> errors;
 
     @Transient
-    @JsonIgnore
     private MultivaluedMap<String, Integer> warnings;
 
     public Ort() {
@@ -175,7 +172,7 @@ public class Ort implements Serializable {
         this.berichtstext = berichtstext;
     }
 
-    @JsonIgnore
+    @JsonbTransient
     public Verwaltungseinheit getGemeinde() {
         return this.gemeinde;
     }
@@ -374,12 +371,12 @@ public class Ort implements Serializable {
         this.kdaId = kdaId;
     }
 
-    @JsonIgnore
+    @JsonbTransient
     public Point getGeom() {
         return geom;
     }
 
-    @JsonIgnore
+    @JsonbTransient
     public void setGeom(Point geom) {
         this.geom = geom;
     }
@@ -416,22 +413,20 @@ public class Ort implements Serializable {
         this.referenceCountMp = referenceCountMp;
     }
 
-    @JsonProperty
     public MultivaluedMap<String, Integer> getErrors() {
         return this.errors;
     }
 
-    @JsonIgnore
+    @JsonbTransient
     public void setErrors(MultivaluedMap<String, Integer> errors) {
         this.errors = errors;
     }
 
-    @JsonProperty
     public MultivaluedMap<String, Integer> getWarnings() {
         return this.warnings;
     }
 
-    @JsonIgnore
+    @JsonbTransient
     public void setWarnings(MultivaluedMap<String, Integer> warnings) {
         this.warnings = warnings;
     }

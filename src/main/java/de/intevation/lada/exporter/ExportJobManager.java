@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Locale;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -79,6 +80,7 @@ public class ExportJobManager extends JobManager {
      * @param format Export format
      * @param encoding Result encoding
      * @param params Export parameters as JsonObject
+     * @param locale Locale to use
      * @param userInfo UserInfo
      * @return The new ExportJob's id
      * @throws IllegalArgumentException if an invalid export format is specified
@@ -87,6 +89,7 @@ public class ExportJobManager extends JobManager {
         String format,
         String encoding,
         JsonObject params,
+        Locale locale,
         UserInfo userInfo
     ) throws IllegalArgumentException {
         String id = getNextIdentifier();
@@ -97,6 +100,7 @@ public class ExportJobManager extends JobManager {
             case "csv":
                 newJob = new CsvExportJob(id, queryTools);
                 newJob.setExporter(csvExporter);
+                newJob.setLocale(locale);
                 break;
             case "laf":
                 newJob = new LafExportJob(id);

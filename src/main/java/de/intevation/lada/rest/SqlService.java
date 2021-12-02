@@ -10,13 +10,10 @@ package de.intevation.lada.rest;
 import java.util.List;
 import java.util.Set;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
@@ -38,8 +35,7 @@ import de.intevation.lada.util.rest.Response;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/sql")
-@RequestScoped
-public class SqlService {
+public class SqlService extends LadaService {
 
     /**
      * The data repository granting read/write access.
@@ -78,8 +74,6 @@ public class SqlService {
      */
     @POST
     @Path("/")
-    @Consumes("application/json")
-    @Produces("application/json")
     public Response execute(
         @Context HttpServletRequest request,
         @Context UriInfo info,
@@ -107,7 +101,7 @@ public class SqlService {
             return new Response(true, StatusCodes.OK, null);
         }
         MultivaluedMap<String, Object> filterValues =
-            queryTools.prepareFilters(gridColumnValues, qid);
+            queryTools.prepareFilters(gridColumnValues);
 
         String statement = prepareStatement(sql, filterValues);
         return new Response(true, StatusCodes.OK, statement);
@@ -159,7 +153,7 @@ public class SqlService {
         }
 
         return "PREPARE request AS \n"
-            + sql + "\n"
+            + sql + ";\n"
             + "EXECUTE request" + parameters + ";\n"
             + "DEALLOCATE request;";
     }

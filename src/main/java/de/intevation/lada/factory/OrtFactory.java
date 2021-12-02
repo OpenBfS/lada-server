@@ -12,8 +12,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.Query;
+import org.apache.log4j.Logger;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -36,6 +36,8 @@ public class OrtFactory {
 
     private static final int ORTTYP5 = 5;
 
+    @Inject
+    private Logger logger;
 
     @Inject
     private Repository repository;
@@ -54,7 +56,10 @@ public class OrtFactory {
             || ort.getKoordXExtern() == null
             || ort.getKoordXExtern().equals("")
             || ort.getKoordYExtern() == null
-            || ort.getKoordYExtern().equals("")) {
+            || ort.getKoordYExtern().equals("")
+        ) {
+            /* TODO: The checked conditions are mostly also checked in KdaUtil.
+             * Do we really need a different StatusCode here? */
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.IMP_INVALID_VALUE);
             err.setKey("coordinates");
@@ -67,8 +72,8 @@ public class OrtFactory {
         String xCoord = ort.getKoordXExtern();
         String yCoord = ort.getKoordYExtern();
 
-        KdaUtil util = new KdaUtil();
-        ObjectNode coords = util.transform(kda, KdaUtil.KDA_GD, xCoord, yCoord);
+        KdaUtil.Result coords = new KdaUtil().transform(
+            kda, KdaUtil.KDA_GD, xCoord, yCoord);
         if (coords == null) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.GEO_NOT_MATCHING);
@@ -78,9 +83,9 @@ public class OrtFactory {
             errors.add(err);
             return;
         }
-        ort.setGeom(
-            generateGeom(coords.get("x").asDouble(),
-            coords.get("y").asDouble()));
+        ort.setGeom(generateGeom(
+                Double.parseDouble(coords.getX()),
+                Double.parseDouble(coords.getY())));
         return;
     }
 
@@ -110,7 +115,6 @@ public class OrtFactory {
             builder.and("kdaId", ort.getKdaId());
             builder.and("koordXExtern", ort.getKoordXExtern());
             builder.and("koordYExtern", ort.getKoordYExtern());
-            builder.and("ozId", ort.getOzId());
             builder.and("netzbetreiberId", ort.getNetzbetreiberId());
             List<Ort> orte =
                 repository.filterPlain(builder.getQuery());
@@ -119,12 +123,29 @@ public class OrtFactory {
             }
         } else if (ort.getGemId() != null) {
             builder.and("gemId", ort.getGemId());
-            builder.and("ozId", ort.getOzId());
             builder.and("netzbetreiberId", ort.getNetzbetreiberId());
             List<Ort> orte =
                 repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
-                return orte.get(0);
+                if (orte.size() == 1) {
+                    return orte.get(0);
+                } else {
+                    //get verwaltungseinheiten
+                    Verwaltungseinheit v = repository.getByIdPlain(
+                        Verwaltungseinheit.class, ort.getGemId());
+                    if (v != null) {
+                        for (Ort oElem : orte) {
+                            //Todo: Check for different kda-types
+                            if (oElem.getKoordXExtern().equals(String.valueOf(v.getMittelpunkt().getX()))
+                            && oElem.getKoordYExtern().equals(String.valueOf(v.getMittelpunkt().getY()))
+                             ){
+                                return oElem;
+                            }
+                        }
+                    } else {
+                        logger.debug("1. we need an else here ...");
+                    }
+                }
             }
         } else  if (ort.getStaatId() != null) {
             builder.and("staatId", ort.getStaatId());
@@ -164,6 +185,11 @@ public class OrtFactory {
             }
             Verwaltungseinheit v = repository.getByIdPlain(
                 Verwaltungseinheit.class, ort.getGemId());
+            //Ort exists - check for OrtId
+            QueryBuilder<Ort> builderExists = repository.queryBuilder(Ort.class);
+            builderExists.and("netzbetreiberId", ort.getNetzbetreiberId());
+            builderExists.andLike("ortId", "%"+ort.getGemId());
+            List<Ort> ortExists =  repository.filterPlain(builderExists.getQuery());
             if (v == null) {
                 ReportItem err = new ReportItem();
                 err.setCode(StatusCodes.IMP_INVALID_VALUE);
@@ -171,13 +197,23 @@ public class OrtFactory {
                 err.setValue(ort.getGemId());
                 errors.add(err);
                 return null;
-            } else {
+            } else if (ortExists.isEmpty()) {
                 if (!hasKoord) {
                     ort.setKdaId(KdaUtil.KDA_GD);
                     ort.setKoordYExtern(
                         String.valueOf(v.getMittelpunkt().getY()));
                     ort.setKoordXExtern(
                         String.valueOf(v.getMittelpunkt().getX()));
+                    //set ortId
+                    if ( v.getIsGemeinde() ) {
+                        ort.setOrtId("GEM_"+ort.getGemId());
+                    } else if ( !v.getIsGemeinde() && v.getIsLandkreis() ){
+                       ort.setOrtId("LK_"+ort.getGemId());
+                    } else if ( !v.getIsGemeinde() && !v.getIsLandkreis() && v.getIsRegbezirk() ) {
+                        ort.setOrtId("RB_"+ort.getGemId());
+                    } else if ( !v.getIsGemeinde() && !v.getIsLandkreis() && !v.getIsRegbezirk() && v.getIsBundesland() ) {
+                        ort.setOrtId("BL_"+ort.getGemId());
+                    }
                 }
                 if (ort.getLangtext() == null || ort.getLangtext().equals("")) {
                     ort.setLangtext(v.getBezeichnung());
@@ -188,7 +224,12 @@ public class OrtFactory {
                     ort.setBerichtstext(v.getBezeichnung());
                 }
                 transformCoordinates(ort);
+
                 hasGem = true;
+            } else if (ortExists.size() > 0 && hasKoord==false) {
+                return ortExists.get(0);
+            } else {
+                return ort;
             }
         }
         if (ort.getStaatId() != null

@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.test.land;
 
-import java.io.StringReader;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -22,7 +21,6 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonException;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
 import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -179,7 +177,7 @@ public class PepGenerationTest extends ServiceTest {
         // 02/12/2020 @ 12:00am (UTC)
         Long end = TS4;
 
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
         checkGeneratedProbeCount(C12, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
         prot.setPassed(true);
@@ -204,7 +202,7 @@ public class PepGenerationTest extends ServiceTest {
         // 06/01/2020 @ 12:00am (UTC)
         Long end = TS5;
 
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
         checkGeneratedProbeCount(C18, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
         prot.setPassed(true);
@@ -229,7 +227,7 @@ public class PepGenerationTest extends ServiceTest {
         // 06/01/2020 @ 12:00am (UTC)
         Long end = TS5;
 
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
         checkGeneratedProbeCount(C9, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -255,7 +253,7 @@ public class PepGenerationTest extends ServiceTest {
         // 06/01/2020 @ 12:00am (UTC)
         Long end = TS5;
 
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
         checkGeneratedProbeCount(C5, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -281,7 +279,7 @@ public class PepGenerationTest extends ServiceTest {
         Long start = TS6;
         //01/01/2030 @ 12:00am (UTC)
         Long end = TS7;
-        String entity = generateFromMpIds(id, start, end);
+        JsonObject entity = generateFromMpIds(id, start, end);
         checkGeneratedProbeCount(C61, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -305,7 +303,7 @@ public class PepGenerationTest extends ServiceTest {
         Long start = TS8;
         //02/02/2021 @ 12:00am (UTC)
         Long end = TS11;
-        String entity = generateFromMpIds(id, start, end);
+        JsonObject entity = generateFromMpIds(id, start, end);
         checkGeneratedProbeCount(C4, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -330,7 +328,7 @@ public class PepGenerationTest extends ServiceTest {
         Long start = TS8;
         //02/02/2021 @ 12:00am (UTC)
         Long end = TS11;
-        String entity = generateFromMpIds(id, start, end);
+        JsonObject entity = generateFromMpIds(id, start, end);
         checkGeneratedProbeCount(2, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -356,7 +354,7 @@ public class PepGenerationTest extends ServiceTest {
         //01/01/2030 @ 12:00am (UTC)
         Long end = TS7;
 
-        String entity = generateFromMpIds(id, start, end);
+        JsonObject entity = generateFromMpIds(id, start, end);
         checkGeneratedProbeCount(C11, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -383,7 +381,7 @@ public class PepGenerationTest extends ServiceTest {
         //03/01/2030 @ 12:00am (UTC)
         Long end = TS10;
 
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
         int expectedCount = C11;
         checkGeneratedProbeCount(expectedCount, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
@@ -425,7 +423,7 @@ public class PepGenerationTest extends ServiceTest {
         //02/29/2020 @ 12:00am (UTC)
         Long end = TS12;
 
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
         checkGeneratedProbeCount(C8, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -464,7 +462,7 @@ public class PepGenerationTest extends ServiceTest {
         //02/29/2020 @ 12:00am (UTC)
         Long end = TS12;
 
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
         checkGeneratedProbeCount(C16, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -503,7 +501,7 @@ public class PepGenerationTest extends ServiceTest {
         Long start = TS2;
         //04/01/2021 @ 12:00am (UTC)
         Long end = TS1;
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
         checkGeneratedProbeCount(C15, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -542,7 +540,7 @@ public class PepGenerationTest extends ServiceTest {
         // 03/01/2021 @ 12:00am (UTC)
         Long end = TS13;
 
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
         int expectedCount = C13;
         checkGeneratedProbeCount(expectedCount, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
@@ -583,7 +581,7 @@ public class PepGenerationTest extends ServiceTest {
         // 03/01/2021 @ 12:00am (UTC)
         Long end = TS13;
 
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
         int expectedCount = C26;
         checkGeneratedProbeCount(expectedCount, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
@@ -623,7 +621,7 @@ public class PepGenerationTest extends ServiceTest {
         // 03/01/2021 @ 12:00am (UTC)
         Long end = TS13;
 
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
         int expectedCount = C53;
         checkGeneratedProbeCount(expectedCount, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
@@ -663,7 +661,7 @@ public class PepGenerationTest extends ServiceTest {
         Long start = TS21;
         //03/01/2021 @ 12:00am (UTC)
         Long end = TS13;
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
         int expectedCount = C368;
         checkGeneratedProbeCount(expectedCount, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
@@ -704,7 +702,7 @@ public class PepGenerationTest extends ServiceTest {
         Long start = TS2;
         //04/01/2021 @ 12:00am (UTC)
         Long end = TS1;
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
         checkGeneratedProbeCount(C14, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -729,7 +727,7 @@ public class PepGenerationTest extends ServiceTest {
         int dailyMpId = ID1014;
 
         List<Integer> idParam = Arrays.asList(monthlyMpId, dailyMpId);
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
         //Monthy mp should generate two records
         checkGeneratedProbeCount(2, entity, prot, monthlyMpId);
         //Daily mp should generate 45 records
@@ -755,12 +753,10 @@ public class PepGenerationTest extends ServiceTest {
         Long start = TS2;
         //04/01/2021 @ 12:00am (UTC)
         Long end =   TS1;
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
 
         //Request should have failed with message 699
-        JsonReader reader = Json.createReader(new StringReader(entity));
-        JsonObject content = reader.readObject();
-        JsonObject data = content.getJsonObject("data");
+        JsonObject data = entity.getJsonObject("data");
         JsonObject mpData =
             data.getJsonObject("proben").getJsonObject(Integer.toString(mpId));
 
@@ -789,12 +785,10 @@ public class PepGenerationTest extends ServiceTest {
         Long end = TS2;
         //04/01/2021 @ 12:00am (UTC)
         Long start =   TS1;
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
 
         //Request should have failed with message 699
-        JsonReader reader = Json.createReader(new StringReader(entity));
-        JsonObject content = reader.readObject();
-        JsonObject data = content.getJsonObject("data");
+        JsonObject data = entity.getJsonObject("data");
         JsonObject mpData =
             data.getJsonObject("proben").getJsonObject(Integer.toString(mpId));
 
@@ -823,12 +817,10 @@ public class PepGenerationTest extends ServiceTest {
         Long end = -1L;
         //04/01/2021 @ 12:00am (UTC)
         Long start = -TS_5L;
-        String entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, start, end);
 
         //Request should have failed with message 699
-        JsonReader reader = Json.createReader(new StringReader(entity));
-        JsonObject content = reader.readObject();
-        JsonObject data = content.getJsonObject("data");
+        JsonObject data = entity.getJsonObject("data");
         JsonObject mpData =
             data.getJsonObject("proben").getJsonObject(Integer.toString(mpId));
 
@@ -843,12 +835,10 @@ public class PepGenerationTest extends ServiceTest {
 
     /**
      * Checks if the tag stored in the given entity matches the expected one.
-     * @param entity Entity to check
+     * @param content Entity to check
      * @param prot Protocol to use
      */
-    private void checkGeneratedTag(String entity, Protocol prot) {
-        JsonReader reader = Json.createReader(new StringReader(entity));
-        JsonObject content = reader.readObject();
+    private void checkGeneratedTag(JsonObject content, Protocol prot) {
         JsonObject data = content.getJsonObject("data");
         String tag = data.getString("tag");
 
@@ -864,19 +854,16 @@ public class PepGenerationTest extends ServiceTest {
      * Checks if a generation process resulted in the expected number of
      * probe records.
      * @param count Expected count of records
-     * @param entity Result entity to check
+     * @param content Result entity to check
      * @param prot Protocol to use
      */
     private void checkGeneratedProbeCount(
         int count,
-        String entity,
+        JsonObject content,
         Protocol prot,
         int mpId
     ) {
         try {
-            /* Try to parse the response*/
-            JsonReader reader = Json.createReader(new StringReader(entity));
-            JsonObject content = reader.readObject();
             JsonObject data = content.getJsonObject("data");
             JsonArray proben = null;
             try {
@@ -913,9 +900,11 @@ public class PepGenerationTest extends ServiceTest {
      * @param ids List of messprogramm ids to generate from
      * @param start Timestamp in ms to start with
      * @param end Timestamp in ms to end with
-     * @return Response enitity String containing the generated objects
+     * @return JsonObject containing the generated objects
      */
-    private String generateFromMpIds(List<Integer> ids, Long start, Long end) {
+    private JsonObject generateFromMpIds(
+        List<Integer> ids, Long start, Long end
+    ) {
         System.out.print(".");
 
         Client client = ClientBuilder.newClient();
@@ -934,16 +923,14 @@ public class PepGenerationTest extends ServiceTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.json(payload.toString()));
 
-        String entity = response.readEntity(String.class);
-        JsonReader reader = Json.createReader(new StringReader(entity));
-        JsonObject content = reader.readObject();
+        JsonObject content = BaseTest.parseResponse(response);
         JsonObject data = content.getJsonObject("data");
 
         //If a tag was applied, increase serial number
         if (data.containsKey("tag") && data.getString("tag") != null) {
             expectedTagSerNo++;
         }
-        return entity;
+        return content;
     }
 
     /**
@@ -956,10 +943,11 @@ public class PepGenerationTest extends ServiceTest {
      * value as value
      */
     private void checkEntityAttributeValues(
-        String entity,
+        JsonObject entity,
         Integer mpId,
         String attribute,
-        Map<Integer, Long> expectedValues) {
+        Map<Integer, Long> expectedValues
+    ) {
         expectedValues.forEach((index, value) -> {
             JsonObject record = getRecordAtIndex(entity, mpId, index);
             Assert.assertNotNull(record);
@@ -971,20 +959,17 @@ public class PepGenerationTest extends ServiceTest {
     /**
      * Parses an entity and returns the record at the given index for
      * messprogramm with given id.
-     * @param entity Entity to use
+     * @param content Entity to use
      * @param mpId MpId to uses
      * @param index Record index
      * @return Record as JsonObject
      */
     private JsonObject getRecordAtIndex(
-        String entity,
+        JsonObject content,
         Integer mpId,
         int index) {
         JsonObject result = null;
         try {
-            /* Try to parse the response*/
-            JsonReader reader = Json.createReader(new StringReader(entity));
-            JsonObject content = reader.readObject();
             JsonObject data = content.getJsonObject("data");
             JsonArray proben = data.getJsonObject("proben")
                     .getJsonObject(mpId.toString()).getJsonArray("data");

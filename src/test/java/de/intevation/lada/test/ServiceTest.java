@@ -17,7 +17,6 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 
 import javax.json.Json;
-import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
@@ -29,7 +28,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.junit.Assert;
 
 import org.locationtech.jts.io.ParseException;
@@ -67,6 +66,11 @@ public class ServiceTest {
     protected List<String> geomPointAttributes = new ArrayList<String>();
 
     /**
+     * The client to be used for interface tests.
+     */
+    protected Client client;
+
+    /**
      * Base url of the server.
      */
     protected URL baseUrl;
@@ -77,6 +81,8 @@ public class ServiceTest {
      * @param p The resulting test protocol
      */
     public void init(URL bUrl, List<Protocol> p) {
+        // TODO: Close this client when done
+        this.client = ClientBuilder.newClient();
         this.baseUrl = bUrl;
         this.protocol = p;
     }
@@ -162,36 +168,26 @@ public class ServiceTest {
         prot.setType("get all");
         prot.setPassed(false);
         protocol.add(prot);
-        /* Create a client*/
-        Client client = ClientBuilder.newClient();
+
         WebTarget target = client.target(baseUrl + parameter);
         /* Request all objects*/
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        String entity = response.readEntity(String.class);
-        try {
-            /* Try to parse the response*/
-            JsonReader reader = Json.createReader(new StringReader(entity));
-            JsonObject content = reader.readObject();
-            /* Verify the response*/
-            Assert.assertTrue("Unsuccessful response object:\n" + content,
-                content.getBoolean("success"));
-            prot.addInfo("success", content.getBoolean("success"));
-            Assert.assertEquals("200", content.getString("message"));
-            prot.addInfo("message", content.getString("message"));
-            Assert.assertNotNull(content.getJsonArray("data"));
-            prot.addInfo("objects", content.getJsonArray("data").size());
-            prot.setPassed(true);
-            return content;
-        } catch (JsonException je) {
-            prot.addInfo("exception", je.getMessage());
-            Assert.fail("Exception while parsing '" + entity + "':\n"
-                + je.getMessage());
-        }
-        return null;
+        JsonObject content = BaseTest.parseResponse(response, prot);
+        /* Verify the response*/
+        Assert.assertTrue("Unsuccessful response object:\n" + content,
+            content.getBoolean("success"));
+        prot.addInfo("success", content.getBoolean("success"));
+        Assert.assertEquals("200", content.getString("message"));
+        prot.addInfo("message", content.getString("message"));
+        Assert.assertNotNull(content.getJsonArray("data"));
+        prot.addInfo("objects", content.getJsonArray("data").size());
+        prot.setPassed(true);
+        return content;
     }
+
     /**
      * Test the GET Service by requesting a single object by id.
      * @param name the name of the entity to request.
@@ -210,8 +206,7 @@ public class ServiceTest {
         prot.setType("get by Id");
         prot.setPassed(false);
         protocol.add(prot);
-        /* Create a client*/
-        Client client = ClientBuilder.newClient();
+
         WebTarget target = client.target(baseUrl + parameter);
         prot.addInfo("parameter", parameter);
         /* Request a object by id*/
@@ -219,39 +214,28 @@ public class ServiceTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        String entity = response.readEntity(String.class);
-        try {
-            /* Try to parse the response*/
-            JsonReader fromServiceReader =
-                Json.createReader(new StringReader(entity));
-            JsonObject content = fromServiceReader.readObject();
-            /* Verify the response*/
-            Assert.assertTrue("Unsuccessful response object:\n" + content,
-                content.getBoolean("success"));
-            prot.addInfo("success", content.getBoolean("success"));
-            Assert.assertEquals("200", content.getString("message"));
-            prot.addInfo("message", content.getString("message"));
-            Assert.assertFalse(content.getJsonObject("data").isEmpty());
-            JsonObject object = content.getJsonObject("data");
-            for (Entry<String, JsonValue> entry : expected.entrySet()) {
-                if (entry.getKey().equals("parentModified")
-                    || entry.getKey().equals("treeModified")
-                    || entry.getKey().equals("letzteAenderung")) {
-                    continue;
-                }
-                Assert.assertEquals(
-                    entry.getValue(),
-                    object.get(entry.getKey()));
+        JsonObject content = BaseTest.parseResponse(response, prot);
+        /* Verify the response*/
+        Assert.assertTrue("Unsuccessful response object:\n" + content,
+            content.getBoolean("success"));
+        prot.addInfo("success", content.getBoolean("success"));
+        Assert.assertEquals("200", content.getString("message"));
+        prot.addInfo("message", content.getString("message"));
+        Assert.assertFalse(content.getJsonObject("data").isEmpty());
+        JsonObject object = content.getJsonObject("data");
+        for (Entry<String, JsonValue> entry : expected.entrySet()) {
+            if (entry.getKey().equals("parentModified")
+                || entry.getKey().equals("treeModified")
+                || entry.getKey().equals("letzteAenderung")) {
+                continue;
             }
-            prot.addInfo("object", "equals");
-            prot.setPassed(true);
-            return content;
-        } catch (JsonException je) {
-            prot.addInfo("exception", je.getMessage());
-            Assert.fail("Exception while parsing '" + entity + "':\n"
-                + je.getMessage());
+            Assert.assertEquals(
+                entry.getValue(),
+                object.get(entry.getKey()));
         }
-        return null;
+        prot.addInfo("object", "equals");
+        prot.setPassed(true);
+        return content;
     }
 
     /**
@@ -267,8 +251,7 @@ public class ServiceTest {
         prot.setType("filter");
         prot.setPassed(false);
         protocol.add(prot);
-        /* Create a client*/
-        Client client = ClientBuilder.newClient();
+
         WebTarget target =
             client.target(baseUrl + parameter);
         prot.addInfo("filter", parameter);
@@ -277,27 +260,17 @@ public class ServiceTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        String entity = response.readEntity(String.class);
-        try {
-            /* Try to parse the response*/
-            JsonReader reader = Json.createReader(new StringReader(entity));
-            JsonObject content = reader.readObject();
-            /* Verify the response*/
-            Assert.assertTrue("Unsuccessful response object:\n" + content,
-                content.getBoolean("success"));
-            prot.addInfo("success", content.getBoolean("success"));
-            Assert.assertEquals("200", content.getString("message"));
-            prot.addInfo("message", content.getString("message"));
-            Assert.assertNotNull(content.getJsonArray("data"));
-            prot.addInfo("objects", content.getJsonArray("data").size());
-            prot.setPassed(true);
-            return content;
-        } catch (JsonException je) {
-            prot.addInfo("exception", je.getMessage());
-            Assert.fail("Exception while parsing '" + entity + "':\n"
-                + je.getMessage());
-        }
-        return null;
+        JsonObject content = BaseTest.parseResponse(response, prot);
+        /* Verify the response*/
+        Assert.assertTrue("Unsuccessful response object:\n" + content,
+            content.getBoolean("success"));
+        prot.addInfo("success", content.getBoolean("success"));
+        Assert.assertEquals("200", content.getString("message"));
+        prot.addInfo("message", content.getString("message"));
+        Assert.assertNotNull(content.getJsonArray("data"));
+        prot.addInfo("objects", content.getJsonArray("data").size());
+        prot.setPassed(true);
+        return content;
     }
 
     /**
@@ -315,34 +288,22 @@ public class ServiceTest {
         prot.setType("create");
         prot.setPassed(false);
         protocol.add(prot);
-        /* Create a client*/
-        Client client = ClientBuilder.newClient();
+
         WebTarget target = client.target(baseUrl + parameter);
         /* Send a post request containing a new object*/
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.entity(create.toString(), MediaType.APPLICATION_JSON));
-        String entity = response.readEntity(String.class);
-        try {
-            /* Try to parse the response*/
-            JsonReader fromServiceReader =
-                Json.createReader(new StringReader(entity));
-            JsonObject content = fromServiceReader.readObject();
-            /* Verify the response*/
-            Assert.assertTrue("Unsuccessful response object:\n" + content,
-                content.getBoolean("success"));
-            prot.addInfo("success", content.getBoolean("success"));
-            Assert.assertEquals("200", content.getString("message"));
-            prot.addInfo("message", content.getString("message"));
-            prot.setPassed(true);
-            return content;
-        } catch (JsonException je) {
-            prot.addInfo("exception", je.getMessage());
-            Assert.fail("Exception while parsing '" + entity + "':\n"
-                + je.getMessage());
-        }
-        return null;
+        JsonObject content = BaseTest.parseResponse(response, prot);
+        /* Verify the response*/
+        Assert.assertTrue("Unsuccessful response object:\n" + content,
+            content.getBoolean("success"));
+        prot.addInfo("success", content.getBoolean("success"));
+        Assert.assertEquals("200", content.getString("message"));
+        prot.addInfo("message", content.getString("message"));
+        prot.setPassed(true);
+        return content;
     }
 
     /**
@@ -367,54 +328,42 @@ public class ServiceTest {
         prot.setType("update");
         prot.setPassed(false);
         protocol.add(prot);
-        try {
-            /* Create a client*/
-            Client client = ClientBuilder.newClient();
-            WebTarget target = client.target(baseUrl + parameter);
-            /* Request object corresponding to id in URL */
-            Response response = target.request()
-                .header("X-SHIB-user", BaseTest.testUser)
-                .header("X-SHIB-roles", BaseTest.testRoles)
-                .get();
-            String entity = response.readEntity(String.class);
-            /* Try to parse the response*/
-            JsonReader reader = Json.createReader(new StringReader(entity));
-            JsonObject oldObject = reader.readObject().getJsonObject("data");
 
-            /* Value replacement */
-            String updatedEntity =
-                oldObject.toString().replace(oldValue, newValue);
-            prot.addInfo("updated datafield", updateAttribute);
-            prot.addInfo("updated value", oldValue);
-            prot.addInfo("updated to", newValue);
+        WebTarget target = client.target(baseUrl + parameter);
+        /* Request object corresponding to id in URL */
+        Response response = target.request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        JsonObject oldObject = BaseTest.parseResponse(
+            response, prot).getJsonObject("data");
 
-            /* Send modified object via put request*/
-            WebTarget putTarget = client.target(baseUrl + parameter);
-            Response updated = putTarget.request()
-                .header("X-SHIB-user", BaseTest.testUser)
-                .header("X-SHIB-roles", BaseTest.testRoles)
-                .put(Entity.entity(updatedEntity, MediaType.APPLICATION_JSON));
+        /* Value replacement */
+        String updatedEntity =
+            oldObject.toString().replace(oldValue, newValue);
+        prot.addInfo("updated datafield", updateAttribute);
+        prot.addInfo("updated value", oldValue);
+        prot.addInfo("updated to", newValue);
 
-            /* Try to parse the response*/
-            JsonReader updatedReader = Json.createReader(
-                new StringReader(updated.readEntity(String.class)));
-            JsonObject updatedObject = updatedReader.readObject();
-            /* Verify the response*/
-            Assert.assertTrue("Unsuccessful response object:\n"
-                + updatedObject,
-                updatedObject.getBoolean("success"));
-            prot.addInfo("success", updatedObject.getBoolean("success"));
-            Assert.assertEquals("200", updatedObject.getString("message"));
-            prot.addInfo("message", updatedObject.getString("message"));
-            Assert.assertEquals(newValue,
-                updatedObject.getJsonObject("data").getString(updateAttribute));
-            prot.setPassed(true);
-            return updatedObject;
-        } catch (JsonException je) {
-            prot.addInfo("exception", je.getMessage());
-            Assert.fail(je.getMessage());
-        }
-        return null;
+        /* Send modified object via put request*/
+        WebTarget putTarget = client.target(baseUrl + parameter);
+        Response updated = putTarget.request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .put(Entity.entity(updatedEntity, MediaType.APPLICATION_JSON));
+
+        JsonObject updatedObject = BaseTest.parseResponse(updated, prot);
+        /* Verify the response*/
+        Assert.assertTrue("Unsuccessful response object:\n"
+            + updatedObject,
+            updatedObject.getBoolean("success"));
+        prot.addInfo("success", updatedObject.getBoolean("success"));
+        Assert.assertEquals("200", updatedObject.getString("message"));
+        prot.addInfo("message", updatedObject.getString("message"));
+        Assert.assertEquals(newValue,
+            updatedObject.getJsonObject("data").getString(updateAttribute));
+        prot.setPassed(true);
+        return updatedObject;
     }
 
     /**
@@ -430,8 +379,7 @@ public class ServiceTest {
         prot.setType("delete");
         prot.setPassed(false);
         protocol.add(prot);
-        /* Create a client*/
-        Client client = ClientBuilder.newClient();
+
         WebTarget target =
             client.target(baseUrl + parameter);
         prot.addInfo("parameter", parameter);
@@ -440,24 +388,14 @@ public class ServiceTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .delete();
-        String entity = response.readEntity(String.class);
-        try {
-            /* Try to parse the response*/
-            JsonReader reader = Json.createReader(new StringReader(entity));
-            JsonObject content = reader.readObject();
-            /* Verify the response*/
-            Assert.assertTrue("Unsuccessful response object:\n" + content,
-                content.getBoolean("success"));
-            prot.addInfo("success", content.getBoolean("success"));
-            Assert.assertEquals("200", content.getString("message"));
-            prot.addInfo("message", content.getString("message"));
-            prot.setPassed(true);
-            return content;
-        } catch (JsonException je) {
-            prot.addInfo("exception", je.getMessage());
-            Assert.fail("Exception while parsing '" + entity + "':\n"
-                + je.getMessage());
-        }
-        return null;
+        JsonObject content = BaseTest.parseResponse(response, prot);
+        /* Verify the response*/
+        Assert.assertTrue("Unsuccessful response object:\n" + content,
+            content.getBoolean("success"));
+        prot.addInfo("success", content.getBoolean("success"));
+        Assert.assertEquals("200", content.getString("message"));
+        prot.addInfo("message", content.getString("message"));
+        prot.setPassed(true);
+        return content;
     }
 }

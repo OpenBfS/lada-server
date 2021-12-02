@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,16 +23,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.JsonValue;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
@@ -55,6 +51,7 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.util.data.StatusCodes;
+import de.intevation.lada.rest.LadaService;
 
 /**
  * This class produces a RESTful service to interact with probe objects.
@@ -62,11 +59,10 @@ import de.intevation.lada.util.data.StatusCodes;
  * @author <a href = "mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("data/import")
-@RequestScoped
-public class LafImportService {
+public class LafImportService extends LadaService {
 
     /**
-     * The importer
+     * The importer implementation.
      */
     @Inject
     @ImportConfig(format = ImportFormat.LAF)
@@ -88,6 +84,30 @@ public class LafImportService {
     private TagUtil tagUtil;
 
     /**
+     * Represents the expected JSON input for file upload.
+     */
+    private static class UploadJson {
+        private String encoding;
+        private Map<String, String> files;
+
+        String getEncoding() {
+            return this.encoding;
+        }
+
+        void setEncoding(String encoding) {
+            this.encoding = encoding;
+        }
+
+        Map<String, String> getFiles() {
+            return this.files;
+        }
+
+        void setFiles(Map<String, String> files) {
+            this.files = files;
+        }
+    }
+
+    /**
      * Import a given list of files, generate a tag and set it to all
      * imported records.
      * Expected input format:
@@ -106,19 +126,15 @@ public class LafImportService {
      */
     @POST
     @Path("/laf/list")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response multiUpload(
-        JsonObject jsonInput,
+        UploadJson jsonInput,
         @Context HttpServletRequest request
     ) {
         UserInfo userInfo = authorization.getInfo(request);
-        //Get file content strings from input object
-        JsonObject filesObject = jsonInput.getJsonObject("files");
 
         Charset charset;
         try {
-            charset = Charset.forName(jsonInput.getString("encoding"));
+            charset = Charset.forName(jsonInput.getEncoding());
         } catch (IllegalArgumentException e) {
             return new Response(
                 false,
@@ -142,14 +158,23 @@ public class LafImportService {
                 "Missing header for messtelle.");
         }
 
+        if (jsonInput.getFiles() == null) {
+            return new Response(
+                false,
+                StatusCodes.IMP_INVALID_VALUE,
+                "No import files given");
+        }
         try {
-            for (Map.Entry<String, JsonValue> e : filesObject.entrySet()) {
-                String base64String = ((JsonString) e.getValue()).getString();
+            for (Map.Entry<String, String> e: jsonInput.getFiles().entrySet()) {
                 ByteBuffer decodedBytes = ByteBuffer.wrap(
-                    Base64.getDecoder().decode(base64String));
+                    Base64.getDecoder().decode(e.getValue()));
                 String decodedContent = new String(
                     new StringBuffer(charset.newDecoder()
                         .decode(decodedBytes)));
+                if (charset.equals(StandardCharsets.UTF_8)) {
+                    // Remove byte order mark if present
+                    decodedContent = decodedContent.replaceFirst("^\uFEFF", "");
+                }
                 files.put(e.getKey(), decodedContent);
             }
         } catch (IllegalArgumentException iae) {
@@ -189,14 +214,21 @@ public class LafImportService {
                 fileResponseData.put(
                     "notifications", importer.getNotifications());
             }
-            fileResponseData.put("success", true);
+            if (importer.getErrors().values().stream().anyMatch(
+                    elem -> elem.stream().anyMatch(
+                        ele -> (ele.getKey().equals("validation#probe")
+                            || ele.getKey().equals("Parser"))))) {
+                fileResponseData.put("success", false);
+            } else {
+                fileResponseData.put("success", true);
+            }
             fileResponseData.put(
                 "probeIds", ((LafImporter) importer).getImportedIds());
             importResponseData.put(fileName, fileResponseData);
             importedProbeids.addAll(((LafImporter) importer).getImportedIds());
         });
 
-        boolean success = false;
+        boolean success = true;
         // If import created at least a new record
         if (importedProbeids.size() > 0) {
             success = true;
@@ -204,6 +236,7 @@ public class LafImportService {
             Response tagCreation = tagUtil.generateTag("IMP", mstId);
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
+                success = false;
                 return new Response(
                     success,
                     StatusCodes.OK,
@@ -231,7 +264,6 @@ public class LafImportService {
     @Deprecated(since = "2021-02-10", forRemoval = true)
     @POST
     @Path("/laf")
-    @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.TEXT_PLAIN)
     public Response upload(
         String content,
@@ -264,8 +296,14 @@ public class LafImportService {
         }
         importer.doImport(content, userInfo, config);
         Map<String, Object> respData = new HashMap<String, Object>();
+        Boolean success = true;
         if (!importer.getErrors().isEmpty()) {
             respData.put("errors", importer.getErrors());
+            if (importer.getErrors().values().stream().anyMatch(
+                    elem -> elem.stream().anyMatch(
+                        ele -> ele.getKey().equals("validation#probe")))) {
+                success = false;
+            }
         }
         if (!importer.getWarnings().isEmpty()) {
             respData.put("warnings", importer.getWarnings());
@@ -278,12 +316,13 @@ public class LafImportService {
         respData.put("probeIds", importedProbeids);
 
         // If import created at least a new record
-        if (importedProbeids.size() > 0 && !mstId.equals("null")) {
+        if (importedProbeids.size() > 0 && !mstId.equals("null") && success) {
             //Generate a tag for the imported probe records
             Response tagCreation = tagUtil.generateTag("IMP", mstId);
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
-                return new Response(true, StatusCodes.OK, respData);
+                success = false;
+                return new Response(success, StatusCodes.OK, respData);
             }
             Tag newTag = (Tag) tagCreation.getData();
             tagUtil.setTagsByProbeIds(importedProbeids, newTag.getId());
@@ -291,7 +330,7 @@ public class LafImportService {
             respData.put("tag", newTag.getTag());
         }
 
-        return new Response(true, StatusCodes.OK, respData);
+        return new Response(success, StatusCodes.OK, respData);
     }
 
     /**

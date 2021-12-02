@@ -38,6 +38,11 @@ import de.intevation.lada.util.data.Repository;
  */
 public class QueryTools {
 
+    static final String GENERICID_FILTER_TYPE = "genericid";
+    static final String GENERICTEXT_FILTER_TYPE = "generictext";
+    static final String TAG_FILTER_TYPE = "tag";
+    static final String TEXT_FILTER_TYPE = "text";
+
     @Inject
     private Repository repository;
 
@@ -57,7 +62,7 @@ public class QueryTools {
     ) {
         String sql = prepareSql(customColumns, qId);
         MultivaluedMap<String, Object> filterValues =
-            prepareFilters(customColumns, qId);
+            prepareFilters(customColumns);
         List<GridColumn> columns = new ArrayList<GridColumn>();
         for (GridColumnValue customColumn : customColumns) {
             columns.add(customColumn.getGridColumn());
@@ -66,10 +71,25 @@ public class QueryTools {
 
     }
 
+    /**
+     * Complement SQL statement from base query with filter and sort settings.
+     *
+     * @param customColumns List<GridColumnValue> with filter and sort settings.
+     * @param qId Database ID of the base query.
+     * @return The completed query string.
+     */
     public String prepareSql(List<GridColumnValue> customColumns, Integer qId) {
         BaseQuery query = repository.getByIdPlain(BaseQuery.class, qId);
 
-        String sql = query.getSql();
+        return prepareSql(customColumns, query.getSql());
+    }
+
+    /**
+     * Generate SQL statement from base query and filter and sort settings.
+     *
+     * Static method for unit testing.
+     */
+    static String prepareSql(List<GridColumnValue> customColumns, String sql) {
         String filterSql = "";
         String genericFilterSql = "";
         String sortSql = "";
@@ -91,11 +111,9 @@ public class QueryTools {
             }
 
             boolean generic = false;
-            if (customColumn.getFilterActive() != null
-                && customColumn.getFilterActive()
+            if (customColumn.getFilterActive()
                 && customColumn.getFilterValue() != null
                 && !customColumn.getFilterValue().isEmpty()
-                && customColumn.getFilterIsNull() != null
                 && !customColumn.getFilterIsNull()
             ) {
                 Filter filter = customColumn.getGridColumn().getFilter();
@@ -103,13 +121,13 @@ public class QueryTools {
                 String currentFilterString = filter.getSql();
                 String currentFilterParam = filter.getParameter();
                 String filterType = filter.getFilterType().getType();
-                if (filterType.equals("generictext")
-                    || filterType.equals("genericid")
+                if (GENERICTEXT_FILTER_TYPE.equals(filterType)
+                    || GENERICID_FILTER_TYPE.equals(filterType)
                 ) {
                     subquery = true;
                     generic = true;
                 }
-                if (filterType.equals("generictext")) {
+                if (GENERICTEXT_FILTER_TYPE.equals(filterType)) {
                     String genTextParam = ":" + filter.getParameter() + "Param";
                     String genTextValue = filter.getParameter() + "Value";
                     currentFilterString =
@@ -121,7 +139,7 @@ public class QueryTools {
                     currentFilterString =
                         currentFilterString.replace(
                             ":" + genTextValue, ":" + currentFilterParam);
-                } else if (filterType.equals("tag")) {
+                } else if (TAG_FILTER_TYPE.equals(filterType)) {
                     String[] tagIds = filterValue.split(",");
                     int tagNumber = tagIds.length;
                     String paramlist = "";
@@ -144,8 +162,7 @@ public class QueryTools {
                     }
                     continue;
                 }
-                if (customColumn.getFilterNegate() != null
-                     && customColumn.getFilterNegate()) {
+                if (customColumn.getFilterNegate()) {
                     currentFilterString = "NOT(" + currentFilterString + ")";
                 }
                 if (generic) {
@@ -162,20 +179,17 @@ public class QueryTools {
                         filterSql += " AND " + currentFilterString;
                     }
                 }
-            } else if (customColumn.getFilterActive() != null
-                       && customColumn.getFilterActive()
-                       && customColumn.getFilterIsNull() != null
+            } else if (customColumn.getFilterActive()
                        && customColumn.getFilterIsNull()
             ) {
                 Filter filter = customColumn.getGridColumn().getFilter();
                 String currentFilterString = filter.getSql();
                 String filterType = filter.getFilterType().getType();
-                if (filterType.equals("generictext")) {
+                if (GENERICTEXT_FILTER_TYPE.equals(filterType)) {
                     currentFilterString =
                         customColumn.getGridColumn().getDataIndex()
                         + " IS NULL";
-                    if (customColumn.getFilterNegate() != null
-                        && customColumn.getFilterNegate()) {
+                    if (customColumn.getFilterNegate()) {
                         currentFilterString =
                             "NOT(" + currentFilterString + ")";
                     }
@@ -191,8 +205,7 @@ public class QueryTools {
                         currentFilterString.replaceAll(" .*", " IS NULL ");
                     currentFilterString =
                         currentFilterString.replaceAll(".*\\(", "");
-                    if (customColumn.getFilterNegate() != null
-                        && customColumn.getFilterNegate()) {
+                    if (customColumn.getFilterNegate()) {
                         currentFilterString =
                             "NOT(" + currentFilterString + ")";
                     }
@@ -209,40 +222,38 @@ public class QueryTools {
             NavigableMap <Integer, String> orderedSorts =
                 sortIndMap.tailMap(0, true);
             String unorderedSorts = sortIndMap.get(-1);
-            sortSql += "";
-            for (String sortString : orderedSorts.values()) {
-                if (sortSql.isEmpty()) {
-                    sortSql += " ORDER BY " + sortString;
-                } else {
-                    sortSql += ", " + sortString;
-                }
-            }
+
+            sortSql = String.join(", ", orderedSorts.values());
             if (unorderedSorts != null && !unorderedSorts.isEmpty()) {
-                if (sortSql.isEmpty()) {
-                    sortSql += " ORDER BY " + unorderedSorts;
-                } else {
-                    sortSql += ", " + unorderedSorts;
+                if (!sortSql.isEmpty()) {
+                    sortSql += ", ";
                 }
+                sortSql += unorderedSorts;
             }
-
+            sortSql = " ORDER BY " + sortSql;
         }
 
-        if (!filterSql.isEmpty()) {
-            sql += filterSql + " ";
-        }
-        sql += sortSql;
+        // Append (possibly empty) WHERE and ORDER BY clause
+        sql += filterSql + sortSql;
+
         //TODO Avoid using subqueries to use aliases in the where clause
         //Append generic and/or tag filter sql seperated from other filters
         if (subquery) {
-            sql = "SELECT * FROM ( " + sql + " ) AS inner_query ";
+            sql = "SELECT * FROM (" + sql + ") AS inner_query";
             sql += genericFilterSql;
         }
         return sql;
     }
 
+    /**
+     * Generate map of parameter names and values to be interpolated into
+     * the queries WHERE clause.
+     *
+     * @param customColumns List of GridColumnValues containing filter settings
+     * @return The generated map
+     */
     public MultivaluedMap<String, Object> prepareFilters(
-        List<GridColumnValue> customColumns,
-        Integer qId
+        List<GridColumnValue> customColumns
     ) {
         //A pattern for finding multiselect date filter values
         Pattern multiselectPattern = Pattern.compile("[0-9]*,[0-9]*");
@@ -253,11 +264,9 @@ public class QueryTools {
             new MultivaluedHashMap<String, Object>();
 
         for (GridColumnValue customColumn : customColumns) {
-            if (customColumn.getFilterActive() != null
-                && customColumn.getFilterActive()
+            if (customColumn.getFilterActive()
                 && customColumn.getFilterValue() != null
                 && !customColumn.getFilterValue().isEmpty()
-                && customColumn.getFilterIsNull() != null
                 && !customColumn.getFilterIsNull()
             ) {
 
@@ -267,7 +276,7 @@ public class QueryTools {
                 String filterType = filter.getFilterType().getType();
 
                 //Check if filter is generic and replace param and value param
-                if (filterType.equals("generictext")) {
+                if (GENERICTEXT_FILTER_TYPE.equals(filterType)) {
                     String genTextValue = filter.getParameter() + "Value";
                     currentFilterParam =
                         genTextValue + customColumn.getGridColumnId();
@@ -275,7 +284,7 @@ public class QueryTools {
 
                 // If a tag filter is applied, split param into n
                 // numbered params for n tags to filter
-                if (filterType.equals("tag")) {
+                if (TAG_FILTER_TYPE.equals(filterType)) {
                     String[] tagIds = filterValue.split(",");
                     int tagNumber = tagIds.length;
                     String param = filter.getParameter();
@@ -291,12 +300,10 @@ public class QueryTools {
                 }
 
                 //Check if Filter is an in filter
-                if (filterType.equals("generictext")
-                    || filterType.equals("text")
+                if (GENERICTEXT_FILTER_TYPE.equals(filterType)
+                    || TEXT_FILTER_TYPE.equals(filterType)
                 ) {
-                    if (customColumn.getFilterRegex() != null
-                        && !customColumn.getFilterRegex()
-                    ) {
+                    if (!customColumn.getFilterRegex()) {
                         filterValue += "%";
                         filterValue = translateToRegex(filterValue);
                     }
@@ -424,19 +431,21 @@ public class QueryTools {
      * @return List of result maps, containing only the configured columns
      */
     public List<Map<String, Object>> prepareResult(
-        List<Object[]> result,
+        List result,
         List<GridColumn> names
     ) {
         if (result.size() == 0) {
             return null;
         }
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
-        for (Object[] row: result) {
+        for (Object row: result) {
             Map<String, Object> set = new HashMap<String, Object>();
             for (int i = 0; i < names.size(); i++) {
                 set.put(
                     names.get(i).getDataIndex(),
-                    row[names.get(i).getPosition() - 1]);
+                    row instanceof Object[]
+                        ? ((Object[]) row)[names.get(i).getPosition() - 1]
+                        : row);
             }
             ret.add(set);
         }

@@ -10,26 +10,23 @@ package de.intevation.lada.rest.stamm;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
@@ -46,14 +43,14 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.rest.LadaService;
 
 /**
- * REST-Service for the probe tags
+ * REST-Service for the probe tags.
  */
 
- @Path("rest/tag")
- @RequestScoped
- public class TagService {
+@Path("rest/tag")
+public class TagService extends LadaService {
 
     @Inject
     private Repository repository;
@@ -73,7 +70,6 @@ import de.intevation.lada.util.rest.Response;
      */
     @GET
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getTags(
         @Context HttpServletRequest request,
         @Context UriInfo info
@@ -120,9 +116,14 @@ import de.intevation.lada.util.rest.Response;
         CriteriaQuery<Tag> criteriaQuery = builder.createQuery(Tag.class);
         Root<Tag> root = criteriaQuery.from(Tag.class);
         Predicate zeroMstfilter = builder.isNull(root.get("mstId"));
-        Predicate userMstFilter =
+        Predicate filter;
+        if (userInfo.getMessstellen().isEmpty()) {
+            filter = zeroMstfilter;
+        } else {
+            Predicate userMstFilter =
             builder.in(root.get("mstId")).value(userInfo.getMessstellen());
-        Predicate filter = builder.or(zeroMstfilter, userMstFilter);
+            filter = builder.or(zeroMstfilter, userMstFilter);
+        }
         if (probeId != null) {
             Join<Tag, TagZuordnung> joinTagZuordnung =
                 root.join(
@@ -160,8 +161,6 @@ import de.intevation.lada.util.rest.Response;
      */
     @POST
     @Path("/generated")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response createGeneratedTags(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
@@ -219,8 +218,6 @@ import de.intevation.lada.util.rest.Response;
      */
     @POST
     @Path("/imported")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response createImportedTags(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
@@ -294,15 +291,14 @@ import de.intevation.lada.util.rest.Response;
      */
     @POST
     @Path("/")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response createTagReference(
         @Context HttpServletRequest request,
         TagZuordnung zuordnung
     ) {
+        // Check if payload contains sensible information
         if (zuordnung == null) {
             return new Response(
-                false, StatusCodes.ERROR_DB_CONNECTION, "Not a valid tag");
+                false, StatusCodes.ERROR_VALIDATION, "Not a valid tag");
         }
         Tag tag = zuordnung.getTag();
         Integer tagId = zuordnung.getTagId();
@@ -312,44 +308,36 @@ import de.intevation.lada.util.rest.Response;
             && zuordnung.getMessungId() != null
         ) {
             return new Response(
-                false, StatusCodes.ERROR_DB_CONNECTION, "Not a valid tag");
+                false, StatusCodes.ERROR_VALIDATION, "Not a valid tag");
         }
 
-        UserInfo userInfo = authorization.getInfo(request);
-        //Use existing tag
-        if (tag == null) {
+        List<String> messstellen =
+            authorization.getInfo(request).getMessstellen();
+
+        if (tag == null) { // Use existing tag
             //Check if tag is already assigned to the probe
-            EntityManager em = repository.entityManager();
-            CriteriaBuilder builder = em.getCriteriaBuilder();
-            CriteriaQuery<TagZuordnung> criteriaQuery =
-                builder.createQuery(TagZuordnung.class);
-            Root<TagZuordnung> root = criteriaQuery.from(TagZuordnung.class);
-            Join<TagZuordnung, Tag> joinTagZuordnung =
-                root.join("tag", javax.persistence.criteria.JoinType.LEFT);
-            Predicate tagFilter =
-                builder.equal(root.get("tag").get("id"), zuordnung.getTagId());
-            Predicate userMstFilter =
-                builder.in(
-                    joinTagZuordnung.get("mstId")).value(
-                        userInfo.getMessstellen());
-            Predicate filter = builder.and(tagFilter, userMstFilter);
-            if (zuordnung.getProbeId() != null) {
-                Predicate probeFilter =
-                    builder.equal(root.get("probeId"), zuordnung.getProbeId());
-                filter = builder.and(filter, probeFilter);
-            } else {
-                Predicate messungFilter =
-                    builder.equal(
-                        root.get("messungId"), zuordnung.getMessungId());
-                filter = builder.and(filter, messungFilter);
-            }
-            criteriaQuery.where(filter);
-            List<TagZuordnung> zuordnungs =
-                repository.filterPlain(criteriaQuery);
-            if (zuordnungs.size() > 0) {
+            final String tagIdParam = "tagId",
+                mstIdsParam = "mstIds",
+                taggedIdParam = "taggedId";
+            String idField = zuordnung.getProbeId() != null
+                ? "probe_id" : "messung_id";
+            Query isAssigned = repository.queryFromString(
+                "SELECT EXISTS("
+                + "SELECT 1 FROM land.tagzuordnung "
+                + "JOIN stamm.tag ON tag_id=tag.id "
+                + "WHERE tag_id=:" + tagIdParam
+                + " AND (mst_id IS NULL OR mst_id IN (:" + mstIdsParam + "))"
+                + " AND " + idField + "=:" + taggedIdParam + ")");
+            isAssigned.setParameter(tagIdParam, zuordnung.getTagId());
+            isAssigned.setParameter(mstIdsParam, messstellen);
+            isAssigned.setParameter(taggedIdParam,
+                zuordnung.getProbeId() != null
+                ? zuordnung.getProbeId()
+                : zuordnung.getMessungId());
+            if ((Boolean) isAssigned.getSingleResult()) {
                 return new Response(
-                    false,
-                    StatusCodes.ERROR_VALIDATION,
+                    true,
+                    StatusCodes.OK,
                     "Tag is already assigned to probe");
             }
 
@@ -385,29 +373,23 @@ import de.intevation.lada.util.rest.Response;
                         "Not authorized to set global tag");
                 }
             //Else check if it is the users private tag
-            } else if (!userInfo.getMessstellen().contains(mstId)) {
+            } else if (!messstellen.contains(mstId)) {
                 return new Response(
-                    false, StatusCodes.ERROR_DB_CONNECTION, "Invalid mstId");
+                    false, StatusCodes.NOT_ALLOWED, "Invalid mstId");
             }
 
-            repository.create(zuordnung);
             zuordnung.setTag(tag);
-            return repository.update(zuordnung);
-        //Create new
-        } else {
+
+        } else { // Create new tag
             String mstId = zuordnung.getTag().getMstId();
             //mstId may not be null, global tags cannot be created
-            if (mstId == null
-                || !userInfo.getMessstellen().contains(mstId)
-            ) {
+            if (mstId == null || !messstellen.contains(mstId)) {
                 return new Response(
                     false,
-                    StatusCodes.ERROR_DB_CONNECTION,
+                    StatusCodes.NOT_ALLOWED,
                     "Invalid/empty mstId");
             }
-            if (repository.create(tag).getSuccess()) {
-                return repository.create(zuordnung);
-            } else {
+            if (!repository.create(tag).getSuccess()) {
                 //TODO Proper response code?
                 return new Response(
                     false,
@@ -415,14 +397,14 @@ import de.intevation.lada.util.rest.Response;
                     "Failed to create Tag");
             }
         }
+        return repository.create(zuordnung);
     }
 
     /**
-     * Delete a reference between a tag and a probe
+     * Delete a reference between a tag and a probe.
      */
     @DELETE
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteTagReference(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,

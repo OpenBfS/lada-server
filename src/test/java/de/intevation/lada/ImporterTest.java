@@ -101,10 +101,6 @@ public class ImporterTest extends BaseTest {
     @Inject
     ObjectMerger merger;
 
-    public ImporterTest() {
-        testProtocol = new ArrayList<Protocol>();
-    }
-
     /**
      * Identify probe objects.
      *

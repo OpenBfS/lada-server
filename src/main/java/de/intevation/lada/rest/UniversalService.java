@@ -11,13 +11,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
@@ -53,8 +50,7 @@ import de.intevation.lada.util.rest.Response;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/universal")
-@RequestScoped
-public class UniversalService {
+public class UniversalService extends LadaService {
 
     /**
      * The data repository granting read/write access.
@@ -93,8 +89,6 @@ public class UniversalService {
      */
     @POST
     @Path("/")
-    @Consumes("application/json")
-    @Produces("application/json")
     public Response execute(
         @Context HttpServletRequest request,
         @Context UriInfo info,
