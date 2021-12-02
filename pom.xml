@@ -112,6 +112,7 @@
             <version>${antlr.version}</version>
         </dependency>
 
+        <!--Geotools-->
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-referencing</artifactId>
@@ -127,7 +128,14 @@
             <artifactId>gt-opengis</artifactId>
             <version>${geotools.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-epsg-hsql</artifactId>
+            <version>${geotools.version}</version>
+            <scope>runtime</scope>
+        </dependency>
 
+        <!--Apache commons-->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
