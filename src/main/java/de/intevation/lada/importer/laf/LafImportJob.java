@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -44,7 +45,7 @@ import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.Response;
 
 /**
- * Asynchronous import job
+ * Asynchronous import job.
  *
  * @author Alexander Woestmann <awoestmann@intevation.de>
  */
@@ -76,7 +77,7 @@ public class LafImportJob extends Job {
     }
 
     /**
-     * Create a result json using a status code and message
+     * Create a result json using a status code and message.
      * @param success True if import was successful
      * @param status Status code
      * @param data Message String
@@ -98,6 +99,9 @@ public class LafImportJob extends Job {
         return importData;
     }
 
+    /**
+     * Run the import job.
+     */
     public void run() {
         super.run();
         logger.debug("Starting LAF import");
@@ -176,9 +180,11 @@ public class LafImportJob extends Job {
                 new HashMap<String, Object>();
             if (!importer.getErrors().isEmpty()) {
                 fileResponseData.put("errors", importer.getErrors());
+                this.currentStatus.setErrors(true);
             }
             if (!importer.getWarnings().isEmpty()) {
                 fileResponseData.put("warnings", importer.getWarnings());
+                this.currentStatus.setWarnings(true);
             }
             if (!importer.getNotifications().isEmpty()) {
                 fileResponseData.put(

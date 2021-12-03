@@ -19,10 +19,10 @@ import org.apache.log4j.Logger;
 import de.intevation.lada.util.auth.UserInfo;
 
 /**
- * Abstract job class
+ * Abstract job class.
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
-abstract public class Job extends Thread {
+public abstract class Job extends Thread {
 
     /**
      * Logger instance.
@@ -56,10 +56,10 @@ abstract public class Job extends Thread {
     protected JobStatus currentStatus = new JobStatus(Status.WAITING);
 
     /**
-     * Cleanup method triggered when the job has finished
+     * Cleanup method triggered when the job has finished.
      * @throws JobNotFinishedException Thrown if job is still running
      */
-    abstract public void cleanup() throws JobNotFinishedException;
+    public abstract void cleanup() throws JobNotFinishedException;
 
     /**
      * Set this job to failed state.
@@ -176,6 +176,10 @@ abstract public class Job extends Thread {
         this.currentStatus.setDone(done);
     }
 
+    /**
+     * Set status message.
+     * @param message Message
+     */
     protected void setMessage(String message) {
         this.currentStatus.setMessage(message);
     }
@@ -214,6 +218,8 @@ abstract public class Job extends Thread {
         private Status status;
         private String message;
         private boolean done;
+        private Boolean warnings;
+        private Boolean errors;
 
         public JobStatus(Status s) {
             this(s, "", false);
@@ -221,8 +227,10 @@ abstract public class Job extends Thread {
 
         public JobStatus(Status s, String m, boolean d) {
             this.status = s;
-            this.message = m != null? m: "";
+            this.message = m != null ? m : "";
             this.done = d;
+            warnings = null;
+            errors = null;
         }
 
         public boolean isDone() {
@@ -234,7 +242,7 @@ abstract public class Job extends Thread {
         }
 
         /**
-         * Return status string as lower case
+         * Return status string as lower case.
          * @return Status string
          */
         @JsonIgnore
@@ -246,6 +254,14 @@ abstract public class Job extends Thread {
             return message;
         }
 
+        public Boolean getErrors() {
+            return errors;
+        }
+
+        public Boolean getWarnings() {
+            return warnings;
+        }
+
         public void setDone(boolean done) {
             this.done = done;
         }
@@ -254,15 +270,29 @@ abstract public class Job extends Thread {
             this.message = message;
         }
 
+        public void setErrors(Boolean errors) {
+            this.errors = errors;
+        }
+
+        public void setWarnings(Boolean warnings) {
+            this.warnings = warnings;
+        }
+
         public void setStatus(Status status) {
             this.status = status;
         }
 
+        /**
+         * Convert status to json object.
+         * @return JsonObject
+         */
         public JsonObject toJsonObject() {
             JsonObject object = Json.createObjectBuilder()
                 .add("status", getStatusString())
                 .add("message", getMessage())
                 .add("done", isDone())
+                .add("errors", getErrors())
+                .add("warnings", getWarnings())
                 .build();
             return object;
         }

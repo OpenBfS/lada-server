@@ -48,7 +48,7 @@ import de.intevation.lada.util.data.Job.JobStatus;
 public class AsyncImportService {
 
     /**
-     * The importer
+     * The importer.
      */
     @Inject
     @ImportConfig(format = ImportFormat.LAF)
@@ -87,7 +87,8 @@ public class AsyncImportService {
             return Response.ok(builder.build().toString()).build();
         }
         UserInfo userInfo = authorization.getInfo(request);
-        String newJobId = importJobManager.createImportJob(userInfo, jsonInput, mstId);
+        String newJobId =
+                importJobManager.createImportJob(userInfo, jsonInput, mstId);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
@@ -104,10 +105,18 @@ public class AsyncImportService {
      *    done: boolean
      *    status: 'waiting' | 'running' | 'finished' | 'error'
      *    message: string (optional)
+     *    errors: boolean
+     *    warnings: boolean
      *  }
      * </pre>
      *
+     *  Note: The 'error' status indicates errors in the server
+     *        like I/O errors etc.
+     *        'errors' and 'warnings' indicate errors in the import itself,
+     *        like authorization issues etc.
+     *
      * @param id Job id to check
+     * @param request Request object
      * @return Json object containing the status information, status
      *         403 if the requesting user has not created the request
      *         or status 404 if job was not found
