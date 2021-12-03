@@ -10,7 +10,6 @@ package de.intevation.lada.model.land;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,6 +20,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 /**
@@ -61,9 +63,11 @@ public class Ortszuordnung implements Serializable {
     private Probe probe;
 
     @Transient
+    @JsonIgnore
     private MultivaluedMap<String, Integer> errors;
 
     @Transient
+    @JsonIgnore
     private MultivaluedMap<String, Integer> warnings;
 
     @Transient
@@ -142,20 +146,22 @@ public class Ortszuordnung implements Serializable {
         this.treeModified = treeModified;
     }
 
+    @JsonProperty
     public MultivaluedMap<String, Integer> getErrors() {
         return this.errors;
     }
 
-    @JsonbTransient
+    @JsonIgnore
     public void setErrors(MultivaluedMap<String, Integer> errors) {
         this.errors = errors;
     }
 
+    @JsonProperty
     public MultivaluedMap<String, Integer> getWarnings() {
         return this.warnings;
     }
 
-    @JsonbTransient
+    @JsonIgnore
     public void setWarnings(MultivaluedMap<String, Integer> warnings) {
         this.warnings = warnings;
     }

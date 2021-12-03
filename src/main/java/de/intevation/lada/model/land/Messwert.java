@@ -10,7 +10,6 @@ package de.intevation.lada.model.land;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,6 +20,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 /**
@@ -77,12 +79,15 @@ public class Messwert implements Serializable {
     private Timestamp parentModified;
 
     @Transient
+    @JsonIgnore
     private MultivaluedMap<String, Integer> errors;
 
     @Transient
+    @JsonIgnore
     private MultivaluedMap<String, Integer> warnings;
 
     @Transient
+    @JsonIgnore
     private MultivaluedMap<String, Integer> notifications;
 
     public Messwert() {
@@ -136,7 +141,7 @@ public class Messwert implements Serializable {
         this.messgroesseId = messgroesseId;
     }
 
-    @JsonbTransient
+    @JsonIgnore
     public Messung getMessung() {
         return this.messung;
     }
@@ -224,29 +229,32 @@ public class Messwert implements Serializable {
         this.parentModified = parentModified;
     }
 
+    @JsonProperty
     public MultivaluedMap<String, Integer> getErrors() {
         return this.errors;
     }
 
-    @JsonbTransient
+    @JsonIgnore
     public void setErrors(MultivaluedMap<String, Integer> errors) {
         this.errors = errors;
     }
 
+    @JsonProperty
     public MultivaluedMap<String, Integer> getWarnings() {
         return this.warnings;
     }
 
-    @JsonbTransient
+    @JsonIgnore
     public void setWarnings(MultivaluedMap<String, Integer> warnings) {
         this.warnings = warnings;
     }
 
+    @JsonProperty
     public MultivaluedMap<String, Integer> getNotifications() {
         return this.notifications;
     }
 
-    @JsonbTransient
+    @JsonIgnore
     public void setNotifications(
         MultivaluedMap<String, Integer> notifications
     ) {

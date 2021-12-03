@@ -9,7 +9,6 @@ package de.intevation.lada.model.stammdaten;
 
 import java.io.Serializable;
 
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,6 +18,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 /**
  * The persistent class for the query_messstelle database table.
@@ -60,7 +62,7 @@ public class QueryMessstelle implements Serializable {
         this.messStelle = messStelle;
     }
 
-    @JsonbTransient
+    @JsonIgnore
     public QueryUser getQueryUser() {
         return this.queryUser;
     }

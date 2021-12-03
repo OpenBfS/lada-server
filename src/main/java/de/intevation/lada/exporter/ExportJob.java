@@ -19,9 +19,10 @@ import java.nio.file.Paths;
 import java.util.Locale;
 
 import javax.json.JsonObject;
-import javax.json.bind.annotation.JsonbProperty;
 
 import org.apache.log4j.Logger;
+
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
@@ -102,7 +103,7 @@ public abstract class ExportJob extends Thread {
     public enum Status {
         WAITING, RUNNING, FINISHED, ERROR;
 
-        @JsonbProperty
+        @JsonValue
         public String getName() {
             return this.name().toLowerCase();
         }
