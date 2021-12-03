@@ -10,7 +10,6 @@ package de.intevation.lada.model.stammdaten;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,6 +17,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 /**
  * The persistent class for the mess_einheit database table.
@@ -40,7 +42,7 @@ public class MessEinheit implements Serializable {
      * this one.
      */
     @OneToMany(mappedBy = "mehIdZu", fetch = FetchType.EAGER)
-    @JsonbTransient
+    @JsonIgnore
     private List<MassEinheitUmrechnung> massEinheitUmrechnungZus;
 
     @Column(name = "eudf_messeinheit_id")

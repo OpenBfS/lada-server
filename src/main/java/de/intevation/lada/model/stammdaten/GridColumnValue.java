@@ -9,7 +9,6 @@ package de.intevation.lada.model.stammdaten;
 
 import java.io.Serializable;
 
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,6 +19,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * The persistent class for the grid_column_values database table.
@@ -167,7 +168,7 @@ public class GridColumnValue implements Serializable {
         this.gridColumnId = gid;
     }
 
-    @JsonbTransient
+    @JsonIgnore
     public GridColumn getGridColumn() {
         return this.gridColumn;
     }
@@ -176,7 +177,7 @@ public class GridColumnValue implements Serializable {
         this.gridColumn = gridColumn;
     }
 
-    @JsonbTransient
+    @JsonIgnore
     public QueryUser getQueryUser() {
         return this.queryUser;
     }
