@@ -93,7 +93,7 @@ public class JsonExportJob extends QueryExportJob {
         // Create a map of id->record
         Map<Integer, Map<String, Object>> idMap =
             new HashMap<Integer, Map<String, Object>>();
-        String sDataJsonKey = "messungen";
+        String sDataJsonKey = "Messungen";
         primaryData.forEach(record -> {
             idMap.put((Integer) record.get(idColumn), record);
         });
@@ -131,7 +131,7 @@ public class JsonExportJob extends QueryExportJob {
                 primaryRecord.put(sDataJsonKey, new ArrayList<Object>());
             }
             ArrayList<Map<String, Object>> messungenList =
-                (ArrayList<Map<String, Object>>) primaryRecord.get("messungen");
+                (ArrayList<Map<String, Object>>) primaryRecord.get("Messungen");
             messungenList.add(mergedMessung);
         });
         if (!success.get()) {
