@@ -210,12 +210,9 @@ public class MessprogrammMmtService extends LadaService {
         if (!response.getSuccess()) {
             return response;
         }
-        Response updated = repository.getById(
-            MessprogrammMmt.class,
-            ((MessprogrammMmt) response.getData()).getId());
         return authorization.filter(
             request,
-            updated,
+            response,
             MessprogrammMmt.class);
     }
 

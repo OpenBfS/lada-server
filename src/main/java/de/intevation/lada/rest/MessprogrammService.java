@@ -350,12 +350,9 @@ public class MessprogrammService extends LadaService {
         if (!response.getSuccess()) {
             return response;
         }
-        Response updated = repository.getById(
-            Messprogramm.class,
-            ((Messprogramm) response.getData()).getId());
         return authorization.filter(
             request,
-            updated,
+            response,
             Messprogramm.class);
     }
 

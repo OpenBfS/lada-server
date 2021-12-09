@@ -296,16 +296,12 @@ public class OrtszuordnungService extends LadaService {
         if (!response.getSuccess()) {
             return response;
         }
-        Response updated = repository.getById(
-            Ortszuordnung.class,
-            ((Ortszuordnung) response.getData()).getId());
         if (violation.hasWarnings()) {
-            updated.setWarnings(violation.getWarnings());
+            response.setWarnings(violation.getWarnings());
         }
-
         return authorization.filter(
             request,
-            updated,
+            response,
             Ortszuordnung.class);
     }
 
