@@ -9,13 +9,12 @@
 package de.intevation.lada.exporter;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Locale;
 
 import javax.json.JsonObject;
@@ -65,16 +64,6 @@ public abstract class ExportJob extends Job {
      * Filename set by the users request.
      */
     protected String downloadFileName;
-
-    /**
-     * Temporary output file's name.
-     */
-    protected String outputFileName;
-
-    /**
-     * Output file's location.
-     */
-    protected String outputFileLocation;
 
     /**
      * Complete path to the output file.
@@ -153,13 +142,6 @@ public abstract class ExportJob extends Job {
     public ExportJob(String jId) {
         this.jobId = jId;
         this.currentStatus = new JobStatus(Status.WAITING, "", false);
-        // TODO: Use e.g. Files.createTempFile() to make it more portable
-        this.outputFileLocation = "/tmp/lada-server/";
-        if (!outputFileLocation.endsWith("/")) {
-            outputFileLocation += "/";
-        }
-        this.outputFileName = jobId;
-        this.outputFilePath = Paths.get(outputFileLocation + outputFileName);
     }
 
     /**
@@ -216,14 +198,6 @@ public abstract class ExportJob extends Job {
      */
     public String getFormat() {
         return format;
-    }
-
-    /**
-     * Get the output file name.
-     * @return Output file name String
-     */
-    public String getOutputFileName() {
-        return outputFileName;
     }
 
     /**
@@ -315,33 +289,12 @@ public abstract class ExportJob extends Job {
      * @return True if written successfully, else false
      */
     protected boolean writeResultToFile(String result) {
-        Path tmpPath = Paths.get(outputFileLocation);
-        logger.debug(String.format(
-            "Writing result to file %s", outputFilePath));
-
-        //Create dir
-        if (!Files.exists(tmpPath)) {
-            try {
-                Files.createDirectories(tmpPath);
-            } catch (IOException ioe) {
-                logger.error(String.format(
-                    "Cannot create export folder. IOException: %s",
-                    ioe.getMessage()));
-                return false;
-            } catch (SecurityException se) {
-                logger.error(String.format(
-                    "Security Exception during directory creation %s",
-                    se.getMessage()));
-                return false;
-            }
-        }
-
         //Create file
         try {
-            Files.createFile(outputFilePath);
-        } catch (FileAlreadyExistsException faee) {
-            logger.error("Cannot create export file. File already exists");
-            return false;
+            this.outputFilePath =
+                File.createTempFile("export", this.format).toPath();
+            logger.debug(String.format(
+                    "Writing result to file %s", outputFilePath));
         } catch (IOException ioe) {
             logger.error(String.format(
                 "Cannot create export file. IOException: %s",
