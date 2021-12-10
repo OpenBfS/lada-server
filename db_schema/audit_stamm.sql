@@ -50,12 +50,12 @@ BEGIN
     END IF;
 
     audit_row = ROW(
-        nextval('audit_trail_id_seq'), -- id
-        TG_TABLE_NAME::varchar,             -- table_name
-        current_timestamp,                  -- tstamp
-        substring(TG_OP,1,1),               -- action
-        NEW.id,                             -- object_id
-        NULL, NULL                          -- row_data, changed_fields
+        nextval('audit_trail_id_seq'),        -- id
+        TG_TABLE_NAME::varchar,               -- table_name
+        current_timestamp AT TIME ZONE 'utc', -- tstamp
+        substring(TG_OP,1,1),                 -- action
+        NEW.id,                               -- object_id
+        NULL, NULL                            -- row_data, changed_fields
         );
 
     IF TG_ARGV[1] IS NOT NULL THEN

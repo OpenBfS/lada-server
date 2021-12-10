@@ -284,16 +284,13 @@ public class OrtszuordnungMpService extends LadaService {
         if (!response.getSuccess()) {
             return response;
         }
-        Response updated = repository.getById(
-            OrtszuordnungMp.class,
-            ((OrtszuordnungMp) response.getData()).getId());
         if (violation.hasWarnings()) {
-            updated.setWarnings(violation.getWarnings());
+            response.setWarnings(violation.getWarnings());
         }
 
         return authorization.filter(
             request,
-            updated,
+            response,
             OrtszuordnungMp.class);
     }
 

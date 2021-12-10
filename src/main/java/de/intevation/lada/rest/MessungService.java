@@ -368,18 +368,15 @@ public class MessungService extends LadaService {
         if (!response.getSuccess()) {
             return response;
         }
-        Response updated = repository.getById(
-            Messung.class,
-            ((Messung) response.getData()).getId());
         if (violation.hasWarnings()) {
-            updated.setWarnings(violation.getWarnings());
+            response.setWarnings(violation.getWarnings());
         }
         if (violation.hasNotifications()) {
-            updated.setNotifications(violation.getNotifications());
+            response.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
             request,
-            updated,
+            response,
             Messung.class);
     }
 

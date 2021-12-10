@@ -16,7 +16,7 @@ import javax.inject.Inject;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
+
 
 /**
  * Data object locker using a timestamp to lock data access.
@@ -42,8 +42,8 @@ public class TimestampLocker implements ObjectLocker {
     public boolean isLocked(Object o) {
         if (o instanceof Probe) {
             Probe newProbe = (Probe) o;
-            Probe oldProbe = (Probe) repository.getById(
-                Probe.class, newProbe.getId()).getData();
+            Probe oldProbe = repository.getByIdPlain(
+                Probe.class, newProbe.getId());
             if (oldProbe.getTreeModified().getTime()
                 > newProbe.getTreeModified().getTime()) {
                 return true;
@@ -59,9 +59,7 @@ public class TimestampLocker implements ObjectLocker {
                             | InvocationTargetException e) {
                         return true;
                     }
-                    Response response =
-                        repository.getById(Probe.class, id);
-                    Probe probe = (Probe) response.getData();
+                    Probe probe = repository.getByIdPlain(Probe.class, id);
                     return isNewer(o, probe.getTreeModified());
                 }
                 if (m.getName().equals("getMessungsId")) {
@@ -72,12 +70,9 @@ public class TimestampLocker implements ObjectLocker {
                             | InvocationTargetException e) {
                         return true;
                     }
-                    Response mResponse =
-                        repository.getById(Messung.class, id);
-                    Messung messung = (Messung) mResponse.getData();
-                    boolean newerMessung =
-                        isNewer(o, messung.getTreeModified());
-                    return newerMessung;
+                    Messung messung =
+                        repository.getByIdPlain(Messung.class, id);
+                    return isNewer(o, messung.getTreeModified());
                 }
             }
         }
@@ -85,7 +80,7 @@ public class TimestampLocker implements ObjectLocker {
     }
 
     /**
-     * Test whether an object is newer tha the given timestamp.
+     * Test whether an object is newer than the given timestamp.
      *
      * @param o     The object to test.
      * @param t     The timestamp.

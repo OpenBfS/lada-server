@@ -186,13 +186,6 @@ public class MessprogrammService extends LadaService {
                 repository.getById(
                     Messprogramm.class, Integer.valueOf(id)),
                 Messprogramm.class);
-        Messprogramm mp = (Messprogramm) response.getData();
-        QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
-        builder.and("mprId", mp.getId());
-        List<Probe> probes =
-            repository.filterPlain(builder.getQuery());
-        mp.setReferenceCount(probes.size());
-        response.setData(mp);
         return response;
     }
 
@@ -258,12 +251,13 @@ public class MessprogrammService extends LadaService {
         ) {
             messprogramm = factory.findUmweltId(messprogramm);
         } else if ((messprogramm.getUmwId() != null
-        || !messprogramm.getUmwId().equals(""))
-        && (messprogramm.getMediaDesk() == null
-        || messprogramm.getMediaDesk().equals(""))
-        ){
+                || !messprogramm.getUmwId().equals(""))
+            && (messprogramm.getMediaDesk() == null
+                || messprogramm.getMediaDesk().equals(""))
+        ) {
             messprogramm = factory.getInitialMediaDesk(messprogramm);
         }
+
         /* Persist the new messprogramm object*/
         Response response = repository.create(messprogramm);
         Messprogramm ret = (Messprogramm) response.getData();
@@ -334,28 +328,25 @@ public class MessprogrammService extends LadaService {
         }
 
         if ((messprogramm.getUmwId() == null
-            || messprogramm.getUmwId().equals(""))
+                || messprogramm.getUmwId().equals(""))
             && !(messprogramm.getMediaDesk() == null
-            || messprogramm.getMediaDesk().equals(""))
+                || messprogramm.getMediaDesk().equals(""))
         ) {
             messprogramm = factory.findUmweltId(messprogramm);
         } else if (!(messprogramm.getUmwId() == null
-            || messprogramm.getUmwId().equals(""))
-            && ( messprogramm.getMediaDesk() == null
-            || messprogramm.getMediaDesk().equals(""))
-            ){
+                || messprogramm.getUmwId().equals(""))
+            && (messprogramm.getMediaDesk() == null
+                || messprogramm.getMediaDesk().equals(""))
+            ) {
             messprogramm = factory.getInitialMediaDesk(messprogramm);
         }
         Response response = repository.update(messprogramm);
         if (!response.getSuccess()) {
             return response;
         }
-        Response updated = repository.getById(
-            Messprogramm.class,
-            ((Messprogramm) response.getData()).getId());
         return authorization.filter(
             request,
-            updated,
+            response,
             Messprogramm.class);
     }
 

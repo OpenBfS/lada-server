@@ -313,16 +313,6 @@ CREATE TABLE mass_einheit_umrechnung
 );
 
 
-CREATE TABLE umwelt (
-    id character varying(3) PRIMARY KEY,
-    beschreibung character varying(300),
-    umwelt_bereich character varying(80) NOT NULL,
-    meh_id integer REFERENCES mess_einheit,
-    meh_id_2 integer REFERENCES mess_einheit,
-    UNIQUE (umwelt_bereich)
-);
-
-
 CREATE TABLE betriebsart (
     id smallint PRIMARY KEY,
     name character varying(30) NOT NULL
@@ -335,7 +325,7 @@ CREATE TABLE staat (
     hkl_id smallint NOT NULL UNIQUE,
     staat_iso character varying(2) UNIQUE,
     staat_kurz character varying(5) UNIQUE,
-    eu boolean,
+    eu boolean NOT NULL DEFAULT false,
     koord_x_extern character varying(22),
     koord_y_extern character varying(22),
     kda_id integer REFERENCES koordinaten_art
@@ -360,9 +350,9 @@ CREATE TABLE netz_betreiber (
     id character varying(2) PRIMARY KEY,
     netzbetreiber character varying(50),
     idf_netzbetreiber character varying(1),
-    is_bmn boolean DEFAULT false,
+    is_bmn boolean NOT NULL DEFAULT false,
     mailverteiler character varying(512),
-    aktiv boolean DEFAULT false
+    aktiv boolean NOT NULL DEFAULT false
 );
 
 
@@ -373,6 +363,17 @@ CREATE TABLE mess_stelle (
     mess_stelle character varying(60),
     mst_typ character varying(1),
     amtskennung character varying(6)
+);
+
+
+CREATE TABLE umwelt (
+    id character varying(3) PRIMARY KEY,
+    beschreibung character varying(300),
+    umwelt_bereich character varying(80) NOT NULL,
+    meh_id integer REFERENCES mess_einheit,
+    meh_id_2 integer REFERENCES mess_einheit,
+    leitstelle character varying(5) REFERENCES mess_stelle,
+    UNIQUE (umwelt_bereich)
 );
 
 
@@ -485,7 +486,7 @@ CREATE TABLE query_messstelle (
 CREATE TABLE filter_type (
     id serial PRIMARY KEY,
     type character varying(12) NOT NULL,
-    multiselect boolean
+    multiselect boolean NOT NULL DEFAULT false
 );
 INSERT INTO filter_type VALUES(0, 'text', false);
 INSERT INTO filter_type VALUES(1, 'number', false);
@@ -523,7 +524,7 @@ CREATE TABLE messgroesse (
     messgroesse character varying(50) NOT NULL,
     default_farbe character varying(9),
     idf_nuklid_key character varying(6),
-    ist_leitnuklid boolean DEFAULT false,
+    ist_leitnuklid boolean NOT NULL DEFAULT false,
     eudf_nuklid_id bigint,
     kennung_bvl character varying(7)
 );
@@ -658,7 +659,7 @@ CREATE TABLE ort (
     langtext character varying(100) NOT NULL,
     staat_id smallint REFERENCES staat,
     gem_id character varying(8) REFERENCES verwaltungseinheit,
-    unscharf boolean DEFAULT false,
+    unscharf boolean NOT NULL DEFAULT false,
     nuts_code character varying(10),
     kda_id integer NOT NULL REFERENCES koordinaten_art,
     koord_x_extern character varying(22) NOT NULL,
