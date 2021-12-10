@@ -313,17 +313,6 @@ CREATE TABLE mass_einheit_umrechnung
 );
 
 
-CREATE TABLE umwelt (
-    id character varying(3) PRIMARY KEY,
-    beschreibung character varying(300),
-    umwelt_bereich character varying(80) NOT NULL,
-    meh_id integer REFERENCES mess_einheit,
-    meh_id_2 integer REFERENCES mess_einheit,
-    leitstelle character varying(5) REFERENCES mess_stelle,
-    UNIQUE (umwelt_bereich)
-);
-
-
 CREATE TABLE betriebsart (
     id smallint PRIMARY KEY,
     name character varying(30) NOT NULL
@@ -374,6 +363,17 @@ CREATE TABLE mess_stelle (
     mess_stelle character varying(60),
     mst_typ character varying(1),
     amtskennung character varying(6)
+);
+
+
+CREATE TABLE umwelt (
+    id character varying(3) PRIMARY KEY,
+    beschreibung character varying(300),
+    umwelt_bereich character varying(80) NOT NULL,
+    meh_id integer REFERENCES mess_einheit,
+    meh_id_2 integer REFERENCES mess_einheit,
+    leitstelle character varying(5) REFERENCES mess_stelle,
+    UNIQUE (umwelt_bereich)
 );
 
 
