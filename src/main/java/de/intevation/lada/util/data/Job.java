@@ -8,10 +8,6 @@
 
 package de.intevation.lada.util.data;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import org.apache.log4j.Logger;
@@ -44,6 +40,7 @@ public abstract class Job extends Thread {
      */
     public enum Status {
         WAITING, RUNNING, FINISHED, ERROR;
+
         @JsonValue
         public String getName() {
             return this.name().toLowerCase();
@@ -241,15 +238,6 @@ public abstract class Job extends Thread {
             return status;
         }
 
-        /**
-         * Return status string as lower case.
-         * @return Status string
-         */
-        @JsonIgnore
-        public String getStatusString() {
-            return status.name().toLowerCase();
-        }
-
         public String getMessage() {
             return message;
         }
@@ -280,21 +268,6 @@ public abstract class Job extends Thread {
 
         public void setStatus(Status status) {
             this.status = status;
-        }
-
-        /**
-         * Convert status to json object.
-         * @return JsonObject
-         */
-        public JsonObject toJsonObject() {
-            JsonObject object = Json.createObjectBuilder()
-                .add("status", getStatusString())
-                .add("message", getMessage())
-                .add("done", isDone())
-                .add("errors", getErrors())
-                .add("warnings", getWarnings())
-                .build();
-            return object;
         }
     }
 }
