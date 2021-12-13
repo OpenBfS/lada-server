@@ -68,7 +68,7 @@ public class ImportJobManager extends JobManager {
         String id = getNextIdentifier();
         logger.debug(String.format("Creating new job: %s", id));
 
-        LafImportJob newJob = new LafImportJob(id);
+        LafImportJob newJob = new LafImportJob();
         newJob.setImporter(importer);
         newJob.setJsonInput(params);
         newJob.setRepository(repository);
@@ -116,7 +116,7 @@ public class ImportJobManager extends JobManager {
                 String.format("Error returning result for job %s:", id));
             jpe.printStackTrace();
         } finally {
-            removeJob(job);
+            removeJob(id);
         }
         return jsonString;
     }

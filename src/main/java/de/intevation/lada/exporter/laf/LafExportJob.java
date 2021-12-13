@@ -34,12 +34,10 @@ public class LafExportJob extends ExportJob {
 
     private static final int LENGTH = 1024;
 
-    public LafExportJob(String jobId) {
-        super(jobId);
+    public LafExportJob() {
         this.format = "laf";
         this.downloadFileName = "export.laf";
-        this.logger =
-            Logger.getLogger(String.format("LafExportJob[%s]", jobId));
+        this.logger = Logger.getLogger("LafExportJob");
     }
 
     /**
@@ -48,7 +46,7 @@ public class LafExportJob extends ExportJob {
     @Override
     public void run() {
         super.run();
-        logger.debug(String.format("Starting LAF export", jobId));
+        logger.debug("Starting LAF export");
 
         //Check encoding
         // TODO: should be done earlier: it's too late to report to the client

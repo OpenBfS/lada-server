@@ -26,11 +26,6 @@ public abstract class Job extends Thread {
     protected Logger logger;
 
     /**
-     * Id of this job.
-     */
-    protected String jobId;
-
-    /**
      * UserInfo.
      */
     protected UserInfo userInfo;
@@ -89,14 +84,6 @@ public abstract class Job extends Thread {
             this.currentStatus.setMessage("Internal server errror");
             this.currentStatus.setDone(true);
         }
-    }
-
-    /**
-     * Return the job identifier.
-     * @return Identifier as String
-     */
-    public String getJobId() {
-        return jobId;
     }
 
     /**

@@ -99,11 +99,9 @@ public abstract class QueryExportJob extends ExportJob {
 
     /**
      * Constructor.
-     * @param jobId Job id
      * @param queryTools Query tools instance
      */
-    public QueryExportJob(String jobId, QueryTools qTools) {
-        super(jobId);
+    public QueryExportJob(QueryTools qTools) {
         this.queryTools = qTools;
         columns = new ArrayList <GridColumnValue>();
         columnsToExport = new ArrayList<String>();

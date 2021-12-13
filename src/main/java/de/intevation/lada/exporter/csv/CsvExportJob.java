@@ -35,12 +35,11 @@ public class CsvExportJob extends QueryExportJob {
 
     private static final int SIZE = 1024;
 
-    public CsvExportJob(String jobId, QueryTools queryTools) {
-        super(jobId, queryTools);
+    public CsvExportJob(QueryTools queryTools) {
+        super(queryTools);
         this.format = "csv";
         this.downloadFileName = "export.csv";
-        this.logger =
-            Logger.getLogger(String.format("CsvExportJob[%s]", jobId));
+        this.logger = Logger.getLogger("CsvExportJob");
     }
 
     /**
@@ -248,8 +247,8 @@ public class CsvExportJob extends QueryExportJob {
         super.run();
 
         logger.debug(
-            String.format("Starting CSV export %s (%s), locale: %s",
-                jobId, encoding, getLocale()));
+            String.format("Starting CSV export; encoding: %s, locale: %s",
+                encoding, getLocale()));
         //Check encoding
         if (!isEncodingValid()) {
             String error = String.format("Invalid encoding: %s", this.encoding);

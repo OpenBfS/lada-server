@@ -98,16 +98,16 @@ public class ExportJobManager extends JobManager {
 
         switch (format) {
             case "csv":
-                newJob = new CsvExportJob(id, queryTools);
+                newJob = new CsvExportJob(queryTools);
                 newJob.setExporter(csvExporter);
                 newJob.setLocale(locale);
                 break;
             case "laf":
-                newJob = new LafExportJob(id);
+                newJob = new LafExportJob();
                 newJob.setExporter(lafExporter);
                 break;
             case "json":
-                newJob = new JsonExportJob(id, queryTools);
+                newJob = new JsonExportJob(queryTools);
                 newJob.setExporter(jsonExporter);
                 break;
             default:
@@ -195,12 +195,12 @@ public class ExportJobManager extends JobManager {
         try {
             Files.copy(filePath, outputStream);
             logger.debug(String.format("Returning result file for job %s", id));
-            removeJob(job);
+            removeJob(id);
             return new ByteArrayInputStream(outputStream.toByteArray());
         } catch (IOException ioe) {
             logger.error(String.format(
                 "Error on reading result file: %s", ioe.getMessage()));
-            removeJob(job);
+            removeJob(id);
             throw new FileNotFoundException();
         }
     }

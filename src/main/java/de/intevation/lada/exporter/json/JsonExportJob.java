@@ -37,12 +37,11 @@ public class JsonExportJob extends QueryExportJob {
     private static final int LENGTH = 1024;
     private String subDataJsonKey;
 
-    public JsonExportJob(String jobId, QueryTools queryTools) {
-        super(jobId, queryTools);
+    public JsonExportJob(QueryTools queryTools) {
+        super(queryTools);
         this.format = "json";
         this.downloadFileName = "export.json";
-        this.logger =
-            Logger.getLogger(String.format("JsonExportJob[%s]", jobId));
+        this.logger = Logger.getLogger("JsonExportJob");
     }
 
     /**

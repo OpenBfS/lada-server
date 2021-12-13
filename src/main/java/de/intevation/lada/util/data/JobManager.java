@@ -66,7 +66,7 @@ public abstract class JobManager {
         Job job = getJobById(id);
         JobStatus statusObject = job.getStatus();
         if (statusObject.getStatus() == Status.ERROR && statusObject.isDone()) {
-            removeJob(job);
+            removeJob(id);
         }
         return statusObject;
     }
@@ -99,21 +99,21 @@ public abstract class JobManager {
     /**
      * Remove the given job from the active job list and trigger its
      * cleanup function.
-     * @param job Job to remove
+     * @param jobId ID of job to remove
      */
-    protected void removeJob(Job job) {
+    protected void removeJob(String jobId) {
         try {
-            logger.debug(String.format("Removing job %s", job.getJobId()));
-            job.cleanup();
+            logger.debug(String.format("Removing job %s", jobId));
+            activeJobs.get(jobId).cleanup();
         } catch (JobNotFinishedException jfe) {
             logger.warn(String.format(
-                "Tried to remove unfinished job %s", job.getJobId()));
+                "Tried to remove unfinished job %s", jobId));
         }
-        activeJobs.remove(job.getJobId());
+        activeJobs.remove(jobId);
     }
 
     /**
-     * Utility class providing unique identifier values for imnport/export jobs.
+     * Utility class providing unique identifier values for jobs.
      *
      * The identifier can be set to the next value by using the next() method
      * and obtained as hex String by using the toString() method.
@@ -193,7 +193,7 @@ public abstract class JobManager {
     }
 
     /**
-     * Thrown if a job with the given can not be found.
+     * Thrown if a job cannot be found.
      */
     public static class JobNotFoundException extends Exception {
         private static final long serialVersionUID = 1L;

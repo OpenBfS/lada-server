@@ -68,14 +68,6 @@ public abstract class ExportJob extends Job {
     protected Repository repository;
 
     /**
-     * Create a new job with the given id.
-     * @param jobId Job identifier
-     */
-    public ExportJob(String jId) {
-        this.jobId = jId;
-    }
-
-    /**
      * Clean up after the export has finished.
      *
      * Removes the result file
