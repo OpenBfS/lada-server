@@ -19,9 +19,6 @@ import java.util.Locale;
 
 import javax.json.JsonObject;
 
-import org.apache.log4j.Logger;
-
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.Repository;
 
@@ -56,11 +53,6 @@ public abstract class ExportJob extends Job {
     protected Locale locale;
 
     /**
-     * Logger instance.
-     */
-    protected Logger logger;
-
-    /**
      * Filename set by the users request.
      */
     protected String downloadFileName;
@@ -76,72 +68,11 @@ public abstract class ExportJob extends Job {
     protected Repository repository;
 
     /**
-     * UserInfo.
-     */
-    protected UserInfo userInfo;
-
-    /**
-     * The current job status.
-     */
-    private JobStatus currentStatus;
-
-    /**
-     * Class modeling a job status.
-     * Stores job status and message
-     */
-    public static class JobStatus {
-        private Status status;
-        private String message;
-        private boolean done;
-
-        public JobStatus(Status s, String m, boolean d) {
-            this.status = s;
-            this.message = m;
-            this.done = d;
-        }
-
-        public boolean isDone() {
-            return done;
-        }
-        /**
-         * Set done.
-         * @param done New done state
-         * @throws IllegalStatusTransitionException Thrown if a done job
-         *  is set to done again
-         */
-        public void setDone(boolean done)
-            throws IllegalStatusTransitionException {
-            if (!done && this.done) {
-                throw new IllegalStatusTransitionException(
-                    "Invalid job status transition: Job is already done");
-            }
-            this.done = done;
-        }
-
-        public Status getStatus() {
-            return status;
-        }
-
-        public void setStatus(Status status) {
-            this.status = status;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
-    }
-
-    /**
      * Create a new job with the given id.
      * @param jobId Job identifier
      */
     public ExportJob(String jId) {
         this.jobId = jId;
-        this.currentStatus = new JobStatus(Status.WAITING, "", false);
     }
 
     /**
