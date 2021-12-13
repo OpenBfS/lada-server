@@ -158,17 +158,6 @@ public abstract class ExportJob extends Job {
     }
 
     /**
-     * Set this job to a running state.
-     */
-    protected void runnning() {
-        try {
-            this.setCurrentStatus(Status.RUNNING);
-        } catch (IllegalStatusTransitionException iste) {
-            fail("Internal server errror");
-        }
-    }
-
-    /**
      * Get the filename used for downloading.
      * @return Filename as String
      */
