@@ -16,15 +16,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
 import org.apache.log4j.Logger;
 
 import de.intevation.lada.exporter.QueryExportJob;
+import de.intevation.lada.exporter.ExportConfig;
+import de.intevation.lada.exporter.Exporter;
+import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.query.QueryTools;
+
 
 /**
  * Job class for exporting records to a CSV file.
@@ -35,8 +39,15 @@ public class CsvExportJob extends QueryExportJob {
 
     private static final int SIZE = 1024;
 
-    public CsvExportJob(QueryTools queryTools) {
-        super(queryTools);
+    /**
+     * The csv exporter.
+     */
+    @Inject
+    @ExportConfig(format = ExportFormat.CSV)
+    private Exporter exporter;
+
+    public CsvExportJob() {
+        super();
         this.format = "csv";
         this.downloadFileName = "export.csv";
         this.logger = Logger.getLogger("CsvExportJob");

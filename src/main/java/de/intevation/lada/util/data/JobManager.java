@@ -10,6 +10,8 @@ package de.intevation.lada.util.data;
 
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import javax.annotation.Resource;
+import javax.enterprise.concurrent.ManagedExecutorService;
 
 import org.apache.log4j.Logger;
 
@@ -29,6 +31,8 @@ public abstract class JobManager {
 
     protected Logger logger;
 
+    @Resource
+    protected ManagedExecutorService executor;
 
     protected Map<String, Job> activeJobs;
 
@@ -202,6 +206,7 @@ public abstract class JobManager {
     /**
      * Exception handler for job threads.
      */
+    // TODO: Still needed if we actually only use the jobs as Runnable?
     protected class JobExceptionHandler
     implements Thread.UncaughtExceptionHandler {
 

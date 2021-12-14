@@ -19,6 +19,7 @@ import java.util.Locale;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.json.JsonObject;
 
 import org.apache.log4j.Logger;
@@ -26,11 +27,10 @@ import org.apache.log4j.Logger;
 import de.intevation.lada.exporter.csv.CsvExportJob;
 import de.intevation.lada.exporter.json.JsonExportJob;
 import de.intevation.lada.exporter.laf.LafExportJob;
-import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.JobManager;
-import de.intevation.lada.util.data.Repository;
+
 
 /**
  * Class creating and managing ExportJobs.
@@ -39,35 +39,14 @@ import de.intevation.lada.util.data.Repository;
 @ApplicationScoped
 public class ExportJobManager extends JobManager {
 
-    /**
-     * The csv exporter.
-     */
     @Inject
-    @ExportConfig(format = ExportFormat.CSV)
-    private Exporter csvExporter;
-
-    /**
-     * The laf exporter.
-     */
-    @Inject
-    @ExportConfig(format = ExportFormat.LAF)
-    private Exporter lafExporter;
-
-    /**
-     * The Json exporter.
-     */
-    @Inject
-    @ExportConfig(format = ExportFormat.JSON)
-    private Exporter jsonExporter;
-
-    /**
-     * The data repository granting read-only access.
-     */
-    @Inject
-    protected Repository repository;
+    private Provider<CsvExportJob> csvExportJobProvider;
 
     @Inject
-    private QueryTools queryTools;
+    private Provider<JsonExportJob> jsonExportJobProvider;
+
+    @Inject
+    private Provider<LafExportJob> lafExportJobProvider;
 
     public ExportJobManager() {
         activeJobs = new HashMap<String, Job>();
@@ -98,17 +77,14 @@ public class ExportJobManager extends JobManager {
 
         switch (format) {
             case "csv":
-                newJob = new CsvExportJob(queryTools);
-                newJob.setExporter(csvExporter);
+                newJob = csvExportJobProvider.get();
                 newJob.setLocale(locale);
                 break;
             case "laf":
-                newJob = new LafExportJob();
-                newJob.setExporter(lafExporter);
+                newJob = lafExportJobProvider.get();
                 break;
             case "json":
-                newJob = new JsonExportJob(queryTools);
-                newJob.setExporter(jsonExporter);
+                newJob = jsonExportJobProvider.get();
                 break;
             default:
                 logger.error(String.format("Unkown export format: %s", format));
@@ -121,13 +97,12 @@ public class ExportJobManager extends JobManager {
                 ? params.getString("filename")
                 : String.format("export.%s", format);
 
-        newJob.setRepository(repository);
         newJob.setDownloadFileName(downloadFileName);
         newJob.setEncoding(encoding);
         newJob.setExportParameter(params);
         newJob.setUserInfo(userInfo);
         newJob.setUncaughtExceptionHandler(new JobExceptionHandler());
-        newJob.start();
+        executor.submit(newJob);
         activeJobs.put(id, newJob);
 
         return id;

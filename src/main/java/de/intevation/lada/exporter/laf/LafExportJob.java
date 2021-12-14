@@ -15,11 +15,15 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.json.JsonNumber;
 import javax.json.JsonValue;
 
 import org.apache.log4j.Logger;
 
+import de.intevation.lada.exporter.ExportConfig;
+import de.intevation.lada.exporter.Exporter;
+import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.ExportJob;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Probe;
@@ -33,6 +37,13 @@ import de.intevation.lada.util.data.QueryBuilder;
 public class LafExportJob extends ExportJob {
 
     private static final int LENGTH = 1024;
+
+    /**
+     * The laf exporter.
+     */
+    @Inject
+    @ExportConfig(format = ExportFormat.LAF)
+    private Exporter exporter;
 
     public LafExportJob() {
         this.format = "laf";

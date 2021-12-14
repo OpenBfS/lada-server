@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
@@ -36,6 +37,7 @@ import de.intevation.lada.model.stammdaten.MessEinheit;
 import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.data.QueryBuilder;
+
 
 /**
  * Abstract class for an export of query results.
@@ -90,6 +92,7 @@ public abstract class QueryExportJob extends ExportJob {
     /**
      * Query tools used to load query data.
      */
+    @Inject
     private QueryTools queryTools;
 
     /**
@@ -101,8 +104,7 @@ public abstract class QueryExportJob extends ExportJob {
      * Constructor.
      * @param queryTools Query tools instance
      */
-    public QueryExportJob(QueryTools qTools) {
-        this.queryTools = qTools;
+    public QueryExportJob() {
         columns = new ArrayList <GridColumnValue>();
         columnsToExport = new ArrayList<String>();
 

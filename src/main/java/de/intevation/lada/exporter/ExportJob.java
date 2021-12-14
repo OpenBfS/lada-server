@@ -17,6 +17,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Locale;
 
+import javax.inject.Inject;
 import javax.json.JsonObject;
 
 import de.intevation.lada.util.data.Job;
@@ -65,6 +66,7 @@ public abstract class ExportJob extends Job {
     /**
      * Repository used for loading data.
      */
+    @Inject
     protected Repository repository;
 
     /**
@@ -149,14 +151,6 @@ public abstract class ExportJob extends Job {
     }
 
     /**
-     * Set the exporter instance.
-     * @param exporter The exporter instance
-     */
-    public void setExporter(Exporter exporter) {
-        this.exporter = exporter;
-    }
-
-    /**
      * Set parameters used for the export.
      * @param exportParams Parameters as JsonObject
      */
@@ -170,14 +164,6 @@ public abstract class ExportJob extends Job {
      */
     public void setLocale(Locale locale) {
         this.locale = locale;
-    }
-
-    /**
-     * Set the repository.
-     * @param repository Repository instance
-     */
-    public void setRepository(Repository repository) {
-        this.repository = repository;
     }
 
     /**

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -23,9 +24,12 @@ import javax.json.JsonObjectBuilder;
 import org.apache.log4j.Logger;
 
 import de.intevation.lada.exporter.QueryExportJob;
+import de.intevation.lada.exporter.ExportConfig;
+import de.intevation.lada.exporter.Exporter;
+import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.query.QueryTools;
+
 
 /**
  * Job class for exporting records to a JSON file.
@@ -37,8 +41,15 @@ public class JsonExportJob extends QueryExportJob {
     private static final int LENGTH = 1024;
     private String subDataJsonKey;
 
-    public JsonExportJob(QueryTools queryTools) {
-        super(queryTools);
+    /**
+     * The JSON exporter.
+     */
+    @Inject
+    @ExportConfig(format = ExportFormat.JSON)
+    private Exporter exporter;
+
+    public JsonExportJob() {
+        super();
         this.format = "json";
         this.downloadFileName = "export.json";
         this.logger = Logger.getLogger("JsonExportJob");
