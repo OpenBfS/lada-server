@@ -37,8 +37,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.intevation.lada.exporter.ExportJob;
 import de.intevation.lada.model.stammdaten.BaseQuery;
+import de.intevation.lada.util.data.Job;
+
 
 /**
  * Test export services.
@@ -265,7 +266,7 @@ public class ExporterTest extends BaseTest {
         final String statusKey = "status";
         assertContains(exportStatusObject, statusKey);
         Assert.assertEquals(
-            ExportJob.Status.FINISHED.name().toLowerCase(),
+            Job.Status.FINISHED.name().toLowerCase(),
             exportStatusObject.getString(statusKey));
 
         /* Request export result */
