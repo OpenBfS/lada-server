@@ -29,8 +29,7 @@ import de.intevation.lada.util.data.Repository;
 * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
 */
 @ExportConfig(format = ExportFormat.LAF)
-public class LafExporter
-implements Exporter {
+public class LafExporter implements Exporter {
 
     /**
      * The creator used to generate content.

@@ -49,6 +49,10 @@ public class ExporterTest extends BaseTest {
 
     private static Logger logger = Logger.getLogger(ExporterTest.class);
 
+    private final String formatCsv = "csv";
+    private final String formatJson = "json";
+    private final String formatLaf = "laf";
+
     @PersistenceContext
     EntityManager em;
 
@@ -76,7 +80,7 @@ public class ExporterTest extends BaseTest {
                 .add("gridColumnId", 2)));
 
     /**
-     * Prepare data for CSV export of a Probe object.
+     * Prepare data for export of a Probe object.
      */
     @Test
     @InSequence(1)
@@ -84,7 +88,7 @@ public class ExporterTest extends BaseTest {
     @UsingDataSet("datasets/dbUnit_probe_query.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
-    public final void prepareCsvExportProbe() {
+    public final void prepareExportProbe() {
         Protocol protocol = new Protocol();
         protocol.setName("database");
         protocol.setType("insert query data");
@@ -108,7 +112,7 @@ public class ExporterTest extends BaseTest {
         System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("asyncexport service");
-        prot.setType("csv");
+        prot.setType(formatCsv);
         prot.setPassed(false);
         testProtocol.add(prot);
 
@@ -117,7 +121,7 @@ public class ExporterTest extends BaseTest {
             .add("idField", JsonValue.NULL)
             .build();
 
-        String result = runCsvExportTest(baseUrl, prot, requestJson);
+        String result = runExportTest(baseUrl, formatCsv, prot, requestJson);
         Assert.assertEquals(
             "Unexpected CSV content",
             "hauptprobenNr,umwId\r\n120510002,L6\r\n120510001,L6\r\n",
@@ -148,7 +152,7 @@ public class ExporterTest extends BaseTest {
             .add("idFilter", Json.createArrayBuilder().add("120510002"))
             .build();
 
-        String result = runCsvExportTest(baseUrl, prot, requestJson);
+        String result = runExportTest(baseUrl, formatCsv, prot, requestJson);
         Assert.assertEquals(
             "Unexpected CSV content",
             "hauptprobenNr,umwId\r\n120510002,L6\r\n",
@@ -157,11 +161,73 @@ public class ExporterTest extends BaseTest {
         prot.setPassed(true);
     }
 
-    private String runCsvExportTest(
-        URL baseUrl, Protocol prot, JsonObject requestJson
+    /**
+     * Test asynchronous JSON export of a Probe identified by ID.
+     */
+    @Test
+    @InSequence(4)
+    @RunAsClient
+    public final void testJsonExportProbeById(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        System.out.print(".");
+        Protocol prot = new Protocol();
+        prot.setName("asyncexport service");
+        prot.setType(formatJson);
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        /* Request asynchronous export */
+        JsonObject requestJson = requestJsonBuilder
+            .add("idField", "hauptproben_nr")
+            .add("idFilter", Json.createArrayBuilder().add("120510002"))
+            .build();
+
+        String result = runExportTest(baseUrl, formatJson, prot, requestJson);
+        Assert.assertEquals(
+            "Unexpected JSON content",
+            "{\"120510002\":"
+            + "{\"hauptproben_nr\":\"120510002\",\"umw_id\":\"L6\"}}",
+            result);
+
+        prot.setPassed(true);
+    }
+
+    /**
+     * Test asynchronous LAF export of a Probe identified by ID.
+     */
+    @Test
+    @InSequence(5)
+    @RunAsClient
+    public final void testLafExportProbeById(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        System.out.print(".");
+        Protocol prot = new Protocol();
+        prot.setName("asyncexport service");
+        prot.setType(formatLaf);
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        /* Request asynchronous export */
+        final int probeId = 1000;
+        JsonObject requestJson = requestJsonBuilder
+            .add("proben", Json.createArrayBuilder().add(probeId))
+            .build();
+
+        String result = runExportTest(baseUrl, formatLaf, prot, requestJson);
+        Assert.assertTrue(
+            "Unexpected LAF content",
+            result.startsWith("%PROBE%") && result.endsWith("%ENDE%"));
+
+        prot.setPassed(true);
+    }
+
+    private String runExportTest(
+        URL baseUrl, String format, Protocol prot, JsonObject requestJson
     ) throws InterruptedException {
         Response exportCreated = client.target(
-            baseUrl + "data/asyncexport/csv")
+            baseUrl + "data/asyncexport/" + format)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
