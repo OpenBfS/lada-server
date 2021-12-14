@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.json.JsonObject;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,8 +25,6 @@ import de.intevation.lada.importer.laf.LafImportJob;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.JobManager;
-import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.data.Job.JobStatus;
 
 /**
@@ -34,21 +33,8 @@ import de.intevation.lada.util.data.Job.JobStatus;
 @ApplicationScoped
 public class ImportJobManager extends JobManager {
 
-    /**
-     * The importer.
-     */
     @Inject
-    @ImportConfig(format = ImportFormat.LAF)
-    private Importer importer;
-
-    @Inject
-    private TagUtil tagUtil;
-
-    /**
-     * The data repository.
-     */
-    @Inject
-    protected Repository repository;
+    private Provider<LafImportJob> lafImportJobProvider;
 
     public ImportJobManager() {
         activeJobs = new HashMap<String, Job>();
@@ -68,14 +54,11 @@ public class ImportJobManager extends JobManager {
         String id = getNextIdentifier();
         logger.debug(String.format("Creating new job: %s", id));
 
-        LafImportJob newJob = new LafImportJob();
-        newJob.setImporter(importer);
+        LafImportJob newJob = lafImportJobProvider.get();
         newJob.setJsonInput(params);
-        newJob.setRepository(repository);
         newJob.setUserInfo(userInfo);
-        newJob.setTagutil(tagUtil);
         newJob.setUncaughtExceptionHandler(new JobExceptionHandler());
-        newJob.start();
+        executor.submit(newJob);
         activeJobs.put(id, newJob);
         return id;
     }

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -33,6 +34,8 @@ import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 
+import de.intevation.lada.importer.ImportConfig;
+import de.intevation.lada.importer.ImportFormat;
 import de.intevation.lada.importer.Importer;
 import de.intevation.lada.model.stammdaten.ImporterConfig;
 import de.intevation.lada.model.stammdaten.Tag;
@@ -50,6 +53,8 @@ import de.intevation.lada.util.rest.Response;
  */
 public class LafImportJob extends Job {
 
+    @Inject
+    @ImportConfig(format = ImportFormat.LAF)
     private Importer importer;
 
     private Map<String, Map<String, Object>> importData;
@@ -58,10 +63,12 @@ public class LafImportJob extends Job {
 
     private String mstId;
 
+    @Inject
     private Repository repository;
 
     private JsonObject result;
 
+    @Inject
     private TagUtil tagUtil;
 
     public LafImportJob() {
@@ -220,24 +227,12 @@ public class LafImportJob extends Job {
         finish();
     }
 
-    public void setImporter(Importer importer) {
-        this.importer = importer;
-    }
-
     public void setJsonInput(JsonObject jsonInput) {
          this.jsonInput = jsonInput;
     }
 
     public void setMstId(String mstId) {
         this.mstId = mstId;
-    }
-
-    public void setRepository(Repository repository) {
-        this.repository = repository;
-    }
-
-    public void setTagutil(TagUtil tagUtil) {
-        this.tagUtil = tagUtil;
     }
 
     /**
