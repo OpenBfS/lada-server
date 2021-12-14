@@ -184,14 +184,16 @@ public abstract class ExportJob extends Job {
      * Remove the export's result file if present.
      */
     protected void removeResultFile() {
-        try {
-            Files.delete(outputFilePath);
-        } catch (NoSuchFileException nsfe) {
-            logger.debug("Can not remove result file: File not found");
-        } catch (IOException ioe) {
-            logger.error(String.format(
-                "Cannot delete result file. IOException: %s",
-                ioe.getMessage()));
+        if (this.outputFilePath != null) {
+            try {
+                Files.delete(this.outputFilePath);
+            } catch (NoSuchFileException nsfe) {
+                logger.debug("Can not remove result file: File not found");
+            } catch (IOException ioe) {
+                logger.error(String.format(
+                        "Cannot delete result file. IOException: %s",
+                        ioe.getMessage()));
+            }
         }
     }
 
@@ -204,7 +206,7 @@ public abstract class ExportJob extends Job {
         //Create file
         try {
             this.outputFilePath =
-                File.createTempFile("export", this.format).toPath();
+                File.createTempFile("export-", "." + this.format).toPath();
             logger.debug(String.format(
                     "Writing result to file %s", outputFilePath));
         } catch (IOException ioe) {
