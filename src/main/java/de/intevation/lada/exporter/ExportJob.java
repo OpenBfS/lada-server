@@ -166,38 +166,19 @@ public abstract class ExportJob extends Job {
     /**
      * Write the export result to a file.
      * @param result Result string to export
-     * @return True if written successfully, else false
+     * @throws IOException if temp file cannot be created or writing it fails.
      */
-    protected boolean writeResultToFile(String result) {
+    protected void writeResultToFile(String result) throws IOException {
         //Create file
-        try {
-            this.outputFilePath =
-                File.createTempFile("export-", "." + this.format).toPath();
-            logger.debug(String.format(
-                    "Writing result to file %s", outputFilePath));
-        } catch (IOException ioe) {
-            logger.error(String.format(
-                "Cannot create export file. IOException: %s",
-                ioe.getMessage()));
-            return false;
-        } catch (SecurityException se) {
-            logger.error(String.format(
-                "Security Exception during file creation %s",
-                se.getMessage()));
-            return false;
-        }
+        this.outputFilePath =
+            File.createTempFile("export-", "." + this.format).toPath();
+        logger.debug(String.format(
+                "Writing result to file %s", outputFilePath));
 
         //Write to file
         try (BufferedWriter writer =
             Files.newBufferedWriter(outputFilePath, encoding)) {
             writer.write(result);
-        } catch (IOException ioe) {
-            logger.error(String.format(
-                "Cannot write to export file. IOException: %s",
-                ioe.getMessage()));
-            return false;
         }
-
-        return true;
     }
 }

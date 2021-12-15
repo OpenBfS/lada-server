@@ -339,12 +339,7 @@ public class CsvExportJob extends QueryExportJob {
             while ((length = exported.read(buffer)) != -1) {
                 result.write(buffer, 0, length);
             }
-            String resultString = new String(result.toByteArray(), encoding);
-            if (!writeResultToFile(resultString)) {
-                fail("Error on writing export result.");
-                return;
-            }
-
+            writeResultToFile(new String(result.toByteArray(), encoding));
         } catch (IOException ioe) {
             logger.error("Error on writing export result. IOException");
             ioe.printStackTrace();

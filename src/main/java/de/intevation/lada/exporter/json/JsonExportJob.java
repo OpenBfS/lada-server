@@ -273,12 +273,7 @@ public class JsonExportJob extends QueryExportJob {
             while ((length = exported.read(buffer)) != -1) {
                 result.write(buffer, 0, length);
             }
-            String resultString = result.toString(encoding);
-            if (!writeResultToFile(resultString)) {
-                fail("Error on writing export result.");
-                return;
-            }
-
+            writeResultToFile(result.toString(encoding));
         } catch (IOException ioe) {
             logger.error("Error on writing export result. IOException");
             ioe.printStackTrace();
