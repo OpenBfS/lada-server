@@ -263,8 +263,42 @@ public class ExporterTest extends BaseTest {
         prot.setPassed(true);
     }
 
-    private String runExportTest(
-        URL baseUrl, String format, Protocol prot, JsonObject requestJson
+    /**
+     * Test failing asynchronous export with invalid request payload.
+     */
+    @Test
+    @InSequence(7)
+    @RunAsClient
+    public final void testAsyncExportFailure(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        System.out.print(".");
+        Protocol prot = new Protocol();
+        prot.setName("asyncexport service");
+        prot.setType("invalid request");
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        /* Request asynchronous export */
+        JsonObject requestJson = Json.createObjectBuilder()
+            // Add arbitrary array to avoid 404 being returned for LAF
+            .add("proben", Json.createArrayBuilder().add("xxx"))
+            .add("invalidField", "xxx")
+            .build();
+
+        startExport(baseUrl, formatCsv, prot, requestJson, Job.Status.ERROR);
+        startExport(baseUrl, formatJson, prot, requestJson, Job.Status.ERROR);
+        startExport(baseUrl, formatLaf, prot, requestJson, Job.Status.ERROR);
+
+        prot.setPassed(true);
+    }
+
+    private String startExport(
+        URL baseUrl,
+        String format,
+        Protocol prot,
+        JsonObject requestJson,
+        Job.Status expectedStatus
     ) throws InterruptedException {
         Response exportCreated = client.target(
             baseUrl + "data/asyncexport/" + format)
@@ -305,8 +339,17 @@ public class ExporterTest extends BaseTest {
         final String statusKey = "status";
         assertContains(exportStatusObject, statusKey);
         Assert.assertEquals(
-            Job.Status.FINISHED.name().toLowerCase(),
+            expectedStatus.name().toLowerCase(),
             exportStatusObject.getString(statusKey));
+
+        return refId;
+    }
+
+    private String runExportTest(
+        URL baseUrl, String format, Protocol prot, JsonObject requestJson
+    ) throws InterruptedException {
+        String refId = startExport(
+            baseUrl, format, prot, requestJson, Job.Status.FINISHED);
 
         /* Request export result */
         Response download = client.target(
