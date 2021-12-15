@@ -31,7 +31,7 @@ public abstract class ExportJob extends Job {
     /**
      * Result encoding.
      */
-    protected String encoding;
+    protected Charset encoding;
 
     /**
      * Exporter instance.
@@ -90,11 +90,7 @@ public abstract class ExportJob extends Job {
         return downloadFileName;
     }
 
-    /**
-     * Get the encoding.
-     * @return Encoding as String
-     */
-    public String getEncoding() {
+    public Charset getEncoding() {
         return this.encoding;
     }
 
@@ -123,18 +119,6 @@ public abstract class ExportJob extends Job {
     }
 
     /**
-     * Checks if given charset is valid.
-     *
-     * Note that charset names are not case sensitive.
-     * See https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/nio/charset/Charset.html
-     * for further information.
-     * @return True if charset is valid, else false
-     */
-    protected boolean isEncodingValid() {
-        return Charset.isSupported(this.encoding);
-    }
-
-    /**
      * Set the filename used for downloading the result file.
      * @param downloadFileName File name
      */
@@ -142,11 +126,7 @@ public abstract class ExportJob extends Job {
         this.downloadFileName = downloadFileName;
     }
 
-    /**
-     * Set the export encoding.
-     * @param encoding Encoding as String
-     */
-    public void setEncoding(String encoding) {
+    public void setEncoding(Charset encoding) {
         this.encoding = encoding;
     }
 
@@ -209,8 +189,7 @@ public abstract class ExportJob extends Job {
 
         //Write to file
         try (BufferedWriter writer =
-            Files.newBufferedWriter(
-                outputFilePath, Charset.forName(encoding))) {
+            Files.newBufferedWriter(outputFilePath, encoding)) {
             writer.write(result);
         } catch (IOException ioe) {
             logger.error(String.format(

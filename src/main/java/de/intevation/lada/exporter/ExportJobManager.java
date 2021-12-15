@@ -12,6 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -66,7 +67,7 @@ public class ExportJobManager extends JobManager {
      */
     public String createExportJob(
         String format,
-        String encoding,
+        Charset encoding,
         JsonObject params,
         Locale locale,
         UserInfo userInfo
@@ -132,7 +133,7 @@ public class ExportJobManager extends JobManager {
         String id
     ) throws JobNotFoundException {
         ExportJob job = getJobById(id);
-        return job.getEncoding();
+        return job.getEncoding().name();
     }
 
     /**

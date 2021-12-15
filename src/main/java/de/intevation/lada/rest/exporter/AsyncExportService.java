@@ -9,6 +9,10 @@ package de.intevation.lada.rest.exporter;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -27,6 +31,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 
@@ -131,11 +136,16 @@ public class AsyncExportService extends LadaService {
         JsonObject objects,
         @Context HttpServletRequest request
     ) {
-
-        String encoding = request.getHeader("X-FILE-ENCODING");
-        if (encoding == null || encoding.equals("")) {
-            encoding = "iso-8859-15";
+        Charset encoding;
+        try {
+            encoding = getCharsetFromRequest(request);
+        } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
+            return Response.status(Status.BAD_REQUEST)
+                .entity((Object) "Invalid or unknown encoding requested")
+                .type(MediaType.TEXT_PLAIN)
+                .build();
         }
+
         String localeRange = request.getHeader("Accept-Language");
         if (localeRange == null || localeRange.equals("")) {
             localeRange = "de-DE";
@@ -189,21 +199,28 @@ public class AsyncExportService extends LadaService {
         JsonObject objects,
         @Context HttpServletRequest request
     ) {
+        Charset encoding;
+        try {
+            encoding = getCharsetFromRequest(request);
+        } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
+            return Response.status(Status.BAD_REQUEST)
+                .entity((Object) "Invalid or unknown encoding requested")
+                .type(MediaType.TEXT_PLAIN)
+                .build();
+        }
 
         //Check if requests contains either messung or probe ids
         if (objects.getJsonArray("proben") == null
             && objects.getJsonArray("messungen") == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+
         String localeRange = request.getHeader("Accept-Language");
         if (localeRange == null || localeRange.equals("")) {
             localeRange = "de-DE";
         }
         Locale locale = getLocaleFromRequest(localeRange);
-        String encoding = request.getHeader("X-FILE-ENCODING");
-        if (encoding == null || encoding.equals("")) {
-            encoding = "iso-8859-15";
-        }
+
         UserInfo userInfo = authorization.getInfo(request);
         String newJobId =
             exportJobManager.createExportJob(
@@ -213,6 +230,7 @@ public class AsyncExportService extends LadaService {
             .build();
         return Response.ok(responseJson.toString()).build();
     }
+
     /**
      * Export data into a json file.
      *
@@ -272,11 +290,10 @@ public class AsyncExportService extends LadaService {
             localeRange = "de-DE";
         }
         Locale locale = getLocaleFromRequest(localeRange);
-        String encoding = "utf-8";
         UserInfo userInfo = authorization.getInfo(request);
         String newJobId =
             exportJobManager.createExportJob(
-                "json", encoding, objects, locale, userInfo);
+                "json", StandardCharsets.UTF_8, objects, locale, userInfo);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
@@ -391,6 +408,14 @@ public class AsyncExportService extends LadaService {
                 "application/octet-stream; charset=" + encoding);
 
         return response.build();
+    }
+
+    private Charset getCharsetFromRequest(HttpServletRequest request) {
+        String encoding = request.getHeader("X-FILE-ENCODING");
+        if (encoding == null || encoding.equals("")) {
+            encoding = "iso-8859-15";
+        }
+        return Charset.forName(encoding);
     }
 
     private Locale getLocaleFromRequest(String localeRanges) {

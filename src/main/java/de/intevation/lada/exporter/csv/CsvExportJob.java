@@ -259,13 +259,7 @@ public class CsvExportJob extends QueryExportJob {
 
         logger.debug(
             String.format("Starting CSV export; encoding: %s, locale: %s",
-                encoding, getLocale()));
-        //Check encoding
-        if (!isEncodingValid()) {
-            String error = String.format("Invalid encoding: %s", this.encoding);
-            fail(error);
-            return;
-        }
+                encoding.name(), getLocale()));
         try {
             parseExportParameters();
         } catch (Exception e) {
@@ -329,7 +323,12 @@ public class CsvExportJob extends QueryExportJob {
         InputStream exported;
         try {
             exported = exporter.export(
-                exportData, encoding, exportOptions.build(), exportColumns, qId, locale);
+                exportData,
+                encoding,
+                exportOptions.build(),
+                exportColumns,
+                qId,
+                locale);
         } catch (Exception e) {
             logger.error("Error writing csv");
             e.printStackTrace();
