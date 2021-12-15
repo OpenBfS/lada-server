@@ -249,10 +249,6 @@ public class JsonExportJob extends QueryExportJob {
         }
 
         //Export data to json
-        if (exportData == null || exportData.size() == 0) {
-            fail("Export data is empty");
-            return;
-        }
         InputStream exported;
         JsonObjectBuilder optionBuilder = Json.createObjectBuilder()
             .add("subData", exportSubdata ? subDataJsonKey : "")

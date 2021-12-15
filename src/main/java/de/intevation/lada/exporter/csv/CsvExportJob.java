@@ -316,10 +316,7 @@ public class CsvExportJob extends QueryExportJob {
                 "subDataColumnNames",
                 exportParameters.getJsonObject("subDataColumnNames"));
         }
-        if (exportData == null || exportData.size() == 0) {
-            fail("Export data is empty");
-            return;
-        }
+
         InputStream exported;
         try {
             exported = exporter.export(

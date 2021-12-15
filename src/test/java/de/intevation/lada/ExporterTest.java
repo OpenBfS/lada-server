@@ -224,6 +224,45 @@ public class ExporterTest extends BaseTest {
         prot.setPassed(true);
     }
 
+    /**
+     * Test asynchronous export of an empty query result.
+     */
+    @Test
+    @InSequence(6)
+    @RunAsClient
+    public final void testQueryExportEmpty(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        System.out.print(".");
+        Protocol prot = new Protocol();
+        prot.setName("asyncexport service");
+        prot.setType("empty query");
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        /* Request asynchronous export */
+        JsonObject requestJson = requestJsonBuilder
+            .add("idField", "hauptproben_nr")
+            .add("idFilter", Json.createArrayBuilder().add("nonexistent"))
+            .build();
+
+        String csvResult = runExportTest(
+            baseUrl, formatCsv, prot, requestJson);
+        Assert.assertEquals(
+            "Unexpected CSV content",
+            "hauptprobenNr,umwId\r\n",
+            csvResult);
+
+        String jsonResult = runExportTest(
+            baseUrl, formatJson, prot, requestJson);
+        Assert.assertEquals(
+            "Unexpected JSON content",
+            "{}",
+            jsonResult);
+
+        prot.setPassed(true);
+    }
+
     private String runExportTest(
         URL baseUrl, String format, Protocol prot, JsonObject requestJson
     ) throws InterruptedException {

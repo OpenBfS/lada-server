@@ -434,9 +434,6 @@ public class QueryTools {
         List result,
         List<GridColumn> names
     ) {
-        if (result.size() == 0) {
-            return null;
-        }
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
         for (Object row: result) {
             Map<String, Object> set = new HashMap<String, Object>();

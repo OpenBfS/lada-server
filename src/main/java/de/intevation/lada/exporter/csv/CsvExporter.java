@@ -168,10 +168,6 @@ public class CsvExporter implements Exporter {
     ) {
         ResourceBundle i18n = ResourceBundle.getBundle(BUNDLE_FILE, locale);
 
-        if (queryResult == null || queryResult.size() == 0) {
-            return null;
-        }
-
         char decimalSeparator = CsvOptions.valueOf("period").getChar();
         char fieldSeparator = CsvOptions.valueOf("comma").getChar();
         String rowDelimiter = CsvOptions.valueOf("windows").getValue();
