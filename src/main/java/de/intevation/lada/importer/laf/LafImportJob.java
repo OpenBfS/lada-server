@@ -72,7 +72,6 @@ public class LafImportJob extends Job {
     private TagUtil tagUtil;
 
     public LafImportJob() {
-        this.currentStatus = new JobStatus(Status.WAITING);
         this.logger = Logger.getLogger("LafImportJob");
     }
 
