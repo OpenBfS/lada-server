@@ -21,8 +21,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import org.apache.log4j.Logger;
-
 import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.Exporter;
@@ -52,7 +50,6 @@ public class JsonExportJob extends QueryExportJob {
         super();
         this.format = "json";
         this.downloadFileName = "export.json";
-        this.logger = Logger.getLogger("JsonExportJob");
     }
 
     /**

@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Locale;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -23,13 +22,10 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.json.JsonObject;
 
-import org.apache.log4j.Logger;
-
 import de.intevation.lada.exporter.csv.CsvExportJob;
 import de.intevation.lada.exporter.json.JsonExportJob;
 import de.intevation.lada.exporter.laf.LafExportJob;
 import de.intevation.lada.util.auth.UserInfo;
-import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.JobManager;
 
 
@@ -50,8 +46,6 @@ public class ExportJobManager extends JobManager {
     private Provider<LafExportJob> lafExportJobProvider;
 
     public ExportJobManager() {
-        activeJobs = new HashMap<String, Job>();
-        logger = Logger.getLogger("ExportJobManager");
         logger.debug("Creating ExportJobManager");
     };
 

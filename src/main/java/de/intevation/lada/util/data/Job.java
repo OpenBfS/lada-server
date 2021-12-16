@@ -23,7 +23,7 @@ public abstract class Job extends Thread {
     /**
      * Logger instance.
      */
-    protected Logger logger;
+    protected Logger logger = Logger.getLogger(this.getClass());
 
     /**
      * UserInfo.

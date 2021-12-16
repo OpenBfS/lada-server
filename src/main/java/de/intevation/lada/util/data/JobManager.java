@@ -8,6 +8,7 @@
 
 package de.intevation.lada.util.data;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Resource;
@@ -29,12 +30,12 @@ public abstract class JobManager {
     protected static JobIdentifier identifier =
         new JobManager.JobIdentifier();
 
-    protected Logger logger;
+    protected Logger logger = Logger.getLogger(this.getClass());
 
     @Resource
     protected ManagedExecutorService executor;
 
-    protected Map<String, Job> activeJobs;
+    protected Map<String, Job> activeJobs = new HashMap<>();
 
     /**
      * Get job by id.

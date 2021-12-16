@@ -20,8 +20,6 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
-import org.apache.log4j.Logger;
-
 import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.Exporter;
@@ -50,7 +48,6 @@ public class CsvExportJob extends QueryExportJob {
         super();
         this.format = "csv";
         this.downloadFileName = "export.csv";
-        this.logger = Logger.getLogger("CsvExportJob");
     }
 
     /**

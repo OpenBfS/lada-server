@@ -18,8 +18,6 @@ import javax.inject.Inject;
 import javax.json.JsonNumber;
 import javax.json.JsonValue;
 
-import org.apache.log4j.Logger;
-
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.exporter.ExportFormat;
@@ -47,7 +45,6 @@ public class LafExportJob extends ExportJob {
     public LafExportJob() {
         this.format = "laf";
         this.downloadFileName = "export.laf";
-        this.logger = Logger.getLogger("LafExportJob");
     }
 
     /**

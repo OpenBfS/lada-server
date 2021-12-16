@@ -8,7 +8,6 @@
 
 package de.intevation.lada.importer;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -19,11 +18,8 @@ import javax.json.JsonObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.log4j.Logger;
-
 import de.intevation.lada.importer.laf.LafImportJob;
 import de.intevation.lada.util.auth.UserInfo;
-import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.JobManager;
 
 
@@ -37,8 +33,6 @@ public class ImportJobManager extends JobManager {
     private Provider<LafImportJob> lafImportJobProvider;
 
     public ImportJobManager() {
-        activeJobs = new HashMap<String, Job>();
-        logger = Logger.getLogger("ImportJobManager");
         logger.debug("Creating ImportJobManager");
     };
 

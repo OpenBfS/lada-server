@@ -71,10 +71,6 @@ public class LafImportJob extends Job {
     @Inject
     private TagUtil tagUtil;
 
-    public LafImportJob() {
-        this.logger = Logger.getLogger("LafImportJob");
-    }
-
     public void cleanup() {
         //Intentionally left blank
     }
