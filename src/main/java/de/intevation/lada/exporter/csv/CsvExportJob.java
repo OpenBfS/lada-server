@@ -55,14 +55,13 @@ public class CsvExportJob extends QueryExportJob {
      *
      * For CSV export, both records will be merged into a single row.
      * @param subData Data to merge into result
-     * @throws QueryExportException Thrown if merging fails
      * @return Merged data as list
      */
     @Override
     @SuppressWarnings("unchecked")
     protected List<Map<String, Object>> mergeSubData(
         List<?> subData
-    ) throws QueryExportException {
+    ) {
         List<Map<String, Object>> mergedData;
         logger.debug(
             String.format(
@@ -76,11 +75,8 @@ public class CsvExportJob extends QueryExportJob {
             case "messwert":
                 mergedData = mergeMesswertData((List<Messwert>) subData);
                 break;
-            default: return null;
-        }
-        if (mergedData == null) {
-            throw new QueryExportException(
-                "Failed merging subdata into query data");
+            default:
+                throw new IllegalArgumentException("Invalid type");
         }
         return mergedData;
     }
@@ -252,47 +248,23 @@ public class CsvExportJob extends QueryExportJob {
      */
     @Override
     public void run() {
-        super.run();
-
         logger.debug(
             String.format("Starting CSV export; encoding: %s, locale: %s",
                 encoding.name(), getLocale()));
-        try {
-            parseExportParameters();
-        } catch (Exception e) {
-            logger.error(String.format("Error parsing export parameters"));
-            e.printStackTrace();
-            fail("Error parsing export parameters");
-            return;
-        }
+        parseExportParameters();
 
         //Fetch primary records
-        try {
-            primaryData = getQueryResult();
-            Integer test = qId;
-        } catch (QueryExportException qee) {
-            fail("Fetching primary data failed");
-            return;
-        }
+        primaryData = getQueryResult();
+        Integer test = qId;
+
         List<Map<String, Object>> exportData = primaryData;
         ArrayList<String> exportColumns = new ArrayList<String>();
         exportColumns.addAll(this.columnsToExport);
 
         //If needed, fetch and merge sub data
         if (exportSubdata) {
-            try {
-                exportData = mergeSubData(getSubData());
-                exportColumns.addAll(subDataColumns);
-            } catch (QueryExportException ee) {
-                logger.error(ee.getMessage());
-                fail("Fetching export sub data failed");
-                return;
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-                e.printStackTrace();
-                fail("Error on fetching sub data");
-                return;
-            }
+            exportData = mergeSubData(getSubData());
+            exportColumns.addAll(subDataColumns);
         }
 
         //Export data to csv
@@ -315,35 +287,26 @@ public class CsvExportJob extends QueryExportJob {
         }
 
         InputStream exported;
+        exported = exporter.export(
+            exportData,
+            encoding,
+            exportOptions.build(),
+            exportColumns,
+            qId,
+            locale);
+
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        byte[] buffer = new byte[SIZE];
+        int length;
         try {
-            exported = exporter.export(
-                exportData,
-                encoding,
-                exportOptions.build(),
-                exportColumns,
-                qId,
-                locale);
-        } catch (Exception e) {
-            logger.error("Error writing csv");
-            e.printStackTrace();
-            fail("Error creating csv");
-            return;
-        }
-        try {
-            ByteArrayOutputStream result = new ByteArrayOutputStream();
-            byte[] buffer = new byte[SIZE];
-            int length;
             while ((length = exported.read(buffer)) != -1) {
                 result.write(buffer, 0, length);
             }
             writeResultToFile(new String(result.toByteArray(), encoding));
         } catch (IOException ioe) {
-            logger.error("Error on writing export result. IOException");
-            ioe.printStackTrace();
-            fail("Error on writing export result.");
-            return;
+            throw new RuntimeException(ioe.getMessage());
         }
+
         logger.debug(String.format("Finished CSV export"));
-        finish();
     }
 }

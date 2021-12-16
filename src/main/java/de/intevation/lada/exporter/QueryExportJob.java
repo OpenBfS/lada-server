@@ -170,31 +170,22 @@ public abstract class QueryExportJob extends ExportJob {
 
     /**
      * Execute the query.
-     * @throws QueryExportException Thrown if loading the query data fails
      * @return Query result as list
      */
-    protected List<Map<String, Object>> getQueryResult()
-    throws QueryExportException {
-        try {
-            List<Map<String, Object>> result =
-                queryTools.getResultForQuery(columns, qId);
-            logger.debug(String.format(
+    protected List<Map<String, Object>> getQueryResult() {
+        List<Map<String, Object>> result =
+            queryTools.getResultForQuery(columns, qId);
+        logger.debug(String.format(
                 "Fetched %d primary records",
                 result == null ? 0 : result.size()));
-            return result;
-        } catch (Exception e) {
-            logger.error("Failed loading query result");
-            e.printStackTrace();
-            throw new QueryExportException("Failed loading query result");
-        }
+        return result;
     }
 
     /**
      * Get the sub data for the query.
-     * @throws QueryExportException Thrown if fetching subdata fails
      * @return Query result as list
      */
-    protected List<?> getSubData() throws QueryExportException {
+    protected List<?> getSubData() {
         if (primaryData == null) {
             return null;
         }
@@ -207,7 +198,7 @@ public abstract class QueryExportJob extends ExportJob {
         //Get subdata
         String subDataType = mapPrimaryToSubDataTypes.get(idType);
         if (subDataType == null) {
-            throw new QueryExportException(
+            throw new IllegalArgumentException(
                 String.format("Unknown id type: %s", idType));
         }
         switch (subDataType) {
@@ -309,12 +300,11 @@ public abstract class QueryExportJob extends ExportJob {
     /**
      * Merge sub data into the primary query result.
      * @param subData Data to merge into result
-     * @throws QueryExportException Thrown if merging fails
      * @return Merged data as list
      */
     protected abstract List<Map<String, Object>> mergeSubData(
         List<?> subData
-    ) throws QueryExportException;
+    );
 
     /**
      * Parse export parameters.
@@ -435,21 +425,5 @@ public abstract class QueryExportJob extends ExportJob {
             Integer.valueOf(columns.get(0).getGridColumnId())
         );
         qId = gridColumn.getBaseQuery();
-    }
-
-    @Override
-    public void run() {
-        super.run();
-    }
-
-    /**
-     * Thrown if merging fails.
-     */
-    public static class QueryExportException extends Exception {
-        private static final long serialVersionUID = 1L;
-
-        public QueryExportException(String msg) {
-            super(msg);
-        }
     }
 }

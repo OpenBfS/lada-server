@@ -96,8 +96,8 @@ public class ExportJobManager extends JobManager {
         newJob.setEncoding(encoding);
         newJob.setExportParameter(params);
         newJob.setUserInfo(userInfo);
-        newJob.setUncaughtExceptionHandler(new JobExceptionHandler());
-        executor.submit(newJob);
+
+        newJob.setFuture(executor.submit(newJob));
         activeJobs.put(id, newJob);
 
         return id;
@@ -165,13 +165,13 @@ public class ExportJobManager extends JobManager {
         try {
             Files.copy(filePath, outputStream);
             logger.debug(String.format("Returning result file for job %s", id));
-            removeJob(id);
             return new ByteArrayInputStream(outputStream.toByteArray());
         } catch (IOException ioe) {
             logger.error(String.format(
                 "Error on reading result file: %s", ioe.getMessage()));
-            removeJob(id);
             throw new FileNotFoundException();
+        } finally {
+            removeJob(id);
         }
     }
 }

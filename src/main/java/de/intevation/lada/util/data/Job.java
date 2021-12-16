@@ -8,6 +8,10 @@
 
 package de.intevation.lada.util.data;
 
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import org.apache.log4j.Logger;
@@ -18,7 +22,7 @@ import de.intevation.lada.util.auth.UserInfo;
  * Abstract job class.
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
-public abstract class Job extends Thread {
+public abstract class Job implements Runnable {
 
     /**
      * Logger instance.
@@ -31,10 +35,16 @@ public abstract class Job extends Thread {
     protected UserInfo userInfo;
 
     /**
+     * The Future corresponding to this job
+     * after being submitted to an ExecutorService.
+     */
+    protected Future<?> future;
+
+    /**
      * Possible status values for jobs.
      */
     public enum Status {
-        WAITING, RUNNING, FINISHED, ERROR;
+        WAITING, FINISHED, ERROR;
 
         @JsonValue
         public String getName() {
@@ -47,6 +57,10 @@ public abstract class Job extends Thread {
      */
     protected JobStatus currentStatus = new JobStatus(Status.WAITING);
 
+    public void setFuture(Future<?> future) {
+        this.future = future;
+    }
+
     /**
      * Cleanup method triggered when the job has finished.
      * @throws JobNotFinishedException Thrown if job is still running
@@ -54,110 +68,33 @@ public abstract class Job extends Thread {
     public abstract void cleanup() throws JobNotFinishedException;
 
     /**
-     * Set this job to failed state.
-     * @param m Optional message
-     */
-    public void fail(String m) {
-        try {
-            this.setCurrentStatus(Status.ERROR);
-            this.setDone(true);
-            this.setMessage(m);
-        } catch (IllegalStatusTransitionException iste) {
-            this.currentStatus.setStatus(Status.ERROR);
-            this.currentStatus.setMessage("Internal server errror");
-            this.currentStatus.setDone(true);
-        } finally {
-            logger.error(
-                String.format("Job failed with message: %s", getMessage()));
-        }
-    }
-
-    /**
-     * Set this job to finished state.
-     */
-    protected void finish() {
-        try {
-            this.setCurrentStatus(Status.FINISHED);
-            this.setDone(true);
-        } catch (IllegalStatusTransitionException iste) {
-            this.currentStatus.setStatus(Status.ERROR);
-            this.currentStatus.setMessage("Internal server errror");
-            this.currentStatus.setDone(true);
-        }
-    }
-
-    /**
-     * Return the message String.
-     * @return message as String
-     */
-    public String getMessage() {
-        return currentStatus.getMessage();
-    }
-
-    /**
      * Return the current job status.
      * @return Job status
      */
     public JobStatus getStatus() {
+        if (this.future != null) {
+            if (this.future.isDone()) {
+                this.currentStatus.setDone(true);
+                try {
+                    this.future.get();
+                    this.currentStatus.setStatus(Status.FINISHED);
+                } catch (CancellationException | InterruptedException e) {
+                    this.currentStatus.setStatus(Status.ERROR);
+                    this.currentStatus.setMessage(e.getMessage());
+                } catch (ExecutionException ee) {
+                    Throwable cause = ee.getCause();
+                    logger.error(cause.getMessage());
+                    cause.printStackTrace();
+                    this.currentStatus.setStatus(Status.ERROR);
+                    this.currentStatus.setMessage(cause.getMessage());
+                }
+            }
+        }
         return currentStatus;
     }
 
     public UserInfo getUserInfo() {
         return userInfo;
-    }
-
-    /**
-    * Check if job is done and will no longer change its status.
-    * @return True if done, else false
-    */
-   public boolean isDone() {
-       return currentStatus.isDone();
-   }
-
-    /**
-     * Run the Job.
-     * Should be overwritten in child classes.
-     */
-    public void run() {
-        currentStatus.setStatus(Status.RUNNING);
-    }
-
-    /**
-     * Set the current status.
-     *
-     * @param status New status
-     * @throws IllegalStatusTransitionException Thrown if job is already done
-     */
-    protected void setCurrentStatus(
-        Status status
-    ) throws IllegalStatusTransitionException {
-        if (isDone()) {
-            throw new IllegalStatusTransitionException(
-                "Invalid job status transition: Job is already done");
-        }
-        this.currentStatus.setStatus(status);
-    }
-
-    /**
-     * Set the done state.
-     * @param done New done status
-     * @throws IllegalArgumentException Thrown if argument is false and
-     *                                  job is already done
-     */
-    protected void setDone(boolean done) throws IllegalArgumentException {
-        if (!done && this.isDone()) {
-            throw new IllegalArgumentException(
-                "Job is already done, can not reset done to false");
-        }
-        this.currentStatus.setDone(done);
-    }
-
-    /**
-     * Set status message.
-     * @param message Message
-     */
-    protected void setMessage(String message) {
-        this.currentStatus.setMessage(message);
     }
 
     /**
@@ -174,16 +111,6 @@ public abstract class Job extends Thread {
      */
     public static class JobNotFinishedException extends Exception {
         private static final long serialVersionUID = 1L;
-    }
-
-    /**
-     * Exception thrown if an illegal status transition was done.
-     */
-    public static class IllegalStatusTransitionException extends Exception {
-        private static final long serialVersionUID = 2L;
-        public IllegalStatusTransitionException(String msg) {
-            super(msg);
-        }
     }
 
     /**

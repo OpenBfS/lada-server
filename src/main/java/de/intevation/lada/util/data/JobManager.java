@@ -203,31 +203,4 @@ public abstract class JobManager {
     public static class JobNotFoundException extends Exception {
         private static final long serialVersionUID = 1L;
     }
-
-    /**
-     * Exception handler for job threads.
-     */
-    // TODO: Still needed if we actually only use the jobs as Runnable?
-    protected class JobExceptionHandler
-    implements Thread.UncaughtExceptionHandler {
-
-        /**
-         * Constructor.
-         */
-        public JobExceptionHandler() { }
-
-        /**
-         * Exception handler function.
-         * @param t Thread
-         * @param e Throwable
-         */
-        public void uncaughtException(Thread t, Throwable e) {
-            String errMsg = e.getMessage();
-            logger.error("Job failed with:");
-            logger.error(errMsg);
-            e.printStackTrace();
-
-            ((Job) t).fail(errMsg);
-        }
-    }
 }

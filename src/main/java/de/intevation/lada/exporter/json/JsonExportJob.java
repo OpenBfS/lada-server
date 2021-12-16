@@ -58,14 +58,13 @@ public class JsonExportJob extends QueryExportJob {
      * For JSON export, the sub data records will be inserted as an array into
      * the corresponding primary record.
      * @param subData Data to merge into result
-     * @throws QueryExportException Thrown if merging fails
      * @return Merged data as list
      */
     @Override
     @SuppressWarnings("unchecked")
     protected List<Map<String, Object>> mergeSubData(
         List<?> subData
-    ) throws QueryExportException {
+    ) {
         List<Map<String, Object>> mergedData;
         logger.debug(
             String.format(
@@ -79,11 +78,8 @@ public class JsonExportJob extends QueryExportJob {
             case "messwert":
                 mergedData = mergeMesswertData((List<Messwert>) subData);
                 break;
-            default: return null;
-        }
-        if (mergedData == null) {
-            throw new QueryExportException(
-                "Failed merging subdata into query data");
+            default:
+                throw new IllegalArgumentException("Invalid type");
         }
         return mergedData;
     }
@@ -208,41 +204,18 @@ public class JsonExportJob extends QueryExportJob {
 
     @Override
     public void run() {
-        super.run();
-        try {
-            parseExportParameters();
-        } catch (Exception e) {
-            logger.error(String.format("Error parsing export parameters"));
-            e.printStackTrace();
-            fail("Error parsing export parameters");
-            return;
-        }
+        parseExportParameters();
 
         // Fetch primary records
-        try {
-            primaryData = getQueryResult();
-        } catch (QueryExportException qee) {
-            fail("Fetching primary data failed");
-            return;
-        }
+        primaryData = getQueryResult();
+
         List<Map<String, Object>> exportData = primaryData;
         ArrayList<String> exportColumns = new ArrayList<String>();
         exportColumns.addAll(this.columnsToExport);
 
         // If needed, fetch and merge sub data
         if (exportSubdata) {
-            try {
-                exportData = mergeSubData(getSubData());
-            } catch (QueryExportException ee) {
-                logger.error(ee.getMessage());
-                fail("Fetching export sub data failed");
-                return;
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-                e.printStackTrace();
-                fail("Error on fetching sub data");
-                return;
-            }
+            exportData = mergeSubData(getSubData());
         }
 
         //Export data to json
@@ -254,30 +227,21 @@ public class JsonExportJob extends QueryExportJob {
             optionBuilder.add("id", idColumn);
         }
         JsonObject exportOptions = optionBuilder.build();
+        exported = exporter.export(
+            exportData, encoding, exportOptions, exportColumns, qId);
+
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        byte[] buffer = new byte[LENGTH];
+        int length;
         try {
-            exported = exporter.export(
-                exportData, encoding, exportOptions, exportColumns, qId);
-        } catch (Exception e) {
-            logger.error("Error creating json");
-            e.printStackTrace();
-            fail("Error creating json");
-            return;
-        }
-        try {
-            ByteArrayOutputStream result = new ByteArrayOutputStream();
-            byte[] buffer = new byte[LENGTH];
-            int length;
             while ((length = exported.read(buffer)) != -1) {
                 result.write(buffer, 0, length);
             }
             writeResultToFile(result.toString(encoding));
         } catch (IOException ioe) {
-            logger.error("Error on writing export result. IOException");
-            ioe.printStackTrace();
-            fail("Error on writing export result.");
-            return;
+            throw new RuntimeException(ioe.getMessage());
         }
+
         logger.debug(String.format("Finished JSON export"));
-        finish();
     }
 }

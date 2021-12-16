@@ -51,8 +51,8 @@ public class ImportJobManager extends JobManager {
         LafImportJob newJob = lafImportJobProvider.get();
         newJob.setJsonInput(params);
         newJob.setUserInfo(userInfo);
-        newJob.setUncaughtExceptionHandler(new JobExceptionHandler());
-        executor.submit(newJob);
+
+        newJob.setFuture(executor.submit(newJob));
         activeJobs.put(id, newJob);
         return id;
     }

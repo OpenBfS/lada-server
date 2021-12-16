@@ -101,18 +101,18 @@ public class LafImportJob extends Job {
     /**
      * Run the import job.
      */
+    @Override
     public void run() {
-        super.run();
         logger.debug("Starting LAF import");
 
         //Get file content strings from input object
         JsonObject filesObject = jsonInput.getJsonObject("files");
 
+        // TODO: handle this upfront in the service
         Charset charset;
         try {
             charset = Charset.forName(jsonInput.getString("encoding"));
         } catch (IllegalArgumentException e) {
-            fail("No valid encoding name given");
             result = createResult(
                 false,
                 StatusCodes.IMP_INVALID_VALUE,
@@ -128,6 +128,7 @@ public class LafImportJob extends Job {
         Map<String, Map<String, Object>> importResponseData =
             new HashMap<String, Map<String, Object>>();
 
+        // TODO: Handle this upfront in the service
         try {
             for (Map.Entry<String, JsonValue> e : filesObject.entrySet()) {
                 String base64String = ((JsonString) e.getValue()).getString();
@@ -144,7 +145,6 @@ public class LafImportJob extends Job {
                 false,
                 StatusCodes.IMP_INVALID_VALUE,
                 msg);
-            fail(msg);
             return;
         } catch (CharacterCodingException cce) {
             String msg = "File content not in valid " + charset.name();
@@ -152,15 +152,15 @@ public class LafImportJob extends Job {
                 false,
                 StatusCodes.IMP_INVALID_VALUE,
                 msg);
-            fail(msg);
             return;
         }
 
-        if(files.size() == 0) {
-            fail("No valid file given");
+        if (files.size() == 0) {
+            throw new IllegalArgumentException("No valid file given");
         }
 
-        logger.debug(String.format("Starting import of %d files", files.size()));
+        logger.debug(
+            String.format("Starting import of %d files", files.size()));
 
         //Import each file
         files.forEach((fileName, content) -> {
@@ -194,7 +194,8 @@ public class LafImportJob extends Job {
                 "probeIds", ((LafImporter) importer).getImportedIds());
             importResponseData.put(fileName, fileResponseData);
             importedProbeids.addAll(((LafImporter) importer).getImportedIds());
-            logger.debug(String.format("Finished import of file \"%s\"", fileName));
+            logger.debug(
+                String.format("Finished import of file \"%s\"", fileName));
         });
 
         // If import created at least a new record
@@ -205,7 +206,6 @@ public class LafImportJob extends Job {
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
                 importData = importResponseData;
-                finish();
                 return;
             }
             Tag newTag = (Tag) tagCreation.getData();
@@ -219,7 +219,6 @@ public class LafImportJob extends Job {
         }
         importData = importResponseData;
         logger.debug("Finished LAF import");
-        finish();
     }
 
     public void setJsonInput(JsonObject jsonInput) {

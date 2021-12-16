@@ -52,7 +52,6 @@ public class LafExportJob extends ExportJob {
      */
     @Override
     public void run() {
-        super.run();
         logger.debug("Starting LAF export");
 
         //Load records
@@ -73,9 +72,7 @@ public class LafExportJob extends ExportJob {
             }
         }
         if (probeIds.isEmpty() && messungIds.isEmpty()) {
-            fail("No data to export");
-            logger.error("No export data set");
-            return;
+            throw new IllegalArgumentException("No data to export");
         }
 
         //Get probe and messung records
@@ -107,22 +104,19 @@ public class LafExportJob extends ExportJob {
         InputStream exported =
             exporter.exportProben(pIds, mIds, encoding, userInfo);
         logger.debug("Finished export to memory, writing to file.");
+
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        byte[] buffer = new byte[LENGTH];
+        int length;
         try {
-            ByteArrayOutputStream result = new ByteArrayOutputStream();
-            byte[] buffer = new byte[LENGTH];
-            int length;
             while ((length = exported.read(buffer)) != -1) {
                 result.write(buffer, 0, length);
             }
             writeResultToFile(new String(result.toByteArray(), encoding));
         } catch (IOException ioe) {
-            logger.error(String.format(
-                "Error on writing export result. IOException: %s",
-                ioe.getMessage()));
-            fail("Error on writing export result.");
-            return;
+            throw new RuntimeException(ioe.getMessage());
         }
+
         logger.debug(String.format("Finished LAF export"));
-        finish();
     }
 }
