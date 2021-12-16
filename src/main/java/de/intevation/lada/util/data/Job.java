@@ -102,14 +102,6 @@ public abstract class Job extends Thread {
         return currentStatus;
     }
 
-    /**
-     * Return the current status as String.
-     * @return Status as String
-     */
-    public String getStatusName() {
-        return currentStatus.getStatus().name().toLowerCase();
-    }
-
     public UserInfo getUserInfo() {
         return userInfo;
     }
