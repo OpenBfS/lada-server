@@ -25,7 +25,7 @@ import de.intevation.lada.importer.laf.LafImportJob;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.JobManager;
-import de.intevation.lada.util.data.Job.JobStatus;
+
 
 /**
  * Class managing import jobs.
@@ -61,20 +61,6 @@ public class ImportJobManager extends JobManager {
         executor.submit(newJob);
         activeJobs.put(id, newJob);
         return id;
-    }
-
-    /**
-     * Get the status of a job by identifier.
-     * @param id Id to look for
-     * @return Job status
-     * @throws JobNotFoundException Thrown if a job with the given can not
-     *                              be found
-     */
-    public JobStatus getJobStatus(
-        String id
-    ) throws JobNotFoundException {
-        Job job = getJobById(id);
-        return job.getStatus();
     }
 
     /**
