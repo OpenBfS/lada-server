@@ -9,16 +9,17 @@ package de.intevation.lada;
 
 import java.net.URL;
 import java.nio.charset.CharacterCodingException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonValue;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.client.Entity;
@@ -747,9 +748,15 @@ public class ImporterTest extends BaseTest {
         prot.setPassed(false);
         testProtocol.add(prot);
 
+        // TODO: Provide valid LAF.
+        final String laf = "%PROBE%\n%ENDE%";
+
         /* Request asynchronous import */
         JsonObject requestJson = Json.createObjectBuilder()
-            .add("files", JsonValue.NULL)
+            .add("encoding", "utf-8")
+            .add("files", Json.createObjectBuilder()
+                .add("test.laf", Base64.getEncoder().encodeToString(
+                        laf.getBytes(StandardCharsets.UTF_8))))
             .build();
 
         Response importCreated = client.target(
