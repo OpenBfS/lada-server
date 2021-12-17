@@ -7,18 +7,15 @@
  */
 package de.intevation.lada.rest.importer;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -37,6 +34,8 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.JobManager.JobNotFoundException;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.Job.JobStatus;
+import de.intevation.lada.rest.LadaService;
+
 
 /**
  * This class produces a RESTful service to interact with probe objects.
@@ -44,8 +43,7 @@ import de.intevation.lada.util.data.Job.JobStatus;
  * @author <a href = "mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("data/import/async")
-@RequestScoped
-public class AsyncImportService {
+public class AsyncImportService extends LadaService {
 
     /**
      * The importer.
@@ -72,8 +70,6 @@ public class AsyncImportService {
 
     @POST
     @Path("/laf")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response createAsyncImport(
         JsonObject jsonInput,
         @Context HttpServletRequest request
@@ -123,7 +119,6 @@ public class AsyncImportService {
      */
     @GET
     @Path("/status/{id}")
-    @Produces("application/json")
     public Response getStatus(
         @PathParam("id") String id,
         @Context HttpServletRequest request) {
@@ -155,7 +150,6 @@ public class AsyncImportService {
 
     @GET
     @Path("/result/{id}")
-    @Produces("application/json")
     public Response getResult(
         @PathParam("id") String id,
         @Context HttpServletRequest request) {
