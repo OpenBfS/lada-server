@@ -259,6 +259,7 @@ public abstract class QueryExportJob extends ExportJob {
         QueryBuilder<Messwert> builder = repository.queryBuilder(
             Messwert.class);
         builder.and("messungsId", messung.getId());
+        // TODO: This is a nice example of ORM-induced database misuse:
         return repository.filterPlain(builder.getQuery()).size();
     }
 
@@ -377,6 +378,14 @@ public abstract class QueryExportJob extends ExportJob {
                     Filter filter = createIdListFilter(
                         gridColumn.getDataIndex());
                     gridColumn.setFilter(filter);
+                    // TODO: This is a hack to avoid in transactional context:
+                    //java.lang.IllegalStateException:
+                    //org.hibernate.TransientPropertyValueException:
+                    //object references an unsaved transient instance -
+                    //save the transient instance before flushing :
+                    //de.intevation.lada.model.stammdaten.GridColumn.filter
+                    //-> de.intevation.lada.model.stammdaten.Filter
+                    repository.entityManager().detach(gridColumn);
 
                     StringBuilder filterValue = new StringBuilder();
                     for (

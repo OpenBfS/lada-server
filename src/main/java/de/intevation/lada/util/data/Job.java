@@ -8,9 +8,19 @@
 
 package de.intevation.lada.util.data;
 
+import static javax.transaction.Status.STATUS_NO_TRANSACTION;
+
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+
+import javax.inject.Inject;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -39,6 +49,15 @@ public abstract class Job implements Runnable {
      * after being submitted to an ExecutorService.
      */
     protected Future<?> future;
+
+    /**
+     * Repository used for loading data.
+     */
+    @Inject
+    protected Repository repository;
+
+    @Inject
+    private UserTransaction tx;
 
     /**
      * Possible status values for jobs.
@@ -95,6 +114,38 @@ public abstract class Job implements Runnable {
 
     public UserInfo getUserInfo() {
         return userInfo;
+    }
+
+    /**
+     * Child classes have to override this method to have the job run within
+     * a transactional context.
+     */
+    protected abstract void runWithTx();
+
+    /**
+     * Should not be overwritten in child classes unless the transaction
+     * handling has to be changed or no transaction is needed.
+     */
+    @Override
+    public void run() {
+        try {
+            this.tx.begin();
+            this.runWithTx();
+        } catch (NotSupportedException | SystemException e) {
+            throw new RuntimeException(e.getMessage());
+        } finally {
+            try {
+                if (this.tx.getStatus() != STATUS_NO_TRANSACTION) {
+                    this.tx.commit();
+                }
+            } catch (SystemException
+                | RollbackException
+                | HeuristicMixedException
+                | HeuristicRollbackException e
+            ) {
+                throw new RuntimeException(e.getMessage());
+            }
+        }
     }
 
     /**

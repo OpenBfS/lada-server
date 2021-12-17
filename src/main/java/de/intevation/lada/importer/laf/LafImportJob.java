@@ -41,7 +41,6 @@ import de.intevation.lada.model.stammdaten.ImporterConfig;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.Response;
@@ -62,9 +61,6 @@ public class LafImportJob extends Job {
     private JsonObject jsonInput;
 
     private String mstId;
-
-    @Inject
-    private Repository repository;
 
     private JsonObject result;
 
@@ -102,7 +98,7 @@ public class LafImportJob extends Job {
      * Run the import job.
      */
     @Override
-    public void run() {
+    public void runWithTx() {
         logger.debug("Starting LAF import");
 
         //Get file content strings from input object

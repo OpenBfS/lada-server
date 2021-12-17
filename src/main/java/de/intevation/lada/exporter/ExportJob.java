@@ -17,11 +17,10 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Locale;
 
-import javax.inject.Inject;
 import javax.json.JsonObject;
 
 import de.intevation.lada.util.data.Job;
-import de.intevation.lada.util.data.Repository;
+
 
 /**
  * Abstract class for an export job.
@@ -62,12 +61,6 @@ public abstract class ExportJob extends Job {
      * Complete path to the output file.
      */
     protected Path outputFilePath;
-
-    /**
-     * Repository used for loading data.
-     */
-    @Inject
-    protected Repository repository;
 
     /**
      * Clean up after the export has finished.

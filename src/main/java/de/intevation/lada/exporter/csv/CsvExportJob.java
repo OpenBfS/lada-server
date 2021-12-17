@@ -247,7 +247,7 @@ public class CsvExportJob extends QueryExportJob {
      * Start the CSV export.
      */
     @Override
-    public void run() {
+    public void runWithTx() {
         logger.debug(
             String.format("Starting CSV export; encoding: %s, locale: %s",
                 encoding.name(), getLocale()));

@@ -203,7 +203,7 @@ public class JsonExportJob extends QueryExportJob {
 
 
     @Override
-    public void run() {
+    public void runWithTx() {
         parseExportParameters();
 
         // Fetch primary records

@@ -51,7 +51,7 @@ public class LafExportJob extends ExportJob {
      * Start the export.
      */
     @Override
-    public void run() {
+    public void runWithTx() {
         logger.debug("Starting LAF export");
 
         //Load records
