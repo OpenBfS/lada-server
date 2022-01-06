@@ -22,7 +22,7 @@ import de.intevation.lada.validation.rules.Rule;
 
 /**
  * Validation rule for probe.
- * Validates if the probe has a "entnahmeort".
+ * Validates if the probe has an existing kommentarP".
  *
  */
 @ValidationRule("KommentarP")
