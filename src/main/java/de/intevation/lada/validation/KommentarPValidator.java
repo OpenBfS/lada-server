@@ -18,9 +18,9 @@ import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
 
 /**
- * Validation for messung objects.
+ * Validation for kommentarP objects.
  *
- * Instantiates the set of rules for messung objects and uses these rules to
+ * Instantiates the set of rules for kommentarP objects and uses these rules to
  * validate the object.
  *
  */
