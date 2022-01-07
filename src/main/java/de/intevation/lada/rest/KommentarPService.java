@@ -231,10 +231,17 @@ public class KommentarPService extends LadaService {
             logger.debug("User is not authorized!");
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
+        Violation violation = validator.validate(kommentar);
+        if (violation.hasErrors()) {
+            Response response =
+                new Response(false, StatusCodes.VAL_EXISTS, kommentar);
+            return response;
+        } else {
         return authorization.filter(
             request,
             repository.update(kommentar),
             KommentarP.class);
+        }
     }
 
     /**
