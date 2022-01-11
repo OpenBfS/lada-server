@@ -70,9 +70,6 @@ public class ExportJobManager {
     @ExportConfig(format = ExportFormat.JSON)
     private Exporter jsonExporter;
 
-    /**
-     * The data repository granting read-only access.
-     */
     @Inject
     private Repository repository;
 

@@ -59,9 +59,6 @@ import de.intevation.lada.rest.LadaService;
 @Path("data/export")
 public class LafExportService extends LadaService {
 
-    /**
-     * The data repository granting read-only access.
-     */
     @Inject
     private Repository repository;
 
