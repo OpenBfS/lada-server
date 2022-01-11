@@ -895,12 +895,7 @@ public class LafObjectMapper {
             }
 
             // Create a new messung and the first status
-            Response created = repository.create(messung);
-            newMessung = ((Messung) created.getData());
-            created =
-                repository.getById(
-                    Messung.class, newMessung.getId());
-            newMessung = ((Messung) created.getData());
+            newMessung = (Messung) repository.create(messung).getData();
             break;
         default:
             throw new IllegalArgumentException(

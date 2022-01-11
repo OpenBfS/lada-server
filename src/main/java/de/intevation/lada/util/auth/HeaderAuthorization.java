@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 
 import de.intevation.lada.model.land.KommentarM;
@@ -103,16 +104,15 @@ public class HeaderAuthorization implements Authorization {
             QueryBuilder<LadaUser> builder =
                 repository.queryBuilder(LadaUser.class);
             builder.and("name", info.getName());
-            List<LadaUser> user =
-                repository.filterPlain(builder.getQuery());
-            if (user == null || user.isEmpty()) {
+            LadaUser user;
+            try {
+                user = repository.getSinglePlain(builder.getQuery());
+            } catch (NoResultException e) {
                 LadaUser newUser = new LadaUser();
                 newUser.setName(info.getName());
-                repository.create(newUser);
-                user =
-                    repository.filterPlain(builder.getQuery());
+                user = (LadaUser) repository.create(newUser).getData();
             }
-            info.setUserId(user.get(0).getId());
+            info.setUserId(user.getId());
             return info;
         }
         return null;
