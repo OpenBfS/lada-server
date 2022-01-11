@@ -53,11 +53,8 @@ public class MessprogrammTest extends ServiceTest {
         JsonObject messprogramm =
             content.getJsonArray("land.messprogramm").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messprogramm);
-        builder.add("baId", JsonValue.NULL);
-        builder.add("gueltigVon", JsonValue.NULL);
-        builder.add("gueltigBis", JsonValue.NULL);
-        builder.add("intervallOffset", JsonValue.NULL);
-        builder.add("ortId", JsonValue.NULL);
+        builder.add("baId", 1);
+        builder.add("intervallOffset", 0);
         builder.add("probeKommentar", JsonValue.NULL);
         builder.add("probeNehmerId", JsonValue.NULL);
         expectedById = builder.build();
