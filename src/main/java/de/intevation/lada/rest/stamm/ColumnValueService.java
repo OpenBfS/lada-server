@@ -167,11 +167,13 @@ public class ColumnValueService extends LadaService {
         } else {
             GridColumn gridColumn = repository.getByIdPlain(
                 GridColumn.class, gridColumnValue.getGridColumnId());
-            gridColumnValue.setGridColumn(gridColumn);
-
             QueryUser queryUser = repository.getByIdPlain(
                 QueryUser.class, gridColumnValue.getQueryUserId());
+            if (gridColumn == null || queryUser == null) {
+                return new Response(false, StatusCodes.VALUE_MISSING, null);
+            }
 
+            gridColumnValue.setGridColumn(gridColumn);
             gridColumnValue.setQueryUser(queryUser);
 
             return repository.update(gridColumnValue);
