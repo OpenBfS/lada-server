@@ -58,7 +58,7 @@ public class ColumnValueService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Request all user defined grid_column_value objects
+     * Request all user defined grid_column_value objects.
      * @return All GridColumnValue objects referencing the given query.
      */
     @GET
@@ -118,7 +118,7 @@ public class ColumnValueService extends LadaService {
     }
 
     /**
-     * Creates a new grid_column_value in the database
+     * Creates a new grid_column_value in the database.
      * @return Response containing the created record.
      */
     @POST
@@ -131,7 +131,7 @@ public class ColumnValueService extends LadaService {
         if (gridColumnValue.getUserId() != null
             && !gridColumnValue.getUserId().equals(userInfo.getUserId())
         ) {
-                return new Response(false, StatusCodes.NOT_ALLOWED, null);
+            return new Response(false, StatusCodes.NOT_ALLOWED, null);
         } else {
             gridColumnValue.setUserId(userInfo.getUserId());
             GridColumn gridColumn = new GridColumn();
@@ -149,7 +149,7 @@ public class ColumnValueService extends LadaService {
     }
 
     /**
-     * Update an existing grid_column_value in the database
+     * Update an existing grid_column_value in the database.
      * @return Response containing the updated record.
      */
     @PUT
@@ -158,14 +158,13 @@ public class ColumnValueService extends LadaService {
         @Context HttpServletRequest request,
         GridColumnValue gridColumnValue
     ) {
+        // TODO: Really authorize with an Authorizer implementation.
+        // Currently any object can be hijacked by passing it with
+        // userId set to the users ID.
         UserInfo userInfo = authorization.getInfo(request);
-        if (gridColumnValue.getUserId() != null
-            && !gridColumnValue.getUserId().equals(userInfo.getUserId())
-        ) {
-                return new Response(false, StatusCodes.NOT_ALLOWED, null);
+        if (!userInfo.getUserId().equals(gridColumnValue.getUserId())) {
+            return new Response(false, StatusCodes.NOT_ALLOWED, null);
         } else {
-            gridColumnValue.setUserId(userInfo.getUserId());
-
             GridColumn gridColumn = repository.getByIdPlain(
                 GridColumn.class, gridColumnValue.getGridColumnId());
             gridColumnValue.setGridColumn(gridColumn);
