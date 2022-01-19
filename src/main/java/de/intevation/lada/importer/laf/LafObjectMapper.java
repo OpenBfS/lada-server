@@ -1324,7 +1324,7 @@ public class LafObjectMapper {
         }
         QueryBuilder<KommentarM> KommentarBuilder =
             repository.queryBuilder(KommentarM.class);
-            KommentarBuilder.and("probeId", probe.getId());
+            KommentarBuilder.and("messungsId", messungsId);
         Response responseKommentar =
             repository.filter(KommentarBuilder.getQuery());
         List<KommentarM> KommentarExist = (List<KommentarM>) responseKommentar.getData();
