@@ -1322,6 +1322,19 @@ public class LafObjectMapper {
                 Timestamp.from(
                     Instant.now().atZone(ZoneOffset.UTC).toInstant()));
         }
+        QueryBuilder<KommentarM> KommentarBuilder =
+            repository.queryBuilder(KommentarM.class);
+            KommentarBuilder.and("probeId", probe.getId());
+        Response responseKommentar =
+            repository.filter(KommentarBuilder.getQuery());
+        List<KommentarM> KommentarExist = (List<KommentarM>) responseKommentar.getData();
+
+        if (KommentarExist.stream().anyMatch(elem -> elem.getText().trim().replace(" ","").toUpperCase().equals(attributes.get("TEXT").trim().replace(" ", "").toUpperCase())==true)) {
+            currentNotifications.add(
+                new ReportItem(
+                    "MESSUNGKOMMENTAR", attributes.get("TEXT"), StatusCodes.IMP_DUPLICATE));
+            return null;
+        }
         kommentar.setText(attributes.get("TEXT"));
         doDefaults(kommentar);
         doConverts(kommentar);

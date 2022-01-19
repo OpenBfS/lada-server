@@ -11,31 +11,31 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.KommentarP;
+import de.intevation.lada.model.land.KommentarM;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.annotation.ValidationConfig;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
 
 /**
- * Validation for kommentarP objects.
+ * Validation for kommentarM objects.
  *
- * Instantiates the set of rules for kommentarP objects and uses these rules to
+ * Instantiates the set of rules for kommentarM objects and uses these rules to
  * validate the object.
  *
  */
-@ValidationConfig(type = "KommentarP")
+@ValidationConfig(type = "KommentarM")
 @ApplicationScoped
-public class KommentarPValidator implements Validator {
+public class KommentarMValidator implements Validator {
 
     @Inject
-    @ValidationRule("KommentarP")
+    @ValidationRule("KommentarM")
     private Instance<Rule> rules;
 
     @Override
     public Violation validate(Object object) {
         Violation violations = new Violation();
-        if (!(object instanceof KommentarP)) {
+        if (!(object instanceof KommentarM)) {
             violations.addError("Kommentar", StatusCodes.NOT_A_PROBE);
             return violations;
         }
