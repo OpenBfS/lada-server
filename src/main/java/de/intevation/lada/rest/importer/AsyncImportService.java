@@ -103,6 +103,7 @@ public class AsyncImportService extends LadaService {
      *    message: string (optional)
      *    errors: boolean
      *    warnings: boolean
+     *    notifications: boolean
      *  }
      * </pre>
      *

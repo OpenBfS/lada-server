@@ -184,6 +184,7 @@ public class LafImportJob extends Job {
             if (!importer.getNotifications().isEmpty()) {
                 fileResponseData.put(
                     "notifications", importer.getNotifications());
+                this.currentStatus.setNotifications(true);
             }
             fileResponseData.put("success", true);
             fileResponseData.put(

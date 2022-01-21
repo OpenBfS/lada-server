@@ -172,6 +172,7 @@ public abstract class Job implements Runnable {
         private Status status;
         private String message;
         private boolean done;
+        private boolean notifications;
         private Boolean warnings;
         private Boolean errors;
 
@@ -207,6 +208,10 @@ public abstract class Job implements Runnable {
             return warnings;
         }
 
+        public Boolean getNotifications() {
+            return notifications;
+        }
+
         public void setDone(boolean done) {
             this.done = done;
         }
@@ -221,6 +226,10 @@ public abstract class Job implements Runnable {
 
         public void setWarnings(Boolean warnings) {
             this.warnings = warnings;
+        }
+
+        public void setNotifications(Boolean notifications) {
+            this.notifications = notifications;
         }
 
         public void setStatus(Status status) {
