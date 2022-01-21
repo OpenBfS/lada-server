@@ -10,6 +10,7 @@ package de.intevation.lada.model.stammdaten;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.json.bind.annotation.JsonbDateFormat;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,6 +39,7 @@ public class DatensatzErzeuger implements Serializable {
     private String datensatzErzeugerId;
 
     @Column(name = "letzte_aenderung", insertable = false)
+    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
     private Timestamp letzteAenderung;
 
     @Column(name = "mst_id")
