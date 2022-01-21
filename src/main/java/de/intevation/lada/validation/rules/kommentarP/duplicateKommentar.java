@@ -15,7 +15,6 @@ import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -39,9 +38,7 @@ public class duplicateKommentar implements Rule {
         QueryBuilder<KommentarP> KommentarBuilder =
             repository.queryBuilder(KommentarP.class);
             KommentarBuilder.and("probeId", probeID);
-        Response responseKommentar =
-            repository.filter(KommentarBuilder.getQuery());
-        List<KommentarP> KommentarExist = (List<KommentarP>) responseKommentar.getData();
+        List<KommentarP> KommentarExist = (List<KommentarP>) repository.filterPlain(KommentarBuilder.getQuery());
 
         if (KommentarExist.stream().anyMatch(elem -> elem.getText().trim().replace(" ","").toUpperCase().equals(kommentar.getText().trim().replace(" ", "").toUpperCase())==true)) {
             Violation violation = new Violation();

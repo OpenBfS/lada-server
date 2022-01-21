@@ -1031,9 +1031,7 @@ public class LafObjectMapper {
         QueryBuilder<KommentarP> KommentarBuilder =
             repository.queryBuilder(KommentarP.class);
             KommentarBuilder.and("probeId", probe.getId());
-        Response responseKommentar =
-            repository.filter(KommentarBuilder.getQuery());
-        List<KommentarP> KommentarExist = (List<KommentarP>) responseKommentar.getData();
+        List<KommentarP> KommentarExist = (List<KommentarP>) repository.filterPlain(KommentarBuilder.getQuery());
 
         if (KommentarExist.stream().anyMatch(elem -> elem.getText().trim().replace(" ","").toUpperCase().equals(attributes.get("TEXT").trim().replace(" ", "").toUpperCase())==true)) {
             currentNotifications.add(
@@ -1325,9 +1323,7 @@ public class LafObjectMapper {
         QueryBuilder<KommentarM> KommentarBuilder =
             repository.queryBuilder(KommentarM.class);
             KommentarBuilder.and("messungsId", messungsId);
-        Response responseKommentar =
-            repository.filter(KommentarBuilder.getQuery());
-        List<KommentarM> KommentarExist = (List<KommentarM>) responseKommentar.getData();
+        List<KommentarM> KommentarExist = (List<KommentarM>) repository.filterPlain(KommentarBuilder.getQuery());
 
         if (KommentarExist.stream().anyMatch(elem -> elem.getText().trim().replace(" ","").toUpperCase().equals(attributes.get("TEXT").trim().replace(" ", "").toUpperCase())==true)) {
             currentNotifications.add(
