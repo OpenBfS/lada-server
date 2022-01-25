@@ -175,7 +175,7 @@ public class OrtService extends LadaService {
                 !authorization.isAuthorized(
                     request,
                     o,
-                    RequestMethod.POST,
+                    RequestMethod.PUT,
                     Ort.class));
             Violation violation = validator.validate(o);
             if (violation.hasErrors() || violation.hasWarnings()) {

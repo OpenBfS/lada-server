@@ -9,15 +9,19 @@ package de.intevation.lada.model.land;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Set;
 
 import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.json.bind.annotation.JsonbTypeDeserializer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -123,8 +127,13 @@ public class Messprogramm implements Serializable {
     @Column(name = "probenahmemenge")
     private String probenahmeMenge;
 
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "mpr_id")
+    private Set<Probe> proben;
+
     @Transient
-    private Integer referenceCount;
+    @JsonIgnore
+    private int referenceCount;
 
     @Transient
     private MultivaluedMap<String, Integer> errors;
@@ -346,12 +355,15 @@ public class Messprogramm implements Serializable {
         this.probenahmeMenge = probenahmeMenge;
     }
 
-    public Integer getReferenceCount() {
-        return this.referenceCount;
-    }
-
-    public void setReferenceCount(Integer referenceCount) {
-        this.referenceCount = referenceCount;
+    /**
+     * @return The number of Probe objects referencing this Messprogramm.
+     */
+    @JsonProperty
+    public int getReferenceCount() {
+        if (this.proben != null) {
+            return this.proben.size();
+        }
+        return 0;
     }
 
     public MultivaluedMap<String, Integer> getErrors() {

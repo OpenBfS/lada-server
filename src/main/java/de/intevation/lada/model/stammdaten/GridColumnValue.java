@@ -75,10 +75,10 @@ public class GridColumnValue implements Serializable {
 
     //Connected grid column's id, used for creating/updating grid_column_values
     @Transient
-    private int gridColumnId;
+    private Integer gridColumnId;
 
     @Transient
-    private int queryUserId;
+    private Integer queryUserId;
 
     public GridColumnValue() {
     }
@@ -155,8 +155,14 @@ public class GridColumnValue implements Serializable {
         this.width = width;
     }
 
-    public int getGridColumnId() {
-        return gridColumnId;
+    /**
+     * @return the grid column ID
+     */
+    public Integer getGridColumnId() {
+        if (this.gridColumnId == null && this.gridColumn != null) {
+            this.gridColumnId = this.gridColumn.getId();
+        }
+        return this.gridColumnId;
     }
 
     /**
@@ -185,7 +191,13 @@ public class GridColumnValue implements Serializable {
         this.queryUser = queryUser;
     }
 
-    public int getQueryUserId() {
+    /**
+     * @return the QueryUser ID
+     */
+    public Integer getQueryUserId() {
+        if (this.queryUserId == null && this.queryUser != null) {
+            this.queryUserId = this.queryUser.getId();
+        }
         return this.queryUserId;
     }
 

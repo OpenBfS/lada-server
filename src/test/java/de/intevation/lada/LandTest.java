@@ -247,7 +247,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T18)
     @RunAsClient
     public final void testMessprogramm(@ArquillianResource URL baseUrl)
@@ -425,7 +424,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T17)
     @UsingDataSet("datasets/dbUnit_messprogramm.json")
     @DataSource("java:jboss/lada-test")

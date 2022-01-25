@@ -329,14 +329,15 @@ public class ServiceTest {
         prot.setPassed(false);
         protocol.add(prot);
 
-        WebTarget target = client.target(baseUrl + parameter);
         /* Request object corresponding to id in URL */
+        final String objKey = "data";
+        WebTarget target = client.target(baseUrl + parameter);
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
         JsonObject oldObject = BaseTest.parseResponse(
-            response, prot).getJsonObject("data");
+            response, prot).getJsonObject(objKey);
 
         /* Value replacement */
         String updatedEntity =
@@ -352,8 +353,8 @@ public class ServiceTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .put(Entity.entity(updatedEntity, MediaType.APPLICATION_JSON));
 
-        JsonObject updatedObject = BaseTest.parseResponse(updated, prot);
         /* Verify the response*/
+        JsonObject updatedObject = BaseTest.parseResponse(updated, prot);
         Assert.assertTrue("Unsuccessful response object:\n"
             + updatedObject,
             updatedObject.getBoolean("success"));
@@ -362,6 +363,17 @@ public class ServiceTest {
         prot.addInfo("message", updatedObject.getString("message"));
         Assert.assertEquals(newValue,
             updatedObject.getJsonObject("data").getString(updateAttribute));
+
+        final String modTimeKey = "letzteAenderung";
+        if (oldObject.containsKey(modTimeKey)) {
+            Assert.assertTrue(
+                "Object modification timestamp did not increase",
+                updatedObject.getJsonObject(objKey).getJsonNumber(modTimeKey)
+                    .longValueExact()
+                > oldObject.getJsonNumber(modTimeKey).longValueExact()
+            );
+        }
+
         prot.setPassed(true);
         return updatedObject;
     }

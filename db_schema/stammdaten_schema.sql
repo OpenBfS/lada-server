@@ -290,18 +290,20 @@ $BODY$;
 CREATE TABLE koordinaten_art (
     id serial PRIMARY KEY,
     koordinatenart character varying(50),
-    idf_geo_key character varying(1)
+    idf_geo_key character varying(1),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
+CREATE TRIGGER letzte_aenderung_koordinaten_art BEFORE UPDATE ON koordinaten_art FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE mess_einheit (
     id serial PRIMARY KEY,
     beschreibung character varying(50),
     einheit character varying(12),
     eudf_messeinheit_id character varying(8),
-    umrechnungs_faktor_eudf bigint
+    umrechnungs_faktor_eudf bigint,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
+CREATE TRIGGER letzte_aenderung_mess_einheit BEFORE UPDATE ON stamm.mess_einheit FOR EACH ROW EXECUTE PROCEDURE stamm.update_letzte_aenderung();
 
 CREATE TABLE mass_einheit_umrechnung
 (
@@ -309,25 +311,17 @@ CREATE TABLE mass_einheit_umrechnung
     meh_id_von integer NOT NULL REFERENCES mess_einheit,
     meh_id_zu integer NOT NULL REFERENCES mess_einheit,
     faktor float NOT NULL,
-    UNIQUE( meh_id_von, meh_id_zu)
+    UNIQUE( meh_id_von, meh_id_zu),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
-
-CREATE TABLE umwelt (
-    id character varying(3) PRIMARY KEY,
-    beschreibung character varying(300),
-    umwelt_bereich character varying(80) NOT NULL,
-    meh_id integer REFERENCES mess_einheit,
-    meh_id_2 integer REFERENCES mess_einheit,
-    UNIQUE (umwelt_bereich)
-);
-
+CREATE TRIGGER letzte_aenderung_mass_einheit_umrechnung BEFORE UPDATE ON stamm.mass_einheit_umrechnung FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE betriebsart (
     id smallint PRIMARY KEY,
-    name character varying(30) NOT NULL
+    name character varying(30) NOT NULL,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
+CREATE TRIGGER letzte_aenderung_betriebsart BEFORE UPDATE ON stamm.betriebsart FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE staat (
     id serial PRIMARY KEY,
@@ -335,11 +329,13 @@ CREATE TABLE staat (
     hkl_id smallint NOT NULL UNIQUE,
     staat_iso character varying(2) UNIQUE,
     staat_kurz character varying(5) UNIQUE,
-    eu boolean,
+    eu boolean NOT NULL DEFAULT false,
     koord_x_extern character varying(22),
     koord_y_extern character varying(22),
-    kda_id integer REFERENCES koordinaten_art
+    kda_id integer REFERENCES koordinaten_art,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
+CREATE TRIGGER letzte_aenderung_staat BEFORE UPDATE ON stamm.staat FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE verwaltungseinheit (
     id character varying(8) NOT NULL PRIMARY KEY,
@@ -360,11 +356,12 @@ CREATE TABLE netz_betreiber (
     id character varying(2) PRIMARY KEY,
     netzbetreiber character varying(50),
     idf_netzbetreiber character varying(1),
-    is_bmn boolean DEFAULT false,
+    is_bmn boolean NOT NULL DEFAULT false,
     mailverteiler character varying(512),
-    aktiv boolean DEFAULT false
+    aktiv boolean NOT NULL DEFAULT false,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
+CREATE TRIGGER letzte_aenderung_netz_betreiber BEFORE UPDATE ON stamm.netz_betreiber FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE mess_stelle (
     id character varying(5) PRIMARY KEY,
@@ -372,20 +369,34 @@ CREATE TABLE mess_stelle (
     beschreibung character varying(300),
     mess_stelle character varying(60),
     mst_typ character varying(1),
-    amtskennung character varying(6)
+    amtskennung character varying(6),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
+CREATE TRIGGER letzte_aenderung_mess_stelle BEFORE UPDATE ON mess_stelle FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
+CREATE TABLE umwelt (
+    id character varying(3) PRIMARY KEY,
+    beschreibung character varying(300),
+    umwelt_bereich character varying(80) NOT NULL,
+    meh_id integer REFERENCES mess_einheit,
+    meh_id_2 integer REFERENCES mess_einheit,
+    leitstelle character varying(5) REFERENCES mess_stelle,
+    UNIQUE (umwelt_bereich),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+);
+CREATE TRIGGER letzte_aenderung_umwelt BEFORE UPDATE ON stamm.umwelt FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE auth_funktion (
     id smallint PRIMARY KEY,
-    funktion character varying(40) UNIQUE NOT NULL
+    funktion character varying(40) UNIQUE NOT NULL,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 INSERT INTO auth_funktion VALUES (0, 'Erfasser');
 INSERT INTO auth_funktion VALUES (1, 'Status-Erfasser');
 INSERT INTO auth_funktion VALUES (2, 'Status-Land');
 INSERT INTO auth_funktion VALUES (3, 'Status-Leitstelle');
 INSERT INTO auth_funktion VALUES (4, 'Stammdatenpflege-Land');
-
+CREATE TRIGGER letzte_aenderung_auth_funktion BEFORE UPDATE ON stamm.auth_funktion FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE auth (
     id serial PRIMARY KEY,
@@ -393,25 +404,28 @@ CREATE TABLE auth (
     netzbetreiber_id character varying(2) REFERENCES netz_betreiber,
     mst_id character varying(5) REFERENCES mess_stelle,
     labor_mst_id character varying(5) REFERENCES mess_stelle,
-    funktion_id smallint REFERENCES auth_funktion
+    funktion_id smallint REFERENCES auth_funktion,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 ALTER TABLE auth
     ADD CONSTRAINT auth_unique UNIQUE (ldap_group, netzbetreiber_id, mst_id, labor_mst_id, funktion_id);
-
+CREATE TRIGGER letzte_aenderung_auth BEFORE UPDATE ON auth FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE auth_lst_umw (
     id serial PRIMARY KEY,
     mst_id character varying(5) REFERENCES mess_stelle,
-    umw_id character varying(3) REFERENCES umwelt
+    umw_id character varying(3) REFERENCES umwelt,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
+CREATE TRIGGER letzte_aenderung_auth_lst_umw BEFORE UPDATE ON stamm.auth_lst_umw FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE datenbasis (
     id serial PRIMARY KEY,
     beschreibung character varying(30),
-    datenbasis character varying(12)
+    datenbasis character varying(12),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
+CREATE TRIGGER letzte_aenderung_datenbasis BEFORE UPDATE ON stamm.datenbasis FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE datensatz_erzeuger (
     id serial PRIMARY KEY,
@@ -424,7 +438,6 @@ CREATE TABLE datensatz_erzeuger (
 
 );
 CREATE TRIGGER letzte_aenderung_datensatz_erzeuger BEFORE UPDATE ON datensatz_erzeuger FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
-
 
 CREATE TABLE deskriptor_umwelt (
     id serial PRIMARY KEY,
@@ -440,9 +453,10 @@ CREATE TABLE deskriptor_umwelt (
     s09 integer,
     s10 integer,
     s11 integer,
-    umw_id character varying(3) NOT NULL REFERENCES umwelt
+    umw_id character varying(3) NOT NULL REFERENCES umwelt,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
+CREATE TRIGGER letzte_aenderung_deskriptor_umwelt BEFORE UPDATE ON stamm.deskriptor_umwelt FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE deskriptoren (
     id serial PRIMARY KEY,
@@ -451,9 +465,10 @@ CREATE TABLE deskriptoren (
     s_xx integer,
     sn smallint,
     beschreibung character varying(100),
-    bedeutung character varying(300)
+    bedeutung character varying(300),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
+CREATE TRIGGER letzte_aenderung_deskriptoren BEFORE UPDATE ON deskriptoren FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE lada_user (
     id serial PRIMARY KEY,
@@ -485,7 +500,7 @@ CREATE TABLE query_messstelle (
 CREATE TABLE filter_type (
     id serial PRIMARY KEY,
     type character varying(12) NOT NULL,
-    multiselect boolean
+    multiselect boolean NOT NULL DEFAULT false
 );
 INSERT INTO filter_type VALUES(0, 'text', false);
 INSERT INTO filter_type VALUES(1, 'number', false);
@@ -513,9 +528,10 @@ CREATE TABLE filter (
 CREATE TABLE mess_methode (
     id character varying(2) PRIMARY KEY,
     beschreibung character varying(300),
-    messmethode character varying(50)
+    messmethode character varying(50),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
+CREATE TRIGGER letzte_aenderung_mess_methode BEFORE UPDATE ON stamm.mess_methode FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE messgroesse (
     id serial PRIMARY KEY,
@@ -523,18 +539,20 @@ CREATE TABLE messgroesse (
     messgroesse character varying(50) NOT NULL,
     default_farbe character varying(9),
     idf_nuklid_key character varying(6),
-    ist_leitnuklid boolean DEFAULT false,
+    ist_leitnuklid boolean NOT NULL DEFAULT false,
     eudf_nuklid_id bigint,
-    kennung_bvl character varying(7)
+    kennung_bvl character varying(7),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
+CREATE TRIGGER letzte_aenderung_messgroesse BEFORE UPDATE ON stamm.messgroesse FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE messgroessen_gruppe (
     id serial PRIMARY KEY,
     bezeichnung character varying(80),
-    ist_leitnuklidgruppe character(1) DEFAULT NULL::bpchar
+    ist_leitnuklidgruppe character(1) DEFAULT NULL::bpchar,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
+CREATE TRIGGER letzte_aenderung_messgroessen_gruppe BEFORE UPDATE ON stamm.messgroessen_gruppe FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE messprogramm_kategorie (
     id serial PRIMARY KEY,
@@ -549,18 +567,21 @@ CREATE TRIGGER letzte_aenderung_messprogramm_kategorie BEFORE UPDATE ON messprog
 
 CREATE TABLE mg_grp (
     messgroessengruppe_id integer NOT NULL REFERENCES messgroessen_gruppe,
-    messgroesse_id integer NOT NULL REFERENCES messgroesse
+    messgroesse_id integer NOT NULL REFERENCES messgroesse,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 ALTER TABLE ONLY mg_grp
     ADD CONSTRAINT mg_grp_pkey PRIMARY KEY (messgroessengruppe_id, messgroesse_id);
-
+CREATE TRIGGER letzte_aenderung_mg_grp BEFORE UPDATE ON stamm.mg_grp FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE mmt_messgroesse_grp (
     messgroessengruppe_id integer NOT NULL REFERENCES messgroessen_gruppe,
-    mmt_id character varying(2) NOT NULL REFERENCES mess_methode
+    mmt_id character varying(2) NOT NULL REFERENCES mess_methode,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 ALTER TABLE ONLY mmt_messgroesse_grp
     ADD CONSTRAINT mmt_messgroesse_grp_pkey PRIMARY KEY (messgroessengruppe_id, mmt_id);
+CREATE TRIGGER letzte_aenderung_mmt_messgroesse_grp BEFORE UPDATE ON stamm.mmt_messgroesse_grp FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE VIEW mmt_messgroesse AS
  SELECT mmt_messgroesse_grp.mmt_id,
@@ -576,65 +597,83 @@ CREATE TABLE rei_progpunkt
 (
     id serial PRIMARY KEY,
     reiid character varying(10) NOT NULL,
-    rei_prog_punkt character varying(120)
+    rei_prog_punkt character varying(120),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
+CREATE TRIGGER letzte_aenderung_rei_progpunkt BEFORE UPDATE ON stamm.rei_progpunkt FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE rei_progpunkt_gruppe
 (
     id serial PRIMARY KEY,
     rei_prog_punkt_gruppe character varying(30),
-    beschreibung character varying(120)
+    beschreibung character varying(120),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
+CREATE TRIGGER letzte_aenderung_rei_progpunkt_gruppe BEFORE UPDATE ON stamm.rei_progpunkt_gruppe FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE rei_progpunkt_grp_zuord
 (
     id serial PRIMARY KEY,
     rei_progpunkt_grp_id integer REFERENCES rei_progpunkt_gruppe,
-    rei_progpunkt_id integer REFERENCES rei_progpunkt
+    rei_progpunkt_id integer REFERENCES rei_progpunkt,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
+CREATE TRIGGER letzte_aenderung_rei_progpunkt_grp_zuord BEFORE UPDATE ON stamm.rei_progpunkt_grp_zuord FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE rei_progpunkt_grp_umw_zuord
 (
     id serial PRIMARY KEY,
     rei_progpunkt_grp_id integer REFERENCES rei_progpunkt_gruppe,
-    umw_id character varying(3) REFERENCES umwelt
+    umw_id character varying(3) REFERENCES umwelt,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
+CREATE TRIGGER letzte_aenderung_rei_progpunkt_grp_umw_zuord BEFORE UPDATE ON stamm.rei_progpunkt_grp_umw_zuord FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE kta (
   id serial NOT NULL,
   code character varying(7),
   bezeichnung character varying(80),
-  CONSTRAINT kta_pkey PRIMARY KEY (id)
+  CONSTRAINT kta_pkey PRIMARY KEY (id),
+  letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 COMMENT ON TABLE kta
   IS 'kernteschnische Anlagen';
+CREATE TRIGGER letzte_aenderung_kta BEFORE UPDATE ON stamm.kta FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE kta_gruppe
 (
     id serial PRIMARY KEY,
     kta_gruppe character varying(7) NOT NULL,
-    beschreibung character varying(120)
+    beschreibung character varying(120),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
+CREATE TRIGGER letzte_aenderung_kta_gruppe BEFORE UPDATE ON stamm.kta_gruppe FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE kta_grp_zuord
 (
     id serial PRIMARY KEY,
     kta_grp_id integer REFERENCES kta_gruppe,
-    kta_id integer REFERENCES kta
+    kta_id integer REFERENCES kta,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
+CREATE TRIGGER letzte_aenderung_kta_grp_zuord BEFORE UPDATE ON stamm.kta_grp_zuord FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 -- Mappings for ort
 
 CREATE TABLE ort_typ (
     id smallint PRIMARY KEY,
     ort_typ character varying(60),
-    code character varying(3)
+    code character varying(3),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
+CREATE TRIGGER letzte_aenderung_ort_typ BEFORE UPDATE ON stamm.ort_typ FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE ortszusatz (
     ozs_id character varying(7) PRIMARY KEY,
-    ortszusatz character varying(80) NOT NULL
+    ortszusatz character varying(80) NOT NULL,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
+CREATE TRIGGER letzte_aenderung_ortszusatz BEFORE UPDATE ON ortszusatz FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE gemeindeuntergliederung (
     id serial PRIMARY KEY,
@@ -658,7 +697,7 @@ CREATE TABLE ort (
     langtext character varying(100) NOT NULL,
     staat_id smallint REFERENCES staat,
     gem_id character varying(8) REFERENCES verwaltungseinheit,
-    unscharf boolean DEFAULT false,
+    unscharf boolean NOT NULL DEFAULT false,
     nuts_code character varying(10),
     kda_id integer NOT NULL REFERENCES koordinaten_art,
     koord_x_extern character varying(22) NOT NULL,
@@ -690,18 +729,20 @@ CREATE TRIGGER set_ort_id_ort BEFORE INSERT ON ort FOR EACH ROW EXECUTE PROCEDUR
 
 CREATE TABLE ortszuordnung_typ (
     id character(1) PRIMARY KEY,
-    ortstyp character varying(60)
+    ortstyp character varying(60),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
+CREATE TRIGGER letzte_aenderung_ortszuordnung_typ BEFORE UPDATE ON stamm.ortszuordnung_typ FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE pflicht_messgroesse (
     id serial PRIMARY KEY,
     messgroesse_id integer NOT NULL REFERENCES messgroesse,
     mmt_id character varying(2) REFERENCES mess_methode,
     umw_id character varying(3) REFERENCES umwelt,
-    datenbasis_id smallint NOT NULL REFERENCES datenbasis
+    datenbasis_id smallint NOT NULL REFERENCES datenbasis,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
+CREATE TRIGGER letzte_aenderung_pflicht_messgroesse BEFORE UPDATE ON stamm.pflicht_messgroesse FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE proben_zusatz (
     id character varying(3) PRIMARY KEY,
@@ -709,25 +750,28 @@ CREATE TABLE proben_zusatz (
     beschreibung character varying(50) NOT NULL,
     zusatzwert character varying(7) NOT NULL,
     eudf_keyword character varying(40),
-    UNIQUE (eudf_keyword)
+    UNIQUE (eudf_keyword),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
+CREATE TRIGGER letzte_aenderung_proben_zusatz BEFORE UPDATE ON stamm.proben_zusatz FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE umwelt_zusatz (
     id serial PRIMARY KEY,
     pzs_id character varying(3) REFERENCES proben_zusatz,
     umw_id character varying(3) REFERENCES umwelt,
-    UNIQUE (pzs_id, umw_id)
+    UNIQUE (pzs_id, umw_id),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
+CREATE TRIGGER letzte_aenderung_umwelt_zusatz BEFORE UPDATE ON stamm.umwelt_zusatz FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE probenart (
     id serial PRIMARY KEY,
     beschreibung character varying(30),
     probenart character varying(5) NOT NULL,
-    probenart_eudf_id character varying(1) NOT NULL
+    probenart_eudf_id character varying(1) NOT NULL,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-
+CREATE TRIGGER letzte_aenderung_probenart BEFORE UPDATE ON stamm.probenart FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE probenehmer (
     id serial PRIMARY KEY,
@@ -904,8 +948,10 @@ CREATE INDEX fts_stauts_kooin10001 ON staat USING btree (kda_id);
 
 CREATE TABLE zeitbasis (
     id  integer PRIMARY KEY,
-    bezeichnung character varying(20) NOT NULL
+    bezeichnung character varying(20) NOT NULL,
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
+CREATE TRIGGER letzte_aenderung_zeitbasis BEFORE UPDATE ON stamm.zeitbasis FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE importer_config (
     id serial PRIMARY KEY,
@@ -917,8 +963,10 @@ CREATE TABLE importer_config (
     action character varying(10),
     CHECK (action = 'default' OR
         action = 'convert' OR
-        action = 'transform')
+        action = 'transform'),
+    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
+CREATE TRIGGER letzte_aenderung_importer_config BEFORE UPDATE ON stamm.importer_config FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 -- Tables for queryui
 
@@ -967,7 +1015,9 @@ CREATE TABLE stamm.tm_fm_umrechnung(
   meh_id_nach smallint NOT NULL REFERENCES stamm.mess_einheit(id),
   umw_id character varying(3) NOT NULL REFERENCES stamm.umwelt(id),
   media_desk_pattern character varying(100),	
-  faktor numeric(25,12) NOT NULL
+  faktor numeric(25,12) NOT NULL,
+  letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
+CREATE TRIGGER letzte_aenderung_tm_fm_umrechnung BEFORE UPDATE ON stamm.tm_fm_umrechnung FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 COMMIT;

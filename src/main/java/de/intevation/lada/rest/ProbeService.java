@@ -520,18 +520,15 @@ public class ProbeService extends LadaService {
         if (!response.getSuccess()) {
             return response;
         }
-        Response updated = repository.getById(
-            Probe.class,
-            ((Probe) response.getData()).getId());
         if (violation.hasWarnings()) {
-            updated.setWarnings(violation.getWarnings());
+            response.setWarnings(violation.getWarnings());
         }
         if (violation.hasNotifications()) {
-           updated.setNotifications(violation.getNotifications());
+           response.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
             request,
-            updated,
+            response,
             Probe.class);
     }
 

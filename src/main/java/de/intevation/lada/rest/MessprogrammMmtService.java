@@ -161,14 +161,9 @@ public class MessprogrammMmtService extends LadaService {
         }
 
         /* Persist the new messprogrammmmt object*/
-        Response response = repository.create(messprogrammmmt);
-        MessprogrammMmt ret = (MessprogrammMmt) response.getData();
-        Response created =
-            repository.getById(
-                MessprogrammMmt.class, ret.getId());
         return authorization.filter(
             request,
-            new Response(true, StatusCodes.OK, created.getData()),
+            repository.create(messprogrammmmt),
             MessprogrammMmt.class);
     }
 
@@ -210,12 +205,9 @@ public class MessprogrammMmtService extends LadaService {
         if (!response.getSuccess()) {
             return response;
         }
-        Response updated = repository.getById(
-            MessprogrammMmt.class,
-            ((MessprogrammMmt) response.getData()).getId());
         return authorization.filter(
             request,
-            updated,
+            response,
             MessprogrammMmt.class);
     }
 

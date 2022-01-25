@@ -5,13 +5,13 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.validation.rules.kommentarP;
+package de.intevation.lada.validation.rules.kommentarM;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.KommentarP;
+import de.intevation.lada.model.land.KommentarM;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -20,11 +20,11 @@ import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
 
 /**
- * Validation rule for probe.
- * Validates if the probe has an existing kommentarP".
+ * Validation rule for messung.
+ * Validates if the messung has a kommentarM.
  *
  */
-@ValidationRule("KommentarP")
+@ValidationRule("KommentarM")
 public class duplicateKommentar implements Rule {
 
     @Inject
@@ -32,13 +32,13 @@ public class duplicateKommentar implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        KommentarP kommentar = (KommentarP) object;
-        Integer probeID  = kommentar.getProbeId();
+        KommentarM kommentar = (KommentarM) object;
+        Integer messungID  = kommentar.getMessungsId();
 
-        QueryBuilder<KommentarP> KommentarBuilder =
-            repository.queryBuilder(KommentarP.class);
-            KommentarBuilder.and("probeId", probeID);
-        List<KommentarP> KommentarExist = (List<KommentarP>) repository.filterPlain(KommentarBuilder.getQuery());
+        QueryBuilder<KommentarM> KommentarBuilder =
+            repository.queryBuilder(KommentarM.class);
+            KommentarBuilder.and("messungsId", messungID);
+        List<KommentarM> KommentarExist = (List<KommentarM>) repository.filterPlain(KommentarBuilder.getQuery());
 
         if (KommentarExist.stream().anyMatch(elem -> elem.getText().trim().replace(" ","").toUpperCase().equals(kommentar.getText().trim().replace(" ", "").toUpperCase())==true)) {
             Violation violation = new Violation();

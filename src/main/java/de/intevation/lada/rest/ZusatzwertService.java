@@ -237,12 +237,9 @@ public class ZusatzwertService extends LadaService {
         if (!response.getSuccess()) {
             return response;
         }
-        Response updated = repository.getById(
-            ZusatzWert.class,
-            ((ZusatzWert) response.getData()).getId());
         return authorization.filter(
             request,
-            updated,
+            response,
             ZusatzWert.class);
     }
 

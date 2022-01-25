@@ -895,12 +895,7 @@ public class LafObjectMapper {
             }
 
             // Create a new messung and the first status
-            Response created = repository.create(messung);
-            newMessung = ((Messung) created.getData());
-            created =
-                repository.getById(
-                    Messung.class, newMessung.getId());
-            newMessung = ((Messung) created.getData());
+            newMessung = (Messung) repository.create(messung).getData();
             break;
         default:
             throw new IllegalArgumentException(
@@ -1036,9 +1031,7 @@ public class LafObjectMapper {
         QueryBuilder<KommentarP> KommentarBuilder =
             repository.queryBuilder(KommentarP.class);
             KommentarBuilder.and("probeId", probe.getId());
-        Response responseKommentar =
-            repository.filter(KommentarBuilder.getQuery());
-        List<KommentarP> KommentarExist = (List<KommentarP>) responseKommentar.getData();
+        List<KommentarP> KommentarExist = (List<KommentarP>) repository.filterPlain(KommentarBuilder.getQuery());
 
         if (KommentarExist.stream().anyMatch(elem -> elem.getText().trim().replace(" ","").toUpperCase().equals(attributes.get("TEXT").trim().replace(" ", "").toUpperCase())==true)) {
             currentNotifications.add(
@@ -1326,6 +1319,17 @@ public class LafObjectMapper {
             kommentar.setDatum(
                 Timestamp.from(
                     Instant.now().atZone(ZoneOffset.UTC).toInstant()));
+        }
+        QueryBuilder<KommentarM> KommentarBuilder =
+            repository.queryBuilder(KommentarM.class);
+            KommentarBuilder.and("messungsId", messungsId);
+        List<KommentarM> KommentarExist = (List<KommentarM>) repository.filterPlain(KommentarBuilder.getQuery());
+
+        if (KommentarExist.stream().anyMatch(elem -> elem.getText().trim().replace(" ","").toUpperCase().equals(attributes.get("TEXT").trim().replace(" ", "").toUpperCase())==true)) {
+            currentNotifications.add(
+                new ReportItem(
+                    "MESSUNGKOMMENTAR", attributes.get("TEXT"), StatusCodes.IMP_DUPLICATE));
+            return null;
         }
         kommentar.setText(attributes.get("TEXT"));
         doDefaults(kommentar);
