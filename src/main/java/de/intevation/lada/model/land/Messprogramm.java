@@ -132,7 +132,6 @@ public class Messprogramm implements Serializable {
     private Set<Probe> proben;
 
     @Transient
-    @JsonIgnore
     private int referenceCount;
 
     @Transient
@@ -358,7 +357,6 @@ public class Messprogramm implements Serializable {
     /**
      * @return The number of Probe objects referencing this Messprogramm.
      */
-    @JsonProperty
     public int getReferenceCount() {
         if (this.proben != null) {
             return this.proben.size();
