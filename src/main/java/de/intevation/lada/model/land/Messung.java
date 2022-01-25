@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 
 import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbTransient;
+import javax.json.bind.annotation.JsonbTypeDeserializer;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -27,6 +28,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.hibernate.annotations.DynamicInsert;
 
 import de.intevation.lada.util.data.EmptyStringConverter;
+import de.intevation.lada.util.data.TimestampDeserializer;
 
 
 /**
@@ -55,11 +57,13 @@ public class Messung implements Serializable {
 
     @Column(name = "letzte_aenderung", insertable = false)
     @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp letzteAenderung;
 
     private Integer messdauer;
 
     @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp messzeitpunkt;
 
     @Column(name = "mmt_id")
@@ -84,6 +88,7 @@ public class Messung implements Serializable {
 
     @Column(name = "tree_modified", insertable = false, updatable = false)
     @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp treeModified;
 
     @Transient
@@ -100,6 +105,7 @@ public class Messung implements Serializable {
 
     @Transient
     @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp parentModified;
 
     @Transient

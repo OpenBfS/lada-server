@@ -96,6 +96,7 @@ public class Probe implements Serializable {
     private Timestamp probeentnahmeBeginn;
 
     @Column(name = "probeentnahme_ende")
+    @JsonbTypeDeserializer(TimestampDeserializer.class)
     @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
     private Timestamp probeentnahmeEnde;
 

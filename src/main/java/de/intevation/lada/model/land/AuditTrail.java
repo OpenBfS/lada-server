@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 import javax.json.JsonObject;
+import javax.json.bind.annotation.JsonbDateFormat;
+import javax.json.bind.annotation.JsonbTypeDeserializer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -21,6 +23,7 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
 import de.intevation.lada.util.data.JsonObjectType;
+import de.intevation.lada.util.data.TimestampDeserializer;
 
 /**
  * The persistent class for the audit_trail database table.
@@ -38,6 +41,8 @@ public class AuditTrail implements Serializable {
     private String action;
 
     @Column(name = "action_tstamp_clk")
+    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp actionTstampClk;
 
     @Column(name = "changed_fields")

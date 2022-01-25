@@ -10,6 +10,8 @@ package de.intevation.lada.model.stammdaten;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.json.bind.annotation.JsonbDateFormat;
+import javax.json.bind.annotation.JsonbTypeDeserializer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,6 +19,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import de.intevation.lada.util.data.TimestampDeserializer;
 
 
 /**
@@ -44,6 +48,8 @@ public class Probenehmer implements Serializable {
     private String kurzBezeichnung;
 
     @Column(name = "letzte_aenderung", insertable = false)
+    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp letzteAenderung;
 
     @Column(name = "netzbetreiber_id")

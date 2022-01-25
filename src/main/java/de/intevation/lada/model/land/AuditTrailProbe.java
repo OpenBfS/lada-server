@@ -10,6 +10,8 @@ package de.intevation.lada.model.land;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.json.bind.annotation.JsonbDateFormat;
+import javax.json.bind.annotation.JsonbTypeDeserializer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -22,6 +24,7 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
 import de.intevation.lada.util.data.JsonObjectType;
+import de.intevation.lada.util.data.TimestampDeserializer;
 
 /**
  * The persistent class for the audit_trail_probe database table.
@@ -45,6 +48,8 @@ public class AuditTrailProbe implements Serializable {
     private JsonNode rowData;
 
     @Column(name = "tstamp")
+    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp tstamp;
 
     @Column(name = "action")

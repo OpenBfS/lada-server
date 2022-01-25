@@ -10,7 +10,9 @@ package de.intevation.lada.model.stammdaten;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbTransient;
+import javax.json.bind.annotation.JsonbTypeDeserializer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,6 +24,8 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Type;
 
 import org.locationtech.jts.geom.Point;
+
+import de.intevation.lada.util.data.TimestampDeserializer;
 
 
 
@@ -60,6 +64,8 @@ public class GemeindeUntergliederung implements Serializable {
     private String koordYExtern;
 
     @Column(name = "letzte_aenderung", insertable = false)
+    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp letzteAenderung;
 
     @Type(type = "jts_geometry")

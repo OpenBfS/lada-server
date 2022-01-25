@@ -10,7 +10,9 @@ package de.intevation.lada.model.land;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbTransient;
+import javax.json.bind.annotation.JsonbTypeDeserializer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,6 +22,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
+
+import de.intevation.lada.util.data.TimestampDeserializer;
 
 /**
  * The persistent class for the messprogramm database table.
@@ -69,6 +73,8 @@ public class Messprogramm implements Serializable {
     private String laborMstId;
 
     @Column(name = "letzte_aenderung", insertable = false)
+    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp letzteAenderung;
 
     @Column(name = "media_desk")
