@@ -33,7 +33,13 @@ import de.intevation.lada.util.rest.Response;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @ApplicationScoped
-@Transactional(value = Transactional.TxType.MANDATORY)
+@Transactional(value = Transactional.TxType.MANDATORY,
+    dontRollbackOn = {
+        /* Although the API documentation states for these Exceptions that
+           they "will not cause the current transaction [...] to be marked
+           for rollback", they have to be named here to make this real. */
+        NoResultException.class,
+        NonUniqueResultException.class})
 public class Repository {
 
     @Inject
@@ -191,12 +197,6 @@ public class Repository {
      * @throws NoResultException if there is no result
      * @throws NonUniqueResultException if more than one result
      */
-    @Transactional(dontRollbackOn = {
-            /* Although the API documentation states for these Exceptions that
-               they "will not cause the current transaction [...] to be marked
-               for rollback", they have to be named here to make this real. */
-            NoResultException.class,
-            NonUniqueResultException.class})
     public <T> T getSinglePlain(
         CriteriaQuery<T> filter
     ) throws NoResultException, NonUniqueResultException {
