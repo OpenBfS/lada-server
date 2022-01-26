@@ -8,6 +8,8 @@
 package de.intevation.lada.model.stammdaten;
 
 import de.intevation.lada.model.land.TagZuordnung;
+
+import java.sql.Timestamp;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -16,7 +18,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -36,6 +40,24 @@ public class Tag {
 
     @Column(name = "mst_id")
     private String mstId;
+
+    @OneToOne
+    @JoinColumn(name = "netzbetreiber", referencedColumnName = "id")
+    private NetzBetreiber netzbetreiber;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private LadaUser user;
+
+    @OneToOne
+    @JoinColumn(name = "typ", referencedColumnName = "id")
+    private TagTyp typ;
+
+    @Column(name = "gueltig_bis")
+    private Timestamp gueltigBis;
+
+    @Column(name = "generated_at")
+    private Timestamp generatedAt;
 
     @OneToMany(mappedBy = "tag", fetch = FetchType.EAGER)
     @JsonIgnore
@@ -84,5 +106,46 @@ public class Tag {
 
     public void setGenerated(boolean generated) {
         this.generated = generated;
+    }
+
+
+    public NetzBetreiber getNetzbetreiber() {
+        return netzbetreiber;
+    }
+
+    public void setNetzbetreiber(NetzBetreiber netzbetreiber) {
+        this.netzbetreiber = netzbetreiber;
+    }
+
+    public LadaUser getUser() {
+        return user;
+    }
+
+    public void setUser(LadaUser user) {
+        this.user = user;
+    }
+
+    public TagTyp getTyp() {
+        return typ;
+    }
+
+    public void setTyp(TagTyp typ) {
+        this.typ = typ;
+    }
+
+    public Timestamp getGueltigBis() {
+        return gueltigBis;
+    }
+
+    public void setGueltigBis(Timestamp gueltigBis) {
+        this.gueltigBis = gueltigBis;
+    }
+
+    public Timestamp getGeneratedAt() {
+        return generatedAt;
+    }
+
+    public void setGeneratedAt(Timestamp generatedAt) {
+        this.generatedAt = generatedAt;
     }
 }
