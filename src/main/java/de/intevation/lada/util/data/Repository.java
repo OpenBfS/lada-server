@@ -12,6 +12,8 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
@@ -173,6 +175,26 @@ public class Repository {
      */
     public <T> List<T> filterPlain(CriteriaQuery<T> filter) {
         return em.createQuery(filter).getResultList();
+    }
+
+    /**
+     * Get a single object from database using the given filter.
+     *
+     * The filter has to select a single entry,
+     * e.g. by a column with UNIQUE constraint.
+     *
+     * @param <T> The type of the objects.
+     * @param filter Filter used to request objects.
+     *
+     * @return T The requested object.
+     *
+     * @throws NoResultException if there is no result
+     * @throws NonUniqueResultException if more than one result
+     */
+    public <T> T getSinglePlain(
+        CriteriaQuery<T> filter
+    ) throws NoResultException, NonUniqueResultException {
+        return (T) em.createQuery(filter).getSingleResult();
     }
 
     /**

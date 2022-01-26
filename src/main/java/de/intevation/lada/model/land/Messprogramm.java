@@ -354,9 +354,15 @@ public class Messprogramm implements Serializable {
         this.probenahmeMenge = probenahmeMenge;
     }
 
+    /**
+     * @return The number of Probe objects referencing this Messprogramm.
+     */
     @JsonProperty
     public int getReferenceCount() {
-        return this.proben.size();
+        if (this.proben != null) {
+            return this.proben.size();
+        }
+        return 0;
     }
 
     @JsonProperty

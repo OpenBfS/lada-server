@@ -30,7 +30,9 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
-
+import de.intevation.lada.validation.Validator;
+import de.intevation.lada.validation.Violation;
+import de.intevation.lada.validation.annotation.ValidationConfig;
 /**
  * REST service for KommentarM objects.
  * <p>
@@ -77,6 +79,10 @@ public class KommentarMService extends LadaService {
     @Inject
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
+
+    @Inject
+    @ValidationConfig(type = "KommentarM")
+    private Validator validator;
 
     /**
      * Get all KommentarM objects.
@@ -191,11 +197,18 @@ public class KommentarMService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
+        Violation violation = validator.validate(kommentar);
+        if (violation.hasErrors()) {
+            Response response =
+                new Response(false, StatusCodes.VAL_EXISTS, kommentar);
+            return response;
+        } else {
         /* Persist the new object*/
         return authorization.filter(
             request,
             repository.create(kommentar),
             KommentarM.class);
+        }
     }
 
     /**
@@ -233,10 +246,17 @@ public class KommentarMService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
+        Violation violation = validator.validate(kommentar);
+        if (violation.hasErrors()) {
+            Response response =
+                new Response(false, StatusCodes.VAL_EXISTS, kommentar);
+            return response;
+        } else {
         return authorization.filter(
             request,
             repository.update(kommentar),
             KommentarM.class);
+        }
     }
 
     /**

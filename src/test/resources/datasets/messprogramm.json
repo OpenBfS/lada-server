@@ -1,22 +1,22 @@
 {
     "baId": null,
+    "aktiv": true,
     "datenbasisId": 2,
     "gemId": "11000000",
-    "gueltigBis": null,
-    "gueltigVon": null,
+    "gueltigBis": 365,
+    "gueltigVon": 1,
     "intervallOffset": null,
     "letzteAenderung": 1381413048800,
     "mediaDesk": "D: 01 01 01 01 01 01 00 00 00 00 00 00",
     "mstId": "06010",
     "laborMstId": "06010",
-    "name": "Test 1",
     "mplId": null,
     "probeKommentar": null,
     "probeNehmerId": null,
-    "probenartId": 3,
+    "probenartId": 1,
     "probenintervall": "M",
     "teilintervallBis": 30,
     "teilintervallVon": 1,
     "test": false,
-    "umwId": "N11"
+    "umwId": "A6"
 }

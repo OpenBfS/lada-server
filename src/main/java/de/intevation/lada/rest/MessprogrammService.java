@@ -259,13 +259,9 @@ public class MessprogrammService extends LadaService {
         }
 
         /* Persist the new messprogramm object*/
-        Response response = repository.create(messprogramm);
-        Messprogramm ret = (Messprogramm) response.getData();
-        Response created =
-            repository.getById(Messprogramm.class, ret.getId());
         return authorization.filter(
             request,
-            new Response(true, StatusCodes.OK, created.getData()),
+            repository.create(messprogramm),
             Messprogramm.class);
     }
 
