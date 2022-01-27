@@ -1,3 +1,4 @@
+embed-server
 batch
 /subsystem=datasources/jdbc-driver=postgres:add(driver-name="postgres",driver-module-name="org.postgres",driver-class-name=org.postgis.DriverWrapper)
 data-source add --jndi-name=java:/jboss/lada --name=lada --connection-url=jdbc:postgresql_postGIS://lada_db:5432/lada --driver-name=postgres --user-name=lada --password=lada
@@ -5,3 +6,4 @@ data-source add --jndi-name=java:/jboss/lada-test --name=lada-test --connection-
 /subsystem=undertow/server=default-server/http-listener=default/:write-attribute(name=max-post-size,value=1398149)
 /subsystem=undertow/server=default-server/https-listener=https/:write-attribute(name=max-post-size,value=1398149)
 run-batch
+stop-embedded-server
