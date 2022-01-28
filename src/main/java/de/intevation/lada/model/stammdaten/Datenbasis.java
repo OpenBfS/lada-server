@@ -12,8 +12,7 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
-import javax.persistence.Column;
+
 
 /**
  * The persistent class for the datenbasis database table.
@@ -30,9 +29,6 @@ public class Datenbasis implements Serializable {
     private String beschreibung;
 
     private String datenbasis;
-
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
 
     public Datenbasis() {
     }
@@ -60,13 +56,4 @@ public class Datenbasis implements Serializable {
     public void setDatenbasis(String datenbasis) {
         this.datenbasis = datenbasis;
     }
-
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
-    }
-
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
-    }
-
 }

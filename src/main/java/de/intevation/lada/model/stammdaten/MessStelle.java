@@ -13,7 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+
 
 /**
  * The persistent class for the mess_stelle database table.
@@ -39,9 +39,6 @@ public class MessStelle implements Serializable {
 
     @Column(name = "netzbetreiber_id")
     private String netzbetreiberId;
-
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
 
     public MessStelle() {
     }
@@ -89,13 +86,4 @@ public class MessStelle implements Serializable {
     public String getNetzbetreiberId() {
         return this.netzbetreiberId;
     }
-
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
-    }
-
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
-    }
-
 }

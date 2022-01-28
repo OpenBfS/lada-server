@@ -12,8 +12,7 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
-import javax.persistence.Column;
+
 
 /**
  * The persistent class for the mess_methode database table.
@@ -30,9 +29,6 @@ public class MessMethode implements Serializable {
     private String beschreibung;
 
     private String messmethode;
-
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
 
     public MessMethode() {
     }
@@ -60,13 +56,4 @@ public class MessMethode implements Serializable {
     public void setMessmethode(String messmethode) {
         this.messmethode = messmethode;
     }
-
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
-    }
-
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
-    }
-
 }

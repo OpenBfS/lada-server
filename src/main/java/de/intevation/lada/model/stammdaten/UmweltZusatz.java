@@ -13,7 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+
 
 /**
  * The persistent class for the umwelt_zusatz database table.
@@ -34,9 +34,6 @@ public class UmweltZusatz implements Serializable {
     private String umwId;
     public UmweltZusatz() {
     }
-
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
 
     public Integer getId() {
         return this.id;
@@ -60,14 +57,6 @@ public class UmweltZusatz implements Serializable {
 
     public void setUmwId(String umwId) {
         this.pzsId = umwId;
-    }
-
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
-    }
-
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
     }
 
 }
