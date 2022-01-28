@@ -13,7 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+
 
 /**
  * The persistent class for the deskriptoren database table.
@@ -39,9 +39,6 @@ public class Deskriptoren implements Serializable {
     private Integer sn;
 
     private Integer vorgaenger;
-
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
 
     public Deskriptoren() {
     }
@@ -100,14 +97,6 @@ public class Deskriptoren implements Serializable {
 
     public void setVorgaenger(Integer vorgaenger) {
         this.vorgaenger = vorgaenger;
-    }
-
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
-    }
-
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
     }
 
 }

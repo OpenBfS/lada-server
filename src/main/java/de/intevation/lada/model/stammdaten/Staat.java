@@ -13,7 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+
 
 /**
  * The persistent class for the staat database table.
@@ -48,9 +48,6 @@ public class Staat implements Serializable {
 
     @Column(name = "staat_kurz")
     private String staatKurz;
-
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
 
     public Staat() {
     }
@@ -125,14 +122,6 @@ public class Staat implements Serializable {
 
     public void setStaatKurz(String staatKurz) {
         this.staatKurz = staatKurz;
-    }
-
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
-    }
-
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
     }
 
 }

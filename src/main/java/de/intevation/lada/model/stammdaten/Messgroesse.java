@@ -13,7 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+
 
 /**
  * The persistent class for the messgroesse database table.
@@ -45,9 +45,6 @@ public class Messgroesse implements Serializable {
     private String kennungBvl;
 
     private String messgroesse;
-
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
 
     public Messgroesse() {
     }
@@ -114,13 +111,5 @@ public class Messgroesse implements Serializable {
 
     public void setMessgroesse(String messgroesse) {
         this.messgroesse = messgroesse;
-    }
-
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
-    }
-
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
     }
 }

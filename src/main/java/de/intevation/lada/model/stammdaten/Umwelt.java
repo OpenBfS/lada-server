@@ -8,13 +8,12 @@
 package de.intevation.lada.model.stammdaten;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+
 
 /**
  * The persistent class for the umwelt database table.
@@ -38,9 +37,6 @@ public class Umwelt implements Serializable {
 
     @Column(name = "umwelt_bereich")
     private String umweltBereich;
-
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
 
     public Umwelt() {
     }
@@ -84,13 +80,4 @@ public class Umwelt implements Serializable {
     public void setUmweltBereich(String umweltBereich) {
         this.umweltBereich = umweltBereich;
     }
-
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
-    }
-
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
-    }
-
 }

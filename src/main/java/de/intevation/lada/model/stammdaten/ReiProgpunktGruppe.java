@@ -13,7 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+
 
 /**
  * The persistent class for the rei_progpunkt_gruppe database table.
@@ -31,9 +31,6 @@ public class ReiProgpunktGruppe implements Serializable {
 
     @Column(name = "rei_prog_punkt_gruppe")
     private String reiProgPunktGruppe;
-
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
 
     public ReiProgpunktGruppe() {
     }
@@ -60,14 +57,6 @@ public class ReiProgpunktGruppe implements Serializable {
 
     public void setReiProgPunktGruppe(String reiProgPunktGruppe) {
         this.reiProgPunktGruppe = reiProgPunktGruppe;
-    }
-
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
-    }
-
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
     }
 
 }

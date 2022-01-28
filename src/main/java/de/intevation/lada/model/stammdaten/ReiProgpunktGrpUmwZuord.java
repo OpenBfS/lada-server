@@ -13,7 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+
 
 /**
  * The persistent class for the rei_progpunkt_grp_umw_zuord database table.
@@ -32,9 +32,6 @@ public class ReiProgpunktGrpUmwZuord implements Serializable {
 
     @Column(name = "umw_id")
     private String umwId;
-
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
 
     public ReiProgpunktGrpUmwZuord() {
     }
@@ -61,14 +58,6 @@ public class ReiProgpunktGrpUmwZuord implements Serializable {
 
     public void setUmwId(String umwId) {
         this.umwId = umwId;
-    }
-
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
-    }
-
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
     }
 
 }

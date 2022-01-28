@@ -13,7 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+
 
 /**
  * The persistent class for the ortszusatz database table.
@@ -29,9 +29,6 @@ public class Ortszusatz implements Serializable {
     private String ozsId;
 
     private String ortszusatz;
-
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
 
     public Ortszusatz() {
     }
@@ -50,14 +47,6 @@ public class Ortszusatz implements Serializable {
 
     public void setOrtszusatz(String ortszusatz) {
         this.ortszusatz = ortszusatz;
-    }
-
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
-    }
-
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
     }
 
 }

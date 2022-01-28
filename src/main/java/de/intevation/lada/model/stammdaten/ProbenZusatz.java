@@ -13,7 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+
 
 /**
  * The persistent class for the proben_zusatz database table.
@@ -36,9 +36,6 @@ public class ProbenZusatz implements Serializable {
 
     @Column(name = "meh_id")
     private Integer messEinheitId;
-
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
 
     public ProbenZusatz() {
     }
@@ -81,14 +78,6 @@ public class ProbenZusatz implements Serializable {
 
     public void setMessEinheitId(Integer messEinheitId) {
         this.messEinheitId = messEinheitId;
-    }
-
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
-    }
-
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
     }
 
 }

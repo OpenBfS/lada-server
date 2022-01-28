@@ -13,7 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+
 
 /**
  * The persistent class for the auth_lst_umw database table.
@@ -32,9 +32,6 @@ public class AuthLstUmw implements Serializable {
 
     @Column(name = "umw_id")
     private String umwId;
-
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
 
     public AuthLstUmw() {
     }
@@ -61,14 +58,6 @@ public class AuthLstUmw implements Serializable {
 
     public void setUmwId(String umwId) {
         this.umwId = umwId;
-    }
-
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
-    }
-
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
     }
 
 }

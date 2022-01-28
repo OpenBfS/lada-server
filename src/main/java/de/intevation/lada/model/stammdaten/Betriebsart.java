@@ -12,7 +12,6 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
 
 
 /**
@@ -28,9 +27,6 @@ public class Betriebsart implements Serializable {
     private Integer id;
 
     private String name;
-
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
 
     public Betriebsart() {
     }
@@ -49,14 +45,6 @@ public class Betriebsart implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
-    }
-
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
     }
 
 }
