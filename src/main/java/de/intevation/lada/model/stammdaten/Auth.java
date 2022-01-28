@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.sql.Timestamp;
 
 
 /**
@@ -41,6 +42,9 @@ public class Auth implements Serializable {
 
     @Column(name = "netzbetreiber_id")
     private String netzbetreiberId;
+
+    @Column(name = "letzte_aenderung", insertable = false)
+    private Timestamp letzteAenderung;
 
     public Auth() {
     }
@@ -91,6 +95,14 @@ public class Auth implements Serializable {
 
     public void setNetzbetreiberId(String netzbetreiberId) {
         this.netzbetreiberId = netzbetreiberId;
+    }
+
+    public Timestamp getLetzteAenderung() {
+        return this.letzteAenderung;
+    }
+
+    public void setLetzteAenderung(Timestamp letzteAenderung) {
+        this.letzteAenderung = letzteAenderung;
     }
 
 }

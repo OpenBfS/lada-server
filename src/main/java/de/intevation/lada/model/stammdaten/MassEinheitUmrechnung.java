@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.sql.Timestamp;
 
 /**
  * The persistent class for the mess_einheit_umrechung database table.
@@ -37,6 +38,9 @@ public class MassEinheitUmrechnung implements Serializable {
 
     private Double faktor;
 
+    @Column(name = "letzte_aenderung", insertable = false)
+    private Timestamp letzteAenderung;
+
     public MassEinheitUmrechnung() {
 
     }
@@ -56,4 +60,13 @@ public class MassEinheitUmrechnung implements Serializable {
     public Double getFaktor() {
         return this.faktor;
     }
+
+    public Timestamp getLetzteAenderung() {
+        return this.letzteAenderung;
+    }
+
+    public void setLetzteAenderung(Timestamp letzteAenderung) {
+        this.letzteAenderung = letzteAenderung;
+    }
+
 }
