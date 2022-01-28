@@ -12,7 +12,7 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
+import java.sql.Timestamp;
 
 /**
  * The persistent class for the ortszuordnung_typ database table.
@@ -27,6 +27,9 @@ public class OrtszuordnungTyp implements Serializable {
     private String id;
 
     private String ortstyp;
+
+    @Column(name = "letzte_aenderung", insertable = false)
+    private Timestamp letzteAenderung;
 
     public OrtszuordnungTyp() {
     }
@@ -45,6 +48,14 @@ public class OrtszuordnungTyp implements Serializable {
 
     public void setOrtstyp(String ortstyp) {
         this.ortstyp = ortstyp;
+    }
+
+    public Timestamp getLetzteAenderung() {
+        return this.letzteAenderung;
+    }
+
+    public void setLetzteAenderung(Timestamp letzteAenderung) {
+        this.letzteAenderung = letzteAenderung;
     }
 
 }

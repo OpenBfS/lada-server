@@ -12,7 +12,7 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
+import java.sql.Timestamp;
 
 /**
  * The persistent class for the kta database table.
@@ -29,6 +29,9 @@ public class Kta implements Serializable {
     private String bezeichnung;
 
     private String code;
+
+    @Column(name = "letzte_aenderung", insertable = false)
+    private Timestamp letzteAenderung;
 
     public Kta() {
     }
@@ -55,6 +58,14 @@ public class Kta implements Serializable {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public Timestamp getLetzteAenderung() {
+        return this.letzteAenderung;
+    }
+
+    public void setLetzteAenderung(Timestamp letzteAenderung) {
+        this.letzteAenderung = letzteAenderung;
     }
 
 }

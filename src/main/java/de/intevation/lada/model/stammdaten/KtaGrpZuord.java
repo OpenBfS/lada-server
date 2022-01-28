@@ -13,7 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
+import java.sql.Timestamp;
 
 /**
  * The persistent class for the kta_grp_zuord database table.
@@ -32,6 +32,9 @@ public class KtaGrpZuord implements Serializable {
 
     @Column(name = "kta_id")
     private Integer ktaId;
+
+    @Column(name = "letzte_aenderung", insertable = false)
+    private Timestamp letzteAenderung;
 
     public KtaGrpZuord() {
     }
@@ -58,6 +61,14 @@ public class KtaGrpZuord implements Serializable {
 
     public void setKtaId(Integer ktaId) {
         this.ktaId = ktaId;
+    }
+
+    public Timestamp getLetzteAenderung() {
+        return this.letzteAenderung;
+    }
+
+    public void setLetzteAenderung(Timestamp letzteAenderung) {
+        this.letzteAenderung = letzteAenderung;
     }
 
 }

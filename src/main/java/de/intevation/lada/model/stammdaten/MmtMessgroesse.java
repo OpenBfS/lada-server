@@ -13,7 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
+import java.sql.Timestamp;
 
 /**
  * The persistent class for the mmt_messgroesse database table.
@@ -32,6 +32,9 @@ public class MmtMessgroesse implements Serializable {
 
     @Column(name = "mmt_id", insertable = false, updatable = false)
     private String mmtId;
+
+    @Column(name = "letzte_aenderung", insertable = false)
+    private Timestamp letzteAenderung;
 
     public MmtMessgroesse() {
     }
@@ -58,6 +61,14 @@ public class MmtMessgroesse implements Serializable {
 
     public void setMmtId(String mmtId) {
         this.mmtId = mmtId;
+    }
+
+    public Timestamp getLetzteAenderung() {
+        return this.letzteAenderung;
+    }
+
+    public void setLetzteAenderung(Timestamp letzteAenderung) {
+        this.letzteAenderung = letzteAenderung;
     }
 
 }
