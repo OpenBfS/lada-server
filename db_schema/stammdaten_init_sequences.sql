@@ -11,6 +11,7 @@ SELECT pg_catalog.setval('datensatz_erzeuger_id_seq', (SELECT max(id) FROM daten
 SELECT pg_catalog.setval('deskriptor_umwelt_id_seq', (SELECT max(id) FROM deskriptor_umwelt), true);
 
 SELECT pg_catalog.setval('deskriptoren_id_seq', (SELECT max(id) FROM deskriptoren), true);
+SELECT pg_catalog.setval('stamm.deskriptoren_s_xx_seq', (SELECT max(s_xx) FROM stamm.deskriptoren), true);
 
 SELECT pg_catalog.setval('filter_id_seq', (SELECT max(id) FROM filter), true);
 
