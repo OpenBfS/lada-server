@@ -13,7 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
+import java.sql.Timestamp;
 
 /**
  * The persistent class for the kta_gruppe database table.
@@ -31,6 +31,9 @@ public class KtaGruppe implements Serializable {
 
     @Column(name = "kta_gruppe")
     private String ktaGruppe;
+
+    @Column(name = "letzte_aenderung", insertable = false)
+    private Timestamp letzteAenderung;
 
     public KtaGruppe() {
     }
@@ -57,6 +60,14 @@ public class KtaGruppe implements Serializable {
 
     public void setKtaGruppe(String ktaGruppe) {
         this.ktaGruppe = ktaGruppe;
+    }
+
+    public Timestamp getLetzteAenderung() {
+        return this.letzteAenderung;
+    }
+
+    public void setLetzteAenderung(Timestamp letzteAenderung) {
+        this.letzteAenderung = letzteAenderung;
     }
 
 }

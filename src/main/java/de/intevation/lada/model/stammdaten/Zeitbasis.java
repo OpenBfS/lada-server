@@ -13,7 +13,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-
+import java.sql.Timestamp;
+import javax.persistence.Column;
 
 /**
  * The persistent class for the zeitbasis database table.
@@ -29,6 +30,9 @@ public class Zeitbasis implements Serializable {
     private Integer id;
 
     private String bezeichnung;
+
+    @Column(name = "letzte_aenderung", insertable = false)
+    private Timestamp letzteAenderung;
 
     public Zeitbasis() {
     }
@@ -47,6 +51,14 @@ public class Zeitbasis implements Serializable {
 
     public void setBezeichnung(String bezeichnung) {
         this.bezeichnung = bezeichnung;
+    }
+
+    public Timestamp getLetzteAenderung() {
+        return this.letzteAenderung;
+    }
+
+    public void setLetzteAenderung(Timestamp letzteAenderung) {
+        this.letzteAenderung = letzteAenderung;
     }
 
 }

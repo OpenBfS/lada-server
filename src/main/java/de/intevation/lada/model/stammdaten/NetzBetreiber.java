@@ -14,7 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-
+import java.sql.Timestamp;
 
 /**
  * The persistent class for the netz_betreiber database table.
@@ -43,6 +43,9 @@ public class NetzBetreiber implements Serializable {
     private String mailverteiler;
 
     private String netzbetreiber;
+
+    @Column(name = "letzte_aenderung", insertable = false)
+    private Timestamp letzteAenderung;
 
     public NetzBetreiber() {
     }
@@ -93,6 +96,14 @@ public class NetzBetreiber implements Serializable {
 
     public void setNetzbetreiber(String netzbetreiber) {
         this.netzbetreiber = netzbetreiber;
+    }
+
+    public Timestamp getLetzteAenderung() {
+        return this.letzteAenderung;
+    }
+
+    public void setLetzteAenderung(Timestamp letzteAenderung) {
+        this.letzteAenderung = letzteAenderung;
     }
 
 }

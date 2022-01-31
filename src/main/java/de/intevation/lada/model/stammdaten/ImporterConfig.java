@@ -13,7 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
+import java.sql.Timestamp;
 
 /**
  * The persistent class for the importer_config database table.
@@ -41,6 +41,9 @@ public class ImporterConfig implements Serializable {
 
     @Column(name = "to_value")
     private String toValue;
+
+    @Column(name = "letzte_aenderung", insertable = false)
+    private Timestamp letzteAenderung;
 
     public ImporterConfig() {
     }
@@ -99,6 +102,14 @@ public class ImporterConfig implements Serializable {
 
     public void setToValue(String toValue) {
         this.toValue = toValue;
+    }
+
+    public Timestamp getLetzteAenderung() {
+        return this.letzteAenderung;
+    }
+
+    public void setLetzteAenderung(Timestamp letzteAenderung) {
+        this.letzteAenderung = letzteAenderung;
     }
 
 }

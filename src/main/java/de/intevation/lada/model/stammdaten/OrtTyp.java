@@ -13,7 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
+import java.sql.Timestamp;
 
 /**
  * The persistent class for the ort_typ database table.
@@ -32,6 +32,9 @@ public class OrtTyp implements Serializable {
 
     @Column(name = "code")
     private String code;
+
+    @Column(name = "letzte_aenderung", insertable = false)
+    private Timestamp letzteAenderung;
 
     public OrtTyp() {
     }
@@ -59,4 +62,13 @@ public class OrtTyp implements Serializable {
     public void setCode(String code) {
         this.code = code;
     }
+
+    public Timestamp getLetzteAenderung() {
+        return this.letzteAenderung;
+    }
+
+    public void setLetzteAenderung(Timestamp letzteAenderung) {
+        this.letzteAenderung = letzteAenderung;
+    }
+
 }
