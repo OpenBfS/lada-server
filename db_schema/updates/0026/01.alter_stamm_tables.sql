@@ -79,18 +79,3 @@ ALTER TABLE stamm.importer_config
      ADD COLUMN IF NOT EXISTS letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc');
 ALTER TABLE stamm.tm_fm_umrechnung
      ADD COLUMN IF NOT EXISTS letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc');
-ALTER TABLE stamm.richtwert_massnahme
-     ADD COLUMN IF NOT EXISTS letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc');
-ALTER TABLE stamm.richtwert
-     ADD COLUMN IF NOT EXISTS letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc');
-ALTER TABLE stamm.sollist_mmtgrp
-     ADD COLUMN IF NOT EXISTS letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc');
-ALTER TABLE stamm.sollist_mmtgrp_zuord
-     ADD COLUMN IF NOT EXISTS letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc');
-ALTER TABLE stamm.sollist_umwgrp
-     ADD COLUMN IF NOT EXISTS letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc');
-ALTER TABLE stamm.sollist_umwgrp_zuord
-     ADD COLUMN IF NOT EXISTS letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc');
-ALTER TABLE stamm.sollist_soll
-     ADD COLUMN IF NOT EXISTS letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc');
-     
