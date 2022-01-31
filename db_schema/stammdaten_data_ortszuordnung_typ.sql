@@ -26,7 +26,6 @@ SET search_path = stamm, pg_catalog;
 
 COPY ortszuordnung_typ (id, ortstyp) FROM stdin;
 U	Ursprungsort
-R	REI-Messpunkt
-Z	Ortszusatz
+R	Entnahmort und Ursprungsort / REI-Messpunkt
 E	Entnahmeort
 \.

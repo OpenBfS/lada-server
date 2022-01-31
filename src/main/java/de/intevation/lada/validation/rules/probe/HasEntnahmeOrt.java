@@ -54,7 +54,7 @@ public class HasEntnahmeOrt implements Rule {
         @SuppressWarnings("unchecked")
         List<Ortszuordnung> orte = (List<Ortszuordnung>) response.getData();
         for (Ortszuordnung ort: orte) {
-            if ("E".equals(ort.getOrtszuordnungTyp())) {
+            if ("E".equals(ort.getOrtszuordnungTyp()) || "R".equals(ort.getOrtszuordnungTyp())) {
                 return null;
             }
         }
