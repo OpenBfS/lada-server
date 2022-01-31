@@ -47,7 +47,7 @@ COPY stamm.base_query (id, sql) FROM stdin;
 52	SELECT deskriptoren.id AS deskId,\n deskriptoren.ebene AS deskEbene,\n deskriptoren.sn AS deskSn,\n deskriptoren.beschreibung AS deskBeschr,\n deskriptoren.bedeutung AS deskBedeutung,\n deskriptoren.vorgaenger AS deskVorgId,\n deskriptorenvorgaenger.ebene AS deskVorgEbene,\n deskriptorenvorgaenger.sn AS deskVorgSN,\n deskriptorenvorgaenger.beschreibung AS deskVorgBeschr\n FROM stamm.deskriptoren\n LEFT JOIN stamm.deskriptoren AS deskriptorenvorgaenger ON (deskriptoren.vorgaenger = deskriptorenvorgaenger.id)
 53	SELECT verwaltungseinheit.id AS verwId,\n verwaltungseinheit.bezeichnung AS verwBez,\n verwaltungseinheit.plz AS plz,\n verwaltungseinheit.is_gemeinde AS isGem,\n verwaltungseinheit.is_landkreis AS isKreis,\n verwaltungseinheit.is_regbezirk AS isRbez,\n verwaltungseinheit.is_bundesland AS isBundesland,\n verwaltungseinheit.nuts AS nuts,\n verwaltungseinheit.bundesland AS bundeslandId,\n bl.bezeichnung AS bundesland,\n verwaltungseinheit.regbezirk AS rbezId,\n rb.bezeichnung AS rbez,\n verwaltungseinheit.kreis AS kreisId,\n lk.bezeichnung AS kreis\n FROM stamm.verwaltungseinheit\n LEFT JOIN stamm.verwaltungseinheit AS bl ON (stamm.verwaltungseinheit.bundesland = bl.id)\n LEFT JOIN stamm.verwaltungseinheit AS rb ON (stamm.verwaltungseinheit.regbezirk = rb.id)\n LEFT JOIN stamm.verwaltungseinheit AS lk ON (stamm.verwaltungseinheit.kreis = lk.id)
 54	SELECT kta_gruppe.id AS anlageId,\n kta_gruppe.kta_gruppe AS anlageBez,\n kta_gruppe.beschreibung AS anlageBeschr\n FROM stamm.kta_gruppe
-55	SELECT staat.id AS staatId,\n  staat.hkl_id AS hklId, staat.staat AS staatBez,\n staat.staat_kurz AS staatKurz,\n staat.staat_iso AS staatIso,\n staat.eu AS staatEu,\n koordinaten_art.koordinatenart AS kda,\n staat.koord_x_extern AS staatKoordX,\n staat.koord_y_extern AS staatKoordY\n FROM stamm.staat\n LEFT JOIN stamm.koordinaten_art ON (staat.kda_id = koordinaten_art.id)
+55	SELECT staat.id AS staatId,\n  staat.hkl_id AS hklId, staat.staat AS staatBez,\n staat.staat_iso AS staatIso,\n staat.eu AS staatEu,\n koordinaten_art.koordinatenart AS kda,\n staat.koord_x_extern AS staatKoordX,\n staat.koord_y_extern AS staatKoordY\n FROM stamm.staat\n LEFT JOIN stamm.koordinaten_art ON (staat.kda_id = koordinaten_art.id)
 56	SELECT ortszusatz.ozs_id AS ozId,\n ortszusatz.ortszusatz AS oz\n FROM stamm.ortszusatz
 60	SELECT netz_betreiber.id AS netzId,\n netz_betreiber.netzbetreiber AS netzbetreiber,\n netz_betreiber.idf_netzbetreiber AS netzIdf,\n netz_betreiber.is_bmn AS netzBmn\n FROM stamm.netz_betreiber
 61	SELECT proben_zusatz.id AS pzsId,\n proben_zusatz.zusatzwert AS pzsBez,\n proben_zusatz.beschreibung AS pzsBeschr,\n mess_einheit.einheit AS pzsEinheit,\n proben_zusatz.eudf_keyword AS pzsEudf\n FROM stamm.proben_zusatz\n LEFT JOIN stamm.mess_einheit ON (proben_zusatz.meh_id = mess_einheit.id)
@@ -951,7 +951,6 @@ COPY stamm.grid_column (id, base_query, name, data_index, "position", filter, da
 5501	55	ID	staatId	1	\N	1
 5502	55	HKL-ID	hklId	2	\N	1
 5503	55	Staat	staatBez	3	83	1
-5504	55	Autokennzeichen	staatKurz	4	\N	1
 5505	55	ISO	staatIso	5	\N	1
 5506	55	EU	staatEu	6	\N	11
 5507	55	Koordinatenart	kda	7	\N	1
@@ -1474,7 +1473,6 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 600	0	5501	21	asc	\N	\N	f	t	0	70	f	f	f
 601	0	5502	21	\N	\N	\N	f	t	1	70	f	f	f
 602	0	5503	21	\N	\N	\N	t	t	2	200	f	f	f
-603	0	5504	21	\N	\N	\N	f	t	3	70	f	f	f
 604	0	5505	21	\N	\N	\N	f	t	4	70	f	f	f
 605	0	5506	21	\N	\N	\N	f	t	5	70	f	f	f
 606	0	5507	21	\N	\N	\N	f	t	6	150	f	f	f

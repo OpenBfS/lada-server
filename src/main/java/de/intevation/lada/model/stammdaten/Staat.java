@@ -46,9 +46,6 @@ public class Staat implements Serializable {
     @Column(name = "staat_iso")
     private String staatIso;
 
-    @Column(name = "staat_kurz")
-    private String staatKurz;
-
     public Staat() {
     }
 
@@ -114,14 +111,6 @@ public class Staat implements Serializable {
 
     public void setStaatIso(String staatIso) {
         this.staatIso = staatIso;
-    }
-
-    public String getStaatKurz() {
-        return this.staatKurz;
-    }
-
-    public void setStaatKurz(String staatKurz) {
-        this.staatKurz = staatKurz;
     }
 
 }
