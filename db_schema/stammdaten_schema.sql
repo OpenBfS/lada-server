@@ -462,7 +462,7 @@ CREATE TABLE deskriptoren (
     id serial PRIMARY KEY,
     vorgaenger integer REFERENCES deskriptoren,
     ebene smallint,
-    s_xx integer,
+    s_xx serial,
     sn smallint,
     beschreibung character varying(100),
     bedeutung character varying(300),
