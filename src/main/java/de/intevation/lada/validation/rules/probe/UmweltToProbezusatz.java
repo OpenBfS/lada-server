@@ -56,7 +56,7 @@ public class UmweltToProbezusatz implements Rule {
                     return null;
                 } else {
                     Violation violation = new Violation();
-                    violation.addWarning("zusatzwert", StatusCodes.VALUE_NOT_MATCHING);
+                    violation.addWarning("zusatzwert", StatusCodes.VAL_PZW);
                     return violation;
                 }
             }
