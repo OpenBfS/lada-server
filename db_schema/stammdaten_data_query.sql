@@ -1473,11 +1473,11 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 600	0	5501	21	asc	\N	\N	f	t	0	70	f	f	f
 601	0	5502	21	\N	\N	\N	f	t	1	70	f	f	f
 602	0	5503	21	\N	\N	\N	t	t	2	200	f	f	f
-604	0	5505	21	\N	\N	\N	f	t	4	70	f	f	f
-605	0	5506	21	\N	\N	\N	f	t	5	70	f	f	f
-606	0	5507	21	\N	\N	\N	f	t	6	150	f	f	f
-607	0	5508	21	\N	\N	\N	f	t	7	100	f	f	f
-608	0	5509	21	\N	\N	\N	f	t	8	100	f	f	f
+604	0	5505	21	\N	\N	\N	f	t	3	70	f	f	f
+605	0	5506	21	\N	\N	\N	f	t	4	70	f	f	f
+606	0	5507	21	\N	\N	\N	f	t	5	150	f	f	f
+607	0	5508	21	\N	\N	\N	f	t	6	100	f	f	f
+608	0	5509	21	\N	\N	\N	f	t	7	100	f	f	f
 609	0	5601	22	asc	\N	\N	t	t	0	120	f	f	f
 610	0	5602	22	\N	\N	\N	t	t	1	400	f	f	f
 611	0	143	1	\N	\N	\N	f	f	\N	80	f	f	f
