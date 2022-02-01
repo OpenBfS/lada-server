@@ -48,7 +48,7 @@ INSERT INTO mass_einheit_umrechnung (meh_id_von, meh_id_zu, faktor)
        VALUES (207, 208, 2);
 INSERT INTO messgroesse (id, messgroesse) VALUES (56, 'Mangan');
 INSERT INTO messgroesse (id, messgroesse) VALUES (57, 'Mangan');
-INSERT INTO mess_methode (id) VALUES ('A3');
+INSERT INTO mess_methode (id) VALUES ('A3'), ('B3');
 INSERT INTO netz_betreiber (id) VALUES ('06');
 INSERT INTO netz_betreiber (id) VALUES ('01');
 INSERT INTO mess_stelle (id, netzbetreiber_id) VALUES ('06010', '06');

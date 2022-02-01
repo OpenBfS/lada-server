@@ -39,6 +39,7 @@ import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.test.land.KommentarMTest;
 import de.intevation.lada.test.land.KommentarPTest;
 import de.intevation.lada.test.land.MessprogrammTest;
+import de.intevation.lada.test.land.MessprogrammMmtTest;
 import de.intevation.lada.test.land.MessungTest;
 import de.intevation.lada.test.land.MesswertTest;
 import de.intevation.lada.test.land.OrtszuordnungTest;
@@ -96,6 +97,7 @@ public class LandTest extends BaseTest {
     private MesswertTest messwertTest;
     private StatusTest statusTest;
     private MessprogrammTest messprogrammTest;
+    private MessprogrammMmtTest messprogrammMmtTest;
     private QueryTest queryTest;
     private PepGenerationTest pepGenerationTest;
 
@@ -109,6 +111,7 @@ public class LandTest extends BaseTest {
         messwertTest = new MesswertTest();
         statusTest = new StatusTest();
         messprogrammTest = new MessprogrammTest();
+        messprogrammMmtTest = new MessprogrammMmtTest();
         queryTest = new QueryTest();
         pepGenerationTest = new PepGenerationTest();
         verboseLogging = false;
@@ -253,6 +256,20 @@ public class LandTest extends BaseTest {
     throws Exception {
         messprogrammTest.init(baseUrl, testProtocol);
         messprogrammTest.execute();
+    }
+
+    /**
+     * Tests for messprogrammMmt operations.
+     * @param baseUrl The server url used for the request.
+     * @throws Exception that can occur during the test.
+     */
+    @Test
+    @InSequence(T18)
+    @RunAsClient
+    public final void testMessprogrammMmt(@ArquillianResource URL baseUrl)
+    throws Exception {
+        messprogrammMmtTest.init(baseUrl, testProtocol);
+        messprogrammMmtTest.execute();
     }
 
     /**

@@ -15,5 +15,15 @@
         "gueltig_von": 1,
         "gueltig_bis": 365,
         "letzte_aenderung": "2015-03-01 12:00:00"
+    }],
+    "land.messprogramm_mmt": [{
+        "id": 1000,
+        "messprogramm_id": 1000,
+        "mmt_id": "A3",
+        "letzte_aenderung": "2015-03-01 12:00:00"
+    }],
+    "land.messprogramm_mmt_messgroesse": [{
+        "messprogramm_mmt_id": 1000,
+        "messgroesse_id": 56
     }]
 }

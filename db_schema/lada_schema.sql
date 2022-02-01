@@ -237,11 +237,15 @@ CREATE TABLE messprogramm_mmt (
     id serial PRIMARY KEY,
     messprogramm_id integer NOT NULL REFERENCES messprogramm ON DELETE CASCADE,
     mmt_id character varying(2) NOT NULL REFERENCES stamm.mess_methode,
-    messgroessen integer[],
     letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER letzte_aenderung_messprogramm_mmt BEFORE UPDATE ON messprogramm_mmt FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
+CREATE TABLE messprogramm_mmt_messgroesse (
+    messprogramm_mmt_id integer REFERENCES messprogramm_mmt ON DELETE CASCADE,
+    messgroesse_id integer REFERENCES stamm.messgroesse,
+    PRIMARY KEY (messprogramm_mmt_id, messgroesse_id)
+);
 
 --
 -- Name: probe; Type: TABLE; Schema: land; Owner: -; Tablespace:
