@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.model.land;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -89,5 +92,32 @@ public class TagZuordnung {
 
     public void setTagId(Integer tagId) {
         this.tagId = tagId;
+    }
+
+    /**
+     * Create json object representation of this object.
+     * @return JSON object
+     */
+    public JsonObject toJson() {
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        JsonObjectBuilder tagBuilder = Json.createObjectBuilder();
+        builder.add("id", id.toString());
+        if (tag.getId() != null) {
+            tagBuilder.add("id", tag.getId().toString());
+        }
+        if (tag.getTag() != null) {
+            tagBuilder.add("tag", tag.getTag());
+        }
+        if (messungId != null) {
+            builder.add("messungId", messungId);
+        }
+        if (probeId != null) {
+            builder.add("probeId", probeId);
+        }
+        if (tagId != null) {
+            builder.add("tagId", tagId);
+        }
+        builder.add("tag", tagBuilder.build());
+        return builder.build();
     }
 }

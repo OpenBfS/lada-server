@@ -9,5 +9,5 @@ INSERT INTO stamm.tag_typ VALUES(4, 'Auto');
 ALTER TABLE stamm.tag ADD COLUMN netzbetreiber varchar(2) REFERENCES stamm.netz_betreiber;
 ALTER TABLE stamm.tag ADD COLUMN user_id INTEGER REFERENCES stamm.lada_user;
 ALTER TABLE stamm.tag ADD COLUMN typ INTEGER REFERENCES stamm.tag_typ;
-ALTER TABLE stamm.tag ADD COLUMN gueltig_bis TIMESTAMP NOT NULL;
+ALTER TABLE stamm.tag ADD COLUMN gueltig_bis TIMESTAMP;
 ALTER TABLE stamm.tag ADD COLUMN generated_at TIMESTAMP NOT NULL DEFAULT NOW();
