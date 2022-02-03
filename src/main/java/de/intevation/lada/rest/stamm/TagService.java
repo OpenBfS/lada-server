@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
@@ -157,6 +158,42 @@ public class TagService extends LadaService {
         criteriaQuery.where(filter);
         return authorization.filter(
             request, repository.filter(criteriaQuery), Tag.class);
+    }
+
+    /**
+     * Update an existing tag object.
+     *
+     * @return Response object containing the updated tag object
+     */
+    @PUT
+    @Path("/{id}")
+    public Response update(
+        @Context HttpHeaders headers,
+        @Context HttpServletRequest request,
+        @PathParam("id") String id,
+        Tag tag
+    ) {
+        if (!authorization.isAuthorized(
+            request, tag, RequestMethod.PUT, Tag.class)) {
+            return new Response(false, StatusCodes.NOT_ALLOWED, null);
+        }
+        //Check if tag has changed and is valid
+        Tag origTag = repository.getByIdPlain(Tag.class, tag.getId());
+        int tagTyp = tag.getTyp().getId();
+        int origTagTyp = origTag.getTyp().getId();
+        if (tagTyp != origTagTyp) {
+            //Tags may only changed to global
+            //or from messstelle to netzbetreiber
+            if (tagTyp != 1 || tagTyp != 2 && origTagTyp != 3) {
+                return new Response(false,
+                    StatusCodes.ERROR_VALIDATION, "Invalid tag type change");
+            }
+        }
+        Response response = repository.update(tag);
+        return authorization.filter(
+            request,
+            response,
+            Tag.class);
     }
 
     /**

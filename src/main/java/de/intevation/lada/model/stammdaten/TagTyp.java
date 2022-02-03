@@ -24,9 +24,10 @@ public class TagTyp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", insertable = false, updatable = false)
     private Integer id;
 
-    @Column(name = "tagtyp")
+    @Column(name = "tagtyp", insertable = false, updatable = false)
     private String tagTyp;
 
     public TagTyp() { }
