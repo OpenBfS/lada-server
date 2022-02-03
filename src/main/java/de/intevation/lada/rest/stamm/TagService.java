@@ -155,8 +155,8 @@ public class TagService extends LadaService {
             filter = builder.and(filter, messungFilter);
         }
         criteriaQuery.where(filter);
-        List<Tag> tags = repository.filterPlain(criteriaQuery);
-        return new Response(true, StatusCodes.OK, tags);
+        return authorization.filter(
+            request, repository.filter(criteriaQuery), Tag.class);
     }
 
     /**

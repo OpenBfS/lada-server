@@ -35,6 +35,7 @@ import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.StatusKombi;
+import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -65,6 +66,7 @@ public class HeaderAuthorization implements Authorization {
     @Inject NetzbetreiberAuthorizer netzAuthorizer;
     @Inject MessprogrammAuthorizer messprogrammAuthorizer;
     @Inject MessprogrammIdAuthorizer mpIdAuthorizer;
+    @Inject TagAuthorizer tagAuthorizer;
 
     @SuppressWarnings("rawtypes")
     @PostConstruct
@@ -85,6 +87,7 @@ public class HeaderAuthorization implements Authorization {
         authorizers.put(Messprogramm.class, messprogrammAuthorizer);
         authorizers.put(MessprogrammMmt.class, messprogrammAuthorizer);
         authorizers.put(OrtszuordnungMp.class, mpIdAuthorizer);
+        authorizers.put(Tag.class, tagAuthorizer);
     }
 
     /**

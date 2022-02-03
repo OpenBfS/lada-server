@@ -22,6 +22,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -65,6 +66,8 @@ public class Tag {
 
     private boolean generated;
 
+    @Transient
+    private boolean readonly;
 
     public Tag() { }
 
@@ -148,4 +151,13 @@ public class Tag {
     public void setGeneratedAt(Timestamp generatedAt) {
         this.generatedAt = generatedAt;
     }
+
+    public boolean isReadonly() {
+        return readonly;
+    }
+
+    public void setReadonly(boolean readonly) {
+        this.readonly = readonly;
+    }
+
 }
