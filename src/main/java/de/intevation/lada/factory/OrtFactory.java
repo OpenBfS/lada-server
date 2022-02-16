@@ -34,7 +34,8 @@ public class OrtFactory {
 
     private static final int EPSG4326 = 4326;
 
-    private static final int ORTTYP5 = 5;
+    private static final int ORTTYP4 = 4; // Verwaltungseinheit
+    private static final int ORTTYP5 = 5; // Staat
 
     @Inject
     private Logger logger;
@@ -199,11 +200,22 @@ public class OrtFactory {
                 return null;
             } else if (ortExists.isEmpty()) {
                 if (!hasKoord) {
-                    ort.setKdaId(KdaUtil.KDA_GD);
-                    ort.setKoordYExtern(
-                        String.valueOf(v.getMittelpunkt().getY()));
-                    ort.setKoordXExtern(
-                        String.valueOf(v.getMittelpunkt().getX()));
+                    if (ort.getKdaId() == null) {
+                        ort.setKdaId(KdaUtil.KDA_GD);
+                        ort.setKoordYExtern(
+                            String.valueOf(v.getMittelpunkt().getY()));
+                        ort.setKoordXExtern(
+                            String.valueOf(v.getMittelpunkt().getX()));
+                    } else {
+                        KdaUtil.Result coords = new KdaUtil().transform(
+                            KdaUtil.KDA_GD,
+                            ort.getKdaId(),
+                            String.valueOf(v.getMittelpunkt().getX()),
+                            String.valueOf(v.getMittelpunkt().getY()));
+                        ort.setKoordYExtern(coords.getY());
+                        ort.setKoordXExtern(coords.getX());
+                    }
+                    ort.setOrtTyp(ORTTYP4);
                     //set ortId
                     if ( v.getIsGemeinde() ) {
                         ort.setOrtId("GEM_"+ort.getGemId());
@@ -214,6 +226,9 @@ public class OrtFactory {
                     } else if ( !v.getIsGemeinde() && !v.getIsLandkreis() && !v.getIsRegbezirk() && v.getIsBundesland() ) {
                         ort.setOrtId("BL_"+ort.getGemId());
                     }
+                }
+                if (ort.getKurztext() == null || ort.getKurztext().equals("")) {
+                    ort.setKurztext(ort.getOrtId());
                 }
                 if (ort.getLangtext() == null || ort.getLangtext().equals("")) {
                     ort.setLangtext(v.getBezeichnung());

@@ -630,11 +630,15 @@ public class LafObjectMapper {
     }
 
     private void doConverts(Ortszuordnung ort) {
-        doDefaults(ort, Ortszuordnung.class, "ortszuordnung");
+        doConverts(ort, Ortszuordnung.class, "ortszuordnung");
     }
 
     private void doTransforms(Ortszuordnung ort) {
         doTransformations(ort, Ortszuordnung.class, "ortszuordnung");
+    }
+
+    private void doDefaults(Ort o) {
+        doDefaults(o, Ort.class, "ort");
     }
 
     private <T> void doDefaults(Object object, Class<T> clazz, String table) {
@@ -1761,6 +1765,7 @@ public class LafObjectMapper {
         Probe probe
     ) {
         Ort o = new Ort();
+        doDefaults(o);
         // If laf contains coordinates, find a ort with matching coordinates or
         // create one.
         if ((attributes.get(type + "KOORDINATEN_ART") != null
