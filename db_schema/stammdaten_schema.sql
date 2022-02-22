@@ -500,7 +500,8 @@ CREATE TABLE query_messstelle (
 CREATE TABLE filter_type (
     id serial PRIMARY KEY,
     type character varying(12) NOT NULL,
-    multiselect boolean NOT NULL DEFAULT false
+    multiselect boolean NOT NULL DEFAULT false,
+    UNIQUE(type)
 );
 INSERT INTO filter_type VALUES(0, 'text', false);
 INSERT INTO filter_type VALUES(1, 'number', false);
