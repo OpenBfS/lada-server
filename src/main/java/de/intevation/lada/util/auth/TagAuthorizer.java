@@ -26,13 +26,16 @@ public class TagAuthorizer extends BaseAuthorizer {
     public <T> boolean isAuthorized(Object data, RequestMethod method,
         UserInfo userInfo, Class<T> clazz) {
         Tag tag = (Tag) data;
-        int typ = tag.getTyp().getId();
+        String typ = tag.getTypId() != null
+            ? tag.getTypId() : tag.getTyp().getId();
+        String netzbetreiber = tag.getNetzbetreiberId() != null
+            ? tag.getNetzbetreiberId() : tag.getNetzbetreiber().getId();
         switch (typ) {
             //Global tags can not be edited
-            case 1: return false;
+            case "global": return false;
             //Netzbetreiber tags may only be edited by stamm users
-            case 2:
-                List<Integer> funktionen = userInfo.getFunktionenForNetzbetreiber(tag.getNetzbetreiber().getId());
+            case "netzbetreiber":
+                List<Integer> funktionen = userInfo.getFunktionenForNetzbetreiber(netzbetreiber);
                 for (int i = 0; i < funktionen.size(); i++) {
                     if (funktionen.get(i).intValue() == 4) {
                         return true;
@@ -40,7 +43,7 @@ public class TagAuthorizer extends BaseAuthorizer {
                 }
                 break;
             //Messstelle tags my only be edited by members of the respective messstelle
-            case 3:
+            case "mst":
                 for (int i = 0; i < userInfo.getMessstellen().size(); i++) {
                     if (userInfo.getMessstellen().contains(tag.getMstId())) {
                         return true;

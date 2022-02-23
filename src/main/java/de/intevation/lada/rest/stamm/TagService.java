@@ -10,18 +10,12 @@ package de.intevation.lada.rest.stamm;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
-import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -39,13 +33,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-
-import de.intevation.lada.model.TagZuordnungs;
-import de.intevation.lada.model.Tags;
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -162,6 +149,20 @@ public class TagService extends LadaService {
 
     /**
      * Update an existing tag object.
+     * Request:
+     * <pre>
+     * <code>
+     * {
+     *   id: [int], //Tag id
+     *   tag: [string], //Tag text
+     *   netzbetreiberId: [string], //Tag netzbetreiber
+     *   mstId: [string], //Owner mst id
+     *   userId: [integer], //Creator user id
+     *   typId: [string], //Tag type id
+     *   gueltigBis: [integer] //Optional: Expiration date
+     * }
+     * </code>
+     * </pre>
      *
      * @return Response object containing the updated tag object
      */
@@ -179,12 +180,12 @@ public class TagService extends LadaService {
         }
         //Check if tag has changed and is valid
         Tag origTag = repository.getByIdPlain(Tag.class, tag.getId());
-        int tagTyp = tag.getTyp().getId();
-        int origTagTyp = origTag.getTyp().getId();
-        if (tagTyp != origTagTyp) {
+        String tagTyp = tag.getTypId();
+        String origTagTyp = origTag.getTyp().getId();
+        if (!tagTyp.equals(origTagTyp)) {
             //Tags may only changed to global
             //or from messstelle to netzbetreiber
-            if (tagTyp != 1 || tagTyp != 2 && origTagTyp != 3) {
+            if (!tagTyp.equals("global") || !tagTyp.equals("netzbetreiber") && !origTagTyp.equals("mst")) {
                 return new Response(false,
                     StatusCodes.ERROR_VALIDATION, "Invalid tag type change");
             }
@@ -317,17 +318,12 @@ public class TagService extends LadaService {
      * <pre>
      * <code>
      * {
-     *  "tags": [
-     *      {
-     *          tag: [string], //Tag text
-     *          netzbetreiber: [string], //Tag netzbetreiber
-     *          mstId: [string], //Owner mst id
-     *          user: [integer], //Creator user id
-     *          typ: [integer], //Tag type id
-     *      }, {
-     *          //Another tag...
-     *      }
-     *   ]
+     *   tag: [string], //Tag text
+     *   netzbetreiberId: [string], //Tag netzbetreiber
+     *   mstId: [string], //Owner mst id
+     *   userId: [integer], //Creator user id
+     *   typId: [string], //Tag type id
+     *   gueltigBis: [integer] //Optional: Expiration date
      * }
      * </code>
      * </pre>
@@ -337,229 +333,19 @@ public class TagService extends LadaService {
      */
     @POST
     @Path("/")
-    public javax.ws.rs.core.Response createTags(
+    public Response createTags(
         @Context HttpServletRequest request,
-        Tags tags
+        Tag tag
     ) {
-        List<Tag> tagList = tags.getTags();
-        Map<String, Response> responses = new HashMap<String, Response>();
-        tagList.forEach(tag -> {
-            tag.setGeneratedAt(new Timestamp(System.currentTimeMillis()));
-            tag.setGueltigBis(
-                getGueltigBis(tag, new Timestamp(System.currentTimeMillis())));
-            responses.put(tag.getTag(), repository.create(tag));
-        });
-
-        //Create Response
-        JsonObjectBuilder builder = Json.createObjectBuilder();
-        JsonObjectBuilder dataBuilder = Json.createObjectBuilder();
-
-        responses.forEach((tag, response) -> {
-            JsonObjectBuilder responseBuilder = Json.createObjectBuilder();
-            responseBuilder.add("success", response.getSuccess());
-            responseBuilder.add("message", response.getMessage());
-            dataBuilder.add(tag, responseBuilder);
-        });
-
-        builder.add("success", true);
-        builder.add("data", dataBuilder);
-        return javax.ws.rs.core.Response.ok(builder.toString()).build();
-    }
-
-
-    /**
-     * Creates a new reference between a tag and a probe.
-     * The tag can be an existing one or a new one, embedded in the request.
-     * Request for creating a new tag:
-     * <pre>
-     * <code>
-     * {
-     *   "probeId": [Integer],
-     *   "tag": {
-     *     "tag": [String],
-     *     "mstId": [String]
-     *   }
-     * }
-     * </code>
-     * </pre>
-     *
-     * Existing tags can be used with the following request:
-     * <pre>
-     * <code>
-     * {
-     *   "probeId": [Integer],
-     *   "tagId": [Integer]
-     * }
-     * </code>
-     * </pre>
-     * Requests containing both, tag and tagId will be rejected.
-     * Setting a mstId is mandatory, as only global tags have no mstId.
-     */
-    @POST
-    @Path("/zuordnung")
-    public javax.ws.rs.core.Response createTagReference(
-        @Context HttpServletRequest request,
-        TagZuordnungs tagZuordnungs
-    ) {
-        List<TagZuordnung> zuordnungs = tagZuordnungs.getTagZuordnungs();
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        ObjectMapper mapper = new ObjectMapper();
-
-        //Create Response
-        JsonObjectBuilder builder = Json.createObjectBuilder();
-        JsonObjectBuilder dataBuilder = Json.createObjectBuilder();
-
-        for (int i = 0; i < zuordnungs.size(); i++) {
-            JsonObjectBuilder responseBuilder = Json.createObjectBuilder();
-            TagZuordnung zuordnung = zuordnungs.get(i);
-            // Check if payload contains sensible information
-            if (zuordnung == null) {
-                responseBuilder.add("success", false);
-                responseBuilder.add("status", StatusCodes.ERROR_VALIDATION);
-                responseBuilder.add("message", "Not a valid tag");
-                responseBuilder.add("data", "");
-                dataBuilder.add("newZuordnung" + i, responseBuilder);
-                continue;
-            }
-            Tag tag = zuordnung.getTag();
-            Integer tagId = zuordnung.getTagId();
-            if (tag != null && tagId != null
-                || tag == null && tagId == null
-                || zuordnung.getProbeId() != null
-                && zuordnung.getMessungId() != null
-            ) {
-                responseBuilder.add("success", false);
-                responseBuilder.add("status", StatusCodes.ERROR_VALIDATION);
-                responseBuilder.add("message", "Not a valid tag");
-                responseBuilder.add("data", zuordnung.toJson());
-                dataBuilder.add("newZuordnung" + i, responseBuilder);
-                continue;
-            }
-
-            List<String> messstellen =
-                authorization.getInfo(request).getMessstellen();
-
-            if (tag == null) { // Use existing tag
-                //Check if tag is already assigned to the probe
-                final String tagIdParam = "tagId",
-                    mstIdsParam = "mstIds",
-                    taggedIdParam = "taggedId";
-                String idField = zuordnung.getProbeId() != null
-                    ? "probe_id" : "messung_id";
-                Query isAssigned = repository.queryFromString(
-                    "SELECT EXISTS("
-                    + "SELECT 1 FROM land.tagzuordnung "
-                    + "JOIN stamm.tag ON tag_id=tag.id "
-                    + "WHERE tag_id=:" + tagIdParam
-                    + " AND (mst_id IS NULL OR mst_id IN (:" + mstIdsParam + "))"
-                    + " AND " + idField + "=:" + taggedIdParam + ")");
-                isAssigned.setParameter(tagIdParam, zuordnung.getTagId());
-                isAssigned.setParameter(mstIdsParam, messstellen);
-                isAssigned.setParameter(taggedIdParam,
-                    zuordnung.getProbeId() != null
-                    ? zuordnung.getProbeId()
-                    : zuordnung.getMessungId());
-                TagZuordnung exisitingZuordnung
-                        = (TagZuordnung) isAssigned.getSingleResult();
-                if ((Boolean) isAssigned.getSingleResult()) {
-                    responseBuilder.add("success", true);
-                    responseBuilder.add("status", StatusCodes.OK);
-                    responseBuilder.add("message",
-                        "Tag is already assigned to probe");
-                    responseBuilder.add("data", "");
-                    dataBuilder.add(
-                        exisitingZuordnung.getId().toString(), responseBuilder);
-                    continue;
-                }
-
-                tag = repository.getByIdPlain(Tag.class, tagId);
-                String mstId = tag.getMstId();
-                //If user tries to assign a global tag: authorize
-                if (mstId == null) {
-                    Object data;
-                    boolean authorized = false;
-                    if (zuordnung.getMessungId() != null) {
-                        data = repository.getByIdPlain(
-                            Messung.class, zuordnung.getMessungId());
-                        authorized = authorization.isAuthorized(
-                            request,
-                            data,
-                            RequestMethod.PUT,
-                            Messung.class
-                        );
-                    } else {
-                        data = repository.getByIdPlain(
-                            Probe.class, zuordnung.getProbeId());
-                        authorized = authorization.isAuthorized(
-                            request,
-                            data,
-                            RequestMethod.PUT,
-                            Probe.class
-                        );
-                    }
-                    if (!authorized) {
-                        responseBuilder.add("success", true);
-                        responseBuilder.add("status", StatusCodes.NOT_ALLOWED);
-                        responseBuilder.add("message",
-                            "Unathorized");
-                        responseBuilder.add("data", zuordnung.toJson());
-                        dataBuilder.add("newZuordnung" + i, responseBuilder);
-                        continue;
-                    }
-                //Else check if it is the users private tag
-                } else if (!messstellen.contains(mstId)) {
-                        responseBuilder.add("success", true);
-                        responseBuilder.add("status", StatusCodes.ERROR_VALIDATION);
-                        responseBuilder.add("message",
-                            "Invalid mstId");
-                        responseBuilder.add("data", zuordnung.toJson());
-                        dataBuilder.add("newZuordnung" + i, responseBuilder);
-                        continue;
-                }
-
-                zuordnung.setTag(tag);
-
-            } else { // Create new tag
-                String mstId = zuordnung.getTag().getMstId();
-                //mstId may not be null, global tags cannot be created
-                if (mstId == null || !messstellen.contains(mstId)) {
-                    responseBuilder.add("success", true);
-                        responseBuilder.add("status", StatusCodes.NOT_ALLOWED);
-                        responseBuilder.add("message",
-                            "Invalid/empty mstId");
-                        responseBuilder.add("data", zuordnung.toJson());
-                        dataBuilder.add("newZuordnung" + i, responseBuilder);
-                        continue;
-                }
-                if (!repository.create(tag).getSuccess()) {
-                    //TODO Proper response code?
-                    responseBuilder.add("success", true);
-                        responseBuilder.add("status", StatusCodes.ERROR_DB_CONNECTION);
-                        responseBuilder.add("message",
-                            "Failed to create tag");
-                        responseBuilder.add("data", zuordnung.toJson());
-                        dataBuilder.add("newZuordnung" + i, responseBuilder);
-                        continue;
-                }
-            }
-            Response createResponse = repository.create(zuordnung);
-
-            //Extend tag expiring time
-            Date date = new Date();
-            Timestamp now = new Timestamp(date.getTime());
-            tag.setGueltigBis(getGueltigBis(tag, now));
-
-            TagZuordnung newZuordnung = (TagZuordnung) createResponse.getData();
-            responseBuilder.add("success", createResponse.getSuccess());
-            responseBuilder.add("status", StatusCodes.OK);
-            responseBuilder.add("data", newZuordnung.toJson());
-            dataBuilder.add(
-                newZuordnung.getId().toString(), responseBuilder);
+        if (!authorization.isAuthorized(request, tag, RequestMethod.POST, Tag.class)) {
+            return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-
-        builder.add("success", true);
-        builder.add("data", dataBuilder);
-        return javax.ws.rs.core.Response.ok(builder.toString()).build();
+        tag.setGeneratedAt(new Timestamp(System.currentTimeMillis()));
+        if (tag.getGueltigBis() == null) {
+            tag.setGueltigBis(getGueltigBis(tag,
+                new Timestamp(System.currentTimeMillis())));
+        }
+        return repository.create(tag);
     }
 
     /**
@@ -577,105 +363,12 @@ public class TagService extends LadaService {
         @PathParam("id") Integer id
         ) {
             Tag tag = repository.getByIdPlain(Tag.class, id);
+            if (!authorization.isAuthorized(
+                request, tag, RequestMethod.DELETE, Tag.class)) {
+                return new Response(false, StatusCodes.NOT_ALLOWED, null);
+            }
             return repository.delete(tag);
         }
-
-    /**
-     * Delete a reference between a tag and a probe.
-     * @return Response object
-     */
-    @DELETE
-    @Path("/zuordnung")
-    public Response deleteTagReference(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        TagZuordnung tagZuordnung
-    ) {
-        if ((tagZuordnung.getProbeId() == null
-            && tagZuordnung.getMessungId() == null)
-            || tagZuordnung.getTagId() == null
-        ) {
-            return new Response(
-                false, StatusCodes.NOT_ALLOWED, "Invalid TagZuordnung");
-        }
-        boolean global = false;
-        //Check if its a global tag
-        Tag tag = repository.getByIdPlain(
-            Tag.class, tagZuordnung.getTagId());
-        if (tag.getMstId() == null) {
-            Object data;
-            boolean authorized = false;
-            if (tagZuordnung.getMessungId() != null) {
-                data = repository.getByIdPlain(
-                    Messung.class, tagZuordnung.getMessungId());
-                authorized = authorization.isAuthorized(
-                    request,
-                    data,
-                    RequestMethod.PUT,
-                    Messung.class
-                );
-            } else {
-                data = repository.getByIdPlain(
-                    Probe.class, tagZuordnung.getProbeId());
-                authorized = authorization.isAuthorized(
-                    request,
-                    data,
-                    RequestMethod.PUT,
-                    Probe.class
-                );
-            }
-            if (!authorized) {
-                return new Response(
-                    false,
-                    StatusCodes.NOT_ALLOWED,
-                    "Not authorized to delete global tag");
-            } else {
-                global = true;
-            }
-        }
-
-        UserInfo userInfo = authorization.getInfo(request);
-        EntityManager em = repository.entityManager();
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<TagZuordnung> criteriaQuery =
-            builder.createQuery(TagZuordnung.class);
-        Root<TagZuordnung> root = criteriaQuery.from(TagZuordnung.class);
-        Join<TagZuordnung, Tag> joinTagZuordnung =
-            root.join("tag", javax.persistence.criteria.JoinType.LEFT);
-        Predicate tagFilter =
-            builder.equal(root.get("tag").get("id"), tagZuordnung.getTagId());
-        Predicate mstFilter;
-        if (global) {
-            mstFilter = builder.isNull(joinTagZuordnung.get("mstId"));
-        } else {
-            mstFilter = builder.in(
-                joinTagZuordnung.get("mstId")).value(userInfo.getMessstellen());
-        }
-        Predicate filter = builder.and(tagFilter, mstFilter);
-
-        if (tagZuordnung.getProbeId() != null) {
-            Predicate probeFilter =
-                builder.equal(root.get("probeId"), tagZuordnung.getProbeId());
-            filter = builder.and(filter, probeFilter);
-        } else {
-            Predicate messungFilter =
-                builder.equal(
-                    root.get("messungId"), tagZuordnung.getMessungId());
-            filter = builder.and(filter, messungFilter);
-        }
-
-        criteriaQuery.where(filter);
-        List<TagZuordnung> zuordnungs =
-            repository.filterPlain(criteriaQuery);
-
-        // TODO Error code if no zuordnung is found?
-        if (zuordnungs.size() == 0) {
-            return new Response(
-                false, StatusCodes.NOT_ALLOWED, "No valid Tags found");
-        } else {
-            return repository.delete(zuordnungs.get(0));
-        }
-    }
 
     /**
      * Get gueltig bis timestamp for the given tag and timestamp.
@@ -684,20 +377,44 @@ public class TagService extends LadaService {
      * @return Timestamp
      */
     private Timestamp getGueltigBis(Tag tag, Timestamp ts) {
-        switch (tag.getTyp().getId()) {
+        Calendar now;
+        Calendar tagExp;
+        String typ = tag.getTypId() != null
+            ? tag.getTypId() : tag.getTyp().getId();
+        switch (typ) {
             //Global tags do not expire
-            case 1: return null;
+            case "global": return null;
             //Netzbetreiber tags do not expire
-            case 2: return null;
+            case "netzbetreiber": return null;
             //Mst tags expire after 365 days
-            case 3:
+            case "mst":
+                //Check if expiration date needs to be extended
+                if (tag.getGueltigBis() != null) {
+                    tagExp = Calendar.getInstance();
+                    tagExp.setTime(tag.getGueltigBis());
+                    now = Calendar.getInstance();
+                    now.add(Calendar.DAY_OF_YEAR, 365);
+                    if (tagExp.compareTo(now) > 0) {
+                        return tag.getGueltigBis();
+                    }
+                }
                 Calendar mstCal = Calendar.getInstance();
                 mstCal.setTime(ts);
                 mstCal.add(Calendar.DAY_OF_YEAR, 365);
                 ts.setTime(mstCal.getTimeInMillis());
                 return ts;
             //Auto tags expire after 548 days
-            case 4:
+            case "auto":
+                //Check if expiration date needs to be extended
+                if (tag.getGueltigBis() != null) {
+                    tagExp = Calendar.getInstance();
+                    tagExp.setTime(tag.getGueltigBis());
+                    now = Calendar.getInstance();
+                    now.add(Calendar.DAY_OF_YEAR, 548);
+                    if (tagExp.compareTo(now) > 0) {
+                        return tag.getGueltigBis();
+                    }
+                }
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(ts);
                 cal.add(Calendar.DAY_OF_YEAR, 548);

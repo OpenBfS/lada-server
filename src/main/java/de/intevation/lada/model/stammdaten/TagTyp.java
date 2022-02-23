@@ -25,18 +25,18 @@ public class TagTyp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", insertable = false, updatable = false)
-    private Integer id;
+    private String id;
 
     @Column(name = "tagtyp", insertable = false, updatable = false)
     private String tagTyp;
 
     public TagTyp() { }
 
-    public Integer getId() {
+    public String getId() {
         return this.id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

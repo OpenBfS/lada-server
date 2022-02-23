@@ -103,7 +103,7 @@ public class TagZuordnung {
         JsonObjectBuilder tagBuilder = Json.createObjectBuilder();
         builder.add("id", id.toString());
         if (tag.getId() != null) {
-            tagBuilder.add("id", tag.getId().toString());
+            tagBuilder.add("id", tag.getId());
         }
         if (tag.getTag() != null) {
             tagBuilder.add("tag", tag.getTag());

@@ -814,6 +814,12 @@ CREATE TABLE status_reihenfolge (
     UNIQUE(von_id, zu_id)
 );
 
+CREATE TABLE stamm.tag_typ (id text PRIMARY KEY, tagtyp TEXT);
+INSERT INTO stamm.tag_typ VALUES('global', 'Global');
+INSERT INTO stamm.tag_typ VALUES('netzbetreiber', 'Netzbetreiber');
+INSERT INTO stamm.tag_typ VALUES('mst', 'Messstelle');
+INSERT INTO stamm.tag_typ VALUES('auto', 'Auto');
+
 /*
 CREATE FUNCTION populate_status_reihenfolge() RETURNS void AS $$
 DECLARE kombi_from RECORD;
@@ -956,8 +962,13 @@ CREATE TABLE grid_column_values (
 CREATE TABLE tag (
     id serial PRIMARY KEY,
     tag text NOT NULL,
-    mst_id character varying REFERENCES mess_stelle(id),
+    mst_id character varying REFERENCES stamm.mess_stelle(id),
     generated boolean NOT NULL DEFAULT false,
+    netzbetreiber varchar(2) REFERENCES stamm.netz_betreiber,
+    user_id INTEGER REFERENCES stamm.lada_user,
+    typ TEXT REFERENCES stamm.tag_typ,
+    gueltig_bis TIMESTAMP,
+    generated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     UNIQUE(tag, mst_id)
 );
 CREATE UNIQUE INDEX gen_tag_unique_idx ON stamm.tag (tag) WHERE generated = true;

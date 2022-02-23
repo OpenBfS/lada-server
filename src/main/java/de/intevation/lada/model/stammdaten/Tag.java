@@ -19,8 +19,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -42,22 +42,33 @@ public class Tag {
     @Column(name = "mst_id")
     private String mstId;
 
-    @OneToOne
-    @JoinColumn(name = "netzbetreiber", referencedColumnName = "id")
+    @Column(name = "netzbetreiber")
+    private String netzbetreiberId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "netzbetreiber", insertable = false, updatable = false)
+    @JsonIgnore
     private NetzBetreiber netzbetreiber;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @Column(name = "user_id")
+    private Integer userId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JsonIgnore
     private LadaUser user;
 
-    @OneToOne
-    @JoinColumn(name = "typ", referencedColumnName = "id")
+    @Column(name = "typ")
+    private String typId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "typ", insertable = false, updatable = false)
     private TagTyp typ;
 
     @Column(name = "gueltig_bis")
     private Timestamp gueltigBis;
 
-    @Column(name = "generated_at")
+    @Column(name = "generated_at", insertable = false, updatable = false)
     private Timestamp generatedAt;
 
     @OneToMany(mappedBy = "tag", fetch = FetchType.EAGER)
@@ -160,4 +171,27 @@ public class Tag {
         this.readonly = readonly;
     }
 
+    public String getNetzbetreiberId() {
+        return netzbetreiberId;
+    }
+
+    public void setNetzbetreiberId(String netzbetreiberId) {
+        this.netzbetreiberId = netzbetreiberId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public String getTypId() {
+        return typId;
+    }
+
+    public void setTypId(String typId) {
+        this.typId = typId;
+    }
 }
