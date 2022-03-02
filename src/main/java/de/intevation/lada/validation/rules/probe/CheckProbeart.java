@@ -22,16 +22,19 @@ import de.intevation.lada.validation.rules.Rule;
 @ValidationRule("Probe")
 public class CheckProbeart implements Rule {
 
+    private static final Integer DATENBASIS_161 = 1;
+    private static final Integer PROBENART_INDIVIDUAL = 1;
+
     @Override
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
         Timestamp end = probe.getProbeentnahmeEnde();
         Timestamp begin = probe.getProbeentnahmeBeginn();
         if (probe.getProbenartId() != null
-             && probe.getDatenbasisId() != 1) {
+            && !DATENBASIS_161.equals(probe.getDatenbasisId())) {
           if (begin != null && end != null
               && !begin.equals(end)
-              && probe.getProbenartId() == 1) {
+              && PROBENART_INDIVIDUAL.equals(probe.getProbenartId())) {
             Violation violation = new Violation();
             violation.addWarning("probenartId", StatusCodes.VAL_SINGLE_DATE);
             return violation;
