@@ -81,6 +81,7 @@ public class LafImportService extends LadaService {
     @Inject
     ImportJobManager importJobManager;
 
+    @Inject
     private TagUtil tagUtil;
 
     /**

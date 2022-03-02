@@ -97,6 +97,16 @@ public class ImporterTest extends BaseTest {
     private static final int T17 = 17;
     private static final Integer DID9 = 9;
 
+    private final String laf = "%PROBE%\n"
+        + "UEBERTRAGUNGSFORMAT \"7\"\n"
+        + "VERSION \"0084\"\n"
+        + "PROBE_ID \"XXX\"\n"
+        + "MESSSTELLE \"06010\"\n"
+        + "PROBENART \"E\"\n"
+        + "MESSPROGRAMM_S 1\n"
+        + "DATENBASIS_S 02\n"
+        + "%ENDE%\n";
+
     @Inject
     Logger internalLogger;
 
@@ -734,6 +744,44 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
+     * Test synchronous import of a Probe object.
+     */
+    @Test
+    @InSequence(18)
+    @RunAsClient
+    public final void testImportProbe(
+        @ArquillianResource URL baseUrl
+    ) {
+        Protocol prot = new Protocol();
+        prot.setName("syncimport service");
+        prot.setType("laf");
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        /* Request synchronous import */
+        Response importResponse = client.target(
+            baseUrl + "data/import/laf")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header("X-LADA-MST", "06010")
+            .post(Entity.entity(laf, MediaType.TEXT_PLAIN));
+        JsonObject importResponseObject = parseResponse(importResponse, prot);
+
+        /* Check if a Probe object has been imported */
+        final String dataKey = "data";
+        assertContains(importResponseObject, dataKey);
+        JsonObject data = importResponseObject.getJsonObject(dataKey);
+
+        final String probeIdsKey = "probeIds";
+        assertContains(data, probeIdsKey);
+        Assert.assertEquals(1,
+            data.getJsonArray(probeIdsKey).size());
+
+        prot.setPassed(true);
+    }
+
+    /**
      * Test asynchronous import of a Probe object.
      */
     @Test
@@ -747,9 +795,6 @@ public class ImporterTest extends BaseTest {
         prot.setType("laf");
         prot.setPassed(false);
         testProtocol.add(prot);
-
-        // TODO: Provide valid LAF.
-        final String laf = "%PROBE%\n%ENDE%";
 
         /* Request asynchronous import */
         JsonObject requestJson = Json.createObjectBuilder()
