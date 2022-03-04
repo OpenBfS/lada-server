@@ -43,13 +43,12 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST-Service for the probe tags.
+ * REST-Service for associations of tags to objects.
  */
 
 @Path("rest/tag/zuordnung")
@@ -61,9 +60,6 @@ public class TagZuordnungService extends LadaService {
     @Inject
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
-
-    @Inject
-    private TagUtil tagUtil;
 
     /**
      * Creates a new reference between a tag and a probe.
@@ -218,6 +214,8 @@ public class TagZuordnungService extends LadaService {
                 zuordnung.setTag(tag);
 
             } else { // Create new tag
+                // TODO: Why does this code exist? Creating tags should be done
+                // via TagService.
                 String mstId = zuordnung.getTag().getMstId();
                 //mstId may not be null, global tags cannot be created
                 if (mstId == null || !messstellen.contains(mstId)) {
@@ -363,6 +361,7 @@ public class TagZuordnungService extends LadaService {
      * @param ts Timestamp to use as base
      * @return Timestamp
      */
+    // TODO: Duplicates a fair amount of code in TagService
     private Timestamp getGueltigBis(Tag tag, Timestamp ts) {
         Calendar now;
         Calendar tagExp;

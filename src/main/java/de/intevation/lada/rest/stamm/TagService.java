@@ -43,7 +43,7 @@ import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST-Service for the probe tags.
+ * REST-Service for tags.
  */
 
 @Path("rest/tag")
@@ -67,7 +67,7 @@ public class TagService extends LadaService {
      */
     @GET
     @Path("/")
-    public Response getTags(
+    public Response get(
         @Context HttpServletRequest request,
         @Context UriInfo info
     ) {
@@ -181,7 +181,10 @@ public class TagService extends LadaService {
         if (!tagTyp.equals(origTagTyp)) {
             //Tags may only changed to global
             //or from messstelle to netzbetreiber
-            if (!tagTyp.equals("global") || !tagTyp.equals("netzbetreiber") && !origTagTyp.equals("mst")) {
+            // TODO: Make sure this works as expected!
+            if (!tagTyp.equals("global")
+                || !tagTyp.equals("netzbetreiber") && !origTagTyp.equals("mst")
+            ) {
                 return new Response(false,
                     StatusCodes.ERROR_VALIDATION, "Invalid tag type change");
             }
@@ -215,11 +218,12 @@ public class TagService extends LadaService {
      */
     @POST
     @Path("/")
-    public Response createTags(
+    public Response create(
         @Context HttpServletRequest request,
         Tag tag
     ) {
-        if (!authorization.isAuthorized(request, tag, RequestMethod.POST, Tag.class)) {
+        if (!authorization.isAuthorized(
+                request, tag, RequestMethod.POST, Tag.class)) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         tag.setGeneratedAt(new Timestamp(System.currentTimeMillis()));
@@ -239,7 +243,7 @@ public class TagService extends LadaService {
      */
     @DELETE
     @Path("/{id}")
-    public Response deleteTag(
+    public Response delete(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
         @PathParam("id") Integer id
