@@ -42,11 +42,17 @@ public class Stammdaten {
     public Stammdaten() {
         matchers = new HashMap<String, Matcher>();
         matchers.put("datenbasis",
-            Matchers.containsInAnyOrder("id", "beschreibung", "datenbasis")
+            Matchers.containsInAnyOrder(
+                "id",
+                "letzteAenderung",
+                "beschreibung",
+                "datenbasis"
+            )
         );
         matchers.put("messeinheit",
             Matchers.containsInAnyOrder(
                 "id",
+                "letzteAenderung",
                 "beschreibung",
                 "einheit",
                 "eudfMesseinheitId",
@@ -57,6 +63,7 @@ public class Stammdaten {
         matchers.put("messgroesse",
             Matchers.containsInAnyOrder(
                 "id",
+                "letzteAenderung",
                 "beschreibung",
                 "defaultFarbe",
                 "eudfNuklidId",
@@ -67,11 +74,17 @@ public class Stammdaten {
             )
         );
         matchers.put("messmethode",
-            Matchers.containsInAnyOrder("id", "beschreibung", "messmethode")
+            Matchers.containsInAnyOrder(
+                "id",
+                "letzteAenderung",
+                "beschreibung",
+                "messmethode"
+            )
         );
         matchers.put("messstelle",
             Matchers.containsInAnyOrder(
                 "id",
+                "letzteAenderung",
                 "amtskennung",
                 "beschreibung",
                 "messStelle",
@@ -82,6 +95,7 @@ public class Stammdaten {
         matchers.put("netzbetreiber",
             Matchers.containsInAnyOrder(
                 "id",
+                "letzteAenderung",
                 "aktiv",
                 "idfNetzbetreiber",
                 "isBmn",
@@ -92,6 +106,7 @@ public class Stammdaten {
         matchers.put("pflichtmessgroesse",
             Matchers.containsInAnyOrder(
                 "id",
+                "letzteAenderung",
                 "messgroesseId",
                 "datenbasisId",
                 "messMethodeId",
@@ -101,6 +116,7 @@ public class Stammdaten {
         matchers.put("probenart",
             Matchers.containsInAnyOrder(
                 "id",
+                "letzteAenderung",
                 "beschreibung",
                 "probenart",
                 "probenartEudfId"
@@ -109,6 +125,7 @@ public class Stammdaten {
         matchers.put("probenzusatz",
             Matchers.containsInAnyOrder(
                 "id",
+                "letzteAenderung",
                 "beschreibung",
                 "eudfKeyword",
                 "zusatzwert",
@@ -137,24 +154,30 @@ public class Stammdaten {
             )
         );
         matchers.put("koordinatenart",
-            Matchers.containsInAnyOrder("id", "idfGeoKey", "koordinatenart")
+            Matchers.containsInAnyOrder(
+                "id",
+                "letzteAenderung",
+                "idfGeoKey",
+                "koordinatenart"
+            )
         );
         matchers.put("staat",
             Matchers.containsInAnyOrder(
                 "id",
+                "letzteAenderung",
                 "eu",
                 "hklId",
                 "koordXExtern",
                 "koordYExtern",
                 "staat",
                 "staatIso",
-                "staatKurz",
                 "kdaId"
             )
         );
         matchers.put("umwelt",
             Matchers.containsInAnyOrder(
                 "id",
+                "letzteAenderung",
                 "beschreibung",
                 "umweltBereich",
                 "mehId",

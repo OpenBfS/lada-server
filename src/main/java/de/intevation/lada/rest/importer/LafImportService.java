@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
 
 import de.intevation.lada.importer.ImportConfig;
 import de.intevation.lada.importer.ImportFormat;
+import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.importer.Importer;
 import de.intevation.lada.importer.laf.LafImporter;
 import de.intevation.lada.model.stammdaten.ImporterConfig;
@@ -76,6 +77,9 @@ public class LafImportService extends LadaService {
     @Inject
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
+
+    @Inject
+    ImportJobManager importJobManager;
 
     @Inject
     private TagUtil tagUtil;
@@ -247,6 +251,8 @@ public class LafImportService extends LadaService {
                 responseData.put("tag", newTag.getTag());
             });
         }
+        System.out.println(importResponseData.get("errors"));
+        System.out.println(importResponseData.get("warnings"));
         return new Response(success, StatusCodes.OK, importResponseData);
     }
 

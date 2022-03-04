@@ -60,7 +60,7 @@ public interface Exporter {
      */
     default InputStream export(
         List<Map<String, Object>> result,
-        String encoding,
+        Charset encoding,
         JsonObject options,
         ArrayList<String> columnsToInclude,
         Integer qId
@@ -86,7 +86,7 @@ public interface Exporter {
      */
     default InputStream export(
         List<Map<String, Object>> result,
-        String encoding,
+        Charset encoding,
         JsonObject options,
         ArrayList<String> columnsToInclude,
         Integer qId,

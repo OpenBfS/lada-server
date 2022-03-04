@@ -55,7 +55,8 @@ public class KdaUtilTest {
          *     WHERE srid = 31466
          */
         KdaUtil.KDA_GK,
-        Map.of("x", "2577687.65820815", "y", "5622631.72513064"),
+        Map.of("x", "2577688", "y", "5622632"),
+        //Map.of("x", "2577687.65820815", "y", "5622631.72513064"),
 
         // 2:
         // SELECT ST_AsLatLonText(ST_SetSRID(
@@ -71,15 +72,18 @@ public class KdaUtilTest {
 
         // 5: CRS = 32632, zone prepended to "x"
         KdaUtil.KDA_UTM_WGS84,
-        Map.of("x", "32365908.607704498", "y", "5621966.21754899"),
+        Map.of("x", "32365909", "y", "5621966"),
+        //Map.of("x", "32365908.607704498", "y", "5621966.21754899"),
 
         // 6: CRS = 25832, zone prepended to "x"
         KdaUtil.KDA_UTM_ETRS89,
-        Map.of("x", "32365908.607703176", "y", "5621966.21742558"),
+        Map.of("x", "32365909", "y", "5621966"),
+        //Map.of("x", "32365908.607703176", "y", "5621966.21742558"),
 
         // 8: CRS = 23032, zone prepended to "x"
         KdaUtil.KDA_UTM_ED50,
-        Map.of("x", "32365990.950936107", "y", "5622168.57949754")
+        Map.of("x", "32365991", "y", "5622169")
+        //Map.of("x", "32365990.950936107", "y", "5622168.57949754")
     );
 
     private static final int NON_EXISTANT_KDA = 9999;

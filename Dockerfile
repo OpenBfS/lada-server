@@ -92,7 +92,7 @@ RUN sed -i '/<\/dependencies>/i         <module name="org.postgres"/>' \
     $WFLY_MODULES/org/jboss/ironjacamar/jdbcadapters/main/module.xml
 RUN ln -fs $PWD/wildfly/standalone.conf $JBOSS_HOME/bin/
 
-RUN wildfly/execute.sh
+RUN $JBOSS_HOME/bin/jboss-cli.sh --file=wildfly/commands.cli
 
 #
 # Build and deploy LADA-server

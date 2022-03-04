@@ -290,6 +290,11 @@ public class OrtService extends LadaService {
                 Ort.class
             )
         );
+        Violation violation = validator.validate(ort);
+            if (violation.hasErrors() || violation.hasWarnings()) {
+                ort.setErrors(violation.getErrors());
+                ort.setWarnings(violation.getWarnings());
+            }
         return new Response(true, StatusCodes.OK, ort);
     }
 

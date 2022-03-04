@@ -74,7 +74,7 @@ public class ProbenzusatzService extends LadaService {
         @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("umwId")) {
+        if (params.isEmpty() || !params.containsKey("umwId") || params.getFirst("umwId").equals("") || params.getFirst("umwId") == null) {
             return repository.getAll(ProbenZusatz.class);
         }
         String umwId = params.getFirst("umwId");

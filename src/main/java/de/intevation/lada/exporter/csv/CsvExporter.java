@@ -12,6 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
@@ -156,19 +157,16 @@ public class CsvExporter implements Exporter {
      * @param locale Locale to use
      * @return Export result as input stream or null if the export failed
      */
+    @Override
     public InputStream export(
         List<Map<String, Object>> queryResult,
-        String encoding,
+        Charset encoding,
         JsonObject options,
         ArrayList<String> columnsToInclude,
         Integer qId,
         Locale locale
     ) {
         ResourceBundle i18n = ResourceBundle.getBundle(BUNDLE_FILE, locale);
-
-        if (queryResult == null || queryResult.size() == 0) {
-            return null;
-        }
 
         char decimalSeparator = CsvOptions.valueOf("period").getChar();
         char fieldSeparator = CsvOptions.valueOf("comma").getChar();
@@ -281,7 +279,8 @@ public class CsvExporter implements Exporter {
             return new ByteArrayInputStream(
                 result.toString().getBytes(encoding));
         } catch (UnsupportedEncodingException uee) {
-            logger.error(String.format("Unsupported encoding: %s", encoding));
+            logger.error(
+                String.format("Unsupported encoding: %s", encoding.name()));
             return null;
         } catch (IOException ioe) {
             logger.error(ioe.toString());

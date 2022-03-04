@@ -353,12 +353,11 @@ public class UniversalServiceTest extends BaseTest {
 
         assertContains(responseJson, totalCountKey);
 
-        // Filtered for a unique hauptproben_nr
         Assert.assertEquals(
             0, responseJson.getInt(totalCountKey));
 
         assertContains(responseJson, dataKey);
-        Assert.assertTrue(responseJson.isNull(dataKey));
+        Assert.assertTrue(responseJson.getJsonArray(dataKey).isEmpty());
 
         prot.setPassed(true);
     }
