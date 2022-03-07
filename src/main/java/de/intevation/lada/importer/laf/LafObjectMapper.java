@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import de.intevation.lada.factory.OrtFactory;
@@ -2222,7 +2221,7 @@ public class LafObjectMapper {
             for (int i =  0; i < value.length() - 4; i += 2) {
                 tmp.add(value.substring(i, i + 2));
             }
-            probe.setMediaDesk(StringUtils.join(tmp.toArray(), " "));
+            probe.setMediaDesk(String.join(" ", tmp));
         }
 
         if ("TESTDATEN".equals(key)) {
