@@ -183,7 +183,7 @@ public class TagService extends LadaService {
             //Tags may only changed to global
             //or from messstelle to netzbetreiber
             if (!tagTyp.equals(TagTyp.TAG_TYPE_GLOBAL)
-                || !tagTyp.equals(TagTyp.TAG_TYPE_NETZBETREIBER) && !origTagTyp.equals(TagTyp.TAG_TYPE_MST)) {
+                && !(tagTyp.equals(TagTyp.TAG_TYPE_NETZBETREIBER) && origTagTyp.equals(TagTyp.TAG_TYPE_MST))) {
                 return new Response(false,
                     StatusCodes.ERROR_VALIDATION, "Invalid tag type change");
             }

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.stammdaten.TagTyp;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -34,14 +35,14 @@ public class TagAuthorizer extends BaseAuthorizer {
             ? tag.getTypId() : tag.getTyp().getId();
         switch (typ) {
             //Netzbetreiber tags may only be edited by stamm users
-            case "netzbetreiber":
+            case TagTyp.TAG_TYPE_NETZBETREIBER:
                 String netzbetreiber = tag.getNetzbetreiberId() != null
                     ? tag.getNetzbetreiberId()
                     : tag.getNetzbetreiber().getId();
                 return userInfo.getFunktionenForNetzbetreiber(
                     netzbetreiber).contains(4);
             // Tags my only be edited by members of the referenced Messstelle
-            case "mst":
+            case TagTyp.TAG_TYPE_MST:
                 return userInfo.getMessstellen().contains(tag.getMstId());
             // Global tags (and anything unknown) can not be edited
             default:
