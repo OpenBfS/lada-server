@@ -22,6 +22,17 @@ import javax.persistence.Table;
 @Table(name = "tag_typ", schema = SchemaName.NAME)
 public class TagTyp {
 
+    //Constants
+    //Default time after which mst tags expire in days
+    public static final int MST_TAG_EXPIRATION_TIME = 365;
+    //Default time after which auto tags expire in days
+    public static final int AUTO_TAG_EXPIRATION_TIME = 584;
+    //Tag type ids
+    public static final String TAG_TYPE_GLOBAL = "global";
+    public static final String TAG_TYPE_NETZBETREIBER = "netzbetreiber";
+    public static final String TAG_TYPE_MST = "mst";
+    public static final String TAG_TYPE_AUTO = "auto";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", insertable = false, updatable = false)

@@ -31,6 +31,7 @@ import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.stammdaten.TagTyp;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -181,10 +182,8 @@ public class TagService extends LadaService {
         if (!tagTyp.equals(origTagTyp)) {
             //Tags may only changed to global
             //or from messstelle to netzbetreiber
-            // TODO: Make sure this works as expected!
-            if (!tagTyp.equals("global")
-                || !tagTyp.equals("netzbetreiber") && !origTagTyp.equals("mst")
-            ) {
+            if (!tagTyp.equals(TagTyp.TAG_TYPE_GLOBAL)
+                || !tagTyp.equals(TagTyp.TAG_TYPE_NETZBETREIBER) && !origTagTyp.equals(TagTyp.TAG_TYPE_MST)) {
                 return new Response(false,
                     StatusCodes.ERROR_VALIDATION, "Invalid tag type change");
             }
@@ -269,41 +268,41 @@ public class TagService extends LadaService {
             ? tag.getTypId() : tag.getTyp().getId();
         switch (typ) {
             //Global tags do not expire
-            case "global": return null;
+            case TagTyp.TAG_TYPE_GLOBAL: return null;
             //Netzbetreiber tags do not expire
-            case "netzbetreiber": return null;
+            case TagTyp.TAG_TYPE_NETZBETREIBER: return null;
             //Mst tags expire after 365 days
-            case "mst":
+            case TagTyp.TAG_TYPE_MST:
                 //Check if expiration date needs to be extended
                 if (tag.getGueltigBis() != null) {
                     tagExp = Calendar.getInstance();
                     tagExp.setTime(tag.getGueltigBis());
                     now = Calendar.getInstance();
-                    now.add(Calendar.DAY_OF_YEAR, 365);
+                    now.add(Calendar.DAY_OF_YEAR, TagTyp.MST_TAG_EXPIRATION_TIME);
                     if (tagExp.compareTo(now) > 0) {
                         return tag.getGueltigBis();
                     }
                 }
                 Calendar mstCal = Calendar.getInstance();
                 mstCal.setTime(ts);
-                mstCal.add(Calendar.DAY_OF_YEAR, 365);
+                mstCal.add(Calendar.DAY_OF_YEAR, TagTyp.MST_TAG_EXPIRATION_TIME);
                 ts.setTime(mstCal.getTimeInMillis());
                 return ts;
             //Auto tags expire after 548 days
-            case "auto":
+            case TagTyp.TAG_TYPE_AUTO:
                 //Check if expiration date needs to be extended
                 if (tag.getGueltigBis() != null) {
                     tagExp = Calendar.getInstance();
                     tagExp.setTime(tag.getGueltigBis());
                     now = Calendar.getInstance();
-                    now.add(Calendar.DAY_OF_YEAR, 548);
+                    now.add(Calendar.DAY_OF_YEAR, TagTyp.AUTO_TAG_EXPIRATION_TIME);
                     if (tagExp.compareTo(now) > 0) {
                         return tag.getGueltigBis();
                     }
                 }
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(ts);
-                cal.add(Calendar.DAY_OF_YEAR, 548);
+                cal.add(Calendar.DAY_OF_YEAR, TagTyp.AUTO_TAG_EXPIRATION_TIME);
                 ts.setTime(cal.getTimeInMillis());
                 return ts;
             default: return null;
