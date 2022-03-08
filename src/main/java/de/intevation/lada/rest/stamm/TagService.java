@@ -262,7 +262,7 @@ public class TagService extends LadaService {
      * @param ts Timestamp to use as base
      * @return Timestamp
      */
-    private Timestamp getGueltigBis(Tag tag, Timestamp ts) {
+    public static Timestamp getGueltigBis(Tag tag, Timestamp ts) {
         Calendar now;
         Calendar tagExp;
         String typ = tag.getTypId() != null

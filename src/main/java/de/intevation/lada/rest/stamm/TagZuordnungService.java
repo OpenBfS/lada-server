@@ -8,7 +8,6 @@
 package de.intevation.lada.rest.stamm;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +31,6 @@ import javax.ws.rs.core.HttpHeaders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import de.intevation.lada.model.TagZuordnungs;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.TagZuordnung;
@@ -80,10 +78,12 @@ public class TagZuordnungService extends LadaService {
      * Existing tags can be used with the following request:
      * <pre>
      * <code>
-     * {
+     * [{
      *   "probeId": [Integer],
      *   "tagId": [Integer]
-     * }
+     * }, {
+     *    ...
+     * }]
      * </code>
      * </pre>
      * Requests containing both, tag and tagId will be rejected.
@@ -93,9 +93,8 @@ public class TagZuordnungService extends LadaService {
     @Path("/")
     public javax.ws.rs.core.Response createTagReference(
         @Context HttpServletRequest request,
-        TagZuordnungs tagZuordnungs
+        List<TagZuordnung> zuordnungs
     ) {
-        List<TagZuordnung> zuordnungs = tagZuordnungs.getTagZuordnungs();
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         ObjectMapper mapper = new ObjectMapper();
 
@@ -243,7 +242,7 @@ public class TagZuordnungService extends LadaService {
             //Extend tag expiring time
             Date date = new Date();
             Timestamp now = new Timestamp(date.getTime());
-            tag.setGueltigBis(getGueltigBis(tag, now));
+            tag.setGueltigBis(TagService.getGueltigBis(tag, now));
 
             TagZuordnung newZuordnung = (TagZuordnung) createResponse.getData();
             responseBuilder.add("success", createResponse.getSuccess());
@@ -354,6 +353,7 @@ public class TagZuordnungService extends LadaService {
             return repository.delete(zuordnungs.get(0));
         }
     }
+<<<<<<< HEAD
 
     /**
      * Get gueltig bis timestamp for the given tag and timestamp.
@@ -404,4 +404,6 @@ public class TagZuordnungService extends LadaService {
             default: return null;
         }
     }
+=======
+>>>>>>> Remove redundant functions and classes in Tag and TagZuordnungService
 }
