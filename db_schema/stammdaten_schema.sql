@@ -1014,9 +1014,9 @@ CREATE TABLE tag (
     generated boolean NOT NULL DEFAULT false,
     netzbetreiber varchar(2) REFERENCES stamm.netz_betreiber,
     user_id INTEGER REFERENCES stamm.lada_user,
-    typ TEXT REFERENCES stamm.tag_typ,
-    gueltig_bis TIMESTAMP,
-    generated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    typ TEXT REFERENCES stamm.tag_typ NOT NULL,
+    gueltig_bis TIMESTAMP without time zone,
+    generated_at TIMESTAMP without time zone NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE(tag, mst_id)
 );
 CREATE UNIQUE INDEX gen_tag_unique_idx ON stamm.tag (tag) WHERE generated = true;
