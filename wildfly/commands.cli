@@ -8,5 +8,9 @@ data-source add --jndi-name=java:/jboss/lada --name=lada --connection-url=jdbc:p
 data-source add --jndi-name=java:/jboss/lada-test --name=lada-test --connection-url=jdbc:postgresql_postGIS://lada_db:5432/lada_test --driver-name=postgres --user-name=lada_test --password=lada_test
 /subsystem=undertow/server=default-server/http-listener=default/:write-attribute(name=max-post-size,value=1398149)
 /subsystem=undertow/server=default-server/https-listener=https/:write-attribute(name=max-post-size,value=1398149)
+/subsystem=logging/console-handler=CONSOLE:write-attribute(name=level, value=DEBUG)
+/subsystem=logging/logger=de.intevation.lada:add(level=DEBUG)
+/subsystem=logging/size-rotating-file-handler=laf:add(file={path=laf.log, relative-to="jboss.server.log.dir"}, formatter="%d{yyyyMMdd-HH:mm}: %-5p %c{1} - %m%n")
+/subsystem=logging/logger=import:add(handlers=[laf], level=DEBUG)
 run-batch
 stop-embedded-server

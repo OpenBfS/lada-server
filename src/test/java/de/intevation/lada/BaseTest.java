@@ -94,7 +94,6 @@ public class BaseTest {
         WebArchive archive = ShrinkWrap.create(WebArchive.class, archiveName)
             .addPackages(true, ClassLoader.getSystemClassLoader()
                 .getDefinedPackage("de.intevation.lada"))
-            .addAsResource("log4j.properties", "log4j.properties")
             .addAsResource("shibboleth.properties", "shibboleth.properties")
             .addAsResource("lada_server_en.properties", "lada_server_en.properties")
             .addAsResource("lada_server_de.properties", "lada_server_de.properties")
