@@ -342,7 +342,7 @@ public class LafImportService extends LadaService {
      * @param mstId Id from Header
      * @param content The laf file content
      */
-    private void logLAFFile(String mstId, String content, Charset enc) {
+    public static void logLAFFile(String mstId, String content, Charset enc) {
         DateFormat df = new SimpleDateFormat("yyyyMMddHHmmssS");
         Date now = new Date();
         // Create filename for imported laf
