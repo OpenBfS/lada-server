@@ -421,6 +421,12 @@
             <artifactId>arquillian-persistence-dbunit</artifactId>
             <version>${arquillian.persistence.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
@@ -454,6 +460,11 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <skip>false</skip>
+                            <systemPropertyVariables>
+                                <java.util.logging.manager>
+                                    org.jboss.logmanager.LogManager
+                                </java.util.logging.manager>
+                            </systemPropertyVariables>
                         </configuration>
                     </plugin>
                 </plugins>

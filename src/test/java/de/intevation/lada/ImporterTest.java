@@ -27,7 +27,6 @@ import javax.ws.rs.client.SyncInvoker;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -106,9 +105,6 @@ public class ImporterTest extends BaseTest {
         + "MESSPROGRAMM_S 1\n"
         + "DATENBASIS_S 02\n"
         + "%ENDE%\n";
-
-    @Inject
-    Logger internalLogger;
 
     @PersistenceContext
     EntityManager em;
