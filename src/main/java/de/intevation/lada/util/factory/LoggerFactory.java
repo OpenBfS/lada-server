@@ -11,7 +11,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 
 @ApplicationScoped

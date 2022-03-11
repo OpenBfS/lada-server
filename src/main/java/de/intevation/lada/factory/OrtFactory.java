@@ -12,7 +12,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.Query;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;

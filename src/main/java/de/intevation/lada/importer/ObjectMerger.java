@@ -12,7 +12,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.land.KommentarM;
 import de.intevation.lada.model.land.KommentarP;
