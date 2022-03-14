@@ -1475,10 +1475,12 @@ public class LafObjectMapper {
         }
 
         // Validator: StatusAssignment
-        StatusProtokoll tmpStatus = new StatusProtokoll();
-        tmpStatus = currentStatus;
-        tmpStatus.setStatusKombi(newKombi);
-        Violation statusViolation = statusValidator.validate(tmpStatus);
+        StatusProtokoll newStatus = new StatusProtokoll();
+        newStatus.setDatum(new Timestamp(new Date().getTime()));
+        newStatus.setMessungsId(messung.getId());
+        newStatus.setMstId(mstId);
+        newStatus.setStatusKombi(newKombi);
+        Violation statusViolation = statusValidator.validate(newStatus);
 
         if (statusViolation.hasWarnings()) {
             statusViolation.getWarnings().forEach((k, v) -> {
@@ -1522,11 +1524,7 @@ public class LafObjectMapper {
             || (statusStufe == 3
                 && userInfo.getFunktionen().contains(3))
         ) {
-            StatusProtokoll newStatus = new StatusProtokoll();
-            newStatus.setDatum(new Timestamp(new Date().getTime()));
-            newStatus.setMessungsId(messung.getId());
-            newStatus.setMstId(mstId);
-            newStatus.setStatusKombi(newKombi);
+            //persist newStatus if authorized to do so
             repository.create(newStatus);
             if (newKombi == 0 || newKombi == 9 || newKombi == 13) {
                 messung.setFertig(false);
