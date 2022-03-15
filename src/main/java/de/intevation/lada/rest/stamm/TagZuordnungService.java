@@ -102,6 +102,7 @@ public class TagZuordnungService extends LadaService {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         JsonObjectBuilder dataBuilder = Json.createObjectBuilder();
 
+        System.out.println("Zuordnung size: " + zuordnungs.size());
         for (int i = 0; i < zuordnungs.size(); i++) {
             JsonObjectBuilder responseBuilder = Json.createObjectBuilder();
             TagZuordnung zuordnung = zuordnungs.get(i);
@@ -152,8 +153,6 @@ public class TagZuordnungService extends LadaService {
                     zuordnung.getProbeId() != null
                     ? zuordnung.getProbeId()
                     : zuordnung.getMessungId());
-                TagZuordnung exisitingZuordnung
-                        = (TagZuordnung) isAssigned.getSingleResult();
                 if ((Boolean) isAssigned.getSingleResult()) {
                     responseBuilder.add("success", true);
                     responseBuilder.add("status", StatusCodes.OK);
@@ -161,7 +160,7 @@ public class TagZuordnungService extends LadaService {
                         "Tag is already assigned to probe");
                     responseBuilder.add("data", "");
                     dataBuilder.add(
-                        exisitingZuordnung.getId().toString(), responseBuilder);
+                        zuordnung.getTagId().toString(), responseBuilder);
                     continue;
                 }
 
@@ -254,7 +253,7 @@ public class TagZuordnungService extends LadaService {
 
         builder.add("success", true);
         builder.add("data", dataBuilder);
-        return javax.ws.rs.core.Response.ok(builder.toString()).build();
+        return javax.ws.rs.core.Response.ok(builder.build().toString()).build();
     }
 
     /**
