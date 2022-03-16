@@ -291,7 +291,7 @@ public class LafObjectMapper {
             if (i == Identified.UPDATE) {
                 isAuthorizedOld =
                     authorizer.isAuthorized(userInfo, old, Probe.class);
-                oldProbeIsReadonly = authorizer.isReadOnly(old.getId());
+                oldProbeIsReadonly = authorizer.isProbeReadOnly(old.getId());
                 if (isAuthorizedOld) {
                     if (oldProbeIsReadonly) {
                         newProbe = old;

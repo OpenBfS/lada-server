@@ -83,7 +83,7 @@ public class TestAuthorization implements Authorization {
     }
 
     @Override
-    public boolean isReadOnly(Integer probeId) {
+    public boolean isProbeReadOnly(Integer probeId) {
         return false;
     }
 

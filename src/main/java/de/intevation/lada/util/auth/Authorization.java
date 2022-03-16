@@ -33,7 +33,7 @@ public interface Authorization {
         Object data,
         Class<T> clazz);
 
-    boolean isReadOnly(Integer probeId);
+    boolean isProbeReadOnly(Integer probeId);
 
     boolean isMessungReadOnly(Integer messungId);
 }

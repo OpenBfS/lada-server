@@ -34,7 +34,6 @@ import de.intevation.lada.model.stammdaten.LadaUser;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Probenehmer;
-import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -225,32 +224,18 @@ public class HeaderAuthorization implements Authorization {
      * @return True if the probe is readonly.
      */
     @Override
-    public boolean isReadOnly(Integer probeId) {
-        QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
-        builder.and("probeId", probeId);
-        Response response = repository.filter(builder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<Messung> messungen = (List<Messung>) response.getData();
-        for (int i = 0; i < messungen.size(); i++) {
-            if (messungen.get(i).getStatus() == null) {
-                continue;
-            }
-            StatusProtokoll status =
-                repository.getByIdPlain(
-                    StatusProtokoll.class,
-                    messungen.get(i).getStatus()
-                );
-            StatusKombi kombi = repository.getByIdPlain(
-                StatusKombi.class, status.getStatusKombi());
-            if (kombi.getStatusWert().getId() != 0
-                && kombi.getStatusWert().getId() != 4
-            ) {
-                return true;
-            }
-        }
-        return false;
+    public boolean isProbeReadOnly(Integer probeId) {
+        Authorizer a = authorizers.get(Probe.class);
+        return a.isProbeReadOnly(probeId);
     }
 
+    /**
+     * Test whether a Messung object is readonly.
+     *
+     * @param messungId   The ID of the Messung object.
+     * @return True if the Messung object is readonly.
+     */
+    @Override
     public boolean isMessungReadOnly(Integer messungId) {
         Authorizer a = authorizers.get(Messung.class);
         return a.isMessungReadOnly(messungId);

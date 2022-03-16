@@ -70,7 +70,7 @@ public class DefaultAuthorization implements Authorization {
      * @return false
      */
     @Override
-    public boolean isReadOnly(Integer probeId) {
+    public boolean isProbeReadOnly(Integer probeId) {
         return false;
     }
 
