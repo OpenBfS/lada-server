@@ -151,7 +151,6 @@ public class OrtFactory {
         } else  if (ort.getStaatId() != null) {
             builder.and("staatId", ort.getStaatId());
             builder.and("ortTyp", ORTTYP5);
-            builder.and("ozId", ort.getOzId());
             builder.and("netzbetreiberId", ort.getNetzbetreiberId());
             List<Ort> orte =
                 repository.filterPlain(builder.getQuery());
