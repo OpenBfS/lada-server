@@ -15,8 +15,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.Set;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
@@ -39,6 +41,7 @@ import org.locationtech.jts.geom.Point;
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.Protocol;
 import de.intevation.lada.test.land.ProbeTest;
+import de.intevation.lada.util.data.StatusCodes;
 
 /**
  * Class for Lada service tests.
@@ -108,6 +111,24 @@ public class ServiceTest {
         scanner.close();
         JsonReader reader = Json.createReader(new StringReader(raw));
         JsonObject content = reader.readObject();
+        reader.close();
+        return content;
+    }
+
+    /**
+     * Load JSON resource file as Array.
+     * @param resource the resource location
+     * @return Array containing the resource.
+     */
+    protected JsonArray readJsonArrayResource(String resource) {
+        InputStream stream =
+            ProbeTest.class.getResourceAsStream(resource);
+        Scanner scanner = new Scanner(stream, "UTF-8");
+        scanner.useDelimiter("\\A");
+        String raw = scanner.next();
+        scanner.close();
+        JsonReader reader = Json.createReader(new StringReader(raw));
+        JsonArray content = reader.readArray();
         reader.close();
         return content;
     }
@@ -307,6 +328,45 @@ public class ServiceTest {
     }
 
     /**
+     * Test the CREATE Service using a list of input objects.
+     * @param name the name of the entity to request.
+     * @param parameter the parameters used in the request.
+     * @param create the objects to create, embedded in POST body.
+     * @return The resulting json object.
+     *
+     */
+    public JsonObject bulkCreate(String name, String parameter, JsonArray create) {
+        System.out.print(".");
+        Protocol prot = new Protocol();
+        prot.setName(name + " service");
+        prot.setType("create");
+        prot.setPassed(false);
+        protocol.add(prot);
+
+        WebTarget target = client.target(baseUrl + parameter);
+        /* Send a post request containing a new object*/
+        Response response = target.request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .post(Entity.entity(create.toString(), MediaType.APPLICATION_JSON));
+        JsonObject content = BaseTest.parseResponse(response, prot);
+        /* Verify the response*/
+        Assert.assertTrue("Unsuccessful response object:\n" + content,
+            content.getBoolean("success"));
+        prot.addInfo("success", content.getBoolean("success"));
+        //Check each result
+        content.getJsonObject("data").forEach((key, object) -> {
+            JsonObject responseObj = (JsonObject) object;
+            Protocol objectProt = new Protocol();
+            Assert.assertEquals(200, responseObj.getInt("status"));
+            objectProt.addInfo("message", responseObj.getString("message"));
+            objectProt.setPassed(true);
+            protocol.add(objectProt);
+        });
+        return content;
+    }
+
+    /**
      * Test an update service.
      * @param name the name of the entity to request.
      * @param parameter the parameters used in the request.
@@ -340,8 +400,15 @@ public class ServiceTest {
             response, prot).getJsonObject(objKey);
 
         /* Value replacement */
-        String updatedEntity =
-            oldObject.toString().replace(oldValue, newValue);
+        JsonObjectBuilder updateBuilder = Json.createObjectBuilder();
+        oldObject.forEach((key, value) -> {
+            if (key.equals(updateAttribute)) {
+                updateBuilder.add(updateAttribute, newValue);
+            } else {
+                updateBuilder.add(key, value);
+            }
+        });
+        String updatedEntity = updateBuilder.build().toString();
         prot.addInfo("updated datafield", updateAttribute);
         prot.addInfo("updated value", oldValue);
         prot.addInfo("updated to", newValue);

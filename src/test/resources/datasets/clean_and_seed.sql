@@ -80,6 +80,7 @@ INSERT INTO probenehmer (
 INSERT INTO messprogramm_transfer VALUES (1, 1, 'Routinemessprogramm', 1, 2);
 
 -- authorization data needed for tests
+INSERT INTO lada_user (id, name) VALUES (2, 'testeins');
 INSERT INTO auth (ldap_group, netzbetreiber_id, mst_id, funktion_id)
        VALUES ('mst_06_status', '06', '06010', 1);
 INSERT INTO auth (ldap_group, netzbetreiber_id, mst_id, funktion_id)

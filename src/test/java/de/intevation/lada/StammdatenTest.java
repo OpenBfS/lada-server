@@ -40,6 +40,7 @@ import de.intevation.lada.test.stamm.MessprogrammKategorieTest;
 import de.intevation.lada.test.stamm.OrtTest;
 import de.intevation.lada.test.stamm.ProbenehmerTest;
 import de.intevation.lada.test.stamm.Stammdaten;
+import de.intevation.lada.test.stamm.TagTest;
 
 
 /**
@@ -105,6 +106,7 @@ public class StammdatenTest extends BaseTest {
     private OrtTest ortTest;
     private DeskriptorenTest deskriptorenTest;
     private KoordinatenartTest kdaTest;
+    private TagTest tagTest;
 
     public StammdatenTest() {
         stammdatenTest = new Stammdaten();
@@ -114,6 +116,7 @@ public class StammdatenTest extends BaseTest {
         ortTest = new OrtTest();
         deskriptorenTest = new DeskriptorenTest();
         kdaTest = new KoordinatenartTest();
+        tagTest = new TagTest();
         verboseLogging = false;
     }
 
@@ -634,5 +637,19 @@ public class StammdatenTest extends BaseTest {
     throws Exception {
         kdaTest.init(baseUrl, testProtocol);
         kdaTest.execute();
+    }
+
+    /**
+     * Test Tag service.
+     * @param baseUrl The server url used for the request.
+     * @throws Exception that can occur during the test.
+     */
+    @Test
+    @InSequence(39)
+    @RunAsClient
+    public final void testTag(@ArquillianResource URL baseUrl)
+    throws Exception {
+        tagTest.init(baseUrl, testProtocol);
+        tagTest.execute();
     }
 }
