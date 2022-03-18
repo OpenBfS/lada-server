@@ -26,7 +26,7 @@ RUN apt-get update -y && \
 
 #
 # Set ENV for pacakge versions
-ENV WILDFLY_VERSION 19.1.0.Final
+ENV WILDFLY_VERSION 26.0.1.Final
 # see wildfly pom.xml for hibernate_spatial_version
 ENV HIBERNATE_VERSION 5.4.27.Final
 ENV GEOLATTE_GEOM_VERSION 1.4.0
@@ -39,8 +39,8 @@ RUN echo "Building Image using WILDFLY_VERSION=${WILDFLY_VERSION}, HIBERNATE_VER
 #
 RUN mkdir /opt/jboss
 
-RUN curl -s \
-    https://download.jboss.org/wildfly/${WILDFLY_VERSION}/wildfly-${WILDFLY_VERSION}.tar.gz\
+RUN curl -Ls \
+    https://github.com/wildfly/wildfly/releases/download/${WILDFLY_VERSION}/wildfly-${WILDFLY_VERSION}.tar.gz\
     | tar zx && mv wildfly-${WILDFLY_VERSION} /opt/jboss/wildfly
 
 ENV JBOSS_HOME /opt/jboss/wildfly
@@ -107,4 +107,3 @@ RUN mvn compile package && \
 #
 CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", \
      "-bmanagement=0.0.0.0"]
-

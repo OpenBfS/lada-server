@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import de.intevation.lada.factory.OrtFactory;
@@ -292,7 +291,7 @@ public class LafObjectMapper {
             if (i == Identified.UPDATE) {
                 isAuthorizedOld =
                     authorizer.isAuthorized(userInfo, old, Probe.class);
-                oldProbeIsReadonly = authorizer.isReadOnly(old.getId());
+                oldProbeIsReadonly = authorizer.isProbeReadOnly(old.getId());
                 if (isAuthorizedOld) {
                     if (oldProbeIsReadonly) {
                         newProbe = old;
@@ -1476,10 +1475,12 @@ public class LafObjectMapper {
         }
 
         // Validator: StatusAssignment
-        StatusProtokoll tmpStatus = new StatusProtokoll();
-        tmpStatus = currentStatus;
-        tmpStatus.setStatusKombi(newKombi);
-        Violation statusViolation = statusValidator.validate(tmpStatus);
+        StatusProtokoll newStatus = new StatusProtokoll();
+        newStatus.setDatum(new Timestamp(new Date().getTime()));
+        newStatus.setMessungsId(messung.getId());
+        newStatus.setMstId(mstId);
+        newStatus.setStatusKombi(newKombi);
+        Violation statusViolation = statusValidator.validate(newStatus);
 
         if (statusViolation.hasWarnings()) {
             statusViolation.getWarnings().forEach((k, v) -> {
@@ -1523,11 +1524,7 @@ public class LafObjectMapper {
             || (statusStufe == 3
                 && userInfo.getFunktionen().contains(3))
         ) {
-            StatusProtokoll newStatus = new StatusProtokoll();
-            newStatus.setDatum(new Timestamp(new Date().getTime()));
-            newStatus.setMessungsId(messung.getId());
-            newStatus.setMstId(mstId);
-            newStatus.setStatusKombi(newKombi);
+            //persist newStatus if authorized to do so
             repository.create(newStatus);
             if (newKombi == 0 || newKombi == 9 || newKombi == 13) {
                 messung.setFertig(false);
@@ -2222,7 +2219,7 @@ public class LafObjectMapper {
             for (int i =  0; i < value.length() - 4; i += 2) {
                 tmp.add(value.substring(i, i + 2));
             }
-            probe.setMediaDesk(StringUtils.join(tmp.toArray(), " "));
+            probe.setMediaDesk(String.join(" ", tmp));
         }
 
         if ("TESTDATEN".equals(key)) {

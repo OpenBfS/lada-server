@@ -8,17 +8,13 @@
 
 package de.intevation.lada.importer.laf;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import static de.intevation.lada.rest.importer.LafImportService.logLAFFile;
+
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +25,6 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonString;
 import javax.json.JsonValue;
-
-import org.apache.log4j.Appender;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Logger;
 
 import de.intevation.lada.importer.ImportConfig;
 import de.intevation.lada.importer.ImportFormat;
@@ -225,41 +217,4 @@ public class LafImportJob extends Job {
     public void setMstId(String mstId) {
         this.mstId = mstId;
     }
-
-    /**
-     * Log the imported file for debugging purposes.
-     *
-     * @param mstId Id from Header
-     * @param content The laf file content
-     */
-    private void logLAFFile(String mstId, String content, Charset enc) {
-        DateFormat df = new SimpleDateFormat("yyyyMMddHHmmssS");
-        Date now = new Date();
-        // Create filename for imported laf
-        String fileName = df.format(now) + "-" + mstId + ".laf";
-        // Set default log path as fallback
-        String filePath = "/var/log/wildfly/";
-        // Get logger and appender for import logger
-        Logger lafLogger = Logger.getLogger("import");
-        Appender lafAppender = Logger.getRootLogger().getAppender("laf");
-        // Retrive path set for import logger
-        if (lafAppender instanceof FileAppender) {
-            File appenderFile =
-                new File(((FileAppender) lafAppender).getFile());
-            filePath = appenderFile.getParent();
-        }
-        // Write laf file if debug enabled
-        if (lafLogger.isDebugEnabled()) {
-            lafLogger.debug("X-LADA-MST: " + mstId);
-            lafLogger.debug(
-                "Imported file logged to: " + filePath + "/" + fileName);
-            try (FileWriter f = new FileWriter(
-                    filePath + "/" + fileName, enc)) {
-                f.write(content);
-            } catch (IOException e) {
-                lafLogger.debug("Could not write import file to " + filePath);
-            }
-        }
-    }
-
 }

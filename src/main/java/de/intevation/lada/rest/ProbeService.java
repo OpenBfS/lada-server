@@ -186,7 +186,7 @@ public class ProbeService extends LadaService {
                 probe.setErrors(violation.getErrors());
                 probe.setNotifications(violation.getNotifications());
             }
-            probe.setReadonly(authorization.isReadOnly(probe.getId()));
+            probe.setReadonly(authorization.isProbeReadOnly(probe.getId()));
         }
         return new Response(true, StatusCodes.OK, probes);
     }
