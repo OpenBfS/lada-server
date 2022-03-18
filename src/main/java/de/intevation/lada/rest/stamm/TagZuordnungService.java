@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 
@@ -270,23 +271,24 @@ public class TagZuordnungService extends LadaService {
      * @return Response object
      */
     @DELETE
-    @Path("/")
+    @Path("/{id}")
     public Response deleteTagReference(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
-        TagZuordnung tagZuordnung
+        @PathParam("id") Integer id
     ) {
-        if ((tagZuordnung.getProbeId() == null
-            && tagZuordnung.getMessungId() == null)
-            || tagZuordnung.getTagId() == null
-        ) {
+
+        TagZuordnung tagZuordnung
+            = repository.getByIdPlain(TagZuordnung.class, id);
+        if (tagZuordnung == null) {
             return new Response(
-                false, StatusCodes.NOT_ALLOWED, "Invalid TagZuordnung");
+                    false,
+                    StatusCodes.NOT_EXISTING,
+                    "Tagzuordnung not found");
         }
         boolean global = false;
         //Check if its a global tag
-        Tag tag = repository.getByIdPlain(
-            Tag.class, tagZuordnung.getTagId());
+        Tag tag = tagZuordnung.getTag();
         if (tag.getMstId() == null) {
             Object data;
             boolean authorized = false;

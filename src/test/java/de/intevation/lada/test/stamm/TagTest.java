@@ -8,9 +8,7 @@
 package de.intevation.lada.test.stamm;
 
 import java.net.URL;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -42,13 +40,6 @@ public class TagTest extends ServiceTest {
     }
 
     /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
-
-    /**
      * Execute the tests.
      */
     public void execute() {
@@ -61,7 +52,6 @@ public class TagTest extends ServiceTest {
      * Test mst tags.
      */
     public void testMstTag() {
-        create = readJsonResource("/datasets/tag_create.json");
         JsonObject tagToTest = createTagJson(TagTyp.TAG_TYPE_MST, "mstTag");
         testTagCRUD(tagToTest);
     }
@@ -70,7 +60,6 @@ public class TagTest extends ServiceTest {
      * Test netzbetreiber tags.
      */
     public void testNetzbetreiberTag() {
-        create = readJsonResource("/datasets/tag_create.json");
         JsonObject tagToTest
             = createTagJson(TagTyp.TAG_TYPE_NETZBETREIBER, "nbTag");
         testTagCRUD(tagToTest);
@@ -80,11 +69,11 @@ public class TagTest extends ServiceTest {
      * Promote a mst tag to global.
      */
     public void promoteMstTag() {
-        create = readJsonResource("/datasets/tag_create.json");
-        JsonObject tagToTest = createTagJson(TagTyp.TAG_TYPE_MST, "mstTagPromoted");
+        JsonObject tagToTest = createTagJson(
+            TagTyp.TAG_TYPE_MST, "mstTagPromoted");
         JsonObject createResponse = create(name, "rest/tag", tagToTest);
         long createdId = createResponse.getJsonObject("data").getInt("id");
-        JsonObject updateResponse = update(name, tagUrl + createdId, "typId",
+        update(name, tagUrl + createdId, "typId",
             "mst",
             "global");
     }
@@ -95,7 +84,7 @@ public class TagTest extends ServiceTest {
      */
     private void testTagCRUD(JsonObject tagToTest) {
 
-        Date now = new Date(System.currentTimeMillis());
+        long now = System.currentTimeMillis();
         JsonObject createResponse = create(name, "rest/tag", tagToTest);
         long createdId = createResponse.getJsonObject("data").getInt("id");
         String createdTyp = createResponse
@@ -104,8 +93,7 @@ public class TagTest extends ServiceTest {
             long createdGueltigBis
                 = createResponse.getJsonObject("data")
                 .getJsonNumber("gueltigBis").longValue();
-            Date gueltigBis = new Date(createdGueltigBis);
-            long diff = calcDayDifference(now, gueltigBis);
+            long diff = getDiffInDays(now, createdGueltigBis);
             Assert.assertEquals(TagTyp.MST_TAG_EXPIRATION_TIME, diff);
         }
         String tagUpdated = tagToTest.getString("tag") + "-mod";
@@ -122,18 +110,9 @@ public class TagTest extends ServiceTest {
      * @return Tag json object
      */
     private JsonObject createTagJson(String type, String tag) {
-        create = readJsonResource("/datasets/tag_create.json");
         JsonObjectBuilder builder = convertObject(create);
         builder.add("typId", type);
         builder.add("tag", tag);
         return builder.build();
-    }
-
-    /**
-     * Calculate the difference in days between the given dates.
-     */
-    private long calcDayDifference(Date first, Date second) {
-        long diffInMillies = Math.abs(first.getTime() - second.getTime());
-        return TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
     }
 }

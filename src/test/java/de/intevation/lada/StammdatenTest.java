@@ -27,12 +27,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
 import de.intevation.lada.model.stammdaten.Deskriptoren;
 import de.intevation.lada.model.stammdaten.KoordinatenArt;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Probenehmer;
+import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.test.land.TagZuordnungTest;
 import de.intevation.lada.test.stamm.DatensatzErzeugerTest;
 import de.intevation.lada.test.stamm.DeskriptorenTest;
 import de.intevation.lada.test.stamm.KoordinatenartTest;
@@ -87,12 +91,22 @@ public class StammdatenTest extends BaseTest {
     private static final int T34 = 34;
     private static final int T35 = 35;
     private static final int T36 = 36;
+    private static final int T37 = 37;
+    private static final int T38 = 38;
+    private static final int T39 = 39;
+    private static final int T40 = 40;
+    private static final int T41 = 41;
 
     private static final int ID5 = 5;
     private static final int ID9 = 9;
     private static final int ID56 = 56;
+    private static final int ID101 = 101;
+    private static final int ID102 = 102;
     private static final int ID207 = 207;
     private static final int ID1000 = 1000;
+    private static final int ID1801 = 1801;
+    private static final int ID1901 = 1901;
+
 
     private static Logger logger = Logger.getLogger(StammdatenTest.class);
 
@@ -107,6 +121,7 @@ public class StammdatenTest extends BaseTest {
     private DeskriptorenTest deskriptorenTest;
     private KoordinatenartTest kdaTest;
     private TagTest tagTest;
+    private TagZuordnungTest tagZuordnungTest;
 
     public StammdatenTest() {
         stammdatenTest = new Stammdaten();
@@ -117,6 +132,7 @@ public class StammdatenTest extends BaseTest {
         deskriptorenTest = new DeskriptorenTest();
         kdaTest = new KoordinatenartTest();
         tagTest = new TagTest();
+        tagZuordnungTest = new TagZuordnungTest();
         verboseLogging = false;
     }
 
@@ -609,7 +625,7 @@ public class StammdatenTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(37)
+    @InSequence(T37)
     @UsingDataSet("datasets/dbUnit_koordinatenart.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
@@ -631,7 +647,7 @@ public class StammdatenTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(38)
+    @InSequence(T38)
     @RunAsClient
     public final void testKoordinatenart(@ArquillianResource URL baseUrl)
     throws Exception {
@@ -645,11 +661,52 @@ public class StammdatenTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(39)
+    @InSequence(T39)
     @RunAsClient
     public final void testTag(@ArquillianResource URL baseUrl)
     throws Exception {
         tagTest.init(baseUrl, testProtocol);
         tagTest.execute();
+    }
+
+    /**
+     * Insert objects needed for the tagzuordnung test into the db.
+     * @throws Exception that can occur during test
+     */
+    @Test
+    @InSequence(T40)
+    @UsingDataSet("datasets/dbUnit_tagzuordnung.json")
+    @DataSource("java:jboss/lada-test")
+    @Cleanup(phase = TestExecutionPhase.NONE)
+    public final void prepareTagzuordnung() throws Exception {
+        Protocol protocol = new Protocol();
+        protocol.setName("database");
+        protocol.setType("insert for tagzuordnung");
+        protocol.addInfo("database",
+            "Insert probe, messung and tags into database");
+        testProtocol.add(protocol);
+        Probe probe = em.find(Probe.class, ID1901);
+        Assert.assertNotNull(probe);
+        Messung messung = em.find(Messung.class, ID1801);
+        Assert.assertNotNull(messung);
+        Tag probeTag = em.find(Tag.class, ID101);
+        Assert.assertNotNull(probeTag);
+        Tag messungTag = em.find(Tag.class, ID102);
+        Assert.assertNotNull(messungTag);
+        protocol.setPassed(true);
+    }
+
+    /**
+     * Test TagZuordnung service.
+     * @param baseUrl The server url used for the request.
+     * @throws Exception that can occur during the test.
+     */
+    @Test
+    @InSequence(T41)
+    @RunAsClient
+    public final void testTagZuordnung(@ArquillianResource URL baseUrl)
+    throws Exception {
+        tagZuordnungTest.init(baseUrl, testProtocol);
+        tagZuordnungTest.execute();
     }
 }

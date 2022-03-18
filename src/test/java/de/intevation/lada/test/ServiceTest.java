@@ -11,6 +11,10 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URL;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map.Entry;
@@ -356,11 +360,13 @@ public class ServiceTest {
         content.getJsonObject("data").forEach((key, object) -> {
             JsonObject responseObj = (JsonObject) object;
             Protocol objectProt = new Protocol();
+            prot.setName(name + " service - id: " + key);
+            prot.setType("create");
             Assert.assertEquals(200, responseObj.getInt("status"));
-            objectProt.addInfo("message", responseObj.getString("message"));
             objectProt.setPassed(true);
             protocol.add(objectProt);
         });
+        prot.setPassed(true);
         return content;
     }
 
@@ -474,5 +480,25 @@ public class ServiceTest {
         prot.addInfo("message", content.getString("message"));
         prot.setPassed(true);
         return content;
+    }
+
+    /**
+     * Get the difference in days between the given timestamps.
+     * @param first First date as unix timestamp
+     * @param second Second date as unix timestamp
+     * @return Difference in days as long
+     */
+    protected long getDiffInDays(long first, long second) {
+        LocalDateTime firstDate = LocalDateTime.ofInstant(
+            Instant.ofEpochMilli(first),
+            ZoneOffset.UTC)
+            .truncatedTo(ChronoUnit.DAYS);
+        LocalDateTime secondDate = LocalDateTime.ofInstant(
+            Instant.ofEpochMilli(second),
+            ZoneOffset.UTC)
+            .truncatedTo(ChronoUnit.DAYS);
+        long diffInDays = Math.abs(
+            ChronoUnit.DAYS.between(secondDate, firstDate));
+        return diffInDays;
     }
 }
