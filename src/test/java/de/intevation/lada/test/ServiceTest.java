@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Scanner;
-import java.util.Set;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -41,7 +40,6 @@ import org.locationtech.jts.geom.Point;
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.Protocol;
 import de.intevation.lada.test.land.ProbeTest;
-import de.intevation.lada.util.data.StatusCodes;
 
 /**
  * Class for Lada service tests.
