@@ -89,49 +89,44 @@ public class HeaderAuthorization implements Authorization {
     /**
      * Request user informations using the HttpServletRequest.
      *
-     * @param source    The HttpServletRequest
+     * @param request    The HttpServletRequest
      * @return The UserInfo object containing username and groups.
      */
     @Override
-    public UserInfo getInfo(Object source) {
-        if (source instanceof HttpServletRequest) {
-            HttpServletRequest request = (HttpServletRequest) source;
-            String roleString =
-                request.getAttribute("lada.user.roles").toString();
-            UserInfo info = getGroupsFromDB(roleString);
-            info.setName(request.getAttribute("lada.user.name").toString());
-            QueryBuilder<LadaUser> builder =
-                repository.queryBuilder(LadaUser.class);
-            builder.and("name", info.getName());
-            LadaUser user;
-            try {
-                user = repository.getSinglePlain(builder.getQuery());
-            } catch (NoResultException e) {
-                LadaUser newUser = new LadaUser();
-                newUser.setName(info.getName());
-                user = (LadaUser) repository.create(newUser).getData();
-            }
-            info.setUserId(user.getId());
-            return info;
+    public UserInfo getInfo(HttpServletRequest request) {
+        String roleString =
+            request.getAttribute("lada.user.roles").toString();
+        UserInfo info = getGroupsFromDB(roleString);
+        info.setName(request.getAttribute("lada.user.name").toString());
+        QueryBuilder<LadaUser> builder =
+            repository.queryBuilder(LadaUser.class);
+        builder.and("name", info.getName());
+        LadaUser user;
+        try {
+            user = repository.getSinglePlain(builder.getQuery());
+        } catch (NoResultException e) {
+            LadaUser newUser = new LadaUser();
+            newUser.setName(info.getName());
+            user = (LadaUser) repository.create(newUser).getData();
         }
-        return null;
+        info.setUserId(user.getId());
+        return info;
     }
 
     /**
      * Filter a list of data objects using the user informations contained in
      * the HttpServletRequest.
      *
-     * @param source    The HttpServletRequest
+     * @param request   The HttpServletRequest
      * @param data      The Response object containing the data.
      * @param clazz     The data object class.
      * @return The Response object containing the filtered data.
      */
     @Override
-    public <T> Response filter(Object source, Response data, Class<T> clazz) {
-        UserInfo userInfo = this.getInfo(source);
-        if (userInfo == null) {
-            return data;
-        }
+    public <T> Response filter(
+        HttpServletRequest request, Response data, Class<T> clazz
+    ) {
+        UserInfo userInfo = this.getInfo(request);
         Authorizer authorizer = authorizers.get(clazz);
         if (authorizer == null) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
@@ -142,7 +137,7 @@ public class HeaderAuthorization implements Authorization {
     /**
      * Check whether a user is authorized to operate on the given data.
      *
-     * @param source    The HttpServletRequest containing user information.
+     * @param request   The HttpServletRequest containing user information.
      * @param data      The data to test.
      * @param method    The Http request type.
      * @param clazz     The data object class.
@@ -150,15 +145,12 @@ public class HeaderAuthorization implements Authorization {
      */
     @Override
     public <T> boolean isAuthorized(
-        Object source,
+        HttpServletRequest request,
         Object data,
         RequestMethod method,
         Class<T> clazz
     ) {
-        UserInfo userInfo = this.getInfo(source);
-        if (userInfo == null) {
-            return false;
-        }
+        UserInfo userInfo = this.getInfo(request);
         Authorizer authorizer = authorizers.get(clazz);
         // Do not authorize anything unknown
         if (authorizer == null || data == null) {
@@ -171,22 +163,19 @@ public class HeaderAuthorization implements Authorization {
      * Check whether a user is authorized to operate on the given data
      * by the given object id.
      *
-     * @param source    The HttpServletRequest containing user information.
+     * @param request   The HttpServletRequest containing user information.
      * @param id        The data's id to test.
      * @param method    The Http request type.
      * @param clazz     The data object class.
      * @return True if the user is authorized else returns false.
      */
     public <T> boolean isAuthorizedById(
-        Object source,
+        HttpServletRequest request,
         Object id,
         RequestMethod method,
         Class<T> clazz
     ) {
-        UserInfo userInfo = this.getInfo(source);
-        if (userInfo == null) {
-            return false;
-        }
+        UserInfo userInfo = this.getInfo(request);
         Authorizer authorizer = authorizers.get(clazz);
         // Do not authorize anything unknown
         if (authorizer == null) {
