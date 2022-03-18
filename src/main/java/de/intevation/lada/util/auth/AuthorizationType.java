@@ -13,7 +13,5 @@ package de.intevation.lada.util.auth;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public enum AuthorizationType {
-    NONE, // DEVELOPMENT ONLY!
-    LDAP, // ... and others...
     HEADER
 }
