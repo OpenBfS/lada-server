@@ -25,6 +25,7 @@ import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.stammdaten.TagTyp;
 import de.intevation.lada.util.rest.Response;
 
 /**
@@ -90,6 +91,7 @@ public class TagUtil {
         Tag currentTag = new Tag();
         currentTag.setGenerated(true);
         currentTag.setMstId(mstId);
+        currentTag.setTypId(TagTyp.TAG_TYPE_AUTO);
         currentTag.setTag(prefix + "_" + today + "_" + serNumber);
 
         return repository.create(currentTag);

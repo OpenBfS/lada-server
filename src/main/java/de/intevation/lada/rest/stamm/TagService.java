@@ -61,6 +61,21 @@ public class TagService extends LadaService {
     private TagUtil tagUtil;
 
     /**
+     * Get a single tag by id.
+     * @return Response containing the tag
+     */
+    @GET
+    @Path("/{id}")
+    public Response getById(
+        @Context HttpHeaders headers,
+        @Context HttpServletRequest request,
+        @PathParam("id") String id) {
+            return authorization.filter(request,
+            repository.getById(Tag.class, Integer.valueOf(id)),
+            Tag.class);
+    }
+
+    /**
      * Get all tags for a Probe or Messung instance,
      * filtered by the users messstelle id.
      * If a pid is set in the url, the tags are filter by the given probe id.
@@ -171,12 +186,12 @@ public class TagService extends LadaService {
         @PathParam("id") String id,
         Tag tag
     ) {
+        Tag origTag = repository.getByIdPlain(Tag.class, tag.getId());
         if (!authorization.isAuthorized(
-            request, tag, RequestMethod.PUT, Tag.class)) {
+            request, origTag, RequestMethod.PUT, Tag.class)) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         //Check if tag has changed and is valid
-        Tag origTag = repository.getByIdPlain(Tag.class, tag.getId());
         String tagTyp = tag.getTypId();
         String origTagTyp = origTag.getTyp().getId();
         if (!tagTyp.equals(origTagTyp)) {

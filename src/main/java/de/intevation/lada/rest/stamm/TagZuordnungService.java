@@ -102,7 +102,6 @@ public class TagZuordnungService extends LadaService {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         JsonObjectBuilder dataBuilder = Json.createObjectBuilder();
 
-        System.out.println("Zuordnung size: " + zuordnungs.size());
         for (int i = 0; i < zuordnungs.size(); i++) {
             JsonObjectBuilder responseBuilder = Json.createObjectBuilder();
             TagZuordnung zuordnung = zuordnungs.get(i);
@@ -165,6 +164,16 @@ public class TagZuordnungService extends LadaService {
                 }
 
                 tag = repository.getByIdPlain(Tag.class, tagId);
+                if (tag == null) {
+                    responseBuilder.add("success", false);
+                    responseBuilder.add("status", StatusCodes.ERROR_VALIDATION);
+                    responseBuilder.add("message",
+                        "Tag not found");
+                    responseBuilder.add("data", "");
+                    dataBuilder.add(
+                        zuordnung.getTagId().toString(), responseBuilder);
+                    continue;
+                }
                 String mstId = tag.getMstId();
                 //If user tries to assign a global tag: authorize
                 if (mstId == null) {
