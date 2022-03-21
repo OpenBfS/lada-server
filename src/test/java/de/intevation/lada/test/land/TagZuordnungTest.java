@@ -7,11 +7,14 @@
  */
 package de.intevation.lada.test.land;
 
+import static de.intevation.lada.BaseTest.assertContains;
+
 import java.net.URL;
 import java.util.List;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 
 import org.junit.Assert;
 
@@ -61,8 +64,13 @@ public class TagZuordnungTest extends ServiceTest {
             Assert.assertEquals(TagTyp.MST_TAG_EXPIRATION_TIME, diffInDays);
         });
 
-        createResponse.getJsonObject(data).forEach((key, value) -> {
-            delete(name, tagUrl + key);
-        });
+        final String idKey = "id";
+        for (JsonValue value: createResponse.getJsonArray(data)) {
+            JsonObject valueObj = (JsonObject) value;
+            assertContains(valueObj, data);
+            JsonObject dataObj = valueObj.getJsonObject(data);
+            assertContains(dataObj, idKey);
+            delete(name, tagUrl + dataObj.getInt(idKey));
+        }
     }
 }

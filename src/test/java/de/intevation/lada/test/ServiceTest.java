@@ -357,12 +357,14 @@ public class ServiceTest {
             content.getBoolean("success"));
         prot.addInfo("success", content.getBoolean("success"));
         //Check each result
-        content.getJsonObject("data").forEach((key, object) -> {
+        content.getJsonArray("data").forEach(object -> {
             JsonObject responseObj = (JsonObject) object;
             Protocol objectProt = new Protocol();
-            prot.setName(name + " service - id: " + key);
+            prot.setName(name + " service");
             prot.setType("create");
-            Assert.assertEquals(200, responseObj.getInt("status"));
+            Assert.assertTrue("Unsuccessful response list element",
+                responseObj.getBoolean("success"));
+            Assert.assertEquals("200", responseObj.getString("message"));
             objectProt.setPassed(true);
             protocol.add(objectProt);
         });

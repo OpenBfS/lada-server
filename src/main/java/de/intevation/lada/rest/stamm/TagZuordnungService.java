@@ -8,12 +8,11 @@
 package de.intevation.lada.rest.stamm;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -75,25 +74,18 @@ public class TagZuordnungService extends LadaService {
      */
     @POST
     @Path("/")
-    public javax.ws.rs.core.Response createTagReference(
+    public Response createTagReference(
         @Context HttpServletRequest request,
         List<TagZuordnung> zuordnungs
     ) {
         //Create Response
-        JsonObjectBuilder builder = Json.createObjectBuilder();
-        JsonObjectBuilder dataBuilder = Json.createObjectBuilder();
+        List<Response> responseList = new ArrayList<>();
 
-        for (int i = 0; i < zuordnungs.size(); i++) {
-            JsonObjectBuilder responseBuilder = Json.createObjectBuilder();
-            TagZuordnung zuordnung = zuordnungs.get(i);
-
+        for (TagZuordnung zuordnung: zuordnungs) {
             // Check if payload contains sensible information
             if (zuordnung == null) {
-                responseBuilder.add("success", false);
-                responseBuilder.add("status", StatusCodes.ERROR_VALIDATION);
-                responseBuilder.add("message", "Not a valid tag");
-                responseBuilder.add("data", "");
-                dataBuilder.add("newZuordnung" + i, responseBuilder);
+                responseList.add(new Response(
+                        false, StatusCodes.ERROR_VALIDATION, zuordnung));
                 continue;
             }
             Integer tagId = zuordnung.getTagId();
@@ -101,11 +93,8 @@ public class TagZuordnungService extends LadaService {
                 || zuordnung.getProbeId() != null
                 && zuordnung.getMessungId() != null
             ) {
-                responseBuilder.add("success", false);
-                responseBuilder.add("status", StatusCodes.ERROR_VALIDATION);
-                responseBuilder.add("message", "Not a valid tag");
-                responseBuilder.add("data", zuordnung.toJson());
-                dataBuilder.add("newZuordnung" + i, responseBuilder);
+                responseList.add(new Response(
+                        false, StatusCodes.ERROR_VALIDATION, zuordnung));
                 continue;
             }
 
@@ -132,24 +121,15 @@ public class TagZuordnungService extends LadaService {
                 ? zuordnung.getProbeId()
                 : zuordnung.getMessungId());
             if ((Boolean) isAssigned.getSingleResult()) {
-                responseBuilder.add("success", true);
-                responseBuilder.add("status", StatusCodes.OK);
-                responseBuilder.add("message",
-                    "Tag is already assigned to probe");
-                responseBuilder.add("data", "");
-                dataBuilder.add(
-                    zuordnung.getTagId().toString(), responseBuilder);
+                responseList.add(new Response(
+                        true, StatusCodes.OK, zuordnung));
                 continue;
             }
 
             Tag tag = repository.getByIdPlain(Tag.class, tagId);
             if (tag == null) {
-                responseBuilder.add("success", false);
-                responseBuilder.add("status", StatusCodes.ERROR_VALIDATION);
-                responseBuilder.add("message", "Tag not found");
-                responseBuilder.add("data", "");
-                dataBuilder.add(
-                    zuordnung.getTagId().toString(), responseBuilder);
+                responseList.add(new Response(
+                        false, StatusCodes.ERROR_VALIDATION, zuordnung));
                 continue;
             }
             String mstId = tag.getMstId();
@@ -177,43 +157,28 @@ public class TagZuordnungService extends LadaService {
                     );
                 }
                 if (!authorized) {
-                    responseBuilder.add("success", false);
-                    responseBuilder.add("status", StatusCodes.NOT_ALLOWED);
-                    responseBuilder.add("message", "Unathorized");
-                    responseBuilder.add("data", zuordnung.toJson());
-                    dataBuilder.add("newZuordnung" + i, responseBuilder);
+                    responseList.add(new Response(
+                            false, StatusCodes.NOT_ALLOWED, zuordnung));
                     continue;
                 }
             } else if (!messstellen.contains(mstId)) {
                 //Else check if it is the users private tag
-                responseBuilder.add("success", false);
-                responseBuilder.add("status", StatusCodes.ERROR_VALIDATION);
-                responseBuilder.add("message", "Invalid mstId");
-                responseBuilder.add("data", zuordnung.toJson());
-                dataBuilder.add("newZuordnung" + i, responseBuilder);
+                responseList.add(new Response(
+                        false, StatusCodes.ERROR_VALIDATION, zuordnung));
                 continue;
             }
 
             zuordnung.setTag(tag);
-
-            Response createResponse = repository.create(zuordnung);
 
             //Extend tag expiring time
             Date date = new Date();
             Timestamp now = new Timestamp(date.getTime());
             tag.setGueltigBis(TagService.getGueltigBis(tag, now));
 
-            TagZuordnung newZuordnung = (TagZuordnung) createResponse.getData();
-            responseBuilder.add("success", createResponse.getSuccess());
-            responseBuilder.add("status", StatusCodes.OK);
-            responseBuilder.add("data", newZuordnung.toJson());
-            dataBuilder.add(
-                newZuordnung.getId().toString(), responseBuilder);
+            responseList.add(repository.create(zuordnung));
         }
 
-        builder.add("success", true);
-        builder.add("data", dataBuilder);
-        return javax.ws.rs.core.Response.ok(builder.build().toString()).build();
+        return new Response(true, StatusCodes.OK, responseList);
     }
 
     /**
