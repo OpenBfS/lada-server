@@ -28,9 +28,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.TagZuordnung;
@@ -61,19 +58,6 @@ public class TagZuordnungService extends LadaService {
 
     /**
      * Creates a new reference between a tag and a probe.
-     * The tag can be an existing one or a new one, embedded in the request.
-     * Request for creating a new tag:
-     * <pre>
-     * <code>
-     * {
-     *   "probeId": [Integer],
-     *   "tag": {
-     *     "tag": [String],
-     *     "mstId": [String]
-     *   }
-     * }
-     * </code>
-     * </pre>
      *
      * Existing tags can be used with the following request:
      * <pre>
@@ -86,7 +70,7 @@ public class TagZuordnungService extends LadaService {
      * }]
      * </code>
      * </pre>
-     * Requests containing both, tag and tagId will be rejected.
+     *
      * Setting a mstId is mandatory, as only global tags have no mstId.
      */
     @POST
@@ -95,9 +79,6 @@ public class TagZuordnungService extends LadaService {
         @Context HttpServletRequest request,
         List<TagZuordnung> zuordnungs
     ) {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        ObjectMapper mapper = new ObjectMapper();
-
         //Create Response
         JsonObjectBuilder builder = Json.createObjectBuilder();
         JsonObjectBuilder dataBuilder = Json.createObjectBuilder();
@@ -105,6 +86,7 @@ public class TagZuordnungService extends LadaService {
         for (int i = 0; i < zuordnungs.size(); i++) {
             JsonObjectBuilder responseBuilder = Json.createObjectBuilder();
             TagZuordnung zuordnung = zuordnungs.get(i);
+
             // Check if payload contains sensible information
             if (zuordnung == null) {
                 responseBuilder.add("success", false);
@@ -114,10 +96,8 @@ public class TagZuordnungService extends LadaService {
                 dataBuilder.add("newZuordnung" + i, responseBuilder);
                 continue;
             }
-            Tag tag = zuordnung.getTag();
             Integer tagId = zuordnung.getTagId();
-            if (tag != null && tagId != null
-                || tag == null && tagId == null
+            if (tagId == null
                 || zuordnung.getProbeId() != null
                 && zuordnung.getMessungId() != null
             ) {
@@ -132,119 +112,90 @@ public class TagZuordnungService extends LadaService {
             List<String> messstellen =
                 authorization.getInfo(request).getMessstellen();
 
-            if (tag == null) { // Use existing tag
-                //Check if tag is already assigned to the probe
-                final String tagIdParam = "tagId",
-                    mstIdsParam = "mstIds",
-                    taggedIdParam = "taggedId";
-                String idField = zuordnung.getProbeId() != null
-                    ? "probe_id" : "messung_id";
-                Query isAssigned = repository.queryFromString(
-                    "SELECT EXISTS("
-                    + "SELECT 1 FROM land.tagzuordnung "
-                    + "JOIN stamm.tag ON tag_id=tag.id "
-                    + "WHERE tag_id=:" + tagIdParam
-                    + " AND (mst_id IS NULL OR mst_id IN (:" + mstIdsParam + "))"
-                    + " AND " + idField + "=:" + taggedIdParam + ")");
-                isAssigned.setParameter(tagIdParam, zuordnung.getTagId());
-                isAssigned.setParameter(mstIdsParam, messstellen);
-                isAssigned.setParameter(taggedIdParam,
-                    zuordnung.getProbeId() != null
-                    ? zuordnung.getProbeId()
-                    : zuordnung.getMessungId());
-                if ((Boolean) isAssigned.getSingleResult()) {
-                    responseBuilder.add("success", true);
-                    responseBuilder.add("status", StatusCodes.OK);
-                    responseBuilder.add("message",
-                        "Tag is already assigned to probe");
-                    responseBuilder.add("data", "");
-                    dataBuilder.add(
-                        zuordnung.getTagId().toString(), responseBuilder);
-                    continue;
-                }
-
-                tag = repository.getByIdPlain(Tag.class, tagId);
-                if (tag == null) {
-                    responseBuilder.add("success", false);
-                    responseBuilder.add("status", StatusCodes.ERROR_VALIDATION);
-                    responseBuilder.add("message",
-                        "Tag not found");
-                    responseBuilder.add("data", "");
-                    dataBuilder.add(
-                        zuordnung.getTagId().toString(), responseBuilder);
-                    continue;
-                }
-                String mstId = tag.getMstId();
-                //If user tries to assign a global tag: authorize
-                if (mstId == null) {
-                    Object data;
-                    boolean authorized = false;
-                    if (zuordnung.getMessungId() != null) {
-                        data = repository.getByIdPlain(
-                            Messung.class, zuordnung.getMessungId());
-                        authorized = authorization.isAuthorized(
-                            request,
-                            data,
-                            RequestMethod.PUT,
-                            Messung.class
-                        );
-                    } else {
-                        data = repository.getByIdPlain(
-                            Probe.class, zuordnung.getProbeId());
-                        authorized = authorization.isAuthorized(
-                            request,
-                            data,
-                            RequestMethod.PUT,
-                            Probe.class
-                        );
-                    }
-                    if (!authorized) {
-                        responseBuilder.add("success", true);
-                        responseBuilder.add("status", StatusCodes.NOT_ALLOWED);
-                        responseBuilder.add("message",
-                            "Unathorized");
-                        responseBuilder.add("data", zuordnung.toJson());
-                        dataBuilder.add("newZuordnung" + i, responseBuilder);
-                        continue;
-                    }
-                //Else check if it is the users private tag
-                } else if (!messstellen.contains(mstId)) {
-                        responseBuilder.add("success", true);
-                        responseBuilder.add("status", StatusCodes.ERROR_VALIDATION);
-                        responseBuilder.add("message",
-                            "Invalid mstId");
-                        responseBuilder.add("data", zuordnung.toJson());
-                        dataBuilder.add("newZuordnung" + i, responseBuilder);
-                        continue;
-                }
-
-                zuordnung.setTag(tag);
-
-            } else { // Create new tag
-                // TODO: Why does this code exist? Creating tags should be done
-                // via TagService.
-                String mstId = zuordnung.getTag().getMstId();
-                //mstId may not be null, global tags cannot be created
-                if (mstId == null || !messstellen.contains(mstId)) {
-                    responseBuilder.add("success", true);
-                        responseBuilder.add("status", StatusCodes.NOT_ALLOWED);
-                        responseBuilder.add("message",
-                            "Invalid/empty mstId");
-                        responseBuilder.add("data", zuordnung.toJson());
-                        dataBuilder.add("newZuordnung" + i, responseBuilder);
-                        continue;
-                }
-                if (!repository.create(tag).getSuccess()) {
-                    //TODO Proper response code?
-                    responseBuilder.add("success", true);
-                        responseBuilder.add("status", StatusCodes.ERROR_DB_CONNECTION);
-                        responseBuilder.add("message",
-                            "Failed to create tag");
-                        responseBuilder.add("data", zuordnung.toJson());
-                        dataBuilder.add("newZuordnung" + i, responseBuilder);
-                        continue;
-                }
+            //Check if tag is already assigned to the probe
+            final String tagIdParam = "tagId",
+                mstIdsParam = "mstIds",
+                taggedIdParam = "taggedId";
+            String idField = zuordnung.getProbeId() != null
+                ? "probe_id" : "messung_id";
+            Query isAssigned = repository.queryFromString(
+                "SELECT EXISTS("
+                + "SELECT 1 FROM land.tagzuordnung "
+                + "JOIN stamm.tag ON tag_id=tag.id "
+                + "WHERE tag_id=:" + tagIdParam
+                + " AND (mst_id IS NULL OR mst_id IN (:" + mstIdsParam + "))"
+                + " AND " + idField + "=:" + taggedIdParam + ")");
+            isAssigned.setParameter(tagIdParam, zuordnung.getTagId());
+            isAssigned.setParameter(mstIdsParam, messstellen);
+            isAssigned.setParameter(taggedIdParam,
+                zuordnung.getProbeId() != null
+                ? zuordnung.getProbeId()
+                : zuordnung.getMessungId());
+            if ((Boolean) isAssigned.getSingleResult()) {
+                responseBuilder.add("success", true);
+                responseBuilder.add("status", StatusCodes.OK);
+                responseBuilder.add("message",
+                    "Tag is already assigned to probe");
+                responseBuilder.add("data", "");
+                dataBuilder.add(
+                    zuordnung.getTagId().toString(), responseBuilder);
+                continue;
             }
+
+            Tag tag = repository.getByIdPlain(Tag.class, tagId);
+            if (tag == null) {
+                responseBuilder.add("success", false);
+                responseBuilder.add("status", StatusCodes.ERROR_VALIDATION);
+                responseBuilder.add("message", "Tag not found");
+                responseBuilder.add("data", "");
+                dataBuilder.add(
+                    zuordnung.getTagId().toString(), responseBuilder);
+                continue;
+            }
+            String mstId = tag.getMstId();
+            //If user tries to assign a global tag: authorize
+            if (mstId == null) {
+                Object data;
+                boolean authorized = false;
+                if (zuordnung.getMessungId() != null) {
+                    data = repository.getByIdPlain(
+                        Messung.class, zuordnung.getMessungId());
+                    authorized = authorization.isAuthorized(
+                        request,
+                        data,
+                        RequestMethod.PUT,
+                        Messung.class
+                    );
+                } else {
+                    data = repository.getByIdPlain(
+                        Probe.class, zuordnung.getProbeId());
+                    authorized = authorization.isAuthorized(
+                        request,
+                        data,
+                        RequestMethod.PUT,
+                        Probe.class
+                    );
+                }
+                if (!authorized) {
+                    responseBuilder.add("success", true);
+                    responseBuilder.add("status", StatusCodes.NOT_ALLOWED);
+                    responseBuilder.add("message", "Unathorized");
+                    responseBuilder.add("data", zuordnung.toJson());
+                    dataBuilder.add("newZuordnung" + i, responseBuilder);
+                    continue;
+                }
+            } else if (!messstellen.contains(mstId)) {
+                //Else check if it is the users private tag
+                responseBuilder.add("success", true);
+                responseBuilder.add("status", StatusCodes.ERROR_VALIDATION);
+                responseBuilder.add("message", "Invalid mstId");
+                responseBuilder.add("data", zuordnung.toJson());
+                dataBuilder.add("newZuordnung" + i, responseBuilder);
+                continue;
+            }
+
+            zuordnung.setTag(tag);
+
             Response createResponse = repository.create(zuordnung);
 
             //Extend tag expiring time
