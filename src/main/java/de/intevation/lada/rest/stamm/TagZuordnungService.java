@@ -27,7 +27,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -273,7 +272,6 @@ public class TagZuordnungService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response deleteTagReference(
-        @Context HttpHeaders headers,
         @Context HttpServletRequest request,
         @PathParam("id") Integer id
     ) {
