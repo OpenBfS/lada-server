@@ -177,7 +177,7 @@ public class TagZuordnungService extends LadaService {
                     );
                 }
                 if (!authorized) {
-                    responseBuilder.add("success", true);
+                    responseBuilder.add("success", false);
                     responseBuilder.add("status", StatusCodes.NOT_ALLOWED);
                     responseBuilder.add("message", "Unathorized");
                     responseBuilder.add("data", zuordnung.toJson());
@@ -186,7 +186,7 @@ public class TagZuordnungService extends LadaService {
                 }
             } else if (!messstellen.contains(mstId)) {
                 //Else check if it is the users private tag
-                responseBuilder.add("success", true);
+                responseBuilder.add("success", false);
                 responseBuilder.add("status", StatusCodes.ERROR_VALIDATION);
                 responseBuilder.add("message", "Invalid mstId");
                 responseBuilder.add("data", zuordnung.toJson());
