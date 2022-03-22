@@ -180,6 +180,8 @@ if [ "$NO_DATA" != "true" ]; then
         stammdaten_data_user_context.sql \
         stammdaten_data_importer_config.sql \
         stammdaten_data_tm_fm_umrechnung.sql\
+        stammdaten_data_richtwert.sql\
+        stammdaten_data_sollist.sql\
         lada_data.sql \
         lada_messprogramm.sql
     do

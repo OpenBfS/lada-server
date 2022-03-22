@@ -17,6 +17,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.transaction.Transactional;
 
 import org.apache.log4j.Logger;
 
@@ -26,9 +27,19 @@ import de.intevation.lada.util.rest.Response;
 /**
  * Provides various methods for database access.
  *
+ * Classes calling these methods have to ensure to do this inside
+ * a transaction context.
+ *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @ApplicationScoped
+@Transactional(value = Transactional.TxType.MANDATORY,
+    dontRollbackOn = {
+        /* Although the API documentation states for these Exceptions that
+           they "will not cause the current transaction [...] to be marked
+           for rollback", they have to be named here to make this real. */
+        NoResultException.class,
+        NonUniqueResultException.class})
 public class Repository {
 
     @Inject

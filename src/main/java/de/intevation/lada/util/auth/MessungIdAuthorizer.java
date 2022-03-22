@@ -14,9 +14,7 @@ import java.util.List;
 
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.MessStelle;
-import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -62,19 +60,9 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
         if (messung.getStatus() == null) {
             return false;
         }
-        StatusProtokoll status = repository.getByIdPlain(
-            StatusProtokoll.class, messung.getStatus());
-        StatusKombi kombi = repository.getByIdPlain(
-            StatusKombi.class, status.getStatusKombi());
-        if (method == RequestMethod.DELETE
-            && (kombi.getId() == 1
-            || kombi.getId() == 9
-            || kombi.getId() == 13)
-        ) {
-            return true;
-        }
         return ((method == RequestMethod.POST
-            || method == RequestMethod.PUT)
+            || method == RequestMethod.PUT
+            || method == RequestMethod.DELETE)
             && getAuthorization(userInfo, probe));
     }
 

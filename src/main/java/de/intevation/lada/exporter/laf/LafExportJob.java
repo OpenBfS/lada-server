@@ -11,15 +11,16 @@ package de.intevation.lada.exporter.laf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.json.JsonNumber;
 import javax.json.JsonValue;
 
-import org.apache.log4j.Logger;
-
+import de.intevation.lada.exporter.ExportConfig;
+import de.intevation.lada.exporter.Exporter;
+import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.ExportJob;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Probe;
@@ -34,33 +35,24 @@ public class LafExportJob extends ExportJob {
 
     private static final int LENGTH = 1024;
 
-    public LafExportJob(String jobId) {
-        super(jobId);
+    /**
+     * The laf exporter.
+     */
+    @Inject
+    @ExportConfig(format = ExportFormat.LAF)
+    private Exporter exporter;
+
+    public LafExportJob() {
         this.format = "laf";
         this.downloadFileName = "export.laf";
-        this.logger =
-            Logger.getLogger(String.format("LafExportJob[%s]", jobId));
     }
 
     /**
      * Start the export.
      */
     @Override
-    public void run() {
-        super.run();
-        logger.debug(String.format("Starting LAF export", jobId));
-
-        //Check encoding
-        // TODO: should be done earlier: it's too late to report to the client
-        Charset charset;
-        if (!isEncodingValid()) {
-            String error = String.format("Invalid encoding: %s", this.encoding);
-            fail(error);
-            logger.error(error);
-            return;
-        } else {
-            charset = Charset.forName(encoding);
-        }
+    public void runWithTx() {
+        logger.debug("Starting LAF export");
 
         //Load records
         List<Integer> probeIds = new ArrayList<Integer>();
@@ -80,9 +72,7 @@ public class LafExportJob extends ExportJob {
             }
         }
         if (probeIds.isEmpty() && messungIds.isEmpty()) {
-            fail("No data to export");
-            logger.error("No export data set");
-            return;
+            throw new IllegalArgumentException("No data to export");
         }
 
         //Get probe and messung records
@@ -112,28 +102,21 @@ public class LafExportJob extends ExportJob {
 
         //Export and write to file
         InputStream exported =
-            exporter.exportProben(pIds, mIds, charset, userInfo);
+            exporter.exportProben(pIds, mIds, encoding, userInfo);
         logger.debug("Finished export to memory, writing to file.");
+
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        byte[] buffer = new byte[LENGTH];
+        int length;
         try {
-            ByteArrayOutputStream result = new ByteArrayOutputStream();
-            byte[] buffer = new byte[LENGTH];
-            int length;
             while ((length = exported.read(buffer)) != -1) {
                 result.write(buffer, 0, length);
             }
-            String resultString = new String(result.toByteArray(), charset);
-            if (!writeResultToFile(resultString)) {
-                fail("Error on writing export result.");
-                return;
-            }
+            writeResultToFile(new String(result.toByteArray(), encoding));
         } catch (IOException ioe) {
-            logger.error(String.format(
-                "Error on writing export result. IOException: %s",
-                ioe.getMessage()));
-            fail("Error on writing export result.");
-            return;
+            throw new RuntimeException(ioe.getMessage());
         }
+
         logger.debug(String.format("Finished LAF export"));
-        finish();
     }
 }

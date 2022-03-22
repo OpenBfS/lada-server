@@ -8,8 +8,6 @@
 package de.intevation.lada.util.rest;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
@@ -31,7 +29,6 @@ public class Response implements Serializable {
     private MultivaluedMap<String, Integer> errors;
     private MultivaluedMap<String, Integer> warnings;
     private MultivaluedMap<String, Integer> notifications;
-    private Boolean readonly;
     private int totalCount;
 
     /**
@@ -48,7 +45,6 @@ public class Response implements Serializable {
         this.errors = new MultivaluedHashMap<String, Integer>();
         this.warnings = new MultivaluedHashMap<String, Integer>();
         this.notifications = new MultivaluedHashMap<String, Integer>();
-        this.readonly = Boolean.FALSE;
         this.totalCount = 0;
     }
 
@@ -66,7 +62,6 @@ public class Response implements Serializable {
         this.errors = new MultivaluedHashMap<String, Integer>();
         this.warnings = new MultivaluedHashMap<String, Integer>();
         this.notifications = new MultivaluedHashMap<String, Integer>();
-        this.readonly = Boolean.FALSE;
         this.totalCount = count;
     }
 
@@ -122,14 +117,6 @@ public class Response implements Serializable {
       this.notifications.putAll(notifications);
     }
 
-    public Boolean getReadonly() {
-        return readonly;
-    }
-
-    public void setReadonly(Boolean readonly) {
-        this.readonly = readonly;
-    }
-
     /**
      * @return the totalCount
      */
@@ -142,37 +129,5 @@ public class Response implements Serializable {
      */
     public void setTotalCount(int totalCount) {
         this.totalCount = totalCount;
-    }
-
-    @SuppressWarnings("unused")
-    private HashMap<String, String> convertCodes(Map<String, Integer> codes) {
-        HashMap<String, String> converted = new HashMap<String, String>();
-        if (codes == null || codes.isEmpty()) {
-            return converted;
-        }
-        for (Map.Entry<String, Integer> entry: codes.entrySet()) {
-            converted.put(entry.getKey(), Integer.toString(entry.getValue()));
-        }
-        return converted;
-    }
-
-    /* Currently unused but might be helpfull later */
-    @SuppressWarnings("unused")
-    private String codes2string(Map<String, Integer> codes) {
-        String response = "{";
-        if (codes == null || codes.isEmpty()) {
-            response += "}";
-            return response;
-        }
-        boolean first = true;
-        for (Map.Entry<String, Integer> entry: codes.entrySet()) {
-            if (!first) {
-                response += ",";
-            }
-            response += entry.getKey() + ":" + "\"" + entry.getValue() + "\"";
-            first = false;
-        }
-        response += "}";
-        return response;
     }
 }

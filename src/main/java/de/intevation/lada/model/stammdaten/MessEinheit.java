@@ -8,6 +8,7 @@
 package de.intevation.lada.model.stammdaten;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.json.bind.annotation.JsonbTransient;
@@ -18,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
 
 /**
  * The persistent class for the mess_einheit database table.
@@ -55,6 +57,9 @@ public class MessEinheit implements Serializable {
      */
     @Transient
     private Boolean primary;
+
+    @Column(name = "letzte_aenderung", insertable = false)
+    private Timestamp letzteAenderung;
 
     public MessEinheit() {
     }
@@ -110,4 +115,13 @@ public class MessEinheit implements Serializable {
     public void setPrimary(Boolean primary) {
         this.primary = primary;
     }
+
+    public Timestamp getLetzteAenderung() {
+        return this.letzteAenderung;
+    }
+
+    public void setLetzteAenderung(Timestamp letzteAenderung) {
+        this.letzteAenderung = letzteAenderung;
+    }
+
 }
