@@ -10,8 +10,8 @@ package de.intevation.lada.model.stammdaten;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbTypeDeserializer;
+import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,6 +27,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.util.data.TimestampDeserializer;
+import de.intevation.lada.util.data.TimestampSerializer;
 
 import org.hibernate.annotations.Type;
 
@@ -79,7 +80,7 @@ public class Ort implements Serializable {
     private String langtext;
 
     @Column(name = "letzte_aenderung", insertable = false)
-    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeSerializer(TimestampSerializer.class)
     @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp letzteAenderung;
 

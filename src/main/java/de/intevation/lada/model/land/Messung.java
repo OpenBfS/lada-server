@@ -10,9 +10,9 @@ package de.intevation.lada.model.land;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.json.bind.annotation.JsonbTypeDeserializer;
+import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -29,6 +29,7 @@ import org.hibernate.annotations.DynamicInsert;
 
 import de.intevation.lada.util.data.EmptyStringConverter;
 import de.intevation.lada.util.data.TimestampDeserializer;
+import de.intevation.lada.util.data.TimestampSerializer;
 
 
 /**
@@ -56,13 +57,13 @@ public class Messung implements Serializable {
     private Integer externeMessungsId;
 
     @Column(name = "letzte_aenderung", insertable = false)
-    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeSerializer(TimestampSerializer.class)
     @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp letzteAenderung;
 
     private Integer messdauer;
 
-    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeSerializer(TimestampSerializer.class)
     @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp messzeitpunkt;
 
@@ -87,7 +88,7 @@ public class Messung implements Serializable {
     private StatusProtokoll statusProtokoll;
 
     @Column(name = "tree_modified", insertable = false, updatable = false)
-    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeSerializer(TimestampSerializer.class)
     @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp treeModified;
 
@@ -104,7 +105,7 @@ public class Messung implements Serializable {
     private Boolean statusEditLst;
 
     @Transient
-    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeSerializer(TimestampSerializer.class)
     @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp parentModified;
 

@@ -10,9 +10,9 @@ package de.intevation.lada.model.land;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.json.bind.annotation.JsonbTypeDeserializer;
+import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,6 +25,7 @@ import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
 
 import de.intevation.lada.util.data.TimestampDeserializer;
+import de.intevation.lada.util.data.TimestampSerializer;
 
 
 /**
@@ -41,7 +42,7 @@ public class Ortszuordnung implements Serializable {
     private Integer id;
 
     @Column(name = "letzte_aenderung", insertable = false)
-    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeSerializer(TimestampSerializer.class)
     @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp letzteAenderung;
 
@@ -60,7 +61,7 @@ public class Ortszuordnung implements Serializable {
     private String ozId;
 
     @Column(name = "tree_modified", insertable = false, updatable = false)
-    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeSerializer(TimestampSerializer.class)
     @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp treeModified;
 

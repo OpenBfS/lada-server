@@ -10,9 +10,9 @@ package de.intevation.lada.model.land;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.json.bind.annotation.JsonbDateFormat;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.json.bind.annotation.JsonbTypeDeserializer;
+import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -30,6 +30,7 @@ import org.hibernate.annotations.DynamicInsert;
 import de.intevation.lada.model.stammdaten.Umwelt;
 import de.intevation.lada.util.data.EmptyStringConverter;
 import de.intevation.lada.util.data.TimestampDeserializer;
+import de.intevation.lada.util.data.TimestampSerializer;
 
 
 /**
@@ -67,7 +68,7 @@ public class Probe implements Serializable {
     private String laborMstId;
 
     @Column(name = "letzte_aenderung", insertable = false)
-    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeSerializer(TimestampSerializer.class)
     @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp letzteAenderung;
 
@@ -91,37 +92,37 @@ public class Probe implements Serializable {
     private Integer probeNehmerId;
 
     @Column(name = "probeentnahme_beginn")
-    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeSerializer(TimestampSerializer.class)
     @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp probeentnahmeBeginn;
 
     @Column(name = "probeentnahme_ende")
     @JsonbTypeDeserializer(TimestampDeserializer.class)
-    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeSerializer(TimestampSerializer.class)
     private Timestamp probeentnahmeEnde;
 
     @Column(name = "probenart_id")
     private Integer probenartId;
 
     @Column(name = "solldatum_beginn")
-    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeSerializer(TimestampSerializer.class)
     @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp solldatumBeginn;
 
     @Column(name = "solldatum_ende")
-    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeSerializer(TimestampSerializer.class)
     @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp solldatumEnde;
 
     @Column(name = "ursprungszeit")
-    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeSerializer(TimestampSerializer.class)
     @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp ursprungszeit;
 
     private Boolean test;
 
     @Column(name = "tree_modified", insertable = false, updatable = false)
-    @JsonbDateFormat(JsonbDateFormat.TIME_IN_MILLIS)
+    @JsonbTypeSerializer(TimestampSerializer.class)
     @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp treeModified;
 
