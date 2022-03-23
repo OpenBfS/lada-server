@@ -60,8 +60,6 @@ public class TagZuordnungService extends LadaService {
      * }]
      * </code>
      * </pre>
-     *
-     * Setting a mstId is mandatory, as only global tags have no mstId.
      */
     @POST
     @Path("/")
