@@ -182,6 +182,7 @@ if [ "$NO_DATA" != "true" ]; then
         stammdaten_data_tm_fm_umrechnung.sql\
         stammdaten_data_richtwert.sql\
         stammdaten_data_sollist.sql\
+        stammdaten_data_tag.sql\
         lada_data.sql \
         lada_messprogramm.sql
     do
