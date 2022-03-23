@@ -337,7 +337,9 @@ public class ServiceTest {
      * @return The resulting json object.
      *
      */
-    public JsonObject bulkCreate(String name, String parameter, JsonArray create) {
+    public JsonObject bulkCreate(
+        String name, String parameter, JsonArray create
+    ) {
         System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName(name + " service");
