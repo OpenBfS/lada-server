@@ -47,19 +47,25 @@ public class TagZuordnungService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Creates a new reference between a tag and a probe.
+     * Create new references between tags and Probe or Messung objects.
      *
-     * Existing tags can be used with the following request:
+     * @param request HttpServletRequest taken from context.
+     * @param zuordnungs A list of references like
      * <pre>
      * <code>
      * [{
      *   "probeId": [Integer],
      *   "tagId": [Integer]
      * }, {
+     *   "messungId": [Integer],
+     *   "tagId": [Integer]
+     * }, {
      *    ...
      * }]
      * </code>
      * </pre>
+     *
+     * @return Response with list of Response objects for each reference.
      */
     @POST
     @Path("/")
