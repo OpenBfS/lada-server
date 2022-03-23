@@ -57,6 +57,7 @@ public class TagAuthorizer extends BaseAuthorizer {
         return isAuthorized(tag, method, userInfo, clazz);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> Response filter(
         Response data,
