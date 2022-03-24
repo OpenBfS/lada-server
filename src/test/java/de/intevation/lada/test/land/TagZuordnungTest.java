@@ -12,7 +12,9 @@ import static de.intevation.lada.BaseTest.assertContains;
 import java.net.URL;
 import java.util.List;
 
+import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
@@ -53,7 +55,7 @@ public class TagZuordnungTest extends ServiceTest {
      * - Delete all created Tagzuordnung objects
      */
     public void execute() {
-        JsonObject createResponse = bulkCreate(name, tagUrl, create);
+        JsonObject createResponse = bulkOperation(name, tagUrl, create);
         long nowLong = System.currentTimeMillis();
         JsonObject tagResponse = getAll("tag", "rest/tag/");
         JsonArray tags = tagResponse.getJsonArray(data);
@@ -65,12 +67,13 @@ public class TagZuordnungTest extends ServiceTest {
         });
 
         final String idKey = "id";
+        JsonArrayBuilder deleteResponseBuilder = Json.createArrayBuilder();
         for (JsonValue value: createResponse.getJsonArray(data)) {
             JsonObject valueObj = (JsonObject) value;
             assertContains(valueObj, data);
-            JsonObject dataObj = valueObj.getJsonObject(data);
-            assertContains(dataObj, idKey);
-            delete(name, tagUrl + dataObj.getInt(idKey));
+            deleteResponseBuilder.add(valueObj.getJsonObject(data));
         }
+        bulkOperation(
+            name, tagUrl + "delete", deleteResponseBuilder.build());
     }
 }

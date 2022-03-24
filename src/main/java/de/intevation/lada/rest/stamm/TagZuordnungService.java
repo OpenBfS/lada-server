@@ -15,10 +15,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 
 import de.intevation.lada.model.land.TagZuordnung;
@@ -39,6 +37,9 @@ import de.intevation.lada.rest.LadaService;
 @Path("rest/tag/zuordnung")
 public class TagZuordnungService extends LadaService {
 
+    @Context
+    HttpServletRequest request;
+
     @Inject
     private Repository repository;
 
@@ -46,10 +47,17 @@ public class TagZuordnungService extends LadaService {
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
 
+    private static final String EXISTS_QUERY_TEMPLATE =
+        "SELECT EXISTS("
+        + "SELECT 1 FROM land.tagzuordnung "
+        + "JOIN stamm.tag ON tag_id=tag.id "
+        + "WHERE tag_id=:%s"
+        + " AND (mst_id IS NULL OR mst_id IN (:%s))"
+        + " AND %s=:%s)";
+
     /**
      * Create new references between tags and Probe or Messung objects.
      *
-     * @param request HttpServletRequest taken from context.
      * @param zuordnungs A list of references like
      * <pre>
      * <code>
@@ -70,7 +78,6 @@ public class TagZuordnungService extends LadaService {
     @POST
     @Path("/")
     public Response createTagReference(
-        @Context HttpServletRequest request,
         List<TagZuordnung> zuordnungs
     ) {
         //Create Response
@@ -96,27 +103,7 @@ public class TagZuordnungService extends LadaService {
                 continue;
             }
 
-            //Check if tag is already assigned to the probe
-            final String tagIdParam = "tagId",
-                mstIdsParam = "mstIds",
-                taggedIdParam = "taggedId";
-            String idField = zuordnung.getProbeId() != null
-                ? "probe_id" : "messung_id";
-            Query isAssigned = repository.queryFromString(
-                "SELECT EXISTS("
-                + "SELECT 1 FROM land.tagzuordnung "
-                + "JOIN stamm.tag ON tag_id=tag.id "
-                + "WHERE tag_id=:" + tagIdParam
-                + " AND (mst_id IS NULL OR mst_id IN (:" + mstIdsParam + "))"
-                + " AND " + idField + "=:" + taggedIdParam + ")");
-            isAssigned.setParameter(tagIdParam, zuordnung.getTagId());
-            isAssigned.setParameter(
-                mstIdsParam, authorization.getInfo(request).getMessstellen());
-            isAssigned.setParameter(taggedIdParam,
-                zuordnung.getProbeId() != null
-                ? zuordnung.getProbeId()
-                : zuordnung.getMessungId());
-            if ((Boolean) isAssigned.getSingleResult()) {
+            if (isExisting(zuordnung)) {
                 responseList.add(new Response(
                         true, StatusCodes.OK, zuordnung));
                 continue;
@@ -137,29 +124,74 @@ public class TagZuordnungService extends LadaService {
     }
 
     /**
-     * Delete a reference between a tag and a probe.
-     * @return Response object
+     * Delete references between tags and Probe or Messung objects.
+     *
+     * @param zuordnungs A list of references like
+     * <pre>
+     * <code>
+     * [{
+     *   "probeId": [Integer],
+     *   "tagId": [Integer]
+     * }, {
+     *   "messungId": [Integer],
+     *   "tagId": [Integer]
+     * }, {
+     *    ...
+     * }]
+     * </code>
+     * </pre>
+     *
+     * @return Response with list of Response objects for each reference.
      */
-    @DELETE
-    @Path("/{id}")
+    @POST
+    @Path("/delete")
     public Response deleteTagReference(
-        @Context HttpServletRequest request,
-        @PathParam("id") Integer id
+        List<TagZuordnung> zuordnungs
     ) {
-        TagZuordnung tagZuordnung
-            = repository.getByIdPlain(TagZuordnung.class, id);
-        if (!authorization.isAuthorized(
-                request,
-                tagZuordnung,
-                RequestMethod.DELETE,
-                TagZuordnung.class)
-        ) {
-            return new Response(
-                false,
-                StatusCodes.NOT_ALLOWED,
-                tagZuordnung);
-        }
+        List<Response> responseList = new ArrayList<>();
 
-        return repository.delete(tagZuordnung);
+        for (TagZuordnung zuordnung: zuordnungs) {
+            if (!authorization.isAuthorized(
+                    request,
+                    zuordnung,
+                    RequestMethod.DELETE,
+                    TagZuordnung.class)
+            ) {
+                responseList.add(new Response(
+                        false,
+                        StatusCodes.NOT_ALLOWED,
+                        zuordnung));
+                continue;
+            }
+
+            if (!isExisting(zuordnung)) {
+                responseList.add(new Response(
+                        true, StatusCodes.OK, zuordnung));
+                continue;
+            }
+
+            responseList.add(repository.delete(zuordnung));
+        }
+        return new Response(true, StatusCodes.OK, responseList);
+    }
+
+    private Boolean isExisting(TagZuordnung zuordnung) {
+        // Check if tag is already assigned
+        final String tagIdParam = "tagId",
+            mstIdsParam = "mstIds",
+            taggedIdParam = "taggedId";
+        String idField = zuordnung.getProbeId() != null
+            ? "probe_id" : "messung_id";
+        Query isAssigned = repository.queryFromString(
+            String.format(EXISTS_QUERY_TEMPLATE,
+                tagIdParam, mstIdsParam, idField, taggedIdParam));
+        isAssigned.setParameter(tagIdParam, zuordnung.getTagId());
+        isAssigned.setParameter(
+            mstIdsParam, authorization.getInfo(request).getMessstellen());
+        isAssigned.setParameter(taggedIdParam,
+            zuordnung.getProbeId() != null
+            ? zuordnung.getProbeId()
+            : zuordnung.getMessungId());
+        return (Boolean) isAssigned.getSingleResult();
     }
 }

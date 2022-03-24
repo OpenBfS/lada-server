@@ -330,20 +330,21 @@ public class ServiceTest {
     }
 
     /**
-     * Test the CREATE Service using a list of input objects.
+     * Test service using a list of input objects.
      * @param name the name of the entity to request.
      * @param parameter the parameters used in the request.
-     * @param create the objects to create, embedded in POST body.
+     * @param payload the objects embedded in POST body.
      * @return The resulting json object.
      *
      */
-    public JsonObject bulkCreate(
-        String name, String parameter, JsonArray create
+    public JsonObject bulkOperation(
+        String name, String parameter, JsonArray payload
     ) {
+        final String type = "bulk";
         System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName(name + " service");
-        prot.setType("create");
+        prot.setType(type);
         prot.setPassed(false);
         protocol.add(prot);
 
@@ -352,7 +353,8 @@ public class ServiceTest {
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .post(Entity.entity(create.toString(), MediaType.APPLICATION_JSON));
+            .post(Entity.entity(
+                    payload.toString(), MediaType.APPLICATION_JSON));
         JsonObject content = BaseTest.parseResponse(response, prot);
         /* Verify the response*/
         Assert.assertTrue("Unsuccessful response object:\n" + content,
@@ -363,7 +365,7 @@ public class ServiceTest {
             JsonObject responseObj = (JsonObject) object;
             Protocol objectProt = new Protocol();
             prot.setName(name + " service");
-            prot.setType("create");
+            prot.setType(type);
             Assert.assertTrue("Unsuccessful response list element",
                 responseObj.getBoolean("success"));
             Assert.assertEquals("200", responseObj.getString("message"));
