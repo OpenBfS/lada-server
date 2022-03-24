@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Assert;
 import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 
 import de.intevation.lada.BaseTest;
@@ -290,7 +291,7 @@ public class Stammdaten {
             prot.addInfo("success", content.getBoolean("success"));
             Assert.assertEquals("200", content.getString("message"));
             prot.addInfo("message", content.getString("message"));
-            Assert.assertThat(content.getJsonObject("data").keySet(),
+            MatcherAssert.assertThat(content.getJsonObject("data").keySet(),
                 matchers.get(type));
             prot.addInfo("object", "equals");
         } catch (JsonException je) {
