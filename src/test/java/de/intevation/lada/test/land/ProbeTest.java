@@ -13,7 +13,6 @@ import java.util.List;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
 
 import org.junit.Assert;
 
@@ -55,12 +54,12 @@ public class ProbeTest extends ServiceTest {
         JsonObject content = readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject probe = content.getJsonArray("land.probe").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(probe);
-        builder.add("mittelungsdauer", JsonValue.NULL);
-        builder.add("probeentnahmeEnde", JsonValue.NULL);
-        builder.add("erzeugerId", JsonValue.NULL);
-        builder.add("mplId", JsonValue.NULL);
-        builder.add("readonly", JsonValue.FALSE);
-        builder.add("owner", JsonValue.TRUE);
+        builder.addNull("mittelungsdauer");
+        builder.addNull("probeentnahmeEnde");
+        builder.addNull("erzeugerId");
+        builder.addNull("mplId");
+        builder.add("readonly", false);
+        builder.add("owner", true);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);
 

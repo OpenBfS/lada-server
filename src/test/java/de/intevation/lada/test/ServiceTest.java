@@ -229,9 +229,11 @@ public class ServiceTest {
                 || entry.getKey().equals("letzteAenderung")) {
                 continue;
             }
+            String key = entry.getKey();
             Assert.assertEquals(
+                String.format("Key '%s':", key),
                 entry.getValue(),
-                object.get(entry.getKey()));
+                object.get(key));
         }
         prot.addInfo("object", "equals");
         prot.setPassed(true);
