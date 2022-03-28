@@ -439,22 +439,6 @@ public class LandTest extends BaseTest {
         Assert.assertNotNull(messprogramm);
         protocol.setPassed(true);
     }
-    /**
-     * Cleanup the database.
-     */
-    // @Test
-    // @Ignore
-    // @InSequence(19)
-    // @DataSource("java:jboss/lada-test")
-    // @CleanupUsingScript("datasets/cleanup.sql")
-    // public final void cleanUp() {
-    //     Protocol protocol = new Protocol();
-    //     protocol.addInfo("database", "Cleaning the database.");
-    //     protocol.setName("database");
-    //     protocol.setType("cleanup");
-    //     protocol.setPassed(true);
-    //     testProtocol.add(protocol);
-    // }
 
     /**
      * Test probe generation from a messprogramm record.
