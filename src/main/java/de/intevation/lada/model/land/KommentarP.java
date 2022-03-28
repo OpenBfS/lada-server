@@ -10,8 +10,6 @@ package de.intevation.lada.model.land;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.json.bind.annotation.JsonbTypeDeserializer;
-import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,8 +18,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import de.intevation.lada.util.data.TimestampDeserializer;
-import de.intevation.lada.util.data.TimestampSerializer;
 
 
 /**
@@ -37,8 +33,6 @@ public class KommentarP implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @JsonbTypeSerializer(TimestampSerializer.class)
-    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp datum;
 
     @Column(name = "mst_id")

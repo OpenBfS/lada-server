@@ -10,8 +10,6 @@ package de.intevation.lada.model.land;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.json.bind.annotation.JsonbTypeDeserializer;
-import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -24,8 +22,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import de.intevation.lada.util.data.EmptyStringConverter;
-import de.intevation.lada.util.data.TimestampDeserializer;
-import de.intevation.lada.util.data.TimestampSerializer;
 
 
 /**
@@ -42,8 +38,6 @@ public class ZusatzWert implements Serializable {
     private Integer id;
 
     @Column(name = "letzte_aenderung", insertable = false)
-    @JsonbTypeSerializer(TimestampSerializer.class)
-    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp letzteAenderung;
 
     private Float messfehler;
@@ -62,8 +56,6 @@ public class ZusatzWert implements Serializable {
     private String pzsId;
 
     @Column(name = "tree_modified", insertable = false, updatable = false)
-    @JsonbTypeSerializer(TimestampSerializer.class)
-    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp treeModified;
 
     @OneToOne

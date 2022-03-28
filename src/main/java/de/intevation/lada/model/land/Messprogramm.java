@@ -12,8 +12,6 @@ import java.sql.Timestamp;
 import java.util.Set;
 
 import javax.json.bind.annotation.JsonbTransient;
-import javax.json.bind.annotation.JsonbTypeDeserializer;
-import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,8 +25,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
 
-import de.intevation.lada.util.data.TimestampDeserializer;
-import de.intevation.lada.util.data.TimestampSerializer;
 
 /**
  * The persistent class for the messprogramm database table.
@@ -78,8 +74,6 @@ public class Messprogramm implements Serializable {
     private String laborMstId;
 
     @Column(name = "letzte_aenderung", insertable = false)
-    @JsonbTypeSerializer(TimestampSerializer.class)
-    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp letzteAenderung;
 
     @Column(name = "media_desk")

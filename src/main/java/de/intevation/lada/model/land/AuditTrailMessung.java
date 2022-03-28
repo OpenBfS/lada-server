@@ -10,8 +10,6 @@ package de.intevation.lada.model.land;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.json.bind.annotation.JsonbTypeDeserializer;
-import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -24,8 +22,6 @@ import org.hibernate.annotations.TypeDefs;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import de.intevation.lada.util.data.JsonObjectType;
-import de.intevation.lada.util.data.TimestampDeserializer;
-import de.intevation.lada.util.data.TimestampSerializer;
 
 
 /**
@@ -44,8 +40,6 @@ public class AuditTrailMessung implements Serializable {
     private String action;
 
     @Column(name = "tstamp")
-    @JsonbTypeSerializer(TimestampSerializer.class)
-    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp tstamp;
 
     @Column(name = "changed_fields")

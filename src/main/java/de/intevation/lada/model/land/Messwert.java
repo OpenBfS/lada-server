@@ -11,8 +11,6 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 import javax.json.bind.annotation.JsonbTransient;
-import javax.json.bind.annotation.JsonbTypeDeserializer;
-import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,8 +22,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
 
-import de.intevation.lada.util.data.TimestampDeserializer;
-import de.intevation.lada.util.data.TimestampSerializer;
 
 
 /**
@@ -44,8 +40,6 @@ public class Messwert implements Serializable {
     private Boolean grenzwertueberschreitung;
 
     @Column(name = "letzte_aenderung", insertable = false)
-    @JsonbTypeSerializer(TimestampSerializer.class)
-    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp letzteAenderung;
 
     @Column(name = "meh_id")
@@ -68,8 +62,6 @@ public class Messwert implements Serializable {
     private Double nwgZuMesswert;
 
     @Column(name = "tree_modified", insertable = false, updatable = false)
-    @JsonbTypeSerializer(TimestampSerializer.class)
-    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp treeModified;
 
     @OneToOne
@@ -83,8 +75,6 @@ public class Messwert implements Serializable {
     private boolean readonly;
 
     @Transient
-    @JsonbTypeSerializer(TimestampSerializer.class)
-    @JsonbTypeDeserializer(TimestampDeserializer.class)
     private Timestamp parentModified;
 
     @Transient

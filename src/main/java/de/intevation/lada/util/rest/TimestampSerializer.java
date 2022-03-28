@@ -6,7 +6,7 @@
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
 
-package de.intevation.lada.util.data;
+package de.intevation.lada.util.rest;
 
 import java.sql.Timestamp;
 
@@ -16,7 +16,7 @@ import javax.json.stream.JsonGenerator;
 
 
 /**
- * Serializer for java.sql.Timestamp.
+ * JSON-B serializer for java.sql.Timestamp.
  */
 public class TimestampSerializer implements JsonbSerializer<Timestamp> {
     @Override

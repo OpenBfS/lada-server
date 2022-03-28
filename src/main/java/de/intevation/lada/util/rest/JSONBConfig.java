@@ -26,6 +26,8 @@ public class JSONBConfig implements ContextResolver<Jsonb> {
     public Jsonb getContext(Class type) {
         return JsonbBuilder.create(new JsonbConfig()
             .withNullValues(true)
+            .withDeserializers(new TimestampDeserializer())
+            .withSerializers(new TimestampSerializer())
         );
     }
 }

@@ -1,4 +1,4 @@
-/* Copyright (C) 2013 by Bundesamt fuer Strahlenschutz
+/* Copyright (C) 2022 by Bundesamt fuer Strahlenschutz
  * Software engineering by Intevation GmbH
  *
  * This file is Free Software under the GNU GPL (v>=3)
@@ -6,7 +6,7 @@
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
 
-package de.intevation.lada.util.data;
+package de.intevation.lada.util.rest;
 
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
@@ -17,7 +17,7 @@ import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
 /**
- * Deserializer for sql timestamps.
+ * JSON-B deserializer for java.sql.Timestamp.
  */
 public class TimestampDeserializer implements JsonbDeserializer <Timestamp> {
     @Override
