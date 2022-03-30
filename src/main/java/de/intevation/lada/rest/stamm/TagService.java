@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -33,7 +32,6 @@ import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
@@ -124,40 +122,37 @@ public class TagService extends LadaService {
             }
         }
 
-        UserInfo userInfo = authorization.getInfo(request);
-        EntityManager em = repository.entityManager();
-        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaBuilder builder =
+            repository.entityManager().getCriteriaBuilder();
         CriteriaQuery<Tag> criteriaQuery = builder.createQuery(Tag.class);
         Root<Tag> root = criteriaQuery.from(Tag.class);
-        Predicate zeroMstfilter = builder.isNull(root.get("mstId"));
-        Predicate filter;
-        if (userInfo.getMessstellen().isEmpty()) {
-            filter = zeroMstfilter;
-        } else {
-            Predicate userMstFilter =
-            builder.in(root.get("mstId")).value(userInfo.getMessstellen());
-            filter = builder.or(zeroMstfilter, userMstFilter);
-        }
+
+        // Return only the tags without mstId or matching the user
+        final String mstIdParam = "mstId";
+        Predicate filter = builder.or(
+            builder.isNull(root.get(mstIdParam)),
+            builder.in(root.get(mstIdParam)).value(
+                authorization.getInfo(request).getMessstellen()));
+
+        // Return only tags assigned to given Probe or Messung object
+        Join<Tag, TagZuordnung> joinTagZuordnung =
+            root.join(
+                "tagZuordnungs",
+                javax.persistence.criteria.JoinType.LEFT);
         if (probeId != null) {
-            Join<Tag, TagZuordnung> joinTagZuordnung =
-                root.join(
-                    "tagZuordnungs",
-                    javax.persistence.criteria.JoinType.LEFT);
-            Predicate probeFilter =
-                builder.equal(joinTagZuordnung.get("probeId"), probeId);
-            filter = builder.and(filter, probeFilter);
+            filter = builder.and(
+                filter,
+                builder.equal(joinTagZuordnung.get("probeId"), probeId));
         } else if (messungId != null) {
-            Join<Tag, TagZuordnung> joinTagZuordnung =
-                root.join(
-                    "tagZuordnungs",
-                    javax.persistence.criteria.JoinType.LEFT);
-            Predicate messungFilter =
-                builder.equal(joinTagZuordnung.get("messungId"), messungId);
-            filter = builder.and(filter, messungFilter);
+            filter = builder.and(
+                filter,
+                builder.equal(joinTagZuordnung.get("messungId"), messungId));
         }
-        criteriaQuery.where(filter);
+
         return authorization.filter(
-            request, repository.filter(criteriaQuery), Tag.class);
+            request,
+            repository.filter(criteriaQuery.where(filter)),
+            Tag.class);
     }
 
     /**
