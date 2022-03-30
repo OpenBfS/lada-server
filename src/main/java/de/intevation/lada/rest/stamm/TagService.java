@@ -25,7 +25,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
@@ -59,15 +58,17 @@ public class TagService extends LadaService {
     @Inject
     private TagUtil tagUtil;
 
+    @Context
+    HttpServletRequest request;
+
     /**
      * Get a single tag by id.
+     * @param id Tag id
      * @return Response containing the tag
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         return authorization.filter(request,
@@ -80,11 +81,11 @@ public class TagService extends LadaService {
      * filtered by the users messstelle id.
      * If a pid is set in the url, the tags are filter by the given probe id.
      * If a mid is set in the url, the tags are filter by the given messung id.
+     * @return Response with list of Tag objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context HttpServletRequest request,
         @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
@@ -161,7 +162,8 @@ public class TagService extends LadaService {
 
     /**
      * Update an existing tag object.
-     * Request:
+     *
+     * @param tag Tag to update using payload like
      * <pre>
      * <code>
      * {
@@ -176,13 +178,12 @@ public class TagService extends LadaService {
      * </code>
      * </pre>
      *
+     * @param id Tag id
      * @return Response object containing the updated tag object
      */
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id,
         Tag tag
     ) {
@@ -228,14 +229,12 @@ public class TagService extends LadaService {
      * }
      * </code>
      * </pre>
-     * @param request Request object
-     * @param tags List
+     * @param tag Tag to create.
      * @return Response object
      */
     @POST
     @Path("/")
     public Response create(
-        @Context HttpServletRequest request,
         Tag tag
     ) {
         if (!authorization.isAuthorized(
@@ -253,16 +252,12 @@ public class TagService extends LadaService {
 
     /**
      * Delete a tag.
-     * @param headers Headers
-     * @param request Request
      * @param id Tag id
      * @return Response object
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") Integer id
     ) {
         Tag tag = repository.getByIdPlain(Tag.class, id);
