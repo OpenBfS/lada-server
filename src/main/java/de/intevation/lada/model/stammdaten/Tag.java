@@ -32,6 +32,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "tag", schema = SchemaName.NAME)
 public class Tag {
+
+    // Default time after which mst tags expire in days
+    public static final int MST_TAG_EXPIRATION_TIME = 365;
+
+    // Default time after which auto tags expire in days
+    public static final int AUTO_TAG_EXPIRATION_TIME = 584;
+
+    // Tag type ids
+    public static final String TAG_TYPE_GLOBAL = "global";
+    public static final String TAG_TYPE_NETZBETREIBER = "netzbetreiber";
+    public static final String TAG_TYPE_MST = "mst";
+    public static final String TAG_TYPE_AUTO = "auto";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -60,10 +73,6 @@ public class Tag {
 
     @Column(name = "typ")
     private String typId;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "typ", insertable = false, updatable = false)
-    private TagTyp typ;
 
     @Column(name = "gueltig_bis")
     private Timestamp gueltigBis;
@@ -137,14 +146,6 @@ public class Tag {
 
     public void setUser(LadaUser user) {
         this.user = user;
-    }
-
-    public TagTyp getTyp() {
-        return typ;
-    }
-
-    public void setTyp(TagTyp typ) {
-        this.typ = typ;
     }
 
     public Timestamp getGueltigBis() {

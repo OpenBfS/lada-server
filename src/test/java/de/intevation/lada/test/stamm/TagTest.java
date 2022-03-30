@@ -16,7 +16,7 @@ import javax.json.JsonObjectBuilder;
 import org.junit.Assert;
 
 import de.intevation.lada.Protocol;
-import de.intevation.lada.model.stammdaten.TagTyp;
+import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -52,7 +52,7 @@ public class TagTest extends ServiceTest {
      * Test mst tags.
      */
     public void testMstTag() {
-        JsonObject tagToTest = createTagJson(TagTyp.TAG_TYPE_MST, "mstTag");
+        JsonObject tagToTest = createTagJson(Tag.TAG_TYPE_MST, "mstTag");
         testTagCRUD(tagToTest);
     }
 
@@ -61,7 +61,7 @@ public class TagTest extends ServiceTest {
      */
     public void testNetzbetreiberTag() {
         JsonObject tagToTest
-            = createTagJson(TagTyp.TAG_TYPE_NETZBETREIBER, "nbTag");
+            = createTagJson(Tag.TAG_TYPE_NETZBETREIBER, "nbTag");
         testTagCRUD(tagToTest);
     }
 
@@ -70,7 +70,7 @@ public class TagTest extends ServiceTest {
      */
     public void promoteMstTag() {
         JsonObject tagToTest = createTagJson(
-            TagTyp.TAG_TYPE_MST, "mstTagPromoted");
+            Tag.TAG_TYPE_MST, "mstTagPromoted");
         JsonObject createResponse = create(name, "rest/tag", tagToTest);
         long createdId = createResponse.getJsonObject("data").getInt("id");
         update(name, tagUrl + createdId, "typId",
@@ -94,7 +94,7 @@ public class TagTest extends ServiceTest {
                 = createResponse.getJsonObject("data")
                 .getJsonNumber("gueltigBis").longValue();
             long diff = getDiffInDays(now, createdGueltigBis);
-            Assert.assertEquals(TagTyp.MST_TAG_EXPIRATION_TIME, diff);
+            Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diff);
         }
         String tagUpdated = tagToTest.getString("tag") + "-mod";
         JsonObject updateResponse = update(name, tagUrl + createdId, "tag",

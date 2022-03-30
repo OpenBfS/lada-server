@@ -21,7 +21,7 @@ import javax.json.JsonValue;
 import org.junit.Assert;
 
 import de.intevation.lada.Protocol;
-import de.intevation.lada.model.stammdaten.TagTyp;
+import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -63,7 +63,7 @@ public class TagZuordnungTest extends ServiceTest {
             JsonObject tag = (JsonObject) tagVal;
             long gueltigBisLong = tag.getJsonNumber("gueltigBis").longValue();
             long diffInDays = getDiffInDays(nowLong, gueltigBisLong);
-            Assert.assertEquals(TagTyp.MST_TAG_EXPIRATION_TIME, diffInDays);
+            Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diffInDays);
         });
 
         final String idKey = "id";
