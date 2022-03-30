@@ -68,8 +68,9 @@ public class TagService extends LadaService {
     public Response getById(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
-        @PathParam("id") String id) {
-            return authorization.filter(request,
+        @PathParam("id") String id
+    ) {
+        return authorization.filter(request,
             repository.getById(Tag.class, Integer.valueOf(id)),
             Tag.class);
     }
@@ -187,7 +188,8 @@ public class TagService extends LadaService {
     ) {
         Tag origTag = repository.getByIdPlain(Tag.class, tag.getId());
         if (!authorization.isAuthorized(
-            request, origTag, RequestMethod.PUT, Tag.class)) {
+            request, origTag, RequestMethod.PUT, Tag.class)
+        ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         //Check if tag has changed and is valid
@@ -237,7 +239,8 @@ public class TagService extends LadaService {
         Tag tag
     ) {
         if (!authorization.isAuthorized(
-                request, tag, RequestMethod.POST, Tag.class)) {
+                request, tag, RequestMethod.POST, Tag.class)
+        ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         tag.setGeneratedAt(new Timestamp(System.currentTimeMillis()));
@@ -261,14 +264,15 @@ public class TagService extends LadaService {
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
         @PathParam("id") Integer id
+    ) {
+        Tag tag = repository.getByIdPlain(Tag.class, id);
+        if (!authorization.isAuthorized(
+                request, tag, RequestMethod.DELETE, Tag.class)
         ) {
-            Tag tag = repository.getByIdPlain(Tag.class, id);
-            if (!authorization.isAuthorized(
-                request, tag, RequestMethod.DELETE, Tag.class)) {
-                return new Response(false, StatusCodes.NOT_ALLOWED, null);
-            }
-            return repository.delete(tag);
+            return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
+        return repository.delete(tag);
+    }
 
     /**
      * Get gueltig bis timestamp for the given tag and timestamp.
