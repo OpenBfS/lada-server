@@ -143,8 +143,18 @@ public class QueryUser implements Serializable {
         return messStelle;
     }
 
+    /**
+     * @return String[] IDs of referenced Messstellen
+     */
     public String[] getMessStellesIds() {
-        return messStellesIds;
+        if (this.messStellesIds == null && this.messStelles != null) {
+            List<String> ids = new ArrayList<>();
+            for (QueryMessstelle ms: this.messStelles) {
+                ids.add(ms.getMessStelle());
+            }
+            this.messStellesIds = ids.toArray(new String[ids.size()]);
+        }
+        return this.messStellesIds;
     }
 
     public void setMessStellesIds(String[] messStellesIds) {

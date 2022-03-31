@@ -103,7 +103,7 @@ public class JsonExporter implements Exporter {
     @SuppressWarnings("unchecked")
     public InputStream export(
         List<Map<String, Object>> queryResult,
-        String encoding,
+        Charset encoding,
         JsonObject options,
         ArrayList<String> columnsToInclude,
         Integer qId
@@ -392,7 +392,8 @@ public class JsonExporter implements Exporter {
                 ((ObjectNode) nodes.get(i)).put(
                     "meh", meh.getEinheit());
                 } else {
-                    continue;}
+                    continue;
+                }
             }
             ((ObjectNode) probe).set("zusatzwerte", nodes);
         } catch (IOException e) {

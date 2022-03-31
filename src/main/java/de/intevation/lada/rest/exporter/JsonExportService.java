@@ -13,15 +13,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.apache.commons.io.IOUtils;
@@ -35,6 +32,7 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.rest.LadaService;
 
 /**
  * REST service to export probe objects and the child objects associated with
@@ -52,8 +50,7 @@ import de.intevation.lada.util.rest.Response;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("data/export")
-@RequestScoped
-public class JsonExportService {
+public class JsonExportService extends LadaService {
 
     /**
      * The exporter.
@@ -81,8 +78,6 @@ public class JsonExportService {
      */
     @POST
     @Path("/json")
-    @Consumes("application/json")
-    @Produces("application/json")
     public String download(
         JsonObject proben,
         @Context HttpServletRequest request

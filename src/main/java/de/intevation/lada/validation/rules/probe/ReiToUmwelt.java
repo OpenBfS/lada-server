@@ -58,7 +58,7 @@ public class ReiToUmwelt implements Rule {
             }
         }
         Violation violation = new Violation();
-        violation.addWarning("umwId", StatusCodes.VALUE_NOT_MATCHING);
+        violation.addWarning("umwId", StatusCodes.VAL_UWB_NOT_MATCHING_REI);
         return violation;
     }
 }

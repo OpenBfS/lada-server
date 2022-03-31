@@ -49,7 +49,9 @@ public class LafRawData {
          * @param value The value
          */
         public void addAttribute(String key, String value) {
-            this.attributes.put(key, value);
+            if (!value.equals("")) {
+                this.attributes.put(key, value);
+            }
         }
 
         /**
@@ -181,7 +183,9 @@ public class LafRawData {
          * @param value The value
          */
         public void addAttribute(String key, String value) {
-            this.attributes.put(key, value);
+            if (!value.equals("")) {
+                this.attributes.put(key, value);
+            }
         }
 
         /**

@@ -9,13 +9,19 @@ package de.intevation.lada.rest.exporter;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnsupportedCharsetException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Locale.LanguageRange;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -25,16 +31,18 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 
 import de.intevation.lada.exporter.ExportJobManager;
-import de.intevation.lada.exporter.ExportJobManager.JobNotFoundException;
-import de.intevation.lada.exporter.ExportJob.JobStatus;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
+import de.intevation.lada.util.data.Job.JobStatus;
+import de.intevation.lada.util.data.JobManager.JobNotFoundException;
+import de.intevation.lada.rest.LadaService;
 
 /**
  * REST service to export data into files using a polling mechanism.
@@ -48,8 +56,7 @@ import de.intevation.lada.util.auth.UserInfo;
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
 @Path("data/asyncexport")
-@RequestScoped
-public class AsyncExportService {
+public class AsyncExportService extends LadaService {
 
     @Inject
     private Logger logger;
@@ -125,21 +132,29 @@ public class AsyncExportService {
      */
     @POST
     @Path("/csv")
-    @Consumes("application/json")
-    @Produces("application/json")
     public Response createCsvExportJob(
         JsonObject objects,
         @Context HttpServletRequest request
     ) {
-
-        String encoding = request.getHeader("X-FILE-ENCODING");
-        if (encoding == null || encoding.equals("")) {
-            encoding = "iso-8859-15";
+        Charset encoding;
+        try {
+            encoding = getCharsetFromRequest(request);
+        } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
+            return Response.status(Status.BAD_REQUEST)
+                .entity((Object) "Invalid or unknown encoding requested")
+                .type(MediaType.TEXT_PLAIN)
+                .build();
         }
+
+        String localeRange = request.getHeader("Accept-Language");
+        if (localeRange == null || localeRange.equals("")) {
+            localeRange = "de-DE";
+        }
+        Locale locale = getLocaleFromRequest(localeRange);
         UserInfo userInfo = authorization.getInfo(request);
         String newJobId =
             exportJobManager.createExportJob(
-                "csv", encoding, objects, userInfo);
+                "csv", encoding, objects, locale, userInfo);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
@@ -180,12 +195,19 @@ public class AsyncExportService {
      */
     @POST
     @Path("/laf")
-    @Consumes("application/json")
-    @Produces("application/json")
     public Response createLafExportJob(
         JsonObject objects,
         @Context HttpServletRequest request
     ) {
+        Charset encoding;
+        try {
+            encoding = getCharsetFromRequest(request);
+        } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
+            return Response.status(Status.BAD_REQUEST)
+                .entity((Object) "Invalid or unknown encoding requested")
+                .type(MediaType.TEXT_PLAIN)
+                .build();
+        }
 
         //Check if requests contains either messung or probe ids
         if (objects.getJsonArray("proben") == null
@@ -193,19 +215,22 @@ public class AsyncExportService {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        String encoding = request.getHeader("X-FILE-ENCODING");
-        if (encoding == null || encoding.equals("")) {
-            encoding = "iso-8859-15";
+        String localeRange = request.getHeader("Accept-Language");
+        if (localeRange == null || localeRange.equals("")) {
+            localeRange = "de-DE";
         }
+        Locale locale = getLocaleFromRequest(localeRange);
+
         UserInfo userInfo = authorization.getInfo(request);
         String newJobId =
             exportJobManager.createExportJob(
-                "laf", encoding, objects, userInfo);
+                "laf", encoding, objects, locale, userInfo);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
         return Response.ok(responseJson.toString()).build();
     }
+
     /**
      * Export data into a json file.
      *
@@ -256,18 +281,19 @@ public class AsyncExportService {
      */
     @POST
     @Path("/json")
-    @Consumes("application/json")
-    @Produces("application/json")
     public Response createJsonExportJob(
         JsonObject objects,
         @Context HttpServletRequest request
     ) {
-
-        String encoding = "utf-8";
+        String localeRange = request.getHeader("Accept-Language");
+        if (localeRange == null || localeRange.equals("")) {
+            localeRange = "de-DE";
+        }
+        Locale locale = getLocaleFromRequest(localeRange);
         UserInfo userInfo = authorization.getInfo(request);
         String newJobId =
             exportJobManager.createExportJob(
-                "json", encoding, objects, userInfo);
+                "json", StandardCharsets.UTF_8, objects, locale, userInfo);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
@@ -294,7 +320,6 @@ public class AsyncExportService {
      */
     @GET
     @Path("/status/{id}")
-    @Produces("application/json")
     public Response getStatus(
         @PathParam("id") String id,
         @Context HttpServletRequest request
@@ -326,7 +351,7 @@ public class AsyncExportService {
     }
 
     /**
-     * Download a finished export file
+     * Download a finished export file.
      * @param id Job id to download file from
      * @return Export file, status 403 if the requesting user has not created
      *         the request or status 404 if job was not found
@@ -383,5 +408,26 @@ public class AsyncExportService {
                 "application/octet-stream; charset=" + encoding);
 
         return response.build();
+    }
+
+    private Charset getCharsetFromRequest(HttpServletRequest request) {
+        String encoding = request.getHeader("X-FILE-ENCODING");
+        if (encoding == null || encoding.equals("")) {
+            encoding = "iso-8859-15";
+        }
+        return Charset.forName(encoding);
+    }
+
+    private Locale getLocaleFromRequest(String localeRanges) {
+        List<Locale> supportedLocales = new LinkedList<Locale>();
+        supportedLocales.add(Locale.GERMAN);
+        supportedLocales.add(Locale.ENGLISH);
+        List<LanguageRange> ranges = Locale.LanguageRange.parse(localeRanges);
+        List<Locale> locales = Locale.filter(ranges, supportedLocales);
+        if (locales.size() == 0) {
+            return Locale.ENGLISH;
+        } else {
+            return locales.get(0);
+        }
     }
 }

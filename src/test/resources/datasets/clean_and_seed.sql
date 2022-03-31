@@ -10,6 +10,7 @@ DELETE FROM land.probe;
 DELETE FROM land.messprogramm;
 DELETE FROM land.messung;
 DELETE FROM pflicht_messgroesse;
+DELETE FROM messprogramm_transfer;
 DELETE FROM datenbasis;
 DELETE FROM umwelt;
 DELETE FROM mass_einheit_umrechnung;
@@ -34,6 +35,7 @@ DELETE FROM filter;
 DELETE FROM result_type;
 DELETE FROM query_user;
 DELETE FROM base_query;
+DELETE FROM lada_user;
 
 -- seed
 -- minimal master data to make interface tests runnable
@@ -52,7 +54,8 @@ INSERT INTO netz_betreiber (id) VALUES ('06');
 INSERT INTO netz_betreiber (id) VALUES ('01');
 INSERT INTO mess_stelle (id, netzbetreiber_id) VALUES ('06010', '06');
 INSERT INTO mess_stelle (id, netzbetreiber_id) VALUES ('01010', '01');
-INSERT INTO pflicht_messgroesse (id, mmt_id, datenbasis_id) VALUES (33, 'A3', 9);
+INSERT INTO pflicht_messgroesse (id, messgroesse_id, mmt_id, datenbasis_id) VALUES
+    (33, 56, 'A3', 9);
 INSERT INTO probenart (id, probenart, probenart_eudf_id) VALUES (1, 'E', 'A');
 INSERT INTO probenart (id, probenart, probenart_eudf_id) VALUES (2, 'S', 'B');
 INSERT INTO proben_zusatz (id, beschreibung, zusatzwert)
@@ -74,6 +77,7 @@ INSERT INTO verwaltungseinheit (
 INSERT INTO probenehmer (
 			id, netzbetreiber_id, prn_id, bezeichnung, kurz_bezeichnung)
 		VALUES (726, '06', 'prn', 'test', 'test');
+INSERT INTO messprogramm_transfer VALUES (1, 1, 'Routinemessprogramm', 1, 2);
 
 -- authorization data needed for tests
 INSERT INTO auth (ldap_group, netzbetreiber_id, mst_id, funktion_id)

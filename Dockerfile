@@ -26,7 +26,7 @@ RUN apt-get update -y && \
 
 #
 # Set ENV for pacakge versions
-ENV WILDFLY_VERSION 16.0.0.Final
+ENV WILDFLY_VERSION 26.0.1.Final
 # see wildfly pom.xml for hibernate_spatial_version
 ENV HIBERNATE_VERSION 5.4.27.Final
 ENV GEOLATTE_GEOM_VERSION 1.4.0
@@ -39,8 +39,8 @@ RUN echo "Building Image using WILDFLY_VERSION=${WILDFLY_VERSION}, HIBERNATE_VER
 #
 RUN mkdir /opt/jboss
 
-RUN curl \
-    https://download.jboss.org/wildfly/${WILDFLY_VERSION}/wildfly-${WILDFLY_VERSION}.tar.gz\
+RUN curl -Ls \
+    https://github.com/wildfly/wildfly/releases/download/${WILDFLY_VERSION}/wildfly-${WILDFLY_VERSION}.tar.gz\
     | tar zx && mv wildfly-${WILDFLY_VERSION} /opt/jboss/wildfly
 
 ENV JBOSS_HOME /opt/jboss/wildfly
@@ -58,11 +58,11 @@ ENV MVN_REPO https://repo1.maven.org/maven2
 ENV WFLY_MODULES $JBOSS_HOME/modules/system/layers/base
 ENV HIBERNATE_MODULE $WFLY_MODULES/org/hibernate/main
 RUN for mod in core envers spatial;\
-    do curl $MVN_REPO/org/hibernate/hibernate-${mod}/${HIBERNATE_VERSION}/hibernate-${mod}-${HIBERNATE_VERSION}.jar >\
+    do curl -s $MVN_REPO/org/hibernate/hibernate-${mod}/${HIBERNATE_VERSION}/hibernate-${mod}-${HIBERNATE_VERSION}.jar >\
         $HIBERNATE_MODULE/hibernate-${mod}.jar;\
     done
 
-RUN curl $MVN_REPO/org/geolatte/geolatte-geom/${GEOLATTE_GEOM_VERSION}/geolatte-geom-${GEOLATTE_GEOM_VERSION}.jar >\
+RUN curl -s $MVN_REPO/org/geolatte/geolatte-geom/${GEOLATTE_GEOM_VERSION}/geolatte-geom-${GEOLATTE_GEOM_VERSION}.jar >\
         $HIBERNATE_MODULE/geolatte-geom.jar
 
 RUN ln -s /usr/share/java/postgresql.jar \
@@ -76,11 +76,6 @@ RUN ln -s /usr/share/java/jts-core.jar \
 # Add volume with datum shift grid
 #
 ENV SRC /usr/src/lada-server
-ENV GRIDSHIFT $SRC/src/main/resources/org/geotools/referencing/factory/gridshift
-RUN curl -s --create-dirs \
-        -o $GRIDSHIFT/BETA2007.gsb \
-        http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/BETA2007.gsb
-# VOLUME $GRIDSHIFT
 
 #
 # Add LADA-server repo
@@ -97,7 +92,7 @@ RUN sed -i '/<\/dependencies>/i         <module name="org.postgres"/>' \
     $WFLY_MODULES/org/jboss/ironjacamar/jdbcadapters/main/module.xml
 RUN ln -fs $PWD/wildfly/standalone.conf $JBOSS_HOME/bin/
 
-RUN wildfly/execute.sh
+RUN $JBOSS_HOME/bin/jboss-cli.sh --file=wildfly/commands.cli
 
 #
 # Build and deploy LADA-server
@@ -112,4 +107,3 @@ RUN mvn compile package && \
 #
 CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", \
      "-bmanagement=0.0.0.0"]
-

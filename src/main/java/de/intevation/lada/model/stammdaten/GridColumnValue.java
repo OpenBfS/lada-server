@@ -39,19 +39,19 @@ public class GridColumnValue implements Serializable {
     private Integer columnIndex;
 
     @Column(name = "filter_active")
-    private Boolean filterActive;
+    private boolean filterActive;
 
     @Column(name = "filter_value")
     private String filterValue;
 
     @Column(name = "filter_negate")
-    private Boolean filterNegate;
+    private boolean filterNegate;
 
     @Column(name = "filter_regex")
-    private Boolean filterRegex;
+    private boolean filterRegex;
 
     @Column(name = "filter_is_null")
-    private Boolean filterIsNull;
+    private boolean filterIsNull;
 
     private String sort;
 
@@ -61,7 +61,7 @@ public class GridColumnValue implements Serializable {
     @Column(name = "user_id")
     private Integer userId;
 
-    private Boolean visible;
+    private boolean visible;
 
     private Integer width;
 
@@ -76,10 +76,10 @@ public class GridColumnValue implements Serializable {
 
     //Connected grid column's id, used for creating/updating grid_column_values
     @Transient
-    private int gridColumnId;
+    private Integer gridColumnId;
 
     @Transient
-    private int queryUserId;
+    private Integer queryUserId;
 
     public GridColumnValue() {
     }
@@ -100,11 +100,11 @@ public class GridColumnValue implements Serializable {
         this.columnIndex = columnIndex;
     }
 
-    public Boolean getFilterActive() {
+    public boolean getFilterActive() {
         return this.filterActive;
     }
 
-    public void setFilterActive(Boolean filterActive) {
+    public void setFilterActive(boolean filterActive) {
         this.filterActive = filterActive;
     }
 
@@ -140,11 +140,11 @@ public class GridColumnValue implements Serializable {
         this.userId = userId;
     }
 
-    public Boolean getVisible() {
+    public boolean getVisible() {
         return this.visible;
     }
 
-    public void setVisible(Boolean visible) {
+    public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
@@ -156,8 +156,14 @@ public class GridColumnValue implements Serializable {
         this.width = width;
     }
 
-    public int getGridColumnId() {
-        return gridColumnId;
+    /**
+     * @return the grid column ID
+     */
+    public Integer getGridColumnId() {
+        if (this.gridColumnId == null && this.gridColumn != null) {
+            this.gridColumnId = this.gridColumn.getId();
+        }
+        return this.gridColumnId;
     }
 
     /**
@@ -186,7 +192,13 @@ public class GridColumnValue implements Serializable {
         this.queryUser = queryUser;
     }
 
-    public int getQueryUserId() {
+    /**
+     * @return the QueryUser ID
+     */
+    public Integer getQueryUserId() {
+        if (this.queryUserId == null && this.queryUser != null) {
+            this.queryUserId = this.queryUser.getId();
+        }
         return this.queryUserId;
     }
 
@@ -194,27 +206,27 @@ public class GridColumnValue implements Serializable {
         this.queryUserId = queryUserId;
     }
 
-    public Boolean getFilterNegate() {
+    public boolean getFilterNegate() {
         return filterNegate;
     }
 
-    public void setFilterNegate(Boolean filterNegate) {
+    public void setFilterNegate(boolean filterNegate) {
         this.filterNegate = filterNegate;
     }
 
-    public Boolean getFilterRegex() {
+    public boolean getFilterRegex() {
         return filterRegex;
     }
 
-    public void setFilterRegex(Boolean filterRegex) {
+    public void setFilterRegex(boolean filterRegex) {
         this.filterRegex = filterRegex;
     }
 
-    public Boolean getFilterIsNull() {
+    public boolean getFilterIsNull() {
         return filterIsNull;
     }
 
-    public void setFilterIsNull(Boolean filterIsNull) {
+    public void setFilterIsNull(boolean filterIsNull) {
         this.filterIsNull = filterIsNull;
     }
 }

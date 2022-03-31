@@ -9,7 +9,6 @@ package de.intevation.lada.rest.stamm;
 
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -18,16 +17,13 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
@@ -42,6 +38,7 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.rest.LadaService;
 
 
 /**
@@ -51,8 +48,7 @@ import de.intevation.lada.util.rest.Response;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/columnvalue")
-@RequestScoped
-public class ColumnValueService {
+public class ColumnValueService extends LadaService {
 
     @Inject
     private Repository repository;
@@ -62,12 +58,11 @@ public class ColumnValueService {
     private Authorization authorization;
 
     /**
-     * Request all user defined grid_column_value objects
+     * Request all user defined grid_column_value objects.
      * @return All GridColumnValue objects referencing the given query.
      */
     @GET
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getQueries(
         @Context HttpServletRequest request,
         @Context UriInfo info
@@ -123,13 +118,11 @@ public class ColumnValueService {
     }
 
     /**
-     * Creates a new grid_column_value in the database
+     * Creates a new grid_column_value in the database.
      * @return Response containing the created record.
      */
     @POST
     @Path("/")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response create(
         @Context HttpServletRequest request,
         GridColumnValue gridColumnValue
@@ -138,7 +131,7 @@ public class ColumnValueService {
         if (gridColumnValue.getUserId() != null
             && !gridColumnValue.getUserId().equals(userInfo.getUserId())
         ) {
-                return new Response(false, StatusCodes.NOT_ALLOWED, null);
+            return new Response(false, StatusCodes.NOT_ALLOWED, null);
         } else {
             gridColumnValue.setUserId(userInfo.getUserId());
             GridColumn gridColumn = new GridColumn();
@@ -156,32 +149,31 @@ public class ColumnValueService {
     }
 
     /**
-     * Update an existing grid_column_value in the database
+     * Update an existing grid_column_value in the database.
      * @return Response containing the updated record.
      */
     @PUT
     @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response update(
         @Context HttpServletRequest request,
         GridColumnValue gridColumnValue
     ) {
+        // TODO: Really authorize with an Authorizer implementation.
+        // Currently any object can be hijacked by passing it with
+        // userId set to the users ID.
         UserInfo userInfo = authorization.getInfo(request);
-        if (gridColumnValue.getUserId() != null
-            && !gridColumnValue.getUserId().equals(userInfo.getUserId())
-        ) {
-                return new Response(false, StatusCodes.NOT_ALLOWED, null);
+        if (!userInfo.getUserId().equals(gridColumnValue.getUserId())) {
+            return new Response(false, StatusCodes.NOT_ALLOWED, null);
         } else {
-            gridColumnValue.setUserId(userInfo.getUserId());
-
             GridColumn gridColumn = repository.getByIdPlain(
                 GridColumn.class, gridColumnValue.getGridColumnId());
-            gridColumnValue.setGridColumn(gridColumn);
-
             QueryUser queryUser = repository.getByIdPlain(
                 QueryUser.class, gridColumnValue.getQueryUserId());
+            if (gridColumn == null || queryUser == null) {
+                return new Response(false, StatusCodes.VALUE_MISSING, null);
+            }
 
+            gridColumnValue.setGridColumn(gridColumn);
             gridColumnValue.setQueryUser(queryUser);
 
             return repository.update(gridColumnValue);
@@ -194,7 +186,6 @@ public class ColumnValueService {
      */
     @DELETE
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
         @Context HttpServletRequest request,
         @PathParam("id") String id

@@ -9,16 +9,13 @@ package de.intevation.lada.rest.stamm;
 
 import java.util.ArrayList;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.NetzBetreiber;
@@ -29,6 +26,7 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.rest.LadaService;
 
 /**
  * REST service for NetzBetreiber objects.
@@ -60,8 +58,7 @@ import de.intevation.lada.util.rest.Response;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/netzbetreiber")
-@RequestScoped
-public class NetzbetreiberService {
+public class NetzbetreiberService extends LadaService {
 
     /**
      * The data repository granting read access.
@@ -85,7 +82,6 @@ public class NetzbetreiberService {
      */
     @GET
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response get(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
@@ -105,7 +101,6 @@ public class NetzbetreiberService {
      */
     @GET
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getById(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,

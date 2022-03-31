@@ -1,0 +1,19 @@
+dn: cn=MemberOf Plugin,cn=plugins,cn=config 
+changetype: modify
+replace: nsslapd-pluginEnabled
+nsslapd-pluginEnabled: on
+
+dn: cn=MemberOf Plugin,cn=plugins,cn=config 
+changetype: modify
+replace: memberofGroupAttr
+memberofGroupAttr: member
+
+dn: cn=MemberOf Plugin,cn=plugins,cn=config 
+changetype: modify
+replace: memberofAttr
+memberofAttr: memberOf
+
+dn: cn=MemberOf Plugin,cn=plugins,cn=config 
+changetype: modify
+replace: memberofAutoAddOC
+memberofAutoAddOC: inetUser

@@ -30,6 +30,10 @@ Maven Checkstyle plugin. Some design related checks where removed.
   <!-- See http://checkstyle.sf.net/config_misc.html#Translation -->
   <module name="Translation"/>
 
+  <module name="LineLength">
+    <property name="severity" value="warning"/>
+  </module>
+
   <module name="FileLength">
     <property name="severity" value="warning"/>
   </module>
@@ -62,11 +66,15 @@ Maven Checkstyle plugin. Some design related checks where removed.
     <module name="JavadocType">
       <property name="severity" value="warning"/>
     </module>
+    <module name="MissingJavadocMethod">
+      <property name="severity" value="warning"/>
+      <property name="scope" value="protected"/>
+      <property name="allowMissingPropertyJavadoc" value="true"/>
+    </module>
     <module name="JavadocMethod">
       <property name="severity" value="warning"/>
       <property name="scope" value="protected"/>
       <property name="validateThrows" value="true"/>
-      <property name="allowMissingPropertyJavadoc" value="true"/>
       <property name="tokens" value="METHOD_DEF"/>
     </module>
     <!-- <module name="JavadocVariable">
@@ -128,9 +136,6 @@ Maven Checkstyle plugin. Some design related checks where removed.
 
     <!-- Checks for Size Violations.                    -->
     <!-- See http://checkstyle.sf.net/config_sizes.html -->
-    <module name="LineLength">
-      <property name="severity" value="warning"/>
-    </module>
     <module name="MethodLength">
       <property name="severity" value="warning"/>
     </module>
@@ -210,6 +215,7 @@ Maven Checkstyle plugin. Some design related checks where removed.
     </module>
     <module name="MultipleStringLiterals">
       <property name="severity" value="warning"/>
+      <property name="ignoreStringsRegexp" value='^(("")|(" "))$'/>
     </module>
     <module name="MissingSwitchDefault"/>
     <module name="SimplifyBooleanExpression">

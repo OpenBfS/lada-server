@@ -4,7 +4,7 @@
     "langtext": "Langer Text",
     "staatId": 0,
     "gemId": "11000000",
-    "unscharf": "t",
+    "unscharf": true,
     "nutsCode": "DE716",
     "kdaId": 5,
     "koordXExtern": "32487030",

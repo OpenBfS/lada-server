@@ -11,14 +11,11 @@ import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 
 import javax.inject.Inject;
-import javax.enterprise.context.RequestScoped;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.log4j.Logger;
@@ -50,8 +47,7 @@ import de.intevation.lada.util.rest.Response;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/version")
-@RequestScoped
-public class VersionService {
+public class VersionService extends LadaService {
 
     @Inject
     private Logger logger;
@@ -65,7 +61,6 @@ public class VersionService {
      */
     @GET
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response get(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,

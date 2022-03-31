@@ -37,6 +37,7 @@ import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.data.QueryBuilder;
 
+
 /**
  * Abstract class for an export of query results.
  */
@@ -94,10 +95,8 @@ public abstract class QueryExportJob extends ExportJob {
 
     /**
      * Constructor.
-     * @param jobId Job id
      */
-    public QueryExportJob(String jobId) {
-        super(jobId);
+    public QueryExportJob() {
         columns = new ArrayList <GridColumnValue>();
         columnsToExport = new ArrayList<String>();
 
@@ -163,32 +162,22 @@ public abstract class QueryExportJob extends ExportJob {
 
     /**
      * Execute the query.
-     * @throws QueryExportException Thrown if loading the query data fails
      * @return Query result as list
      */
-    protected List<Map<String, Object>> getQueryResult()
-    throws QueryExportException {
-        try {
-            QueryTools queryTools = new QueryTools(
-                repository, columns);
-            List<Map<String, Object>> result = queryTools.getResultForQuery();
-            logger.debug(String.format(
+    protected List<Map<String, Object>> getQueryResult() {
+        QueryTools queryTools = new QueryTools(repository, columns);
+        List<Map<String, Object>> result = queryTools.getResultForQuery();
+        logger.debug(String.format(
                 "Fetched %d primary records",
                 result == null ? 0 : result.size()));
-            return result;
-        } catch (Exception e) {
-            logger.error("Failed loading query result");
-            e.printStackTrace();
-            throw new QueryExportException("Failed loading query result");
-        }
+        return result;
     }
 
     /**
      * Get the sub data for the query.
-     * @throws QueryExportException Thrown if fetching subdata fails
      * @return Query result as list
      */
-    protected List<?> getSubData() throws QueryExportException {
+    protected List<?> getSubData() {
         if (primaryData == null) {
             return null;
         }
@@ -201,7 +190,7 @@ public abstract class QueryExportJob extends ExportJob {
         //Get subdata
         String subDataType = mapPrimaryToSubDataTypes.get(idType);
         if (subDataType == null) {
-            throw new QueryExportException(
+            throw new IllegalArgumentException(
                 String.format("Unknown id type: %s", idType));
         }
         switch (subDataType) {
@@ -262,6 +251,7 @@ public abstract class QueryExportJob extends ExportJob {
         QueryBuilder<Messwert> builder = repository.queryBuilder(
             Messwert.class);
         builder.and("messungsId", messung.getId());
+        // TODO: This is a nice example of ORM-induced database misuse:
         return repository.filterPlain(builder.getQuery()).size();
     }
 
@@ -303,12 +293,11 @@ public abstract class QueryExportJob extends ExportJob {
     /**
      * Merge sub data into the primary query result.
      * @param subData Data to merge into result
-     * @throws QueryExportException Thrown if merging fails
      * @return Merged data as list
      */
     protected abstract List<Map<String, Object>> mergeSubData(
         List<?> subData
-    ) throws QueryExportException;
+    );
 
     /**
      * Parse export parameters.
@@ -380,6 +369,14 @@ public abstract class QueryExportJob extends ExportJob {
                     Filter filter = createIdListFilter(
                         gridColumn.getDataIndex());
                     gridColumn.setFilter(filter);
+                    // TODO: This is a hack to avoid in transactional context:
+                    //java.lang.IllegalStateException:
+                    //org.hibernate.TransientPropertyValueException:
+                    //object references an unsaved transient instance -
+                    //save the transient instance before flushing :
+                    //de.intevation.lada.model.stammdaten.GridColumn.filter
+                    //-> de.intevation.lada.model.stammdaten.Filter
+                    repository.entityManager().detach(gridColumn);
 
                     StringBuilder filterValue = new StringBuilder();
                     for (
@@ -428,21 +425,5 @@ public abstract class QueryExportJob extends ExportJob {
             Integer.valueOf(columns.get(0).getGridColumnId())
         );
         qId = gridColumn.getBaseQuery();
-    }
-
-    @Override
-    public void run() {
-        super.run();
-    }
-
-    /**
-     * Thrown if merging fails.
-     */
-    public static class QueryExportException extends Exception {
-        private static final long serialVersionUID = 1L;
-
-        public QueryExportException(String msg) {
-            super(msg);
-        }
     }
 }

@@ -77,7 +77,13 @@ public class TagZuordnung {
         this.tag = tag;
     }
 
+    /**
+     * @return ID of the referenced tag
+     */
     public Integer getTagId() {
+        if (this.tagId == null && this.tag != null) {
+            this.tagId = this.tag.getId();
+        }
         return this.tagId;
     }
 

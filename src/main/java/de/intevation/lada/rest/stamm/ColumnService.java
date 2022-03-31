@@ -7,15 +7,12 @@
  */
 package de.intevation.lada.rest.stamm;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 
 import de.intevation.lada.model.stammdaten.GridColumn;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -24,6 +21,7 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.rest.LadaService;
 
 /**
  * REST-Service for preconfigured columns.
@@ -55,8 +53,7 @@ import de.intevation.lada.util.rest.Response;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/column")
-@RequestScoped
-public class ColumnService {
+public class ColumnService extends LadaService {
 
     @Inject
     private Repository repository;
@@ -71,7 +68,6 @@ public class ColumnService {
      */
     @GET
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getQueries(
         @Context HttpServletRequest request,
         @QueryParam("qid") Integer qid

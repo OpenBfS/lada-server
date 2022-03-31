@@ -7,15 +7,28 @@
  */
 package de.intevation.lada;
 
+import java.net.URL;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.SyncInvoker;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.ApplyScriptBefore;
@@ -25,6 +38,7 @@ import org.jboss.arquillian.persistence.DataSource;
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.TestExecutionPhase;
 import org.jboss.arquillian.persistence.UsingDataSet;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -40,8 +54,10 @@ import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.ZusatzWert;
+import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
+
 
 /**
  * Class to test the Lada-Importer.
@@ -81,6 +97,16 @@ public class ImporterTest extends BaseTest {
     private static final int T17 = 17;
     private static final Integer DID9 = 9;
 
+    private final String laf = "%PROBE%\n"
+        + "UEBERTRAGUNGSFORMAT \"7\"\n"
+        + "VERSION \"0084\"\n"
+        + "PROBE_ID \"XXX\"\n"
+        + "MESSSTELLE \"06010\"\n"
+        + "PROBENART \"E\"\n"
+        + "MESSPROGRAMM_S 1\n"
+        + "DATENBASIS_S 02\n"
+        + "%ENDE%\n";
+
     @Inject
     Logger internalLogger;
 
@@ -100,10 +126,6 @@ public class ImporterTest extends BaseTest {
 
     @Inject
     ObjectMerger merger;
-
-    public ImporterTest() {
-        testProtocol = new ArrayList<Protocol>();
-    }
 
     /**
      * Identify probe objects.
@@ -719,5 +741,114 @@ public class ImporterTest extends BaseTest {
 
         protocol.setPassed(true);
         testProtocol.add(protocol);
+    }
+
+    /**
+     * Test synchronous import of a Probe object.
+     */
+    @Test
+    @InSequence(18)
+    @RunAsClient
+    public final void testImportProbe(
+        @ArquillianResource URL baseUrl
+    ) {
+        Protocol prot = new Protocol();
+        prot.setName("syncimport service");
+        prot.setType("laf");
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        /* Request synchronous import */
+        Response importResponse = client.target(
+            baseUrl + "data/import/laf")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header("X-LADA-MST", "06010")
+            .post(Entity.entity(laf, MediaType.TEXT_PLAIN));
+        JsonObject importResponseObject = parseResponse(importResponse, prot);
+
+        /* Check if a Probe object has been imported */
+        final String dataKey = "data";
+        assertContains(importResponseObject, dataKey);
+        JsonObject data = importResponseObject.getJsonObject(dataKey);
+
+        final String probeIdsKey = "probeIds";
+        assertContains(data, probeIdsKey);
+        Assert.assertEquals(1,
+            data.getJsonArray(probeIdsKey).size());
+
+        prot.setPassed(true);
+    }
+
+    /**
+     * Test asynchronous import of a Probe object.
+     */
+    @Test
+    @InSequence(18)
+    @RunAsClient
+    public final void testAsyncImportProbe(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        Protocol prot = new Protocol();
+        prot.setName("asyncimport service");
+        prot.setType("laf");
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        /* Request asynchronous import */
+        JsonObject requestJson = Json.createObjectBuilder()
+            .add("encoding", "utf-8")
+            .add("files", Json.createObjectBuilder()
+                .add("test.laf", Base64.getEncoder().encodeToString(
+                        laf.getBytes(StandardCharsets.UTF_8))))
+            .build();
+
+        Response importCreated = client.target(
+            baseUrl + "data/import/async/laf")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .header("X-LADA-MST", "06010")
+            .post(Entity.entity(requestJson.toString(),
+                    MediaType.APPLICATION_JSON));
+        JsonObject importCreatedObject = parseResponse(importCreated, prot);
+
+        final String refIdKey = "refId";
+        assertContains(importCreatedObject, refIdKey);
+        String refId = importCreatedObject.getString(refIdKey);
+
+        /* Request status of asynchronous import */
+        SyncInvoker statusRequest = client.target(
+            baseUrl + "data/import/async/status/" + refId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles);
+        JsonObject importStatusObject = Json.createObjectBuilder().build();
+        boolean done = false;
+        final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
+        final int waitASecond = 1000;
+        do {
+            importStatusObject = parseResponse(statusRequest.get(), prot);
+
+            final String doneKey = "done";
+            assertContains(importStatusObject, doneKey);
+            done = importStatusObject.getBoolean(doneKey);
+
+            Assert.assertTrue(
+                "Import not done within one minute",
+                waitUntil.isAfter(Instant.now()));
+            Thread.sleep(waitASecond);
+        } while (!done);
+
+        final String statusKey = "status";
+        assertContains(importStatusObject, statusKey);
+        Assert.assertEquals(
+            Job.Status.FINISHED.name().toLowerCase(),
+            importStatusObject.getString(statusKey));
+
+        // TODO: Test if data correctly entered database
+
+        prot.setPassed(true);
     }
 }

@@ -12,6 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
@@ -21,7 +22,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -49,6 +52,8 @@ import de.intevation.lada.util.data.Repository;
  */
 @ExportConfig(format = ExportFormat.CSV)
 public class CsvExporter implements Exporter {
+
+    private static final String BUNDLE_FILE = "lada_server";
 
     @Inject Logger logger;
 
@@ -148,19 +153,20 @@ public class CsvExporter implements Exporter {
      *
      * @param columnsToInclude List of column names to include in the export.
      *                         If not set, all columns will be exported
-     * @param qId
+     * @param qId query id
+     * @param locale Locale to use
      * @return Export result as input stream or null if the export failed
      */
+    @Override
     public InputStream export(
         List<Map<String, Object>> queryResult,
-        String encoding,
+        Charset encoding,
         JsonObject options,
         ArrayList<String> columnsToInclude,
-        Integer qId
+        Integer qId,
+        Locale locale
     ) {
-        if (queryResult == null || queryResult.size() == 0) {
-            return null;
-        }
+        ResourceBundle i18n = ResourceBundle.getBundle(BUNDLE_FILE, locale);
 
         char decimalSeparator = CsvOptions.valueOf("period").getChar();
         char fieldSeparator = CsvOptions.valueOf("comma").getChar();
@@ -234,6 +240,7 @@ public class CsvExporter implements Exporter {
                 for (int i = 0; i < keys.length; i++) {
                     Object value = row.get(keys[i]);
 
+
                     //Value is a status kombi
                     if (keys[i].equals("statusK")) {
                         rowItems.add(getStatusStringByid((Integer) value));
@@ -252,6 +259,9 @@ public class CsvExporter implements Exporter {
                             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         sdf.setTimeZone(TimeZone.getTimeZone(timezone));
                         rowItems.add(sdf.format(calendar.getTime()));
+                    } else if (value instanceof Boolean) {
+                        rowItems.add(value != null
+                            ? i18n.getString(value.toString()) : null);
                     } else {
                         rowItems.add(value != null ? value.toString() : null);
                     }
@@ -269,7 +279,8 @@ public class CsvExporter implements Exporter {
             return new ByteArrayInputStream(
                 result.toString().getBytes(encoding));
         } catch (UnsupportedEncodingException uee) {
-            logger.error(String.format("Unsupported encoding: %s", encoding));
+            logger.error(
+                String.format("Unsupported encoding: %s", encoding.name()));
             return null;
         } catch (IOException ioe) {
             logger.error(ioe.toString());

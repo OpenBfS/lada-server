@@ -110,6 +110,9 @@ public class Ort implements Serializable {
     @Column(name = "kda_id")
     private Integer kdaId;
 
+    @Column(name = "rei_progpunkt_grp_id")
+    private Integer reiProgpunktGrpId;
+
     @Type(type = "jts_geometry")
     @Column(columnDefinition = "geometry(Point, 4326)")
     private Point geom;
@@ -198,6 +201,14 @@ public class Ort implements Serializable {
 
     public void setGemUntId(Integer gemUntId) {
         this.gemUntId = gemUntId;
+    }
+
+    public Integer getReiProgpunktGrpId() {
+        return this.reiProgpunktGrpId;
+    }
+
+    public void setReiProgpunktGrpId(Integer reiProgpunktGrpId) {
+        this.reiProgpunktGrpId = reiProgpunktGrpId;
     }
 
     public Float getHoeheUeberNn() {

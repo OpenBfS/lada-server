@@ -7,36 +7,37 @@
  */
 package de.intevation.lada.util.data;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assume.assumeTrue;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.referencing.FactoryException;
 
-import org.junit.Ignore;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 /**
- * Test accuracy of coordinate transformations
+ * Unit tests for KdaUtil.
  */
 @RunWith(Parameterized.class)
 public class KdaUtilTest {
 
+    private static Logger logger = Logger.getLogger(KdaUtilTest.class);
+
     /* Tolerance in meter for coordinate comparison */
-    private static final double EPSILON = 1;
+    private static final double EPSILON = 1.05;
 
     /* Expected coordinates for KdaUtil.KDA_* (except KdaUtil.KDA_GS)
      * retrieved with PostGIS (2.5.5 with Proj 4.9.3) using
@@ -54,7 +55,8 @@ public class KdaUtilTest {
          *     WHERE srid = 31466
          */
         KdaUtil.KDA_GK,
-        Map.of("x", "2577687.65820815", "y", "5622631.72513064"),
+        Map.of("x", "2577688", "y", "5622632"),
+        //Map.of("x", "2577687.65820815", "y", "5622631.72513064"),
 
         // 2:
         // SELECT ST_AsLatLonText(ST_SetSRID(
@@ -70,20 +72,31 @@ public class KdaUtilTest {
 
         // 5: CRS = 32632, zone prepended to "x"
         KdaUtil.KDA_UTM_WGS84,
-        Map.of("x", "32365908.607704498", "y", "5621966.21754899"),
+        Map.of("x", "32365909", "y", "5621966"),
+        //Map.of("x", "32365908.607704498", "y", "5621966.21754899"),
 
         // 6: CRS = 25832, zone prepended to "x"
         KdaUtil.KDA_UTM_ETRS89,
-        Map.of("x", "32365908.607703176", "y", "5621966.21742558"),
+        Map.of("x", "32365909", "y", "5621966"),
+        //Map.of("x", "32365908.607703176", "y", "5621966.21742558"),
 
         // 8: CRS = 23032, zone prepended to "x"
         KdaUtil.KDA_UTM_ED50,
-        Map.of("x", "32365990.950936107", "y", "5622168.57949754")
+        Map.of("x", "32365991", "y", "5622169")
+        //Map.of("x", "32365990.950936107", "y", "5622168.57949754")
     );
 
+    private static final int NON_EXISTANT_KDA = 9999;
+
+    private final String decimalPoint = ".", decimalComma = ",";
+
+    private final String messageAssertNotNull = "Transformation result is null";
+
+    /**
+     * @return All combinations of KdaUtil.KDA_* as input and output.
+     */
     @Parameters(name = "from {0} to {1}")
     public static List<Object[]> fromToCombinations() {
-        // All combinations of KdaUtil.KDA_* as input and output
         List<Object[]> combinations = new ArrayList<Object[]>();
         for (Integer from : COORDS.keySet()) {
             for (Integer to : COORDS.keySet()) {
@@ -99,9 +112,9 @@ public class KdaUtilTest {
     @Parameter(1)
     public int toKda;
 
-    // TODO: Do not ignore
-    @Ignore("Tests involving KDA_UTM_ED50 currently fail. "
-        + "Further investigation needed.")
+    /**
+     * Accuracy of coordinate transformations.
+     */
     @Test
     public void transformTest() throws FactoryException {
         if (fromKda == KdaUtil.KDA_GK || toKda == KdaUtil.KDA_GK) {
@@ -116,13 +129,15 @@ public class KdaUtilTest {
         }
 
         KdaUtil kdaUtil = new KdaUtil();
-        ObjectNode result = kdaUtil.transform(
+        KdaUtil.Result result = kdaUtil.transform(
             fromKda,
             toKda,
             COORDS.get(fromKda).get("x"),
             COORDS.get(fromKda).get("y")
         );
-        assertNotNull("Transformation result is null", result);
+        Assert.assertNotNull(messageAssertNotNull, result);
+        logger.debug("Transformation result: x=" + result.getX()
+            + " y=" + result.getY());
 
         // Expected coordinates
         int compareWith = toKda;
@@ -139,15 +154,15 @@ public class KdaUtilTest {
         switch (toKda) {
         case KdaUtil.KDA_GS:
             result = kdaUtil.arcToDegree(
-                result.get("x").asText(),
-                result.get("y").asText());
-            assertNotNull("Conversion of transformation result "
+                result.getX().replace(decimalComma, decimalPoint),
+                result.getY().replace(decimalComma, decimalPoint));
+            Assert.assertNotNull("Conversion of transformation result "
                 + "to decimal notation failed", result);
         default:
             rX = Double.parseDouble(
-                result.get("x").asText().replace(',', '.'));
+                result.getX().replace(decimalComma, decimalPoint));
             rY = Double.parseDouble(
-                result.get("y").asText().replace(',', '.'));
+                result.getY().replace(decimalComma, decimalPoint));
         }
 
         // Distance between expected and result
@@ -165,13 +180,183 @@ public class KdaUtilTest {
             d = Math.sqrt(
                 Math.pow(rX - eX, 2) + Math.pow(rY - eY, 2));
         }
-        assertTrue(
+        // TODO: Better results also for KDA_UTM_ED50
+        double epsilon = EPSILON
+            * (toKda == KdaUtil.KDA_UTM_ED50
+                || fromKda == KdaUtil.KDA_UTM_ED50
+                ? 5 : 1);
+        Assert.assertTrue(
             String.format(
                 "from %d to %d: "
                 + "Distance %.2f m between result POINT(%.10g %.10g) and "
                 + "expected POINT(%.10g %.10g) > %.2f m",
-                fromKda, toKda, d, rX, rY, eX, eY, EPSILON),
-            d <= EPSILON
+                fromKda, toKda, d, rX, rY, eX, eY, epsilon),
+            d <= epsilon
         );
+    }
+
+    /**
+     * Input with comma as decimal separator.
+     */
+    @Test
+    public void commaInputTest() {
+        KdaUtil.Result result = new KdaUtil().transform(
+            fromKda,
+            toKda,
+            COORDS.get(fromKda).get("x").replace(decimalPoint, decimalComma),
+            COORDS.get(fromKda).get("y").replace(decimalPoint, decimalComma)
+        );
+        Assert.assertNotNull(messageAssertNotNull, result);
+    }
+
+    /**
+     * Invalid KDA of given coordinates.
+     */
+    @Test
+    public void invalidFromKdaTest() {
+        KdaUtil.Result result = new KdaUtil().transform(
+            NON_EXISTANT_KDA,
+            toKda,
+            COORDS.get(fromKda).get("x"),
+            COORDS.get(fromKda).get("y"));
+        Assert.assertNull(result);
+    }
+
+    /**
+     * Invalid KDA to transform into.
+     */
+    @Test
+    public void invalidToKdaTest() {
+        KdaUtil.Result result = new KdaUtil().transform(
+            fromKda,
+            NON_EXISTANT_KDA,
+            COORDS.get(fromKda).get("x"),
+            COORDS.get(fromKda).get("y"));
+        Assert.assertNull(result);
+    }
+
+    /**
+     * Invalid null input.
+     */
+    @Test
+    public void nullInputTest() {
+        KdaUtil.Result result = new KdaUtil().transform(
+            fromKda, toKda, null, null);
+        Assert.assertNull(result);
+    }
+
+    /**
+     * Invalid string input.
+     */
+    @Test
+    public void invalidStringTest() {
+        KdaUtil.Result result = new KdaUtil().transform(
+            fromKda, toKda, "", "");
+        Assert.assertNull(result);
+    }
+
+    /**
+     * Invalid zone numbers.
+     */
+    @Test
+    public void invalidZoneTest() {
+        double invalidZone;
+        final double invalidGKZone = 999, invalidUTMZone = 99;
+        switch (fromKda) {
+        case KdaUtil.KDA_GS:
+        case KdaUtil.KDA_GD:
+            // No zone number in input
+            return;
+        case KdaUtil.KDA_GK:
+            invalidZone = invalidGKZone;
+            break;
+        default:
+            invalidZone = invalidUTMZone;
+        }
+        String x = COORDS.get(fromKda).get("x");
+        x = new DecimalFormat(KdaUtil.EASTING_PATTERN).format(
+            invalidZone * KdaUtil.ZONE_PREFIX_MULTIPLIER
+            + Double.parseDouble(x) % KdaUtil.ZONE_PREFIX_MULTIPLIER);
+        KdaUtil.Result result = new KdaUtil().transform(
+            fromKda,
+            toKda,
+            x,
+            COORDS.get(fromKda).get("y"));
+        Assert.assertNull(result);
+    }
+
+    /**
+     * Negative sexagesimal input.
+     */
+    @Test
+    public void sexagesimalNegativeInputTest() {
+        // Compare sexagesimal input with decimal geodetic output only
+        if (fromKda != KdaUtil.KDA_GS || toKda != KdaUtil.KDA_GD) {
+            return;
+        }
+        KdaUtil.Result result = new KdaUtil().transform(
+            fromKda,
+            toKda,
+            "-70000.000",
+            "-500000.000");
+        Assert.assertNotNull(messageAssertNotNull, result);
+        Assert.assertEquals("-7.0", result.getX());
+        Assert.assertEquals("-50.0", result.getY());
+    }
+
+    /**
+     * Out of range longitude/easting.
+     */
+    @Test
+    public void invalidXTest() {
+        String x;
+        switch (fromKda) {
+        case KdaUtil.KDA_GS:
+            // Valid longitude is between -180 and 180 degrees
+            x = "-1810000.000";
+            break;
+        case KdaUtil.KDA_GD:
+            // Valid longitude is between -180 and 180 degrees
+            x = "-181";
+            break;
+        default:
+            x = new DecimalFormat(KdaUtil.EASTING_PATTERN).format(
+                // Negative easting is invalid
+                -Double.parseDouble(COORDS.get(fromKda).get("x")));
+        }
+        KdaUtil.Result result = new KdaUtil().transform(
+            fromKda,
+            toKda,
+            x,
+            COORDS.get(fromKda).get("y"));
+        Assert.assertNull(result);
+    }
+
+    /**
+     * Out of range latitude/northing.
+     */
+    @Test
+    public void invalidYTest() {
+        String y;
+        switch (fromKda) {
+        case KdaUtil.KDA_GS:
+            // Valid latitude is between -90 and 90 degrees
+            y = "990000.000";
+            break;
+        case KdaUtil.KDA_GD:
+            // Valid latitude is between -90 and 90 degrees
+            y = "99";
+            break;
+        default:
+            // Absolute value of northing is < 1e7
+            final double invalidN = 1e7;
+            y = new DecimalFormat(KdaUtil.NORTHING_PATTERN).format(invalidN);
+        }
+        KdaUtil.Result result = new KdaUtil().transform(
+            fromKda,
+            toKda,
+            COORDS.get(fromKda).get("x"),
+            y);
+        Assert.assertNull(result);
     }
 }

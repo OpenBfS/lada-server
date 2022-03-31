@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -23,9 +22,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
@@ -91,8 +88,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/messprogramm")
-@RequestScoped
-public class MessprogrammService {
+public class MessprogrammService extends LadaService {
 
     /**
      * The data repository granting read/write access.
@@ -137,7 +133,6 @@ public class MessprogrammService {
      */
     @GET
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response get(
         @Context UriInfo info,
         @Context HttpServletRequest request
@@ -181,7 +176,6 @@ public class MessprogrammService {
      */
     @GET
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getById(
         @Context HttpServletRequest request,
         @PathParam("id") String id
@@ -192,13 +186,6 @@ public class MessprogrammService {
                 repository.getById(
                     Messprogramm.class, Integer.valueOf(id)),
                 Messprogramm.class);
-        Messprogramm mp = (Messprogramm) response.getData();
-        QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
-        builder.and("mprId", mp.getId());
-        List<Probe> probes =
-            repository.filterPlain(builder.getQuery());
-        mp.setReferenceCount(probes.size());
-        response.setData(mp);
         return response;
     }
 
@@ -237,7 +224,6 @@ public class MessprogrammService {
      */
     @POST
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response create(
         @Context HttpServletRequest request,
         Messprogramm messprogramm
@@ -264,15 +250,18 @@ public class MessprogrammService {
             || messprogramm.getUmwId().length() == 0
         ) {
             messprogramm = factory.findUmweltId(messprogramm);
+        } else if ((messprogramm.getUmwId() != null
+                || !messprogramm.getUmwId().equals(""))
+            && (messprogramm.getMediaDesk() == null
+                || messprogramm.getMediaDesk().equals(""))
+        ) {
+            messprogramm = factory.getInitialMediaDesk(messprogramm);
         }
+
         /* Persist the new messprogramm object*/
-        Response response = repository.create(messprogramm);
-        Messprogramm ret = (Messprogramm) response.getData();
-        Response created =
-            repository.getById(Messprogramm.class, ret.getId());
         return authorization.filter(
             request,
-            new Response(true, StatusCodes.OK, created.getData()),
+            repository.create(messprogramm),
             Messprogramm.class);
     }
 
@@ -311,7 +300,6 @@ public class MessprogrammService {
      */
     @PUT
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response update(
         @Context HttpServletRequest request,
         @PathParam("id") String id,
@@ -335,21 +323,26 @@ public class MessprogrammService {
             return response;
         }
 
-        if (messprogramm.getUmwId() == null
-            || messprogramm.getUmwId().equals("")
+        if ((messprogramm.getUmwId() == null
+                || messprogramm.getUmwId().equals(""))
+            && !(messprogramm.getMediaDesk() == null
+                || messprogramm.getMediaDesk().equals(""))
         ) {
             messprogramm = factory.findUmweltId(messprogramm);
+        } else if (!(messprogramm.getUmwId() == null
+                || messprogramm.getUmwId().equals(""))
+            && (messprogramm.getMediaDesk() == null
+                || messprogramm.getMediaDesk().equals(""))
+            ) {
+            messprogramm = factory.getInitialMediaDesk(messprogramm);
         }
         Response response = repository.update(messprogramm);
         if (!response.getSuccess()) {
             return response;
         }
-        Response updated = repository.getById(
-            Messprogramm.class,
-            ((Messprogramm) response.getData()).getId());
         return authorization.filter(
             request,
-            updated,
+            response,
             Messprogramm.class);
     }
 
@@ -372,7 +365,6 @@ public class MessprogrammService {
      */
     @PUT
     @Path("/aktiv")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response setAktiv(
         @Context HttpServletRequest request,
         JsonObject data
@@ -435,7 +427,6 @@ public class MessprogrammService {
      */
     @DELETE
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
         @Context HttpServletRequest request,
         @PathParam("id") String id

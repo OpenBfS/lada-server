@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
@@ -20,10 +19,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
@@ -83,8 +80,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/status")
-@RequestScoped
-public class StatusService {
+public class StatusService extends LadaService {
 
     /**
      * The data repository granting read/write access.
@@ -136,7 +132,6 @@ public class StatusService {
      */
     @GET
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response get(
         @Context HttpHeaders headers,
         @Context UriInfo info,
@@ -189,7 +184,6 @@ public class StatusService {
      */
     @GET
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getById(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
@@ -230,7 +224,6 @@ public class StatusService {
      */
     @POST
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response create(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
@@ -361,9 +354,7 @@ public class StatusService {
                 }
                 violationCollection.addNotifications(
                     violation.getNotifications());
-                if (hasValidMesswerte) {
-                    break;
-                }
+
             }
             } else if (newStatusWert != 7) {
                     Violation error = new Violation();
@@ -443,7 +434,6 @@ public class StatusService {
      */
     @PUT
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response update(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,
@@ -464,7 +454,6 @@ public class StatusService {
      */
     @DELETE
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public Response delete(
         @Context HttpHeaders headers,
         @Context HttpServletRequest request,

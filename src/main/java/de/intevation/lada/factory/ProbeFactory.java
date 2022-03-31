@@ -65,6 +65,9 @@ public class ProbeFactory {
     // Day of year representing February 28
     private static final int FEBRUARY_28 = 58;
 
+    // pattern to format deskriptor sn
+    private static final String SN_FORMAT = " %02d";
+
     private static Hashtable<String, int[]> fieldsTable =
         new Hashtable<String, int[]>();
 
@@ -444,7 +447,7 @@ public class ProbeFactory {
         probe.setBaId(messprogramm.getBaId());
         probe.setDatenbasisId(messprogramm.getDatenbasisId());
         probe.setMediaDesk(messprogramm.getMediaDesk());
-        probe = findMediaDesk(probe);
+        probe = findMedia(probe);
         probe.setMstId(messprogramm.getMstId());
         probe.setLaborMstId(messprogramm.getLaborMstId());
         probe.setProbenartId(messprogramm.getProbenartId());
@@ -500,6 +503,7 @@ public class ProbeFactory {
             ortP.setOrtszuordnungTyp(ort.getOrtszuordnungTyp());
             ortP.setProbeId(probe.getId());
             ortP.setOrtId(ort.getOrtId());
+            ortP.setOzId(ort.getOzId());
             ortP.setOrtszusatztext(ort.getOrtszusatztext());
             createObject(ortP, dryrun);
             Ort o = repository.getByIdPlain(
@@ -565,11 +569,13 @@ public class ProbeFactory {
      *
      * @return The updated probe object.
      */
-    public Probe findMediaDesk(Probe probe) {
+    public Probe findMedia(Probe probe) {
         String mediaDesk = probe.getMediaDesk();
         if (mediaDesk != null) {
             Object result = repository.queryFromString(
-                "SELECT get_media_from_media_desk( :mediaDesk );")
+                "SELECT "
+                + de.intevation.lada.model.stammdaten.SchemaName.NAME
+                + ".get_media_from_media_desk( :mediaDesk );")
                     .setParameter("mediaDesk", mediaDesk)
                     .getSingleResult();
             probe.setMedia(result != null ? result.toString() : "");
@@ -815,4 +821,184 @@ public class ProbeFactory {
         this.protocol = protocol;
     }
 
+
+    /**
+     * Set the minimal 'deskriptor' acording to the umwelt.
+     *
+     * @param   probe    The probe
+     *
+     * @return The updated messprogramm.
+     */
+    public Probe getInitialMediaDesk(Probe probe) {
+        String umweltId = probe.getUmwId();
+        if (umweltId != null) {
+            probe.setMediaDesk(getInitialMediaDesk(umweltId));
+        }
+        return probe;
+    }
+
+    /**
+     * Set the minimal 'deskriptor' acording to the umwelt.
+     *
+     * @param   messprogramm    The messprogramm
+     *
+     * @return The updated messprogramm.
+     */
+    public Messprogramm getInitialMediaDesk(Messprogramm messprogramm) {
+        String umweltId = messprogramm.getUmwId();
+        if (umweltId != null) {
+            messprogramm.setMediaDesk(getInitialMediaDesk(umweltId));
+        }
+        return messprogramm;
+    }
+
+    /**
+     * Find the minimal deskriptor string for the specified umwelt id
+     *
+     * @param   umId  The umwelt id.
+     *
+     * @return The deskripto string.
+     */
+    private String getInitialMediaDesk(String umwId) {
+        logger.debug("getInitialMediaDesk - umw_id: " + umwId);
+        String mediaDesk = "D:";
+        QueryBuilder<DeskriptorUmwelt> builder =
+            repository.queryBuilder(DeskriptorUmwelt.class);
+        builder.and("umwId",umwId);
+        Response response =
+            repository.filter(builder.getQuery());
+        @SuppressWarnings("unchecked")
+        List<DeskriptorUmwelt> data =
+            (List<DeskriptorUmwelt>) response.getData();
+        if (data.isEmpty()) {
+            logger.debug("getInitialMediaDesk - media_desk : D: 00 00 00 00 00 00 00 00 00 00 00 00");
+            return "D: 00 00 00 00 00 00 00 00 00 00 00 00";
+        } else {
+            Integer s00 = data.get(0).getS00();
+            Integer s01 = data.get(0).getS01();
+            Integer s02 = data.get(0).getS02();
+            Integer s03 = data.get(0).getS03();
+            Integer s04 = data.get(0).getS04();
+            Integer s05 = data.get(0).getS05();
+            Integer s06 = data.get(0).getS06();
+            Integer s07 = data.get(0).getS07();
+            Integer s08 = data.get(0).getS08();
+            Integer s09 = data.get(0).getS09();
+            Integer s10 = data.get(0).getS10();
+            Integer s11 = data.get(0).getS11();
+            for (int i = 0; i < data.size(); i++) {
+                if (data.get(i).getS00() == null || !data.get(i).getS00().equals(s00)) {
+                    s00 = null;
+                }
+                if (data.get(i).getS01() == null || !data.get(i).getS01().equals(s01)) {
+                    s01 = null;
+                }
+                if (data.get(i).getS02() == null || !data.get(i).getS02().equals(s02)) {
+                    s02 = null;
+                }
+                if (data.get(i).getS03() == null || !data.get(i).getS03().equals(s03)) {
+                    s03 = null;
+                }
+                if (data.get(i).getS04() == null || !data.get(i).getS04().equals(s04)) {
+                    s04 = null;
+                }
+                if (data.get(i).getS05() == null || !data.get(i).getS05().equals(s05)) {
+                    s05 = null;
+                }
+                if (data.get(i).getS06() == null || !data.get(i).getS06().equals(s06)) {
+                    s06 = null;
+                }
+                if (data.get(i).getS07() == null || !data.get(i).getS07().equals(s07)) {
+                    s07 = null;
+                }
+                if (data.get(i).getS08() == null || !data.get(i).getS08().equals(s08)) {
+                    s08 = null;
+                }
+                if (data.get(i).getS09() == null || !data.get(i).getS09().equals(s09)) {
+                    s09 = null;
+                }
+                if (data.get(i).getS10() == null || !data.get(i).getS10().equals(s10)) {
+                    s10 = null;
+                }
+                if (data.get(i).getS11() == null || !data.get(i).getS11().equals(s11)) {
+                    s11 = null;
+                }
+            }
+            Deskriptoren d;
+            if (s00 == null) {
+                mediaDesk = mediaDesk + " 00";
+            } else {
+                d = repository.getByIdPlain(Deskriptoren.class, s00);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+            }
+            if (s01 == null) {
+                mediaDesk = mediaDesk + " 00";
+            } else {
+                d = repository.getByIdPlain(Deskriptoren.class, s01);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+            }
+            if (s02 == null) {
+                mediaDesk = mediaDesk + " 00";
+            } else {
+                d = repository.getByIdPlain(Deskriptoren.class, s02);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+            }
+            if (s03 == null) {
+                mediaDesk = mediaDesk + " 00";
+            } else {
+                d = repository.getByIdPlain(Deskriptoren.class, s03);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+            }
+            if (s04 == null) {
+                mediaDesk = mediaDesk + " 00";
+            } else {
+                d = repository.getByIdPlain(Deskriptoren.class, s04);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+            }
+            if (s05 == null) {
+                mediaDesk = mediaDesk + " 00";
+            } else {
+                d = repository.getByIdPlain(Deskriptoren.class, s05);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+            }
+            if (s06 == null) {
+                mediaDesk = mediaDesk + " 00";
+            } else {
+                d = repository.getByIdPlain(Deskriptoren.class, s06);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+            }
+            if (s07 == null) {
+                mediaDesk = mediaDesk + " 00";
+            } else {
+                d = repository.getByIdPlain(Deskriptoren.class, s07);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+            }
+            if (s08 == null) {
+                mediaDesk = mediaDesk + " 00";
+            } else {
+                d = repository.getByIdPlain(Deskriptoren.class, s08);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+            }
+            if (s09 == null) {
+                mediaDesk = mediaDesk + " 00";
+            } else {
+                d = repository.getByIdPlain(Deskriptoren.class, s09);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+            }
+            if (s10 == null) {
+                mediaDesk = mediaDesk + " 00";
+            } else {
+                d = repository.getByIdPlain(Deskriptoren.class, s10);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+            }
+            if (s11 == null) {
+                mediaDesk = mediaDesk + " 00";
+            } else {
+                d = repository.getByIdPlain(Deskriptoren.class, s11);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+            }
+            logger.debug("getInitialMediaDesk - umw_desk: " + mediaDesk);
+            return mediaDesk;
+        }
+    }
 }

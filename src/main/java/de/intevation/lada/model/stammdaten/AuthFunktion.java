@@ -12,7 +12,8 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
+import java.sql.Timestamp;
+import javax.persistence.Column;
 
 /**
  * The persistent class for the auth_funktion database table.
@@ -27,6 +28,9 @@ public class AuthFunktion implements Serializable {
     private Integer id;
 
     private String funktion;
+
+    @Column(name = "letzte_aenderung", insertable = false)
+    private Timestamp letzteAenderung;
 
     public AuthFunktion() {
     }
@@ -45,6 +49,14 @@ public class AuthFunktion implements Serializable {
 
     public void setFunktion(String funktion) {
         this.funktion = funktion;
+    }
+
+    public Timestamp getLetzteAenderung() {
+        return this.letzteAenderung;
+    }
+
+    public void setLetzteAenderung(Timestamp letzteAenderung) {
+        this.letzteAenderung = letzteAenderung;
     }
 
 }
