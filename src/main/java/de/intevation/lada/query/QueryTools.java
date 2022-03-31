@@ -62,7 +62,6 @@ public class QueryTools {
      * @param repository Repository for database access.
      * @param customColumns Customized column configs, containing
      *      filter, sorting and references to the respective column.
-     * @param qId Query id.
      */
     public QueryTools(
         Repository repository,
