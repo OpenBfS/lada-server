@@ -29,6 +29,8 @@ public class TagTest extends ServiceTest {
     private final String name = "tag";
     private final String tagUrl = "rest/tag/";
 
+    private final String dataKey = "data";
+
     @Override
     public void init(
         URL baseUrl,
@@ -71,8 +73,8 @@ public class TagTest extends ServiceTest {
     public void promoteMstTag() {
         JsonObject tagToTest = createTagJson(
             Tag.TAG_TYPE_MST, "mstTagPromoted");
-        JsonObject createResponse = create(name, "rest/tag", tagToTest);
-        long createdId = createResponse.getJsonObject("data").getInt("id");
+        JsonObject createResponse = create(name, tagUrl, tagToTest);
+        long createdId = createResponse.getJsonObject(dataKey).getInt("id");
         update(name, tagUrl + createdId, "typId",
             "mst",
             "global");
@@ -85,23 +87,25 @@ public class TagTest extends ServiceTest {
     private void testTagCRUD(JsonObject tagToTest) {
 
         long now = System.currentTimeMillis();
-        JsonObject createResponse = create(name, "rest/tag", tagToTest);
-        long createdId = createResponse.getJsonObject("data").getInt("id");
+        JsonObject createResponse = create(name, tagUrl, tagToTest);
+        long createdId = createResponse.getJsonObject(dataKey).getInt("id");
         String createdTyp = createResponse
-            .getJsonObject("data").getString("typId");
+            .getJsonObject(dataKey).getString("typId");
         if (createdTyp.equals("mst") || createdTyp.equals("auto")) {
             long createdGueltigBis
-                = createResponse.getJsonObject("data")
+                = createResponse.getJsonObject(dataKey)
                 .getJsonNumber("gueltigBis").longValue();
             long diff = getDiffInDays(now, createdGueltigBis);
             Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diff);
         }
-        String tagUpdated = tagToTest.getString("tag") + "-mod";
-        JsonObject updateResponse = update(name, tagUrl + createdId, "tag",
-            tagToTest.getString("tag"),
+        String tagUpdated = tagToTest.getString(name) + "-mod";
+        JsonObject updateResponse = update(name, tagUrl + createdId, name,
+            tagToTest.getString(name),
             tagUpdated);
-        getAll(name, tagUrl);
-        getById(name, tagUrl + createdId, updateResponse.getJsonObject("data"));
+        JsonObject getAllResponse = getAll(name, tagUrl);
+        Assert.assertFalse(getAllResponse.getJsonArray(dataKey).isEmpty());
+        getById(name, tagUrl + createdId,
+            updateResponse.getJsonObject(dataKey));
         delete(name, tagUrl + createdId);
     }
 
@@ -112,7 +116,7 @@ public class TagTest extends ServiceTest {
     private JsonObject createTagJson(String type, String tag) {
         JsonObjectBuilder builder = convertObject(create);
         builder.add("typId", type);
-        builder.add("tag", tag);
+        builder.add(name, tag);
         return builder.build();
     }
 }

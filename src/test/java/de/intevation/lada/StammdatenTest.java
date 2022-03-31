@@ -656,12 +656,34 @@ public class StammdatenTest extends BaseTest {
     }
 
     /**
+     * Cleanup database for TagTest.
+     * @throws Exception that can occur during test
+     */
+    @Test
+    @InSequence(T39)
+    @ApplyScriptBefore("datasets/clean_and_seed.sql")
+    @DataSource("java:jboss/lada-test")
+    @Cleanup(phase = TestExecutionPhase.NONE)
+    public final void prepareTag() throws Exception {
+        Protocol protocol = new Protocol();
+        protocol.setName("database");
+        protocol.setType("cleanup for tag");
+        protocol.addInfo("database", "cleanup for tag");
+        testProtocol.add(protocol);
+        Tag probeTag = em.find(Tag.class, ID101);
+        Assert.assertNull(probeTag);
+        Tag messungTag = em.find(Tag.class, ID102);
+        Assert.assertNull(messungTag);
+        protocol.setPassed(true);
+    }
+
+    /**
      * Test Tag service.
      * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T39)
+    @InSequence(T40)
     @RunAsClient
     public final void testTag(@ArquillianResource URL baseUrl)
     throws Exception {
