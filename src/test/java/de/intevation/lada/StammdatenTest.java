@@ -675,10 +675,11 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @InSequence(T40)
+    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @UsingDataSet("datasets/dbUnit_tagzuordnung.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
-    public final void prepareTagzuordnung() throws Exception {
+    public final void prepareTagZuordnung() throws Exception {
         Protocol protocol = new Protocol();
         protocol.setName("database");
         protocol.setType("insert for tagzuordnung");
