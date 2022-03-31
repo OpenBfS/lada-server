@@ -66,10 +66,6 @@ public class UniversalService extends LadaService {
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
 
-    @Inject
-    private QueryTools queryTools;
-
-
     /**
      * Execute query, using the given result columns.
      * The query can contain the following post data:
@@ -95,7 +91,6 @@ public class UniversalService extends LadaService {
         @Context UriInfo info,
         QueryColumns columns
     ) {
-        Integer qid;
         MultivaluedMap<String, String> params = info.getQueryParameters();
         List<GridColumnValue> gridColumnValues = columns.getColumns();
 
@@ -151,17 +146,24 @@ public class UniversalService extends LadaService {
             columnValue.setGridColumn(gridColumn);
         }
 
-        GridColumn gridColumn = repository.getByIdPlain(
-            GridColumn.class,
-            Integer.valueOf(gridColumnValues.get(0).getGridColumnId())
-        );
+        int offset = 0, limit = Integer.MAX_VALUE;
+        if (params.containsKey("start") && params.containsKey("limit")) {
+            offset = Integer.valueOf(params.getFirst("start"));
+            limit = Integer.valueOf(params.getFirst("limit"));
+        }
 
-        qid = gridColumn.getBaseQuery();
-        List<Map<String, Object>> result =
-            queryTools.getResultForQuery(columns.getColumns(), qid);
+        QueryTools queryTools = new QueryTools(
+            repository, columns.getColumns());
+        List<Map<String, Object>> result = queryTools.getResultForQuery(
+            offset, limit);
+
         if (result == null) {
             return new Response(true, StatusCodes.OK, null);
         }
+
+        // TODO: This issues a potentially costly 'SELECT count(*)'
+        // for every request. Better not to rely on total count at client side?
+        int size = queryTools.getTotalCountForQuery();
 
         for (Map<String, Object> row: result) {
             Object idToAuthorize = row.get(authorizationColumnIndex);
@@ -203,17 +205,6 @@ public class UniversalService extends LadaService {
                 readonly = true;
             }
             row.put("readonly", readonly);
-        }
-        int size = result.size();
-
-        if (params.containsKey("start") && params.containsKey("limit")) {
-            int start = Integer.valueOf(params.getFirst("start"));
-            int limit = Integer.valueOf(params.getFirst("limit"));
-            int end = limit + start;
-            if (start + limit > result.size()) {
-                end = result.size();
-            }
-            result = result.subList(start, end);
         }
 
         return new Response(true, StatusCodes.OK, result, size);

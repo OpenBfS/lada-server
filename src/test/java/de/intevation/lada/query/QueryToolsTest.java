@@ -45,7 +45,7 @@ public class QueryToolsTest {
      * Test preparation of SQL statement if no filter and sorting is requested.
      */
     @Test
-    public void prepareSqlNoSortTest() {
+    public void prepareSqlNoFilterTest() {
         assertEquals(
             TEST_QUERY_BASE,
             QueryTools.prepareSql(columnValues, TEST_QUERY_BASE)
@@ -56,14 +56,14 @@ public class QueryToolsTest {
      * Test preparation of ORDER BY clause for sorting by one column.
      */
     @Test
-    public void prepareSqlOneColSortTest() {
+    public void prepareSortSqlOneColTest() {
         column1.setDataIndex("test");
         columnValue1.setGridColumn(column1);
         // TODO: Schema should allow only ASC/DESC or just make it a boolean!
         columnValue1.setSort("xxx");
         assertEquals(
-            TEST_QUERY_BASE + " ORDER BY test xxx ",
-            QueryTools.prepareSql(columnValues, TEST_QUERY_BASE)
+            " ORDER BY test xxx ",
+            QueryTools.prepareSortSql(columnValues)
         );
     }
 
@@ -71,7 +71,7 @@ public class QueryToolsTest {
      * Test preparation of ORDER BY clause for sorting by two columns.
      */
     @Test
-    public void prepareSqlTwoColSortTest() {
+    public void prepareSortSqlTwoColTest() {
         column1.setDataIndex("test");
         columnValue1.setGridColumn(column1);
         // TODO: Schema should allow only ASC/DESC or just make it a boolean!
@@ -83,8 +83,8 @@ public class QueryToolsTest {
         columnValue2.setSort("yyy");
 
         assertEquals(
-            TEST_QUERY_BASE + " ORDER BY test xxx , another yyy ",
-            QueryTools.prepareSql(columnValues, TEST_QUERY_BASE)
+            " ORDER BY test xxx , another yyy ",
+            QueryTools.prepareSortSql(columnValues)
         );
     }
 
@@ -92,7 +92,7 @@ public class QueryToolsTest {
      * Test preparation of ORDER BY clause for sorting in specified order.
      */
     @Test
-    public void prepareSqlOrderedColSortTest() {
+    public void prepareSortSqlOrderedColTest() {
         column1.setDataIndex("test");
         columnValue1.setGridColumn(column1);
         // TODO: Schema should allow only ASC/DESC or just make it a boolean!
@@ -111,8 +111,8 @@ public class QueryToolsTest {
         columnValue3.setSortIndex(1);
 
         assertEquals(
-            TEST_QUERY_BASE + " ORDER BY first zzz , second yyy , test xxx ",
-            QueryTools.prepareSql(columnValues, TEST_QUERY_BASE)
+            " ORDER BY first zzz , second yyy , test xxx ",
+            QueryTools.prepareSortSql(columnValues)
         );
     }
 
