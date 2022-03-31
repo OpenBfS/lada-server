@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
@@ -90,19 +89,12 @@ public abstract class QueryExportJob extends ExportJob {
     protected Integer qId;
 
     /**
-     * Query tools used to load query data.
-     */
-    @Inject
-    private QueryTools queryTools;
-
-    /**
      * Primary data query result.
      */
     protected List<Map<String, Object>> primaryData;
 
     /**
      * Constructor.
-     * @param queryTools Query tools instance
      */
     public QueryExportJob() {
         columns = new ArrayList <GridColumnValue>();
@@ -173,8 +165,8 @@ public abstract class QueryExportJob extends ExportJob {
      * @return Query result as list
      */
     protected List<Map<String, Object>> getQueryResult() {
-        List<Map<String, Object>> result =
-            queryTools.getResultForQuery(columns, qId);
+        QueryTools queryTools = new QueryTools(repository, columns);
+        List<Map<String, Object>> result = queryTools.getResultForQuery();
         logger.debug(String.format(
                 "Fetched %d primary records",
                 result == null ? 0 : result.size()));
@@ -344,7 +336,6 @@ public abstract class QueryExportJob extends ExportJob {
         exportParameters.getJsonArray("columns").forEach(jsonValue -> {
             JsonObject columnObj = (JsonObject) jsonValue;
             GridColumnValue columnValue = new GridColumnValue();
-            GridColumn gridColumn;
             columnValue.setgridColumnId(columnObj.getInt("gridColumnId"));
             String sort = columnObj.get("sort") != null
                 && columnObj.get("sort").getValueType() == ValueType.STRING
@@ -359,7 +350,7 @@ public abstract class QueryExportJob extends ExportJob {
             columnValue.setFilterIsNull(columnObj.getBoolean("filterIsNull"));
             columnValue.setFilterNegate(columnObj.getBoolean("filterNegate"));
             columnValue.setFilterRegex(columnObj.getBoolean("filterRegex"));
-            gridColumn = repository.getByIdPlain(
+            GridColumn gridColumn = repository.getByIdPlain(
                 GridColumn.class, columnValue.getGridColumnId());
 
             columnValue.setGridColumn(gridColumn);
