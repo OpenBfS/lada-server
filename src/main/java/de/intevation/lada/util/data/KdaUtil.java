@@ -264,27 +264,21 @@ public class KdaUtil {
             String epsgWGS = getWgsUtmEpsg(
                 Double.parseDouble(degrees.getY()),
                 Double.parseDouble(degrees.getX()));
-            Result coord = jtsTransform(crs,
+            Result coords = jtsTransform(crs,
                 epsgWGS,
                 y,
                 x);
-            if (coord == null) {
+            if (coords == null) {
                 return null;
             }
-            coord.setX(epsgWGS.substring(
+            coords.setX(epsgWGS.substring(
                 epsgWGS.length() - 2,
-                epsgWGS.length()) + coord.getX());
-            String coordX = coord.getX();
-            String coordY = coord.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 3 ? maxLenX : 3;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 3 ? maxLenY : 3;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
-            coord.setX(coordX);
-            coord.setY(coordY);
-            return coord;
+                epsgWGS.length()) + coords.getX());
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
+            coords.setX(coordX);
+            coords.setY(coordY);
+            return coords;
         }
 
         @Override
@@ -294,27 +288,21 @@ public class KdaUtil {
             String epsgEtrs = getEtrsEpsg(
                 Double.parseDouble(degrees.getY()),
                 Double.parseDouble(degrees.getX()));
-            Result coord = jtsTransform(crs,
+            Result coords = jtsTransform(crs,
                 epsgEtrs,
                 y,
                 x);
-            if (coord == null) {
+            if (coords == null) {
                 return null;
             }
-            coord.setX(epsgEtrs.substring(
-                    epsgEtrs.length() - 2,
-                    epsgEtrs.length()) + coord.getX());
-            String coordX = coord.getX();
-            String coordY = coord.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 3 ? maxLenX : 3;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 3 ? maxLenY : 3;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
-            coord.setX(coordX);
-            coord.setY(coordY);
-            return coord;
+            coords.setX(epsgEtrs.substring(
+                epsgEtrs.length() - 2,
+                epsgEtrs.length()) + coords.getX());
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
+            coords.setX(coordX);
+            coords.setY(coordY);
+            return coords;
         }
 
         @Override
@@ -322,23 +310,17 @@ public class KdaUtil {
             Result degrees = jtsTransform(crs, "EPSG:4326", y, x);
             String epsgEd50 = getEpsgForEd50UtmFromDegree(
                 degrees.getY());
-            Result coord = jtsTransform(crs, epsgEd50, y, x);
-            if (coord == null) {
+            Result coords = jtsTransform(crs, epsgEd50, y, x);
+            if (coords == null) {
                 return null;
             }
-            String coordX = coord.getX();
-            String coordY = coord.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 3 ? maxLenX : 3;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 3 ? maxLenY : 3;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             String zone = epsgEd50.substring(
                 epsgEd50.length() - 2, epsgEd50.length());
-            coord.setX(zone + coordX);
-            coord.setY(coordY);
-            return coord;
+            coords.setX(zone + coordX);
+            coords.setY(coordY);
+            return coords;
         }
     }
 
@@ -387,25 +369,19 @@ public class KdaUtil {
                 Double.parseDouble(degrees.getX()),
                 Double.parseDouble(degrees.getY()));
 
-            Result coord = jtsTransform(
+            Result coords = jtsTransform(
                 "EPSG:4326",
                 epsgGk,
                 degrees.getY(),
                 degrees.getX());
-            if (coord == null) {
+            if (coords == null) {
                 return null;
             }
-            String coordX = coord.getX();
-            String coordY = coord.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 2 ? maxLenX : 2;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 2 ? maxLenY : 2;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
-            coord.setX(coordY);
-            coord.setY(coordX);
-            return coord;
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
+            coords.setX(coordY);
+            coords.setY(coordX);
+            return coords;
         }
 
         @Override
@@ -427,27 +403,21 @@ public class KdaUtil {
             String epsgWgs = getWgsUtmEpsg(
                 Double.parseDouble(degrees.getX()),
                 Double.parseDouble(degrees.getY()));
-            Result coord = jtsTransform("EPSG:4326",
+            Result coords = jtsTransform("EPSG:4326",
                 epsgWgs,
                 degrees.getY(),
                 degrees.getX());
-            if (coord == null) {
+            if (coords == null) {
                 return null;
             }
-            coord.setX(epsgWgs.substring(
+            coords.setX(epsgWgs.substring(
                 epsgWgs.length() - 2,
-                epsgWgs.length()) + coord.getX());
-            String coordX = coord.getX();
-            String coordY = coord.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 3 ? maxLenX : 3;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 3 ? maxLenY : 3;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
-            coord.setX(coordX);
-            coord.setY(coordY);
-            return coord;
+                epsgWgs.length()) + coords.getX());
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
+            coords.setX(coordX);
+            coords.setY(coordY);
+            return coords;
         }
 
         @Override
@@ -459,27 +429,21 @@ public class KdaUtil {
             String epsgEtrs = getEtrsEpsg(
                 Double.parseDouble(degrees.getX()),
                 Double.parseDouble(degrees.getY()));
-            Result coord = jtsTransform("EPSG:4326",
+            Result coords = jtsTransform("EPSG:4326",
                 epsgEtrs,
                 degrees.getY(),
                 degrees.getX());
-            if (coord == null) {
+            if (coords == null) {
                 return null;
             }
-            coord.setX(epsgEtrs.substring(
-                    epsgEtrs.length() - 2,
-                    epsgEtrs.length()) + coord.getX());
-            String coordX = coord.getX();
-            String coordY = coord.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 3 ? maxLenX : 3;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 3 ? maxLenY : 3;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
-            coord.setX(coordX);
-            coord.setY(coordY);
-            return coord;
+            coords.setX(epsgEtrs.substring(
+                epsgEtrs.length() - 2,
+                epsgEtrs.length()) + coords.getX());
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
+            coords.setX(coordX);
+            coords.setY(coordY);
+            return coords;
         }
 
         @Override
@@ -490,26 +454,20 @@ public class KdaUtil {
             }
             String epsgEd50 = getEpsgForEd50UtmFromDegree(
                 degrees.getX());
-            Result coord = jtsTransform("EPSG:4326",
+            Result coords = jtsTransform("EPSG:4326",
                 epsgEd50,
                 degrees.getY(),
                 degrees.getX());
-            if (coord == null) {
+            if (coords == null) {
                 return null;
             }
-            String coordX = coord.getX();
-            String coordY = coord.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 3 ? maxLenX : 3;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 3 ? maxLenY : 3;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             String zone = epsgEd50.substring(
                 epsgEd50.length() - 2, epsgEd50.length());
-            coord.setX(zone + coordX);
-            coord.setY(coordY);
-            return coord;
+            coords.setX(zone + coordX);
+            coords.setY(coordY);
+            return coords;
         }
     }
 
@@ -539,21 +497,15 @@ public class KdaUtil {
         @Override
         public Result transformTo1() {
             String epsgGk = getGkEpsg(Double.valueOf(x), Double.valueOf(y));
-            Result coord = jtsTransform("EPSG:4326", epsgGk, y, x);
-            if (coord == null) {
+            Result coords = jtsTransform("EPSG:4326", epsgGk, y, x);
+            if (coords == null) {
                 return null;
             }
-            String coordX = coord.getX();
-            String coordY = coord.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 3 ? maxLenX : 3;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 3 ? maxLenY : 3;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
-            coord.setX(coordY);
-            coord.setY(coordX);
-            return coord;
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
+            coords.setX(coordY);
+            coords.setY(coordX);
+            return coords;
         }
 
         @Override
@@ -570,70 +522,52 @@ public class KdaUtil {
         public Result transformTo5() {
             String epsgWgs = getWgsUtmEpsg(
                 Double.valueOf(x), Double.valueOf(y));
-            Result coord = jtsTransform("EPSG:4326", epsgWgs, y, x);
-            if (coord == null) {
+            Result coords = jtsTransform("EPSG:4326", epsgWgs, y, x);
+            if (coords == null) {
                 return null;
             }
-            coord.setX(epsgWgs.substring(
+            coords.setX(epsgWgs.substring(
                 epsgWgs.length() - 2,
-                epsgWgs.length()) + coord.getX());
-            String coordX = coord.getX();
-            String coordY = coord.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 3 ? maxLenX : 3;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 3 ? maxLenY : 3;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
-            coord.setX(coordX);
-            coord.setY(coordY);
-            return coord;
+                epsgWgs.length()) + coords.getX());
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
+            coords.setX(coordX);
+            coords.setY(coordY);
+            return coords;
         }
 
         @Override
         public Result transformTo6() {
             String epsgEtrs = getEtrsEpsg(
                 Double.valueOf(x), Double.valueOf(y));
-            Result coord = jtsTransform("EPSG:4326", epsgEtrs, y, x);
-            if (coord == null) {
+            Result coords = jtsTransform("EPSG:4326", epsgEtrs, y, x);
+            if (coords == null) {
                 return null;
             }
-            coord.setX(epsgEtrs.substring(
-                    epsgEtrs.length() - 2,
-                    epsgEtrs.length()) + coord.getX());
-            String coordX = coord.getX();
-            String coordY = coord.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 3 ? maxLenX : 3;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 3 ? maxLenY : 3;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
-            coord.setX(coordX);
-            coord.setY(coordY);
-            return coord;
+            coords.setX(epsgEtrs.substring(
+                epsgEtrs.length() - 2,
+                epsgEtrs.length()) + coords.getX());
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
+            coords.setX(coordX);
+            coords.setY(coordY);
+            return coords;
         }
 
         @Override
         public Result transformTo8() {
             String epsgEd50 = getEpsgForEd50UtmFromDegree(x);
-            Result coord = jtsTransform("EPSG:4326", epsgEd50, y, x);
-            if (coord == null) {
+            Result coords = jtsTransform("EPSG:4326", epsgEd50, y, x);
+            if (coords == null) {
                 return null;
             }
-            String coordX = coord.getX();
-            String coordY = coord.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 3 ? maxLenX : 3;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 3 ? maxLenY : 3;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             String zone = epsgEd50.substring(
                 epsgEd50.length() - 2, epsgEd50.length());
-            coord.setX(zone + coordX);
-            coord.setY(coordY);
-            return coord;
+            coords.setX(zone + coordX);
+            coords.setY(coordY);
+            return coords;
         }
     }
 
@@ -670,14 +604,8 @@ public class KdaUtil {
             if (coords == null) {
                 return null;
             }
-            String coordX = coords.getX();
-            String coordY = coords.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 2 ? maxLenX : 2;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 2 ? maxLenY : 2;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             coords.setX(coordY);
             coords.setY(coordX);
             return coords;
@@ -749,14 +677,8 @@ public class KdaUtil {
             if (coords == null) {
                 return null;
             }
-            String coordX = coords.getX();
-            String coordY = coords.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 7 ? maxLenX : 7;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 7 ? maxLenY : 7;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             String zone = epsgEd50.substring(
                 epsgEd50.length() - 2, epsgEd50.length());
             coords.setX(zone + coordX);
@@ -799,14 +721,8 @@ public class KdaUtil {
             if (coords == null) {
                 return null;
             }
-            String coordX = coords.getX();
-            String coordY = coords.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 2 ? maxLenX : 2;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 2 ? maxLenY : 2;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             coords.setX(coordY);
             coords.setY(coordX);
             return coords;
@@ -878,14 +794,8 @@ public class KdaUtil {
             if (coords == null) {
                 return null;
             }
-            String coordX = coords.getX();
-            String coordY = coords.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 7 ? maxLenX : 7;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 7 ? maxLenY : 7;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             String zone = epsgEd50.substring(
                 epsgEd50.length() - 2, epsgEd50.length());
             coords.setX(zone + coordX);
@@ -928,14 +838,8 @@ public class KdaUtil {
             if (coords == null) {
                 return null;
             }
-            String coordX = coords.getX();
-            String coordY = coords.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 2 ? maxLenX : 2;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 2 ? maxLenY : 2;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             coords.setX(coordY);
             coords.setY(coordX);
             return coords;
@@ -982,14 +886,8 @@ public class KdaUtil {
             if (coords == null) {
                 return null;
             }
-            String coordX = coords.getX();
-            String coordY = coords.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 7 ? maxLenX : 7;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 7 ? maxLenY : 7;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             String zone = epsgWgs.substring(
                 epsgWgs.length() - 2, epsgWgs.length());
             coords.setX(zone + coordX);
@@ -1012,14 +910,8 @@ public class KdaUtil {
             if (coords == null) {
                 return null;
             }
-            String coordX = coords.getX();
-            String coordY = coords.getY();
-            int maxLenX = coordX.length() - coordX.indexOf(".");
-            int precX = maxLenX < 7 ? maxLenX : 7;
-            int maxLenY = coordY.length() - coordY.indexOf(".");
-            int precY = maxLenY < 7 ? maxLenY : 7;
-            coordX = coordX.substring(0, coordX.indexOf(".") + precX);
-            coordY = coordY.substring(0, coordY.indexOf(".") + precY);
+            String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
+            String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             String zone = epsgEtrs.substring(
                 epsgEtrs.length() - 2, epsgEtrs.length());
             coords.setX(zone + coordX);

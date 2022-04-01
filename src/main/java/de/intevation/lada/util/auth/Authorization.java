@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.util.auth;
 
+import javax.servlet.http.HttpServletRequest;
+
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -16,15 +18,22 @@ import de.intevation.lada.util.rest.Response;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public interface Authorization {
-    UserInfo getInfo(Object source);
+    UserInfo getInfo(HttpServletRequest request);
 
-    <T> Response filter(Object source, Response data, Class<T> clazz);
+    <T> Response filter(
+        HttpServletRequest request, Response data, Class<T> clazz);
 
     <T> boolean isAuthorized(
-        Object source, Object data, RequestMethod method, Class<T> clazz);
+        HttpServletRequest request,
+        Object data,
+        RequestMethod method,
+        Class<T> clazz);
 
     <T> boolean isAuthorizedById(
-        Object source, Object id, RequestMethod method, Class<T> clazz);
+        HttpServletRequest request,
+        Object id,
+        RequestMethod method,
+        Class<T> clazz);
 
     <T> boolean isAuthorized(UserInfo userInfo, Object data, Class<T> clazz);
 
@@ -33,7 +42,7 @@ public interface Authorization {
         Object data,
         Class<T> clazz);
 
-    boolean isReadOnly(Integer probeId);
+    boolean isProbeReadOnly(Integer probeId);
 
     boolean isMessungReadOnly(Integer messungId);
 }

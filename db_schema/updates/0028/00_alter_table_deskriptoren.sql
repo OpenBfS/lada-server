@@ -14,6 +14,6 @@ GRANT USAGE ON SEQUENCE stamm.deskriptoren_s_xx_seq TO lada;
 GRANT ALL ON SEQUENCE stamm.deskriptoren_s_xx_seq TO postgres;
 
 ALTER TABLE IF EXISTS stamm.deskriptoren
-    ALTER COLUMN s_xx SET DEFAULT nextval('stamm.deskriptoren_id_seq'::regclass);
+    ALTER COLUMN s_xx SET DEFAULT nextval('stamm.deskriptoren_s_xx_seq'::regclass);
 
 SELECT pg_catalog.setval('stamm.deskriptoren_s_xx_seq', (SELECT max(s_xx) FROM stamm.deskriptoren), true);

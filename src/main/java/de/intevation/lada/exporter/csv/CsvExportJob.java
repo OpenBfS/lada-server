@@ -255,7 +255,6 @@ public class CsvExportJob extends QueryExportJob {
 
         //Fetch primary records
         primaryData = getQueryResult();
-        Integer test = qId;
 
         List<Map<String, Object>> exportData = primaryData;
         ArrayList<String> exportColumns = new ArrayList<String>();

@@ -10,6 +10,7 @@ DELETE FROM land.probe;
 DELETE FROM land.messprogramm;
 DELETE FROM land.messung;
 DELETE FROM pflicht_messgroesse;
+DELETE FROM messprogramm_transfer;
 DELETE FROM datenbasis;
 DELETE FROM umwelt;
 DELETE FROM mass_einheit_umrechnung;
@@ -76,6 +77,7 @@ INSERT INTO verwaltungseinheit (
 INSERT INTO probenehmer (
 			id, netzbetreiber_id, prn_id, bezeichnung, kurz_bezeichnung)
 		VALUES (726, '06', 'prn', 'test', 'test');
+INSERT INTO messprogramm_transfer VALUES (1, 1, 'Routinemessprogramm', 1, 2);
 
 -- authorization data needed for tests
 INSERT INTO auth (ldap_group, netzbetreiber_id, mst_id, funktion_id)

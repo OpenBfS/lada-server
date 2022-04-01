@@ -7,12 +7,9 @@
  */
 package de.intevation.lada.rest.stamm;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -145,121 +142,6 @@ public class TagService extends LadaService {
         List<Tag> tags = repository.filterPlain(criteriaQuery);
         return new Response(true, StatusCodes.OK, tags);
     }
-
-    /**
-     * Creates and sets a generated tag for a list of generated probe and
-     * messung instances.
-     * The created tag has the format "PEP_<YYYYMMDD>_<#>", with <#> as a
-     * serial.
-     * <pre>
-     * <code>
-     * {
-     *   "probeIds": [Integer[]],
-     *   "mstId": [String]
-     * </code>
-     * </pre>
-     */
-    @POST
-    @Path("/generated")
-    public Response createGeneratedTags(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        JsonObject object
-    ) {
-        UserInfo userInfo = authorization.getInfo(request);
-        List<Integer> probeIds = new ArrayList<Integer>();
-
-        //Check given mstId
-        String mstId;
-        try {
-            mstId = object.getString("mstId");
-        } catch (NullPointerException npe) {
-            return new Response(
-                false, StatusCodes.NOT_ALLOWED, "Invalid mstId");
-        }
-
-        if (mstId == null || !userInfo.getMessstellen().contains(mstId)) {
-            return new Response(
-                false, StatusCodes.NOT_ALLOWED, "Invalid mstId");
-        }
-
-        //Parse probe ids
-        JsonArray probeIdArray = object.getJsonArray("probeIds");
-        try {
-            probeIdArray.forEach(value -> {
-                probeIds.add(Integer.parseInt(value.toString()));
-            });
-        } catch (NumberFormatException nfe) {
-            return new Response(
-                false, StatusCodes.NOT_ALLOWED, "Invalid probe id(s)");
-        }
-        Response resp =
-            tagUtil.generateTag("PEP", userInfo.getMessstellen().get(0));
-        Tag currentTag = (Tag) resp.getData();
-
-        return new Response(
-            true,
-            StatusCodes.OK,
-            tagUtil.setTagsByProbeIds(probeIds, currentTag.getId()));
-    }
-
-    /**
-     * Creates and sets a generated tag for a list of imported probe and messung
-     * instances.
-     * The created tag has the format "IMP_<YYYYMMDD>_<#>", with <#> as a
-     * serial.
-     * <pre>
-     * <code>
-     * {
-     *   "probeIds": [Integer[]],
-     *   "mstId": [String]
-     * </code>
-     * </pre>
-     */
-    @POST
-    @Path("/imported")
-    public Response createImportedTags(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        JsonObject object
-    ) {
-        UserInfo userInfo = authorization.getInfo(request);
-        List<Integer> probeIds = new ArrayList<Integer>();
-
-        //Check given mstId
-        String mstId;
-        try {
-            mstId = object.getString("mstId");
-        } catch (NullPointerException npe) {
-            return new Response(
-                false, StatusCodes.NOT_ALLOWED, "Invalid mstId");
-        }
-
-        if (mstId == null || !userInfo.getMessstellen().contains(mstId)) {
-            return new Response(
-                false, StatusCodes.NOT_ALLOWED, "Invalid mstId");
-        }
-
-        //Parse probe ids
-        JsonArray probeIdArray = object.getJsonArray("probeIds");
-        try {
-            probeIdArray.forEach(value -> {
-                probeIds.add(Integer.parseInt(value.toString()));
-            });
-        } catch (NumberFormatException nfe) {
-            return new Response(
-                false, StatusCodes.NOT_ALLOWED, "Invalid probe id(s)");
-        }
-        Response resp =
-            tagUtil.generateTag("IMP", userInfo.getMessstellen().get(0));
-        Tag currentTag = (Tag) resp.getData();
-
-        return new Response(
-            true,
-            StatusCodes.OK,
-            tagUtil.setTagsByProbeIds(probeIds, currentTag.getId()));
-    }
-
 
     /**
      * Creates a new reference between a tag and a probe.
