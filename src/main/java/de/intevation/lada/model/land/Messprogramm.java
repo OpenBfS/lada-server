@@ -18,6 +18,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
@@ -26,6 +28,8 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import de.intevation.lada.model.stammdaten.ProbenZusatz;
 
 
 /**
@@ -127,6 +131,15 @@ public class Messprogramm implements Serializable {
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "mpr_id")
     private Set<Probe> proben;
+
+    @ManyToMany (fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "messprogramm_proben_zusatz",
+        schema = SchemaName.NAME,
+        joinColumns = @JoinColumn(name = "messprogramm_id"),
+        inverseJoinColumns = @JoinColumn(name = "proben_zusatz_id")
+    )
+    private Set<ProbenZusatz> pZusatzWerts;
 
     @Transient
     @JsonIgnore
@@ -352,6 +365,14 @@ public class Messprogramm implements Serializable {
 
     public void setProbenahmeMenge(String probenahmeMenge) {
         this.probenahmeMenge = probenahmeMenge;
+    }
+
+    public Set<ProbenZusatz> getpZusatzWerts() {
+        return pZusatzWerts;
+    }
+
+    public void setpZusatzWerts(Set<ProbenZusatz> pZusatzWerts) {
+        this.pZusatzWerts = pZusatzWerts;
     }
 
     /**

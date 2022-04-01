@@ -228,6 +228,11 @@ CREATE TABLE messprogramm (
 );
 CREATE TRIGGER letzte_aenderung_messprogramm BEFORE UPDATE ON messprogramm FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
+CREATE TABLE messprogramm_proben_zusatz (
+    proben_zusatz_id character varying(3) REFERENCES stamm.proben_zusatz,
+    messprogramm_id INTEGER REFERENCES messprogramm ON DELETE CASCADE,
+    PRIMARY KEY (proben_zusatz_id, messprogramm_id)
+);
 
 --
 -- Name: messprogramm_mmt; Type: TABLE; Schema: land; Owner: -; Tablespace:
