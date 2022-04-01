@@ -31,6 +31,18 @@
         "letzte_aenderung": "2012-05-08 12:00:00",
         "geplant": true,
         "tree_modified": "2012-05-09 12:00:00"
+    }, {
+        "id": 1802,
+        "probe_id": 1901,
+        "nebenproben_nr": "T101",
+        "ext_id": 453,
+        "mmt_id": "A3",
+        "messdauer": 3600,
+        "messzeitpunkt": "2012-05-06 14:00:00",
+        "fertig": false,
+        "letzte_aenderung": "2012-05-08 12:00:00",
+        "geplant": true,
+        "tree_modified": "2012-05-09 12:00:00"
     }],
     "stamm.tag": [{
         "id": 101,

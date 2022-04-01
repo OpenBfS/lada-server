@@ -9,6 +9,9 @@ package de.intevation.lada.rest.stamm;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -23,9 +26,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.stammdaten.Tag;
@@ -75,53 +77,27 @@ public class TagService extends LadaService {
     }
 
     /**
-     * Get all tags for a Probe or Messung instance,
+     * Get tags for Probe or Messung instances,
      * filtered by the users messstelle id.
-     * If a pid is set in the url, the tags are filter by the given probe id.
-     * If a mid is set in the url, the tags are filter by the given messung id.
+     * If IDs of Probe or Messung objects are given as URL parameters like
+     * <pre>
+     * <code>
+     * ?pid=42&pid=24
+     * </code>
+     * </pre>
+     * only those tags are returned that are associated to all of them.
+     *
+     * @param pIds filter by IDs of Probe objects.
+     * @param mIds filter by IDs of Messung objects. Ignored if pid is given.
+     *
      * @return Response with list of Tag objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info
+        @QueryParam("pid") Set<Integer> pIds,
+        @QueryParam("mid") Set<Integer> mIds
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        Integer probeId = null;
-        Integer messungId = null;
-
-        if (!params.isEmpty()
-            && params.containsKey("pid")
-            && params.containsKey("mid")
-        ) {
-            return new Response(
-                false,
-                StatusCodes.ERROR_DB_CONNECTION,
-                "Filtering by both pid and mid not allowed");
-        }
-
-        if (!params.isEmpty() && params.containsKey("pid")) {
-            try {
-                probeId = Integer.valueOf(params.getFirst("pid"));
-            } catch (NumberFormatException e) {
-                return new Response(
-                    false,
-                    StatusCodes.ERROR_DB_CONNECTION,
-                    "Not a valid probe id");
-            }
-        }
-
-        if (!params.isEmpty() && params.containsKey("mid")) {
-            try {
-                messungId = Integer.valueOf(params.getFirst("mid"));
-            } catch (NumberFormatException nfe) {
-                return new Response(
-                    false,
-                    StatusCodes.ERROR_DB_CONNECTION,
-                    "Not a valid messung id");
-            }
-        }
-
         CriteriaBuilder builder =
             repository.entityManager().getCriteriaBuilder();
         CriteriaQuery<Tag> criteriaQuery = builder.createQuery(Tag.class);
@@ -134,25 +110,34 @@ public class TagService extends LadaService {
             builder.in(root.get(mstIdParam)).value(
                 authorization.getInfo(request).getMessstellen()));
 
-        // Return only tags assigned to given Probe or Messung object
-        Join<Tag, TagZuordnung> joinTagZuordnung =
-            root.join(
-                "tagZuordnungs",
-                javax.persistence.criteria.JoinType.LEFT);
-        if (probeId != null) {
-            filter = builder.and(
+        // Return only tags assigned to all given Probe or Messung objects
+        List<Tag> result;
+        if (!pIds.isEmpty() || !mIds.isEmpty()) {
+            Join<Tag, TagZuordnung> joinTagZuordnung =
+                root.join("tagZuordnungs");
+            // Work-around missing SQL INTERSECTION in JPA:
+            final String filterBy = pIds.isEmpty() ? "messungId" : "probeId";
+            final Iterator<Integer> filterIds =
+                pIds.isEmpty() ? mIds.iterator() : pIds.iterator();
+            Predicate idFilter = builder.and(
                 filter,
-                builder.equal(joinTagZuordnung.get("probeId"), probeId));
-        } else if (messungId != null) {
-            filter = builder.and(
-                filter,
-                builder.equal(joinTagZuordnung.get("messungId"), messungId));
+                builder.equal(
+                    joinTagZuordnung.get(filterBy), filterIds.next()));
+            result = repository.filterPlain(criteriaQuery.where(idFilter));
+            while (!result.isEmpty() && filterIds.hasNext()) {
+                idFilter = builder.and(
+                    filter,
+                    builder.equal(
+                        joinTagZuordnung.get(filterBy), filterIds.next()));
+                result.retainAll(
+                    repository.filterPlain(criteriaQuery.where(idFilter)));
+            }
+        } else {
+            result = repository.filterPlain(criteriaQuery.where(filter));
         }
 
         return authorization.filter(
-            request,
-            repository.filter(criteriaQuery.where(filter)),
-            Tag.class);
+            request, new Response(true, StatusCodes.OK, result), Tag.class);
     }
 
     /**

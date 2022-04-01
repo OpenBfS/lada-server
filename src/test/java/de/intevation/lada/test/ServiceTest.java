@@ -366,7 +366,8 @@ public class ServiceTest {
             Protocol objectProt = new Protocol();
             prot.setName(name + " service");
             prot.setType(type);
-            Assert.assertTrue("Unsuccessful response list element",
+            Assert.assertTrue(
+                "Unsuccessful response list element:\n" + responseObj,
                 responseObj.getBoolean("success"));
             Assert.assertEquals("200", responseObj.getString("message"));
             objectProt.setPassed(true);
