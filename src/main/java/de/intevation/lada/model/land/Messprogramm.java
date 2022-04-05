@@ -367,11 +367,11 @@ public class Messprogramm implements Serializable {
         this.probenahmeMenge = probenahmeMenge;
     }
 
-    public Set<ProbenZusatz> getpZusatzWerts() {
+    public Set<ProbenZusatz> getPZusatzWerts() {
         return pZusatzWerts;
     }
 
-    public void setpZusatzWerts(Set<ProbenZusatz> pZusatzWerts) {
+    public void setPZusatzWerts(Set<ProbenZusatz> pZusatzWerts) {
         this.pZusatzWerts = pZusatzWerts;
     }
 
