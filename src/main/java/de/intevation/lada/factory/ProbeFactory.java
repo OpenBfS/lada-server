@@ -469,7 +469,7 @@ public class ProbeFactory {
         toProtocol(probe, dryrun);
 
         //Create zusatzwert objects
-        Set<ProbenZusatz> pZusatzs = messprogramm.getPZusatzWerts();
+        Set<ProbenZusatz> pZusatzs = messprogramm.getProbenZusatzs();
         List<String> zusatzWerts = new ArrayList<String>();
         if (pZusatzs != null) {
             for (ProbenZusatz pZusatz: pZusatzs) {

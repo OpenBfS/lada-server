@@ -139,7 +139,7 @@ public class Messprogramm implements Serializable {
         joinColumns = @JoinColumn(name = "messprogramm_id"),
         inverseJoinColumns = @JoinColumn(name = "proben_zusatz_id")
     )
-    private Set<ProbenZusatz> pZusatzWerts;
+    private Set<ProbenZusatz> probenZusatzs;
 
     @Transient
     @JsonIgnore
@@ -367,12 +367,12 @@ public class Messprogramm implements Serializable {
         this.probenahmeMenge = probenahmeMenge;
     }
 
-    public Set<ProbenZusatz> getPZusatzWerts() {
-        return pZusatzWerts;
+    public Set<ProbenZusatz> getProbenZusatzs() {
+        return probenZusatzs;
     }
 
-    public void setPZusatzWerts(Set<ProbenZusatz> pZusatzWerts) {
-        this.pZusatzWerts = pZusatzWerts;
+    public void setProbenZusatzs(Set<ProbenZusatz> probenZusatzs) {
+        this.probenZusatzs = probenZusatzs;
     }
 
     /**
