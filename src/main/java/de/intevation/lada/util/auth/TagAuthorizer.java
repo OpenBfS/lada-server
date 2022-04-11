@@ -74,7 +74,7 @@ public class TagAuthorizer extends BaseAuthorizer {
     }
 
     private Tag setAuthData(UserInfo userInfo, Tag tag) {
-        tag.setReadonly(isAuthorized(tag, RequestMethod.POST,
+        tag.setReadonly(!isAuthorized(tag, RequestMethod.POST,
             userInfo, Tag.class));
         return tag;
     }
