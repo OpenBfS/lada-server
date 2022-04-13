@@ -32,11 +32,14 @@ public class ProbenZusatzsExist implements Rule {
         Messprogramm messprogramm = (Messprogramm) object;
         Violation violation = new Violation();
 
-        for (ProbenZusatz pz: messprogramm.getProbenZusatzs()) {
-            if (
-                repository.getByIdPlain(ProbenZusatz.class, pz.getId()) == null
-            ) {
-                violation.addError("probenZusatzs", StatusCodes.NOT_EXISTING);
+        if (messprogramm.getProbenZusatzs() != null) {
+            for (ProbenZusatz pz: messprogramm.getProbenZusatzs()) {
+                if (repository.getByIdPlain(
+                        ProbenZusatz.class, pz.getId()) == null
+                ) {
+                    violation.addError(
+                        "probenZusatzs", StatusCodes.NOT_EXISTING);
+                }
             }
         }
 

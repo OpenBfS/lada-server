@@ -32,11 +32,15 @@ public class MessgroesseExist implements Rule {
         MessprogrammMmt messprogrammMmt = (MessprogrammMmt) object;
         Violation violation = new Violation();
 
-        for (Integer mId: messprogrammMmt.getMessgroessen()) {
-            if (
-                repository.getByIdPlain(Messgroesse.class, mId) == null
-            ) {
-                violation.addError("messgroessen", StatusCodes.NOT_EXISTING);
+        Integer[] mIds = messprogrammMmt.getMessgroessen();
+        if (mIds != null) {
+            for (Integer mId: mIds) {
+                if (
+                    repository.getByIdPlain(Messgroesse.class, mId) == null
+                ) {
+                    violation.addError(
+                        "messgroessen", StatusCodes.NOT_EXISTING);
+                }
             }
         }
 
