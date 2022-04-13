@@ -33,6 +33,9 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.validation.Validator;
+import de.intevation.lada.validation.Violation;
+import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
  * REST service for MessprogrammMmt objects.
@@ -78,6 +81,10 @@ public class MessprogrammMmtService extends LadaService {
     @Inject
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
+
+    @Inject
+    @ValidationConfig(type = "MessprogrammMmt")
+    private Validator validator;
 
     /**
      * Get all MessprogrammMmt objects.
@@ -164,6 +171,15 @@ public class MessprogrammMmtService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
+        Violation violation = validator.validate(messprogrammmmt);
+        if (violation.hasErrors()) {
+            Response response = new Response(
+                false, StatusCodes.ERROR_VALIDATION, messprogrammmmt);
+            response.setErrors(violation.getErrors());
+            response.setWarnings(violation.getWarnings());
+            return response;
+        }
+
         setMessgroesseObjects(messprogrammmmt);
 
         /* Persist the new messprogrammmmt object*/
@@ -205,6 +221,15 @@ public class MessprogrammMmtService extends LadaService {
                 MessprogrammMmt.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
+        }
+
+        Violation violation = validator.validate(messprogrammmmt);
+        if (violation.hasErrors()) {
+            Response response = new Response(
+                false, StatusCodes.ERROR_VALIDATION, messprogrammmmt);
+            response.setErrors(violation.getErrors());
+            response.setWarnings(violation.getWarnings());
+            return response;
         }
 
         setMessgroesseObjects(messprogrammmmt);
