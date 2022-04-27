@@ -11,7 +11,6 @@ import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -63,7 +62,6 @@ public class VersionService extends LadaService {
     @Path("/")
     public Response get(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @Context UriInfo info
     ) {
         String version = "unknown";

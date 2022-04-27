@@ -10,10 +10,15 @@ package de.intevation.lada.util.auth;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
 public class NetzbetreiberAuthorizer extends BaseAuthorizer {
+
+    public NetzbetreiberAuthorizer(Repository repository) {
+        super(repository);
+    }
 
     @Override
     public <T> boolean isAuthorized(

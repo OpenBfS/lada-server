@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -86,7 +85,6 @@ public class UniversalService extends LadaService {
     @POST
     @Path("/")
     public Response execute(
-        @Context HttpServletRequest request,
         @Context UriInfo info,
         QueryColumns columns
     ) {
@@ -197,7 +195,6 @@ public class UniversalService extends LadaService {
                     }
 
                     readonly = !authorization.isAuthorizedById(
-                        request,
                         idToAuthorize,
                         RequestMethod.PUT,
                         authorizationColumnType);

@@ -10,7 +10,6 @@ package de.intevation.lada.rest.stamm;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -84,7 +83,6 @@ public class NetzbetreiberService extends LadaService {
     @Path("/")
     public Response get(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @Context UriInfo info
     ) {
         return repository.getAll(NetzBetreiber.class);
@@ -103,10 +101,9 @@ public class NetzbetreiberService extends LadaService {
     @Path("/{id}")
     public Response getById(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         if (userInfo.getNetzbetreiber().contains(id)) {
             return repository.getById(NetzBetreiber.class, id);
         }

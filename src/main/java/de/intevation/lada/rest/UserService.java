@@ -95,7 +95,7 @@ public class UserService extends LadaService {
         response.put("username", request.getAttribute("lada.user.name"));
         response.put("roles", request.getAttribute("lada.user.roles"));
         response.put("servertime", new Date().getTime());
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         response.put("messstelleLabor", userInfo.getMessLaborId());
         response.put("netzbetreiber", userInfo.getNetzbetreiber());
         response.put("funktionen", userInfo.getFunktionen());

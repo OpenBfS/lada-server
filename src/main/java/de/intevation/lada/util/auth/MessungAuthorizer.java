@@ -17,10 +17,15 @@ import de.intevation.lada.model.stammdaten.AuthLstUmw;
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.util.data.QueryBuilder;
+import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
 public class MessungAuthorizer extends BaseAuthorizer {
+
+    public MessungAuthorizer(Repository repository) {
+        super(repository);
+    }
 
     @Override
     public <T> boolean isAuthorized(

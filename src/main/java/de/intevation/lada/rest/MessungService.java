@@ -10,7 +10,6 @@ package de.intevation.lada.rest;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -121,8 +120,7 @@ public class MessungService extends LadaService {
     @Path("/")
     public Response get(
         @Context HttpHeaders headers,
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         //If no params are given: return all messung records
@@ -161,7 +159,6 @@ public class MessungService extends LadaService {
                 repository.queryBuilder(Messung.class);
             builder.and("probeId", probeId);
             Response r = authorization.filter(
-                request,
                 repository.filter(builder.getQuery()),
                 Messung.class);
             if (r.getSuccess()) {
@@ -183,7 +180,6 @@ public class MessungService extends LadaService {
                     for (Messung messung: messungs) {
                         messung.setReadonly(
                             !authorization.isAuthorized(
-                                request,
                                 messung,
                                 RequestMethod.PUT,
                                 Messung.class));
@@ -200,9 +196,6 @@ public class MessungService extends LadaService {
                     }
                 }
                 return new Response(true, StatusCodes.OK, messungs);
-                //return authorization.filter(
-                //    request, new Response(
-                //        true, 200, messungs), Messung.class);
             } else {
                 return r;
             }
@@ -222,7 +215,6 @@ public class MessungService extends LadaService {
     @Path("/{id}")
     public Response getById(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         Response response =
@@ -239,7 +231,6 @@ public class MessungService extends LadaService {
             response.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
-            request,
             response,
             Messung.class);
     }
@@ -274,11 +265,9 @@ public class MessungService extends LadaService {
     @Path("/")
     public Response create(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         Messung messung
     ) {
         if (!authorization.isAuthorized(
-                request,
                 messung,
                 RequestMethod.POST,
                 Messung.class)
@@ -305,7 +294,6 @@ public class MessungService extends LadaService {
             response.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
-            request,
             response,
             Messung.class);
     }
@@ -340,12 +328,10 @@ public class MessungService extends LadaService {
     @Path("/{id}")
     public Response update(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id,
         Messung messung
     ) {
         if (!authorization.isAuthorized(
-                request,
                 messung,
                 RequestMethod.PUT,
                 Messung.class)
@@ -375,7 +361,6 @@ public class MessungService extends LadaService {
             response.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
-            request,
             response,
             Messung.class);
     }
@@ -393,7 +378,6 @@ public class MessungService extends LadaService {
     @Path("/{id}")
     public Response delete(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         /* Get the messung object by id*/
@@ -402,7 +386,6 @@ public class MessungService extends LadaService {
                 Messung.class, Integer.valueOf(id));
         Messung messungObj = (Messung) messung.getData();
         if (!authorization.isAuthorized(
-                request,
                 messungObj,
                 RequestMethod.DELETE,
                 Messung.class)

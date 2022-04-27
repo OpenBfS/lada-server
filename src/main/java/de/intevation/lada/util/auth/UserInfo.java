@@ -22,6 +22,15 @@ public class UserInfo {
     private Integer userId;
     private List<Auth> auth;
 
+    // Prevent instances without useful data.
+    private UserInfo() { };
+
+    UserInfo(String name, Integer userId, List<Auth> auth) {
+        this.name = name;
+        this.userId = userId;
+        this.auth = auth;
+    }
+
     public class MessLaborId {
         private String messstelle;
         private String labor;
@@ -63,24 +72,10 @@ public class UserInfo {
     }
 
     /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
      * @return the userId
      */
     public Integer getUserId() {
         return userId;
-    }
-
-    /**
-     * @param userId the userId to set
-     */
-    public void setUserId(Integer userId) {
-        this.userId = userId;
     }
 
     public List<MessLaborId> getMessLaborId() {
@@ -184,9 +179,5 @@ public class UserInfo {
             }
         }
         return ret;
-    }
-
-    public void setAuth(List<Auth> auth) {
-        this.auth = auth;
     }
 }

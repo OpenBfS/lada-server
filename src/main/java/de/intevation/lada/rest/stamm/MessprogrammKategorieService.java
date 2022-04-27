@@ -10,7 +10,6 @@ package de.intevation.lada.rest.stamm;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -82,7 +81,6 @@ public class MessprogrammKategorieService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @Context HttpServletRequest request,
         @Context UriInfo info
     ) {
         List<MessprogrammKategorie> kategorie =
@@ -91,7 +89,6 @@ public class MessprogrammKategorieService extends LadaService {
             // TODO Do not iterate all the objects if its not necessary
             kat.setReadonly(true);
                 // !authorization.isAuthorized(
-                //     request,
                 //     kat,
                 //     RequestMethod.POST,
                 //     MessprogrammKategorie.class));
@@ -111,14 +108,12 @@ public class MessprogrammKategorieService extends LadaService {
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         MessprogrammKategorie mpk = repository.getByIdPlain(
             MessprogrammKategorie.class, Integer.valueOf(id));
         mpk.setReadonly(
             !authorization.isAuthorized(
-                request,
                 mpk,
                 RequestMethod.POST,
                 MessprogrammKategorie.class
@@ -130,11 +125,9 @@ public class MessprogrammKategorieService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpServletRequest request,
         MessprogrammKategorie kategorie
     ) {
         if (!authorization.isAuthorized(
-            request,
             kategorie,
             RequestMethod.POST,
             MessprogrammKategorie.class)
@@ -156,12 +149,10 @@ public class MessprogrammKategorieService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpServletRequest request,
         @PathParam("id") String id,
         MessprogrammKategorie kategorie
     ) {
         if (!authorization.isAuthorized(
-            request,
             kategorie,
             RequestMethod.PUT,
             MessprogrammKategorie.class)
@@ -185,14 +176,12 @@ public class MessprogrammKategorieService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         MessprogrammKategorie kategorie = repository.getByIdPlain(
             MessprogrammKategorie.class, Integer.valueOf(id));
         if (kategorie == null
             || !authorization.isAuthorized(
-                request,
                 kategorie,
                 RequestMethod.DELETE,
                 MessprogrammKategorie.class

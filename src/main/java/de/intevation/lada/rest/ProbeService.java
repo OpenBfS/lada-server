@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.persistence.TransactionRequiredException;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -159,8 +158,7 @@ public class ProbeService extends LadaService {
     @Path("/")
     public Response get(
         @Context HttpHeaders headers,
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         List<Probe> probes = repository.getAllPlain(Probe.class);
@@ -204,8 +202,7 @@ public class ProbeService extends LadaService {
     @Path("/{id}")
     public Response getById(
         @Context HttpHeaders headers,
-        @PathParam("id") Integer id,
-        @Context HttpServletRequest request
+        @PathParam("id") Integer id
     ) {
         Response response =
             repository.getById(Probe.class, id);
@@ -216,7 +213,7 @@ public class ProbeService extends LadaService {
         if (violation.hasNotifications()) {
             response.setNotifications(violation.getNotifications());
         }
-        return this.authorization.filter(request, response, Probe.class);
+        return this.authorization.filter(response, Probe.class);
     }
 
     /**
@@ -260,11 +257,9 @@ public class ProbeService extends LadaService {
     @Path("/")
     public Response create(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         Probe probe
     ) {
         if (!authorization.isAuthorized(
-                request,
                 probe,
                 RequestMethod.POST,
                 Probe.class)
@@ -302,7 +297,6 @@ public class ProbeService extends LadaService {
         }
 
         return authorization.filter(
-            request,
             newProbe,
             Probe.class);
     }
@@ -327,7 +321,6 @@ public class ProbeService extends LadaService {
     @Path("/messprogramm")
     public Response createFromMessprogramm(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         JsonObject object
     ) {
 
@@ -368,7 +361,6 @@ public class ProbeService extends LadaService {
                 Probe testProbe = new Probe();
                 testProbe.setMstId(messprogramm.getMstId());
                 if (!authorization.isAuthorized(
-                        request,
                         testProbe,
                         RequestMethod.POST,
                         Probe.class)
@@ -425,7 +417,7 @@ public class ProbeService extends LadaService {
             // Assume the user is associated to at least one Messstelle,
             // because authorization should ensure this.
             // TODO: Pick the correct instead of the first Messstelle
-            String mstId = authorization.getInfo(request)
+            String mstId = authorization.getInfo()
                 .getMessstellen().get(0);
             Response tagCreation = tagUtil.generateTag("PEP", mstId);
             if (tagCreation.getSuccess()) {
@@ -482,12 +474,10 @@ public class ProbeService extends LadaService {
     @Path("/{id}")
     public Response update(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id,
         Probe probe
     ) {
         if (!authorization.isAuthorized(
-                request,
                 probe,
                 RequestMethod.PUT,
                 Probe.class)
@@ -527,7 +517,6 @@ public class ProbeService extends LadaService {
            response.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
-            request,
             response,
             Probe.class);
     }
@@ -545,7 +534,6 @@ public class ProbeService extends LadaService {
     @Path("/{id}")
     public Response delete(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         /* Get the probe object by id*/
@@ -556,7 +544,6 @@ public class ProbeService extends LadaService {
         }
         Probe probeObj = (Probe) probe.getData();
         if (!authorization.isAuthorized(
-                request,
                 probeObj,
                 RequestMethod.DELETE,
                 Probe.class)
