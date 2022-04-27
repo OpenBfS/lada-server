@@ -78,6 +78,13 @@ public class UserInfo {
         return userId;
     }
 
+    /**
+     * @return the user's roles
+     */
+    public List<Auth> getAuth() {
+        return auth;
+    }
+
     public List<MessLaborId> getMessLaborId() {
         List<MessLaborId> ret = new ArrayList<MessLaborId>();
         for (Auth a : auth) {
