@@ -231,9 +231,9 @@ public class HeaderAuthorization implements Authorization {
     }
 
     /**
-     * Check whether a user is authorized to operate on the given probe.
+     * Check whether a user is authorized to operate on the given object.
      *
-     * @param data      The probe data to test.
+     * @param data      The object to test.
      * @param clazz     The data object class.
      * @return True if the user is authorized else returns false.
      */
@@ -242,18 +242,13 @@ public class HeaderAuthorization implements Authorization {
         Object data,
         Class<T> clazz
     ) {
-        Authorizer authorizer = authorizers.get(clazz);
-        if (authorizer == null) {
-            return false;
-        }
-        return authorizer.isAuthorized(
-            data, RequestMethod.GET, userInfo, clazz);
+        return isAuthorized(data, RequestMethod.GET, clazz);
     }
 
     /**
-     * Check whether a user is authorized to operate on the given probe.
+     * Check whether a user is authorized to create the given object.
      *
-     * @param data      The probe data to test.
+     * @param data      The object to test.
      * @param clazz     The data object class.
      * @return True if the user is authorized else returns false.
      */
@@ -262,11 +257,6 @@ public class HeaderAuthorization implements Authorization {
         Object data,
         Class<T> clazz
     ) {
-        Authorizer authorizer = authorizers.get(clazz);
-        if (authorizer == null) {
-            return false;
-        }
-        return authorizer.isAuthorized(
-            data, RequestMethod.POST, userInfo, clazz);
+        return isAuthorized(data, RequestMethod.POST, clazz);
     }
 }
