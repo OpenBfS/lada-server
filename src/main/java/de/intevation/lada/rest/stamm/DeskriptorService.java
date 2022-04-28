@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -86,8 +85,7 @@ public class DeskriptorService extends LadaService {
     @Path("/")
     public Response get(
         @Context HttpHeaders headers,
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty()
@@ -127,8 +125,7 @@ public class DeskriptorService extends LadaService {
     @Path("/{id}")
     public Response getById(
         @Context HttpHeaders headers,
-        @PathParam("id") String id,
-        @Context HttpServletRequest request
+        @PathParam("id") String id
     ) {
         return repository.getById(
             Deskriptoren.class, Integer.valueOf(id));

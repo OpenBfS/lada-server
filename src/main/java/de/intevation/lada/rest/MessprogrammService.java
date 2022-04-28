@@ -15,7 +15,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -134,8 +133,7 @@ public class MessprogrammService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
 
@@ -155,7 +153,7 @@ public class MessprogrammService extends LadaService {
         for (Messprogramm mp: messprogramms) {
             mp.setReadonly(
                 !authorization.isAuthorized(
-                    request, mp, RequestMethod.POST, Messprogramm.class));
+                    mp, RequestMethod.POST, Messprogramm.class));
             Violation violation = validator.validate(mp);
             if (violation.hasErrors() || violation.hasWarnings()) {
                 mp.setErrors(violation.getErrors());
@@ -177,12 +175,10 @@ public class MessprogrammService extends LadaService {
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         Response response =
             authorization.filter(
-                request,
                 repository.getById(
                     Messprogramm.class, Integer.valueOf(id)),
                 Messprogramm.class);
@@ -225,11 +221,9 @@ public class MessprogrammService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpServletRequest request,
         Messprogramm messprogramm
     ) {
         if (!authorization.isAuthorized(
-                request,
                 messprogramm,
                 RequestMethod.POST,
                 Messprogramm.class)
@@ -260,7 +254,6 @@ public class MessprogrammService extends LadaService {
 
         /* Persist the new messprogramm object*/
         return authorization.filter(
-            request,
             repository.create(messprogramm),
             Messprogramm.class);
     }
@@ -301,12 +294,10 @@ public class MessprogrammService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpServletRequest request,
         @PathParam("id") String id,
         Messprogramm messprogramm
     ) {
         if (!authorization.isAuthorized(
-                request,
                 messprogramm,
                 RequestMethod.PUT,
                 Messprogramm.class)
@@ -341,7 +332,6 @@ public class MessprogrammService extends LadaService {
             return response;
         }
         return authorization.filter(
-            request,
             response,
             Messprogramm.class);
     }
@@ -366,7 +356,6 @@ public class MessprogrammService extends LadaService {
     @PUT
     @Path("/aktiv")
     public Response setAktiv(
-        @Context HttpServletRequest request,
         JsonObject data
     ) {
         Boolean active;
@@ -401,7 +390,7 @@ public class MessprogrammService extends LadaService {
             int id = m.getId().intValue();
             mpResult.put("id", id);
             if (authorization.isAuthorized(
-                    request, m, RequestMethod.PUT, Messprogramm.class)
+                    m, RequestMethod.PUT, Messprogramm.class)
             ) {
                 m.setAktiv(active);
                 Response r = repository.update(m);
@@ -428,7 +417,6 @@ public class MessprogrammService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         /* Get the messprogamm object by id*/
@@ -446,7 +434,6 @@ public class MessprogrammService extends LadaService {
         }
 
         if (!authorization.isAuthorized(
-                request,
                 messprogrammObj,
                 RequestMethod.DELETE,
                 Messprogramm.class)

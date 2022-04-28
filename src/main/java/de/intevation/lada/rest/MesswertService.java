@@ -10,7 +10,6 @@ package de.intevation.lada.rest;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -126,8 +125,7 @@ public class MesswertService extends LadaService {
     @Path("/")
     public Response get(
         @Context HttpHeaders headers,
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("messungsId")) {
@@ -142,7 +140,6 @@ public class MesswertService extends LadaService {
         }
         Messung messung = repository.getByIdPlain(Messung.class, id);
         if (!authorization.isAuthorized(
-                request,
                 messung,
                 RequestMethod.GET,
                 Messung.class)
@@ -154,7 +151,6 @@ public class MesswertService extends LadaService {
         builder.and("messungsId", messungId);
 
         Response r = authorization.filter(
-            request,
             repository.filter(builder.getQuery()),
             Messwert.class);
         if (r.getSuccess()) {
@@ -187,7 +183,6 @@ public class MesswertService extends LadaService {
     @Path("/{id}")
     public Response getById(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         Response response =
@@ -197,7 +192,6 @@ public class MesswertService extends LadaService {
         Messung messung = repository.getByIdPlain(
             Messung.class, messwert.getMessungsId());
         if (!authorization.isAuthorized(
-            request,
             messung,
             RequestMethod.GET,
             Messung.class)
@@ -211,7 +205,6 @@ public class MesswertService extends LadaService {
             response.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
-            request,
             response,
             Messwert.class);
     }
@@ -246,11 +239,9 @@ public class MesswertService extends LadaService {
     @Path("/")
     public Response create(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         Messwert messwert
     ) {
         if (!authorization.isAuthorized(
-                request,
                 messwert,
                 RequestMethod.POST,
                 Messwert.class)
@@ -276,7 +267,6 @@ public class MesswertService extends LadaService {
            response.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
-            request,
             response,
             Messwert.class);
     }
@@ -311,12 +301,10 @@ public class MesswertService extends LadaService {
     @Path("/{id}")
     public Response update(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id,
         Messwert messwert
     ) {
         if (!authorization.isAuthorized(
-                request,
                 messwert,
                 RequestMethod.PUT,
                 Messwert.class)
@@ -347,7 +335,6 @@ public class MesswertService extends LadaService {
            response.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
-            request,
             response,
             Messwert.class);
     }
@@ -361,8 +348,7 @@ public class MesswertService extends LadaService {
     @Path("/normalize")
     public Response normalize(
         @Context HttpHeaders headers,
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("messungsId")) {
@@ -378,7 +364,6 @@ public class MesswertService extends LadaService {
         //Load messung, probe and umwelt to get MessEinheit to convert to
         Messung messung = repository.getByIdPlain(Messung.class, messungIdInt);
         if (!authorization.isAuthorized(
-            request,
             messung,
             RequestMethod.PUT,
             Messung.class)
@@ -405,7 +390,6 @@ public class MesswertService extends LadaService {
 
         for (Messwert messwert: messwerte) {
             if (!authorization.isAuthorized(
-                request,
                 messwert,
                 RequestMethod.PUT,
                 Messwert.class)
@@ -438,7 +422,6 @@ public class MesswertService extends LadaService {
                 updated.setNotifications(violation.getNotifications());
             }
             authorization.filter(
-                    request,
                     updated,
                     Messwert.class);
         }
@@ -458,7 +441,6 @@ public class MesswertService extends LadaService {
     @Path("/{id}")
     public Response delete(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         /* Get the messwert object by id*/
@@ -467,7 +449,6 @@ public class MesswertService extends LadaService {
                 Messwert.class, Integer.valueOf(id));
         Messwert messwertObj = (Messwert) messwert.getData();
         if (!authorization.isAuthorized(
-                request,
                 messwertObj,
                 RequestMethod.DELETE,
                 Messwert.class)

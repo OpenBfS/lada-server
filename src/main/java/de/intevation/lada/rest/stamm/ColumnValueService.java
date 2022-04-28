@@ -16,7 +16,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -64,7 +63,6 @@ public class ColumnValueService extends LadaService {
     @GET
     @Path("/")
     public Response getQueries(
-        @Context HttpServletRequest request,
         @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
@@ -83,7 +81,7 @@ public class ColumnValueService extends LadaService {
                 StatusCodes.ERROR_DB_CONNECTION,
                 "Not a valid filter id");
         }
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         EntityManager em = repository.entityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<GridColumnValue> criteriaQuery =
@@ -124,10 +122,9 @@ public class ColumnValueService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpServletRequest request,
         GridColumnValue gridColumnValue
     ) {
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         if (gridColumnValue.getUserId() != null
             && !gridColumnValue.getUserId().equals(userInfo.getUserId())
         ) {
@@ -155,13 +152,12 @@ public class ColumnValueService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpServletRequest request,
         GridColumnValue gridColumnValue
     ) {
         // TODO: Really authorize with an Authorizer implementation.
         // Currently any object can be hijacked by passing it with
         // userId set to the users ID.
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         if (!userInfo.getUserId().equals(gridColumnValue.getUserId())) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         } else {
@@ -187,10 +183,9 @@ public class ColumnValueService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         GridColumnValue gridColumnValue = repository.getByIdPlain(
             GridColumnValue.class, Integer.valueOf(id));
         if (gridColumnValue.getUserId().equals(userInfo.getUserId())) {

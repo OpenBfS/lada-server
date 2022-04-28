@@ -18,11 +18,9 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -155,7 +153,6 @@ public class AuditTrailService extends LadaService {
     @GET
     @Path("/probe/{id}")
     public String getProbe(
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         if (id == null || "".equals(id)) {
@@ -177,7 +174,7 @@ public class AuditTrailService extends LadaService {
         if (probe == null) {
             return ret;
         }
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
 
         //Get ort ids connected to this probe
         QueryBuilder<Ortszuordnung> refBuilder =
@@ -312,7 +309,6 @@ public class AuditTrailService extends LadaService {
     @GET
     @Path("/messung/{id}")
     public String getMessung(
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         if (id == null || "".equals(id)) {
@@ -337,7 +333,7 @@ public class AuditTrailService extends LadaService {
             repository.getByIdPlain(StatusProtokoll.class, messung.getStatus());
         Probe probe =
             repository.getByIdPlain(Probe.class, messung.getProbeId());
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         QueryBuilder<AuditTrailMessung> builder =
             repository.queryBuilder(AuditTrailMessung.class);
         builder.and("objectId", mId);

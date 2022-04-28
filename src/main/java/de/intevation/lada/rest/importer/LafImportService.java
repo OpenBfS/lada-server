@@ -131,7 +131,7 @@ public class LafImportService extends LadaService {
         UploadJson jsonInput,
         @Context HttpServletRequest request
     ) {
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
 
         Charset charset;
         try {
@@ -272,7 +272,7 @@ public class LafImportService extends LadaService {
         String content,
         @Context HttpServletRequest request
     ) {
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         String mstId = request.getHeader("X-LADA-MST");
 
         /** Preparation for Client-Update: "Vorbelegung Messstelle" will

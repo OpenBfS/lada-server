@@ -509,11 +509,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -542,11 +538,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -571,11 +563,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterNetzkennung(LafParser.NetzkennungContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -599,11 +587,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterErzeuger(LafParser.ErzeugerContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -629,11 +613,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Staat_der_messstelle_langContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -659,11 +639,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Staat_der_messstelle_kurzContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -689,11 +665,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Staat_der_messstelle_sContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -717,11 +689,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterMessstelle(LafParser.MessstelleContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -745,11 +713,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterMesslabor(LafParser.MesslaborContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -773,11 +737,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterProbe_id(LafParser.Probe_idContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -801,11 +761,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterMessungs_id(LafParser.Messungs_idContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -832,11 +788,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterProben_nr(LafParser.Proben_nrContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -861,11 +813,7 @@ public class LafObjectListener extends LafBaseListener {
             }
             currentMessung.addAttribute("NEBENPROBENNUMMER", nnr);
         } else {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         currentProbe.addAttribute("HAUPTPROBENNUMMER", hnr);
@@ -881,11 +829,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.HauptprobennummerContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -911,11 +855,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.NebenprobennummerContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -947,11 +887,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -981,11 +917,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1012,11 +944,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Messprogramm_landContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1042,11 +970,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.ProbenahmeinstitutionContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1070,11 +994,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterProbenart(LafParser.ProbenartContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1086,9 +1006,6 @@ public class LafObjectListener extends LafBaseListener {
             err.setCode(StatusCodes.IMP_PARSER_ERROR);
             currentErrors.add(err);
             return;
-        }
-        if (value.equals("")) {
-            value = null;
         }
         currentProbe.addAttribute(
             ctx.getChild(0).toString().toUpperCase(), value);
@@ -1104,11 +1021,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1136,11 +1049,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1167,11 +1076,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Soll_datum_uhrzeit_aContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         if (ctx.getChildCount() < 4) {
@@ -1210,11 +1115,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Soll_datum_uhrzeit_eContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         if (ctx.getChildCount() < 4) {
@@ -1254,11 +1155,7 @@ public class LafObjectListener extends LafBaseListener {
     ) {
 
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         if (ctx.getChildCount() < 4) {
@@ -1297,11 +1194,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Probenahme_datum_uhrzeit_aContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         if (ctx.getChildCount() < 4) {
@@ -1340,11 +1233,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Probenahme_datum_uhrzeit_eContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         if (ctx.getChildCount() < 4) {
@@ -1386,11 +1275,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1402,9 +1287,6 @@ public class LafObjectListener extends LafBaseListener {
             err.setCode(StatusCodes.IMP_PARSER_ERROR);
             currentErrors.add(err);
             return;
-        }
-        if (value.equals("")) {
-            value = null;
         }
         currentProbe.addAttribute(
             ctx.getChild(0).toString().toUpperCase(), value);
@@ -1423,11 +1305,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1439,9 +1317,6 @@ public class LafObjectListener extends LafBaseListener {
             err.setCode(StatusCodes.IMP_PARSER_ERROR);
             currentErrors.add(err);
             return;
-        }
-        if (value.equals("")) {
-            value = null;
         }
         currentProbe.addAttribute(
             ctx.getChild(0).toString().toUpperCase(), value);
@@ -1455,11 +1330,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterDeskriptoren(LafParser.DeskriptorenContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1484,11 +1355,7 @@ public class LafObjectListener extends LafBaseListener {
     @Override public void enterRei_programmpunkt(
         LafParser.Rei_programmpunktContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1514,11 +1381,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Rei_programmpunktgruppeContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1544,11 +1407,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Referenz_datum_uhrzeitContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         if (ctx.getChildCount() < 4) {
@@ -1585,11 +1444,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterTestdaten(LafParser.TestdatenContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1613,11 +1468,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterSzenario(LafParser.SzenarioContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1643,11 +1494,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Sek_datenbasisContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1673,11 +1520,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Sek_datenbasis_sContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1703,11 +1546,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.U_herkunftsland_langContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1720,10 +1559,9 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "ursprungsort"
-        // currentProbe.addAttribute(
-        //     ctx.getChild(0).toString().toUpperCase(), value);
+        if (!"".equals(value)) {
+            currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
     }
 
     /**
@@ -1734,11 +1572,7 @@ public class LafObjectListener extends LafBaseListener {
     @Override public void enterU_herkunftsland_kurz(
         LafParser.U_herkunftsland_kurzContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1751,10 +1585,9 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "ursprungsort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
+        if (!"".equals(value)) {
+            currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
     }
 
     /**
@@ -1766,11 +1599,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.U_herkunftsland_sContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1783,10 +1612,9 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "ursprungsort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
+        if (!"".equals(value)) {
+            currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
     }
 
     /**
@@ -1798,11 +1626,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.U_gemeindeschluesselContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1815,10 +1639,9 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "ursprungsort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
+        if (!"".equals(value)) {
+            currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
     }
 
     /**
@@ -1830,11 +1653,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.U_gemeindenameContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1847,11 +1666,10 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "ursprungsort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
-    }
+        if (!"".equals(value)) {
+            currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
+   }
 
     /**
      * {@inheritDoc}
@@ -1862,11 +1680,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.U_orts_zusatzkennzahlContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -1879,10 +1693,9 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "ursprungsort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
+        if (!"".equals(value)) {
+            currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
     }
 
     /**
@@ -1929,9 +1742,6 @@ public class LafObjectListener extends LafBaseListener {
         currentUOrt.put("U_KOORDINATEN_X", koord1);
         currentUOrt.put("U_KOORDINATEN_Y", koord2);
         currentUOrt.put("U_KOORDINATEN_ART", art);
-        // TODO Add to "ursprungsort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
     }
 
     /**
@@ -1978,9 +1788,6 @@ public class LafObjectListener extends LafBaseListener {
         currentUOrt.put("U_KOORDINATEN_X", koord1);
         currentUOrt.put("U_KOORDINATEN_Y", koord2);
         currentUOrt.put("U_KOORDINATEN_ART_S", art);
-        // TODO Add to "ursprungsort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
     }
 
     /**
@@ -1992,11 +1799,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.U_orts_zusatzcodeContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2009,10 +1812,9 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "ursprungsort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
+        if (!"".equals(value)) {
+            currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
     }
 
     /**
@@ -2024,11 +1826,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.U_orts_zusatztextContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2041,10 +1839,9 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "ursprungsort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
+        if (!"".equals(value)) {
+            currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
     }
 
     /**
@@ -2054,11 +1851,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterU_nuts_code(LafParser.U_nuts_codeContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2071,10 +1864,9 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "ursprungsort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
+        if (!"".equals(value)) {
+            currentUOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
     }
 
     /**
@@ -2089,11 +1881,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2106,12 +1894,11 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        if (!"".equals(value)) {
+            currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
         hasEHerkunfstland = true;
-        // TODO Add to "entnahmeort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
-    }
+   }
 
     /**
      * {@inheritDoc}
@@ -2125,11 +1912,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2142,11 +1925,10 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        if (!"".equals(value)) {
+            currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
         hasEHerkunfstland = true;
-        // TODO Add to "entnahmeort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
     }
 
     /**
@@ -2161,11 +1943,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2178,11 +1956,10 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        if (!"".equals(value)) {
+            currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
         hasEHerkunfstland = true;
-        // TODO Add to "entnahmeort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
     }
 
     /**
@@ -2197,11 +1974,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2214,11 +1987,10 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        if (!"".equals(value)) {
+            currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
         hasEGemeinde = true;
-        // TODO Add to "entnahmeort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
     }
 
     /**
@@ -2233,11 +2005,7 @@ public class LafObjectListener extends LafBaseListener {
             return;
         }
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2250,11 +2018,10 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        if (!"".equals(value)) {
+            currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
         hasEGemeinde = true;
-        // TODO Add to "entnahmeort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
     }
 
     /**
@@ -2266,11 +2033,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.P_orts_zusatzkennzahlContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2283,11 +2046,10 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "entnahmeort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
-    }
+        if (!"".equals(value)) {
+            currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
+   }
 
     /**
      * {@inheritDoc}
@@ -2337,9 +2099,6 @@ public class LafObjectListener extends LafBaseListener {
         currentEOrt.put("P_KOORDINATEN_Y", koord2);
         currentEOrt.put("P_KOORDINATEN_ART", art);
         hasEKoordinaten = true;
-        // TODO Add to "entnahmeort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
     }
 
     /**
@@ -2390,9 +2149,6 @@ public class LafObjectListener extends LafBaseListener {
         currentEOrt.put("P_KOORDINATEN_Y", koord2);
         currentEOrt.put("P_KOORDINATEN_ART_S", art);
         hasEKoordinaten = true;
-        // TODO Add to "entnahmeort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
     }
 
     /**
@@ -2404,11 +2160,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.P_orts_zusatzcodeContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2421,10 +2173,9 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "entnahmeort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
+        if (!"".equals(value)) {
+            currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
     }
 
     /**
@@ -2436,11 +2187,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.P_orts_zusatztextContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2453,10 +2200,9 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "entnahmeort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
+        if (!"".equals(value)) {
+            currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
     }
 
     /**
@@ -2466,11 +2212,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterP_nuts_code(LafParser.P_nuts_codeContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2483,11 +2225,10 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "entnahmeort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
-    }
+        if (!"".equals(value)) {
+            currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
+   }
 
     /**
      * {@inheritDoc}
@@ -2496,11 +2237,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterP_site_id(LafParser.P_site_idContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2513,11 +2250,10 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "entnahmeort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
-    }
+        if (!"".equals(value)) {
+            currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
+   }
 
     /**
      * {@inheritDoc}
@@ -2526,11 +2262,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterP_site_name(LafParser.P_site_nameContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2543,10 +2275,9 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "entnahmeort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
+        if (!"".equals(value)) {
+            currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
     }
 
     /**
@@ -2556,11 +2287,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterP_hoehe_nn(LafParser.P_hoehe_nnContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2573,11 +2300,10 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "entnahmeort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
-    }
+        if (!"".equals(value)) {
+            currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
+   }
 
     /**
      * {@inheritDoc}
@@ -2586,11 +2312,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterP_hoehe_land(LafParser.P_hoehe_landContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2603,11 +2325,10 @@ public class LafObjectListener extends LafBaseListener {
             currentErrors.add(err);
             return;
         }
-        currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
-        // TODO Add to "entnahmeort"
-        // currentProbe.addAttribute(
-        //    ctx.getChild(0).toString().toUpperCase(), value);
-    }
+        if (!"".equals(value)) {
+            currentEOrt.put(ctx.getChild(0).toString().toUpperCase(), value);
+        }
+   }
 
     /**
      * {@inheritDoc}
@@ -2618,11 +2339,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.MehrzweckfeldContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2686,11 +2403,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Messzeit_sekundenContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2719,11 +2432,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Messmethode_cContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2752,11 +2461,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Messmethode_sContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2785,11 +2490,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.BearbeitungsstatusContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2816,11 +2517,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterPep_flag(LafParser.Pep_flagContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -2849,11 +2546,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Erfassung_abgeschlossenContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String value = ctx.getChild(1).toString();
@@ -3724,11 +3417,7 @@ public class LafObjectListener extends LafBaseListener {
      */
     @Override public void enterKommentar_t(LafParser.Kommentar_tContext ctx) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String text = ctx.getChild(1).toString();
@@ -3819,11 +3508,7 @@ public class LafObjectListener extends LafBaseListener {
         LafParser.Probenkommentar_tContext ctx
     ) {
         if (ctx.getChildCount() == 2) {
-            ReportItem warn = new ReportItem();
-            warn.setKey(ctx.getChild(0).toString());
-            warn.setValue("");
-            warn.setCode(StatusCodes.IMP_MISSING_VALUE);
-            //currentWarnings.add(warn);
+            // empty value
             return;
         }
         String text = ctx.getChild(1).toString();

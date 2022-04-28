@@ -66,9 +66,7 @@ import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.model.stammdaten.Umwelt;
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
 import de.intevation.lada.model.stammdaten.Zeitbasis;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
+import de.intevation.lada.util.auth.HeaderAuthorization;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.MesswertNormalizer;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -87,9 +85,7 @@ public class LafObjectMapper {
     @Inject
     private Logger logger;
 
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorizer;
+    private HeaderAuthorization authorizer;
 
     @Inject
     @ValidationConfig(type = "Probe")
@@ -262,7 +258,7 @@ public class LafObjectMapper {
 
         // Check if the user is authorized to create the probe
         boolean isAuthorized =
-            authorizer.isAuthorized(userInfo, probe, Probe.class);
+            authorizer.isAuthorized(probe, Probe.class);
         if (!isAuthorized) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.NOT_ALLOWED);
@@ -290,7 +286,7 @@ public class LafObjectMapper {
             // Matching probe was found in the db. Update it!
             if (i == Identified.UPDATE) {
                 isAuthorizedOld =
-                    authorizer.isAuthorized(userInfo, old, Probe.class);
+                    authorizer.isAuthorized(old, Probe.class);
                 oldProbeIsReadonly = authorizer.isProbeReadOnly(old.getId());
                 if (isAuthorizedOld) {
                     if (oldProbeIsReadonly) {
@@ -838,7 +834,7 @@ public class LafObjectMapper {
         doConverts(messung);
         doTransforms(messung);
         // Check if the user is authorized to create the object
-        if (!authorizer.isAuthorizedOnNew(userInfo, messung, Messung.class)) {
+        if (!authorizer.isAuthorizedOnNew(messung, Messung.class)) {
             ReportItem warn = new ReportItem();
             warn.setCode(StatusCodes.NOT_ALLOWED);
             warn.setKey(userInfo.getName());
@@ -2381,6 +2377,7 @@ public class LafObjectMapper {
      */
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
+        this.authorizer = new HeaderAuthorization(userInfo, this.repository);
     }
 
     /**

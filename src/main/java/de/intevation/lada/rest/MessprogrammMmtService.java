@@ -8,7 +8,6 @@
 package de.intevation.lada.rest;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -88,8 +87,7 @@ public class MessprogrammMmtService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("messprogrammId")) {
@@ -100,7 +98,6 @@ public class MessprogrammMmtService extends LadaService {
             repository.queryBuilder(MessprogrammMmt.class);
         builder.and("messprogrammId", messprogrammId);
         return authorization.filter(
-            request,
             repository.filter(builder.getQuery()),
             MessprogrammMmt.class);
     }
@@ -117,11 +114,9 @@ public class MessprogrammMmtService extends LadaService {
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         return authorization.filter(
-            request,
             repository.getById(
                 MessprogrammMmt.class, Integer.valueOf(id)),
             MessprogrammMmt.class);
@@ -148,11 +143,9 @@ public class MessprogrammMmtService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpServletRequest request,
         MessprogrammMmt messprogrammmmt
     ) {
         if (!authorization.isAuthorized(
-                request,
                 messprogrammmmt,
                 RequestMethod.POST,
                 MessprogrammMmt.class)
@@ -162,7 +155,6 @@ public class MessprogrammMmtService extends LadaService {
 
         /* Persist the new messprogrammmmt object*/
         return authorization.filter(
-            request,
             repository.create(messprogrammmmt),
             MessprogrammMmt.class);
     }
@@ -188,12 +180,10 @@ public class MessprogrammMmtService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpServletRequest request,
         @PathParam("id") String id,
         MessprogrammMmt messprogrammmmt
     ) {
         if (!authorization.isAuthorized(
-                request,
                 messprogrammmmt,
                 RequestMethod.PUT,
                 MessprogrammMmt.class)
@@ -206,7 +196,6 @@ public class MessprogrammMmtService extends LadaService {
             return response;
         }
         return authorization.filter(
-            request,
             response,
             MessprogrammMmt.class);
     }
@@ -223,7 +212,6 @@ public class MessprogrammMmtService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         /* Get the messprogrammmmt object by id*/
@@ -233,7 +221,6 @@ public class MessprogrammMmtService extends LadaService {
         MessprogrammMmt messprogrammmmtObj =
             (MessprogrammMmt) messprogrammmmt.getData();
         if (!authorization.isAuthorized(
-                request,
                 messprogrammmmtObj,
                 RequestMethod.DELETE,
                 Messprogramm.class)

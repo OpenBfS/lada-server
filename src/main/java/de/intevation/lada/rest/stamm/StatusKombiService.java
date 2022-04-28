@@ -16,7 +16,6 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -114,10 +113,9 @@ public class StatusKombiService extends LadaService {
     @POST
     @Path("/getbyids")
     public Response getById(
-        @Context HttpServletRequest request,
         JsonArray ids
     ) {
-        UserInfo user = authorization.getInfo(request);
+        UserInfo user = authorization.getInfo();
         List<JsonNumber> idList = ids.getValuesAs(JsonNumber.class);
         List<Integer> intList = new ArrayList<>();
         for (JsonNumber id : idList) {

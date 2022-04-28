@@ -8,14 +8,14 @@
 package de.intevation.lada.util.auth;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 
 import de.intevation.lada.model.land.KommentarM;
 import de.intevation.lada.model.land.KommentarP;
@@ -46,87 +46,115 @@ import de.intevation.lada.util.rest.Response;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
+@RequestScoped
 @AuthorizationConfig(type = AuthorizationType.HEADER)
 public class HeaderAuthorization implements Authorization {
 
+    private UserInfo userInfo;
+
+    private Map<Class, Authorizer> authorizers;
+
     /**
-     * The Repository used to read from Database.
+     * Injectable constructor to be used in request context.
      */
     @Inject
-    private Repository repository;
+    public HeaderAuthorization(
+        @Context HttpServletRequest request,
+        Repository repository
+    ) {
+        // The username
+        String name = request.getAttribute("lada.user.name").toString();
 
-    @SuppressWarnings("rawtypes")
-    private Map<Class, Authorizer> authorizers;
-    @Inject ProbeAuthorizer probeAuthorizer;
-    @Inject MessungAuthorizer messungAuthorizer;
-    @Inject ProbeIdAuthorizer pIdAuthorizer;
-    @Inject MessungIdAuthorizer mIdAuthorizer;
-    @Inject NetzbetreiberAuthorizer netzAuthorizer;
-    @Inject MessprogrammAuthorizer messprogrammAuthorizer;
-    @Inject MessprogrammIdAuthorizer mpIdAuthorizer;
+        // The user's roles
+        String[] mst = request.getAttribute("lada.user.roles").toString()
+            .replace("[", "").replace("]", "").replace(" ", "").split(",");
+        QueryBuilder<Auth> authBuilder = repository.queryBuilder(Auth.class);
+        authBuilder.andIn("ldapGroup", Arrays.asList(mst));
+        List<Auth> auth = repository.filterPlain(authBuilder.getQuery());
 
-    @SuppressWarnings("rawtypes")
-    @PostConstruct
-    public void init() {
-        authorizers = new HashMap<Class, Authorizer>();
-        authorizers.put(Probe.class, probeAuthorizer);
-        authorizers.put(Messung.class, messungAuthorizer);
-        authorizers.put(Ortszuordnung.class, pIdAuthorizer);
-        authorizers.put(KommentarP.class, pIdAuthorizer);
-        authorizers.put(ZusatzWert.class, pIdAuthorizer);
-        authorizers.put(KommentarM.class, mIdAuthorizer);
-        authorizers.put(Messwert.class, mIdAuthorizer);
-        authorizers.put(StatusProtokoll.class, mIdAuthorizer);
-        authorizers.put(Probenehmer.class, netzAuthorizer);
-        authorizers.put(DatensatzErzeuger.class, netzAuthorizer);
-        authorizers.put(MessprogrammKategorie.class, netzAuthorizer);
-        authorizers.put(Ort.class, netzAuthorizer);
-        authorizers.put(Messprogramm.class, messprogrammAuthorizer);
-        authorizers.put(MessprogrammMmt.class, messprogrammAuthorizer);
-        authorizers.put(OrtszuordnungMp.class, mpIdAuthorizer);
+        // The user's ID
+        QueryBuilder<LadaUser> uIdBuilder =
+            repository.queryBuilder(LadaUser.class);
+        uIdBuilder.and("name", name);
+        LadaUser user;
+        try {
+            user = repository.getSinglePlain(uIdBuilder.getQuery());
+        } catch (NoResultException e) {
+            LadaUser newUser = new LadaUser();
+            newUser.setName(name);
+            user = (LadaUser) repository.create(newUser).getData();
+        }
+
+        this.userInfo = new UserInfo(name, user.getId(), auth);
+        initAuthorizers(repository);
     }
 
     /**
-     * Request user informations using the HttpServletRequest.
+     * Constructor to be used outside request context.
+     */
+    public HeaderAuthorization(
+        UserInfo userInfo,
+        Repository repository
+    ) {
+        this.userInfo = userInfo;
+        initAuthorizers(repository);
+    }
+
+    private void initAuthorizers(Repository repository) {
+        ProbeAuthorizer probeAuthorizer =
+            new ProbeAuthorizer(repository);
+        MessungAuthorizer messungAuthorizer =
+            new MessungAuthorizer(repository);
+        ProbeIdAuthorizer pIdAuthorizer =
+            new ProbeIdAuthorizer(repository);
+        MessungIdAuthorizer mIdAuthorizer =
+            new MessungIdAuthorizer(repository);
+        NetzbetreiberAuthorizer netzAuthorizer =
+            new NetzbetreiberAuthorizer(repository);
+        MessprogrammAuthorizer messprogrammAuthorizer =
+            new MessprogrammAuthorizer(repository);
+        MessprogrammIdAuthorizer mpIdAuthorizer =
+            new MessprogrammIdAuthorizer(repository);
+
+        this.authorizers = Map.ofEntries(
+            Map.entry(Probe.class, probeAuthorizer),
+            Map.entry(Messung.class, messungAuthorizer),
+            Map.entry(Ortszuordnung.class, pIdAuthorizer),
+            Map.entry(KommentarP.class, pIdAuthorizer),
+            Map.entry(ZusatzWert.class, pIdAuthorizer),
+            Map.entry(KommentarM.class, mIdAuthorizer),
+            Map.entry(Messwert.class, mIdAuthorizer),
+            Map.entry(StatusProtokoll.class, mIdAuthorizer),
+            Map.entry(Probenehmer.class, netzAuthorizer),
+            Map.entry(DatensatzErzeuger.class, netzAuthorizer),
+            Map.entry(MessprogrammKategorie.class, netzAuthorizer),
+            Map.entry(Ort.class, netzAuthorizer),
+            Map.entry(Messprogramm.class, messprogrammAuthorizer),
+            Map.entry(MessprogrammMmt.class, messprogrammAuthorizer),
+            Map.entry(OrtszuordnungMp.class, mpIdAuthorizer)
+        );
+    }
+
+    /**
+     * Request user informations.
      *
-     * @param request    The HttpServletRequest
      * @return The UserInfo object containing username and groups.
      */
     @Override
-    public UserInfo getInfo(HttpServletRequest request) {
-        String roleString =
-            request.getAttribute("lada.user.roles").toString();
-        UserInfo info = getGroupsFromDB(roleString);
-        info.setName(request.getAttribute("lada.user.name").toString());
-        QueryBuilder<LadaUser> builder =
-            repository.queryBuilder(LadaUser.class);
-        builder.and("name", info.getName());
-        LadaUser user;
-        try {
-            user = repository.getSinglePlain(builder.getQuery());
-        } catch (NoResultException e) {
-            LadaUser newUser = new LadaUser();
-            newUser.setName(info.getName());
-            user = (LadaUser) repository.create(newUser).getData();
-        }
-        info.setUserId(user.getId());
-        return info;
+    public UserInfo getInfo() {
+        return this.userInfo;
     }
 
     /**
      * Filter a list of data objects using the user informations contained in
      * the HttpServletRequest.
      *
-     * @param request   The HttpServletRequest
      * @param data      The Response object containing the data.
      * @param clazz     The data object class.
      * @return The Response object containing the filtered data.
      */
     @Override
-    public <T> Response filter(
-        HttpServletRequest request, Response data, Class<T> clazz
-    ) {
-        UserInfo userInfo = this.getInfo(request);
+    public <T> Response filter(Response data, Class<T> clazz) {
         Authorizer authorizer = authorizers.get(clazz);
         if (authorizer == null) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
@@ -137,7 +165,6 @@ public class HeaderAuthorization implements Authorization {
     /**
      * Check whether a user is authorized to operate on the given data.
      *
-     * @param request   The HttpServletRequest containing user information.
      * @param data      The data to test.
      * @param method    The Http request type.
      * @param clazz     The data object class.
@@ -145,12 +172,10 @@ public class HeaderAuthorization implements Authorization {
      */
     @Override
     public <T> boolean isAuthorized(
-        HttpServletRequest request,
         Object data,
         RequestMethod method,
         Class<T> clazz
     ) {
-        UserInfo userInfo = this.getInfo(request);
         Authorizer authorizer = authorizers.get(clazz);
         // Do not authorize anything unknown
         if (authorizer == null || data == null) {
@@ -163,47 +188,22 @@ public class HeaderAuthorization implements Authorization {
      * Check whether a user is authorized to operate on the given data
      * by the given object id.
      *
-     * @param request   The HttpServletRequest containing user information.
      * @param id        The data's id to test.
      * @param method    The Http request type.
      * @param clazz     The data object class.
      * @return True if the user is authorized else returns false.
      */
     public <T> boolean isAuthorizedById(
-        HttpServletRequest request,
         Object id,
         RequestMethod method,
         Class<T> clazz
     ) {
-        UserInfo userInfo = this.getInfo(request);
         Authorizer authorizer = authorizers.get(clazz);
         // Do not authorize anything unknown
         if (authorizer == null) {
             return false;
         }
         return authorizer.isAuthorizedById(id, method, userInfo, clazz);
-    }
-
-    /**
-     * Request the lada specific groups.
-     *
-     * @param roles     The roles defined in the OpenId server.
-     * @return The UserInfo contianing roles and user name.
-     */
-    private UserInfo getGroupsFromDB(String roles) {
-        QueryBuilder<Auth> builder = repository.queryBuilder(Auth.class);
-        roles = roles.replace("[", "");
-        roles = roles.replace("]", "");
-        roles = roles.replace(" ", "");
-        String[] mst = roles.split(",");
-        builder.andIn("ldapGroup", Arrays.asList(mst));
-        Response response =
-            repository.filter(builder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<Auth> auth = (List<Auth>) response.getData();
-        UserInfo userInfo = new UserInfo();
-        userInfo.setAuth(auth);
-        return userInfo;
     }
 
     /**
@@ -231,44 +231,32 @@ public class HeaderAuthorization implements Authorization {
     }
 
     /**
-     * Check whether a user is authorized to operate on the given probe.
+     * Check whether a user is authorized to operate on the given object.
      *
-     * @param userInfo  The user information.
-     * @param data      The probe data to test.
+     * @param data      The object to test.
+     * @param clazz     The data object class.
      * @return True if the user is authorized else returns false.
      */
     @Override
     public <T> boolean isAuthorized(
-        UserInfo userInfo,
         Object data,
         Class<T> clazz
     ) {
-        Authorizer authorizer = authorizers.get(clazz);
-        if (authorizer == null) {
-            return false;
-        }
-        return authorizer.isAuthorized(
-            data, RequestMethod.GET, userInfo, clazz);
+        return isAuthorized(data, RequestMethod.GET, clazz);
     }
 
     /**
-     * Check whether a user is authorized to operate on the given probe.
+     * Check whether a user is authorized to create the given object.
      *
-     * @param userInfo  The user information.
-     * @param data      The probe data to test.
+     * @param data      The object to test.
+     * @param clazz     The data object class.
      * @return True if the user is authorized else returns false.
      */
     @Override
     public <T> boolean isAuthorizedOnNew(
-        UserInfo userInfo,
         Object data,
         Class<T> clazz
     ) {
-        Authorizer authorizer = authorizers.get(clazz);
-        if (authorizer == null) {
-            return false;
-        }
-        return authorizer.isAuthorized(
-            data, RequestMethod.POST, userInfo, clazz);
+        return isAuthorized(data, RequestMethod.POST, clazz);
     }
 }
