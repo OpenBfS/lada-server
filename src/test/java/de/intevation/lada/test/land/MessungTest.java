@@ -52,7 +52,7 @@ public class MessungTest extends ServiceTest {
         });
 
         // Prepare expected probe object
-        JsonObject content = readJsonResource("/datasets/dbUnit_messung.json");
+        JsonObject content = readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject messung =
             content.getJsonArray("land.messung").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messung);

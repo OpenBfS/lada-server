@@ -362,7 +362,8 @@ public class LandTest extends BaseTest {
      */
     @Test
     @InSequence(T9)
-    @UsingDataSet("datasets/dbUnit_messung.json")
+    @ApplyScriptBefore("datasets/clean_and_seed.sql")
+    @UsingDataSet("datasets/dbUnit_probe.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseMessung() throws Exception {
@@ -405,7 +406,8 @@ public class LandTest extends BaseTest {
      */
     @Test
     @InSequence(T13)
-    @UsingDataSet("datasets/dbUnit_messwert.json")
+    @ApplyScriptBefore("datasets/clean_and_seed.sql")
+    @UsingDataSet("datasets/dbUnit_probe.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseMesswert() throws Exception {
