@@ -311,20 +311,17 @@ public class ProbeFactory {
      * Create a list of probe objects.
      *
      * @param messprogramm    Messprogramm
-     * @param from  The start date
-     * @param to    The end date
+     * @param start  The start date
+     * @param end    The end date
+     * @param dryrun Persist objects only if set to false
      *
      * @return List of probe objects.
      */
     public List<Probe> create(
-        Messprogramm messprogramm, Long from, Long to, boolean dryrun
+        Messprogramm messprogramm, Calendar start, Calendar end, boolean dryrun
     ) {
         protocol = new ArrayList<>();
-        Calendar start = Calendar.getInstance();
-        start.setTimeInMillis(from);
 
-        Calendar end = Calendar.getInstance();
-        end.setTimeInMillis(to);
         /* Adjust to end of the day as we want to generate Probe objects
          * before or at this day. */
         end.set(Calendar.HOUR_OF_DAY, HOD23);
