@@ -55,6 +55,7 @@ import de.intevation.lada.test.land.ZusatzwertTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
+@ApplyScriptBefore("datasets/clean_and_seed.sql")
 // TODO make tests independent of test data which do not exist anymore
 public class LandTest extends BaseTest {
 
@@ -278,7 +279,6 @@ public class LandTest extends BaseTest {
      */
     @Test
     @InSequence(T1)
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @UsingDataSet("datasets/dbUnit_probe.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
@@ -362,7 +362,7 @@ public class LandTest extends BaseTest {
      */
     @Test
     @InSequence(T9)
-    @UsingDataSet("datasets/dbUnit_messung.json")
+    @UsingDataSet("datasets/dbUnit_probe.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseMessung() throws Exception {
@@ -405,7 +405,7 @@ public class LandTest extends BaseTest {
      */
     @Test
     @InSequence(T13)
-    @UsingDataSet("datasets/dbUnit_messwert.json")
+    @UsingDataSet("datasets/dbUnit_probe.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseMesswert() throws Exception {
@@ -444,7 +444,6 @@ public class LandTest extends BaseTest {
      * Test probe generation from a messprogramm record.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @UsingDataSet("datasets/dbUnit_pep_gen.json")
     @DataSource("java:jboss/lada-test")
     @InSequence(T21)
