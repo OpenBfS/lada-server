@@ -127,7 +127,7 @@ public class ServiceTest {
             if (timestampAttributes.contains(key)) {
                 Timestamp timestamp = Timestamp.valueOf(
                     entry.getValue().toString().replaceAll("\"", ""));
-                builder.add(key, timestamp.getTime());
+                builder.add(key, String.valueOf(timestamp.getTime()));
             } else if (geomPointAttributes.contains(key)) {
                 // Convert EWKT to latitude and longitude
                 String wkt = entry.getValue().toString().split(";")[1];
@@ -370,9 +370,9 @@ public class ServiceTest {
         if (oldObject.containsKey(modTimeKey)) {
             Assert.assertTrue(
                 "Object modification timestamp did not increase",
-                updatedObject.getJsonObject(objKey).getJsonNumber(modTimeKey)
-                    .longValueExact()
-                > oldObject.getJsonNumber(modTimeKey).longValueExact()
+                Long.parseLong(
+                    updatedObject.getJsonObject(objKey).getString(modTimeKey))
+                > Long.parseLong(oldObject.getString(modTimeKey))
             );
         }
 

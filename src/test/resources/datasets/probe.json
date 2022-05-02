@@ -13,9 +13,9 @@
     "probenartId":1,
     "test":true,
     "umwId": "A6",
-    "letzteAenderung": 1423475916000,
-    "probeentnahmeBeginn": 1423389516000,
-    "probeentnahmeEnde": 1423475916000,
-    "solldatumBeginn": 1423475916000,
-    "solldatumEnde": 1423475916000
+    "letzteAenderung": "1423475916000",
+    "probeentnahmeBeginn": "1423389516000",
+    "probeentnahmeEnde": "1423475916000",
+    "solldatumBeginn": "1423475916000",
+    "solldatumEnde": "1423475916000"
 }

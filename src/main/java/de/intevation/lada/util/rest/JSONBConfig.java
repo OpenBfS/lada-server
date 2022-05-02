@@ -10,6 +10,7 @@ package de.intevation.lada.util.rest;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
+import javax.json.bind.annotation.JsonbDateFormat;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
@@ -22,12 +23,17 @@ import javax.ws.rs.ext.Provider;
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 public class JSONBConfig implements ContextResolver<Jsonb> {
+
     @Override
-    public Jsonb getContext(Class type) {
+    public Jsonb getContext(Class<?> type) {
+        // Return regardless of type in order to use the same config for
+        // de-/serializing any object
         return JsonbBuilder.create(new JsonbConfig()
             .withNullValues(true)
-            .withDeserializers(new TimestampDeserializer())
-            .withSerializers(new TimestampSerializer())
+            // The API-doc says "Custom date format as specified in
+            // DateTimeFormatter", but at least with Yasson the special
+            // JsonbDateFormat.TIME_IN_MILLIS can be used here, too.
+            .withDateFormat(JsonbDateFormat.TIME_IN_MILLIS, null)
         );
     }
 }
