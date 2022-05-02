@@ -814,11 +814,6 @@ public class ProbeFactory {
         return protocol;
     }
 
-    public void setProtocol(List<Map<String, Object>> protocol) {
-        this.protocol = protocol;
-    }
-
-
     /**
      * Set the minimal 'deskriptor' acording to the umwelt.
      *
