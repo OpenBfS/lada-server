@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -19,7 +18,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.QueryColumns;
-import de.intevation.lada.model.stammdaten.GridColumn;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -50,10 +48,6 @@ public class SqlService extends LadaService {
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
 
-    @Inject
-    private QueryTools queryTools;
-
-
     /**
      * Return SQL as would be executed for the given query.
      * The request can contain the following post data:
@@ -75,7 +69,6 @@ public class SqlService extends LadaService {
     @POST
     @Path("/")
     public Response execute(
-        @Context HttpServletRequest request,
         @Context UriInfo info,
         QueryColumns columns
     ) {
@@ -88,22 +81,14 @@ public class SqlService extends LadaService {
             //TODO Error code if no columns are given
             return new Response(false, StatusCodes.NOT_EXISTING, null);
         }
-        for (GridColumnValue columnValue : gridColumnValues) {
-            GridColumn gridColumn = repository.getByIdPlain(
-                GridColumn.class, columnValue.getGridColumnId());
-            columnValue.setGridColumn(gridColumn);
-        }
 
-        Integer qid = gridColumnValues.get(0).getGridColumn().getBaseQuery();
-        String sql =
-            queryTools.prepareSql(gridColumnValues, qid);
+        QueryTools queryTools = new QueryTools(repository, gridColumnValues);
+        String sql = queryTools.getSql();
         if (sql == null) {
             return new Response(true, StatusCodes.OK, null);
         }
-        MultivaluedMap<String, Object> filterValues =
-            queryTools.prepareFilters(gridColumnValues);
 
-        String statement = prepareStatement(sql, filterValues);
+        String statement = prepareStatement(sql, queryTools.getFilterValues());
         return new Response(true, StatusCodes.OK, statement);
     }
 

@@ -12,10 +12,15 @@ import java.util.List;
 
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
 public class ProbeAuthorizer extends BaseAuthorizer {
+
+    public ProbeAuthorizer(Repository repository) {
+        super(repository);
+    }
 
     @Override
     public <T> boolean isAuthorized(

@@ -151,7 +151,7 @@ public class AsyncExportService extends LadaService {
             localeRange = "de-DE";
         }
         Locale locale = getLocaleFromRequest(localeRange);
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
                 "csv", encoding, objects, locale, userInfo);
@@ -221,7 +221,7 @@ public class AsyncExportService extends LadaService {
         }
         Locale locale = getLocaleFromRequest(localeRange);
 
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
                 "laf", encoding, objects, locale, userInfo);
@@ -290,7 +290,7 @@ public class AsyncExportService extends LadaService {
             localeRange = "de-DE";
         }
         Locale locale = getLocaleFromRequest(localeRange);
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
                 "json", StandardCharsets.UTF_8, objects, locale, userInfo);
@@ -326,7 +326,7 @@ public class AsyncExportService extends LadaService {
     ) {
         JobStatus status;
         UserInfo originalCreator;
-        UserInfo requestingUser = authorization.getInfo(request);
+        UserInfo requestingUser = authorization.getInfo();
 
         try {
             originalCreator = exportJobManager.getJobUserInfo(id);
@@ -367,7 +367,7 @@ public class AsyncExportService extends LadaService {
         String encoding;
         String filename;
         UserInfo originalCreator;
-        UserInfo requestingUser = authorization.getInfo(request);
+        UserInfo requestingUser = authorization.getInfo();
 
         try {
             originalCreator = exportJobManager.getJobUserInfo(id);

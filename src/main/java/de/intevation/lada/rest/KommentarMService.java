@@ -8,7 +8,6 @@
 package de.intevation.lada.rest;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -100,8 +99,7 @@ public class KommentarMService extends LadaService {
     @Path("/")
     public Response get(
         @Context HttpHeaders headers,
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("messungsId")) {
@@ -116,7 +114,7 @@ public class KommentarMService extends LadaService {
         }
         Messung messung = repository.getByIdPlain(Messung.class, id);
         if (!authorization.isAuthorized(
-                request, messung, RequestMethod.GET, Messung.class)
+                messung, RequestMethod.GET, Messung.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -125,7 +123,6 @@ public class KommentarMService extends LadaService {
             repository.queryBuilder(KommentarM.class);
         builder.and("messungsId", messungId);
         return authorization.filter(
-            request,
             repository.filter(builder.getQuery()),
             KommentarM.class);
     }
@@ -143,7 +140,6 @@ public class KommentarMService extends LadaService {
     @Path("/{id}")
     public Response getById(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         Response response =
@@ -153,13 +149,12 @@ public class KommentarMService extends LadaService {
         Messung messung = repository.getByIdPlain(
             Messung.class, kommentar.getMessungsId());
         if (!authorization.isAuthorized(
-                request, messung, RequestMethod.GET, Messung.class)
+                messung, RequestMethod.GET, Messung.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
         return authorization.filter(
-            request,
             response,
             KommentarM.class);
     }
@@ -186,11 +181,9 @@ public class KommentarMService extends LadaService {
     @Path("/")
     public Response create(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         KommentarM kommentar
     ) {
         if (!authorization.isAuthorized(
-                request,
                 kommentar,
                 RequestMethod.POST,
                 KommentarM.class)
@@ -205,7 +198,6 @@ public class KommentarMService extends LadaService {
         } else {
         /* Persist the new object*/
         return authorization.filter(
-            request,
             repository.create(kommentar),
             KommentarM.class);
         }
@@ -234,12 +226,10 @@ public class KommentarMService extends LadaService {
     @Path("/{id}")
     public Response update(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id,
         KommentarM kommentar
     ) {
         if (!authorization.isAuthorized(
-                request,
                 kommentar,
                 RequestMethod.PUT,
                 KommentarM.class)
@@ -253,7 +243,6 @@ public class KommentarMService extends LadaService {
             return response;
         } else {
         return authorization.filter(
-            request,
             repository.update(kommentar),
             KommentarM.class);
         }
@@ -272,7 +261,6 @@ public class KommentarMService extends LadaService {
     @Path("/{id}")
     public Response delete(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         /* Get the object by id*/
@@ -281,7 +269,6 @@ public class KommentarMService extends LadaService {
                 KommentarM.class, Integer.valueOf(id));
         KommentarM kommentarObj = (KommentarM) kommentar.getData();
         if (!authorization.isAuthorized(
-                request,
                 kommentarObj,
                 RequestMethod.DELETE,
                 KommentarM.class)

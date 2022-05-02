@@ -8,7 +8,6 @@
 package de.intevation.lada.rest;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -106,7 +105,6 @@ public class ZusatzwertService extends LadaService {
     @Path("/")
     public Response get(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
@@ -118,7 +116,6 @@ public class ZusatzwertService extends LadaService {
             repository.queryBuilder(ZusatzWert.class);
         builder.and("probeId", probeId);
         return authorization.filter(
-            request,
             repository.filter(builder.getQuery()),
             ZusatzWert.class);
     }
@@ -136,11 +133,9 @@ public class ZusatzwertService extends LadaService {
     @Path("/{id}")
     public Response getById(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         return authorization.filter(
-            request,
             repository.getById(
                 ZusatzWert.class, Integer.valueOf(id)),
             ZusatzWert.class);
@@ -173,11 +168,9 @@ public class ZusatzwertService extends LadaService {
     @Path("/")
     public Response create(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         ZusatzWert zusatzwert
     ) {
         if (!authorization.isAuthorized(
-                request,
                 zusatzwert,
                 RequestMethod.POST,
                 ZusatzWert.class)
@@ -186,7 +179,6 @@ public class ZusatzwertService extends LadaService {
         }
         /* Persist the new object*/
         return authorization.filter(
-            request,
             repository.create(zusatzwert),
             ZusatzWert.class);
     }
@@ -218,12 +210,10 @@ public class ZusatzwertService extends LadaService {
     @Path("/{id}")
     public Response update(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id,
         ZusatzWert zusatzwert
     ) {
         if (!authorization.isAuthorized(
-                request,
                 zusatzwert,
                 RequestMethod.PUT,
                 ZusatzWert.class)
@@ -238,7 +228,6 @@ public class ZusatzwertService extends LadaService {
             return response;
         }
         return authorization.filter(
-            request,
             response,
             ZusatzWert.class);
     }
@@ -256,7 +245,6 @@ public class ZusatzwertService extends LadaService {
     @Path("/{id}")
     public Response delete(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         /* Get the object by id*/
@@ -265,7 +253,6 @@ public class ZusatzwertService extends LadaService {
                 ZusatzWert.class, Integer.valueOf(id));
         ZusatzWert obj = (ZusatzWert) object.getData();
         if (!authorization.isAuthorized(
-                request,
                 obj,
                 RequestMethod.DELETE,
                 ZusatzWert.class)

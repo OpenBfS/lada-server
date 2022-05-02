@@ -50,7 +50,7 @@ public class StatusTest extends ServiceTest {
         });
 
         // Prepare expected object
-        JsonObject content = readJsonResource("/datasets/dbUnit_messung.json");
+        JsonObject content = readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject status =
         content.getJsonArray("land.status_protokoll").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(status);

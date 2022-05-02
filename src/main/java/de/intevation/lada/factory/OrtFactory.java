@@ -151,7 +151,6 @@ public class OrtFactory {
         } else  if (ort.getStaatId() != null) {
             builder.and("staatId", ort.getStaatId());
             builder.and("ortTyp", ORTTYP5);
-            builder.and("ozId", ort.getOzId());
             builder.and("netzbetreiberId", ort.getNetzbetreiberId());
             List<Ort> orte =
                 repository.filterPlain(builder.getQuery());
@@ -170,6 +169,8 @@ public class OrtFactory {
         boolean hasKoord = false;
         boolean hasGem = false;
         boolean hasStaat = false;
+        //set default value for attribute "unscharf"
+        ort.setUnscharf(false);
         if (ort.getKdaId() != null
             && ort.getKoordXExtern() != null
             && ort.getKoordYExtern() != null

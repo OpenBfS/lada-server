@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -65,10 +64,6 @@ public class UniversalService extends LadaService {
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
 
-    @Inject
-    private QueryTools queryTools;
-
-
     /**
      * Execute query, using the given result columns.
      * The query can contain the following post data:
@@ -90,11 +85,9 @@ public class UniversalService extends LadaService {
     @POST
     @Path("/")
     public Response execute(
-        @Context HttpServletRequest request,
         @Context UriInfo info,
         QueryColumns columns
     ) {
-        Integer qid;
         MultivaluedMap<String, String> params = info.getQueryParameters();
         List<GridColumnValue> gridColumnValues = columns.getColumns();
 
@@ -149,67 +142,69 @@ public class UniversalService extends LadaService {
             columnValue.setGridColumn(gridColumn);
         }
 
-        GridColumn gridColumn = repository.getByIdPlain(
-            GridColumn.class,
-            Integer.valueOf(gridColumnValues.get(0).getGridColumnId())
-        );
+        int offset = 0, limit = Integer.MAX_VALUE;
+        if (params.containsKey("start") && params.containsKey("limit")) {
+            offset = Integer.valueOf(params.getFirst("start"));
+            limit = Integer.valueOf(params.getFirst("limit"));
+        }
 
-        qid = gridColumn.getBaseQuery();
-        List<Map<String, Object>> result =
-            queryTools.getResultForQuery(columns.getColumns(), qid);
+        QueryTools queryTools = new QueryTools(
+            repository, columns.getColumns());
+        List<Map<String, Object>> result = queryTools.getResultForQuery(
+            offset, limit);
+
         if (result == null) {
             return new Response(true, StatusCodes.OK, null);
+        }
+
+        // TODO: This issues a potentially costly 'SELECT count(*)'
+        // for every request. Better not to rely on total count at client side?
+        int size = queryTools.getTotalCountForQuery();
+        boolean doAuthorize = true;
+        if (result.size() > 2000) {
+            doAuthorize = false;
         }
 
         for (Map<String, Object> row: result) {
             Object idToAuthorize = row.get(authorizationColumnIndex);
             boolean readonly;
+            if (doAuthorize) {
+                if (idToAuthorize != null) {
+                    //If column is an ort, get Netzbetreiberid
+                    if (authorizationColumnType == Ort.class) {
+                        Ort ort = (Ort) repository.getByIdPlain(
+                            Ort.class, idToAuthorize);
+                        idToAuthorize = ort.getNetzbetreiberId();
+                    }
+                    if (authorizationColumnType == DatensatzErzeuger.class) {
+                        DatensatzErzeuger de =
+                            (DatensatzErzeuger) repository.getByIdPlain(
+                                DatensatzErzeuger.class, idToAuthorize);
+                        idToAuthorize = de.getNetzbetreiberId();
+                    }
+                    if (authorizationColumnType == Probenehmer.class) {
+                        Probenehmer pn = (Probenehmer) repository.getByIdPlain(
+                            Probenehmer.class, idToAuthorize);
+                        idToAuthorize = pn.getNetzbetreiberId();
+                    }
+                    if (authorizationColumnType == MessprogrammKategorie.class) {
+                        MessprogrammKategorie mk =
+                            (MessprogrammKategorie) repository.getByIdPlain(
+                                MessprogrammKategorie.class, idToAuthorize);
+                        idToAuthorize = mk.getNetzbetreiberId();
+                    }
 
-            if (idToAuthorize != null) {
-                //If column is an ort, get Netzbetreiberid
-                if (authorizationColumnType == Ort.class) {
-                    Ort ort = (Ort) repository.getByIdPlain(
-                        Ort.class, idToAuthorize);
-                    idToAuthorize = ort.getNetzbetreiberId();
+                    readonly = !authorization.isAuthorizedById(
+                        idToAuthorize,
+                        RequestMethod.PUT,
+                        authorizationColumnType);
+                } else {
+                    readonly = true;
                 }
-                if (authorizationColumnType == DatensatzErzeuger.class) {
-                    DatensatzErzeuger de =
-                        (DatensatzErzeuger) repository.getByIdPlain(
-                            DatensatzErzeuger.class, idToAuthorize);
-                    idToAuthorize = de.getNetzbetreiberId();
-                }
-                if (authorizationColumnType == Probenehmer.class) {
-                    Probenehmer pn = (Probenehmer) repository.getByIdPlain(
-                        Probenehmer.class, idToAuthorize);
-                    idToAuthorize = pn.getNetzbetreiberId();
-                }
-                if (authorizationColumnType == MessprogrammKategorie.class) {
-                    MessprogrammKategorie mk =
-                        (MessprogrammKategorie) repository.getByIdPlain(
-                            MessprogrammKategorie.class, idToAuthorize);
-                    idToAuthorize = mk.getNetzbetreiberId();
-                }
-
-                readonly = !authorization.isAuthorizedById(
-                    request,
-                    idToAuthorize,
-                    RequestMethod.PUT,
-                    authorizationColumnType);
             } else {
                 readonly = true;
             }
             row.put("readonly", readonly);
-        }
-        int size = result.size();
-
-        if (params.containsKey("start") && params.containsKey("limit")) {
-            int start = Integer.valueOf(params.getFirst("start"));
-            int limit = Integer.valueOf(params.getFirst("limit"));
-            int end = limit + start;
-            if (start + limit > result.size()) {
-                end = result.size();
-            }
-            result = result.subList(start, end);
         }
 
         return new Response(true, StatusCodes.OK, result, size);

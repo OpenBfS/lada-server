@@ -23,7 +23,6 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -149,7 +148,6 @@ public class OrtService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @Context HttpServletRequest request,
         @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
@@ -173,7 +171,6 @@ public class OrtService extends LadaService {
             o.setReferenceCountMp(zuordnungsMp.size());
             o.setReadonly(
                 !authorization.isAuthorized(
-                    request,
                     o,
                     RequestMethod.PUT,
                     Ort.class));
@@ -186,7 +183,7 @@ public class OrtService extends LadaService {
         }
 
         List<Ort> orte = new ArrayList<>();
-        UserInfo user = authorization.getInfo(request);
+        UserInfo user = authorization.getInfo();
         EntityManager em = repository.entityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Ort> query = builder.createQuery(Ort.class);
@@ -243,7 +240,6 @@ public class OrtService extends LadaService {
             o.setReferenceCountMp(zuordnungsMp.size());
             o.setReadonly(
                 !authorization.isAuthorized(
-                    request,
                     o,
                     RequestMethod.PUT,
                     Ort.class));
@@ -268,7 +264,6 @@ public class OrtService extends LadaService {
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpServletRequest request,
         @PathParam("id") int id
     ) {
         Ort ort = repository.getByIdPlain(Ort.class, id);
@@ -284,7 +279,6 @@ public class OrtService extends LadaService {
         ort.setReferenceCountMp(zuordnungsMp.size());
         ort.setReadonly(
             !authorization.isAuthorized(
-                request,
                 ort,
                 RequestMethod.PUT,
                 Ort.class
@@ -311,7 +305,6 @@ public class OrtService extends LadaService {
     @POST
     @Path("/getbyids")
     public Response getByIds(
-        @Context HttpServletRequest request,
         JsonArray ids
     ) {
         QueryBuilder<Ort> builder = repository.queryBuilder(Ort.class);
@@ -335,7 +328,6 @@ public class OrtService extends LadaService {
 
                 o.setReadonly(
                     !authorization.isAuthorized(
-                        request,
                         o,
                         RequestMethod.PUT,
                         Ort.class));
@@ -374,11 +366,9 @@ public class OrtService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpServletRequest request,
         Ort ort
     ) {
         if (!authorization.isAuthorized(
-            request,
             ort,
             RequestMethod.POST,
             Ort.class)
@@ -448,12 +438,10 @@ public class OrtService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpServletRequest request,
         @PathParam("id") String id,
         Ort ort
     ) {
         if (!authorization.isAuthorized(
-            request,
             ort,
             RequestMethod.PUT,
             Ort.class)
@@ -527,7 +515,6 @@ public class OrtService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         Response response =
@@ -541,7 +528,6 @@ public class OrtService extends LadaService {
             return new Response(false, StatusCodes.ERROR_DELETE, ort);
         }
         if (!authorization.isAuthorized(
-            request,
             ort,
             RequestMethod.DELETE,
             Ort.class)

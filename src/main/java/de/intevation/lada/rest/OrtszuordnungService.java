@@ -10,7 +10,6 @@ package de.intevation.lada.rest;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -122,8 +121,7 @@ public class OrtszuordnungService extends LadaService {
     @Path("/")
     public Response get(
         @Context HttpHeaders headers,
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("probeId")) {
@@ -135,7 +133,6 @@ public class OrtszuordnungService extends LadaService {
             repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", probeId);
         Response r = authorization.filter(
-            request,
             repository.filter(builder.getQuery()),
             Ortszuordnung.class);
         if (r.getSuccess()) {
@@ -168,7 +165,6 @@ public class OrtszuordnungService extends LadaService {
     @Path("/{id}")
     public Response getById(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         Response response =
@@ -181,7 +177,6 @@ public class OrtszuordnungService extends LadaService {
             response.setWarnings(violation.getWarnings());
         }
         return authorization.filter(
-            request,
             response,
             Ortszuordnung.class);
     }
@@ -212,11 +207,9 @@ public class OrtszuordnungService extends LadaService {
     @Path("/")
     public Response create(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         Ortszuordnung ort
     ) {
         if (!authorization.isAuthorized(
-                request,
                 ort,
                 RequestMethod.POST,
                 Ortszuordnung.class)) {
@@ -238,7 +231,6 @@ public class OrtszuordnungService extends LadaService {
         }
 
         return authorization.filter(
-            request,
             response,
             Ortszuordnung.class);
     }
@@ -269,12 +261,10 @@ public class OrtszuordnungService extends LadaService {
     @Path("/{id}")
     public Response update(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id,
         Ortszuordnung ort
     ) {
         if (!authorization.isAuthorized(
-                request,
                 ort,
                 RequestMethod.PUT,
                 Ortszuordnung.class)) {
@@ -300,7 +290,6 @@ public class OrtszuordnungService extends LadaService {
             response.setWarnings(violation.getWarnings());
         }
         return authorization.filter(
-            request,
             response,
             Ortszuordnung.class);
     }
@@ -318,7 +307,6 @@ public class OrtszuordnungService extends LadaService {
     @Path("/{id}")
     public Response delete(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         Response object =
@@ -326,7 +314,6 @@ public class OrtszuordnungService extends LadaService {
                 Ortszuordnung.class, Integer.valueOf(id));
         Ortszuordnung ortObj = (Ortszuordnung) object.getData();
         if (!authorization.isAuthorized(
-                request,
                 ortObj,
                 RequestMethod.PUT,
                 Ortszuordnung.class)) {

@@ -29,5 +29,5 @@ import de.intevation.lada.util.auth.AuthorizationType;
     ElementType.METHOD,
     ElementType.PARAMETER})
 public @interface AuthorizationConfig {
-    AuthorizationType type() default AuthorizationType.NONE;
+    AuthorizationType type() default AuthorizationType.HEADER;
 }

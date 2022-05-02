@@ -10,7 +10,6 @@ package de.intevation.lada.rest.stamm;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -83,7 +82,6 @@ public class DatensatzErzeugerService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @Context HttpServletRequest request,
         @Context UriInfo info
     ) {
         List<DatensatzErzeuger> erzeuger =
@@ -93,7 +91,6 @@ public class DatensatzErzeugerService extends LadaService {
             // TODO Do not iterate all the objects if its not necessary
             erz.setReadonly(true);
                 // !authorization.isAuthorized(
-                //     request,
                 //     erz,
                 //     RequestMethod.POST,
                 //     DatensatzErzeuger.class));
@@ -113,14 +110,12 @@ public class DatensatzErzeugerService extends LadaService {
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         DatensatzErzeuger erzeuger = repository.getByIdPlain(
             DatensatzErzeuger.class, Integer.valueOf(id));
         erzeuger.setReadonly(
             !authorization.isAuthorized(
-                request,
                 erzeuger,
                 RequestMethod.POST,
                 DatensatzErzeuger.class
@@ -132,11 +127,9 @@ public class DatensatzErzeugerService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpServletRequest request,
         DatensatzErzeuger datensatzerzeuger
     ) {
         if (!authorization.isAuthorized(
-            request,
             datensatzerzeuger,
             RequestMethod.POST,
             DatensatzErzeuger.class)
@@ -161,12 +154,10 @@ public class DatensatzErzeugerService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpServletRequest request,
         @PathParam("id") String id,
         DatensatzErzeuger datensatzerzeuger
     ) {
         if (!authorization.isAuthorized(
-            request,
             datensatzerzeuger,
             RequestMethod.PUT,
             DatensatzErzeuger.class)
@@ -193,14 +184,12 @@ public class DatensatzErzeugerService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         DatensatzErzeuger datensatzerzeuger = repository.getByIdPlain(
             DatensatzErzeuger.class, Integer.valueOf(id));
         if (datensatzerzeuger == null
             || !authorization.isAuthorized(
-                request,
                 datensatzerzeuger,
                 RequestMethod.DELETE,
                 DatensatzErzeuger.class

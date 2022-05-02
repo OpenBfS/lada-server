@@ -16,24 +16,28 @@ import de.intevation.lada.util.rest.Response;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public interface Authorization {
-    UserInfo getInfo(Object source);
+    UserInfo getInfo();
 
-    <T> Response filter(Object source, Response data, Class<T> clazz);
+    <T> Response filter(
+        Response data, Class<T> clazz);
 
     <T> boolean isAuthorized(
-        Object source, Object data, RequestMethod method, Class<T> clazz);
+        Object data,
+        RequestMethod method,
+        Class<T> clazz);
 
     <T> boolean isAuthorizedById(
-        Object source, Object id, RequestMethod method, Class<T> clazz);
+        Object id,
+        RequestMethod method,
+        Class<T> clazz);
 
-    <T> boolean isAuthorized(UserInfo userInfo, Object data, Class<T> clazz);
+    <T> boolean isAuthorized(Object data, Class<T> clazz);
 
     <T> boolean isAuthorizedOnNew(
-        UserInfo userInfo,
         Object data,
         Class<T> clazz);
 
-    boolean isReadOnly(Integer probeId);
+    boolean isProbeReadOnly(Integer probeId);
 
     boolean isMessungReadOnly(Integer messungId);
 }

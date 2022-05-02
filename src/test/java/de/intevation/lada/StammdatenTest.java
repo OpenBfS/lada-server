@@ -48,6 +48,7 @@ import de.intevation.lada.test.stamm.Stammdaten;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
+@ApplyScriptBefore("datasets/clean_and_seed.sql")
 public class StammdatenTest extends BaseTest {
 
     private static final int T1 = 1;
@@ -131,7 +132,6 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @InSequence(T1)
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @UsingDataSet("datasets/dbUnit_datensatzerzeuger.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)

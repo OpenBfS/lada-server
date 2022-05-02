@@ -10,8 +10,6 @@ package de.intevation.lada.util.auth;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.MessprogrammMmt;
 import de.intevation.lada.model.stammdaten.MessStelle;
@@ -21,8 +19,9 @@ import de.intevation.lada.util.rest.Response;
 
 public class MessprogrammAuthorizer extends BaseAuthorizer {
 
-    @Inject
-    private Repository repository;
+    public MessprogrammAuthorizer(Repository repository) {
+        super(repository);
+    }
 
     @Override
     public <T> boolean isAuthorized(

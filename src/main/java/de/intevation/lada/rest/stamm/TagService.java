@@ -17,7 +17,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -68,7 +67,6 @@ public class TagService extends LadaService {
     @GET
     @Path("/")
     public Response getTags(
-        @Context HttpServletRequest request,
         @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
@@ -107,7 +105,7 @@ public class TagService extends LadaService {
             }
         }
 
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         EntityManager em = repository.entityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Tag> criteriaQuery = builder.createQuery(Tag.class);
@@ -174,7 +172,6 @@ public class TagService extends LadaService {
     @POST
     @Path("/")
     public Response createTagReference(
-        @Context HttpServletRequest request,
         TagZuordnung zuordnung
     ) {
         // Check if payload contains sensible information
@@ -194,7 +191,7 @@ public class TagService extends LadaService {
         }
 
         List<String> messstellen =
-            authorization.getInfo(request).getMessstellen();
+            authorization.getInfo().getMessstellen();
 
         if (tag == null) { // Use existing tag
             //Check if tag is already assigned to the probe
@@ -233,7 +230,6 @@ public class TagService extends LadaService {
                     data = repository.getByIdPlain(
                         Messung.class, zuordnung.getMessungId());
                     authorized = authorization.isAuthorized(
-                        request,
                         data,
                         RequestMethod.PUT,
                         Messung.class
@@ -242,7 +238,6 @@ public class TagService extends LadaService {
                     data = repository.getByIdPlain(
                         Probe.class, zuordnung.getProbeId());
                     authorized = authorization.isAuthorized(
-                        request,
                         data,
                         RequestMethod.PUT,
                         Probe.class
@@ -289,7 +284,6 @@ public class TagService extends LadaService {
     @Path("/")
     public Response deleteTagReference(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         TagZuordnung tagZuordnung
     ) {
         if ((tagZuordnung.getProbeId() == null
@@ -310,7 +304,6 @@ public class TagService extends LadaService {
                 data = repository.getByIdPlain(
                     Messung.class, tagZuordnung.getMessungId());
                 authorized = authorization.isAuthorized(
-                    request,
                     data,
                     RequestMethod.PUT,
                     Messung.class
@@ -319,7 +312,6 @@ public class TagService extends LadaService {
                 data = repository.getByIdPlain(
                     Probe.class, tagZuordnung.getProbeId());
                 authorized = authorization.isAuthorized(
-                    request,
                     data,
                     RequestMethod.PUT,
                     Probe.class
@@ -335,7 +327,7 @@ public class TagService extends LadaService {
             }
         }
 
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         EntityManager em = repository.entityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<TagZuordnung> criteriaQuery =
