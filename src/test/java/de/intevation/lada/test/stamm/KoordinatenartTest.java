@@ -37,13 +37,6 @@ public class KoordinatenartTest extends ServiceTest {
 
     private final String url = "rest/koordinatenart/";
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
-
     @Override
     public void init(
         URL baseUrl,

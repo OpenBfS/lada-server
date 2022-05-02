@@ -28,13 +28,6 @@ public class MessprogrammTest extends ServiceTest {
     private JsonObject expectedById;
     private JsonObject create;
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
-
     @Override
     public void init(
         URL baseUrl,

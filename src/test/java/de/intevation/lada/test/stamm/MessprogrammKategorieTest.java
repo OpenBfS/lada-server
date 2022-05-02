@@ -24,15 +24,9 @@ import de.intevation.lada.test.ServiceTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class MessprogrammKategorieTest extends ServiceTest {
+
     private JsonObject expectedById;
     private JsonObject create;
-
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
 
     @Override
     public void init(

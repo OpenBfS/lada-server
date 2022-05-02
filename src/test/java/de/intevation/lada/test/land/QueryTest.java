@@ -19,13 +19,6 @@ import de.intevation.lada.test.ServiceTest;
  */
 public class QueryTest extends ServiceTest {
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
-
     @Override
     public void init(
         URL baseUrl,

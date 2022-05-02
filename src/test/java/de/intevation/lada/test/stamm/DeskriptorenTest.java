@@ -23,14 +23,8 @@ import de.intevation.lada.test.ServiceTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class DeskriptorenTest extends ServiceTest {
-    private JsonObject expectedById;
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
+    private JsonObject expectedById;
 
     @Override
     public void init(
