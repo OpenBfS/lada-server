@@ -135,7 +135,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testProbe(@ArquillianResource URL baseUrl)
     throws Exception {
-        probeTest.init(baseUrl, testProtocol);
+        probeTest.init(this.client, baseUrl, testProtocol);
         probeTest.execute();
     }
 
@@ -150,7 +150,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testPkommentar(@ArquillianResource URL baseUrl)
     throws Exception {
-        pkommentarTest.init(baseUrl, testProtocol);
+        pkommentarTest.init(this.client, baseUrl, testProtocol);
         pkommentarTest.execute();
     }
 
@@ -165,7 +165,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testOrtszuordnung(@ArquillianResource URL baseUrl)
     throws Exception {
-        ortszuordnungTest.init(baseUrl, testProtocol);
+        ortszuordnungTest.init(this.client, baseUrl, testProtocol);
         ortszuordnungTest.execute();
     }
 
@@ -180,7 +180,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testZusatzwert(@ArquillianResource URL baseUrl)
     throws Exception {
-        zusatzwertTest.init(baseUrl, testProtocol);
+        zusatzwertTest.init(this.client, baseUrl, testProtocol);
         zusatzwertTest.execute();
     }
     /**
@@ -194,7 +194,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMessung(@ArquillianResource URL baseUrl)
     throws Exception {
-        messungTest.init(baseUrl, testProtocol);
+        messungTest.init(this.client, baseUrl, testProtocol);
         messungTest.execute();
     }
 
@@ -209,7 +209,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMkommentar(@ArquillianResource URL baseUrl)
     throws Exception {
-        mkommentarTest.init(baseUrl, testProtocol);
+        mkommentarTest.init(this.client, baseUrl, testProtocol);
         mkommentarTest.execute();
     }
 
@@ -223,7 +223,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMesswert(@ArquillianResource URL baseUrl)
     throws Exception {
-        messwertTest.init(baseUrl, testProtocol);
+        messwertTest.init(this.client, baseUrl, testProtocol);
         messwertTest.execute();
     }
 
@@ -238,7 +238,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testStatus(@ArquillianResource URL baseUrl)
     throws Exception {
-        statusTest.init(baseUrl, testProtocol);
+        statusTest.init(this.client, baseUrl, testProtocol);
         statusTest.execute();
     }
 
@@ -252,7 +252,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMessprogramm(@ArquillianResource URL baseUrl)
     throws Exception {
-        messprogrammTest.init(baseUrl, testProtocol);
+        messprogrammTest.init(this.client, baseUrl, testProtocol);
         messprogrammTest.execute();
     }
 
@@ -267,7 +267,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testQuery(@ArquillianResource URL baseUrl)
     throws Exception {
-        queryTest.init(baseUrl, testProtocol);
+        queryTest.init(this.client, baseUrl, testProtocol);
         queryTest.execute();
     }
 
@@ -485,7 +485,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testPepGeneration(@ArquillianResource URL baseUrl)
             throws Exception {
-        pepGenerationTest.init(baseUrl, testProtocol);
+        pepGenerationTest.init(this.client, baseUrl, testProtocol);
         pepGenerationTest.execute();
     }
 }

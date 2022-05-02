@@ -7,10 +7,6 @@
  */
 package de.intevation.lada.test.land;
 
-import java.net.URL;
-import java.util.List;
-
-import de.intevation.lada.Protocol;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -18,14 +14,6 @@ import de.intevation.lada.test.ServiceTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class QueryTest extends ServiceTest {
-
-    @Override
-    public void init(
-        URL baseUrl,
-        List<Protocol> protocol
-    ) {
-        super.init(baseUrl, protocol);
-    }
 
     /**
      * Execute the tests.

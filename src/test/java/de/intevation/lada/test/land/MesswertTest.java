@@ -14,7 +14,7 @@ import java.util.List;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
-import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 
 import org.junit.Assert;
@@ -35,10 +35,11 @@ public class MesswertTest extends ServiceTest {
 
     @Override
     public void init(
+        Client c,
         URL baseUrl,
         List<Protocol> protocol
     ) {
-        super.init(baseUrl, protocol);
+        super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung",
@@ -86,7 +87,7 @@ public class MesswertTest extends ServiceTest {
         prot.setPassed(false);
         protocol.add(prot);
 
-        Response normalized = ClientBuilder.newClient().target(
+        Response normalized = client.target(
             baseUrl + "rest/messwert/normalize?messungsId=1200")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)

@@ -22,7 +22,6 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
@@ -80,9 +79,8 @@ public class ServiceTest {
      * @param bUrl The server url used for the request.
      * @param p The resulting test protocol
      */
-    public void init(URL bUrl, List<Protocol> p) {
-        // TODO: Close this client when done
-        this.client = ClientBuilder.newClient();
+    public void init(Client c, URL bUrl, List<Protocol> p) {
+        this.client = c;
         this.baseUrl = bUrl;
         this.protocol = p;
     }
