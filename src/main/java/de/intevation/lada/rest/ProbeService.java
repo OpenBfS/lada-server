@@ -8,16 +8,14 @@
 package de.intevation.lada.rest;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.inject.Inject;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
 import javax.persistence.TransactionRequiredException;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -139,6 +137,32 @@ public class ProbeService extends LadaService {
     private TagUtil tagUtil;
 
     /**
+     * Expected format for payload in POST request to createFromMessprogramm().
+     */
+    public static class PostData {
+        private List<Integer> ids;
+        private boolean dryrun;
+        private Calendar start;
+        private Calendar end;
+
+        public void setIds(List<Integer> ids) {
+            this.ids = ids;
+        }
+
+        public void setDryrun(boolean dryrun) {
+            this.dryrun = dryrun;
+        }
+
+        public void setStart(Calendar start) {
+            this.start = start;
+        }
+
+        public void setEnd(Calendar end) {
+            this.end = end;
+        }
+    }
+
+    /**
      * Get all Probe objects.
      * <p>
      * The requested objects can be filtered using the following URL
@@ -159,8 +183,7 @@ public class ProbeService extends LadaService {
     @Path("/")
     public Response get(
         @Context HttpHeaders headers,
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         List<Probe> probes = repository.getAllPlain(Probe.class);
@@ -204,8 +227,7 @@ public class ProbeService extends LadaService {
     @Path("/{id}")
     public Response getById(
         @Context HttpHeaders headers,
-        @PathParam("id") Integer id,
-        @Context HttpServletRequest request
+        @PathParam("id") Integer id
     ) {
         Response response =
             repository.getById(Probe.class, id);
@@ -216,7 +238,7 @@ public class ProbeService extends LadaService {
         if (violation.hasNotifications()) {
             response.setNotifications(violation.getNotifications());
         }
-        return this.authorization.filter(request, response, Probe.class);
+        return this.authorization.filter(response, Probe.class);
     }
 
     /**
@@ -259,12 +281,9 @@ public class ProbeService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         Probe probe
     ) {
         if (!authorization.isAuthorized(
-                request,
                 probe,
                 RequestMethod.POST,
                 Probe.class)
@@ -302,7 +321,6 @@ public class ProbeService extends LadaService {
         }
 
         return authorization.filter(
-            request,
             newProbe,
             Probe.class);
     }
@@ -315,6 +333,7 @@ public class ProbeService extends LadaService {
      * <code>
      * {
      *  "ids": [[number]],
+     *  "dryrun": [boolean],
      *  "start": [timestamp],
      *  "end": [timestamp]
      * }
@@ -326,31 +345,17 @@ public class ProbeService extends LadaService {
     @POST
     @Path("/messprogramm")
     public Response createFromMessprogramm(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        JsonObject object
+        PostData object
     ) {
-
-        JsonArray ids = object.getJsonArray("ids");
-        if (ids == null) {
+        if (object.ids == null) {
             return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
-
-        // This is due to the requiremment that the dryrun variable has to be
-        // effectively final.
-        boolean dryrun;
-        if (object.containsKey("dryrun")) {
-            dryrun = object.getBoolean("dryrun");
-        } else {
-            dryrun = false;
         }
 
         Map<String, Object> responseData = new HashMap<String, Object>();
         Map<String, Object> probenData = new HashMap<String, Object>();
         List<Integer> generatedProbeIds = new ArrayList<Integer>();
 
-        ids.forEach(mpId -> {
-            int id = Integer.parseInt(mpId.toString());
+        object.ids.forEach(id -> {
             HashMap<String, Object> data = new HashMap<String, Object>();
             Messprogramm messprogramm = repository.getByIdPlain(
                 Messprogramm.class, id);
@@ -362,13 +367,12 @@ public class ProbeService extends LadaService {
                 return;
             }
 
-            if (!dryrun) {
+            if (!object.dryrun) {
                 // Use a dummy probe with same mstId as the messprogramm to
                 // authorize the user to create probe objects.
                 Probe testProbe = new Probe();
                 testProbe.setMstId(messprogramm.getMstId());
                 if (!authorization.isAuthorized(
-                        request,
                         testProbe,
                         RequestMethod.POST,
                         Probe.class)
@@ -381,20 +385,7 @@ public class ProbeService extends LadaService {
                 }
             }
 
-            long start = 0;
-            long end = 0;
-            try {
-                start = object.getJsonNumber("start").longValue();
-                end = object.getJsonNumber("end").longValue();
-            } catch (ClassCastException e) {
-                // Catch invalid (i.e. too high) time values
-                data.put("success", false);
-                data.put("message", StatusCodes.VALUE_OUTSIDE_RANGE);
-                data.put("data", null);
-                probenData.put(messprogramm.getId().toString(), data);
-                return;
-            }
-            if (start > end) {
+            if (object.start.after(object.end)) {
                 data.put("success", false);
                 data.put("message", StatusCodes.DATE_BEGIN_AFTER_END);
                 data.put("data", null);
@@ -403,9 +394,9 @@ public class ProbeService extends LadaService {
             }
             List<Probe> proben = factory.create(
                 messprogramm,
-                start,
-                end,
-                dryrun);
+                object.start,
+                object.end,
+                object.dryrun);
 
             for (Probe probe : proben) {
                 if (!probe.isFound()) {
@@ -421,11 +412,11 @@ public class ProbeService extends LadaService {
         responseData.put("proben", probenData);
 
         // Generate and associate tag
-        if (!dryrun && generatedProbeIds.size() > 0) {
+        if (!object.dryrun && generatedProbeIds.size() > 0) {
             // Assume the user is associated to at least one Messstelle,
             // because authorization should ensure this.
             // TODO: Pick the correct instead of the first Messstelle
-            String mstId = authorization.getInfo(request)
+            String mstId = authorization.getInfo()
                 .getMessstellen().get(0);
             Response tagCreation = tagUtil.generateTag("PEP", mstId);
             if (tagCreation.getSuccess()) {
@@ -481,13 +472,10 @@ public class ProbeService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id,
         Probe probe
     ) {
         if (!authorization.isAuthorized(
-                request,
                 probe,
                 RequestMethod.PUT,
                 Probe.class)
@@ -527,7 +515,6 @@ public class ProbeService extends LadaService {
            response.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
-            request,
             response,
             Probe.class);
     }
@@ -544,8 +531,6 @@ public class ProbeService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         /* Get the probe object by id*/
@@ -556,7 +541,6 @@ public class ProbeService extends LadaService {
         }
         Probe probeObj = (Probe) probe.getData();
         if (!authorization.isAuthorized(
-                request,
                 probeObj,
                 RequestMethod.DELETE,
                 Probe.class)

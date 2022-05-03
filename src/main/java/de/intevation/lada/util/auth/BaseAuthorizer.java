@@ -9,8 +9,6 @@ package de.intevation.lada.util.auth;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.StatusProtokoll;
@@ -21,11 +19,14 @@ import de.intevation.lada.util.rest.Response;
 
 public abstract class BaseAuthorizer implements Authorizer {
 
-    /**
-     * The Repository used to read from Database.
-     */
-    @Inject
     protected Repository repository;
+
+    /**
+     * Call this in implementations extending this abstract class.
+     */
+    public BaseAuthorizer(Repository repository) {
+        this.repository = repository;
+    }
 
     /**
      * Get the authorization of a single probe.

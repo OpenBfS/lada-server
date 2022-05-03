@@ -8,7 +8,6 @@
 package de.intevation.lada.rest;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -20,7 +19,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -107,8 +106,7 @@ public class KommentarPService extends LadaService {
     @Path("/")
     public Response get(
         @Context HttpHeaders headers,
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("probeId")) {
@@ -119,7 +117,6 @@ public class KommentarPService extends LadaService {
             repository.queryBuilder(KommentarP.class);
         builder.and("probeId", probeId);
         return authorization.filter(
-            request,
             repository.filter(builder.getQuery()),
             KommentarP.class);
     }
@@ -137,11 +134,9 @@ public class KommentarPService extends LadaService {
     @Path("/{id}")
     public Response getById(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         return authorization.filter(
-            request,
             repository.getById(
                 KommentarP.class, Integer.valueOf(id)),
             KommentarP.class);
@@ -170,11 +165,9 @@ public class KommentarPService extends LadaService {
     @Path("/")
     public Response create(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         KommentarP kommentar
     ) {
         if (!authorization.isAuthorized(
-                request,
                 kommentar,
                 RequestMethod.POST,
                 KommentarP.class)
@@ -189,7 +182,6 @@ public class KommentarPService extends LadaService {
         } else {
         /* Persist the new object*/
         return authorization.filter(
-            request,
             repository.create(kommentar),
             KommentarP.class);
         }
@@ -218,12 +210,10 @@ public class KommentarPService extends LadaService {
     @Path("/{id}")
     public Response update(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id,
         KommentarP kommentar
     ) {
         if (!authorization.isAuthorized(
-                request,
                 kommentar,
                 RequestMethod.PUT,
                 KommentarP.class)
@@ -238,7 +228,6 @@ public class KommentarPService extends LadaService {
             return response;
         } else {
         return authorization.filter(
-            request,
             repository.update(kommentar),
             KommentarP.class);
         }
@@ -257,7 +246,6 @@ public class KommentarPService extends LadaService {
     @Path("/{id}")
     public Response delete(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         /* Get the object by id*/
@@ -266,7 +254,6 @@ public class KommentarPService extends LadaService {
                 KommentarP.class, Integer.valueOf(id));
         KommentarP kommentarObj = (KommentarP) kommentar.getData();
         if (!authorization.isAuthorized(
-                request,
                 kommentarObj,
                 RequestMethod.DELETE,
                 KommentarP.class)

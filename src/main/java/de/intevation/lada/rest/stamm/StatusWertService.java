@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -83,7 +82,6 @@ public class StatusWertService extends LadaService {
     @Path("/")
     public Response get(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
@@ -100,7 +98,7 @@ public class StatusWertService extends LadaService {
                     new Response(false, StatusCodes.VALUE_OUTSIDE_RANGE, null);
             }
         }
-        UserInfo user = authorization.getInfo(request);
+        UserInfo user = authorization.getInfo();
         List<StatusWert> werte = getReachable(mIds, user);
         Response response = new Response(true, StatusCodes.OK, werte);
         return response;

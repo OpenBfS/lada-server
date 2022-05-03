@@ -25,7 +25,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 /** ServletFilter used for Shibboleth authentification. */
 @WebFilter({"/rest/*", "/data/*"})

@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
 
@@ -33,10 +34,11 @@ public class TagTest extends ServiceTest {
 
     @Override
     public void init(
+        Client c,
         URL baseUrl,
         List<Protocol> protocol
     ) {
-        super.init(baseUrl, protocol);
+        super.init(c, baseUrl, protocol);
         create = readJsonResource("/datasets/tag_create.json");
         Assert.assertNotNull(create);
     }

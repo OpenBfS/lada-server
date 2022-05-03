@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -87,7 +86,6 @@ public class UniversalService extends LadaService {
     @POST
     @Path("/")
     public Response execute(
-        @Context HttpServletRequest request,
         @Context UriInfo info,
         QueryColumns columns
     ) {
@@ -164,43 +162,50 @@ public class UniversalService extends LadaService {
         // TODO: This issues a potentially costly 'SELECT count(*)'
         // for every request. Better not to rely on total count at client side?
         int size = queryTools.getTotalCountForQuery();
+        boolean doAuthorize = true;
+        if (result.size() > 2000) {
+            doAuthorize = false;
+        }
 
         for (Map<String, Object> row: result) {
             Object idToAuthorize = row.get(authorizationColumnIndex);
             boolean readonly;
+            if (doAuthorize) {
+                if (idToAuthorize != null) {
+                    //If column is an ort, get Netzbetreiberid
+                    if (authorizationColumnType == Ort.class) {
+                        Ort ort = repository.getByIdPlain(
+                            Ort.class, idToAuthorize);
+                        idToAuthorize = ort.getNetzbetreiberId();
+                    }
+                    if (authorizationColumnType == DatensatzErzeuger.class) {
+                        DatensatzErzeuger de = repository.getByIdPlain(
+                            DatensatzErzeuger.class, idToAuthorize);
+                        idToAuthorize = de.getNetzbetreiberId();
+                    }
+                    if (authorizationColumnType == Probenehmer.class) {
+                        Probenehmer pn = repository.getByIdPlain(
+                            Probenehmer.class, idToAuthorize);
+                        idToAuthorize = pn.getNetzbetreiberId();
+                    }
+                    if (authorizationColumnType == MessprogrammKategorie.class) {
+                        MessprogrammKategorie mk = repository.getByIdPlain(
+                            MessprogrammKategorie.class, idToAuthorize);
+                        idToAuthorize = mk.getNetzbetreiberId();
+                    }
+                    if (authorizationColumnType == Tag.class) {
+                        Tag tag = repository.getByIdPlain(
+                            Tag.class, idToAuthorize);
+                        idToAuthorize = tag.getId();
+                    }
 
-            if (idToAuthorize != null) {
-                //If column is an ort, get Netzbetreiberid
-                if (authorizationColumnType == Ort.class) {
-                    Ort ort = repository.getByIdPlain(
-                        Ort.class, idToAuthorize);
-                    idToAuthorize = ort.getNetzbetreiberId();
+                    readonly = !authorization.isAuthorizedById(
+                        idToAuthorize,
+                        RequestMethod.PUT,
+                        authorizationColumnType);
+                } else {
+                    readonly = true;
                 }
-                if (authorizationColumnType == DatensatzErzeuger.class) {
-                    DatensatzErzeuger de = repository.getByIdPlain(
-                        DatensatzErzeuger.class, idToAuthorize);
-                    idToAuthorize = de.getNetzbetreiberId();
-                }
-                if (authorizationColumnType == Probenehmer.class) {
-                    Probenehmer pn = repository.getByIdPlain(
-                        Probenehmer.class, idToAuthorize);
-                    idToAuthorize = pn.getNetzbetreiberId();
-                }
-                if (authorizationColumnType == MessprogrammKategorie.class) {
-                    MessprogrammKategorie mk = repository.getByIdPlain(
-                        MessprogrammKategorie.class, idToAuthorize);
-                    idToAuthorize = mk.getNetzbetreiberId();
-                }
-                if (authorizationColumnType == Tag.class) {
-                    Tag tag = repository.getByIdPlain(Tag.class, idToAuthorize);
-                    idToAuthorize = tag.getId();
-                }
-
-                readonly = !authorization.isAuthorizedById(
-                    request,
-                    idToAuthorize,
-                    RequestMethod.PUT,
-                    authorizationColumnType);
             } else {
                 readonly = true;
             }

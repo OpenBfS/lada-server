@@ -8,7 +8,6 @@
 package de.intevation.lada.rest.stamm;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -79,7 +78,6 @@ public class MessstelleService extends LadaService {
     @Path("/")
     public Response get(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @Context UriInfo info
     ) {
         return repository.getAll(MessStelle.class);
@@ -98,7 +96,6 @@ public class MessstelleService extends LadaService {
     @Path("/{id}")
     public Response getById(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         return repository.getById(MessStelle.class, id);

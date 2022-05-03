@@ -84,7 +84,7 @@ public class JsonExportService extends LadaService {
     ) {
         JsonArray array = proben.getJsonArray("proben");
         List<Integer> probeIds = new ArrayList<Integer>();
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         for (int i = 0; i < array.size(); i++) {
             Integer probeId = array.getInt(i);
             probeIds.add(probeId);

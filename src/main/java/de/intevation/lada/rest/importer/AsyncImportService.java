@@ -20,7 +20,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.importer.ImportConfig;
 import de.intevation.lada.importer.ImportFormat;
@@ -82,7 +82,7 @@ public class AsyncImportService extends LadaService {
             .add("data", "Missing header for messtelle.");
             return Response.ok(builder.build().toString()).build();
         }
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         String newJobId =
                 importJobManager.createImportJob(userInfo, jsonInput, mstId);
         JsonObject responseJson = Json.createObjectBuilder()
@@ -126,7 +126,7 @@ public class AsyncImportService extends LadaService {
 
         JobStatus status;
         UserInfo originalCreator;
-        UserInfo requestingUser = authorization.getInfo(request);
+        UserInfo requestingUser = authorization.getInfo();
         try {
             originalCreator = importJobManager.getJobUserInfo(id);
             if (!originalCreator.getUserId().equals(
@@ -156,7 +156,7 @@ public class AsyncImportService extends LadaService {
         @Context HttpServletRequest request) {
 
         UserInfo originalCreator;
-        UserInfo requestingUser = authorization.getInfo(request);
+        UserInfo requestingUser = authorization.getInfo();
 
         try {
             originalCreator = importJobManager.getJobUserInfo(id);

@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.model.stammdaten.Ort;

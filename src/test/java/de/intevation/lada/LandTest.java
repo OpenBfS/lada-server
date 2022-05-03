@@ -12,7 +12,7 @@ import java.net.URL;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -55,6 +55,7 @@ import de.intevation.lada.test.land.ZusatzwertTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
+@ApplyScriptBefore("datasets/clean_and_seed.sql")
 // TODO make tests independent of test data which do not exist anymore
 public class LandTest extends BaseTest {
 
@@ -134,7 +135,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testProbe(@ArquillianResource URL baseUrl)
     throws Exception {
-        probeTest.init(baseUrl, testProtocol);
+        probeTest.init(this.client, baseUrl, testProtocol);
         probeTest.execute();
     }
 
@@ -149,7 +150,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testPkommentar(@ArquillianResource URL baseUrl)
     throws Exception {
-        pkommentarTest.init(baseUrl, testProtocol);
+        pkommentarTest.init(this.client, baseUrl, testProtocol);
         pkommentarTest.execute();
     }
 
@@ -164,7 +165,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testOrtszuordnung(@ArquillianResource URL baseUrl)
     throws Exception {
-        ortszuordnungTest.init(baseUrl, testProtocol);
+        ortszuordnungTest.init(this.client, baseUrl, testProtocol);
         ortszuordnungTest.execute();
     }
 
@@ -179,7 +180,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testZusatzwert(@ArquillianResource URL baseUrl)
     throws Exception {
-        zusatzwertTest.init(baseUrl, testProtocol);
+        zusatzwertTest.init(this.client, baseUrl, testProtocol);
         zusatzwertTest.execute();
     }
     /**
@@ -193,7 +194,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMessung(@ArquillianResource URL baseUrl)
     throws Exception {
-        messungTest.init(baseUrl, testProtocol);
+        messungTest.init(this.client, baseUrl, testProtocol);
         messungTest.execute();
     }
 
@@ -208,7 +209,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMkommentar(@ArquillianResource URL baseUrl)
     throws Exception {
-        mkommentarTest.init(baseUrl, testProtocol);
+        mkommentarTest.init(this.client, baseUrl, testProtocol);
         mkommentarTest.execute();
     }
 
@@ -222,7 +223,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMesswert(@ArquillianResource URL baseUrl)
     throws Exception {
-        messwertTest.init(baseUrl, testProtocol);
+        messwertTest.init(this.client, baseUrl, testProtocol);
         messwertTest.execute();
     }
 
@@ -237,7 +238,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testStatus(@ArquillianResource URL baseUrl)
     throws Exception {
-        statusTest.init(baseUrl, testProtocol);
+        statusTest.init(this.client, baseUrl, testProtocol);
         statusTest.execute();
     }
 
@@ -251,7 +252,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMessprogramm(@ArquillianResource URL baseUrl)
     throws Exception {
-        messprogrammTest.init(baseUrl, testProtocol);
+        messprogrammTest.init(this.client, baseUrl, testProtocol);
         messprogrammTest.execute();
     }
 
@@ -266,7 +267,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testQuery(@ArquillianResource URL baseUrl)
     throws Exception {
-        queryTest.init(baseUrl, testProtocol);
+        queryTest.init(this.client, baseUrl, testProtocol);
         queryTest.execute();
     }
 
@@ -278,7 +279,6 @@ public class LandTest extends BaseTest {
      */
     @Test
     @InSequence(T1)
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @UsingDataSet("datasets/dbUnit_probe.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
@@ -362,7 +362,7 @@ public class LandTest extends BaseTest {
      */
     @Test
     @InSequence(T9)
-    @UsingDataSet("datasets/dbUnit_messung.json")
+    @UsingDataSet("datasets/dbUnit_probe.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseMessung() throws Exception {
@@ -405,7 +405,7 @@ public class LandTest extends BaseTest {
      */
     @Test
     @InSequence(T13)
-    @UsingDataSet("datasets/dbUnit_messwert.json")
+    @UsingDataSet("datasets/dbUnit_probe.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseMesswert() throws Exception {
@@ -459,7 +459,6 @@ public class LandTest extends BaseTest {
      * Test probe generation from a messprogramm record.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @UsingDataSet("datasets/dbUnit_pep_gen.json")
     @DataSource("java:jboss/lada-test")
     @InSequence(T21)
@@ -486,7 +485,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testPepGeneration(@ArquillianResource URL baseUrl)
             throws Exception {
-        pepGenerationTest.init(baseUrl, testProtocol);
+        pepGenerationTest.init(this.client, baseUrl, testProtocol);
         pepGenerationTest.execute();
     }
 }

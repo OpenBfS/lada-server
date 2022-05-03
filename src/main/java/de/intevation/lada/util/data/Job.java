@@ -24,7 +24,7 @@ import javax.transaction.UserTransaction;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.util.auth.UserInfo;
 

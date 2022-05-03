@@ -18,16 +18,14 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.QueryMessstelle;
@@ -95,10 +93,8 @@ public class QueryService extends LadaService {
      */
     @GET
     @Path("/")
-    public Response getQueries(
-        @Context HttpServletRequest request
-    ) {
-        UserInfo userInfo = authorization.getInfo(request);
+    public Response getQueries() {
+        UserInfo userInfo = authorization.getInfo();
         EntityManager em = repository.entityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<QueryUser> criteriaQuery =
@@ -140,10 +136,9 @@ public class QueryService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpServletRequest request,
         QueryUser query
     ) {
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         if (query.getUserId() != null
             && !query.getUserId().equals(userInfo.getUserId())
         ) {
@@ -166,10 +161,9 @@ public class QueryService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpServletRequest request,
         QueryUser query
     ) {
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         if (query.getUserId() != null
             && !query.getUserId().equals(userInfo.getUserId())
         ) {
@@ -236,10 +230,9 @@ public class QueryService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         QueryUser query = repository.getByIdPlain(
             QueryUser.class, Integer.valueOf(id));
         if (query.getUserId().equals(userInfo.getUserId())) {

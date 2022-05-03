@@ -17,6 +17,7 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
 
@@ -38,10 +39,11 @@ public class TagZuordnungTest extends ServiceTest {
 
     @Override
     public void init(
+        Client c,
         URL baseUrl,
         List<Protocol> protocol
     ) {
-        super.init(baseUrl, protocol);
+        super.init(c, baseUrl, protocol);
         create = readJsonArrayResource("/datasets/tagzuordnung_create.json");
         Assert.assertNotNull(create);
         create2 = readJsonArrayResource("/datasets/tagzuordnung_create2.json");

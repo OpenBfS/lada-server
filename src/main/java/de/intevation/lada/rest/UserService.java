@@ -10,14 +10,11 @@ package de.intevation.lada.rest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -26,7 +23,7 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 /**
  * REST service to get login data for the Lada application.
@@ -86,25 +83,17 @@ public class UserService extends LadaService {
      */
     @GET
     @Path("/")
-    public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info,
-        @Context HttpServletRequest request
-    ) {
+    public Response get() {
+        UserInfo userInfo = authorization.getInfo();
         Map<String, Object> response = new HashMap<String, Object>();
-        response.put("username", request.getAttribute("lada.user.name"));
-        response.put("roles", request.getAttribute("lada.user.roles"));
+        response.put("username", userInfo.getName());
+        response.put("roles", userInfo.getAuth().stream()
+                .map(a -> a.getLdapGroup()).collect(Collectors.toSet()));
         response.put("servertime", new Date().getTime());
-        UserInfo userInfo = authorization.getInfo(request);
         response.put("messstelleLabor", userInfo.getMessLaborId());
         response.put("netzbetreiber", userInfo.getNetzbetreiber());
         response.put("funktionen", userInfo.getFunktionen());
         response.put("userId", userInfo.getUserId());
-
-        logger.debug(
-            request.getAttribute("lada.user.name") + " - "
-            + request.getAttribute("lada.user.roles")
-        );
 
         return new Response(true, StatusCodes.OK, response);
     }

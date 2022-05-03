@@ -27,7 +27,6 @@ import javax.ws.rs.client.SyncInvoker;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -65,6 +64,7 @@ import de.intevation.lada.util.data.Repository;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
+@ApplyScriptBefore("datasets/clean_and_seed.sql")
 public class ImporterTest extends BaseTest {
 
     private static final double MESS15D = 1.5d;
@@ -107,9 +107,6 @@ public class ImporterTest extends BaseTest {
         + "DATENBASIS_S 02\n"
         + "%ENDE%\n";
 
-    @Inject
-    Logger internalLogger;
-
     @PersistenceContext
     EntityManager em;
 
@@ -133,7 +130,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(0)
     @UsingDataSet("datasets/dbUnit_probe_import.json")
     @DataSource("java:jboss/lada-test")
@@ -162,7 +158,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T1)
     @UsingDataSet("datasets/dbUnit_probe_import.json")
     @DataSource("java:jboss/lada-test")
@@ -192,7 +187,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T2)
     @UsingDataSet("datasets/dbUnit_probe_import.json")
     @DataSource("java:jboss/lada-test")
@@ -220,7 +214,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during test.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T3)
     @UsingDataSet("datasets/dbUnit_probe_import.json")
     @DataSource("java:jboss/lada-test")
@@ -248,7 +241,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T4)
     @UsingDataSet("datasets/dbUnit_probe_import.json")
     @DataSource("java:jboss/lada-test")
@@ -278,7 +270,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that ca occur during the test.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T5)
     @UsingDataSet("datasets/dbUnit_probe_import.json")
     @DataSource("java:jboss/lada-test")
@@ -308,7 +299,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T6)
     @UsingDataSet("datasets/dbUnit_messung_import.json")
     @DataSource("java:jboss/lada-test")
@@ -337,7 +327,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T7)
     @UsingDataSet("datasets/dbUnit_messung_import.json")
     @DataSource("java:jboss/lada-test")
@@ -364,7 +353,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T8)
     @UsingDataSet("datasets/dbUnit_messung_import.json")
     @DataSource("java:jboss/lada-test")
@@ -393,7 +381,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T9)
     @UsingDataSet("datasets/dbUnit_messung_import.json")
     @DataSource("java:jboss/lada-test")
@@ -422,7 +409,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @Ignore
     @InSequence(T10)
     @DataSource("java:jboss/lada-test")
@@ -453,7 +439,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T11)
     @UsingDataSet("datasets/dbUnit_messung_import.json")
     @DataSource("java:jboss/lada-test")
@@ -484,7 +469,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T12)
     @UsingDataSet("datasets/dbUnit_import_merge.json")
     @ShouldMatchDataSet(value = "datasets/dbUnit_import_merge_match.json",
@@ -528,7 +512,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T13)
     @UsingDataSet("datasets/dbUnit_import_merge.json")
     @ShouldMatchDataSet(
@@ -565,7 +548,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @Ignore
     @InSequence(T14)
     @UsingDataSet("datasets/dbUnit_import_merge.json")
@@ -617,7 +599,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T15)
     @UsingDataSet("datasets/dbUnit_import_merge.json")
     @ShouldMatchDataSet(
@@ -661,7 +642,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T16)
     @UsingDataSet("datasets/dbUnit_import_merge.json")
     @ShouldMatchDataSet(
@@ -706,7 +686,6 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @InSequence(T17)
     @UsingDataSet("datasets/dbUnit_import_merge.json")
     @ShouldMatchDataSet(

@@ -38,15 +38,12 @@ import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGruppe;
 import de.intevation.lada.model.stammdaten.StatusKombi;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
+import de.intevation.lada.util.auth.HeaderAuthorization;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
 
-// import org.apache.log4j.Logger;
 
 /**
  * This creator produces a LAF conform String containing all information about
@@ -58,7 +55,6 @@ import de.intevation.lada.util.rest.Response;
 @Named("lafcreator")
 public class LafCreator
 implements Creator {
-    // @Inject private Logger logger;
 
     private static final int LAND_RESET = 15;
     private static final int MST_RESET = 14;
@@ -81,9 +77,7 @@ implements Creator {
     private static final String DEFAULT_FORMAT = "%s";
     private static final String CN = "\"%s\""; // cn, mcn, scn
 
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorization;
+    private HeaderAuthorization authorization;
 
     /**
      * The repository used to read data.
@@ -492,7 +486,7 @@ implements Creator {
                 (m.getFertig() ? "1" : "0"));
             laf += lafLine("BEARBEITUNGSSTATUS", writeStatus(m));
             if (this.userInfo != null
-                && authorization.isAuthorized(this.userInfo, m, Messung.class)
+                && authorization.isAuthorized(m, Messung.class)
             ) {
                 for (Messwert mw : werte) {
                     laf += writeMesswert(mw);
@@ -672,5 +666,6 @@ implements Creator {
     @Override
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
+        this.authorization = new HeaderAuthorization(userInfo, this.repository);
     }
 }

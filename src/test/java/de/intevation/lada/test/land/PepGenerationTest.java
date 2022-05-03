@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.test.land;
 
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -22,8 +21,6 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -107,24 +104,9 @@ public class PepGenerationTest extends ServiceTest {
     private static final long TS_5L = 5L;
 
     /**
-     * Messprogramm records from datasource.
-     */
-    JsonArray messprogramms;
-
-    /**
      * Current expected tag serial number.
      */
     int expectedTagSerNo = 0;
-
-    @Override
-    public void init(
-        URL baseUrl,
-        List<Protocol> protocol
-    ) {
-        super.init(baseUrl, protocol);
-        messprogramms = readJsonResource("/datasets/dbUnit_pep_gen.json")
-            .getJsonArray("stamm.messprogramm");
-    }
 
     /**
      * Execute all available tests.
@@ -907,7 +889,6 @@ public class PepGenerationTest extends ServiceTest {
     ) {
         System.out.print(".");
 
-        Client client = ClientBuilder.newClient();
         WebTarget target = client.target(baseUrl + "rest/probe/messprogramm");
         JsonArrayBuilder idArrayBuilder = Json.createArrayBuilder();
         ids.forEach(item -> {

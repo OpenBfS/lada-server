@@ -153,7 +153,7 @@ public class LafExportService extends LadaService {
                 .build();
         }
 
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         InputStream exported =
             exporter.exportProben(pIds, mIds, charset, userInfo);
 

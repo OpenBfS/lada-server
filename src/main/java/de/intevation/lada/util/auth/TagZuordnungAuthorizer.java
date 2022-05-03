@@ -8,12 +8,11 @@
 
 package de.intevation.lada.util.auth;
 
-import javax.inject.Inject;
-
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -23,11 +22,14 @@ import de.intevation.lada.util.rest.Response;
  */
 public class TagZuordnungAuthorizer extends BaseAuthorizer {
 
-    @Inject
     ProbeAuthorizer probeAuthorizer;
-
-    @Inject
     MessungAuthorizer messungAuthorizer;
+
+    public TagZuordnungAuthorizer(Repository repository) {
+        super(repository);
+        probeAuthorizer = new ProbeAuthorizer(repository);
+        messungAuthorizer = new MessungAuthorizer(repository);
+    }
 
     @Override
     public <T> boolean isAuthorized(

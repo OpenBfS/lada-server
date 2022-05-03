@@ -19,7 +19,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -27,7 +26,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 
 import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.stammdaten.Tag;
@@ -58,9 +56,6 @@ public class TagService extends LadaService {
     @Inject
     private TagUtil tagUtil;
 
-    @Context
-    HttpServletRequest request;
-
     /**
      * Get a single tag by id.
      * @param id Tag id
@@ -71,7 +66,7 @@ public class TagService extends LadaService {
     public Response getById(
         @PathParam("id") String id
     ) {
-        return authorization.filter(request,
+        return authorization.filter(
             repository.getById(Tag.class, Integer.valueOf(id)),
             Tag.class);
     }
@@ -108,7 +103,7 @@ public class TagService extends LadaService {
         Predicate filter = builder.or(
             builder.isNull(root.get(mstIdParam)),
             builder.in(root.get(mstIdParam)).value(
-                authorization.getInfo(request).getMessstellen()));
+                authorization.getInfo().getMessstellen()));
 
         // Return only tags assigned to all given Probe or Messung objects
         List<Tag> result;
@@ -137,7 +132,7 @@ public class TagService extends LadaService {
         }
 
         return authorization.filter(
-            request, new Response(true, StatusCodes.OK, result), Tag.class);
+            new Response(true, StatusCodes.OK, result), Tag.class);
     }
 
     /**
@@ -169,7 +164,7 @@ public class TagService extends LadaService {
     ) {
         Tag origTag = repository.getByIdPlain(Tag.class, tag.getId());
         if (!authorization.isAuthorized(
-            request, origTag, RequestMethod.PUT, Tag.class)
+                origTag, RequestMethod.PUT, Tag.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -188,7 +183,6 @@ public class TagService extends LadaService {
         }
         Response response = repository.update(tag);
         return authorization.filter(
-            request,
             response,
             Tag.class);
     }
@@ -218,7 +212,7 @@ public class TagService extends LadaService {
         Tag tag
     ) {
         if (!authorization.isAuthorized(
-                request, tag, RequestMethod.POST, Tag.class)
+                tag, RequestMethod.POST, Tag.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -242,7 +236,7 @@ public class TagService extends LadaService {
     ) {
         Tag tag = repository.getByIdPlain(Tag.class, id);
         if (!authorization.isAuthorized(
-                request, tag, RequestMethod.DELETE, Tag.class)
+                tag, RequestMethod.DELETE, Tag.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }

@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -134,8 +133,7 @@ public class StatusService extends LadaService {
     @Path("/")
     public Response get(
         @Context HttpHeaders headers,
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
         if (params.isEmpty() || !params.containsKey("messungsId")) {
@@ -153,7 +151,6 @@ public class StatusService extends LadaService {
             repository.queryBuilder(StatusProtokoll.class);
         builder.and("messungsId", id);
         Response r = authorization.filter(
-            request,
             repository.filter(builder.getQuery()),
             StatusProtokoll.class);
         if (r.getSuccess()) {
@@ -186,7 +183,6 @@ public class StatusService extends LadaService {
     @Path("/{id}")
     public Response getById(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         Response response = repository.getById(
@@ -195,7 +191,6 @@ public class StatusService extends LadaService {
         );
 
         return authorization.filter(
-            request,
             response,
             StatusProtokoll.class);
     }
@@ -226,7 +221,6 @@ public class StatusService extends LadaService {
     @Path("/")
     public Response create(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         StatusProtokoll status
     ) {
         if (status.getMessungsId() == null
@@ -235,7 +229,7 @@ public class StatusService extends LadaService {
             return new Response(false, StatusCodes.VALUE_MISSING, status);
         }
 
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         Messung messung = repository.getByIdPlain(
             Messung.class, status.getMessungsId());
         if (lock.isLocked(messung)) {
@@ -244,7 +238,6 @@ public class StatusService extends LadaService {
 
         // Is user authorized to edit status at all?
         Response r = authorization.filter(
-            request,
             new Response(true, StatusCodes.OK, messung),
             Messung.class);
         Messung filteredMessung = (Messung) r.getData();
@@ -279,12 +272,11 @@ public class StatusService extends LadaService {
                 //    'status wert' == 8
                 if (newKombi.getStatusWert().getId() == 8) {
                     return authorization.filter(
-                        request,
                         resetStatus(status, oldStatus, messung),
                         StatusProtokoll.class);
                 } else {
                     // 2. user wants to set new status
-                    return setNewStatus(status, newKombi, messung, request);
+                    return setNewStatus(status, newKombi, messung);
                 }
             } else {
                 // Not allowed.
@@ -296,8 +288,7 @@ public class StatusService extends LadaService {
     private Response setNewStatus(
         StatusProtokoll status,
         StatusKombi newKombi,
-        Messung messung,
-        HttpServletRequest request
+        Messung messung
     ) {
         Violation violation = new Violation();
         Violation violationCollection = new Violation();
@@ -405,7 +396,6 @@ public class StatusService extends LadaService {
             response.setNotifications(violationCollection.getNotifications());
         }
         return authorization.filter(
-            request,
             response,
             StatusProtokoll.class);
     }
@@ -436,7 +426,6 @@ public class StatusService extends LadaService {
     @Path("/{id}")
     public Response update(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id,
         StatusProtokoll status
     ) {
@@ -456,7 +445,6 @@ public class StatusService extends LadaService {
     @Path("/{id}")
     public Response delete(
         @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         /* Get the object by id*/
@@ -465,7 +453,6 @@ public class StatusService extends LadaService {
                 StatusProtokoll.class, Integer.valueOf(id));
         StatusProtokoll obj = (StatusProtokoll) object.getData();
         if (!authorization.isAuthorized(
-                request,
                 obj,
                 RequestMethod.DELETE,
                 StatusProtokoll.class)

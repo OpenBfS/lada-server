@@ -8,11 +8,9 @@
 package de.intevation.lada.rest.stamm;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 
 import de.intevation.lada.model.stammdaten.GridColumn;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -69,7 +67,6 @@ public class ColumnService extends LadaService {
     @GET
     @Path("/")
     public Response getQueries(
-        @Context HttpServletRequest request,
         @QueryParam("qid") Integer qid
     ) {
         //If no qid is given, return all grid_column objects

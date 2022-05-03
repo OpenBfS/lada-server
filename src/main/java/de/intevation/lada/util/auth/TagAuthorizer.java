@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -21,6 +22,10 @@ import de.intevation.lada.util.rest.Response;
  * @author Alexander Woestmann <awoestmann@intevation.de>
  */
 public class TagAuthorizer extends BaseAuthorizer {
+
+    public TagAuthorizer(Repository repository) {
+        super(repository);
+    }
 
     @Override
     public <T> boolean isAuthorized(

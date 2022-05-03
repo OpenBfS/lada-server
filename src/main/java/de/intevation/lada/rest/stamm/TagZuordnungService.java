@@ -14,10 +14,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.Query;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
 
 import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.stammdaten.Tag;
@@ -36,9 +34,6 @@ import de.intevation.lada.rest.LadaService;
 
 @Path("rest/tag/zuordnung")
 public class TagZuordnungService extends LadaService {
-
-    @Context
-    HttpServletRequest request;
 
     @Inject
     private Repository repository;
@@ -96,7 +91,7 @@ public class TagZuordnungService extends LadaService {
             }
 
             if (!authorization.isAuthorized(
-                    request, zuordnung, RequestMethod.POST, TagZuordnung.class)
+                    zuordnung, RequestMethod.POST, TagZuordnung.class)
             ) {
                 responseList.add(new Response(
                         false, StatusCodes.NOT_ALLOWED, zuordnung));
@@ -152,7 +147,6 @@ public class TagZuordnungService extends LadaService {
 
         for (TagZuordnung zuordnung: zuordnungs) {
             if (!authorization.isAuthorized(
-                    request,
                     zuordnung,
                     RequestMethod.DELETE,
                     TagZuordnung.class)
@@ -187,7 +181,7 @@ public class TagZuordnungService extends LadaService {
                 tagIdParam, mstIdsParam, idField, taggedIdParam));
         isAssigned.setParameter(tagIdParam, zuordnung.getTagId());
         isAssigned.setParameter(
-            mstIdsParam, authorization.getInfo(request).getMessstellen());
+            mstIdsParam, authorization.getInfo().getMessstellen());
         isAssigned.setParameter(taggedIdParam,
             zuordnung.getProbeId() != null
             ? zuordnung.getProbeId()
