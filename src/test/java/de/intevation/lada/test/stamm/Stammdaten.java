@@ -214,7 +214,7 @@ public class Stammdaten extends ServiceTest {
         String type
     ) {
         Assert.assertNotNull(type);
-        getAll(type, "rest/" + type);
+        get(type, "rest/" + type);
     }
 
     /**

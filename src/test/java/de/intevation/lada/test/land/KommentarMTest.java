@@ -65,7 +65,7 @@ public class KommentarMTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("mkommentar", "rest/mkommentar?messungsId=1000");
+        get("mkommentar", "rest/mkommentar?messungsId=1000");
         getById("mkommentar", "rest/mkommentar/1000", expectedById);
         JsonObject created = create("mkommentar", "rest/mkommentar", create);
         update(

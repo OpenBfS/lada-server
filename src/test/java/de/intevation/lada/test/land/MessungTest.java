@@ -71,7 +71,7 @@ public class MessungTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("messung", "rest/messung");
+        get("messung", "rest/messung");
         getById("messung", "rest/messung/1200", expectedById);
         JsonObject created = create("messung", "rest/messung", create);
         update("messung", "rest/messung/1200", "nebenprobenNr", "T100", "U200");

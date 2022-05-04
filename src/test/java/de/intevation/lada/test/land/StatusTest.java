@@ -64,7 +64,7 @@ public class StatusTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("status", "rest/status?messungsId=1000");
+        get("status", "rest/status?messungsId=1000");
         getById("status", "rest/status/1000", expectedById);
         create("status", "rest/status", create);
     }

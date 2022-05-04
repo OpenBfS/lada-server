@@ -159,16 +159,15 @@ public class ServiceTest {
      * @param parameter the url parameter used in the request.
      * @return the json object returned by the serive.
      */
-    public JsonObject getAll(String name, String parameter) {
+    public JsonObject get(String name, String parameter) {
         System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName(name + " service");
-        prot.setType("get all");
+        prot.setType("get");
         prot.setPassed(false);
         protocol.add(prot);
 
         WebTarget target = client.target(baseUrl + parameter);
-        /* Request all objects*/
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -232,41 +231,6 @@ public class ServiceTest {
                 object.get(entry.getKey()));
         }
         prot.addInfo("object", "equals");
-        prot.setPassed(true);
-        return content;
-    }
-
-    /**
-     * Test the GET service using filters.
-     * @param name the name of the requested entity.
-     * @param parameter the parameters used in the request.
-     * @return the resulting json object.
-     */
-    public JsonObject filter(String name, String parameter) {
-        System.out.print(".");
-        Protocol prot = new Protocol();
-        prot.setName(name + " service");
-        prot.setType("filter");
-        prot.setPassed(false);
-        protocol.add(prot);
-
-        WebTarget target =
-            client.target(baseUrl + parameter);
-        prot.addInfo("filter", parameter);
-        /* Request the objects using the filter*/
-        Response response = target.request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .get();
-        JsonObject content = BaseTest.parseResponse(response, prot);
-        /* Verify the response*/
-        Assert.assertTrue("Unsuccessful response object:\n" + content,
-            content.getBoolean("success"));
-        prot.addInfo("success", content.getBoolean("success"));
-        Assert.assertEquals("200", content.getString("message"));
-        prot.addInfo("message", content.getString("message"));
-        Assert.assertNotNull(content.getJsonArray("data"));
-        prot.addInfo("objects", content.getJsonArray("data").size());
         prot.setPassed(true);
         return content;
     }

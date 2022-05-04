@@ -64,9 +64,9 @@ public class MessprogrammTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("messprogramm", "rest/messprogramm");
+        get("messprogramm", "rest/messprogramm");
         getById("messprogramm", "rest/messprogramm/1000", expectedById);
-        filter("messprogramm", "rest/messprogramm?qid=9");
+        get("messprogramm", "rest/messprogramm?qid=9");
         update(
             "messprogramm",
             "rest/messprogramm/1000",

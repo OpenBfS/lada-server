@@ -60,7 +60,7 @@ public class KoordinatenartTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll(name, url);
+        get(name, url);
         getById(name, url + KDA_ID, expectedById);
         recalculate();
     }

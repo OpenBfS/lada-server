@@ -66,7 +66,7 @@ public class MesswertTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("messwert", "rest/messwert?messungsId=1200");
+        get("messwert", "rest/messwert?messungsId=1200");
         getById("messwert", "rest/messwert/10000", expectedById);
         normalize(expectedById);
         JsonObject created = create("messwert", "rest/messwert", create);

@@ -68,7 +68,7 @@ public class ProbeTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("probe", "rest/probe");
+        get("probe", "rest/probe");
         getById("probe", "rest/probe/1000", expectedById);
         JsonObject created = create("probe", "rest/probe", create);
         update(

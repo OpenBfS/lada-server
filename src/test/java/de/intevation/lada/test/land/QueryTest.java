@@ -19,8 +19,8 @@ public class QueryTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("query", "rest/query/probe");
-        getAll("query", "rest/query/messprogramm");
-        getAll("query", "rest/query/stammdaten");
+        get("query", "rest/query/probe");
+        get("query", "rest/query/messprogramm");
+        get("query", "rest/query/stammdaten");
     }
 }
