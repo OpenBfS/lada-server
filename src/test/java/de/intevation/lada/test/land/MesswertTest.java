@@ -95,16 +95,6 @@ public class MesswertTest extends ServiceTest {
             .put(null);
         JsonObject normalizedObject = BaseTest.parseResponse(normalized, prot);
 
-        /* Verify the response*/
-        boolean success = normalizedObject.getBoolean("success");
-        Assert.assertTrue(
-            "Unsuccessful response object:\n" + normalizedObject,
-            success);
-        prot.addInfo("success", success);
-        String message = normalizedObject.getString("message");
-        Assert.assertEquals("200", message);
-        prot.addInfo("message", message);
-
         // The following makes assumptions about the first entry only
         JsonObject normalizedMesswert =
             normalizedObject.getJsonArray("data").getJsonObject(0);

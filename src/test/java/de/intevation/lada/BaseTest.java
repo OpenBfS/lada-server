@@ -155,14 +155,68 @@ public class BaseTest {
      * Utility method to parse JSON in a Response object.
      *
      * Asserts that the response has HTTP status code 200 and a parseable
-     * JSON body.
+     * JSON body corresponding to a de.intevation.lada.util.rest.Response.
      *
      * @param response The response to be parsed.
      * @return Parsed JsonObject or null in case of failure
      */
-    // TODO: Use in more tests to reduce code duplication
     public static JsonObject parseResponse(Response response) {
         return parseResponse(response, null);
+    }
+
+    /**
+     * Utility method to parse JSON in a Response object.
+     *
+     * Asserts that the response has HTTP status code 200 and a parseable
+     * JSON body corresponding to a de.intevation.lada.util.rest.Response.
+     *
+     * @param response The response to be parsed.
+     * @param protocol Protocol to add exception info in case of failure
+     * @return Parsed JsonObject or null in case of failure
+     */
+    public static JsonObject parseResponse(
+        Response response,
+        Protocol protocol
+    ) {
+        return parseResponse(response, protocol, Response.Status.OK);
+    }
+
+    /**
+     * Utility method to check status and parse JSON in a Response object
+     * corresponding to a de.intevation.lada.util.rest.Response.
+     *
+     * @param response The response to be parsed.
+     * @param protocol Protocol to add exception info in case of failure
+     * @param expectedStatus Expected HTTP status code
+     * @return Parsed JsonObject or null in case of (expected) failure
+     */
+    public static JsonObject parseResponse(
+        Response response,
+        Protocol protocol,
+        Response.Status expectedStatus
+    ) {
+        JsonObject content = parseSimpleResponse(
+            response, protocol, expectedStatus);
+
+        /* Verify the response*/
+        if (Response.Status.OK.equals(expectedStatus)) {
+            final String successKey = "success", messageKey = "message";
+            assertContains(content, successKey);
+            Assert.assertTrue("Unsuccessful response object:\n" + content,
+                content.getBoolean(successKey));
+            if (protocol != null) {
+                protocol.addInfo(
+                    successKey, content.getBoolean(successKey));
+            }
+            assertContains(content, messageKey);
+            Assert.assertEquals("200", content.getString(messageKey));
+            if (protocol != null) {
+                protocol.addInfo(
+                    messageKey, content.getString(messageKey));
+            }
+        }
+
+        return content;
     }
 
     /**
@@ -173,27 +227,46 @@ public class BaseTest {
      *
      * @param response The response to be parsed.
      * @param protocol Protocol to add exception info in case of failure
-     * @return Parsed JsonObject or null in case of failure
+     * @return Parsed JsonObject or null in case of (expected) failure
      */
-    // TODO: Use in more tests to reduce code duplication
-    public static JsonObject parseResponse(
+    public static JsonObject parseSimpleResponse(
         Response response,
         Protocol protocol
+    ) {
+        return parseSimpleResponse(response, protocol, Response.Status.OK);
+    }
+
+    /**
+     * Utility method to check status and parse JSON in a Response object.
+     *
+     * @param response The response to be parsed.
+     * @param protocol Protocol to add exception info in case of failure
+     * @param expectedStatus Expected HTTP status code
+     * @return Parsed JsonObject or null in case of (expected) failure
+     */
+    public static JsonObject parseSimpleResponse(
+        Response response,
+        Protocol protocol,
+        Response.Status expectedStatus
     ) {
         String responseBody = response.readEntity(String.class);
         logger.debug(responseBody);
         Assert.assertEquals(
             "Unexpected response status code",
-            Response.Status.OK.getStatusCode(),
+            expectedStatus.getStatusCode(),
             response.getStatus());
-        try {
-            return Json.createReader(new StringReader(responseBody))
-                .readObject();
-        } catch (JsonException je) {
-            if (protocol != null) {
-                protocol.addInfo("exception", je.getMessage());
+
+        if (Response.Status.OK.equals(expectedStatus)) {
+            try {
+                JsonObject content = Json.createReader(
+                    new StringReader(responseBody)).readObject();
+                return content;
+            } catch (JsonException je) {
+                if (protocol != null) {
+                    protocol.addInfo("exception", je.getMessage());
+                }
+                Assert.fail(je.getMessage());
             }
-            Assert.fail(je.getMessage());
         }
         return null;
     }

@@ -90,18 +90,6 @@ public class KoordinatenartTest extends ServiceTest {
         JsonObject content = BaseTest.parseResponse(response, prot);
 
         /* Verify the response*/
-        final String successKey = "success";
-        BaseTest.assertContains(content, successKey);
-        boolean success = content.getBoolean(successKey);
-        Assert.assertTrue("Unsuccessful response object:\n" + content, success);
-        prot.addInfo(successKey, success);
-
-        final String messageKey = "message";
-        BaseTest.assertContains(content, messageKey);
-        String message = content.getString(messageKey);
-        Assert.assertEquals("200", message);
-        prot.addInfo(messageKey, message);
-
         final String dataKey = "data";
         BaseTest.assertContains(content, dataKey);
         JsonObject data = content.getJsonObject(dataKey);

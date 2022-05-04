@@ -15,6 +15,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.Assert;
 
@@ -64,9 +65,8 @@ public class MessprogrammTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("messprogramm", "rest/messprogramm");
+        get("messprogramm", "rest/messprogramm", Status.METHOD_NOT_ALLOWED);
         getById("messprogramm", "rest/messprogramm/1000", expectedById);
-        get("messprogramm", "rest/messprogramm?qid=9");
         update(
             "messprogramm",
             "rest/messprogramm/1000",
