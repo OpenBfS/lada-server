@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URL;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map.Entry;
@@ -113,11 +114,18 @@ public class ServiceTest {
     /**
      * Convert geometries and timestamps.
      * @param object The current version.
+     * @param exclusions Keys in object to be excluded in conversion
      * @return Builder with the new version.
      */
-    protected JsonObjectBuilder convertObject(JsonObject object) {
+    protected JsonObjectBuilder convertObject(
+        JsonObject object,
+        String... exclusions
+    ) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         for (Entry<String, JsonValue> entry : object.entrySet()) {
+            if (Arrays.asList(exclusions).contains(entry.getKey())) {
+                continue;
+            }
             String key = WordUtils.capitalize(
                 entry.getKey(), new char[]{'_'}).replaceAll("_", "");
             key = key.replaceFirst(
