@@ -234,6 +234,7 @@ public class ServiceTest {
                 continue;
             }
             Assert.assertEquals(
+                String.format("%s:", entry.getKey()),
                 entry.getValue(),
                 object.get(entry.getKey()));
         }
