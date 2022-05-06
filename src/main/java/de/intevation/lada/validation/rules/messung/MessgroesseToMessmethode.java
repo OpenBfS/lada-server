@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.validation.rules.messung;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -38,29 +37,24 @@ public class MessgroesseToMessmethode implements Rule {
     @Override
     public Violation execute(Object object) {
         Messung messung = (Messung) object;
-        String mmt = messung.getMmtId();
+
         QueryBuilder<Messwert> builder =
-            repository.queryBuilder(Messwert.class);
-        builder.and("messungsId", messung.getId());
+            repository.queryBuilder(Messwert.class)
+                .and("messungsId", messung.getId());
         List<Messwert> messwerte = repository.filterPlain(builder.getQuery());
 
         QueryBuilder<MmtMessgroesse> mmtBuilder =
-            repository.queryBuilder(MmtMessgroesse.class);
-
-        List<MmtMessgroesse> messgroessen =
+            repository.queryBuilder(MmtMessgroesse.class)
+                .and("mmtId", messung.getMmtId());
+        List<MmtMessgroesse> mmtMs =
             repository.filterPlain(mmtBuilder.getQuery());
-        List<MmtMessgroesse> found = new ArrayList<MmtMessgroesse>();
-        for (MmtMessgroesse mg: messgroessen) {
-            if (mg.getMmtId().equals(mmt)) {
-                found.add(mg);
-            }
-        }
+
         Violation violation = new Violation();
         for (Messwert messwert : messwerte) {
             boolean hit = false;
-            for (MmtMessgroesse messgroesse: found) {
+            for (MmtMessgroesse mmtM: mmtMs) {
                 if (messwert.getMessgroesseId().equals(
-                        messgroesse.getMessgroesseId())) {
+                        mmtM.getMessgroesseId())) {
                     hit = true;
                 }
             }
@@ -68,7 +62,8 @@ public class MessgroesseToMessmethode implements Rule {
                 Messgroesse mg = repository.getByIdPlain(
                     Messgroesse.class, messwert.getMessgroesseId());
                 violation.addError(
-                    "messgroesse#" + mmt + " " + mg.getMessgroesse(),
+                    "messgroesse#" + messung.getMmtId()
+                    + " " + mg.getMessgroesse(),
                     StatusCodes.VALUE_NOT_MATCHING);
             }
         }
