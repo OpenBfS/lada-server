@@ -250,7 +250,7 @@ public class BaseTest {
         Response.Status expectedStatus
     ) {
         String responseBody = response.readEntity(String.class);
-        logger.debug(responseBody);
+        logger.trace(responseBody);
         Assert.assertEquals(
             "Unexpected response status code",
             expectedStatus.getStatusCode(),
