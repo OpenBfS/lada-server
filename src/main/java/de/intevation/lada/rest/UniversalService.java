@@ -161,7 +161,7 @@ public class UniversalService extends LadaService {
         // for every request. Better not to rely on total count at client side?
         int size = queryTools.getTotalCountForQuery();
         boolean doAuthorize = true;
-        if (result.size() > 2000) {
+        if (result.size() > 500) {
             doAuthorize = false;
         }
 
