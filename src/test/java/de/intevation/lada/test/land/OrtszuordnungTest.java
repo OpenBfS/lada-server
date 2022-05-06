@@ -45,7 +45,7 @@ public class OrtszuordnungTest extends ServiceTest {
 
         // Prepare expected probe object
         JsonObject content =
-            readJsonResource("/datasets/dbUnit_ortszuordnung.json");
+            readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject messung =
             content.getJsonArray("land.ortszuordnung").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messung);

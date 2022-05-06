@@ -159,7 +159,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T6)
     @RunAsClient
     public final void testOrtszuordnung(@ArquillianResource URL baseUrl)
@@ -317,9 +316,8 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T5)
-    @UsingDataSet("datasets/dbUnit_ortszuordnung.json")
+    @UsingDataSet("datasets/dbUnit_probe.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseOrtszuordnung() throws Exception {

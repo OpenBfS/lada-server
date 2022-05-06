@@ -57,5 +57,12 @@
         "meh_id": 207,
         "grenzwertueberschreitung": false,
         "letzte_aenderung": "2012-05-09 09:00:00"
+    }],
+    "land.ortszuordnung": [{
+        "id": 1000,
+        "probe_id": 1000,
+        "ort_id": 1000,
+        "ortszusatztext": "Test",
+        "letzte_aenderung": "2012-05-07 09:00:00"
     }]
 }
