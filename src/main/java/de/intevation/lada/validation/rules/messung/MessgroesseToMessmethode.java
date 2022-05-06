@@ -19,7 +19,6 @@ import de.intevation.lada.model.stammdaten.MmtMessgroesse;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -43,18 +42,13 @@ public class MessgroesseToMessmethode implements Rule {
         QueryBuilder<Messwert> builder =
             repository.queryBuilder(Messwert.class);
         builder.and("messungsId", messung.getId());
-        Response response = repository.filter(builder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<Messwert> messwerte = (List<Messwert>) response.getData();
+        List<Messwert> messwerte = repository.filterPlain(builder.getQuery());
 
         QueryBuilder<MmtMessgroesse> mmtBuilder =
             repository.queryBuilder(MmtMessgroesse.class);
 
-        Response results =
-            repository.filter(mmtBuilder.getQuery());
-        @SuppressWarnings("unchecked")
         List<MmtMessgroesse> messgroessen =
-            (List<MmtMessgroesse>) results.getData();
+            repository.filterPlain(mmtBuilder.getQuery());
         List<MmtMessgroesse> found = new ArrayList<MmtMessgroesse>();
         for (MmtMessgroesse mg: messgroessen) {
             if (mg.getMmtId().equals(mmt)) {
