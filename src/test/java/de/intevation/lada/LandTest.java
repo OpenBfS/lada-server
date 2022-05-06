@@ -168,12 +168,11 @@ public class LandTest extends BaseTest {
     }
 
     /**
-     * Tests for zustzwert operations.
+     * Tests for zusatzwert operations.
      * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T8)
     @RunAsClient
     public final void testZusatzwert(@ArquillianResource URL baseUrl)
@@ -336,9 +335,8 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T7)
-    @UsingDataSet("datasets/dbUnit_zusatzwert.json")
+    @UsingDataSet("datasets/dbUnit_probe.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseZusatzwert() throws Exception {

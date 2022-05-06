@@ -64,5 +64,13 @@
         "ort_id": 1000,
         "ortszusatztext": "Test",
         "letzte_aenderung": "2012-05-07 09:00:00"
+    }],
+    "land.zusatz_wert": [{
+        "id": 1000,
+        "probe_id": 1000,
+        "pzs_id": "A75",
+        "messwert_pzs": 12.0,
+        "messfehler": 8.0,
+        "letzte_aenderung": "2012-05-08 14:00:00"
     }]
 }
