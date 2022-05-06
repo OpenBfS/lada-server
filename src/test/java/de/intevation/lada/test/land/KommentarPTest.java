@@ -46,7 +46,7 @@ public class KommentarPTest extends ServiceTest {
 
         // Prepare expected probe object
         JsonObject content =
-            readJsonResource("/datasets/dbUnit_pkommentar.json");
+            readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject messung =
             content.getJsonArray("land.kommentar_p").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messung);

@@ -145,10 +145,9 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T4)
     @RunAsClient
-    public final void testPkommentar(@ArquillianResource URL baseUrl)
+    public final void testKommentarP(@ArquillianResource URL baseUrl)
     throws Exception {
         pkommentarTest.init(this.client, baseUrl, testProtocol);
         pkommentarTest.execute();
@@ -298,9 +297,8 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T3)
-    @UsingDataSet("datasets/dbUnit_pkommentar.json")
+    @UsingDataSet("datasets/dbUnit_probe.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseKommentarP() throws Exception {
