@@ -228,7 +228,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T16)
     @RunAsClient
     public final void testStatus(@ArquillianResource URL baseUrl)

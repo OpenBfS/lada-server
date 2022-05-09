@@ -50,8 +50,7 @@ public class BaseTest {
     /**
      * Roles used for tests.
      */
-    public static String testRoles =
-        "cn=mst_06010 cn=mst_06_status, cn=land_06_stamm";
+    public static String testRoles = "cn=mst_06_status, cn=land_06_stamm";
 
     private static Logger logger = Logger.getLogger(BaseTest.class);
 
