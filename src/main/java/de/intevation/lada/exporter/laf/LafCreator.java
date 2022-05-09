@@ -44,7 +44,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
 
-// import org.apache.log4j.Logger;
 
 /**
  * This creator produces a LAF conform String containing all information about
@@ -56,7 +55,6 @@ import de.intevation.lada.util.rest.Response;
 @Named("lafcreator")
 public class LafCreator
 implements Creator {
-    // @Inject private Logger logger;
 
     private static final int LAND_RESET = 15;
     private static final int MST_RESET = 14;

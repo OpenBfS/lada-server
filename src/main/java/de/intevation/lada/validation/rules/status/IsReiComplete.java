@@ -9,7 +9,7 @@ package de.intevation.lada.validation.rules.status;
 
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Probe;

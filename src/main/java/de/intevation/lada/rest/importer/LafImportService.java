@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.rest.importer;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -31,9 +30,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.log4j.Appender;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.importer.ImportConfig;
 import de.intevation.lada.importer.ImportFormat;
@@ -341,25 +338,24 @@ public class LafImportService extends LadaService {
      *
      * @param mstId Id from Header
      * @param content The laf file content
+     * @param enc Charset used for writing LAF file
      */
     public static void logLAFFile(String mstId, String content, Charset enc) {
-        DateFormat df = new SimpleDateFormat("yyyyMMddHHmmssS");
-        Date now = new Date();
-        // Create filename for imported laf
-        String fileName = df.format(now) + "-" + mstId + ".laf";
-        // Set default log path as fallback
-        String filePath = "/var/log/wildfly/";
-        // Get logger and appender for import logger
+        // Get logger for import logger
         Logger lafLogger = Logger.getLogger("import");
-        Appender lafAppender = Logger.getRootLogger().getAppender("laf");
-        // Retrive path set for import logger
-        if (lafAppender instanceof FileAppender) {
-            File appenderFile =
-                new File(((FileAppender) lafAppender).getFile());
-            filePath = appenderFile.getParent();
-        }
+
         // Write laf file if debug enabled
         if (lafLogger.isDebugEnabled()) {
+            DateFormat df = new SimpleDateFormat("yyyyMMddHHmmssS");
+            Date now = new Date();
+            // Create filename for imported laf
+            String fileName = df.format(now) + "-" + mstId + ".laf";
+
+            // Retrive path set for import logger
+            String logDir = System.getProperty("jboss.server.log.dir");
+            // Set default log path as fallback
+            String filePath = logDir != null ? logDir : "/var/log/wildfly/";
+
             lafLogger.debug("X-LADA-MST: " + mstId);
             lafLogger.debug(
                 "Imported file logged to: " + filePath + "/" + fileName);

@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.validation.rules.messung;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,7 +18,6 @@ import de.intevation.lada.model.stammdaten.MmtMessgroesse;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -39,34 +37,24 @@ public class MessgroesseToMessmethode implements Rule {
     @Override
     public Violation execute(Object object) {
         Messung messung = (Messung) object;
-        String mmt = messung.getMmtId();
+
         QueryBuilder<Messwert> builder =
-            repository.queryBuilder(Messwert.class);
-        builder.and("messungsId", messung.getId());
-        Response response = repository.filter(builder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<Messwert> messwerte = (List<Messwert>) response.getData();
+            repository.queryBuilder(Messwert.class)
+                .and("messungsId", messung.getId());
+        List<Messwert> messwerte = repository.filterPlain(builder.getQuery());
 
         QueryBuilder<MmtMessgroesse> mmtBuilder =
-            repository.queryBuilder(MmtMessgroesse.class);
+            repository.queryBuilder(MmtMessgroesse.class)
+                .and("mmtId", messung.getMmtId());
+        List<MmtMessgroesse> mmtMs =
+            repository.filterPlain(mmtBuilder.getQuery());
 
-        Response results =
-            repository.filter(mmtBuilder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<MmtMessgroesse> messgroessen =
-            (List<MmtMessgroesse>) results.getData();
-        List<MmtMessgroesse> found = new ArrayList<MmtMessgroesse>();
-        for (MmtMessgroesse mg: messgroessen) {
-            if (mg.getMmtId().equals(mmt)) {
-                found.add(mg);
-            }
-        }
         Violation violation = new Violation();
         for (Messwert messwert : messwerte) {
             boolean hit = false;
-            for (MmtMessgroesse messgroesse: found) {
+            for (MmtMessgroesse mmtM: mmtMs) {
                 if (messwert.getMessgroesseId().equals(
-                        messgroesse.getMessgroesseId())) {
+                        mmtM.getMessgroesseId())) {
                     hit = true;
                 }
             }
@@ -74,7 +62,8 @@ public class MessgroesseToMessmethode implements Rule {
                 Messgroesse mg = repository.getByIdPlain(
                     Messgroesse.class, messwert.getMessgroesseId());
                 violation.addError(
-                    "messgroesse#" + mmt + " " + mg.getMessgroesse(),
+                    "messgroesse#" + messung.getMmtId()
+                    + " " + mg.getMessgroesse(),
                     StatusCodes.VALUE_NOT_MATCHING);
             }
         }

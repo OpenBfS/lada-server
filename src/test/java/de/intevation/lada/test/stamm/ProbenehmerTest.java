@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
 
@@ -24,22 +25,17 @@ import de.intevation.lada.test.ServiceTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class ProbenehmerTest extends ServiceTest {
+
     private JsonObject expectedById;
     private JsonObject create;
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
-
     @Override
     public void init(
+        Client c,
         URL baseUrl,
         List<Protocol> protocol
     ) {
-        super.init(baseUrl, protocol);
+        super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
@@ -63,7 +59,7 @@ public class ProbenehmerTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("probenehmer", "rest/probenehmer");
+        get("probenehmer", "rest/probenehmer");
         getById("probenehmer", "rest/probenehmer/1000", expectedById);
         update(
             "probenehmer",

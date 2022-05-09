@@ -13,6 +13,8 @@ import java.util.List;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.Assert;
 
@@ -27,19 +29,13 @@ public class MessprogrammTest extends ServiceTest {
     private JsonObject expectedById;
     private JsonObject create;
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
-
     @Override
     public void init(
+        Client c,
         URL baseUrl,
         List<Protocol> protocol
     ) {
-        super.init(baseUrl, protocol);
+        super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung",
@@ -68,9 +64,8 @@ public class MessprogrammTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("messprogramm", "rest/messprogramm");
+        get("messprogramm", "rest/messprogramm", Status.METHOD_NOT_ALLOWED);
         getById("messprogramm", "rest/messprogramm/1000", expectedById);
-        filter("messprogramm", "rest/messprogramm?qid=9");
         update(
             "messprogramm",
             "rest/messprogramm/1000",

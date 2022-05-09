@@ -19,7 +19,7 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.transaction.Transactional;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.util.rest.Response;
 

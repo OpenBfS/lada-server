@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Job.JobNotFinishedException;

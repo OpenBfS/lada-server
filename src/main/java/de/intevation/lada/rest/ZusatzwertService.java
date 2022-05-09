@@ -177,7 +177,8 @@ public class ZusatzwertService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        /* Persist the new object*/
+
+        // TODO: perform validation to avoid violating database constraints
         return authorization.filter(
             repository.create(zusatzwert),
             ZusatzWert.class);

@@ -83,31 +83,23 @@ Vollständigen Setup inklusive LADA-Client, in dem jeweils der auf dem Host
 vorhandene Quellcode in die Container gemounted wird, so dass auf dem Host
 durchgeführte Änderungen leicht innerhalb der Container getestet werden können.
 
-Bauen der Images:
- $ docker build -f db_schema/Dockerfile -t koala/lada_db db_schema
- $ docker build -f shibboleth/Dockerfile -t koala/lada_idp shibboleth
- $ docker build -t koala/lada_wildfly .
+Aufsetzen von Datenbank und LADA-Server:
+ $ docker-compose up -d
+
+Bauen des Client-Images:
  $ cd your/repo/of/lada-client
  $ docker build -t koala/lada_client .
 
-Oder für ein Client-Image mit Shibboleth-Unterstützung:
-
-$ docker build -f Dockerfile.shibboleth -t koala/lada_client .
-
-Aufbau eines Netzwerks für die LADA-Komponenten:
- $ docker network create lada_network
+Oder für Shibboleth-Unterstützung:
+ $ docker build -f shibboleth/Dockerfile -t koala/lada_idp shibboleth
+ $ cd your/repo/of/lada-client
+ $ docker build -f Dockerfile.shibboleth -t koala/lada_client .
 
 Starten der Container:
- $ docker run --name lada_db --net=lada_network \
-          -v $PWD/db_schema:/opt/lada_sql/ \
-          -d koala/lada_db:latest
  $ docker run --name lada-idp --net=lada_network \
              -p 20080:80 -p 28080:8080 -p 20443:443 -p 28443:8443 \
              -v $PWD/shibboleth:/usr/local/lada_shib/sources \
              -d koala/lada_idp
- $ docker run --name lada-server --net=lada_network \
-          -v $PWD:/usr/src/lada-server \
-          -d koala/lada_wildfly
  $ cd your/repo/of/lada-client
  $ docker run --name lada-client --net=lada_network \
               -v $PWD:/usr/local/lada \

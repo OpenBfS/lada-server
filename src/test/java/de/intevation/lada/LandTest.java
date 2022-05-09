@@ -12,7 +12,7 @@ import java.net.URL;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -24,7 +24,6 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -135,7 +134,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testProbe(@ArquillianResource URL baseUrl)
     throws Exception {
-        probeTest.init(baseUrl, testProtocol);
+        probeTest.init(this.client, baseUrl, testProtocol);
         probeTest.execute();
     }
 
@@ -145,12 +144,11 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T4)
     @RunAsClient
-    public final void testPkommentar(@ArquillianResource URL baseUrl)
+    public final void testKommentarP(@ArquillianResource URL baseUrl)
     throws Exception {
-        pkommentarTest.init(baseUrl, testProtocol);
+        pkommentarTest.init(this.client, baseUrl, testProtocol);
         pkommentarTest.execute();
     }
 
@@ -160,27 +158,25 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T6)
     @RunAsClient
     public final void testOrtszuordnung(@ArquillianResource URL baseUrl)
     throws Exception {
-        ortszuordnungTest.init(baseUrl, testProtocol);
+        ortszuordnungTest.init(this.client, baseUrl, testProtocol);
         ortszuordnungTest.execute();
     }
 
     /**
-     * Tests for zustzwert operations.
+     * Tests for zusatzwert operations.
      * @param baseUrl The server url used for the request.
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T8)
     @RunAsClient
     public final void testZusatzwert(@ArquillianResource URL baseUrl)
     throws Exception {
-        zusatzwertTest.init(baseUrl, testProtocol);
+        zusatzwertTest.init(this.client, baseUrl, testProtocol);
         zusatzwertTest.execute();
     }
     /**
@@ -189,12 +185,11 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T10)
     @RunAsClient
     public final void testMessung(@ArquillianResource URL baseUrl)
     throws Exception {
-        messungTest.init(baseUrl, testProtocol);
+        messungTest.init(this.client, baseUrl, testProtocol);
         messungTest.execute();
     }
 
@@ -204,12 +199,11 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T12)
     @RunAsClient
-    public final void testMkommentar(@ArquillianResource URL baseUrl)
+    public final void testKommentarM(@ArquillianResource URL baseUrl)
     throws Exception {
-        mkommentarTest.init(baseUrl, testProtocol);
+        mkommentarTest.init(this.client, baseUrl, testProtocol);
         mkommentarTest.execute();
     }
 
@@ -223,7 +217,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMesswert(@ArquillianResource URL baseUrl)
     throws Exception {
-        messwertTest.init(baseUrl, testProtocol);
+        messwertTest.init(this.client, baseUrl, testProtocol);
         messwertTest.execute();
     }
 
@@ -233,12 +227,11 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T16)
     @RunAsClient
     public final void testStatus(@ArquillianResource URL baseUrl)
     throws Exception {
-        statusTest.init(baseUrl, testProtocol);
+        statusTest.init(this.client, baseUrl, testProtocol);
         statusTest.execute();
     }
 
@@ -252,7 +245,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMessprogramm(@ArquillianResource URL baseUrl)
     throws Exception {
-        messprogrammTest.init(baseUrl, testProtocol);
+        messprogrammTest.init(this.client, baseUrl, testProtocol);
         messprogrammTest.execute();
     }
 
@@ -262,12 +255,11 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T20)
     @RunAsClient
     public final void testQuery(@ArquillianResource URL baseUrl)
     throws Exception {
-        queryTest.init(baseUrl, testProtocol);
+        queryTest.init(this.client, baseUrl, testProtocol);
         queryTest.execute();
     }
 
@@ -298,9 +290,8 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T3)
-    @UsingDataSet("datasets/dbUnit_pkommentar.json")
+    @UsingDataSet("datasets/dbUnit_probe.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseKommentarP() throws Exception {
@@ -319,9 +310,8 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T5)
-    @UsingDataSet("datasets/dbUnit_ortszuordnung.json")
+    @UsingDataSet("datasets/dbUnit_probe.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseOrtszuordnung() throws Exception {
@@ -340,9 +330,8 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T7)
-    @UsingDataSet("datasets/dbUnit_zusatzwert.json")
+    @UsingDataSet("datasets/dbUnit_probe.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseZusatzwert() throws Exception {
@@ -383,9 +372,8 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @InSequence(T11)
-    @UsingDataSet("datasets/dbUnit_mkommentar.json")
+    @UsingDataSet("datasets/dbUnit_probe.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseKommentarM() throws Exception {
@@ -470,7 +458,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testPepGeneration(@ArquillianResource URL baseUrl)
             throws Exception {
-        pepGenerationTest.init(baseUrl, testProtocol);
+        pepGenerationTest.init(this.client, baseUrl, testProtocol);
         pepGenerationTest.execute();
     }
 }

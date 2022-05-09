@@ -18,7 +18,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.model.land.Messprogramm;
@@ -813,11 +813,6 @@ public class ProbeFactory {
     public List<Map<String, Object>> getProtocol() {
         return protocol;
     }
-
-    public void setProtocol(List<Map<String, Object>> protocol) {
-        this.protocol = protocol;
-    }
-
 
     /**
      * Set the minimal 'deskriptor' acording to the umwelt.

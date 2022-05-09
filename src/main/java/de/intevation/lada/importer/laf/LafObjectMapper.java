@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.factory.ProbeFactory;

@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
 
@@ -23,21 +24,16 @@ import de.intevation.lada.test.ServiceTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class DeskriptorenTest extends ServiceTest {
-    private JsonObject expectedById;
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
+    private JsonObject expectedById;
 
     @Override
     public void init(
+        Client c,
         URL baseUrl,
         List<Protocol> protocol
     ) {
-        super.init(baseUrl, protocol);
+        super.init(c, baseUrl, protocol);
 
         // Prepare expected object
         JsonObject content =
@@ -52,9 +48,9 @@ public class DeskriptorenTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("deskriptor", "rest/deskriptor");
-        getAll("deskriptor", "rest/deskriptor?layer=1");
-        getAll("deskriptor", "rest/deskriptor?layer=1&parents=1, 2");
+        get("deskriptor", "rest/deskriptor");
+        get("deskriptor", "rest/deskriptor?layer=1");
+        get("deskriptor", "rest/deskriptor?layer=1&parents=1, 2");
         getById("deskriptor", "rest/deskriptor/1000", expectedById);
     }
 }

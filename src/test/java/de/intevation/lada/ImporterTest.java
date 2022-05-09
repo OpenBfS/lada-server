@@ -27,7 +27,6 @@ import javax.ws.rs.client.SyncInvoker;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -107,9 +106,6 @@ public class ImporterTest extends BaseTest {
         + "MESSPROGRAMM_S 1\n"
         + "DATENBASIS_S 02\n"
         + "%ENDE%\n";
-
-    @Inject
-    Logger internalLogger;
 
     @PersistenceContext
     EntityManager em;
@@ -795,7 +791,8 @@ public class ImporterTest extends BaseTest {
             .header("X-LADA-MST", "06010")
             .post(Entity.entity(requestJson.toString(),
                     MediaType.APPLICATION_JSON));
-        JsonObject importCreatedObject = parseResponse(importCreated, prot);
+        JsonObject importCreatedObject = parseSimpleResponse(
+            importCreated, prot);
 
         final String refIdKey = "refId";
         assertContains(importCreatedObject, refIdKey);
@@ -812,7 +809,7 @@ public class ImporterTest extends BaseTest {
         final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
         final int waitASecond = 1000;
         do {
-            importStatusObject = parseResponse(statusRequest.get(), prot);
+            importStatusObject = parseSimpleResponse(statusRequest.get(), prot);
 
             final String doneKey = "done";
             assertContains(importStatusObject, doneKey);

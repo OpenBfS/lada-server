@@ -14,7 +14,7 @@ import java.util.List;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
-import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 
 import org.junit.Assert;
@@ -33,19 +33,13 @@ public class MesswertTest extends ServiceTest {
     private JsonObject expectedById;
     private JsonObject create;
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
-
     @Override
     public void init(
+        Client c,
         URL baseUrl,
         List<Protocol> protocol
     ) {
-        super.init(baseUrl, protocol);
+        super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung",
@@ -72,7 +66,7 @@ public class MesswertTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("messwert", "rest/messwert?messungsId=1200");
+        get("messwert", "rest/messwert?messungsId=1200");
         getById("messwert", "rest/messwert/10000", expectedById);
         normalize(expectedById);
         JsonObject created = create("messwert", "rest/messwert", create);
@@ -93,23 +87,13 @@ public class MesswertTest extends ServiceTest {
         prot.setPassed(false);
         protocol.add(prot);
 
-        Response normalized = ClientBuilder.newClient().target(
+        Response normalized = client.target(
             baseUrl + "rest/messwert/normalize?messungsId=1200")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .put(null);
         JsonObject normalizedObject = BaseTest.parseResponse(normalized, prot);
-
-        /* Verify the response*/
-        boolean success = normalizedObject.getBoolean("success");
-        Assert.assertTrue(
-            "Unsuccessful response object:\n" + normalizedObject,
-            success);
-        prot.addInfo("success", success);
-        String message = normalizedObject.getString("message");
-        Assert.assertEquals("200", message);
-        prot.addInfo("message", message);
 
         // The following makes assumptions about the first entry only
         JsonObject normalizedMesswert =

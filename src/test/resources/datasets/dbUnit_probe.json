@@ -18,6 +18,13 @@
         "solldatum_ende": "2012-05-05 16:00:00",
         "tree_modified": "2012-05-08 10:00:00"
     }],
+    "land.kommentar_p": [{
+        "id": 1000,
+        "mst_id": "06010",
+        "datum": "2012-05-11 12:01:00",
+        "text": "Testkommentar",
+        "probe_id": 1000
+    }],
     "land.messung": [{
         "id": 1200,
         "probe_id": 1000,
@@ -50,5 +57,27 @@
         "meh_id": 207,
         "grenzwertueberschreitung": false,
         "letzte_aenderung": "2012-05-09 09:00:00"
+    }],
+    "land.ortszuordnung": [{
+        "id": 1000,
+        "probe_id": 1000,
+        "ort_id": 1000,
+        "ortszusatztext": "Test",
+        "letzte_aenderung": "2012-05-07 09:00:00"
+    }],
+    "land.zusatz_wert": [{
+        "id": 1000,
+        "probe_id": 1000,
+        "pzs_id": "A75",
+        "messwert_pzs": 12.0,
+        "messfehler": 8.0,
+        "letzte_aenderung": "2012-05-08 14:00:00"
+    }],
+    "land.kommentar_m": [{
+        "id": 1000,
+        "mst_id": "06010",
+        "datum": "2012-05-08 11:00:00",
+        "text": "Testkommentar",
+        "messungs_id": 1200
     }]
 }

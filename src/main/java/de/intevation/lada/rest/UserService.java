@@ -23,7 +23,7 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 /**
  * REST service to get login data for the Lada application.

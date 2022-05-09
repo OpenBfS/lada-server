@@ -21,9 +21,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.model.land.Messprogramm;
@@ -111,57 +108,6 @@ public class MessprogrammService extends LadaService {
 
     @Inject
     private ProbeFactory factory;
-
-    /**
-     * Get all Messprogramm objects.
-     * <p>
-     * The requested objects can be filtered using the following URL
-     * parameters:<br>
-     *  * page: The page to display in a paginated result grid.<br>
-     *  * start: The first Probe item.<br>
-     *  * limit: The count of Probe items.<br>
-     *  * sort: Sort the result ascending(ASC) or descenting (DESC).<br>
-     *  <br>
-     *  The response data contains a stripped set of Messprogramm objects.
-     *  The returned fields are defined in the query used in the request.
-     * <p>
-     * Example:
-     * http://example.com/messprogramm?page=[PAGE]&start=[START]&limit=[LIMIT]]
-     *
-     * @return Response object containing all Messprogramm objects.
-     */
-    @GET
-    @Path("/")
-    public Response get(
-        @Context UriInfo info
-    ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-
-        List<Messprogramm> messprogramms =
-            repository.getAllPlain(Messprogramm.class);
-        int size = messprogramms.size();
-        if (params.containsKey("start") && params.containsKey("limit")) {
-            int start = Integer.valueOf(params.getFirst("start"));
-            int limit = Integer.valueOf(params.getFirst("limit"));
-            int end = limit + start;
-            if (start + limit > messprogramms.size()) {
-                end = messprogramms.size();
-            }
-            messprogramms = messprogramms.subList(start, end);
-        }
-
-        for (Messprogramm mp: messprogramms) {
-            mp.setReadonly(
-                !authorization.isAuthorized(
-                    mp, RequestMethod.POST, Messprogramm.class));
-            Violation violation = validator.validate(mp);
-            if (violation.hasErrors() || violation.hasWarnings()) {
-                mp.setErrors(violation.getErrors());
-                mp.setWarnings(violation.getWarnings());
-            }
-        }
-        return new Response(true, StatusCodes.OK, messprogramms, size);
-    }
 
     /**
      * Get a Messprogramm object by id.

@@ -99,6 +99,7 @@
                     <showWarnings>true</showWarnings>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <compilerArgument>-Xlint:unchecked</compilerArgument>
                 </configuration>
             </plugin>
             <plugin>
@@ -350,9 +351,9 @@
 
         <!-- Logging -->
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Arquillian/Testing -->
@@ -418,6 +419,12 @@
             <artifactId>arquillian-persistence-dbunit</artifactId>
             <version>${arquillian.persistence.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
@@ -451,6 +458,11 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <skip>false</skip>
+                            <systemPropertyVariables>
+                                <java.util.logging.manager>
+                                    org.jboss.logmanager.LogManager
+                                </java.util.logging.manager>
+                            </systemPropertyVariables>
                         </configuration>
                     </plugin>
                 </plugins>

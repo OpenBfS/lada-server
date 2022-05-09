@@ -14,6 +14,7 @@ import java.util.List;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
+import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
 
@@ -30,19 +31,13 @@ public class ZusatzwertTest extends ServiceTest {
     private JsonObject expectedById;
     private JsonObject create;
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
-
     @Override
     public void init(
+        Client c,
         URL baseUrl,
         List<Protocol> protocol
     ) {
-        super.init(baseUrl, protocol);
+        super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung",
@@ -51,7 +46,7 @@ public class ZusatzwertTest extends ServiceTest {
 
         // Prepare expected probe object
         JsonObject content =
-            readJsonResource("/datasets/dbUnit_zusatzwert.json");
+            readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject messung =
             content.getJsonArray("land.zusatz_wert").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messung);
@@ -70,10 +65,10 @@ public class ZusatzwertTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("zusatzwert", "rest/zusatzwert");
+        get("zusatzwert", "rest/zusatzwert");
         getById("zusatzwert", "rest/zusatzwert/1000", expectedById);
         JsonObject created = create("zusatzwert", "rest/zusatzwert", create);
-        update("zusatzwert", "rest/zusatzwert/1000", "pzsId", "A77", "A78");
+        update("zusatzwert", "rest/zusatzwert/1000", "pzsId", "A75", "A74");
         delete(
             "zusatzwert",
             "rest/zusatzwert/" + created.getJsonObject("data").get("id"));

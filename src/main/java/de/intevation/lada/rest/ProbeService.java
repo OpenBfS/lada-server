@@ -24,8 +24,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.lock.LockConfig;
@@ -160,58 +158,6 @@ public class ProbeService extends LadaService {
         public void setEnd(Calendar end) {
             this.end = end;
         }
-    }
-
-    /**
-     * Get all Probe objects.
-     * <p>
-     * The requested objects can be filtered using the following URL
-     * parameters:<br>
-     *  * page: The page to display in a paginated result grid.<br>
-     *  * start: The first Probe item.<br>
-     *  * limit: The count of Probe items.<br>
-     *  <br>
-     *  The response data contains a stripped set of Probe objects.
-     *  The returned fields are defined in the query used in the request.
-     * <p>
-     * Example:
-     * http://example.com/probe?page=[PAGE]&start=[START]&limit=[LIMIT]
-     *
-     * @return Response object containing all Probe objects.
-     */
-    @GET
-    @Path("/")
-    public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info
-    ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        List<Probe> probes = repository.getAllPlain(Probe.class);
-
-        int size = probes.size();
-        if (params.containsKey("start") && params.containsKey("limit")) {
-            int start = Integer.valueOf(params.getFirst("start"));
-            int limit = Integer.valueOf(params.getFirst("limit"));
-            int end = limit + start;
-            if (start + limit > size) {
-                end = size;
-            }
-            probes = probes.subList(start, end);
-        }
-
-        for (Probe probe: probes) {
-            Violation violation = validator.validate(probe);
-            if (violation.hasWarnings()
-                || violation.hasErrors()
-                || violation.hasNotifications()
-            ) {
-                probe.setWarnings(violation.getWarnings());
-                probe.setErrors(violation.getErrors());
-                probe.setNotifications(violation.getNotifications());
-            }
-            probe.setReadonly(authorization.isProbeReadOnly(probe.getId()));
-        }
-        return new Response(true, StatusCodes.OK, probes);
     }
 
     /**

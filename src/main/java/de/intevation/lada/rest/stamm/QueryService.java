@@ -25,7 +25,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.QueryMessstelle;
@@ -156,7 +156,7 @@ public class QueryService extends LadaService {
     }
 
     /**
-     * Update an existing query_user object in the database
+     * Update an existing query_user object in the database.
      */
     @PUT
     @Path("/{id}")

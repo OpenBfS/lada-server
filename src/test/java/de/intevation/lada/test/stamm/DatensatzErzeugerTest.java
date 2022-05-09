@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
 
@@ -27,19 +28,13 @@ public class DatensatzErzeugerTest extends ServiceTest {
     private JsonObject expectedById;
     private JsonObject create;
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
-
     @Override
     public void init(
+        Client c,
         URL baseUrl,
         List<Protocol> protocol
     ) {
-        super.init(baseUrl, protocol);
+        super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
@@ -63,7 +58,7 @@ public class DatensatzErzeugerTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("datensatzerzeuger", "rest/datensatzerzeuger");
+        get("datensatzerzeuger", "rest/datensatzerzeuger");
         getById(
             "datensatzerzeuger",
             "rest/datensatzerzeuger/1000",

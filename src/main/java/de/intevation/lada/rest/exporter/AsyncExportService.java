@@ -33,7 +33,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.exporter.ExportJobManager;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
