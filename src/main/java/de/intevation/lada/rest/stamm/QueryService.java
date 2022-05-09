@@ -156,7 +156,7 @@ public class QueryService extends LadaService {
     }
 
     /**
-     * Update an existing query_user object in the database
+     * Update an existing query_user object in the database.
      */
     @PUT
     @Path("/{id}")
