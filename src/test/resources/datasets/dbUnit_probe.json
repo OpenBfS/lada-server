@@ -72,5 +72,12 @@
         "messwert_pzs": 12.0,
         "messfehler": 8.0,
         "letzte_aenderung": "2012-05-08 14:00:00"
+    }],
+    "land.kommentar_m": [{
+        "id": 1000,
+        "mst_id": "06010",
+        "datum": "2012-05-08 11:00:00",
+        "text": "Testkommentar",
+        "messungs_id": 1200
     }]
 }
