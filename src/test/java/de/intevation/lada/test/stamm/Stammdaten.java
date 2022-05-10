@@ -214,7 +214,7 @@ public class Stammdaten extends ServiceTest {
         String type
     ) {
         Assert.assertNotNull(type);
-        getAll(type, "rest/" + type);
+        get(type, "rest/" + type);
     }
 
     /**
@@ -245,11 +245,6 @@ public class Stammdaten extends ServiceTest {
             .get();
         JsonObject content = BaseTest.parseResponse(response, prot);
         /* Verify the response*/
-        Assert.assertTrue("Unsuccessful response object:\n" + content,
-            content.getBoolean("success"));
-        prot.addInfo("success", content.getBoolean("success"));
-        Assert.assertEquals("200", content.getString("message"));
-        prot.addInfo("message", content.getString("message"));
         MatcherAssert.assertThat(content.getJsonObject("data").keySet(),
             matchers.get(type));
         prot.addInfo("object", "equals");

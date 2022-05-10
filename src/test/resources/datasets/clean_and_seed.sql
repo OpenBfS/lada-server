@@ -4,6 +4,7 @@ SET search_path TO stamm;
 DELETE FROM auth;
 DELETE FROM land.tagzuordnung;
 DELETE FROM tag;
+DELETE FROM land.ortszuordnung;
 DELETE FROM ort;
 DELETE FROM ort_typ;
 DELETE FROM land.probe;
@@ -15,6 +16,9 @@ DELETE FROM datenbasis;
 DELETE FROM umwelt;
 DELETE FROM mass_einheit_umrechnung;
 DELETE FROM mess_einheit;
+DELETE FROM mmt_messgroesse_grp;
+DELETE FROM mg_grp;
+DELETE FROM messgroessen_gruppe;
 DELETE FROM messgroesse;
 DELETE FROM mess_methode;
 DELETE FROM datensatz_erzeuger;
@@ -50,6 +54,9 @@ INSERT INTO mass_einheit_umrechnung (meh_id_von, meh_id_zu, faktor)
 INSERT INTO messgroesse (id, messgroesse) VALUES (56, 'Mangan');
 INSERT INTO messgroesse (id, messgroesse) VALUES (57, 'Mangan');
 INSERT INTO mess_methode (id) VALUES ('A3');
+INSERT INTO messgroessen_gruppe (id) VALUES (1);
+INSERT INTO mg_grp (messgroessengruppe_id, messgroesse_id) VALUES (1, 56);
+INSERT INTO mmt_messgroesse_grp (messgroessengruppe_id, mmt_id) VALUES (1, 'A3');
 INSERT INTO netz_betreiber (id) VALUES ('06');
 INSERT INTO netz_betreiber (id) VALUES ('01');
 INSERT INTO mess_stelle (id, netzbetreiber_id) VALUES ('06010', '06');
@@ -85,3 +92,45 @@ INSERT INTO auth (ldap_group, netzbetreiber_id, mst_id, funktion_id)
        VALUES ('mst_06_status', '06', '06010', 1);
 INSERT INTO auth (ldap_group, netzbetreiber_id, mst_id, funktion_id)
        VALUES ('land_06_stamm', '06', '06010', 4);
+
+/*
+ We have to use SQL to add ort data because geometry field does not work
+ with @UsingDataSet
+ Keep this in sync with dbUnit_ort.json, which is still used
+ to verify test results!
+*/
+INSERT INTO stamm.ort (
+    id,
+    netzbetreiber_id,
+    ort_id,
+    langtext,
+    staat_id,
+    gem_id,
+    unscharf,
+    nuts_code,
+    kda_id,
+    koord_x_extern,
+    koord_y_extern,
+    letzte_aenderung,
+    geom,
+    ort_typ,
+    kurztext,
+    berichtstext
+) VALUES (
+    1000,
+    '06',
+    'D_ 00191',
+    'Langer Text',
+    0,
+    '11000000',
+    TRUE,
+    'DE716',
+    5,
+    '32487017',
+    '5519769',
+    '2015-03-01 12:00:00',
+    'SRID=4326;POINT(49.83021 8.81948)',
+    1,
+    'kurz',
+    'bericht'
+);

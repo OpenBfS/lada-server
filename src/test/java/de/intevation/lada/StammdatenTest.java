@@ -256,8 +256,8 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @InSequence(T7)
-    // Use SQL because geometry field does not work with @UsingDataSet
-    @ApplyScriptBefore("datasets/dbUnit_ort.sql")
+    // Data added using clean_and_seed.sql because geometry field
+    // does not work with @UsingDataSet
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseOrt() throws Exception {

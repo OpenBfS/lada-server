@@ -60,7 +60,7 @@ public class MessprogrammKategorieTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("messprogrammkategorie", "rest/messprogrammkategorie");
+        get("messprogrammkategorie", "rest/messprogrammkategorie");
         getById(
             "messprogrammkategorie",
             "rest/messprogrammkategorie/1000",

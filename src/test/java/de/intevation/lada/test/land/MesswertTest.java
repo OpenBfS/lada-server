@@ -66,7 +66,7 @@ public class MesswertTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("messwert", "rest/messwert?messungsId=1200");
+        get("messwert", "rest/messwert?messungsId=1200");
         getById("messwert", "rest/messwert/10000", expectedById);
         normalize(expectedById);
         JsonObject created = create("messwert", "rest/messwert", create);
@@ -94,16 +94,6 @@ public class MesswertTest extends ServiceTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .put(null);
         JsonObject normalizedObject = BaseTest.parseResponse(normalized, prot);
-
-        /* Verify the response*/
-        boolean success = normalizedObject.getBoolean("success");
-        Assert.assertTrue(
-            "Unsuccessful response object:\n" + normalizedObject,
-            success);
-        prot.addInfo("success", success);
-        String message = normalizedObject.getString("message");
-        Assert.assertEquals("200", message);
-        prot.addInfo("message", message);
 
         // The following makes assumptions about the first entry only
         JsonObject normalizedMesswert =

@@ -46,7 +46,7 @@ public class ZusatzwertTest extends ServiceTest {
 
         // Prepare expected probe object
         JsonObject content =
-            readJsonResource("/datasets/dbUnit_zusatzwert.json");
+            readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject messung =
             content.getJsonArray("land.zusatz_wert").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messung);
@@ -65,10 +65,10 @@ public class ZusatzwertTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("zusatzwert", "rest/zusatzwert");
+        get("zusatzwert", "rest/zusatzwert");
         getById("zusatzwert", "rest/zusatzwert/1000", expectedById);
         JsonObject created = create("zusatzwert", "rest/zusatzwert", create);
-        update("zusatzwert", "rest/zusatzwert/1000", "pzsId", "A77", "A78");
+        update("zusatzwert", "rest/zusatzwert/1000", "pzsId", "A75", "A74");
         delete(
             "zusatzwert",
             "rest/zusatzwert/" + created.getJsonObject("data").get("id"));

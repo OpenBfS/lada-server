@@ -104,8 +104,8 @@ public class TagTest extends ServiceTest {
         JsonObject updateResponse = update(name, tagUrl + createdId, name,
             tagToTest.getString(name),
             tagUpdated);
-        JsonObject getAllResponse = getAll(name, tagUrl);
-        Assert.assertFalse(getAllResponse.getJsonArray(dataKey).isEmpty());
+        JsonObject getResponse = get(name, tagUrl);
+        Assert.assertFalse(getResponse.getJsonArray(dataKey).isEmpty());
         getById(name, tagUrl + createdId,
             updateResponse.getJsonObject(dataKey));
         delete(name, tagUrl + createdId);

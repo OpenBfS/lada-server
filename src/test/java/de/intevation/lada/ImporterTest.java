@@ -791,7 +791,8 @@ public class ImporterTest extends BaseTest {
             .header("X-LADA-MST", "06010")
             .post(Entity.entity(requestJson.toString(),
                     MediaType.APPLICATION_JSON));
-        JsonObject importCreatedObject = parseResponse(importCreated, prot);
+        JsonObject importCreatedObject = parseSimpleResponse(
+            importCreated, prot);
 
         final String refIdKey = "refId";
         assertContains(importCreatedObject, refIdKey);
@@ -808,7 +809,7 @@ public class ImporterTest extends BaseTest {
         final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
         final int waitASecond = 1000;
         do {
-            importStatusObject = parseResponse(statusRequest.get(), prot);
+            importStatusObject = parseSimpleResponse(statusRequest.get(), prot);
 
             final String doneKey = "done";
             assertContains(importStatusObject, doneKey);

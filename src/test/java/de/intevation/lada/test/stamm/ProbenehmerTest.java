@@ -59,7 +59,7 @@ public class ProbenehmerTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("probenehmer", "rest/probenehmer");
+        get("probenehmer", "rest/probenehmer");
         getById("probenehmer", "rest/probenehmer/1000", expectedById);
         update(
             "probenehmer",

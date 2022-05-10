@@ -64,7 +64,7 @@ public class TagZuordnungTest extends ServiceTest {
         // test assigning tags
         JsonObject createResponse = bulkOperation(name, tagUrl, create);
         long nowLong = System.currentTimeMillis();
-        JsonObject tagResponse = getAll("tag", "rest/tag/");
+        JsonObject tagResponse = get("tag", "rest/tag/");
         JsonArray tags = tagResponse.getJsonArray(data);
         Assert.assertEquals(2, tags.size());
         tags.forEach(tagVal -> {
@@ -75,28 +75,28 @@ public class TagZuordnungTest extends ServiceTest {
         });
 
         // test filtering tags by assignment
-        tagResponse = getAll("tag", "rest/tag?pid=9999");
+        tagResponse = get("tag", "rest/tag?pid=9999");
         Assert.assertTrue(
             "Returned data despite filtering for non-existent ID",
             tagResponse.getJsonArray(data).isEmpty());
 
-        tagResponse = getAll("tag", "rest/tag?pid=1901");
+        tagResponse = get("tag", "rest/tag?pid=1901");
         Assert.assertEquals(
             "Expected one tag für given Probe ID",
             1, tagResponse.getJsonArray(data).size());
 
-        tagResponse = getAll("tag", "rest/tag?mid=1801");
+        tagResponse = get("tag", "rest/tag?mid=1801");
         Assert.assertEquals(
             "Expected one tag für given Messung ID",
             1, tagResponse.getJsonArray(data).size());
 
-        tagResponse = getAll("tag", "rest/tag?mid=1801&mid=1802");
+        tagResponse = get("tag", "rest/tag?mid=1801&mid=1802");
         Assert.assertTrue(
             "Expected empty result filtering by tagged and un-tagged object",
             tagResponse.getJsonArray(data).isEmpty());
 
         bulkOperation(name, tagUrl, create2);
-        tagResponse = getAll("tag", "rest/tag?mid=1801&mid=1802");
+        tagResponse = get("tag", "rest/tag?mid=1801&mid=1802");
         Assert.assertEquals(
             "Expected one tag für given Messung IDs",
             1, tagResponse.getJsonArray(data).size());

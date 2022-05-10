@@ -850,10 +850,6 @@ public class PepGenerationTest extends ServiceTest {
             JsonArray proben = null;
             try {
                 /* Verify the response*/
-                Assert.assertTrue(content.getBoolean("success"));
-                prot.addInfo("success", content.getBoolean("success"));
-                Assert.assertEquals("200", content.getString("message"));
-                prot.addInfo("message", content.getString("message"));
                 Assert.assertNotNull(content.getJsonObject("data"));
 
                 //Get data for given messprogramm

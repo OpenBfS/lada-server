@@ -58,7 +58,7 @@ public class DatensatzErzeugerTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("datensatzerzeuger", "rest/datensatzerzeuger");
+        get("datensatzerzeuger", "rest/datensatzerzeuger");
         getById(
             "datensatzerzeuger",
             "rest/datensatzerzeuger/1000",

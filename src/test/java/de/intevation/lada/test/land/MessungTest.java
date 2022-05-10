@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
 
@@ -50,16 +49,15 @@ public class MessungTest extends ServiceTest {
         JsonObject content = readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject messung =
             content.getJsonArray("land.messung").getJsonObject(0);
-        JsonObjectBuilder builder = convertObject(messung);
-        JsonObject trans =
-            content.getJsonArray("land.messung_translation").getJsonObject(0);
-        builder.add("externeMessungsId", trans.get("messungs_ext_id"));
-        builder.add("parentModified", TS1);
-        builder.add("readonly", JsonValue.FALSE);
-        builder.add("owner", JsonValue.TRUE);
-        builder.add("statusEdit", JsonValue.TRUE);
-        builder.add("status", ID1000);
-        expectedById = builder.build();
+        // Automatic conversion of key for external ID does not work
+        final String extIdKey = "ext_id";
+        expectedById = convertObject(messung, extIdKey)
+            .add("externeMessungsId", messung.get(extIdKey))
+            .add("parentModified", TS1)
+            .add("readonly", JsonValue.FALSE)
+            .add("owner", JsonValue.TRUE)
+            .add("status", ID1000)
+            .build();
         Assert.assertNotNull(expectedById);
 
         // Load probe object to test POST request
@@ -71,7 +69,7 @@ public class MessungTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("messung", "rest/messung");
+        get("messung", "rest/messung");
         getById("messung", "rest/messung/1200", expectedById);
         JsonObject created = create("messung", "rest/messung", create);
         update("messung", "rest/messung/1200", "nebenprobenNr", "T100", "U200");

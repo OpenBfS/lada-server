@@ -62,7 +62,7 @@ public class OrtTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("ort", "rest/ort");
+        get("ort", "rest/ort");
         getById("ort", "rest/ort/1000", expectedById);
         int createdId = create("ort", "rest/ort", create)
             .getJsonObject("data").getInt("id");
