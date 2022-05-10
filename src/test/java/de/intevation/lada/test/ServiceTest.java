@@ -329,10 +329,6 @@ public class ServiceTest {
             .post(Entity.entity(
                     payload.toString(), MediaType.APPLICATION_JSON));
         JsonObject content = BaseTest.parseResponse(response, prot);
-        /* Verify the response*/
-        Assert.assertTrue("Unsuccessful response object:\n" + content,
-            content.getBoolean("success"));
-        prot.addInfo("success", content.getBoolean("success"));
         //Check each result
         content.getJsonArray("data").forEach(object -> {
             JsonObject responseObj = (JsonObject) object;
