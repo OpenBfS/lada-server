@@ -1772,7 +1772,15 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 889	0	1546	31	\N	\N	\N	t	f	\N	40	f	f	f
 971	1	4335	35	\N	\N	\N	t	f	-1	40	f	f	f
 1048	0	1650	36	\N	\N	\N	t	f	-1	40	f	f	f
-1092	0	3130	4	\N	\N	\N	f	f	\N	76	f	f	f
+1090	0	6301	37	\N	\N	\N	f	t	1	40	f	f	f
+1091	0	6302	37	\N	\N	\N	f	t	2	120	f	f	f
+1092	0	6303	37	\N	\N	\N	t	t	3	120	f	f	f
+1093	0	6304	37	\N	\N	\N	t	t	4	150	f	f	f
+1094	0	6305	37	\N	\N	\N	f	t	5	150	f	f	f
+1095	0	6306	37	\N	\N	\N	t	t	6	150	f	f	f
+1096	0	6307	37	\N	\N	\N	f	t	7	170	f	f	f
+1097	0	6308	37	\N	\N	\N	f	t	8	170	f	f	f
+1100	0	3130	4	\N	\N	\N	f	f	\N	76	f	f	f
 \.
 
 
