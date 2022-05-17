@@ -36,13 +36,10 @@ public class TagAuthorizer extends BaseAuthorizer {
     ) {
         Tag tag = (Tag) data;
         switch (tag.getTypId()) {
-            //Netzbetreiber tags may only be edited by stamm users
+            // Netzbetreiber tags may only be edited by stamm users
             case Tag.TAG_TYPE_NETZBETREIBER:
-                String netzbetreiber = tag.getNetzbetreiberId() != null
-                    ? tag.getNetzbetreiberId()
-                    : tag.getNetzbetreiber().getId();
                 return userInfo.getFunktionenForNetzbetreiber(
-                    netzbetreiber).contains(4);
+                    tag.getNetzbetreiberId()).contains(4);
             // Tags my only be edited by members of the referenced Messstelle
             case Tag.TAG_TYPE_MST:
                 return userInfo.getMessstellen().contains(tag.getMstId());

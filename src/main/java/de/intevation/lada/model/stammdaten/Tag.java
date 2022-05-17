@@ -172,7 +172,13 @@ public class Tag {
         this.readonly = readonly;
     }
 
+    /**
+     * @return ID of Netzbetreiber associated to this tag.
+     */
     public String getNetzbetreiberId() {
+        if (this.netzbetreiberId == null && this.netzbetreiber != null) {
+            this.netzbetreiberId = this.netzbetreiber.getId();
+        }
         return netzbetreiberId;
     }
 
