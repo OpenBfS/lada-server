@@ -104,10 +104,8 @@ public class TagZuordnungService extends LadaService {
                 continue;
             }
 
-            Tag tag = repository.getByIdPlain(Tag.class, tagId);
-            zuordnung.setTag(tag);
-
             //Extend tag expiring time
+            Tag tag = repository.getByIdPlain(Tag.class, tagId);
             Date date = new Date();
             Timestamp now = new Timestamp(date.getTime());
             tag.setGueltigBis(TagService.getGueltigBis(tag, now));
@@ -164,7 +162,15 @@ public class TagZuordnungService extends LadaService {
                 continue;
             }
 
-            responseList.add(repository.delete(zuordnung));
+            // Delete existing entity
+            responseList.add(
+                repository.delete(
+                    repository.getSinglePlain(
+                        repository.queryBuilder(TagZuordnung.class)
+                        .and("tagId", zuordnung.getTagId())
+                        .and("probeId", zuordnung.getProbeId())
+                        .and("messungId", zuordnung.getMessungId())
+                        .getQuery())));
         }
         return new Response(true, StatusCodes.OK, responseList);
     }

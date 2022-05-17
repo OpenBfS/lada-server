@@ -7,21 +7,13 @@
  */
 package de.intevation.lada.model.land;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-import de.intevation.lada.model.stammdaten.Tag;
 
 /**
  * The persistent class for the tagzuordnung database table.
@@ -41,11 +33,7 @@ public class TagZuordnung {
     @Column(name = "messung_id")
     private Integer messungId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "tag_id")
-    private Tag tag;
-
-    @Transient
+    @Column(name = "tag_id")
     private Integer tagId;
 
     public Integer getId() {
@@ -72,55 +60,14 @@ public class TagZuordnung {
         this.probeId = probe;
     }
 
-    public Tag getTag() {
-        return this.tag;
-    }
-
-    public void setTag(Tag tag) {
-        this.tag = tag;
-    }
-
     /**
      * @return ID of the referenced tag
      */
     public Integer getTagId() {
-        if (this.tagId == null && this.tag != null) {
-            this.tagId = this.tag.getId();
-        }
         return this.tagId;
     }
 
     public void setTagId(Integer tagId) {
         this.tagId = tagId;
-    }
-
-    /**
-     * Create json object representation of this object.
-     * @return JSON object
-     */
-    public JsonObject toJson() {
-        JsonObjectBuilder builder = Json.createObjectBuilder();
-        JsonObjectBuilder tagBuilder = Json.createObjectBuilder();
-        builder.add("id", id != null? id.toString(): "null");
-        if (tag != null) {
-            if (tag.getId() != null) {
-                tagBuilder.add("id", tag.getId());
-            }
-            if (tag.getTag() != null) {
-                tagBuilder.add("tag", tag.getTag());
-            }
-        }
-
-        if (messungId != null) {
-            builder.add("messungId", messungId);
-        }
-        if (probeId != null) {
-            builder.add("probeId", probeId);
-        }
-        if (tagId != null) {
-            builder.add("tagId", tagId);
-        }
-        builder.add("tag", tagBuilder.build());
-        return builder.build();
     }
 }

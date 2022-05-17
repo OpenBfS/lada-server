@@ -107,7 +107,6 @@ public class TagUtil {
     ) {
         // TODO: Instead of using IDs as parameters, pass the objects directly
         // instead of fetching them from the database again, whenever possible.
-        Tag tag = repository.getByIdPlain(Tag.class, tagId);
 
         //Get given probe and messung records
         List<Probe> probes = repository.filterPlain(
@@ -121,7 +120,7 @@ public class TagUtil {
         List<TagZuordnung> zuordnungs = new ArrayList<TagZuordnung>();
         probes.forEach(probe -> {
             TagZuordnung zuordnung = new TagZuordnung();
-            zuordnung.setTag(tag);
+            zuordnung.setTagId(tagId);
             zuordnung.setProbeId(probe.getId());
             repository.create(zuordnung);
             zuordnungs.add(zuordnung);
@@ -129,7 +128,7 @@ public class TagUtil {
 
         messungs.forEach(messung -> {
             TagZuordnung zuordnung = new TagZuordnung();
-            zuordnung.setTag(tag);
+            zuordnung.setTagId(tagId);
             zuordnung.setMessungId(messung.getId());
             repository.create(zuordnung);
             zuordnungs.add(zuordnung);

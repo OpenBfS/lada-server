@@ -80,7 +80,8 @@ public class Tag {
     @Column(name = "generated_at", insertable = false, updatable = false)
     private Timestamp generatedAt;
 
-    @OneToMany(mappedBy = "tag", fetch = FetchType.EAGER)
+    @OneToMany
+    @JoinColumn(name = "tag_id")
     @JsonIgnore
     private Set<TagZuordnung> tagZuordnungs;
 

@@ -7,16 +7,11 @@
  */
 package de.intevation.lada.test.land;
 
-import static de.intevation.lada.BaseTest.assertContains;
-
 import java.net.URL;
 import java.util.List;
 
-import javax.json.Json;
 import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
-import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
@@ -62,7 +57,7 @@ public class TagZuordnungTest extends ServiceTest {
      */
     public void execute() {
         // test assigning tags
-        JsonObject createResponse = bulkOperation(name, tagUrl, create);
+        bulkOperation(name, tagUrl, create);
         long nowLong = System.currentTimeMillis();
         JsonObject tagResponse = get("tag", "rest/tag/");
         JsonArray tags = tagResponse.getJsonArray(data);
@@ -102,14 +97,6 @@ public class TagZuordnungTest extends ServiceTest {
             1, tagResponse.getJsonArray(data).size());
 
         // Test unassigning tags
-        final String idKey = "id";
-        JsonArrayBuilder deleteResponseBuilder = Json.createArrayBuilder();
-        for (JsonValue value: createResponse.getJsonArray(data)) {
-            JsonObject valueObj = (JsonObject) value;
-            assertContains(valueObj, data);
-            deleteResponseBuilder.add(valueObj.getJsonObject(data));
-        }
-        bulkOperation(
-            name, tagUrl + "delete", deleteResponseBuilder.build());
+        bulkOperation(name, tagUrl + "delete", create);
     }
 }
