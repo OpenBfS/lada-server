@@ -60,9 +60,17 @@
         "netzbetreiber": "06",
         "gueltig_bis": "2000-01-01 00:00:00.0",
         "user_id": 2
+    }, {
+        "id": 103,
+        "tag": "assignedTag",
+        "typ": "mst",
+        "mst_id": "06010",
+        "netzbetreiber": "06",
+        "gueltig_bis": "2000-01-01 00:00:00.0",
+        "user_id": 2
     }],
     "land.tagzuordnung": [{
         "probe_id": 1901,
-        "tag_id": 101
+        "tag_id": 103
     }]
 }

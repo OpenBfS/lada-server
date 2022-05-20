@@ -50,7 +50,7 @@ public class TagTest extends ServiceTest {
         testMstTag();
         testNetzbetreiberTag();
         promoteMstTag();
-        delete(name, tagUrl + "101"); // Delete tag with assignment
+        delete(name, tagUrl + "103"); // Delete tag with assignment
     }
 
     /**
@@ -88,8 +88,6 @@ public class TagTest extends ServiceTest {
      * @param tagToTest Tag to test
      */
     private void testTagCRUD(JsonObject tagToTest) {
-
-        long now = System.currentTimeMillis();
         JsonObject createResponse = create(name, tagUrl, tagToTest);
         long createdId = createResponse.getJsonObject(dataKey).getInt("id");
         String createdTyp = createResponse
@@ -98,7 +96,7 @@ public class TagTest extends ServiceTest {
             long createdGueltigBis
                 = createResponse.getJsonObject(dataKey)
                 .getJsonNumber("gueltigBis").longValue();
-            long diff = getDiffInDays(now, createdGueltigBis);
+            long diff = getDaysFromNow(createdGueltigBis);
             Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diff);
         }
         String tagUpdated = tagToTest.getString(name) + "-mod";

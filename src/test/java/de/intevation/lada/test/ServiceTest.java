@@ -449,21 +449,18 @@ public class ServiceTest {
 
     /**
      * Get the difference in days between the given timestamps.
-     * @param first First date as unix timestamp
-     * @param second Second date as unix timestamp
+     * @param to Date as unix timestamp
      * @return Difference in days as long
      */
-    protected long getDiffInDays(long first, long second) {
-        LocalDateTime firstDate = LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(first),
+    protected long getDaysFromNow(long to) {
+        LocalDateTime fromDate = LocalDateTime.ofInstant(
+            Instant.ofEpochMilli(System.currentTimeMillis()),
             ZoneOffset.UTC)
             .truncatedTo(ChronoUnit.DAYS);
-        LocalDateTime secondDate = LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(second),
+        LocalDateTime toDate = LocalDateTime.ofInstant(
+            Instant.ofEpochMilli(to),
             ZoneOffset.UTC)
             .truncatedTo(ChronoUnit.DAYS);
-        long diffInDays = Math.abs(
-            ChronoUnit.DAYS.between(secondDate, firstDate));
-        return diffInDays;
+        return ChronoUnit.DAYS.between(fromDate, toDate);
     }
 }

@@ -9,9 +9,11 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
@@ -58,14 +60,21 @@ public class TagZuordnungTest extends ServiceTest {
     public void execute() {
         // test assigning tags
         bulkOperation(name, tagUrl, create);
-        long nowLong = System.currentTimeMillis();
         JsonObject tagResponse = get("tag", "rest/tag/");
-        JsonArray tags = tagResponse.getJsonArray(data);
+        List<Integer> tagIds = create.stream()
+            .map(zuord -> zuord.asJsonObject().getInt("tagId"))
+            .collect(Collectors.toList());
+        List<JsonValue> tags = tagResponse.getJsonArray(data).stream()
+            .filter(tag -> tagIds.contains(
+                    tag.asJsonObject().getInt("id")))
+            .collect(Collectors.toList());
         Assert.assertEquals(2, tags.size());
+
+        // Test validity of newly assigned tags
         tags.forEach(tagVal -> {
             JsonObject tag = (JsonObject) tagVal;
             long gueltigBisLong = tag.getJsonNumber("gueltigBis").longValue();
-            long diffInDays = getDiffInDays(nowLong, gueltigBisLong);
+            long diffInDays = getDaysFromNow(gueltigBisLong);
             Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diffInDays);
         });
 
@@ -77,12 +86,12 @@ public class TagZuordnungTest extends ServiceTest {
 
         tagResponse = get("tag", "rest/tag?pid=1901");
         Assert.assertEquals(
-            "Expected one tag für given Probe ID",
-            1, tagResponse.getJsonArray(data).size());
+            "Number of tags for given Probe ID:",
+            2, tagResponse.getJsonArray(data).size());
 
         tagResponse = get("tag", "rest/tag?mid=1801");
         Assert.assertEquals(
-            "Expected one tag für given Messung ID",
+            "Number of tags for given Messung ID:",
             1, tagResponse.getJsonArray(data).size());
 
         tagResponse = get("tag", "rest/tag?mid=1801&mid=1802");
@@ -93,7 +102,7 @@ public class TagZuordnungTest extends ServiceTest {
         bulkOperation(name, tagUrl, create2);
         tagResponse = get("tag", "rest/tag?mid=1801&mid=1802");
         Assert.assertEquals(
-            "Expected one tag für given Messung IDs",
+            "Number of tags for given Messung IDs:",
             1, tagResponse.getJsonArray(data).size());
 
         // Test unassigning tags
