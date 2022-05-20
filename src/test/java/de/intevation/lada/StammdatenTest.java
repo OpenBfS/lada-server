@@ -683,18 +683,20 @@ public class StammdatenTest extends BaseTest {
     @Test
     @InSequence(T39)
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
+    @UsingDataSet("datasets/dbUnit_tagzuordnung.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareTag() throws Exception {
         Protocol protocol = new Protocol();
         protocol.setName("database");
-        protocol.setType("cleanup for tag");
-        protocol.addInfo("database", "cleanup for tag");
+        protocol.setType("insert for tag");
+        protocol.addInfo("database",
+            "Insert probe, messung and tags into database");
         testProtocol.add(protocol);
         Tag probeTag = em.find(Tag.class, ID101);
-        Assert.assertNull(probeTag);
+        Assert.assertNotNull(probeTag);
         Tag messungTag = em.find(Tag.class, ID102);
-        Assert.assertNull(messungTag);
+        Assert.assertNotNull(messungTag);
         protocol.setPassed(true);
     }
 

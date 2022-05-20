@@ -50,6 +50,7 @@ public class TagTest extends ServiceTest {
         testMstTag();
         testNetzbetreiberTag();
         promoteMstTag();
+        delete(name, tagUrl + "101"); // Delete tag with assignment
     }
 
     /**

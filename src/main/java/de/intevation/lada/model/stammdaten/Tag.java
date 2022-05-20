@@ -81,7 +81,7 @@ public class Tag {
     private Timestamp generatedAt;
 
     @OneToMany
-    @JoinColumn(name = "tag_id")
+    @JoinColumn(name = "tag_id", updatable = false)
     @JsonIgnore
     private Set<TagZuordnung> tagZuordnungs;
 
