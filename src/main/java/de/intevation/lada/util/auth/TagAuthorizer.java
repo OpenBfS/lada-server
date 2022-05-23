@@ -38,8 +38,18 @@ public class TagAuthorizer extends BaseAuthorizer {
         switch (tag.getTypId()) {
             // Netzbetreiber tags may only be edited by stamm users
             case Tag.TAG_TYPE_NETZBETREIBER:
-                return userInfo.getFunktionenForNetzbetreiber(
-                    tag.getNetzbetreiberId()).contains(4);
+                switch (method) {
+                case GET:
+                case POST:
+                    return userInfo.getNetzbetreiber().contains(
+                        tag.getNetzbetreiberId());
+                case PUT:
+                case DELETE:
+                    return userInfo.getFunktionenForNetzbetreiber(
+                        tag.getNetzbetreiberId()).contains(4);
+                default:
+                    return false;
+                }
             // Tags my only be edited by members of the referenced Messstelle
             case Tag.TAG_TYPE_MST:
                 return userInfo.getMessstellen().contains(tag.getMstId());
@@ -76,7 +86,7 @@ public class TagAuthorizer extends BaseAuthorizer {
     }
 
     private Tag setAuthData(UserInfo userInfo, Tag tag) {
-        tag.setReadonly(!isAuthorized(tag, RequestMethod.POST,
+        tag.setReadonly(!isAuthorized(tag, RequestMethod.PUT,
             userInfo, Tag.class));
         return tag;
     }
