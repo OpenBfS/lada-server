@@ -216,6 +216,9 @@ public class TagService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
+
+        tag.setUserId(authorization.getInfo().getUserId());
+
         tag.setGeneratedAt(new Timestamp(System.currentTimeMillis()));
         if (tag.getGueltigBis() == null) {
             tag.setGueltigBis(getGueltigBis(tag,
