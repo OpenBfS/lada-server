@@ -37,13 +37,12 @@ public class Tag {
     public static final int MST_TAG_EXPIRATION_TIME = 365;
 
     // Default time after which auto tags expire in days
-    public static final int AUTO_TAG_EXPIRATION_TIME = 584;
+    public static final int GENERATED_EXPIRATION_TIME = 584;
 
     // Tag type ids
     public static final String TAG_TYPE_GLOBAL = "global";
     public static final String TAG_TYPE_NETZBETREIBER = "netzbetreiber";
     public static final String TAG_TYPE_MST = "mst";
-    public static final String TAG_TYPE_AUTO = "auto";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

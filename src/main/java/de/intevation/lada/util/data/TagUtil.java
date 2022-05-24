@@ -90,7 +90,7 @@ public class TagUtil {
         Tag currentTag = new Tag();
         currentTag.setGenerated(true);
         currentTag.setMstId(mstId);
-        currentTag.setTypId(Tag.TAG_TYPE_AUTO);
+        currentTag.setTypId(Tag.TAG_TYPE_NETZBETREIBER);
         currentTag.setTag(prefix + "_" + today + "_" + serNumber);
 
         return repository.create(currentTag);

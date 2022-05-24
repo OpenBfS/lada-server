@@ -257,9 +257,8 @@ public class TagService extends LadaService {
         Calendar tagExp;
         switch (tag.getTypId()) {
             //Global tags do not expire
-            case Tag.TAG_TYPE_GLOBAL: return null;
-            //Netzbetreiber tags do not expire
-            case Tag.TAG_TYPE_NETZBETREIBER: return null;
+            case Tag.TAG_TYPE_GLOBAL:
+                return null;
             //Mst tags expire after 365 days
             case Tag.TAG_TYPE_MST:
                 //Check if expiration date needs to be extended
@@ -277,21 +276,26 @@ public class TagService extends LadaService {
                 mstCal.add(Calendar.DAY_OF_YEAR, Tag.MST_TAG_EXPIRATION_TIME);
                 ts.setTime(mstCal.getTimeInMillis());
                 return ts;
-            //Auto tags expire after 548 days
-            case Tag.TAG_TYPE_AUTO:
+            // Generated tags expire after 548 days,
+            // other Netzbetreiber tags do not expire
+            case Tag.TAG_TYPE_NETZBETREIBER:
+                if (!tag.getGenerated()) {
+                    return null;
+                }
                 //Check if expiration date needs to be extended
                 if (tag.getGueltigBis() != null) {
                     tagExp = Calendar.getInstance();
                     tagExp.setTime(tag.getGueltigBis());
                     now = Calendar.getInstance();
-                    now.add(Calendar.DAY_OF_YEAR, Tag.AUTO_TAG_EXPIRATION_TIME);
+                    now.add(Calendar.DAY_OF_YEAR,
+                        Tag.GENERATED_EXPIRATION_TIME);
                     if (tagExp.compareTo(now) > 0) {
                         return tag.getGueltigBis();
                     }
                 }
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(ts);
-                cal.add(Calendar.DAY_OF_YEAR, Tag.AUTO_TAG_EXPIRATION_TIME);
+                cal.add(Calendar.DAY_OF_YEAR, Tag.GENERATED_EXPIRATION_TIME);
                 ts.setTime(cal.getTimeInMillis());
                 return ts;
             default: return null;

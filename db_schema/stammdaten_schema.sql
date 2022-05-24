@@ -862,7 +862,6 @@ CREATE TABLE stamm.tag_typ (id text PRIMARY KEY, tagtyp TEXT);
 INSERT INTO stamm.tag_typ VALUES('global', 'Global');
 INSERT INTO stamm.tag_typ VALUES('netzbetreiber', 'Netzbetreiber');
 INSERT INTO stamm.tag_typ VALUES('mst', 'Messstelle');
-INSERT INTO stamm.tag_typ VALUES('auto', 'Auto');
 
 /*
 CREATE FUNCTION populate_status_reihenfolge() RETURNS void AS $$
