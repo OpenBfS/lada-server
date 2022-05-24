@@ -145,52 +145,41 @@ public class TagUtil {
      * @return Timestamp
      */
     public static Timestamp calculateGueltigBis(Tag tag, Timestamp ts) {
-        Calendar now;
-        Calendar tagExp;
         switch (tag.getTypId()) {
             //Global tags do not expire
             case Tag.TAG_TYPE_GLOBAL:
                 return null;
             //Mst tags expire after 365 days
             case Tag.TAG_TYPE_MST:
-                //Check if expiration date needs to be extended
-                if (tag.getGueltigBis() != null) {
-                    tagExp = Calendar.getInstance();
-                    tagExp.setTime(tag.getGueltigBis());
-                    now = Calendar.getInstance();
-                    now.add(Calendar.DAY_OF_YEAR, Tag.MST_TAG_EXPIRATION_TIME);
-                    if (tagExp.compareTo(now) > 0) {
-                        return tag.getGueltigBis();
-                    }
-                }
-                Calendar mstCal = Calendar.getInstance();
-                mstCal.setTime(ts);
-                mstCal.add(Calendar.DAY_OF_YEAR, Tag.MST_TAG_EXPIRATION_TIME);
-                ts.setTime(mstCal.getTimeInMillis());
-                return ts;
+                return checkExpires(tag, ts, Tag.MST_TAG_EXPIRATION_TIME);
             // Generated tags expire after 548 days,
             // other Netzbetreiber tags do not expire
             case Tag.TAG_TYPE_NETZBETREIBER:
                 if (!tag.getGenerated()) {
                     return null;
                 }
-                //Check if expiration date needs to be extended
-                if (tag.getGueltigBis() != null) {
-                    tagExp = Calendar.getInstance();
-                    tagExp.setTime(tag.getGueltigBis());
-                    now = Calendar.getInstance();
-                    now.add(Calendar.DAY_OF_YEAR,
-                        Tag.GENERATED_EXPIRATION_TIME);
-                    if (tagExp.compareTo(now) > 0) {
-                        return tag.getGueltigBis();
-                    }
-                }
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(ts);
-                cal.add(Calendar.DAY_OF_YEAR, Tag.GENERATED_EXPIRATION_TIME);
-                ts.setTime(cal.getTimeInMillis());
-                return ts;
+                return checkExpires(tag, ts, Tag.GENERATED_EXPIRATION_TIME);
             default: return null;
         }
+    }
+
+    private static Timestamp checkExpires(
+        Tag tag, Timestamp ts, int expirationTime
+    ) {
+        //Check if expiration date needs to be extended
+        if (tag.getGueltigBis() != null) {
+            Calendar tagExp = Calendar.getInstance();
+            tagExp.setTime(tag.getGueltigBis());
+            Calendar now = Calendar.getInstance();
+            now.add(Calendar.DAY_OF_YEAR, expirationTime);
+            if (tagExp.compareTo(now) > 0) {
+                return tag.getGueltigBis();
+            }
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(ts);
+        cal.add(Calendar.DAY_OF_YEAR, expirationTime);
+        ts.setTime(cal.getTimeInMillis());
+        return ts;
     }
 }
