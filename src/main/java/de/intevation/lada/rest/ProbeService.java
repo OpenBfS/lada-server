@@ -361,10 +361,9 @@ public class ProbeService extends LadaService {
         if (!object.dryrun && generatedProbeIds.size() > 0) {
             // Assume the user is associated to at least one Messstelle,
             // because authorization should ensure this.
-            // TODO: Pick the correct instead of the first Messstelle
-            String mstId = authorization.getInfo()
-                .getMessstellen().get(0);
-            Response tagCreation = tagUtil.generateTag("PEP", mstId);
+            // TODO: Pick the correct instead of the first Netzbetreiber
+            Response tagCreation = tagUtil.generateTag(
+                "PEP", authorization.getInfo().getNetzbetreiber().get(0));
             if (tagCreation.getSuccess()) {
                 Tag newTag = (Tag) tagCreation.getData();
                 tagUtil.setTagsByProbeIds(generatedProbeIds, newTag.getId());

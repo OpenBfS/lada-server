@@ -26,6 +26,7 @@ import de.intevation.lada.importer.ImportConfig;
 import de.intevation.lada.importer.ImportFormat;
 import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.importer.Importer;
+import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -74,17 +75,23 @@ public class AsyncImportService extends LadaService {
         JsonObject jsonInput,
         @Context HttpServletRequest request
     ) {
+        JsonObjectBuilder errBuilder = Json.createObjectBuilder()
+            .add("success", false)
+            .add("status", StatusCodes.NOT_ALLOWED);
+
         String mstId = request.getHeader("X-LADA-MST");
         if (mstId == null) {
-            JsonObjectBuilder builder = Json.createObjectBuilder();
-            builder.add("success", false)
-            .add("status", StatusCodes.NOT_ALLOWED)
-            .add("data", "Missing header for messtelle.");
-            return Response.ok(builder.build().toString()).build();
+            errBuilder.add("data", "Missing header for messtelle.");
+            return Response.ok(errBuilder.build().toString()).build();
+        }
+        MessStelle mst = repository.getByIdPlain(MessStelle.class, mstId);
+        if (mst == null) {
+            errBuilder.add("data", "Wrong header for messtelle.");
+            return Response.ok(errBuilder.build().toString()).build();
         }
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
-                importJobManager.createImportJob(userInfo, jsonInput, mstId);
+            importJobManager.createImportJob(userInfo, jsonInput, mst);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();

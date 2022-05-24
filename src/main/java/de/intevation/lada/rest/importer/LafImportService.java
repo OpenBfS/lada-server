@@ -38,6 +38,7 @@ import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.importer.Importer;
 import de.intevation.lada.importer.laf.LafImporter;
 import de.intevation.lada.model.stammdaten.ImporterConfig;
+import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -155,6 +156,13 @@ public class LafImportService extends LadaService {
                 StatusCodes.NOT_ALLOWED,
                 "Missing header for messtelle.");
         }
+        MessStelle mst = repository.getByIdPlain(MessStelle.class, mstId);
+        if (mst == null) {
+            return new Response(
+                false,
+                StatusCodes.NOT_ALLOWED,
+                "Wrong header for messtelle.");
+        }
 
         if (jsonInput.getFiles() == null) {
             return new Response(
@@ -231,7 +239,8 @@ public class LafImportService extends LadaService {
         if (importedProbeids.size() > 0) {
             success = true;
             //Generate a tag for the imported probe records
-            Response tagCreation = tagUtil.generateTag("IMP", mstId);
+            Response tagCreation = tagUtil.generateTag(
+                "IMP", mst.getNetzbetreiberId());
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
                 success = false;
@@ -256,8 +265,6 @@ public class LafImportService extends LadaService {
     /**
      * Import a LAF formatted file.
      *
-     * @param input     String containing file content.
-     * @param header    The HTTP header containing authorization information.
      * @return Response object.
      * @deprecated This endpoint will be removed. Use multiUpload() instead.
      */
@@ -271,6 +278,13 @@ public class LafImportService extends LadaService {
     ) {
         UserInfo userInfo = authorization.getInfo();
         String mstId = request.getHeader("X-LADA-MST");
+        MessStelle mst = repository.getByIdPlain(MessStelle.class, mstId);
+        if (mst == null) {
+            return new Response(
+                false,
+                StatusCodes.NOT_ALLOWED,
+                "Wrong header for messtelle.");
+        }
 
         /** Preparation for Client-Update: "Vorbelegung Messstelle" will
          * become mandatory!
@@ -318,7 +332,8 @@ public class LafImportService extends LadaService {
         // If import created at least a new record
         if (importedProbeids.size() > 0 && !mstId.equals("null") && success) {
             //Generate a tag for the imported probe records
-            Response tagCreation = tagUtil.generateTag("IMP", mstId);
+            Response tagCreation = tagUtil.generateTag(
+                "IMP", mst.getNetzbetreiberId());
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
                 success = false;

@@ -46,12 +46,12 @@ public class TagUtil {
      * Creates an auto generated tag using the current date and a given prefix.
      * Format is: {prefix}_yyyyMMdd_{serialNumber}
      * @param prefix Prefix to set
-     * @param mstId mstId to set in the tag
+     * @param netzbetreiberId netzbetreiberId to set in the tag
      * @return Response of tag creation
      */
     public synchronized Response generateTag(
         String prefix,
-        String mstId
+        String netzbetreiberId
     ) {
         //Get current date
         LocalDate date = LocalDate.now();
@@ -92,7 +92,7 @@ public class TagUtil {
         //Create next tag
         Tag currentTag = new Tag();
         currentTag.setGenerated(true);
-        currentTag.setMstId(mstId); // TODO: set Netzbetreiber instead
+        currentTag.setNetzbetreiberId(netzbetreiberId);
         currentTag.setTypId(Tag.TAG_TYPE_NETZBETREIBER);
         currentTag.setTag(prefix + "_" + today + "_" + serNumber);
 
