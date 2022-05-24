@@ -14,12 +14,10 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -57,18 +55,8 @@ public class Tag {
     @Column(name = "netzbetreiber")
     private String netzbetreiberId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "netzbetreiber", insertable = false, updatable = false)
-    @JsonIgnore
-    private NetzBetreiber netzbetreiber;
-
     @Column(name = "user_id")
     private Integer userId;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    @JsonIgnore
-    private LadaUser user;
 
     @Column(name = "typ")
     private String typId;
@@ -132,22 +120,6 @@ public class Tag {
     }
 
 
-    public NetzBetreiber getNetzbetreiber() {
-        return netzbetreiber;
-    }
-
-    public void setNetzbetreiber(NetzBetreiber netzbetreiber) {
-        this.netzbetreiber = netzbetreiber;
-    }
-
-    public LadaUser getUser() {
-        return user;
-    }
-
-    public void setUser(LadaUser user) {
-        this.user = user;
-    }
-
     public Timestamp getGueltigBis() {
         return gueltigBis;
     }
@@ -158,10 +130,6 @@ public class Tag {
 
     public Timestamp getGeneratedAt() {
         return generatedAt;
-    }
-
-    public void setGeneratedAt(Timestamp generatedAt) {
-        this.generatedAt = generatedAt;
     }
 
     public boolean isReadonly() {
@@ -176,9 +144,6 @@ public class Tag {
      * @return ID of Netzbetreiber associated to this tag.
      */
     public String getNetzbetreiberId() {
-        if (this.netzbetreiberId == null && this.netzbetreiber != null) {
-            this.netzbetreiberId = this.netzbetreiber.getId();
-        }
         return netzbetreiberId;
     }
 

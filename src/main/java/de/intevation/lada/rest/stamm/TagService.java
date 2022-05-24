@@ -215,7 +215,6 @@ public class TagService extends LadaService {
 
         tag.setUserId(authorization.getInfo().getUserId());
 
-        tag.setGeneratedAt(new Timestamp(System.currentTimeMillis()));
         if (tag.getGueltigBis() == null) {
             tag.setGueltigBis(TagUtil.calculateGueltigBis(tag,
                 new Timestamp(System.currentTimeMillis())));
