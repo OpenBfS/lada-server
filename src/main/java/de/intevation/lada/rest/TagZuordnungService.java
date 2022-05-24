@@ -1,11 +1,11 @@
-/* Copyright (C) 2018 by Bundesamt fuer Strahlenschutz
+/* Copyright (C) 2022 by Bundesamt fuer Strahlenschutz
  * Software engineering by Intevation GmbH
  *
  * This file is Free Software under the GNU GPL (v>=3)
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.rest.stamm;
+package de.intevation.lada.rest;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
-import de.intevation.lada.rest.LadaService;
+
 
 /**
  * REST-Service for associations of tags to objects.
