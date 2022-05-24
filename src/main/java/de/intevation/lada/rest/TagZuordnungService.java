@@ -9,7 +9,6 @@ package de.intevation.lada.rest;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -107,9 +106,15 @@ public class TagZuordnungService extends LadaService {
 
             //Extend tag expiring time
             Tag tag = repository.getByIdPlain(Tag.class, tagId);
-            Date date = new Date();
-            Timestamp now = new Timestamp(date.getTime());
-            tag.setGueltigBis(TagUtil.calculateGueltigBis(tag, now));
+            if (Tag.TAG_TYPE_MST.equals(tag.getTypId())) {
+                Timestamp defaultExpiration =
+                    TagUtil.getMstTagDefaultExpiration();
+                if (tag.getGueltigBis() == null
+                    || defaultExpiration.after(tag.getGueltigBis())
+                ) {
+                    tag.setGueltigBis(defaultExpiration);
+                }
+            }
 
             responseList.add(repository.create(zuordnung));
         }

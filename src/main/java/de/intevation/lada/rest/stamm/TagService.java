@@ -164,19 +164,36 @@ public class TagService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        //Check if tag has changed and is valid
+
         String tagTyp = tag.getTypId();
         String origTagTyp = origTag.getTypId();
-        if (!tagTyp.equals(origTagTyp)) {
-            //Tags may only changed to global
-            //or from messstelle to netzbetreiber
-            if (!tagTyp.equals(Tag.TAG_TYPE_GLOBAL)
-                && !(tagTyp.equals(Tag.TAG_TYPE_NETZBETREIBER)
-                    && origTagTyp.equals(Tag.TAG_TYPE_MST))) {
-                return new Response(false,
-                    StatusCodes.ERROR_VALIDATION, "Invalid tag type change");
+        Timestamp gueltigBis = tag.getGueltigBis();
+        Timestamp origGueltigBis = origTag.getGueltigBis();
+        if (!tagTyp.equals(origTagTyp)
+            && ((origGueltigBis == null && gueltigBis == null)
+                || (origGueltigBis != null && gueltigBis != null
+                    && origGueltigBis.equals(gueltigBis)))
+        ) {
+            // User changed type but not gueltigBis
+            switch (tagTyp) {
+            // Remove expiration timestamp for 'advanced' tags
+            case Tag.TAG_TYPE_GLOBAL:
+                tag.setGueltigBis(null);
+                break;
+            case Tag.TAG_TYPE_NETZBETREIBER:
+                if (!Tag.TAG_TYPE_GLOBAL.equals(origTagTyp)) {
+                    tag.setGueltigBis(null);
+                }
+                break;
+            case Tag.TAG_TYPE_MST:
+                // Set default expiration for tags downgraded to 'mst'
+                tag.setGueltigBis(TagUtil.getMstTagDefaultExpiration());
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown tag type");
             }
         }
+
         Response response = repository.update(tag);
         return authorization.filter(
             response,
@@ -215,9 +232,10 @@ public class TagService extends LadaService {
 
         tag.setUserId(authorization.getInfo().getUserId());
 
-        if (tag.getGueltigBis() == null) {
-            tag.setGueltigBis(TagUtil.calculateGueltigBis(tag,
-                new Timestamp(System.currentTimeMillis())));
+        if (tag.getGueltigBis() == null
+            && Tag.TAG_TYPE_MST.equals(tag.getTypId())
+        ) {
+            tag.setGueltigBis(TagUtil.getMstTagDefaultExpiration());
         }
         return repository.create(tag);
     }

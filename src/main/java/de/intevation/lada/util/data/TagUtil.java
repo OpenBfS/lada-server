@@ -9,10 +9,11 @@
 package de.intevation.lada.util.data;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -91,9 +92,15 @@ public class TagUtil {
         //Create next tag
         Tag currentTag = new Tag();
         currentTag.setGenerated(true);
-        currentTag.setMstId(mstId);
+        currentTag.setMstId(mstId); // TODO: set Netzbetreiber instead
         currentTag.setTypId(Tag.TAG_TYPE_NETZBETREIBER);
         currentTag.setTag(prefix + "_" + today + "_" + serNumber);
+
+        // Generated tags expire after 548 days
+        Instant then = Instant.now()
+            .plus(Tag.GENERATED_EXPIRATION_TIME, ChronoUnit.DAYS)
+            .truncatedTo(ChronoUnit.DAYS);
+        currentTag.setGueltigBis(Timestamp.from(then));
 
         return repository.create(currentTag);
     }
@@ -139,47 +146,12 @@ public class TagUtil {
     }
 
     /**
-     * Calculate gueltig bis timestamp for the given tag and timestamp.
-     * @param tag Tag to get date for
-     * @param ts Timestamp to use as base
-     * @return Timestamp
+     * @return Timestamp Tag.MST_TAG_EXPIRATION_TIME days after now.
      */
-    public static Timestamp calculateGueltigBis(Tag tag, Timestamp ts) {
-        switch (tag.getTypId()) {
-            //Global tags do not expire
-            case Tag.TAG_TYPE_GLOBAL:
-                return null;
-            //Mst tags expire after 365 days
-            case Tag.TAG_TYPE_MST:
-                return checkExpires(tag, ts, Tag.MST_TAG_EXPIRATION_TIME);
-            // Generated tags expire after 548 days,
-            // other Netzbetreiber tags do not expire
-            case Tag.TAG_TYPE_NETZBETREIBER:
-                if (!tag.getGenerated()) {
-                    return null;
-                }
-                return checkExpires(tag, ts, Tag.GENERATED_EXPIRATION_TIME);
-            default: return null;
-        }
-    }
-
-    private static Timestamp checkExpires(
-        Tag tag, Timestamp ts, int expirationTime
-    ) {
-        //Check if expiration date needs to be extended
-        if (tag.getGueltigBis() != null) {
-            Calendar tagExp = Calendar.getInstance();
-            tagExp.setTime(tag.getGueltigBis());
-            Calendar now = Calendar.getInstance();
-            now.add(Calendar.DAY_OF_YEAR, expirationTime);
-            if (tagExp.compareTo(now) > 0) {
-                return tag.getGueltigBis();
-            }
-        }
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(ts);
-        cal.add(Calendar.DAY_OF_YEAR, expirationTime);
-        ts.setTime(cal.getTimeInMillis());
-        return ts;
+    public static Timestamp getMstTagDefaultExpiration() {
+        Instant then = Instant.now()
+            .plus(Tag.MST_TAG_EXPIRATION_TIME, ChronoUnit.DAYS)
+            .truncatedTo(ChronoUnit.DAYS);
+        return Timestamp.from(then);
     }
 }
