@@ -8,9 +8,11 @@
 
 package de.intevation.lada.util.data;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -134,5 +136,61 @@ public class TagUtil {
             zuordnungs.add(zuordnung);
         });
         return zuordnungs;
+    }
+
+    /**
+     * Calculate gueltig bis timestamp for the given tag and timestamp.
+     * @param tag Tag to get date for
+     * @param ts Timestamp to use as base
+     * @return Timestamp
+     */
+    public static Timestamp calculateGueltigBis(Tag tag, Timestamp ts) {
+        Calendar now;
+        Calendar tagExp;
+        switch (tag.getTypId()) {
+            //Global tags do not expire
+            case Tag.TAG_TYPE_GLOBAL:
+                return null;
+            //Mst tags expire after 365 days
+            case Tag.TAG_TYPE_MST:
+                //Check if expiration date needs to be extended
+                if (tag.getGueltigBis() != null) {
+                    tagExp = Calendar.getInstance();
+                    tagExp.setTime(tag.getGueltigBis());
+                    now = Calendar.getInstance();
+                    now.add(Calendar.DAY_OF_YEAR, Tag.MST_TAG_EXPIRATION_TIME);
+                    if (tagExp.compareTo(now) > 0) {
+                        return tag.getGueltigBis();
+                    }
+                }
+                Calendar mstCal = Calendar.getInstance();
+                mstCal.setTime(ts);
+                mstCal.add(Calendar.DAY_OF_YEAR, Tag.MST_TAG_EXPIRATION_TIME);
+                ts.setTime(mstCal.getTimeInMillis());
+                return ts;
+            // Generated tags expire after 548 days,
+            // other Netzbetreiber tags do not expire
+            case Tag.TAG_TYPE_NETZBETREIBER:
+                if (!tag.getGenerated()) {
+                    return null;
+                }
+                //Check if expiration date needs to be extended
+                if (tag.getGueltigBis() != null) {
+                    tagExp = Calendar.getInstance();
+                    tagExp.setTime(tag.getGueltigBis());
+                    now = Calendar.getInstance();
+                    now.add(Calendar.DAY_OF_YEAR,
+                        Tag.GENERATED_EXPIRATION_TIME);
+                    if (tagExp.compareTo(now) > 0) {
+                        return tag.getGueltigBis();
+                    }
+                }
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(ts);
+                cal.add(Calendar.DAY_OF_YEAR, Tag.GENERATED_EXPIRATION_TIME);
+                ts.setTime(cal.getTimeInMillis());
+                return ts;
+            default: return null;
+        }
     }
 }

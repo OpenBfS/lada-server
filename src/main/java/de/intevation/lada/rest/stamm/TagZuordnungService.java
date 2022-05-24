@@ -24,6 +24,7 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
+import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
@@ -108,7 +109,7 @@ public class TagZuordnungService extends LadaService {
             Tag tag = repository.getByIdPlain(Tag.class, tagId);
             Date date = new Date();
             Timestamp now = new Timestamp(date.getTime());
-            tag.setGueltigBis(TagService.getGueltigBis(tag, now));
+            tag.setGueltigBis(TagUtil.calculateGueltigBis(tag, now));
 
             responseList.add(repository.create(zuordnung));
         }
