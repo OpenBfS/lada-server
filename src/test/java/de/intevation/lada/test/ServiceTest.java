@@ -181,7 +181,6 @@ public class ServiceTest {
     public JsonObject get(
         String name, String parameter, Response.Status expectedStatus
     ) {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName(name + " service");
         prot.setType("get");
@@ -217,7 +216,6 @@ public class ServiceTest {
         String parameter,
         JsonObject expected
     ) {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName(name + " service");
         prot.setType("get by Id");
@@ -260,7 +258,6 @@ public class ServiceTest {
      *
      */
     public JsonObject create(String name, String parameter, JsonObject create) {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName(name + " service");
         prot.setType("create");
@@ -295,7 +292,6 @@ public class ServiceTest {
         String oldValue,
         String newValue
     ) {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName(name + " service");
         prot.setType("update");
@@ -352,7 +348,6 @@ public class ServiceTest {
      * @return The resulting json object.
      */
     public JsonObject delete(String name, String parameter) {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName(name + " service");
         prot.setType("delete");

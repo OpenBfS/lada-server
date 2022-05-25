@@ -227,7 +227,6 @@ public class Stammdaten extends ServiceTest {
         String type,
         Object id
     ) {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName(type + "Service");
         prot.setType("get by Id");

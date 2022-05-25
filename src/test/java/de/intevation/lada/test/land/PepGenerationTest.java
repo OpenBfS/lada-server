@@ -883,7 +883,6 @@ public class PepGenerationTest extends ServiceTest {
     private JsonObject generateFromMpIds(
         List<Integer> ids, Long start, Long end
     ) {
-        System.out.print(".");
 
         WebTarget target = client.target(baseUrl + "rest/probe/messprogramm");
         JsonArrayBuilder idArrayBuilder = Json.createArrayBuilder();
