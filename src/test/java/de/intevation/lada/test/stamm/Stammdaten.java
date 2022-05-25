@@ -173,6 +173,7 @@ public class Stammdaten extends ServiceTest {
                 "koordYExtern",
                 "staat",
                 "staatIso",
+                "staatKurz",
                 "kdaId"
             )
         );
