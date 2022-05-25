@@ -46,9 +46,9 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
             if (tag == null) {
                 return false;
             }
-            String mstId = tag.getMstId();
-            if (mstId == null) {
-                // User tries to assign a global tag
+
+            switch (tag.getTypId()) {
+            case Tag.TAG_TYPE_GLOBAL:
                 if (zuordnung.getMessungId() != null) {
                     return messungAuthorizer.isAuthorized(
                         repository.getByIdPlain(
@@ -57,7 +57,8 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
                         userInfo,
                         Messung.class
                     );
-                } else if (zuordnung.getProbeId() != null) {
+                }
+                if (zuordnung.getProbeId() != null) {
                     return probeAuthorizer.isAuthorized(
                         repository.getByIdPlain(
                             Probe.class, zuordnung.getProbeId()),
@@ -66,9 +67,15 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
                         Probe.class
                     );
                 }
-            } else if (userInfo.getMessstellen().contains(mstId)) {
-                // Else check if it is the users private tag
-                return true;
+                // Should not happen because either Messung or Probe is assigned
+                return false;
+            case Tag.TAG_TYPE_NETZBETREIBER:
+                return userInfo.getNetzbetreiber().contains(
+                    tag.getNetzbetreiberId());
+            case Tag.TAG_TYPE_MST:
+                return userInfo.getMessstellen().contains(tag.getMstId());
+            default:
+                throw new IllegalArgumentException("Unknown tag type");
             }
         default:
             return false;
