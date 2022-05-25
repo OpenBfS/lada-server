@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.SollistMmtGrp;
@@ -64,7 +63,6 @@ public class SollistMmtGruppeService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-            @Context HttpHeaders headers,
             @Context UriInfo info
     ) {
         return repository.getAll(SollistMmtGrp.class);

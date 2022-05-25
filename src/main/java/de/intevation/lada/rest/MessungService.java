@@ -17,7 +17,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
@@ -119,7 +118,6 @@ public class MessungService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
@@ -214,7 +212,6 @@ public class MessungService extends LadaService {
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
         Response response =
@@ -264,7 +261,6 @@ public class MessungService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpHeaders headers,
         Messung messung
     ) {
         if (!authorization.isAuthorized(
@@ -327,7 +323,6 @@ public class MessungService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpHeaders headers,
         @PathParam("id") String id,
         Messung messung
     ) {
@@ -377,7 +372,6 @@ public class MessungService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
         /* Get the messung object by id*/

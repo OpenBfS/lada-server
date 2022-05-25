@@ -12,7 +12,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.Staat;
@@ -70,7 +69,6 @@ public class StaatService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
         return repository.getAll(Staat.class);
@@ -88,7 +86,6 @@ public class StaatService extends LadaService {
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
         return repository.getById(Staat.class, Integer.valueOf(id));

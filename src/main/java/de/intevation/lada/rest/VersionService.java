@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
 
 import org.jboss.logging.Logger;
@@ -61,7 +60,6 @@ public class VersionService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
         String version = "unknown";

@@ -17,7 +17,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
@@ -124,7 +123,6 @@ public class MesswertService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
@@ -182,7 +180,6 @@ public class MesswertService extends LadaService {
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
         Response response =
@@ -238,7 +235,6 @@ public class MesswertService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpHeaders headers,
         Messwert messwert
     ) {
         if (!authorization.isAuthorized(
@@ -300,7 +296,6 @@ public class MesswertService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpHeaders headers,
         @PathParam("id") String id,
         Messwert messwert
     ) {
@@ -347,7 +342,6 @@ public class MesswertService extends LadaService {
     @PUT
     @Path("/normalize")
     public Response normalize(
-        @Context HttpHeaders headers,
         @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
@@ -440,7 +434,6 @@ public class MesswertService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
         /* Get the messwert object by id*/
