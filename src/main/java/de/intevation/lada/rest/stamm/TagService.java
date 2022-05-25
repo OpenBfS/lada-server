@@ -68,8 +68,8 @@ public class TagService extends LadaService {
     }
 
     /**
-     * Get tags for Probe or Messung instances,
-     * filtered by the users messstelle id.
+     * Get tags.
+     *
      * If IDs of Probe or Messung objects are given as URL parameters like
      * <pre>
      * <code>
@@ -77,6 +77,7 @@ public class TagService extends LadaService {
      * </code>
      * </pre>
      * only those tags are returned that are associated to all of them.
+     * Otherwise, return only tags the user is allowed to assign.
      *
      * @param pIds filter by IDs of Probe objects.
      * @param mIds filter by IDs of Messung objects. Ignored if pid is given.
@@ -94,36 +95,41 @@ public class TagService extends LadaService {
         CriteriaQuery<Tag> criteriaQuery = builder.createQuery(Tag.class);
         Root<Tag> root = criteriaQuery.from(Tag.class);
 
-        // Return only the tags without mstId or matching the user
-        final String mstIdParam = "mstId";
-        Predicate filter = builder.or(
-            builder.isNull(root.get(mstIdParam)),
-            builder.in(root.get(mstIdParam)).value(
-                authorization.getInfo().getMessstellen()));
-
-        // Return only tags assigned to all given Probe or Messung objects
         List<Tag> result;
         if (!pIds.isEmpty() || !mIds.isEmpty()) {
+            // Return only tags assigned to all given Probe or Messung objects
             Join<Tag, TagZuordnung> joinTagZuordnung =
                 root.join("tagZuordnungs");
             // Work-around missing SQL INTERSECTION in JPA:
             final String filterBy = pIds.isEmpty() ? "messungId" : "probeId";
             final Iterator<Integer> filterIds =
                 pIds.isEmpty() ? mIds.iterator() : pIds.iterator();
-            Predicate idFilter = builder.and(
-                filter,
-                builder.equal(
-                    joinTagZuordnung.get(filterBy), filterIds.next()));
+            Predicate idFilter = builder.equal(
+                joinTagZuordnung.get(filterBy), filterIds.next());
             result = repository.filterPlain(criteriaQuery.where(idFilter));
             while (!result.isEmpty() && filterIds.hasNext()) {
-                idFilter = builder.and(
-                    filter,
-                    builder.equal(
-                        joinTagZuordnung.get(filterBy), filterIds.next()));
+                idFilter = builder.equal(
+                    joinTagZuordnung.get(filterBy), filterIds.next());
                 result.retainAll(
                     repository.filterPlain(criteriaQuery.where(idFilter)));
             }
         } else {
+            // Return only tags the user is allowed to assign
+            final String typIdParam = "typId";
+            Predicate filter = builder.or(
+                builder.equal(root.get(typIdParam), Tag.TAG_TYPE_GLOBAL),
+                builder.and(
+                    builder.equal(
+                        root.get(typIdParam), Tag.TAG_TYPE_NETZBETREIBER),
+                    builder.in(root.get("netzbetreiberId")).value(
+                        authorization.getInfo().getNetzbetreiber())
+                ),
+                builder.and(
+                    builder.equal(root.get(typIdParam), Tag.TAG_TYPE_MST),
+                    builder.in(root.get("mstId")).value(
+                        authorization.getInfo().getMessstellen())
+                ));
+
             result = repository.filterPlain(criteriaQuery.where(filter));
         }
 
