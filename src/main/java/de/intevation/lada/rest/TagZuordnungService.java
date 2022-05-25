@@ -45,9 +45,7 @@ public class TagZuordnungService extends LadaService {
     private static final String EXISTS_QUERY_TEMPLATE =
         "SELECT EXISTS("
         + "SELECT 1 FROM land.tagzuordnung "
-        + "JOIN stamm.tag ON tag_id=tag.id "
         + "WHERE tag_id=:%s"
-        + " AND (mst_id IS NULL OR mst_id IN (:%s))"
         + " AND %s=:%s)";
 
     /**
@@ -90,17 +88,17 @@ public class TagZuordnungService extends LadaService {
                 continue;
             }
 
+            if (isExisting(zuordnung)) {
+                responseList.add(new Response(
+                        true, StatusCodes.OK, zuordnung));
+                continue;
+            }
+
             if (!authorization.isAuthorized(
                     zuordnung, RequestMethod.POST, TagZuordnung.class)
             ) {
                 responseList.add(new Response(
                         false, StatusCodes.NOT_ALLOWED, zuordnung));
-                continue;
-            }
-
-            if (isExisting(zuordnung)) {
-                responseList.add(new Response(
-                        true, StatusCodes.OK, zuordnung));
                 continue;
             }
 
@@ -150,6 +148,12 @@ public class TagZuordnungService extends LadaService {
         List<Response> responseList = new ArrayList<>();
 
         for (TagZuordnung zuordnung: zuordnungs) {
+            if (!isExisting(zuordnung)) {
+                responseList.add(new Response(
+                        true, StatusCodes.OK, zuordnung));
+                continue;
+            }
+
             if (!authorization.isAuthorized(
                     zuordnung,
                     RequestMethod.DELETE,
@@ -159,12 +163,6 @@ public class TagZuordnungService extends LadaService {
                         false,
                         StatusCodes.NOT_ALLOWED,
                         zuordnung));
-                continue;
-            }
-
-            if (!isExisting(zuordnung)) {
-                responseList.add(new Response(
-                        true, StatusCodes.OK, zuordnung));
                 continue;
             }
 
@@ -184,16 +182,13 @@ public class TagZuordnungService extends LadaService {
     private Boolean isExisting(TagZuordnung zuordnung) {
         // Check if tag is already assigned
         final String tagIdParam = "tagId",
-            mstIdsParam = "mstIds",
             taggedIdParam = "taggedId";
         String idField = zuordnung.getProbeId() != null
             ? "probe_id" : "messung_id";
         Query isAssigned = repository.queryFromString(
             String.format(EXISTS_QUERY_TEMPLATE,
-                tagIdParam, mstIdsParam, idField, taggedIdParam));
+                tagIdParam, idField, taggedIdParam));
         isAssigned.setParameter(tagIdParam, zuordnung.getTagId());
-        isAssigned.setParameter(
-            mstIdsParam, authorization.getInfo().getMessstellen());
         isAssigned.setParameter(taggedIdParam,
             zuordnung.getProbeId() != null
             ? zuordnung.getProbeId()
