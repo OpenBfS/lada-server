@@ -536,11 +536,6 @@ implements Creator {
                     MST_NOT_DELIV,
                     MST_RESET));
             builder.orderBy("datum", false);
-            StatusProtokoll mst = repository.filterPlain(
-                builder.getQuery()).get(0);
-            Integer mstKombi = mst.getStatusKombi();
-            StatusKombi kombi = repository.getByIdPlain(
-                StatusKombi.class, mstKombi);
             if (currenStufe == 2) {
                 status[1] = currentKombi.getStatusWert().getId();
             } else {

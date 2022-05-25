@@ -973,10 +973,6 @@ public class LafObjectMapper {
         QueryBuilder<Messwert> messwBuilder =
             repository.queryBuilder(Messwert.class);
         messwBuilder.and("messungsId", newMessung.getId());
-        Response response =
-            repository.filter(messwBuilder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<Messwert> messwerteList = (List<Messwert>) response.getData();
         for (Messwert messwert: messwerte) {
             Violation messwViolation = messwertValidator.validate(messwert);
             if (messwViolation.hasWarnings()) {
