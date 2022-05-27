@@ -137,11 +137,6 @@ public class OrtService extends LadaService {
 
     /**
      * Get Ort objects.
-     * <p>
-     * The requested objects can be filtered e.g. using a URL parameter named
-     * ortId.
-     * <p>
-     * Example: http://example.com/rest/ort?ortId=[ID]
      *
      * @return Response object containing all (filtered) Ort objects.
      */
@@ -151,37 +146,6 @@ public class OrtService extends LadaService {
         @Context UriInfo info
     ) {
         MultivaluedMap<String, String> params = info.getQueryParameters();
-
-        //If a single ort is requested
-        if (params.containsKey("ortId")) {
-            Integer id;
-            try {
-                id = Integer.valueOf(params.getFirst("ortId"));
-            } catch (NumberFormatException e) {
-                return new Response(
-                    false,
-                    StatusCodes.ERROR_DB_CONNECTION, "Not a valid filter id");
-            }
-
-            Ort o = repository.getByIdPlain(Ort.class, id);
-            List<Ortszuordnung> zuordnungs = getOrtsZuordnungs(o);
-            o.setReferenceCount(zuordnungs.size());
-            o.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
-            List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(o);
-            o.setReferenceCountMp(zuordnungsMp.size());
-            o.setReadonly(
-                !authorization.isAuthorized(
-                    o,
-                    RequestMethod.PUT,
-                    Ort.class));
-            Violation violation = validator.validate(o);
-            if (violation.hasErrors() || violation.hasWarnings()) {
-                o.setErrors(violation.getErrors());
-                o.setWarnings(violation.getWarnings());
-            }
-            return new Response(true, StatusCodes.OK, o);
-        }
-
         List<Ort> orte = new ArrayList<>();
         UserInfo user = authorization.getInfo();
         EntityManager em = repository.entityManager();
@@ -267,12 +231,7 @@ public class OrtService extends LadaService {
         @PathParam("id") int id
     ) {
         Ort ort = repository.getByIdPlain(Ort.class, id);
-
-        QueryBuilder<Ortszuordnung> builder =
-            repository.queryBuilder(Ortszuordnung.class);
-        builder.and("ortId", ort.getId());
-        List<Ortszuordnung> zuordnungs =
-            repository.filterPlain(builder.getQuery());
+        List<Ortszuordnung> zuordnungs = getOrtsZuordnungs(ort);
         ort.setReferenceCount(zuordnungs.size());
         ort.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
         List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(ort);
@@ -593,5 +552,4 @@ public class OrtService extends LadaService {
         refBuilder.and("ortId", o.getId());
         return repository.filterPlain(refBuilder.getQuery());
     }
-
 }
