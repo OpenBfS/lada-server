@@ -14,9 +14,7 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.ReiProgpunktGrpUmwZuord;
 import de.intevation.lada.model.stammdaten.Umwelt;
@@ -62,33 +60,23 @@ public class UmweltService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all Umwelt objects.
-     * <p>
-     * Example: http://example.com/umwelt
+     * Get Umwelt objects.
      *
-     * @return Response object containing all Umwelt objects.
+     * @param reiProgpunktGrpId URL parameter "reiprogpunktgruppe" to filter
+     * using reiProgpunktGrpId.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info
+        @QueryParam("reiprogpunktgruppe") Integer reiProgpunktGrpId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("reiprogpunktgruppe")) {
+        if (reiProgpunktGrpId == null) {
             return repository.getAll(Umwelt.class);
-        }
-        Integer id = null;
-        try {
-            id = Integer.valueOf(params.getFirst("reiprogpunktgruppe"));
-        } catch (NumberFormatException e) {
-            return new Response(
-                false,
-                StatusCodes.ERROR_DB_CONNECTION,
-                "Not a valid filter id");
         }
         QueryBuilder<ReiProgpunktGrpUmwZuord> builder =
             repository.queryBuilder(ReiProgpunktGrpUmwZuord.class);
-        builder.and("reiProgpunktGrpId", id);
+        builder.and("reiProgpunktGrpId", reiProgpunktGrpId);
         List<ReiProgpunktGrpUmwZuord> zuord =
             repository.filterPlain(builder.getQuery());
         if (zuord.isEmpty()) {

@@ -14,9 +14,7 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.Kta;
 import de.intevation.lada.model.stammdaten.KtaGrpZuord;
@@ -61,33 +59,22 @@ public class KtaService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all Kta objects.
-     * <p>
-     * Example: http://example.com/kta
+     * Get Kta objects.
      *
+     * @param ktagruppe URL parameter to filter by ktaGrpId
      * @return Response object containing all Kta objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info
+        @QueryParam("ktagruppe") Integer ktagruppe
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("ktagruppe")) {
+        if (ktagruppe == null) {
             return repository.getAll(Kta.class);
-        }
-        Integer id = null;
-        try {
-            id = Integer.valueOf(params.getFirst("ktagruppe"));
-        } catch (NumberFormatException e) {
-            return new Response(
-                false,
-                StatusCodes.ERROR_DB_CONNECTION,
-                "Not a valid filter id");
         }
         QueryBuilder<KtaGrpZuord> builder =
             repository.queryBuilder(KtaGrpZuord.class);
-        builder.and("ktaGrpId", id);
+        builder.and("ktaGrpId", ktagruppe);
         List<KtaGrpZuord> zuord =
             repository.filterPlain(builder.getQuery());
         if (zuord.isEmpty()) {

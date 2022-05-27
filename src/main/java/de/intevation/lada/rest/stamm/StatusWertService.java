@@ -14,9 +14,7 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.StatusProtokoll;
@@ -71,24 +69,22 @@ public class StatusWertService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get all StatusWert objects.
-     * <p>
-     * Example: http://example.com/statuwert
+     * Get StatusWert objects.
      *
+     * @param messungsId URL parameter to filter using comma separated IDs
      * @return Response object containing all StatusWert objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info
+        @QueryParam("messungsId") String messungsId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("messungsId")) {
+        if (messungsId == null) {
             return repository.getAll(StatusWert.class);
         }
 
         List<Integer> mIds = new ArrayList<Integer>();
-        for (String messId : params.getFirst("messungsId").split(",")) {
+        for (String messId : messungsId.split(",")) {
             try {
                 mIds.add(Integer.valueOf(messId));
             } catch (NumberFormatException nfe) {

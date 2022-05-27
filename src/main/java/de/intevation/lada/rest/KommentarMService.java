@@ -14,9 +14,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.KommentarM;
 import de.intevation.lada.model.land.Messung;
@@ -83,11 +81,10 @@ public class KommentarMService extends LadaService {
     private Validator validator;
 
     /**
-     * Get all KommentarM objects.
-     * <p>
-     * The requested objects have to be filtered using an URL parameter named
-     * messungsId.
-     * <p>
+     * Get KommentarM objects.
+     *
+     * @param messungsId The requested objects have to be filtered
+     * using an URL parameter named messungsId.
      * Example: http://example.com/mkommentar?messungsId=[ID]
      *
      * @return Response object containing filtered KommentarM objects.
@@ -97,20 +94,13 @@ public class KommentarMService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info
+        @QueryParam("messungsId") Integer messungsId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("messungsId")) {
+        if (messungsId == null) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        String messungId = params.getFirst("messungsId");
-        int id;
-        try {
-            id = Integer.valueOf(messungId);
-        } catch (NumberFormatException nfe) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
-        Messung messung = repository.getByIdPlain(Messung.class, id);
+
+        Messung messung = repository.getByIdPlain(Messung.class, messungsId);
         if (!authorization.isAuthorized(
                 messung, RequestMethod.GET, Messung.class)
         ) {
@@ -119,7 +109,7 @@ public class KommentarMService extends LadaService {
 
         QueryBuilder<KommentarM> builder =
             repository.queryBuilder(KommentarM.class);
-        builder.and("messungsId", messungId);
+        builder.and("messungsId", messungsId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
             KommentarM.class);

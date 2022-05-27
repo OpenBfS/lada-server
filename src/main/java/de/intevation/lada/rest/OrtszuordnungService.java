@@ -16,11 +16,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
-
-import org.jboss.logging.Logger;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
@@ -76,12 +72,6 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
 public class OrtszuordnungService extends LadaService {
 
     /**
-     * The logger used in this class.
-     */
-    @Inject
-    private Logger logger;
-
-    /**
      * The data repository granting read/write access.
      */
     @Inject
@@ -106,27 +96,21 @@ public class OrtszuordnungService extends LadaService {
     private Validator validator;
 
     /**
-     * Get all Ort objects.
-     * <p>
-     * The requested objects can be filtered using a URL parameter named
-     * probeId.
-     * <p>
-     * Example: http://example.com/ort?probeId=[ID]
+     * Get Ortszuordnung objects.
      *
+     * @param probeId The requested objects can be filtered using
+     * a URL parameter named probeId.
      *
-     * @return Response object containing all Ort objects.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info
+        @QueryParam("probeId") Integer probeId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("probeId")) {
-            logger.debug("get all");
+        if (probeId == null) {
             return repository.getAll(Ortszuordnung.class);
         }
-        String probeId = params.getFirst("probeId");
         QueryBuilder<Ortszuordnung> builder =
             repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", probeId);

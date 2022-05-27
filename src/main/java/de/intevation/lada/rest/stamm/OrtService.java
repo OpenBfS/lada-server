@@ -29,10 +29,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import org.jboss.logging.Logger;
 
@@ -138,14 +137,20 @@ public class OrtService extends LadaService {
     /**
      * Get Ort objects.
      *
+     * @param netzbetreiberId URL parameter to filter using Netzbetreiber.
+     * @param search URL parameter to filter using given pattern.
+     * @param start URL parameter used as offset for paging
+     * @param limit URL parameter used as limit for paging
      * @return Response object containing all (filtered) Ort objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info
+        @QueryParam("netzbetreiberId") String netzbetreiberId,
+        @QueryParam("search") String search,
+        @QueryParam("start") Integer start,
+        @QueryParam("limit") Integer limit
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
         List<Ort> orte = new ArrayList<>();
         UserInfo user = authorization.getInfo();
         EntityManager em = repository.entityManager();
@@ -153,21 +158,19 @@ public class OrtService extends LadaService {
         CriteriaQuery<Ort> query = builder.createQuery(Ort.class);
         Root<Ort> root = query.from(Ort.class);
         Predicate filter = null;
-        if (params.containsKey("netzbetreiberId")) {
+        if (netzbetreiberId != null) {
             Predicate netzbetreiberFilter =
-                builder.equal(
-                    root.get("netzbetreiberId"),
-                    params.getFirst("netzbetreiberId"));
+                builder.equal(root.get("netzbetreiberId"), netzbetreiberId);
             filter = builder.and(netzbetreiberFilter);
         } else {
             for (String nb : user.getNetzbetreiber()) {
                 builder.or(builder.equal(root.get("netzbetreiberId"), nb));
             }
         }
-        if (params.containsKey("search")) {
+        if (search != null) {
             Join<Ort, Verwaltungseinheit> join =
                 root.join("gemeinde", JoinType.LEFT);
-            String pattern = "%" + params.getFirst("search") + "%";
+            String pattern = "%" + search + "%";
             Predicate idFilter = builder.like(root.get("ortId"), pattern);
             Predicate kurzTextFilter =
                 builder.like(root.get("kurztext"), pattern);
@@ -187,12 +190,11 @@ public class OrtService extends LadaService {
         orte = repository.filterPlain(query);
 
         int size = orte.size();
-        if (params.containsKey("start") && params.containsKey("limit")) {
-            int start = Integer.valueOf(params.getFirst("start"));
-            int limit = Integer.valueOf(params.getFirst("limit"));
+        // TODO: Push paging down to database
+        if (start != null && limit != null) {
             int end = limit + start;
-            if (limit == 0 || (start + limit > orte.size())) {
-                end = orte.size();
+            if (limit.intValue() == 0 || end > size) {
+                end = size;
             }
             orte = orte.subList(start, end);
         }

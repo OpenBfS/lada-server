@@ -79,8 +79,8 @@ public class UniversalService extends LadaService {
      * }
      * </code>
      * </pre>
-     * @param start Use as offset for paging
-     * @param limit Use as limit for paging
+     * @param start URL parameter used as offset for paging
+     * @param limit URL parameter used as limit for paging
      * @return JSON encoded query results
      */
     @POST

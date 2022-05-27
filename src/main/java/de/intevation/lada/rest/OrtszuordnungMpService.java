@@ -16,9 +16,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
@@ -98,26 +96,21 @@ public class OrtszuordnungMpService extends LadaService {
     private Validator validator;
 
     /**
-     * Get all Ort objects.
-     * <p>
-     * The requested objects can be filtered using a URL parameter named
-     * messprogrammId.
-     * <p>
-     * Example: http://example.com/ort?messprogrammId=[ID]
+     * Get OrtszuordnungMp objects.
      *
+     * @param messprogrammId The requested objects can be filtered
+     * using a URL parameter named messprogrammId.
      *
-     * @return Response object containing all Ort objects.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info
+        @QueryParam("messprogrammId") Integer messprogrammId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("messprogrammId")) {
+        if (messprogrammId == null) {
             return repository.getAll(OrtszuordnungMp.class);
         }
-        String messprogrammId = params.getFirst("messprogrammId");
         QueryBuilder<OrtszuordnungMp> builder =
             repository.queryBuilder(OrtszuordnungMp.class);
         builder.and("messprogrammId", messprogrammId);

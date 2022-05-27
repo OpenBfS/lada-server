@@ -14,9 +14,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import org.jboss.logging.Logger;
 
@@ -92,25 +90,22 @@ public class KommentarPService extends LadaService {
 
 
     /**
-     * Get all KommentarP objects.
-     * <p>
-     * The requested objects can be filtered using a URL parameter named
-     * probeId.
-     * <p>
+     * Get KommentarP objects.
+     *
+     * @param probeId The requested objects can be filtered
+     * using an URL parameter named probeId.
      * Example: http://example.com/pkommentar?probeId=[ID]
      *
-     * @return Response object containing all KommentarP objects.
+     * @return Response object containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info
+        @QueryParam("probeId") Integer probeId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("probeId")) {
+        if (probeId == null) {
             return repository.getAll(KommentarP.class);
         }
-        String probeId = params.getFirst("probeId");
         QueryBuilder<KommentarP> builder =
             repository.queryBuilder(KommentarP.class);
         builder.and("probeId", probeId);

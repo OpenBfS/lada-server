@@ -13,9 +13,7 @@ import javax.persistence.Query;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -60,22 +58,19 @@ public class ProbenzusatzService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all ProbenZusatz objects.
-     * <p>
-     * Example: http://example.com/probenzusatz
+     * Get ProbenZusatz objects.
      *
-     * @return Response object containing all ProbenZusatz objects.
+     * @param umwId URL parameter to filter using umwId
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info
+        @QueryParam("umwId") String umwId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("umwId") || params.getFirst("umwId").equals("") || params.getFirst("umwId") == null) {
+        if (umwId == null) {
             return repository.getAll(ProbenZusatz.class);
         }
-        String umwId = params.getFirst("umwId");
         Query query =
             repository.queryFromString(
                 "SELECT pzs_id FROM "

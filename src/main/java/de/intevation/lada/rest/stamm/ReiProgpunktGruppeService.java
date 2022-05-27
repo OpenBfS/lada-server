@@ -14,9 +14,7 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.ReiProgpunktGrpUmwZuord;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGrpZuord;
@@ -62,38 +60,27 @@ public class ReiProgpunktGruppeService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all ReiProgpunktGruppe objects.
-     * <p>
-     * Example: http://example.com/reiprogpunkgruppe
+     * Get ReiProgpunktGruppe objects.
      *
+     * @param reiProgpunktId URL parameter "reiprogpunkt" to filter
+     * using reiProgpunktId
+     * @param umwelt URL parameter to filter using umwId
      * @return Response object containing all Datenbasis objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info
+        @QueryParam("reiprogpunkt") Integer reiProgpunktId,
+        @QueryParam("umwelt") String umwelt
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty()
-            || (!params.containsKey("reiprogpunkt")
-            && !params.containsKey("umwelt"))
-        ) {
+        if (reiProgpunktId == null && umwelt == null) {
             return repository.getAll(ReiProgpunktGruppe.class);
         }
         List<ReiProgpunktGruppe> list = new ArrayList<ReiProgpunktGruppe>();
-        if (params.containsKey("reiprogpunkt")) {
-            Integer id = null;
-            try {
-                id = Integer.valueOf(params.getFirst("reiprogpunkt"));
-            } catch (NumberFormatException e) {
-                return new Response(
-                    false,
-                    StatusCodes.ERROR_DB_CONNECTION,
-                    "Not a valid filter id");
-            }
+        if (reiProgpunktId != null) {
             QueryBuilder<ReiProgpunktGrpZuord> builder =
                 repository.queryBuilder(ReiProgpunktGrpZuord.class);
-            builder.and("reiProgpunktId", id);
+            builder.and("reiProgpunktId", reiProgpunktId);
             List<ReiProgpunktGrpZuord> zuord =
                 repository.filterPlain(builder.getQuery());
             if (zuord.isEmpty()) {
@@ -107,10 +94,10 @@ public class ReiProgpunktGruppeService extends LadaService {
             }
             builder1.orIn("id", ids);
             list = repository.filterPlain(builder1.getQuery());
-        } else if (params.containsKey("umwelt")) {
+        } else if (umwelt != null) {
             QueryBuilder<ReiProgpunktGrpUmwZuord> builder =
                 repository.queryBuilder(ReiProgpunktGrpUmwZuord.class);
-            builder.and("umwId", params.getFirst("umwelt"));
+            builder.and("umwId", umwelt);
             List<ReiProgpunktGrpUmwZuord> zuord =
                 repository.filterPlain(builder.getQuery());
             if (zuord.isEmpty()) {

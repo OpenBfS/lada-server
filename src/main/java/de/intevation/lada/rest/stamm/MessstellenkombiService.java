@@ -12,11 +12,7 @@ import java.util.Arrays;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
-
-import org.jboss.logging.Logger;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.Auth;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -52,8 +48,6 @@ import de.intevation.lada.rest.LadaService;
 @Path("rest/messstellenkombi")
 public class MessstellenkombiService extends LadaService {
 
-    @Inject Logger logger;
-
     /**
      * The data repository granting read access.
      */
@@ -61,29 +55,22 @@ public class MessstellenkombiService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all MessStellenKombi objects.
-     * <p>
-     * The requested objects can be filtered using a URL parameter named
-     * netzbetreiberId.
-     * <p>
-      * Example: http://example.com/messstelle
+     * @param netzbetreiberId URL parameter to filter result
      *
-     * @return Response object containing all MessStelle objects.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info
+        @QueryParam("netzbetreiberId") String netzbetreiberId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-
         QueryBuilder<Auth> mstMlQuery = repository.queryBuilder(Auth.class);
         mstMlQuery.orIntList("funktionId", Arrays.asList(0, 1));
 
-        if (params.containsKey("netzbetreiberId")) {
+        if (netzbetreiberId != null) {
             mstMlQuery.andIn(
                 "netzbetreiberId",
-                Arrays.asList(params.getFirst("netzbetreiberId").split(",")));
+                Arrays.asList(netzbetreiberId.split(",")));
         }
 
         return repository.filter(mstMlQuery.getQuery());

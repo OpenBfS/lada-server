@@ -22,9 +22,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.GridColumn;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
@@ -57,25 +55,16 @@ public class ColumnValueService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Request all user defined grid_column_value objects.
-     * @return All GridColumnValue objects referencing the given query.
+     * Request user defined GridColumnValue objects.
+     * @param qid query ID
+     * @return GridColumnValue objects referencing the given query ID.
      */
     @GET
     @Path("/")
     public Response getQueries(
-        @Context UriInfo info
+        @QueryParam("qid") Integer qid
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("qid")) {
-            return new Response(
-                false,
-                StatusCodes.ERROR_DB_CONNECTION,
-                "Not a valid filter id");
-        }
-        Integer id = null;
-        try {
-            id = Integer.valueOf(params.getFirst("qid"));
-        } catch (NumberFormatException e) {
+        if (qid == null) {
             return new Response(
                 false,
                 StatusCodes.ERROR_DB_CONNECTION,
@@ -91,7 +80,7 @@ public class ColumnValueService extends LadaService {
             root.join("queryUser", javax.persistence.criteria.JoinType.LEFT);
         Join<MessStelle, QueryUser> mess =
             value.join("messStelles", javax.persistence.criteria.JoinType.LEFT);
-        Predicate filter = builder.equal(root.get("queryUser"), id);
+        Predicate filter = builder.equal(root.get("queryUser"), qid);
         Predicate uId = builder.equal(root.get("userId"), userInfo.getUserId());
         Predicate zeroIdFilter = builder.equal(root.get("userId"), "0");
         Predicate userFilter = builder.or(uId, zeroIdFilter);

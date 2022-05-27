@@ -14,9 +14,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
@@ -90,26 +88,22 @@ public class ZusatzwertService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get all Zusatzwert objects.
-     * <p>
-     * The requested objects can be filtered using a URL parameter named
-     * probeId.
-     * <p>
+     * Get Zusatzwert objects.
+     *
+     * @param probeId The requested objects can be filtered using
+     * a URL parameter named probeId.
      * Example: http://example.com/zusatzwert?probeId=[ID]
      *
-     *
-     * @return Response object containing all Zusatzwert objects.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info
+        @QueryParam("probeId") Integer probeId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("probeId")) {
+        if (probeId == null) {
             return repository.getAll(ZusatzWert.class);
         }
-        String probeId = params.getFirst("probeId");
         QueryBuilder<ZusatzWert> builder =
             repository.queryBuilder(ZusatzWert.class);
         builder.and("probeId", probeId);

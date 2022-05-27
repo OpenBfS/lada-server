@@ -14,9 +14,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.MessprogrammMmt;
@@ -75,25 +73,22 @@ public class MessprogrammMmtService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get all MessprogrammMmt objects.
-     * <p>
-     * The requested objects can be filtered using a URL parameter named
-     * messprogrammId.
-     * <p>
+     * Get MessprogrammMmt objects.
+     *
+     * @param messprogrammId The requested objects can be filtered
+     * using a URL parameter named messprogrammId.
      * Example: http://example.com/messprogrammmmt?messprogrammId=[ID]
      *
-     * @return Response object containing all MessprogrammMmt objects.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info
+        @QueryParam("messprogrammId") Integer messprogrammId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("messprogrammId")) {
+        if (messprogrammId == null) {
             return repository.getAll(MessprogrammMmt.class);
         }
-        String messprogrammId = params.getFirst("messprogrammId");
         QueryBuilder<MessprogrammMmt> builder =
             repository.queryBuilder(MessprogrammMmt.class);
         builder.and("messprogrammId", messprogrammId);
