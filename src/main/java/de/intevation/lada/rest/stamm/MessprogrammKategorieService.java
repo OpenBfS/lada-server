@@ -16,8 +16,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -72,17 +70,13 @@ public class MessprogrammKategorieService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get all Datenbasis objects.
-     * <p>
-     * Example: http://example.com/messprogrammkategorie
+     * Get all MessprogrammKategorie objects.
      *
-     * @return Response object containing all objects.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
-    public Response get(
-        @Context UriInfo info
-    ) {
+    public Response get() {
         List<MessprogrammKategorie> kategorie =
             repository.getAllPlain(MessprogrammKategorie.class);
         for (MessprogrammKategorie kat: kategorie) {

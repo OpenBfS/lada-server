@@ -13,8 +13,6 @@ import java.util.MissingResourceException;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import org.jboss.logging.Logger;
 
@@ -55,13 +53,11 @@ public class VersionService extends LadaService {
      * <p>
      * Example: http://example.com/version
      *
-     * @return Response object containing all MessStelle objects.
+     * @return Response object containing version.
      */
     @GET
     @Path("/")
-    public Response get(
-        @Context UriInfo info
-    ) {
+    public Response get() {
         String version = "unknown";
         try {
             version = ResourceBundle.getBundle("lada").getString("version");

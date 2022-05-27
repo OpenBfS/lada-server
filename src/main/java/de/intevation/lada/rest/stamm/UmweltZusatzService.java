@@ -11,8 +11,6 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.UmweltZusatz;
 import de.intevation.lada.util.data.Repository;
@@ -59,13 +57,11 @@ public class UmweltZusatzService extends LadaService {
      * <p>
      * Example: http://example.com/umweltzustz
      *
-     * @return Response object containing all StatusWert objects.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
-    public Response get(
-        @Context UriInfo info
-    ) {
+    public Response get() {
         return repository.getAll(UmweltZusatz.class);
     }
 

@@ -11,8 +11,6 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.Nuts;
 import de.intevation.lada.util.data.Repository;
@@ -57,17 +55,13 @@ public class NutsService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all UmweltZusatz objects.
-     * <p>
-     * Example: http://example.com/umweltzustz
+     * Get all Nuts objects.
      *
-     * @return Response object containing all StatusWert objects.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
-    public Response get(
-        @Context UriInfo info
-    ) {
+    public Response get() {
         return repository.getAll(Nuts.class);
     }
 

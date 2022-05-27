@@ -11,8 +11,6 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.Staat;
 import de.intevation.lada.util.data.Repository;
@@ -68,9 +66,7 @@ public class StaatService extends LadaService {
      */
     @GET
     @Path("/")
-    public Response get(
-        @Context UriInfo info
-    ) {
+    public Response get() {
         return repository.getAll(Staat.class);
     }
 

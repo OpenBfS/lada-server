@@ -20,8 +20,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.StatusProtokoll;
@@ -84,9 +82,7 @@ public class StatusKombiService extends LadaService {
      */
     @GET
     @Path("/")
-    public Response get(
-        @Context UriInfo info
-    ) {
+    public Response get() {
         return repository.getAll(StatusKombi.class);
     }
 
