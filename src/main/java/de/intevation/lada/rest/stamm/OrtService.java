@@ -539,11 +539,11 @@ public class OrtService extends LadaService {
     }
 
     /**
-     * Return the Ortszuordnung instances referencing the given ort
+     * Return the Ortszuordnung instances referencing the given ort.
      * @param o Ort instance
      * @return Ortszuordnung instances as list
      */
-    public List<Ortszuordnung> getOrtsZuordnungs(Ort o) {
+    private List<Ortszuordnung> getOrtsZuordnungs(Ort o) {
         QueryBuilder<Ortszuordnung> refBuilder =
             repository.queryBuilder(Ortszuordnung.class);
         refBuilder.and("ortId", o.getId());
@@ -556,7 +556,7 @@ public class OrtService extends LadaService {
      *                   the ort to check
      * @return Number of references as int
      */
-    public int getPlausibleRefCount(List<Ortszuordnung> zuordnungs) {
+    private int getPlausibleRefCount(List<Ortszuordnung> zuordnungs) {
         Map<Integer, Integer> plausibleMap = new HashMap<Integer, Integer>();
         for (Ortszuordnung zuordnung: zuordnungs) {
             EntityManager em = repository.entityManager();
@@ -583,11 +583,11 @@ public class OrtService extends LadaService {
     }
 
     /**
-     * Return the OrtszuordnungMp instances referencing the given ort
+     * Return the OrtszuordnungMp instances referencing the given ort.
      * @param o Ort instance
      * @return Ortszuordnung instances as list
      */
-    public List<OrtszuordnungMp> getOrtsZuordnungsMp(Ort o) {
+    private List<OrtszuordnungMp> getOrtsZuordnungsMp(Ort o) {
         QueryBuilder<OrtszuordnungMp> refBuilder =
             repository.queryBuilder(OrtszuordnungMp.class);
         refBuilder.and("ortId", o.getId());
