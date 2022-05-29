@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -382,37 +381,6 @@ public class StatusService extends LadaService {
         return authorization.filter(
             response,
             StatusProtokoll.class);
-    }
-
-    /**
-     * Update an existing Status object.
-     * <p>
-     * The object to update should come as JSON formatted string.
-     * <pre>
-     * <code>
-     * {
-     *  "id": [number],
-     *  "owner": [boolean],
-     *  "messungsId": [number],
-     *  "erzeuger": [string],
-     *  "status": [number],
-     *  "skommentar": [string],
-     *  "treeModified": [timestamp],
-     *  "parentModified": [timestamp],
-     *  "sdatum": [date]
-     * }
-     * </code>
-     * </pre>
-     *
-     * @return Response object containing the updated Status object.
-     */
-    @PUT
-    @Path("/{id}")
-    public Response update(
-        @PathParam("id") String id,
-        StatusProtokoll status
-    ) {
-        return new Response(false, StatusCodes.NOT_ALLOWED, status);
     }
 
     /**
