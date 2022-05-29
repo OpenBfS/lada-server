@@ -386,7 +386,7 @@ public class MessungService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        if (lock.isLocked(messung)) {
+        if (lock.isLocked(messungObj)) {
             return new Response(false, StatusCodes.CHANGED_VALUE, null);
         }
 
