@@ -111,7 +111,7 @@ public class Stammdaten extends ServiceTest {
                 "letzteAenderung",
                 "messgroesseId",
                 "datenbasisId",
-                "messMethodeId",
+                "mmtId",
                 "umwId"
             )
         );

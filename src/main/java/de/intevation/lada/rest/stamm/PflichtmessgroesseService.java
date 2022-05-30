@@ -72,13 +72,11 @@ public class PflichtmessgroesseService extends LadaService {
 
     /**
      * Get a single PflichtMessgroesse object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/pflichtmessgroesse/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single PflichtMessgroesse.
      */
+    // TODO: Do not use a foreign key field for filtering as PathParam
     @GET
     @Path("/{id}")
     public Response getById(
@@ -86,10 +84,11 @@ public class PflichtmessgroesseService extends LadaService {
     ) {
         QueryBuilder<PflichtMessgroesse> builder =
             repository.queryBuilder(PflichtMessgroesse.class);
-        builder.and("messMethodeId", id);
+        builder.and("mmtId", id);
         List<PflichtMessgroesse> result =
             repository.filterPlain(builder.getQuery());
         if (!result.isEmpty()) {
+            // TODO: Do not return arbitrary list element
             return new Response(true, StatusCodes.OK, result.get(0));
         }
         return new Response(false, StatusCodes.NOT_EXISTING, null);
