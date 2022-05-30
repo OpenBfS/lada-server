@@ -66,18 +66,15 @@ public class OrtTypService extends LadaService {
 
     /**
      * Get a single OrtTyp object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/orttyp/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single OrtTyp.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        return repository.getById(OrtTyp.class, Integer.valueOf(id));
+        return repository.getById(OrtTyp.class, id);
     }
 }

@@ -157,23 +157,16 @@ public class StatusService extends LadaService {
 
     /**
      * Get a single Status object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/status/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Status.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(
-            StatusProtokoll.class,
-            Integer.valueOf(id)
-        );
-
+        Response response = repository.getById(StatusProtokoll.class, id);
         return authorization.filter(
             response,
             StatusProtokoll.class);
@@ -385,23 +378,17 @@ public class StatusService extends LadaService {
 
     /**
      * Delete an existing Status object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/status/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        /* Get the object by id*/
-        Response object =
-            repository.getById(
-                StatusProtokoll.class, Integer.valueOf(id));
-        StatusProtokoll obj = (StatusProtokoll) object.getData();
+        StatusProtokoll obj = repository.getByIdPlain(
+            StatusProtokoll.class, id);
         if (!authorization.isAuthorized(
                 obj,
                 RequestMethod.DELETE,

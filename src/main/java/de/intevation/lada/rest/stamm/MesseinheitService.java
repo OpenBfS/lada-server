@@ -121,18 +121,15 @@ public class MesseinheitService extends LadaService {
 
     /**
      * Get a single MessEinheit object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messeinheit/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single MessEinheit.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        return repository.getById(MessEinheit.class, Integer.valueOf(id));
+        return repository.getById(MessEinheit.class, id);
     }
 }

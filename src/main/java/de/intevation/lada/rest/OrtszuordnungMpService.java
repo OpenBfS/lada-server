@@ -135,22 +135,17 @@ public class OrtszuordnungMpService extends LadaService {
     }
 
     /**
-     * Get a Ort object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/ort/{id}
+     * Get single object by id.
      *
-     * @return Response object containing a single Ort.
+     * @param id The id is appended to the URL as a path parameter.
+     * @return Response object
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Response response =
-            repository.getById(
-                OrtszuordnungMp.class, Integer.valueOf(id));
+        Response response = repository.getById(OrtszuordnungMp.class, id);
         OrtszuordnungMp ort = (OrtszuordnungMp) response.getData();
         Violation violation = validator.validate(ort);
         if (violation.hasErrors() || violation.hasWarnings()) {
@@ -240,7 +235,7 @@ public class OrtszuordnungMpService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         OrtszuordnungMp ort
     ) {
         if (!authorization.isAuthorized(
@@ -272,23 +267,18 @@ public class OrtszuordnungMpService extends LadaService {
     }
 
     /**
-     * Delete an existing Ort object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/orortt/{id}
+     * Delete object by id.
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Response object =
-            repository.getById(
-                OrtszuordnungMp.class, Integer.valueOf(id));
-        OrtszuordnungMp ortObj = (OrtszuordnungMp) object.getData();
+        OrtszuordnungMp ortObj = repository.getByIdPlain(
+            OrtszuordnungMp.class, id);
         if (!authorization.isAuthorized(
                 ortObj,
                 RequestMethod.PUT,

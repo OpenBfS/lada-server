@@ -100,22 +100,16 @@ public class StatusWertService extends LadaService {
 
     /**
      * Get a single StatusWert object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/statuswert/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single StatusWert.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        return repository.getById(
-            StatusWert.class,
-            Integer.valueOf(id)
-        );
+        return repository.getById(StatusWert.class, id);
     }
 
     /**

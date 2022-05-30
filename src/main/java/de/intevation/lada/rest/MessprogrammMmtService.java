@@ -99,21 +99,17 @@ public class MessprogrammMmtService extends LadaService {
 
     /**
      * Get a MessprogrammMmt object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messprogrammmmt/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single MessprogrammMmt.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         return authorization.filter(
-            repository.getById(
-                MessprogrammMmt.class, Integer.valueOf(id)),
+            repository.getById(MessprogrammMmt.class, id),
             MessprogrammMmt.class);
     }
 
@@ -175,7 +171,7 @@ public class MessprogrammMmtService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         MessprogrammMmt messprogrammmmt
     ) {
         if (!authorization.isAuthorized(
@@ -197,24 +193,17 @@ public class MessprogrammMmtService extends LadaService {
 
     /**
      * Delete an existing MessprogrammMmt object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messprogammmmt/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        /* Get the messprogrammmmt object by id*/
-        Response messprogrammmmt =
-            repository.getById(
-                MessprogrammMmt.class, Integer.valueOf(id));
-        MessprogrammMmt messprogrammmmtObj =
-            (MessprogrammMmt) messprogrammmmt.getData();
+        MessprogrammMmt messprogrammmmtObj = repository.getByIdPlain(
+            MessprogrammMmt.class, id);
         if (!authorization.isAuthorized(
                 messprogrammmmtObj,
                 RequestMethod.DELETE,

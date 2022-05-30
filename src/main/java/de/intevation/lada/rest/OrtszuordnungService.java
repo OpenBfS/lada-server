@@ -136,21 +136,16 @@ public class OrtszuordnungService extends LadaService {
 
     /**
      * Get a Ort object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/ort/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Ort.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Response response =
-            repository.getById(
-                Ortszuordnung.class, Integer.valueOf(id));
+        Response response = repository.getById(Ortszuordnung.class, id);
         Ortszuordnung ort = (Ortszuordnung) response.getData();
         Violation violation = validator.validate(ort);
         if (violation.hasErrors() || violation.hasWarnings()) {
@@ -240,7 +235,7 @@ public class OrtszuordnungService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         Ortszuordnung ort
     ) {
         if (!authorization.isAuthorized(
@@ -275,22 +270,16 @@ public class OrtszuordnungService extends LadaService {
 
     /**
      * Delete an existing Ort object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/orortt/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Response object =
-            repository.getById(
-                Ortszuordnung.class, Integer.valueOf(id));
-        Ortszuordnung ortObj = (Ortszuordnung) object.getData();
+        Ortszuordnung ortObj = repository.getByIdPlain(Ortszuordnung.class, id);
         if (!authorization.isAuthorized(
                 ortObj,
                 RequestMethod.PUT,

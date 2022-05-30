@@ -202,21 +202,16 @@ public class MessungService extends LadaService {
 
     /**
      * Get a Messung object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messung/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Messung.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Response response =
-            repository.getById(
-                Messung.class, Integer.valueOf(id));
+        Response response = repository.getById(Messung.class, id);
         Messung messung = (Messung) response.getData();
         Violation violation = validator.validate(messung);
         if (violation.hasErrors()
@@ -323,7 +318,7 @@ public class MessungService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         Messung messung
     ) {
         if (!authorization.isAuthorized(
@@ -362,23 +357,16 @@ public class MessungService extends LadaService {
 
     /**
      * Delete an existing Messung object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messung/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        /* Get the messung object by id*/
-        Response messung =
-            repository.getById(
-                Messung.class, Integer.valueOf(id));
-        Messung messungObj = (Messung) messung.getData();
+        Messung messungObj = repository.getByIdPlain(Messung.class, id);
         if (!authorization.isAuthorized(
                 messungObj,
                 RequestMethod.DELETE,

@@ -105,20 +105,16 @@ public class ProbenehmerService extends LadaService {
 
     /**
      * Get a single Datenbasis object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/probenehmer/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single object.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Probenehmer p = repository.getByIdPlain(
-            Probenehmer.class, Integer.valueOf(id));
+        Probenehmer p = repository.getByIdPlain(Probenehmer.class, id);
         p.setReadonly(
             !authorization.isAuthorized(
                 p,
@@ -156,7 +152,7 @@ public class ProbenehmerService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         Probenehmer probenehmer
     ) {
         if (!authorization.isAuthorized(
@@ -183,10 +179,10 @@ public class ProbenehmerService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         Probenehmer probenehmer = repository.getByIdPlain(
-            Probenehmer.class, Integer.valueOf(id));
+            Probenehmer.class, id);
         if (probenehmer == null
             || !authorization.isAuthorized(
                 probenehmer,

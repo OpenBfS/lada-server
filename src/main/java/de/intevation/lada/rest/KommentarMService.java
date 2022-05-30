@@ -117,21 +117,16 @@ public class KommentarMService extends LadaService {
 
     /**
      * Get a single KommentarM object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/mkommentar/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single KommentarM.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Response response =
-            repository.getById(
-                KommentarM.class, Integer.valueOf(id));
+        Response response = repository.getById(KommentarM.class, id);
         KommentarM kommentar = (KommentarM) response.getData();
         Messung messung = repository.getByIdPlain(
             Messung.class, kommentar.getMessungsId());
@@ -211,7 +206,7 @@ public class KommentarMService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         KommentarM kommentar
     ) {
         if (!authorization.isAuthorized(
@@ -235,23 +230,16 @@ public class KommentarMService extends LadaService {
 
     /**
      * Delete an existing KommentarM object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/mkommentar/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        /* Get the object by id*/
-        Response kommentar =
-            repository.getById(
-                KommentarM.class, Integer.valueOf(id));
-        KommentarM kommentarObj = (KommentarM) kommentar.getData();
+        KommentarM kommentarObj = repository.getByIdPlain(KommentarM.class, id);
         if (!authorization.isAuthorized(
                 kommentarObj,
                 RequestMethod.DELETE,

@@ -149,37 +149,30 @@ public class AuditTrailService extends LadaService {
 
     /**
      * Service to generate audit trail for probe objects.
+     *
+     * @param pId ID of probe given in URL path.
      */
     @GET
     @Path("/probe/{id}")
     public String getProbe(
-        @PathParam("id") String id
+        @PathParam("id") Integer pId
     ) {
-        if (id == null || "".equals(id)) {
-            String ret = "{\"success\": false,"
-                + "\"message\":698,\"data\":null}";
-            return ret;
+        if (pId == null) {
+            return "{\"success\": false,\"message\":698,\"data\":null}";
         }
 
-        Integer pId = null;
-        String ret = "{\"success\": false,"
-            + "\"message\":600,\"data\":null}";
-        try {
-            pId = Integer.valueOf(id);
-        } catch (NumberFormatException nfe) {
-            return ret;
-        }
         // Get the plain probe object to have the hauptproben_nr.
         Probe probe = repository.getByIdPlain(Probe.class, pId);
         if (probe == null) {
-            return ret;
+            return "{\"success\": false,\"message\":600,\"data\":null}";
         }
+
         UserInfo userInfo = authorization.getInfo();
 
         //Get ort ids connected to this probe
         QueryBuilder<Ortszuordnung> refBuilder =
             repository.queryBuilder(Ortszuordnung.class);
-        refBuilder.and("probeId", id);
+        refBuilder.and("probeId", pId);
         List<Integer> ortIds = new LinkedList<Integer>();
         for (Ortszuordnung zuordnung
             : repository.filterPlain(refBuilder.getQuery())
@@ -190,9 +183,9 @@ public class AuditTrailService extends LadaService {
         // Get all entries for the probe and its sub objects.
         QueryBuilder<AuditTrailProbe> builder =
             repository.queryBuilder(AuditTrailProbe.class);
-        builder.and("objectId", id);
+        builder.and("objectId", pId);
         builder.and("tableName", "probe");
-        builder.or("probeId", id);
+        builder.or("probeId", pId);
         if (ortIds.size() > 0) {
             builder.orIn("ortId", ortIds);
         }
@@ -305,29 +298,21 @@ public class AuditTrailService extends LadaService {
 
     /**
      * Service to generate audit trail for messung objects.
+     *
+     * @param mId ID of Messung given in URL path.
      */
     @GET
     @Path("/messung/{id}")
     public String getMessung(
-        @PathParam("id") String id
+        @PathParam("id") Integer mId
     ) {
-        if (id == null || "".equals(id)) {
-            String ret = "{\"success\": false,"
-                + "\"message\":698,\"data\":null}";
-            return ret;
+        if (mId == null) {
+            return "{\"success\": false,\"message\":698,\"data\":null}";
         }
 
-        Integer mId = null;
-        String ret = "{\"success\": false,"
-            + "\"message\":600,\"data\":null}";
-        try {
-            mId = Integer.valueOf(id);
-        } catch (NumberFormatException nfe) {
-            return ret;
-        }
         Messung messung = repository.getByIdPlain(Messung.class, mId);
         if (messung == null) {
-            return ret;
+            return "{\"success\": false,\"message\":600,\"data\":null}";
         }
         StatusProtokoll status =
             repository.getByIdPlain(StatusProtokoll.class, messung.getStatus());

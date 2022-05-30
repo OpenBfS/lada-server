@@ -92,20 +92,17 @@ public class MessprogrammKategorieService extends LadaService {
 
     /**
      * Get a single object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messprogrammkategorie/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single object.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         MessprogrammKategorie mpk = repository.getByIdPlain(
-            MessprogrammKategorie.class, Integer.valueOf(id));
+            MessprogrammKategorie.class, id);
         mpk.setReadonly(
             !authorization.isAuthorized(
                 mpk,
@@ -143,7 +140,7 @@ public class MessprogrammKategorieService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         MessprogrammKategorie kategorie
     ) {
         if (!authorization.isAuthorized(
@@ -170,10 +167,10 @@ public class MessprogrammKategorieService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         MessprogrammKategorie kategorie = repository.getByIdPlain(
-            MessprogrammKategorie.class, Integer.valueOf(id));
+            MessprogrammKategorie.class, id);
         if (kategorie == null
             || !authorization.isAuthorized(
                 kategorie,

@@ -100,19 +100,15 @@ public class DeskriptorService extends LadaService {
 
     /**
      * Get a single Deskriptor object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/deskriptor/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Deskriptor.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        return repository.getById(
-            Deskriptoren.class, Integer.valueOf(id));
+        return repository.getById(Deskriptoren.class, id);
     }
 }

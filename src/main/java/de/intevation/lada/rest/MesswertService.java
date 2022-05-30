@@ -162,21 +162,16 @@ public class MesswertService extends LadaService {
 
     /**
      * Get a Messwert object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messwert/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Messwert.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Response response =
-            repository.getById(
-                Messwert.class, Integer.valueOf(id));
+        Response response = repository.getById(Messwert.class, id);
         Messwert messwert = (Messwert) response.getData();
         Messung messung = repository.getByIdPlain(
             Messung.class, messwert.getMessungsId());
@@ -288,7 +283,7 @@ public class MesswertService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         Messwert messwert
     ) {
         if (!authorization.isAuthorized(
@@ -410,23 +405,16 @@ public class MesswertService extends LadaService {
 
     /**
      * Delete an existing Messwert object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messwert/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        /* Get the messwert object by id*/
-        Response messwert =
-            repository.getById(
-                Messwert.class, Integer.valueOf(id));
-        Messwert messwertObj = (Messwert) messwert.getData();
+        Messwert messwertObj = repository.getByIdPlain(Messwert.class, id);
         if (!authorization.isAuthorized(
                 messwertObj,
                 RequestMethod.DELETE,

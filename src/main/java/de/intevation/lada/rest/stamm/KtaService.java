@@ -92,18 +92,15 @@ public class KtaService extends LadaService {
 
     /**
      * Get a single Kta object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/kta/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Kta.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        return repository.getById(Kta.class, Integer.valueOf(id));
+        return repository.getById(Kta.class, id);
     }
 }

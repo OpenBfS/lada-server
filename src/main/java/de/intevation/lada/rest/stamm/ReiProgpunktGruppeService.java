@@ -118,18 +118,15 @@ public class ReiProgpunktGruppeService extends LadaService {
 
     /**
      * Get a single ReiProgpunktGruppe object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/reiprogpunkgruppe/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single ReiProgpunktGruppe.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        return repository.getById(ReiProgpunktGruppe.class, Integer.valueOf(id));
+        return repository.getById(ReiProgpunktGruppe.class, id);
     }
 }

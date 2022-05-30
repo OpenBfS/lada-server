@@ -220,17 +220,14 @@ public class OrtService extends LadaService {
 
     /**
      * Get a single Ort object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/rest/ort/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Ort.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") int id
+        @PathParam("id") Integer id
     ) {
         Ort ort = repository.getByIdPlain(Ort.class, id);
         List<Ortszuordnung> zuordnungs = getOrtsZuordnungs(ort);
@@ -399,7 +396,7 @@ public class OrtService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         Ort ort
     ) {
         if (!authorization.isAuthorized(
@@ -466,20 +463,16 @@ public class OrtService extends LadaService {
 
     /**
      * Delete an existing Ort object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/rest/ort/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Response response =
-            repository.getById(Ort.class, Integer.valueOf(id));
+        Response response = repository.getById(Ort.class, id);
         if (!response.getSuccess()) {
             return response;
         }

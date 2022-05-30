@@ -79,11 +79,8 @@ public class MessstelleService extends LadaService {
 
     /**
      * Get a single MessStelle object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messstelle/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single MessStelle.
      */
     @GET

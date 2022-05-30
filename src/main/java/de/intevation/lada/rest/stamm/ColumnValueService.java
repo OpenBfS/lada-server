@@ -167,16 +167,17 @@ public class ColumnValueService extends LadaService {
 
     /**
      * Delete the given column.
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response containing the deleted record.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         UserInfo userInfo = authorization.getInfo();
         GridColumnValue gridColumnValue = repository.getByIdPlain(
-            GridColumnValue.class, Integer.valueOf(id));
+            GridColumnValue.class, id);
         if (gridColumnValue.getUserId().equals(userInfo.getUserId())) {
             return repository.delete(gridColumnValue);
         }

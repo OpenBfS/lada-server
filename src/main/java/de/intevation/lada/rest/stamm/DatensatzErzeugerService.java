@@ -93,21 +93,18 @@ public class DatensatzErzeugerService extends LadaService {
     }
 
     /**
-     * Get a single Datenbasis object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/datenbasis/{id}
+     * Get a single object by id.
      *
-     * @return Response object containing a single Datenabasis.
+     * @param id The id is appended to the URL as a path parameter.
+     * @return Response object
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         DatensatzErzeuger erzeuger = repository.getByIdPlain(
-            DatensatzErzeuger.class, Integer.valueOf(id));
+            DatensatzErzeuger.class, id);
         erzeuger.setReadonly(
             !authorization.isAuthorized(
                 erzeuger,
@@ -148,7 +145,7 @@ public class DatensatzErzeugerService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         DatensatzErzeuger datensatzerzeuger
     ) {
         if (!authorization.isAuthorized(
@@ -178,10 +175,10 @@ public class DatensatzErzeugerService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         DatensatzErzeuger datensatzerzeuger = repository.getByIdPlain(
-            DatensatzErzeuger.class, Integer.valueOf(id));
+            DatensatzErzeuger.class, id);
         if (datensatzerzeuger == null
             || !authorization.isAuthorized(
                 datensatzerzeuger,

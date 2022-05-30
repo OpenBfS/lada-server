@@ -65,18 +65,15 @@ public class StatusStufeService extends LadaService {
 
     /**
      * Get a single StatusStufe object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/statusstufe/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single StatusStufe.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        return repository.getById(StatusStufe.class, Integer.valueOf(id));
+        return repository.getById(StatusStufe.class, id);
     }
 }

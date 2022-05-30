@@ -16,8 +16,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import org.jboss.logging.Logger;
-
 import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -66,12 +64,6 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
 public class KommentarPService extends LadaService {
 
     /**
-     * The logger used in this class.
-     */
-    @Inject
-    private Logger logger;
-
-    /**
      * The data repository granting read/write access.
      */
     @Inject
@@ -116,21 +108,17 @@ public class KommentarPService extends LadaService {
 
     /**
      * Get a single KommentarP object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/pkommentar/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single KommentarP.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         return authorization.filter(
-            repository.getById(
-                KommentarP.class, Integer.valueOf(id)),
+            repository.getById(KommentarP.class, id),
             KommentarP.class);
     }
 
@@ -200,7 +188,7 @@ public class KommentarPService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         KommentarP kommentar
     ) {
         if (!authorization.isAuthorized(
@@ -208,7 +196,6 @@ public class KommentarPService extends LadaService {
                 RequestMethod.PUT,
                 KommentarP.class)
         ) {
-            logger.debug("User is not authorized!");
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         Violation violation = validator.validate(kommentar);
@@ -225,29 +212,21 @@ public class KommentarPService extends LadaService {
 
     /**
      * Delete an existing KommentarP by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/pkommentar/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        /* Get the object by id*/
-        Response kommentar =
-            repository.getById(
-                KommentarP.class, Integer.valueOf(id));
-        KommentarP kommentarObj = (KommentarP) kommentar.getData();
+        KommentarP kommentarObj = repository.getByIdPlain(KommentarP.class, id);
         if (!authorization.isAuthorized(
                 kommentarObj,
                 RequestMethod.DELETE,
                 KommentarP.class)
         ) {
-            logger.debug("User is not authorized!");
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         return repository.delete(kommentarObj);
