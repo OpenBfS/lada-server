@@ -434,7 +434,7 @@ public class MesswertService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        if (lock.isLocked(messwert)) {
+        if (lock.isLocked(messwertObj)) {
             return new Response(false, StatusCodes.NO_ACCESS, null);
         }
         /* Delete the messwert object*/
