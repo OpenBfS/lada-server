@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.rest.stamm;
 
-import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -55,22 +55,21 @@ public class MessstellenkombiService extends LadaService {
     private Repository repository;
 
     /**
-     * @param netzbetreiberId URL parameter to filter result
+     * @param netzbetreiberIds Multiple URL parameters "netzbetreiberId"
+     * can be given to filter the result.
      *
      * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("netzbetreiberId") String netzbetreiberId
+        @QueryParam("netzbetreiberId") List<String> netzbetreiberIds
     ) {
         QueryBuilder<Auth> mstMlQuery = repository.queryBuilder(Auth.class);
-        mstMlQuery.orIntList("funktionId", Arrays.asList(0, 1));
+        mstMlQuery.orIntList("funktionId", List.of(0, 1));
 
-        if (netzbetreiberId != null) {
-            mstMlQuery.andIn(
-                "netzbetreiberId",
-                Arrays.asList(netzbetreiberId.split(",")));
+        if (netzbetreiberIds != null) {
+            mstMlQuery.andIn("netzbetreiberId", netzbetreiberIds);
         }
 
         return repository.filter(mstMlQuery.getQuery());
