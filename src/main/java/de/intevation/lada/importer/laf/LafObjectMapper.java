@@ -258,9 +258,8 @@ public class LafObjectMapper {
         }
 
         // Check if the user is authorized to create the probe
-        // TODO: Should use RequestMethod.POST?
         if (
-            !authorizer.isAuthorized(probe, RequestMethod.GET, Probe.class)
+            !authorizer.isAuthorized(probe, RequestMethod.POST, Probe.class)
         ) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.NOT_ALLOWED);
