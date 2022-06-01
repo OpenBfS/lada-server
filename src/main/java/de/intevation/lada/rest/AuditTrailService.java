@@ -157,10 +157,6 @@ public class AuditTrailService extends LadaService {
     public String getProbe(
         @PathParam("id") Integer pId
     ) {
-        if (pId == null) {
-            return "{\"success\": false,\"message\":698,\"data\":null}";
-        }
-
         // Get the plain probe object to have the hauptproben_nr.
         Probe probe = repository.getByIdPlain(Probe.class, pId);
         if (probe == null) {
@@ -306,10 +302,6 @@ public class AuditTrailService extends LadaService {
     public String getMessung(
         @PathParam("id") Integer mId
     ) {
-        if (mId == null) {
-            return "{\"success\": false,\"message\":698,\"data\":null}";
-        }
-
         Messung messung = repository.getByIdPlain(Messung.class, mId);
         if (messung == null) {
             return "{\"success\": false,\"message\":600,\"data\":null}";
