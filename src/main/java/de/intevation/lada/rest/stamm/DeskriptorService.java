@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.rest.stamm;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -68,20 +67,15 @@ public class DeskriptorService extends LadaService {
      * The requested objects can be filtered using the following URL
      * parameters:
      * @param layer The layer of the reqested deskriptor
-     * @param parents The parents of the requested deskriptor
-     * <br>
-     * The response data contains a stripped set of deskriptor objects.
-     * <p>
-     * Example:
-     * http://example.com/deskriptor?layer=[LAYER]
-     *
+     * @param parents The parents of the requested deskriptor, each given
+     * using an URL parameter named "parents".
      * @return Response object containing the Deskriptor objects.
      */
     @GET
     @Path("/")
     public Response get(
         @QueryParam("layer") Integer layer,
-        @QueryParam("parents") String parents
+        @QueryParam("parents") List<Integer> parents
     ) {
         if (layer == null) {
             return repository.getAll(Deskriptoren.class);
@@ -90,10 +84,8 @@ public class DeskriptorService extends LadaService {
             repository.queryBuilder(Deskriptoren.class);
         builder.and("sn", 0).not();
         builder.and("ebene", layer);
-        if (parents != null) {
-            String[] parentArray = parents.split(", ");
-            List<String> parentList = Arrays.asList(parentArray);
-            builder.andIn("vorgaenger", parentList);
+        if (parents != null && !parents.isEmpty()) {
+            builder.andIn("vorgaenger", parents);
         }
         return repository.filter(builder.getQuery());
     }
