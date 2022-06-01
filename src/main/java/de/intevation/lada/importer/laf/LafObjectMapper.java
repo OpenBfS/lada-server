@@ -72,6 +72,7 @@ import de.intevation.lada.util.data.MesswertNormalizer;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
+import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
@@ -257,9 +258,10 @@ public class LafObjectMapper {
         }
 
         // Check if the user is authorized to create the probe
-        boolean isAuthorized =
-            authorizer.isAuthorized(probe, Probe.class);
-        if (!isAuthorized) {
+        // TODO: Should use RequestMethod.POST?
+        if (
+            !authorizer.isAuthorized(probe, RequestMethod.GET, Probe.class)
+        ) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.NOT_ALLOWED);
             err.setKey(userInfo.getName());
@@ -278,17 +280,16 @@ public class LafObjectMapper {
         // Compare the probe with objects in the db
         Probe newProbe = null;
         boolean oldProbeIsReadonly = false;
-        boolean isAuthorizedOld = false;
-
         try {
             Identified i = probeIdentifier.find(probe);
             Probe old = (Probe) probeIdentifier.getExisting();
             // Matching probe was found in the db. Update it!
             if (i == Identified.UPDATE) {
-                isAuthorizedOld =
-                    authorizer.isAuthorized(old, Probe.class);
                 oldProbeIsReadonly = authorizer.isProbeReadOnly(old.getId());
-                if (isAuthorizedOld) {
+                if (
+                    // TODO: Should use RequestMethod.PUT?
+                    authorizer.isAuthorized(old, RequestMethod.GET, Probe.class)
+                ) {
                     if (oldProbeIsReadonly) {
                         newProbe = old;
                         currentNotifications.add(
@@ -834,7 +835,9 @@ public class LafObjectMapper {
         doConverts(messung);
         doTransforms(messung);
         // Check if the user is authorized to create the object
-        if (!authorizer.isAuthorizedOnNew(messung, Messung.class)) {
+        if (
+            !authorizer.isAuthorized(messung, RequestMethod.POST, Messung.class)
+        ) {
             ReportItem warn = new ReportItem();
             warn.setCode(StatusCodes.NOT_ALLOWED);
             warn.setKey(userInfo.getName());

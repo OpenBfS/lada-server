@@ -42,6 +42,7 @@ import de.intevation.lada.util.auth.HeaderAuthorization;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
+import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
 
@@ -486,7 +487,9 @@ implements Creator {
                 (m.getFertig() ? "1" : "0"));
             laf += lafLine("BEARBEITUNGSSTATUS", writeStatus(m));
             if (this.userInfo != null
-                && authorization.isAuthorized(m, Messung.class)
+                // TODO: GET is correct RequestMethod here?
+                && authorization.isAuthorized(
+                    m, RequestMethod.GET, Messung.class)
             ) {
                 for (Messwert mw : werte) {
                     laf += writeMesswert(mw);
