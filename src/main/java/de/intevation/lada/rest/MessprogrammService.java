@@ -111,22 +111,18 @@ public class MessprogrammService extends LadaService {
 
     /**
      * Get a Messprogramm object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messprogramm/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Messprogramm.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         Response response =
             authorization.filter(
-                repository.getById(
-                    Messprogramm.class, Integer.valueOf(id)),
+                repository.getById(Messprogramm.class, id),
                 Messprogramm.class);
         return response;
     }
@@ -240,7 +236,7 @@ public class MessprogrammService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         Messprogramm messprogramm
     ) {
         if (!authorization.isAuthorized(
@@ -353,26 +349,21 @@ public class MessprogrammService extends LadaService {
 
     /**
      * Delete an existing Messprogramm object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messprogamm/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        /* Get the messprogamm object by id*/
-        Response messprogramm =
-            repository.getById(
-                Messprogramm.class, Integer.valueOf(id));
-        Messprogramm messprogrammObj = (Messprogramm) messprogramm.getData();
+        Messprogramm messprogrammObj = repository.getByIdPlain(
+            Messprogramm.class, id);
         /* check if probe references to the messprogramm exists */
+        // TODO: This is a nice example of ORM-induced database misuse:
         QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
-        builder.and("mprId",  ((Messprogramm) messprogramm.getData()).getId());
+        builder.and("mprId", messprogrammObj.getId());
         List<Probe> probes =
             repository.filterPlain(builder.getQuery());
         if (probes.size() > 0) {

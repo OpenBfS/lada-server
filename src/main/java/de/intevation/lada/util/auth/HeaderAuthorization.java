@@ -229,34 +229,4 @@ public class HeaderAuthorization implements Authorization {
         Authorizer a = authorizers.get(Messung.class);
         return a.isMessungReadOnly(messungId);
     }
-
-    /**
-     * Check whether a user is authorized to operate on the given object.
-     *
-     * @param data      The object to test.
-     * @param clazz     The data object class.
-     * @return True if the user is authorized else returns false.
-     */
-    @Override
-    public <T> boolean isAuthorized(
-        Object data,
-        Class<T> clazz
-    ) {
-        return isAuthorized(data, RequestMethod.GET, clazz);
-    }
-
-    /**
-     * Check whether a user is authorized to create the given object.
-     *
-     * @param data      The object to test.
-     * @param clazz     The data object class.
-     * @return True if the user is authorized else returns false.
-     */
-    @Override
-    public <T> boolean isAuthorizedOnNew(
-        Object data,
-        Class<T> clazz
-    ) {
-        return isAuthorized(data, RequestMethod.POST, clazz);
-    }
 }

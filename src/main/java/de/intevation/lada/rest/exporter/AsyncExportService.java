@@ -321,8 +321,7 @@ public class AsyncExportService extends LadaService {
     @GET
     @Path("/status/{id}")
     public Response getStatus(
-        @PathParam("id") String id,
-        @Context HttpServletRequest request
+        @PathParam("id") String id
     ) {
         JobStatus status;
         UserInfo originalCreator;
@@ -360,9 +359,8 @@ public class AsyncExportService extends LadaService {
     @Path("download/{id}")
     @Produces("application/octet-stream")
     public Response download(
-        @PathParam("id") String id,
-        @Context HttpServletRequest request) {
-
+        @PathParam("id") String id
+    ) {
         ByteArrayInputStream resultStream;
         String encoding;
         String filename;

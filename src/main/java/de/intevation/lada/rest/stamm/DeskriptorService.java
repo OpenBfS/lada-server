@@ -7,22 +7,17 @@
  */
 package de.intevation.lada.rest.stamm;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.Deskriptoren;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
 
@@ -67,67 +62,45 @@ public class DeskriptorService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all Deskriptor objects.
-     * <p>
-     * The requested objects can be filtered using the following URL
-     * parameters:<br>
-     *  * layer: the layer of the reqested deskriptor<br>
-     *  * parents: the parents of the requested deskriptor<br>
-     * <br>
-     * The response data contains a stripped set of deskriptor objects.
-     * <p>
-     * Example:
-     * http://example.com/deskriptor?layer=[LAYER]
+     * Get Deskriptor objects.
      *
+     * The requested objects can be filtered using the following URL
+     * parameters:
+     * @param layer The layer of the reqested deskriptor
+     * @param parents The parents of the requested deskriptor, each given
+     * using an URL parameter named "parents".
      * @return Response object containing the Deskriptor objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info
+        @QueryParam("layer") Integer layer,
+        @QueryParam("parents") List<Integer> parents
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty()
-            || !params.containsKey("layer")
-        ) {
+        if (layer == null) {
             return repository.getAll(Deskriptoren.class);
         }
         QueryBuilder<Deskriptoren> builder =
             repository.queryBuilder(Deskriptoren.class);
         builder.and("sn", 0).not();
-        try {
-            builder.and("ebene",
-                Integer.valueOf(params.getFirst("layer")));
-            builder.and("ebene", params.getFirst("layer"));
-            if (params.containsKey("parents")) {
-                String parents = params.getFirst("parents");
-                String[] parentArray = parents.split(", ");
-                List<String> parentList = Arrays.asList(parentArray);
-                builder.andIn("vorgaenger", parentList);
-            }
-        } catch (NumberFormatException nfe) {
-            return new Response(false, StatusCodes.VALUE_OUTSIDE_RANGE, null);
+        builder.and("ebene", layer);
+        if (parents != null && !parents.isEmpty()) {
+            builder.andIn("vorgaenger", parents);
         }
         return repository.filter(builder.getQuery());
     }
 
     /**
      * Get a single Deskriptor object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/deskriptor/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Deskriptor.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        return repository.getById(
-            Deskriptoren.class, Integer.valueOf(id));
+        return repository.getById(Deskriptoren.class, id);
     }
 }

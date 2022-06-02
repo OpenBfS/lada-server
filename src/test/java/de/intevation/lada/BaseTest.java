@@ -26,7 +26,6 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 
@@ -124,14 +123,6 @@ public class BaseTest {
     @After
     public void tearDown() {
         this.client.close();
-    }
-
-    /**
-     * Print a newline after each test file was processed for formatting.
-     */
-    @AfterClass
-    public static final void afterTests() {
-        System.out.println("");
     }
 
     /**

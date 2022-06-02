@@ -110,7 +110,6 @@ public class ExporterTest extends BaseTest {
     public final void testCsvExportProbe(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("asyncexport service");
         prot.setType(formatCsv);
@@ -140,7 +139,6 @@ public class ExporterTest extends BaseTest {
     public final void testCsvExportProbeById(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("asyncexport service");
         prot.setType("filtered csv");
@@ -171,7 +169,6 @@ public class ExporterTest extends BaseTest {
     public final void testJsonExportProbeById(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("asyncexport service");
         prot.setType(formatJson);
@@ -203,7 +200,6 @@ public class ExporterTest extends BaseTest {
     public final void testLafExportProbeById(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("asyncexport service");
         prot.setType(formatLaf);
@@ -233,7 +229,6 @@ public class ExporterTest extends BaseTest {
     public final void testQueryExportEmpty(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("asyncexport service");
         prot.setType("empty query");
@@ -272,7 +267,6 @@ public class ExporterTest extends BaseTest {
     public final void testAsyncExportFailure(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("asyncexport service");
         prot.setType("invalid request");

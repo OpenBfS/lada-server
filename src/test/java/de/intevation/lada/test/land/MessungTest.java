@@ -14,6 +14,7 @@ import java.util.List;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response;
 
 import org.junit.Assert;
 
@@ -69,7 +70,8 @@ public class MessungTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("messung", "rest/messung");
+        get("messung", "rest/messung", Response.Status.BAD_REQUEST);
+        get("messung", "rest/messung?probeId=1000");
         getById("messung", "rest/messung/1200", expectedById);
         JsonObject created = create("messung", "rest/messung", create);
         update("messung", "rest/messung/1200", "nebenprobenNr", "T100", "U200");

@@ -22,7 +22,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
@@ -283,7 +282,6 @@ public class TagService extends LadaService {
     @DELETE
     @Path("/")
     public Response deleteTagReference(
-        @Context HttpHeaders headers,
         TagZuordnung tagZuordnung
     ) {
         if ((tagZuordnung.getProbeId() == null

@@ -15,13 +15,9 @@ import javax.inject.Inject;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
@@ -118,38 +114,27 @@ public class StatusService extends LadaService {
     private Validator probeValidator;
 
     /**
-     * Get all Status objects.
-     * <p>
-     * The requested objects have to be filtered using an URL parameter named
-     * messungsId.
-     * <p>
+     * Get StatusProtokoll objects.
+     *
+     * @param messungsId The requested objects have to be filtered
+     * using an URL parameter named messungsId.
      * Example: http://example.com/status?messungsId=[ID]
      *
-     * @return Response object containing filtered Status objects.
+     * @return Response containing requested objects.
      * Status-Code 699 if parameter is missing or requested objects are
      * not authorized.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info
+        @QueryParam("messungsId") Integer messungsId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("messungsId")) {
+        if (messungsId == null) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        String messungId = params.getFirst("messungsId");
-        int id;
-        try {
-            id = Integer.valueOf(messungId);
-        } catch (NumberFormatException nfe) {
-            return new Response(false, StatusCodes.NO_ACCESS, null);
-        }
-
         QueryBuilder<StatusProtokoll> builder =
             repository.queryBuilder(StatusProtokoll.class);
-        builder.and("messungsId", id);
+        builder.and("messungsId", messungsId);
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
             StatusProtokoll.class);
@@ -172,24 +157,16 @@ public class StatusService extends LadaService {
 
     /**
      * Get a single Status object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/status/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Status.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(
-            StatusProtokoll.class,
-            Integer.valueOf(id)
-        );
-
+        Response response = repository.getById(StatusProtokoll.class, id);
         return authorization.filter(
             response,
             StatusProtokoll.class);
@@ -220,7 +197,6 @@ public class StatusService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpHeaders headers,
         StatusProtokoll status
     ) {
         if (status.getMessungsId() == null
@@ -401,57 +377,18 @@ public class StatusService extends LadaService {
     }
 
     /**
-     * Update an existing Status object.
-     * <p>
-     * The object to update should come as JSON formatted string.
-     * <pre>
-     * <code>
-     * {
-     *  "id": [number],
-     *  "owner": [boolean],
-     *  "messungsId": [number],
-     *  "erzeuger": [string],
-     *  "status": [number],
-     *  "skommentar": [string],
-     *  "treeModified": [timestamp],
-     *  "parentModified": [timestamp],
-     *  "sdatum": [date]
-     * }
-     * </code>
-     * </pre>
-     *
-     * @return Response object containing the updated Status object.
-     */
-    @PUT
-    @Path("/{id}")
-    public Response update(
-        @Context HttpHeaders headers,
-        @PathParam("id") String id,
-        StatusProtokoll status
-    ) {
-        return new Response(false, StatusCodes.NOT_ALLOWED, status);
-    }
-
-    /**
      * Delete an existing Status object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/status/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpHeaders headers,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        /* Get the object by id*/
-        Response object =
-            repository.getById(
-                StatusProtokoll.class, Integer.valueOf(id));
-        StatusProtokoll obj = (StatusProtokoll) object.getData();
+        StatusProtokoll obj = repository.getByIdPlain(
+            StatusProtokoll.class, id);
         if (!authorization.isAuthorized(
                 obj,
                 RequestMethod.DELETE,

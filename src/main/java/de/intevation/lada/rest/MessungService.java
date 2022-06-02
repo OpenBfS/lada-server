@@ -10,16 +10,14 @@ package de.intevation.lada.rest;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
@@ -103,123 +101,56 @@ public class MessungService extends LadaService {
     private Validator validator;
 
     /**
-     * Get all Messung objects.
-     * <p>
-     * The requested objects can be filtered using the following URL parameters:
-     * parameters:<br>
-     * probeId: probeId to use as filter
-     * page: The page to display in a paginated result grid.<br>
-     * start: The first Probe item.<br>
-     * limit: The count of Probe items.<br>
-     * <p>
-     * Example: http://example.com/messung?probeId=[ID]&page=[PAGE]&start=[START]&limit=[LIMIT]
+     * Get Messung objects.
      *
-     * @return Response object containing all Messung objects.
+     * @param probeId URL parameter probeId to use as filter (required).
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info
+        @QueryParam("probeId") @NotNull Integer probeId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        //If no params are given: return all messung records
-        if (params.isEmpty()
-            || (!params.containsKey("probeId"))
-        ) {
-            List<Messung> messungs =
-                repository.getAllPlain(Messung.class);
-            int size = messungs.size();
-            if (params.containsKey("start") && params.containsKey("limit")) {
-                int start = Integer.valueOf(params.getFirst("start"));
-                int limit = Integer.valueOf(params.getFirst("limit"));
-                int end = limit + start;
-                if (start + limit > size) {
-                    end = size;
-                }
-                messungs = messungs.subList(start, end);
-            }
-            for (Messung m: messungs) {
-                m.setReadonly(authorization.isMessungReadOnly(m.getId()));
-                Violation violation = validator.validate(m);
-                if (violation.hasErrors()
-                    || violation.hasWarnings()
-                    || violation.hasNotifications()
-                ) {
-                    m.setErrors(violation.getErrors());
-                    m.setWarnings(violation.getWarnings());
-                    m.setNotifications(violation.getNotifications());
-                }
-            }
-            return new Response(true, StatusCodes.OK, messungs);
-        } else {
-            //Filter by probeId
-            String probeId = params.getFirst("probeId");
-            QueryBuilder<Messung> builder =
-                repository.queryBuilder(Messung.class);
-            builder.and("probeId", probeId);
-            Response r = authorization.filter(
-                repository.filter(builder.getQuery()),
-                Messung.class);
-            if (r.getSuccess()) {
-                @SuppressWarnings("unchecked")
-                List<Messung> messungs = (List<Messung>) r.getData();
-                int size = messungs.size();
-                if (params.containsKey("start")
-                    && params.containsKey("limit")
-                ) {
-                    int start = Integer.valueOf(params.getFirst("start"));
-                    int limit = Integer.valueOf(params.getFirst("limit"));
-                    int end = limit + start;
-                    if (start + limit > size) {
-                        end = size;
-                    }
-                    messungs = messungs.subList(start, end);
-                }
-                if (messungs.size() > 0) {
-                    for (Messung messung: messungs) {
-                        messung.setReadonly(
-                            !authorization.isAuthorized(
-                                messung,
-                                RequestMethod.PUT,
-                                Messung.class));
-                        Violation violation = validator.validate(messung);
-                        if (violation.hasErrors()
-                            || violation.hasWarnings()
-                            || violation.hasNotifications()
-                        ) {
-                            messung.setErrors(violation.getErrors());
-                            messung.setWarnings(violation.getWarnings());
-                            messung.setNotifications(
-                                violation.getNotifications());
-                        }
-                    }
-                }
-                return new Response(true, StatusCodes.OK, messungs);
-            } else {
-                return r;
+        QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class)
+            .and("probeId", probeId);
+        Response r = authorization.filter(
+            repository.filter(builder.getQuery()),
+            Messung.class);
+        @SuppressWarnings("unchecked")
+        List<Messung> messungs = (List<Messung>) r.getData();
+        for (Messung messung: messungs) {
+            // TODO: Should have been set by authorization.filter() already
+            messung.setReadonly(
+                !authorization.isAuthorized(
+                    messung,
+                    RequestMethod.PUT,
+                    Messung.class));
+            Violation violation = validator.validate(messung);
+            if (violation.hasErrors()
+                || violation.hasWarnings()
+                || violation.hasNotifications()
+            ) {
+                messung.setErrors(violation.getErrors());
+                messung.setWarnings(violation.getWarnings());
+                messung.setNotifications(
+                    violation.getNotifications());
             }
         }
+        return new Response(true, StatusCodes.OK, messungs);
     }
 
     /**
      * Get a Messung object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messung/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Messung.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Response response =
-            repository.getById(
-                Messung.class, Integer.valueOf(id));
+        Response response = repository.getById(Messung.class, id);
         Messung messung = (Messung) response.getData();
         Violation violation = validator.validate(messung);
         if (violation.hasErrors()
@@ -264,7 +195,6 @@ public class MessungService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpHeaders headers,
         Messung messung
     ) {
         if (!authorization.isAuthorized(
@@ -327,8 +257,7 @@ public class MessungService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpHeaders headers,
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         Messung messung
     ) {
         if (!authorization.isAuthorized(
@@ -367,24 +296,16 @@ public class MessungService extends LadaService {
 
     /**
      * Delete an existing Messung object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messung/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpHeaders headers,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        /* Get the messung object by id*/
-        Response messung =
-            repository.getById(
-                Messung.class, Integer.valueOf(id));
-        Messung messungObj = (Messung) messung.getData();
+        Messung messungObj = repository.getByIdPlain(Messung.class, id);
         if (!authorization.isAuthorized(
                 messungObj,
                 RequestMethod.DELETE,
@@ -392,7 +313,7 @@ public class MessungService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        if (lock.isLocked(messung)) {
+        if (lock.isLocked(messungObj)) {
             return new Response(false, StatusCodes.CHANGED_VALUE, null);
         }
 

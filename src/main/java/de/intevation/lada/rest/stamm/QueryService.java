@@ -230,11 +230,10 @@ public class QueryService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         UserInfo userInfo = authorization.getInfo();
-        QueryUser query = repository.getByIdPlain(
-            QueryUser.class, Integer.valueOf(id));
+        QueryUser query = repository.getByIdPlain(QueryUser.class, id);
         if (query.getUserId().equals(userInfo.getUserId())) {
             return repository.delete(query);
         }

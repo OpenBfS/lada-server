@@ -31,12 +31,6 @@ public interface Authorization {
         RequestMethod method,
         Class<T> clazz);
 
-    <T> boolean isAuthorized(Object data, Class<T> clazz);
-
-    <T> boolean isAuthorizedOnNew(
-        Object data,
-        Class<T> clazz);
-
     boolean isProbeReadOnly(Integer probeId);
 
     boolean isMessungReadOnly(Integer messungId);

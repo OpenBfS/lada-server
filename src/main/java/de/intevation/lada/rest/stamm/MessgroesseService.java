@@ -14,10 +14,7 @@ import javax.persistence.Query;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -65,23 +62,19 @@ public class MessgroesseService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all Messgroesse objects.
-     * <p>
-     * Example: http://example.com/messgroesse
+     * Get Messgroesse objects.
      *
-     * @return Response object containing all Messgroesse objects.
+     * @param mmtId URL parameter to filter by mmtId
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info
+        @QueryParam("mmtId") String mmtId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("mmtId")) {
+        if (mmtId == null) {
             return repository.getAll(Messgroesse.class);
         }
-        String mmtId = params.getFirst("mmtId");
 
         Query query =
             repository.queryFromString(
@@ -100,19 +93,15 @@ public class MessgroesseService extends LadaService {
 
     /**
      * Get a single Messgroesse object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messgroesse/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Messgroesse.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        return repository.getById(Messgroesse.class, Integer.valueOf(id));
+        return repository.getById(Messgroesse.class, id);
     }
 }

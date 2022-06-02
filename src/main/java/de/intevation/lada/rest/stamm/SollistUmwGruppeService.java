@@ -10,9 +10,6 @@ package de.intevation.lada.rest.stamm;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.SollistUmwGrp;
 import de.intevation.lada.util.data.Repository;
@@ -63,10 +60,7 @@ public class SollistUmwGruppeService extends LadaService {
      */
     @GET
     @Path("/")
-    public Response get(
-            @Context HttpHeaders headers,
-            @Context UriInfo info
-    ) {
+    public Response get() {
         return repository.getAll(SollistUmwGrp.class);
     }
 }

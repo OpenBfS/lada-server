@@ -111,7 +111,7 @@ public class Stammdaten extends ServiceTest {
                 "letzteAenderung",
                 "messgroesseId",
                 "datenbasisId",
-                "messMethodeId",
+                "mmtId",
                 "umwId"
             )
         );
@@ -173,6 +173,7 @@ public class Stammdaten extends ServiceTest {
                 "koordYExtern",
                 "staat",
                 "staatIso",
+                "staatKurz",
                 "kdaId"
             )
         );
@@ -227,7 +228,6 @@ public class Stammdaten extends ServiceTest {
         String type,
         Object id
     ) {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName(type + "Service");
         prot.setType("get by Id");
