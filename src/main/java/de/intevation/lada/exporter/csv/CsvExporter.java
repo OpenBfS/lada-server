@@ -240,10 +240,11 @@ public class CsvExporter implements Exporter {
                 for (int i = 0; i < keys.length; i++) {
                     Object value = row.get(keys[i]);
 
-
                     //Value is a status kombi
                     if (keys[i].equals("statusK")) {
                         rowItems.add(getStatusStringByid((Integer) value));
+                    } else if (keys[i].equals("latitude") | keys[i].equals("longitude")) {
+                        rowItems.add(value.toString());
                     } else if (value instanceof Double) {
                         decimalFormat.applyPattern("0.###E00");
                         rowItems.add(decimalFormat.format((Double) value));
