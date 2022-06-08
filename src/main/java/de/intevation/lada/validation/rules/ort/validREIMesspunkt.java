@@ -39,26 +39,35 @@ public class validREIMesspunkt implements Rule {
         if (ort.getKtaGruppeId()!= null){
             kta = repository.getByIdPlain(Kta.class, ort.getKtaGruppeId()).getCode();
         } else {
-            violation.addWarning("kta#kta_missing", StatusCodes.VALUE_MISSING);
+            violation.addWarning("ktaGruppeId", StatusCodes.VALUE_MISSING);
         }
 
         //check ortId
-        if ( ort.getOrtId() == null) {
-            violation.addWarning("ortId", StatusCodes.VALUE_MISSING);
-        } else {
+        if (ort.getOrtId() == null) {
+            if (ort.getId() != null) {
+                //should not happen due to db constraint!
+                //if getId() == null we have a new Ort which wil be validated before creation
+                violation.addWarning("ortId", StatusCodes.VALUE_MISSING);
+                return violation;
+            }
+        } else if (ort.getOrtId().length() < 5){
+            violation.addWarning("ortId", StatusCodes.VALUE_OUTSIDE_RANGE);
+        } else if (ort.getOrtId().length()> 5){
             String mpId = ort.getOrtId();
             if (mpId.length()>12){
-                violation.addWarning("ortId#tooLong", StatusCodes.VALUE_OUTSIDE_RANGE);
+                violation.addWarning("ortId", StatusCodes.VALUE_OUTSIDE_RANGE);
             }
             if (kta!=null && !mpId.substring(0, 3).equals(kta) ) {
-                violation.addWarning("kta#kta_notMatching", StatusCodes.VALUE_NOT_MATCHING);
+                violation.addWarning("ortId", StatusCodes.VALUE_NOT_MATCHING);
             }
             if (mpId.substring(0, 4).equals(kta) && mpId.length() == 4) {
-                violation.addWarning("ortId#MP_missing", StatusCodes.VALUE_OUTSIDE_RANGE);
+                violation.addWarning("ortId", StatusCodes.VALUE_OUTSIDE_RANGE);
             }
             if (mpId.substring(0, 4).equals(kta) && mpId.substring(4, mpId.length()).length() > 4) {
-                violation.addNotification("ortId#MP_tooLong", StatusCodes.VALUE_OUTSIDE_RANGE);
+                violation.addNotification("ortId", StatusCodes.VALUE_OUTSIDE_RANGE);
             }
+        } else {
+            violation.addWarning("ortId", StatusCodes.VALUE_OUTSIDE_RANGE);
         }
 
     return violation;
