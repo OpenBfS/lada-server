@@ -213,6 +213,7 @@ public class OrtService extends LadaService {
             if (violation.hasErrors() || violation.hasWarnings()) {
                 o.setErrors(violation.getErrors());
                 o.setWarnings(violation.getWarnings());
+                o.setNotifications(violation.getNotifications());
             }
         }
         return new Response(true, StatusCodes.OK, orte, size);
@@ -246,6 +247,7 @@ public class OrtService extends LadaService {
             if (violation.hasErrors() || violation.hasWarnings()) {
                 ort.setErrors(violation.getErrors());
                 ort.setWarnings(violation.getWarnings());
+                ort.setNotifications(violation.getNotifications());
             }
         return new Response(true, StatusCodes.OK, ort);
     }
@@ -352,6 +354,7 @@ public class OrtService extends LadaService {
                 new Response(false, StatusCodes.ERROR_VALIDATION, ort);
             response.setErrors(violation.getErrors());
             response.setWarnings(violation.getWarnings());
+            response.setNotifications(violation.getNotifications());
             return response;
         }
 
@@ -361,6 +364,7 @@ public class OrtService extends LadaService {
         }
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
+            response.setNotifications(violation.getNotifications());
         }
 
         return response;
@@ -450,12 +454,14 @@ public class OrtService extends LadaService {
                 new Response(false, StatusCodes.ERROR_VALIDATION, ort);
             response.setErrors(violation.getErrors());
             response.setWarnings(violation.getWarnings());
+            response.setNotifications(violation.getNotifications());
             return response;
         }
 
         Response response = repository.update(ort);
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
+            response.setNotifications(violation.getNotifications());
         }
 
         return response;
