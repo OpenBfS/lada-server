@@ -108,7 +108,8 @@ public class CsvExporter implements Exporter {
     ) {
         String[] names = new String[keys.length];
         ArrayList<String> keysList = new ArrayList<String>(Arrays.asList(keys));
-        keysList.forEach(key -> {
+        int index = 0;
+        for (String key : keysList) {
             QueryBuilder<GridColumn> builder =
                 repository.queryBuilder(GridColumn.class);
             builder.and("dataIndex", key);
@@ -124,8 +125,9 @@ public class CsvExporter implements Exporter {
                     ? subDataColumnNames.getString(key)
                     : key;
             }
-            names[keysList.indexOf(key)] = name;
-        });
+            names[index] = name;
+            index++;
+        };
         return names;
     }
 
