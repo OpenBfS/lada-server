@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.validation.rules.probe;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -46,10 +47,13 @@ public class HasOneUrsprungsOrt implements Rule {
             || Integer.valueOf(4).equals(probe.getDatenbasisId())) {
                 return null;
         }
+
+        List<String> zuordTypeFilter = Arrays.asList("U", "R");
+
         QueryBuilder<Ortszuordnung> builder =
             repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", id);
-        builder.and("ortszuordnungTyp", "U");
+        builder.andIn("ortszuordnungTyp", zuordTypeFilter);
         Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<Ortszuordnung> orte = (List<Ortszuordnung>) response.getData();
