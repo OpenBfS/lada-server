@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.Query;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -64,13 +65,14 @@ public class MessgroesseService extends LadaService {
     /**
      * Get Messgroesse objects.
      *
-     * @param mmtId URL parameter to filter by mmtId
+     * @param mmtId URL parameter to filter by mmtId. Might be null
+     * (i.e. not given at all) but not an empty string.
      * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("mmtId") String mmtId
+        @QueryParam("mmtId") @Pattern(regexp = ".+") String mmtId
     ) {
         if (mmtId == null) {
             return repository.getAll(Messgroesse.class);

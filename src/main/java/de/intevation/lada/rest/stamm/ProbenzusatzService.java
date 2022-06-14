@@ -10,6 +10,7 @@ package de.intevation.lada.rest.stamm;
 import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.Query;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -60,13 +61,14 @@ public class ProbenzusatzService extends LadaService {
     /**
      * Get ProbenZusatz objects.
      *
-     * @param umwId URL parameter to filter using umwId
+     * @param umwId URL parameter to filter using umwId. Might be null
+     * (i.e. not given at all) but not an empty string.
      * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("umwId") String umwId
+        @QueryParam("umwId") @Pattern(regexp = ".+") String umwId
     ) {
         if (umwId == null) {
             return repository.getAll(ProbenZusatz.class);

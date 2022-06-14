@@ -23,6 +23,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -138,7 +139,9 @@ public class OrtService extends LadaService {
      * Get Ort objects.
      *
      * @param netzbetreiberId URL parameter to filter using Netzbetreiber.
-     * @param search URL parameter to filter using given pattern.
+     * Might be null (i.e. not given at all) but not an empty string.
+     * @param search URL parameter to filter using given pattern. Might be null
+     * (i.e. not given at all) but not an empty string.
      * @param start URL parameter used as offset for paging
      * @param limit URL parameter used as limit for paging
      * @return Response object containing all (filtered) Ort objects.
@@ -146,8 +149,9 @@ public class OrtService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("netzbetreiberId") String netzbetreiberId,
-        @QueryParam("search") String search,
+        @QueryParam("netzbetreiberId")
+        @Pattern(regexp = ".+") String netzbetreiberId,
+        @QueryParam("search") @Pattern(regexp = ".+") String search,
         @QueryParam("start") Integer start,
         @QueryParam("limit") Integer limit
     ) {
