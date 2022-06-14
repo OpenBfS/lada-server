@@ -68,7 +68,7 @@ public class MessstellenkombiService extends LadaService {
         QueryBuilder<Auth> mstMlQuery = repository.queryBuilder(Auth.class);
         mstMlQuery.orIntList("funktionId", List.of(0, 1));
 
-        if (netzbetreiberIds != null) {
+        if (netzbetreiberIds != null && !netzbetreiberIds.isEmpty()) {
             mstMlQuery.andIn("netzbetreiberId", netzbetreiberIds);
         }
 
