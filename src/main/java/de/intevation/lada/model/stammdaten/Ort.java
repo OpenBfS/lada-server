@@ -141,6 +141,9 @@ public class Ort implements Serializable {
     @Transient
     private MultivaluedMap<String, Integer> warnings;
 
+    @Transient
+    private MultivaluedMap<String, Integer> notifications;
+
     public Ort() {
     }
 
@@ -441,5 +444,16 @@ public class Ort implements Serializable {
     @JsonbTransient
     public void setWarnings(MultivaluedMap<String, Integer> warnings) {
         this.warnings = warnings;
+    }
+
+    public MultivaluedMap<String, Integer> getNotifications() {
+        return this.notifications;
+    }
+
+    @JsonbTransient
+    public void setNotifications(
+        MultivaluedMap<String, Integer> notifications
+    ) {
+        this.notifications = notifications;
     }
 }

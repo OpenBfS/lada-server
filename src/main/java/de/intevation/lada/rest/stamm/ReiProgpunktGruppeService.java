@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -64,14 +65,15 @@ public class ReiProgpunktGruppeService extends LadaService {
      *
      * @param reiProgpunktId URL parameter "reiprogpunkt" to filter
      * using reiProgpunktId
-     * @param umwelt URL parameter to filter using umwId
+     * @param umwelt URL parameter to filter using umwId. Might be null
+     * (i.e. not given at all) but not an empty string.
      * @return Response object containing all Datenbasis objects.
      */
     @GET
     @Path("/")
     public Response get(
         @QueryParam("reiprogpunkt") Integer reiProgpunktId,
-        @QueryParam("umwelt") String umwelt
+        @QueryParam("umwelt") @Pattern(regexp = ".+") String umwelt
     ) {
         if (reiProgpunktId == null && umwelt == null) {
             return repository.getAll(ReiProgpunktGruppe.class);

@@ -8,6 +8,7 @@
 package de.intevation.lada.rest.stamm;
 
 import javax.inject.Inject;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -70,14 +71,15 @@ public class VerwaltungseinheitService extends LadaService {
      * Get Verwaltungseinheit objects.
      *
      * @param query The result list can be filtered using the URL parameter
-     * 'query'. A filter is defined as the first letters of the 'bezeichnung'
+     * 'query'. A filter is defined as the first letters of the 'bezeichnung'.
+     * Might be null (i.e. not given at all) but not an empty string.
      *
      * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("query") String query
+        @QueryParam("query") @Pattern(regexp = ".+") String query
     ) {
         if (query == null) {
             return repository.getAll(Verwaltungseinheit.class);
