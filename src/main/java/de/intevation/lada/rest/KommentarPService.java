@@ -14,12 +14,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
-
-import org.jboss.logging.Logger;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -69,12 +64,6 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
 public class KommentarPService extends LadaService {
 
     /**
-     * The logger used in this class.
-     */
-    @Inject
-    private Logger logger;
-
-    /**
      * The data repository granting read/write access.
      */
     @Inject
@@ -93,26 +82,22 @@ public class KommentarPService extends LadaService {
 
 
     /**
-     * Get all KommentarP objects.
-     * <p>
-     * The requested objects can be filtered using a URL parameter named
-     * probeId.
-     * <p>
+     * Get KommentarP objects.
+     *
+     * @param probeId The requested objects can be filtered
+     * using an URL parameter named probeId.
      * Example: http://example.com/pkommentar?probeId=[ID]
      *
-     * @return Response object containing all KommentarP objects.
+     * @return Response object containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info
+        @QueryParam("probeId") Integer probeId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("probeId")) {
+        if (probeId == null) {
             return repository.getAll(KommentarP.class);
         }
-        String probeId = params.getFirst("probeId");
         QueryBuilder<KommentarP> builder =
             repository.queryBuilder(KommentarP.class);
         builder.and("probeId", probeId);
@@ -123,22 +108,17 @@ public class KommentarPService extends LadaService {
 
     /**
      * Get a single KommentarP object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/pkommentar/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single KommentarP.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         return authorization.filter(
-            repository.getById(
-                KommentarP.class, Integer.valueOf(id)),
+            repository.getById(KommentarP.class, id),
             KommentarP.class);
     }
 
@@ -164,7 +144,6 @@ public class KommentarPService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpHeaders headers,
         KommentarP kommentar
     ) {
         if (!authorization.isAuthorized(
@@ -209,8 +188,7 @@ public class KommentarPService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpHeaders headers,
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         KommentarP kommentar
     ) {
         if (!authorization.isAuthorized(
@@ -218,7 +196,6 @@ public class KommentarPService extends LadaService {
                 RequestMethod.PUT,
                 KommentarP.class)
         ) {
-            logger.debug("User is not authorized!");
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         Violation violation = validator.validate(kommentar);
@@ -235,30 +212,21 @@ public class KommentarPService extends LadaService {
 
     /**
      * Delete an existing KommentarP by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/pkommentar/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpHeaders headers,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        /* Get the object by id*/
-        Response kommentar =
-            repository.getById(
-                KommentarP.class, Integer.valueOf(id));
-        KommentarP kommentarObj = (KommentarP) kommentar.getData();
+        KommentarP kommentarObj = repository.getByIdPlain(KommentarP.class, id);
         if (!authorization.isAuthorized(
                 kommentarObj,
                 RequestMethod.DELETE,
                 KommentarP.class)
         ) {
-            logger.debug("User is not authorized!");
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         return repository.delete(kommentarObj);

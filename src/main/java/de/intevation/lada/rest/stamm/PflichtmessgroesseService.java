@@ -13,9 +13,6 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.PflichtMessgroesse;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -69,34 +66,29 @@ public class PflichtmessgroesseService extends LadaService {
      */
     @GET
     @Path("/")
-    public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info
-    ) {
+    public Response get() {
         return repository.getAll(PflichtMessgroesse.class);
     }
 
     /**
      * Get a single PflichtMessgroesse object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/pflichtmessgroesse/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single PflichtMessgroesse.
      */
+    // TODO: Do not use a foreign key field for filtering as PathParam
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
         QueryBuilder<PflichtMessgroesse> builder =
             repository.queryBuilder(PflichtMessgroesse.class);
-        builder.and("messMethodeId", id);
+        builder.and("mmtId", id);
         List<PflichtMessgroesse> result =
             repository.filterPlain(builder.getQuery());
         if (!result.isEmpty()) {
+            // TODO: Do not return arbitrary list element
             return new Response(true, StatusCodes.OK, result.get(0));
         }
         return new Response(false, StatusCodes.NOT_EXISTING, null);

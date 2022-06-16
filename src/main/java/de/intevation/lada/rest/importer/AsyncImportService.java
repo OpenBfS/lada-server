@@ -120,7 +120,6 @@ public class AsyncImportService extends LadaService {
      *        like authorization issues etc.
      *
      * @param id Job id to check
-     * @param request Request object
      * @return Json object containing the status information, status
      *         403 if the requesting user has not created the request
      *         or status 404 if job was not found
@@ -128,9 +127,8 @@ public class AsyncImportService extends LadaService {
     @GET
     @Path("/status/{id}")
     public Response getStatus(
-        @PathParam("id") String id,
-        @Context HttpServletRequest request) {
-
+        @PathParam("id") String id
+    ) {
         JobStatus status;
         UserInfo originalCreator;
         UserInfo requestingUser = authorization.getInfo();
@@ -159,9 +157,8 @@ public class AsyncImportService extends LadaService {
     @GET
     @Path("/result/{id}")
     public Response getResult(
-        @PathParam("id") String id,
-        @Context HttpServletRequest request) {
-
+        @PathParam("id") String id
+    ) {
         UserInfo originalCreator;
         UserInfo requestingUser = authorization.getInfo();
 

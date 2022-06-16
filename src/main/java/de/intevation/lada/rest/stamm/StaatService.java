@@ -11,9 +11,6 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.Staat;
 import de.intevation.lada.util.data.Repository;
@@ -69,28 +66,21 @@ public class StaatService extends LadaService {
      */
     @GET
     @Path("/")
-    public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info
-    ) {
+    public Response get() {
         return repository.getAll(Staat.class);
     }
 
     /**
      * Get a single Staat object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/staat/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Staat.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        return repository.getById(Staat.class, Integer.valueOf(id));
+        return repository.getById(Staat.class, id);
     }
 }

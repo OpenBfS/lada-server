@@ -7,17 +7,13 @@
  */
 package de.intevation.lada.rest.stamm;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.StatusProtokoll;
@@ -27,10 +23,8 @@ import de.intevation.lada.model.stammdaten.StatusWert;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
 
@@ -72,97 +66,64 @@ public class StatusWertService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get all StatusWert objects.
-     * <p>
-     * Example: http://example.com/statuwert
+     * Get StatusWert objects.
      *
+     * @param messungsId URL parameter to filter using messungsId
      * @return Response object containing all StatusWert objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info
+        @QueryParam("messungsId") Integer messungsId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("messungsId")) {
+        if (messungsId == null) {
             return repository.getAll(StatusWert.class);
         }
-
-        List<Integer> mIds = new ArrayList<Integer>();
-        for (String messId : params.getFirst("messungsId").split(",")) {
-            try {
-                mIds.add(Integer.valueOf(messId));
-            } catch (NumberFormatException nfe) {
-                return
-                    new Response(false, StatusCodes.VALUE_OUTSIDE_RANGE, null);
-            }
-        }
-        UserInfo user = authorization.getInfo();
-        List<StatusWert> werte = getReachable(mIds, user);
-        Response response = new Response(true, StatusCodes.OK, werte);
-        return response;
+        return getReachable(messungsId);
     }
 
     /**
      * Get a single StatusWert object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/statuswert/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single StatusWert.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        return repository.getById(
-            StatusWert.class,
-            Integer.valueOf(id)
-        );
+        return repository.getById(StatusWert.class, id);
     }
 
     /**
      * Get the list of possible status values following the actual status
-     * values of the Messungen represented by the given IDs.
+     * value of the Messung represented by the given ID.
      *
-     * @return Disjunction of possible status values for all Messungen
+     * @param messungsId Id of a Messung instance
+     * @return Possible status values for given Messung
      */
-    private List<StatusWert> getReachable(
-        List<Integer> messIds,
-        UserInfo user
-    ) {
-        QueryBuilder<Messung> messungQuery =
-            repository.queryBuilder(Messung.class);
-        messungQuery.orIn("id", messIds);
-        List<Messung> messungen = repository.filterPlain(
-            messungQuery.getQuery());
+    private Response getReachable(Integer messungsId) {
+        Messung messung = repository.getByIdPlain(Messung.class, messungsId);
 
-        List<StatusErreichbar> erreichbare = new ArrayList<StatusErreichbar>();
-        for (Messung messung : messungen) {
-            StatusProtokoll status = repository.getByIdPlain(
-                StatusProtokoll.class, messung.getStatus());
-            StatusKombi kombi = repository.getByIdPlain(
-                StatusKombi.class, status.getStatusKombi());
+        StatusProtokoll status = repository.getByIdPlain(
+            StatusProtokoll.class, messung.getStatus());
+        StatusKombi kombi = repository.getByIdPlain(
+            StatusKombi.class, status.getStatusKombi());
 
-            QueryBuilder<StatusErreichbar> errFilter =
-                repository.queryBuilder(StatusErreichbar.class);
-            errFilter.andIn("stufeId", user.getFunktionen());
-            errFilter.and("curStufe", kombi.getStatusStufe().getId());
-            errFilter.and("curWert", kombi.getStatusWert().getId());
-            erreichbare.addAll(repository.filterPlain(
-                    errFilter.getQuery()));
-        }
+        QueryBuilder<StatusErreichbar> errFilter = repository
+            .queryBuilder(StatusErreichbar.class)
+            .andIn("stufeId", authorization.getInfo().getFunktionen())
+            .and("curStufe", kombi.getStatusStufe().getId())
+            .and("curWert", kombi.getStatusWert().getId());
+        List<StatusErreichbar> erreichbare = repository.filterPlain(
+            errFilter.getQuery());
 
         QueryBuilder<StatusWert> werteFilter =
             repository.queryBuilder(StatusWert.class);
-        for (int i = 0; i < erreichbare.size(); i++) {
-            werteFilter.or("id", erreichbare.get(i).getWertId());
+        for (StatusErreichbar erreichbar: erreichbare) {
+            werteFilter.or("id", erreichbar.getWertId());
         }
-
-        return repository.filterPlain(werteFilter.getQuery());
+        return repository.filter(werteFilter.getQuery());
     }
 }

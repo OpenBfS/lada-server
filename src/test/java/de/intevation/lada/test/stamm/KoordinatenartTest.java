@@ -66,7 +66,6 @@ public class KoordinatenartTest extends ServiceTest {
     }
 
     private void recalculate() {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName(name + " service");
         prot.setType("recalculate");

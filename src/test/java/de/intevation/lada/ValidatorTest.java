@@ -119,7 +119,6 @@ public class ValidatorTest {
      */
     @AfterClass
     public static final void afterTests() {
-        System.out.println("");
     }
 
     /**

@@ -34,7 +34,7 @@ public class PflichtMessgroesse implements Serializable {
     private Integer datenbasisId;
 
     @Column(name = "mmt_id")
-    private String messMethodeId;
+    private String mmtId;
 
     @Column(name = "umw_id")
     private String umwId;
@@ -69,12 +69,12 @@ public class PflichtMessgroesse implements Serializable {
         this.datenbasisId = datenbasisId;
     }
 
-    public String getMessMethodeId() {
-        return this.messMethodeId;
+    public String getMmtId() {
+        return this.mmtId;
     }
 
-    public void setMessMethodeId(String messMethodeId) {
-        this.messMethodeId = messMethodeId;
+    public void setMmtId(String mmtId) {
+        this.mmtId = mmtId;
     }
 
     public String getUmwId() {

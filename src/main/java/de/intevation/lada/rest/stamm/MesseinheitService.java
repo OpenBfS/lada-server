@@ -14,10 +14,7 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.MassEinheitUmrechnung;
 import de.intevation.lada.model.stammdaten.MessEinheit;
@@ -63,43 +60,34 @@ public class MesseinheitService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all MessEinheit objects.
-     * <p>
-     * The requested Objects can be filtered using an two URL parameters named
-     * mehId and secMehId.
+     * Get MessEinheit objects.
+     *
+     * The requested Objects can be filtered using two URL parameters:
+     * @param mehId
+     * @param secMehId
      * If these parameters are used, the filter only returns records that are
      * convertable into one of these units.
      * Records, convertable into the primary messeinheit (mehId) will have the
      * attribute 'primary' set to true.
      * Records convertable into the secondary messeinheit (secMehId) will have
      * the attribute 'primary' set to false.
-     * Example: http://example.com/messeinheit
      *
-     * @return Response object containing all MessEinheit objects.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info
+        @QueryParam("mehId") Integer mehId,
+        @QueryParam("secMehId") Integer secMehId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty()
-            || !params.containsKey("mehId")
-            || params.getFirst("mehId").equals("")
-        ) {
+        if (mehId == null) {
             return repository.getAll(MessEinheit.class);
         }
-        String mehId = params.getFirst("mehId");
 
-
-        MessEinheit meh = repository.getByIdPlain(
-            MessEinheit.class, Integer.parseInt(mehId));
+        MessEinheit meh = repository.getByIdPlain(MessEinheit.class, mehId);
         MessEinheit secMeh = null;
-        if (params.containsKey("secMehId")) {
-            String secMehId = params.getFirst("secMehId");
-            secMeh = repository.getByIdPlain(
-                MessEinheit.class, Integer.parseInt(secMehId));
+        if (secMehId != null) {
+            secMeh = repository.getByIdPlain(MessEinheit.class, secMehId);
         }
         List<MessEinheit> einheits =
             new ArrayList<MessEinheit>(
@@ -133,19 +121,15 @@ public class MesseinheitService extends LadaService {
 
     /**
      * Get a single MessEinheit object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messeinheit/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single MessEinheit.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        return repository.getById(MessEinheit.class, Integer.valueOf(id));
+        return repository.getById(MessEinheit.class, id);
     }
 }

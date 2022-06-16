@@ -16,10 +16,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
 
 import org.apache.commons.io.IOUtils;
 
@@ -79,8 +77,7 @@ public class JsonExportService extends LadaService {
     @POST
     @Path("/json")
     public String download(
-        JsonObject proben,
-        @Context HttpServletRequest request
+        JsonObject proben
     ) {
         JsonArray array = proben.getJsonArray("proben");
         List<Integer> probeIds = new ArrayList<Integer>();

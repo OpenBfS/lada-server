@@ -22,8 +22,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.lock.LockConfig;
@@ -162,21 +160,16 @@ public class ProbeService extends LadaService {
 
     /**
      * Get a single Probe object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/probe/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Probe.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
         @PathParam("id") Integer id
     ) {
-        Response response =
-            repository.getById(Probe.class, id);
+        Response response = repository.getById(Probe.class, id);
         Violation violation = validator.validate(response.getData());
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
@@ -417,7 +410,7 @@ public class ProbeService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         Probe probe
     ) {
         if (!authorization.isAuthorized(
@@ -466,21 +459,16 @@ public class ProbeService extends LadaService {
 
     /**
      * Delete an existing Probe object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/probe/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        /* Get the probe object by id*/
-        Response probe =
-            repository.getById(Probe.class, Integer.valueOf(id));
+        Response probe = repository.getById(Probe.class, id);
         if (!probe.getSuccess()) {
             return probe;
         }

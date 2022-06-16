@@ -80,7 +80,6 @@ public class MesswertTest extends ServiceTest {
      * Test messwert normalization
      */
     private void normalize(JsonObject oldValue) {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("messwert" + " service");
         prot.setType("normalize");

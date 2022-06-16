@@ -21,7 +21,7 @@
         <!-- GeoTools Version
              Note: GeoTools >= 20 is no longer compatible with JTS < 1.15 -->
         <geotools.version>20.0</geotools.version>
-        <checkstyle.plugin.version>3.1.1</checkstyle.plugin.version>
+        <checkstyle.plugin.version>3.1.2</checkstyle.plugin.version>
         <arquillian.persistence.version>1.0.0.Alpha7</arquillian.persistence.version>
     </properties>
 
@@ -157,6 +157,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${checkstyle.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>10.2</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <id>validate</id>
@@ -245,6 +252,10 @@
             <groupId>jakarta.json</groupId>
             <artifactId>jakarta.json-api</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jboss.spec.javax.ws.rs</groupId>

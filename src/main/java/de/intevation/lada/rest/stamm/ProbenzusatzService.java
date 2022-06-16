@@ -10,13 +10,11 @@ package de.intevation.lada.rest.stamm;
 import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.Query;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -61,23 +59,20 @@ public class ProbenzusatzService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all ProbenZusatz objects.
-     * <p>
-     * Example: http://example.com/probenzusatz
+     * Get ProbenZusatz objects.
      *
-     * @return Response object containing all ProbenZusatz objects.
+     * @param umwId URL parameter to filter using umwId. Might be null
+     * (i.e. not given at all) but not an empty string.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info
+        @QueryParam("umwId") @Pattern(regexp = ".+") String umwId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("umwId") || params.getFirst("umwId").equals("") || params.getFirst("umwId") == null) {
+        if (umwId == null) {
             return repository.getAll(ProbenZusatz.class);
         }
-        String umwId = params.getFirst("umwId");
         Query query =
             repository.queryFromString(
                 "SELECT pzs_id FROM "
@@ -95,17 +90,13 @@ public class ProbenzusatzService extends LadaService {
 
     /**
      * Get a single ProbenZusatz object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/probenzusatz/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single ProbenZusatz.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
         return repository.getById(ProbenZusatz.class, id);

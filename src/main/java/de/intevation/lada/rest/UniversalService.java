@@ -14,9 +14,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.QueryColumns;
 import de.intevation.lada.model.land.Messprogramm;
@@ -67,7 +65,8 @@ public class UniversalService extends LadaService {
 
     /**
      * Execute query, using the given result columns.
-     * The query can contain the following post data:
+     *
+     * @param columns The query can contain the following post data:
      * <pre>
      * <code>
      * {
@@ -81,15 +80,17 @@ public class UniversalService extends LadaService {
      * }
      * </code>
      * </pre>
+     * @param start URL parameter used as offset for paging
+     * @param limit URL parameter used as limit for paging
      * @return JSON encoded query results
      */
     @POST
     @Path("/")
     public Response execute(
-        @Context UriInfo info,
+        @QueryParam("start") int start, // default for primitive type: 0
+        @QueryParam("limit") Integer limit,
         QueryColumns columns
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
         List<GridColumnValue> gridColumnValues = columns.getColumns();
 
         String authorizationColumnIndex = null;
@@ -144,16 +145,10 @@ public class UniversalService extends LadaService {
             columnValue.setGridColumn(gridColumn);
         }
 
-        int offset = 0, limit = Integer.MAX_VALUE;
-        if (params.containsKey("start") && params.containsKey("limit")) {
-            offset = Integer.valueOf(params.getFirst("start"));
-            limit = Integer.valueOf(params.getFirst("limit"));
-        }
-
         QueryTools queryTools = new QueryTools(
             repository, columns.getColumns());
         List<Map<String, Object>> result = queryTools.getResultForQuery(
-            offset, limit);
+            start, limit);
 
         if (result == null) {
             return new Response(true, StatusCodes.OK, null);

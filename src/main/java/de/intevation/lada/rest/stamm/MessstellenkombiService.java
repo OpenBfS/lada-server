@@ -7,17 +7,12 @@
  */
 package de.intevation.lada.rest.stamm;
 
-import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
-
-import org.jboss.logging.Logger;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.Auth;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -53,8 +48,6 @@ import de.intevation.lada.rest.LadaService;
 @Path("rest/messstellenkombi")
 public class MessstellenkombiService extends LadaService {
 
-    @Inject Logger logger;
-
     /**
      * The data repository granting read access.
      */
@@ -62,30 +55,21 @@ public class MessstellenkombiService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all MessStellenKombi objects.
-     * <p>
-     * The requested objects can be filtered using a URL parameter named
-     * netzbetreiberId.
-     * <p>
-      * Example: http://example.com/messstelle
+     * @param netzbetreiberIds Multiple URL parameters "netzbetreiberId"
+     * can be given to filter the result.
      *
-     * @return Response object containing all MessStelle objects.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info
+        @QueryParam("netzbetreiberId") List<String> netzbetreiberIds
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-
         QueryBuilder<Auth> mstMlQuery = repository.queryBuilder(Auth.class);
-        mstMlQuery.orIntList("funktionId", Arrays.asList(0, 1));
+        mstMlQuery.orIntList("funktionId", List.of(0, 1));
 
-        if (params.containsKey("netzbetreiberId")) {
-            mstMlQuery.andIn(
-                "netzbetreiberId",
-                Arrays.asList(params.getFirst("netzbetreiberId").split(",")));
+        if (netzbetreiberIds != null && !netzbetreiberIds.isEmpty()) {
+            mstMlQuery.andIn("netzbetreiberId", netzbetreiberIds);
         }
 
         return repository.filter(mstMlQuery.getQuery());
