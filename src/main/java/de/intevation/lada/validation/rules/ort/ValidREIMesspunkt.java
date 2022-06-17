@@ -23,7 +23,7 @@ import de.intevation.lada.validation.rules.Rule;
 import org.jboss.logging.Logger;
 
 @ValidationRule("Ort")
-public class validREIMesspunkt implements Rule {
+public class ValidREIMesspunkt implements Rule {
     @Inject
     private Logger logger;
 

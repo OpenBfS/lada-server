@@ -5,13 +5,13 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.validation.rules.kommentarM;
+package de.intevation.lada.validation.rules.kommentarP;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.KommentarM;
+import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -20,25 +20,25 @@ import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
 
 /**
- * Validation rule for messung.
- * Validates if the messung has a kommentarM.
+ * Validation rule for probe.
+ * Validates if the probe has an existing kommentarP".
  *
  */
-@ValidationRule("KommentarM")
-public class duplicateKommentar implements Rule {
+@ValidationRule("KommentarP")
+public class DuplicateKommentar implements Rule {
 
     @Inject
     private Repository repository;
 
     @Override
     public Violation execute(Object object) {
-        KommentarM kommentar = (KommentarM) object;
-        Integer messungID  = kommentar.getMessungsId();
+        KommentarP kommentar = (KommentarP) object;
+        Integer probeID  = kommentar.getProbeId();
 
-        QueryBuilder<KommentarM> kommentarBuilder = repository
-            .queryBuilder(KommentarM.class)
-            .and("messungsId", messungID);
-        List<KommentarM> kommentarExist = repository.filterPlain(
+        QueryBuilder<KommentarP> kommentarBuilder = repository
+            .queryBuilder(KommentarP.class)
+            .and("probeId", probeID);
+        List<KommentarP> kommentarExist = repository.filterPlain(
             kommentarBuilder.getQuery());
 
         // TODO: Should be the job of EXISTS and a WHERE-clause in database
