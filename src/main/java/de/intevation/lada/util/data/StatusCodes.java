@@ -47,6 +47,9 @@ public class StatusCodes {
     public static final int GEO_UNCHANGEABLE_COORD = 653;
     public static final int STATUS_RO = 654;
     public static final int ORT_SINGLE_UORT = 655;
+    public static final int ORT_REIMP_MISSING = 656;
+    public static final int ORT_ANLAGE_MISSING = 657;
+    public static final int ORT_REIMP_TOO_LONG = 658;
     public static final int DATE_IN_FUTURE = 661;
     public static final int DATE_BEGIN_AFTER_END = 662;
     public static final int URSPR_Date_BEFORE_BEGIN = 663;
