@@ -35,19 +35,23 @@ public class duplicateKommentar implements Rule {
         KommentarP kommentar = (KommentarP) object;
         Integer probeID  = kommentar.getProbeId();
 
-        QueryBuilder<KommentarP> KommentarBuilder =
-            repository.queryBuilder(KommentarP.class);
-            KommentarBuilder.and("probeId", probeID);
-        List<KommentarP> KommentarExist = (List<KommentarP>) repository.filterPlain(KommentarBuilder.getQuery());
+        QueryBuilder<KommentarP> kommentarBuilder = repository
+            .queryBuilder(KommentarP.class)
+            .and("probeId", probeID);
+        List<KommentarP> kommentarExist = repository.filterPlain(
+            kommentarBuilder.getQuery());
 
-        if (KommentarExist.stream().anyMatch(elem -> elem.getText().trim().replace(" ","").toUpperCase().equals(kommentar.getText().trim().replace(" ", "").toUpperCase())==true)) {
+        // TODO: Should be the job of EXISTS and a WHERE-clause in database
+        if (kommentarExist.stream().anyMatch(
+                elem -> elem.getText().trim().replace(" ", "").toUpperCase()
+                .equals(kommentar.getText().trim().replace(" ", "")
+                    .toUpperCase()))
+        ) {
             Violation violation = new Violation();
-         violation.addError("Kommentar", StatusCodes.VAL_EXISTS);
-         return violation;
-        } else {
-            return null;
+            violation.addError("Kommentar", StatusCodes.VAL_EXISTS);
+            return violation;
         }
-
+        return null;
     }
 }
 

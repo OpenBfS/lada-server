@@ -242,7 +242,7 @@ public class OrtFactory {
                 transformCoordinates(ort);
 
                 hasGem = true;
-            } else if (ortExists.size() > 0 && hasKoord==false) {
+            } else if (ortExists.size() > 0 && !hasKoord) {
                 return ortExists.get(0);
             } else {
                 return ort;
