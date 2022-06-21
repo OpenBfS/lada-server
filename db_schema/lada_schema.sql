@@ -277,7 +277,13 @@ CREATE TABLE probe (
     tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     rei_progpunkt_grp_id integer REFERENCES stamm.rei_progpunkt_gruppe,
     kta_gruppe_id integer REFERENCES stamm.kta_gruppe,
-    UNIQUE (test, mst_id, hauptproben_nr),
+    mitte_  sammelzeitraum timestamp without time zone GENERATED ALWAYS AS (
+        CASE
+            WHEN (probeentnahme_beginn IS NULL) THEN NULL::timestamp without time zone
+            WHEN ((probeentnahme_beginn IS NOT NULL) AND (probeentnahme_ende IS NULL)) THEN probeentnahme_beginn
+            ELSE (probeentnahme_beginn + ((probeentnahme_ende - probeentnahme_beginn) / (2)::double precision))
+        END) 
+        STORED,    UNIQUE (test, mst_id, hauptproben_nr),
     CHECK(solldatum_beginn <= solldatum_ende)
 );
 CREATE TRIGGER letzte_aenderung_probe BEFORE UPDATE ON probe FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
