@@ -8,16 +8,19 @@
 package de.intevation.lada.model.stammdaten;
 
 import de.intevation.lada.model.land.TagZuordnung;
+
+import java.sql.Timestamp;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -27,6 +30,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "tag", schema = SchemaName.NAME)
 public class Tag {
+
+    // Default time after which mst tags expire in days
+    public static final int MST_TAG_EXPIRATION_TIME = 365;
+
+    // Default time after which auto tags expire in days
+    public static final int GENERATED_EXPIRATION_TIME = 584;
+
+    // Tag type ids
+    public static final String TAG_TYPE_GLOBAL = "global";
+    public static final String TAG_TYPE_NETZBETREIBER = "netzbetreiber";
+    public static final String TAG_TYPE_MST = "mst";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -37,12 +52,30 @@ public class Tag {
     @Column(name = "mst_id")
     private String mstId;
 
-    @OneToMany(mappedBy = "tag", fetch = FetchType.EAGER)
+    @Column(name = "netzbetreiber")
+    private String netzbetreiberId;
+
+    @Column(name = "user_id")
+    private Integer userId;
+
+    @Column(name = "typ")
+    private String typId;
+
+    @Column(name = "gueltig_bis")
+    private Timestamp gueltigBis;
+
+    @Column(name = "generated_at", insertable = false, updatable = false)
+    private Timestamp generatedAt;
+
+    @OneToMany
+    @JoinColumn(name = "tag_id", updatable = false)
     @JsonIgnore
     private Set<TagZuordnung> tagZuordnungs;
 
     private boolean generated;
 
+    @Transient
+    private boolean readonly;
 
     public Tag() { }
 
@@ -84,5 +117,53 @@ public class Tag {
 
     public void setGenerated(boolean generated) {
         this.generated = generated;
+    }
+
+
+    public Timestamp getGueltigBis() {
+        return gueltigBis;
+    }
+
+    public void setGueltigBis(Timestamp gueltigBis) {
+        this.gueltigBis = gueltigBis;
+    }
+
+    public Timestamp getGeneratedAt() {
+        return generatedAt;
+    }
+
+    public boolean isReadonly() {
+        return readonly;
+    }
+
+    public void setReadonly(boolean readonly) {
+        this.readonly = readonly;
+    }
+
+    /**
+     * @return ID of Netzbetreiber associated to this tag.
+     */
+    public String getNetzbetreiberId() {
+        return netzbetreiberId;
+    }
+
+    public void setNetzbetreiberId(String netzbetreiberId) {
+        this.netzbetreiberId = netzbetreiberId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public String getTypId() {
+        return typId;
+    }
+
+    public void setTypId(String typId) {
+        this.typId = typId;
     }
 }

@@ -47,7 +47,8 @@
       <property name="qualifiedTableNames">true</property>
       <property name="datatypeFactory">org.dbunit.ext.postgresql.PostgresqlDataTypeFactory</property>
     </extension>
-    <extension qualifier="persistence-script">
-      <property name="showSql">true</property>
-    </extension>
+    <!-- Uncomment to show executed SQL in log -->
+    <!-- <extension qualifier="persistence-script"> -->
+    <!--   <property name="showSql">true</property> -->
+    <!-- </extension> -->
 </arquillian>

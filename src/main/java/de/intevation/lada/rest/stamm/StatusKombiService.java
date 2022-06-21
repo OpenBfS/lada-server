@@ -16,14 +16,10 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.StatusProtokoll;
@@ -86,38 +82,30 @@ public class StatusKombiService extends LadaService {
      */
     @GET
     @Path("/")
-    public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info
-    ) {
+    public Response get() {
         return repository.getAll(StatusKombi.class);
     }
 
     /**
-     * Get a single StatusStufe object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/statusstufe/{id}
+     * Get a single StatusKombi object by id.
      *
-     * @return Response object containing a single StatusStufe.
+     * @param id The id is appended to the URL as a path parameter.
+     * @return Response object
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        return repository.getById(StatusKombi.class, Integer.valueOf(id));
+        return repository.getById(StatusKombi.class, id);
     }
 
     @POST
     @Path("/getbyids")
     public Response getById(
-        @Context HttpServletRequest request,
         JsonArray ids
     ) {
-        UserInfo user = authorization.getInfo(request);
+        UserInfo user = authorization.getInfo();
         List<JsonNumber> idList = ids.getValuesAs(JsonNumber.class);
         List<Integer> intList = new ArrayList<>();
         for (JsonNumber id : idList) {

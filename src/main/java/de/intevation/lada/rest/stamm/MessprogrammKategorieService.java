@@ -10,15 +10,12 @@ package de.intevation.lada.rest.stamm;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -73,25 +70,19 @@ public class MessprogrammKategorieService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get all Datenbasis objects.
-     * <p>
-     * Example: http://example.com/messprogrammkategorie
+     * Get all MessprogrammKategorie objects.
      *
-     * @return Response object containing all objects.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
-    public Response get(
-        @Context HttpServletRequest request,
-        @Context UriInfo info
-    ) {
+    public Response get() {
         List<MessprogrammKategorie> kategorie =
             repository.getAllPlain(MessprogrammKategorie.class);
         for (MessprogrammKategorie kat: kategorie) {
             // TODO Do not iterate all the objects if its not necessary
             kat.setReadonly(true);
                 // !authorization.isAuthorized(
-                //     request,
                 //     kat,
                 //     RequestMethod.POST,
                 //     MessprogrammKategorie.class));
@@ -101,24 +92,19 @@ public class MessprogrammKategorieService extends LadaService {
 
     /**
      * Get a single object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messprogrammkategorie/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single object.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         MessprogrammKategorie mpk = repository.getByIdPlain(
-            MessprogrammKategorie.class, Integer.valueOf(id));
+            MessprogrammKategorie.class, id);
         mpk.setReadonly(
             !authorization.isAuthorized(
-                request,
                 mpk,
                 RequestMethod.POST,
                 MessprogrammKategorie.class
@@ -130,11 +116,9 @@ public class MessprogrammKategorieService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpServletRequest request,
         MessprogrammKategorie kategorie
     ) {
         if (!authorization.isAuthorized(
-            request,
             kategorie,
             RequestMethod.POST,
             MessprogrammKategorie.class)
@@ -156,12 +140,10 @@ public class MessprogrammKategorieService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpServletRequest request,
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         MessprogrammKategorie kategorie
     ) {
         if (!authorization.isAuthorized(
-            request,
             kategorie,
             RequestMethod.PUT,
             MessprogrammKategorie.class)
@@ -185,14 +167,12 @@ public class MessprogrammKategorieService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         MessprogrammKategorie kategorie = repository.getByIdPlain(
-            MessprogrammKategorie.class, Integer.valueOf(id));
+            MessprogrammKategorie.class, id);
         if (kategorie == null
             || !authorization.isAuthorized(
-                request,
                 kategorie,
                 RequestMethod.DELETE,
                 MessprogrammKategorie.class

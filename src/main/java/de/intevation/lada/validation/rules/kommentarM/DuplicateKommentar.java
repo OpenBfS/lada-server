@@ -25,7 +25,7 @@ import de.intevation.lada.validation.rules.Rule;
  *
  */
 @ValidationRule("KommentarM")
-public class duplicateKommentar implements Rule {
+public class DuplicateKommentar implements Rule {
 
     @Inject
     private Repository repository;
@@ -35,19 +35,23 @@ public class duplicateKommentar implements Rule {
         KommentarM kommentar = (KommentarM) object;
         Integer messungID  = kommentar.getMessungsId();
 
-        QueryBuilder<KommentarM> KommentarBuilder =
-            repository.queryBuilder(KommentarM.class);
-            KommentarBuilder.and("messungsId", messungID);
-        List<KommentarM> KommentarExist = (List<KommentarM>) repository.filterPlain(KommentarBuilder.getQuery());
+        QueryBuilder<KommentarM> kommentarBuilder = repository
+            .queryBuilder(KommentarM.class)
+            .and("messungsId", messungID);
+        List<KommentarM> kommentarExist = repository.filterPlain(
+            kommentarBuilder.getQuery());
 
-        if (KommentarExist.stream().anyMatch(elem -> elem.getText().trim().replace(" ","").toUpperCase().equals(kommentar.getText().trim().replace(" ", "").toUpperCase())==true)) {
+        // TODO: Should be the job of EXISTS and a WHERE-clause in database
+        if (kommentarExist.stream().anyMatch(
+                elem -> elem.getText().trim().replace(" ", "").toUpperCase()
+                .equals(kommentar.getText().trim().replace(" ", "")
+                    .toUpperCase()))
+        ) {
             Violation violation = new Violation();
-         violation.addError("Kommentar", StatusCodes.VAL_EXISTS);
-         return violation;
-        } else {
-            return null;
+            violation.addError("Kommentar", StatusCodes.VAL_EXISTS);
+            return violation;
         }
-
+        return null;
     }
 }
 

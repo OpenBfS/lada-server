@@ -8,17 +8,13 @@
 package de.intevation.lada.rest;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.KommentarM;
 import de.intevation.lada.model.land.Messung;
@@ -85,11 +81,10 @@ public class KommentarMService extends LadaService {
     private Validator validator;
 
     /**
-     * Get all KommentarM objects.
-     * <p>
-     * The requested objects have to be filtered using an URL parameter named
-     * messungsId.
-     * <p>
+     * Get KommentarM objects.
+     *
+     * @param messungsId The requested objects have to be filtered
+     * using an URL parameter named messungsId.
      * Example: http://example.com/mkommentar?messungsId=[ID]
      *
      * @return Response object containing filtered KommentarM objects.
@@ -99,67 +94,49 @@ public class KommentarMService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @QueryParam("messungsId") Integer messungsId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("messungsId")) {
+        if (messungsId == null) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        String messungId = params.getFirst("messungsId");
-        int id;
-        try {
-            id = Integer.valueOf(messungId);
-        } catch (NumberFormatException nfe) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
-        Messung messung = repository.getByIdPlain(Messung.class, id);
+
+        Messung messung = repository.getByIdPlain(Messung.class, messungsId);
         if (!authorization.isAuthorized(
-                request, messung, RequestMethod.GET, Messung.class)
+                messung, RequestMethod.GET, Messung.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
         QueryBuilder<KommentarM> builder =
             repository.queryBuilder(KommentarM.class);
-        builder.and("messungsId", messungId);
+        builder.and("messungsId", messungsId);
         return authorization.filter(
-            request,
             repository.filter(builder.getQuery()),
             KommentarM.class);
     }
 
     /**
      * Get a single KommentarM object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/mkommentar/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single KommentarM.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Response response =
-            repository.getById(
-                KommentarM.class, Integer.valueOf(id));
+        Response response = repository.getById(KommentarM.class, id);
         KommentarM kommentar = (KommentarM) response.getData();
         Messung messung = repository.getByIdPlain(
             Messung.class, kommentar.getMessungsId());
         if (!authorization.isAuthorized(
-                request, messung, RequestMethod.GET, Messung.class)
+                messung, RequestMethod.GET, Messung.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
         return authorization.filter(
-            request,
             response,
             KommentarM.class);
     }
@@ -185,12 +162,9 @@ public class KommentarMService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         KommentarM kommentar
     ) {
         if (!authorization.isAuthorized(
-                request,
                 kommentar,
                 RequestMethod.POST,
                 KommentarM.class)
@@ -205,7 +179,6 @@ public class KommentarMService extends LadaService {
         } else {
         /* Persist the new object*/
         return authorization.filter(
-            request,
             repository.create(kommentar),
             KommentarM.class);
         }
@@ -233,13 +206,10 @@ public class KommentarMService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         KommentarM kommentar
     ) {
         if (!authorization.isAuthorized(
-                request,
                 kommentar,
                 RequestMethod.PUT,
                 KommentarM.class)
@@ -253,7 +223,6 @@ public class KommentarMService extends LadaService {
             return response;
         } else {
         return authorization.filter(
-            request,
             repository.update(kommentar),
             KommentarM.class);
         }
@@ -261,27 +230,17 @@ public class KommentarMService extends LadaService {
 
     /**
      * Delete an existing KommentarM object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/mkommentar/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        /* Get the object by id*/
-        Response kommentar =
-            repository.getById(
-                KommentarM.class, Integer.valueOf(id));
-        KommentarM kommentarObj = (KommentarM) kommentar.getData();
+        KommentarM kommentarObj = repository.getByIdPlain(KommentarM.class, id);
         if (!authorization.isAuthorized(
-                request,
                 kommentarObj,
                 RequestMethod.DELETE,
                 KommentarM.class)

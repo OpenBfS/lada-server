@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.test.land;
 
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -22,8 +21,6 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -108,24 +105,9 @@ public class PepGenerationTest extends ServiceTest {
     private static final long TS_5L = 5L;
 
     /**
-     * Messprogramm records from datasource.
-     */
-    JsonArray messprogramms;
-
-    /**
      * Current expected tag serial number.
      */
     int expectedTagSerNo = 0;
-
-    @Override
-    public void init(
-        URL baseUrl,
-        List<Protocol> protocol
-    ) {
-        super.init(baseUrl, protocol);
-        messprogramms = readJsonResource("/datasets/dbUnit_pep_gen.json")
-            .getJsonArray("stamm.messprogramm");
-    }
 
     /**
      * Execute all available tests.
@@ -850,13 +832,14 @@ public class PepGenerationTest extends ServiceTest {
         Long end = TS4;
         JsonObject entity = generateFromMpIds(idParam, start, end);
         JsonObject data = entity.getJsonObject("data");
-        JsonArray proben = data.getJsonObject("proben").getJsonObject("1020").getJsonArray("data");
+        JsonArray proben = data.getJsonObject("proben")
+            .getJsonObject("1020").getJsonArray("data");
 
         proben.forEach((probe) -> {
             JsonObject probeObject = (JsonObject) probe;
             Integer probeId = probeObject.getInt("id");
-            Client client = ClientBuilder.newClient();
-            WebTarget target = client.target(baseUrl + "rest/zusatzwert?probeId=" + probeId);
+            WebTarget target = client.target(
+                baseUrl + "rest/zusatzwert?probeId=" + probeId);
             Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -902,10 +885,6 @@ public class PepGenerationTest extends ServiceTest {
             JsonArray proben = null;
             try {
                 /* Verify the response*/
-                Assert.assertTrue(content.getBoolean("success"));
-                prot.addInfo("success", content.getBoolean("success"));
-                Assert.assertEquals("200", content.getString("message"));
-                prot.addInfo("message", content.getString("message"));
                 Assert.assertNotNull(content.getJsonObject("data"));
 
                 //Get data for given messprogramm
@@ -939,9 +918,7 @@ public class PepGenerationTest extends ServiceTest {
     private JsonObject generateFromMpIds(
         List<Integer> ids, Long start, Long end
     ) {
-        System.out.print(".");
 
-        Client client = ClientBuilder.newClient();
         WebTarget target = client.target(baseUrl + "rest/probe/messprogramm");
         JsonArrayBuilder idArrayBuilder = Json.createArrayBuilder();
         ids.forEach(item -> {

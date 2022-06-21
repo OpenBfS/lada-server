@@ -8,17 +8,13 @@
 package de.intevation.lada.rest;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
@@ -92,57 +88,43 @@ public class ZusatzwertService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get all Zusatzwert objects.
-     * <p>
-     * The requested objects can be filtered using a URL parameter named
-     * probeId.
-     * <p>
+     * Get Zusatzwert objects.
+     *
+     * @param probeId The requested objects can be filtered using
+     * a URL parameter named probeId.
      * Example: http://example.com/zusatzwert?probeId=[ID]
      *
-     *
-     * @return Response object containing all Zusatzwert objects.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        @Context UriInfo info
+        @QueryParam("probeId") Integer probeId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("probeId")) {
+        if (probeId == null) {
             return repository.getAll(ZusatzWert.class);
         }
-        String probeId = params.getFirst("probeId");
         QueryBuilder<ZusatzWert> builder =
             repository.queryBuilder(ZusatzWert.class);
         builder.and("probeId", probeId);
         return authorization.filter(
-            request,
             repository.filter(builder.getQuery()),
             ZusatzWert.class);
     }
 
     /**
      * Get a Zusatzwert object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/zusatzwert/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Zusatzwert.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         return authorization.filter(
-            request,
-            repository.getById(
-                ZusatzWert.class, Integer.valueOf(id)),
+            repository.getById(ZusatzWert.class, id),
             ZusatzWert.class);
     }
 
@@ -172,21 +154,18 @@ public class ZusatzwertService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         ZusatzWert zusatzwert
     ) {
         if (!authorization.isAuthorized(
-                request,
                 zusatzwert,
                 RequestMethod.POST,
                 ZusatzWert.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        /* Persist the new object*/
+
+        // TODO: perform validation to avoid violating database constraints
         return authorization.filter(
-            request,
             repository.create(zusatzwert),
             ZusatzWert.class);
     }
@@ -217,13 +196,10 @@ public class ZusatzwertService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         ZusatzWert zusatzwert
     ) {
         if (!authorization.isAuthorized(
-                request,
                 zusatzwert,
                 RequestMethod.PUT,
                 ZusatzWert.class)
@@ -238,34 +214,23 @@ public class ZusatzwertService extends LadaService {
             return response;
         }
         return authorization.filter(
-            request,
             response,
             ZusatzWert.class);
     }
 
     /**
      * Delete an existing Zusatzwert object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/zusatzwert/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        /* Get the object by id*/
-        Response object =
-            repository.getById(
-                ZusatzWert.class, Integer.valueOf(id));
-        ZusatzWert obj = (ZusatzWert) object.getData();
+        ZusatzWert obj = repository.getByIdPlain(ZusatzWert.class, id);
         if (!authorization.isAuthorized(
-                request,
                 obj,
                 RequestMethod.DELETE,
                 ZusatzWert.class)

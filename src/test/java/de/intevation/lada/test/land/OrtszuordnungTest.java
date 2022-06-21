@@ -14,6 +14,7 @@ import java.util.List;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
+import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
 
@@ -30,19 +31,13 @@ public class OrtszuordnungTest extends ServiceTest {
     private JsonObject expectedById;
     private JsonObject create;
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
-
     @Override
     public void init(
+        Client c,
         URL baseUrl,
         List<Protocol> protocol
     ) {
-        super.init(baseUrl, protocol);
+        super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
@@ -50,7 +45,7 @@ public class OrtszuordnungTest extends ServiceTest {
 
         // Prepare expected probe object
         JsonObject content =
-            readJsonResource("/datasets/dbUnit_ortszuordnung.json");
+            readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject messung =
             content.getJsonArray("land.ortszuordnung").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messung);
@@ -69,7 +64,7 @@ public class OrtszuordnungTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("ortszuordnung", "rest/ortszuordnung");
+        get("ortszuordnung", "rest/ortszuordnung");
         getById("ortszuordnung", "rest/ortszuordnung/1000", expectedById);
         JsonObject created =
             create("ortszuordnung", "rest/ortszuordnung", create);

@@ -12,7 +12,7 @@ import java.net.URL;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -27,12 +27,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
 import de.intevation.lada.model.stammdaten.Deskriptoren;
 import de.intevation.lada.model.stammdaten.KoordinatenArt;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Probenehmer;
+import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.test.land.TagZuordnungTest;
 import de.intevation.lada.test.stamm.DatensatzErzeugerTest;
 import de.intevation.lada.test.stamm.DeskriptorenTest;
 import de.intevation.lada.test.stamm.KoordinatenartTest;
@@ -40,6 +44,7 @@ import de.intevation.lada.test.stamm.MessprogrammKategorieTest;
 import de.intevation.lada.test.stamm.OrtTest;
 import de.intevation.lada.test.stamm.ProbenehmerTest;
 import de.intevation.lada.test.stamm.Stammdaten;
+import de.intevation.lada.test.stamm.TagTest;
 
 
 /**
@@ -48,6 +53,7 @@ import de.intevation.lada.test.stamm.Stammdaten;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
+@ApplyScriptBefore("datasets/clean_and_seed.sql")
 public class StammdatenTest extends BaseTest {
 
     private static final int T1 = 1;
@@ -86,12 +92,22 @@ public class StammdatenTest extends BaseTest {
     private static final int T34 = 34;
     private static final int T35 = 35;
     private static final int T36 = 36;
+    private static final int T37 = 37;
+    private static final int T38 = 38;
+    private static final int T39 = 39;
+    private static final int T40 = 40;
+    private static final int T41 = 41;
 
     private static final int ID5 = 5;
     private static final int ID9 = 9;
     private static final int ID56 = 56;
+    private static final int ID101 = 101;
+    private static final int ID102 = 102;
     private static final int ID207 = 207;
     private static final int ID1000 = 1000;
+    private static final int ID1801 = 1801;
+    private static final int ID1901 = 1901;
+
 
     private static Logger logger = Logger.getLogger(StammdatenTest.class);
 
@@ -105,6 +121,8 @@ public class StammdatenTest extends BaseTest {
     private OrtTest ortTest;
     private DeskriptorenTest deskriptorenTest;
     private KoordinatenartTest kdaTest;
+    private TagTest tagTest;
+    private TagZuordnungTest tagZuordnungTest;
 
     public StammdatenTest() {
         stammdatenTest = new Stammdaten();
@@ -114,6 +132,8 @@ public class StammdatenTest extends BaseTest {
         ortTest = new OrtTest();
         deskriptorenTest = new DeskriptorenTest();
         kdaTest = new KoordinatenartTest();
+        tagTest = new TagTest();
+        tagZuordnungTest = new TagZuordnungTest();
         verboseLogging = false;
     }
 
@@ -131,7 +151,6 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @InSequence(T1)
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @UsingDataSet("datasets/dbUnit_datensatzerzeuger.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
@@ -156,7 +175,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testDatensatzerzeuger(@ArquillianResource URL baseUrl)
     throws Exception {
-        datensatzerzeugerTest.init(baseUrl, testProtocol);
+        datensatzerzeugerTest.init(this.client, baseUrl, testProtocol);
         datensatzerzeugerTest.execute();
     }
 
@@ -190,7 +209,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testProbenehmer(@ArquillianResource URL baseUrl)
     throws Exception {
-        probenehmerTest.init(baseUrl, testProtocol);
+        probenehmerTest.init(this.client, baseUrl, testProtocol);
         probenehmerTest.execute();
     }
 
@@ -227,7 +246,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testMessprogrammKategorie(@ArquillianResource URL baseUrl)
     throws Exception {
-        messprogrammkategorieTest.init(baseUrl, testProtocol);
+        messprogrammkategorieTest.init(this.client, baseUrl, testProtocol);
         messprogrammkategorieTest.execute();
     }
 
@@ -237,8 +256,8 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @InSequence(T7)
-    // Use SQL because geometry field does not work with @UsingDataSet
-    @ApplyScriptBefore("datasets/dbUnit_ort.sql")
+    // Data added using clean_and_seed.sql because geometry field
+    // does not work with @UsingDataSet
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseOrt() throws Exception {
@@ -262,7 +281,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testOrt(@ArquillianResource URL baseUrl)
     throws Exception {
-        ortTest.init(baseUrl, testProtocol);
+        ortTest.init(this.client, baseUrl, testProtocol);
         ortTest.execute();
     }
 
@@ -274,7 +293,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T9)
     @RunAsClient
     public final void testDatenbasisAll(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getAll(baseUrl, "datenbasis", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("datenbasis");
     }
 
     /**
@@ -285,7 +305,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T10)
     @RunAsClient
     public final void testDatenbasisById(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getById(baseUrl, "datenbasis", ID9, testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("datenbasis", ID9);
     }
 
     /**
@@ -296,7 +317,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T11)
     @RunAsClient
     public final void testMesseinheitAll(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getAll(baseUrl, "messeinheit", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("messeinheit");
     }
 
     /**
@@ -307,7 +329,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T12)
     @RunAsClient
     public final void testMesseinheitById(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getById(baseUrl, "messeinheit", ID207, testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("messeinheit", ID207);
     }
 
     /**
@@ -318,7 +341,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T13)
     @RunAsClient
     public final void testMessgroesseAll(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getAll(baseUrl, "messgroesse", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("messgroesse");
     }
 
     /**
@@ -329,7 +353,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T14)
     @RunAsClient
     public final void testMessgroesseById(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getById(baseUrl, "messgroesse", ID56, testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("messgroesse", ID56);
     }
 
     /**
@@ -340,7 +365,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T15)
     @RunAsClient
     public final void testMessmethodeAll(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getAll(baseUrl, "messmethode", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("messmethode");
     }
 
     /**
@@ -351,7 +377,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T16)
     @RunAsClient
     public final void testMessmethodeById(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getById(baseUrl, "messmethode", "A3", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("messmethode", "A3");
     }
 
     /**
@@ -362,7 +389,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T17)
     @RunAsClient
     public final void testMessstelleAll(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getAll(baseUrl, "messstelle", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("messstelle");
     }
 
     /**
@@ -373,7 +401,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T18)
     @RunAsClient
     public final void testMessstelleById(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getById(baseUrl, "messstelle", "06010", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("messstelle", "06010");
     }
 
     /**
@@ -384,7 +413,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T19)
     @RunAsClient
     public final void testNetzbetreiberAll(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getAll(baseUrl, "netzbetreiber", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("netzbetreiber");
     }
 
     /**
@@ -395,7 +425,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T20)
     @RunAsClient
     public final void testNetzbetreiberById(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getById(baseUrl, "netzbetreiber", "06", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("netzbetreiber", "06");
     }
 
     /**
@@ -408,7 +439,8 @@ public class StammdatenTest extends BaseTest {
     public final void testPflichtmessgroesseAll(
         @ArquillianResource URL baseUrl
     ) {
-        stammdatenTest.getAll(baseUrl, "pflichtmessgroesse", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("pflichtmessgroesse");
     }
 
     /**
@@ -421,11 +453,8 @@ public class StammdatenTest extends BaseTest {
     public final void testPflichtmessgroesseById(
         @ArquillianResource URL baseUrl
     ) {
-        stammdatenTest.getById(
-            baseUrl,
-            "pflichtmessgroesse",
-            "A3",
-            testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("pflichtmessgroesse", "A3");
     }
 
     /**
@@ -436,7 +465,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T23)
     @RunAsClient
     public final void testProbenartAll(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getAll(baseUrl, "probenart", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("probenart");
     }
 
     /**
@@ -447,7 +477,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T24)
     @RunAsClient
     public final void testProbenartById(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getById(baseUrl, "probenart", 1, testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("probenart", 1);
     }
 
     /**
@@ -458,7 +489,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T25)
     @RunAsClient
     public final void testProbenzusatzAll(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getAll(baseUrl, "probenzusatz", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("probenzusatz");
     }
 
     /**
@@ -469,7 +501,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T26)
     @RunAsClient
     public final void testProbenzusatzById(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getById(baseUrl, "probenzusatz", "A74", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("probenzusatz", "A74");
     }
 
     /**
@@ -480,7 +513,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T27)
     @RunAsClient
     public final void testKoordinatenartAll(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getAll(baseUrl, "koordinatenart", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("koordinatenart");
     }
 
     /**
@@ -491,7 +525,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T28)
     @RunAsClient
     public final void testKoordinatenartById(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getById(baseUrl, "koordinatenart", ID5, testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("koordinatenart", ID5);
     }
 
     /**
@@ -502,7 +537,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T29)
     @RunAsClient
     public final void testStaatAll(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getAll(baseUrl, "staat", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("staat");
     }
 
     /**
@@ -513,7 +549,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T30)
     @RunAsClient
     public final void testStaatById(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getById(baseUrl, "staat", 0, testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("staat", 0);
     }
 
     /**
@@ -524,7 +561,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T31)
     @RunAsClient
     public final void testUmweltAll(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getAll(baseUrl, "umwelt", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("umwelt");
     }
 
     /**
@@ -535,7 +573,8 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T32)
     @RunAsClient
     public final void testUmweltById(@ArquillianResource URL baseUrl) {
-        stammdatenTest.getById(baseUrl, "umwelt", "L6", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("umwelt", "L6");
     }
 
     /**
@@ -548,7 +587,8 @@ public class StammdatenTest extends BaseTest {
     public final void testVerwaltungseinheitAll(
         @ArquillianResource URL baseUrl
     ) {
-        stammdatenTest.getAll(baseUrl, "verwaltungseinheit", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("verwaltungseinheit");
     }
 
     /**
@@ -561,8 +601,8 @@ public class StammdatenTest extends BaseTest {
     public final void testVerwaltungseinheitById(
         @ArquillianResource URL baseUrl
     ) {
-        stammdatenTest.getById(baseUrl, "verwaltungseinheit",
-            "11000000", testProtocol);
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("verwaltungseinheit", "11000000");
     }
 
     /**
@@ -597,7 +637,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testDeskriptoren(@ArquillianResource URL baseUrl)
     throws Exception {
-        deskriptorenTest.init(baseUrl, testProtocol);
+        deskriptorenTest.init(this.client, baseUrl, testProtocol);
         deskriptorenTest.execute();
     }
 
@@ -606,7 +646,7 @@ public class StammdatenTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(37)
+    @InSequence(T37)
     @UsingDataSet("datasets/dbUnit_koordinatenart.json")
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
@@ -628,11 +668,91 @@ public class StammdatenTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(38)
+    @InSequence(T38)
     @RunAsClient
     public final void testKoordinatenart(@ArquillianResource URL baseUrl)
     throws Exception {
-        kdaTest.init(baseUrl, testProtocol);
+        kdaTest.init(this.client, baseUrl, testProtocol);
         kdaTest.execute();
+    }
+
+    /**
+     * Cleanup database for TagTest.
+     * @throws Exception that can occur during test
+     */
+    @Test
+    @InSequence(T39)
+    @ApplyScriptBefore("datasets/clean_and_seed.sql")
+    @UsingDataSet("datasets/dbUnit_tagzuordnung.json")
+    @DataSource("java:jboss/lada-test")
+    @Cleanup(phase = TestExecutionPhase.NONE)
+    public final void prepareTag() throws Exception {
+        Protocol protocol = new Protocol();
+        protocol.setName("database");
+        protocol.setType("insert for tag");
+        protocol.addInfo("database",
+            "Insert probe, messung and tags into database");
+        testProtocol.add(protocol);
+        Tag probeTag = em.find(Tag.class, ID101);
+        Assert.assertNotNull(probeTag);
+        Tag messungTag = em.find(Tag.class, ID102);
+        Assert.assertNotNull(messungTag);
+        protocol.setPassed(true);
+    }
+
+    /**
+     * Test Tag service.
+     * @param baseUrl The server url used for the request.
+     * @throws Exception that can occur during the test.
+     */
+    @Test
+    @InSequence(T40)
+    @RunAsClient
+    public final void testTag(@ArquillianResource URL baseUrl)
+    throws Exception {
+        tagTest.init(this.client, baseUrl, testProtocol);
+        tagTest.execute();
+    }
+
+    /**
+     * Insert objects needed for the tagzuordnung test into the db.
+     * @throws Exception that can occur during test
+     */
+    @Test
+    @InSequence(T40)
+    @ApplyScriptBefore("datasets/clean_and_seed.sql")
+    @UsingDataSet("datasets/dbUnit_tagzuordnung.json")
+    @DataSource("java:jboss/lada-test")
+    @Cleanup(phase = TestExecutionPhase.NONE)
+    public final void prepareTagZuordnung() throws Exception {
+        Protocol protocol = new Protocol();
+        protocol.setName("database");
+        protocol.setType("insert for tagzuordnung");
+        protocol.addInfo("database",
+            "Insert probe, messung and tags into database");
+        testProtocol.add(protocol);
+        Probe probe = em.find(Probe.class, ID1901);
+        Assert.assertNotNull(probe);
+        Messung messung = em.find(Messung.class, ID1801);
+        Assert.assertNotNull(messung);
+        Tag probeTag = em.find(Tag.class, ID101);
+        Assert.assertNotNull(probeTag);
+        Tag messungTag = em.find(Tag.class, ID102);
+        Assert.assertNotNull(messungTag);
+        protocol.setPassed(true);
+    }
+
+    /**
+     * Test TagZuordnung service.
+     * @param baseUrl The server url used for the request.
+     * @throws Exception that can occur during the test.
+     */
+    @Test
+    @InSequence(T41)
+    @RunAsClient
+    public final void testTagZuordnung(@ArquillianResource URL baseUrl)
+    throws Exception {
+        tagZuordnungTest.init(this.client, baseUrl, testProtocol);
+        tagZuordnungTest.execute();
     }
 }

@@ -33,7 +33,7 @@ import javax.json.JsonObject;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
@@ -108,7 +108,8 @@ public class CsvExporter implements Exporter {
     ) {
         String[] names = new String[keys.length];
         ArrayList<String> keysList = new ArrayList<String>(Arrays.asList(keys));
-        keysList.forEach(key -> {
+        int index = 0;
+        for (String key : keysList) {
             QueryBuilder<GridColumn> builder =
                 repository.queryBuilder(GridColumn.class);
             builder.and("dataIndex", key);
@@ -124,8 +125,9 @@ public class CsvExporter implements Exporter {
                     ? subDataColumnNames.getString(key)
                     : key;
             }
-            names[keysList.indexOf(key)] = name;
-        });
+            names[index] = name;
+            index++;
+        };
         return names;
     }
 
@@ -240,10 +242,11 @@ public class CsvExporter implements Exporter {
                 for (int i = 0; i < keys.length; i++) {
                     Object value = row.get(keys[i]);
 
-
                     //Value is a status kombi
                     if (keys[i].equals("statusK")) {
                         rowItems.add(getStatusStringByid((Integer) value));
+                    } else if (keys[i].equals("latitude") | keys[i].equals("longitude")) {
+                        rowItems.add(value.toString());
                     } else if (value instanceof Double) {
                         decimalFormat.applyPattern("0.###E00");
                         rowItems.add(decimalFormat.format((Double) value));

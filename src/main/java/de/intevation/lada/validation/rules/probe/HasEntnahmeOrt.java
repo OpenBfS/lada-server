@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.validation.rules.probe;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -47,14 +48,24 @@ public class HasEntnahmeOrt implements Rule {
             || Integer.valueOf(4).equals(probe.getDatenbasisId())) {
                 return null;
         }
+        List<String> zuordTypeFilter = Arrays.asList("E", "R");
         QueryBuilder<Ortszuordnung> builder =
             repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", id);
+        builder.andIn("ortszuordnungTyp", zuordTypeFilter);
         Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<Ortszuordnung> orte = (List<Ortszuordnung>) response.getData();
+
+        if (orte.size()>1) {
+            Violation violation = new Violation();
+            violation.addWarning("entnahmeOrt", StatusCodes.VALUE_AMBIGOUS);
+            return violation;
+        }
+
         for (Ortszuordnung ort: orte) {
-            if ("E".equals(ort.getOrtszuordnungTyp()) || "R".equals(ort.getOrtszuordnungTyp())) {
+            if (( "E".equals(ort.getOrtszuordnungTyp()) || "R".equals(ort.getOrtszuordnungTyp()) && probe.getDatenbasisId() != 4)
+                    || "R".equals(ort.getOrtszuordnungTyp()) && probe.getDatenbasisId() == 4 ) {
                 return null;
             }
         }

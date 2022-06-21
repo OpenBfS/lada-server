@@ -20,8 +20,6 @@ import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
 
-//import org.apache.log4j.Logger;
-
 /**
  * Validation rule for probe.
  * Validates if the probe has a unique "hauptprobennr".
@@ -30,8 +28,6 @@ import de.intevation.lada.validation.rules.Rule;
  */
 @ValidationRule("Probe")
 public class UniqueHauptprobenNr implements Rule {
-//    @Inject
-//    private Logger logger;
 
     @Inject
     private Repository repository;

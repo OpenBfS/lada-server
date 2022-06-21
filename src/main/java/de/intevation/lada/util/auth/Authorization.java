@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.util.auth;
 
-import javax.servlet.http.HttpServletRequest;
-
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -18,28 +16,19 @@ import de.intevation.lada.util.rest.Response;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public interface Authorization {
-    UserInfo getInfo(HttpServletRequest request);
+    UserInfo getInfo();
 
     <T> Response filter(
-        HttpServletRequest request, Response data, Class<T> clazz);
+        Response data, Class<T> clazz);
 
     <T> boolean isAuthorized(
-        HttpServletRequest request,
         Object data,
         RequestMethod method,
         Class<T> clazz);
 
     <T> boolean isAuthorizedById(
-        HttpServletRequest request,
         Object id,
         RequestMethod method,
-        Class<T> clazz);
-
-    <T> boolean isAuthorized(UserInfo userInfo, Object data, Class<T> clazz);
-
-    <T> boolean isAuthorizedOnNew(
-        UserInfo userInfo,
-        Object data,
         Class<T> clazz);
 
     boolean isProbeReadOnly(Integer probeId);

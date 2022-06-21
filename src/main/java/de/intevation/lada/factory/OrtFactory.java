@@ -12,7 +12,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.Query;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -242,7 +242,7 @@ public class OrtFactory {
                 transformCoordinates(ort);
 
                 hasGem = true;
-            } else if (ortExists.size() > 0 && hasKoord==false) {
+            } else if (ortExists.size() > 0 && !hasKoord) {
                 return ortExists.get(0);
             } else {
                 return ort;

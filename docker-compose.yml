@@ -1,0 +1,28 @@
+version: "3.5"
+services:
+  db:
+    container_name: "lada_db"
+    build:
+      context: ./db_schema
+    image: "koala/lada_db"
+    networks:
+      - lada_network
+    volumes:
+      - ./db_schema:/opt/lada_sql/
+  server:
+    container_name: "lada-server"
+    image: "koala/lada_wildfly"
+    networks:
+      - lada_network
+    depends_on:
+      - db
+    volumes:
+      - ./:/usr/src/lada-server
+    ports:
+      - 8080:8080 # direct access to interfaces
+      - 9990:9990 # Wildfly management console
+      - 8787:8787 # Remote debugging of server code
+      - 5005:5005 # Remote debugging of test code
+networks:
+  lada_network:
+    name: lada_network

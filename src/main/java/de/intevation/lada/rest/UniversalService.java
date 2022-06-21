@@ -12,12 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.QueryColumns;
 import de.intevation.lada.model.land.Messprogramm;
@@ -30,6 +27,7 @@ import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.ResultType;
+import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -67,7 +65,8 @@ public class UniversalService extends LadaService {
 
     /**
      * Execute query, using the given result columns.
-     * The query can contain the following post data:
+     *
+     * @param columns The query can contain the following post data:
      * <pre>
      * <code>
      * {
@@ -81,16 +80,17 @@ public class UniversalService extends LadaService {
      * }
      * </code>
      * </pre>
+     * @param start URL parameter used as offset for paging
+     * @param limit URL parameter used as limit for paging
      * @return JSON encoded query results
      */
     @POST
     @Path("/")
     public Response execute(
-        @Context HttpServletRequest request,
-        @Context UriInfo info,
+        @QueryParam("start") int start, // default for primitive type: 0
+        @QueryParam("limit") Integer limit,
         QueryColumns columns
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
         List<GridColumnValue> gridColumnValues = columns.getColumns();
 
         String authorizationColumnIndex = null;
@@ -107,6 +107,7 @@ public class UniversalService extends LadaService {
          */
         final LinkedHashMap<String, Class<?>> hierarchy
             = new LinkedHashMap<String, Class<?>>();
+        hierarchy.put("tagId",       Tag.class);
         hierarchy.put("mprkat",      MessprogrammKategorie.class);
         hierarchy.put("dsatzerz",    DatensatzErzeuger.class);
         hierarchy.put("probenehmer", Probenehmer.class);
@@ -144,16 +145,10 @@ public class UniversalService extends LadaService {
             columnValue.setGridColumn(gridColumn);
         }
 
-        int offset = 0, limit = Integer.MAX_VALUE;
-        if (params.containsKey("start") && params.containsKey("limit")) {
-            offset = Integer.valueOf(params.getFirst("start"));
-            limit = Integer.valueOf(params.getFirst("limit"));
-        }
-
         QueryTools queryTools = new QueryTools(
             repository, columns.getColumns());
         List<Map<String, Object>> result = queryTools.getResultForQuery(
-            offset, limit);
+            start, limit);
 
         if (result == null) {
             return new Response(true, StatusCodes.OK, null);
@@ -162,41 +157,50 @@ public class UniversalService extends LadaService {
         // TODO: This issues a potentially costly 'SELECT count(*)'
         // for every request. Better not to rely on total count at client side?
         int size = queryTools.getTotalCountForQuery();
+        boolean doAuthorize = true;
+        if (result.size() > 500) {
+            doAuthorize = false;
+        }
 
         for (Map<String, Object> row: result) {
             Object idToAuthorize = row.get(authorizationColumnIndex);
             boolean readonly;
-
-            if (idToAuthorize != null) {
-                //If column is an ort, get Netzbetreiberid
-                if (authorizationColumnType == Ort.class) {
-                    Ort ort = (Ort) repository.getByIdPlain(
-                        Ort.class, idToAuthorize);
-                    idToAuthorize = ort.getNetzbetreiberId();
-                }
-                if (authorizationColumnType == DatensatzErzeuger.class) {
-                    DatensatzErzeuger de =
-                        (DatensatzErzeuger) repository.getByIdPlain(
+            if (doAuthorize) {
+                if (idToAuthorize != null) {
+                    //If column is an ort, get Netzbetreiberid
+                    if (authorizationColumnType == Ort.class) {
+                        Ort ort = repository.getByIdPlain(
+                            Ort.class, idToAuthorize);
+                        idToAuthorize = ort.getNetzbetreiberId();
+                    }
+                    if (authorizationColumnType == DatensatzErzeuger.class) {
+                        DatensatzErzeuger de = repository.getByIdPlain(
                             DatensatzErzeuger.class, idToAuthorize);
-                    idToAuthorize = de.getNetzbetreiberId();
-                }
-                if (authorizationColumnType == Probenehmer.class) {
-                    Probenehmer pn = (Probenehmer) repository.getByIdPlain(
-                        Probenehmer.class, idToAuthorize);
-                    idToAuthorize = pn.getNetzbetreiberId();
-                }
-                if (authorizationColumnType == MessprogrammKategorie.class) {
-                    MessprogrammKategorie mk =
-                        (MessprogrammKategorie) repository.getByIdPlain(
+                        idToAuthorize = de.getNetzbetreiberId();
+                    }
+                    if (authorizationColumnType == Probenehmer.class) {
+                        Probenehmer pn = repository.getByIdPlain(
+                            Probenehmer.class, idToAuthorize);
+                        idToAuthorize = pn.getNetzbetreiberId();
+                    }
+                    if (authorizationColumnType == MessprogrammKategorie.class) {
+                        MessprogrammKategorie mk = repository.getByIdPlain(
                             MessprogrammKategorie.class, idToAuthorize);
-                    idToAuthorize = mk.getNetzbetreiberId();
-                }
+                        idToAuthorize = mk.getNetzbetreiberId();
+                    }
+                    if (authorizationColumnType == Tag.class) {
+                        Tag tag = repository.getByIdPlain(
+                            Tag.class, idToAuthorize);
+                        idToAuthorize = tag.getId();
+                    }
 
-                readonly = !authorization.isAuthorizedById(
-                    request,
-                    idToAuthorize,
-                    RequestMethod.PUT,
-                    authorizationColumnType);
+                    readonly = !authorization.isAuthorizedById(
+                        idToAuthorize,
+                        RequestMethod.PUT,
+                        authorizationColumnType);
+                } else {
+                    readonly = true;
+                }
             } else {
                 readonly = true;
             }

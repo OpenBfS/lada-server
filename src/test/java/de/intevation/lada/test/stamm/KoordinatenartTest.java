@@ -13,6 +13,7 @@ import java.util.List;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
@@ -37,19 +38,13 @@ public class KoordinatenartTest extends ServiceTest {
 
     private final String url = "rest/koordinatenart/";
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
-
     @Override
     public void init(
+        Client c,
         URL baseUrl,
         List<Protocol> protocol
     ) {
-        super.init(baseUrl, protocol);
+        super.init(c, baseUrl, protocol);
 
         // Prepare expected object
         JsonObject content = readJsonResource(
@@ -65,13 +60,12 @@ public class KoordinatenartTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll(name, url);
+        get(name, url);
         getById(name, url + KDA_ID, expectedById);
         recalculate();
     }
 
     private void recalculate() {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName(name + " service");
         prot.setType("recalculate");
@@ -95,18 +89,6 @@ public class KoordinatenartTest extends ServiceTest {
         JsonObject content = BaseTest.parseResponse(response, prot);
 
         /* Verify the response*/
-        final String successKey = "success";
-        BaseTest.assertContains(content, successKey);
-        boolean success = content.getBoolean(successKey);
-        Assert.assertTrue("Unsuccessful response object:\n" + content, success);
-        prot.addInfo(successKey, success);
-
-        final String messageKey = "message";
-        BaseTest.assertContains(content, messageKey);
-        String message = content.getString(messageKey);
-        Assert.assertEquals("200", message);
-        prot.addInfo(messageKey, message);
-
         final String dataKey = "data";
         BaseTest.assertContains(content, dataKey);
         JsonObject data = content.getJsonObject(dataKey);

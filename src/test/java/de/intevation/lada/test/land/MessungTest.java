@@ -12,8 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response;
 
 import org.junit.Assert;
 
@@ -31,19 +32,13 @@ public class MessungTest extends ServiceTest {
     private JsonObject expectedById;
     private JsonObject create;
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
-
     @Override
     public void init(
+        Client c,
         URL baseUrl,
         List<Protocol> protocol
     ) {
-        super.init(baseUrl, protocol);
+        super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung",
@@ -52,19 +47,18 @@ public class MessungTest extends ServiceTest {
         });
 
         // Prepare expected probe object
-        JsonObject content = readJsonResource("/datasets/dbUnit_messung.json");
+        JsonObject content = readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject messung =
             content.getJsonArray("land.messung").getJsonObject(0);
-        JsonObjectBuilder builder = convertObject(messung);
-        JsonObject trans =
-            content.getJsonArray("land.messung_translation").getJsonObject(0);
-        builder.add("externeMessungsId", trans.get("messungs_ext_id"));
-        builder.add("parentModified", TS1);
-        builder.add("readonly", JsonValue.FALSE);
-        builder.add("owner", JsonValue.TRUE);
-        builder.add("statusEdit", JsonValue.TRUE);
-        builder.add("status", ID1000);
-        expectedById = builder.build();
+        // Automatic conversion of key for external ID does not work
+        final String extIdKey = "ext_id";
+        expectedById = convertObject(messung, extIdKey)
+            .add("externeMessungsId", messung.get(extIdKey))
+            .add("parentModified", TS1)
+            .add("readonly", JsonValue.FALSE)
+            .add("owner", JsonValue.TRUE)
+            .add("status", ID1000)
+            .build();
         Assert.assertNotNull(expectedById);
 
         // Load probe object to test POST request
@@ -76,7 +70,8 @@ public class MessungTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("messung", "rest/messung");
+        get("messung", "rest/messung", Response.Status.BAD_REQUEST);
+        get("messung", "rest/messung?probeId=1000");
         getById("messung", "rest/messung/1200", expectedById);
         JsonObject created = create("messung", "rest/messung", create);
         update("messung", "rest/messung/1200", "nebenprobenNr", "T100", "U200");

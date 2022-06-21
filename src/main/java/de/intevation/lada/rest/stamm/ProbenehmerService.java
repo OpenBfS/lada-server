@@ -10,15 +10,12 @@ package de.intevation.lada.rest.stamm;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -92,17 +89,13 @@ public class ProbenehmerService extends LadaService {
      */
     @GET
     @Path("/")
-    public Response get(
-        @Context HttpServletRequest request,
-        @Context UriInfo info
-    ) {
+    public Response get() {
         List<Probenehmer> nehmer =
             repository.getAllPlain(Probenehmer.class);
         for (Probenehmer p : nehmer) {
             // TODO Do not iterate all the objects if its not necessary
             p.setReadonly(true);
                 // !authorization.isAuthorized(
-                //     request,
                 //     p,
                 //     RequestMethod.POST,
                 //     Probenehmer.class));
@@ -112,24 +105,18 @@ public class ProbenehmerService extends LadaService {
 
     /**
      * Get a single Datenbasis object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/probenehmer/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single object.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Probenehmer p = repository.getByIdPlain(
-            Probenehmer.class, Integer.valueOf(id));
+        Probenehmer p = repository.getByIdPlain(Probenehmer.class, id);
         p.setReadonly(
             !authorization.isAuthorized(
-                request,
                 p,
                 RequestMethod.POST,
                 Probenehmer.class
@@ -141,11 +128,9 @@ public class ProbenehmerService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpServletRequest request,
         Probenehmer probenehmer
     ) {
         if (!authorization.isAuthorized(
-            request,
             probenehmer,
             RequestMethod.POST,
             Probenehmer.class)
@@ -167,12 +152,10 @@ public class ProbenehmerService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpServletRequest request,
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         Probenehmer probenehmer
     ) {
         if (!authorization.isAuthorized(
-            request,
             probenehmer,
             RequestMethod.PUT,
             Probenehmer.class)
@@ -196,14 +179,12 @@ public class ProbenehmerService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         Probenehmer probenehmer = repository.getByIdPlain(
-            Probenehmer.class, Integer.valueOf(id));
+            Probenehmer.class, id);
         if (probenehmer == null
             || !authorization.isAuthorized(
-                request,
                 probenehmer,
                 RequestMethod.DELETE,
                 Probenehmer.class

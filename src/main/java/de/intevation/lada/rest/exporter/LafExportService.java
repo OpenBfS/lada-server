@@ -83,8 +83,7 @@ public class LafExportService extends LadaService {
      * The service takes JSON formatted  POST data containing probe ids and
      * exports the Probe objects filtered by these ids.
      *
-     * @param proben    JSON formatted string with an array of probe ids.
-     * @param header    The HTTP header containing authorization information.
+     * @param objects    JSON formatted string with an array of probe ids.
      * @return The LAF file to export.
      */
     @POST
@@ -153,7 +152,7 @@ public class LafExportService extends LadaService {
                 .build();
         }
 
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         InputStream exported =
             exporter.exportProben(pIds, mIds, charset, userInfo);
 

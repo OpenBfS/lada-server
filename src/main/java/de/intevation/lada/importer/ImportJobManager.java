@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.intevation.lada.importer.laf.LafImportJob;
+import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.JobManager;
 
@@ -40,18 +41,18 @@ public class ImportJobManager extends JobManager {
      * Create a new import job.
      * @param userInfo User info
      * @param params Parameters
-     * @param mstId mstId
+     * @param mst MessStelle
      * @return New job refId
      */
     public String createImportJob(
-        UserInfo userInfo, JsonObject params, String mstId) {
+        UserInfo userInfo, JsonObject params, MessStelle mst) {
         String id = getNextIdentifier();
         logger.debug(String.format("Creating new job: %s", id));
 
         LafImportJob newJob = lafImportJobProvider.get();
         newJob.setJsonInput(params);
         newJob.setUserInfo(userInfo);
-        newJob.setMstId(mstId);
+        newJob.setMst(mst);
 
         newJob.setFuture(executor.submit(newJob));
         activeJobs.put(id, newJob);

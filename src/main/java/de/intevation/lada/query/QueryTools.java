@@ -22,7 +22,7 @@ import javax.persistence.Query;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.stammdaten.Filter;
 import de.intevation.lada.model.stammdaten.GridColumn;
@@ -105,7 +105,7 @@ public class QueryTools {
      * @return List of result maps.
      */
     public List<Map<String, Object>> getResultForQuery() {
-        return getResultForQuery(0, Integer.MAX_VALUE);
+        return getResultForQuery(0, null);
     }
 
     /**
@@ -114,18 +114,21 @@ public class QueryTools {
      *
      * @param offset The position of the first result to retrieve,
      * numbered from 0.
-     * @param limit The maximum number of results to retrieve.
+     * @param limit The maximum number of results to retrieve,
+     * or null for no limit.
      * @return List of result maps.
      */
     public List<Map<String, Object>> getResultForQuery(
         int offset,
-        int limit
+        Integer limit
     ) {
-        List result = prepareQuery(getSql())
-            .setFirstResult(offset).setMaxResults(limit).getResultList();
+        Query query = prepareQuery(getSql()).setFirstResult(offset);
+        if (limit != null) {
+            query.setMaxResults(limit);
+        }
 
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
-        for (Object row: result) {
+        for (Object row: query.getResultList()) {
             Map<String, Object> set = new HashMap<String, Object>();
             for (GridColumnValue column: this.customColumns) {
                 set.put(

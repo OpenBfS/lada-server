@@ -17,7 +17,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -132,7 +132,6 @@ public class UniversalServiceTest extends BaseTest {
     @InSequence(2)
     @RunAsClient
     public final void testGetAll(@ArquillianResource URL baseUrl) {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("universal service");
         prot.setType("universal get all");
@@ -168,7 +167,6 @@ public class UniversalServiceTest extends BaseTest {
     @InSequence(3)
     @RunAsClient
     public final void testGetPaged(@ArquillianResource URL baseUrl) {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("universal service");
         prot.setType("universal get paged");
@@ -205,7 +203,6 @@ public class UniversalServiceTest extends BaseTest {
     @InSequence(4)
     @RunAsClient
     public final void testGetSql(@ArquillianResource URL baseUrl) {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("SQL service");
         prot.setType("SQL service");
@@ -238,7 +235,6 @@ public class UniversalServiceTest extends BaseTest {
     @InSequence(5)
     @RunAsClient
     public final void testGetFiltered(@ArquillianResource URL baseUrl) {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("universal service");
         prot.setType("universal get filtered");
@@ -278,7 +274,6 @@ public class UniversalServiceTest extends BaseTest {
     @InSequence(6)
     @RunAsClient
     public final void testGetSqlWithParameter(@ArquillianResource URL baseUrl) {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("SQL service");
         prot.setType("SQL service with parameters");
@@ -315,7 +310,6 @@ public class UniversalServiceTest extends BaseTest {
     @InSequence(7)
     @RunAsClient
     public final void testGetEmpty(@ArquillianResource URL baseUrl) {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("universal service");
         prot.setType("universal get empty");
@@ -371,7 +365,6 @@ public class UniversalServiceTest extends BaseTest {
     @InSequence(8)
     @RunAsClient
     public final void testGetSingleColumn(@ArquillianResource URL baseUrl) {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("universal service");
         prot.setType("universal get single column");

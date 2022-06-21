@@ -11,16 +11,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.MessprogrammMmt;
@@ -87,54 +84,43 @@ public class MessprogrammMmtService extends LadaService {
     private Validator validator;
 
     /**
-     * Get all MessprogrammMmt objects.
-     * <p>
-     * The requested objects can be filtered using a URL parameter named
-     * messprogrammId.
-     * <p>
+     * Get MessprogrammMmt objects.
+     *
+     * @param messprogrammId The requested objects can be filtered
+     * using a URL parameter named messprogrammId.
      * Example: http://example.com/messprogrammmmt?messprogrammId=[ID]
      *
-     * @return Response object containing all MessprogrammMmt objects.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @QueryParam("messprogrammId") Integer messprogrammId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("messprogrammId")) {
+        if (messprogrammId == null) {
             return repository.getAll(MessprogrammMmt.class);
         }
-        String messprogrammId = params.getFirst("messprogrammId");
         QueryBuilder<MessprogrammMmt> builder =
             repository.queryBuilder(MessprogrammMmt.class);
         builder.and("messprogrammId", messprogrammId);
         return authorization.filter(
-            request,
             repository.filter(builder.getQuery()),
             MessprogrammMmt.class);
     }
 
     /**
      * Get a MessprogrammMmt object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messprogrammmmt/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single MessprogrammMmt.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         return authorization.filter(
-            request,
-            repository.getById(
-                MessprogrammMmt.class, Integer.valueOf(id)),
+            repository.getById(MessprogrammMmt.class, id),
             MessprogrammMmt.class);
     }
 
@@ -159,11 +145,9 @@ public class MessprogrammMmtService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpServletRequest request,
         MessprogrammMmt messprogrammmmt
     ) {
         if (!authorization.isAuthorized(
-                request,
                 messprogrammmmt,
                 RequestMethod.POST,
                 MessprogrammMmt.class)
@@ -184,7 +168,6 @@ public class MessprogrammMmtService extends LadaService {
 
         /* Persist the new messprogrammmmt object*/
         return authorization.filter(
-            request,
             repository.create(messprogrammmmt),
             MessprogrammMmt.class);
     }
@@ -210,12 +193,10 @@ public class MessprogrammMmtService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpServletRequest request,
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         MessprogrammMmt messprogrammmmt
     ) {
         if (!authorization.isAuthorized(
-                request,
                 messprogrammmmt,
                 RequestMethod.PUT,
                 MessprogrammMmt.class)
@@ -239,34 +220,24 @@ public class MessprogrammMmtService extends LadaService {
             return response;
         }
         return authorization.filter(
-            request,
             response,
             MessprogrammMmt.class);
     }
 
     /**
      * Delete an existing MessprogrammMmt object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messprogammmmt/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        /* Get the messprogrammmmt object by id*/
-        Response messprogrammmmt =
-            repository.getById(
-                MessprogrammMmt.class, Integer.valueOf(id));
-        MessprogrammMmt messprogrammmmtObj =
-            (MessprogrammMmt) messprogrammmmt.getData();
+        MessprogrammMmt messprogrammmmtObj = repository.getByIdPlain(
+            MessprogrammMmt.class, id);
         if (!authorization.isAuthorized(
-                request,
                 messprogrammmmtObj,
                 RequestMethod.DELETE,
                 Messprogramm.class)

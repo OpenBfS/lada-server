@@ -7,18 +7,13 @@
  */
 package de.intevation.lada.test.stamm;
 
-import java.io.StringReader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.json.Json;
-import javax.json.JsonException;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
@@ -29,19 +24,25 @@ import org.hamcrest.Matchers;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.Protocol;
+import de.intevation.lada.test.ServiceTest;
 
 /**
  * Test Stammdaten entities.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-public class Stammdaten {
+public class Stammdaten extends ServiceTest {
 
-    @SuppressWarnings("rawtypes")
     private static Map<String, Matcher> matchers;
 
-    @SuppressWarnings("rawtypes")
-    public Stammdaten() {
-        matchers = new HashMap<String, Matcher>();
+    @Override
+    public void init(
+        Client c,
+        URL baseUrl,
+        List<Protocol> protocol
+    ) {
+        super.init(c, baseUrl, protocol);
+
+        matchers = new HashMap<>();
         matchers.put("datenbasis",
             Matchers.containsInAnyOrder(
                 "id",
@@ -110,7 +111,7 @@ public class Stammdaten {
                 "letzteAenderung",
                 "messgroesseId",
                 "datenbasisId",
-                "messMethodeId",
+                "mmtId",
                 "umwId"
             )
         );
@@ -172,6 +173,7 @@ public class Stammdaten {
                 "koordYExtern",
                 "staat",
                 "staatIso",
+                "staatKurz",
                 "kdaId"
             )
         );
@@ -182,7 +184,8 @@ public class Stammdaten {
                 "beschreibung",
                 "umweltBereich",
                 "mehId",
-                "secMehId")
+                "secMehId"
+            )
         );
         matchers.put("verwaltungseinheit",
             Matchers.containsInAnyOrder(
@@ -206,98 +209,44 @@ public class Stammdaten {
     /**
      * Test the GET Service by requesting all objects.
      *
-     * @param baseUrl The url pointing to the test deployment.
      * @param type the entity type.
-     * @param protocol the test protocol.
      */
     public final void getAll(
-        URL baseUrl,
-        String type,
-        List<Protocol> protocol
+        String type
     ) {
-        System.out.print(".");
-        Protocol prot = new Protocol();
-        prot.setName(type + " service");
-        prot.setType("get all");
-        prot.setPassed(false);
-        protocol.add(prot);
         Assert.assertNotNull(type);
-        /* Create a client*/
-        Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(baseUrl + "rest/" + type);
-        /* Request all objects*/
-        Response response = target.request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .get();
-        String entity = response.readEntity(String.class);
-        try {
-            /* Try to parse the response*/
-            JsonReader reader = Json.createReader(new StringReader(entity));
-            JsonObject content = reader.readObject();
-            /* Verify the response*/
-            Assert.assertTrue(content.getBoolean("success"));
-            prot.addInfo("success", content.getBoolean("success"));
-            Assert.assertEquals("200", content.getString("message"));
-            prot.addInfo("message", content.getString("message"));
-            Assert.assertNotNull(content.getJsonArray("data"));
-            prot.addInfo("objects", content.getJsonArray("data").size());
-        } catch (JsonException je) {
-            prot.addInfo("exception", je.getMessage());
-            Assert.fail(je.getMessage());
-        }
-        prot.setPassed(true);
+        get(type, "rest/" + type);
     }
 
     /**
      * Get entity by id.
-     * @param baseUrl The server base url
      * @param type the entity type
      * @param id the entity id
-     * @param protocol the test protocol
      */
     @SuppressWarnings("unchecked")
     public final void getById(
-        URL baseUrl,
         String type,
-        Object id,
-        List<Protocol> protocol
+        Object id
     ) {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName(type + "Service");
         prot.setType("get by Id");
         prot.setPassed(false);
         protocol.add(prot);
-        try {
-            /* Create a client*/
-            Client client = ClientBuilder.newClient();
-            WebTarget target =
-                client.target(baseUrl + "rest/" + type + "/" + id);
-            prot.addInfo(type + "Id", id);
-            /* Request an object by id*/
-            Response response = target.request()
-                .header("X-SHIB-user", BaseTest.testUser)
-                .header("X-SHIB-roles", BaseTest.testRoles)
-                .get();
-            String entity = response.readEntity(String.class);
-            /* Try to parse the response*/
-            JsonReader fromServiceReader =
-                Json.createReader(new StringReader(entity));
-            JsonObject content = fromServiceReader.readObject();
-            /* Verify the response*/
-            Assert.assertTrue("Unsuccessful response object:\n" + content,
-                content.getBoolean("success"));
-            prot.addInfo("success", content.getBoolean("success"));
-            Assert.assertEquals("200", content.getString("message"));
-            prot.addInfo("message", content.getString("message"));
-            MatcherAssert.assertThat(content.getJsonObject("data").keySet(),
-                matchers.get(type));
-            prot.addInfo("object", "equals");
-        } catch (JsonException je) {
-            prot.addInfo("exception", je.getMessage());
-            Assert.fail(je.getMessage());
-        }
-        prot.setPassed(true);
+
+        /* Create a client*/
+        WebTarget target =
+            client.target(baseUrl + "rest/" + type + "/" + id);
+        prot.addInfo(type + "Id", id);
+        /* Request an object by id*/
+        Response response = target.request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        JsonObject content = BaseTest.parseResponse(response, prot);
+        /* Verify the response*/
+        MatcherAssert.assertThat(content.getJsonObject("data").keySet(),
+            matchers.get(type));
+        prot.addInfo("object", "equals");
     }
 }

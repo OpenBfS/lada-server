@@ -11,14 +11,10 @@ import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
@@ -57,15 +53,11 @@ public class VersionService extends LadaService {
      * <p>
      * Example: http://example.com/version
      *
-     * @return Response object containing all MessStelle objects.
+     * @return Response object containing version.
      */
     @GET
     @Path("/")
-    public Response get(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        @Context UriInfo info
-    ) {
+    public Response get() {
         String version = "unknown";
         try {
             version = ResourceBundle.getBundle("lada").getString("version");

@@ -10,17 +10,13 @@ package de.intevation.lada.rest;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
@@ -111,11 +107,10 @@ public class MesswertService extends LadaService {
     private MesswertNormalizer messwertNormalizer;
 
     /**
-     * Get all Messwert objects.
-     * <p>
-     * The requested objects have to be filtered using an URL parameter named
-     * messungsId.
-     * <p>
+     * Get Messwert objects.
+     *
+     * @param messungsId The requested objects have to be filtered
+     * using an URL parameter named messungsId.
      * Example: http://example.com/messwert?messungsId=[ID]
      *
      * @return Response object containing filtered Messwert objects.
@@ -125,36 +120,24 @@ public class MesswertService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @QueryParam("messungsId") Integer messungsId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("messungsId")) {
+        if (messungsId == null) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        String messungId = params.getFirst("messungsId");
-        int id;
-        try {
-            id = Integer.valueOf(messungId);
-        } catch (NumberFormatException nfe) {
-            return new Response(false, StatusCodes.NO_ACCESS, null);
-        }
-        Messung messung = repository.getByIdPlain(Messung.class, id);
+        Messung messung = repository.getByIdPlain(Messung.class, messungsId);
         if (!authorization.isAuthorized(
-                request,
                 messung,
                 RequestMethod.GET,
                 Messung.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
+
         QueryBuilder<Messwert> builder =
             repository.queryBuilder(Messwert.class);
-        builder.and("messungsId", messungId);
-
+        builder.and("messungsId", messungsId);
         Response r = authorization.filter(
-            request,
             repository.filter(builder.getQuery()),
             Messwert.class);
         if (r.getSuccess()) {
@@ -162,7 +145,10 @@ public class MesswertService extends LadaService {
             List<Messwert> messwerts = (List<Messwert>) r.getData();
             for (Messwert messwert: messwerts) {
                 Violation violation = validator.validate(messwert);
-                if (violation.hasErrors() || violation.hasWarnings() || violation.hasNotifications()) {
+                if (violation.hasErrors()
+                    || violation.hasWarnings()
+                    || violation.hasNotifications()
+                ) {
                     messwert.setErrors(violation.getErrors());
                     messwert.setWarnings(violation.getWarnings());
                     messwert.setNotifications(violation.getNotifications());
@@ -176,28 +162,20 @@ public class MesswertService extends LadaService {
 
     /**
      * Get a Messwert object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messwert/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Messwert.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Response response =
-            repository.getById(
-                Messwert.class, Integer.valueOf(id));
+        Response response = repository.getById(Messwert.class, id);
         Messwert messwert = (Messwert) response.getData();
         Messung messung = repository.getByIdPlain(
             Messung.class, messwert.getMessungsId());
         if (!authorization.isAuthorized(
-            request,
             messung,
             RequestMethod.GET,
             Messung.class)
@@ -211,7 +189,6 @@ public class MesswertService extends LadaService {
             response.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
-            request,
             response,
             Messwert.class);
     }
@@ -245,12 +222,9 @@ public class MesswertService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         Messwert messwert
     ) {
         if (!authorization.isAuthorized(
-                request,
                 messwert,
                 RequestMethod.POST,
                 Messwert.class)
@@ -276,7 +250,6 @@ public class MesswertService extends LadaService {
            response.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
-            request,
             response,
             Messwert.class);
     }
@@ -310,13 +283,10 @@ public class MesswertService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         Messwert messwert
     ) {
         if (!authorization.isAuthorized(
-                request,
                 messwert,
                 RequestMethod.PUT,
                 Messwert.class)
@@ -347,38 +317,28 @@ public class MesswertService extends LadaService {
            response.setNotifications(violation.getNotifications());
         }
         return authorization.filter(
-            request,
             response,
             Messwert.class);
     }
 
     /**
      * Normalise all Messwert objects connected to the given Messung.
-     * The messung id needs to be given as url parameter 'messungsId'.
+     * @param messungsId The messung id needs to be given
+     * as URL parameter 'messungsId'.
      * @return Response object containing the updated Messwert objects.
      */
     @PUT
     @Path("/normalize")
     public Response normalize(
-        @Context HttpHeaders headers,
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @QueryParam("messungsId") Integer messungsId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("messungsId")) {
+        if (messungsId == null) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        String messungId = params.getFirst("messungsId");
-        int messungIdInt;
-        try {
-            messungIdInt = Integer.valueOf(messungId);
-        } catch (NumberFormatException nfe) {
-            return new Response(false, StatusCodes.NO_ACCESS, null);
-        }
+
         //Load messung, probe and umwelt to get MessEinheit to convert to
-        Messung messung = repository.getByIdPlain(Messung.class, messungIdInt);
+        Messung messung = repository.getByIdPlain(Messung.class, messungsId);
         if (!authorization.isAuthorized(
-            request,
             messung,
             RequestMethod.PUT,
             Messung.class)
@@ -398,14 +358,13 @@ public class MesswertService extends LadaService {
         //Get all Messwert objects to convert
         QueryBuilder<Messwert> messwertBuilder =
             repository.queryBuilder(Messwert.class);
-        messwertBuilder.and("messungsId", messungIdInt);
+        messwertBuilder.and("messungsId", messungsId);
         List<Messwert> messwerte = messwertNormalizer.normalizeMesswerte(
             repository.filterPlain(messwertBuilder.getQuery()),
             umwelt.getId());
 
         for (Messwert messwert: messwerte) {
             if (!authorization.isAuthorized(
-                request,
                 messwert,
                 RequestMethod.PUT,
                 Messwert.class)
@@ -438,7 +397,6 @@ public class MesswertService extends LadaService {
                 updated.setNotifications(violation.getNotifications());
             }
             authorization.filter(
-                    request,
                     updated,
                     Messwert.class);
         }
@@ -447,34 +405,24 @@ public class MesswertService extends LadaService {
 
     /**
      * Delete an existing Messwert object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messwert/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        /* Get the messwert object by id*/
-        Response messwert =
-            repository.getById(
-                Messwert.class, Integer.valueOf(id));
-        Messwert messwertObj = (Messwert) messwert.getData();
+        Messwert messwertObj = repository.getByIdPlain(Messwert.class, id);
         if (!authorization.isAuthorized(
-                request,
                 messwertObj,
                 RequestMethod.DELETE,
                 Messwert.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        if (lock.isLocked(messwert)) {
+        if (lock.isLocked(messwertObj)) {
             return new Response(false, StatusCodes.NO_ACCESS, null);
         }
         /* Delete the messwert object*/

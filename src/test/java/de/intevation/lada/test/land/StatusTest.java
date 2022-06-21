@@ -14,6 +14,7 @@ import java.util.List;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
+import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
 
@@ -30,19 +31,13 @@ public class StatusTest extends ServiceTest {
     private JsonObject expectedById;
     private JsonObject create;
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
-
     @Override
     public void init(
+        Client c,
         URL baseUrl,
         List<Protocol> protocol
     ) {
-        super.init(baseUrl, protocol);
+        super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "datum",
@@ -50,7 +45,7 @@ public class StatusTest extends ServiceTest {
         });
 
         // Prepare expected object
-        JsonObject content = readJsonResource("/datasets/dbUnit_messung.json");
+        JsonObject content = readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject status =
         content.getJsonArray("land.status_protokoll").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(status);
@@ -69,7 +64,7 @@ public class StatusTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        getAll("status", "rest/status?messungsId=1000");
+        get("status", "rest/status?messungsId=1000");
         getById("status", "rest/status/1000", expectedById);
         create("status", "rest/status", create);
     }

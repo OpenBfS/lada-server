@@ -11,9 +11,6 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.MessMethode;
 import de.intevation.lada.util.data.Repository;
@@ -63,26 +60,19 @@ public class MessmethodeService extends LadaService {
      */
     @GET
     @Path("/")
-    public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info
-    ) {
+    public Response get() {
         return repository.getAll(MessMethode.class);
     }
 
     /**
      * Get a single MessMethode object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messmethode/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single MessMethode.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
         @PathParam("id") String id
     ) {
         return repository.getById(MessMethode.class, id);

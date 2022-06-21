@@ -11,12 +11,9 @@ import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.QueryColumns;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
@@ -70,8 +67,6 @@ public class SqlService extends LadaService {
     @POST
     @Path("/")
     public Response execute(
-        @Context HttpServletRequest request,
-        @Context UriInfo info,
         QueryColumns columns
     ) {
         // There is nothing to authorize and it is ensured

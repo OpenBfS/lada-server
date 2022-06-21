@@ -10,15 +10,12 @@ package de.intevation.lada.rest.stamm;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -74,18 +71,13 @@ public class DatensatzErzeugerService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get all Datenbasis objects.
-     * <p>
-     * Example: http://example.com/datenbasis
+     * Get all DatensatzErzeuger objects.
      *
-     * @return Response object containing all Datenbasis objects.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
-    public Response get(
-        @Context HttpServletRequest request,
-        @Context UriInfo info
-    ) {
+    public Response get() {
         List<DatensatzErzeuger> erzeuger =
             repository.getAllPlain(DatensatzErzeuger.class);
 
@@ -93,7 +85,6 @@ public class DatensatzErzeugerService extends LadaService {
             // TODO Do not iterate all the objects if its not necessary
             erz.setReadonly(true);
                 // !authorization.isAuthorized(
-                //     request,
                 //     erz,
                 //     RequestMethod.POST,
                 //     DatensatzErzeuger.class));
@@ -102,25 +93,20 @@ public class DatensatzErzeugerService extends LadaService {
     }
 
     /**
-     * Get a single Datenbasis object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/datenbasis/{id}
+     * Get a single object by id.
      *
-     * @return Response object containing a single Datenabasis.
+     * @param id The id is appended to the URL as a path parameter.
+     * @return Response object
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         DatensatzErzeuger erzeuger = repository.getByIdPlain(
-            DatensatzErzeuger.class, Integer.valueOf(id));
+            DatensatzErzeuger.class, id);
         erzeuger.setReadonly(
             !authorization.isAuthorized(
-                request,
                 erzeuger,
                 RequestMethod.POST,
                 DatensatzErzeuger.class
@@ -132,11 +118,9 @@ public class DatensatzErzeugerService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpServletRequest request,
         DatensatzErzeuger datensatzerzeuger
     ) {
         if (!authorization.isAuthorized(
-            request,
             datensatzerzeuger,
             RequestMethod.POST,
             DatensatzErzeuger.class)
@@ -161,12 +145,10 @@ public class DatensatzErzeugerService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpServletRequest request,
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         DatensatzErzeuger datensatzerzeuger
     ) {
         if (!authorization.isAuthorized(
-            request,
             datensatzerzeuger,
             RequestMethod.PUT,
             DatensatzErzeuger.class)
@@ -193,14 +175,12 @@ public class DatensatzErzeugerService extends LadaService {
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         DatensatzErzeuger datensatzerzeuger = repository.getByIdPlain(
-            DatensatzErzeuger.class, Integer.valueOf(id));
+            DatensatzErzeuger.class, id);
         if (datensatzerzeuger == null
             || !authorization.isAuthorized(
-                request,
                 datensatzerzeuger,
                 RequestMethod.DELETE,
                 DatensatzErzeuger.class

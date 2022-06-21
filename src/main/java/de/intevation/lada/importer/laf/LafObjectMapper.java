@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.factory.ProbeFactory;
@@ -66,14 +66,13 @@ import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.model.stammdaten.Umwelt;
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
 import de.intevation.lada.model.stammdaten.Zeitbasis;
-import de.intevation.lada.util.annotation.AuthorizationConfig;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.AuthorizationType;
+import de.intevation.lada.util.auth.HeaderAuthorization;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.MesswertNormalizer;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
+import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
@@ -87,9 +86,7 @@ public class LafObjectMapper {
     @Inject
     private Logger logger;
 
-    @Inject
-    @AuthorizationConfig(type = AuthorizationType.HEADER)
-    private Authorization authorizer;
+    private HeaderAuthorization authorizer;
 
     @Inject
     @ValidationConfig(type = "Probe")
@@ -261,9 +258,9 @@ public class LafObjectMapper {
         }
 
         // Check if the user is authorized to create the probe
-        boolean isAuthorized =
-            authorizer.isAuthorized(userInfo, probe, Probe.class);
-        if (!isAuthorized) {
+        if (
+            !authorizer.isAuthorized(probe, RequestMethod.POST, Probe.class)
+        ) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.NOT_ALLOWED);
             err.setKey(userInfo.getName());
@@ -282,17 +279,16 @@ public class LafObjectMapper {
         // Compare the probe with objects in the db
         Probe newProbe = null;
         boolean oldProbeIsReadonly = false;
-        boolean isAuthorizedOld = false;
-
         try {
             Identified i = probeIdentifier.find(probe);
             Probe old = (Probe) probeIdentifier.getExisting();
             // Matching probe was found in the db. Update it!
             if (i == Identified.UPDATE) {
-                isAuthorizedOld =
-                    authorizer.isAuthorized(userInfo, old, Probe.class);
                 oldProbeIsReadonly = authorizer.isProbeReadOnly(old.getId());
-                if (isAuthorizedOld) {
+                if (
+                    // TODO: Should use RequestMethod.PUT?
+                    authorizer.isAuthorized(old, RequestMethod.GET, Probe.class)
+                ) {
                     if (oldProbeIsReadonly) {
                         newProbe = old;
                         currentNotifications.add(
@@ -838,7 +834,9 @@ public class LafObjectMapper {
         doConverts(messung);
         doTransforms(messung);
         // Check if the user is authorized to create the object
-        if (!authorizer.isAuthorizedOnNew(userInfo, messung, Messung.class)) {
+        if (
+            !authorizer.isAuthorized(messung, RequestMethod.POST, Messung.class)
+        ) {
             ReportItem warn = new ReportItem();
             warn.setCode(StatusCodes.NOT_ALLOWED);
             warn.setKey(userInfo.getName());
@@ -977,10 +975,6 @@ public class LafObjectMapper {
         QueryBuilder<Messwert> messwBuilder =
             repository.queryBuilder(Messwert.class);
         messwBuilder.and("messungsId", newMessung.getId());
-        Response response =
-            repository.filter(messwBuilder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<Messwert> messwerteList = (List<Messwert>) response.getData();
         for (Messwert messwert: messwerte) {
             Violation messwViolation = messwertValidator.validate(messwert);
             if (messwViolation.hasWarnings()) {
@@ -1031,15 +1025,25 @@ public class LafObjectMapper {
                     "PROBENKOMMENTAR", "Text", StatusCodes.VALUE_MISSING));
             return null;
         }
-        QueryBuilder<KommentarP> KommentarBuilder =
-            repository.queryBuilder(KommentarP.class);
-            KommentarBuilder.and("probeId", probe.getId());
-        List<KommentarP> KommentarExist = (List<KommentarP>) repository.filterPlain(KommentarBuilder.getQuery());
 
-        if (KommentarExist.stream().anyMatch(elem -> elem.getText().trim().replace(" ","").toUpperCase().equals(attributes.get("TEXT").trim().replace(" ", "").toUpperCase())==true)) {
+        // TODO: Why does the following duplicate a validation rule?
+        QueryBuilder<KommentarP> kommentarBuilder = repository
+            .queryBuilder(KommentarP.class)
+            .and("probeId", probe.getId());
+        List<KommentarP> kommentarExist = repository.filterPlain(
+            kommentarBuilder.getQuery());
+
+        // TODO: Should be the job of EXISTS and a WHERE-clause in database
+        if (kommentarExist.stream().anyMatch(
+                elem -> elem.getText().trim().replace(" ", "").toUpperCase()
+                .equals(attributes.get("TEXT").trim().replace(" ", "")
+                    .toUpperCase()))
+        ) {
             currentNotifications.add(
                 new ReportItem(
-                    "PROBENKOMMENTAR", attributes.get("TEXT"), StatusCodes.IMP_DUPLICATE));
+                    "PROBENKOMMENTAR",
+                    attributes.get("TEXT"),
+                    StatusCodes.IMP_DUPLICATE));
             return null;
         }
         KommentarP kommentar = new KommentarP();
@@ -1270,8 +1274,7 @@ public class LafObjectMapper {
         }
         if (attributes.containsKey("GRENZWERT")) {
             messwert.setGrenzwertueberschreitung(
-                attributes.get("GRENZWERT").equalsIgnoreCase("J")
-                    ? true : false);
+                attributes.get("GRENZWERT").equalsIgnoreCase("J"));
         }
         doDefaults(messwert);
         doConverts(messwert);
@@ -1323,15 +1326,25 @@ public class LafObjectMapper {
                 Timestamp.from(
                     Instant.now().atZone(ZoneOffset.UTC).toInstant()));
         }
-        QueryBuilder<KommentarM> KommentarBuilder =
-            repository.queryBuilder(KommentarM.class);
-            KommentarBuilder.and("messungsId", messungsId);
-        List<KommentarM> KommentarExist = (List<KommentarM>) repository.filterPlain(KommentarBuilder.getQuery());
 
-        if (KommentarExist.stream().anyMatch(elem -> elem.getText().trim().replace(" ","").toUpperCase().equals(attributes.get("TEXT").trim().replace(" ", "").toUpperCase())==true)) {
+        // TODO: Why does the following duplicate a validation rule?
+        QueryBuilder<KommentarM> kommentarBuilder = repository
+            .queryBuilder(KommentarM.class)
+            .and("messungsId", messungsId);
+        List<KommentarM> kommentarExist = repository.filterPlain(
+            kommentarBuilder.getQuery());
+
+        // TODO: Should be the job of EXISTS and a WHERE-clause in database
+        if (kommentarExist.stream().anyMatch(
+                elem -> elem.getText().trim().replace(" ", "").toUpperCase()
+                .equals(attributes.get("TEXT").trim().replace(" ", "")
+                    .toUpperCase()))
+        ) {
             currentNotifications.add(
                 new ReportItem(
-                    "MESSUNGKOMMENTAR", attributes.get("TEXT"), StatusCodes.IMP_DUPLICATE));
+                    "MESSUNGKOMMENTAR",
+                    attributes.get("TEXT"),
+                    StatusCodes.IMP_DUPLICATE));
             return null;
         }
         kommentar.setText(attributes.get("TEXT"));
@@ -2381,6 +2394,7 @@ public class LafObjectMapper {
      */
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
+        this.authorizer = new HeaderAuthorization(userInfo, this.repository);
     }
 
     /**

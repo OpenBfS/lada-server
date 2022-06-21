@@ -14,6 +14,7 @@ import java.util.List;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
 
@@ -36,10 +37,11 @@ public class MessprogrammMmtTest extends ServiceTest {
 
     @Override
     public void init(
+        Client c,
         URL baseUrl,
         List<Protocol> protocol
     ) {
-        super.init(baseUrl, protocol);
+        super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
@@ -68,9 +70,9 @@ public class MessprogrammMmtTest extends ServiceTest {
         final String url = "rest/messprogrammmmt/";
         final String id = "1000";
 
-        getAll(name, url);
+        get(name, url);
         getById(name, url + id, expectedById);
-        filter(name, url + "?messprogrammId=1000");
+        get(name, url + "?messprogrammId=1000");
         update(
             name,
             url + id,

@@ -16,16 +16,13 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.GridColumn;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
@@ -58,32 +55,22 @@ public class ColumnValueService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Request all user defined grid_column_value objects.
-     * @return All GridColumnValue objects referencing the given query.
+     * Request user defined GridColumnValue objects.
+     * @param qid query ID
+     * @return GridColumnValue objects referencing the given query ID.
      */
     @GET
     @Path("/")
     public Response getQueries(
-        @Context HttpServletRequest request,
-        @Context UriInfo info
+        @QueryParam("qid") Integer qid
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("qid")) {
+        if (qid == null) {
             return new Response(
                 false,
                 StatusCodes.ERROR_DB_CONNECTION,
                 "Not a valid filter id");
         }
-        Integer id = null;
-        try {
-            id = Integer.valueOf(params.getFirst("qid"));
-        } catch (NumberFormatException e) {
-            return new Response(
-                false,
-                StatusCodes.ERROR_DB_CONNECTION,
-                "Not a valid filter id");
-        }
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         EntityManager em = repository.entityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<GridColumnValue> criteriaQuery =
@@ -93,7 +80,7 @@ public class ColumnValueService extends LadaService {
             root.join("queryUser", javax.persistence.criteria.JoinType.LEFT);
         Join<MessStelle, QueryUser> mess =
             value.join("messStelles", javax.persistence.criteria.JoinType.LEFT);
-        Predicate filter = builder.equal(root.get("queryUser"), id);
+        Predicate filter = builder.equal(root.get("queryUser"), qid);
         Predicate uId = builder.equal(root.get("userId"), userInfo.getUserId());
         Predicate zeroIdFilter = builder.equal(root.get("userId"), "0");
         Predicate userFilter = builder.or(uId, zeroIdFilter);
@@ -124,10 +111,9 @@ public class ColumnValueService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpServletRequest request,
         GridColumnValue gridColumnValue
     ) {
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         if (gridColumnValue.getUserId() != null
             && !gridColumnValue.getUserId().equals(userInfo.getUserId())
         ) {
@@ -155,13 +141,12 @@ public class ColumnValueService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpServletRequest request,
         GridColumnValue gridColumnValue
     ) {
         // TODO: Really authorize with an Authorizer implementation.
         // Currently any object can be hijacked by passing it with
         // userId set to the users ID.
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         if (!userInfo.getUserId().equals(gridColumnValue.getUserId())) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         } else {
@@ -182,17 +167,17 @@ public class ColumnValueService extends LadaService {
 
     /**
      * Delete the given column.
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response containing the deleted record.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         GridColumnValue gridColumnValue = repository.getByIdPlain(
-            GridColumnValue.class, Integer.valueOf(id));
+            GridColumnValue.class, id);
         if (gridColumnValue.getUserId().equals(userInfo.getUserId())) {
             return repository.delete(gridColumnValue);
         }

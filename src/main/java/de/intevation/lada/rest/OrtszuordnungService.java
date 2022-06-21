@@ -10,19 +10,13 @@ package de.intevation.lada.rest;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
-
-import org.apache.log4j.Logger;
+import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
@@ -78,12 +72,6 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
 public class OrtszuordnungService extends LadaService {
 
     /**
-     * The logger used in this class.
-     */
-    @Inject
-    private Logger logger;
-
-    /**
      * The data repository granting read/write access.
      */
     @Inject
@@ -108,34 +96,25 @@ public class OrtszuordnungService extends LadaService {
     private Validator validator;
 
     /**
-     * Get all Ort objects.
-     * <p>
-     * The requested objects can be filtered using a URL parameter named
-     * probeId.
-     * <p>
-     * Example: http://example.com/ort?probeId=[ID]
+     * Get Ortszuordnung objects.
      *
+     * @param probeId The requested objects can be filtered using
+     * a URL parameter named probeId.
      *
-     * @return Response object containing all Ort objects.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @Context HttpHeaders headers,
-        @Context UriInfo info,
-        @Context HttpServletRequest request
+        @QueryParam("probeId") Integer probeId
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        if (params.isEmpty() || !params.containsKey("probeId")) {
-            logger.debug("get all");
+        if (probeId == null) {
             return repository.getAll(Ortszuordnung.class);
         }
-        String probeId = params.getFirst("probeId");
         QueryBuilder<Ortszuordnung> builder =
             repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", probeId);
         Response r = authorization.filter(
-            request,
             repository.filter(builder.getQuery()),
             Ortszuordnung.class);
         if (r.getSuccess()) {
@@ -157,23 +136,16 @@ public class OrtszuordnungService extends LadaService {
 
     /**
      * Get a Ort object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/ort/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Ort.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Response response =
-            repository.getById(
-                Ortszuordnung.class, Integer.valueOf(id));
+        Response response = repository.getById(Ortszuordnung.class, id);
         Ortszuordnung ort = (Ortszuordnung) response.getData();
         Violation violation = validator.validate(ort);
         if (violation.hasErrors() || violation.hasWarnings()) {
@@ -181,7 +153,6 @@ public class OrtszuordnungService extends LadaService {
             response.setWarnings(violation.getWarnings());
         }
         return authorization.filter(
-            request,
             response,
             Ortszuordnung.class);
     }
@@ -211,12 +182,9 @@ public class OrtszuordnungService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
         Ortszuordnung ort
     ) {
         if (!authorization.isAuthorized(
-                request,
                 ort,
                 RequestMethod.POST,
                 Ortszuordnung.class)) {
@@ -238,7 +206,6 @@ public class OrtszuordnungService extends LadaService {
         }
 
         return authorization.filter(
-            request,
             response,
             Ortszuordnung.class);
     }
@@ -268,13 +235,10 @@ public class OrtszuordnungService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         Ortszuordnung ort
     ) {
         if (!authorization.isAuthorized(
-                request,
                 ort,
                 RequestMethod.PUT,
                 Ortszuordnung.class)) {
@@ -300,33 +264,23 @@ public class OrtszuordnungService extends LadaService {
             response.setWarnings(violation.getWarnings());
         }
         return authorization.filter(
-            request,
             response,
             Ortszuordnung.class);
     }
 
     /**
      * Delete an existing Ort object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/orortt/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpHeaders headers,
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        Response object =
-            repository.getById(
-                Ortszuordnung.class, Integer.valueOf(id));
-        Ortszuordnung ortObj = (Ortszuordnung) object.getData();
+        Ortszuordnung ortObj = repository.getByIdPlain(Ortszuordnung.class, id);
         if (!authorization.isAuthorized(
-                request,
                 ortObj,
                 RequestMethod.PUT,
                 Ortszuordnung.class)) {

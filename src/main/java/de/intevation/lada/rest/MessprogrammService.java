@@ -15,16 +15,12 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
 
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.model.land.Messprogramm;
@@ -114,77 +110,19 @@ public class MessprogrammService extends LadaService {
     private ProbeFactory factory;
 
     /**
-     * Get all Messprogramm objects.
-     * <p>
-     * The requested objects can be filtered using the following URL
-     * parameters:<br>
-     *  * page: The page to display in a paginated result grid.<br>
-     *  * start: The first Probe item.<br>
-     *  * limit: The count of Probe items.<br>
-     *  * sort: Sort the result ascending(ASC) or descenting (DESC).<br>
-     *  <br>
-     *  The response data contains a stripped set of Messprogramm objects.
-     *  The returned fields are defined in the query used in the request.
-     * <p>
-     * Example:
-     * http://example.com/messprogramm?page=[PAGE]&start=[START]&limit=[LIMIT]]
-     *
-     * @return Response object containing all Messprogramm objects.
-     */
-    @GET
-    @Path("/")
-    public Response get(
-        @Context UriInfo info,
-        @Context HttpServletRequest request
-    ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-
-        List<Messprogramm> messprogramms =
-            repository.getAllPlain(Messprogramm.class);
-        int size = messprogramms.size();
-        if (params.containsKey("start") && params.containsKey("limit")) {
-            int start = Integer.valueOf(params.getFirst("start"));
-            int limit = Integer.valueOf(params.getFirst("limit"));
-            int end = limit + start;
-            if (start + limit > messprogramms.size()) {
-                end = messprogramms.size();
-            }
-            messprogramms = messprogramms.subList(start, end);
-        }
-
-        for (Messprogramm mp: messprogramms) {
-            mp.setReadonly(
-                !authorization.isAuthorized(
-                    request, mp, RequestMethod.POST, Messprogramm.class));
-            Violation violation = validator.validate(mp);
-            if (violation.hasErrors() || violation.hasWarnings()) {
-                mp.setErrors(violation.getErrors());
-                mp.setWarnings(violation.getWarnings());
-            }
-        }
-        return new Response(true, StatusCodes.OK, messprogramms, size);
-    }
-
-    /**
      * Get a Messprogramm object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messprogramm/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single Messprogramm.
      */
     @GET
     @Path("/{id}")
     public Response getById(
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
         Response response =
             authorization.filter(
-                request,
-                repository.getById(
-                    Messprogramm.class, Integer.valueOf(id)),
+                repository.getById(Messprogramm.class, id),
                 Messprogramm.class);
         return response;
     }
@@ -225,11 +163,9 @@ public class MessprogrammService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        @Context HttpServletRequest request,
         Messprogramm messprogramm
     ) {
         if (!authorization.isAuthorized(
-                request,
                 messprogramm,
                 RequestMethod.POST,
                 Messprogramm.class)
@@ -260,7 +196,6 @@ public class MessprogrammService extends LadaService {
 
         /* Persist the new messprogramm object*/
         return authorization.filter(
-            request,
             repository.create(messprogramm),
             Messprogramm.class);
     }
@@ -301,12 +236,10 @@ public class MessprogrammService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        @Context HttpServletRequest request,
-        @PathParam("id") String id,
+        @PathParam("id") Integer id,
         Messprogramm messprogramm
     ) {
         if (!authorization.isAuthorized(
-                request,
                 messprogramm,
                 RequestMethod.PUT,
                 Messprogramm.class)
@@ -341,7 +274,6 @@ public class MessprogrammService extends LadaService {
             return response;
         }
         return authorization.filter(
-            request,
             response,
             Messprogramm.class);
     }
@@ -366,7 +298,6 @@ public class MessprogrammService extends LadaService {
     @PUT
     @Path("/aktiv")
     public Response setAktiv(
-        @Context HttpServletRequest request,
         JsonObject data
     ) {
         Boolean active;
@@ -401,7 +332,7 @@ public class MessprogrammService extends LadaService {
             int id = m.getId().intValue();
             mpResult.put("id", id);
             if (authorization.isAuthorized(
-                    request, m, RequestMethod.PUT, Messprogramm.class)
+                    m, RequestMethod.PUT, Messprogramm.class)
             ) {
                 m.setAktiv(active);
                 Response r = repository.update(m);
@@ -418,27 +349,21 @@ public class MessprogrammService extends LadaService {
 
     /**
      * Delete an existing Messprogramm object by id.
-     * <p>
-     * The id is appended to the URL as a path parameter.
-     * <p>
-     * Example: http://example.com/messprogamm/{id}
      *
+     * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
      */
     @DELETE
     @Path("/{id}")
     public Response delete(
-        @Context HttpServletRequest request,
-        @PathParam("id") String id
+        @PathParam("id") Integer id
     ) {
-        /* Get the messprogamm object by id*/
-        Response messprogramm =
-            repository.getById(
-                Messprogramm.class, Integer.valueOf(id));
-        Messprogramm messprogrammObj = (Messprogramm) messprogramm.getData();
+        Messprogramm messprogrammObj = repository.getByIdPlain(
+            Messprogramm.class, id);
         /* check if probe references to the messprogramm exists */
+        // TODO: This is a nice example of ORM-induced database misuse:
         QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
-        builder.and("mprId",  ((Messprogramm) messprogramm.getData()).getId());
+        builder.and("mprId", messprogrammObj.getId());
         List<Probe> probes =
             repository.filterPlain(builder.getQuery());
         if (probes.size() > 0) {
@@ -446,7 +371,6 @@ public class MessprogrammService extends LadaService {
         }
 
         if (!authorization.isAuthorized(
-                request,
                 messprogrammObj,
                 RequestMethod.DELETE,
                 Messprogramm.class)

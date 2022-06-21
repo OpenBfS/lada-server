@@ -33,7 +33,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 
 import de.intevation.lada.exporter.ExportJobManager;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -151,7 +151,7 @@ public class AsyncExportService extends LadaService {
             localeRange = "de-DE";
         }
         Locale locale = getLocaleFromRequest(localeRange);
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
                 "csv", encoding, objects, locale, userInfo);
@@ -221,7 +221,7 @@ public class AsyncExportService extends LadaService {
         }
         Locale locale = getLocaleFromRequest(localeRange);
 
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
                 "laf", encoding, objects, locale, userInfo);
@@ -290,7 +290,7 @@ public class AsyncExportService extends LadaService {
             localeRange = "de-DE";
         }
         Locale locale = getLocaleFromRequest(localeRange);
-        UserInfo userInfo = authorization.getInfo(request);
+        UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
                 "json", StandardCharsets.UTF_8, objects, locale, userInfo);
@@ -321,12 +321,11 @@ public class AsyncExportService extends LadaService {
     @GET
     @Path("/status/{id}")
     public Response getStatus(
-        @PathParam("id") String id,
-        @Context HttpServletRequest request
+        @PathParam("id") String id
     ) {
         JobStatus status;
         UserInfo originalCreator;
-        UserInfo requestingUser = authorization.getInfo(request);
+        UserInfo requestingUser = authorization.getInfo();
 
         try {
             originalCreator = exportJobManager.getJobUserInfo(id);
@@ -360,14 +359,13 @@ public class AsyncExportService extends LadaService {
     @Path("download/{id}")
     @Produces("application/octet-stream")
     public Response download(
-        @PathParam("id") String id,
-        @Context HttpServletRequest request) {
-
+        @PathParam("id") String id
+    ) {
         ByteArrayInputStream resultStream;
         String encoding;
         String filename;
         UserInfo originalCreator;
-        UserInfo requestingUser = authorization.getInfo(request);
+        UserInfo requestingUser = authorization.getInfo();
 
         try {
             originalCreator = exportJobManager.getJobUserInfo(id);

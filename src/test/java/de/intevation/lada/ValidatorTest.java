@@ -14,7 +14,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -88,7 +88,6 @@ public class ValidatorTest {
         WebArchive archive = ShrinkWrap.create(WebArchive.class, archiveName)
             .addPackages(true, ClassLoader.getSystemClassLoader()
                 .getDefinedPackage("de.intevation.lada"))
-            .addAsResource("log4j.properties", "log4j.properties")
             .addAsResource("shibboleth.properties", "shibboleth.properties")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsResource("META-INF/test-persistence.xml",
@@ -120,7 +119,6 @@ public class ValidatorTest {
      */
     @AfterClass
     public static final void afterTests() {
-        System.out.println("");
     }
 
     /**

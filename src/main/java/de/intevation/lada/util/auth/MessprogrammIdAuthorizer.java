@@ -13,15 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
-//import javax.inject.Inject;
-//import org.apache.log4j.Logger;
 
 public class MessprogrammIdAuthorizer extends BaseAuthorizer {
 
-//    @Inject private Logger logger;
+    public MessprogrammIdAuthorizer(Repository repository) {
+        super(repository);
+    }
 
     @Override
     public <T> boolean isAuthorized(

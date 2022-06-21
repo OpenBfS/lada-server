@@ -23,7 +23,7 @@ import javax.ws.rs.client.SyncInvoker;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -110,7 +110,6 @@ public class ExporterTest extends BaseTest {
     public final void testCsvExportProbe(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("asyncexport service");
         prot.setType(formatCsv);
@@ -140,7 +139,6 @@ public class ExporterTest extends BaseTest {
     public final void testCsvExportProbeById(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("asyncexport service");
         prot.setType("filtered csv");
@@ -171,7 +169,6 @@ public class ExporterTest extends BaseTest {
     public final void testJsonExportProbeById(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("asyncexport service");
         prot.setType(formatJson);
@@ -203,7 +200,6 @@ public class ExporterTest extends BaseTest {
     public final void testLafExportProbeById(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("asyncexport service");
         prot.setType(formatLaf);
@@ -233,7 +229,6 @@ public class ExporterTest extends BaseTest {
     public final void testQueryExportEmpty(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("asyncexport service");
         prot.setType("empty query");
@@ -272,7 +267,6 @@ public class ExporterTest extends BaseTest {
     public final void testAsyncExportFailure(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        System.out.print(".");
         Protocol prot = new Protocol();
         prot.setName("asyncexport service");
         prot.setType("invalid request");
@@ -307,7 +301,8 @@ public class ExporterTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.entity(requestJson.toString(),
                     MediaType.APPLICATION_JSON));
-        JsonObject exportCreatedObject = parseResponse(exportCreated, prot);
+        JsonObject exportCreatedObject = parseSimpleResponse(
+            exportCreated, prot);
 
         final String refIdKey = "refId";
         assertContains(exportCreatedObject, refIdKey);
@@ -324,7 +319,7 @@ public class ExporterTest extends BaseTest {
         final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
         final int waitASecond = 1000;
         do {
-            exportStatusObject = parseResponse(statusRequest.get(), prot);
+            exportStatusObject = parseSimpleResponse(statusRequest.get(), prot);
 
             final String doneKey = "done";
             assertContains(exportStatusObject, doneKey);

@@ -73,7 +73,6 @@ Maven Checkstyle plugin. Some design related checks where removed.
     </module>
     <module name="JavadocMethod">
       <property name="severity" value="warning"/>
-      <property name="scope" value="protected"/>
       <property name="validateThrows" value="true"/>
       <property name="tokens" value="METHOD_DEF"/>
     </module>
@@ -104,9 +103,7 @@ Maven Checkstyle plugin. Some design related checks where removed.
     <module name="StaticVariableName">
       <property name="severity" value="warning"/>
     </module>
-    <module name="TypeName">
-      <property name="severity" value="warning"/>
-    </module>
+    <module name="TypeName"/>
 
 
     <!-- Checks for Headers                                -->
@@ -218,11 +215,10 @@ Maven Checkstyle plugin. Some design related checks where removed.
       <property name="ignoreStringsRegexp" value='^(("")|(" "))$'/>
     </module>
     <module name="MissingSwitchDefault"/>
-    <module name="SimplifyBooleanExpression">
-      <property name="severity" value="warning"/>
-    </module>
+    <module name="SimplifyBooleanExpression"/>
     <module name="SimplifyBooleanReturn"/>
     <module name="StringLiteralEquality"/>
+    <module name="UnusedLocalVariable"/>
 
     <!-- Checks for class design                         -->
     <!-- See http://checkstyle.sf.net/config_design.html -->
