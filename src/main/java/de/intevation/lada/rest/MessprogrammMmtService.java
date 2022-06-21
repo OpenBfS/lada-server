@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -18,6 +21,7 @@ import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.MessprogrammMmt;
+import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -26,6 +30,9 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.validation.Validator;
+import de.intevation.lada.validation.Violation;
+import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
  * REST service for MessprogrammMmt objects.
@@ -71,6 +78,10 @@ public class MessprogrammMmtService extends LadaService {
     @Inject
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
+
+    @Inject
+    @ValidationConfig(type = "MessprogrammMmt")
+    private Validator validator;
 
     /**
      * Get MessprogrammMmt objects.
@@ -144,6 +155,17 @@ public class MessprogrammMmtService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
+        Violation violation = validator.validate(messprogrammmmt);
+        if (violation.hasErrors()) {
+            Response response = new Response(
+                false, StatusCodes.ERROR_VALIDATION, messprogrammmmt);
+            response.setErrors(violation.getErrors());
+            response.setWarnings(violation.getWarnings());
+            return response;
+        }
+
+        setMessgroesseObjects(messprogrammmmt);
+
         /* Persist the new messprogrammmmt object*/
         return authorization.filter(
             repository.create(messprogrammmmt),
@@ -182,6 +204,17 @@ public class MessprogrammMmtService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
+        Violation violation = validator.validate(messprogrammmmt);
+        if (violation.hasErrors()) {
+            Response response = new Response(
+                false, StatusCodes.ERROR_VALIDATION, messprogrammmmt);
+            response.setErrors(violation.getErrors());
+            response.setWarnings(violation.getWarnings());
+            return response;
+        }
+
+        setMessgroesseObjects(messprogrammmmt);
+
         Response response = repository.update(messprogrammmmt);
         if (!response.getSuccess()) {
             return response;
@@ -213,5 +246,19 @@ public class MessprogrammMmtService extends LadaService {
         }
         /* Delete the messprogrammmmt object*/
         return repository.delete(messprogrammmmtObj);
+    }
+
+    /**
+     * Initialize referenced objects from given IDs.
+     */
+    private void setMessgroesseObjects(MessprogrammMmt mm) {
+        Set<Messgroesse> mos = new HashSet<>();
+        for (Integer mId: mm.getMessgroessen()) {
+            Messgroesse m = repository.getByIdPlain(Messgroesse.class, mId);
+            if (m != null) {
+                mos.add(m);
+            }
+        }
+        mm.setMessgroesseObjects(mos);
     }
 }

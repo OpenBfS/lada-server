@@ -103,9 +103,7 @@ Maven Checkstyle plugin. Some design related checks where removed.
     <module name="StaticVariableName">
       <property name="severity" value="warning"/>
     </module>
-    <module name="TypeName">
-      <property name="severity" value="warning"/>
-    </module>
+    <module name="TypeName"/>
 
 
     <!-- Checks for Headers                                -->
@@ -217,9 +215,7 @@ Maven Checkstyle plugin. Some design related checks where removed.
       <property name="ignoreStringsRegexp" value='^(("")|(" "))$'/>
     </module>
     <module name="MissingSwitchDefault"/>
-    <module name="SimplifyBooleanExpression">
-      <property name="severity" value="warning"/>
-    </module>
+    <module name="SimplifyBooleanExpression"/>
     <module name="SimplifyBooleanReturn"/>
     <module name="StringLiteralEquality"/>
     <module name="UnusedLocalVariable"/>

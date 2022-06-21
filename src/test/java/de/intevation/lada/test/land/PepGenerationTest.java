@@ -58,6 +58,7 @@ public class PepGenerationTest extends ServiceTest {
     private static final int ID1019 = 1019;
     private static final int ID1100 = 1100;
     private static final int ID1103 = 1103;
+    private static final int ID1020 = 1020;
 
     private static final int A699 = 699;
 
@@ -136,6 +137,7 @@ public class PepGenerationTest extends ServiceTest {
         testGenerationRejectUnauthorized();
         testGenerationRejectInvalidParams();
         testGenerationRejectNegativeParams();
+        testZusatzwertgeneration();
     }
 
     /**
@@ -717,7 +719,40 @@ public class PepGenerationTest extends ServiceTest {
         prot.setPassed(true);
     }
 
+    private void testZusatzwertgeneration() {
+        Protocol prot = new Protocol();
+        prot.setName("PEP-Gen");
+        prot.setType("zusatzwert generation");
+        prot.setPassed(false);
+        protocol.add(prot);
 
+        int mpId = ID1020;
+        List <Integer> idParam = new ArrayList<Integer>();
+        idParam.add(mpId);
+
+        // 02/01/2020 @ 12:00am (UTC)
+        String start = TS3;
+        // 02/12/2020 @ 12:00am (UTC)
+        String end = TS4;
+        JsonObject entity = generateFromMpIds(idParam, start, end);
+        JsonObject data = entity.getJsonObject("data");
+        JsonArray proben = data.getJsonObject("proben")
+            .getJsonObject("1020").getJsonArray("data");
+
+        proben.forEach((probe) -> {
+            JsonObject probeObject = (JsonObject) probe;
+            Integer probeId = probeObject.getInt("id");
+            WebTarget target = client.target(
+                baseUrl + "rest/zusatzwert?probeId=" + probeId);
+            Response response = target.request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+            JsonObject responseJson = BaseTest.parseResponse(response);
+            JsonArray zwData = responseJson.getJsonArray("data");
+            Assert.assertTrue(zwData.size() > 0);
+        });
+    }
 
     /**
      * Checks if the tag stored in the given entity matches the expected one.

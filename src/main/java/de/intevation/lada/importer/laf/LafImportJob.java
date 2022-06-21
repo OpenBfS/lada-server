@@ -30,6 +30,7 @@ import de.intevation.lada.importer.ImportConfig;
 import de.intevation.lada.importer.ImportFormat;
 import de.intevation.lada.importer.Importer;
 import de.intevation.lada.model.stammdaten.ImporterConfig;
+import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -52,7 +53,7 @@ public class LafImportJob extends Job {
 
     private JsonObject jsonInput;
 
-    private String mstId;
+    private MessStelle mst;
 
     private JsonObject result;
 
@@ -151,6 +152,7 @@ public class LafImportJob extends Job {
             String.format("Starting import of %d files", files.size()));
 
         //Import each file
+        String mstId = this.mst.getId();
         files.forEach((fileName, content) -> {
             logLAFFile(mstId, content, charset);
             List<ImporterConfig> config = new ArrayList<ImporterConfig>();
@@ -191,7 +193,7 @@ public class LafImportJob extends Job {
         if (importedProbeids.size() > 0) {
             //Generate a tag for the imported probe records
             Response tagCreation =
-                tagUtil.generateTag("IMP", mstId);
+                tagUtil.generateTag("IMP", mst.getNetzbetreiberId());
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
                 importData = importResponseData;
@@ -214,7 +216,7 @@ public class LafImportJob extends Job {
          this.jsonInput = jsonInput;
     }
 
-    public void setMstId(String mstId) {
-        this.mstId = mstId;
+    public void setMst(MessStelle mst) {
+        this.mst = mst;
     }
 }

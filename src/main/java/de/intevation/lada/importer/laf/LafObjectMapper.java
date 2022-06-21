@@ -1025,15 +1025,25 @@ public class LafObjectMapper {
                     "PROBENKOMMENTAR", "Text", StatusCodes.VALUE_MISSING));
             return null;
         }
-        QueryBuilder<KommentarP> KommentarBuilder =
-            repository.queryBuilder(KommentarP.class);
-            KommentarBuilder.and("probeId", probe.getId());
-        List<KommentarP> KommentarExist = (List<KommentarP>) repository.filterPlain(KommentarBuilder.getQuery());
 
-        if (KommentarExist.stream().anyMatch(elem -> elem.getText().trim().replace(" ","").toUpperCase().equals(attributes.get("TEXT").trim().replace(" ", "").toUpperCase())==true)) {
+        // TODO: Why does the following duplicate a validation rule?
+        QueryBuilder<KommentarP> kommentarBuilder = repository
+            .queryBuilder(KommentarP.class)
+            .and("probeId", probe.getId());
+        List<KommentarP> kommentarExist = repository.filterPlain(
+            kommentarBuilder.getQuery());
+
+        // TODO: Should be the job of EXISTS and a WHERE-clause in database
+        if (kommentarExist.stream().anyMatch(
+                elem -> elem.getText().trim().replace(" ", "").toUpperCase()
+                .equals(attributes.get("TEXT").trim().replace(" ", "")
+                    .toUpperCase()))
+        ) {
             currentNotifications.add(
                 new ReportItem(
-                    "PROBENKOMMENTAR", attributes.get("TEXT"), StatusCodes.IMP_DUPLICATE));
+                    "PROBENKOMMENTAR",
+                    attributes.get("TEXT"),
+                    StatusCodes.IMP_DUPLICATE));
             return null;
         }
         KommentarP kommentar = new KommentarP();
@@ -1264,8 +1274,7 @@ public class LafObjectMapper {
         }
         if (attributes.containsKey("GRENZWERT")) {
             messwert.setGrenzwertueberschreitung(
-                attributes.get("GRENZWERT").equalsIgnoreCase("J")
-                    ? true : false);
+                attributes.get("GRENZWERT").equalsIgnoreCase("J"));
         }
         doDefaults(messwert);
         doConverts(messwert);
@@ -1317,15 +1326,25 @@ public class LafObjectMapper {
                 Timestamp.from(
                     Instant.now().atZone(ZoneOffset.UTC).toInstant()));
         }
-        QueryBuilder<KommentarM> KommentarBuilder =
-            repository.queryBuilder(KommentarM.class);
-            KommentarBuilder.and("messungsId", messungsId);
-        List<KommentarM> KommentarExist = (List<KommentarM>) repository.filterPlain(KommentarBuilder.getQuery());
 
-        if (KommentarExist.stream().anyMatch(elem -> elem.getText().trim().replace(" ","").toUpperCase().equals(attributes.get("TEXT").trim().replace(" ", "").toUpperCase())==true)) {
+        // TODO: Why does the following duplicate a validation rule?
+        QueryBuilder<KommentarM> kommentarBuilder = repository
+            .queryBuilder(KommentarM.class)
+            .and("messungsId", messungsId);
+        List<KommentarM> kommentarExist = repository.filterPlain(
+            kommentarBuilder.getQuery());
+
+        // TODO: Should be the job of EXISTS and a WHERE-clause in database
+        if (kommentarExist.stream().anyMatch(
+                elem -> elem.getText().trim().replace(" ", "").toUpperCase()
+                .equals(attributes.get("TEXT").trim().replace(" ", "")
+                    .toUpperCase()))
+        ) {
             currentNotifications.add(
                 new ReportItem(
-                    "MESSUNGKOMMENTAR", attributes.get("TEXT"), StatusCodes.IMP_DUPLICATE));
+                    "MESSUNGKOMMENTAR",
+                    attributes.get("TEXT"),
+                    StatusCodes.IMP_DUPLICATE));
             return null;
         }
         kommentar.setText(attributes.get("TEXT"));

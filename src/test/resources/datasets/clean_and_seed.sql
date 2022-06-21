@@ -53,7 +53,7 @@ INSERT INTO mass_einheit_umrechnung (meh_id_von, meh_id_zu, faktor)
        VALUES (207, 208, 2);
 INSERT INTO messgroesse (id, messgroesse) VALUES (56, 'Mangan');
 INSERT INTO messgroesse (id, messgroesse) VALUES (57, 'Mangan');
-INSERT INTO mess_methode (id) VALUES ('A3');
+INSERT INTO mess_methode (id) VALUES ('A3'), ('B3');
 INSERT INTO messgroessen_gruppe (id) VALUES (1);
 INSERT INTO mg_grp (messgroessengruppe_id, messgroesse_id) VALUES (1, 56);
 INSERT INTO mmt_messgroesse_grp (messgroessengruppe_id, mmt_id) VALUES (1, 'A3');
@@ -87,6 +87,7 @@ INSERT INTO probenehmer (
 INSERT INTO messprogramm_transfer VALUES (1, 1, 'Routinemessprogramm', 1, 2);
 
 -- authorization data needed for tests
+INSERT INTO lada_user (id, name) VALUES (2, 'testeins');
 INSERT INTO auth (ldap_group, netzbetreiber_id, mst_id, funktion_id)
        VALUES ('mst_06_status', '06', '06010', 1);
 INSERT INTO auth (ldap_group, netzbetreiber_id, mst_id, funktion_id)

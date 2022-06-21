@@ -11,6 +11,10 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URL;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
@@ -18,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
@@ -107,6 +112,24 @@ public class ServiceTest {
         scanner.close();
         JsonReader reader = Json.createReader(new StringReader(raw));
         JsonObject content = reader.readObject();
+        reader.close();
+        return content;
+    }
+
+    /**
+     * Load JSON resource file as Array.
+     * @param resource the resource location
+     * @return Array containing the resource.
+     */
+    protected JsonArray readJsonArrayResource(String resource) {
+        InputStream stream =
+            ProbeTest.class.getResourceAsStream(resource);
+        Scanner scanner = new Scanner(stream, "UTF-8");
+        scanner.useDelimiter("\\A");
+        String raw = scanner.next();
+        scanner.close();
+        JsonReader reader = Json.createReader(new StringReader(raw));
+        JsonArray content = reader.readArray();
         reader.close();
         return content;
     }
@@ -278,6 +301,50 @@ public class ServiceTest {
     }
 
     /**
+     * Test service using a list of input objects.
+     * @param name the name of the entity to request.
+     * @param parameter the parameters used in the request.
+     * @param payload the objects embedded in POST body.
+     * @return The resulting json object.
+     *
+     */
+    public JsonObject bulkOperation(
+        String name, String parameter, JsonArray payload
+    ) {
+        final String type = "bulk";
+        System.out.print(".");
+        Protocol prot = new Protocol();
+        prot.setName(name + " service");
+        prot.setType(type);
+        prot.setPassed(false);
+        protocol.add(prot);
+
+        WebTarget target = client.target(baseUrl + parameter);
+        /* Send a post request containing a new object*/
+        Response response = target.request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .post(Entity.entity(
+                    payload.toString(), MediaType.APPLICATION_JSON));
+        JsonObject content = BaseTest.parseResponse(response, prot);
+        //Check each result
+        content.getJsonArray("data").forEach(object -> {
+            JsonObject responseObj = (JsonObject) object;
+            Protocol objectProt = new Protocol();
+            prot.setName(name + " service");
+            prot.setType(type);
+            Assert.assertTrue(
+                "Unsuccessful response list element:\n" + responseObj,
+                responseObj.getBoolean("success"));
+            Assert.assertEquals("200", responseObj.getString("message"));
+            objectProt.setPassed(true);
+            protocol.add(objectProt);
+        });
+        prot.setPassed(true);
+        return content;
+    }
+
+    /**
      * Test an update service.
      * @param name the name of the entity to request.
      * @param parameter the parameters used in the request.
@@ -310,8 +377,15 @@ public class ServiceTest {
             response, prot).getJsonObject(objKey);
 
         /* Value replacement */
-        String updatedEntity =
-            oldObject.toString().replace(oldValue, newValue);
+        JsonObjectBuilder updateBuilder = Json.createObjectBuilder();
+        oldObject.forEach((key, value) -> {
+            if (key.equals(updateAttribute)) {
+                updateBuilder.add(updateAttribute, newValue);
+            } else {
+                updateBuilder.add(key, value);
+            }
+        });
+        String updatedEntity = updateBuilder.build().toString();
         prot.addInfo("updated datafield", updateAttribute);
         prot.addInfo("updated value", oldValue);
         prot.addInfo("updated to", newValue);
@@ -367,5 +441,22 @@ public class ServiceTest {
 
         prot.setPassed(true);
         return content;
+    }
+
+    /**
+     * Get the difference in days between the given timestamps.
+     * @param to Date as unix timestamp
+     * @return Difference in days as long
+     */
+    protected long getDaysFromNow(String to) {
+        LocalDateTime fromDate = LocalDateTime.ofInstant(
+            Instant.ofEpochMilli(System.currentTimeMillis()),
+            ZoneOffset.UTC)
+            .truncatedTo(ChronoUnit.DAYS);
+        LocalDateTime toDate = LocalDateTime.ofInstant(
+            Instant.ofEpochMilli(Long.valueOf(to)),
+            ZoneOffset.UTC)
+            .truncatedTo(ChronoUnit.DAYS);
+        return ChronoUnit.DAYS.between(fromDate, toDate);
     }
 }

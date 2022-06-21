@@ -8,8 +8,11 @@
 
 package de.intevation.lada.util.data;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,12 +46,12 @@ public class TagUtil {
      * Creates an auto generated tag using the current date and a given prefix.
      * Format is: {prefix}_yyyyMMdd_{serialNumber}
      * @param prefix Prefix to set
-     * @param mstId mstId to set in the tag
+     * @param netzbetreiberId netzbetreiberId to set in the tag
      * @return Response of tag creation
      */
     public synchronized Response generateTag(
         String prefix,
-        String mstId
+        String netzbetreiberId
     ) {
         //Get current date
         LocalDate date = LocalDate.now();
@@ -89,8 +92,15 @@ public class TagUtil {
         //Create next tag
         Tag currentTag = new Tag();
         currentTag.setGenerated(true);
-        currentTag.setMstId(mstId);
+        currentTag.setNetzbetreiberId(netzbetreiberId);
+        currentTag.setTypId(Tag.TAG_TYPE_NETZBETREIBER);
         currentTag.setTag(prefix + "_" + today + "_" + serNumber);
+
+        // Generated tags expire after 548 days
+        Instant then = Instant.now()
+            .plus(Tag.GENERATED_EXPIRATION_TIME, ChronoUnit.DAYS)
+            .truncatedTo(ChronoUnit.DAYS);
+        currentTag.setGueltigBis(Timestamp.from(then));
 
         return repository.create(currentTag);
     }
@@ -106,7 +116,6 @@ public class TagUtil {
     ) {
         // TODO: Instead of using IDs as parameters, pass the objects directly
         // instead of fetching them from the database again, whenever possible.
-        Tag tag = repository.getByIdPlain(Tag.class, tagId);
 
         //Get given probe and messung records
         List<Probe> probes = repository.filterPlain(
@@ -120,7 +129,7 @@ public class TagUtil {
         List<TagZuordnung> zuordnungs = new ArrayList<TagZuordnung>();
         probes.forEach(probe -> {
             TagZuordnung zuordnung = new TagZuordnung();
-            zuordnung.setTag(tag);
+            zuordnung.setTagId(tagId);
             zuordnung.setProbeId(probe.getId());
             repository.create(zuordnung);
             zuordnungs.add(zuordnung);
@@ -128,11 +137,21 @@ public class TagUtil {
 
         messungs.forEach(messung -> {
             TagZuordnung zuordnung = new TagZuordnung();
-            zuordnung.setTag(tag);
+            zuordnung.setTagId(tagId);
             zuordnung.setMessungId(messung.getId());
             repository.create(zuordnung);
             zuordnungs.add(zuordnung);
         });
         return zuordnungs;
+    }
+
+    /**
+     * @return Timestamp Tag.MST_TAG_EXPIRATION_TIME days after now.
+     */
+    public static Timestamp getMstTagDefaultExpiration() {
+        Instant then = Instant.now()
+            .plus(Tag.MST_TAG_EXPIRATION_TIME, ChronoUnit.DAYS)
+            .truncatedTo(ChronoUnit.DAYS);
+        return Timestamp.from(then);
     }
 }

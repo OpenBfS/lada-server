@@ -228,6 +228,11 @@ CREATE TABLE messprogramm (
 );
 CREATE TRIGGER letzte_aenderung_messprogramm BEFORE UPDATE ON messprogramm FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
+CREATE TABLE messprogramm_proben_zusatz (
+    proben_zusatz_id character varying(3) REFERENCES stamm.proben_zusatz,
+    messprogramm_id INTEGER REFERENCES messprogramm ON DELETE CASCADE,
+    PRIMARY KEY (proben_zusatz_id, messprogramm_id)
+);
 
 --
 -- Name: messprogramm_mmt; Type: TABLE; Schema: land; Owner: -; Tablespace:
@@ -237,11 +242,15 @@ CREATE TABLE messprogramm_mmt (
     id serial PRIMARY KEY,
     messprogramm_id integer NOT NULL REFERENCES messprogramm ON DELETE CASCADE,
     mmt_id character varying(2) NOT NULL REFERENCES stamm.mess_methode,
-    messgroessen integer[],
     letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER letzte_aenderung_messprogramm_mmt BEFORE UPDATE ON messprogramm_mmt FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
+CREATE TABLE messprogramm_mmt_messgroesse (
+    messprogramm_mmt_id integer REFERENCES messprogramm_mmt ON DELETE CASCADE,
+    messgroesse_id integer REFERENCES stamm.messgroesse,
+    PRIMARY KEY (messprogramm_mmt_id, messgroesse_id)
+);
 
 --
 -- Name: probe; Type: TABLE; Schema: land; Owner: -; Tablespace:
@@ -277,6 +286,12 @@ CREATE TABLE probe (
     tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     rei_progpunkt_grp_id integer REFERENCES stamm.rei_progpunkt_gruppe,
     kta_gruppe_id integer REFERENCES stamm.kta_gruppe,
+    mitte_sammelzeitraum timestamp without time zone GENERATED ALWAYS AS (
+        CASE
+            WHEN (probeentnahme_beginn IS NULL) THEN NULL::timestamp without time zone
+            WHEN ((probeentnahme_beginn IS NOT NULL) AND (probeentnahme_ende IS NULL)) THEN probeentnahme_beginn
+            ELSE (probeentnahme_beginn + ((probeentnahme_ende - probeentnahme_beginn) / (2)::double precision))
+        END) STORED,
     UNIQUE (test, mst_id, hauptproben_nr),
     CHECK(solldatum_beginn <= solldatum_ende)
 );

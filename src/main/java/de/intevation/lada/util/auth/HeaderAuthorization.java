@@ -27,6 +27,7 @@ import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.stammdaten.Auth;
 import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
@@ -34,6 +35,7 @@ import de.intevation.lada.model.stammdaten.LadaUser;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Probenehmer;
+import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -115,6 +117,10 @@ public class HeaderAuthorization implements Authorization {
             new MessprogrammAuthorizer(repository);
         MessprogrammIdAuthorizer mpIdAuthorizer =
             new MessprogrammIdAuthorizer(repository);
+        TagAuthorizer tagAuthorizer =
+            new TagAuthorizer(repository);
+        TagZuordnungAuthorizer tagZuordnungAuthorizer =
+            new TagZuordnungAuthorizer(repository);
 
         this.authorizers = Map.ofEntries(
             Map.entry(Probe.class, probeAuthorizer),
@@ -131,7 +137,9 @@ public class HeaderAuthorization implements Authorization {
             Map.entry(Ort.class, netzAuthorizer),
             Map.entry(Messprogramm.class, messprogrammAuthorizer),
             Map.entry(MessprogrammMmt.class, messprogrammAuthorizer),
-            Map.entry(OrtszuordnungMp.class, mpIdAuthorizer)
+            Map.entry(OrtszuordnungMp.class, mpIdAuthorizer),
+            Map.entry(Tag.class, tagAuthorizer),
+            Map.entry(TagZuordnung.class, tagZuordnungAuthorizer)
         );
     }
 

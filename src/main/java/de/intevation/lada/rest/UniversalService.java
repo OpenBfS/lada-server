@@ -27,6 +27,7 @@ import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.ResultType;
+import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -106,6 +107,7 @@ public class UniversalService extends LadaService {
          */
         final LinkedHashMap<String, Class<?>> hierarchy
             = new LinkedHashMap<String, Class<?>>();
+        hierarchy.put("tagId",       Tag.class);
         hierarchy.put("mprkat",      MessprogrammKategorie.class);
         hierarchy.put("dsatzerz",    DatensatzErzeuger.class);
         hierarchy.put("probenehmer", Probenehmer.class);
@@ -167,26 +169,29 @@ public class UniversalService extends LadaService {
                 if (idToAuthorize != null) {
                     //If column is an ort, get Netzbetreiberid
                     if (authorizationColumnType == Ort.class) {
-                        Ort ort = (Ort) repository.getByIdPlain(
+                        Ort ort = repository.getByIdPlain(
                             Ort.class, idToAuthorize);
                         idToAuthorize = ort.getNetzbetreiberId();
                     }
                     if (authorizationColumnType == DatensatzErzeuger.class) {
-                        DatensatzErzeuger de =
-                            (DatensatzErzeuger) repository.getByIdPlain(
-                                DatensatzErzeuger.class, idToAuthorize);
+                        DatensatzErzeuger de = repository.getByIdPlain(
+                            DatensatzErzeuger.class, idToAuthorize);
                         idToAuthorize = de.getNetzbetreiberId();
                     }
                     if (authorizationColumnType == Probenehmer.class) {
-                        Probenehmer pn = (Probenehmer) repository.getByIdPlain(
+                        Probenehmer pn = repository.getByIdPlain(
                             Probenehmer.class, idToAuthorize);
                         idToAuthorize = pn.getNetzbetreiberId();
                     }
                     if (authorizationColumnType == MessprogrammKategorie.class) {
-                        MessprogrammKategorie mk =
-                            (MessprogrammKategorie) repository.getByIdPlain(
-                                MessprogrammKategorie.class, idToAuthorize);
+                        MessprogrammKategorie mk = repository.getByIdPlain(
+                            MessprogrammKategorie.class, idToAuthorize);
                         idToAuthorize = mk.getNetzbetreiberId();
+                    }
+                    if (authorizationColumnType == Tag.class) {
+                        Tag tag = repository.getByIdPlain(
+                            Tag.class, idToAuthorize);
+                        idToAuthorize = tag.getId();
                     }
 
                     readonly = !authorization.isAuthorizedById(

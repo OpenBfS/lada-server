@@ -52,6 +52,7 @@ COPY stamm.base_query (id, sql) FROM stdin;
 60	SELECT netz_betreiber.id AS netzId,\n netz_betreiber.netzbetreiber AS netzbetreiber,\n netz_betreiber.idf_netzbetreiber AS netzIdf,\n netz_betreiber.is_bmn AS netzBmn\n FROM stamm.netz_betreiber
 61	SELECT proben_zusatz.id AS pzsId,\n proben_zusatz.zusatzwert AS pzsBez,\n proben_zusatz.beschreibung AS pzsBeschr,\n mess_einheit.einheit AS pzsEinheit,\n proben_zusatz.eudf_keyword AS pzsEudf\n FROM stamm.proben_zusatz\n LEFT JOIN stamm.mess_einheit ON (proben_zusatz.meh_id = mess_einheit.id)
 62	SELECT rei_progpunkt_gruppe.id AS reiproggrpId,\n rei_progpunkt_gruppe.rei_prog_punkt_gruppe AS reiproggrp,\n rei_progpunkt_gruppe.beschreibung AS reiproggrpbeschr\n FROM stamm.rei_progpunkt_gruppe
+63	SELECT tag.id AS tagId,\n tag.tag,\n tag.mst_id AS mstId,\n tag.netzbetreiber AS netzId,\n lada_user.name AS username,\n tag.typ,\n tag.gueltig_bis AS gueltigBis,\n tag.generated_at AS generatedAt\n FROM stamm.tag\n LEFT JOIN stamm.lada_user ON tag.user_id = lada_user.id
 \.
 
 
@@ -180,6 +181,9 @@ COPY stamm.filter (id, sql, parameter, type, name) FROM stdin;
 119	messprogramm.probe_kommentar ~ :mprPKommentar	mprPKommentar	0	mprPKommentar
 120	probenehmer.plz ~ :plz	plz	0	plz
 121	pzs ~ :pzs	pzs	0	pzs
+130	tag.netzbetreiber IN ( :netzId )	netzId	4	Netzbetreiber
+131	tag.mst_id IN ( :mstId )	mstId	4	Messstelle
+132	tag.typ IN ( :typ )	typ	4	Typ
 \.
 
 
@@ -230,6 +234,8 @@ COPY stamm.result_type (id, name, format) FROM stdin;
 40	sollistUmwGr	\N
 41	sollistMmtGr	\N
 42	id	\N
+43	tagId	\N
+44	tagTyp	\N
 \.
 
 
@@ -971,6 +977,14 @@ COPY stamm.grid_column (id, base_query, name, data_index, "position", filter, da
 6201	62	ID	reiproggrpId	1	\N	1
 6202	62	REI-Prog-GRP	reiproggrp	2	\N	1
 6203	62	REI-Prog-GRP-Beschr	reiproggrpbeschr	3	99	1
+6301	63	ID	tagId	1	\N	43
+6302	63	Tag	tag	2	\N	1
+6303	63	Messstelle	mstId	3	131	10
+6304	63	Netzbetreiber	netzId	4	130	18
+6305	63	Eigentümer	username	5	\N	1
+6306	63	Typ	typ	6	132	44
+6307	63	Gültig bis	gueltigBis	7	\N	2
+6308	63	Generiert	generatedAt	8	\N	2
 \.
 
 
@@ -1017,6 +1031,7 @@ COPY stamm.query_user (id, name, user_id, base_query, description) FROM stdin;
 34	StammBund REI-ProgrammpunktGruppe	0	62	Abfrage REI-ProgrammpunktGruppe
 35	Messwerte mit Umrechnung	1	43	Es werden nur Messungen mit Messstellen-Status angezeigt!
 36	Messungen mit Probenzusatzwerten	0	16	Vorlage für Messungesselektion mit Probenzusatzwerten\nIn den Spalten der Nuklide werden nur Messwerte mit Messstellen-Status angezeigt. In den Details richtet sich die Sichtbarkeit nach den persönlichen Berechtigungen.
+37	Tags	0	63	Tags
 \.
 
 
@@ -1757,7 +1772,15 @@ COPY stamm.grid_column_values (id, user_id, grid_column, query_user, sort, sort_
 889	0	1546	31	\N	\N	\N	t	f	\N	40	f	f	f
 971	1	4335	35	\N	\N	\N	t	f	-1	40	f	f	f
 1048	0	1650	36	\N	\N	\N	t	f	-1	40	f	f	f
-1092	0	3130	4	\N	\N	\N	f	f	\N	76	f	f	f
+1090	0	6301	37	\N	\N	\N	f	t	1	40	f	f	f
+1091	0	6302	37	\N	\N	\N	f	t	2	120	f	f	f
+1092	0	6303	37	\N	\N	\N	t	t	3	120	f	f	f
+1093	0	6304	37	\N	\N	\N	t	t	4	150	f	f	f
+1094	0	6305	37	\N	\N	\N	f	t	5	150	f	f	f
+1095	0	6306	37	\N	\N	\N	t	t	6	150	f	f	f
+1096	0	6307	37	\N	\N	\N	f	t	7	170	f	f	f
+1097	0	6308	37	\N	\N	\N	f	t	8	170	f	f	f
+1100	0	3130	4	\N	\N	\N	f	f	\N	76	f	f	f
 \.
 
 

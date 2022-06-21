@@ -7,11 +7,12 @@
  */
 package de.intevation.lada.rest.stamm;
 
+import java.sql.Timestamp;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -20,19 +21,16 @@ import javax.persistence.criteria.Root;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
@@ -41,7 +39,7 @@ import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST-Service for the probe tags.
+ * REST-Service for tags.
  */
 
 @Path("rest/tag")
@@ -54,317 +52,216 @@ public class TagService extends LadaService {
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
 
-    @Inject
-    private TagUtil tagUtil;
-
     /**
-     * Get all tags for a Probe or Messung instance,
-     * filtered by the users messstelle id.
-     * If a pid is set in the url, the tags are filter by the given probe id.
-     * If a mid is set in the url, the tags are filter by the given messung id.
+     * Get a single tag by id.
+     * @param id Tag id
+     * @return Response containing the tag
      */
     @GET
-    @Path("/")
-    public Response getTags(
-        @Context UriInfo info
+    @Path("/{id}")
+    public Response getById(
+        @PathParam("id") String id
     ) {
-        MultivaluedMap<String, String> params = info.getQueryParameters();
-        Integer probeId = null;
-        Integer messungId = null;
-
-        if (!params.isEmpty()
-            && params.containsKey("pid")
-            && params.containsKey("mid")
-        ) {
-            return new Response(
-                false,
-                StatusCodes.ERROR_DB_CONNECTION,
-                "Filtering by both pid and mid not allowed");
-        }
-
-        if (!params.isEmpty() && params.containsKey("pid")) {
-            try {
-                probeId = Integer.valueOf(params.getFirst("pid"));
-            } catch (NumberFormatException e) {
-                return new Response(
-                    false,
-                    StatusCodes.ERROR_DB_CONNECTION,
-                    "Not a valid probe id");
-            }
-        }
-
-        if (!params.isEmpty() && params.containsKey("mid")) {
-            try {
-                messungId = Integer.valueOf(params.getFirst("mid"));
-            } catch (NumberFormatException nfe) {
-                return new Response(
-                    false,
-                    StatusCodes.ERROR_DB_CONNECTION,
-                    "Not a valid messung id");
-            }
-        }
-
-        UserInfo userInfo = authorization.getInfo();
-        EntityManager em = repository.entityManager();
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Tag> criteriaQuery = builder.createQuery(Tag.class);
-        Root<Tag> root = criteriaQuery.from(Tag.class);
-        Predicate zeroMstfilter = builder.isNull(root.get("mstId"));
-        Predicate filter;
-        if (userInfo.getMessstellen().isEmpty()) {
-            filter = zeroMstfilter;
-        } else {
-            Predicate userMstFilter =
-            builder.in(root.get("mstId")).value(userInfo.getMessstellen());
-            filter = builder.or(zeroMstfilter, userMstFilter);
-        }
-        if (probeId != null) {
-            Join<Tag, TagZuordnung> joinTagZuordnung =
-                root.join(
-                    "tagZuordnungs",
-                    javax.persistence.criteria.JoinType.LEFT);
-            Predicate probeFilter =
-                builder.equal(joinTagZuordnung.get("probeId"), probeId);
-            filter = builder.and(filter, probeFilter);
-        } else if (messungId != null) {
-            Join<Tag, TagZuordnung> joinTagZuordnung =
-                root.join(
-                    "tagZuordnungs",
-                    javax.persistence.criteria.JoinType.LEFT);
-            Predicate messungFilter =
-                builder.equal(joinTagZuordnung.get("messungId"), messungId);
-            filter = builder.and(filter, messungFilter);
-        }
-        criteriaQuery.where(filter);
-        List<Tag> tags = repository.filterPlain(criteriaQuery);
-        return new Response(true, StatusCodes.OK, tags);
+        return authorization.filter(
+            repository.getById(Tag.class, Integer.valueOf(id)),
+            Tag.class);
     }
 
     /**
-     * Creates a new reference between a tag and a probe.
-     * The tag can be an existing one or a new one, embedded in the request.
-     * Request for creating a new tag:
+     * Get tags.
+     *
+     * If IDs of Probe or Messung objects are given as URL parameters like
+     * <pre>
+     * <code>
+     * ?pid=42&pid=24
+     * </code>
+     * </pre>
+     * only those tags are returned that are associated to all of them.
+     * Otherwise, return only tags the user is allowed to assign.
+     *
+     * @param pIds filter by IDs of Probe objects.
+     * @param mIds filter by IDs of Messung objects. Ignored if pid is given.
+     *
+     * @return Response with list of Tag objects.
+     */
+    @GET
+    @Path("/")
+    public Response get(
+        @QueryParam("pid") Set<Integer> pIds,
+        @QueryParam("mid") Set<Integer> mIds
+    ) {
+        CriteriaBuilder builder =
+            repository.entityManager().getCriteriaBuilder();
+        CriteriaQuery<Tag> criteriaQuery = builder.createQuery(Tag.class);
+        Root<Tag> root = criteriaQuery.from(Tag.class);
+
+        List<Tag> result;
+        if (!pIds.isEmpty() || !mIds.isEmpty()) {
+            // Return only tags assigned to all given Probe or Messung objects
+            Join<Tag, TagZuordnung> joinTagZuordnung =
+                root.join("tagZuordnungs");
+            // Work-around missing SQL INTERSECTION in JPA:
+            final String filterBy = pIds.isEmpty() ? "messungId" : "probeId";
+            final Iterator<Integer> filterIds =
+                pIds.isEmpty() ? mIds.iterator() : pIds.iterator();
+            Predicate idFilter = builder.equal(
+                joinTagZuordnung.get(filterBy), filterIds.next());
+            result = repository.filterPlain(criteriaQuery.where(idFilter));
+            while (!result.isEmpty() && filterIds.hasNext()) {
+                idFilter = builder.equal(
+                    joinTagZuordnung.get(filterBy), filterIds.next());
+                result.retainAll(
+                    repository.filterPlain(criteriaQuery.where(idFilter)));
+            }
+        } else {
+            // Return only tags the user is allowed to assign
+            final String typIdParam = "typId";
+            Predicate filter = builder.or(
+                builder.equal(root.get(typIdParam), Tag.TAG_TYPE_GLOBAL),
+                builder.and(
+                    builder.equal(
+                        root.get(typIdParam), Tag.TAG_TYPE_NETZBETREIBER),
+                    builder.in(root.get("netzbetreiberId")).value(
+                        authorization.getInfo().getNetzbetreiber())
+                ),
+                builder.and(
+                    builder.equal(root.get(typIdParam), Tag.TAG_TYPE_MST),
+                    builder.in(root.get("mstId")).value(
+                        authorization.getInfo().getMessstellen())
+                ));
+
+            result = repository.filterPlain(criteriaQuery.where(filter));
+        }
+
+        return authorization.filter(
+            new Response(true, StatusCodes.OK, result), Tag.class);
+    }
+
+    /**
+     * Update an existing tag object.
+     *
+     * @param tag Tag to update using payload like
      * <pre>
      * <code>
      * {
-     *   "probeId": [Integer],
-     *   "tag": {
-     *     "tag": [String],
-     *     "mstId": [String]
-     *   }
+     *   id: [int], //Tag id
+     *   tag: [string], //Tag text
+     *   netzbetreiberId: [string], //Tag netzbetreiber
+     *   mstId: [string], //Owner mst id
+     *   userId: [integer], //Creator user id
+     *   typId: [string], //Tag type id
+     *   gueltigBis: [integer] //Optional: Expiration date
      * }
      * </code>
      * </pre>
      *
-     * Existing tags can be used with the following request:
-     * <pre>
-     * <code>
-     * {
-     *   "probeId": [Integer],
-     *   "tagId": [Integer]
-     * }
-     * </code>
-     * </pre>
-     * Requests containing both, tag and tagId will be rejected.
-     * Setting a mstId is mandatory, as only global tags have no mstId.
+     * @param id Tag id
+     * @return Response object containing the updated tag object
      */
-    @POST
-    @Path("/")
-    public Response createTagReference(
-        TagZuordnung zuordnung
+    @PUT
+    @Path("/{id}")
+    public Response update(
+        @PathParam("id") String id,
+        Tag tag
     ) {
-        // Check if payload contains sensible information
-        if (zuordnung == null) {
-            return new Response(
-                false, StatusCodes.ERROR_VALIDATION, "Not a valid tag");
-        }
-        Tag tag = zuordnung.getTag();
-        Integer tagId = zuordnung.getTagId();
-        if (tag != null && tagId != null
-            || tag == null && tagId == null
-            || zuordnung.getProbeId() != null
-            && zuordnung.getMessungId() != null
+        Tag origTag = repository.getByIdPlain(Tag.class, tag.getId());
+        if (!authorization.isAuthorized(
+                origTag, RequestMethod.PUT, Tag.class)
         ) {
-            return new Response(
-                false, StatusCodes.ERROR_VALIDATION, "Not a valid tag");
+            return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
-        List<String> messstellen =
-            authorization.getInfo().getMessstellen();
-
-        if (tag == null) { // Use existing tag
-            //Check if tag is already assigned to the probe
-            final String tagIdParam = "tagId",
-                mstIdsParam = "mstIds",
-                taggedIdParam = "taggedId";
-            String idField = zuordnung.getProbeId() != null
-                ? "probe_id" : "messung_id";
-            Query isAssigned = repository.queryFromString(
-                "SELECT EXISTS("
-                + "SELECT 1 FROM land.tagzuordnung "
-                + "JOIN stamm.tag ON tag_id=tag.id "
-                + "WHERE tag_id=:" + tagIdParam
-                + " AND (mst_id IS NULL OR mst_id IN (:" + mstIdsParam + "))"
-                + " AND " + idField + "=:" + taggedIdParam + ")");
-            isAssigned.setParameter(tagIdParam, zuordnung.getTagId());
-            isAssigned.setParameter(mstIdsParam, messstellen);
-            isAssigned.setParameter(taggedIdParam,
-                zuordnung.getProbeId() != null
-                ? zuordnung.getProbeId()
-                : zuordnung.getMessungId());
-            if ((Boolean) isAssigned.getSingleResult()) {
-                return new Response(
-                    true,
-                    StatusCodes.OK,
-                    "Tag is already assigned to probe");
-            }
-
-            tag = repository.getByIdPlain(Tag.class, tagId);
-            String mstId = tag.getMstId();
-            //If user tries to assign a global tag: authorize
-            if (mstId == null) {
-                Object data;
-                boolean authorized = false;
-                if (zuordnung.getMessungId() != null) {
-                    data = repository.getByIdPlain(
-                        Messung.class, zuordnung.getMessungId());
-                    authorized = authorization.isAuthorized(
-                        data,
-                        RequestMethod.PUT,
-                        Messung.class
-                    );
-                } else {
-                    data = repository.getByIdPlain(
-                        Probe.class, zuordnung.getProbeId());
-                    authorized = authorization.isAuthorized(
-                        data,
-                        RequestMethod.PUT,
-                        Probe.class
-                    );
+        String tagTyp = tag.getTypId();
+        String origTagTyp = origTag.getTypId();
+        Timestamp gueltigBis = tag.getGueltigBis();
+        Timestamp origGueltigBis = origTag.getGueltigBis();
+        if (!tagTyp.equals(origTagTyp)
+            && ((origGueltigBis == null && gueltigBis == null)
+                || (origGueltigBis != null && gueltigBis != null
+                    && origGueltigBis.equals(gueltigBis)))
+        ) {
+            // User changed type but not gueltigBis
+            switch (tagTyp) {
+            // Remove expiration timestamp for 'advanced' tags
+            case Tag.TAG_TYPE_GLOBAL:
+                tag.setGueltigBis(null);
+                break;
+            case Tag.TAG_TYPE_NETZBETREIBER:
+                if (!Tag.TAG_TYPE_GLOBAL.equals(origTagTyp)) {
+                    tag.setGueltigBis(null);
                 }
-                if (!authorized) {
-                    return new Response(
-                        false,
-                        StatusCodes.NOT_ALLOWED,
-                        "Not authorized to set global tag");
-                }
-            //Else check if it is the users private tag
-            } else if (!messstellen.contains(mstId)) {
-                return new Response(
-                    false, StatusCodes.NOT_ALLOWED, "Invalid mstId");
-            }
-
-            zuordnung.setTag(tag);
-
-        } else { // Create new tag
-            String mstId = zuordnung.getTag().getMstId();
-            //mstId may not be null, global tags cannot be created
-            if (mstId == null || !messstellen.contains(mstId)) {
-                return new Response(
-                    false,
-                    StatusCodes.NOT_ALLOWED,
-                    "Invalid/empty mstId");
-            }
-            if (!repository.create(tag).getSuccess()) {
-                //TODO Proper response code?
-                return new Response(
-                    false,
-                    StatusCodes.ERROR_DB_CONNECTION,
-                    "Failed to create Tag");
+                break;
+            case Tag.TAG_TYPE_MST:
+                // Set default expiration for tags downgraded to 'mst'
+                tag.setGueltigBis(TagUtil.getMstTagDefaultExpiration());
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown tag type");
             }
         }
-        return repository.create(zuordnung);
+
+        Response response = repository.update(tag);
+        return authorization.filter(
+            response,
+            Tag.class);
     }
 
     /**
-     * Delete a reference between a tag and a probe.
+     * Creates a new tag.
+     *
+     * Request:
+     * <pre>
+     * <code>
+     * {
+     *   tag: [string], //Tag text
+     *   netzbetreiberId: [string], //Tag netzbetreiber
+     *   mstId: [string], //Owner mst id
+     *   userId: [integer], //Creator user id
+     *   typId: [string], //Tag type id
+     *   gueltigBis: [integer] //Optional: Expiration date
+     * }
+     * </code>
+     * </pre>
+     * @param tag Tag to create.
+     * @return Response object
+     */
+    @POST
+    @Path("/")
+    public Response create(
+        Tag tag
+    ) {
+        if (!authorization.isAuthorized(
+                tag, RequestMethod.POST, Tag.class)
+        ) {
+            return new Response(false, StatusCodes.NOT_ALLOWED, null);
+        }
+
+        tag.setUserId(authorization.getInfo().getUserId());
+
+        if (tag.getGueltigBis() == null
+            && Tag.TAG_TYPE_MST.equals(tag.getTypId())
+        ) {
+            tag.setGueltigBis(TagUtil.getMstTagDefaultExpiration());
+        }
+        return repository.create(tag);
+    }
+
+    /**
+     * Delete a tag.
+     * @param id Tag id
+     * @return Response object
      */
     @DELETE
-    @Path("/")
-    public Response deleteTagReference(
-        TagZuordnung tagZuordnung
+    @Path("/{id}")
+    public Response delete(
+        @PathParam("id") Integer id
     ) {
-        if ((tagZuordnung.getProbeId() == null
-            && tagZuordnung.getMessungId() == null)
-            || tagZuordnung.getTagId() == null
+        Tag tag = repository.getByIdPlain(Tag.class, id);
+        if (!authorization.isAuthorized(
+                tag, RequestMethod.DELETE, Tag.class)
         ) {
-            return new Response(
-                false, StatusCodes.NOT_ALLOWED, "Invalid TagZuordnung");
+            return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        boolean global = false;
-        //Check if its a global tag
-        Tag tag = repository.getByIdPlain(
-            Tag.class, tagZuordnung.getTagId());
-        if (tag.getMstId() == null) {
-            Object data;
-            boolean authorized = false;
-            if (tagZuordnung.getMessungId() != null) {
-                data = repository.getByIdPlain(
-                    Messung.class, tagZuordnung.getMessungId());
-                authorized = authorization.isAuthorized(
-                    data,
-                    RequestMethod.PUT,
-                    Messung.class
-                );
-            } else {
-                data = repository.getByIdPlain(
-                    Probe.class, tagZuordnung.getProbeId());
-                authorized = authorization.isAuthorized(
-                    data,
-                    RequestMethod.PUT,
-                    Probe.class
-                );
-            }
-            if (!authorized) {
-                return new Response(
-                    false,
-                    StatusCodes.NOT_ALLOWED,
-                    "Not authorized to delete global tag");
-            } else {
-                global = true;
-            }
-        }
-
-        UserInfo userInfo = authorization.getInfo();
-        EntityManager em = repository.entityManager();
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<TagZuordnung> criteriaQuery =
-            builder.createQuery(TagZuordnung.class);
-        Root<TagZuordnung> root = criteriaQuery.from(TagZuordnung.class);
-        Join<TagZuordnung, Tag> joinTagZuordnung =
-            root.join("tag", javax.persistence.criteria.JoinType.LEFT);
-        Predicate tagFilter =
-            builder.equal(root.get("tag").get("id"), tagZuordnung.getTagId());
-        Predicate mstFilter;
-        if (global) {
-            mstFilter = builder.isNull(joinTagZuordnung.get("mstId"));
-        } else {
-            mstFilter = builder.in(
-                joinTagZuordnung.get("mstId")).value(userInfo.getMessstellen());
-        }
-        Predicate filter = builder.and(tagFilter, mstFilter);
-
-        if (tagZuordnung.getProbeId() != null) {
-            Predicate probeFilter =
-                builder.equal(root.get("probeId"), tagZuordnung.getProbeId());
-            filter = builder.and(filter, probeFilter);
-        } else {
-            Predicate messungFilter =
-                builder.equal(
-                    root.get("messungId"), tagZuordnung.getMessungId());
-            filter = builder.and(filter, messungFilter);
-        }
-
-        criteriaQuery.where(filter);
-        List<TagZuordnung> zuordnungs =
-            repository.filterPlain(criteriaQuery);
-
-        // TODO Error code if no zuordnung is found?
-        if (zuordnungs.size() == 0) {
-            return new Response(
-                false, StatusCodes.NOT_ALLOWED, "No valid Tags found");
-        } else {
-            return repository.delete(zuordnungs.get(0));
-        }
+        return repository.delete(tag);
     }
 }

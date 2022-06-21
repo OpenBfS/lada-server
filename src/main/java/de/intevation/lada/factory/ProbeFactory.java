@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -28,9 +29,11 @@ import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.stammdaten.DeskriptorUmwelt;
 import de.intevation.lada.model.stammdaten.Deskriptoren;
 import de.intevation.lada.model.stammdaten.Ort;
+import de.intevation.lada.model.stammdaten.ProbenZusatz;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
@@ -458,8 +461,23 @@ public class ProbeFactory {
         probe.setReiProgpunktGrpId(messprogramm.getReiProgpunktGrpId());
         probe.setKtaGruppeId(messprogramm.getKtaGruppeId());
         probe.setFound(false);
+
         createObject(probe, dryrun);
         toProtocol(probe, dryrun);
+
+        //Create zusatzwert objects
+        Set<ProbenZusatz> pZusatzs = messprogramm.getProbenZusatzs();
+        List<String> zusatzWerts = new ArrayList<String>();
+        if (pZusatzs != null) {
+            for (ProbenZusatz pZusatz: pZusatzs) {
+                ZusatzWert zusatz = new ZusatzWert();
+                zusatz.setProbeId(probe.getId());
+                zusatz.setPzsId(pZusatz.getId());
+                createObject(zusatz, dryrun);
+                zusatzWerts.add(zusatz.getPzsId());
+            }
+            currentProtocol.put("pZws", zusatzWerts);
+        }
 
         if (messprogramm.getProbeKommentar() != null
             && !messprogramm.getProbeKommentar().equals("")
