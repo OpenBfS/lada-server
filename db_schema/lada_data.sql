@@ -964,10 +964,10 @@ SELECT setval(pg_get_serial_sequence('status_protokoll', 'id'),
 
 ALTER TABLE zusatz_wert DISABLE TRIGGER ALL;
 
-COPY zusatz_wert (id, probe_id, pzs_id, messwert_pzs, messfehler, letzte_aenderung, nwg_zu_messwert, tree_modified) FROM stdin;
-1	84	A76	7.5	48	2012-04-23 12:32:56	\N	2016-03-17 09:19:04.94469
-26	186	A78	0	0	2016-03-07 12:32:37	0	2016-03-17 09:19:04.94469
-21	157	A78	0	2	2016-03-07 10:26:00	2	2016-03-17 09:19:04.94469
+COPY zusatz_wert (id, probe_id, pzs_id, messwert_pzs, messfehler, letzte_aenderung, tree_modified) FROM stdin;
+1	84	A76	7.5	48	2012-04-23 12:32:56	2016-03-17 09:19:04.94469
+26	186	A78	0	0	2016-03-07 12:32:37	2016-03-17 09:19:04.94469
+21	157	A78	0	2	2016-03-07 10:26:00	2016-03-17 09:19:04.94469
 \.
 
 
