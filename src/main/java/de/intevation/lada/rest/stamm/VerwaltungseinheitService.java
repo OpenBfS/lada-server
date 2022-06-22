@@ -22,39 +22,6 @@ import de.intevation.lada.rest.LadaService;
 
 /**
  * REST service for Verwaltungseinheit  objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [string],
- *      "bezeichnung": [string],
- *      "bundesland": [string],
- *      "isBundesland": [string],
- *      "isGemeinde": [string],
- *      "isLandkreis": [string],
- *      "isRegbezirk": [string],
- *      "koordXExtern": [string],
- *      "koordYExtern": [string],
- *      "kreis": [string],
- *      "latitude": [number],
- *      "longitude": [number],
- *      "nuts": [string],
- *      "plz": [string],
- *      "regbezirk": [string],
- *      "koordinatenartId":[number]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
