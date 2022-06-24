@@ -2,8 +2,8 @@
 
 SET search_path = stamm, pg_catalog;
 
-COPY tag (tag, mst_id, netzbetreiber, typ) FROM stdin;
+COPY tag (tag, mst_id, netzbetreiber_id, tag_typ) FROM stdin;
 test_global	\N	\N	global
-test_netz	\N	06	netzbetreiber
+test_netz	\N	06	netz
 test_mst	06010	\N	mst
 \.

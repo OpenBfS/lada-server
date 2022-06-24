@@ -860,7 +860,7 @@ CREATE TABLE status_reihenfolge (
 
 CREATE TABLE stamm.tag_typ (id text PRIMARY KEY, tagtyp TEXT);
 INSERT INTO stamm.tag_typ VALUES('global', 'Global');
-INSERT INTO stamm.tag_typ VALUES('netzbetreiber', 'Netzbetreiber');
+INSERT INTO stamm.tag_typ VALUES('netz', 'Netzbetreiber');
 INSERT INTO stamm.tag_typ VALUES('mst', 'Messstelle');
 
 /*
@@ -1010,15 +1010,15 @@ CREATE TABLE tag (
     id serial PRIMARY KEY,
     tag text NOT NULL,
     mst_id character varying REFERENCES stamm.mess_stelle(id),
-    generated boolean NOT NULL DEFAULT false,
-    netzbetreiber varchar(2) REFERENCES stamm.netz_betreiber,
+    auto_tag boolean NOT NULL DEFAULT false,
+    netzbetreiber_id varchar(2) REFERENCES stamm.netz_betreiber,
     user_id INTEGER REFERENCES stamm.lada_user,
-    typ TEXT REFERENCES stamm.tag_typ NOT NULL,
+    tag_typ TEXT REFERENCES stamm.tag_typ NOT NULL,
     gueltig_bis TIMESTAMP without time zone,
-    generated_at TIMESTAMP without time zone NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-    UNIQUE(tag, mst_id)
+    created_at TIMESTAMP without time zone NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE(tag, netzbetreiber_id, mst_id)
 );
-CREATE UNIQUE INDEX gen_tag_unique_idx ON stamm.tag (tag) WHERE generated = true;
+CREATE UNIQUE INDEX auto_tag_unique_idx ON stamm.tag (tag) WHERE auto_tag = true;
 
 CREATE TABLE stamm.tm_fm_umrechnung(
   id serial NOT NULL PRIMARY KEY,	

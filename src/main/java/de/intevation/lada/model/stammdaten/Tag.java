@@ -39,7 +39,7 @@ public class Tag {
 
     // Tag type ids
     public static final String TAG_TYPE_GLOBAL = "global";
-    public static final String TAG_TYPE_NETZBETREIBER = "netzbetreiber";
+    public static final String TAG_TYPE_NETZBETREIBER = "netz";
     public static final String TAG_TYPE_MST = "mst";
 
     @Id
@@ -52,27 +52,28 @@ public class Tag {
     @Column(name = "mst_id")
     private String mstId;
 
-    @Column(name = "netzbetreiber")
+    @Column(name = "netzbetreiber_id")
     private String netzbetreiberId;
 
     @Column(name = "user_id")
     private Integer userId;
 
-    @Column(name = "typ")
+    @Column(name = "tag_typ")
     private String typId;
 
     @Column(name = "gueltig_bis")
     private Timestamp gueltigBis;
 
-    @Column(name = "generated_at", insertable = false, updatable = false)
-    private Timestamp generatedAt;
+    @Column(name = "created_at", insertable = false, updatable = false)
+    private Timestamp createdAt;
 
     @OneToMany
     @JoinColumn(name = "tag_id", updatable = false)
     @JsonIgnore
     private Set<TagZuordnung> tagZuordnungs;
 
-    private boolean generated;
+    @Column(name = "auto_tag")
+    private boolean autoTag;
 
     @Transient
     private boolean readonly;
@@ -111,12 +112,12 @@ public class Tag {
         this.tagZuordnungs = tagZuordnungs;
     }
 
-    public boolean getGenerated() {
-        return this.generated;
+    public boolean getAutoTag() {
+        return this.autoTag;
     }
 
-    public void setGenerated(boolean generated) {
-        this.generated = generated;
+    public void setAutoTag(boolean autoTag) {
+        this.autoTag = autoTag;
     }
 
 
@@ -128,8 +129,8 @@ public class Tag {
         this.gueltigBis = gueltigBis;
     }
 
-    public Timestamp getGeneratedAt() {
-        return generatedAt;
+    public Timestamp getCreatedAt() {
+        return createdAt;
     }
 
     public boolean isReadonly() {

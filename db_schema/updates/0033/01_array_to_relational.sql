@@ -10,7 +10,7 @@ INSERT INTO land.messprogramm_mmt_messgroesse
     FROM land.messprogramm_mmt AS mmt,
         unnest(mmt.messgroessen) AS messgroessen (id);
 
-ALTER TABLE land.messprogramm_mmt DROP COLUMN messgroessen;
+ALTER TABLE land.messprogramm_mmt DROP COLUMN messgroessen CASCADE;
 
 -- TODO: Does not work for other users than "lada":
 GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES

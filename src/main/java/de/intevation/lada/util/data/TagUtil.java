@@ -91,7 +91,7 @@ public class TagUtil {
 
         //Create next tag
         Tag currentTag = new Tag();
-        currentTag.setGenerated(true);
+        currentTag.setAutoTag(true);
         currentTag.setNetzbetreiberId(netzbetreiberId);
         currentTag.setTypId(Tag.TAG_TYPE_NETZBETREIBER);
         currentTag.setTag(prefix + "_" + today + "_" + serNumber);
