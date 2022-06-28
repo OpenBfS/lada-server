@@ -1,5 +1,6 @@
 -- Create tag typ table
 CREATE TABLE stamm.tag_typ (id text PRIMARY KEY, tagtyp TEXT);
+GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES ON stamm.tag_typ TO lada;
 INSERT INTO stamm.tag_typ VALUES('global', 'Global');
 INSERT INTO stamm.tag_typ VALUES('netz', 'Netzbetreiber');
 INSERT INTO stamm.tag_typ VALUES('mst', 'Messstelle');
