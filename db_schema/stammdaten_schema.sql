@@ -738,11 +738,13 @@ CREATE TRIGGER letzte_aenderung_ortszuordnung_typ BEFORE UPDATE ON stamm.ortszuo
 CREATE TABLE pflicht_messgroesse (
     id serial PRIMARY KEY,
     messgroesse_id integer NOT NULL REFERENCES messgroesse,
-    mmt_id character varying(2) REFERENCES mess_methode,
-    umw_id character varying(3) REFERENCES umwelt,
+    mmt_id character varying(2) NOT NULL REFERENCES mess_methode,
+    umw_id character varying(3) NOT NULL REFERENCES umwelt,
     datenbasis_id smallint NOT NULL REFERENCES datenbasis,
     letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
+ALTER TABLE IF EXISTS pflicht_messgroesse
+    ADD CONSTRAINT pflicht_messgroesse_unique UNIQUE (messgroesse_id, mmt_id, umw_id, datenbasis_id);
 CREATE TRIGGER letzte_aenderung_pflicht_messgroesse BEFORE UPDATE ON stamm.pflicht_messgroesse FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE proben_zusatz (
