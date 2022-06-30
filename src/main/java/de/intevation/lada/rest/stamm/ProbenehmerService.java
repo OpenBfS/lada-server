@@ -18,6 +18,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import de.intevation.lada.model.stammdaten.Probenehmer;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -122,6 +123,8 @@ public class ProbenehmerService extends LadaService {
                 Probenehmer.class
             )
         );
+        List<Probe> referencedProbes = getPRNZuordnungs(p);
+        p.setReferenceCount(referencedProbes.size());
         return new Response(true, StatusCodes.OK, p);
     }
 
@@ -192,6 +195,17 @@ public class ProbenehmerService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
+        if (getPRNZuordnungs(probenehmer).size() > 0) {
+            return new Response(false, StatusCodes.ERROR_DELETE, probenehmer);
+        }
         return repository.delete(probenehmer);
+    }
+
+    private List<Probe> getPRNZuordnungs(Probenehmer probenehmer) {
+            //check for references
+            QueryBuilder<Probe> refBuilder =
+            repository.queryBuilder(Probe.class);
+            refBuilder.and("probeNehmerId", probenehmer.getId());
+            return repository.filterPlain(refBuilder.getQuery());
     }
 }
