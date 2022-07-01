@@ -57,17 +57,18 @@ public class ValidREIMesspunkt implements Rule {
                     builderKtaList.and("code", KTAOrtId);
                 List<Kta> KtaList = repository.filterPlain(builderKtaList.getQuery());
 
-                if (KtaList.size() < 1) {
+                if (KtaList.size() < 1 || KtaList == null) {
                     violation.addWarning("ortId", StatusCodes.ORT_ANLAGE_MISSING);
-
+                    return violation;
                 }
 
                 for (KtaGrpZuord kta : ktas){
-                    if ( (KtaList.size()>0 || KtaList==null) && kta.getKtaId() != KtaList.get(0).getId() ) {
+                    if ( kta.getKtaId() != KtaList.get(0).getId() ) {
                         violation.addWarning("ktaGruppeId", StatusCodes.VALUE_NOT_MATCHING);
-                    } else if ( ort.getOrtId().length() < 5  && kta.getKtaId() == KtaList.get(0).getId() ){
+                    } else if ( ort.getOrtId().length() < 5
+                        && kta.getKtaId() == KtaList.get(0).getId() ){
                         violation.addWarning("ortId", StatusCodes.ORT_REIMP_MISSING);
-                    } else if ( ort.getOrtId().length() > 12  && kta.getKtaId() == KtaList.get(0).getId() ){
+                    } else if (  ort.getOrtId().length() > 12  && kta.getKtaId() == KtaList.get(0).getId() ){
                         violation.addWarning("ortId", StatusCodes.ORT_REIMP_TOO_LONG);
                     } else {
                         break;
