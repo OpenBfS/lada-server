@@ -61,8 +61,12 @@ INSERT INTO netz_betreiber (id) VALUES ('06');
 INSERT INTO netz_betreiber (id) VALUES ('01');
 INSERT INTO mess_stelle (id, netzbetreiber_id) VALUES ('06010', '06');
 INSERT INTO mess_stelle (id, netzbetreiber_id) VALUES ('01010', '01');
-INSERT INTO pflicht_messgroesse (id, messgroesse_id, mmt_id, datenbasis_id) VALUES
-    (33, 56, 'A3', 9);
+INSERT INTO umwelt (id, umwelt_bereich, meh_id) VALUES
+    ('L6', 'Spurenmessung Luft', 208),
+    ('A6', 'Umweltbereich für test', null);
+INSERT INTO pflicht_messgroesse (
+        id, messgroesse_id, mmt_id, umw_id, datenbasis_id
+    ) VALUES (33, 56, 'A3', 'A6', 9);
 INSERT INTO probenart (id, probenart, probenart_eudf_id) VALUES (1, 'E', 'A');
 INSERT INTO probenart (id, probenart, probenart_eudf_id) VALUES (2, 'S', 'B');
 INSERT INTO proben_zusatz (id, beschreibung, zusatzwert)
@@ -74,9 +78,6 @@ INSERT INTO proben_zusatz (id, beschreibung, zusatzwert)
 INSERT INTO koordinaten_art (id) VALUES (5);
 INSERT INTO staat (id, staat, hkl_id, staat_iso)
        VALUES (0, 'Deutschland', 0, 'DE');
-INSERT INTO umwelt (id, umwelt_bereich, meh_id) VALUES
-    ('L6', 'Spurenmessung Luft', 208),
-    ('A6', 'Umweltbereich für test', null);
 INSERT INTO verwaltungseinheit (
             id, bundesland, bezeichnung,
             is_bundesland, is_gemeinde, is_landkreis, is_regbezirk)
