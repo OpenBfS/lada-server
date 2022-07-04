@@ -95,7 +95,7 @@ public class Repository {
             em.contains(object)
             ? object : em.merge(object));
         em.flush();
-        return new Response(true, StatusCodes.OK, "");
+        return new Response(true, StatusCodes.OK, object);
     }
 
     /**
