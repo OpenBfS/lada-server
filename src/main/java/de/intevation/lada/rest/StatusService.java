@@ -121,8 +121,7 @@ public class StatusService extends LadaService {
      * Example: http://example.com/status?messungsId=[ID]
      *
      * @return Response containing requested objects.
-     * Status-Code 699 if parameter is missing or requested objects are
-     * not authorized.
+     * Status-Code 699 if parameter is missing.
      */
     @GET
     @Path("/")
@@ -138,21 +137,17 @@ public class StatusService extends LadaService {
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
             StatusProtokoll.class);
-        if (r.getSuccess()) {
-            @SuppressWarnings("unchecked")
-            List<StatusProtokoll> status = (List<StatusProtokoll>) r.getData();
-            for (StatusProtokoll s: status) {
-                Violation violation = validator.validate(s);
-                if (violation.hasErrors() || violation.hasWarnings()) {
-                    s.setErrors(violation.getErrors());
-                    s.setWarnings(violation.getWarnings());
-                    s.setNotifications(violation.getNotifications());
-                }
+        @SuppressWarnings("unchecked")
+        List<StatusProtokoll> status = (List<StatusProtokoll>) r.getData();
+        for (StatusProtokoll s: status) {
+            Violation violation = validator.validate(s);
+            if (violation.hasErrors() || violation.hasWarnings()) {
+                s.setErrors(violation.getErrors());
+                s.setWarnings(violation.getWarnings());
+                s.setNotifications(violation.getNotifications());
             }
-            return new Response(true, StatusCodes.OK, status);
-        } else {
-            return r;
         }
+        return new Response(true, StatusCodes.OK, status);
     }
 
     /**
