@@ -174,11 +174,7 @@ public class TagService extends LadaService {
         String tagTyp = tag.getTypId();
         String origTagTyp = origTag.getTypId();
         Timestamp gueltigBis = tag.getGueltigBis();
-        Timestamp origGueltigBis = origTag.getGueltigBis();
         if (!tagTyp.equals(origTagTyp)
-            && ((origGueltigBis == null && gueltigBis == null)
-                || (origGueltigBis != null && gueltigBis != null
-                    && origGueltigBis.equals(gueltigBis)))
         ) {
             // User changed type but not gueltigBis
             switch (tagTyp) {
@@ -197,6 +193,11 @@ public class TagService extends LadaService {
                 break;
             default:
                 throw new IllegalArgumentException("Unknown tag type");
+            }
+        } else {
+            // tagType messstelle never without gueltigBis
+            if (tagTyp.equals(Tag.TAG_TYPE_MST) && gueltigBis == null) {
+                tag.setGueltigBis(TagUtil.getMstTagDefaultExpiration());
             }
         }
 
