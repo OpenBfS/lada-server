@@ -48,8 +48,6 @@ public class ShibbolethFilter implements Filter {
         } catch (java.io.IOException e) {
             logger.error("Failed to read config file: " + CONFIG_FILE);
         }
-        //applicationId = properties.getProperty("applicationId");
-
     }
 
     @Override
@@ -65,28 +63,8 @@ public class ShibbolethFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        //Enumeration<String> headers = httpRequest.getHeaderNames();
-        //while(headers.hasMoreElements()) {
-        //    String name = headers.nextElement();
-        //    logger.debug("key: " + name + " value: " +
-        //        httpRequest.getHeader(name));
-        //}
-
         String user = httpRequest.getHeader("X-SHIB-user");
         String roles = httpRequest.getHeader("X-SHIB-roles");
-        //String appId = httpRequest.getHeader("X_SHIB-applicationId");
-
-        //if (!applicationId.equals(appId)) {
-        //        httpResponse.reset();
-        //        httpResponse.setStatus(401);
-        //        httpResponse.getOutputStream().print(
-        //            "{\"success\":false,\"message\":\"698\",\"data\":" +
-        //            "\"Not authenticated via the Lada application!\"," +
-        //            "\"errors\":{},\"warnings\":{}," +
-        //                "\"readonly\":false,\"totalCount\":0}");
-        //        httpResponse.getOutputStream().flush();
-        //        return;
-        //}
 
         if (user == null || "".equals(user)) {
                 httpResponse.reset();
