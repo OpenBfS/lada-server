@@ -96,11 +96,6 @@ public class ShibbolethFilter implements Filter {
         return;
     }
 
-    @Override
-    public void destroy() {
-
-    }
-
     private Set<String> extractRoles(String roles) {
         Set<String> groups = new HashSet<>();
         if (roles == null || "".equals(roles) || "(null)".equals(roles)) {
@@ -116,5 +111,4 @@ public class ShibbolethFilter implements Filter {
             return groups;
         }
     }
-
 }
