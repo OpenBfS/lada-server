@@ -9,15 +9,12 @@
 package de.intevation.lada.util.auth;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Properties;
 
 import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -31,24 +28,8 @@ import org.jboss.logging.Logger;
 @WebFilter({"/rest/*", "/data/*"})
 public class ShibbolethFilter implements Filter {
 
-    private static final String CONFIG_FILE = "/shibboleth.properties";
-
     @Inject
     private Logger logger = Logger.getLogger(ShibbolethFilter.class);
-
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        /* Read config and initialize configuration variables */
-        Properties properties = new Properties();
-        try (InputStream stream = getClass().getResourceAsStream(
-                CONFIG_FILE)) {
-            properties.load(stream);
-        } catch (java.io.FileNotFoundException e) {
-            logger.error("Failed to find config file: " + CONFIG_FILE);
-        } catch (java.io.IOException e) {
-            logger.error("Failed to read config file: " + CONFIG_FILE);
-        }
-    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
