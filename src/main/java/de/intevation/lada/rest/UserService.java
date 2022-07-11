@@ -94,7 +94,10 @@ public class UserService extends LadaService {
         response.put("netzbetreiber", userInfo.getNetzbetreiber());
         response.put("funktionen", userInfo.getFunktionen());
         response.put("userId", userInfo.getUserId());
-
+        logger.debug(
+            userInfo.getName() + " - " +
+            userInfo.getAuth().stream().map(a -> a.getLdapGroup()).collect(Collectors.toSet())
+        );
         return new Response(true, StatusCodes.OK, response);
     }
 }
