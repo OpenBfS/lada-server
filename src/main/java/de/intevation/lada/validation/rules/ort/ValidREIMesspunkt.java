@@ -35,7 +35,6 @@ public class ValidREIMesspunkt implements Rule {
         Ort ort = (Ort) object;
 
         Violation violation = new Violation();
-        logger.debug("Orttyp - "+ort.getOrtTyp());
         if ( ort == null || ort.getOrtTyp()==null || ort.getOrtTyp() != 3)  {
             return null;
         }
