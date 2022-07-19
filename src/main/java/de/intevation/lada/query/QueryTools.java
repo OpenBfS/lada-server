@@ -338,8 +338,7 @@ public class QueryTools {
     private void prepareFilters() {
         //A pattern for finding multiselect date filter values
         Pattern multiselectPattern = Pattern.compile("[0-9]*,[0-9]*");
-        Pattern multiselectNumberPattern =
-            Pattern.compile("[0-9]+(\\.[0-9]*(e[+-][0-9]+)?)?,[0-9]+(\\.[0-9]*(e[+-][0-9]+)?)?");
+        Pattern multiselectNumberPattern = Pattern.compile("[0-9.]*,[0-9.]*");
 
         //Map containing all filters and filter values
         this.filterValues = new MultivaluedHashMap<String, Object>();
