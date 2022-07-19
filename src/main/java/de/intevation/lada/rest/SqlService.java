@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.MultivaluedHashMap;
 
 import de.intevation.lada.model.QueryColumns;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
@@ -79,14 +80,23 @@ public class SqlService extends LadaService {
             return new Response(false, StatusCodes.NOT_EXISTING, null);
         }
 
-        QueryTools queryTools = new QueryTools(repository, gridColumnValues);
-        String sql = queryTools.getSql();
-        if (sql == null) {
-            return new Response(true, StatusCodes.OK, null);
+        try {
+            QueryTools queryTools = new QueryTools(repository, gridColumnValues);
+            String sql = queryTools.getSql();
+            if (sql == null) {
+                return new Response(true, StatusCodes.OK, null);
+            }
+            String statement =
+                prepareStatement(sql, queryTools.getFilterValues());
+            return new Response(true, StatusCodes.OK, statement);
+        } catch (IllegalArgumentException iae) {
+            Response r = new Response(false, StatusCodes.SQL_INVALID_FILTER, null);
+            MultivaluedMap<String, Integer> error =
+                new MultivaluedHashMap<String, Integer>();
+            error.add(iae.getMessage(), StatusCodes.SQL_INVALID_FILTER);
+            r.setErrors(error);
+            return r;
         }
-
-        String statement = prepareStatement(sql, queryTools.getFilterValues());
-        return new Response(true, StatusCodes.OK, statement);
     }
 
     private String prepareStatement(

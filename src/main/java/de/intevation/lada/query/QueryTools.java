@@ -22,8 +22,6 @@ import javax.persistence.Query;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.jboss.logging.Logger;
-
 import de.intevation.lada.model.stammdaten.Filter;
 import de.intevation.lada.model.stammdaten.GridColumn;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
@@ -31,15 +29,12 @@ import de.intevation.lada.model.stammdaten.BaseQuery;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.data.Repository;
 
-
 /**
  * Utility class to handle the SQL query configuration.
  *
  * @author <a href = "mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class QueryTools {
-
-    private final Logger logger = Logger.getLogger(QueryTools.class);
 
     static final String GENERICID_FILTER_TYPE = "genericid";
     static final String GENERICTEXT_FILTER_TYPE = "generictext";
@@ -66,7 +61,7 @@ public class QueryTools {
     public QueryTools(
         Repository repository,
         List<GridColumnValue> customColumns
-    ) {
+    )  throws IllegalArgumentException {
         this.repository = repository;
 
         for (GridColumnValue columnValue : customColumns) {
@@ -335,10 +330,9 @@ public class QueryTools {
      *
      * The result is stored as this.filterValues.
      */
-    private void prepareFilters() {
+    private void prepareFilters() throws IllegalArgumentException {
         //A pattern for finding multiselect date filter values
         Pattern multiselectPattern = Pattern.compile("[0-9]*,[0-9]*");
-        Pattern multiselectNumberPattern = Pattern.compile("[0-9.]*,[0-9.]*");
 
         //Map containing all filters and filter values
         this.filterValues = new MultivaluedHashMap<String, Object>();
@@ -390,24 +384,31 @@ public class QueryTools {
                     try {
                         Pattern.compile(filterValue);
                     } catch (IllegalArgumentException e) {
-                        this.filterValues = null;
-                        return;
+                        throw new IllegalArgumentException(
+                            String.format("illegal regular expression: '%s'", filterValue));
                     }
                 }
 
                 if (!filter.getFilterType().getMultiselect()) {
                     if (filter.getFilterType().getType().equals("number")) {
                         String[] params = filter.getParameter().split(",");
-                        Matcher matcher =
-                            multiselectNumberPattern.matcher(filterValue);
-                        if (matcher.find()) {
-                            String[] values = matcher.group(0).split(",", -1);
+                        String[] values = filterValue.split(",", -1);
+                        if (values.length != 2) {
+                            throw new IllegalArgumentException(
+                                String.format("illegal number filter parameter: %s", filterValue));
+                        } else{
                             double from =
                                 values[0].equals("")
                                 ? 0 : Double.valueOf(values[0]);
+                            if (Double.isNaN(from)) {
+                                throw new IllegalArgumentException("\"von\" Parameter kein Zahlenwert");
+                            }
                             double to =
                                 values[1].equals("")
                                 ? Double.MAX_VALUE : Double.valueOf(values[1]);
+                            if (Double.isNaN(to)) {
+                                throw new IllegalArgumentException("\"bis\" Parameter kein Zahlenwert");
+                            }
                             //Add parameters and values to filter map
                             this.filterValues.add(params[0], from);
                             this.filterValues.add(params[1], to);
