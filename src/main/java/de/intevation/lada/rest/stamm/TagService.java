@@ -114,23 +114,7 @@ public class TagService extends LadaService {
                     repository.filterPlain(criteriaQuery.where(idFilter)));
             }
         } else {
-            // Return only tags the user is allowed to assign
-            final String typIdParam = "typId";
-            Predicate filter = builder.or(
-                builder.equal(root.get(typIdParam), Tag.TAG_TYPE_GLOBAL),
-                builder.and(
-                    builder.equal(
-                        root.get(typIdParam), Tag.TAG_TYPE_NETZBETREIBER),
-                    builder.in(root.get("netzbetreiberId")).value(
-                        authorization.getInfo().getNetzbetreiber())
-                ),
-                builder.and(
-                    builder.equal(root.get(typIdParam), Tag.TAG_TYPE_MST),
-                    builder.in(root.get("mstId")).value(
-                        authorization.getInfo().getMessstellen())
-                ));
-
-            result = repository.filterPlain(criteriaQuery.where(filter));
+            result = repository.getAllPlain(Tag.class);
         }
 
         return authorization.filter(
