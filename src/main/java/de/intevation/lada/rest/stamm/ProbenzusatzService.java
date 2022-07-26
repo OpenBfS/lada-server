@@ -70,22 +70,26 @@ public class ProbenzusatzService extends LadaService {
     public Response get(
         @QueryParam("umwId") @Pattern(regexp = ".+") String umwId
     ) {
-        if (umwId == null) {
-            return repository.getAll(ProbenZusatz.class);
+        if (umwId != null) {
+            Query query =
+                repository.queryFromString(
+                    "SELECT pzs_id FROM "
+                    + de.intevation.lada.model.stammdaten.SchemaName.NAME
+                    + ".umwelt_zusatz "
+                    + "WHERE umw_id = :umw"
+                ).setParameter("umw", umwId);
+            @SuppressWarnings("unchecked")
+            List<String> ids = query.getResultList();
+
+            if (!ids.isEmpty()) {
+            QueryBuilder<ProbenZusatz> builder2 =
+                repository.queryBuilder(ProbenZusatz.class);
+            builder2.orIn("id", ids);
+            return repository.filter(builder2.getQuery());
+            }
         }
-        Query query =
-            repository.queryFromString(
-                "SELECT pzs_id FROM "
-                + de.intevation.lada.model.stammdaten.SchemaName.NAME
-                + ".umwelt_zusatz "
-                + "WHERE umw_id = :umw"
-            ).setParameter("umw", umwId);
-        @SuppressWarnings("unchecked")
-        List<String> ids = query.getResultList();
-        QueryBuilder<ProbenZusatz> builder2 =
-            repository.queryBuilder(ProbenZusatz.class);
-        builder2.orIn("id", ids);
-        return repository.filter(builder2.getQuery());
+
+        return repository.getAll(ProbenZusatz.class);
     }
 
     /**
