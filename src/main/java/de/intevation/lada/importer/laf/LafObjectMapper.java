@@ -395,8 +395,6 @@ public class LafObjectMapper {
                 importProbeIds.add(newProbe.getId());
             }  else if (probe != null) {
                 importProbeIds.add(probe.getId());
-            } else {
-                importProbeIds.add(null);
             }
         } catch (InvalidTargetObjectTypeException e) {
             ReportItem err = new ReportItem();
@@ -1627,15 +1625,19 @@ public class LafObjectMapper {
                         o = findOrCreateOrt(uort.get(0), "U_", probe);
                     }
 
-                        if (o == null) {
-                            Ort oE = findOrCreateOrt(object.getEntnahmeOrt(), "P_", probe);
-                            if (oE == null) {
-                                return;
-                            } else {
-                                o = oE;
-                            }
+                    if (o == null) {
+                        Ort oE = findOrCreateOrt(object.getEntnahmeOrt(), "P_", probe);
+                        if (oE == null) {
+                            ReportItem warn = new ReportItem();
+                            warn.setCode(StatusCodes.VALUE_MISSING);
+                            warn.setKey("Ort");
+                            warn.setValue("Kein Messpunkt angelegt");
+                            currentWarnings.add(warn);
+                            return;
+                        } else {
+                            o = oE;
                         }
-                    if (o != null) {
+                    } else {
                         o.setOrtTyp(1);
                         o.setKtaGruppeId(ktaGrp.get(0).getId());
                         repository.update(o);
@@ -1650,12 +1652,6 @@ public class LafObjectMapper {
 
                         probe.setKtaGruppeId(ktaGrp.get(0).getId());
                         repository.update(probe);
-                    } else {
-                        ReportItem warn = new ReportItem();
-                        warn.setCode(StatusCodes.VALUE_MISSING);
-                        warn.setKey("Ort");
-                        warn.setValue("Kein Messpunkt angelegt");
-                        currentWarnings.add(warn);
                     }
                 } else {
                     ReportItem warn = new ReportItem();
