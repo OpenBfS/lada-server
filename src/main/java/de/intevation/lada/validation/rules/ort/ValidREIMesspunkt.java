@@ -20,12 +20,10 @@ import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
 
-import org.jboss.logging.Logger;
+
 
 @ValidationRule("Ort")
 public class ValidREIMesspunkt implements Rule {
-    @Inject
-    private Logger logger;
 
     @Inject
     private Repository repository;
@@ -50,7 +48,6 @@ public class ValidREIMesspunkt implements Rule {
                 violation.addWarning("ortId", StatusCodes.VALUE_OUTSIDE_RANGE);
             } else {
                 String KTAOrtId = ort.getOrtId().substring(0,4);
-                logger.debug("OrtId substring: " + KTAOrtId);
                 QueryBuilder<Kta> builderKtaList =
                     repository.queryBuilder(Kta.class);
                     builderKtaList.and("code", KTAOrtId);
