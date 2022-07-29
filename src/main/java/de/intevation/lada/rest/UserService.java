@@ -93,6 +93,10 @@ public class UserService extends LadaService {
         response.put("messstelleLabor", userInfo.getMessLaborId());
         response.put("netzbetreiber", userInfo.getNetzbetreiber());
         response.put("funktionen", userInfo.getFunktionen());
+        response.put("netzbetreiberFunktionen", userInfo.getNetzbetreiber()
+            .stream().collect(Collectors.toMap(
+                    nb -> nb,
+                    nb -> userInfo.getFunktionenForNetzbetreiber(nb))));
         response.put("userId", userInfo.getUserId());
         logger.debug(
             userInfo.getName() + " - " +
