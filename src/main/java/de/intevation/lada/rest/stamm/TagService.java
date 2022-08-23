@@ -27,6 +27,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.TagZuordnung;
+import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -158,6 +159,17 @@ public class TagService extends LadaService {
         String tagTyp = tag.getTypId();
         String origTagTyp = origTag.getTypId();
         Timestamp gueltigBis = tag.getGueltigBis();
+
+        if (tag.getMstId() != null) {
+            MessStelle mst = repository.getByIdPlain(
+                MessStelle.class, tag.getMstId());
+            if (tag.getNetzbetreiberId() == null) {
+                tag.setNetzbetreiberId(mst.getNetzbetreiberId());
+            } else if (!tag.getNetzbetreiberId().equals(mst.getNetzbetreiberId())) {
+                return new Response(false, StatusCodes.VALUE_NOT_MATCHING, "mst");
+            }
+        }
+
         if (!tagTyp.equals(origTagTyp)
         ) {
             // User changed type but not gueltigBis
@@ -222,6 +234,16 @@ public class TagService extends LadaService {
         }
 
         tag.setUserId(authorization.getInfo().getUserId());
+
+        if (tag.getMstId() != null) {
+            MessStelle mst = repository.getByIdPlain(
+                MessStelle.class, tag.getMstId());
+            if (tag.getNetzbetreiberId() == null) {
+                tag.setNetzbetreiberId(mst.getNetzbetreiberId());
+            } else if (!tag.getNetzbetreiberId().equals(mst.getNetzbetreiberId())) {
+                return new Response(false, StatusCodes.VALUE_NOT_MATCHING, "mst");
+            }
+        }
 
         if (tag.getGueltigBis() == null
             && Tag.TAG_TYPE_MST.equals(tag.getTypId())
