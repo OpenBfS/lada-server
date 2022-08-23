@@ -43,6 +43,7 @@ import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.land.ZusatzWert;
+import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.stammdaten.Datenbasis;
 import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
 import de.intevation.lada.model.stammdaten.ImporterConfig;
@@ -63,6 +64,7 @@ import de.intevation.lada.model.stammdaten.ReiProgpunktGruppe;
 import de.intevation.lada.model.stammdaten.Staat;
 import de.intevation.lada.model.stammdaten.StatusErreichbar;
 import de.intevation.lada.model.stammdaten.StatusKombi;
+import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.model.stammdaten.Umwelt;
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
 import de.intevation.lada.model.stammdaten.Zeitbasis;
@@ -393,8 +395,6 @@ public class LafObjectMapper {
                 importProbeIds.add(newProbe.getId());
             }  else if (probe != null) {
                 importProbeIds.add(probe.getId());
-            } else {
-                importProbeIds.add(null);
             }
         } catch (InvalidTargetObjectTypeException e) {
             ReportItem err = new ReportItem();
@@ -519,6 +519,19 @@ public class LafObjectMapper {
                     object.getMessungen().get(i),
                     newProbe,
                     newProbe.getMstId());
+            }
+            //if key SZENARIO is present in imported file, assign global tag to probe and its messung objects
+            if (object.getAttributes().containsKey("SZENARIO")) {
+                //assign to probe object
+                assignGlobalTag(object.getAttributes().get("SZENARIO"), newProbe);
+                //assign to messung objects
+                QueryBuilder<Messung> builderMessung =
+                    repository.queryBuilder(Messung.class);
+                builderMessung.and("probeId", newProbe.getId());
+                List<Messung> messungen =  repository.filterPlain(builderMessung.getQuery());
+                for (Messung messung: messungen) {
+                    assignGlobalTag(object.getAttributes().get("SZENARIO"), messung);
+                }
             }
         }
         if (!currentErrors.isEmpty()) {
@@ -1612,15 +1625,19 @@ public class LafObjectMapper {
                         o = findOrCreateOrt(uort.get(0), "U_", probe);
                     }
 
-                        if (o == null) {
-                            Ort oE = findOrCreateOrt(object.getEntnahmeOrt(), "P_", probe);
-                            if (oE == null) {
-                                return;
-                            } else {
-                                o = oE;
-                            }
+                    if (o == null) {
+                        Ort oE = findOrCreateOrt(object.getEntnahmeOrt(), "P_", probe);
+                        if (oE == null) {
+                            ReportItem warn = new ReportItem();
+                            warn.setCode(StatusCodes.VALUE_MISSING);
+                            warn.setKey("Ort");
+                            warn.setValue("Kein Messpunkt angelegt");
+                            currentWarnings.add(warn);
+                            return;
+                        } else {
+                            o = oE;
                         }
-                    if (o != null) {
+                    } else {
                         o.setOrtTyp(1);
                         o.setKtaGruppeId(ktaGrp.get(0).getId());
                         repository.update(o);
@@ -1635,12 +1652,6 @@ public class LafObjectMapper {
 
                         probe.setKtaGruppeId(ktaGrp.get(0).getId());
                         repository.update(probe);
-                    } else {
-                        ReportItem warn = new ReportItem();
-                        warn.setCode(StatusCodes.VALUE_MISSING);
-                        warn.setKey("Ort");
-                        warn.setValue("Kein Messpunkt angelegt");
-                        currentWarnings.add(warn);
                     }
                 } else {
                     ReportItem warn = new ReportItem();
@@ -1942,6 +1953,65 @@ public class LafObjectMapper {
         ZonedDateTime orig = ZonedDateTime.parse(date, formatter);
         ZonedDateTime utc = orig.withZoneSameInstant(ZoneOffset.UTC);
         return Timestamp.from(utc.toInstant());
+    }
+
+    //Assign global Tag based on LAF field SZENARIO
+    private void assignGlobalTag(String szenario, Object object) {
+        QueryBuilder<Tag> builderTag =
+                repository.queryBuilder(Tag.class);
+            builderTag.and("tag", szenario);
+            builderTag.and("typId", "global");
+            List<Tag> globalTag =
+                repository.filterPlain(builderTag.getQuery());
+
+        if (globalTag.isEmpty()){
+            ReportItem note = new ReportItem();
+            note.setCode(StatusCodes.VALUE_NOT_MATCHING);
+            note.setKey("globalTag");
+            note.setValue(szenario);
+            currentWarnings.add(note);
+        } else {
+                TagZuordnung tagZuord = new TagZuordnung();
+
+            if (object instanceof Probe) {
+                Probe probe = (Probe) object;
+                QueryBuilder<TagZuordnung> builderZuord =
+                        repository.queryBuilder(TagZuordnung.class);
+                    builderZuord.and("probeId", probe.getId());
+                    List<TagZuordnung> globalTagZuord =
+                        repository.filterPlain(builderZuord.getQuery());
+                 if (globalTagZuord.stream().anyMatch(z -> z.getTagId().equals(globalTag.get(0).getId()))) {
+                    ReportItem note = new ReportItem();
+                    note.setCode(StatusCodes.VAL_EXISTS);
+                    note.setKey("globalTag#probe");
+                    note.setValue(szenario);
+                    currentNotifications.add(note);
+                } else {
+                    tagZuord.setTagId(globalTag.get(0).getId());
+                    tagZuord.setProbeId(probe.getId());
+                    repository.create(tagZuord);
+                }
+            } else if (object instanceof Messung) {
+                Messung messung = (Messung) object;
+                QueryBuilder<TagZuordnung> builderZuord =
+                    repository.queryBuilder(TagZuordnung.class);
+                builderZuord.and("messungId", messung.getId());
+                List<TagZuordnung> globalTagZuord =
+                    repository.filterPlain(builderZuord.getQuery());
+
+                if (globalTagZuord.stream().anyMatch(z -> z.getTagId().equals(globalTag.get(0).getId()))) {
+                    ReportItem note = new ReportItem();
+                    note.setCode(StatusCodes.VAL_EXISTS);
+                    note.setKey("globalTag#messung");
+                    note.setValue(szenario);
+                    currentNotifications.add(note);
+                } else {
+                    tagZuord.setTagId(globalTag.get(0).getId());
+                    tagZuord.setMessungId(messung.getId());
+                    repository.create(tagZuord);
+                }
+            }
+        }
     }
 
     private void logProbe(Probe probe) {
