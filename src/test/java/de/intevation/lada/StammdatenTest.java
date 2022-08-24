@@ -430,34 +430,6 @@ public class StammdatenTest extends BaseTest {
     }
 
     /**
-     * Tests for pflichtmessgroesse operations.
-     * @param baseUrl The server url used for the request.
-     */
-    @Test
-    @InSequence(T21)
-    @RunAsClient
-    public final void testPflichtmessgroesseAll(
-        @ArquillianResource URL baseUrl
-    ) {
-        stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getAll("pflichtmessgroesse");
-    }
-
-    /**
-     * Tests for pflichtmessgroesse by id operations.
-     * @param baseUrl The server url used for the request.
-     */
-    @Test
-    @InSequence(T22)
-    @RunAsClient
-    public final void testPflichtmessgroesseById(
-        @ArquillianResource URL baseUrl
-    ) {
-        stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getById("pflichtmessgroesse", "A3");
-    }
-
-    /**
      * Tests for probeart operations.
      * @param baseUrl The server url used for the request.
      */
