@@ -135,7 +135,21 @@ SELECT audit_trail.id,
     cast(row_data ->> 'messungs_id' AS int) AS messungs_id
 FROM audit_trail;
 
+-- View for messprogramm audit trail
+CREATE OR REPLACE VIEW audit_trail_messprogramm AS
+SELECT audit_trail.id,
+    audit_trail.table_name,
+    audit_trail.tstamp,
+    audit_trail.action,
+    audit_trail.object_id,
+    audit_trail.row_data,
+    audit_trail.changed_fields,
+    cast(row_data ->> 'messprogramm_id' AS int) AS mp_id
+FROM audit_trail;
 
+SELECT stamm.audit_table('messprogramm', true, false, '{id, tree_modified, letzte_aenderung}'::text[]);
+SELECT stamm.audit_table('messprogramm_mmt', true, false, '{id, messprogramm_id, tree_modified, letzte_aenderung}'::text[]);
+SELECT stamm.audit_table('ortszuordnung_mp', true, false, '{id, messprogramm_id, tree_modified, letzte_aenderung}'::text[]);
 SELECT stamm.audit_table('probe', true, false, '{id, tree_modified, letzte_aenderung}'::text[]);
 SELECT stamm.audit_table('messung', true, false, '{id, probe_id, tree_modified, letzte_aenderung, status}'::text[]);
 SELECT stamm.audit_table('messwert', true, false, '{id, messungs_id, tree_modified, letzte_aenderung}'::text[]);
