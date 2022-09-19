@@ -460,7 +460,7 @@ public class AuditTrailService extends LadaService {
                 "ort_id",
                 audit.getRowData().get("ort_id").toString(),
                 "id",
-                Strings.STAMM);
+                de.intevation.lada.model.stammdaten.SchemaName.NAME);
             node.put("identifier", value);
         }
 
