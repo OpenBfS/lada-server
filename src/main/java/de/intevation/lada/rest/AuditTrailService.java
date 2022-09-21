@@ -451,6 +451,18 @@ public class AuditTrailService extends LadaService {
         ObjectNode data = translateValues((ObjectNode) audit.getChangedFields());
         node.putPOJO("changedFields", data);
         //TODO related tables
+        if ("messprogramm_mmt_messgroesse".equals(audit.getTableName())) {
+            String value = translateId(
+                "messgroesse",
+                "messgroesse",
+                audit.getRowData().get("messgroesse_id").toString(),
+                "id",
+                de.intevation.lada.model.stammdaten.SchemaName.NAME);
+            node.put("identifier", value);
+        }
+        if ("messprogramm_proben_zusatz".equals(audit.getTableName())) {
+            node.put("identifier", audit.getRowData().get("proben_zusatz_id"));
+        }
         if ("messprogramm_mmt".equals(audit.getTableName())) {
             node.put("identifier", audit.getRowData().get("mmt_id").toString());
         }

@@ -144,12 +144,14 @@ SELECT audit_trail.id,
     audit_trail.object_id,
     audit_trail.row_data,
     audit_trail.changed_fields,
-    cast(row_data ->> 'messprogramm_id' AS int) AS mp_id
+    coalesce(cast(row_data ->> 'messprogramm_id' AS integer),
+        (SELECT messprogramm_id FROM land.messprogramm_mmt WHERE id = cast(
+            row_data ->> 'messprogramm_mmt_id' AS integer))) AS mp_id
 FROM audit_trail;
 
 SELECT stamm.audit_table('messprogramm', true, false, '{id, tree_modified, letzte_aenderung}'::text[]);
 SELECT stamm.audit_table('messprogramm_mmt', true, false, '{id, messprogramm_id, tree_modified, letzte_aenderung}'::text[]);
-SELECT stamm.audit_table('messprogramm_mmt_messgroesse', true, false, '{id, messprogramm_id, tree_modified, letzte_aenderung}'::text[]);
+SELECT stamm.audit_table('messprogramm_mmt_messgroesse', true, false, '{id, messprogramm_mmt_id, tree_modified, letzte_aenderung}'::text[]);
 SELECT stamm.audit_table('messprogramm_proben_zusatz', true, false, '{id, messprogramm_id, tree_modified, letzte_aenderung}'::text[]);
 SELECT stamm.audit_table('ortszuordnung_mp', true, false, '{id, messprogramm_id, tree_modified, letzte_aenderung}'::text[]);
 SELECT stamm.audit_table('probe', true, false, '{id, tree_modified, letzte_aenderung}'::text[]);
