@@ -149,6 +149,8 @@ FROM audit_trail;
 
 SELECT stamm.audit_table('messprogramm', true, false, '{id, tree_modified, letzte_aenderung}'::text[]);
 SELECT stamm.audit_table('messprogramm_mmt', true, false, '{id, messprogramm_id, tree_modified, letzte_aenderung}'::text[]);
+SELECT stamm.audit_table('messprogramm_mmt_messgroesse', true, false, '{id, messprogramm_id, tree_modified, letzte_aenderung}'::text[]);
+SELECT stamm.audit_table('messprogramm_proben_zusatz', true, false, '{id, messprogramm_id, tree_modified, letzte_aenderung}'::text[]);
 SELECT stamm.audit_table('ortszuordnung_mp', true, false, '{id, messprogramm_id, tree_modified, letzte_aenderung}'::text[]);
 SELECT stamm.audit_table('probe', true, false, '{id, tree_modified, letzte_aenderung}'::text[]);
 SELECT stamm.audit_table('messung', true, false, '{id, probe_id, tree_modified, letzte_aenderung, status}'::text[]);

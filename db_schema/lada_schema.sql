@@ -229,9 +229,10 @@ CREATE TABLE messprogramm (
 CREATE TRIGGER letzte_aenderung_messprogramm BEFORE UPDATE ON messprogramm FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE messprogramm_proben_zusatz (
-    proben_zusatz_id character varying(3) REFERENCES stamm.proben_zusatz,
-    messprogramm_id INTEGER REFERENCES messprogramm ON DELETE CASCADE,
-    PRIMARY KEY (proben_zusatz_id, messprogramm_id)
+    id SERIAL PRIMARY KEY,
+    proben_zusatz_id character varying(3) REFERENCES stamm.proben_zusatz NOT NULL,
+    messprogramm_id INTEGER REFERENCES messprogramm ON DELETE CASCADE NOT NULL,
+    UNIQUE (proben_zusatz_id, messprogramm_id)
 );
 
 --
@@ -247,9 +248,10 @@ CREATE TABLE messprogramm_mmt (
 CREATE TRIGGER letzte_aenderung_messprogramm_mmt BEFORE UPDATE ON messprogramm_mmt FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE messprogramm_mmt_messgroesse (
-    messprogramm_mmt_id integer REFERENCES messprogramm_mmt ON DELETE CASCADE,
-    messgroesse_id integer REFERENCES stamm.messgroesse,
-    PRIMARY KEY (messprogramm_mmt_id, messgroesse_id)
+    id serial PRIMARY KEY,
+    messprogramm_mmt_id integer REFERENCES messprogramm_mmt ON DELETE CASCADE NOT NULL,
+    messgroesse_id integer REFERENCES stamm.messgroesse NOT NULL,
+    UNIQUE (messprogramm_mmt_id, messgroesse_id)
 );
 
 --
