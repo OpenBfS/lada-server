@@ -74,16 +74,16 @@ done
 psql $DB_CONNECT_STRING -d $DB_NAME --command \
      "INSERT INTO lada_schema_version(version) VALUES ($new_ver)"
 
-echo create stammdaten schema
-psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/stammdaten_schema.sql
+echo create master schema
+psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/master_schema.sql #master_schema.sql
 
 echo create lada schema
 psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/lada_schema.sql
 
 echo create audit-trail table/trigger/views
 for file in \
-    audit_stamm.sql \
-    audit_land.sql \
+    audit_master.sql \
+    audit_lada.sql \
     lada_views.sql
 do
     psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/$file
@@ -91,11 +91,11 @@ done
 
 echo set grants
 psql $DB_CONNECT_STRING -d $DB_NAME --command \
-     "GRANT USAGE ON SCHEMA stamm, land TO $ROLE_NAME;
+     "GRANT USAGE ON SCHEMA master, lada TO $ROLE_NAME;
       GRANT USAGE
-            ON ALL SEQUENCES IN SCHEMA stamm, land TO $ROLE_NAME;
+            ON ALL SEQUENCES IN SCHEMA master, lada TO $ROLE_NAME;
       GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES
-            ON ALL TABLES IN SCHEMA stamm, land TO $ROLE_NAME;"
+            ON ALL TABLES IN SCHEMA master, lada TO $ROLE_NAME;"
 
 echo download german administrative borders
 cd /tmp
@@ -122,9 +122,9 @@ done
 
 echo create verwaltungsgrenze view
 psql -q $DB_CONNECT_STRING -d $DB_NAME \
-    -f $DIR/stammdaten_verwaltungsgrenze_view.sql
+    -f $DIR/master_admin_border_view.sql
 psql $DB_CONNECT_STRING -d $DB_NAME --command \
-     "GRANT SELECT, REFERENCES ON TABLE stamm.verwaltungsgrenze TO $ROLE_NAME;"
+     "GRANT SELECT, REFERENCES ON TABLE master.admin_border_view TO $ROLE_NAME;"
 
 if [ "$NO_DATA" != "true" ]; then
     echo import german administrative borders
@@ -138,53 +138,53 @@ if [ "$NO_DATA" != "true" ]; then
     done
     echo refresh verwaltungsgrenze view
     psql $DB_CONNECT_STRING -d $DB_NAME --command \
-         "REFRESH MATERIALIZED VIEW stamm.verwaltungsgrenze"
+         "REFRESH MATERIALIZED VIEW master.admin_border_view"
 
     echo "load data:"
     for file in \
-        stammdaten_data_status_reihenfolge.sql \
-        stammdaten_data_verwaltungseinheit.sql \
-        stammdaten_data_netzbetreiber.sql \
-        stammdaten_data_mess_stelle.sql \
-        stammdaten_data_auth.sql \
-        stammdaten_data_betriebsart.sql \
-        stammdaten_data_mess_einheit.sql \
-        stammdaten_data_mass_einheit_umrechnung.sql \
-        stammdaten_data_umwelt.sql \
-        stammdaten_data_auth_lst_umw.sql \
-        stammdaten_data_datenbasis.sql \
-        stammdaten_data_datensatz_erzeuger.sql \
-        stammdaten_data_deskriptor_umwelt.sql \
-        stammdaten_data_deskriptoren.sql \
-        stammdaten_data_koordinaten_art.sql \
-        stammdaten_data_messmethode.sql \
-        stammdaten_data_messgroesse.sql \
-        stammdaten_data_messgroessen_gruppe.sql \
-        stammdaten_data_ort_typ.sql \
-        stammdaten_data_staat.sql \
-        stammdaten_data_kta.sql \
-        stammdaten_data_ortszuordnung_typ.sql \
-        stammdaten_data_pflicht_messgroesse.sql \
-        stammdaten_data_proben_zusatz.sql \
-        stammdaten_data_umwelt_zusatz.sql \
-        stammdaten_data_probenart.sql \
-        stammdaten_data_messprogramm_transfer.sql \
-        stammdaten_data_ortszusatz.sql \
-        stammdaten_data_messprogramm_kategorie.sql \
-        stammdaten_data_gemeindeuntergliederung.sql \
-        stammdaten_data_rei.sql \
-        stammdaten_data_ort.sql \
-        stammdaten_data_probenehmer.sql \
-        stammdaten_data_zeitbasis.sql \
-        stammdaten_data_query.sql \
-        stammdaten_data_user_context.sql \
-        stammdaten_data_importer_config.sql \
-        stammdaten_data_tm_fm_umrechnung.sql\
-        stammdaten_data_richtwert.sql\
-        stammdaten_data_sollist.sql\
-        stammdaten_data_tag.sql\
+        master_data_status_order_mp.sql \
+        master_data_admin_unit.sql \
+        master_data_network.sql \
+        master_data_meas_facil.sql \
+        master_data_auth.sql \
+        master_data_opr_mod.sql \
+        master_data_meas_unit.sql \
+        master_data_unit_convers.sql \
+        master_data_env_medium.sql \
+        master_data_auth_coord_ofc_env_medium_mp.sql \
+        master_data_regulation.sql \
+        master_data_dataset_creator.sql \
+        master_data_env_descrip_env_medium_mp.sql \
+        master_data_env_descrip.sql \
+        master_data_spat_ref_sys.sql \
+        master_data_mmt.sql \
+        master_data_measd.sql \
+        master_data_measd_gr.sql \
+        master_data_site_class.sql \
+        master_data_state.sql \
+        master_data_nucl_facil.sql \
+        master_data_type_regulation.sql \
+        master_data_oblig_measd_mp.sql \
+        master_data_sample_specif.sql \
+        master_data_env_specif_mp.sql \
+        master_data_sample_meth.sql \
+        master_data_mpg_transfer.sql \
+        master_data_poi.sql \
+        master_data_mpg_categ.sql \
+        master_data_munic_div.sql \
+        master_data_rei.sql \
+        master_data_site.sql \
+        master_data_sampler.sql \
+        master_data_tz.sql \
+        master_data_query.sql \
+        master_data_user_context.sql \
+        master_data_import_config.sql \
+        master_data_convers_dm_fm.sql\
+        master_data_ref_val.sql\
+        master_data_targ_act.sql\
+        master_data_tag.sql\
         lada_data.sql \
-        lada_messprogramm.sql
+        lada_mpg.sql
     do
         [ -f private_${file} ] && file=private_${file}
         echo "  ${file%.sql}"
@@ -192,6 +192,6 @@ if [ "$NO_DATA" != "true" ]; then
     done
 
     echo init sequences
-    psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/stammdaten_init_sequences.sql
+    psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/master_init_sequences.sql
 
 fi

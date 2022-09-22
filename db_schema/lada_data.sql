@@ -16,19 +16,19 @@ SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 
-SET search_path = land, pg_catalog;
+SET search_path = lada, pg_catalog;
 
 --
 -- TOC entry 4692 (class 0 OID 1170850)
 -- Dependencies: 294
--- Data for Name: probe; Type: TABLE DATA; Schema: land; Owner: postgres
+-- Data for Name: sample; Type: TABLE DATA; Schema: lada; Owner: postgres
 --
 
 SET SESSION AUTHORIZATION DEFAULT;
 
-ALTER TABLE probe DISABLE TRIGGER ALL;
+ALTER TABLE sample DISABLE TRIGGER ALL;
 
-COPY probe (id, ext_id, test, mst_id, labor_mst_id, hauptproben_nr, datenbasis_id, ba_id, probenart_id, media_desk, media, umw_id, probeentnahme_beginn, probeentnahme_ende, mittelungsdauer, letzte_aenderung, erzeuger_id, probe_nehmer_id, mpl_id, mpr_id, solldatum_beginn, solldatum_ende, tree_modified) FROM stdin;
+COPY sample (id, sample_ext_id, is_test, meas_facil_id, appr_lab_id, main_sample_id, regulation_id, opr_mode_id, sample_meth_id, env_descrip_display, env_descrip_name, env_medium_id, sample_start_date, sample_end_date, mid_sample_date, last_mod, dataset_creator_id, sampleer_id, state_mpg_id, mpg_id, sched_start_date, sched_end_date, tree_mod) FROM stdin;
 660	000007590041X	t	12020	12020	N0013KE12	2	1	1	D: 01 03 52 02 00 00 00 00 00 00 00 00	Schafkäse	N92	2012-01-26 11:30:00+01	\N	\N	2017-03-22 20:10:18.048436	\N	784	\N	\N	2012-01-01 00:00:00	2012-01-31 21:59:59	2017-03-22 20:10:18.048436
 409	000007589343X	t	12010	12010	A0239MP12	2	1	1	D: 01 02 07 03 00 00 00 00 00 00 00 00	Magermilchpulver	N94	2012-03-15 11:00:00+01	\N	\N	2017-03-22 20:10:18.048436	\N	1199	\N	\N	2012-03-01 00:00:00	2012-03-31 21:59:59	2017-03-22 20:10:18.048436
 42	000007578227X	t	06010	06010	120109003	2	1	1	D: 01 03 26 03 04 02 00 00 00 00 00 00	Frischkäse Fettstufe auch mit Gewürzen/Kräutern	N91	2012-01-04 08:00:00+01	\N	\N	2017-03-22 20:10:18.048436	\N	734	\N	\N	2012-01-01 00:00:00	2012-01-31 21:59:59	2017-03-22 20:10:18.048436
@@ -88,21 +88,21 @@ COPY probe (id, ext_id, test, mst_id, labor_mst_id, hauptproben_nr, datenbasis_i
 \.
 
 
-ALTER TABLE probe ENABLE TRIGGER ALL;
+ALTER TABLE sample ENABLE TRIGGER ALL;
 
-SELECT setval(pg_get_serial_sequence('probe', 'id'),
-    (SELECT max(id) FROM probe));
+SELECT setval(pg_get_serial_sequence('sample', 'id'),
+    (SELECT max(id) FROM sample));
 
 
 --
 -- TOC entry 4687 (class 0 OID 1170823)
 -- Dependencies: 289
--- Data for Name: messung; Type: TABLE DATA; Schema: land; Owner: postgres
+-- Data for Name: measm; Type: TABLE DATA; Schema: lada; Owner: postgres
 --
 
-ALTER TABLE messung DISABLE TRIGGER ALL;
+ALTER TABLE measm DISABLE TRIGGER ALL;
 
-COPY messung (id, ext_id, probe_id, nebenproben_nr, mmt_id, messdauer, messzeitpunkt, fertig, status, letzte_aenderung, geplant, tree_modified) FROM stdin;
+COPY measm (id, sample_ext_id, sample_id, min_sample_id, mmt_id, meas_pd, measm_start_date, is_completed, status, last_mod, is_scheduled, tree_mod) FROM stdin;
 179	1	660	01G1	G1	82693	2012-01-30 09:32:00	t	571	2012-03-06 17:42:26	t	2016-03-17 09:19:04.94469
 198	1	409	01G1	G1	161733	2012-03-19 23:00:00	t	572	2012-04-17 19:42:25	t	2016-03-17 09:19:04.94469
 699	1	313	G101	G1	247215	2012-02-24 11:00:00	t	574	2012-03-06 17:42:26	t	2016-03-17 09:19:04.94469
@@ -188,41 +188,41 @@ COPY messung (id, ext_id, probe_id, nebenproben_nr, mmt_id, messdauer, messzeitp
 \.
 
 
-ALTER TABLE messung ENABLE TRIGGER ALL;
+ALTER TABLE measm ENABLE TRIGGER ALL;
 
-SELECT setval(pg_get_serial_sequence('messung', 'id'),
-    (SELECT max(id) FROM messung));
+SELECT setval(pg_get_serial_sequence('measm', 'id'),
+    (SELECT max(id) FROM measm));
 
 
 --
 -- TOC entry 4681 (class 0 OID 1170751)
 -- Dependencies: 283
--- Data for Name: kommentar_m; Type: TABLE DATA; Schema: land; Owner: postgres
+-- Data for Name: comm_measm; Type: TABLE DATA; Schema: lada; Owner: postgres
 --
 
-ALTER TABLE kommentar_m DISABLE TRIGGER ALL;
+ALTER TABLE comm_measm DISABLE TRIGGER ALL;
 
-COPY kommentar_m (id, mst_id, datum, text, messungs_id) FROM stdin;
+COPY comm_measm (id, meas_facil_id, date, text, measm_id) FROM stdin;
 481	12020	2012-07-12 06:18:00	Messung FM\nFM/TM lt Stammdaten	195
 482	12020	2012-07-12 09:32:00	Messung FM\nFM/TM lt Stammdaten	195
 \.
 
 
-ALTER TABLE kommentar_m ENABLE TRIGGER ALL;
+ALTER TABLE comm_measm ENABLE TRIGGER ALL;
 
-SELECT setval(pg_get_serial_sequence('kommentar_m', 'id'),
-    (SELECT max(id) FROM kommentar_m));
+SELECT setval(pg_get_serial_sequence('comm_measm', 'id'),
+    (SELECT max(id) FROM comm_measm));
 
 
 --
 -- TOC entry 4682 (class 0 OID 1170759)
 -- Dependencies: 284
--- Data for Name: kommentar_p; Type: TABLE DATA; Schema: land; Owner: postgres
+-- Data for Name: comm_sample; Type: TABLE DATA; Schema: lada; Owner: postgres
 --
 
-ALTER TABLE kommentar_p DISABLE TRIGGER ALL;
+ALTER TABLE comm_sample DISABLE TRIGGER ALL;
 
-COPY kommentar_p (id, mst_id, datum, text, probe_id) FROM stdin;
+COPY comm_sample (id, meas_facil_id, date, text, sample_id) FROM stdin;
 120	12020	2011-12-14 12:43:38	n_im04	660
 168	06010	2011-11-07 12:10:49	A76, A0-Horizont: Probenahmetiefe (Mächtigkeit der Humusschicht) notieren!	84
 183	12020	2011-12-14 12:30:49	n_pf07	406
@@ -236,21 +236,21 @@ COPY kommentar_p (id, mst_id, datum, text, probe_id) FROM stdin;
 \.
 
 
-ALTER TABLE kommentar_p ENABLE TRIGGER ALL;
+ALTER TABLE comm_sample ENABLE TRIGGER ALL;
 
-SELECT setval(pg_get_serial_sequence('kommentar_p', 'id'),
-    (SELECT max(id) FROM kommentar_p));
+SELECT setval(pg_get_serial_sequence('comm_sample', 'id'),
+    (SELECT max(id) FROM comm_sample));
 
 
 --
 -- TOC entry 4690 (class 0 OID 1170837)
 -- Dependencies: 292
--- Data for Name: messwert; Type: TABLE DATA; Schema: land; Owner: postgres
+-- Data for Name: meas_val; Type: TABLE DATA; Schema: lada; Owner: postgres
 --
 
-ALTER TABLE messwert DISABLE TRIGGER ALL;
+ALTER TABLE meas_val DISABLE TRIGGER ALL;
 
-COPY messwert (id, messungs_id, messgroesse_id, messwert_nwg, messwert, messfehler, nwg_zu_messwert, meh_id, grenzwertueberschreitung, letzte_aenderung, tree_modified) FROM stdin;
+COPY meas_val (id, measm_id, measd_id, less_than_LOD, name, meas_err, detect_lim, unit_id, is_threshold, last_mod, tree_mod) FROM stdin;
 6076	179	28	\N	19	4.5	\N	67	\N	2012-02-22 12:38:39	2016-03-17 09:19:04.94469
 3820	198	28	\N	500	2.5	\N	64	\N	2012-03-26 16:31:35	2016-03-17 09:19:04.94469
 3825	198	373	\N	1.70000005	3.2	\N	64	\N	2012-03-26 16:31:35	2016-03-17 09:19:04.94469
@@ -770,21 +770,21 @@ COPY messwert (id, messungs_id, messgroesse_id, messwert_nwg, messwert, messfehl
 \.
 
 
-ALTER TABLE messwert ENABLE TRIGGER ALL;
+ALTER TABLE meas_val ENABLE TRIGGER ALL;
 
-SELECT setval(pg_get_serial_sequence('messwert', 'id'),
-    (SELECT max(id) FROM messwert));
+SELECT setval(pg_get_serial_sequence('meas_val', 'id'),
+    (SELECT max(id) FROM meas_val));
 
 
 --
 -- TOC entry 4691 (class 0 OID 1170844)
 -- Dependencies: 293
--- Data for Name: ortszuordnung; Type: TABLE DATA; Schema: land; Owner: postgres
+-- Data for Name: geolocat; Type: TABLE DATA; Schema: lada; Owner: postgres
 --
 
-ALTER TABLE ortszuordnung DISABLE TRIGGER ALL;
+ALTER TABLE geolocat DISABLE TRIGGER ALL;
 
-COPY ortszuordnung (id, probe_id, ort_id, ortszuordnung_typ, ortszusatztext, letzte_aenderung, tree_modified) FROM stdin;
+COPY geolocat (id, sample_id, site_id, type_regulation, add_site_text, last_mod, tree_mod) FROM stdin;
 614	660	97	E	\N	2013-08-12 07:57:26.600695	2016-03-17 09:19:04.94469
 297	409	69	E	\N	2013-08-12 07:57:26.600695	2016-03-17 09:19:04.94469
 820	42	23	E	\N	2013-08-12 07:57:26.600695	2016-03-17 09:19:04.94469
@@ -845,21 +845,21 @@ COPY ortszuordnung (id, probe_id, ort_id, ortszuordnung_typ, ortszusatztext, let
 \.
 
 
-ALTER TABLE ortszuordnung ENABLE TRIGGER ALL;
+ALTER TABLE geolocat ENABLE TRIGGER ALL;
 
-SELECT setval(pg_get_serial_sequence('ortszuordnung', 'id'),
-    (SELECT max(id) FROM ortszuordnung));
+SELECT setval(pg_get_serial_sequence('geolocat', 'id'),
+    (SELECT max(id) FROM geolocat));
 
 
 --
 -- TOC entry 4695 (class 0 OID 1170895)
 -- Dependencies: 297
--- Data for Name: status_protokoll; Type: TABLE DATA; Schema: land; Owner: postgres
+-- Data for Name: status_prot; Type: TABLE DATA; Schema: lada; Owner: postgres
 --
 
-ALTER TABLE status_protokoll DISABLE TRIGGER ALL;
+ALTER TABLE status_prot DISABLE TRIGGER ALL;
 
-COPY status_protokoll (id, mst_id, datum, text, messungs_id, status_kombi, tree_modified) FROM stdin;
+COPY status_prot (id, meas_facil_id, date, text, measm_id, status_comb, tree_mod) FROM stdin;
 571	12020	2016-02-29 21:53:01.736444	Test	179	1	2016-03-17 09:19:04.94469
 572	12010	2016-02-29 21:53:01.736444	Test	198	1	2016-03-17 09:19:04.94469
 573	06010	2016-02-29 21:53:01.736444	Test	646	1	2016-03-17 09:19:04.94469
@@ -950,31 +950,31 @@ COPY status_protokoll (id, mst_id, datum, text, messungs_id, status_kombi, tree_
 \.
 
 
-ALTER TABLE status_protokoll ENABLE TRIGGER ALL;
+ALTER TABLE status_prot ENABLE TRIGGER ALL;
 
-SELECT setval(pg_get_serial_sequence('status_protokoll', 'id'),
-    (SELECT max(id) FROM status_protokoll));
+SELECT setval(pg_get_serial_sequence('status_prot', 'id'),
+    (SELECT max(id) FROM status_prot));
 
 
 --
 -- TOC entry 4696 (class 0 OID 1170904)
 -- Dependencies: 298
--- Data for Name: zusatz_wert; Type: TABLE DATA; Schema: land; Owner: postgres
+-- Data for Name: sample_specif_meas_val; Type: TABLE DATA; Schema: lada; Owner: postgres
 --
 
-ALTER TABLE zusatz_wert DISABLE TRIGGER ALL;
+ALTER TABLE sample_specif_meas_val DISABLE TRIGGER ALL;
 
-COPY zusatz_wert (id, probe_id, pzs_id, messwert_pzs, messfehler, letzte_aenderung, tree_modified) FROM stdin;
+COPY sample_specif_meas_val (id, sample_id, sample_specif_id, meas_val, error, last_mod, tree_mod) FROM stdin;
 1	84	A76	7.5	48	2012-04-23 12:32:56	2016-03-17 09:19:04.94469
 26	186	A78	0	0	2016-03-07 12:32:37	2016-03-17 09:19:04.94469
 21	157	A78	0	2	2016-03-07 10:26:00	2016-03-17 09:19:04.94469
 \.
 
 
-ALTER TABLE zusatz_wert ENABLE TRIGGER ALL;
+ALTER TABLE sample_specif_meas_val ENABLE TRIGGER ALL;
 
-SELECT setval(pg_get_serial_sequence('zusatz_wert', 'id'),
-    (SELECT max(id) FROM zusatz_wert));
+SELECT setval(pg_get_serial_sequence('sample_specif_meas_val', 'id'),
+    (SELECT max(id) FROM sample_specif_meas_val));
 
 --
 -- PostgreSQL database dump complete

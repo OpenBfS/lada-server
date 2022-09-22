@@ -19,33 +19,33 @@ SET row_security = off;
 -- Name: lada_messwert; Type: VIEW; Schema: public; Owner: postgres
 --
 
-CREATE VIEW public.lada_messwert AS
- SELECT messwert.id,
-    messwert.messungs_id,
-    messwert.messgroesse_id,
-    messwert.messwert_nwg,
-    messwert.messwert,
-    messwert.messfehler,
-    messwert.nwg_zu_messwert,
-    messwert.meh_id,
-    messwert.grenzwertueberschreitung,
-    status_protokoll.status_kombi,
-    messwert.letzte_aenderung
-   FROM ((land.messwert
-     JOIN land.messung ON ((messwert.messungs_id = messung.id)))
-     JOIN land.status_protokoll ON (((messung.status = status_protokoll.id) AND (status_protokoll.status_kombi <> 1))));
-ALTER TABLE public.lada_messwert OWNER TO postgres;
-GRANT SELECT ON TABLE public.lada_messwert TO lada;
+CREATE VIEW public.lada_meas_val AS
+ SELECT meas_val.id,
+    meas_val.measm_id,
+    meas_val.measd_id,
+    meas_val.less_than_LOD,
+    meas_val.name,
+    meas_val.meas_err,
+    meas_val.detect_lim,
+    meas_val.unit_id,
+    meas_val.is_threshold,
+    status_prot.status_comb,
+    meas_val.last_mod
+   FROM ((lada.meas_val
+     JOIN lada.measm ON ((meas_val.measm_id = measm.id)))
+     JOIN lada.status_prot ON (((measm.status = status_prot.id) AND (status_prot.status_comb <> 1))));
+ALTER TABLE public.lada_meas_val OWNER TO postgres;
+GRANT SELECT ON TABLE public.lada_meas_val TO lada;
 
 --
--- Name: rueckfrage_messung; Type: VIEW; Schema: land; Owner: postgres
+-- Name: query_measm_view; Type: VIEW; Schema: lada; Owner: postgres
 --
 
-CREATE OR REPLACE VIEW land.rueckfrage_messung
+CREATE OR REPLACE VIEW lada.query_measm_view
  AS
- SELECT DISTINCT status_protokoll.messungs_id
-   FROM land.status_protokoll
-  WHERE (status_protokoll.status_kombi = ANY (ARRAY[9, 13]));
-ALTER TABLE land.rueckfrage_messung
+ SELECT DISTINCT status_prot.measm_id
+   FROM lada.status_prot
+  WHERE (status_prot.status_comb = ANY (ARRAY[9, 13]));
+ALTER TABLE lada.query_measm_view
     OWNER TO postgres;
-GRANT SELECT ON TABLE land.rueckfrage_messung TO lada;
+GRANT SELECT ON TABLE lada.query_measm_view TO lada;
