@@ -18,13 +18,9 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -395,9 +391,7 @@ public class AuditTrailService extends LadaService {
      */
     @GET
     @Path("/messprogramm/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
     public String getMessprogramm(
-        @Context HttpServletRequest request,
         @PathParam("id") String id
     ) {
         if (id == null || "".equals(id)) {
