@@ -450,7 +450,6 @@ public class AuditTrailService extends LadaService {
         node.put("action", audit.getAction());
         ObjectNode data = translateValues((ObjectNode) audit.getChangedFields());
         node.putPOJO("changedFields", data);
-        //TODO related tables
         if ("messprogramm_mmt_messgroesse".equals(audit.getTableName())) {
             String value = translateId(
                 "messgroesse",
