@@ -36,7 +36,7 @@ echo "DB_NAME = $DB_NAME"
 DB_CONNECT_STRING="-v ON_ERROR_STOP=on "
 
 # if variable DB_SRV and otional DB_PORT is set a remote database connection will be used
-if [ -n "$DB_SRV" ] ; then DB_CONNECT_STRING="-h $DB_SRV" ; fi
+if [ -n "$DB_SRV" ] ; then DB_CONNECT_STRING="$DB_CONNECT_STRING -h $DB_SRV" ; fi
 if [ -n "$DB_SRV" -a -n "$DB_PORT"  ] ; then
   DB_CONNECT_STRING="$DB_CONNECT_STRING -p $DB_PORT"
 fi
@@ -55,7 +55,7 @@ fi
 
 echo create db $DB_NAME
 psql $DB_CONNECT_STRING --command \
-     "CREATE DATABASE $DB_NAME ENCODING = 'UTF8'"
+     "CREATE DATABASE $DB_NAME OWNER = $ROLE_NAME ENCODING = 'UTF8'"
 
 echo create postgis extension
 psql $DB_CONNECT_STRING -d $DB_NAME  --command  \
@@ -67,7 +67,8 @@ psql $DB_CONNECT_STRING -d $DB_NAME  --command  \
 
 echo create version table
 psql $DB_CONNECT_STRING -d $DB_NAME \
-     -f $DIR/updates/0000/01.add_schema_version.sql
+    -c "SET role $ROLE_NAME;" \
+    -f $DIR/updates/0000/01.add_schema_version.sql
 for d in "$DIR"/updates/* ; do
   new_ver=$( basename $d )
 done
@@ -75,10 +76,14 @@ psql $DB_CONNECT_STRING -d $DB_NAME --command \
      "INSERT INTO lada_schema_version(version) VALUES ($new_ver)"
 
 echo create stammdaten schema
-psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/stammdaten_schema.sql
+psql -q $DB_CONNECT_STRING -d $DB_NAME \
+    -c "SET role $ROLE_NAME;" \
+    -f $DIR/stammdaten_schema.sql
 
 echo create lada schema
-psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/lada_schema.sql
+psql -q $DB_CONNECT_STRING -d $DB_NAME \
+    -c "SET role $ROLE_NAME;" \
+    -f $DIR/lada_schema.sql
 
 echo create audit-trail table/trigger/views
 for file in \
@@ -86,16 +91,17 @@ for file in \
     audit_land.sql \
     lada_views.sql
 do
-    psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/$file
+    psql -q $DB_CONNECT_STRING -d $DB_NAME \
+        -c "SET role $ROLE_NAME;" \
+        -f $DIR/$file
 done
 
 echo set grants
-psql $DB_CONNECT_STRING -d $DB_NAME --command \
-     "GRANT USAGE ON SCHEMA stamm, land TO $ROLE_NAME;
-      GRANT USAGE
-            ON ALL SEQUENCES IN SCHEMA stamm, land TO $ROLE_NAME;
-      GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES
-            ON ALL TABLES IN SCHEMA stamm, land TO $ROLE_NAME;"
+psql $DB_CONNECT_STRING -d $DB_NAME \
+ --command "GRANT ALL ON ALL TABLES IN SCHEMA land TO lada;"\
+ --command "GRANT ALL ON ALL SEQUENCES IN SCHEMA land TO lada;"\
+ --command "GRANT ALL ON ALL TABLES IN SCHEMA stamm TO lada;"\
+ --command "GRANT ALL ON ALL SEQUENCES IN SCHEMA stamm TO lada;"
 
 echo download german administrative borders
 cd /tmp
@@ -117,11 +123,14 @@ do
     TABLE=$(echo $file_table | awk '{print $2}')
     shp2pgsql -p -s 25832:4326 \
         ${SHAPE_DIR}/VG250_${FILE} \
-        geo.vg250_${TABLE} | psql -q $DB_CONNECT_STRING -d $DB_NAME
+        geo.vg250_${TABLE} |\
+        sed "1iSET role $ROLE_NAME;" |\
+        psql -q $DB_CONNECT_STRING -d $DB_NAME
 done
 
 echo create verwaltungsgrenze view
 psql -q $DB_CONNECT_STRING -d $DB_NAME \
+    -c "SET role $ROLE_NAME;" \
     -f $DIR/stammdaten_verwaltungsgrenze_view.sql
 psql $DB_CONNECT_STRING -d $DB_NAME --command \
      "GRANT SELECT, REFERENCES ON TABLE stamm.verwaltungsgrenze TO $ROLE_NAME;"
