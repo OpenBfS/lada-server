@@ -682,11 +682,6 @@ CREATE TABLE gemeindeuntergliederung (
     gem_id character varying(8) NOT NULL REFERENCES verwaltungseinheit,
     ozk_id integer NOT NULL,
     gemeindeuntergliederung character varying(180),
-    kda_id integer REFERENCES koordinaten_art,
-    koord_x_extern character varying(22),
-    koord_y_extern character varying(22),
-    geom public.geometry(Point,4326),
-    shape public.geometry(MultiPolygon,4326),
     letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER letzte_aenderung_gemeindeuntergliederung BEFORE UPDATE ON gemeindeuntergliederung FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();

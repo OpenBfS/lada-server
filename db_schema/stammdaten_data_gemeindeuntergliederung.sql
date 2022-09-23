@@ -19,8 +19,8 @@ SET row_security = off;
 -- Data for Name: gemeindeuntergliederung; Type: TABLE DATA; Schema: stamm; Owner: postgres
 --
 
-COPY stamm.gemeindeuntergliederung (id, netzbetreiber_id, gem_id, ozk_id, gemeindeuntergliederung, kda_id, koord_x_extern, koord_y_extern, geom, shape, letzte_aenderung) FROM stdin;
-1	11	11000000	28	Johannisthal	1	5398276	5813574	0101000020E61000008CB96B09F9002B405BD3BCE314394A40	\N	2011-11-21 10:35:17
+COPY stamm.gemeindeuntergliederung (id, netzbetreiber_id, gem_id, ozk_id, gemeindeuntergliederung, letzte_aenderung) FROM stdin;
+1	11	11000000	28	Johannisthal	2011-11-21 10:35:17
 \.
 
 
