@@ -34,8 +34,6 @@ CREATE VIEW public.lada_meas_val AS
    FROM ((lada.meas_val
      JOIN lada.measm ON ((meas_val.measm_id = measm.id)))
      JOIN lada.status_prot ON (((measm.status = status_prot.id) AND (status_prot.status_comb <> 1))));
-ALTER TABLE public.lada_meas_val OWNER TO postgres;
-GRANT SELECT ON TABLE public.lada_meas_val TO lada;
 
 CREATE OR REPLACE VIEW lada.meas_val_view
  AS
@@ -54,7 +52,6 @@ CREATE OR REPLACE VIEW lada.meas_val_view
      JOIN lada.measm ON meas_val.measm_id = measm.id
      JOIN lada.status_prot ON measm.status = status_prot.id AND status_prot.status_comb <> 1;
 
-
 --
 -- Name: query_measm_view; Type: VIEW; Schema: lada; Owner: postgres
 --
@@ -64,6 +61,3 @@ CREATE OR REPLACE VIEW lada.query_measm_view
  SELECT DISTINCT status_prot.measm_id
    FROM lada.status_prot
   WHERE (status_prot.status_comb = ANY (ARRAY[9, 13]));
-ALTER TABLE lada.query_measm_view
-    OWNER TO postgres;
-GRANT SELECT ON TABLE lada.query_measm_view TO lada;

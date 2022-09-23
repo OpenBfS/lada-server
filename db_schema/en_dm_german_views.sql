@@ -1103,5 +1103,3 @@ CREATE VIEW public.lada_messwert AS
    FROM ((lada.meas_val
      JOIN lada.measm ON ((meas_val.measm_id = measm.id)))
      JOIN lada.status_prot ON (((measm.status = status_prot.id) AND (status_prot.status_comb <> 1))));
-ALTER TABLE public.lada_messwert OWNER TO postgres;
-GRANT SELECT ON TABLE public.lada_messwert TO lada;
