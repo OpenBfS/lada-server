@@ -31,6 +31,7 @@ import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.stammdaten.Auth;
 import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
+import de.intevation.lada.model.stammdaten.GemeindeUntergliederung;
 import de.intevation.lada.model.stammdaten.LadaUser;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Ort;
@@ -133,6 +134,7 @@ public class HeaderAuthorization implements Authorization {
             Map.entry(StatusProtokoll.class, mIdAuthorizer),
             Map.entry(Probenehmer.class, netzAuthorizer),
             Map.entry(DatensatzErzeuger.class, netzAuthorizer),
+            Map.entry(GemeindeUntergliederung.class, netzAuthorizer),
             Map.entry(MessprogrammKategorie.class, netzAuthorizer),
             Map.entry(Ort.class, netzAuthorizer),
             Map.entry(Messprogramm.class, messprogrammAuthorizer),
