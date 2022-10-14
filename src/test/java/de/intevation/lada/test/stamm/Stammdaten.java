@@ -248,5 +248,6 @@ public class Stammdaten extends ServiceTest {
         MatcherAssert.assertThat(content.getJsonObject("data").keySet(),
             matchers.get(type));
         prot.addInfo("object", "equals");
+        prot.setPassed(true);
     }
 }
