@@ -20,12 +20,10 @@ import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
 
-import org.jboss.logging.Logger;
+
 
 @ValidationRule("Ort")
 public class ValidREIMesspunkt implements Rule {
-    @Inject
-    private Logger logger;
 
     @Inject
     private Repository repository;
@@ -35,8 +33,7 @@ public class ValidREIMesspunkt implements Rule {
         Ort ort = (Ort) object;
 
         Violation violation = new Violation();
-
-        if (ort.getOrtTyp() != 3) {
+        if ( ort == null || ort.getOrtTyp()==null || ort.getOrtTyp() != 3)  {
             return null;
         }
 
@@ -51,23 +48,23 @@ public class ValidREIMesspunkt implements Rule {
                 violation.addWarning("ortId", StatusCodes.VALUE_OUTSIDE_RANGE);
             } else {
                 String KTAOrtId = ort.getOrtId().substring(0,4);
-                logger.debug("OrtId substring: " + KTAOrtId);
                 QueryBuilder<Kta> builderKtaList =
                     repository.queryBuilder(Kta.class);
                     builderKtaList.and("code", KTAOrtId);
                 List<Kta> KtaList = repository.filterPlain(builderKtaList.getQuery());
 
-                if (KtaList.size() < 1) {
+                if (KtaList.size() < 1 || KtaList == null) {
                     violation.addWarning("ortId", StatusCodes.ORT_ANLAGE_MISSING);
-
+                    return violation;
                 }
 
                 for (KtaGrpZuord kta : ktas){
-                    if ( (KtaList.size()>0 || KtaList==null) && kta.getKtaId() != KtaList.get(0).getId() ) {
+                    if ( kta.getKtaId() != KtaList.get(0).getId() ) {
                         violation.addWarning("ktaGruppeId", StatusCodes.VALUE_NOT_MATCHING);
-                    } else if ( ort.getOrtId().length() < 5  && kta.getKtaId() == KtaList.get(0).getId() ){
+                    } else if ( ort.getOrtId().length() < 5
+                        && kta.getKtaId() == KtaList.get(0).getId() ){
                         violation.addWarning("ortId", StatusCodes.ORT_REIMP_MISSING);
-                    } else if ( ort.getOrtId().length() > 12  && kta.getKtaId() == KtaList.get(0).getId() ){
+                    } else if (  ort.getOrtId().length() > 12  && kta.getKtaId() == KtaList.get(0).getId() ){
                         violation.addWarning("ortId", StatusCodes.ORT_REIMP_TOO_LONG);
                     } else {
                         break;

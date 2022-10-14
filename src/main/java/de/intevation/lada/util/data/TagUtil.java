@@ -13,7 +13,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -91,7 +90,7 @@ public class TagUtil {
 
         //Create next tag
         Tag currentTag = new Tag();
-        currentTag.setGenerated(true);
+        currentTag.setAutoTag(true);
         currentTag.setNetzbetreiberId(netzbetreiberId);
         currentTag.setTypId(Tag.TAG_TYPE_NETZBETREIBER);
         currentTag.setTag(prefix + "_" + today + "_" + serNumber);
@@ -109,10 +108,9 @@ public class TagUtil {
      * Sets tags for the given probe records an connected messung records.
      * @param probeIds Probe ids to set tags for
      * @param tagId Tag id to set
-     * @return List of created tag references
      */
-    public List<TagZuordnung> setTagsByProbeIds(
-            List<Integer> probeIds, Integer tagId
+    public void setTagsByProbeIds(
+        List<Integer> probeIds, Integer tagId
     ) {
         // TODO: Instead of using IDs as parameters, pass the objects directly
         // instead of fetching them from the database again, whenever possible.
@@ -126,13 +124,11 @@ public class TagUtil {
             .getQuery());
 
         //Set tags
-        List<TagZuordnung> zuordnungs = new ArrayList<TagZuordnung>();
         probes.forEach(probe -> {
             TagZuordnung zuordnung = new TagZuordnung();
             zuordnung.setTagId(tagId);
             zuordnung.setProbeId(probe.getId());
             repository.create(zuordnung);
-            zuordnungs.add(zuordnung);
         });
 
         messungs.forEach(messung -> {
@@ -140,9 +136,7 @@ public class TagUtil {
             zuordnung.setTagId(tagId);
             zuordnung.setMessungId(messung.getId());
             repository.create(zuordnung);
-            zuordnungs.add(zuordnung);
         });
-        return zuordnungs;
     }
 
     /**

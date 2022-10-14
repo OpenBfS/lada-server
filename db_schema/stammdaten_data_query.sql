@@ -52,7 +52,7 @@ COPY stamm.base_query (id, sql) FROM stdin;
 60	SELECT netz_betreiber.id AS netzId,\n netz_betreiber.netzbetreiber AS netzbetreiber,\n netz_betreiber.idf_netzbetreiber AS netzIdf,\n netz_betreiber.is_bmn AS netzBmn\n FROM stamm.netz_betreiber
 61	SELECT proben_zusatz.id AS pzsId,\n proben_zusatz.zusatzwert AS pzsBez,\n proben_zusatz.beschreibung AS pzsBeschr,\n mess_einheit.einheit AS pzsEinheit,\n proben_zusatz.eudf_keyword AS pzsEudf\n FROM stamm.proben_zusatz\n LEFT JOIN stamm.mess_einheit ON (proben_zusatz.meh_id = mess_einheit.id)
 62	SELECT rei_progpunkt_gruppe.id AS reiproggrpId,\n rei_progpunkt_gruppe.rei_prog_punkt_gruppe AS reiproggrp,\n rei_progpunkt_gruppe.beschreibung AS reiproggrpbeschr\n FROM stamm.rei_progpunkt_gruppe
-63	SELECT tag.id AS tagId,\n tag.tag,\n tag.mst_id AS mstId,\n tag.netzbetreiber AS netzId,\n lada_user.name AS username,\n tag.typ,\n tag.gueltig_bis AS gueltigBis,\n tag.generated_at AS generatedAt\n FROM stamm.tag\n LEFT JOIN stamm.lada_user ON tag.user_id = lada_user.id
+63	SELECT tag.id AS tagId,\n tag.tag,\n tag.mst_id AS mstId,\n tag.netzbetreiber_id AS netzId,\n lada_user.name AS username,\n tag.tag_typ AS tagTyp,\n tag.gueltig_bis AS gueltigBis,\n tag.created_at AS createdAt\n FROM stamm.tag\n LEFT JOIN stamm.lada_user ON tag.user_id = lada_user.id
 \.
 
 
@@ -982,9 +982,9 @@ COPY stamm.grid_column (id, base_query, name, data_index, "position", filter, da
 6303	63	Messstelle	mstId	3	131	10
 6304	63	Netzbetreiber	netzId	4	130	18
 6305	63	Eigentümer	username	5	\N	1
-6306	63	Typ	typ	6	132	44
+6306	63	Typ	tagTyp	6	132	44
 6307	63	Gültig bis	gueltigBis	7	\N	2
-6308	63	Generiert	generatedAt	8	\N	2
+6308	63	Generiert	createdAt	8	\N	2
 \.
 
 

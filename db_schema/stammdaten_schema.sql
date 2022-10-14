@@ -682,11 +682,6 @@ CREATE TABLE gemeindeuntergliederung (
     gem_id character varying(8) NOT NULL REFERENCES verwaltungseinheit,
     ozk_id integer NOT NULL,
     gemeindeuntergliederung character varying(180),
-    kda_id integer REFERENCES koordinaten_art,
-    koord_x_extern character varying(22),
-    koord_y_extern character varying(22),
-    geom public.geometry(Point,4326),
-    shape public.geometry(MultiPolygon,4326),
     letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER letzte_aenderung_gemeindeuntergliederung BEFORE UPDATE ON gemeindeuntergliederung FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
@@ -694,7 +689,7 @@ CREATE TRIGGER letzte_aenderung_gemeindeuntergliederung BEFORE UPDATE ON gemeind
 CREATE TABLE ort (
     id serial PRIMARY KEY,
     netzbetreiber_id character varying(2) NOT NULL REFERENCES netz_betreiber,
-    ort_id character varying(13) NOT NULL,
+    ort_id character varying(20) NOT NULL,
     langtext character varying(100) NOT NULL,
     staat_id smallint REFERENCES staat,
     gem_id character varying(8) REFERENCES verwaltungseinheit,
@@ -738,11 +733,13 @@ CREATE TRIGGER letzte_aenderung_ortszuordnung_typ BEFORE UPDATE ON stamm.ortszuo
 CREATE TABLE pflicht_messgroesse (
     id serial PRIMARY KEY,
     messgroesse_id integer NOT NULL REFERENCES messgroesse,
-    mmt_id character varying(2) REFERENCES mess_methode,
-    umw_id character varying(3) REFERENCES umwelt,
+    mmt_id character varying(2) NOT NULL REFERENCES mess_methode,
+    umw_id character varying(3) NOT NULL REFERENCES umwelt,
     datenbasis_id smallint NOT NULL REFERENCES datenbasis,
     letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
+ALTER TABLE IF EXISTS pflicht_messgroesse
+    ADD CONSTRAINT pflicht_messgroesse_unique UNIQUE (messgroesse_id, mmt_id, umw_id, datenbasis_id);
 CREATE TRIGGER letzte_aenderung_pflicht_messgroesse BEFORE UPDATE ON stamm.pflicht_messgroesse FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
 
 CREATE TABLE proben_zusatz (
@@ -860,7 +857,7 @@ CREATE TABLE status_reihenfolge (
 
 CREATE TABLE stamm.tag_typ (id text PRIMARY KEY, tagtyp TEXT);
 INSERT INTO stamm.tag_typ VALUES('global', 'Global');
-INSERT INTO stamm.tag_typ VALUES('netzbetreiber', 'Netzbetreiber');
+INSERT INTO stamm.tag_typ VALUES('netz', 'Netzbetreiber');
 INSERT INTO stamm.tag_typ VALUES('mst', 'Messstelle');
 
 /*
@@ -1010,15 +1007,15 @@ CREATE TABLE tag (
     id serial PRIMARY KEY,
     tag text NOT NULL,
     mst_id character varying REFERENCES stamm.mess_stelle(id),
-    generated boolean NOT NULL DEFAULT false,
-    netzbetreiber varchar(2) REFERENCES stamm.netz_betreiber,
+    auto_tag boolean NOT NULL DEFAULT false,
+    netzbetreiber_id varchar(2) REFERENCES stamm.netz_betreiber,
     user_id INTEGER REFERENCES stamm.lada_user,
-    typ TEXT REFERENCES stamm.tag_typ NOT NULL,
+    tag_typ TEXT REFERENCES stamm.tag_typ NOT NULL,
     gueltig_bis TIMESTAMP without time zone,
-    generated_at TIMESTAMP without time zone NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-    UNIQUE(tag, mst_id)
+    created_at TIMESTAMP without time zone NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE(tag, netzbetreiber_id, mst_id)
 );
-CREATE UNIQUE INDEX gen_tag_unique_idx ON stamm.tag (tag) WHERE generated = true;
+CREATE UNIQUE INDEX auto_tag_unique_idx ON stamm.tag (tag) WHERE auto_tag = true;
 
 CREATE TABLE stamm.tm_fm_umrechnung(
   id serial NOT NULL PRIMARY KEY,	

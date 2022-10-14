@@ -356,7 +356,8 @@ public class ProbeService extends LadaService {
             // because authorization should ensure this.
             // TODO: Pick the correct instead of the first Netzbetreiber
             Response tagCreation = tagUtil.generateTag(
-                "PEP", authorization.getInfo().getNetzbetreiber().get(0));
+                "PEP", List.copyOf(authorization.getInfo().getNetzbetreiber())
+                    .get(0));
             if (tagCreation.getSuccess()) {
                 Tag newTag = (Tag) tagCreation.getData();
                 tagUtil.setTagsByProbeIds(generatedProbeIds, newTag.getId());

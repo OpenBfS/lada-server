@@ -66,6 +66,9 @@ public class Probenehmer implements Serializable {
     private String typ;
 
     @Transient
+    private Integer referenceCount;
+
+    @Transient
     private boolean readonly;
 
     public Probenehmer() {
@@ -191,6 +194,13 @@ public class Probenehmer implements Serializable {
         this.typ = typ;
     }
 
+    public Integer getReferenceCount() {
+        return this.referenceCount;
+    }
+
+    public void setReferenceCount(Integer referenceCount) {
+        this.referenceCount = referenceCount;
+    }
     /**
      * @return the readonly
      */

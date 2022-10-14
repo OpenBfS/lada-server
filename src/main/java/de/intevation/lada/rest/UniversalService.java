@@ -15,6 +15,8 @@ import javax.inject.Inject;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.MultivaluedHashMap;
 
 import de.intevation.lada.model.QueryColumns;
 import de.intevation.lada.model.land.Messprogramm;
@@ -145,68 +147,77 @@ public class UniversalService extends LadaService {
             columnValue.setGridColumn(gridColumn);
         }
 
-        QueryTools queryTools = new QueryTools(
-            repository, columns.getColumns());
-        List<Map<String, Object>> result = queryTools.getResultForQuery(
-            start, limit);
+        try {
+            QueryTools queryTools = new QueryTools(
+                repository, columns.getColumns());
+            List<Map<String, Object>> result = queryTools.getResultForQuery(
+                start, limit);
 
-        if (result == null) {
-            return new Response(true, StatusCodes.OK, null);
-        }
+            if (result == null) {
+                return new Response(true, StatusCodes.OK, null);
+            }
 
-        // TODO: This issues a potentially costly 'SELECT count(*)'
-        // for every request. Better not to rely on total count at client side?
-        int size = queryTools.getTotalCountForQuery();
-        boolean doAuthorize = true;
-        if (result.size() > 500) {
-            doAuthorize = false;
-        }
+            // TODO: This issues a potentially costly 'SELECT count(*)'
+            // for every request. Better not to rely on total count at client side?
+            int size = queryTools.getTotalCountForQuery();
+            boolean doAuthorize = true;
+            if (result.size() > 500) {
+                doAuthorize = false;
+            }
 
-        for (Map<String, Object> row: result) {
-            Object idToAuthorize = row.get(authorizationColumnIndex);
-            boolean readonly;
-            if (doAuthorize) {
-                if (idToAuthorize != null) {
-                    //If column is an ort, get Netzbetreiberid
-                    if (authorizationColumnType == Ort.class) {
-                        Ort ort = repository.getByIdPlain(
-                            Ort.class, idToAuthorize);
-                        idToAuthorize = ort.getNetzbetreiberId();
-                    }
-                    if (authorizationColumnType == DatensatzErzeuger.class) {
-                        DatensatzErzeuger de = repository.getByIdPlain(
-                            DatensatzErzeuger.class, idToAuthorize);
-                        idToAuthorize = de.getNetzbetreiberId();
-                    }
-                    if (authorizationColumnType == Probenehmer.class) {
-                        Probenehmer pn = repository.getByIdPlain(
-                            Probenehmer.class, idToAuthorize);
-                        idToAuthorize = pn.getNetzbetreiberId();
-                    }
-                    if (authorizationColumnType == MessprogrammKategorie.class) {
-                        MessprogrammKategorie mk = repository.getByIdPlain(
-                            MessprogrammKategorie.class, idToAuthorize);
-                        idToAuthorize = mk.getNetzbetreiberId();
-                    }
-                    if (authorizationColumnType == Tag.class) {
-                        Tag tag = repository.getByIdPlain(
-                            Tag.class, idToAuthorize);
-                        idToAuthorize = tag.getId();
-                    }
+            for (Map<String, Object> row: result) {
+                Object idToAuthorize = row.get(authorizationColumnIndex);
+                boolean readonly;
+                if (doAuthorize) {
+                    if (idToAuthorize != null) {
+                        //If column is an ort, get Netzbetreiberid
+                        if (authorizationColumnType == Ort.class) {
+                            Ort ort = repository.getByIdPlain(
+                                Ort.class, idToAuthorize);
+                            idToAuthorize = ort.getNetzbetreiberId();
+                        }
+                        if (authorizationColumnType == DatensatzErzeuger.class) {
+                            DatensatzErzeuger de = repository.getByIdPlain(
+                                DatensatzErzeuger.class, idToAuthorize);
+                            idToAuthorize = de.getNetzbetreiberId();
+                        }
+                        if (authorizationColumnType == Probenehmer.class) {
+                            Probenehmer pn = repository.getByIdPlain(
+                                Probenehmer.class, idToAuthorize);
+                            idToAuthorize = pn.getNetzbetreiberId();
+                        }
+                        if (authorizationColumnType == MessprogrammKategorie.class) {
+                            MessprogrammKategorie mk = repository.getByIdPlain(
+                                MessprogrammKategorie.class, idToAuthorize);
+                            idToAuthorize = mk.getNetzbetreiberId();
+                        }
+                        if (authorizationColumnType == Tag.class) {
+                            Tag tag = repository.getByIdPlain(
+                                Tag.class, idToAuthorize);
+                            idToAuthorize = tag.getId();
+                        }
 
-                    readonly = !authorization.isAuthorizedById(
-                        idToAuthorize,
-                        RequestMethod.PUT,
-                        authorizationColumnType);
+                        readonly = !authorization.isAuthorizedById(
+                            idToAuthorize,
+                            RequestMethod.PUT,
+                            authorizationColumnType);
+                    } else {
+                        readonly = true;
+                    }
                 } else {
                     readonly = true;
                 }
-            } else {
-                readonly = true;
+                row.put("readonly", readonly);
             }
-            row.put("readonly", readonly);
-        }
 
-        return new Response(true, StatusCodes.OK, result, size);
+            return new Response(true, StatusCodes.OK, result, size);
+        } catch (IllegalArgumentException iae) {
+            Response r = new Response(false, StatusCodes.SQL_INVALID_FILTER, null);
+            MultivaluedMap<String, Integer> error =
+                new MultivaluedHashMap<String, Integer>();
+            error.add(iae.getMessage(), StatusCodes.SQL_INVALID_FILTER);
+            r.setErrors(error);
+            return r;
+        }
     }
 }

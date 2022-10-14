@@ -17,8 +17,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.stammdaten.Probenehmer;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.stammdaten.GemeindeUntergliederung;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -30,7 +29,7 @@ import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for Probenehmer objects.
+ * REST service for GemeindeUntergliederung objects.
  * <p>
  * The services produce data in the application/json media type.
  * A typical response holds information about the action performed and the data.
@@ -41,20 +40,10 @@ import de.intevation.lada.rest.LadaService;
  *  "message": [string],
  *  "data":[{
  *      "id": [number],
- *      "bearbeiter": [string],
- *      "bemerkung": [string],
- *      "betrieb": [string],
- *      "bezeichnung": [string]",
- *      "kurzBezeichnung": [string],
+ *      "netzbetreiber_id": [string],
+ *      "gemId": [string],
+ *      "ozkId": [number],
  *      "letzteAenderung": [timestamp],
- *      "netzbetreiberId": [string]
- *      "ort": [string],
- *      "plz": [string],
- *      "prnId": [string],
- *      "strasse": [string],
- *      "telefon": [string],
- *      "tourenplan": [string],
- *      "typ": [string],
  *      "readonly": [boolean]
  *  }],
  *  "errors": [object],
@@ -68,8 +57,8 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/probenehmer")
-public class ProbenehmerService extends LadaService {
+@Path("rest/gemeindeuntergliederung")
+public class GemeindeUntergliederungService extends LadaService {
 
     /**
      * The data repository granting read access.
@@ -82,30 +71,28 @@ public class ProbenehmerService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get all Probenehmer objects.
-     * <p>
-     * Example: http://example.com/probenehmer
+     * Get all GemeindeUntergliederung objects.
      *
-     * @return Response object containing all objects.
+     * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get() {
-        List<Probenehmer> nehmer =
-            repository.getAllPlain(Probenehmer.class);
-        for (Probenehmer p : nehmer) {
+        List<GemeindeUntergliederung> gemUntergliederung =
+            repository.getAllPlain(GemeindeUntergliederung.class);
+        for (GemeindeUntergliederung gu: gemUntergliederung) {
             // TODO Do not iterate all the objects if its not necessary
-            p.setReadonly(true);
+            gu.setReadonly(true);
                 // !authorization.isAuthorized(
-                //     p,
+                //     gu,
                 //     RequestMethod.POST,
-                //     Probenehmer.class));
+                //     GemeindeUntergliederung.class));
         }
-        return new Response(true, StatusCodes.OK, nehmer, nehmer.size());
+        return new Response(true, StatusCodes.OK, gemUntergliederung, gemUntergliederung.size());
     }
 
     /**
-     * Get a single Datenbasis object by id.
+     * Get a single object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single object.
@@ -115,39 +102,38 @@ public class ProbenehmerService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        Probenehmer p = repository.getByIdPlain(Probenehmer.class, id);
-        p.setReadonly(
+        GemeindeUntergliederung gu = repository.getByIdPlain(
+            GemeindeUntergliederung.class, id);
+        gu.setReadonly(
             !authorization.isAuthorized(
-                p,
+                gu,
                 RequestMethod.POST,
-                Probenehmer.class
+                GemeindeUntergliederung.class
             )
         );
-        List<Probe> referencedProbes = getPRNZuordnungs(p);
-        p.setReferenceCount(referencedProbes.size());
-        return new Response(true, StatusCodes.OK, p);
+        return new Response(true, StatusCodes.OK, gu);
     }
 
     @POST
     @Path("/")
     public Response create(
-        Probenehmer probenehmer
+        GemeindeUntergliederung gemUntergliederung
     ) {
         if (!authorization.isAuthorized(
-            probenehmer,
+            gemUntergliederung,
             RequestMethod.POST,
-            Probenehmer.class)
+            GemeindeUntergliederung.class)
         ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, probenehmer);
+            return new Response(false, StatusCodes.NOT_ALLOWED, gemUntergliederung);
         }
-        QueryBuilder<Probenehmer> builder =
-            repository.queryBuilder(Probenehmer.class);
-        builder.and("prnId", probenehmer.getPrnId());
-        builder.and("netzbetreiberId", probenehmer.getNetzbetreiberId());
-        List<Probenehmer> nehmer =
+        QueryBuilder<GemeindeUntergliederung> builder =
+            repository.queryBuilder(GemeindeUntergliederung.class);
+        builder.and("ozkId", gemUntergliederung.getOzkId());
+        builder.and("netzbetreiberId", gemUntergliederung.getNetzbetreiberId());
+        List<GemeindeUntergliederung> gemUntergliederungn =
             repository.filterPlain(builder.getQuery());
-        if (nehmer.isEmpty()) {
-            return repository.create(probenehmer);
+        if (gemUntergliederungn.isEmpty()) {
+            return repository.create(gemUntergliederung);
         }
         return new Response(false, StatusCodes.IMP_DUPLICATE, null);
     }
@@ -156,27 +142,27 @@ public class ProbenehmerService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        Probenehmer probenehmer
+        GemeindeUntergliederung gemUntergliederung
     ) {
         if (!authorization.isAuthorized(
-            probenehmer,
+            gemUntergliederung,
             RequestMethod.PUT,
-            Probenehmer.class)
+            GemeindeUntergliederung.class)
         ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, probenehmer);
+            return new Response(false, StatusCodes.NOT_ALLOWED, gemUntergliederung);
         }
-        QueryBuilder<Probenehmer> builder =
-            repository.queryBuilder(Probenehmer.class);
-        builder.and("prnId", probenehmer.getPrnId());
-        builder.and("netzbetreiberId", probenehmer.getNetzbetreiberId());
-        List<Probenehmer> nehmer =
+        QueryBuilder<GemeindeUntergliederung> builder =
+            repository.queryBuilder(GemeindeUntergliederung.class);
+        builder.and("ozkId", gemUntergliederung.getOzkId());
+        builder.and("netzbetreiberId", gemUntergliederung.getNetzbetreiberId());
+        List<GemeindeUntergliederung> gemUntergliederungn =
             repository.filterPlain(builder.getQuery());
-        if (!nehmer.isEmpty()
-            && !nehmer.get(0).getId().equals(probenehmer.getId())
+        if (!gemUntergliederungn.isEmpty()
+            && !gemUntergliederungn.get(0).getId().equals(gemUntergliederung.getId())
         ) {
             return new Response(false, StatusCodes.IMP_DUPLICATE, null);
         }
-        return repository.update(probenehmer);
+        return repository.update(gemUntergliederung);
     }
 
     @DELETE
@@ -184,28 +170,17 @@ public class ProbenehmerService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        Probenehmer probenehmer = repository.getByIdPlain(
-            Probenehmer.class, id);
-        if (probenehmer == null
+        GemeindeUntergliederung gemUntergliederung = repository.getByIdPlain(
+            GemeindeUntergliederung.class, id);
+        if (gemUntergliederung == null
             || !authorization.isAuthorized(
-                probenehmer,
+                gemUntergliederung,
                 RequestMethod.DELETE,
-                Probenehmer.class
+                GemeindeUntergliederung.class
             )
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        if (getPRNZuordnungs(probenehmer).size() > 0) {
-            return new Response(false, StatusCodes.ERROR_DELETE, probenehmer);
-        }
-        return repository.delete(probenehmer);
-    }
-
-    private List<Probe> getPRNZuordnungs(Probenehmer probenehmer) {
-            //check for references
-            QueryBuilder<Probe> refBuilder =
-            repository.queryBuilder(Probe.class);
-            refBuilder.and("probeNehmerId", probenehmer.getId());
-            return repository.filterPlain(refBuilder.getQuery());
+        return repository.delete(gemUntergliederung);
     }
 }

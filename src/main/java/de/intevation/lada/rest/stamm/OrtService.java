@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.json.JsonArray;
-import javax.json.JsonNumber;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -254,51 +252,6 @@ public class OrtService extends LadaService {
                 ort.setNotifications(violation.getNotifications());
             }
         return new Response(true, StatusCodes.OK, ort);
-    }
-
-    /**
-     * Get multiple Ort object by ids.
-     * <p>
-     * The ids are send as array in the POST request.
-     * <p>
-     * Example: http://example.com/rest/ort/getbyids
-     *     payload: "[1,2,3]"
-     *
-     * @return Response object containing multiple Ort objects.
-     */
-    @POST
-    @Path("/getbyids")
-    public Response getByIds(
-        JsonArray ids
-    ) {
-        QueryBuilder<Ort> builder = repository.queryBuilder(Ort.class);
-        List<JsonNumber> idList = ids.getValuesAs(JsonNumber.class);
-        if (idList.size() > 0) {
-            List<Integer> intList = new ArrayList<>();
-            for (JsonNumber id : idList) {
-                intList.add(id.intValue());
-            }
-
-            builder.andIn("id", intList);
-
-            List<Ort> orte =
-                repository.filterPlain(builder.getQuery());
-            for (Ort o : orte) {
-                List<Ortszuordnung> zuordnungs = getOrtsZuordnungs(o);
-                o.setReferenceCount(zuordnungs.size());
-                o.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
-                List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(o);
-                o.setReferenceCountMp(zuordnungsMp.size());
-
-                o.setReadonly(
-                    !authorization.isAuthorized(
-                        o,
-                        RequestMethod.PUT,
-                        Ort.class));
-            }
-            return new Response(true, StatusCodes.OK, orte, orte.size());
-        }
-        return new Response(true, StatusCodes.OK, null, 0);
     }
 
     /**

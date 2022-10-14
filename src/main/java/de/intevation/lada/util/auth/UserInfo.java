@@ -8,7 +8,9 @@
 package de.intevation.lada.util.auth;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.intevation.lada.model.stammdaten.Auth;
 
@@ -141,8 +143,8 @@ public class UserInfo {
     /**
      * @return the netzbetreiber
      */
-    public List<String> getNetzbetreiber() {
-        List<String> ret = new ArrayList<String>();
+    public Set<String> getNetzbetreiber() {
+        Set<String> ret = new HashSet<>();
         for (Auth a : auth) {
             if (a.getNetzbetreiberId() != null) {
                 ret.add(a.getNetzbetreiberId());

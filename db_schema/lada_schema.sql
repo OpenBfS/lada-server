@@ -358,7 +358,6 @@ CREATE TABLE zusatz_wert (
     messwert_pzs double precision,
     messfehler real,
     letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    nwg_zu_messwert double precision,
     kleiner_als character varying(1),
     tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE (probe_id, pzs_id)

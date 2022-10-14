@@ -408,7 +408,11 @@ public class AuditTrailService extends LadaService {
             query.setParameter("id", id);
         }
         List<?> result = query.getResultList();
-        return result.get(0).toString();
+        if (!result.isEmpty() ){
+            return result.get(0).toString();
+        } else {
+            return "(Object wurde gelöscht)";
+        }
     }
 
     private Long formatDate(String format, String date) {
