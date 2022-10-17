@@ -233,6 +233,9 @@ public class OrtService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Ort ort = repository.getByIdPlain(Ort.class, id);
+        if (ort == null) {
+            return new Response(false, StatusCodes.NOT_EXISTING, null);
+        }
         List<Ortszuordnung> zuordnungs = getOrtsZuordnungs(ort);
         ort.setReferenceCount(zuordnungs.size());
         ort.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
