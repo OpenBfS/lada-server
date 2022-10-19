@@ -28,7 +28,7 @@ SET SESSION AUTHORIZATION DEFAULT;
 
 ALTER TABLE sample DISABLE TRIGGER ALL;
 
-COPY sample (id, sample_ext_id, is_test, meas_facil_id, appr_lab_id, main_sample_id, regulation_id, opr_mode_id, sample_meth_id, env_descrip_display, env_descrip_name, env_medium_id, sample_start_date, sample_end_date, mid_sample_date, last_mod, dataset_creator_id, sampleer_id, state_mpg_id, mpg_id, sched_start_date, sched_end_date, tree_mod) FROM stdin;
+COPY sample (id, sample_ext_id, is_test, meas_facil_id, appr_lab_id, main_sample_id, regulation_id, opr_mode_id, sample_meth_id, env_descrip_display, env_descrip_name, env_medium_id, sample_start_date, sample_end_date, mid_sample_date, last_mod, dataset_creator_id, sampler_id, state_mpg_id, mpg_id, sched_start_date, sched_end_date, tree_mod) FROM stdin;
 660	000007590041X	t	12020	12020	N0013KE12	2	1	1	D: 01 03 52 02 00 00 00 00 00 00 00 00	Schafkäse	N92	2012-01-26 11:30:00+01	\N	\N	2017-03-22 20:10:18.048436	\N	784	\N	\N	2012-01-01 00:00:00	2012-01-31 21:59:59	2017-03-22 20:10:18.048436
 409	000007589343X	t	12010	12010	A0239MP12	2	1	1	D: 01 02 07 03 00 00 00 00 00 00 00 00	Magermilchpulver	N94	2012-03-15 11:00:00+01	\N	\N	2017-03-22 20:10:18.048436	\N	1199	\N	\N	2012-03-01 00:00:00	2012-03-31 21:59:59	2017-03-22 20:10:18.048436
 42	000007578227X	t	06010	06010	120109003	2	1	1	D: 01 03 26 03 04 02 00 00 00 00 00 00	Frischkäse Fettstufe auch mit Gewürzen/Kräutern	N91	2012-01-04 08:00:00+01	\N	\N	2017-03-22 20:10:18.048436	\N	734	\N	\N	2012-01-01 00:00:00	2012-01-31 21:59:59	2017-03-22 20:10:18.048436
@@ -250,7 +250,7 @@ SELECT setval(pg_get_serial_sequence('comm_sample', 'id'),
 
 ALTER TABLE meas_val DISABLE TRIGGER ALL;
 
-COPY meas_val (id, measm_id, measd_id, less_than_LOD, name, meas_err, detect_lim, unit_id, is_threshold, last_mod, tree_mod) FROM stdin;
+COPY meas_val (id, measm_id, measd_id, less_than_LOD, meas_val, meas_err, detect_lim, unit_id, is_threshold, last_mod, tree_mod) FROM stdin;
 6076	179	28	\N	19	4.5	\N	67	\N	2012-02-22 12:38:39	2016-03-17 09:19:04.94469
 3820	198	28	\N	500	2.5	\N	64	\N	2012-03-26 16:31:35	2016-03-17 09:19:04.94469
 3825	198	373	\N	1.70000005	3.2	\N	64	\N	2012-03-26 16:31:35	2016-03-17 09:19:04.94469
@@ -784,7 +784,7 @@ SELECT setval(pg_get_serial_sequence('meas_val', 'id'),
 
 ALTER TABLE geolocat DISABLE TRIGGER ALL;
 
-COPY geolocat (id, sample_id, site_id, type_regulation, add_site_text, last_mod, tree_mod) FROM stdin;
+COPY geolocat (id, sample_id, site_ext_id, type_regulation, add_site_text, last_mod, tree_mod) FROM stdin;
 614	660	97	E	\N	2013-08-12 07:57:26.600695	2016-03-17 09:19:04.94469
 297	409	69	E	\N	2013-08-12 07:57:26.600695	2016-03-17 09:19:04.94469
 820	42	23	E	\N	2013-08-12 07:57:26.600695	2016-03-17 09:19:04.94469
@@ -964,7 +964,7 @@ SELECT setval(pg_get_serial_sequence('status_prot', 'id'),
 
 ALTER TABLE sample_specif_meas_val DISABLE TRIGGER ALL;
 
-COPY sample_specif_meas_val (id, sample_id, sample_specif_id, meas_val, error, last_mod, tree_mod) FROM stdin;
+COPY sample_specif_meas_val (id, sample_id, sample_specif_id, meas_val, meas_err, last_mod, tree_mod) FROM stdin;
 1	84	A76	7.5	48	2012-04-23 12:32:56	2016-03-17 09:19:04.94469
 26	186	A78	0	0	2016-03-07 12:32:37	2016-03-17 09:19:04.94469
 21	157	A78	0	2	2016-03-07 10:26:00	2016-03-17 09:19:04.94469

@@ -126,6 +126,9 @@ psql -q $DB_CONNECT_STRING -d $DB_NAME \
 psql $DB_CONNECT_STRING -d $DB_NAME --command \
      "GRANT SELECT, REFERENCES ON TABLE master.admin_border_view TO $ROLE_NAME;"
 
+echo create german views
+psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/en_dm_german_views.sql
+
 if [ "$NO_DATA" != "true" ]; then
     echo import german administrative borders
     for file_table in "GEM gem" "KRS kr" "RBZ rb" "LAN bl"
@@ -185,6 +188,7 @@ if [ "$NO_DATA" != "true" ]; then
         master_data_tag.sql\
         lada_data.sql \
         lada_mpg.sql
+	
     do
         [ -f private_${file} ] && file=private_${file}
         echo "  ${file%.sql}"

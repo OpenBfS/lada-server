@@ -22,10 +22,10 @@ SET search_path = master, pg_catalog;
 --
 -- TOC entry 4713 (class 0 OID 535818)
 -- Dependencies: 279
--- Data for Name: sampleer; Type: TABLE DATA; Schema: master; Owner: lada
+-- Data for Name: sampler; Type: TABLE DATA; Schema: master; Owner: lada
 --
 
-COPY sampleer (id, network_id, sampleer_ext_id, editor, comm, inst, descr, short_text, city, zip, street, phone, route_planning, type, last_mod) FROM stdin;
+COPY sampler (id, network_id, sampler_ext_id, editor, comm, inst, descr, short_text, city, zip, street, phone, route_planning, type, last_mod) FROM stdin;
 724	06	AV18	\N	\N	\N	Stadt Kassel - Veterinärdienst und Lebensmittelüberwachung	AVV Kassel	Kassel	34117	Kurt Schumacher Straße 31	\N	\N	\N	2000-01-01 00:00:00
 726	06	AV24	\N	\N	\N	Stadt Wiesbaden - Amt f. Veterinärwesen u. Verbraucherschutz	AVV Wiesb	Wiesbaden	65187	Teutonenstraße 1	\N	\N	\N	2000-01-01 00:00:00
 727	06	AV0	\N	\N	\N	Rheingau-Taunus Kreis - RD III.8 Verbraucherschutz u. Veterinärwesen	AVV RhgTns	Bad Schwalbach	65307	Heimbacher Straße 7	\N	\N	\N	2000-01-01 00:00:00

@@ -20,8 +20,8 @@ CREATE FUNCTION set_site_id() RETURNS trigger
     DECLARE value text;
     BEGIN
         value = '#'::text || lpad(NEW.id::text, 9, '0'::text);
-        IF NEW.ext_id IS NULL THEN
-            NEW.ext_id = value;
+        IF NEW.site_ext_id IS NULL THEN
+            NEW.site_ext_id = value;
         END IF;
         IF NEW.long_text IS NULL OR NEW.long_text = '' THEN
             NEW.long_text = value;
@@ -104,7 +104,7 @@ end;
 $$;
 
 
-CREATE OR REPLACE FUNCTION get_desk_beschreibung(
+CREATE OR REPLACE FUNCTION get_desk_description(
 	media_desk character varying,
 	stufe integer)
     RETURNS character varying
@@ -493,7 +493,7 @@ CREATE TABLE query_user (
 CREATE TABLE query_meas_facil_mp (
     id serial PRIMARY KEY,
     query integer NOT NULL REFERENCES query_user ON DELETE CASCADE,
-    meas_facil character varying(5) NOT NULL REFERENCES meas_facil
+    meas_facil_id character varying(5) NOT NULL REFERENCES meas_facil
 );
 
 
@@ -694,7 +694,7 @@ CREATE TRIGGER last_mod_munic_div BEFORE UPDATE ON munic_div FOR EACH ROW EXECUT
 CREATE TABLE site (
     id serial PRIMARY KEY,
     network_id character varying(2) NOT NULL REFERENCES network,
-    ext_id character varying(13) NOT NULL,
+    site_ext_id character varying(13) NOT NULL,
     long_text character varying(100) NOT NULL,
     state_id smallint REFERENCES state,
     munic_id character varying(8) REFERENCES admin_unit,
@@ -720,7 +720,7 @@ CREATE TABLE site (
     height_asl real,
     rei_ag_gr_id integer REFERENCES rei_ag_gr,
     munic_div_id integer REFERENCES munic_div,
-    UNIQUE(ext_id, network_id)
+    UNIQUE(site_ext_id, network_id)
 );
 
 CREATE INDEX ort_netz_id_idx ON master.site USING btree (network_id);
@@ -776,10 +776,10 @@ CREATE TABLE sample_meth (
 );
 CREATE TRIGGER last_mod_sample_meth BEFORE UPDATE ON master.sample_meth FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
-CREATE TABLE sampleer (
+CREATE TABLE sampler (
     id serial PRIMARY KEY,
     network_id character varying(2) NOT NULL REFERENCES network,
-    sampleer_ext_id character varying(9) NOT NULL,
+    sampler_ext_id character varying(9) NOT NULL,
     editor character varying(25),
     comm character varying(60),
     inst character varying(80),
@@ -792,9 +792,9 @@ CREATE TABLE sampleer (
     route_planning character varying(3),
     type character(1),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    UNIQUE(sampleer_ext_id, network_id)
+    UNIQUE(sampler_ext_id, network_id)
 );
-CREATE TRIGGER last_mod_sampleer BEFORE UPDATE ON sampleer FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
+CREATE TRIGGER last_mod_sampler BEFORE UPDATE ON sampler FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 
 CREATE TABLE disp (
@@ -994,14 +994,14 @@ CREATE TABLE grid_col_mp (
 CREATE TABLE grid_col_conf (
     id serial PRIMARY KEY,
     user_id integer NOT NULL REFERENCES lada_user,
-    grid_col_mp integer NOT NULL REFERENCES grid_col_mp,
+    grid_col_mp_id integer NOT NULL REFERENCES grid_col_mp,
     query_user_id integer NOT NULL REFERENCES query_user ON DELETE CASCADE,
     sort character varying(4),
     sort_index integer,
     filter_val text,
     is_filter_active boolean NOT NULL DEFAULT false,
     is_filter_negate boolean NOT NULL DEFAULT false,
-    is_filter_reg_ex boolean NOT NULL DEFAULT false,
+    is_filter_regex boolean NOT NULL DEFAULT false,
     is_filter_null boolean NOT NULL DEFAULT false,
     is_visible boolean NOT NULL DEFAULT false,
     col_index integer,
@@ -1015,7 +1015,7 @@ CREATE TABLE tag (
     is_auto_tag boolean NOT NULL DEFAULT false,
     network_id varchar(2) REFERENCES network,
     lada_user_id INTEGER REFERENCES lada_user,
-    name_type TEXT REFERENCES tag_type NOT NULL,
+    tag_type TEXT REFERENCES tag_type NOT NULL,
     val_until TIMESTAMP without time zone,
     created_at TIMESTAMP without time zone NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE(name, network_id, meas_facil_id)

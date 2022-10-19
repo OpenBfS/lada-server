@@ -24,7 +24,7 @@ CREATE VIEW public.lada_meas_val AS
     meas_val.measm_id,
     meas_val.measd_id,
     meas_val.less_than_LOD,
-    meas_val.name,
+    meas_val.meas_val,
     meas_val.meas_err,
     meas_val.detect_lim,
     meas_val.unit_id,
@@ -36,6 +36,24 @@ CREATE VIEW public.lada_meas_val AS
      JOIN lada.status_prot ON (((measm.status = status_prot.id) AND (status_prot.status_comb <> 1))));
 ALTER TABLE public.lada_meas_val OWNER TO postgres;
 GRANT SELECT ON TABLE public.lada_meas_val TO lada;
+
+CREATE OR REPLACE VIEW lada.meas_val_view
+ AS
+ SELECT meas_val.id,
+    meas_val.measm_id,
+    meas_val.measd_id,
+    meas_val.less_than_LOD,
+    meas_val.meas_val,
+    meas_val.meas_err,
+    meas_val.detect_lim,
+    meas_val.unit_id,
+    meas_val.is_threshold,
+    status_prot.status_comb,
+    meas_val.last_mod
+   FROM lada.meas_val
+     JOIN lada.measm ON meas_val.measm_id = measm.id
+     JOIN lada.status_prot ON measm.status = status_prot.id AND status_prot.status_comb <> 1;
+
 
 --
 -- Name: query_measm_view; Type: VIEW; Schema: lada; Owner: postgres

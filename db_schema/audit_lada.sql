@@ -107,7 +107,7 @@ SELECT
             row_data ->> 'measm_id' AS integer))) AS sample_id,
     lada_audit.row_data,
     lada_audit.changed_fields,
-    null as ort_id
+    null as site_id
 FROM lada.audit_trail as lada_audit
 UNION
 SELECT master_audit.id,

@@ -19,7 +19,7 @@ SET row_security = off;
 -- Data for Name: mpg; Type: TABLE DATA; Schema: lada; Owner: postgres
 --
 
-COPY lada.mpg (id, comm_mpg, is_test, is_active, meas_facil_id, appr_lab_id, regulation_id, opr_mode_id, munic_id, env_descrip_id, env_medium_id, sample_meth_id, sample_pd, sample_pd_start_date, sample_pd_end_date, sample_pd_offset, valid_start_date, valid_end_date, sampleer_id, state_mpg_id, comm_sample, rei_ag_gr_id, nucl_facil_gr_id, unit_id, last_mod) FROM stdin;
+COPY lada.mpg (id, comm_mpg, is_test, is_active, meas_facil_id, appr_lab_id, regulation_id, opr_mode_id, munic_id, env_descrip_id, env_medium_id, sample_meth_id, sample_pd, sample_pd_start_date, sample_pd_end_date, sample_pd_offset, valid_start_date, valid_end_date, sampler_id, state_mpg_id, comm_sample, rei_ag_gr_id, nucl_facil_gr_id, unit_id, last_mod) FROM stdin;
 3474	falls nicht lieferbar bitte Ersatzprobe aus gleichem Umweltbereich	f	t	06010	06010	2	1	\N	D: 01 25 01 01 00 00 00 00 02 00 00 00	N21	1	J	150	210	0	1	365	78	\N	\N	\N	\N	67	2011-11-21 10:36:30
 3513	falls nicht lieferbar bitte Ersatzprobe anderes Fruchtgemüse	f	t	06010	06010	2	1	\N	D: 01 25 03 02 00 00 00 00 02 00 00 00	N23	1	J	1	365	0	1	365	734	\N	\N	\N	\N	67	2011-11-21 10:36:30
 3558	falls nicht lieferbar bitte Ersatzprobe aus gleichem Umweltbereich	f	t	06010	06010	2	1	\N	D: 01 29 01 02 00 00 00 00 02 00 00 00	N44	1	J	180	365	0	1	365	92	\N	\N	\N	\N	67	2011-11-21 10:36:30

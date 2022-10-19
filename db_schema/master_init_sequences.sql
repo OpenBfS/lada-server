@@ -35,7 +35,7 @@ SELECT pg_catalog.setval('oblig_measd_mp_id_seq', (SELECT max(id) FROM oblig_mea
 
 SELECT pg_catalog.setval('sample_meth_id_seq', (SELECT max(id) FROM sample_meth), true);
 
-SELECT pg_catalog.setval('sampleer_id_seq', (SELECT max(id) FROM sampleer), true);
+SELECT pg_catalog.setval('sampler_id_seq', (SELECT max(id) FROM sampler), true);
 
 SELECT pg_catalog.setval('base_query_id_seq', (SELECT max(id) FROM base_query), true);
 
