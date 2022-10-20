@@ -18,12 +18,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Type;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.locationtech.jts.geom.Point;
-
-
 
 /**
  * The persistent class for the ort database table.
@@ -50,30 +44,11 @@ public class GemeindeUntergliederung implements Serializable {
     @Column(name = "gemeindeuntergliederung")
     private String gemeindeUntergliederung;
 
-    @Column(name = "kda_id")
-    private Integer kdaId;
-
-    @Column(name = "koord_x_extern")
-    private String koordXExtern;
-
-    @Column(name = "koord_y_extern")
-    private String koordYExtern;
-
     @Column(name = "letzte_aenderung", insertable = false)
     private Timestamp letzteAenderung;
 
-    @Type(type = "jts_geometry")
-    @Column(columnDefinition = "geometry(Point, 4326)")
-    private Point geom;
-
     @Transient
     private boolean readonly;
-
-    @Transient
-    private Double longitude;
-
-    @Transient
-    private Double latitude;
 
     public GemeindeUntergliederung() {
     }
@@ -118,68 +93,12 @@ public class GemeindeUntergliederung implements Serializable {
         this.gemeindeUntergliederung = gemeindeUntergliederung;
     }
 
-    public Integer getKdaId() {
-        return this.kdaId;
-    }
-
-    public void setKdaId(Integer kdaId) {
-        this.kdaId = kdaId;
-    }
-
-    public String getKoordXExtern() {
-        return this.koordXExtern;
-    }
-
-    public void setKoordXExtern(String koordXExtern) {
-        this.koordXExtern = koordXExtern;
-    }
-
-    public String getKoordYExtern() {
-        return this.koordYExtern;
-    }
-
-    public void setKoordYExtern(String koordYExtern) {
-        this.koordYExtern = koordYExtern;
-    }
-
-    /**
-     * Get the lat.
-     * @return the lat.
-     */
-    public Double getLatitude() {
-        // We might want to serialize an object without geom
-        return this.geom != null
-            ? this.geom.getY()
-            : null;
-    }
-
     public Timestamp getLetzteAenderung() {
         return this.letzteAenderung;
     }
 
     public void setLetzteAenderung(Timestamp letzteAenderung) {
         this.letzteAenderung = letzteAenderung;
-    }
-
-    /**
-     * Get the lon.
-     * @return the lon
-     */
-    public Double getLongitude() {
-        // We might want to serialize an object without geom
-        return this.geom != null
-            ? this.geom.getX()
-            : null;
-    }
-
-    @JsonIgnore
-    public Point getGeom() {
-        return geom;
-    }
-
-    @JsonIgnore
-    public void setGeom(Point geom) {
-        this.geom = geom;
     }
 
     public boolean isReadonly() {

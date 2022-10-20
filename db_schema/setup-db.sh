@@ -126,7 +126,7 @@ do
         psql -q $DB_CONNECT_STRING -d $DB_NAME
 done
 
-echo create verwaltungsgrenze view
+echo create main border view
 psql -q $DB_CONNECT_STRING -d $DB_NAME \
     -c "SET role $ROLE_NAME;" \
     -f $DIR/master_admin_border_view.sql
@@ -146,7 +146,7 @@ if [ "$NO_DATA" != "true" ]; then
             ${SHAPE_DIR}/VG250_${FILE} \
             geo.vg250_${TABLE} | psql -q $DB_CONNECT_STRING -d $DB_NAME
     done
-    echo refresh verwaltungsgrenze view
+    echo refresh main border view
     psql $DB_CONNECT_STRING -d $DB_NAME --command \
          "REFRESH MATERIALIZED VIEW master.admin_border_view"
 

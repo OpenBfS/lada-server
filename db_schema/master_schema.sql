@@ -682,11 +682,6 @@ CREATE TABLE munic_div (
     munic_id character varying(8) NOT NULL REFERENCES admin_unit,
     site_ext_id integer NOT NULL,
     name character varying(180),
-    spat_ref_sys_id integer REFERENCES spat_ref_sys,
-    x_coord_ext character varying(22),
-    y_coord_ext character varying(22),
-    geom public.geometry(Point,4326),
-    shape public.geometry(MultiPolygon,4326),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_munic_div BEFORE UPDATE ON munic_div FOR EACH ROW EXECUTE PROCEDURE update_last_mod();

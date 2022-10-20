@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 
+
 /**
  * The persistent class for the kommentar_p database table.
  *

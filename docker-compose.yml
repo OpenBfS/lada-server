@@ -11,6 +11,8 @@ services:
       - ./db_schema:/opt/lada_sql/
   server:
     container_name: "lada-server"
+    build:
+      context: ./
     image: "koala/lada_wildfly"
     networks:
       - lada_network

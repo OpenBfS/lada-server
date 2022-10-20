@@ -33,7 +33,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.junit.Assert;
 
 import org.locationtech.jts.io.ParseException;
@@ -156,7 +156,7 @@ public class ServiceTest {
             if (timestampAttributes.contains(key)) {
                 Timestamp timestamp = Timestamp.valueOf(
                     entry.getValue().toString().replaceAll("\"", ""));
-                builder.add(key, timestamp.getTime());
+                builder.add(key, String.valueOf(timestamp.getTime()));
             } else if (geomPointAttributes.contains(key)) {
                 // Convert EWKT to latitude and longitude
                 String wkt = entry.getValue().toString().split(";")[1];
@@ -262,10 +262,11 @@ public class ServiceTest {
                 || entry.getKey().equals("letzteAenderung")) {
                 continue;
             }
+            String key = entry.getKey();
             Assert.assertEquals(
-                String.format("%s:", entry.getKey()),
+                String.format("%s:", key),
                 entry.getValue(),
-                object.get(entry.getKey()));
+                object.get(key));
         }
         prot.addInfo("object", "equals");
         prot.setPassed(true);
@@ -405,9 +406,9 @@ public class ServiceTest {
         if (oldObject.containsKey(modTimeKey)) {
             Assert.assertTrue(
                 "Object modification timestamp did not increase",
-                updatedObject.getJsonObject(objKey).getJsonNumber(modTimeKey)
-                    .longValueExact()
-                > oldObject.getJsonNumber(modTimeKey).longValueExact()
+                Long.parseLong(
+                    updatedObject.getJsonObject(objKey).getString(modTimeKey))
+                > Long.parseLong(oldObject.getString(modTimeKey))
             );
         }
 
@@ -447,13 +448,13 @@ public class ServiceTest {
      * @param to Date as unix timestamp
      * @return Difference in days as long
      */
-    protected long getDaysFromNow(long to) {
+    protected long getDaysFromNow(String to) {
         LocalDateTime fromDate = LocalDateTime.ofInstant(
             Instant.ofEpochMilli(System.currentTimeMillis()),
             ZoneOffset.UTC)
             .truncatedTo(ChronoUnit.DAYS);
         LocalDateTime toDate = LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(to),
+            Instant.ofEpochMilli(Long.valueOf(to)),
             ZoneOffset.UTC)
             .truncatedTo(ChronoUnit.DAYS);
         return ChronoUnit.DAYS.between(fromDate, toDate);

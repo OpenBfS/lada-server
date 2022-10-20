@@ -13,7 +13,6 @@ import java.util.List;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response.Status;
 
@@ -51,8 +50,8 @@ public class MessprogrammTest extends ServiceTest {
         JsonObjectBuilder builder = convertObject(messprogramm);
         builder.add("baId", 1);
         builder.add("intervallOffset", 0);
-        builder.add("probeKommentar", JsonValue.NULL);
-        builder.add("probeNehmerId", JsonValue.NULL);
+        builder.addNull("probeKommentar");
+        builder.addNull("probeNehmerId");
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);
 

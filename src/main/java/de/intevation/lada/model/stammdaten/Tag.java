@@ -12,6 +12,7 @@ import de.intevation.lada.model.land.TagZuordnung;
 import java.sql.Timestamp;
 import java.util.Set;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,8 +22,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * The persistent class for the tag database table.
@@ -69,7 +68,7 @@ public class Tag {
 
     @OneToMany
     @JoinColumn(name = "tag_id", updatable = false)
-    @JsonIgnore
+    @JsonbTransient
     private Set<TagZuordnung> tagZuordnungs;
 
     @Column(name = "auto_tag")

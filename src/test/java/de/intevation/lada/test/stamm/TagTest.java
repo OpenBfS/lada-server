@@ -93,9 +93,8 @@ public class TagTest extends ServiceTest {
         String createdTyp = createResponse
             .getJsonObject(dataKey).getString("typId");
         if (createdTyp.equals("mst") || createdTyp.equals("auto")) {
-            long createdGueltigBis
-                = createResponse.getJsonObject(dataKey)
-                .getJsonNumber("gueltigBis").longValue();
+            String createdGueltigBis = createResponse.getJsonObject(dataKey)
+                .getString("gueltigBis");
             long diff = getDaysFromNow(createdGueltigBis);
             Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diff);
         }

@@ -410,11 +410,6 @@ CREATE VIEW stamm.gemeindeuntergliederung AS SELECT
 	munic_id AS gem_id,
 	site_ext_id AS ozk_id,
 	name AS gemeindeuntergliederung,
-	spat_ref_sys_id AS kda_id,
-	x_coord_ext AS koord_x_extern,
-	y_coord_ext AS koord_y_extern,
-	geom,
-	shape,
 	last_mod AS letzte_aenderung
 FROM master.munic_div;
 

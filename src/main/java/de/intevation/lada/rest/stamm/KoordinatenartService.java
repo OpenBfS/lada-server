@@ -57,26 +57,25 @@ public class KoordinatenartService extends LadaService {
     /**
      * Expected format for the payload in POST request to recalculate().
      */
-    private static class PostData {
-        int from;
-        int to;
-        String x;
-        String y;
+    public static class PostData {
+        private int from;
+        private int to;
+        private String x;
+        private String y;
 
-        // Setters needed for JSON deserialization:
-        void setFrom(int from) {
+        public void setFrom(int from) {
             this.from = from;
         }
 
-        void setTo(int to) {
+        public void setTo(int to) {
             this.to = to;
         }
 
-        void setX(String x) {
+        public void setX(String x) {
             this.x = x;
         }
 
-        void setY(String y) {
+        public void setY(String y) {
             this.y = y;
         }
     }

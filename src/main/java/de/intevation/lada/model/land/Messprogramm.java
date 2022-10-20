@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Set;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,9 +26,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
 
@@ -142,15 +140,12 @@ public class Messprogramm implements Serializable {
     private Set<ProbenZusatz> probenZusatzs;
 
     @Transient
-    @JsonIgnore
     private int referenceCount;
 
     @Transient
-    @JsonIgnore
     private MultivaluedMap<String, Integer> errors;
 
     @Transient
-    @JsonIgnore
     private MultivaluedMap<String, Integer> warnings;
 
     @Transient
@@ -378,7 +373,6 @@ public class Messprogramm implements Serializable {
     /**
      * @return The number of Probe objects referencing this Messprogramm.
      */
-    @JsonProperty
     public int getReferenceCount() {
         if (this.proben != null) {
             return this.proben.size();
@@ -386,22 +380,20 @@ public class Messprogramm implements Serializable {
         return 0;
     }
 
-    @JsonProperty
     public MultivaluedMap<String, Integer> getErrors() {
         return this.errors;
     }
 
-    @JsonIgnore
+    @JsonbTransient
     public void setErrors(MultivaluedMap<String, Integer> errors) {
         this.errors = errors;
     }
 
-    @JsonProperty
     public MultivaluedMap<String, Integer> getWarnings() {
         return this.warnings;
     }
 
-    @JsonIgnore
+    @JsonbTransient
     public void setWarnings(MultivaluedMap<String, Integer> warnings) {
         this.warnings = warnings;
     }

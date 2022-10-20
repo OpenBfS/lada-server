@@ -45,7 +45,6 @@ BEGIN
         RAISE EXCEPTION 'lada.if_modified_func() may only run as an AFTER trigger';
     END IF;
 
-    -- Do nothing on delete.
     IF (TG_OP = 'DELETE') THEN
         item_id = OLD.id;
     ELSE

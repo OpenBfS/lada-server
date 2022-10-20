@@ -11,7 +11,9 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 
+/**
+ * Activates JAX-RS and defines basic properties of the application.
+ */
 @ApplicationPath("/")
 public class JaxRsActivator extends Application {
-
 }

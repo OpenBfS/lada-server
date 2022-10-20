@@ -15,14 +15,16 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.inject.Inject;
+import javax.json.bind.annotation.JsonbTypeSerializer;
+import javax.json.bind.serializer.JsonbSerializer;
+import javax.json.bind.serializer.SerializationContext;
+import javax.json.stream.JsonGenerator;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
-
-import com.fasterxml.jackson.annotation.JsonValue;
 
 import org.jboss.logging.Logger;
 
@@ -64,11 +66,6 @@ public abstract class Job implements Runnable {
      */
     public enum Status {
         WAITING, FINISHED, ERROR;
-
-        @JsonValue
-        public String getName() {
-            return this.name().toLowerCase();
-        }
     }
 
     /**
@@ -169,12 +166,22 @@ public abstract class Job implements Runnable {
      * Stores job status and message
      */
     public static class JobStatus {
+        @JsonbTypeSerializer(StatusSerializer.class)
         private Status status;
         private String message;
         private boolean done;
         private boolean notifications;
         private Boolean warnings;
         private Boolean errors;
+
+        private static class StatusSerializer
+            implements JsonbSerializer<Status> {
+            public void serialize(
+                Status status, JsonGenerator generator, SerializationContext ctx
+            ) {
+                generator.write(status.name().toLowerCase());
+            }
+        }
 
         public JobStatus(Status s) {
             this(s, "", false);

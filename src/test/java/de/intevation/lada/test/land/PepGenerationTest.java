@@ -80,29 +80,27 @@ public class PepGenerationTest extends ServiceTest {
     private static final int C61 = 61;
     private static final int C368 = 368;
 
-    private static final long TS1 = 1617235200000L;
-    private static final long TS2 = 1580256000000L;
-    private static final long TS3 = 1580515200000L;
-    private static final long TS4 = 1581465600000L;
-    private static final long TS5 = 1590969600000L;
-    private static final long TS6 = 1735689600000L;
-    private static final long TS7 = 1893456000000L;
-    private static final long TS8 = 1577836800000L;
-    private static final long TS9 = 1581638400000L;
-    private static final long TS10 = 1898553600000L;
-    private static final long TS11 = 1612224000000L;
-    private static final long TS12 = 1582934400000L;
-    private static final long TS13 = 1614556800000L;
-    private static final long TS14 = 1456704000000L;
-    private static final long TS15 = 1472428800000L;
-    private static final long TS16 = 1464566400000L;
-    private static final long TS17 = 1585440000000L;
-    private static final long TS18 = 1582502400000L;
-    private static final long TS19 = 1614384000000L;
-    private static final long TS20 = 1614988800000L;
-    private static final long TS21 = 1582848000000L;
-
-    private static final long TS_5L = 5L;
+    private static final String TS1 = "1617235200000";
+    private static final String TS2 = "1580256000000";
+    private static final String TS3 = "1580515200000";
+    private static final String TS4 = "1581465600000";
+    private static final String TS5 = "1590969600000";
+    private static final String TS6 = "1735689600000";
+    private static final String TS7 = "1893456000000";
+    private static final String TS8 = "1577836800000";
+    private static final String TS9 = "1581638400000";
+    private static final String TS10 = "1898553600000";
+    private static final String TS11 = "1612224000000";
+    private static final String TS12 = "1582934400000";
+    private static final String TS13 = "1614556800000";
+    private static final String TS14 = "1456704000000";
+    private static final String TS15 = "1472428800000";
+    private static final String TS16 = "1464566400000";
+    private static final String TS17 = "1585440000000";
+    private static final String TS18 = "1582502400000";
+    private static final String TS19 = "1614384000000";
+    private static final String TS20 = "1614988800000";
+    private static final String TS21 = "1582848000000";
 
     /**
      * Current expected tag serial number.
@@ -156,12 +154,7 @@ public class PepGenerationTest extends ServiceTest {
         List<Integer> idParam = new ArrayList<Integer>();
         idParam.add(mpId);
 
-        // 02/01/2020 @ 12:00am (UTC)
-        Long start = TS3;
-        // 02/12/2020 @ 12:00am (UTC)
-        Long end = TS4;
-
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, TS3, TS4);
         checkGeneratedProbeCount(C12, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
         prot.setPassed(true);
@@ -181,12 +174,7 @@ public class PepGenerationTest extends ServiceTest {
         List<Integer> idParam = new ArrayList<Integer>();
         idParam.add(mpId);
 
-        // 02/01/2020 @ 12:00am (UTC)
-        Long start = TS3;
-        // 06/01/2020 @ 12:00am (UTC)
-        Long end = TS5;
-
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, TS3, TS5);
         checkGeneratedProbeCount(C18, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
         prot.setPassed(true);
@@ -206,12 +194,7 @@ public class PepGenerationTest extends ServiceTest {
         List<Integer> idParam = new ArrayList<Integer>();
         idParam.add(mpId);
 
-        // 02/01/2020 @ 12:00am (UTC)
-        Long start = TS3;
-        // 06/01/2020 @ 12:00am (UTC)
-        Long end = TS5;
-
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, TS3, TS5);
         checkGeneratedProbeCount(C9, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -232,12 +215,7 @@ public class PepGenerationTest extends ServiceTest {
         List<Integer> idParam = new ArrayList<Integer>();
         idParam.add(mpId);
 
-        // 02/01/2020 @ 12:00am (UTC)
-        Long start = TS3;
-        // 06/01/2020 @ 12:00am (UTC)
-        Long end = TS5;
-
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, TS3, TS5);
         checkGeneratedProbeCount(C5, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -259,11 +237,7 @@ public class PepGenerationTest extends ServiceTest {
         id.add(mpId);
 
         //Generate 61 records for five years
-        //01/01/2025 @ 12:00am (UTC)
-        Long start = TS6;
-        //01/01/2030 @ 12:00am (UTC)
-        Long end = TS7;
-        JsonObject entity = generateFromMpIds(id, start, end);
+        JsonObject entity = generateFromMpIds(id, TS6, TS7);
         checkGeneratedProbeCount(C61, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -283,11 +257,8 @@ public class PepGenerationTest extends ServiceTest {
         int mpId = ID1002;
         List<Integer> id = new ArrayList<Integer>();
         id.add(mpId);
-        //01/01/2020 @ 12:00am (UTC)
-        Long start = TS8;
-        //02/02/2021 @ 12:00am (UTC)
-        Long end = TS11;
-        JsonObject entity = generateFromMpIds(id, start, end);
+
+        JsonObject entity = generateFromMpIds(id, TS8, TS11);
         checkGeneratedProbeCount(C4, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -308,11 +279,7 @@ public class PepGenerationTest extends ServiceTest {
         List<Integer> id = new ArrayList<Integer>();
         id.add(mpId);
 
-        //01/01/2020 @ 12:00am (UTC)
-        Long start = TS8;
-        //02/02/2021 @ 12:00am (UTC)
-        Long end = TS11;
-        JsonObject entity = generateFromMpIds(id, start, end);
+        JsonObject entity = generateFromMpIds(id, TS8, TS11);
         checkGeneratedProbeCount(2, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -333,12 +300,7 @@ public class PepGenerationTest extends ServiceTest {
         List<Integer> id = new ArrayList<Integer>();
         id.add(mpId);
 
-        //01/01/2020 @ 12:00am (UTC)
-        Long start = TS8;
-        //01/01/2030 @ 12:00am (UTC)
-        Long end = TS7;
-
-        JsonObject entity = generateFromMpIds(id, start, end);
+        JsonObject entity = generateFromMpIds(id, TS8, TS7);
         checkGeneratedProbeCount(C11, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -360,19 +322,14 @@ public class PepGenerationTest extends ServiceTest {
         List<Integer> idParam = new ArrayList<Integer>();
         idParam.add(mpId);
 
-        //02/29/2020 @ 12:00am (UTC)
-        Long start = TS8;
-        //03/01/2030 @ 12:00am (UTC)
-        Long end = TS10;
-
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, TS8, TS10);
         int expectedCount = C11;
         checkGeneratedProbeCount(expectedCount, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
         //Check return data
         String startAttribute = "solldatumBeginn";
-        Map<Integer, Long> expectedValues = new HashMap<Integer, Long>();
+        Map<Integer, String> expectedValues = new HashMap<>();
         //Expected first record: 02/29/2020 @ 12:00am (UTC)
         expectedValues.put(0, TS12);
         //Expected second record: 03/01/2021 @ 12:00am (UTC)
@@ -402,18 +359,13 @@ public class PepGenerationTest extends ServiceTest {
         List<Integer> idParam = new ArrayList<Integer>();
         idParam.add(mpId);
 
-        //02/29/2016 @ 12:00am (UTC)
-        Long start = TS14;
-        //02/29/2020 @ 12:00am (UTC)
-        Long end = TS12;
-
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, TS14, TS12);
         checkGeneratedProbeCount(C8, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
         //Check return data
         String startAttribute = "solldatumBeginn";
-        Map<Integer, Long> expectedValues = new HashMap<Integer, Long>();
+        Map<Integer, String> expectedValues = new HashMap<>();
         //Expected first record: 08/28/2016 @ 12:00am (UTC)
         expectedValues.put(0, TS15);
         //Expected last record: 02/29/2020 @ 12:00am (UTC)
@@ -441,18 +393,13 @@ public class PepGenerationTest extends ServiceTest {
         List<Integer> idParam = new ArrayList<Integer>();
         idParam.add(mpId);
 
-        //02/29/2016 @ 12:00am (UTC)
-        Long start = TS14;
-        //02/29/2020 @ 12:00am (UTC)
-        Long end = TS12;
-
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, TS14, TS12);
         checkGeneratedProbeCount(C16, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
         //Check return data
         String startAttribute = "solldatumBeginn";
-        Map<Integer, Long> expectedValues = new HashMap<Integer, Long>();
+        Map<Integer, String> expectedValues = new HashMap<>();
         //Expected first record: 05/30/2016 @ 12:00am (UTC)
         expectedValues.put(0, TS16);
         //Expected last record: 02/29/2020 @ 12:00am (UTC)
@@ -479,19 +426,15 @@ public class PepGenerationTest extends ServiceTest {
 
         Integer mpId = ID1103;
         List<Integer> idParam = new ArrayList<Integer>();
-
         idParam.add(mpId);
-        //01/29/2020 @ 12:00am (UTC)
-        Long start = TS2;
-        //04/01/2021 @ 12:00am (UTC)
-        Long end = TS1;
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+
+        JsonObject entity = generateFromMpIds(idParam, TS2, TS1);
         checkGeneratedProbeCount(C15, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
         //Check return data
         String startAttribute = "solldatumBeginn";
-        Map<Integer, Long> expectedValues = new HashMap<Integer, Long>();
+        Map<Integer, String> expectedValues = new HashMap<>();
         //Expected first record: 02/29/2020 @ 12:00am (UTC)
         expectedValues.put(0, TS12);
         //Expected second record: 03/29/2020 @ 12:00am (UTC)
@@ -519,19 +462,14 @@ public class PepGenerationTest extends ServiceTest {
         List<Integer> idParam = new ArrayList<Integer>();
         idParam.add(mpId);
 
-        // 02/24/2020 @ 12:00am (UTC)
-        Long start = TS18;
-        // 03/01/2021 @ 12:00am (UTC)
-        Long end = TS13;
-
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, TS18, TS13);
         int expectedCount = C13;
         checkGeneratedProbeCount(expectedCount, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
         //Check return data
         String startAttribute = "solldatumBeginn";
-        Map<Integer, Long> expectedValues = new HashMap<Integer, Long>();
+        Map<Integer, String> expectedValues = new HashMap<>();
         //Expected first record: 02/29/2020 @ 12:00am (UTC)
         expectedValues.put(0, TS12);
         //Expected last record: 02/27/2021 @ 12:00am (UTC)
@@ -560,19 +498,14 @@ public class PepGenerationTest extends ServiceTest {
         List<Integer> idParam = new ArrayList<Integer>();
         idParam.add(mpId);
 
-        // 02/24/2020 @ 12:00am (UTC)
-        Long start = TS18;
-        // 03/01/2021 @ 12:00am (UTC)
-        Long end = TS13;
-
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, TS18, TS13);
         int expectedCount = C26;
         checkGeneratedProbeCount(expectedCount, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
         //Check return data
         String startAttribute = "solldatumBeginn";
-        Map<Integer, Long> expectedValues = new HashMap<Integer, Long>();
+        Map<Integer, String> expectedValues = new HashMap<>();
         //Expected first record: 02/29/2020 @ 12:00am (UTC)
         expectedValues.put(0, TS12);
         //Expected last record: 02/27/2021 @ 12:00am (UTC)
@@ -600,19 +533,14 @@ public class PepGenerationTest extends ServiceTest {
         List<Integer> idParam = new ArrayList<Integer>();
         idParam.add(mpId);
 
-        // 02/24/2020 @ 12:00am (UTC)
-        Long start = TS18;
-        // 03/01/2021 @ 12:00am (UTC)
-        Long end = TS13;
-
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, TS18, TS13);
         int expectedCount = C53;
         checkGeneratedProbeCount(expectedCount, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
         //Check return data
         String startAttribute = "solldatumBeginn";
-        Map<Integer, Long> expectedValues = new HashMap<Integer, Long>();
+        Map<Integer, String> expectedValues = new HashMap<>();
         //Expected first record: 02/29/2020 @ 12:00am (UTC)
         expectedValues.put(0, TS12);
         //Expected last record: 03/06/2021 @ 12:00am (UTC)
@@ -641,18 +569,14 @@ public class PepGenerationTest extends ServiceTest {
         List<Integer> idParam = new ArrayList<Integer>();
         idParam.add(mpId);
 
-        //02/28/2020 @ 12:00am (UTC)
-        Long start = TS21;
-        //03/01/2021 @ 12:00am (UTC)
-        Long end = TS13;
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, TS21, TS13);
         int expectedCount = C368;
         checkGeneratedProbeCount(expectedCount, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
         //Check return data
         String startAttribute = "solldatumBeginn";
-        Map<Integer, Long> expectedValues = new HashMap<Integer, Long>();
+        Map<Integer, String> expectedValues = new HashMap<>();
         //Expected first record: 02/28/2020 @ 12:00am (UTC)
         expectedValues.put(0, TS21);
         //Expected second record: 02/29/2020 @ 12:00am (UTC)
@@ -680,13 +604,9 @@ public class PepGenerationTest extends ServiceTest {
 
         int mpId = ID1008;
         List<Integer> idParam = new ArrayList<Integer>();
-
         idParam.add(mpId);
-        //01/29/2020 @ 12:00am (UTC)
-        Long start = TS2;
-        //04/01/2021 @ 12:00am (UTC)
-        Long end = TS1;
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+
+        JsonObject entity = generateFromMpIds(idParam, TS2, TS1);
         checkGeneratedProbeCount(C14, entity, prot, mpId);
         checkGeneratedTag(entity, prot);
 
@@ -703,15 +623,11 @@ public class PepGenerationTest extends ServiceTest {
         prot.setPassed(false);
         protocol.add(prot);
 
-        //01/01/2020 @ 12:00am (UTC)
-        Long start = TS8;
-        //02/14/2020 @ 12:00am (UTC)
-        Long end = TS9;
         int monthlyMpId = ID1013;
         int dailyMpId = ID1014;
 
         List<Integer> idParam = Arrays.asList(monthlyMpId, dailyMpId);
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+        JsonObject entity = generateFromMpIds(idParam, TS8, TS9);
         //Monthy mp should generate two records
         checkGeneratedProbeCount(2, entity, prot, monthlyMpId);
         //Daily mp should generate 45 records
@@ -731,13 +647,9 @@ public class PepGenerationTest extends ServiceTest {
 
         int mpId = ID1009;
         List<Integer> idParam = new ArrayList<Integer>();
-
         idParam.add(mpId);
-        //01/29/2020 @ 12:00am (UTC)
-        Long start = TS2;
-        //04/01/2021 @ 12:00am (UTC)
-        Long end =   TS1;
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+
+        JsonObject entity = generateFromMpIds(idParam, TS2, TS1);
 
         //Request should have failed with message 699
         JsonObject data = entity.getJsonObject("data");
@@ -763,13 +675,9 @@ public class PepGenerationTest extends ServiceTest {
 
         int mpId = ID1010;
         List<Integer> idParam = new ArrayList<Integer>();
-
         idParam.add(mpId);
-        //01/29/2020 @ 12:00am (UTC)
-        Long end = TS2;
-        //04/01/2021 @ 12:00am (UTC)
-        Long start =   TS1;
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+
+        JsonObject entity = generateFromMpIds(idParam, TS1, TS2);
 
         //Request should have failed with message 699
         JsonObject data = entity.getJsonObject("data");
@@ -795,13 +703,9 @@ public class PepGenerationTest extends ServiceTest {
 
         int mpId = ID1010;
         List<Integer> idParam = new ArrayList<Integer>();
-
         idParam.add(mpId);
-        //01/29/2020 @ 12:00am (UTC)
-        Long end = -1L;
-        //04/01/2021 @ 12:00am (UTC)
-        Long start = -TS_5L;
-        JsonObject entity = generateFromMpIds(idParam, start, end);
+
+        JsonObject entity = generateFromMpIds(idParam, "-5", "-1");
 
         //Request should have failed with message 699
         JsonObject data = entity.getJsonObject("data");
@@ -827,9 +731,9 @@ public class PepGenerationTest extends ServiceTest {
         idParam.add(mpId);
 
         // 02/01/2020 @ 12:00am (UTC)
-        Long start = TS3;
+        String start = TS3;
         // 02/12/2020 @ 12:00am (UTC)
-        Long end = TS4;
+        String end = TS4;
         JsonObject entity = generateFromMpIds(idParam, start, end);
         JsonObject data = entity.getJsonObject("data");
         JsonArray proben = data.getJsonObject("proben")
@@ -880,30 +784,14 @@ public class PepGenerationTest extends ServiceTest {
         Protocol prot,
         int mpId
     ) {
-        try {
-            JsonObject data = content.getJsonObject("data");
-            JsonArray proben = null;
-            try {
-                /* Verify the response*/
-                Assert.assertNotNull(content.getJsonObject("data"));
+        //Get data for given messprogramm
+        JsonObject mpData = content.getJsonObject("data")
+            .getJsonObject("proben").getJsonObject(String.valueOf(mpId));
+        Assert.assertNotNull(mpData);
 
-                //Get data for given messprogramm
-                JsonObject mpData =
-                    data.getJsonObject("proben").getJsonObject("" + mpId);
-                Assert.assertNotNull(mpData);
-
-                //Check if data is an array of records
-                proben = mpData.getJsonArray("data");
-            } catch (ClassCastException cce) {
-                Assert.fail(cce.getMessage());
-            }
-
-            prot.addInfo("objects", proben.size());
-            Assert.assertEquals(count, proben.size());
-        } catch (JsonException je) {
-            prot.addInfo("exception", je.getMessage());
-            Assert.fail(je.getMessage());
-        }
+        JsonArray proben = mpData.getJsonArray("data");
+        prot.addInfo("objects", proben.size());
+        Assert.assertEquals(count, proben.size());
     }
 
     /**
@@ -916,7 +804,7 @@ public class PepGenerationTest extends ServiceTest {
      * @return JsonObject containing the generated objects
      */
     private JsonObject generateFromMpIds(
-        List<Integer> ids, Long start, Long end
+        List<Integer> ids, String start, String end
     ) {
 
         WebTarget target = client.target(baseUrl + "rest/probe/messprogramm");
@@ -945,7 +833,7 @@ public class PepGenerationTest extends ServiceTest {
     }
 
     /**
-     * Check if the given entity's long attribute equals the expected values
+     * Check if the given entity's attribute equals the expected values
      * given in a map.
      * @param entity Entity to check
      * @param mpId mpId to check
@@ -957,13 +845,13 @@ public class PepGenerationTest extends ServiceTest {
         JsonObject entity,
         Integer mpId,
         String attribute,
-        Map<Integer, Long> expectedValues
+        Map<Integer, String> expectedValues
     ) {
         expectedValues.forEach((index, value) -> {
             JsonObject record = getRecordAtIndex(entity, mpId, index);
             Assert.assertNotNull(record);
-            long startDate = record.getJsonNumber(attribute).longValue();
-            Assert.assertEquals(value.longValue(), startDate);
+            String startDate = record.getString(attribute);
+            Assert.assertEquals(value, startDate);
         });
     }
 

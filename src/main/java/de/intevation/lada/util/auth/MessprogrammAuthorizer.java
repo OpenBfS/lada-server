@@ -42,6 +42,9 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
                 Messprogramm.class,
                 ((MessprogrammMmt) data).getMessprogrammId()
             );
+            if (messprogramm == null) {
+                return false;
+            }
         } else {
             return false;
         }

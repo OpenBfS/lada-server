@@ -19,8 +19,8 @@ SET row_security = off;
 -- Data for Name: munic_div; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.munic_div (id, network_id, munic_id, site_ext_id, name, spat_ref_sys_id, x_coord_ext, y_coord_ext, geom, shape, last_mod) FROM stdin;
-1	11	11000000	28	Johannisthal	1	5398276	5813574	0101000020E61000008CB96B09F9002B405BD3BCE314394A40	\N	2011-11-21 10:35:17
+COPY master.munic_div (id, network_id, munic_id, site_ext_id, name, last_mod) FROM stdin;
+1	11	11000000	28	Johannisthal	2011-11-21 10:35:17
 \.
 
 
