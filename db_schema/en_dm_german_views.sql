@@ -1076,6 +1076,13 @@ CREATE VIEW stamm.verwaltungsgrenze AS SELECT
 	shape
 FROM master.admin_border_view;
 */
+CREATE VIEW stamm.verwaltungsgrenze AS
+ SELECT id,
+       munic_id AS gem_id,
+       is_munic AS is_gemeinde,
+       shape
+  FROM master.admin_border_view;
+
 CREATE VIEW stamm.zeitbasis AS SELECT
 	id,
 	name AS bezeichnung,
