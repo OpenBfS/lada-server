@@ -571,6 +571,7 @@ CREATE VIEW stamm.messprogramm_transfer AS SELECT
 FROM master.mpg_transf;
 
 CREATE VIEW stamm.mg_grp AS SELECT
+	measd_gr_id AS messgroessengruppe_id,
 	measd_id AS messgroesse_id,
 	last_mod AS letzte_aenderung
 FROM master.measd_gr_mp;
@@ -581,6 +582,7 @@ CREATE VIEW stamm.mmt_messgroesse AS SELECT
 FROM master.mmt_measd_view;
 
 CREATE VIEW stamm.mmt_messgroesse_grp AS SELECT
+	measd_gr_id AS messgroessengruppe_id,
 	mmt_id,
 	last_mod AS letzte_aenderung
 FROM master.mmt_measd_gr_mp;
