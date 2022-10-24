@@ -134,6 +134,8 @@ psql -q $DB_CONNECT_STRING -d $DB_NAME \
 echo create german views
 psql -q $DB_CONNECT_STRING -d $DB_NAME \
     -c "SET role $ROLE_NAME;" \
+    -c "CREATE SCHEMA land AUTHORIZATION $ROLE_NAME" \
+    -c "CREATE SCHEMA stamm AUTHORIZATION $ROLE_NAME" \
     -f $DIR/en_dm_german_views.sql
 
 if [ "$NO_DATA" != "true" ]; then
