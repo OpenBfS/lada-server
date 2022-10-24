@@ -272,6 +272,13 @@ CREATE VIEW land.zusatz_wert AS SELECT
 	smaller_than AS kleiner_als
 FROM lada.sample_specif_meas_val;
 
+CREATE FUNCTION stamm.get_media_from_media_desk(media_desk character varying)
+	RETURNS character varying
+	LANGUAGE sql
+	AS $$
+		SELECT master.get_media_from_media_desk(media_desk)
+	$$;
+
 CREATE VIEW stamm.audit_trail AS SELECT
 	id,
 	table_name,
