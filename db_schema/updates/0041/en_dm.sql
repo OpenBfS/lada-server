@@ -769,6 +769,7 @@ ALTER TABLE master.measd_gr_mp RENAME COLUMN messgroessengruppe_id TO measd_gr_i
 ALTER TABLE master.measd_gr_mp RENAME COLUMN messgroesse_id TO measd_id;
 ALTER TABLE master.measd_gr_mp RENAME COLUMN letzte_aenderung TO last_mod;
 CREATE VIEW stamm.mg_grp AS SELECT
+	measd_gr_id AS messgroessengruppe_id,
 	measd_id AS messgroesse_id,
 	last_mod AS letzte_aenderung
 FROM master.measd_gr_mp;
@@ -784,6 +785,7 @@ ALTER TABLE master.mmt_messgroesse_grp RENAME TO mmt_measd_gr_mp;
 ALTER TABLE master.mmt_measd_gr_mp RENAME COLUMN messgroessengruppe_id TO measd_gr_id;
 ALTER TABLE master.mmt_measd_gr_mp RENAME COLUMN letzte_aenderung TO last_mod;
 CREATE VIEW stamm.mmt_messgroesse_grp AS SELECT
+	measd_gr_id AS messgroessengruppe_id,
 	mmt_id,
 	last_mod AS letzte_aenderung
 FROM master.mmt_measd_gr_mp;
