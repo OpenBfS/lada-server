@@ -891,6 +891,7 @@ ALTER TABLE master.poi RENAME COLUMN ozs_id TO id;
 ALTER TABLE master.poi RENAME COLUMN ortszusatz TO name;
 ALTER TABLE master.poi RENAME COLUMN letzte_aenderung TO last_mod;
 CREATE VIEW stamm.ortszusatz AS SELECT
+	id as ozs_id,
 	name AS ortszusatz,
 	last_mod AS letzte_aenderung
 FROM master.poi;
