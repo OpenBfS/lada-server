@@ -1,9 +1,9 @@
 {
-    "land.messwert": [{
+    "lada.meas_val": [{
         "id": 1003,
-        "messungs_id": 1200,
-        "messgroesse_id": 56,
-        "messwert": 1.5,
-        "meh_id": 207
+        "measm_id": 1200,
+        "measd_id": 56,
+        "meas_val": 1.5,
+        "unit_id": 207
     }]
 }

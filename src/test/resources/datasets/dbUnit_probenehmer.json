@@ -1,19 +1,19 @@
 {
-    "stamm.probenehmer": [{
+    "master.sampler": [{
         "id": 1000,
-        "netzbetreiber_id": "06",
-        "prn_id": "AV6",
-        "bearbeiter": "Testbearbeiter",
-        "bemerkung": "Testbemerkung",
-        "betrieb": "Testbetrieb",
-        "bezeichnung": "Testbezeichnung",
-        "kurz_bezeichnung": "Testkurz",
-        "ort": "Testhausen",
-        "plz": "12345",
-        "strasse": "Teststrasse",
-        "telefon": "01100011",
-        "tourenplan": "kpt",
-        "typ": "a",
-        "letzte_aenderung": "2015-03-01 12:00:00"
+        "network_id": "06",
+        "sampler_ext_id": "AV6",
+        "editor": "Testbearbeiter",
+        "comm": "Testbemerkung",
+        "inst": "Testbetrieb",
+        "descr": "Testbezeichnung",
+        "short_text": "Testkurz",
+        "city": "Testhausen",
+        "zip": "12345",
+        "street": "Teststrasse",
+        "phone": "01100011",
+        "route_planning": "kpt",
+        "type": "a",
+        "last_mod": "2015-03-01 12:00:00"
     }]
 }

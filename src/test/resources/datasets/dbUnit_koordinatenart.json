@@ -1,7 +1,7 @@
 {
-    "stamm.koordinaten_art": [{
+    "master.spat_ref_sys": [{
         "id": 4,
-        "koordinatenart": "test",
+        "name": "test",
         "idf_geo_key": "t"
     }]
 }

@@ -47,7 +47,7 @@ public class StatusTest extends ServiceTest {
         // Prepare expected object
         JsonObject content = readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject status =
-        content.getJsonArray("land.status_protokoll").getJsonObject(0);
+        content.getJsonArray("lada.status_prot").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(status);
         builder.add("parentModified", TS1);
         builder.add("readonly", JsonValue.FALSE);

@@ -48,7 +48,7 @@ public class ProbeTest extends ServiceTest {
 
         // Prepare expected probe object
         JsonObject content = readJsonResource("/datasets/dbUnit_probe.json");
-        JsonObject probe = content.getJsonArray("land.probe").getJsonObject(0);
+        JsonObject probe = content.getJsonArray("lada.sample").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(probe);
         builder.addNull("mittelungsdauer");
         builder.addNull("probeentnahmeEnde");

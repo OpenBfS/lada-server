@@ -46,7 +46,7 @@ public class MessprogrammKategorieTest extends ServiceTest {
             readJsonResource("/datasets/dbUnit_messprogrammkategorie.json");
         JsonObject erzeuger =
             content.getJsonArray(
-                "stamm.messprogramm_kategorie").getJsonObject(0);
+                "master.mpg_categ").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);

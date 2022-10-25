@@ -46,7 +46,7 @@ public class MessprogrammTest extends ServiceTest {
         JsonObject content =
             readJsonResource("/datasets/dbUnit_messprogramm.json");
         JsonObject messprogramm =
-            content.getJsonArray("land.messprogramm").getJsonObject(0);
+            content.getJsonArray("lada.mpg").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messprogramm);
         builder.add("baId", 1);
         builder.add("intervallOffset", 0);

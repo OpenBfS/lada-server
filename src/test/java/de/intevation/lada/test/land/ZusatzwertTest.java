@@ -47,8 +47,8 @@ public class ZusatzwertTest extends ServiceTest {
         // Prepare expected probe object
         JsonObject content =
             readJsonResource("/datasets/dbUnit_probe.json");
-        JsonObject messung =
-            content.getJsonArray("land.zusatz_wert").getJsonObject(0);
+        JsonObject messung = content.getJsonArray("lada.sample_specif_meas_val")
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messung);
         builder.add("parentModified", TS1);
         builder.add("readonly", JsonValue.FALSE);

@@ -1,23 +1,23 @@
 {
-    "land.probe": [{
+    "lada.sample": [{
         "id": 1000,
-        "ext_id": "T001",
-        "ba_id": "1",
-        "datenbasis_id": 9,
-        "letzte_aenderung": "2012-05-05 11:12:00",
-        "media": "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet",
-        "media_desk": "D: 59 04 01 00 05 05 01 02 00 00 00 00",
-        "mst_id": "06010",
-        "labor_mst_id": "06010",
-        "probeentnahme_beginn": "2012-05-03 13:07:00",
-        "probenart_id": 2,
-        "test": false,
-        "umw_id":"A6",
-        "hauptproben_nr": "120510002",
-        "mpr_id": 1000,
-        "probe_nehmer_id": 726,
-        "solldatum_beginn": "2013-05-01 16:00:00",
-        "solldatum_ende": "2013-05-05 16:00:00",
-        "tree_modified": "2012-05-08 10:00:00"
+        "sample_ext_id": "T001",
+        "opr_mode_id": "1",
+        "regulation_id": 9,
+        "last_mod": "2012-05-05 11:12:00",
+        "env_descrip_name": "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet",
+        "env_descrip_display": "D: 59 04 01 00 05 05 01 02 00 00 00 00",
+        "meas_facil_id": "06010",
+        "appr_lab_id": "06010",
+        "sample_start_date": "2012-05-03 13:07:00",
+        "sample_meth_id": 2,
+        "is_test": false,
+        "env_medium_id":"A6",
+        "main_sample_id": "120510002",
+        "mpg_id": 1000,
+        "sampler_id": 726,
+        "sched_start_date": "2013-05-01 16:00:00",
+        "sched_end_date": "2013-05-05 16:00:00",
+        "tree_mod": "2012-05-08 10:00:00"
     }]
 }

@@ -1,20 +1,20 @@
 {
-    "stamm.ort": [{
+    "master.site": [{
         "id": 1000,
-        "netzbetreiber_id": "06",
-        "ort_id": "D_ 00191",
-        "langtext": "Langer Text",
-        "staat_id": 0,
-        "gem_id": "11000000",
-        "unscharf": true,
-        "nuts_code": "DE716",
-        "kda_id": 5,
-        "koord_x_extern": "32487017",
-        "koord_y_extern": "5519769",
-        "letzte_aenderung": "2015-03-01 12:00:00",
+        "network_id": "06",
+        "ext_id": "D_ 00191",
+        "long_text": "Langer Text",
+        "state_id": 0,
+        "munic_id": "11000000",
+        "is_fuzzy": true,
+        "nuts_id": "DE716",
+        "spat_ref_sys_id": 5,
+        "x_coord_ext": "32487017",
+        "y_coord_ext": "5519769",
+        "last_mod": "2015-03-01 12:00:00",
         "geom": "SRID=4326;POINT(49.83021 8.81948)",
-        "ort_typ": 1,
-        "kurztext": "kurz",
-        "berichtstext": "bericht"
+        "site_class_id": 1,
+        "short_text": "kurz",
+        "rei_report_text": "bericht"
     }]
 }

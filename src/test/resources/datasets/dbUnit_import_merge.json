@@ -1,89 +1,89 @@
 {
-    "land.messprogramm": [{
+    "lada.mpg": [{
         "id": 1000,
-        "test": false,
-        "mst_id": "06010",
-        "labor_mst_id": "06010",
-        "datenbasis_id": 9,
-        "gem_id": "11000000",
-        "media_desk": "D: 50 90 01 06 02 05 00 00 00 00 00 00",
-        "umw_id": "L6",
-        "probenart_id": 1,
-        "probenintervall": "M",
-        "gueltig_von": 1,
-        "gueltig_bis": 100,
-        "teilintervall_von": 1,
-        "teilintervall_bis": 30,
-        "letzte_aenderung": "2015-03-01 12:00:00"
+        "is_test": false,
+        "meas_facil_id": "06010",
+        "appr_lab_id": "06010",
+        "regulation_id": 9,
+        "munic_id": "11000000",
+        "env_descrip_id": "D: 50 90 01 06 02 05 00 00 00 00 00 00",
+        "env_medium_id": "L6",
+        "sample_meth_id": 1,
+        "sample_pd": "M",
+        "valid_start_date": 1,
+        "valid_end_date": 100,
+        "sample_pd_start_date": 1,
+        "sample_pd_end_date": 30,
+        "last_mod": "2015-03-01 12:00:00"
     }],
-    "land.probe": [{
+    "lada.sample": [{
         "id": 1000,
-        "ext_id": "T001",
-        "ba_id": "1",
-        "datenbasis_id": 9,
-        "letzte_aenderung": "2012-05-05 11:12:00",
-        "media": "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet",
-        "media_desk": "D: 59 04 01 00 05 05 01 02 00 00 00 00",
-        "mst_id": "06010",
-        "labor_mst_id": "06010",
-        "probeentnahme_beginn": "2012-05-03 13:07:00",
-        "probenart_id": 1,
-        "test": false,
-        "umw_id":"L6",
-        "hauptproben_nr": "120510002",
-        "mpr_id": 1000,
-        "probe_nehmer_id": 726,
-        "solldatum_beginn": "2013-05-01 16:00:00",
-        "solldatum_ende": "2013-05-05 16:00:00",
-        "tree_modified": "2012-05-08 10:00:00"
+        "sample_ext_id": "T001",
+        "opr_mode_id": "1",
+        "regulation_id": 9,
+        "last_mod": "2012-05-05 11:12:00",
+        "env_descrip_name": "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet",
+        "env_descrip_display": "D: 59 04 01 00 05 05 01 02 00 00 00 00",
+        "meas_facil_id": "06010",
+        "appr_lab_id": "06010",
+        "sample_start_date": "2012-05-03 13:07:00",
+        "sample_meth_id": 1,
+        "is_test": false,
+        "env_medium_id":"L6",
+        "main_sample_id": "120510002",
+        "mpg_id": 1000,
+        "sampler_id": 726,
+        "sched_start_date": "2013-05-01 16:00:00",
+        "sched_end_date": "2013-05-05 16:00:00",
+        "tree_mod": "2012-05-08 10:00:00"
     }],
-    "land.messung": [{
+    "lada.measm": [{
         "id": 1200,
-        "probe_id": 1000,
-        "nebenproben_nr": "06A0",
-        "ext_id": 1,
+        "sample_id": 1000,
+        "min_sample_id": "06A0",
+        "sample_ext_id": 1,
         "mmt_id": "A3",
-        "messdauer": 3600,
-        "messzeitpunkt": "2012-05-06 14:00:00",
-        "fertig": false,
-        "letzte_aenderung": "2012-05-08 12:00:00",
-        "geplant": true,
-        "tree_modified": "2012-05-09 12:00:00"
+        "meas_pd": 3600,
+        "measm_start_date": "2012-05-06 14:00:00",
+        "is_completed": false,
+        "last_mod": "2012-05-08 12:00:00",
+        "is_scheduled": true,
+        "tree_mod": "2012-05-09 12:00:00"
     }],
-    "land.zusatz_wert": [{
+    "lada.sample_specif_meas_val": [{
         "id": 1000,
-        "probe_id": 1000,
-        "pzs_id": "A74",
-        "messwert_pzs": 1.8,
-        "messfehler": 0.2,
-        "letzte_aenderung": "2012-05-08 12:00:00",
-        "tree_modified": "2012-05-09 12:00:00"
+        "sample_id": 1000,
+        "sample_specif_id": "A74",
+        "meas_val": 1.8,
+        "meas_err": 0.2,
+        "last_mod": "2012-05-08 12:00:00",
+        "tree_mod": "2012-05-09 12:00:00"
     }],
-    "land.kommentar_p": [{
+    "lada.comm_sample": [{
         "id": 1000,
-        "probe_id": 1000,
-        "datum": "2012-05-08 12:00:00",
-        "mst_id": "06010",
+        "sample_id": 1000,
+        "date": "2012-05-08 12:00:00",
+        "meas_facil_id": "06010",
         "text": "Testtext"
     }],
-    "land.kommentar_m": [{
+    "lada.comm_measm": [{
         "id": 1000,
-        "messungs_id": 1200,
-        "datum": "2012-05-08 12:00:00",
-        "mst_id": "06010",
+        "measm_id": 1200,
+        "date": "2012-05-08 12:00:00",
+        "meas_facil_id": "06010",
         "text": "Testtext"
     }],
-    "land.messwert": [{
+    "lada.meas_val": [{
         "id": 1000,
-        "messungs_id": 1200,
-        "messgroesse_id": 56,
-        "messwert": 1000.8,
-        "meh_id": 207
+        "measm_id": 1200,
+        "measd_id": 56,
+        "meas_val": 1000.8,
+        "unit_id": 207
     }, {
         "id": 1001,
-        "messungs_id": 1200,
-        "messgroesse_id": 57,
-        "messwert": 1000.8,
-        "meh_id": 208
+        "measm_id": 1200,
+        "measd_id": 57,
+        "meas_val": 1000.8,
+        "unit_id": 208
     }]
 }

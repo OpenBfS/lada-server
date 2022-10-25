@@ -472,7 +472,7 @@ public class ImporterTest extends BaseTest {
     @InSequence(T12)
     @UsingDataSet("datasets/dbUnit_import_merge.json")
     @ShouldMatchDataSet(value = "datasets/dbUnit_import_merge_match.json",
-        excludeColumns = {"letzte_aenderung", "tree_modified"})
+        excludeColumns = {"last_mod", "tree_mod"})
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)
@@ -516,7 +516,7 @@ public class ImporterTest extends BaseTest {
     @UsingDataSet("datasets/dbUnit_import_merge.json")
     @ShouldMatchDataSet(
         value = "datasets/dbUnit_import_merge_match_messung.json",
-        excludeColumns = {"letzte_aenderung", "tree_modified"})
+        excludeColumns = {"last_mod", "tree_mod"})
     @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.AFTER,
         strategy = CleanupStrategy.USED_TABLES_ONLY)

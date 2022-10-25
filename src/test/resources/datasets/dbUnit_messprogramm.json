@@ -1,29 +1,29 @@
 {
-    "land.messprogramm": [{
+    "lada.mpg": [{
         "id": 1000,
-        "test": false,
-        "mst_id": "06010",
-        "labor_mst_id": "06010",
-        "datenbasis_id": 2,
-        "gem_id": "11000000",
-        "media_desk": "D: 50 90 01 06 02 05 00 00 00 00 00 00",
-        "umw_id": "A6",
-        "probenart_id": 1,
-        "probenintervall": "M",
-        "teilintervall_von": 1,
-        "teilintervall_bis": 30,
-        "gueltig_von": 1,
-        "gueltig_bis": 365,
-        "letzte_aenderung": "2015-03-01 12:00:00"
+        "is_test": false,
+        "meas_facil_id": "06010",
+        "appr_lab_id": "06010",
+        "regulation_id": 2,
+        "munic_id": "11000000",
+        "env_descrip_id": "D: 50 90 01 06 02 05 00 00 00 00 00 00",
+        "env_medium_id": "A6",
+        "sample_meth_id": 1,
+        "sample_pd": "M",
+        "sample_pd_start_date": 1,
+        "sample_pd_end_date": 30,
+        "valid_start_date": 1,
+        "valid_end_date": 365,
+        "last_mod": "2015-03-01 12:00:00"
     }],
-    "land.messprogramm_mmt": [{
+    "lada.mpg_mmt_mp": [{
         "id": 1000,
-        "messprogramm_id": 1000,
+        "mpg_id": 1000,
         "mmt_id": "A3",
-        "letzte_aenderung": "2015-03-01 12:00:00"
+        "last_mod": "2015-03-01 12:00:00"
     }],
-    "land.messprogramm_mmt_messgroesse": [{
-        "messprogramm_mmt_id": 1000,
-        "messgroesse_id": 56
+    "lada.mpg_mmt_measd_mp": [{
+        "mpg_mmt_id": 1000,
+        "measd_id": 56
     }]
 }

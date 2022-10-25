@@ -49,9 +49,9 @@ public class MessungTest extends ServiceTest {
         // Prepare expected probe object
         JsonObject content = readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject messung =
-            content.getJsonArray("land.messung").getJsonObject(0);
+            content.getJsonArray("lada.measm").getJsonObject(0);
         // Automatic conversion of key for external ID does not work
-        final String extIdKey = "ext_id";
+        final String extIdKey = "sample_ext_id";
         expectedById = convertObject(messung, extIdKey)
             .add("externeMessungsId", messung.get(extIdKey))
             .add("parentModified", TS1)

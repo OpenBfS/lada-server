@@ -1,9 +1,9 @@
 {
-    "stamm.datensatz_erzeuger": [{
+    "master.dataset_creator": [{
         "id": 1000,
-        "bezeichnung": "Testbezeichnung",
-        "netzbetreiber_id": "06",
-        "mst_id": "06010",
-        "datensatz_erzeuger_id": "06"
+        "descr": "Testbezeichnung",
+        "network_id": "06",
+        "meas_facil_id": "06010",
+        "ext_id": "06"
     }]
 }

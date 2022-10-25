@@ -50,7 +50,7 @@ public class KoordinatenartTest extends ServiceTest {
         JsonObject content = readJsonResource(
             "/datasets/dbUnit_koordinatenart.json");
         JsonObject erzeuger =
-            content.getJsonArray("stamm.koordinaten_art").getJsonObject(0);
+            content.getJsonArray("master.spat_ref_sys").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);

@@ -48,7 +48,7 @@ public class OrtTest extends ServiceTest {
         // Prepare expected object
         JsonObject content = readJsonResource("/datasets/dbUnit_ort.json");
         JsonObject erzeuger =
-            content.getJsonArray("stamm.ort").getJsonObject(0);
+            content.getJsonArray("master.site").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);

@@ -44,7 +44,7 @@ public class DatensatzErzeugerTest extends ServiceTest {
         JsonObject content = readJsonResource(
             "/datasets/dbUnit_datensatzerzeuger.json");
         JsonObject erzeuger = content.getJsonArray(
-            "stamm.datensatz_erzeuger").getJsonObject(0);
+            "master.dataset_creator").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);

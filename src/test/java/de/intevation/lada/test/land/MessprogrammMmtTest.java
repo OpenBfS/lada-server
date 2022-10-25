@@ -51,7 +51,7 @@ public class MessprogrammMmtTest extends ServiceTest {
         JsonObject content =
             readJsonResource("/datasets/dbUnit_messprogramm.json");
         JsonObject messprogrammMmt =
-            content.getJsonArray("land.messprogramm_mmt").getJsonObject(0);
+            content.getJsonArray("lada.mpg_mmt_mp").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messprogrammMmt);
         builder.add("messgroessen", Json.createArrayBuilder().add(56));
         expectedById = builder.build();

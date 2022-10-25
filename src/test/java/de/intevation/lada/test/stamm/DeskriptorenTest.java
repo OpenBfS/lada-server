@@ -38,7 +38,7 @@ public class DeskriptorenTest extends ServiceTest {
         // Prepare expected object
         JsonObject content =
             readJsonResource("/datasets/dbUnit_deskriptor.json")
-                .getJsonArray("stamm.deskriptoren").getJsonObject(0);
+                .getJsonArray("master.env_descrip").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(content);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);

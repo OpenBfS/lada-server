@@ -1,9 +1,9 @@
 {
-    "stamm.messprogramm_kategorie": [{
+    "master.mpg_categ": [{
         "id": 1000,
-        "netzbetreiber_id": "06",
-        "code": "mp2",
-        "bezeichnung": "Testbezeichnung",
-        "letzte_aenderung": "2015-03-01 12:00:00"
+        "network_id": "06",
+        "ext_id": "mp2",
+        "name": "Testbezeichnung",
+        "last_mod": "2015-03-01 12:00:00"
     }]
 }
