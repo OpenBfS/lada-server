@@ -82,10 +82,10 @@ CREATE FUNCTION lada.set_measm_status() RETURNS trigger
     DECLARE status_id integer;
     BEGIN
         INSERT INTO lada.status_prot
-            (mst_id, datum, text, messungs_id, status_mp)
-        VALUES ((SELECT mst_id
+            (meas_facil_id, date, text, measm_id, status_comb)
+        VALUES ((SELECT meas_facil_id
                      FROM lada.sample
-                     WHERE id = NEW.probe_id),
+                     WHERE id = NEW.sample_id),
                 now() AT TIME ZONE 'utc', '', NEW.id, 1)
         RETURNING id into status_id;
         UPDATE lada.measm SET status = status_id where id = NEW.id;
@@ -100,9 +100,9 @@ CREATE FUNCTION lada.set_measm_ext_id() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN
-        IF NEW.ext_id IS NULL THEN
-            NEW.ext_id = (
-                SELECT coalesce(max(ext_id),0)
+        IF NEW.sample_ext_id IS NULL THEN
+            NEW.sample_ext_id = (
+                SELECT coalesce(max(sample_ext_id),0)
                    FROM lada.measm
                    WHERE sample_id = NEW.sample_id) + 1;
         END IF;
