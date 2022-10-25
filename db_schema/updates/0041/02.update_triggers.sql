@@ -95,6 +95,30 @@ $$;
 CREATE TRIGGER status_measm AFTER INSERT ON lada.measm
     FOR EACH ROW EXECUTE PROCEDURE lada.set_measm_status();
 
+DROP FUNCTION lada.update_status_messung CASCADE;
+CREATE FUNCTION lada.update_status_measm() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+        CASE
+            WHEN new.status_comb in (2, 3, 4, 5, 6, 7, 8, 10, 11, 12)
+            THEN
+                UPDATE lada.measm SET is_completed = true, status = NEW.id
+                    WHERE id = NEW.measm_id;
+            WHEN new.status_comb in (1, 9, 13)
+            THEN
+                UPDATE lada.measm SET is_completed = false, status = NEW.id
+                    WHERE id = NEW.measm_id;
+            ELSE
+                UPDATE lada.measm SET status = NEW.id WHERE id = NEW.measm_id;
+        END CASE;
+        RETURN NEW;
+    END
+$$;
+CREATE TRIGGER update_measm_after_status_prot_created
+    AFTER INSERT ON lada.status_prot
+    FOR EACH ROW EXECUTE PROCEDURE lada.update_status_measm();
+
 DROP FUNCTION lada.set_messung_ext_id CASCADE;
 CREATE FUNCTION lada.set_measm_ext_id() RETURNS trigger
     LANGUAGE plpgsql
