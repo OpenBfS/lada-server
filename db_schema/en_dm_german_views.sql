@@ -87,6 +87,7 @@ CREATE VIEW land.messprogramm_mmt AS SELECT
 FROM lada.mpg_mmt_mp;
 
 CREATE VIEW land.messprogramm_mmt_messgroesse AS SELECT
+	mpg_mmt_id AS messprogramm_mmt_id,
 	measd_id AS messgroesse_id
 FROM lada.mpg_mmt_measd_mp;
 /*
@@ -100,6 +101,7 @@ CREATE VIEW land.messprogramm_mmt_view AS SELECT
 FROM lada.mpg_mmt_mp_view;
 */
 CREATE VIEW land.messprogramm_proben_zusatz AS SELECT
+	sample_specif_id AS proben_zusatz_id,
 	mpg_id AS messprogramm_id
 FROM lada.mpg_sample_specif;
 /*

@@ -138,6 +138,7 @@ ALTER TABLE lada.messprogramm_mmt_messgroesse RENAME TO mpg_mmt_measd_mp;
 ALTER TABLE lada.mpg_mmt_measd_mp RENAME COLUMN messprogramm_mmt_id TO mpg_mmt_id;
 ALTER TABLE lada.mpg_mmt_measd_mp RENAME COLUMN messgroesse_id TO measd_id;
 CREATE VIEW land.messprogramm_mmt_messgroesse AS SELECT
+	mpg_mmt_id AS messprogramm_mmt_id,
 	measd_id AS messgroesse_id
 FROM lada.mpg_mmt_measd_mp;
 
@@ -145,6 +146,7 @@ ALTER TABLE lada.messprogramm_proben_zusatz RENAME TO mpg_sample_specif;
 ALTER TABLE lada.mpg_sample_specif RENAME COLUMN proben_zusatz_id TO sample_specif_id;
 ALTER TABLE lada.mpg_sample_specif RENAME COLUMN messprogramm_id TO mpg_id;
 CREATE VIEW land.messprogramm_proben_zusatz AS SELECT
+	sample_specif_id AS proben_zusatz_id,
 	mpg_id AS messprogramm_id
 FROM lada.mpg_sample_specif;
 
