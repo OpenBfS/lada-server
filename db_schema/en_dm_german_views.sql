@@ -178,7 +178,7 @@ FROM lada.meas_val_view;
 CREATE VIEW land.ortszuordnung AS SELECT
 	id,
 	sample_id AS probe_id,
-	site_ext_id AS ort_id,
+	site_id AS ort_id,
 	type_regulation AS ortszuordnung_typ,
 	add_site_text AS ortszusatztext,
 	last_mod AS letzte_aenderung,

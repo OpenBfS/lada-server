@@ -225,7 +225,7 @@ FROM lada.meas_val_view;
 
 ALTER TABLE lada.ortszuordnung RENAME TO geolocat;
 ALTER TABLE lada.geolocat RENAME COLUMN probe_id TO sample_id;
-ALTER TABLE lada.geolocat RENAME COLUMN ort_id TO site_ext_id;
+ALTER TABLE lada.geolocat RENAME COLUMN ort_id TO site_id;
 ALTER TABLE lada.geolocat RENAME COLUMN ortszuordnung_typ TO type_regulation;
 ALTER TABLE lada.geolocat RENAME COLUMN ortszusatztext TO add_site_text;
 ALTER TABLE lada.geolocat RENAME COLUMN letzte_aenderung TO last_mod;
@@ -234,7 +234,7 @@ ALTER TABLE lada.geolocat RENAME COLUMN oz_id TO poi_id;
 CREATE VIEW land.ortszuordnung AS SELECT
 	id,
 	sample_id AS probe_id,
-	site_ext_id AS ort_id,
+	site_id AS ort_id,
 	type_regulation AS ortszuordnung_typ,
 	add_site_text AS ortszusatztext,
 	last_mod AS letzte_aenderung,

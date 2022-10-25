@@ -321,7 +321,7 @@ CREATE TABLE comm_sample (
 CREATE TABLE geolocat (
     id serial PRIMARY KEY,
     sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE,
-    site_ext_id integer NOT NULL REFERENCES master.site,
+    site_id integer NOT NULL REFERENCES master.site,
     type_regulation character varying(1) REFERENCES master.type_regulation,
     add_site_text character varying(100),
     poi_id character varying(7) REFERENCES master.poi,
