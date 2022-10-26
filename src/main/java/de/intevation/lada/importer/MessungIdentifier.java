@@ -38,7 +38,7 @@ public class MessungIdentifier implements Identifier {
         Messung messung = (Messung) object;
         QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
 
-        // extermeMessungsId null and hauptprobenNr not null and mstId not null.
+        // externeMessungsId null and nebenprobenNr not null and mstId not null.
         if (messung.getExterneMessungsId() == null
             && messung.getNebenprobenNr() != null
         ) {

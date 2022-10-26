@@ -44,8 +44,8 @@ public class TimestampLocker implements ObjectLocker {
             Probe newProbe = (Probe) o;
             Probe oldProbe = repository.getByIdPlain(
                 Probe.class, newProbe.getId());
-            if (oldProbe.getTreeModified().getTime()
-                > newProbe.getTreeModified().getTime()) {
+            if (oldProbe.getTreeMod().getTime()
+                > newProbe.getTreeMod().getTime()) {
                 return true;
             }
         } else {
@@ -60,7 +60,7 @@ public class TimestampLocker implements ObjectLocker {
                         return true;
                     }
                     Probe probe = repository.getByIdPlain(Probe.class, id);
-                    return isNewer(o, probe.getTreeModified());
+                    return isNewer(o, probe.getTreeMod());
                 }
                 if (m.getName().equals("getMessungsId")) {
                     Integer id;

@@ -26,17 +26,17 @@ public class IsReiComplete implements Rule {
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
         Violation violation = new Violation();
-        if (probe.getDatenbasisId() == null) {
+        if (probe.getRegulationId() == null) {
             return null;
         }
-        if (probe.getDatenbasisId() != 3
-            && probe.getDatenbasisId() != 4
+        if (probe.getRegulationId() != 3
+            && probe.getRegulationId() != 4
         ) {
-            if (probe.getReiProgpunktGrpId() != null) {
+            if (probe.getReiAgGrId() != null) {
                 violation.addError(
                     "reiProgpunktGrpId", StatusCodes.VALUE_NOT_MATCHING);
             }
-            if (probe.getKtaGruppeId() != null) {
+            if (probe.getNuclFacilGrId() != null) {
                 violation.addError(
                     "ktaGruppeId", StatusCodes.VALUE_NOT_MATCHING);
             }
@@ -45,11 +45,11 @@ public class IsReiComplete implements Rule {
             }
             return null;
         }
-        if (probe.getReiProgpunktGrpId() == null) {
+        if (probe.getReiAgGrId() == null) {
             violation.addWarning(
                 "reiProgpunktGrpId", StatusCodes.VALUE_MISSING);
         }
-        if (probe.getKtaGruppeId() == null) {
+        if (probe.getNuclFacilGrId() == null) {
             violation.addWarning(
                 "ktaGruppeId", StatusCodes.VALUE_MISSING);
         }

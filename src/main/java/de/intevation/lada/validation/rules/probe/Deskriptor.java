@@ -36,20 +36,20 @@ public class Deskriptor implements Rule {
     @Override
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
-        if (probe.getMediaDesk() == null) {
+        if (probe.getEnvDescripDisplay() == null) {
             Violation violation = new Violation();
             violation.addWarning("mediaDesk", StatusCodes.VALUE_MISSING);
             return violation;
         }
-        String[] mediaDesk = probe.getMediaDesk().split(" ");
+        String[] mediaDesk = probe.getEnvDescripDisplay().split(" ");
         if (mediaDesk.length <= 1) {
             Violation violation = new Violation();
             violation.addWarning("mediaDesk", StatusCodes.VALUE_MISSING);
             return violation;
         }
         if (mediaDesk.length >= 1
-            && probe.getDatenbasisId() != null
-            && probe.getDatenbasisId() == 4
+            && probe.getRegulationId() != null
+            && probe.getRegulationId() == 4
             && (mediaDesk[1].equals("00")
             || mediaDesk[2].equals("00"))
         ) {

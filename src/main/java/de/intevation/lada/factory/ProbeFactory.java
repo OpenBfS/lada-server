@@ -407,9 +407,9 @@ public class ProbeFactory {
         currentProtocol = new HashMap<>();
         QueryBuilder<Probe> builderProbe =
             repository.queryBuilder(Probe.class);
-        builderProbe.and("mprId", messprogramm.getId());
-        builderProbe.and("solldatumBeginn", startDate);
-        builderProbe.and("solldatumEnde", endDate);
+        builderProbe.and("mpgId", messprogramm.getId());
+        builderProbe.and("schedStartDate", startDate);
+        builderProbe.and("schedEndDate", endDate);
 
         QueryBuilder<MessprogrammMmt> builder =
             repository.queryBuilder(MessprogrammMmt.class);
@@ -444,22 +444,22 @@ public class ProbeFactory {
             return proben.get(0);
         }
         Probe probe = new Probe();
-        probe.setBaId(messprogramm.getBaId());
-        probe.setDatenbasisId(messprogramm.getDatenbasisId());
-        probe.setMediaDesk(messprogramm.getMediaDesk());
+        probe.setOprModeId(messprogramm.getBaId());
+        probe.setRegulationId(messprogramm.getDatenbasisId());
+        probe.setEnvDescripDisplay(messprogramm.getMediaDesk());
         probe = findMedia(probe);
-        probe.setMstId(messprogramm.getMstId());
-        probe.setLaborMstId(messprogramm.getLaborMstId());
-        probe.setProbenartId(messprogramm.getProbenartId());
-        probe.setProbeNehmerId(messprogramm.getProbeNehmerId());
-        probe.setSolldatumBeginn(new Timestamp(startDate.getTime()));
-        probe.setSolldatumEnde(new Timestamp(endDate.getTime()));
-        probe.setTest(messprogramm.getTest());
-        probe.setUmwId(messprogramm.getUmwId());
-        probe.setMprId(messprogramm.getId());
-        probe.setMplId(messprogramm.getMplId());
-        probe.setReiProgpunktGrpId(messprogramm.getReiProgpunktGrpId());
-        probe.setKtaGruppeId(messprogramm.getKtaGruppeId());
+        probe.setMeasFacilId(messprogramm.getMstId());
+        probe.setApprLabId(messprogramm.getLaborMstId());
+        probe.setSampleMethId(messprogramm.getProbenartId());
+        probe.setSamplerId(messprogramm.getProbeNehmerId());
+        probe.setSchedStartDate(new Timestamp(startDate.getTime()));
+        probe.setSchedEndDate(new Timestamp(endDate.getTime()));
+        probe.setIsTest(messprogramm.getTest());
+        probe.setEnvMediumId(messprogramm.getUmwId());
+        probe.setMpgId(messprogramm.getId());
+        probe.setStateMpgId(messprogramm.getMplId());
+        probe.setReiAgGrId(messprogramm.getReiProgpunktGrpId());
+        probe.setNuclFacilGrId(messprogramm.getKtaGruppeId());
         probe.setFound(false);
 
         createObject(probe, dryrun);
@@ -536,17 +536,17 @@ public class ProbeFactory {
 
     private void toProtocol(Probe probe, boolean dryrun) {
         currentProtocol.put("id", probe.getId());
-        currentProtocol.put("externeProbeId", probe.getExterneProbeId());
-        currentProtocol.put("mstId", probe.getMstId());
-        currentProtocol.put("datenbasisId", probe.getDatenbasisId());
-        currentProtocol.put("baId", probe.getBaId());
-        currentProtocol.put("probenartId", probe.getProbenartId());
-        currentProtocol.put("solldatumBeginn", probe.getSolldatumBeginn());
-        currentProtocol.put("solldatumEnde", probe.getSolldatumEnde());
-        currentProtocol.put("mprId", probe.getMprId());
-        currentProtocol.put("mediaDesk", probe.getMediaDesk());
-        currentProtocol.put("umwId", probe.getUmwId());
-        currentProtocol.put("probeNehmerId", probe.getProbeNehmerId());
+        currentProtocol.put("sampleExtId", probe.getSampleExtId());
+        currentProtocol.put("mstId", probe.getMeasFacilId());
+        currentProtocol.put("datenbasisId", probe.getRegulationId());
+        currentProtocol.put("baId", probe.getOprModeId());
+        currentProtocol.put("probenartId", probe.getSampleMethId());
+        currentProtocol.put("solldatumBeginn", probe.getSchedStartDate());
+        currentProtocol.put("solldatumEnde", probe.getSchedEndDate());
+        currentProtocol.put("mprId", probe.getMpgId());
+        currentProtocol.put("mediaDesk", probe.getEnvDescripDisplay());
+        currentProtocol.put("umwId", probe.getEnvMediumId());
+        currentProtocol.put("probeNehmerId", probe.getSamplerId());
         currentProtocol.put("found", probe.isFound());
         currentProtocol.put("dryrun", dryrun);
     }
@@ -566,13 +566,13 @@ public class ProbeFactory {
      * @return The updated probe object.
      */
     public Probe findUmweltId(Probe probe) {
-        String mediaDesk = probe.getMediaDesk();
+        String mediaDesk = probe.getEnvDescripDisplay();
         if (mediaDesk != null) {
             String[] mediaDeskParts = mediaDesk.split(" ");
             if (mediaDeskParts.length <= 1) {
                 return probe;
             }
-            probe.setUmwId(findUmwelt(mediaDeskParts));
+            probe.setEnvMediumId(findUmwelt(mediaDeskParts));
         }
         return probe;
     }
@@ -585,7 +585,7 @@ public class ProbeFactory {
      * @return The updated probe object.
      */
     public Probe findMedia(Probe probe) {
-        String mediaDesk = probe.getMediaDesk();
+        String mediaDesk = probe.getEnvDescripDisplay();
         if (mediaDesk != null) {
             Object result = repository.queryFromString(
                 "SELECT "
@@ -593,7 +593,7 @@ public class ProbeFactory {
                 + ".get_media_from_media_desk( :mediaDesk );")
                     .setParameter("mediaDesk", mediaDesk)
                     .getSingleResult();
-            probe.setMedia(result != null ? result.toString() : "");
+            probe.setEnvDescripName(result != null ? result.toString() : "");
         }
         return probe;
     }
@@ -840,9 +840,9 @@ public class ProbeFactory {
      * @return The updated messprogramm.
      */
     public Probe getInitialMediaDesk(Probe probe) {
-        String umweltId = probe.getUmwId();
+        String umweltId = probe.getEnvMediumId();
         if (umweltId != null) {
-            probe.setMediaDesk(getInitialMediaDesk(umweltId));
+            probe.setEnvDescripDisplay(getInitialMediaDesk(umweltId));
         }
         return probe;
     }

@@ -46,8 +46,8 @@ public class HasPflichtmessgroessen implements Rule {
         QueryBuilder<PflichtMessgroesse> builder =
             repository.queryBuilder(PflichtMessgroesse.class);
         builder.and("mmtId", messung.getMmtId());
-        builder.and("umwId", probe.getUmwId());
-        builder.and("datenbasisId", probe.getDatenbasisId());
+        builder.and("umwId", probe.getEnvMediumId());
+        builder.and("datenbasisId", probe.getRegulationId());
         Response response =
             repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
@@ -59,9 +59,10 @@ public class HasPflichtmessgroessen implements Rule {
                 repository.queryBuilder(PflichtMessgroesse.class);
             builderGrp.and("mmtId", messung.getMmtId());
             builderGrp.and(
-                "umwId", probe.getUmwId() == null
-                    ? null : probe.getUmwId().substring(0, 1));
-            builderGrp.and("datenbasisId", probe.getDatenbasisId());
+                "umwId",
+                probe.getEnvMediumId() == null
+                    ? null : probe.getEnvMediumId().substring(0, 1));
+            builderGrp.and("datenbasisId", probe.getRegulationId());
             Response responseGrp =
                 repository.filter(builderGrp.getQuery());
             @SuppressWarnings("unchecked")
@@ -75,10 +76,11 @@ public class HasPflichtmessgroessen implements Rule {
                 repository.queryBuilder(PflichtMessgroesse.class);
             builderGrpS2.and("mmtId", messung.getMmtId());
             builderGrpS2.and(
-                "umwId", probe.getUmwId() == null
-                    ? null : probe.getUmwId().length() >= 1
-                        ? null : probe.getUmwId().substring(0, 2));
-            builderGrpS2.and("datenbasisId", probe.getDatenbasisId());
+                "umwId",
+                probe.getEnvMediumId() == null
+                    ? null : probe.getEnvMediumId().length() >= 1
+                        ? null : probe.getEnvMediumId().substring(0, 2));
+            builderGrpS2.and("datenbasisId", probe.getRegulationId());
             Response responseGrpS2 =
                 repository.filter(builderGrpS2.getQuery());
             @SuppressWarnings("unchecked")

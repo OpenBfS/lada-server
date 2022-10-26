@@ -25,7 +25,7 @@ public class HasDatenbasis implements Rule {
     @Override
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
-        if (probe.getDatenbasisId() == null) {
+        if (probe.getRegulationId() == null) {
             Violation violation = new Violation();
             violation.addError("datenbasis", StatusCodes.VALUE_MISSING);
             return violation;

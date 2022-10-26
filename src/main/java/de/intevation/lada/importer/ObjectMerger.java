@@ -43,67 +43,67 @@ public class ObjectMerger {
      * @return returns true on success
      */
     public boolean merge(Probe target, Probe src) {
-        if (src.getBaId() != null) {
-            target.setBaId(src.getBaId());
+        if (src.getOprModeId() != null) {
+            target.setOprModeId(src.getOprModeId());
         }
-        if (src.getDatenbasisId() != null) {
-            target.setDatenbasisId(src.getDatenbasisId());
+        if (src.getRegulationId() != null) {
+            target.setRegulationId(src.getRegulationId());
         }
-        if (src.getErzeugerId() != null) {
-            target.setErzeugerId(src.getErzeugerId());
+        if (src.getDatasetCreatorId() != null) {
+            target.setDatasetCreatorId(src.getDatasetCreatorId());
         }
-        if (src.getHauptprobenNr() != null
-            && !src.getHauptprobenNr().isEmpty()
+        if (src.getMainSampleId() != null
+            && !src.getMainSampleId().isEmpty()
         ) {
-            target.setHauptprobenNr(src.getHauptprobenNr());
+            target.setMainSampleId(src.getMainSampleId());
         }
-        if (src.getLaborMstId() != null) {
-            target.setLaborMstId(src.getLaborMstId());
+        if (src.getApprLabId() != null) {
+            target.setApprLabId(src.getApprLabId());
         }
-        if (src.getMedia() != null) {
-            target.setMedia(src.getMedia());
+        if (src.getEnvDescripName() != null) {
+            target.setEnvDescripName(src.getEnvDescripName());
         }
-        if (src.getMediaDesk() != null) {
-            target.setMediaDesk(src.getMediaDesk());
+        if (src.getEnvDescripDisplay() != null) {
+            target.setEnvDescripDisplay(src.getEnvDescripDisplay());
         }
-        if (src.getMittelungsdauer() != null) {
-            target.setMittelungsdauer(src.getMittelungsdauer());
+        if (src.getMidSampleDate() != null) {
+            target.setMidSampleDate(src.getMidSampleDate());
         }
-        if (src.getMplId() != null) {
-            target.setMplId(src.getMplId());
+        if (src.getStateMpgId() != null) {
+            target.setStateMpgId(src.getStateMpgId());
         }
-        if (src.getProbeentnahmeBeginn() != null) {
-            target.setProbeentnahmeBeginn(src.getProbeentnahmeBeginn());
+        if (src.getSampleStartDate() != null) {
+            target.setSampleStartDate(src.getSampleStartDate());
         }
-        if (src.getProbeentnahmeEnde() != null) {
-            target.setProbeentnahmeEnde(src.getProbeentnahmeEnde());
+        if (src.getSampleEndDate() != null) {
+            target.setSampleEndDate(src.getSampleEndDate());
         }
-        if (src.getProbenartId() != null) {
-            target.setProbenartId(src.getProbenartId());
+        if (src.getSampleMethId() != null) {
+            target.setSampleMethId(src.getSampleMethId());
         }
-        if (src.getProbeNehmerId() != null) {
-            target.setProbeNehmerId(src.getProbeNehmerId());
+        if (src.getSamplerId() != null) {
+            target.setSamplerId(src.getSamplerId());
         }
-        if (src.getSolldatumBeginn() != null) {
-            target.setSolldatumBeginn(src.getSolldatumBeginn());
+        if (src.getSchedStartDate() != null) {
+            target.setSchedStartDate(src.getSchedStartDate());
         }
-        if (src.getSolldatumEnde() != null) {
-            target.setSolldatumEnde(src.getSolldatumEnde());
+        if (src.getSchedEndDate() != null) {
+            target.setSchedEndDate(src.getSchedEndDate());
         }
-        if (src.getUrsprungszeit() != null) {
-            target.setUrsprungszeit(src.getUrsprungszeit());
+        if (src.getOrigDate() != null) {
+            target.setOrigDate(src.getOrigDate());
         }
-        if (src.getTest() != null) {
-            if (target.getTest() == null) {
-                target.setTest(src.getTest());
+        if (src.getIsTest() != null) {
+            if (target.getIsTest() == null) {
+                target.setIsTest(src.getIsTest());
             }
         } else {
             // Set explicit to false, if is null in src to not violate
             // constraints
-            target.setTest(false);
+            target.setIsTest(false);
         }
-        if (src.getUmwId() != null) {
-            target.setUmwId(src.getUmwId());
+        if (src.getEnvMediumId() != null) {
+            target.setEnvMediumId(src.getEnvMediumId());
         }
         Response r = repository.update(target);
         return r.getSuccess();

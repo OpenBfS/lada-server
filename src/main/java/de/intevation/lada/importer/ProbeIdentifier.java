@@ -38,18 +38,18 @@ public class ProbeIdentifier implements Identifier {
         Probe probe = (Probe) object;
         QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
 
-        // externeProbeId null and hauptprobenNr not null and mstId not null.
-        if (probe.getExterneProbeId() == null
-            && probe.getHauptprobenNr() != null
-            && probe.getMstId() != null
+        // sampleExtId null and mainSampleId not null and mstId not null.
+        if (probe.getSampleExtId() == null
+            && probe.getMainSampleId() != null
+            && probe.getMeasFacilId() != null
         ) {
-            builder.and("mstId", probe.getMstId());
-            builder.and("hauptprobenNr", probe.getHauptprobenNr());
+            builder.and("measFacilId", probe.getMeasFacilId());
+            builder.and("mainSampleId", probe.getMainSampleId());
             List<Probe> proben =
                 repository.filterPlain(builder.getQuery());
             if (proben.size() > 1) {
                 // Should never happen. DB has unique constraint for
-                // "hauptprobenNr"
+                // "mainSampleId"
                 return Identified.REJECT;
             }
             if (proben.isEmpty()) {
@@ -57,16 +57,16 @@ public class ProbeIdentifier implements Identifier {
             }
             found = proben.get(0);
             return Identified.UPDATE;
-        } else if (probe.getExterneProbeId() != null
-            && (probe.getHauptprobenNr() == null
-                || probe.getMstId() == null)
+        } else if (probe.getSampleExtId() != null
+            && (probe.getMainSampleId() == null
+                || probe.getMeasFacilId() == null)
         ) {
-            builder.and("externeProbeId", probe.getExterneProbeId());
+            builder.and("sampleExtId", probe.getSampleExtId());
             List<Probe> proben =
                 repository.filterPlain(builder.getQuery());
             if (proben.size() > 1) {
                 // Should never happen. DB has unique constraint for
-                // "externeProbeId"
+                // "sampleExtId"
                 return Identified.REJECT;
             }
             if (proben.isEmpty()) {
@@ -75,22 +75,22 @@ public class ProbeIdentifier implements Identifier {
             found = proben.get(0);
             return Identified.UPDATE;
         } else {
-            builder.and("externeProbeId", probe.getExterneProbeId());
+            builder.and("sampleExtId", probe.getSampleExtId());
             List<Probe> proben =
                 repository.filterPlain(builder.getQuery());
             if (proben.size() > 1) {
                 // Should never happen. DB has unique constraint for
-                // "externeProbeId"
+                // "sampleExtId"
                 return Identified.REJECT;
             }
             if (proben.isEmpty()) {
                 return Identified.NEW;
             }
-            if (proben.get(0).getHauptprobenNr() == null
-                || proben.get(0).getHauptprobenNr().equals(
-                    probe.getHauptprobenNr())
-                || probe.getHauptprobenNr().isEmpty()
-                || proben.get(0).getHauptprobenNr().isEmpty()
+            if (proben.get(0).getMainSampleId() == null
+                || proben.get(0).getMainSampleId().equals(
+                    probe.getMainSampleId())
+                || probe.getMainSampleId().isEmpty()
+                || proben.get(0).getMainSampleId().isEmpty()
             ) {
                 found = proben.get(0);
                 return Identified.UPDATE;

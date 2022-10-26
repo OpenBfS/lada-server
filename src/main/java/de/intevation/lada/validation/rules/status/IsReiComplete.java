@@ -42,15 +42,15 @@ public class IsReiComplete implements Rule {
                 Messung.class, status.getMessungsId());
         Probe probe =
             repository.getByIdPlain(Probe.class, messung.getProbeId());
-        if (!Integer.valueOf(3).equals(probe.getDatenbasisId())
-            && !Integer.valueOf(4).equals(probe.getDatenbasisId())) {
+        if (!Integer.valueOf(3).equals(probe.getRegulationId())
+            && !Integer.valueOf(4).equals(probe.getRegulationId())) {
             return null;
         }
         Violation violation = new Violation();
-        if (probe.getReiProgpunktGrpId() == null) {
+        if (probe.getReiAgGrId() == null) {
             violation.addError("reiProgpunktGrpId", StatusCodes.VALUE_MISSING);
         }
-        if (probe.getKtaGruppeId() == null) {
+        if (probe.getNuclFacilGrId() == null) {
             violation.addError("ktaGruppeId", StatusCodes.VALUE_MISSING);
         }
         if (violation.hasErrors()) {
