@@ -20,7 +20,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "result_type", schema = SchemaName.NAME)
+@Table(name = "result_type", schema = SchemaName.LEGACY_NAME)
 @NamedQuery(name = "ResultType.findAll", query = "SELECT r FROM ResultType r")
 public class ResultType implements Serializable {
     private static final long serialVersionUID = 1L;

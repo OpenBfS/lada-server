@@ -13,7 +13,8 @@ package de.intevation.lada.model.land;
  *
  */
 public class SchemaName {
-    public static final String NAME = "land";
+    public static final String NAME = "lada";
+    public static final String LEGACY_NAME = "land";
 
     private SchemaName() { };
 }

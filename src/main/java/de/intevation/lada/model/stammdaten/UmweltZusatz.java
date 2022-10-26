@@ -20,7 +20,7 @@ import java.sql.Timestamp;
  *
  */
 @Entity
-@Table(name = "umwelt_zusatz", schema = SchemaName.NAME)
+@Table(name = "umwelt_zusatz", schema = SchemaName.LEGACY_NAME)
 public class UmweltZusatz implements Serializable {
     private static final long serialVersionUID = 1L;
 

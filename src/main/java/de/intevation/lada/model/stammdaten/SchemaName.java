@@ -13,7 +13,8 @@ package de.intevation.lada.model.stammdaten;
  *
  */
 public class SchemaName {
-    public static final String NAME = "stamm";
+    public static final String NAME = "master";
+    public static final String LEGACY_NAME = "stamm";
 
     private SchemaName() { };
 }

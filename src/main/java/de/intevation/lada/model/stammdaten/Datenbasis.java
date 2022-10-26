@@ -20,7 +20,7 @@ import javax.persistence.Column;
  *
  */
 @Entity
-@Table(name = "datenbasis", schema = SchemaName.NAME)
+@Table(name = "datenbasis", schema = SchemaName.LEGACY_NAME)
 public class Datenbasis implements Serializable {
     private static final long serialVersionUID = 1L;
 

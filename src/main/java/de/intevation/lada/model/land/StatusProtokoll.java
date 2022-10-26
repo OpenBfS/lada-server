@@ -27,7 +27,7 @@ import javax.ws.rs.core.MultivaluedMap;
  *
  */
 @Entity
-@Table(name = "status_protokoll", schema = SchemaName.NAME)
+@Table(name = "status_protokoll", schema = SchemaName.LEGACY_NAME)
 public class StatusProtokoll implements Serializable {
     private static final long serialVersionUID = 1L;
 

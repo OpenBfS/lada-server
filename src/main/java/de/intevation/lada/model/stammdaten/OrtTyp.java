@@ -20,7 +20,7 @@ import java.sql.Timestamp;
  *
  */
 @Entity
-@Table(name = "ort_typ", schema = SchemaName.NAME)
+@Table(name = "ort_typ", schema = SchemaName.LEGACY_NAME)
 public class OrtTyp implements Serializable {
     private static final long serialVersionUID = 1L;
 

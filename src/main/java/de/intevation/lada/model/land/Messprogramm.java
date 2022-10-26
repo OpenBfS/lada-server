@@ -35,7 +35,7 @@ import de.intevation.lada.model.stammdaten.ProbenZusatz;
  *
  */
 @Entity
-@Table(name = "messprogramm", schema = SchemaName.NAME)
+@Table(name = "messprogramm", schema = SchemaName.LEGACY_NAME)
 public class Messprogramm implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -133,7 +133,7 @@ public class Messprogramm implements Serializable {
     @ManyToMany (fetch = FetchType.EAGER)
     @JoinTable(
         name = "messprogramm_proben_zusatz",
-        schema = SchemaName.NAME,
+        schema = SchemaName.LEGACY_NAME,
         joinColumns = @JoinColumn(name = "messprogramm_id"),
         inverseJoinColumns = @JoinColumn(name = "proben_zusatz_id")
     )

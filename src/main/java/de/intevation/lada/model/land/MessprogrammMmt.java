@@ -31,7 +31,7 @@ import de.intevation.lada.model.stammdaten.Messgroesse;
  *
  */
 @Entity
-@Table(name = "messprogramm_mmt", schema = SchemaName.NAME)
+@Table(name = "messprogramm_mmt", schema = SchemaName.LEGACY_NAME)
 public class MessprogrammMmt implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -45,7 +45,7 @@ public class MessprogrammMmt implements Serializable {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "messprogramm_mmt_messgroesse",
-        schema = SchemaName.NAME,
+        schema = SchemaName.LEGACY_NAME,
         joinColumns = @JoinColumn(name = "messprogramm_mmt_id"),
         inverseJoinColumns = @JoinColumn(name = "messgroesse_id")
     )

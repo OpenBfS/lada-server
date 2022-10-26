@@ -29,7 +29,7 @@ import javax.persistence.Transient;
  *
  */
 @Entity
-@Table(name = "query_user", schema = SchemaName.NAME)
+@Table(name = "query_user", schema = SchemaName.LEGACY_NAME)
 public class QueryUser implements Serializable {
     private static final long serialVersionUID = 1L;
 

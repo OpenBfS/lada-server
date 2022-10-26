@@ -29,7 +29,7 @@ import javax.ws.rs.core.MultivaluedMap;
  *
  */
 @Entity
-@Table(name = "messwert", schema = SchemaName.NAME)
+@Table(name = "messwert", schema = SchemaName.LEGACY_NAME)
 public class Messwert implements Serializable {
     private static final long serialVersionUID = 1L;
 

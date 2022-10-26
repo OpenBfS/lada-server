@@ -22,7 +22,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "status_kombi", schema = SchemaName.NAME)
+@Table(name = "status_kombi", schema = SchemaName.LEGACY_NAME)
 public class StatusKombi implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -22,7 +22,7 @@ import java.sql.Timestamp;
  * The persistent class for the mess_einheit_umrechung database table.
  */
 @Entity
-@Table(name = "mass_einheit_umrechnung", schema = SchemaName.NAME)
+@Table(name = "mass_einheit_umrechnung", schema = SchemaName.LEGACY_NAME)
 public class MassEinheitUmrechnung implements Serializable {
     private static final long serialVersionUID = 1L;
 

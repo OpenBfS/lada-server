@@ -20,7 +20,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "umwelt", schema = SchemaName.NAME)
+@Table(name = "umwelt", schema = SchemaName.LEGACY_NAME)
 public class Umwelt implements Serializable {
     private static final long serialVersionUID = 1L;
 

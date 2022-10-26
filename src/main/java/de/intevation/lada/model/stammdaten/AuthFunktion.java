@@ -20,7 +20,7 @@ import javax.persistence.Column;
  *
  */
 @Entity
-@Table(name = "auth_funktion", schema = SchemaName.NAME)
+@Table(name = "auth_funktion", schema = SchemaName.LEGACY_NAME)
 public class AuthFunktion implements Serializable {
     private static final long serialVersionUID = 1L;
 

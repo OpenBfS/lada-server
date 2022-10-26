@@ -20,7 +20,7 @@ import javax.persistence.Column;
  *
  */
 @Entity
-@Table(name = "ortszuordnung_typ", schema = SchemaName.NAME)
+@Table(name = "ortszuordnung_typ", schema = SchemaName.LEGACY_NAME)
 public class OrtszuordnungTyp implements Serializable {
     private static final long serialVersionUID = 1L;
 

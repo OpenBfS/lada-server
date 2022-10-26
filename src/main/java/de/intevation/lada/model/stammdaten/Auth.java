@@ -21,7 +21,7 @@ import java.sql.Timestamp;
  *
  */
 @Entity
-@Table(name = "auth", schema = SchemaName.NAME)
+@Table(name = "auth", schema = SchemaName.LEGACY_NAME)
 public class Auth implements Serializable {
     private static final long serialVersionUID = 1L;
 

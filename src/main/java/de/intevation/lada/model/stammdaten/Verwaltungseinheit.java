@@ -23,7 +23,7 @@ import org.locationtech.jts.geom.Point;
  *
  */
 @Entity
-@Table(name = "verwaltungseinheit", schema = SchemaName.NAME)
+@Table(name = "verwaltungseinheit", schema = SchemaName.LEGACY_NAME)
 public class Verwaltungseinheit implements Serializable {
     private static final long serialVersionUID = 1L;
 

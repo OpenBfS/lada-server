@@ -25,7 +25,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "query_messstelle", schema = SchemaName.NAME)
+@Table(name = "query_messstelle", schema = SchemaName.LEGACY_NAME)
 public class QueryMessstelle implements Serializable {
     private static final long serialVersionUID = 1L;
 

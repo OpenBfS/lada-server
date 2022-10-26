@@ -25,7 +25,7 @@ import javax.persistence.Transient;
  *
  */
 @Entity
-@Table(name = "kommentar_m", schema = SchemaName.NAME)
+@Table(name = "kommentar_m", schema = SchemaName.LEGACY_NAME)
 public class KommentarM implements Serializable {
     private static final long serialVersionUID = 1L;
 

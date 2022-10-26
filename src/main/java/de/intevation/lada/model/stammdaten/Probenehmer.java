@@ -25,7 +25,7 @@ import javax.persistence.Transient;
  *
  */
 @Entity
-@Table(name = "probenehmer", schema = SchemaName.NAME)
+@Table(name = "probenehmer", schema = SchemaName.LEGACY_NAME)
 public class Probenehmer implements Serializable {
     private static final long serialVersionUID = 1L;
 

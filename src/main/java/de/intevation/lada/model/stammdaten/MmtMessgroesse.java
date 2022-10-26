@@ -20,7 +20,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "mmt_messgroesse", schema = SchemaName.NAME)
+@Table(name = "mmt_messgroesse", schema = SchemaName.LEGACY_NAME)
 public class MmtMessgroesse implements Serializable {
     private static final long serialVersionUID = 1L;
 

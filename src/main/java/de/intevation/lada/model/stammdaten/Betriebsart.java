@@ -20,7 +20,7 @@ import javax.persistence.Column;
  *
  */
 @Entity
-@Table(name = "betriebsart", schema = SchemaName.NAME)
+@Table(name = "betriebsart", schema = SchemaName.LEGACY_NAME)
 public class Betriebsart implements Serializable {
     private static final long serialVersionUID = 1L;
 

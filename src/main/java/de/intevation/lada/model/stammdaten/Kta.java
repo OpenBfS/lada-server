@@ -20,7 +20,7 @@ import javax.persistence.Column;
  *
  */
 @Entity
-@Table(name = "kta", schema = SchemaName.NAME)
+@Table(name = "kta", schema = SchemaName.LEGACY_NAME)
 public class Kta implements Serializable {
     private static final long serialVersionUID = 1L;
 

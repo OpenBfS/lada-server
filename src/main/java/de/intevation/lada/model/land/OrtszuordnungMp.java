@@ -27,7 +27,7 @@ import javax.ws.rs.core.MultivaluedMap;
  *
  */
 @Entity
-@Table(name = "ortszuordnung_mp", schema = SchemaName.NAME)
+@Table(name = "ortszuordnung_mp", schema = SchemaName.LEGACY_NAME)
 public class OrtszuordnungMp implements Serializable {
     private static final long serialVersionUID = 1L;
 

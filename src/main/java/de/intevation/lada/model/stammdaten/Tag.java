@@ -27,7 +27,7 @@ import javax.persistence.Transient;
  * The persistent class for the tag database table.
  */
 @Entity
-@Table(name = "tag", schema = SchemaName.NAME)
+@Table(name = "tag", schema = SchemaName.LEGACY_NAME)
 public class Tag {
 
     // Default time after which mst tags expire in days

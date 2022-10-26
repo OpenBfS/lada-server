@@ -24,7 +24,7 @@ import org.locationtech.jts.geom.MultiPolygon;
  *
  */
 @Entity
-@Table(name = "verwaltungsgrenze", schema = SchemaName.NAME)
+@Table(name = "verwaltungsgrenze", schema = SchemaName.LEGACY_NAME)
 public class Verwaltungsgrenze implements Serializable {
     private static final long serialVersionUID = 1L;
 

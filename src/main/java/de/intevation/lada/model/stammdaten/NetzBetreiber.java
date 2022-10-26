@@ -21,7 +21,7 @@ import java.sql.Timestamp;
  *
  */
 @Entity
-@Table(name = "netz_betreiber", schema = SchemaName.NAME)
+@Table(name = "netz_betreiber", schema = SchemaName.LEGACY_NAME)
 @NamedQuery(
     name = "NetzBetreiber.findAll",
     query = "SELECT n FROM NetzBetreiber n")

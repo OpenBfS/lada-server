@@ -24,7 +24,7 @@ import javax.persistence.Transient;
  *
  */
 @Entity
-@Table(name = "gemeindeuntergliederung", schema = SchemaName.NAME)
+@Table(name = "gemeindeuntergliederung", schema = SchemaName.LEGACY_NAME)
 public class GemeindeUntergliederung implements Serializable {
     private static final long serialVersionUID = 1L;
 

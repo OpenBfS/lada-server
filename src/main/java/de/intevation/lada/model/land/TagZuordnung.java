@@ -19,7 +19,7 @@ import javax.persistence.Table;
  * The persistent class for the tagzuordnung database table.
  */
 @Entity
-@Table(name = "tagzuordnung", schema = SchemaName.NAME)
+@Table(name = "tagzuordnung", schema = SchemaName.LEGACY_NAME)
 public class TagZuordnung {
     public static final long serialVersionUID = 1L;
 

@@ -20,7 +20,7 @@ import java.sql.Timestamp;
  *
  */
 @Entity
-@Table(name = "rei_progpunkt_gruppe", schema = SchemaName.NAME)
+@Table(name = "rei_progpunkt_gruppe", schema = SchemaName.LEGACY_NAME)
 public class ReiProgpunktGruppe implements Serializable {
     private static final long serialVersionUID = 1L;
 

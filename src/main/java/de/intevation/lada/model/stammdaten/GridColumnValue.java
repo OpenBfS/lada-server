@@ -26,7 +26,7 @@ import javax.persistence.Transient;
  *
  */
 @Entity
-@Table(name = "grid_column_values", schema = SchemaName.NAME)
+@Table(name = "grid_column_values", schema = SchemaName.LEGACY_NAME)
 public class GridColumnValue implements Serializable {
     private static final long serialVersionUID = 1L;
 

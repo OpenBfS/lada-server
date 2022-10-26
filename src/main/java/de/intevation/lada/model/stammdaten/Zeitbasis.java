@@ -22,7 +22,7 @@ import javax.persistence.Column;
  */
 @Entity
 @NamedQuery(name = "Zeitbasis.findAll", query = "SELECT z FROM Zeitbasis z")
-@Table(name = "zeitbasis", schema = SchemaName.NAME)
+@Table(name = "zeitbasis", schema = SchemaName.LEGACY_NAME)
 public class Zeitbasis implements Serializable {
     private static final long serialVersionUID = 1L;
 

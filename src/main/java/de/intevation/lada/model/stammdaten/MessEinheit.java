@@ -26,7 +26,7 @@ import javax.persistence.Transient;
  *
  */
 @Entity
-@Table(name = "mess_einheit", schema = SchemaName.NAME)
+@Table(name = "mess_einheit", schema = SchemaName.LEGACY_NAME)
 public class MessEinheit implements Serializable {
     private static final long serialVersionUID = 1L;
 

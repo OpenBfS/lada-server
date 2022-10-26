@@ -21,7 +21,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "filter_value", schema = SchemaName.NAME)
+@Table(name = "filter_value", schema = SchemaName.LEGACY_NAME)
 @NamedQuery(name = "FilterValue.findAll", query = "SELECT f FROM FilterValue f")
 public class FilterValue implements Serializable {
     private static final long serialVersionUID = 1L;

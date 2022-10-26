@@ -20,7 +20,7 @@ import java.sql.Timestamp;
  *
  */
 @Entity
-@Table(name = "auth_lst_umw", schema = SchemaName.NAME)
+@Table(name = "auth_lst_umw", schema = SchemaName.LEGACY_NAME)
 public class AuthLstUmw implements Serializable {
     private static final long serialVersionUID = 1L;
 
