@@ -35,7 +35,7 @@ import de.intevation.lada.util.data.EmptyStringConverter;
  */
 @Entity
 @DynamicInsert(true)
-@Table(name = "probe", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 public class Probe implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -43,16 +43,12 @@ public class Probe implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "ba_id")
     private Integer baId;
 
-    @Column(name = "datenbasis_id")
     private Integer datenbasisId;
 
-    @Column(name = "erzeuger_id")
     private Integer erzeugerId;
 
-    @Column(name = "hauptproben_nr")
     @Convert(converter = EmptyStringConverter.class)
     private String hauptprobenNr;
 
@@ -60,65 +56,50 @@ public class Probe implements Serializable {
     @Convert(converter = EmptyStringConverter.class)
     private String externeProbeId;
 
-    @Column(name = "labor_mst_id")
     private String laborMstId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
+    @Column(insertable = false)
     private Timestamp letzteAenderung;
 
     private String media;
 
-    @Column(name = "media_desk")
     private String mediaDesk;
 
     private Long mittelungsdauer;
 
-    @Column(name = "mpl_id")
     private Integer mplId;
 
-    @Column(name = "mpr_id")
     private Integer mprId;
 
-    @Column(name = "mst_id")
     private String mstId;
 
-    @Column(name = "probe_nehmer_id")
     private Integer probeNehmerId;
 
-    @Column(name = "probeentnahme_beginn")
     private Timestamp probeentnahmeBeginn;
 
-    @Column(name = "probeentnahme_ende")
     private Timestamp probeentnahmeEnde;
 
-    @Column(name = "probenart_id")
     private Integer probenartId;
 
-    @Column(name = "solldatum_beginn")
     private Timestamp solldatumBeginn;
 
-    @Column(name = "solldatum_ende")
     private Timestamp solldatumEnde;
 
-    @Column(name = "ursprungszeit")
     private Timestamp ursprungszeit;
 
     private Boolean test;
 
-    @Column(name = "tree_modified", insertable = false, updatable = false)
+    @Column(insertable = false, updatable = false)
     private Timestamp treeModified;
 
     @OneToOne
     @JoinColumn(name = "umw_id", insertable = false, updatable = false)
     private Umwelt umwelt;
 
-    @Column(name = "umw_id")
     private String umwId;
 
-    @Column(name = "rei_progpunkt_grp_id")
     private Integer reiProgpunktGrpId;
 
-    @Column(name = "kta_gruppe_id")
     private Integer ktaGruppeId;
 
     @Transient

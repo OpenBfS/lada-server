@@ -14,6 +14,9 @@
             <property name="hibernate.show_sql" value="false" />
             <!-- Use a special PostGIS dialect implmented for Lada. This dialect implements an additional integer array type -->
             <property name="hibernate.dialect" value="de.intevation.lada.util.data.LadaPostgisDialect"/>
+            <property
+                name="hibernate.implicit_naming_strategy"
+                value="de.intevation.lada.model.NamingStrategy"/>
        </properties>
     </persistence-unit>
 </persistence>
