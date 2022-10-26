@@ -205,7 +205,7 @@ public class ProbenehmerService extends LadaService {
             //check for references
             QueryBuilder<Probe> refBuilder =
             repository.queryBuilder(Probe.class);
-            refBuilder.and("probeNehmerId", probenehmer.getId());
+            refBuilder.and("samplerId", probenehmer.getId());
             return repository.filterPlain(refBuilder.getQuery());
     }
 }

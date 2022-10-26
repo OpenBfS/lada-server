@@ -195,7 +195,7 @@ public class Ortszuordnung implements Serializable {
      */
     public Timestamp getParentModified() {
         if (this.parentModified == null && this.probe != null) {
-            return this.probe.getTreeModified();
+            return this.probe.getTreeMod();
         }
         return this.parentModified;
     }

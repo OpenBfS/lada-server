@@ -115,14 +115,15 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
             boolean readOnly = true;
             boolean owner = false;
             MessStelle mst =
-                repository.getByIdPlain(MessStelle.class, probe.getMstId());
+                repository.getByIdPlain(
+                    MessStelle.class, probe.getMeasFacilId());
             if (!userInfo.getNetzbetreiber().contains(
                     mst.getNetzbetreiberId())) {
                 owner = false;
                 readOnly = true;
             } else {
                 if (userInfo.belongsTo(
-                    probe.getMstId(), probe.getLaborMstId())
+                    probe.getMeasFacilId(), probe.getApprLabId())
                 ) {
                     owner = true;
                 } else {

@@ -176,13 +176,13 @@ public class LafObjectMapper {
             if ("PROBE".equals(current.getName().toUpperCase())
                 && "MSTID".equals(current.getAttribute().toUpperCase())
                 && "DEFAULT".equals(current.getAction().toUpperCase())) {
-                probe.setMstId(current.getToValue());
+                probe.setMeasFacilId(current.getToValue());
             }
         }
         if (object.getAttributes().containsKey("MESSSTELLE")) {
-            probe.setMstId(object.getAttributes().get("MESSSTELLE"));
+            probe.setMeasFacilId(object.getAttributes().get("MESSSTELLE"));
         }
-        if (probe.getMstId() == null) {
+        if (probe.getMeasFacilId() == null) {
             currentErrors.add(
                 new ReportItem(
                     "MESSSTELLE", "", StatusCodes.IMP_MISSING_VALUE));
@@ -191,12 +191,12 @@ public class LafObjectMapper {
             return;
         } else {
             MessStelle mst = repository.getByIdPlain(
-                MessStelle.class, probe.getMstId());
+                MessStelle.class, probe.getMeasFacilId());
             if (mst == null) {
                 currentErrors.add(
                     new ReportItem(
                         "MESSSTELLE",
-                        probe.getMstId(), StatusCodes.IMP_INVALID_VALUE));
+                        probe.getMeasFacilId(), StatusCodes.IMP_INVALID_VALUE));
                 errors.put(
                     object.getIdentifier(),
                     new ArrayList<ReportItem>(currentErrors));
@@ -250,12 +250,12 @@ public class LafObjectMapper {
         doDefaults(probe);
         doConverts(probe);
         doTransforms(probe);
-        if (probe.getLaborMstId() == null) {
-            probe.setLaborMstId(probe.getMstId());
+        if (probe.getApprLabId() == null) {
+            probe.setApprLabId(probe.getMeasFacilId());
         }
         // Use the deskriptor string to find the medium
         probe = factory.findMedia(probe);
-        if (probe.getUmwId() == null) {
+        if (probe.getEnvMediumId() == null) {
             factory.findUmweltId(probe);
         }
 
@@ -266,7 +266,7 @@ public class LafObjectMapper {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.NOT_ALLOWED);
             err.setKey(userInfo.getName());
-            err.setValue("Messstelle " + probe.getMstId());
+            err.setValue("Messstelle " + probe.getMeasFacilId());
             currentWarnings.clear();
             currentErrors.add(err);
             errors.put(
@@ -296,7 +296,7 @@ public class LafObjectMapper {
                         currentNotifications.add(
                             new ReportItem(
                                 "probe",
-                                old.getExterneProbeId(),
+                                old.getExtId(),
                                 StatusCodes.IMP_UNCHANGABLE));
                     } else {
                         if (merger.merge(old, probe)) {
@@ -327,7 +327,7 @@ public class LafObjectMapper {
                 ReportItem err = new ReportItem();
                     err.setCode(StatusCodes.NOT_ALLOWED);
                     err.setKey(userInfo.getName());
-                    err.setValue("Messstelle " + old.getMstId());
+                    err.setValue("Messstelle " + old.getMeasFacilId());
                     currentWarnings.clear();
                     currentErrors.add(err);
                     errors.put(
@@ -446,9 +446,9 @@ public class LafObjectMapper {
                 merger.mergeZusatzwerte(newProbe, zusatzwerte);
 
                 // Special things for REI-Messpunkt
-                if (probe.getReiProgpunktGrpId() != null
-                    || Integer.valueOf(3).equals(probe.getDatenbasisId())
-                    || Integer.valueOf(4).equals(probe.getDatenbasisId())
+                if (probe.getReiAgGrId() != null
+                    || Integer.valueOf(3).equals(probe.getRegulationId())
+                    || Integer.valueOf(4).equals(probe.getRegulationId())
                 ) {
                     createReiMesspunkt(object, newProbe);
                 } else {
@@ -632,7 +632,7 @@ public class LafObjectMapper {
                 create(
                     object.getMessungen().get(i),
                     newProbe,
-                    newProbe.getMstId());
+                    newProbe.getMeasFacilId());
             }
             //if key SZENARIO is present in imported file, assign global tag to probe and its messung objects
             if (object.getAttributes().containsKey("SZENARIO")) {
@@ -1069,7 +1069,7 @@ public class LafObjectMapper {
             }
         }
         messwerte = messwertNormalizer.normalizeMesswerte(
-            messwerte, probe.getUmwId());
+            messwerte, probe.getEnvMediumId());
         //persist messwerte
         merger.mergeMesswerte(newMessung, messwerte);
         // Check for warnings and errors for messung ...
@@ -1179,7 +1179,7 @@ public class LafObjectMapper {
         if (attributes.containsKey("MST_ID")) {
             kommentar.setMstId(attributes.get("MST_ID"));
         } else {
-            kommentar.setMstId(probe.getMstId());
+            kommentar.setMstId(probe.getMeasFacilId());
         }
         if (attributes.containsKey("DATE")) {
             String date = attributes.get("DATE") + " " + attributes.get("TIME");
@@ -1443,7 +1443,7 @@ public class LafObjectMapper {
         if (attributes.containsKey("MST_ID")) {
             kommentar.setMstId(attributes.get("MST_ID"));
         } else {
-            kommentar.setMstId(probe.getMstId());
+            kommentar.setMstId(probe.getMeasFacilId());
         }
         if (attributes.containsKey("DATE")) {
             String date = attributes.get("DATE") + " " + attributes.get("TIME");
@@ -1717,7 +1717,7 @@ public class LafObjectMapper {
                     ort.setOrtszusatztext(uo.get("U_ORTS_ZUSATZTEXT"));
                 }
                 repository.create(ort);
-                probe.setKtaGruppeId(messpunkte.get(0).getKtaGruppeId());
+                probe.setNuclFacilGrId(messpunkte.get(0).getKtaGruppeId());
                 repository.update(probe);
             } else if (uo.get("U_ORTS_ZUSATZCODE").length() == 4) {
                 QueryBuilder<KtaGruppe> builderKta =
@@ -1764,7 +1764,7 @@ public class LafObjectMapper {
 
                         repository.create(ort);
 
-                        probe.setKtaGruppeId(ktaGrp.get(0).getId());
+                        probe.setNuclFacilGrId(ktaGrp.get(0).getId());
                         repository.update(probe);
                     }
                 } else {
@@ -1977,7 +1977,7 @@ public class LafObjectMapper {
         }
 
         MessStelle mst = repository.getByIdPlain(
-            MessStelle.class, probe.getMstId());
+            MessStelle.class, probe.getMeasFacilId());
         o.setNetzbetreiberId(mst.getNetzbetreiberId());
         o = ortFactory.completeOrt(o);
         if (o == null || o.getGeom() == null) {
@@ -2090,27 +2090,27 @@ public class LafObjectMapper {
 
     private void logProbe(Probe probe) {
         logger.debug("%PROBE%");
-        logger.debug("datenbasis: " + probe.getDatenbasisId());
-        logger.debug("betriebsart: " + probe.getBaId());
-        logger.debug("erzeuger: " + probe.getErzeugerId());
-        logger.debug("hauptprobennummer: " + probe.getHauptprobenNr());
-        logger.debug("externeprobeid: " + probe.getExterneProbeId());
-        logger.debug("labor: " + probe.getLaborMstId());
-        logger.debug("deskriptoren: " + probe.getMediaDesk());
-        logger.debug("media: " + probe.getMedia());
-        logger.debug("mittelung: " + probe.getMittelungsdauer());
-        logger.debug("mpl: " + probe.getMplId());
-        logger.debug("mpr: " + probe.getMprId());
-        logger.debug("mst: " + probe.getMstId());
-        logger.debug("pnbeginn: " + probe.getProbeentnahmeBeginn());
-        logger.debug("pnende: " + probe.getProbeentnahmeEnde());
-        logger.debug("probenart: " + probe.getProbenartId());
-        logger.debug("probenehmer: " + probe.getProbeNehmerId());
-        logger.debug("sbeginn: " + probe.getSolldatumBeginn());
-        logger.debug("sende: " + probe.getSolldatumEnde());
-        logger.debug("ursprungszeit: " + probe.getUrsprungszeit());
-        logger.debug("test: " + probe.getTest());
-        logger.debug("umw: " + probe.getUmwId());
+        logger.debug("datenbasis: " + probe.getRegulationId());
+        logger.debug("betriebsart: " + probe.getOprModeId());
+        logger.debug("erzeuger: " + probe.getDatasetCreatorId());
+        logger.debug("hauptprobennummer: " + probe.getMainSampleId());
+        logger.debug("externeprobeid: " + probe.getExtId());
+        logger.debug("labor: " + probe.getApprLabId());
+        logger.debug("deskriptoren: " + probe.getEnvDescripDisplay());
+        logger.debug("media: " + probe.getEnvDescripName());
+        logger.debug("mittelung: " + probe.getMidSampleDate());
+        logger.debug("mpl: " + probe.getStateMpgId());
+        logger.debug("mpr: " + probe.getMpgId());
+        logger.debug("mst: " + probe.getMeasFacilId());
+        logger.debug("pnbeginn: " + probe.getSampleStartDate());
+        logger.debug("pnende: " + probe.getSampleEndDate());
+        logger.debug("probenart: " + probe.getSampleMethId());
+        logger.debug("probenehmer: " + probe.getSamplerId());
+        logger.debug("sbeginn: " + probe.getSchedStartDate());
+        logger.debug("sende: " + probe.getSchedEndDate());
+        logger.debug("ursprungszeit: " + probe.getOrigDate());
+        logger.debug("test: " + probe.getIsTest());
+        logger.debug("umw: " + probe.getEnvMediumId());
     }
 
     private void addProbeAttribute(
@@ -2122,7 +2122,7 @@ public class LafObjectMapper {
         String value = attribute.getValue();
 
         if ("DATENBASIS_S".equals(key)
-            && probe.getDatenbasisId() == null
+            && probe.getRegulationId() == null
         ) {
             Datenbasis datenbasis = repository.getByIdPlain(
                 Datenbasis.class,
@@ -2135,9 +2135,9 @@ public class LafObjectMapper {
                 return;
             }
             Integer v = Integer.valueOf(value.toString());
-            probe.setDatenbasisId(v);
+            probe.setRegulationId(v);
         } else if ("DATENBASIS_S".equals(key)
-            && probe.getDatenbasisId() != null) {
+            && probe.getRegulationId() != null) {
             currentWarnings.add(
                 new ReportItem(
                     key, value.toString(), StatusCodes.IMP_DUPLICATE));
@@ -2145,7 +2145,7 @@ public class LafObjectMapper {
 
 
         if ("DATENBASIS".equals(key)
-            && probe.getDatenbasisId() == null
+            && probe.getRegulationId() == null
         ) {
             List<ImporterConfig> cfgs =
                 getImporterConfigByAttributeUpper("DATENBASIS");
@@ -2176,9 +2176,9 @@ public class LafObjectMapper {
                 return;
             }
             Integer v = datenbasis.get(0).getId();
-            probe.setDatenbasisId(v);
+            probe.setRegulationId(v);
         } else if ("DATENBASIS".equals(key)
-            && probe.getDatenbasisId() != null
+            && probe.getRegulationId() != null
         ) {
             currentWarnings.add(
                 new ReportItem(
@@ -2186,16 +2186,16 @@ public class LafObjectMapper {
         }
 
         if ("PROBE_ID".equals(key)) {
-            probe.setExterneProbeId(value);
+            probe.setExtId(value);
         }
 
         if ("HAUPTPROBENNUMMER".equals(key)) {
-            probe.setHauptprobenNr(value.toString());
+            probe.setMainSampleId(value.toString());
         }
 
         if ("MPR_ID".equals(key)) {
             Integer v = Integer.valueOf(value.toString());
-            probe.setMprId(v);
+            probe.setMpgId(v);
         }
 
         if ("MESSLABOR".equals(key)) {
@@ -2207,11 +2207,11 @@ public class LafObjectMapper {
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setLaborMstId(value.toString());
+            probe.setApprLabId(value.toString());
         }
 
         if ("MESSPROGRAMM_S".equals(key)
-            && probe.getBaId() == null
+            && probe.getOprModeId() == null
         ) {
             QueryBuilder<MessprogrammTransfer> builder =
                 repository.queryBuilder(MessprogrammTransfer.class);
@@ -2225,9 +2225,9 @@ public class LafObjectMapper {
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setBaId(transfer.get(0).getBaId());
-            if (probe.getDatenbasisId() == null) {
-                probe.setDatenbasisId(transfer.get(0).getDatenbasisId());
+            probe.setOprModeId(transfer.get(0).getBaId());
+            if (probe.getRegulationId() == null) {
+                probe.setRegulationId(transfer.get(0).getDatenbasisId());
             }
         }
         if ("MESSPROGRAMM_C".equals(key)) {
@@ -2243,9 +2243,9 @@ public class LafObjectMapper {
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setBaId(transfer.get(0).getBaId());
-            if (probe.getDatenbasisId() == null) {
-                probe.setDatenbasisId(transfer.get(0).getDatenbasisId());
+            probe.setOprModeId(transfer.get(0).getBaId());
+            if (probe.getRegulationId() == null) {
+                probe.setRegulationId(transfer.get(0).getDatenbasisId());
             }
         }
 
@@ -2253,7 +2253,7 @@ public class LafObjectMapper {
             QueryBuilder<DatensatzErzeuger> builder =
                 repository.queryBuilder(DatensatzErzeuger.class);
             builder.and("netzbetreiberId", netzbetreiberId);
-            builder.and("mstId", probe.getMstId());
+            builder.and("mstId", probe.getMeasFacilId());
             builder.and("datensatzErzeugerId", value);
             List<DatensatzErzeuger> datensatzErzeuger =
                     (List<DatensatzErzeuger>) repository.filterPlain(
@@ -2264,7 +2264,7 @@ public class LafObjectMapper {
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setErzeugerId(datensatzErzeuger.get(0).getId());
+            probe.setDatasetCreatorId(datensatzErzeuger.get(0).getId());
         }
 
         if ("MESSPROGRAMM_LAND".equals(key)) {
@@ -2281,7 +2281,7 @@ public class LafObjectMapper {
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setMplId(kategorie.get(0).getId());
+            probe.setStateMpgId(kategorie.get(0).getId());
         }
 
         if ("PROBENAHMEINSTITUTION".equals(key)) {
@@ -2298,27 +2298,27 @@ public class LafObjectMapper {
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setProbeNehmerId(prn.get(0).getId());
+            probe.setSamplerId(prn.get(0).getId());
         }
 
         if ("SOLL_DATUM_UHRZEIT_A".equals(key)) {
-            probe.setSolldatumBeginn(getDate(value.toString()));
+            probe.setSchedStartDate(getDate(value.toString()));
         }
         if ("SOLL_DATUM_UHRZEIT_E".equals(key)) {
-            probe.setSolldatumEnde(getDate(value.toString()));
+            probe.setSchedEndDate(getDate(value.toString()));
         }
         if ("PROBENAHME_DATUM_UHRZEIT_A".equals(key)) {
-            probe.setProbeentnahmeBeginn(getDate(value.toString()));
+            probe.setSampleStartDate(getDate(value.toString()));
         }
         if ("PROBENAHME_DATUM_UHRZEIT_E".equals(key)) {
-            probe.setProbeentnahmeEnde(getDate(value.toString()));
+            probe.setSampleEndDate(getDate(value.toString()));
         }
         if ("URSPRUNGS_DATUM_UHRZEIT".equals(key)) {
-            probe.setUrsprungszeit(getDate(value.toString()));
+            probe.setOrigDate(getDate(value.toString()));
         }
 
         if ("UMWELTBEREICH_S".equals(key)
-            && probe.getUmwId() == null
+            && probe.getEnvMediumId() == null
         ) {
             Umwelt umw = repository.getByIdPlain(
                 Umwelt.class, value.toString());
@@ -2328,14 +2328,16 @@ public class LafObjectMapper {
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setUmwId(value.toString());
-        } else if ("UMWELTBEREICH_S".equals(key) && probe.getUmwId() != null) {
+            probe.setEnvMediumId(value.toString());
+        } else if ("UMWELTBEREICH_S".equals(key)
+            && probe.getEnvMediumId() != null
+        ) {
             currentWarnings.add(
                 new ReportItem(
                     key, value.toString(), StatusCodes.IMP_DUPLICATE));
         }
         if ("UMWELTBEREICH_C".equals(key)
-            && probe.getUmwId() == null
+            && probe.getEnvMediumId() == null
             && value != null
         ) {
             QueryBuilder<Umwelt> builder =
@@ -2352,8 +2354,10 @@ public class LafObjectMapper {
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setUmwId(umwelt.get(0).getId());
-        } else if ("UMWELTBEREICH_C".equals(key) && probe.getUmwId() != null) {
+            probe.setEnvMediumId(umwelt.get(0).getId());
+        } else if ("UMWELTBEREICH_C".equals(key)
+            && probe.getEnvMediumId() != null
+        ) {
             currentWarnings.add(
                 new ReportItem(
                     key, value.toString(), StatusCodes.IMP_DUPLICATE));
@@ -2376,14 +2380,14 @@ public class LafObjectMapper {
             for (int i =  0; i < value.length() - 4; i += 2) {
                 tmp.add(value.substring(i, i + 2));
             }
-            probe.setMediaDesk(String.join(" ", tmp));
+            probe.setEnvDescripDisplay(String.join(" ", tmp));
         }
 
         if ("TESTDATEN".equals(key)) {
             if (value.toString().equals("1")) {
-                probe.setTest(true);
+                probe.setIsTest(true);
             } else if (value.toString().equals("0")) {
-                probe.setTest(false);
+                probe.setIsTest(false);
             }
         }
 
@@ -2395,7 +2399,7 @@ public class LafObjectMapper {
             List<ReiProgpunktGruppe> list =
                 repository.filterPlain(builder.getQuery());
             if (!list.isEmpty()) {
-                probe.setReiProgpunktGrpId(list.get(0).getId());
+                probe.setReiAgGrId(list.get(0).getId());
             } else {
                 currentWarnings.add(
                     new ReportItem(
@@ -2404,7 +2408,7 @@ public class LafObjectMapper {
         }
 
         if ("MEDIUM".equals(key)) {
-            probe.setMedia(value.toString());
+            probe.setEnvDescripName(value.toString());
         }
 
         if ("PROBENART".equals(key) && value != null) {
@@ -2437,7 +2441,7 @@ public class LafObjectMapper {
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setProbenartId(probenart.get(0).getId());
+            probe.setSampleMethId(probenart.get(0).getId());
         }
     }
     /**

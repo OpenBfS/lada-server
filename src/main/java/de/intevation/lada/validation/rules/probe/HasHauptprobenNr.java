@@ -25,12 +25,12 @@ public class HasHauptprobenNr implements Rule {
     @Override
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
-        if (probe.getHauptprobenNr() == null
-            || probe.getHauptprobenNr().equals("")
+        if (probe.getMainSampleId() == null
+            || probe.getMainSampleId().equals("")
         ) {
             Violation violation = new Violation();
             violation.addNotification(
-                "hauptprobenNr", StatusCodes.VALUE_MISSING);
+                "mainSampleId", StatusCodes.VALUE_MISSING);
             return violation;
         }
         return null;

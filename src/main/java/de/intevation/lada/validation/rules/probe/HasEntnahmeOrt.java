@@ -43,9 +43,9 @@ public class HasEntnahmeOrt implements Rule {
             violation.addWarning("entnahmeOrt", StatusCodes.VALUE_MISSING);
             return violation;
         }
-        if (probe.getReiProgpunktGrpId() != null
-            || Integer.valueOf(3).equals(probe.getDatenbasisId())
-            || Integer.valueOf(4).equals(probe.getDatenbasisId())) {
+        if (probe.getReiAgGrId() != null
+            || Integer.valueOf(3).equals(probe.getRegulationId())
+            || Integer.valueOf(4).equals(probe.getRegulationId())) {
                 return null;
         }
         List<String> zuordTypeFilter = Arrays.asList("E", "R");
@@ -64,8 +64,12 @@ public class HasEntnahmeOrt implements Rule {
         }
 
         for (Ortszuordnung ort: orte) {
-            if (( "E".equals(ort.getOrtszuordnungTyp()) || "R".equals(ort.getOrtszuordnungTyp()) && probe.getDatenbasisId() != 4)
-                    || "R".equals(ort.getOrtszuordnungTyp()) && probe.getDatenbasisId() == 4 ) {
+            if (("E".equals(ort.getOrtszuordnungTyp())
+                    || "R".equals(ort.getOrtszuordnungTyp())
+                    && probe.getRegulationId() != 4)
+                    || "R".equals(ort.getOrtszuordnungTyp())
+                && probe.getRegulationId() == 4
+            ) {
                 return null;
             }
         }

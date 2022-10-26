@@ -347,12 +347,14 @@ public class MesswertService extends LadaService {
         Probe probe =
             repository.getByIdPlain(
                 Probe.class, messung.getProbeId());
-        if (probe.getUmwId() == null || probe.getUmwId().equals("")) {
+        if (probe.getEnvMediumId() == null
+            || probe.getEnvMediumId().equals("")
+        ) {
             return new Response(true, StatusCodes.OP_NOT_POSSIBLE, null);
         }
         Umwelt umwelt =
             repository.getByIdPlain(
-                Umwelt.class, probe.getUmwId());
+                Umwelt.class, probe.getEnvMediumId());
         //Get all Messwert objects to convert
         QueryBuilder<Messwert> messwertBuilder =
             repository.queryBuilder(Messwert.class);
