@@ -74,7 +74,7 @@ public class ProbenzusatzService extends LadaService {
             Query query =
                 repository.queryFromString(
                     "SELECT pzs_id FROM "
-                    + de.intevation.lada.model.stammdaten.SchemaName.NAME
+                    + de.intevation.lada.model.stammdaten.SchemaName.LEGACY_NAME
                     + ".umwelt_zusatz "
                     + "WHERE umw_id = :umw"
                 ).setParameter("umw", umwId);
