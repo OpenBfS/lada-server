@@ -44,7 +44,7 @@ public class StatusFolge implements Rule {
             repository.queryBuilder(StatusProtokoll.class);
 
         lastFilter.and("messungsId", status.getMessungsId());
-        lastFilter.orderBy("datum", true);
+        lastFilter.orderBy("id", true);
         List<StatusProtokoll> protos =
             repository.filterPlain(lastFilter.getQuery());
         if (protos.isEmpty()) {
