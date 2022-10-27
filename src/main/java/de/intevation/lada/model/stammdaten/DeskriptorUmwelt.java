@@ -27,28 +27,40 @@ public class DeskriptorUmwelt implements Serializable {
     @Id
     private Integer id;
 
+    @Column(name = "s00")
     private Integer s00;
 
+    @Column(name = "s01")
     private Integer s01;
 
+    @Column(name = "s02")
     private Integer s02;
 
+    @Column(name = "s03")
     private Integer s03;
 
+    @Column(name = "s04")
     private Integer s04;
 
+    @Column(name = "s05")
     private Integer s05;
 
+    @Column(name = "s06")
     private Integer s06;
 
+    @Column(name = "s07")
     private Integer s07;
 
+    @Column(name = "s08")
     private Integer s08;
 
+    @Column(name = "s09")
     private Integer s09;
 
+    @Column(name = "s10")
     private Integer s10;
 
+    @Column(name = "s11")
     private Integer s11;
 
     @Column(name = "umw_id")
