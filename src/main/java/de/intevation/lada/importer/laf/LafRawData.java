@@ -17,16 +17,16 @@ import java.util.Map;
  */
 public class LafRawData {
 
-    private List<LafRawData.Probe> probe;
+    private List<LafRawData.Sample> probe;
 
     public LafRawData() {
-        this.probe = new ArrayList<LafRawData.Probe>();
+        this.probe = new ArrayList<LafRawData.Sample>();
     }
 
     /**
-     * Raw probe data with simple key value mapping.
+     * Raw sample data with simple key value mapping.
      */
-    public class Probe {
+    public class Sample {
         private Map<String, String> attributes;
         private List<LafRawData.Messung> messung;
         private List<Map<String, String>> kommentar;
@@ -34,7 +34,7 @@ public class LafRawData {
         private Map<String, String> eOrt;
         private List<Map<String, String>> uOrt;
 
-        public Probe() {
+        public Sample() {
             this.attributes = new HashMap<String, String>();
             this.eOrt = new HashMap<String, String>();
             this.uOrt = new ArrayList<Map<String, String>>();
@@ -249,11 +249,11 @@ public class LafRawData {
      * Add a probe raw data object.
      * @param p the probe
      */
-    public void addProbe(LafRawData.Probe p) {
+    public void addProbe(LafRawData.Sample p) {
         this.probe.add(p);
     }
 
-    public List<LafRawData.Probe> getProben() {
+    public List<LafRawData.Sample> getProben() {
         return this.probe;
     }
 

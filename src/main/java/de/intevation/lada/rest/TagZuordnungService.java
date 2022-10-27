@@ -49,7 +49,7 @@ public class TagZuordnungService extends LadaService {
         + " AND %s=:%s)";
 
     /**
-     * Create new references between tags and Probe or Messung objects.
+     * Create new references between tags and Sample or Messung objects.
      *
      * @param zuordnungs A list of references like
      * <pre>
@@ -121,7 +121,7 @@ public class TagZuordnungService extends LadaService {
     }
 
     /**
-     * Delete references between tags and Probe or Messung objects.
+     * Delete references between tags and Sample or Messung objects.
      *
      * @param zuordnungs A list of references like
      * <pre>

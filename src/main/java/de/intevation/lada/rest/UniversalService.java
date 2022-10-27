@@ -21,7 +21,7 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import de.intevation.lada.model.QueryColumns;
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
 import de.intevation.lada.model.stammdaten.GridColumn;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
@@ -115,7 +115,7 @@ public class UniversalService extends LadaService {
         hierarchy.put("probenehmer", Probenehmer.class);
         hierarchy.put("ortId",       Ort.class);
         hierarchy.put("mpId",        Messprogramm.class);
-        hierarchy.put("probeId",     Probe.class);
+        hierarchy.put("probeId",     Sample.class);
         hierarchy.put("messungId",   Messung.class);
         int resultNdx = hierarchy.size();
         for (GridColumnValue columnValue : gridColumnValues) {

@@ -12,7 +12,7 @@ import java.util.Date;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
@@ -38,8 +38,8 @@ public class DateMesszeitpunkt implements Rule {
         Messung messung = (Messung) object;
         Integer probeId = messung.getProbeId();
         Response response =
-            repository.getById(Probe.class, probeId);
-        Probe probe = (Probe) response.getData();
+            repository.getById(Sample.class, probeId);
+        Sample probe = (Sample) response.getData();
 
         if (probe == null) {
             Violation violation = new Violation();

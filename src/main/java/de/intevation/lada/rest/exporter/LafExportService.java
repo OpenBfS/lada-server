@@ -32,7 +32,7 @@ import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -43,7 +43,7 @@ import de.intevation.lada.rest.LadaService;
 
 /**
  * REST service to export probe objects and the child objects associated with
- * the selected Probe objects.
+ * the selected Sample objects.
  * <p>
  * To request objects post a JSON formatted string with an array of probe ids.
  * <pre>
@@ -78,10 +78,10 @@ public class LafExportService extends LadaService {
 
 
     /**
-     * Export Probe objects.
+     * Export Sample objects.
      *
      * The service takes JSON formatted  POST data containing probe ids and
-     * exports the Probe objects filtered by these ids.
+     * exports the Sample objects filtered by these ids.
      *
      * @param objects    JSON formatted string with an array of probe ids.
      * @return The LAF file to export.
@@ -112,12 +112,12 @@ public class LafExportService extends LadaService {
 
         List<Integer> pIds = new ArrayList<Integer>();
         if (!probeIds.isEmpty()) {
-            QueryBuilder<Probe> pBuilder =
-                repository.queryBuilder(Probe.class);
+            QueryBuilder<Sample> pBuilder =
+                repository.queryBuilder(Sample.class);
             pBuilder.andIn("id", probeIds);
-            List<Probe> pObjects = repository.filterPlain(
+            List<Sample> pObjects = repository.filterPlain(
                 pBuilder.getQuery());
-            for (Probe p : pObjects) {
+            for (Sample p : pObjects) {
                 pIds.add(p.getId());
             }
         }

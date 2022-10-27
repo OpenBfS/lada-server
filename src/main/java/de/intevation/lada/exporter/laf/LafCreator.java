@@ -23,7 +23,7 @@ import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.stammdaten.MessEinheit;
@@ -122,11 +122,11 @@ implements Creator {
      */
     private String probeToLAF(String probeId, List<Integer> messungen) {
         Response found = repository.getById(
-            Probe.class, Integer.valueOf(probeId));
+            Sample.class, Integer.valueOf(probeId));
         if (found.getData() == null) {
             return null;
         }
-        Probe aProbe = (Probe) found.getData();
+        Sample aProbe = (Sample) found.getData();
         String lafProbe = writeAttributes(aProbe, messungen);
         return lafProbe;
     }
@@ -138,7 +138,7 @@ implements Creator {
      * @return LAF conform string.
      */
     @SuppressWarnings("unchecked")
-    private String writeAttributes(Probe probe, List<Integer> messungen) {
+    private String writeAttributes(Sample probe, List<Integer> messungen) {
         QueryBuilder<KommentarP> kommBuilder =
             repository.queryBuilder(KommentarP.class);
         kommBuilder.and("probeId", probe.getId());
@@ -314,7 +314,7 @@ implements Creator {
      * @return LAF conform string
      */
     @SuppressWarnings("unchecked")
-    private String writeOrt(Probe probe) {
+    private String writeOrt(Sample probe) {
         QueryBuilder<Ortszuordnung> builder =
             repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", probe.getId());
@@ -441,7 +441,7 @@ implements Creator {
      * @return LAF conform string.
      */
     @SuppressWarnings("unchecked")
-    private String writeMessung(Probe probe, List<Integer> messungen) {
+    private String writeMessung(Sample probe, List<Integer> messungen) {
         QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
         if (messungen.isEmpty()) {
             // Get all messungen

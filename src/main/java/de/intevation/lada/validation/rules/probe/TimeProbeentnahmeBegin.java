@@ -10,7 +10,7 @@ package de.intevation.lada.validation.rules.probe;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -23,12 +23,12 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationRule("Probe")
+@ValidationRule("Sample")
 public class TimeProbeentnahmeBegin implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Probe probe = (Probe) object;
+        Sample probe = (Sample) object;
         Timestamp begin = probe.getSampleStartDate();
         Timestamp end = probe.getSampleEndDate();
         if (begin == null) {

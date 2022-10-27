@@ -59,7 +59,7 @@ public class Ortszuordnung implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "probe_id", insertable = false, updatable = false)
-    private Probe probe;
+    private Sample probe;
 
     @Transient
     private MultivaluedMap<String, Integer> errors;

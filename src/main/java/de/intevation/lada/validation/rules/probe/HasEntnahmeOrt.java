@@ -13,7 +13,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Ortszuordnung;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -28,7 +28,7 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationRule("Probe")
+@ValidationRule("Sample")
 public class HasEntnahmeOrt implements Rule {
 
     @Inject
@@ -36,7 +36,7 @@ public class HasEntnahmeOrt implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Probe probe = (Probe) object;
+        Sample probe = (Sample) object;
         Integer id = probe.getId();
         if (id == null) {
             Violation violation = new Violation();

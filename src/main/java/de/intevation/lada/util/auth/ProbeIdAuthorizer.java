@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -55,8 +55,8 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Probe probe =
-            repository.getByIdPlain(Probe.class, id);
+        Sample probe =
+            repository.getByIdPlain(Sample.class, id);
         return !isProbeReadOnly((Integer) id)
             && getAuthorization(userInfo, probe);
     }
@@ -96,9 +96,9 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         try {
             Method getProbeId = clazz.getMethod("getProbeId");
             Integer id = (Integer) getProbeId.invoke(data);
-            Probe probe =
-                (Probe) repository.getById(
-                    Probe.class, id).getData();
+            Sample probe =
+                (Sample) repository.getById(
+                    Sample.class, id).getData();
 
             boolean readOnly = true;
             boolean owner = false;

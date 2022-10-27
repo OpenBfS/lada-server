@@ -25,7 +25,7 @@ import de.intevation.lada.util.data.StatusCodes;
 public class LafObjectListener extends LafBaseListener {
 
     LafRawData data;
-    LafRawData.Probe currentProbe;
+    LafRawData.Sample currentProbe;
     LafRawData.Messung currentMessung;
     Map<String, String> currentUOrt;
     Map<String, String> currentEOrt;
@@ -156,7 +156,7 @@ public class LafObjectListener extends LafBaseListener {
             currentProbe.addEntnahmeOrt(currentEOrt);
             currentEOrt.clear();
         }
-        currentProbe = data.new Probe();
+        currentProbe = data.new Sample();
         hasEKoordinaten = false;
         hasEGemeinde = false;
         hasEHerkunfstland = false;
@@ -203,7 +203,7 @@ public class LafObjectListener extends LafBaseListener {
                     new ArrayList<>(currentWarnings));
             }
         }
-        currentProbe = data.new Probe();
+        currentProbe = data.new Sample();
         currentErrors.clear();
         currentWarnings.clear();
         currentProbe = null;
