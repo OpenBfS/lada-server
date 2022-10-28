@@ -154,7 +154,7 @@ public abstract class Job implements Runnable {
     }
 
     /**
-     * Exception thrown if an unfished ExportJob is about to be removed
+     * Exception thrown if an unfished Job is about to be removed
      * while still runnning.
      */
     public static class JobNotFinishedException extends Exception {
