@@ -81,7 +81,7 @@ public class MessgroesseService extends LadaService {
         Query query =
             repository.queryFromString(
                 "SELECT messgroesse_id FROM "
-                + de.intevation.lada.model.stammdaten.SchemaName.NAME
+                + de.intevation.lada.model.stammdaten.SchemaName.LEGACY_NAME
                 + ".mmt_messgroesse "
                 + "WHERE mmt_id = :mmt"
             ).setParameter("mmt", mmtId);
