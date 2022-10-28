@@ -535,8 +535,9 @@ public class ProbeFactory {
     }
 
     private void toProtocol(Sample probe, boolean dryrun) {
+        // TODO: Avoid redefining Sample attribute names.
         currentProtocol.put("id", probe.getId());
-        currentProtocol.put("sampleExtId", probe.getSampleExtId());
+        currentProtocol.put("externeProbeId", probe.getSampleExtId());
         currentProtocol.put("mstId", probe.getMeasFacilId());
         currentProtocol.put("datenbasisId", probe.getRegulationId());
         currentProtocol.put("baId", probe.getOprModeId());
