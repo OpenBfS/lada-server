@@ -151,7 +151,7 @@ CREATE VIEW land.messprogramm_proben_zusatz AS SELECT
 FROM lada.mpg_sample_specif;
 
 ALTER TABLE lada.messung RENAME TO measm;
-ALTER TABLE lada.measm RENAME COLUMN ext_id TO measm_ext_id;
+ALTER TABLE lada.measm RENAME COLUMN ext_id TO sample_ext_id;
 ALTER TABLE lada.measm RENAME COLUMN probe_id TO sample_id;
 ALTER TABLE lada.measm RENAME COLUMN nebenproben_nr TO min_sample_id;
 ALTER TABLE lada.measm RENAME COLUMN messdauer TO meas_pd;
@@ -162,7 +162,7 @@ ALTER TABLE lada.measm RENAME COLUMN geplant TO is_scheduled;
 ALTER TABLE lada.measm RENAME COLUMN tree_modified TO tree_mod;
 CREATE VIEW land.messung AS SELECT
 	id,
-	measm_ext_id AS ext_id,
+	sample_ext_id AS ext_id,
 	sample_id AS probe_id,
 	min_sample_id AS nebenproben_nr,
 	mmt_id,
