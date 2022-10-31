@@ -20,8 +20,8 @@ CREATE FUNCTION set_site_id() RETURNS trigger
     DECLARE value text;
     BEGIN
         value = '#'::text || lpad(NEW.id::text, 9, '0'::text);
-        IF NEW.site_ext_id IS NULL THEN
-            NEW.site_ext_id = value;
+        IF NEW.ext_id IS NULL THEN
+            NEW.ext_id = value;
         END IF;
         IF NEW.long_text IS NULL OR NEW.long_text = '' THEN
             NEW.long_text = value;
@@ -680,7 +680,7 @@ CREATE TABLE munic_div (
     id serial PRIMARY KEY,
     network_id character varying(2) NOT NULL REFERENCES network,
     munic_id character varying(8) NOT NULL REFERENCES admin_unit,
-    site_ext_id integer NOT NULL,
+    site_id integer NOT NULL,
     name character varying(180),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
@@ -689,7 +689,7 @@ CREATE TRIGGER last_mod_munic_div BEFORE UPDATE ON munic_div FOR EACH ROW EXECUT
 CREATE TABLE site (
     id serial PRIMARY KEY,
     network_id character varying(2) NOT NULL REFERENCES network,
-    site_ext_id character varying(13) NOT NULL,
+    ext_id character varying(13) NOT NULL,
     long_text character varying(100) NOT NULL,
     state_id smallint REFERENCES state,
     munic_id character varying(8) REFERENCES admin_unit,
@@ -715,7 +715,7 @@ CREATE TABLE site (
     height_asl real,
     rei_ag_gr_id integer REFERENCES rei_ag_gr,
     munic_div_id integer REFERENCES munic_div,
-    UNIQUE(site_ext_id, network_id)
+    UNIQUE(ext_id, network_id)
 );
 
 CREATE INDEX ort_netz_id_idx ON master.site USING btree (network_id);
@@ -774,7 +774,7 @@ CREATE TRIGGER last_mod_sample_meth BEFORE UPDATE ON master.sample_meth FOR EACH
 CREATE TABLE sampler (
     id serial PRIMARY KEY,
     network_id character varying(2) NOT NULL REFERENCES network,
-    sampler_ext_id character varying(9) NOT NULL,
+    ext_id character varying(9) NOT NULL,
     editor character varying(25),
     comm character varying(60),
     inst character varying(80),
@@ -787,7 +787,7 @@ CREATE TABLE sampler (
     route_planning character varying(3),
     type character(1),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    UNIQUE(sampler_ext_id, network_id)
+    UNIQUE(ext_id, network_id)
 );
 CREATE TRIGGER last_mod_sampler BEFORE UPDATE ON sampler FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 

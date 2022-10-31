@@ -124,9 +124,9 @@ CREATE FUNCTION lada.set_measm_ext_id() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN
-        IF NEW.sample_ext_id IS NULL THEN
-            NEW.sample_ext_id = (
-                SELECT coalesce(max(sample_ext_id),0)
+        IF NEW.ext_id IS NULL THEN
+            NEW.ext_id = (
+                SELECT coalesce(max(ext_id),0)
                    FROM lada.measm
                    WHERE sample_id = NEW.sample_id) + 1;
         END IF;
@@ -253,8 +253,8 @@ CREATE FUNCTION master.set_site_id() RETURNS trigger
     DECLARE value text;
     BEGIN
         value = '#'::text || lpad(NEW.id::text, 9, '0'::text);
-        IF NEW.site_ext_id IS NULL THEN
-            NEW.site_ext_id = value;
+        IF NEW.ext_id IS NULL THEN
+            NEW.ext_id = value;
         END IF;
         IF NEW.long_text IS NULL OR NEW.long_text = '' THEN
             NEW.long_text = value;

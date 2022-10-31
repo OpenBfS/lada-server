@@ -136,7 +136,7 @@ FROM lada.mpg_view;
 */
 CREATE VIEW land.messung AS SELECT
 	id,
-	sample_ext_id AS ext_id,
+	ext_id AS ext_id,
 	sample_id AS probe_id,
 	min_sample_id AS nebenproben_nr,
 	mmt_id,
@@ -213,7 +213,7 @@ FROM lada.geolocat_mpg_view;
 
 CREATE VIEW land.probe AS SELECT
 	id,
-	sample_ext_id AS ext_id,
+	ext_id AS ext_id,
 	is_test AS test,
 	meas_facil_id AS mst_id,
 	appr_lab_id AS labor_mst_id,
@@ -414,7 +414,7 @@ CREATE VIEW stamm.gemeindeuntergliederung AS SELECT
 	id,
 	network_id AS netzbetreiber_id,
 	munic_id AS gem_id,
-	site_ext_id AS ozk_id,
+	site_id AS ozk_id,
 	name AS gemeindeuntergliederung,
 	last_mod AS letzte_aenderung
 FROM master.munic_div;
@@ -623,7 +623,7 @@ FROM master.nuts;
 CREATE VIEW stamm.ort AS SELECT
 	id,
 	network_id AS netzbetreiber_id,
-	site_ext_id AS ort_id,
+	ext_id AS ort_id,
 	long_text AS langtext,
 	state_id AS staat_id,
 	munic_id AS gem_id,
@@ -825,7 +825,7 @@ FROM master.sample_meth;
 CREATE VIEW stamm.probenehmer AS SELECT
 	id,
 	network_id AS netzbetreiber_id,
-	sampler_ext_id AS prn_id,
+	ext_id AS prn_id,
 	editor AS bearbeiter,
 	comm AS bemerkung,
 	inst AS betrieb,
