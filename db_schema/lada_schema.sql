@@ -22,9 +22,9 @@ CREATE FUNCTION set_measm_ext_id() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN
-        IF NEW.sample_ext_id IS NULL THEN
-            NEW.sample_ext_id = (
-                SELECT coalesce(max(sample_ext_id),0)
+        IF NEW.ext_id IS NULL THEN
+            NEW.ext_id = (
+                SELECT coalesce(max(ext_id),0)
                    FROM lada.measm
                    WHERE sample_id = NEW.sample_id) + 1;
         END IF;
@@ -260,7 +260,7 @@ CREATE TABLE mpg_mmt_measd_mp (
 
 CREATE TABLE sample (
     id serial PRIMARY KEY,
-    sample_ext_id character varying(16) UNIQUE NOT NULL
+    ext_id character varying(16) UNIQUE NOT NULL
         DEFAULT 'sss'
             || lpad(nextval('lada.sample_sample_id_seq')::varchar, 12, '0')
             || 'Y',
@@ -374,7 +374,7 @@ CREATE TRIGGER tree_mod_zusatzwert BEFORE UPDATE ON sample_specif_meas_val FOR E
 
 CREATE TABLE measm (
     id serial PRIMARY KEY,
-    sample_ext_id integer NOT NULL,
+    ext_id integer NOT NULL,
     sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE,
     min_sample_id character varying(4),
     mmt_id character varying(2) NOT NULL REFERENCES master.mmt ON DELETE CASCADE,
@@ -385,12 +385,12 @@ CREATE TABLE measm (
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     is_scheduled boolean DEFAULT false NOT NULL,
     tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    UNIQUE (id, sample_ext_id),
+    UNIQUE (id, sample_id),
     UNIQUE (id, min_sample_id)
 );
 CREATE TRIGGER last_mod_measm BEFORE UPDATE ON measm FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 CREATE TRIGGER tree_mod_measm BEFORE UPDATE ON measm FOR EACH ROW EXECUTE PROCEDURE update_tree_mod_measm();
-CREATE TRIGGER sample_ext_id BEFORE INSERT ON lada.measm FOR EACH ROW EXECUTE PROCEDURE set_measm_ext_id();
+CREATE TRIGGER sample_id BEFORE INSERT ON lada.measm FOR EACH ROW EXECUTE PROCEDURE set_measm_ext_id();
 CREATE TRIGGER status_measm AFTER INSERT ON lada.measm FOR EACH ROW EXECUTE PROCEDURE set_measm_status();
 
 --
