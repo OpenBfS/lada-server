@@ -473,11 +473,6 @@ public class LafObjectMapper {
                         builderPresentROrte.and("ortszuordnungTyp", "R");
                     List<Ortszuordnung> presentROrte = repository.filterPlain(builderPresentROrte.getQuery());
 
-                    //Logging-Block I
-                    logger.debug("EOrte: "+presentEOrte.size());
-                    logger.debug("UOrte: "+presentUOrte.size());
-                    logger.debug("ROrte: "+presentROrte.size());
-
                     //Switch if we need to create an R-Ort
                     Boolean rOrt = false;
                     // First create or find entnahmeOrte and ursprungsOrte
@@ -1822,8 +1817,6 @@ public class LafObjectMapper {
         String type,
         Probe probe
     ) {
-        logger.debug("rawOrt: "+rawOrt);
-        logger.debug("type: "+type);
         if (rawOrt.isEmpty()) {
             return null;
         }
@@ -1832,7 +1825,6 @@ public class LafObjectMapper {
         ort.setProbeId(probe.getId());
         if (type.equals("E")) {type = "P";}
         Ort o = findOrCreateOrt(rawOrt, type+"_", probe);
-        logger.debug(o);
         if (o == null) {
             return null;
         }
