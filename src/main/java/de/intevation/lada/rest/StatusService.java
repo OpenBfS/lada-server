@@ -24,8 +24,10 @@ import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -112,6 +114,10 @@ public class StatusService extends LadaService {
     @Inject
     @ValidationConfig(type = "Probe")
     private Validator probeValidator;
+
+    @Inject
+    @ValidationConfig(type = "Ort")
+    private Validator ortValidator;
 
     /**
      * Get StatusProtokoll objects.
@@ -329,6 +335,20 @@ public class StatusService extends LadaService {
                     repository.delete(messwerte.get(i));
                 }
             }
+
+            // validate orte
+            QueryBuilder<Ortszuordnung> ortBuilder =
+                repository.queryBuilder(Ortszuordnung.class);
+                ortBuilder.and("probeId", probe.getId());
+            List<Ortszuordnung> assignedOrte = repository.filterPlain(ortBuilder.getQuery());
+
+            for (Ortszuordnung o : assignedOrte){
+                violation = ortValidator.validate(repository.getByIdPlain(Ort.class, o.getOrtId()));
+                violationCollection.addErrors(violation.getErrors());
+                violationCollection.addWarnings(violation.getWarnings());
+                violationCollection.addNotifications(violation.getNotifications());
+            }
+
             // validate statusobject
             violation = validator.validate(status);
             violationCollection.addErrors(violation.getErrors());
