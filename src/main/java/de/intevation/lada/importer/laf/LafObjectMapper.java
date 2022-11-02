@@ -452,38 +452,157 @@ public class LafObjectMapper {
                 ) {
                     createReiMesspunkt(object, newProbe);
                 } else {
-                    // Merge entnahmeOrt
-                    createEntnahmeOrt(object.getEntnahmeOrt(), newProbe);
-
-                    // Create ursprungsOrte
-                    //Check if ursprungsOrte present and clean up
-                    if (object.getUrsprungsOrte().size() > 0){
-                    QueryBuilder<Ortszuordnung> builderUOrt =
+                    // Check if we have EOrte present
+                    QueryBuilder<Ortszuordnung> builderPresentEOrte =
                         repository.queryBuilder(Ortszuordnung.class);
-                        builderUOrt.and("probeId", newProbe.getId());
-                        builderUOrt.and("ortszuordnungTyp", "U");
-                    Response uOrtQuery =
-                        repository.filter(builderUOrt.getQuery());
-                    @SuppressWarnings("unchecked")
-                    List<Ortszuordnung> uOrteProbe = (List<Ortszuordnung>) uOrtQuery.getData();
-                    if (!uOrteProbe.isEmpty()){
-                        for (Ortszuordnung elemOrt : uOrteProbe){
-                            repository.delete(elemOrt);
-                        }
-                    }
-                    }
-                    //Add Ursprungsort from LAF
+                        builderPresentEOrte.and("probeId", newProbe.getId());
+                        builderPresentEOrte.and("ortszuordnungTyp", "E");
+                    List<Ortszuordnung> presentEOrte = repository.filterPlain(builderPresentEOrte.getQuery());
+
+                    // Check if we have UOrte present
+                    QueryBuilder<Ortszuordnung> builderPresentUOrte =
+                        repository.queryBuilder(Ortszuordnung.class);
+                        builderPresentUOrte.and("probeId", newProbe.getId());
+                        builderPresentUOrte.and("ortszuordnungTyp", "U");
+                    List<Ortszuordnung> presentUOrte = repository.filterPlain(builderPresentUOrte.getQuery());
+
+                    // Check if we have ROrte present
+                    QueryBuilder<Ortszuordnung> builderPresentROrte =
+                        repository.queryBuilder(Ortszuordnung.class);
+                        builderPresentROrte.and("probeId", newProbe.getId());
+                        builderPresentROrte.and("ortszuordnungTyp", "R");
+                    List<Ortszuordnung> presentROrte = repository.filterPlain(builderPresentROrte.getQuery());
+
+                    //Logging-Block I
+                    logger.debug("EOrte: "+presentEOrte.size());
+                    logger.debug("UOrte: "+presentUOrte.size());
+                    logger.debug("ROrte: "+presentROrte.size());
+
+                    //Switch if we need to create an R-Ort
+                    Boolean rOrt = false;
+                    // First create or find entnahmeOrte and ursprungsOrte
+                    // Create the new entnahmeOrt but do not persist
+                    Ortszuordnung eOrt = createOrtszuordnung(object.getEntnahmeOrt(), "E" , newProbe);
+
+                    //Create/Find Ursprungsort(e) from LAF
                     List<Ortszuordnung> uOrte = new ArrayList<>();
+                    //If object.getUrsprungsOrte().size() > 1
                     for (int i = 0; i < object.getUrsprungsOrte().size(); i++) {
                         Ortszuordnung tmp =
-                            createUrsprungsOrt(
-                                object.getUrsprungsOrte().get(i), newProbe);
+                            createOrtszuordnung(
+                                object.getUrsprungsOrte().get(i), "U", newProbe);
                         if (tmp != null) {
                             uOrte.add(tmp);
                         }
                     }
-                    // Persist ursprungsOrte
-                    merger.mergeUrsprungsOrte(newProbe.getId(), uOrte);
+
+                    //If the LAF delivers eOrt and uOrt and those are a match by created/found - Id -- we need to create an R-Ort
+                    if (uOrte.size() > 0 && eOrt!= null && uOrte.stream().anyMatch(uOrt -> uOrt.getOrtId().equals(eOrt.getOrtId()))){
+                        rOrt = true;
+                    }
+
+                    //further conditionals for eOrt
+                    if (eOrt != null) {
+                        //Check if the new Ort matches an U-Ort if exists
+                        if (presentUOrte.size() > 0 && eOrt!= null && presentUOrte.stream().anyMatch(uOrt -> uOrt.getOrtId().equals(eOrt.getOrtId()))){
+                            rOrt = true;
+                        }
+                        if (presentROrte.size() > 0 && eOrt!= null && presentROrte.stream().anyMatch(rtypeOrt -> rtypeOrt.getOrtId().equals(eOrt.getOrtId()))){
+                            rOrt = true;
+                        }
+                    }
+
+                    //conditionals for the ursprungsOrte
+                    if (uOrte.size()==1) {
+                        //Check if the new Ort matches the U-Ort if exists, this only works if we have 1 Ursprungsort in the LAF, if we have more we must assume multiple
+                        //ursprungsorte
+                            if (presentEOrte.size() > 0 && uOrte.size() > 0 && presentEOrte.stream().anyMatch(etypeOrt -> etypeOrt.getOrtId().equals(uOrte.get(0).getOrtId()))){
+                                rOrt = true;
+                            }
+                            if (presentROrte.size() > 0 && uOrte.size() > 0 && presentROrte.stream().anyMatch(rtypeOrt -> rtypeOrt.getOrtId().equals(uOrte.get(0).getOrtId()))){
+                                //ToDo: We need to handle R-Orte!
+                                rOrt = true;
+                            }
+                    }
+
+                    if (!rOrt) {
+                        //persist general entnahmeOrt
+                        if(eOrt != null){
+                            merger.mergeEntnahmeOrt(newProbe.getId(), eOrt);
+                        }
+                        if(uOrte.size()>0){
+                            merger.mergeUrsprungsOrte(newProbe.getId(), uOrte);
+                        }
+                    } else {
+                        if (rOrt && presentROrte.size() == 1){
+                            //we may have additional information for the ortszuordnung such as an ortszusatz, we make an update.
+                            QueryBuilder<Ortszuordnung> builderUOrt =
+                            repository.queryBuilder(Ortszuordnung.class);
+                            builderUOrt.and("probeId", newProbe.getId());
+                            builderUOrt.and("ortszuordnungTyp", "R");
+                            Response uOrtQuery =
+                                repository.filter(builderUOrt.getQuery());
+                            @SuppressWarnings("unchecked")
+                            List<Ortszuordnung> uOrteProbe = (List<Ortszuordnung>) uOrtQuery.getData();
+                            if (!uOrteProbe.isEmpty()){
+                                for (Ortszuordnung elemOrt : uOrteProbe){
+                                    repository.delete(elemOrt);
+                                }
+                            }
+
+                            if ((eOrt != null)) {
+                                eOrt.setOrtszuordnungTyp(("R"));
+                                merger.mergeEntnahmeOrt(newProbe.getId(), eOrt);
+                            }
+                            if (uOrte.size()==1 && eOrt == null){
+                                uOrte.get(0).setOrtszuordnungTyp("R");
+                                merger.mergeUrsprungsOrte(newProbe.getId(), uOrte);
+                            }
+                        }
+                        // clean up ursprungsorte before!
+                        if (object.getUrsprungsOrte().size() > 0 || presentUOrte.size() > 0){
+                            QueryBuilder<Ortszuordnung> builderUOrt =
+                                repository.queryBuilder(Ortszuordnung.class);
+                                builderUOrt.and("probeId", newProbe.getId());
+                                builderUOrt.and("ortszuordnungTyp", "U");
+                            Response uOrtQuery =
+                                repository.filter(builderUOrt.getQuery());
+                            @SuppressWarnings("unchecked")
+                            List<Ortszuordnung> uOrteProbe = (List<Ortszuordnung>) uOrtQuery.getData();
+                            if (!uOrteProbe.isEmpty()){
+                                for (Ortszuordnung elemOrt : uOrteProbe){
+                                    repository.delete(elemOrt);
+                                }
+                            }
+                        }
+                        if (eOrt != null){
+                            eOrt.setOrtszuordnungTyp("R");
+                            //Merging the entnahmeOrt cleans it up!
+                            merger.mergeEntnahmeOrt(newProbe.getId(), eOrt);
+                        } else {
+                            if (uOrte.size()==1){
+
+                                //clean up entnahmeOrte before merge
+
+                                QueryBuilder<Ortszuordnung> builderEOrt =
+                                    repository.queryBuilder(Ortszuordnung.class);
+                                    builderEOrt.and("probeId", newProbe.getId());
+                                    builderEOrt.and("ortszuordnungTyp", "E");
+                                Response eOrtQuery =
+                                    repository.filter(builderEOrt.getQuery());
+                                @SuppressWarnings("unchecked")
+                                List<Ortszuordnung> eOrteProbe = (List<Ortszuordnung>) eOrtQuery.getData();
+                                if (!eOrteProbe.isEmpty()){
+                                    for (Ortszuordnung elemOrt : eOrteProbe){
+                                        repository.delete(elemOrt);
+                                    }
+                                }
+
+                                uOrte.get(0).setOrtszuordnungTyp("R");
+                                merger.mergeUrsprungsOrte(newProbe.getId(), uOrte);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -1698,86 +1817,49 @@ public class LafObjectMapper {
         return;
     }
 
-    private Ortszuordnung createUrsprungsOrt(
-        Map<String, String> ursprungsOrt,
+    private Ortszuordnung createOrtszuordnung(
+        Map<String, String> rawOrt,
+        String type,
         Probe probe
     ) {
-        if (ursprungsOrt.isEmpty()) {
+        logger.debug("rawOrt: "+rawOrt);
+        logger.debug("type: "+type);
+        if (rawOrt.isEmpty()) {
             return null;
         }
         Ortszuordnung ort = new Ortszuordnung();
-        ort.setOrtszuordnungTyp("U");
+        ort.setOrtszuordnungTyp(type);
         ort.setProbeId(probe.getId());
-
-        Ort o = findOrCreateOrt(ursprungsOrt, "U_", probe);
+        if (type.equals("E")) {type = "P";}
+        Ort o = findOrCreateOrt(rawOrt, type+"_", probe);
+        logger.debug(o);
         if (o == null) {
             return null;
         }
         ort.setOrtId(o.getId());
         ort.setOzId(o.getOzId());
-        if (ursprungsOrt.containsKey("U_ORTS_ZUSATZCODE")) {
+        if (rawOrt.containsKey(type+"_ORTS_ZUSATZCODE")) {
             Ortszusatz zusatz = repository.getByIdPlain(
                 Ortszusatz.class,
-                ursprungsOrt.get("U_ORTS_ZUSATZCODE")
+                rawOrt.get(type+"_ORTS_ZUSATZCODE")
             );
             if (zusatz == null) {
                 currentWarnings.add(
                     new ReportItem(
-                        "U_ORTS_ZUSATZCODE",
-                        ursprungsOrt.get("U_ORTS_ZUSATZCODE"),
+                        type+"_ORTS_ZUSATZCODE",
+                        rawOrt.get(type+"_ORTS_ZUSATZCODE"),
                         StatusCodes.IMP_INVALID_VALUE));
             } else {
                 ort.setOzId(zusatz.getOzsId());
             }
         }
-        if (ursprungsOrt.containsKey("U_ORTS_ZUSATZTEXT")) {
-            ort.setOrtszusatztext(ursprungsOrt.get("U_ORTS_ZUSATZTEXT"));
+        if (rawOrt.containsKey(type+"_ORTS_ZUSATZTEXT")) {
+            ort.setOrtszusatztext(rawOrt.get(type+"_ORTS_ZUSATZTEXT"));
         }
         doDefaults(ort);
         doConverts(ort);
         doTransforms(ort);
         return ort;
-    }
-
-    private void createEntnahmeOrt(
-        Map<String, String> entnahmeOrt,
-        Probe probe
-    ) {
-        if (entnahmeOrt.isEmpty()) {
-            return;
-        }
-        Ortszuordnung ort = new Ortszuordnung();
-        ort.setOrtszuordnungTyp("E");
-        ort.setProbeId(probe.getId());
-
-        Ort o = findOrCreateOrt(entnahmeOrt, "P_", probe);
-        if (o == null) {
-            return;
-        }
-        ort.setOrtId(o.getId());
-        ort.setOzId(o.getOzId());
-        if (entnahmeOrt.containsKey("P_ORTS_ZUSATZCODE")) {
-            Ortszusatz zusatz = repository.getByIdPlain(
-                Ortszusatz.class,
-                entnahmeOrt.get("P_ORTS_ZUSATZCODE")
-            );
-            if (zusatz == null) {
-                currentWarnings.add(
-                    new ReportItem(
-                        "P_ORTS_ZUSATZCODE",
-                        entnahmeOrt.get("P_ORTS_ZUSATZCODE"),
-                        StatusCodes.IMP_INVALID_VALUE));
-            } else {
-                ort.setOzId(zusatz.getOzsId());
-            }
-        }
-        if (entnahmeOrt.containsKey("P_ORTS_ZUSATZTEXT")) {
-            ort.setOrtszusatztext(entnahmeOrt.get("P_ORTS_ZUSATZTEXT"));
-        }
-        doDefaults(ort);
-        doConverts(ort);
-        doTransforms(ort);
-        merger.mergeEntnahmeOrt(probe.getId(), ort);
     }
 
     private Ort findOrCreateOrt(
