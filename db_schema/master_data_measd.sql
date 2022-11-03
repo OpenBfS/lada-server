@@ -910,7 +910,7 @@ COPY master.measd (id, descr, name, def_color, idf_ext_id, is_ref_nucl, eudf_nuc
 
 
 --
--- Name: name_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: measd_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('master.measd_id_seq', 1041, true);

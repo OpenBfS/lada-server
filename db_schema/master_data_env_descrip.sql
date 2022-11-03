@@ -18546,7 +18546,7 @@ COPY env_descrip (id, pred_id, lev, s_xx, lev_val, name, implication) FROM stdin
 
 
 --
--- Name: deskriptoren_id_seq; Type: SEQUENCE SET; Schema: stammdaten; Owner: postgres
+-- Name: env_descrip_id_seq; Type: SEQUENCE SET; Schema: stammdaten; Owner: postgres
 --
 
 SELECT pg_catalog.setval('env_descrip_id_seq', 18522, true);

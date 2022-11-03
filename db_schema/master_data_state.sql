@@ -236,7 +236,7 @@ COPY state (id, ctry, ctry_orig_id, iso_3166, int_veh_reg_code, is_eu_country, x
 
 
 --
--- Name: ctry_id_seq; Type: SEQUENCE SET; Schema: stammdaten; Owner: postgres
+-- Name: state_id_seq; Type: SEQUENCE SET; Schema: stammdaten; Owner: postgres
 --
 
 SELECT pg_catalog.setval('state_id_seq', 999, true);

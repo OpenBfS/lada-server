@@ -60,7 +60,7 @@ COPY import_conf (id, name, attribute, meas_facil_id, from_val, to_val, action) 
 --
 -- TOC entry 5309 (class 0 OID 0)
 -- Dependencies: 313
--- Name: importer_config_id_seq; Type: SEQUENCE SET; Schema: stammdaten; Owner: postgres
+-- Name: import_conf_id_seq; Type: SEQUENCE SET; Schema: stammdaten; Owner: postgres
 --
 
 SELECT pg_catalog.setval('import_conf_id_seq', (SELECT max(id) FROM import_conf), true);

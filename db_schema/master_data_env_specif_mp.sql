@@ -694,7 +694,7 @@ COPY master.env_specif_mp (id, sample_specif_id, env_medium_id) FROM stdin;
 
 
 --
--- Name: umwelt_zusatz_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: env_specif_mp_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('master.env_specif_mp_id_seq', 667, true);

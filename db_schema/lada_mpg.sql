@@ -236,14 +236,14 @@ SELECT pg_catalog.setval('lada.mpg_id_seq', 37464, true);
 
 
 --
--- Name: messprogramm_mmt_id_seq; Type: SEQUENCE SET; Schema: lada; Owner: postgres
+-- Name: mpg_mmt_id_seq; Type: SEQUENCE SET; Schema: lada; Owner: postgres
 --
 
 SELECT pg_catalog.setval('lada.mpg_mmt_mp_id_seq', 16266, true);
 
 
 --
--- Name: ortszuordnung_mp_id_seq; Type: SEQUENCE SET; Schema: lada; Owner: postgres
+-- Name: geolocat_mpg_mp_id_seq; Type: SEQUENCE SET; Schema: lada; Owner: postgres
 --
 
 SELECT pg_catalog.setval('lada.geolocat_mpg_id_seq', 11509, true);

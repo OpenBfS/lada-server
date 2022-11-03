@@ -139,10 +139,10 @@ SET default_with_oids = false;
 
 
 --
--- Name: messung_messung_ext_id; Type: SEQUENCE; Schema: lada; Owner: -
+-- Name: measm_measm_ext_id_seq; Type: SEQUENCE; Schema: lada; Owner: -
 --
 
-CREATE SEQUENCE measm_measm_ext_id
+CREATE SEQUENCE measm_measm_ext_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -151,7 +151,7 @@ CREATE SEQUENCE measm_measm_ext_id
 
 
 --
--- Name: probe_probe_id_seq; Type: SEQUENCE; Schema: lada; Owner: -
+-- Name: sample_sample_id_seq; Type: SEQUENCE; Schema: lada; Owner: -
 --
 
 CREATE SEQUENCE sample_sample_id_seq
@@ -459,52 +459,52 @@ CREATE TABLE tag_link
     UNIQUE (measm_id, tag_id)
 );
 --
--- Name: messung_probe_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
+-- Name: measm_sample_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE INDEX messung_probe_id_idx ON measm USING btree (sample_id);
-
-
---
--- Name: ort_probe_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
---
-
-CREATE INDEX ort_probe_id_idx ON geolocat USING btree (sample_id);
+CREATE INDEX measm_sample_id_idx ON measm USING btree (sample_id);
 
 
 --
--- Name: zusatz_wert_probe_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
+-- Name: site_sample_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE INDEX zusatz_wert_probe_id_idx ON sample_specif_meas_val USING btree (sample_id);
-
-
---
--- Name: kommentar_probe_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
---
-
-CREATE INDEX kommentar_probe_id_idx ON comm_sample USING btree (sample_id);
+CREATE INDEX site_sample_id_idx ON geolocat USING btree (sample_id);
 
 
 --
--- Name: messwert_messungs_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
+-- Name: sample_specif_meas_val_sample_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE INDEX name_messungs_id_idx ON meas_val USING btree (measm_id);
-
-
---
--- Name: status_messungs_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
---
-
-CREATE INDEX status_messungs_id_idx ON status_prot USING btree (measm_id);
+CREATE INDEX sample_specif_meas_val_sample_id_idx ON sample_specif_meas_val USING btree (sample_id);
 
 
 --
--- Name: kommentar_messungs_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
+-- Name: comm_sample_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE INDEX kommentar_messungs_id_idx ON comm_measm USING btree (measm_id);
+CREATE INDEX comm_sample_id_idx ON comm_sample USING btree (sample_id);
+
+
+--
+-- Name: meas_val_measm_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
+--
+
+CREATE INDEX meas_val_measm_id_idx ON meas_val USING btree (measm_id);
+
+
+--
+-- Name: status_prot_measm_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
+--
+
+CREATE INDEX status_prot_measm_id_idx ON status_prot USING btree (measm_id);
+
+
+--
+-- Name: comm_measm_measm_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
+--
+
+CREATE INDEX comm_measm_id_idx ON comm_measm USING btree (measm_id);
 
 
 --

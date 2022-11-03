@@ -32,7 +32,7 @@ COPY master.convers_dm_fm (id, unit_id, to_unit_id , env_medium_id, env_descrip_
 ALTER TABLE master.convers_dm_fm ENABLE TRIGGER ALL;
 
 --
--- Name: tm_fm_umrechnung_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: convers_dm_fm_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('master.convers_dm_fm_id_seq', 1, true);

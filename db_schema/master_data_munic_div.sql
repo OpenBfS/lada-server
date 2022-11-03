@@ -25,7 +25,7 @@ COPY master.munic_div (id, network_id, munic_id, site_id, name, last_mod) FROM s
 
 
 --
--- Name: name_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: munic_div_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('master.munic_div_id_seq', 1, false);

@@ -718,7 +718,7 @@ CREATE TABLE site (
     UNIQUE(ext_id, network_id)
 );
 
-CREATE INDEX ort_netz_id_idx ON master.site USING btree (network_id);
+CREATE INDEX site_network_id_idx ON master.site USING btree (network_id);
 
 CREATE TRIGGER last_mod_site BEFORE UPDATE ON site FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 CREATE TRIGGER set_site_id_site BEFORE INSERT ON site FOR EACH ROW EXECUTE PROCEDURE set_site_id();
@@ -947,7 +947,7 @@ CREATE TABLE mpg_transf (
 
 -- Mappings for import
 
-CREATE INDEX fts_stauts_kooin10001 ON state USING btree (spat_ref_sys_id);
+CREATE INDEX fts_status_kooin10001 ON state USING btree (spat_ref_sys_id);
 
 CREATE TABLE tz (
     id  integer PRIMARY KEY,

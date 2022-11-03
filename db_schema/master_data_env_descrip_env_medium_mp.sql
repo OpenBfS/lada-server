@@ -2116,7 +2116,7 @@ COPY env_descrip_env_medium_mp (id, s00, s01, s02, s03, s04, s05, s06, s07, s08,
 
 
 --
--- Name: deskriptor_umwelt_id_seq; Type: SEQUENCE SET; Schema: stammdaten; Owner: postgres
+-- Name: env_descrip_env_medium_mp_id_seq; Type: SEQUENCE SET; Schema: stammdaten; Owner: postgres
 --
 
 SELECT pg_catalog.setval('env_descrip_env_medium_mp_id_seq', 2661, true);

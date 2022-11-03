@@ -176,14 +176,14 @@ COPY master.ref_val (id, env_medium_id, ref_val_meas_id, measd_gr_id, specif, re
 
 
 --
--- Name: name_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: ref_val_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('master.ref_val_id_seq', 479, true);
 
 
 --
--- Name: name_massnahme_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: ref_val_measure_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('master.ref_val_measure_id_seq', 21, true);

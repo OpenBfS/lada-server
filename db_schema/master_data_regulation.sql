@@ -40,7 +40,7 @@ COPY regulation (id, descr, regulation) FROM stdin;
 --
 -- TOC entry 5414 (class 0 OID 0)
 -- Dependencies: 234
--- Name: name_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: regulation_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('regulation_id_seq', 14, true);

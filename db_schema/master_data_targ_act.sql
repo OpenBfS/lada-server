@@ -1654,35 +1654,35 @@ COPY master.targ_env_gr_mp (id, targ_env__gr_id, env_medium_id) FROM stdin;
 
 
 --
--- Name: sollist_mmtgrp_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: targ_act_mmt_gr_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('master.targ_act_mmt_gr_id_seq', 6, false);
 
 
 --
--- Name: sollist_mmtgrp_zuord_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: targ_act_mmt_gr_mp_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('master.targ_act_mmt_gr_mp_id_seq', 11, false);
 
 
 --
--- Name: sollist_soll_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: targ_act_targ_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('master.targ_act_targ_id_seq', 1377, false);
 
 
 --
--- Name: targ_env__gr_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: targ_env_gr_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('master.targ_env_gr_id_seq', 49, false);
 
 
 --
--- Name: sollist_umwgrp_zuord_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: targ_env_gr_mp_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('master.targ_env_gr_mp_id_seq', 161, false);

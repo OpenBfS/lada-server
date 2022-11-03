@@ -1812,14 +1812,14 @@ SELECT pg_catalog.setval('master.filter_id_seq', 121, true);
 
 
 --
--- Name: grid_column_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: grid_col_mp_id_se Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('master.grid_col_mp_id_seq', 10445, true);
 
 
 --
--- Name: grid_column_values_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: grid_col_conf_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('master.grid_col_conf_id_seq', 10000, true);
@@ -1833,7 +1833,7 @@ SELECT pg_catalog.setval('master.lada_user_id_seq', 100, true);
 
 
 --
--- Name: query_messstelle_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: query_meas_facil_mp_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('master.query_meas_facil_mp_id_seq', 100, true);
@@ -1847,7 +1847,7 @@ SELECT pg_catalog.setval('master.query_user_id_seq', 100, true);
 
 
 --
--- Name: result_type_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: disp_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('master.disp_id_seq', 41, false);

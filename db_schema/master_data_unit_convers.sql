@@ -150,7 +150,7 @@ COPY master.unit_convers (id, from_unit_id, to_unit_id , factor) FROM stdin;
 
 
 --
--- Name: mass_einheit_umrechnung_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+-- Name: unit_convers_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
 --
 
 SELECT pg_catalog.setval('master.unit_convers_id_seq', 1, false);
