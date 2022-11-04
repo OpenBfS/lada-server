@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -86,7 +87,7 @@ public class MessprogrammMmtService extends LadaService {
     /**
      * Get MessprogrammMmt objects.
      *
-     * @param messprogrammId The requested objects can be filtered
+     * @param messprogrammId The requested objects will be filtered
      * using a URL parameter named messprogrammId.
      * Example: http://example.com/messprogrammmmt?messprogrammId=[ID]
      *
@@ -95,11 +96,8 @@ public class MessprogrammMmtService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("messprogrammId") Integer messprogrammId
+        @QueryParam("messprogrammId") @NotNull Integer messprogrammId
     ) {
-        if (messprogrammId == null) {
-            return repository.getAll(MessprogrammMmt.class);
-        }
         QueryBuilder<MessprogrammMmt> builder =
             repository.queryBuilder(MessprogrammMmt.class);
         builder.and("messprogrammId", messprogrammId);

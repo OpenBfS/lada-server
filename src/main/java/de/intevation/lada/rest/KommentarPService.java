@@ -8,6 +8,7 @@
 package de.intevation.lada.rest;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -84,7 +85,7 @@ public class KommentarPService extends LadaService {
     /**
      * Get KommentarP objects.
      *
-     * @param probeId The requested objects can be filtered
+     * @param probeId The requested objects will be filtered
      * using an URL parameter named probeId.
      * Example: http://example.com/pkommentar?probeId=[ID]
      *
@@ -93,11 +94,8 @@ public class KommentarPService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("probeId") Integer probeId
+        @QueryParam("probeId") @NotNull Integer probeId
     ) {
-        if (probeId == null) {
-            return repository.getAll(KommentarP.class);
-        }
         QueryBuilder<KommentarP> builder =
             repository.queryBuilder(KommentarP.class);
         builder.and("probeId", probeId);

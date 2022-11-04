@@ -10,6 +10,7 @@ package de.intevation.lada.rest;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -106,11 +107,8 @@ public class OrtszuordnungService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("probeId") Integer probeId
+        @QueryParam("probeId") @NotNull Integer probeId
     ) {
-        if (probeId == null) {
-            return repository.getAll(Ortszuordnung.class);
-        }
         QueryBuilder<Ortszuordnung> builder =
             repository.queryBuilder(Ortszuordnung.class);
         builder.and("probeId", probeId);

@@ -8,6 +8,7 @@
 package de.intevation.lada.rest;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -90,7 +91,7 @@ public class ZusatzwertService extends LadaService {
     /**
      * Get Zusatzwert objects.
      *
-     * @param probeId The requested objects can be filtered using
+     * @param probeId The requested objects will be filtered using
      * a URL parameter named probeId.
      * Example: http://example.com/zusatzwert?probeId=[ID]
      *
@@ -99,11 +100,8 @@ public class ZusatzwertService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("probeId") Integer probeId
+        @QueryParam("probeId") @NotNull Integer probeId
     ) {
-        if (probeId == null) {
-            return repository.getAll(ZusatzWert.class);
-        }
         QueryBuilder<ZusatzWert> builder =
             repository.queryBuilder(ZusatzWert.class);
         builder.and("probeId", probeId);

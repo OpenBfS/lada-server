@@ -16,6 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -62,7 +63,7 @@ public class ColumnValueService extends LadaService {
     @GET
     @Path("/")
     public Response getQueries(
-        @QueryParam("qid") Integer qid
+        @QueryParam("qid") @NotNull Integer qid
     ) {
         if (qid == null) {
             return new Response(

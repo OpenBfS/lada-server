@@ -10,6 +10,7 @@ package de.intevation.lada.rest.stamm;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -74,12 +75,9 @@ public class DeskriptorService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("layer") Integer layer,
+        @QueryParam("layer") @NotNull Integer layer,
         @QueryParam("parents") List<Integer> parents
     ) {
-        if (layer == null) {
-            return repository.getAll(Deskriptoren.class);
-        }
         QueryBuilder<Deskriptoren> builder =
             repository.queryBuilder(Deskriptoren.class);
         builder.and("sn", 0).not();

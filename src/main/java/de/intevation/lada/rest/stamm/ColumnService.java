@@ -8,6 +8,7 @@
 package de.intevation.lada.rest.stamm;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -67,12 +68,8 @@ public class ColumnService extends LadaService {
     @GET
     @Path("/")
     public Response getQueries(
-        @QueryParam("qid") Integer qid
+        @QueryParam("qid") @NotNull Integer qid
     ) {
-        //If no qid is given, return all grid_column objects
-        if (qid == null) {
-            return repository.getAll(GridColumn.class);
-        }
 
         QueryBuilder<GridColumn> builder =
             repository.queryBuilder(GridColumn.class);

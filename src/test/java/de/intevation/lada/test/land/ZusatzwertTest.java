@@ -65,7 +65,7 @@ public class ZusatzwertTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("zusatzwert", "rest/zusatzwert");
+        get("zusatzwert", "rest/zusatzwert?probeId=1000");
         getById("zusatzwert", "rest/zusatzwert/1000", expectedById);
         JsonObject created = create("zusatzwert", "rest/zusatzwert", create);
         update("zusatzwert", "rest/zusatzwert/1000", "pzsId", "A75", "A74");
