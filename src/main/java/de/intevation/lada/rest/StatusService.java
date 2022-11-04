@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -132,11 +133,8 @@ public class StatusService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("messungsId") Integer messungsId
+        @QueryParam("messungsId") @NotNull Integer messungsId
     ) {
-        if (messungsId == null) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
         QueryBuilder<StatusProtokoll> builder =
             repository.queryBuilder(StatusProtokoll.class);
         builder.and("messungsId", messungsId);

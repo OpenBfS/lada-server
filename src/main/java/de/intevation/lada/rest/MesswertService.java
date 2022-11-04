@@ -10,6 +10,7 @@ package de.intevation.lada.rest;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -120,11 +121,8 @@ public class MesswertService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("messungsId") Integer messungsId
+        @QueryParam("messungsId") @NotNull Integer messungsId
     ) {
-        if (messungsId == null) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
         Messung messung = repository.getByIdPlain(Messung.class, messungsId);
         if (!authorization.isAuthorized(
                 messung,
