@@ -65,12 +65,6 @@ public class ColumnValueService extends LadaService {
     public Response getQueries(
         @QueryParam("qid") @NotNull Integer qid
     ) {
-        if (qid == null) {
-            return new Response(
-                false,
-                StatusCodes.ERROR_DB_CONNECTION,
-                "Not a valid filter id");
-        }
         UserInfo userInfo = authorization.getInfo();
         EntityManager em = repository.entityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
