@@ -205,7 +205,7 @@ ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messungs_id TO measm_id;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messgroesse_id TO measd_id;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messwert_nwg TO less_than_LOD;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messwert TO meas_val;
-ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messfehler TO meas_err;
+ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messfehler TO error;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN nwg_zu_messwert TO detect_lim;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN meh_id TO unit_id;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN grenzwertueberschreitung TO is_threshold;
@@ -217,7 +217,7 @@ CREATE VIEW land.messwert_view AS SELECT
 	measd_id AS messgroesse_id,
 	less_than_LOD AS messwert_nwg,
 	meas_val AS messwert,
-	meas_err AS messfehler,
+	error AS messfehler,
 	detect_lim AS nwg_zu_messwert,
 	unit_id AS meh_id,
 	is_threshold AS grenzwertueberschreitung,
@@ -357,7 +357,7 @@ ALTER TABLE IF EXISTS lada.zusatz_wert RENAME TO sample_specif_meas_val;
 ALTER TABLE IF EXISTS lada.sample_specif_meas_val RENAME COLUMN probe_id TO sample_id;
 ALTER TABLE IF EXISTS lada.sample_specif_meas_val RENAME COLUMN pzs_id TO sample_specif_id;
 ALTER TABLE IF EXISTS lada.sample_specif_meas_val RENAME COLUMN messwert_pzs TO meas_val;
-ALTER TABLE IF EXISTS lada.sample_specif_meas_val RENAME COLUMN messfehler TO meas_err;
+ALTER TABLE IF EXISTS lada.sample_specif_meas_val RENAME COLUMN messfehler TO error;
 ALTER TABLE IF EXISTS lada.sample_specif_meas_val RENAME COLUMN letzte_aenderung TO last_mod;
 ALTER TABLE IF EXISTS lada.sample_specif_meas_val RENAME COLUMN tree_modified TO tree_mod;
 ALTER TABLE IF EXISTS lada.sample_specif_meas_val RENAME COLUMN kleiner_als TO smaller_than;
@@ -366,7 +366,7 @@ CREATE VIEW land.zusatz_wert AS SELECT
 	sample_id AS probe_id,
 	sample_specif_id AS pzs_id,
 	meas_val AS messwert_pzs,
-	meas_err AS messfehler,
+	error AS messfehler,
 	last_mod AS letzte_aenderung,
 	tree_mod AS tree_modified,
 	smaller_than AS kleiner_als
@@ -379,13 +379,13 @@ CREATE FUNCTION stamm.get_media_from_media_desk(media_desk character varying)
 		SELECT master.get_media_from_media_desk(media_desk)
 	$$;
 
-ALTER TABLE IF EXISTS master.audit_trail RENAME COLUMN object_id TO site_id;
+--ALTER TABLE IF EXISTS master.audit_trail RENAME COLUMN object_id TO site_id;
 CREATE VIEW stamm.audit_trail AS SELECT
 	id,
 	table_name,
 	tstamp,
 	action,
-	site_id AS object_id,
+	object_id,
 	row_data,
 	changed_fields
 FROM master.audit_trail;
@@ -1055,6 +1055,7 @@ ALTER TABLE IF EXISTS master.ref_val RENAME COLUMN massnahme_id TO ref_val_meas_
 ALTER TABLE IF EXISTS master.ref_val RENAME COLUMN messgroessengruppe_id TO measd_gr_id;
 ALTER TABLE IF EXISTS master.ref_val RENAME COLUMN zusatztext TO specif;
 ALTER TABLE IF EXISTS master.ref_val RENAME COLUMN richtwert TO ref_val;
+ALTER TABLE IF EXISTS master.ref_val RENAME COLUMN letzte_aenderung TO last_mod;
 CREATE VIEW stamm.richtwert AS SELECT
 	id,
 	env_medium_id AS umw_id,
@@ -1067,6 +1068,7 @@ FROM master.ref_val;
 ALTER TABLE IF EXISTS master.richtwert_massnahme RENAME TO ref_val_measure;
 ALTER TABLE IF EXISTS master.ref_val_measure RENAME COLUMN massnahme TO measure;
 ALTER TABLE IF EXISTS master.ref_val_measure RENAME COLUMN beschreibung TO descr;
+ALTER TABLE IF EXISTS master.ref_val_measure RENAME COLUMN letzte_aenderung TO last_mod;
 CREATE VIEW stamm.richtwert_massnahme AS SELECT
 	id,
 	measure AS massnahme,
@@ -1076,6 +1078,7 @@ FROM master.ref_val_measure;
 ALTER TABLE IF EXISTS master.sollist_mmtgrp RENAME TO targ_act_mmt_gr;
 ALTER TABLE IF EXISTS master.targ_act_mmt_gr RENAME COLUMN bezeichnung TO name;
 ALTER TABLE IF EXISTS master.targ_act_mmt_gr RENAME COLUMN beschreibung TO descr;
+ALTER TABLE IF EXISTS master.targ_act_mmt_gr RENAME COLUMN letzte_aenderung TO last_mod;
 CREATE VIEW stamm.sollist_mmtgrp AS SELECT
 	id,
 	name AS bezeichnung,
@@ -1084,6 +1087,7 @@ FROM master.targ_act_mmt_gr;
 
 ALTER TABLE IF EXISTS master.sollist_mmtgrp_zuord RENAME TO targ_act_mmt_gr_mp;
 ALTER TABLE IF EXISTS master.targ_act_mmt_gr_mp RENAME COLUMN sollist_mmtgrp_id TO targ_act_mmt_gr_id;
+ALTER TABLE IF EXISTS master.targ_act_mmt_gr_mp RENAME COLUMN letzte_aenderung TO last_mod;
 CREATE VIEW stamm.sollist_mmtgrp_zuord AS SELECT
 	id,
 	mmt_id,
@@ -1096,6 +1100,7 @@ ALTER TABLE IF EXISTS master.targ_act_targ RENAME COLUMN sollist_mmtgrp_id TO ta
 ALTER TABLE IF EXISTS master.targ_act_targ RENAME COLUMN sollist_umwgrp_id TO targ_env_medium_gr_id;
 ALTER TABLE IF EXISTS master.targ_act_targ RENAME COLUMN imp TO is_imp;
 ALTER TABLE IF EXISTS master.targ_act_targ RENAME COLUMN soll TO targ;
+ALTER TABLE IF EXISTS master.targ_act_targ RENAME COLUMN letzte_aenderung TO last_mod;
 CREATE VIEW stamm.sollist_soll AS SELECT
 	id,
 	network_id AS netzbetreiber_id,
@@ -1108,6 +1113,7 @@ FROM master.targ_act_targ;
 ALTER TABLE IF EXISTS master.sollist_umwgrp RENAME TO targ_env_gr;
 ALTER TABLE IF EXISTS master.targ_env_gr RENAME COLUMN bezeichnung TO name;
 ALTER TABLE IF EXISTS master.targ_env_gr RENAME COLUMN beschreibung TO targ_env__gr_displ;
+ALTER TABLE IF EXISTS master.targ_env_gr RENAME COLUMN letzte_aenderung TO last_mod;
 CREATE VIEW stamm.sollist_umwgrp AS SELECT
 	id,
 	name AS bezeichnung,
@@ -1117,6 +1123,7 @@ FROM master.targ_env_gr;
 ALTER TABLE IF EXISTS master.sollist_umwgrp_zuord RENAME TO targ_env_gr_mp;
 ALTER TABLE IF EXISTS master.targ_env_gr_mp RENAME COLUMN sollist_umwgrp_id TO targ_env__gr_id;
 ALTER TABLE IF EXISTS master.targ_env_gr_mp RENAME COLUMN umw_id TO env_medium_id;
+ALTER TABLE IF EXISTS master.targ_env_gr_mp RENAME COLUMN letzte_aenderung TO last_mod;
 CREATE VIEW stamm.sollist_umwgrp_zuord AS SELECT
 	id,
 	targ_env__gr_id AS sollist_umwgrp_id,
@@ -1197,6 +1204,7 @@ ALTER TABLE IF EXISTS master.tag RENAME COLUMN mst_id TO meas_facil_id;
 ALTER TABLE IF EXISTS master.tag RENAME COLUMN auto_tag TO is_auto_tag;
 ALTER TABLE IF EXISTS master.tag RENAME COLUMN netzbetreiber_id TO network_id;
 ALTER TABLE IF EXISTS master.tag RENAME COLUMN user_id TO lada_user_id;
+ALTER TABLE IF EXISTS master.tag RENAME COLUMN tag_typ TO tag_type;
 ALTER TABLE IF EXISTS master.tag RENAME COLUMN gueltig_bis TO val_until;
 CREATE VIEW stamm.tag AS SELECT
 	id,
@@ -1205,7 +1213,7 @@ CREATE VIEW stamm.tag AS SELECT
 	is_auto_tag AS auto_tag,
 	network_id AS netzbetreiber_id,
 	lada_user_id AS user_id,
-	tag_typ,
+	tag_type as tag_typ,
 	val_until AS gueltig_bis,
 	created_at
 FROM master.tag;
@@ -1306,3 +1314,47 @@ CREATE VIEW stamm.zeitbasis AS SELECT
 	name AS bezeichnung,
 	last_mod AS letzte_aenderung
 FROM master.tz;
+
+--NEW: add lada.audit_trail_sample_view & lada.audit_trail_measm_view
+-- View for sample audit trail
+
+CREATE OR REPLACE VIEW lada.audit_trail_sample_view AS
+SELECT
+    lada_audit.id,
+    lada_audit.table_name,
+    lada_audit.action,
+    lada_audit.object_id,
+    lada_audit.tstamp,
+    cast(row_data ->> 'measm_id' AS integer) AS measm_id,
+    coalesce(cast(row_data ->> 'sample_id' AS integer),
+        (SELECT sample_id FROM lada.measm WHERE id = cast(
+            row_data ->> 'measm_id' AS integer))) AS sample_id,
+    lada_audit.row_data,
+    lada_audit.changed_fields,
+    null as site_id
+FROM lada.audit_trail as lada_audit
+UNION
+SELECT master_audit.id,
+    master_audit.table_name,
+    master_audit.action,
+    master_audit.object_id,
+    master_audit.tstamp,
+    null as messungs_id,
+    null as probe_id,
+    master_audit.row_data,
+    master_audit.changed_fields,
+    cast(row_data ->> 'id' AS integer) AS site_id
+FROM master.audit_trail as master_audit;
+
+
+-- View for measm audit trail
+CREATE OR REPLACE VIEW audit_trail_measm_view AS
+SELECT audit_trail.id,
+    audit_trail.table_name,
+    audit_trail.tstamp,
+    audit_trail.action,
+    audit_trail.object_id,
+    audit_trail.row_data,
+    audit_trail.changed_fields,
+    cast(row_data ->> 'measm_id' AS int) AS measm_id
+FROM audit_trail;

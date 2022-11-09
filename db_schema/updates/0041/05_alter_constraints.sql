@@ -24,7 +24,7 @@ ALTER TABLE lada.meas_val RENAME CONSTRAINT messwert_messungs_id_fkey TO meas_va
 ALTER TABLE lada.meas_val RENAME CONSTRAINT messwert_messgroesse_id_fkey TO meas_val_measd_id_fkey;
 ALTER TABLE lada.meas_val RENAME CONSTRAINT messwert_meh_id_fkey TO meas_val_unit_id_fkey;
 ALTER TABLE lada.measm RENAME CONSTRAINT messung_pkey TO measm_pkey;
-ALTER TABLE lada.measm RENAME CONSTRAINT messung_id_ext_id_key TO measm_id_sample_id_key;
+ALTER TABLE lada.measm RENAME CONSTRAINT messung_id_ext_id_key TO measm_id_ext_id_key;
 ALTER TABLE lada.measm RENAME CONSTRAINT messung_id_nebenproben_nr_key TO measm_id_min_sample_id_key;
 ALTER TABLE lada.measm RENAME CONSTRAINT messung_probe_id_fkey TO measm_sample_id_fkey;
 ALTER TABLE lada.measm RENAME CONSTRAINT messung_mmt_id_fkey TO measm_mmt_id_fkey;

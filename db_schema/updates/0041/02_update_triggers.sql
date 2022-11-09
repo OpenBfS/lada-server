@@ -133,7 +133,7 @@ CREATE FUNCTION lada.set_measm_ext_id() RETURNS trigger
         RETURN NEW;
     END;
 $$;
-CREATE TRIGGER sample_ext_id BEFORE INSERT ON lada.measm
+CREATE TRIGGER ext_id BEFORE INSERT ON lada.measm
     FOR EACH ROW EXECUTE PROCEDURE lada.set_measm_ext_id();
 
 -- Schema "master"

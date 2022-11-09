@@ -40,4 +40,6 @@ UNION
 CREATE INDEX verwaltungsgrenze_sp_idx ON admin_border_view USING gist (shape);
 CREATE INDEX verwaltungsgrenze_gem_id_idx ON admin_border_view (munic_id);
 
+GRANT ALL ON TABLE master.admin_border_view TO lada;
+
 COMMIT;

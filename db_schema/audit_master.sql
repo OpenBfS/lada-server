@@ -150,13 +150,13 @@ COMMENT ON FUNCTION audit_table(regclass) IS $body$
 Add auditing support to the given table. Row-level changes will be logged with full client query text. No cols are ignored.
 $body$;
 
-CREATE INDEX site_id_ndx ON audit_trail(cast("row_data"->>'site_id' AS varchar));
+CREATE INDEX site_id_ndx ON audit_trail(cast("row_data"->>'object_id' AS varchar));
 
 -- View for site audit trail
 CREATE OR REPLACE VIEW audit_trail_site_view AS
 SELECT audit_trail.id,
     audit_trail.table_name,
-    audit_trail.tstamp,
+    audit_trail.tstamp as last_mod,
     audit_trail.action,
     audit_trail.object_id,
     audit_trail.row_data,

@@ -84,7 +84,7 @@ CREATE FUNCTION update_tree_mod_measm() RETURNS trigger
         RAISE NOTICE 'measm is %',NEW.id;
         NEW.tree_mod = now() AT TIME ZONE 'utc';
         UPDATE lada.meas_val SET tree_mod = now() AT TIME ZONE 'utc' WHERE measm_id = NEW.id;
-		UPDATE lada.status_prot SET tree_mod = now() AT TIME ZONE 'utc' WHERE measm_id = NEW.id;
+        UPDATE lada.status_prot SET tree_mod = now() AT TIME ZONE 'utc' WHERE measm_id = NEW.id;
         RETURN NEW;
     END;
 $$;
@@ -358,7 +358,7 @@ CREATE TABLE sample_specif_meas_val (
     sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE,
     sample_specif_id character varying(3) NOT NULL REFERENCES master.sample_specif,
     meas_val double precision,
-    meas_err real,
+    error real,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     smaller_than character varying(1),
     tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
@@ -385,12 +385,12 @@ CREATE TABLE measm (
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     is_scheduled boolean DEFAULT false NOT NULL,
     tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    UNIQUE (id, sample_id),
+    UNIQUE (id, ext_id),
     UNIQUE (id, min_sample_id)
 );
 CREATE TRIGGER last_mod_measm BEFORE UPDATE ON measm FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 CREATE TRIGGER tree_mod_measm BEFORE UPDATE ON measm FOR EACH ROW EXECUTE PROCEDURE update_tree_mod_measm();
-CREATE TRIGGER sample_id BEFORE INSERT ON lada.measm FOR EACH ROW EXECUTE PROCEDURE set_measm_ext_id();
+CREATE TRIGGER ext_id BEFORE INSERT ON lada.measm FOR EACH ROW EXECUTE PROCEDURE set_measm_ext_id();
 CREATE TRIGGER status_measm AFTER INSERT ON lada.measm FOR EACH ROW EXECUTE PROCEDURE set_measm_status();
 
 --
@@ -416,7 +416,7 @@ CREATE TABLE meas_val (
     measd_id integer NOT NULL REFERENCES master.measd,
     less_than_LOD character varying(1),
     meas_val double precision,
-    meas_err real,
+    error real,
     detect_lim double precision,
     unit_id smallint NOT NULL REFERENCES master.meas_unit,
     is_threshold boolean DEFAULT false,
@@ -511,56 +511,56 @@ CREATE INDEX comm_measm_id_idx ON comm_measm USING btree (measm_id);
 -- Name: COLUMN geolocat.type_regulation; Type: COMMENT; Schema: lada; Owner: -
 --
 
-COMMENT ON COLUMN geolocat.type_regulation IS 'E = Entnahmeport, U = Ursprungsort, Z = Ortszusatz';
+COMMENT ON COLUMN geolocat.type_regulation IS 'E = Entnahmeort, U = Ursprungsort, Z = Ortszusatz';
 
 
 --
 -- Name: COLUMN sample.id; Type: COMMENT; Schema: lada; Owner: -
 --
 
-COMMENT ON COLUMN sample.id IS 'interner Probenschlüssel';
+COMMENT ON COLUMN sample.id IS 'internal sample_id';
 
 
 --
 -- Name: COLUMN sample.test; Type: COMMENT; Schema: lada; Owner: -
 --
 
-COMMENT ON COLUMN sample.is_test IS 'Ist Testdatensatz?';
+COMMENT ON COLUMN sample.is_test IS 'is test data?';
 
 
 --
 -- Name: COLUMN sample.mst_id; Type: COMMENT; Schema: lada; Owner: -
 --
 
-COMMENT ON COLUMN sample.meas_facil_id IS 'ID für Messstelle';
+COMMENT ON COLUMN sample.meas_facil_id IS 'ID for measuring facility';
 
 
 --
 -- Name: COLUMN sample.labor_mst_id; Type: COMMENT; Schema: lada; Owner: -
 --
 
-COMMENT ON COLUMN sample.appr_lab_id IS '-- ID für Messlabor';
+COMMENT ON COLUMN sample.appr_lab_id IS 'ID for approved laboratory';
 
 
 --
 -- Name: COLUMN sample.hauptproben_nr; Type: COMMENT; Schema: lada; Owner: -
 --
 
-COMMENT ON COLUMN sample.main_sample_id IS 'externer Probensclüssel';
+COMMENT ON COLUMN sample.main_sample_id IS 'external sample id';
 
 
 --
 -- Name: COLUMN sample.ba_id; Type: COMMENT; Schema: lada; Owner: -
 --
 
-COMMENT ON COLUMN sample.opr_mode_id IS 'ID der Betriebsart (normal/Routine oder Störfall/intensiv)';
+COMMENT ON COLUMN sample.opr_mode_id IS 'ID of operation mode (normal/Routine oder Störfall/intensiv)';
 
 
 --
 -- Name: COLUMN sample.probenart_id; Type: COMMENT; Schema: lada; Owner: -
 --
 
-COMMENT ON COLUMN sample.sample_meth_id IS 'ID der Probenart(Einzel-, Sammel-, Misch- ...Probe)';
+COMMENT ON COLUMN sample.sample_meth_id IS 'ID of sample method (Einzel-, Sammel-, Misch- ...Probe)';
 
 
 --
@@ -581,7 +581,7 @@ COMMENT ON COLUMN sample.env_descrip_name IS 'dekodierte Medienbezeichnung (aus 
 -- Name: COLUMN sample.umw_id; Type: COMMENT; Schema: lada; Owner: -
 --
 
-COMMENT ON COLUMN sample.env_medium_id IS 'ID für Umweltbereich';
+COMMENT ON COLUMN sample.env_medium_id IS 'ID for environmental medium';
 
 
 --

@@ -250,7 +250,7 @@ SELECT setval(pg_get_serial_sequence('comm_sample', 'id'),
 
 ALTER TABLE meas_val DISABLE TRIGGER ALL;
 
-COPY meas_val (id, measm_id, measd_id, less_than_LOD, meas_val, meas_err, detect_lim, unit_id, is_threshold, last_mod, tree_mod) FROM stdin;
+COPY meas_val (id, measm_id, measd_id, less_than_LOD, meas_val, error, detect_lim, unit_id, is_threshold, last_mod, tree_mod) FROM stdin;
 6076	179	28	\N	19	4.5	\N	67	\N	2012-02-22 12:38:39	2016-03-17 09:19:04.94469
 3820	198	28	\N	500	2.5	\N	64	\N	2012-03-26 16:31:35	2016-03-17 09:19:04.94469
 3825	198	373	\N	1.70000005	3.2	\N	64	\N	2012-03-26 16:31:35	2016-03-17 09:19:04.94469
@@ -964,7 +964,7 @@ SELECT setval(pg_get_serial_sequence('status_prot', 'id'),
 
 ALTER TABLE sample_specif_meas_val DISABLE TRIGGER ALL;
 
-COPY sample_specif_meas_val (id, sample_id, sample_specif_id, meas_val, meas_err, last_mod, tree_mod) FROM stdin;
+COPY sample_specif_meas_val (id, sample_id, sample_specif_id, meas_val, error, last_mod, tree_mod) FROM stdin;
 1	84	A76	7.5	48	2012-04-23 12:32:56	2016-03-17 09:19:04.94469
 26	186	A78	0	0	2016-03-07 12:32:37	2016-03-17 09:19:04.94469
 21	157	A78	0	2	2016-03-07 10:26:00	2016-03-17 09:19:04.94469

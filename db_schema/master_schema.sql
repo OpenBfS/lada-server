@@ -689,7 +689,7 @@ CREATE TRIGGER last_mod_munic_div BEFORE UPDATE ON munic_div FOR EACH ROW EXECUT
 CREATE TABLE site (
     id serial PRIMARY KEY,
     network_id character varying(2) NOT NULL REFERENCES network,
-    ext_id character varying(13) NOT NULL,
+    ext_id character varying(20) NOT NULL,
     long_text character varying(100) NOT NULL,
     state_id smallint REFERENCES state,
     munic_id character varying(8) REFERENCES admin_unit,
