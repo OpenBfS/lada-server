@@ -628,7 +628,6 @@ CREATE VIEW stamm.ort AS SELECT
 	state_id AS staat_id,
 	munic_id AS gem_id,
 	is_fuzzy AS unscharf,
-	nuts_id AS nuts_code,
 	spat_ref_sys_id AS kda_id,
 	x_coord_ext AS koord_x_extern,
 	y_coord_ext AS koord_y_extern,
@@ -1058,7 +1057,6 @@ CREATE VIEW stamm.verwaltungseinheit AS SELECT
 	is_gov_dist AS is_regbezirk,
 	is_state AS is_bundesland,
 	zip AS plz,
-	nuts,
 	geom_center AS mittelpunkt
 FROM master.admin_unit;
 /*

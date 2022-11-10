@@ -823,7 +823,6 @@ ALTER TABLE IF EXISTS master.site RENAME COLUMN langtext TO long_text;
 ALTER TABLE IF EXISTS master.site RENAME COLUMN staat_id TO state_id;
 ALTER TABLE IF EXISTS master.site RENAME COLUMN gem_id TO munic_id;
 ALTER TABLE IF EXISTS master.site RENAME COLUMN unscharf TO is_fuzzy;
-ALTER TABLE IF EXISTS master.site RENAME COLUMN nuts_code TO nuts_id;
 ALTER TABLE IF EXISTS master.site RENAME COLUMN kda_id TO spat_ref_sys_id;
 ALTER TABLE IF EXISTS master.site RENAME COLUMN koord_x_extern TO x_coord_ext;
 ALTER TABLE IF EXISTS master.site RENAME COLUMN koord_y_extern TO y_coord_ext;
@@ -850,7 +849,6 @@ CREATE VIEW stamm.ort AS SELECT
 	state_id AS staat_id,
 	munic_id AS gem_id,
 	is_fuzzy AS unscharf,
-	nuts_id AS nuts_code,
 	spat_ref_sys_id AS kda_id,
 	x_coord_ext AS koord_x_extern,
 	y_coord_ext AS koord_y_extern,
@@ -1292,7 +1290,6 @@ CREATE VIEW stamm.verwaltungseinheit AS SELECT
 	is_gov_dist AS is_regbezirk,
 	is_state AS is_bundesland,
 	zip AS plz,
-	nuts,
 	geom_center AS mittelpunkt
 FROM master.admin_unit;
 

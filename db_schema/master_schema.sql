@@ -348,7 +348,6 @@ CREATE TABLE admin_unit (
     is_gov_dist boolean DEFAULT false NOT NULL,
     is_state boolean DEFAULT false NOT NULL,
     zip character varying(6),
-    nuts character varying(10),
     geom_center public.geometry(Point)
 );
 
@@ -694,7 +693,6 @@ CREATE TABLE site (
     state_id smallint REFERENCES state,
     munic_id character varying(8) REFERENCES admin_unit,
     is_fuzzy boolean NOT NULL DEFAULT false,
-    nuts_id character varying(10),
     spat_ref_sys_id integer NOT NULL REFERENCES spat_ref_sys,
     x_coord_ext character varying(22) NOT NULL,
     y_coord_ext character varying(22) NOT NULL,
