@@ -372,13 +372,6 @@ implements Creator {
                 sOrte.get(0).getGemId());
         }
 
-        if (sOrte.get(0).getNutsCode() != null
-            && sOrte.get(0).getNutsCode().length() > 0
-        ) {
-            laf += lafLine(typePrefix + "NUTS_CODE",
-                sOrte.get(0).getNutsCode());
-        }
-
         if (sOrte.get(0).getGemUntId() != null) {
             GemeindeUntergliederung gu = repository.getByIdPlain(
                 GemeindeUntergliederung.class, sOrte.get(0).getGemUntId());

@@ -48,8 +48,6 @@ public class Verwaltungseinheit implements Serializable {
 
     private String kreis;
 
-    private String nuts;
-
     private String plz;
 
     private String regbezirk;
@@ -137,14 +135,6 @@ public class Verwaltungseinheit implements Serializable {
         return this.mittelpunkt != null
             ? this.mittelpunkt.getX()
             : null;
-    }
-
-    public String getNuts() {
-        return this.nuts;
-    }
-
-    public void setNuts(String nuts) {
-        this.nuts = nuts;
     }
 
     public String getPlz() {
