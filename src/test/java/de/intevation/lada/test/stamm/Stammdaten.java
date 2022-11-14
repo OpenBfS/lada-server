@@ -145,7 +145,6 @@ public class Stammdaten extends ServiceTest {
                 "latitude",
                 "longitude",
                 "letzteAenderung",
-                "nutsCode",
                 "unscharf",
                 "netzbetreiberId",
                 "staatId",
@@ -199,7 +198,6 @@ public class Stammdaten extends ServiceTest {
                 "kreis",
                 "latitude",
                 "longitude",
-                "nuts",
                 "plz",
                 "regbezirk"
             )

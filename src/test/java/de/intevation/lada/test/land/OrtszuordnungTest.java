@@ -64,7 +64,7 @@ public class OrtszuordnungTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("ortszuordnung", "rest/ortszuordnung");
+        get("ortszuordnung", "rest/ortszuordnung?probeId=1000");
         getById("ortszuordnung", "rest/ortszuordnung/1000", expectedById);
         JsonObject created =
             create("ortszuordnung", "rest/ortszuordnung", create);

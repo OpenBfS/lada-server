@@ -8,6 +8,7 @@
 package de.intevation.lada.rest;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -88,18 +89,14 @@ public class KommentarMService extends LadaService {
      * Example: http://example.com/mkommentar?messungsId=[ID]
      *
      * @return Response object containing filtered KommentarM objects.
-     * Status-Code 699 if parameter is missing or requested objects are
+     * Status-Code 699 if requested objects are
      * not authorized.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("messungsId") Integer messungsId
+        @QueryParam("messungsId") @NotNull Integer messungsId
     ) {
-        if (messungsId == null) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
-
         Messung messung = repository.getByIdPlain(Messung.class, messungsId);
         if (!authorization.isAuthorized(
                 messung, RequestMethod.GET, Messung.class)

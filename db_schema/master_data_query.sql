@@ -640,28 +640,27 @@ COPY master.grid_col_mp (id, base_query, grid_col, data_index, "position", filte
 3106	31	Langtext	langtext	6	115	1
 3107	31	Staat	staat	7	55	20
 3108	31	Verwaltungseinheit	verwaltungseinheit	8	10	16
-3109	31	NUTS-Code	nutsCode	9	\N	1
-3110	31	OZ-ID	ozId	10	\N	1
-3111	31	Anlage	anlage	11	109	25
-3112	31	mpArt	mpArt	12	89	1
-3113	31	Koordinatenart	koordinatenArt	13	\N	1
-3114	31	X-Koordinate	koordXExtern	14	\N	1
-3115	31	Y-Koordinate	koordYExtern	15	\N	1
-3116	31	Longitude	longitude	16	\N	39
-3117	31	Latitude	latitude	17	\N	39
-3118	31	Höhe über NN	hoeheUeberNn	18	\N	39
-3119	31	Höhe	hoeheLand	19	\N	39
-3120	31	Aktiv (REI)	ortAktiv	20	52	11
-3121	31	letzte Änderung	letzteAenderung	21	\N	2
-3122	31	Zone	zone	22	\N	1
-3123	31	Sektor	sektor	23	\N	1
-3124	31	Zustaendigkeit	zustaendigkeit	24	\N	1
-3125	31	Berichtstext	berichtstext	25	\N	1
-3126	31	unscharf	unscharf	26	\N	11
-3127	31	Netzbetreiber	netzbetreiber	27	23	18
-3128	31	Anlage-Beschr	anlagebeschr	28	\N	25
-3129	31	Verw-ID	verwid	29	\N	16
-3130	31	GEOM	geom	30	\N	7
+3110	31	OZ-ID	ozId	9	\N	1
+3111	31	Anlage	anlage	10	109	25
+3112	31	mpArt	mpArt	11	89	1
+3113	31	Koordinatenart	koordinatenArt	12	\N	1
+3114	31	X-Koordinate	koordXExtern	13	\N	1
+3115	31	Y-Koordinate	koordYExtern	14	\N	1
+3116	31	Longitude	longitude	15	\N	39
+3117	31	Latitude	latitude	16	\N	39
+3118	31	Höhe über NN	hoeheUeberNn	17	\N	39
+3119	31	Höhe	hoeheLand	18	\N	39
+3120	31	Aktiv (REI)	ortAktiv	19	52	11
+3121	31	letzte Änderung	letzteAenderung	20	\N	2
+3122	31	Zone	zone	21	\N	1
+3123	31	Sektor	sektor	22	\N	1
+3124	31	Zustaendigkeit	zustaendigkeit	23	\N	1
+3125	31	Berichtstext	berichtstext	24	\N	1
+3126	31	unscharf	unscharf	25	\N	11
+3127	31	Netzbetreiber	netzbetreiber	26	23	18
+3128	31	Anlage-Beschr	anlagebeschr	27	\N	25
+3129	31	Verw-ID	verwid	28	\N	16
+3130	31	GEOM	geom	29	\N	7
 3201	32	ID	id	1	\N	21
 3202	32	Netz-ID	netzId	2	\N	18
 3203	32	PRN	prnId	3	41	1
@@ -945,13 +944,12 @@ COPY master.grid_col_mp (id, base_query, grid_col, data_index, "position", filte
 5305	53	ist_Landkreis	isKreis	5	79	11
 5306	53	ist_Reg.bezirk	isRbez	6	80	11
 5307	53	ist_Bundesland	isBundesland	7	81	11
-5308	53	NUTS	nuts	8	\N	1
-5309	53	Bundesland-ID	bundeslandId	9	\N	1
-5310	53	Bundesland	bundesland	10	\N	1
-5311	53	Reg.bezirk-ID	rbezId	11	\N	1
-5312	53	Reg.bezirk	rbez	12	\N	1
-5313	53	Landkreis-ID	kreisId	13	\N	1
-5314	53	Landkreis	kreis	14	\N	1
+5309	53	Bundesland-ID	bundeslandId	8	\N	1
+5310	53	Bundesland	bundesland	9	\N	1
+5311	53	Reg.bezirk-ID	rbezId	10	\N	1
+5312	53	Reg.bezirk	rbez	11	\N	1
+5313	53	Landkreis-ID	kreisId	12	\N	1
+5314	53	Landkreis	kreis	13	\N	1
 5401	54	ID	anlageId	1	\N	33
 5402	54	Anlage	anlageBez	2	82	1
 5403	54	Beschreibung	anlageBeschr	3	\N	1
@@ -1055,7 +1053,6 @@ COPY master.grid_col_conf (id, user_id, grid_col_mp_id, query_user_id, sort, sor
 129	0	3110	4	\N	\N	\N	f	f	-1	56	f	f	f
 132	0	3103	4	\N	\N	\N	t	t	1	120	f	f	f
 135	0	3113	4	\N	\N	\N	f	f	-1	120	f	f	f
-146	0	3109	4	\N	\N	\N	f	f	-1	90	f	f	f
 91	0	3306	6	\N	\N	\N	f	f	-1	125	f	f	f
 94	0	3307	6	\N	\N	\N	t	f	-1	120	f	f	f
 95	0	3308	6	\N	\N	\N	f	f	-1	164	f	f	f
@@ -1471,7 +1468,6 @@ COPY master.grid_col_conf (id, user_id, grid_col_mp_id, query_user_id, sort, sor
 582	0	5305	19	\N	\N	\N	t	t	4	100	f	f	f
 583	0	5306	19	\N	\N	\N	t	t	5	100	f	f	f
 584	0	5307	19	\N	\N	\N	t	t	6	100	f	f	f
-585	0	5308	19	\N	\N	\N	f	t	7	100	f	f	f
 586	0	5309	19	\N	\N	\N	f	t	8	100	f	f	f
 587	0	5310	19	\N	\N	\N	f	t	9	100	f	f	f
 588	0	5311	19	\N	\N	\N	f	t	10	100	f	f	f
@@ -1780,7 +1776,7 @@ COPY master.grid_col_conf (id, user_id, grid_col_mp_id, query_user_id, sort, sor
 1095	0	6306	37	\N	\N	\N	t	t	6	150	f	f	f
 1096	0	6307	37	\N	\N	\N	f	t	7	170	f	f	f
 1097	0	6308	37	\N	\N	\N	f	t	8	170	f	f	f
-1100	0	3130	4	\N	\N	\N	f	f	\N	76	f	f	f
+1100	0	3130	4	\N	\N	\N	f	t	\N	76	f	f	f
 \.
 
 

@@ -10,6 +10,7 @@ package de.intevation.lada.rest;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -98,7 +99,7 @@ public class OrtszuordnungMpService extends LadaService {
     /**
      * Get OrtszuordnungMp objects.
      *
-     * @param messprogrammId The requested objects can be filtered
+     * @param messprogrammId The requested objects will be filtered
      * using a URL parameter named messprogrammId.
      *
      * @return Response containing requested objects.
@@ -106,11 +107,8 @@ public class OrtszuordnungMpService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("messprogrammId") Integer messprogrammId
+        @QueryParam("messprogrammId") @NotNull Integer messprogrammId
     ) {
-        if (messprogrammId == null) {
-            return repository.getAll(OrtszuordnungMp.class);
-        }
         QueryBuilder<OrtszuordnungMp> builder =
             repository.queryBuilder(OrtszuordnungMp.class);
         builder.and("messprogrammId", messprogrammId);

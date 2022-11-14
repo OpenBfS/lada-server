@@ -70,7 +70,6 @@ public class MessprogrammMmtTest extends ServiceTest {
         final String url = "rest/messprogrammmmt/";
         final String id = "1000";
 
-        get(name, url);
         getById(name, url + id, expectedById);
         get(name, url + "?messprogrammId=1000");
         update(

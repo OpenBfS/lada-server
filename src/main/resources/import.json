@@ -234,10 +234,6 @@
         "regex": ".{1,100}",
         "default": ""
     }, {
-        "key": "ort_nuts_code",
-        "regex": ".{1,10}",
-        "default": ""
-    }, {
         "key": "ort_hoehe_land",
         "regex": "[0-9]{1,9},[0-9]{1,9}",
         "default": ""

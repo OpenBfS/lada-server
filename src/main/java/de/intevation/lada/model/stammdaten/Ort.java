@@ -84,9 +84,6 @@ public class Ort implements Serializable {
     @Column(name = "netzbetreiber_id")
     private String netzbetreiberId;
 
-    @Column(name = "nuts_code")
-    private String nutsCode;
-
     @Column(name = "ort_id")
     private String ortId;
 
@@ -304,14 +301,6 @@ public class Ort implements Serializable {
 
     public void setNetzbetreiberId(String netzbetreiberId) {
         this.netzbetreiberId = netzbetreiberId;
-    }
-
-    public String getNutsCode() {
-        return this.nutsCode;
-    }
-
-    public void setNutsCode(String nutsCode) {
-        this.nutsCode = nutsCode;
     }
 
     public String getOrtId() {
