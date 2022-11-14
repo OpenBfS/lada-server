@@ -3,7 +3,7 @@
         "id": 1200,
         "sample_id": 1000,
         "min_sample_id": "06A0",
-        "sample_ext_id": 1,
+        "ext_id": 1,
         "mmt_id": "A3",
         "meas_pd": 1000,
         "measm_start_date": "2012-05-06 14:00:00",

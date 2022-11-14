@@ -51,7 +51,7 @@ public class MessungTest extends ServiceTest {
         JsonObject messung =
             content.getJsonArray("lada.measm").getJsonObject(0);
         // Automatic conversion of key for external ID does not work
-        final String extIdKey = "sample_ext_id";
+        final String extIdKey = "ext_id";
         expectedById = convertObject(messung, extIdKey)
             .add("externeMessungsId", messung.get(extIdKey))
             .add("parentModified", TS1)

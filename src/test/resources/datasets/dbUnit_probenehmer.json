@@ -2,7 +2,7 @@
     "master.sampler": [{
         "id": 1000,
         "network_id": "06",
-        "sampler_ext_id": "AV6",
+        "ext_id": "AV6",
         "editor": "Testbearbeiter",
         "comm": "Testbemerkung",
         "inst": "Testbetrieb",

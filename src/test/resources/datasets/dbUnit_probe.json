@@ -29,7 +29,7 @@
         "id": 1200,
         "sample_id": 1000,
         "min_sample_id": "T100",
-        "sample_ext_id": 453,
+        "ext_id": 453,
         "mmt_id": "A3",
         "meas_pd": 3600,
         "measm_start_date": "2012-05-06 14:00:00",
@@ -52,7 +52,7 @@
         "measm_id": 1200,
         "measd_id": 56,
         "less_than_LOD": "<",
-        "meas_err": 3.3,
+        "error": 3.3,
         "detect_lim": 2.4,
         "unit_id": 207,
         "is_threshold": false,
@@ -70,7 +70,7 @@
         "sample_id": 1000,
         "sample_specif_id": "A75",
         "meas_val": 12.0,
-        "meas_err": 8.0,
+        "error": 8.0,
         "last_mod": "2012-05-08 14:00:00"
     }],
     "lada.comm_measm": [{
