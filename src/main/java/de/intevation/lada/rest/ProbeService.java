@@ -52,8 +52,8 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/sample")
-public class SampleService extends LadaService {
+@Path("rest/probe")
+public class ProbeService extends LadaService {
 
     /**
      * The data repository granting read/write access.

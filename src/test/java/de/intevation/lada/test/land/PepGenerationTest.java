@@ -807,7 +807,7 @@ public class PepGenerationTest extends ServiceTest {
         List<Integer> ids, String start, String end
     ) {
 
-        WebTarget target = client.target(baseUrl + "rest/sample/messprogramm");
+        WebTarget target = client.target(baseUrl + "rest/probe/messprogramm");
         JsonArrayBuilder idArrayBuilder = Json.createArrayBuilder();
         ids.forEach(item -> {
             idArrayBuilder.add(item);

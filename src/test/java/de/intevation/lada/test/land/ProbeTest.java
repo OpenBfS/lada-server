@@ -68,17 +68,17 @@ public class ProbeTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("probe", "rest/sample", Status.METHOD_NOT_ALLOWED);
-        getById("probe", "rest/sample/1000", expectedById);
-        JsonObject created = create("probe", "rest/sample", create);
+        get("probe", "rest/probe", Status.METHOD_NOT_ALLOWED);
+        getById("probe", "rest/probe/1000", expectedById);
+        JsonObject created = create("probe", "rest/probe", create);
         update(
             "probe",
-            "rest/sample/1000",
+            "rest/probe/1000",
             "mainSampleId",
             "120510002",
             "130510002");
         delete(
             "probe",
-            "rest/sample/" + created.getJsonObject("data").get("id"));
+            "rest/probe/" + created.getJsonObject("data").get("id"));
     }
 }
