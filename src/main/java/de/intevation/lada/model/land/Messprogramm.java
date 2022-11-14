@@ -128,7 +128,7 @@ public class Messprogramm implements Serializable {
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "mpg_id")
-    private Set<Sample> proben;
+    private Set<Probe> proben;
 
     @ManyToMany (fetch = FetchType.EAGER)
     @JoinTable(
@@ -371,7 +371,7 @@ public class Messprogramm implements Serializable {
     }
 
     /**
-     * @return The number of Sample objects referencing this Messprogramm.
+     * @return The number of Probe objects referencing this Messprogramm.
      */
     public int getReferenceCount() {
         if (this.proben != null) {

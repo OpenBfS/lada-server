@@ -13,7 +13,7 @@ import java.util.List;
 import org.junit.Assert;
 
 import de.intevation.lada.Protocol;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
 
@@ -49,7 +49,7 @@ public class ProbeTest {
         prot.setType("has mainSampleId");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setMainSampleId("4554567890");
         Violation violation = validator.validate(probe);
         if (violation.hasErrors()) {
@@ -69,7 +69,7 @@ public class ProbeTest {
         prot.setType("has no mainSampleId");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasErrors());
         Assert.assertTrue(violation.getErrors().containsKey("mainSampleId"));
@@ -88,7 +88,7 @@ public class ProbeTest {
         prot.setType("existing mainSampleId (new)");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setMainSampleId("120510002");
         prot.addInfo("mainSampleId", "120510002");
         Violation violation = validator.validate(probe);
@@ -109,7 +109,7 @@ public class ProbeTest {
         prot.setType("unique mainSampleId (new)");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setMainSampleId("4564567890");
         prot.addInfo("mainSampleId", "4564567890");
         Violation violation = validator.validate(probe);
@@ -130,7 +130,7 @@ public class ProbeTest {
         prot.setType("unique mainSampleId (update)");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setId(1);
         probe.setMainSampleId("4564567890");
         prot.addInfo("mainSampleId", "4564567890");
@@ -152,7 +152,7 @@ public class ProbeTest {
         prot.setType("existing mainSampleId (update)");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setId(1);
         probe.setMainSampleId("120224003");
         prot.addInfo("mainSampleId", "120224003");
@@ -174,7 +174,7 @@ public class ProbeTest {
         prot.setType("has entnahmeOrt");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setId(1);
         Violation violation = validator.validate(probe);
         if (violation.hasWarnings()) {
@@ -194,7 +194,7 @@ public class ProbeTest {
         prot.setType("has no entnahmeOrt");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setId(ID710);
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasWarnings());
@@ -214,7 +214,7 @@ public class ProbeTest {
         prot.setType("has probeentnahmeBegin");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setSampleStartDate(new Timestamp(TS1));
         probe.setSampleEndDate(new Timestamp(TS2));
         Violation violation = validator.validate(probe);
@@ -235,7 +235,7 @@ public class ProbeTest {
         prot.setType("has no probeentnahmeBegin");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(
@@ -255,7 +255,7 @@ public class ProbeTest {
         prot.setType("time no end probeentnahmeBegin");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setSampleStartDate(new Timestamp(TS1));
         Violation violation = validator.validate(probe);
         if (violation.hasWarnings()) {
@@ -275,7 +275,7 @@ public class ProbeTest {
         prot.setType("time no begin probeentnahmeBegin");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setSampleEndDate(new Timestamp(TS1));
         Violation violation = validator.validate(probe);
         Assert.assertTrue(
@@ -297,7 +297,7 @@ public class ProbeTest {
         prot.setType("time begin after end probeentnahmeBegin");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setSampleStartDate(new Timestamp(TS2));
         probe.setSampleEndDate(new Timestamp(TS1));
         Violation violation = validator.validate(probe);
@@ -318,7 +318,7 @@ public class ProbeTest {
         prot.setType("time begin in future probeentnahmeBegin");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setSampleStartDate(new Timestamp(TS3));
         Violation violation = validator.validate(probe);
         Assert.assertTrue(
@@ -336,7 +336,7 @@ public class ProbeTest {
         prot.setType("has Umwelt");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setEnvMediumId("A4");
         Violation violation = validator.validate(probe);
         if (violation.hasWarnings()) {
@@ -355,7 +355,7 @@ public class ProbeTest {
         prot.setType("has no Umwelt");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey("umwId"));
@@ -373,7 +373,7 @@ public class ProbeTest {
         prot.setType("has empty Umwelt");
         prot.setPassed(false);
         protocol.add(prot);
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setEnvMediumId("");
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasWarnings());

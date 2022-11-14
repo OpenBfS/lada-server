@@ -9,7 +9,7 @@
 package de.intevation.lada.util.auth;
 
 import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.data.Repository;
@@ -61,13 +61,13 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
                 if (zuordnung.getProbeId() != null) {
                     return probeAuthorizer.isAuthorized(
                         repository.getByIdPlain(
-                            Sample.class, zuordnung.getProbeId()),
+                            Probe.class, zuordnung.getProbeId()),
                         RequestMethod.PUT,
                         userInfo,
-                        Sample.class
+                        Probe.class
                     );
                 }
-                // Should not happen because either Messung or Sample is assigned
+                // Should not happen because either Messung or Probe is assigned
                 return false;
             case Tag.TAG_TYPE_NETZBETREIBER:
                 return userInfo.getNetzbetreiber().contains(

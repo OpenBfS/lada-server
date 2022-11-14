@@ -22,7 +22,7 @@ public class ValidFromTo implements Rule {
 
     private static final int DOY_MIN = 1;
 
-    // Leap years should be handled in generation of Sample objects
+    // Leap years should be handled in generation of Probe objects
     private static final int DOY_MAX = 365;
 
     @Override

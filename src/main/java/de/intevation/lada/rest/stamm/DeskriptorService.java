@@ -22,6 +22,8 @@ import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
 
 /**
+ * REST service for Probe objects.
+ * <p>
  * The services produce data in the application/json media type.
  * All HTTP methods use the authorization module to determine if the user is
  * allowed to perform the requested action.

@@ -8,7 +8,7 @@
 package de.intevation.lada.validation.rules.probe;
 
 import java.sql.Timestamp;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -19,7 +19,7 @@ import de.intevation.lada.validation.rules.Rule;
  * Validates if the "probeart" matches date values.
  *
  */
-@ValidationRule("Sample")
+@ValidationRule("Probe")
 public class CheckProbeart implements Rule {
 
     private static final Integer DATENBASIS_161 = 1;
@@ -27,7 +27,7 @@ public class CheckProbeart implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Sample probe = (Sample) object;
+        Probe probe = (Probe) object;
         Timestamp end = probe.getSampleEndDate();
         Timestamp begin = probe.getSampleStartDate();
         if (probe.getSampleMethId() != null

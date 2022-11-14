@@ -86,7 +86,7 @@ public class TagZuordnungTest extends ServiceTest {
 
         tagResponse = get("tag", "rest/tag?pid=1901");
         Assert.assertEquals(
-            "Number of tags for given Sample ID:",
+            "Number of tags for given Probe ID:",
             2, tagResponse.getJsonArray(data).size());
 
         tagResponse = get("tag", "rest/tag?mid=1801");

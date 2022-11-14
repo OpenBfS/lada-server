@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -40,8 +40,8 @@ public class IsReiComplete implements Rule {
         Messung messung =
             repository.getByIdPlain(
                 Messung.class, status.getMessungsId());
-        Sample probe =
-            repository.getByIdPlain(Sample.class, messung.getProbeId());
+        Probe probe =
+            repository.getByIdPlain(Probe.class, messung.getProbeId());
         if (!Integer.valueOf(3).equals(probe.getRegulationId())
             && !Integer.valueOf(4).equals(probe.getRegulationId())) {
             return null;

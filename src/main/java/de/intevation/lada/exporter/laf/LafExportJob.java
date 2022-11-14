@@ -23,7 +23,7 @@ import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.ExportJob;
 import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.util.data.QueryBuilder;
 
 /**
@@ -78,12 +78,12 @@ public class LafExportJob extends ExportJob {
         //Get probe and messung records
         List<Integer> pIds = new ArrayList<Integer>();
         if (!probeIds.isEmpty()) {
-            QueryBuilder<Sample> pBuilder = repository.queryBuilder(
-                Sample.class);
+            QueryBuilder<Probe> pBuilder = repository.queryBuilder(
+                Probe.class);
             pBuilder.andIn("id", probeIds);
-            List<Sample> pObjects = repository.filterPlain(
+            List<Probe> pObjects = repository.filterPlain(
                 pBuilder.getQuery());
-            for (Sample p : pObjects) {
+            for (Probe p : pObjects) {
                 pIds.add(p.getId());
             }
         }

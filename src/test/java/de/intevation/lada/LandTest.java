@@ -33,7 +33,7 @@ import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.test.land.KommentarMTest;
 import de.intevation.lada.test.land.KommentarPTest;
@@ -295,9 +295,9 @@ public class LandTest extends BaseTest {
         Protocol protocol = new Protocol();
         protocol.setName("database");
         protocol.setType("insert probe");
-        protocol.addInfo("database", "Insert Sample into database");
+        protocol.addInfo("database", "Insert Probe into database");
         testProtocol.add(protocol);
-        Sample probe = em.find(Sample.class, ID1000);
+        Probe probe = em.find(Probe.class, ID1000);
         Assert.assertNotNull(probe);
         protocol.setPassed(true);
     }

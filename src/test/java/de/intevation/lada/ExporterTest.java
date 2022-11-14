@@ -81,7 +81,7 @@ public class ExporterTest extends BaseTest {
                 .add("gridColumnId", 2)));
 
     /**
-     * Prepare data for export of a Sample object.
+     * Prepare data for export of a Probe object.
      */
     @Test
     @InSequence(1)
@@ -102,7 +102,7 @@ public class ExporterTest extends BaseTest {
     }
 
     /**
-     * Test asynchronous CSV export of a Sample object.
+     * Test asynchronous CSV export of a Probe object.
      */
     @Test
     @InSequence(2)
@@ -131,7 +131,7 @@ public class ExporterTest extends BaseTest {
     }
 
     /**
-     * Test asynchronous CSV export of a Sample identified by ID.
+     * Test asynchronous CSV export of a Probe identified by ID.
      */
     @Test
     @InSequence(3)
@@ -161,7 +161,7 @@ public class ExporterTest extends BaseTest {
     }
 
     /**
-     * Test asynchronous JSON export of a Sample identified by ID.
+     * Test asynchronous JSON export of a Probe identified by ID.
      */
     @Test
     @InSequence(4)
@@ -192,7 +192,7 @@ public class ExporterTest extends BaseTest {
     }
 
     /**
-     * Test asynchronous LAF export of a Sample identified by ID.
+     * Test asynchronous LAF export of a Probe identified by ID.
      */
     @Test
     @InSequence(5)

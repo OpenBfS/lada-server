@@ -24,7 +24,7 @@ import javax.ws.rs.PathParam;
 
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.model.land.Messprogramm;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -362,9 +362,9 @@ public class MessprogrammService extends LadaService {
             Messprogramm.class, id);
         /* check if probe references to the messprogramm exists */
         // TODO: This is a nice example of ORM-induced database misuse:
-        QueryBuilder<Sample> builder = repository.queryBuilder(Sample.class);
+        QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
         builder.and("mprId", messprogrammObj.getId());
-        List<Sample> probes =
+        List<Probe> probes =
             repository.filterPlain(builder.getQuery());
         if (probes.size() > 0) {
             return new Response(false, StatusCodes.ERROR_DELETE, null);

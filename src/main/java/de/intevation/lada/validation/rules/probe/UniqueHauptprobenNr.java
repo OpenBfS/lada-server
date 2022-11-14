@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -26,7 +26,7 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationRule("Sample")
+@ValidationRule("Probe")
 public class UniqueHauptprobenNr implements Rule {
 
     @Inject
@@ -35,14 +35,14 @@ public class UniqueHauptprobenNr implements Rule {
     @SuppressWarnings("unchecked")
     @Override
     public Violation execute(Object object) {
-        Sample probe = (Sample) object;
+        Probe probe = (Probe) object;
         if (probe.getMainSampleId() != null) {
-            QueryBuilder<Sample> builder = repository.queryBuilder(Sample.class);
+            QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
             builder.and("mainSampleId", probe.getMainSampleId());
             builder.and("measFacilId", probe.getMeasFacilId());
             Response response = repository.filter(builder.getQuery());
-            if (!((List<Sample>) response.getData()).isEmpty()) {
-                Sample found = ((List<Sample>) response.getData()).get(0);
+            if (!((List<Probe>) response.getData()).isEmpty()) {
+                Probe found = ((List<Probe>) response.getData()).get(0);
                 // The probe found in the db equals the new probe. (Update)
                 if (probe.getId() != null
                     && probe.getId().equals(found.getId())

@@ -56,7 +56,7 @@ public class ValidatorTest {
     protected static boolean verboseLogging = false;
 
     @Inject
-    @ValidationConfig(type = "Sample")
+    @ValidationConfig(type = "Probe")
     private Validator probeValidator;
     private ProbeTest probeTest;
 

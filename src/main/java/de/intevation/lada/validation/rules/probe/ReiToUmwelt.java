@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGrpUmwZuord;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -26,7 +26,7 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationRule("Sample")
+@ValidationRule("Probe")
 public class ReiToUmwelt implements Rule {
 
     @Inject
@@ -34,7 +34,7 @@ public class ReiToUmwelt implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Sample probe = (Sample) object;
+        Probe probe = (Probe) object;
         if (probe.getRegulationId() != null
             && probe.getRegulationId() != 3
             && probe.getRegulationId() != 4

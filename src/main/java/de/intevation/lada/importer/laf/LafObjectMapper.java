@@ -40,7 +40,7 @@ import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.land.TagZuordnung;
@@ -91,7 +91,7 @@ public class LafObjectMapper {
     private HeaderAuthorization authorizer;
 
     @Inject
-    @ValidationConfig(type = "Sample")
+    @ValidationConfig(type = "Probe")
     private Validator probeValidator;
 
     @Inject
@@ -103,7 +103,7 @@ public class LafObjectMapper {
     private Validator ortValidator;
 
     @Inject
-    @IdentifierConfig(type = "Sample")
+    @IdentifierConfig(type = "Probe")
     private Identifier probeIdentifier;
 
     @Inject
@@ -160,11 +160,11 @@ public class LafObjectMapper {
         }
     }
 
-    private void create(LafRawData.Sample object) {
+    private void create(LafRawData.Probe object) {
         currentWarnings = new ArrayList<>();
         currentErrors = new ArrayList<>();
         currentNotifications = new ArrayList<>();
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         String netzbetreiberId = null;
 
         Iterator<ImporterConfig> importerConfig = config.iterator();
@@ -261,7 +261,7 @@ public class LafObjectMapper {
 
         // Check if the user is authorized to create the probe
         if (
-            !authorizer.isAuthorized(probe, RequestMethod.POST, Sample.class)
+            !authorizer.isAuthorized(probe, RequestMethod.POST, Probe.class)
         ) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.NOT_ALLOWED);
@@ -279,17 +279,17 @@ public class LafObjectMapper {
         // Check for errors and warnings
 
         // Compare the probe with objects in the db
-        Sample newProbe = null;
+        Probe newProbe = null;
         boolean oldProbeIsReadonly = false;
         try {
             Identified i = probeIdentifier.find(probe);
-            Sample old = (Sample) probeIdentifier.getExisting();
+            Probe old = (Probe) probeIdentifier.getExisting();
             // Matching probe was found in the db. Update it!
             if (i == Identified.UPDATE) {
                 oldProbeIsReadonly = authorizer.isProbeReadOnly(old.getId());
                 if (
                     // TODO: Should use RequestMethod.PUT?
-                    authorizer.isAuthorized(old, RequestMethod.GET, Sample.class)
+                    authorizer.isAuthorized(old, RequestMethod.GET, Probe.class)
                 ) {
                     if (oldProbeIsReadonly) {
                         newProbe = old;
@@ -336,7 +336,7 @@ public class LafObjectMapper {
                     return;
                 }
             } else if (i == Identified.REJECT) {
-                // Sample was found but some data does not match
+                // Probe was found but some data does not match
                 ReportItem err = new ReportItem();
                 err.setCode(StatusCodes.IMP_PRESENT);
                 err.setKey("duplicate");
@@ -360,7 +360,7 @@ public class LafObjectMapper {
                 Violation violation = probeValidator.validate(probe);
                 if (!violation.hasErrors()) {
                     Response created = repository.create(probe);
-                    newProbe = ((Sample) created.getData());
+                    newProbe = ((Probe) created.getData());
                 } else {
                     for (Entry<String, List<Integer>> err
                         : violation.getErrors().entrySet()
@@ -400,7 +400,7 @@ public class LafObjectMapper {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.ERROR_VALIDATION);
             err.setKey("not known");
-            err.setValue("No valid Sample Object");
+            err.setValue("No valid Probe Object");
             currentErrors.add(err);
             if (!currentErrors.isEmpty()) {
                 errors.put(object.getIdentifier(),
@@ -561,16 +561,16 @@ public class LafObjectMapper {
         }
     }
 
-    private void doDefaults(Sample probe) {
-        doDefaults(probe, Sample.class, "probe");
+    private void doDefaults(Probe probe) {
+        doDefaults(probe, Probe.class, "probe");
     }
 
-    private void doConverts(Sample probe) {
-        doConverts(probe, Sample.class, "probe");
+    private void doConverts(Probe probe) {
+        doConverts(probe, Probe.class, "probe");
     }
 
-    private void doTransforms(Sample probe) {
-        doTransformations(probe, Sample.class, "probe");
+    private void doTransforms(Probe probe) {
+        doTransformations(probe, Probe.class, "probe");
     }
 
     private void doDefaults(Messung messung) {
@@ -832,7 +832,7 @@ public class LafObjectMapper {
 
     private void create(
         LafRawData.Messung object,
-        Sample probe, String mstId
+        Probe probe, String mstId
     ) {
         Messung messung = new Messung();
         messung.setProbeId(probe.getId());
@@ -1030,7 +1030,7 @@ public class LafObjectMapper {
 
     private KommentarP createProbeKommentar(
         Map<String, String> attributes,
-        Sample probe
+        Probe probe
     ) {
         if (attributes.get("TEXT").equals("")) {
             currentWarnings.add(
@@ -1317,7 +1317,7 @@ public class LafObjectMapper {
     private KommentarM createMessungKommentar(
         Map<String, String> attributes,
         int messungsId,
-        Sample probe
+        Probe probe
     ) {
         if (attributes.get("TEXT").equals("")) {
             currentWarnings.add(
@@ -1570,7 +1570,7 @@ public class LafObjectMapper {
         }
     }
 
-    private void createReiMesspunkt(LafRawData.Sample object, Sample probe) {
+    private void createReiMesspunkt(LafRawData.Probe object, Probe probe) {
 
         QueryBuilder<Ortszuordnung> builder =
             repository.queryBuilder(Ortszuordnung.class);
@@ -1578,7 +1578,7 @@ public class LafObjectMapper {
         List<Ortszuordnung> zuordnungen =
             repository.filterPlain(builder.getQuery());
         if (!zuordnungen.isEmpty()) {
-            // Sample already has an ort.
+            // Probe already has an ort.
             return;
         }
 
@@ -1700,7 +1700,7 @@ public class LafObjectMapper {
 
     private Ortszuordnung createUrsprungsOrt(
         Map<String, String> ursprungsOrt,
-        Sample probe
+        Probe probe
     ) {
         if (ursprungsOrt.isEmpty()) {
             return null;
@@ -1741,7 +1741,7 @@ public class LafObjectMapper {
 
     private void createEntnahmeOrt(
         Map<String, String> entnahmeOrt,
-        Sample probe
+        Probe probe
     ) {
         if (entnahmeOrt.isEmpty()) {
             return;
@@ -1783,7 +1783,7 @@ public class LafObjectMapper {
     private Ort findOrCreateOrt(
         Map<String, String> attributes,
         String type,
-        Sample probe
+        Probe probe
     ) {
         Ort o = new Ort();
         doDefaults(o);
@@ -1923,7 +1923,7 @@ public class LafObjectMapper {
             for (Entry<String, List<Integer>> err
                 : violation.getErrors().entrySet()) {
                 for (Integer code : err.getValue()) {
-                    // Add to warnings because Sample object might be imported
+                    // Add to warnings because Probe object might be imported
                     currentWarnings.add(
                         new ReportItem("validation", err.getKey(), code));
                 }
@@ -1973,8 +1973,8 @@ public class LafObjectMapper {
         } else {
                 TagZuordnung tagZuord = new TagZuordnung();
 
-            if (object instanceof Sample) {
-                Sample probe = (Sample) object;
+            if (object instanceof Probe) {
+                Probe probe = (Probe) object;
                 QueryBuilder<TagZuordnung> builderZuord =
                         repository.queryBuilder(TagZuordnung.class);
                     builderZuord.and("probeId", probe.getId());
@@ -2014,7 +2014,7 @@ public class LafObjectMapper {
         }
     }
 
-    private void logProbe(Sample probe) {
+    private void logProbe(Probe probe) {
         logger.debug("%PROBE%");
         logger.debug("datenbasis: " + probe.getRegulationId());
         logger.debug("betriebsart: " + probe.getOprModeId());
@@ -2041,7 +2041,7 @@ public class LafObjectMapper {
 
     private void addProbeAttribute(
         Entry<String, String> attribute,
-        Sample probe,
+        Probe probe,
         String netzbetreiberId
     ) {
         String key = attribute.getKey();

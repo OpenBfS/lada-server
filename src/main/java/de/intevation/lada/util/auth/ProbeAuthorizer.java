@@ -10,7 +10,7 @@ package de.intevation.lada.util.auth;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -29,7 +29,7 @@ public class ProbeAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Sample probe = (Sample) data;
+        Probe probe = (Probe) data;
         if (method == RequestMethod.PUT
             || method == RequestMethod.DELETE) {
             return !isProbeReadOnly(probe.getId())
@@ -45,7 +45,7 @@ public class ProbeAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Sample probe = repository.getByIdPlain(Sample.class, id);
+        Probe probe = repository.getByIdPlain(Probe.class, id);
         return isAuthorized(probe, method, userInfo, clazz);
     }
 
@@ -57,13 +57,13 @@ public class ProbeAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         if (data.getData() instanceof List<?>) {
-            List<Sample> proben = new ArrayList<Sample>();
-            for (Sample probe :(List<Sample>) data.getData()) {
+            List<Probe> proben = new ArrayList<Probe>();
+            for (Probe probe :(List<Probe>) data.getData()) {
                 proben.add(setAuthData(userInfo, probe));
             }
             data.setData(proben);
-        } else if (data.getData() instanceof Sample) {
-            Sample probe = (Sample) data.getData();
+        } else if (data.getData() instanceof Probe) {
+            Probe probe = (Probe) data.getData();
             data.setData(setAuthData(userInfo, probe));
         }
         return data;
@@ -76,7 +76,7 @@ public class ProbeAuthorizer extends BaseAuthorizer {
      * @param probe     The probe object.
      * @return The probe.
      */
-    private Sample setAuthData(UserInfo userInfo, Sample probe) {
+    private Probe setAuthData(UserInfo userInfo, Probe probe) {
         MessStelle mst =
             repository.getByIdPlain(
                 MessStelle.class, probe.getMeasFacilId());

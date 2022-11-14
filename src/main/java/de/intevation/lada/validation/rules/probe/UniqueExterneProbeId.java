@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -24,7 +24,7 @@ import de.intevation.lada.validation.rules.Rule;
  * Validates if the probe has a unique "ext_id".
  *
  */
-@ValidationRule("Sample")
+@ValidationRule("Probe")
 public class UniqueExterneProbeId implements Rule {
 
     @Inject
@@ -32,13 +32,13 @@ public class UniqueExterneProbeId implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Sample probe = (Sample) object;
-        QueryBuilder<Sample> builder = repository.queryBuilder(Sample.class);
+        Probe probe = (Probe) object;
+        QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
         builder.and("sampleExtId", probe.getSampleExtId());
-        List<Sample> existing =
+        List<Probe> existing =
             repository.filterPlain(builder.getQuery());
         if (!existing.isEmpty()) {
-            Sample found = existing.get(0);
+            Probe found = existing.get(0);
             // The probe found in the db equals the new probe. (Update)
             if (probe.getId() != null && probe.getId().equals(found.getId())) {
                 return null;

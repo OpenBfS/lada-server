@@ -71,7 +71,7 @@ public class TagService extends LadaService {
     /**
      * Get tags.
      *
-     * If IDs of Sample or Messung objects are given as URL parameters like
+     * If IDs of Probe or Messung objects are given as URL parameters like
      * <pre>
      * <code>
      * ?pid=42&pid=24
@@ -80,7 +80,7 @@ public class TagService extends LadaService {
      * only those tags are returned that are associated to all of them.
      * Otherwise, return only tags the user is allowed to assign.
      *
-     * @param pIds filter by IDs of Sample objects.
+     * @param pIds filter by IDs of Probe objects.
      * @param mIds filter by IDs of Messung objects. Ignored if pid is given.
      *
      * @return Response with list of Tag objects.
@@ -98,7 +98,7 @@ public class TagService extends LadaService {
 
         List<Tag> result;
         if (!pIds.isEmpty() || !mIds.isEmpty()) {
-            // Return only tags assigned to all given Sample or Messung objects
+            // Return only tags assigned to all given Probe or Messung objects
             Join<Tag, TagZuordnung> joinTagZuordnung =
                 root.join("tagZuordnungs");
             // Work-around missing SQL INTERSECTION in JPA:

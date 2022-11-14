@@ -19,7 +19,7 @@ import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -42,7 +42,7 @@ public class ObjectMerger {
      * @param src the source object
      * @return returns true on success
      */
-    public boolean merge(Sample target, Sample src) {
+    public boolean merge(Probe target, Probe src) {
         if (src.getOprModeId() != null) {
             target.setOprModeId(src.getOprModeId());
         }
@@ -153,7 +153,7 @@ public class ObjectMerger {
      * @return the merge instance
      */
     public ObjectMerger mergeZusatzwerte(
-        Sample target,
+        Probe target,
         List<ZusatzWert> zusatzwerte
     ) {
         QueryBuilder<ZusatzWert> builder =
@@ -192,7 +192,7 @@ public class ObjectMerger {
      * @return the merge instance
      */
     public ObjectMerger mergeKommentare(
-        Sample target,
+        Probe target,
         List<KommentarP> kommentare
     ) {
         QueryBuilder<KommentarP> builder =

@@ -60,7 +60,7 @@ public class ZusatzWert implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "probe_id", insertable = false, updatable = false)
-    private Sample probe;
+    private Probe probe;
 
     @Transient
     private boolean owner;

@@ -10,7 +10,7 @@ package de.intevation.lada.validation.rules.probe;
 import java.util.List;
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.stammdaten.UmweltZusatz;
 import de.intevation.lada.util.data.StatusCodes;
@@ -26,7 +26,7 @@ import de.intevation.lada.util.data.Repository;
  *
  * @author <a href="mailto:jbuermeyer@bfs.de">Jonas Buermeyer</a>
  */
-@ValidationRule("Sample")
+@ValidationRule("Probe")
 public class UmweltToProbezusatz implements Rule {
 
     @Inject
@@ -34,7 +34,7 @@ public class UmweltToProbezusatz implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Sample probe = (Sample) object;
+        Probe probe = (Probe) object;
         if (probe.getEnvMediumId() == null
             || probe.getEnvMediumId().equals("")
         ) {

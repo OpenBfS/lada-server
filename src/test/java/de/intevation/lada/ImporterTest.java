@@ -51,7 +51,7 @@ import de.intevation.lada.model.land.KommentarM;
 import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -111,7 +111,7 @@ public class ImporterTest extends BaseTest {
     EntityManager em;
 
     @Inject
-    @IdentifierConfig(type = "Sample")
+    @IdentifierConfig(type = "Probe")
     Identifier probeIdentifier;
 
     @Inject
@@ -141,9 +141,9 @@ public class ImporterTest extends BaseTest {
         protocol.setType("identify probe");
         protocol.addInfo(
             "import",
-            "Compare and find Sample by HP-Nr. and MST, Update");
+            "Compare and find Probe by HP-Nr. and MST, Update");
 
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setMainSampleId("120510002");
         probe.setMeasFacilId("06010");
 
@@ -169,9 +169,9 @@ public class ImporterTest extends BaseTest {
         protocol.setType("identify probe");
         protocol.addInfo(
             "import",
-            "Compare and find Sample by HP-Nr. and MST, New");
+            "Compare and find Probe by HP-Nr. and MST, New");
 
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setMainSampleId("120510003");
         probe.setMeasFacilId("06010");
 
@@ -198,9 +198,9 @@ public class ImporterTest extends BaseTest {
         protocol.setType("identify probe");
         protocol.addInfo(
             "import",
-            "Compare and find Sample by sampleExtId, Update");
+            "Compare and find Probe by sampleExtId, Update");
 
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setSampleExtId("T001");
 
         Identified found = probeIdentifier.find(probe);
@@ -225,9 +225,9 @@ public class ImporterTest extends BaseTest {
         protocol.setType("identify probe");
         protocol.addInfo(
             "import",
-            "Compare and find Sample by sampleExtId, New");
+            "Compare and find Probe by sampleExtId, New");
 
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setSampleExtId("T002");
 
         Identified found = probeIdentifier.find(probe);
@@ -252,9 +252,9 @@ public class ImporterTest extends BaseTest {
         protocol.setType("identify probe");
         protocol.addInfo(
             "import",
-            "Compare and find Sample by sampleExtId, Reject");
+            "Compare and find Probe by sampleExtId, Reject");
 
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setSampleExtId("T001");
         probe.setMainSampleId("120510003");
         probe.setMeasFacilId("06010");
@@ -281,9 +281,9 @@ public class ImporterTest extends BaseTest {
         protocol.setType("identify probe");
         protocol.addInfo(
             "import",
-            "Compare and find Sample by sampleExtId, Update");
+            "Compare and find Probe by sampleExtId, Update");
 
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setSampleExtId("T001");
         probe.setMainSampleId("");
         probe.setMeasFacilId("06010");
@@ -482,7 +482,7 @@ public class ImporterTest extends BaseTest {
         protocol.setType("merge probe");
         protocol.addInfo("import", "Merge objects");
 
-        Sample probe = new Sample();
+        Probe probe = new Probe();
         probe.setSampleExtId("T001");
         probe.setMainSampleId("120510002");
         probe.setMeasFacilId("06010");
@@ -500,7 +500,7 @@ public class ImporterTest extends BaseTest {
         probe.setSchedStartDate(Timestamp.valueOf("2013-05-01 16:00:00"));
         probe.setSchedEndDate(Timestamp.valueOf("2013-05-05 16:00:00"));
         probe.setSampleStartDate(Timestamp.valueOf("2012-05-03 13:07:00"));
-        Sample dbProbe = repository.getByIdPlain(Sample.class, PID1000);
+        Probe dbProbe = repository.getByIdPlain(Probe.class, PID1000);
         merger.merge(dbProbe, probe);
 
         protocol.setPassed(true);
@@ -563,7 +563,7 @@ public class ImporterTest extends BaseTest {
         protocol.setType("merge zusatzwert");
         protocol.addInfo("import", "Merge objects");
 
-        Sample probe = repository.getByIdPlain(Sample.class, PID1000);
+        Probe probe = repository.getByIdPlain(Probe.class, PID1000);
         List<ZusatzWert> zusatzwerte = new ArrayList<ZusatzWert>();
         ZusatzWert wert1 = new ZusatzWert();
         wert1.setProbeId(PID1000);
@@ -613,7 +613,7 @@ public class ImporterTest extends BaseTest {
         protocol.setType("merge probe kommentar");
         protocol.addInfo("import", "Merge objects");
 
-        Sample probe = repository.getByIdPlain(Sample.class, PID1000);
+        Probe probe = repository.getByIdPlain(Probe.class, PID1000);
         List<KommentarP> kommentare = new ArrayList<KommentarP>();
         KommentarP komm1 = new KommentarP();
         komm1.setProbeId(PID1000);
@@ -723,7 +723,7 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
-     * Test synchronous import of a Sample object.
+     * Test synchronous import of a Probe object.
      */
     @Test
     @InSequence(18)
@@ -747,7 +747,7 @@ public class ImporterTest extends BaseTest {
             .post(Entity.entity(laf, MediaType.TEXT_PLAIN));
         JsonObject importResponseObject = parseResponse(importResponse, prot);
 
-        /* Check if a Sample object has been imported */
+        /* Check if a Probe object has been imported */
         final String dataKey = "data";
         assertContains(importResponseObject, dataKey);
         JsonObject data = importResponseObject.getJsonObject(dataKey);
@@ -761,7 +761,7 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
-     * Test asynchronous import of a Sample object.
+     * Test asynchronous import of a Probe object.
      */
     @Test
     @InSequence(18)

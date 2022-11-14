@@ -10,7 +10,7 @@ package de.intevation.lada.util.auth;
 import java.util.List;
 
 import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -34,7 +34,7 @@ public abstract class BaseAuthorizer implements Authorizer {
      * @param userInfo  The user information.
      * @param probe     The probe to authorize.
      */
-    protected boolean getAuthorization(UserInfo userInfo, Sample probe) {
+    protected boolean getAuthorization(UserInfo userInfo, Probe probe) {
         return (probe.getMeasFacilId() != null
             && userInfo.getMessstellen().contains(probe.getMeasFacilId()));
     }

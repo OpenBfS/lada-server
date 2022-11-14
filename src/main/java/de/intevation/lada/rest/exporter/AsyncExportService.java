@@ -162,10 +162,10 @@ public class AsyncExportService extends LadaService {
     }
 
     /**
-     * Export Sample objects into laf files.
+     * Export Probe objects into laf files.
      *
      * The service takes JSON formatted  POST data containing probe ids and
-     * creates a asynchronous export job for the Sample objects filtered by
+     * creates a asynchronous export job for the Probe objects filtered by
      * these ids.
      * <p>
      * To request the export post a JSON formatted string with an array of

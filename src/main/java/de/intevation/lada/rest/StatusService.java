@@ -24,7 +24,7 @@ import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -110,7 +110,7 @@ public class StatusService extends LadaService {
     private Validator messungValidator;
 
     @Inject
-    @ValidationConfig(type = "Sample")
+    @ValidationConfig(type = "Probe")
     private Validator probeValidator;
 
     /**
@@ -268,8 +268,8 @@ public class StatusService extends LadaService {
             || newStatusWert == 2
             || newStatusWert == 7
         ) {
-            Sample probe = repository.getByIdPlain(
-                Sample.class, messung.getProbeId());
+            Probe probe = repository.getByIdPlain(
+                Probe.class, messung.getProbeId());
             // init violation_collection with probe validation
             Violation probeViolation = probeValidator.validate(probe);
             violationCollection.addErrors(probeViolation.getErrors());

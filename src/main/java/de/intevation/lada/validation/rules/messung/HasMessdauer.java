@@ -10,7 +10,7 @@ package de.intevation.lada.validation.rules.messung;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -31,8 +31,8 @@ public class HasMessdauer implements Rule {
     @Override
     public Violation execute(Object object) {
         Messung messung = (Messung) object;
-        Sample probe =
-            repository.getByIdPlain(Sample.class, messung.getProbeId());
+        Probe probe =
+            repository.getByIdPlain(Probe.class, messung.getProbeId());
 
         if (messung.getMessdauer() == null) {
             //Exception for continous samples or Datenbasis = §161
