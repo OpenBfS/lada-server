@@ -38,15 +38,13 @@ public class DeskriptorToUmwelt implements Rule {
     @Override
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
-        if (probe.getEnvDescripDisplay() == null
-            || probe.getEnvDescripDisplay().equals("")
-        ) {
+        if (probe.getMediaDesk() == null || probe.getMediaDesk().equals("")) {
             return null;
         }
-        if (probe.getEnvMediumId() == null) {
+        if (probe.getUmwId() == null) {
             return null;
         }
-        String[] mediaDesk = probe.getEnvDescripDisplay().split(" ");
+        String[] mediaDesk = probe.getMediaDesk().split(" ");
         if (mediaDesk.length <= 1 || "00".equals(mediaDesk[1])) {
             return null;
         }
@@ -96,8 +94,7 @@ public class DeskriptorToUmwelt implements Rule {
             }
         }
         Violation violation =
-            validateUmwelt(
-                mediaIds, probe.getEnvMediumId(), probe.getRegulationId());
+            validateUmwelt(mediaIds, probe.getUmwId(), probe.getDatenbasisId());
         return violation;
     }
 

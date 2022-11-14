@@ -57,17 +57,17 @@ public class DateMesszeitpunkt implements Rule {
             return violation;
         }
 
-        if (probe.getSampleStartDate() == null
-            && probe.getSampleEndDate() == null) {
+        if (probe.getProbeentnahmeBeginn() == null
+            && probe.getProbeentnahmeEnde() == null) {
             return null;
         }
 
-        if ((probe.getSampleStartDate() != null
-            && probe.getSampleStartDate().after(messung.getMesszeitpunkt())
-            || probe.getSampleEndDate() != null
-            && probe.getSampleEndDate().after(messung.getMesszeitpunkt()))
-            && (probe.getSampleMethId() != null
-                && (probe.getSampleMethId() == 3 || probe.getSampleMethId() == 9))
+        if ((probe.getProbeentnahmeBeginn() != null
+            && probe.getProbeentnahmeBeginn().after(messung.getMesszeitpunkt())
+            || probe.getProbeentnahmeEnde() != null
+            && probe.getProbeentnahmeEnde().after(messung.getMesszeitpunkt()))
+            && (probe.getProbenartId() != null
+                && (probe.getProbenartId() == 3 || probe.getProbenartId() == 9))
         ) {
             Violation violation = new Violation();
             violation.addWarning(

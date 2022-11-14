@@ -199,10 +199,9 @@ public class AuditTrailService extends LadaService {
         auditJson.put("id", probe.getId());
         auditJson.put(
             "identifier",
-            (probe.getMainSampleId() == null)
-            ? probe.getSampleExtId()
-            : probe.getMainSampleId()
-        );
+            (probe.getHauptprobenNr() == null)
+            ? probe.getExterneProbeId() : probe.getHauptprobenNr()
+            );
         for (AuditTrailProbe a : audit) {
             //If audit entry shows a messwert, do not show if:
             // - StatusKombi is 1 (MST - nicht vergeben)
@@ -215,8 +214,7 @@ public class AuditTrailService extends LadaService {
                     repository.getByIdPlain(
                         StatusProtokoll.class, messung.getStatus());
                 if (status.getStatusKombi() == 1
-                    && !userInfo.getMessstellen().contains(
-                        probe.getMeasFacilId())
+                    && !userInfo.getMessstellen().contains(probe.getMstId())
                 ) {
                     continue;
                 }
@@ -233,9 +231,7 @@ public class AuditTrailService extends LadaService {
      * @param audit The table entry
      * @param mapper JSON object mapper
      */
-    private ObjectNode createEntry(
-        AuditTrailProbe audit, ObjectMapper mapper
-    ) {
+    private ObjectNode createEntry(AuditTrailProbe audit, ObjectMapper mapper) {
         ObjectNode node = mapper.createObjectNode();
         node.put("timestamp", audit.getTstamp().getTime());
         node.put("type", audit.getTableName());
@@ -344,8 +340,7 @@ public class AuditTrailService extends LadaService {
             // - User is not owner of the messung
             if (a.getTableName().equals("messwert")
                     && status.getStatusKombi() == 1
-                    && !userInfo.getMessstellen().contains(
-                        probe.getMeasFacilId())) {
+                    && !userInfo.getMessstellen().contains(probe.getMstId())) {
                 continue;
             }
             entries.add(createEntry(a, mapper));

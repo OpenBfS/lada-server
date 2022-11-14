@@ -28,13 +28,13 @@ public class CheckProbeart implements Rule {
     @Override
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
-        Timestamp end = probe.getSampleEndDate();
-        Timestamp begin = probe.getSampleStartDate();
-        if (probe.getSampleMethId() != null
-            && !DATENBASIS_161.equals(probe.getRegulationId())) {
+        Timestamp end = probe.getProbeentnahmeEnde();
+        Timestamp begin = probe.getProbeentnahmeBeginn();
+        if (probe.getProbenartId() != null
+            && !DATENBASIS_161.equals(probe.getDatenbasisId())) {
           if (begin != null && end != null
               && !begin.equals(end)
-              && PROBENART_INDIVIDUAL.equals(probe.getSampleMethId())) {
+              && PROBENART_INDIVIDUAL.equals(probe.getProbenartId())) {
             Violation violation = new Violation();
             violation.addWarning("probenartId", StatusCodes.VAL_SINGLE_DATE);
             return violation;

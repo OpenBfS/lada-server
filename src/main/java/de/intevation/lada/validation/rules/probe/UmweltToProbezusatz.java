@@ -35,12 +35,12 @@ public class UmweltToProbezusatz implements Rule {
     @Override
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
-        if (probe.getEnvMediumId() == null
-            || probe.getEnvMediumId().equals("")
+        if (probe.getUmwId() == null
+            || probe.getUmwId().equals("")
         ) {
             return null;
         } else {
-            String umwId = probe.getEnvMediumId();
+            String umwId = probe.getUmwId();
             QueryBuilder<UmweltZusatz> builderUmwZus =
                 repository.queryBuilder(UmweltZusatz.class);
                 builderUmwZus.and("umwId", umwId);

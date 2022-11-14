@@ -27,7 +27,7 @@ public class HasProbenahmeBegin implements Rule {
     @Override
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
-        Timestamp begin = probe.getSampleStartDate();
+        Timestamp begin = probe.getProbeentnahmeBeginn();
         if (begin == null) {
             Violation violation = new Violation();
             violation.addWarning(

@@ -49,6 +49,46 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  * All HTTP methods use the authorization module to determine if the user is
  * allowed to perform the requested action.
  * A typical response holds information about the action performed and the data.
+ * <pre>
+ * <code>
+ * {
+ *  "success": [boolean];
+ *  "message": [string],
+ *  "data":[{
+ *      "id":[number],
+ *      "baId": [string],
+ *      "datenbasisId": [number],
+ *      "letzteAenderung": [timestamp],
+ *      "media": [string],
+ *      "mediaDesk": [string],
+ *      "mittelungsdauer": [number],
+ *      "mstId": [string],
+ *      "netzbetreiberId":[string],
+ *      "probeentnahmeBeginn": [timestamp],
+ *      "probeentnahmeEnde": [timestamp],
+ *      "probenartId": [number],
+ *      "test": [boolean],
+ *      "umwId": [string],
+ *      "hauptprobenNr": [string],
+ *      "erzeugerId": [string],
+ *      "mpKat": [string],
+ *      "mplId": [number],
+ *      "mprId": [number],
+ *      "probeNehmerId": [number],
+ *      "solldatumBeginn": [timestamp],
+ *      "solldatumEnde": [timestamp],
+ *      "treeModified": [timestamp],
+ *      "readonly": [boolean],
+ *      "owner": [boolean],
+ *      "externeProbeId": [string]
+ *  }],
+ *  "errors": [object],
+ *  "warnings": [object],
+ *  "readonly": [boolean],
+ *  "totalCount": [number]
+ * }
+ * </code>
+ * </pre>
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
@@ -145,6 +185,35 @@ public class ProbeService extends LadaService {
      * <p>
      * The new object is embedded in the post data as JSON formatted string.
      * <p>
+     * <pre>
+     * <code>
+     * {
+     *  "externeProbeId": [string],
+     *  "hauptprobenNr": [string],
+     *  "test": [boolean],
+     *  "netzbetreiberId": [string],
+     *  "mstId": [string],
+     *  "datenbasisId": [number],
+     *  "baId": [string],
+     *  "probenartId": [number],
+     *  "mediaDesk": [string],
+     *  "media": [string],
+     *  "umwId": [string],
+     *  "mittelungsdauer": [number],
+     *  "erzeugerId":[string],
+     *  "probeNehmerId": [number],
+     *  "mpKat": [string],
+     *  "mplId": [number],
+     *  "mprId": [number],
+     *  "treeModified":null,
+     *  "probeentnahmeBeginn": [date],
+     *  "probeentnahmeEnde": [date],
+     *  "letzteAenderung": [date],
+     *  "solldatumBeginn": [date],
+     *  "solldatumEnde": [date]
+     * }
+     * </code>
+     * </pre>
      *
      * @return Response object containing the new probe object.
      */
@@ -169,16 +238,12 @@ public class ProbeService extends LadaService {
             response.setNotifications(violation.getNotifications());
             return response;
         }
-        if (probe.getEnvMediumId() == null
-            || "".equals(probe.getEnvMediumId())
-        ) {
+        if (probe.getUmwId() == null || probe.getUmwId().equals("")) {
             probe = factory.findUmweltId(probe);
         } else {
-            if (probe.getEnvDescripDisplay() == null
-                || probe.getEnvDescripDisplay().isEmpty()
-                || "D: 00 00 00 00 00 00 00 00 00 00 00 00".equals(
-                    probe.getEnvDescripDisplay())
-            ) {
+            if (probe.getMediaDesk() == null ||
+                probe.getMediaDesk().isEmpty() ||
+                probe.getMediaDesk().equals("D: 00 00 00 00 00 00 00 00 00 00 00 00")) {
                 probe = factory.getInitialMediaDesk(probe);
             }
         }
@@ -245,7 +310,7 @@ public class ProbeService extends LadaService {
                 // Use a dummy probe with same mstId as the messprogramm to
                 // authorize the user to create probe objects.
                 Probe testProbe = new Probe();
-                testProbe.setMeasFacilId(messprogramm.getMstId());
+                testProbe.setMstId(messprogramm.getMstId());
                 if (!authorization.isAuthorized(
                         testProbe,
                         RequestMethod.POST,
@@ -310,6 +375,36 @@ public class ProbeService extends LadaService {
      * Update an existing Probe object.
      * <p>
      * The object to update should come as JSON formatted string.
+     * <pre>
+     * <code>
+     * {
+     *  "id": [number],
+     *  "externeProbeId": [string],
+     *  "hauptprobenNr": [string],
+     *  "test": [boolean],
+     *  "netzbetreiberId": [string],
+     *  "mstId": [string],
+     *  "datenbasisId": [number],
+     *  "baId": [string],
+     *  "probenartId": [number],
+     *  "mediaDesk": [string],
+     *  "media": [string],
+     *  "umwId": [string],
+     *  "mittelungsdauer": [number],
+     *  "erzeugerId": [number],
+     *  "probeNehmerId": [number],
+     *  "mpKat": [string],
+     *  "mplId": [number],
+     *  "mprId": [number],
+     *  "treeModified": [timestamp],
+     *  "probeentnahmeBeginn": [date],
+     *  "probeentnahmeEnde": [date],
+     *  "letzteAenderung": [date],
+     *  "solldatumBeginn": [date],
+     *  "solldatumEnde":[date]
+     * }
+     * </code>
+     * </pre>
      *
      * @return Response object containing the updated Probe object.
      */
@@ -329,16 +424,12 @@ public class ProbeService extends LadaService {
         if (lock.isLocked(probe)) {
             return new Response(false, StatusCodes.CHANGED_VALUE, null);
         }
-        if (probe.getEnvMediumId() == null
-            || probe.getEnvMediumId().isEmpty()
-        ) {
+        if (probe.getUmwId() == null || probe.getUmwId().isEmpty()) {
             factory.findUmweltId(probe);
         } else {
-            if (probe.getEnvDescripDisplay() == null
-                || probe.getEnvDescripDisplay().isEmpty()
-                || "D: 00 00 00 00 00 00 00 00 00 00 00 00".equals(
-                    probe.getEnvDescripDisplay())
-            ) {
+            if (probe.getMediaDesk() == null ||
+                probe.getMediaDesk().isEmpty() ||
+                probe.getMediaDesk().equals("D: 00 00 00 00 00 00 00 00 00 00 00 00")) {
                 factory.getInitialMediaDesk(probe);
             }
         }

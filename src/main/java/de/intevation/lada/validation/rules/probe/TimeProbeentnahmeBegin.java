@@ -29,8 +29,8 @@ public class TimeProbeentnahmeBegin implements Rule {
     @Override
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
-        Timestamp begin = probe.getSampleStartDate();
-        Timestamp end = probe.getSampleEndDate();
+        Timestamp begin = probe.getProbeentnahmeBeginn();
+        Timestamp end = probe.getProbeentnahmeEnde();
         if (begin == null) {
             if (end == null) {
                 return null;

@@ -35,7 +35,7 @@ import de.intevation.lada.util.data.EmptyStringConverter;
  */
 @Entity
 @DynamicInsert(true)
-@Table(name = "sample", schema = SchemaName.NAME)
+@Table(schema = SchemaName.LEGACY_NAME)
 public class Probe implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -43,63 +43,64 @@ public class Probe implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Integer oprModeId;
+    private Integer baId;
 
-    private Integer regulationId;
+    private Integer datenbasisId;
 
-    private Integer datasetCreatorId;
-
-    @Convert(converter = EmptyStringConverter.class)
-    private String mainSampleId;
+    private Integer erzeugerId;
 
     @Convert(converter = EmptyStringConverter.class)
-    private String sampleExtId;
+    private String hauptprobenNr;
 
-    private String apprLabId;
+    @Column(name = "ext_id")
+    @Convert(converter = EmptyStringConverter.class)
+    private String externeProbeId;
+
+    private String laborMstId;
 
     @Column(insertable = false)
-    private Timestamp lastMod;
+    private Timestamp letzteAenderung;
 
-    private String envDescripName;
+    private String media;
 
-    private String envDescripDisplay;
+    private String mediaDesk;
 
-    private Long midSampleDate;
+    private Long mittelungsdauer;
 
-    private Integer stateMpgId;
+    private Integer mplId;
 
-    private Integer mpgId;
+    private Integer mprId;
 
-    private String measFacilId;
+    private String mstId;
 
-    private Integer samplerId;
+    private Integer probeNehmerId;
 
-    private Timestamp sampleStartDate;
+    private Timestamp probeentnahmeBeginn;
 
-    private Timestamp sampleEndDate;
+    private Timestamp probeentnahmeEnde;
 
-    private Integer sampleMethId;
+    private Integer probenartId;
 
-    private Timestamp schedStartDate;
+    private Timestamp solldatumBeginn;
 
-    private Timestamp schedEndDate;
+    private Timestamp solldatumEnde;
 
-    private Timestamp origDate;
+    private Timestamp ursprungszeit;
 
-    private Boolean isTest;
+    private Boolean test;
 
     @Column(insertable = false, updatable = false)
-    private Timestamp treeMod;
+    private Timestamp treeModified;
 
     @OneToOne
-    @JoinColumn(name = "env_medium_id", insertable = false, updatable = false)
+    @JoinColumn(name = "umw_id", insertable = false, updatable = false)
     private Umwelt umwelt;
 
-    private String envMediumId;
+    private String umwId;
 
-    private Integer reiAgGrId;
+    private Integer reiProgpunktGrpId;
 
-    private Integer nuclFacilGrId;
+    private Integer ktaGruppeId;
 
     @Transient
     private boolean readonly;
@@ -131,180 +132,180 @@ public class Probe implements Serializable {
         this.id = id;
     }
 
-    public Integer getOprModeId() {
-        return this.oprModeId;
+    public Integer getBaId() {
+        return this.baId;
     }
 
-    public void setOprModeId(Integer oprModeId) {
-        this.oprModeId = oprModeId;
+    public void setBaId(Integer baId) {
+        this.baId = baId;
     }
 
-    public Integer getRegulationId() {
-        return this.regulationId;
+    public Integer getDatenbasisId() {
+        return this.datenbasisId;
     }
 
-    public void setRegulationId(Integer regulationId) {
-        this.regulationId = regulationId;
+    public void setDatenbasisId(Integer datenbasisId) {
+        this.datenbasisId = datenbasisId;
     }
 
-    public Integer getDatasetCreatorId() {
-        return this.datasetCreatorId;
+    public Integer getErzeugerId() {
+        return this.erzeugerId;
     }
 
-    public void setDatasetCreatorId(Integer datasetCreatorId) {
-        this.datasetCreatorId = datasetCreatorId;
+    public void setErzeugerId(Integer erzeugerId) {
+        this.erzeugerId = erzeugerId;
     }
 
-    public String getMainSampleId() {
-        return this.mainSampleId;
+    public String getHauptprobenNr() {
+        return this.hauptprobenNr;
     }
 
-    public void setMainSampleId(String mainSampleId) {
-        this.mainSampleId = mainSampleId;
+    public void setHauptprobenNr(String hauptprobenNr) {
+        this.hauptprobenNr = hauptprobenNr;
     }
 
-    public String getSampleExtId() {
-        return this.sampleExtId;
+    public String getExterneProbeId() {
+        return this.externeProbeId;
     }
 
-    public void setSampleExtId(String sampleExtId) {
-        this.sampleExtId = sampleExtId;
+    public void setExterneProbeId(String externeProbeId) {
+        this.externeProbeId = externeProbeId;
     }
 
-    public String getApprLabId() {
-        return this.apprLabId;
+    public String getLaborMstId() {
+        return this.laborMstId;
     }
 
-    public void setApprLabId(String apprLabId) {
-        this.apprLabId = apprLabId;
+    public void setLaborMstId(String laborMstId) {
+        this.laborMstId = laborMstId;
     }
 
-    public Timestamp getLastMod() {
-        return this.lastMod;
+    public Timestamp getLetzteAenderung() {
+        return this.letzteAenderung;
     }
 
-    public void setLastMod(Timestamp lastMod) {
-        this.lastMod = lastMod;
+    public void setLetzteAenderung(Timestamp letzteAenderung) {
+        this.letzteAenderung = letzteAenderung;
     }
 
-    public String getEnvDescripName() {
-        return this.envDescripName;
+    public String getMedia() {
+        return this.media;
     }
 
-    public void setEnvDescripName(String envDescripName) {
-        this.envDescripName = envDescripName;
+    public void setMedia(String media) {
+        this.media = media;
     }
 
-    public String getEnvDescripDisplay() {
-        return this.envDescripDisplay;
+    public String getMediaDesk() {
+        return this.mediaDesk;
     }
 
-    public void setEnvDescripDisplay(String envDescripDisplay) {
-        this.envDescripDisplay = envDescripDisplay;
+    public void setMediaDesk(String mediaDesk) {
+        this.mediaDesk = mediaDesk;
     }
 
-    public Long getMidSampleDate() {
-        return this.midSampleDate;
+    public Long getMittelungsdauer() {
+        return this.mittelungsdauer;
     }
 
-    public void setMidSampleDate(Long midSampleDate) {
-        this.midSampleDate = midSampleDate;
+    public void setMittelungsdauer(Long mittelungsdauer) {
+        this.mittelungsdauer = mittelungsdauer;
     }
 
-    public Integer getStateMpgId() {
-        return this.stateMpgId;
+    public Integer getMplId() {
+        return this.mplId;
     }
 
-    public void setStateMpgId(Integer stateMpgId) {
-        this.stateMpgId = stateMpgId;
+    public void setMplId(Integer mplId) {
+        this.mplId = mplId;
     }
 
-    public Integer getMpgId() {
-        return this.mpgId;
+    public Integer getMprId() {
+        return this.mprId;
     }
 
-    public void setMpgId(Integer mpgId) {
-        this.mpgId = mpgId;
+    public void setMprId(Integer mprId) {
+        this.mprId = mprId;
     }
 
-    public String getMeasFacilId() {
-        return this.measFacilId;
+    public String getMstId() {
+        return this.mstId;
     }
 
-    public void setMeasFacilId(String measFacilId) {
-        this.measFacilId = measFacilId;
+    public void setMstId(String mstId) {
+        this.mstId = mstId;
     }
 
-    public Integer getSamplerId() {
-        return this.samplerId;
+    public Integer getProbeNehmerId() {
+        return this.probeNehmerId;
     }
 
-    public void setSamplerId(Integer samplerId) {
-        this.samplerId = samplerId;
+    public void setProbeNehmerId(Integer probeNehmerId) {
+        this.probeNehmerId = probeNehmerId;
     }
 
-    public Timestamp getSampleStartDate() {
-        return this.sampleStartDate;
+    public Timestamp getProbeentnahmeBeginn() {
+        return this.probeentnahmeBeginn;
     }
 
-    public void setSampleStartDate(Timestamp sampleStartDate) {
-        this.sampleStartDate = sampleStartDate;
+    public void setProbeentnahmeBeginn(Timestamp probeentnahmeBeginn) {
+        this.probeentnahmeBeginn = probeentnahmeBeginn;
     }
 
-    public Timestamp getSampleEndDate() {
-        return this.sampleEndDate;
+    public Timestamp getProbeentnahmeEnde() {
+        return this.probeentnahmeEnde;
     }
 
-    public void setSampleEndDate(Timestamp sampleEndDate) {
-        this.sampleEndDate = sampleEndDate;
+    public void setProbeentnahmeEnde(Timestamp probeentnahmeEnde) {
+        this.probeentnahmeEnde = probeentnahmeEnde;
     }
 
-    public Integer getSampleMethId() {
-        return this.sampleMethId;
+    public Integer getProbenartId() {
+        return this.probenartId;
     }
 
-    public void setSampleMethId(Integer sampleMethId) {
-        this.sampleMethId = sampleMethId;
+    public void setProbenartId(Integer probenartId) {
+        this.probenartId = probenartId;
     }
 
-    public Timestamp getSchedStartDate() {
-        return this.schedStartDate;
+    public Timestamp getSolldatumBeginn() {
+        return this.solldatumBeginn;
     }
 
-    public void setSchedStartDate(Timestamp schedStartDate) {
-        this.schedStartDate = schedStartDate;
+    public void setSolldatumBeginn(Timestamp solldatumBeginn) {
+        this.solldatumBeginn = solldatumBeginn;
     }
 
-    public Timestamp getSchedEndDate() {
-        return this.schedEndDate;
+    public Timestamp getSolldatumEnde() {
+        return this.solldatumEnde;
     }
 
-    public void setSchedEndDate(Timestamp schedEndDate) {
-        this.schedEndDate = schedEndDate;
+    public void setSolldatumEnde(Timestamp solldatumEnde) {
+        this.solldatumEnde = solldatumEnde;
     }
 
-    public Timestamp getOrigDate() {
-        return this.origDate;
+    public Timestamp getUrsprungszeit() {
+        return this.ursprungszeit;
     }
 
-    public void setOrigDate(Timestamp origDate) {
-        this.origDate = origDate;
+    public void setUrsprungszeit(Timestamp ursprungszeit) {
+        this.ursprungszeit = ursprungszeit;
     }
 
-    public Boolean getIsTest() {
-        return this.isTest;
+    public Boolean getTest() {
+        return this.test;
     }
 
-    public void setIsTest(Boolean isTest) {
-        this.isTest = isTest;
+    public void setTest(Boolean test) {
+        this.test = test;
     }
 
-    public Timestamp getTreeMod() {
-        return this.treeMod;
+    public Timestamp getTreeModified() {
+        return this.treeModified;
     }
 
-    public void setTreeMod(Timestamp treeMod) {
-        this.treeMod = treeMod;
+    public void setTreeModified(Timestamp treeModified) {
+        this.treeModified = treeModified;
     }
 
     @JsonbTransient
@@ -312,28 +313,28 @@ public class Probe implements Serializable {
         return this.umwelt;
     }
 
-    public String getEnvMediumId() {
-        return this.envMediumId;
+    public String getUmwId() {
+        return this.umwId;
     }
 
-    public void setEnvMediumId(String envMediumId) {
-        this.envMediumId = envMediumId;
+    public void setUmwId(String umwId) {
+        this.umwId = umwId;
     }
 
-    public Integer getReiAgGrId() {
-        return reiAgGrId;
+    public Integer getReiProgpunktGrpId() {
+        return reiProgpunktGrpId;
     }
 
-    public void setReiAgGrId(Integer reiAgGrId) {
-        this.reiAgGrId = reiAgGrId;
+    public void setReiProgpunktGrpId(Integer reiProgpunktGrpId) {
+        this.reiProgpunktGrpId = reiProgpunktGrpId;
     }
 
-    public Integer getNuclFacilGrId() {
-        return nuclFacilGrId;
+    public Integer getKtaGruppeId() {
+        return ktaGruppeId;
     }
 
-    public void setNuclFacilGrId(Integer nuclFacilGrId) {
-        this.nuclFacilGrId = nuclFacilGrId;
+    public void setKtaGruppeId(Integer ktaGruppeId) {
+        this.ktaGruppeId = ktaGruppeId;
     }
 
     public boolean isReadonly() {

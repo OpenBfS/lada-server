@@ -144,8 +144,8 @@ public class ImporterTest extends BaseTest {
             "Compare and find Probe by HP-Nr. and MST, Update");
 
         Probe probe = new Probe();
-        probe.setMainSampleId("120510002");
-        probe.setMeasFacilId("06010");
+        probe.setHauptprobenNr("120510002");
+        probe.setMstId("06010");
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.UPDATE, found);
@@ -172,8 +172,8 @@ public class ImporterTest extends BaseTest {
             "Compare and find Probe by HP-Nr. and MST, New");
 
         Probe probe = new Probe();
-        probe.setMainSampleId("120510003");
-        probe.setMeasFacilId("06010");
+        probe.setHauptprobenNr("120510003");
+        probe.setMstId("06010");
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.NEW, found);
@@ -198,10 +198,10 @@ public class ImporterTest extends BaseTest {
         protocol.setType("identify probe");
         protocol.addInfo(
             "import",
-            "Compare and find Probe by sampleExtId, Update");
+            "Compare and find Probe by externeProbeId, Update");
 
         Probe probe = new Probe();
-        probe.setSampleExtId("T001");
+        probe.setExterneProbeId("T001");
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.UPDATE, found);
@@ -225,10 +225,10 @@ public class ImporterTest extends BaseTest {
         protocol.setType("identify probe");
         protocol.addInfo(
             "import",
-            "Compare and find Probe by sampleExtId, New");
+            "Compare and find Probe by externeProbeId, New");
 
         Probe probe = new Probe();
-        probe.setSampleExtId("T002");
+        probe.setExterneProbeId("T002");
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.NEW, found);
@@ -252,12 +252,12 @@ public class ImporterTest extends BaseTest {
         protocol.setType("identify probe");
         protocol.addInfo(
             "import",
-            "Compare and find Probe by sampleExtId, Reject");
+            "Compare and find Probe by externeProbeId, Reject");
 
         Probe probe = new Probe();
-        probe.setSampleExtId("T001");
-        probe.setMainSampleId("120510003");
-        probe.setMeasFacilId("06010");
+        probe.setExterneProbeId("T001");
+        probe.setHauptprobenNr("120510003");
+        probe.setMstId("06010");
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.REJECT, found);
@@ -281,12 +281,12 @@ public class ImporterTest extends BaseTest {
         protocol.setType("identify probe");
         protocol.addInfo(
             "import",
-            "Compare and find Probe by sampleExtId, Update");
+            "Compare and find Probe by externeProbeId, Update");
 
         Probe probe = new Probe();
-        probe.setSampleExtId("T001");
-        probe.setMainSampleId("");
-        probe.setMeasFacilId("06010");
+        probe.setExterneProbeId("T001");
+        probe.setHauptprobenNr("");
+        probe.setMstId("06010");
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.UPDATE, found);
@@ -483,23 +483,23 @@ public class ImporterTest extends BaseTest {
         protocol.addInfo("import", "Merge objects");
 
         Probe probe = new Probe();
-        probe.setSampleExtId("T001");
-        probe.setMainSampleId("120510002");
-        probe.setMeasFacilId("06010");
-        probe.setOprModeId(1);
-        probe.setRegulationId(DID9);
-        probe.setEnvDescripName(
+        probe.setExterneProbeId("T001");
+        probe.setHauptprobenNr("120510002");
+        probe.setMstId("06010");
+        probe.setBaId(1);
+        probe.setDatenbasisId(DID9);
+        probe.setMedia(
             "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet");
-        probe.setEnvDescripDisplay("D: 59 04 01 00 05 05 01 02 00 00 00 00");
-        probe.setMpgId(MPRID1000);
-        probe.setSamplerId(PNID);
-        probe.setIsTest(false);
-        probe.setApprLabId("06010");
-        probe.setSampleMethId(2);
-        probe.setEnvMediumId("A6");
-        probe.setSchedStartDate(Timestamp.valueOf("2013-05-01 16:00:00"));
-        probe.setSchedEndDate(Timestamp.valueOf("2013-05-05 16:00:00"));
-        probe.setSampleStartDate(Timestamp.valueOf("2012-05-03 13:07:00"));
+        probe.setMediaDesk("D: 59 04 01 00 05 05 01 02 00 00 00 00");
+        probe.setMprId(MPRID1000);
+        probe.setProbeNehmerId(PNID);
+        probe.setTest(false);
+        probe.setLaborMstId("06010");
+        probe.setProbenartId(2);
+        probe.setUmwId("A6");
+        probe.setSolldatumBeginn(Timestamp.valueOf("2013-05-01 16:00:00"));
+        probe.setSolldatumEnde(Timestamp.valueOf("2013-05-05 16:00:00"));
+        probe.setProbeentnahmeBeginn(Timestamp.valueOf("2012-05-03 13:07:00"));
         Probe dbProbe = repository.getByIdPlain(Probe.class, PID1000);
         merger.merge(dbProbe, probe);
 

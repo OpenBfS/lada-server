@@ -46,15 +46,15 @@ public class ProbeTest {
     public final void hasHauptprobenNr(List<Protocol> protocol) {
         Protocol prot = new Protocol();
         prot.setName("ProbeValidator");
-        prot.setType("has mainSampleId");
+        prot.setType("has hauptprobenNr");
         prot.setPassed(false);
         protocol.add(prot);
         Probe probe = new Probe();
-        probe.setMainSampleId("4554567890");
+        probe.setHauptprobenNr("4554567890");
         Violation violation = validator.validate(probe);
         if (violation.hasErrors()) {
             Assert.assertFalse(
-                violation.getErrors().containsKey("mainSampleId"));
+                violation.getErrors().containsKey("hauptprobenNr"));
         }
         prot.setPassed(true);
     }
@@ -66,15 +66,15 @@ public class ProbeTest {
     public final void hasNoHauptprobenNr(List<Protocol> protocol) {
         Protocol prot = new Protocol();
         prot.setName("ProbeValidator");
-        prot.setType("has no mainSampleId");
+        prot.setType("has no hauptprobenNr");
         prot.setPassed(false);
         protocol.add(prot);
         Probe probe = new Probe();
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey("mainSampleId"));
+        Assert.assertTrue(violation.getErrors().containsKey("hauptprobenNr"));
         Assert.assertTrue(
-            violation.getErrors().get("mainSampleId").contains(ID631));
+            violation.getErrors().get("hauptprobenNr").contains(ID631));
         prot.setPassed(true);
     }
 
@@ -85,17 +85,17 @@ public class ProbeTest {
     public final void existingHauptprobenNrNew(List<Protocol> protocol) {
         Protocol prot = new Protocol();
         prot.setName("ProbeValidator");
-        prot.setType("existing mainSampleId (new)");
+        prot.setType("existing hauptprobenNr (new)");
         prot.setPassed(false);
         protocol.add(prot);
         Probe probe = new Probe();
-        probe.setMainSampleId("120510002");
-        prot.addInfo("mainSampleId", "120510002");
+        probe.setHauptprobenNr("120510002");
+        prot.addInfo("hauptprobenNr", "120510002");
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey("mainSampleId"));
+        Assert.assertTrue(violation.getErrors().containsKey("hauptprobenNr"));
         Assert.assertTrue(
-            violation.getErrors().get("mainSampleId").contains(ID611));
+            violation.getErrors().get("hauptprobenNr").contains(ID611));
         prot.setPassed(true);
     }
 
@@ -106,16 +106,16 @@ public class ProbeTest {
     public final void uniqueHauptprobenNrNew(List<Protocol> protocol) {
         Protocol prot = new Protocol();
         prot.setName("ProbeValidator");
-        prot.setType("unique mainSampleId (new)");
+        prot.setType("unique hauptprobenNr (new)");
         prot.setPassed(false);
         protocol.add(prot);
         Probe probe = new Probe();
-        probe.setMainSampleId("4564567890");
-        prot.addInfo("mainSampleId", "4564567890");
+        probe.setHauptprobenNr("4564567890");
+        prot.addInfo("hauptprobenNr", "4564567890");
         Violation violation = validator.validate(probe);
         if (violation.hasErrors()) {
             Assert.assertFalse(
-                violation.getErrors().containsKey("mainSampleId"));
+                violation.getErrors().containsKey("hauptprobenNr"));
         }
         prot.setPassed(true);
     }
@@ -127,17 +127,17 @@ public class ProbeTest {
     public final void uniqueHauptprobenNrUpdate(List<Protocol> protocol) {
         Protocol prot = new Protocol();
         prot.setName("ProbeValidator");
-        prot.setType("unique mainSampleId (update)");
+        prot.setType("unique hauptprobenNr (update)");
         prot.setPassed(false);
         protocol.add(prot);
         Probe probe = new Probe();
         probe.setId(1);
-        probe.setMainSampleId("4564567890");
-        prot.addInfo("mainSampleId", "4564567890");
+        probe.setHauptprobenNr("4564567890");
+        prot.addInfo("hauptprobenNr", "4564567890");
         Violation violation = validator.validate(probe);
         if (violation.hasErrors()) {
             Assert.assertFalse(
-                violation.getErrors().containsKey("mainSampleId"));
+                violation.getErrors().containsKey("hauptprobenNr"));
         }
         prot.setPassed(true);
     }
@@ -149,18 +149,18 @@ public class ProbeTest {
     public final void existingHauptprobenNrUpdate(List<Protocol> protocol) {
         Protocol prot = new Protocol();
         prot.setName("ProbeValidator");
-        prot.setType("existing mainSampleId (update)");
+        prot.setType("existing hauptprobenNr (update)");
         prot.setPassed(false);
         protocol.add(prot);
         Probe probe = new Probe();
         probe.setId(1);
-        probe.setMainSampleId("120224003");
-        prot.addInfo("mainSampleId", "120224003");
+        probe.setHauptprobenNr("120224003");
+        prot.addInfo("hauptprobenNr", "120224003");
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey("mainSampleId"));
+        Assert.assertTrue(violation.getErrors().containsKey("hauptprobenNr"));
         Assert.assertTrue(
-            violation.getErrors().get("mainSampleId").contains(ID611));
+            violation.getErrors().get("hauptprobenNr").contains(ID611));
         prot.setPassed(true);
     }
 
@@ -215,8 +215,8 @@ public class ProbeTest {
         prot.setPassed(false);
         protocol.add(prot);
         Probe probe = new Probe();
-        probe.setSampleStartDate(new Timestamp(TS1));
-        probe.setSampleEndDate(new Timestamp(TS2));
+        probe.setProbeentnahmeBeginn(new Timestamp(TS1));
+        probe.setProbeentnahmeEnde(new Timestamp(TS2));
         Violation violation = validator.validate(probe);
         if (violation.hasWarnings()) {
             Assert.assertFalse(
@@ -256,7 +256,7 @@ public class ProbeTest {
         prot.setPassed(false);
         protocol.add(prot);
         Probe probe = new Probe();
-        probe.setSampleStartDate(new Timestamp(TS1));
+        probe.setProbeentnahmeBeginn(new Timestamp(TS1));
         Violation violation = validator.validate(probe);
         if (violation.hasWarnings()) {
             Assert.assertFalse(
@@ -276,7 +276,7 @@ public class ProbeTest {
         prot.setPassed(false);
         protocol.add(prot);
         Probe probe = new Probe();
-        probe.setSampleEndDate(new Timestamp(TS1));
+        probe.setProbeentnahmeEnde(new Timestamp(TS1));
         Violation violation = validator.validate(probe);
         Assert.assertTrue(
             violation.getWarnings().get("probeentnahmeBeginn").contains(ID631));
@@ -298,8 +298,8 @@ public class ProbeTest {
         prot.setPassed(false);
         protocol.add(prot);
         Probe probe = new Probe();
-        probe.setSampleStartDate(new Timestamp(TS2));
-        probe.setSampleEndDate(new Timestamp(TS1));
+        probe.setProbeentnahmeBeginn(new Timestamp(TS2));
+        probe.setProbeentnahmeEnde(new Timestamp(TS1));
         Violation violation = validator.validate(probe);
         Assert.assertTrue(
             violation.getWarnings().get("probeentnahmeBeginn").contains(ID662));
@@ -319,7 +319,7 @@ public class ProbeTest {
         prot.setPassed(false);
         protocol.add(prot);
         Probe probe = new Probe();
-        probe.setSampleStartDate(new Timestamp(TS3));
+        probe.setProbeentnahmeBeginn(new Timestamp(TS3));
         Violation violation = validator.validate(probe);
         Assert.assertTrue(
             violation.getWarnings().get("probeentnahmeBeginn").contains(ID661));
@@ -337,7 +337,7 @@ public class ProbeTest {
         prot.setPassed(false);
         protocol.add(prot);
         Probe probe = new Probe();
-        probe.setEnvMediumId("A4");
+        probe.setUmwId("A4");
         Violation violation = validator.validate(probe);
         if (violation.hasWarnings()) {
             Assert.assertFalse(violation.getWarnings().containsKey("umwId"));
@@ -374,7 +374,7 @@ public class ProbeTest {
         prot.setPassed(false);
         protocol.add(prot);
         Probe probe = new Probe();
-        probe.setEnvMediumId("");
+        probe.setUmwId("");
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey("umwId"));

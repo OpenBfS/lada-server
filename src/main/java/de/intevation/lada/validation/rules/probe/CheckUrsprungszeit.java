@@ -27,8 +27,8 @@ public class CheckUrsprungszeit implements Rule {
     @Override
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
-        Timestamp uZeit = probe.getOrigDate();
-        Timestamp begin = probe.getSampleStartDate();
+        Timestamp uZeit = probe.getUrsprungszeit();
+        Timestamp begin = probe.getProbeentnahmeBeginn();
         if (uZeit != null && begin != null && uZeit.after(begin)
         ) {
             Violation violation = new Violation();

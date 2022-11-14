@@ -155,7 +155,7 @@ public class MessungTest {
         Violation violation = validator.validate(messung);
         if (violation.hasErrors()) {
             Assert.assertFalse(
-                violation.getErrors().containsKey("mainSampleId"));
+                violation.getErrors().containsKey("hauptprobenNr"));
             return;
         }
         prot.setPassed(true);

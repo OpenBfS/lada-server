@@ -79,13 +79,13 @@ public class ProbeAuthorizer extends BaseAuthorizer {
     private Probe setAuthData(UserInfo userInfo, Probe probe) {
         MessStelle mst =
             repository.getByIdPlain(
-                MessStelle.class, probe.getMeasFacilId());
+                MessStelle.class, probe.getMstId());
         if (!userInfo.getNetzbetreiber().contains(mst.getNetzbetreiberId())) {
             probe.setOwner(false);
             probe.setReadonly(true);
             return probe;
         }
-        if (userInfo.belongsTo(probe.getMeasFacilId(), probe.getApprLabId())) {
+        if (userInfo.belongsTo(probe.getMstId(), probe.getLaborMstId())) {
             probe.setOwner(true);
         } else {
             probe.setOwner(false);

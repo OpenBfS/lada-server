@@ -34,17 +34,16 @@ public class HasMessbeginn implements Rule {
         Probe probe =
             repository.getByIdPlain(Probe.class, messung.getProbeId());
         if (messung.getMesszeitpunkt() == null
-            && (
-                probe.getRegulationId() != null
-                && probe.getRegulationId() != 1
-            )) {
+            &&(
+            probe.getDatenbasisId() != null
+            && probe.getDatenbasisId() != 1
+            )){
             Violation violation = new Violation();
             violation.addWarning("messzeitpunkt", StatusCodes.VALUE_MISSING);
             return violation;
         } else if (messung.getMesszeitpunkt() == null) {
-            Violation violation = new Violation();
-            violation.addNotification(
-                "messzeitpunkt", StatusCodes.VALUE_MISSING);
+             Violation violation = new Violation();
+            violation.addNotification("messzeitpunkt", StatusCodes.VALUE_MISSING);
             return violation;
         } else {
             return null;

@@ -42,8 +42,8 @@ public class HasREIMesspunkt implements Rule {
             violation.addWarning("extPID", StatusCodes.VALUE_MISSING);
             return violation;
         }
-        if (probe.getReiAgGrId() != null
-            || Integer.valueOf(4).equals(probe.getRegulationId())) {
+        if (probe.getReiProgpunktGrpId() != null
+            || Integer.valueOf(4).equals(probe.getDatenbasisId())) {
             QueryBuilder<Ortszuordnung> builder =
                 repository.queryBuilder(Ortszuordnung.class);
             builder.and("probeId", id);

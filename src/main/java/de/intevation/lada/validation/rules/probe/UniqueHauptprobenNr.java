@@ -36,10 +36,10 @@ public class UniqueHauptprobenNr implements Rule {
     @Override
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
-        if (probe.getMainSampleId() != null) {
+        if (probe.getHauptprobenNr() != null) {
             QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
-            builder.and("mainSampleId", probe.getMainSampleId());
-            builder.and("measFacilId", probe.getMeasFacilId());
+            builder.and("hauptprobenNr", probe.getHauptprobenNr());
+            builder.and("mstId", probe.getMstId());
             Response response = repository.filter(builder.getQuery());
             if (!((List<Probe>) response.getData()).isEmpty()) {
                 Probe found = ((List<Probe>) response.getData()).get(0);
@@ -50,7 +50,7 @@ public class UniqueHauptprobenNr implements Rule {
                     return null;
                 }
                 Violation violation = new Violation();
-                violation.addError("mainSampleId", StatusCodes.VALUE_AMBIGOUS);
+                violation.addError("hauptprobenNr", StatusCodes.VALUE_AMBIGOUS);
                 return violation;
             }
         }

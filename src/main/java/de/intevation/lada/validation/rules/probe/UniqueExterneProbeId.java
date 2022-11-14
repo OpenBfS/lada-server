@@ -34,7 +34,7 @@ public class UniqueExterneProbeId implements Rule {
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
         QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
-        builder.and("sampleExtId", probe.getSampleExtId());
+        builder.and("externeProbeId", probe.getExterneProbeId());
         List<Probe> existing =
             repository.filterPlain(builder.getQuery());
         if (!existing.isEmpty()) {
@@ -44,7 +44,7 @@ public class UniqueExterneProbeId implements Rule {
                 return null;
             }
             Violation violation = new Violation();
-            violation.addError("sampleExtId", StatusCodes.VALUE_AMBIGOUS);
+            violation.addError("externeProbeId", StatusCodes.VALUE_AMBIGOUS);
             return violation;
         }
         return null;

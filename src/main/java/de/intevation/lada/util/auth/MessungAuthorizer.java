@@ -107,9 +107,9 @@ public class MessungAuthorizer extends BaseAuthorizer {
                 Probe.class, messung.getProbeId()).getData();
         MessStelle mst =
             repository.getByIdPlain(
-                MessStelle.class, probe.getMeasFacilId());
+                MessStelle.class, probe.getMstId());
 
-        if (userInfo.belongsTo(probe.getMeasFacilId(), probe.getApprLabId())) {
+        if (userInfo.belongsTo(probe.getMstId(), probe.getLaborMstId())) {
             messung.setOwner(true);
             messung.setReadonly(false);
         } else {
@@ -144,7 +144,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
         }
 
         // Has the user the right to edit status for the 'Messstelle'?
-        if (userInfo.getFunktionenForMst(probe.getMeasFacilId()).contains(1)
+        if (userInfo.getFunktionenForMst(probe.getMstId()).contains(1)
             && (stufe == 0 || stufe == 1)
         ) {
             messung.setStatusEditMst(true);
@@ -179,7 +179,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
             List<AuthLstUmw> lsts =
                 repository.filterPlain(lstFilter.getQuery());
             for (int i = 0; i < lsts.size(); i++) {
-                if (lsts.get(i).getUmwId().equals(probe.getEnvMediumId())) {
+                if (lsts.get(i).getUmwId().equals(probe.getUmwId())) {
                     messung.setStatusEditLst(true);
                 }
                 if (messung.getStatusEditLst()) {

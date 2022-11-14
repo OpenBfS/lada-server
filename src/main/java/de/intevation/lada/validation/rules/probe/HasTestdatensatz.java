@@ -23,7 +23,7 @@ public class HasTestdatensatz implements Rule {
     @Override
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
-        if (probe.getIsTest() == null) {
+        if (probe.getTest() == null) {
             Violation violation = new Violation();
             violation.addError("test", StatusCodes.VALUE_MISSING);
             return violation;

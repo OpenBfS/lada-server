@@ -39,21 +39,21 @@ public class ProbeTest extends ServiceTest {
         super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "lastMod",
-            "sampleStartDate",
-            "schedStartDate",
-            "schedEndDate",
-            "treeMod"
+            "letzteAenderung",
+            "probeentnahmeBeginn",
+            "solldatumBeginn",
+            "solldatumEnde",
+            "treeModified"
         });
 
         // Prepare expected probe object
         JsonObject content = readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject probe = content.getJsonArray("lada.sample").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(probe);
-        builder.addNull("midSampleDate");
-        builder.addNull("sampleEndDate");
-        builder.addNull("datasetCreatorId");
-        builder.addNull("stateMpgId");
+        builder.addNull("mittelungsdauer");
+        builder.addNull("probeentnahmeEnde");
+        builder.addNull("erzeugerId");
+        builder.addNull("mplId");
         builder.add("readonly", false);
         builder.add("owner", true);
         expectedById = builder.build();
@@ -74,7 +74,7 @@ public class ProbeTest extends ServiceTest {
         update(
             "probe",
             "rest/probe/1000",
-            "mainSampleId",
+            "hauptprobenNr",
             "120510002",
             "130510002");
         delete(

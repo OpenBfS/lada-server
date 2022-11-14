@@ -147,10 +147,10 @@ implements Creator {
         List<KommentarP> kommentare = (List<KommentarP>) kommentar.getData();
 
         String probenart = null;
-        if (probe.getSampleMethId() != null) {
+        if (probe.getProbenartId() != null) {
             QueryBuilder<Probenart> builder =
                 repository.queryBuilder(Probenart.class);
-            builder.and("id", probe.getSampleMethId());
+            builder.and("id", probe.getProbenartId());
             List<Probenart> probenarten =
                 (List<Probenart>) repository.filter(
                     builder.getQuery()
@@ -160,7 +160,7 @@ implements Creator {
 
         MessStelle messstelle =
             repository.getByIdPlain(
-                MessStelle.class, probe.getMeasFacilId());
+                MessStelle.class, probe.getMstId());
 
         QueryBuilder<ZusatzWert> zusatzBuilder =
             repository.queryBuilder(ZusatzWert.class);
@@ -170,101 +170,100 @@ implements Creator {
         List<ZusatzWert> zusatzwerte = (List<ZusatzWert>) zusatz.getData();
 
         String laf = "";
-        laf += lafLine("PROBE_ID", probe.getSampleExtId(), CN);
-        laf += probe.getRegulationId() == null
+        laf += lafLine("PROBE_ID", probe.getExterneProbeId(), CN);
+        laf += probe.getDatenbasisId() == null
             ? ""
             : lafLine("DATENBASIS_S",
-                String.format("%02d", probe.getRegulationId()));
+                String.format("%02d", probe.getDatenbasisId()));
         laf += messstelle == null
             ? ""
             : lafLine("NETZKENNUNG", messstelle.getNetzbetreiberId(), CN);
-        laf += probe.getMeasFacilId() == null
+        laf += probe.getMstId() == null
             ? ""
-            : lafLine("MESSSTELLE", probe.getMeasFacilId(), CN);
-        laf += probe.getApprLabId() == null
+            : lafLine("MESSSTELLE", probe.getMstId(), CN);
+        laf += probe.getLaborMstId() == null
             ? ""
-            : lafLine("MESSLABOR", probe.getApprLabId(), CN);
-        laf += probe.getMainSampleId() == null
+            : lafLine("MESSLABOR", probe.getLaborMstId(), CN);
+        laf += probe.getHauptprobenNr() == null
             ? ""
-            : lafLine("HAUPTPROBENNUMMER", probe.getMainSampleId(), CN);
-        if (probe.getOprModeId() != null && probe.getRegulationId() != null) {
-            if (probe.getRegulationId() == DATENBASIS4) {
-                if (probe.getOprModeId() == 1) {
+            : lafLine("HAUPTPROBENNUMMER", probe.getHauptprobenNr(), CN);
+        if (probe.getBaId() != null && probe.getDatenbasisId() != null) {
+            if (probe.getDatenbasisId() == DATENBASIS4) {
+                if (probe.getBaId() == 1) {
                     laf += lafLine("MESSPROGRAMM_S", MP4, CN);
-                } else if (probe.getOprModeId() == 2) {
+                } else if (probe.getBaId() == 2) {
                     laf += lafLine("MESSPROGRAMM_S", MP5, CN);
-                } else if (probe.getOprModeId() == BAID3) {
+                } else if (probe.getBaId() == BAID3) {
                     laf += lafLine("MESSPROGRAMM_S", MP6, CN);
                 } else {
                     laf += lafLine("MESSPROGRAMM_S",
-                        "\"" + (char) probe.getOprModeId().intValue() + "\"");
+                        "\"" + (char) probe.getBaId().intValue() + "\"");
                 }
             } else {
-                if (probe.getOprModeId() > BAID3) {
+                if (probe.getBaId() > BAID3) {
                     laf +=
                         lafLine("MESSPROGRAMM_S", "\""
-                            + (char) probe.getOprModeId().intValue() + "\"");
-                } else if (probe.getOprModeId() == BAID3) {
+                            + (char) probe.getBaId().intValue() + "\"");
+                } else if (probe.getBaId() == BAID3) {
                     laf += lafLine("MESSPROGRAMM_S", 2, CN);
                 } else {
-                    laf += lafLine("MESSPROGRAMM_S", probe.getOprModeId(), CN);
+                    laf += lafLine("MESSPROGRAMM_S", probe.getBaId(), CN);
                 }
             }
         }
-        laf += probe.getSampleMethId() == null
+        laf += probe.getProbenartId() == null
             ? ""
             : lafLine("PROBENART", probenart, CN);
         laf += lafLine("ZEITBASIS_S", "2");
-        laf += probe.getSchedStartDate() == null
+        laf += probe.getSolldatumBeginn() == null
             ? ""
             : lafLine("SOLL_DATUM_UHRZEIT_A",
-                toUTCString(probe.getSchedStartDate()));
-        laf += probe.getSchedEndDate() == null
+                toUTCString(probe.getSolldatumBeginn()));
+        laf += probe.getSolldatumEnde() == null
             ? ""
             : lafLine("SOLL_DATUM_UHRZEIT_E",
-                toUTCString(probe.getSchedEndDate()));
-        laf += probe.getSampleStartDate() == null
+                toUTCString(probe.getSolldatumEnde()));
+        laf += probe.getProbeentnahmeBeginn() == null
             ? ""
             : lafLine("PROBENAHME_DATUM_UHRZEIT_A",
-                toUTCString(probe.getSampleStartDate()));
-        laf += probe.getSampleEndDate() == null
+                toUTCString(probe.getProbeentnahmeBeginn()));
+        laf += probe.getProbeentnahmeEnde() == null
             ? ""
             : lafLine("PROBENAHME_DATUM_UHRZEIT_E",
-                toUTCString(probe.getSampleEndDate()));
-        laf += probe.getOrigDate() == null
+                toUTCString(probe.getProbeentnahmeEnde()));
+        laf += probe.getUrsprungszeit() == null
             ? ""
             : lafLine("URSPRUNGS_DATUM_UHRZEIT",
-                toUTCString(probe.getOrigDate()));
-        laf += probe.getEnvMediumId() == null
+                toUTCString(probe.getUrsprungszeit()));
+        laf += probe.getUmwId() == null
             ? ""
-            : lafLine("UMWELTBEREICH_S", probe.getEnvMediumId(), CN);
-        laf += probe.getEnvDescripDisplay() == null
+            : lafLine("UMWELTBEREICH_S", probe.getUmwId(), CN);
+        laf += probe.getMediaDesk() == null
             ? ""
             : lafLine("DESKRIPTOREN",
-                probe.getEnvDescripDisplay().replaceAll(" ", "")
-                    .substring(2), CN);
-        laf += probe.getIsTest()
+                probe.getMediaDesk().replaceAll(" ", "").substring(2), CN);
+        laf += probe.getTest()
             ? lafLine("TESTDATEN", "1")
             : lafLine("TESTDATEN", "0");
-        if (probe.getDatasetCreatorId() != null) {
+        if (probe.getErzeugerId() != null) {
             DatensatzErzeuger erz = repository.getByIdPlain(
-                DatensatzErzeuger.class, probe.getDatasetCreatorId());
+                DatensatzErzeuger.class, probe.getErzeugerId());
             laf += lafLine("ERZEUGER", erz.getDatensatzErzeugerId(), CN);
         }
-        if (probe.getStateMpgId() != null) {
+        if (probe.getMplId() != null) {
             MessprogrammKategorie mpkat = repository.getByIdPlain(
-                MessprogrammKategorie.class, probe.getStateMpgId());
+                MessprogrammKategorie.class, probe.getMplId());
             laf += lafLine("MESSPROGRAMM_LAND", mpkat.getCode(), CN);
         }
-        if (probe.getSamplerId() != null) {
+        if (probe.getProbeNehmerId() != null) {
             Probenehmer prn = repository.getByIdPlain(
-                Probenehmer.class, probe.getSamplerId());
+                Probenehmer.class, probe.getProbeNehmerId());
             laf += lafLine("PROBENAHMEINSTITUTION", prn.getPrnId(), CN);
         }
-        if (probe.getReiAgGrId() != null) {
+        if (probe.getReiProgpunktGrpId() != null) {
             ReiProgpunktGruppe rpg = repository.getByIdPlain(
                 ReiProgpunktGruppe.class,
-                probe.getReiAgGrId());
+                probe.getReiProgpunktGrpId());
             laf += lafLine(
                 "REI_PROGRAMMPUNKTGRUPPE",
                 rpg.getReiProgPunktGruppe(), CN);

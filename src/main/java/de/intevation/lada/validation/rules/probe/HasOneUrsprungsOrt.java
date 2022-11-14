@@ -42,9 +42,9 @@ public class HasOneUrsprungsOrt implements Rule {
             violation.addWarning("entnahmeOrt", StatusCodes.VALUE_MISSING);
             return violation;
         }
-        if (probe.getReiAgGrId() != null
-            || Integer.valueOf(3).equals(probe.getRegulationId())
-            || Integer.valueOf(4).equals(probe.getRegulationId())) {
+        if (probe.getReiProgpunktGrpId() != null
+            || Integer.valueOf(3).equals(probe.getDatenbasisId())
+            || Integer.valueOf(4).equals(probe.getDatenbasisId())) {
                 return null;
         }
 

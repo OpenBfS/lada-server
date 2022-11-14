@@ -35,25 +35,25 @@ public class ReiToUmwelt implements Rule {
     @Override
     public Violation execute(Object object) {
         Probe probe = (Probe) object;
-        if (probe.getRegulationId() != null
-            && probe.getRegulationId() != 3
-            && probe.getRegulationId() != 4
+        if (probe.getDatenbasisId() != null
+            && probe.getDatenbasisId() != 3
+            && probe.getDatenbasisId() != 4
         ) {
             return null;
         }
-        if (probe.getEnvMediumId() == null) {
+        if (probe.getUmwId() == null) {
             return null;
         }
-        if (probe.getReiAgGrId() == null) {
+        if (probe.getReiProgpunktGrpId() == null) {
             return null;
         }
         QueryBuilder<ReiProgpunktGrpUmwZuord> builder =
             repository.queryBuilder(ReiProgpunktGrpUmwZuord.class);
-        builder.and("reiProgpunktGrpId", probe.getReiAgGrId());
+        builder.and("reiProgpunktGrpId", probe.getReiProgpunktGrpId());
         List<ReiProgpunktGrpUmwZuord> zuord =
             repository.filterPlain(builder.getQuery());
         for (ReiProgpunktGrpUmwZuord entry : zuord) {
-            if (entry.getUmwId().equals(probe.getEnvMediumId())) {
+            if (entry.getUmwId().equals(probe.getUmwId())) {
                 return null;
             }
         }
