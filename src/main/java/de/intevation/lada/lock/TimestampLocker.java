@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.util.data.Repository;
 
 
@@ -40,10 +40,10 @@ public class TimestampLocker implements ObjectLocker {
      */
     @Override
     public boolean isLocked(Object o) {
-        if (o instanceof Probe) {
-            Probe newProbe = (Probe) o;
-            Probe oldProbe = repository.getByIdPlain(
-                Probe.class, newProbe.getId());
+        if (o instanceof Sample) {
+            Sample newProbe = (Sample) o;
+            Sample oldProbe = repository.getByIdPlain(
+                Sample.class, newProbe.getId());
             if (oldProbe.getTreeMod().getTime()
                 > newProbe.getTreeMod().getTime()) {
                 return true;
@@ -59,7 +59,7 @@ public class TimestampLocker implements ObjectLocker {
                             | InvocationTargetException e) {
                         return true;
                     }
-                    Probe probe = repository.getByIdPlain(Probe.class, id);
+                    Sample probe = repository.getByIdPlain(Sample.class, id);
                     return isNewer(o, probe.getTreeMod());
                 }
                 if (m.getName().equals("getMessungsId")) {

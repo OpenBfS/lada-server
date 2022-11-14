@@ -30,7 +30,7 @@ import de.intevation.lada.model.land.AuditTrailMessung;
 import de.intevation.lada.model.land.AuditTrailProbe;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Ortszuordnung;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -158,7 +158,7 @@ public class AuditTrailService extends LadaService {
         @PathParam("id") Integer pId
     ) {
         // Get the plain probe object to have the hauptproben_nr.
-        Probe probe = repository.getByIdPlain(Probe.class, pId);
+        Sample probe = repository.getByIdPlain(Sample.class, pId);
         if (probe == null) {
             return "{\"success\": false,\"message\":600,\"data\":null}";
         }
@@ -312,8 +312,8 @@ public class AuditTrailService extends LadaService {
         }
         StatusProtokoll status =
             repository.getByIdPlain(StatusProtokoll.class, messung.getStatus());
-        Probe probe =
-            repository.getByIdPlain(Probe.class, messung.getProbeId());
+        Sample probe =
+            repository.getByIdPlain(Sample.class, messung.getProbeId());
         UserInfo userInfo = authorization.getInfo();
         QueryBuilder<AuditTrailMessung> builder =
             repository.queryBuilder(AuditTrailMessung.class);

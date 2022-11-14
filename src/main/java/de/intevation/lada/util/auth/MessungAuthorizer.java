@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.AuthLstUmw;
 import de.intevation.lada.model.stammdaten.MessStelle;
@@ -35,9 +35,9 @@ public class MessungAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         Messung messung = (Messung) data;
-        Probe probe =
+        Sample probe =
             repository.getByIdPlain(
-                Probe.class, messung.getProbeId());
+                Sample.class, messung.getProbeId());
         if (method == RequestMethod.PUT
             || method == RequestMethod.DELETE) {
             return !this.isMessungReadOnly(messung.getId())
@@ -102,9 +102,9 @@ public class MessungAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Messung messung
     ) {
-        Probe probe =
-            (Probe) repository.getById(
-                Probe.class, messung.getProbeId()).getData();
+        Sample probe =
+            (Sample) repository.getById(
+                Sample.class, messung.getProbeId()).getData();
         MessStelle mst =
             repository.getByIdPlain(
                 MessStelle.class, probe.getMeasFacilId());

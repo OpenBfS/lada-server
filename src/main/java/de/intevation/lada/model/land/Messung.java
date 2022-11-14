@@ -71,7 +71,7 @@ public class Messung implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "probe_id", insertable = false, updatable = false)
-    private Probe probe;
+    private Sample probe;
 
     private Integer status;
 
@@ -189,7 +189,7 @@ public class Messung implements Serializable {
     }
 
     @JsonbTransient
-    public Probe getProbe() {
+    public Sample getProbe() {
         return this.probe;
     }
 

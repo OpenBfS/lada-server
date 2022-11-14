@@ -24,7 +24,7 @@ import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.stammdaten.Umwelt;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -344,9 +344,9 @@ public class MesswertService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
-        Probe probe =
+        Sample probe =
             repository.getByIdPlain(
-                Probe.class, messung.getProbeId());
+                Sample.class, messung.getProbeId());
         if (probe.getEnvMediumId() == null
             || probe.getEnvMediumId().equals("")
         ) {

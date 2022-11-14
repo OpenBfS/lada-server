@@ -29,14 +29,10 @@ import de.intevation.lada.model.stammdaten.Umwelt;
 import de.intevation.lada.util.data.EmptyStringConverter;
 
 
-/**
- * The persistent class for the probe database table.
- *
- */
 @Entity
 @DynamicInsert(true)
-@Table(name = "sample", schema = SchemaName.NAME)
-public class Probe implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class Sample implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -120,7 +116,7 @@ public class Probe implements Serializable {
     @Transient
     private MultivaluedMap<String, Integer> notifications;
 
-    public Probe() {
+    public Sample() {
     }
 
     public Integer getId() {

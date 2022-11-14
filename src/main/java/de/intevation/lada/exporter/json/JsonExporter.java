@@ -44,7 +44,7 @@ import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.stammdaten.Betriebsart;
@@ -186,8 +186,8 @@ public class JsonExporter implements Exporter {
     }
 
     /**
-     * Export Probe objects as JSON.
-     * @param proben List of Probe IDs to export.
+     * Export Sample objects as JSON.
+     * @param proben List of Sample IDs to export.
      * @param messungen Ignored. All associated Messung objects are exported.
      * @param encoding Ignored. Result is always UTF_8.
      * @param userInfo UserInfo
@@ -218,11 +218,11 @@ public class JsonExporter implements Exporter {
     }
 
     private String createJsonString(List<Integer> probeIds, UserInfo userInfo) {
-        QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
+        QueryBuilder<Sample> builder = repository.queryBuilder(Sample.class);
         for (Integer id : probeIds) {
             builder.or("id", id);
         }
-        List<Probe> proben =
+        List<Sample> proben =
             repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();
         try {
@@ -310,7 +310,7 @@ public class JsonExporter implements Exporter {
             ((ObjectNode) node).set("messstelle", nodes);
             ((ObjectNode) node).set("labormessstelle", nodes2);
         } catch (IOException e) {
-            logger.debug("Could not export Messstelle for Probe "
+            logger.debug("Could not export Messstelle for Sample "
                 + node.get("externeProbeId").asText());
         }
     }
@@ -337,7 +337,7 @@ public class JsonExporter implements Exporter {
             }
             ((ObjectNode) probe).set("messungen", nodes);
         } catch (IOException e) {
-            logger.debug("Could not export Messungen for Probe "
+            logger.debug("Could not export Messungen for Sample "
                 + probe.get("externeProbeId").asText());
         }
     }
@@ -363,7 +363,7 @@ public class JsonExporter implements Exporter {
             }
             ((ObjectNode) probe).set("kommentare", nodes);
         } catch (IOException e) {
-            logger.debug("Could not export Kommentare for Probe "
+            logger.debug("Could not export Kommentare for Sample "
                 + probe.get("externeProbeId").asText());
         }
     }
@@ -397,7 +397,7 @@ public class JsonExporter implements Exporter {
             }
             ((ObjectNode) probe).set("zusatzwerte", nodes);
         } catch (IOException e) {
-            logger.debug("Could not export Zusatzwerte for Probe "
+            logger.debug("Could not export Zusatzwerte for Sample "
                 + probe.get("externeProbeId").asText());
         }
     }
@@ -560,7 +560,7 @@ public class JsonExporter implements Exporter {
             }
             ((ObjectNode) node).set("ortszuordnung", nodes);
         } catch (IOException e) {
-            logger.debug("Could not export Ortszuordnugen for Probe "
+            logger.debug("Could not export Ortszuordnugen for Sample "
                 + node.get("externeProbeId").asText());
         }
     }

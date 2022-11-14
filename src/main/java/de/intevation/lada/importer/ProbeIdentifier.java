@@ -12,31 +12,31 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
 /**
  * Class to identify a probe object.
  */
-@IdentifierConfig(type = "Probe")
+@IdentifierConfig(type = "Sample")
 public class ProbeIdentifier implements Identifier {
 
     @Inject
     private Repository repository;
 
-    private Probe found;
+    private Sample found;
 
     @Override
     public Identified find(Object object)
     throws InvalidTargetObjectTypeException {
         found = null;
-        if (!(object instanceof Probe)) {
+        if (!(object instanceof Sample)) {
             throw new InvalidTargetObjectTypeException(
-                "Object is not of type Probe");
+                "Object is not of type Sample");
         }
-        Probe probe = (Probe) object;
-        QueryBuilder<Probe> builder = repository.queryBuilder(Probe.class);
+        Sample probe = (Sample) object;
+        QueryBuilder<Sample> builder = repository.queryBuilder(Sample.class);
 
         // extId null and mainSampleId not null and mstId not null.
         if (probe.getExtId() == null
@@ -45,7 +45,7 @@ public class ProbeIdentifier implements Identifier {
         ) {
             builder.and("measFacilId", probe.getMeasFacilId());
             builder.and("mainSampleId", probe.getMainSampleId());
-            List<Probe> proben =
+            List<Sample> proben =
                 repository.filterPlain(builder.getQuery());
             if (proben.size() > 1) {
                 // Should never happen. DB has unique constraint for
@@ -62,7 +62,7 @@ public class ProbeIdentifier implements Identifier {
                 || probe.getMeasFacilId() == null)
         ) {
             builder.and("extId", probe.getExtId());
-            List<Probe> proben =
+            List<Sample> proben =
                 repository.filterPlain(builder.getQuery());
             if (proben.size() > 1) {
                 // Should never happen. DB has unique constraint for
@@ -76,7 +76,7 @@ public class ProbeIdentifier implements Identifier {
             return Identified.UPDATE;
         } else {
             builder.and("extId", probe.getExtId());
-            List<Probe> proben =
+            List<Sample> proben =
                 repository.filterPlain(builder.getQuery());
             if (proben.size() > 1) {
                 // Should never happen. DB has unique constraint for

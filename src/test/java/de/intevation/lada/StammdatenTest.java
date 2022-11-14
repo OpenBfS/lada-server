@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
 import de.intevation.lada.model.stammdaten.Deskriptoren;
 import de.intevation.lada.model.stammdaten.KoordinatenArt;
@@ -708,7 +708,7 @@ public class StammdatenTest extends BaseTest {
         protocol.addInfo("database",
             "Insert probe, messung and tags into database");
         testProtocol.add(protocol);
-        Probe probe = em.find(Probe.class, ID1901);
+        Sample probe = em.find(Sample.class, ID1901);
         Assert.assertNotNull(probe);
         Messung messung = em.find(Messung.class, ID1801);
         Assert.assertNotNull(messung);

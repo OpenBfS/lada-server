@@ -34,7 +34,7 @@ import de.intevation.lada.rest.LadaService;
 
 /**
  * REST service to export probe objects and the child objects associated with
- * the selected Probe objects.
+ * the selected Sample objects.
  * <p>
  * To request objects post a JSON formatted string with an array of probe ids.
  * <pre>
@@ -66,10 +66,10 @@ public class JsonExportService extends LadaService {
 
 
     /**
-     * Export Probe objects.
+     * Export Sample objects.
      *
      * The service takes JSON formatted  POST data containing probe ids and
-     * exports the Probe objects filtered by these ids.
+     * exports the Sample objects filtered by these ids.
      *
      * @param proben    JSON formatted string with an array of probe ids.
      * @return The JSON to export.

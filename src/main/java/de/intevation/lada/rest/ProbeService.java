@@ -28,7 +28,7 @@ import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.land.Messprogramm;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -43,7 +43,7 @@ import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
- * REST service for Probe objects.
+ * REST service for Sample objects.
  * <p>
  * The services produce data in the application/json media type.
  * All HTTP methods use the authorization module to determine if the user is
@@ -76,14 +76,14 @@ public class ProbeService extends LadaService {
     private ObjectLocker lock;
 
     /**
-     * The validator used for Probe objects.
+     * The validator used for Sample objects.
      */
     @Inject
-    @ValidationConfig(type = "Probe")
+    @ValidationConfig(type = "Sample")
     private Validator validator;
 
     /**
-     * The factory to create Probe objects.
+     * The factory to create Sample objects.
      * Used for messprogramm.
      */
     @Inject
@@ -119,17 +119,17 @@ public class ProbeService extends LadaService {
     }
 
     /**
-     * Get a single Probe object by id.
+     * Get a single Sample object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Probe.
+     * @return Response object containing a single Sample.
      */
     @GET
     @Path("/{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(Probe.class, id);
+        Response response = repository.getById(Sample.class, id);
         Violation violation = validator.validate(response.getData());
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
@@ -137,11 +137,11 @@ public class ProbeService extends LadaService {
         if (violation.hasNotifications()) {
             response.setNotifications(violation.getNotifications());
         }
-        return this.authorization.filter(response, Probe.class);
+        return this.authorization.filter(response, Sample.class);
     }
 
     /**
-     * Create a new Probe object.
+     * Create a new Sample object.
      * <p>
      * The new object is embedded in the post data as JSON formatted string.
      * <p>
@@ -151,12 +151,12 @@ public class ProbeService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        Probe probe
+        Sample probe
     ) {
         if (!authorization.isAuthorized(
                 probe,
                 RequestMethod.POST,
-                Probe.class)
+                Sample.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -196,11 +196,11 @@ public class ProbeService extends LadaService {
 
         return authorization.filter(
             newProbe,
-            Probe.class);
+            Sample.class);
     }
 
     /**
-     * Create new Probe objects from a messprogramm.
+     * Create new Sample objects from a messprogramm.
      * <p>
      * <p>
      * <pre>
@@ -244,12 +244,12 @@ public class ProbeService extends LadaService {
             if (!object.dryrun) {
                 // Use a dummy probe with same mstId as the messprogramm to
                 // authorize the user to create probe objects.
-                Probe testProbe = new Probe();
+                Sample testProbe = new Sample();
                 testProbe.setMeasFacilId(messprogramm.getMstId());
                 if (!authorization.isAuthorized(
                         testProbe,
                         RequestMethod.POST,
-                        Probe.class)
+                        Sample.class)
                 ) {
                     data.put("success", false);
                     data.put("message", StatusCodes.NOT_ALLOWED);
@@ -266,13 +266,13 @@ public class ProbeService extends LadaService {
                 probenData.put(messprogramm.getId().toString(), data);
                 return;
             }
-            List<Probe> proben = factory.create(
+            List<Sample> proben = factory.create(
                 messprogramm,
                 object.start,
                 object.end,
                 object.dryrun);
 
-            for (Probe probe : proben) {
+            for (Sample probe : proben) {
                 if (!probe.isFound()) {
                     generatedProbeIds.add(probe.getId());
                 }
@@ -307,22 +307,22 @@ public class ProbeService extends LadaService {
     }
 
     /**
-     * Update an existing Probe object.
+     * Update an existing Sample object.
      * <p>
      * The object to update should come as JSON formatted string.
      *
-     * @return Response object containing the updated Probe object.
+     * @return Response object containing the updated Sample object.
      */
     @PUT
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        Probe probe
+        Sample probe
     ) {
         if (!authorization.isAuthorized(
                 probe,
                 RequestMethod.PUT,
-                Probe.class)
+                Sample.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -364,11 +364,11 @@ public class ProbeService extends LadaService {
         }
         return authorization.filter(
             response,
-            Probe.class);
+            Sample.class);
     }
 
     /**
-     * Delete an existing Probe object by id.
+     * Delete an existing Sample object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
@@ -378,15 +378,15 @@ public class ProbeService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        Response probe = repository.getById(Probe.class, id);
+        Response probe = repository.getById(Sample.class, id);
         if (!probe.getSuccess()) {
             return probe;
         }
-        Probe probeObj = (Probe) probe.getData();
+        Sample probeObj = (Sample) probe.getData();
         if (!authorization.isAuthorized(
                 probeObj,
                 RequestMethod.DELETE,
-                Probe.class)
+                Sample.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }

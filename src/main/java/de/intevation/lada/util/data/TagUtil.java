@@ -24,7 +24,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.rest.Response;
@@ -106,7 +106,7 @@ public class TagUtil {
 
     /**
      * Sets tags for the given probe records an connected messung records.
-     * @param probeIds Probe ids to set tags for
+     * @param probeIds Sample ids to set tags for
      * @param tagId Tag id to set
      */
     public void setTagsByProbeIds(
@@ -116,8 +116,8 @@ public class TagUtil {
         // instead of fetching them from the database again, whenever possible.
 
         //Get given probe and messung records
-        List<Probe> probes = repository.filterPlain(
-            repository.queryBuilder(Probe.class).andIn("id", probeIds)
+        List<Sample> probes = repository.filterPlain(
+            repository.queryBuilder(Sample.class).andIn("id", probeIds)
             .getQuery());
         List<Messung> messungs = repository.filterPlain(
             repository.queryBuilder(Messung.class).andIn("probeId", probeIds)

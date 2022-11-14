@@ -28,7 +28,7 @@ import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.OrtszuordnungMp;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.stammdaten.DeskriptorUmwelt;
 import de.intevation.lada.model.stammdaten.Deskriptoren;
@@ -182,7 +182,7 @@ public class ProbeFactory {
                     );
                 }
 
-                /* Ensure we do not generate Probe objects with
+                /* Ensure we do not generate Sample objects with
                  * begin before start, which might otherwise happen if
                  * start is after what teilVon represents for this intervall */
                 if (this.getFrom().before(start)) {
@@ -320,12 +320,12 @@ public class ProbeFactory {
      *
      * @return List of probe objects.
      */
-    public List<Probe> create(
+    public List<Sample> create(
         Messprogramm messprogramm, Calendar start, Calendar end, boolean dryrun
     ) {
         protocol = new ArrayList<>();
 
-        /* Adjust to end of the day as we want to generate Probe objects
+        /* Adjust to end of the day as we want to generate Sample objects
          * before or at this day. */
         end.set(Calendar.HOUR_OF_DAY, HOD23);
         end.set(Calendar.MINUTE, MIN59);
@@ -335,7 +335,7 @@ public class ProbeFactory {
         int gueltigBis = messprogramm.getGueltigBis();
         int offset = messprogramm.getIntervallOffset();
 
-        List<Probe> proben = new ArrayList<Probe>();
+        List<Sample> proben = new ArrayList<Sample>();
 
         for (Intervall intervall = new Intervall(messprogramm, start);
              intervall.getFrom().before(end);
@@ -374,7 +374,7 @@ public class ProbeFactory {
                         || solldatumBeginnDOY <= actualGueltigBis)
                 )
             ) {
-                Probe probe = createObjects(
+                Sample probe = createObjects(
                     messprogramm,
                     sollFrom.getTime(),
                     sollTo.getTime(),
@@ -398,15 +398,15 @@ public class ProbeFactory {
      *
      * @return The new probe object.
      */
-    private Probe createObjects(
+    private Sample createObjects(
         Messprogramm messprogramm,
         Date startDate,
         Date endDate,
         boolean dryrun
     ) {
         currentProtocol = new HashMap<>();
-        QueryBuilder<Probe> builderProbe =
-            repository.queryBuilder(Probe.class);
+        QueryBuilder<Sample> builderProbe =
+            repository.queryBuilder(Sample.class);
         builderProbe.and("mpgId", messprogramm.getId());
         builderProbe.and("schedStartDate", startDate);
         builderProbe.and("schedEndDate", endDate);
@@ -418,7 +418,7 @@ public class ProbeFactory {
         @SuppressWarnings("unchecked")
         List<MessprogrammMmt> mmts = (List<MessprogrammMmt>) response.getData();
         List<String> messungProtocol = new ArrayList<>();
-        List<Probe> proben =
+        List<Sample> proben =
             repository.filterPlain(builderProbe.getQuery());
 
         QueryBuilder<OrtszuordnungMp> builderOrt =
@@ -443,7 +443,7 @@ public class ProbeFactory {
             }
             return proben.get(0);
         }
-        Probe probe = new Probe();
+        Sample probe = new Sample();
         probe.setOprModeId(messprogramm.getBaId());
         probe.setRegulationId(messprogramm.getDatenbasisId());
         probe.setEnvDescripDisplay(messprogramm.getMediaDesk());
@@ -527,14 +527,14 @@ public class ProbeFactory {
         }
         // Reolad the probe to have the old id
         if (!dryrun) {
-            probe = (Probe) repository.getById(
-                Probe.class, probe.getId()).getData();
+            probe = (Sample) repository.getById(
+                Sample.class, probe.getId()).getData();
         }
         protocol.add(currentProtocol);
         return probe;
     }
 
-    private void toProtocol(Probe probe, boolean dryrun) {
+    private void toProtocol(Sample probe, boolean dryrun) {
         currentProtocol.put("id", probe.getId());
         currentProtocol.put("externeProbeId", probe.getExtId());
         currentProtocol.put("mstId", probe.getMeasFacilId());
@@ -565,7 +565,7 @@ public class ProbeFactory {
      *
      * @return The updated probe object.
      */
-    public Probe findUmweltId(Probe probe) {
+    public Sample findUmweltId(Sample probe) {
         String mediaDesk = probe.getEnvDescripDisplay();
         if (mediaDesk != null) {
             String[] mediaDeskParts = mediaDesk.split(" ");
@@ -584,7 +584,7 @@ public class ProbeFactory {
      *
      * @return The updated probe object.
      */
-    public Probe findMedia(Probe probe) {
+    public Sample findMedia(Sample probe) {
         String mediaDesk = probe.getEnvDescripDisplay();
         if (mediaDesk != null) {
             Object result = repository.queryFromString(
@@ -839,7 +839,7 @@ public class ProbeFactory {
      *
      * @return The updated messprogramm.
      */
-    public Probe getInitialMediaDesk(Probe probe) {
+    public Sample getInitialMediaDesk(Sample probe) {
         String umweltId = probe.getEnvMediumId();
         if (umweltId != null) {
             probe.setEnvDescripDisplay(getInitialMediaDesk(umweltId));

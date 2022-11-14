@@ -25,7 +25,7 @@ import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.OrtszuordnungMp;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.land.ZusatzWert;
@@ -124,7 +124,7 @@ public class HeaderAuthorization implements Authorization {
             new TagZuordnungAuthorizer(repository);
 
         this.authorizers = Map.ofEntries(
-            Map.entry(Probe.class, probeAuthorizer),
+            Map.entry(Sample.class, probeAuthorizer),
             Map.entry(Messung.class, messungAuthorizer),
             Map.entry(Ortszuordnung.class, pIdAuthorizer),
             Map.entry(KommentarP.class, pIdAuthorizer),
@@ -224,7 +224,7 @@ public class HeaderAuthorization implements Authorization {
      */
     @Override
     public boolean isProbeReadOnly(Integer probeId) {
-        Authorizer a = authorizers.get(Probe.class);
+        Authorizer a = authorizers.get(Sample.class);
         return a.isProbeReadOnly(probeId);
     }
 
