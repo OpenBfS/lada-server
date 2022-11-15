@@ -249,7 +249,7 @@ implements Creator {
         if (probe.getDatasetCreatorId() != null) {
             DatensatzErzeuger erz = repository.getByIdPlain(
                 DatensatzErzeuger.class, probe.getDatasetCreatorId());
-            laf += lafLine("ERZEUGER", erz.getDatensatzErzeugerId(), CN);
+            laf += lafLine("ERZEUGER", erz.getExtId(), CN);
         }
         if (probe.getStateMpgId() != null) {
             MessprogrammKategorie mpkat = repository.getByIdPlain(

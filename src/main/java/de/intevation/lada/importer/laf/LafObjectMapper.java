@@ -2252,9 +2252,9 @@ public class LafObjectMapper {
         if ("ERZEUGER".equals(key)) {
             QueryBuilder<DatensatzErzeuger> builder =
                 repository.queryBuilder(DatensatzErzeuger.class);
-            builder.and("netzbetreiberId", netzbetreiberId);
-            builder.and("mstId", probe.getMeasFacilId());
-            builder.and("datensatzErzeugerId", value);
+            builder.and("networkId", netzbetreiberId);
+            builder.and("measFacilId", probe.getMeasFacilId());
+            builder.and("extId", value);
             List<DatensatzErzeuger> datensatzErzeuger =
                     (List<DatensatzErzeuger>) repository.filterPlain(
                             builder.getQuery());

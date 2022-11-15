@@ -179,7 +179,7 @@ public class UniversalService extends LadaService {
                         if (authorizationColumnType == DatensatzErzeuger.class) {
                             DatensatzErzeuger de = repository.getByIdPlain(
                                 DatensatzErzeuger.class, idToAuthorize);
-                            idToAuthorize = de.getNetzbetreiberId();
+                            idToAuthorize = de.getNetworkId();
                         }
                         if (authorizationColumnType == Probenehmer.class) {
                             Probenehmer pn = repository.getByIdPlain(

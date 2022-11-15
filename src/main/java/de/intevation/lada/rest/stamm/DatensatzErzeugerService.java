@@ -131,9 +131,9 @@ public class DatensatzErzeugerService extends LadaService {
         QueryBuilder<DatensatzErzeuger> builder =
             repository.queryBuilder(DatensatzErzeuger.class);
         builder.and(
-            "datensatzErzeugerId", datensatzerzeuger.getDatensatzErzeugerId());
-        builder.and("netzbetreiberId", datensatzerzeuger.getNetzbetreiberId());
-        builder.and("mstId", datensatzerzeuger.getMstId());
+            "extId", datensatzerzeuger.getExtId());
+        builder.and("networkId", datensatzerzeuger.getNetworkId());
+        builder.and("measFacilId", datensatzerzeuger.getMeasFacilId());
         List<DatensatzErzeuger> erzeuger =
             repository.filterPlain(builder.getQuery());
         if (erzeuger.isEmpty()) {
@@ -159,9 +159,9 @@ public class DatensatzErzeugerService extends LadaService {
         QueryBuilder<DatensatzErzeuger> builder =
             repository.queryBuilder(DatensatzErzeuger.class);
         builder.and(
-            "datensatzErzeugerId", datensatzerzeuger.getDatensatzErzeugerId());
-        builder.and("netzbetreiberId", datensatzerzeuger.getNetzbetreiberId());
-        builder.and("mstId", datensatzerzeuger.getMstId());
+            "extId", datensatzerzeuger.getExtId());
+        builder.and("networkId", datensatzerzeuger.getNetworkId());
+        builder.and("measFacilId", datensatzerzeuger.getMeasFacilId());
         List<DatensatzErzeuger> erzeuger =
             repository.filterPlain(builder.getQuery());
         if (!erzeuger.isEmpty()

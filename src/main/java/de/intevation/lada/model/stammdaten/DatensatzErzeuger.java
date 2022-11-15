@@ -21,11 +21,11 @@ import javax.persistence.Transient;
 
 
 /**
- * The persistent class for the datensatz_erzeuger database table.
+ * The persistent class for the dataset_creator database table.
  *
  */
 @Entity
-@Table(name = "datensatz_erzeuger", schema = SchemaName.LEGACY_NAME)
+@Table(name = "dataset_creator", schema = SchemaName.NAME)
 public class DatensatzErzeuger implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -33,19 +33,16 @@ public class DatensatzErzeuger implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String bezeichnung;
+    private String descr;
 
-    @Column(name = "datensatz_erzeuger_id")
-    private String datensatzErzeugerId;
+    private String extId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
-    @Column(name = "mst_id")
-    private String mstId;
+    private String measFacilId;
 
-    @Column(name = "netzbetreiber_id")
-    private String netzbetreiberId;
+    private String networkId;
 
     @Transient
     private boolean readonly;
@@ -61,44 +58,44 @@ public class DatensatzErzeuger implements Serializable {
         this.id = id;
     }
 
-    public String getBezeichnung() {
-        return this.bezeichnung;
+    public String getDescr() {
+        return this.descr;
     }
 
-    public void setBezeichnung(String bezeichnung) {
-        this.bezeichnung = bezeichnung;
+    public void setDescr(String descr) {
+        this.descr = descr;
     }
 
-    public String getDatensatzErzeugerId() {
-        return this.datensatzErzeugerId;
+    public String getExtId() {
+        return this.extId;
     }
 
-    public void setDatensatzErzeugerId(String datensatzErzeugerId) {
-        this.datensatzErzeugerId = datensatzErzeugerId;
+    public void setExtId(String extId) {
+        this.extId = extId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
-    public String getMstId() {
-        return this.mstId;
+    public String getMeasFacilId() {
+        return this.measFacilId;
     }
 
-    public void setMstId(String mstId) {
-        this.mstId = mstId;
+    public void setMeasFacilId(String measFacilId) {
+        this.measFacilId = measFacilId;
     }
 
-    public String getNetzbetreiberId() {
-        return this.netzbetreiberId;
+    public String getNetworkId() {
+        return this.networkId;
     }
 
-    public void setNetzbetreiberId(String netzbetreiberId) {
-        this.netzbetreiberId = netzbetreiberId;
+    public void setNetworkId(String networkId) {
+        this.networkId = networkId;
     }
 
     public boolean isReadonly() {
