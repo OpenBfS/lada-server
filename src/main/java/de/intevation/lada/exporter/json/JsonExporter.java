@@ -48,7 +48,7 @@ import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.stammdaten.OprMode;
-import de.intevation.lada.model.stammdaten.Datenbasis;
+import de.intevation.lada.model.stammdaten.Regulation;
 import de.intevation.lada.model.stammdaten.Deskriptoren;
 import de.intevation.lada.model.stammdaten.MessEinheit;
 import de.intevation.lada.model.stammdaten.MessMethode;
@@ -243,8 +243,8 @@ public class JsonExporter implements Exporter {
                 Probenart.class,
                 probe.get("probenartId").asInt()
             );
-            Datenbasis datenbasis = repository.getByIdPlain(
-                Datenbasis.class,
+            Regulation datenbasis = repository.getByIdPlain(
+                Regulation.class,
                 probe.get("datenbasisId").asInt()
             );
             Umwelt umw = repository.getByIdPlain(

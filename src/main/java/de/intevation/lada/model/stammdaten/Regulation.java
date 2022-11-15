@@ -21,7 +21,7 @@ import javax.persistence.Column;
  */
 @Entity
 @Table(name = "regulation", schema = SchemaName.NAME)
-public class Datenbasis implements Serializable {
+public class Regulation implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,7 +34,7 @@ public class Datenbasis implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public Datenbasis() {
+    public Regulation() {
     }
 
     public Integer getId() {

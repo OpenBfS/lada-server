@@ -44,7 +44,7 @@ import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.land.TagZuordnung;
-import de.intevation.lada.model.stammdaten.Datenbasis;
+import de.intevation.lada.model.stammdaten.Regulation;
 import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.ImporterConfig;
 import de.intevation.lada.model.stammdaten.KoordinatenArt;
@@ -2124,8 +2124,8 @@ public class LafObjectMapper {
         if ("DATENBASIS_S".equals(key)
             && probe.getRegulationId() == null
         ) {
-            Datenbasis datenbasis = repository.getByIdPlain(
-                Datenbasis.class,
+            Regulation datenbasis = repository.getByIdPlain(
+                Regulation.class,
                 Integer.valueOf(value.toString())
             );
             if (datenbasis == null) {
@@ -2165,11 +2165,11 @@ public class LafObjectMapper {
                         "[" + String.valueOf(from) + "]", String.valueOf(to));
                 }
             }
-            QueryBuilder<Datenbasis> builder =
-                repository.queryBuilder(Datenbasis.class);
+            QueryBuilder<Regulation> builder =
+                repository.queryBuilder(Regulation.class);
             builder.and("regulation", attr);
-            List<Datenbasis> datenbasis =
-                (List<Datenbasis>) repository.filterPlain(builder.getQuery());
+            List<Regulation> datenbasis =
+                (List<Regulation>) repository.filterPlain(builder.getQuery());
             if (datenbasis == null || datenbasis.isEmpty()) {
                 currentErrors.add(
                     new ReportItem(key, attr, StatusCodes.IMP_INVALID_VALUE));
