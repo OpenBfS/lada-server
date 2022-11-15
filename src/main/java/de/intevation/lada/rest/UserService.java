@@ -88,7 +88,7 @@ public class UserService extends LadaService {
         Map<String, Object> response = new HashMap<String, Object>();
         response.put("username", userInfo.getName());
         response.put("roles", userInfo.getAuth().stream()
-                .map(a -> a.getLdapGroup()).collect(Collectors.toSet()));
+                .map(a -> a.getLdapGr()).collect(Collectors.toSet()));
         response.put("servertime", new Date().getTime());
         response.put("messstelleLabor", userInfo.getMessLaborId());
         response.put("netzbetreiber", userInfo.getNetzbetreiber());
@@ -100,7 +100,7 @@ public class UserService extends LadaService {
         response.put("userId", userInfo.getUserId());
         logger.debug(
             userInfo.getName() + " - " +
-            userInfo.getAuth().stream().map(a -> a.getLdapGroup()).collect(Collectors.toSet())
+            userInfo.getAuth().stream().map(a -> a.getLdapGr()).collect(Collectors.toSet())
         );
         return new Response(true, StatusCodes.OK, response);
     }

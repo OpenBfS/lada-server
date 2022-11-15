@@ -72,7 +72,7 @@ public class HeaderAuthorization implements Authorization {
         String[] mst = request.getAttribute("lada.user.roles").toString()
             .replace("[", "").replace("]", "").replace(" ", "").split(",");
         QueryBuilder<Auth> authBuilder = repository.queryBuilder(Auth.class);
-        authBuilder.andIn("ldapGroup", Arrays.asList(mst));
+        authBuilder.andIn("ldapGr", Arrays.asList(mst));
         List<Auth> auth = repository.filterPlain(authBuilder.getQuery());
 
         // The user's ID

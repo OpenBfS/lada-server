@@ -21,30 +21,25 @@ import java.sql.Timestamp;
  *
  */
 @Entity
-@Table(name = "auth", schema = SchemaName.LEGACY_NAME)
+@Table(name = "auth", schema = SchemaName.NAME)
 public class Auth implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    @Column(name = "funktion_id")
-    private Integer funktionId;
+    private Integer authFunctId;
 
-    @Column(name = "labor_mst_id")
-    private String laborMstId;
+    private String apprLabId;
 
-    @Column(name = "ldap_group")
-    private String ldapGroup;
+    private String ldapGr;
 
-    @Column(name = "mst_id")
-    private String mstId;
+    private String measFacilId;
 
-    @Column(name = "netzbetreiber_id")
-    private String netzbetreiberId;
+    private String networkId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public Auth() {
     }
@@ -57,52 +52,52 @@ public class Auth implements Serializable {
         this.id = id;
     }
 
-    public Integer getFunktionId() {
-        return this.funktionId;
+    public Integer getAuthFunctId() {
+        return this.authFunctId;
     }
 
-    public void setFunktionId(Integer funktionId) {
-        this.funktionId = funktionId;
+    public void setAuthFunctId(Integer authFunctId) {
+        this.authFunctId = authFunctId;
     }
 
-    public String getLaborMstId() {
-        return this.laborMstId;
+    public String getApprLabId() {
+        return this.apprLabId;
     }
 
-    public void setLaborMstId(String laborMstId) {
-        this.laborMstId = laborMstId;
+    public void setApprLabId(String apprLabId) {
+        this.apprLabId = apprLabId;
     }
 
-    public String getLdapGroup() {
-        return this.ldapGroup;
+    public String getLdapGr() {
+        return this.ldapGr;
     }
 
-    public void setLdapGroup(String ldapGroup) {
-        this.ldapGroup = ldapGroup;
+    public void setLdapGr(String ldapGr) {
+        this.ldapGr = ldapGr;
     }
 
-    public String getMstId() {
-        return this.mstId;
+    public String getMeasFacilId() {
+        return this.measFacilId;
     }
 
-    public void setMstId(String mstId) {
-        this.mstId = mstId;
+    public void setMeasFacilId(String measFacilId) {
+        this.measFacilId = measFacilId;
     }
 
-    public String getNetzbetreiberId() {
-        return this.netzbetreiberId;
+    public String getNetworkId() {
+        return this.networkId;
     }
 
-    public void setNetzbetreiberId(String netzbetreiberId) {
-        this.netzbetreiberId = netzbetreiberId;
+    public void setNetworkId(String networkId) {
+        this.networkId = networkId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }

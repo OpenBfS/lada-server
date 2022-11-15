@@ -90,10 +90,10 @@ public class UserInfo {
     public List<MessLaborId> getMessLaborId() {
         List<MessLaborId> ret = new ArrayList<MessLaborId>();
         for (Auth a : auth) {
-            if (a.getMstId() != null) {
+            if (a.getMeasFacilId() != null) {
                 MessLaborId id = new MessLaborId();
-                id.setMessstelle(a.getMstId());
-                id.setLabor(a.getLaborMstId());
+                id.setMessstelle(a.getMeasFacilId());
+                id.setLabor(a.getApprLabId());
                 ret.add(id);
             }
         }
@@ -102,12 +102,12 @@ public class UserInfo {
 
     public boolean belongsTo(String messstelle, String labor) {
         for (Auth a : auth) {
-            if (a.getMstId() == null) {
+            if (a.getMeasFacilId() == null) {
                 continue;
             }
-            if (a.getMstId().equals(messstelle)
-                || (a.getLaborMstId() != null
-                    && a.getLaborMstId().equals(labor))) {
+            if (a.getMeasFacilId().equals(messstelle)
+                || (a.getApprLabId() != null
+                    && a.getApprLabId().equals(labor))) {
                 return true;
             }
         }
@@ -120,8 +120,8 @@ public class UserInfo {
     public List<String> getMessstellen() {
         List<String> ret = new ArrayList<String>();
         for (Auth a : auth) {
-            if (a.getMstId() != null) {
-                ret.add(a.getMstId());
+            if (a.getMeasFacilId() != null) {
+                ret.add(a.getMeasFacilId());
             }
         }
         return ret;
@@ -133,8 +133,8 @@ public class UserInfo {
     public List<String> getLaborMessstellen() {
         List<String> ret = new ArrayList<String>();
         for (Auth a : auth) {
-            if (a.getLaborMstId() != null) {
-                ret.add(a.getLaborMstId());
+            if (a.getApprLabId() != null) {
+                ret.add(a.getApprLabId());
             }
         }
         return ret;
@@ -146,8 +146,8 @@ public class UserInfo {
     public Set<String> getNetzbetreiber() {
         Set<String> ret = new HashSet<>();
         for (Auth a : auth) {
-            if (a.getNetzbetreiberId() != null) {
-                ret.add(a.getNetzbetreiberId());
+            if (a.getNetworkId() != null) {
+                ret.add(a.getNetworkId());
             }
         }
         return ret;
@@ -156,8 +156,8 @@ public class UserInfo {
     public List<Integer> getFunktionen() {
         List<Integer> ret = new ArrayList<Integer>();
         for (Auth a : auth) {
-            if (a.getFunktionId() != null) {
-                ret.add(a.getFunktionId());
+            if (a.getAuthFunctId() != null) {
+                ret.add(a.getAuthFunctId());
             }
         }
         return ret;
@@ -169,8 +169,8 @@ public class UserInfo {
     public List<Integer> getFunktionenForMst(String mstId) {
         List<Integer> ret = new ArrayList<Integer>();
         for (Auth a : auth) {
-            if (a.getMstId() != null && a.getMstId().equals(mstId)) {
-                ret.add(a.getFunktionId());
+            if (a.getMeasFacilId() != null && a.getMeasFacilId().equals(mstId)) {
+                ret.add(a.getAuthFunctId());
             }
         }
         return ret;
@@ -182,9 +182,9 @@ public class UserInfo {
     public List<Integer> getFunktionenForNetzbetreiber(String nId) {
         List<Integer> ret = new ArrayList<Integer>();
         for (Auth a : auth) {
-            if (a.getNetzbetreiberId() != null
-                && a.getNetzbetreiberId().equals(nId)) {
-                ret.add(a.getFunktionId());
+            if (a.getNetworkId() != null
+                && a.getNetworkId().equals(nId)) {
+                ret.add(a.getAuthFunctId());
             }
         }
         return ret;
