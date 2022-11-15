@@ -202,7 +202,7 @@ public class LafImportService extends LadaService {
             if (!"".equals(mstId)) {
                 QueryBuilder<ImporterConfig> builder =
                     repository.queryBuilder(ImporterConfig.class);
-                builder.and("mstId", mstId);
+                builder.and("measFacilId", mstId);
                 config =
                     (List<ImporterConfig>) repository.filterPlain(
                         builder.getQuery());
@@ -304,7 +304,7 @@ public class LafImportService extends LadaService {
         if (!"".equals(mstId)) {
             QueryBuilder<ImporterConfig> builder =
                 repository.queryBuilder(ImporterConfig.class);
-            builder.and("mstId", mstId);
+            builder.and("measFacilId", mstId);
             config = (List<ImporterConfig>) repository.filterPlain(
                 builder.getQuery());
         }

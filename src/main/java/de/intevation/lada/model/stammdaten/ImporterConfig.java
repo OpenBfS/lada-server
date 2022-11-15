@@ -15,12 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the importer_config database table.
- *
- */
 @Entity
-@Table(name = "importer_config", schema = SchemaName.LEGACY_NAME)
+@Table(name = "import_conf", schema = SchemaName.NAME)
 public class ImporterConfig implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -31,19 +27,16 @@ public class ImporterConfig implements Serializable {
 
     private String attribute;
 
-    @Column(name = "from_value")
-    private String fromValue;
+    private String fromVal;
 
-    @Column(name = "mst_id")
-    private String mstId;
+    private String measFacilId;
 
     private String name;
 
-    @Column(name = "to_value")
-    private String toValue;
+    private String toVal;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public ImporterConfig() {
     }
@@ -72,20 +65,20 @@ public class ImporterConfig implements Serializable {
         this.attribute = attribute;
     }
 
-    public String getFromValue() {
-        return this.fromValue;
+    public String getFromVal() {
+        return this.fromVal;
     }
 
-    public void setFromValue(String fromValue) {
-        this.fromValue = fromValue;
+    public void setFromVal(String fromVal) {
+        this.fromVal = fromVal;
     }
 
-    public String getMstId() {
-        return this.mstId;
+    public String getMeasFacilId() {
+        return this.measFacilId;
     }
 
-    public void setMstId(String mstId) {
-        this.mstId = mstId;
+    public void setMeasFacilId(String measFacilId) {
+        this.measFacilId = measFacilId;
     }
 
     public String getName() {
@@ -96,20 +89,20 @@ public class ImporterConfig implements Serializable {
         this.name = name;
     }
 
-    public String getToValue() {
-        return this.toValue;
+    public String getToVal() {
+        return this.toVal;
     }
 
-    public void setToValue(String toValue) {
-        this.toValue = toValue;
+    public void setToVal(String toVal) {
+        this.toVal = toVal;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }

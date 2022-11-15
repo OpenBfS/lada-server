@@ -171,12 +171,12 @@ public class LafObjectMapper {
         while (importerConfig.hasNext()) {
             ImporterConfig current = importerConfig.next();
             if ("ZEITBASIS".equals(current.getName().toUpperCase())) {
-                currentZeitbasis = Integer.valueOf(current.getToValue());
+                currentZeitbasis = Integer.valueOf(current.getToVal());
             }
             if ("PROBE".equals(current.getName().toUpperCase())
                 && "MSTID".equals(current.getAttribute().toUpperCase())
                 && "DEFAULT".equals(current.getAction().toUpperCase())) {
-                probe.setMeasFacilId(current.getToValue());
+                probe.setMeasFacilId(current.getToVal());
             }
         }
         if (object.getAttributes().containsKey("MESSSTELLE")) {
@@ -209,8 +209,8 @@ public class LafObjectMapper {
             List<ImporterConfig> cfg =
             getImporterConfigByAttributeUpper("ZEITBASIS");
             String attribute = object.getAttributes().get("ZEITBASIS");
-            if (!cfg.isEmpty() && attribute.equals(cfg.get(0).getFromValue())) {
-                attribute = cfg.get(0).getToValue();
+            if (!cfg.isEmpty() && attribute.equals(cfg.get(0).getFromVal())) {
+                attribute = cfg.get(0).getToVal();
             }
             QueryBuilder<Zeitbasis> builder =
                 repository.queryBuilder(Zeitbasis.class);
@@ -803,11 +803,11 @@ public class LafObjectMapper {
                                 // Cast to integer
                                 setter.invoke(
                                     object,
-                                    Integer.valueOf(current.getToValue()));
+                                    Integer.valueOf(current.getToVal()));
                             } else {
                                 // we handle the default as string.
                                 // Other parameter types are not implemented!
-                                setter.invoke(object, current.getToValue());
+                                setter.invoke(object, current.getToVal());
                             }
                         }
                     }
@@ -867,10 +867,10 @@ public class LafObjectMapper {
                 }
                 try {
                     Object value = getter.invoke(object);
-                    if (value.equals(current.getFromValue())
+                    if (value.equals(current.getFromVal())
                         && setter != null
                     ) {
-                        setter.invoke(object, current.getToValue());
+                        setter.invoke(object, current.getToVal());
                     }
                 } catch (IllegalAccessException
                     | IllegalArgumentException
@@ -927,9 +927,9 @@ public class LafObjectMapper {
                         return;
                     }
                     char from = (char) Integer.parseInt(
-                        current.getFromValue(), 16);
+                        current.getFromVal(), 16);
                     char to = (char) Integer.parseInt(
-                        current.getToValue(), 16);
+                        current.getToVal(), 16);
                     value = value.toString().replaceAll(
                         "[" + String.valueOf(from) + "]", String.valueOf(to));
                     setter.invoke(object, value);
@@ -1231,13 +1231,13 @@ public class LafObjectMapper {
         for (int i = 0; i < cfgs.size(); i++) {
             ImporterConfig cfg = cfgs.get(i);
             if (cfg.getAction().equals("convert")
-                && cfg.getFromValue().equals(attribute)
+                && cfg.getFromVal().equals(attribute)
             ) {
-                attribute = cfg.getToValue();
+                attribute = cfg.getToVal();
             }
             if (cfg.getAction().equals("transform")) {
-                char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
-                char to = (char) Integer.parseInt(cfg.getToValue(), 16);
+                char from = (char) Integer.parseInt(cfg.getFromVal(), 16);
+                char to = (char) Integer.parseInt(cfg.getToVal(), 16);
                 attribute = attribute.replaceAll(
                     "[" + String.valueOf(from) + "]", String.valueOf(to));
             }
@@ -1295,13 +1295,13 @@ public class LafObjectMapper {
                 ImporterConfig cfg = cfgs.get(i);
                 if (cfg != null
                     && cfg.getAction().equals("convert")
-                    && cfg.getFromValue().equals(attribute)
+                    && cfg.getFromVal().equals(attribute)
                 ) {
-                    attribute = cfg.getToValue();
+                    attribute = cfg.getToVal();
                 }
                 if (cfg != null && cfg.getAction().equals("transform")) {
-                    char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
-                    char to = (char) Integer.parseInt(cfg.getToValue(), 16);
+                    char from = (char) Integer.parseInt(cfg.getFromVal(), 16);
+                    char to = (char) Integer.parseInt(cfg.getToVal(), 16);
                     attribute = attribute.replaceAll(
                         "[" + String.valueOf(from) + "]", String.valueOf(to));
                 }
@@ -1356,13 +1356,13 @@ public class LafObjectMapper {
                 ImporterConfig cfg = cfgs.get(i);
                 if (cfg != null
                     && cfg.getAction().equals("convert")
-                    && cfg.getFromValue().equals(attribute)
+                    && cfg.getFromVal().equals(attribute)
                 ) {
-                    attribute = cfg.getToValue();
+                    attribute = cfg.getToVal();
                 }
                 if (cfg != null && cfg.getAction().equals("transform")) {
-                    char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
-                    char to = (char) Integer.parseInt(cfg.getToValue(), 16);
+                    char from = (char) Integer.parseInt(cfg.getFromVal(), 16);
+                    char to = (char) Integer.parseInt(cfg.getToVal(), 16);
                     attribute = attribute.replaceAll(
                         "[" + String.valueOf(from) + "]", String.valueOf(to));
                 }
@@ -2154,13 +2154,13 @@ public class LafObjectMapper {
                 ImporterConfig cfg = cfgs.get(i);
                 if (cfg != null
                     && cfg.getAction().equals("convert")
-                    && cfg.getFromValue().equals(attr)
+                    && cfg.getFromVal().equals(attr)
                 ) {
-                    attr = cfg.getToValue();
+                    attr = cfg.getToVal();
                 }
                 if (cfg != null && cfg.getAction().equals("transform")) {
-                    char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
-                    char to = (char) Integer.parseInt(cfg.getToValue(), 16);
+                    char from = (char) Integer.parseInt(cfg.getFromVal(), 16);
+                    char to = (char) Integer.parseInt(cfg.getToVal(), 16);
                     attr = attr.replaceAll(
                         "[" + String.valueOf(from) + "]", String.valueOf(to));
                 }
@@ -2419,13 +2419,13 @@ public class LafObjectMapper {
                 ImporterConfig cfg = cfgs.get(i);
                 if (cfg != null
                     && cfg.getAction().equals("convert")
-                    && cfg.getFromValue().equals(attr)
+                    && cfg.getFromVal().equals(attr)
                 ) {
-                    attr = cfg.getToValue();
+                    attr = cfg.getToVal();
                 }
                 if (cfg != null && cfg.getAction().equals("transform")) {
-                    char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
-                    char to = (char) Integer.parseInt(cfg.getToValue(), 16);
+                    char from = (char) Integer.parseInt(cfg.getFromVal(), 16);
+                    char to = (char) Integer.parseInt(cfg.getToVal(), 16);
                     attr = attr.replaceAll(
                         "[" + String.valueOf(from) + "]", String.valueOf(to));
                 }
