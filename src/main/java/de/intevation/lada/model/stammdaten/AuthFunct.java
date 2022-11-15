@@ -21,7 +21,7 @@ import javax.persistence.Column;
  */
 @Entity
 @Table(name = "auth_funct", schema = SchemaName.NAME)
-public class AuthFunktion implements Serializable {
+public class AuthFunct implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -32,7 +32,7 @@ public class AuthFunktion implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public AuthFunktion() {
+    public AuthFunct() {
     }
 
     public Integer getId() {
