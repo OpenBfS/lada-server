@@ -23,7 +23,7 @@ import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.stammdaten.DatasetCreator;
-import de.intevation.lada.model.stammdaten.GridColumn;
+import de.intevation.lada.model.stammdaten.GridColMp;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Ort;
@@ -119,8 +119,8 @@ public class UniversalService extends LadaService {
         hierarchy.put("messungId",   Messung.class);
         int resultNdx = hierarchy.size();
         for (GridColumnValue columnValue : gridColumnValues) {
-            GridColumn gridColumn = repository.getByIdPlain(
-                GridColumn.class,
+            GridColMp gridColumn = repository.getByIdPlain(
+                GridColMp.class,
                 Integer.valueOf(columnValue.getGridColumnId())
             );
             //Check if column can be used for authorization

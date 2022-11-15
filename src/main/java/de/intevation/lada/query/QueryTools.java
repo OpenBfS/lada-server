@@ -23,7 +23,7 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
 import de.intevation.lada.model.stammdaten.Filter;
-import de.intevation.lada.model.stammdaten.GridColumn;
+import de.intevation.lada.model.stammdaten.GridColMp;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
 import de.intevation.lada.model.stammdaten.BaseQuery;
 import de.intevation.lada.model.stammdaten.Tag;
@@ -66,8 +66,8 @@ public class QueryTools {
 
         for (GridColumnValue columnValue : customColumns) {
             if (columnValue.getGridColumn() == null) {
-                GridColumn gridColumn = repository.getByIdPlain(
-                    GridColumn.class, columnValue.getGridColumnId());
+                GridColMp gridColumn = repository.getByIdPlain(
+                    GridColMp.class, columnValue.getGridColumnId());
                 columnValue.setGridColumn(gridColumn);
             }
         }

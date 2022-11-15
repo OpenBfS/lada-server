@@ -16,7 +16,7 @@ import org.junit.Test;
 import de.intevation.lada.model.stammdaten.Filter;
 import de.intevation.lada.model.stammdaten.FilterType;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
-import de.intevation.lada.model.stammdaten.GridColumn;
+import de.intevation.lada.model.stammdaten.GridColMp;
 
 /**
  * Unit test for QueryTools.
@@ -29,9 +29,9 @@ public class QueryToolsTest {
     private Filter filter = new Filter();
     private final String filterSql = "test = :param";
 
-    private GridColumn column1 = new GridColumn(),
-        column2 = new GridColumn(),
-        column3 = new GridColumn();
+    private GridColMp column1 = new GridColMp(),
+        column2 = new GridColMp(),
+        column3 = new GridColMp();
 
     private GridColumnValue columnValue1 = new GridColumnValue(),
         columnValue2 = new GridColumnValue(),

@@ -67,7 +67,7 @@ public class GridColumnValue implements Serializable {
     //bi-directional one-to-one association to GridColumn
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "grid_column")
-    private GridColumn gridColumn;
+    private GridColMp gridColumn;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "query_user")
@@ -174,11 +174,11 @@ public class GridColumnValue implements Serializable {
     }
 
     @JsonbTransient
-    public GridColumn getGridColumn() {
+    public GridColMp getGridColumn() {
         return this.gridColumn;
     }
 
-    public void setGridColumn(GridColumn gridColumn) {
+    public void setGridColumn(GridColMp gridColumn) {
         this.gridColumn = gridColumn;
     }
 

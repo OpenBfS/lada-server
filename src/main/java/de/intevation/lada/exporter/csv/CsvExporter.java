@@ -38,7 +38,7 @@ import org.jboss.logging.Logger;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
-import de.intevation.lada.model.stammdaten.GridColumn;
+import de.intevation.lada.model.stammdaten.GridColMp;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.model.stammdaten.StatusStufe;
 import de.intevation.lada.model.stammdaten.StatusWert;
@@ -110,15 +110,15 @@ public class CsvExporter implements Exporter {
         ArrayList<String> keysList = new ArrayList<String>(Arrays.asList(keys));
         int index = 0;
         for (String key : keysList) {
-            QueryBuilder<GridColumn> builder =
-                repository.queryBuilder(GridColumn.class);
+            QueryBuilder<GridColMp> builder =
+                repository.queryBuilder(GridColMp.class);
             builder.and("dataIndex", key);
             builder.and("baseQuery", qId);
-            List<GridColumn> result =
+            List<GridColMp> result =
                 repository.filterPlain(builder.getQuery());
             String name = key;
             if (result.size() > 0) {
-                GridColumn column = result.get(0);
+                GridColMp column = result.get(0);
                 name = column.getGridCol();
             } else {
                 name = subDataColumnNames.containsKey(key)

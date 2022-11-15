@@ -13,7 +13,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.stammdaten.GridColumn;
+import de.intevation.lada.model.stammdaten.GridColMp;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -71,8 +71,8 @@ public class ColumnService extends LadaService {
         @QueryParam("qid") @NotNull Integer qid
     ) {
 
-        QueryBuilder<GridColumn> builder =
-            repository.queryBuilder(GridColumn.class);
+        QueryBuilder<GridColMp> builder =
+            repository.queryBuilder(GridColMp.class);
         builder.and("baseQuery", qid);
 
         return repository.filter(builder.getQuery());

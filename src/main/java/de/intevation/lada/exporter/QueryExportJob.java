@@ -27,7 +27,7 @@ import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.Filter;
 import de.intevation.lada.model.stammdaten.FilterType;
-import de.intevation.lada.model.stammdaten.GridColumn;
+import de.intevation.lada.model.stammdaten.GridColMp;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.model.stammdaten.StatusStufe;
@@ -350,8 +350,8 @@ public abstract class QueryExportJob extends ExportJob {
             columnValue.setFilterIsNull(columnObj.getBoolean("filterIsNull"));
             columnValue.setFilterNegate(columnObj.getBoolean("filterNegate"));
             columnValue.setFilterRegex(columnObj.getBoolean("filterRegex"));
-            GridColumn gridColumn = repository.getByIdPlain(
-                GridColumn.class, columnValue.getGridColumnId());
+            GridColMp gridColumn = repository.getByIdPlain(
+                GridColMp.class, columnValue.getGridColumnId());
 
             columnValue.setGridColumn(gridColumn);
 
@@ -420,8 +420,8 @@ public abstract class QueryExportJob extends ExportJob {
         }
 
         //Get query id
-        GridColumn gridColumn = repository.getByIdPlain(
-            GridColumn.class,
+        GridColMp gridColumn = repository.getByIdPlain(
+            GridColMp.class,
             Integer.valueOf(columns.get(0).getGridColumnId())
         );
         qId = gridColumn.getBaseQuery();

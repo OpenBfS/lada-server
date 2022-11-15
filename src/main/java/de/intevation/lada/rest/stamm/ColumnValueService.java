@@ -25,7 +25,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.stammdaten.GridColumn;
+import de.intevation.lada.model.stammdaten.GridColMp;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.QueryUser;
@@ -115,7 +115,7 @@ public class ColumnValueService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         } else {
             gridColumnValue.setUserId(userInfo.getUserId());
-            GridColumn gridColumn = new GridColumn();
+            GridColMp gridColumn = new GridColMp();
             gridColumn.setId(gridColumnValue.getGridColumnId());
             gridColumnValue.setGridColumn(gridColumn);
 
@@ -145,8 +145,8 @@ public class ColumnValueService extends LadaService {
         if (!userInfo.getUserId().equals(gridColumnValue.getUserId())) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         } else {
-            GridColumn gridColumn = repository.getByIdPlain(
-                GridColumn.class, gridColumnValue.getGridColumnId());
+            GridColMp gridColumn = repository.getByIdPlain(
+                GridColMp.class, gridColumnValue.getGridColumnId());
             QueryUser queryUser = repository.getByIdPlain(
                 QueryUser.class, gridColumnValue.getQueryUserId());
             if (gridColumn == null || queryUser == null) {

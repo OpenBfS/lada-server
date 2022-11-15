@@ -18,8 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "grid_col_mp", schema = SchemaName.NAME)
-public class GridColumn implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class GridColMp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -43,7 +43,7 @@ public class GridColumn implements Serializable {
     @Column(name = "base_query")
     private Integer baseQuery;
 
-    public GridColumn() {
+    public GridColMp() {
     }
 
     public Integer getId() {
