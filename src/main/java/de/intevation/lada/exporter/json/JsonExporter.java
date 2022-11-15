@@ -47,7 +47,7 @@ import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.land.ZusatzWert;
-import de.intevation.lada.model.stammdaten.Betriebsart;
+import de.intevation.lada.model.stammdaten.OprMode;
 import de.intevation.lada.model.stammdaten.Datenbasis;
 import de.intevation.lada.model.stammdaten.Deskriptoren;
 import de.intevation.lada.model.stammdaten.MessEinheit;
@@ -257,8 +257,8 @@ public class JsonExporter implements Exporter {
                 datenbasis == null ? "" : datenbasis.getDatenbasis());
             probe.put("umw", umw == null ? "" : umw.getUmweltBereich());
             if (probe.get("baId").asInt() != 0) {
-                Betriebsart ba = repository.getByIdPlain(
-                    Betriebsart.class,
+                OprMode ba = repository.getByIdPlain(
+                    OprMode.class,
                     probe.get("baId").asInt()
                 );
                 probe.put("messRegime", ba.getName());

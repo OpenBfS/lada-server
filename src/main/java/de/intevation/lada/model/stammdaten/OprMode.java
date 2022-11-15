@@ -16,12 +16,12 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 
 /**
- * The persistent class for the betriebsart database table.
+ * The persistent class for the opr_mode database table.
  *
  */
 @Entity
 @Table(name = "opr_mode", schema = SchemaName.NAME)
-public class Betriebsart implements Serializable {
+public class OprMode implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -32,7 +32,7 @@ public class Betriebsart implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public Betriebsart() {
+    public OprMode() {
     }
 
     public Integer getId() {
