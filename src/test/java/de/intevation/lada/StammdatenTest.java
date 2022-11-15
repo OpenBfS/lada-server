@@ -296,7 +296,7 @@ public class StammdatenTest extends BaseTest {
     @Test
     @InSequence(T9)
     @RunAsClient
-    public final void testDatenbasisAll(@ArquillianResource URL baseUrl) {
+    public final void testRegulationAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
         stammdatenTest.getAll("datenbasis");
     }
@@ -308,7 +308,7 @@ public class StammdatenTest extends BaseTest {
     @Test
     @InSequence(T10)
     @RunAsClient
-    public final void testDatenbasisById(@ArquillianResource URL baseUrl) {
+    public final void testRegulationById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
         stammdatenTest.getById("datenbasis", ID9);
     }
