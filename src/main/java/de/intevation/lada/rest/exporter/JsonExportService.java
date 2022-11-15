@@ -32,6 +32,8 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
 
+import org.jboss.logging.Logger;
+
 /**
  * REST service to export probe objects and the child objects associated with
  * the selected Probe objects.
@@ -49,6 +51,8 @@ import de.intevation.lada.rest.LadaService;
  */
 @Path("data/export")
 public class JsonExportService extends LadaService {
+
+    @Inject private Logger logger;
 
     /**
      * The exporter.
@@ -77,21 +81,39 @@ public class JsonExportService extends LadaService {
     @POST
     @Path("/json")
     public String download(
-        JsonObject proben
+        JsonObject params
     ) {
-        JsonArray array = proben.getJsonArray("proben");
-        List<Integer> probeIds = new ArrayList<Integer>();
         UserInfo userInfo = authorization.getInfo();
-        for (int i = 0; i < array.size(); i++) {
-            Integer probeId = array.getInt(i);
-            probeIds.add(probeId);
+        JsonArray array = params.getJsonArray("proben");
+        InputStream exported = null;
+        if (array != null && array.size() > 0) {
+            List<Integer> probeIds = new ArrayList<Integer>();
+            for (int i = 0; i < array.size(); i++) {
+                Integer probeId = array.getInt(i);
+                probeIds.add(probeId);
+            }
+            exported = exporter.exportProben(
+                                    probeIds,
+                                    new ArrayList<Integer>(),
+                                    StandardCharsets.UTF_8,
+                                    userInfo);
+        } else {
+            array = params.getJsonArray("messungen");
+            if (array != null && array.size() > 0) {
+                List<Integer> messungsIds = new ArrayList<Integer>();
+                for (int i = 0; i < array.size(); i++) {
+                    Integer messungsId = array.getInt(i);
+                    messungsIds.add(messungsId);
+                }
+                exported = exporter.exportMessungen(
+                                    new ArrayList<Integer>(),
+                                    messungsIds,
+                                    StandardCharsets.UTF_8,
+                                    userInfo);
+            } else {
+                logger.debug("nothing selected to export");
+            }
         }
-        InputStream exported =
-            exporter.exportProben(
-                probeIds,
-                new ArrayList<Integer>(),
-                StandardCharsets.UTF_8,
-                userInfo);
         if (exported == null) {
             return new Response(
                 false, StatusCodes.NOT_EXISTING, null).toString();

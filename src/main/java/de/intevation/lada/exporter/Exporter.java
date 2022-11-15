@@ -45,6 +45,26 @@ public interface Exporter {
     }
 
     /**
+     * Export Messungen and associated Proben context.
+     *
+     * Note: This method may not be implemented by the implementing class.
+     * The default implementation returns null.
+     *
+     * @param proben Proben to export
+     * @param messungen Messungen to export
+     * @param encoding Encoding to use
+     * @param userInfo Requesting user info
+     * @return Exported data as InputStream or null if not implemented
+     */
+    default InputStream exportMessungen(
+        List<Integer> proben,
+        List<Integer> messungen,
+        Charset encoding,
+        UserInfo userInfo) {
+            return null;
+    }
+
+    /**
      * Export a query result.
      *
      * Note: This method may not be implemented by the implementing class.
