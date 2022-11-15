@@ -30,7 +30,7 @@ public class NetzbetreiberAuthorizer extends BaseAuthorizer {
         String id;
         Method m;
         try {
-            m = clazz.getMethod("getNetzbetreiberId");
+            m = clazz.getMethod("getNetworkId");
         } catch (NoSuchMethodException | SecurityException e1) {
             return false;
         }
