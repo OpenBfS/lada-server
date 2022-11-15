@@ -26,7 +26,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.GridColMp;
-import de.intevation.lada.model.stammdaten.GridColumnValue;
+import de.intevation.lada.model.stammdaten.GridColConf;
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.QueryUser;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -68,10 +68,10 @@ public class ColumnValueService extends LadaService {
         UserInfo userInfo = authorization.getInfo();
         EntityManager em = repository.entityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<GridColumnValue> criteriaQuery =
-            builder.createQuery(GridColumnValue.class);
-        Root<GridColumnValue> root = criteriaQuery.from(GridColumnValue.class);
-        Join<GridColumnValue, QueryUser> value =
+        CriteriaQuery<GridColConf> criteriaQuery =
+            builder.createQuery(GridColConf.class);
+        Root<GridColConf> root = criteriaQuery.from(GridColConf.class);
+        Join<GridColConf, QueryUser> value =
             root.join("queryUser", javax.persistence.criteria.JoinType.LEFT);
         Join<MessStelle, QueryUser> mess =
             value.join("messStelles", javax.persistence.criteria.JoinType.LEFT);
@@ -88,10 +88,10 @@ public class ColumnValueService extends LadaService {
         }
         filter = builder.and(filter, userFilter);
         criteriaQuery.where(filter).distinct(true);
-        List<GridColumnValue> queries =
+        List<GridColConf> queries =
             repository.filterPlain(criteriaQuery);
 
-        for (GridColumnValue gcv : queries) {
+        for (GridColConf gcv : queries) {
             gcv.setGridColMpId(gcv.getGridColMp().getId());
             gcv.setQueryUserId(gcv.getQueryUser().getId());
         }
@@ -106,7 +106,7 @@ public class ColumnValueService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        GridColumnValue gridColumnValue
+        GridColConf gridColumnValue
     ) {
         UserInfo userInfo = authorization.getInfo();
         if (gridColumnValue.getUserId() != null
@@ -136,7 +136,7 @@ public class ColumnValueService extends LadaService {
     @PUT
     @Path("/{id}")
     public Response update(
-        GridColumnValue gridColumnValue
+        GridColConf gridColumnValue
     ) {
         // TODO: Really authorize with an Authorizer implementation.
         // Currently any object can be hijacked by passing it with
@@ -171,8 +171,8 @@ public class ColumnValueService extends LadaService {
         @PathParam("id") Integer id
     ) {
         UserInfo userInfo = authorization.getInfo();
-        GridColumnValue gridColumnValue = repository.getByIdPlain(
-            GridColumnValue.class, id);
+        GridColConf gridColumnValue = repository.getByIdPlain(
+            GridColConf.class, id);
         if (gridColumnValue.getUserId().equals(userInfo.getUserId())) {
             return repository.delete(gridColumnValue);
         }

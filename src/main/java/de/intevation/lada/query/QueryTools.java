@@ -24,7 +24,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import de.intevation.lada.model.stammdaten.Filter;
 import de.intevation.lada.model.stammdaten.GridColMp;
-import de.intevation.lada.model.stammdaten.GridColumnValue;
+import de.intevation.lada.model.stammdaten.GridColConf;
 import de.intevation.lada.model.stammdaten.BaseQuery;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.data.Repository;
@@ -49,7 +49,7 @@ public class QueryTools {
     // ORDER BY clause
     private String sortSql;
 
-    private List<GridColumnValue> customColumns;
+    private List<GridColConf> customColumns;
 
     private MultivaluedMap<String, Object> filterValues;
 
@@ -60,11 +60,11 @@ public class QueryTools {
      */
     public QueryTools(
         Repository repository,
-        List<GridColumnValue> customColumns
+        List<GridColConf> customColumns
     )  throws IllegalArgumentException {
         this.repository = repository;
 
-        for (GridColumnValue columnValue : customColumns) {
+        for (GridColConf columnValue : customColumns) {
             if (columnValue.getGridColMp() == null) {
                 GridColMp gridColumn = repository.getByIdPlain(
                     GridColMp.class, columnValue.getGridColMpId());
@@ -125,7 +125,7 @@ public class QueryTools {
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
         for (Object row: query.getResultList()) {
             Map<String, Object> set = new HashMap<String, Object>();
-            for (GridColumnValue column: this.customColumns) {
+            for (GridColConf column: this.customColumns) {
                 set.put(
                     column.getGridColMp().getDataIndex(),
                     row instanceof Object[]
@@ -156,12 +156,12 @@ public class QueryTools {
      * @param sql The base query without WHERE and ORDER BY clause.
      * @return The query including WHERE clause.
      */
-    static String prepareSql(List<GridColumnValue> customColumns, String sql) {
+    static String prepareSql(List<GridColConf> customColumns, String sql) {
         String filterSql = "";
         String genericFilterSql = "";
         boolean subquery = false;
 
-        for (GridColumnValue customColumn : customColumns) {
+        for (GridColConf customColumn : customColumns) {
             boolean generic = false;
             if (customColumn.getIsFilterActive()
                 && customColumn.getFilterVal() != null
@@ -287,11 +287,11 @@ public class QueryTools {
      * @param customColumns List<GridColumnValue> with filter and sort settings.
      * @return The "ORDER BY" clause
      */
-    static String prepareSortSql(List<GridColumnValue> customColumns) {
+    static String prepareSortSql(List<GridColConf> customColumns) {
         TreeMap<Integer, String> sortIndMap = new TreeMap<Integer, String>();
         String sortSql = "";
 
-        for (GridColumnValue customColumn : customColumns) {
+        for (GridColConf customColumn : customColumns) {
             if (customColumn.getSort() != null
                 && !customColumn.getSort().isEmpty()) {
                     String sortValue =
@@ -337,7 +337,7 @@ public class QueryTools {
         //Map containing all filters and filter values
         this.filterValues = new MultivaluedHashMap<String, Object>();
 
-        for (GridColumnValue customColumn : this.customColumns) {
+        for (GridColConf customColumn : this.customColumns) {
             if (customColumn.getIsFilterActive()
                 && customColumn.getFilterVal() != null
                 && !customColumn.getFilterVal().isEmpty()

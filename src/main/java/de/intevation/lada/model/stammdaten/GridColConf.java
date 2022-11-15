@@ -21,8 +21,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "grid_col_conf", schema = SchemaName.NAME)
-public class GridColumnValue implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class GridColConf implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -67,7 +67,7 @@ public class GridColumnValue implements Serializable {
     @Transient
     private Integer queryUserId;
 
-    public GridColumnValue() {
+    public GridColConf() {
     }
 
     public Integer getId() {

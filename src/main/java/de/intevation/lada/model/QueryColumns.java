@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.model;
 
-import de.intevation.lada.model.stammdaten.GridColumnValue;
+import de.intevation.lada.model.stammdaten.GridColConf;
 
 import java.util.List;
 
@@ -21,15 +21,15 @@ import javax.persistence.FetchType;
 public class QueryColumns {
 
     @Basic(fetch = FetchType.EAGER)
-    private List<GridColumnValue> columns;
+    private List<GridColConf> columns;
 
     public QueryColumns() { }
 
-    public void setColumns(List<GridColumnValue> columns) {
+    public void setColumns(List<GridColConf> columns) {
         this.columns = columns;
     }
 
-    public List<GridColumnValue> getColumns() {
+    public List<GridColConf> getColumns() {
         return this.columns;
     }
 }

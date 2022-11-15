@@ -28,7 +28,7 @@ import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.Filter;
 import de.intevation.lada.model.stammdaten.FilterType;
 import de.intevation.lada.model.stammdaten.GridColMp;
-import de.intevation.lada.model.stammdaten.GridColumnValue;
+import de.intevation.lada.model.stammdaten.GridColConf;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.model.stammdaten.StatusStufe;
 import de.intevation.lada.model.stammdaten.StatusWert;
@@ -66,7 +66,7 @@ public abstract class QueryExportJob extends ExportJob {
     /**
      * Query result.
      */
-    protected List<GridColumnValue> columns;
+    protected List<GridColConf> columns;
 
     /**
      * Columns to use for export.
@@ -97,7 +97,7 @@ public abstract class QueryExportJob extends ExportJob {
      * Constructor.
      */
     public QueryExportJob() {
-        columns = new ArrayList <GridColumnValue>();
+        columns = new ArrayList <GridColConf>();
         columnsToExport = new ArrayList<String>();
 
         mapPrimaryToSubDataTypes = new HashMap<String, String>();
@@ -335,7 +335,7 @@ public abstract class QueryExportJob extends ExportJob {
 
         exportParameters.getJsonArray("columns").forEach(jsonValue -> {
             JsonObject columnObj = (JsonObject) jsonValue;
-            GridColumnValue columnValue = new GridColumnValue();
+            GridColConf columnValue = new GridColConf();
             columnValue.setGridColMpId(columnObj.getInt("gridColumnId"));
             String sort = columnObj.get("sort") != null
                 && columnObj.get("sort").getValueType() == ValueType.STRING

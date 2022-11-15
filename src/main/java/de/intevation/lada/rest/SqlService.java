@@ -17,7 +17,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.MultivaluedHashMap;
 
 import de.intevation.lada.model.QueryColumns;
-import de.intevation.lada.model.stammdaten.GridColumnValue;
+import de.intevation.lada.model.stammdaten.GridColConf;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -72,7 +72,7 @@ public class SqlService extends LadaService {
     ) {
         // There is nothing to authorize and it is ensured
         // that a user is authenticated.
-        List<GridColumnValue> gridColumnValues = columns.getColumns();
+        List<GridColConf> gridColumnValues = columns.getColumns();
 
         if (gridColumnValues == null
             || gridColumnValues.isEmpty()) {

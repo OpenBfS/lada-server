@@ -24,7 +24,7 @@ import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.GridColMp;
-import de.intevation.lada.model.stammdaten.GridColumnValue;
+import de.intevation.lada.model.stammdaten.GridColConf;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Probenehmer;
@@ -93,7 +93,7 @@ public class UniversalService extends LadaService {
         @QueryParam("limit") Integer limit,
         QueryColumns columns
     ) {
-        List<GridColumnValue> gridColumnValues = columns.getColumns();
+        List<GridColConf> gridColumnValues = columns.getColumns();
 
         String authorizationColumnIndex = null;
         Class<?> authorizationColumnType = null;
@@ -118,7 +118,7 @@ public class UniversalService extends LadaService {
         hierarchy.put("probeId",     Sample.class);
         hierarchy.put("messungId",   Messung.class);
         int resultNdx = hierarchy.size();
-        for (GridColumnValue columnValue : gridColumnValues) {
+        for (GridColConf columnValue : gridColumnValues) {
             GridColMp gridColumn = repository.getByIdPlain(
                 GridColMp.class,
                 Integer.valueOf(columnValue.getGridColMpId())

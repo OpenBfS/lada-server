@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import de.intevation.lada.model.stammdaten.Filter;
 import de.intevation.lada.model.stammdaten.FilterType;
-import de.intevation.lada.model.stammdaten.GridColumnValue;
+import de.intevation.lada.model.stammdaten.GridColConf;
 import de.intevation.lada.model.stammdaten.GridColMp;
 
 /**
@@ -33,12 +33,12 @@ public class QueryToolsTest {
         column2 = new GridColMp(),
         column3 = new GridColMp();
 
-    private GridColumnValue columnValue1 = new GridColumnValue(),
-        columnValue2 = new GridColumnValue(),
-        columnValue3 = new GridColumnValue();
+    private GridColConf columnValue1 = new GridColConf(),
+        columnValue2 = new GridColConf(),
+        columnValue3 = new GridColConf();
     private final String filterValue = "'test'";
 
-    private List<GridColumnValue> columnValues = List.of(
+    private List<GridColConf> columnValues = List.of(
         columnValue1, columnValue2, columnValue3);
 
     /**
