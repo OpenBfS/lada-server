@@ -16,23 +16,23 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 
 /**
- * The persistent class for the datenbasis database table.
+ * The persistent class for the regulation database table.
  *
  */
 @Entity
-@Table(name = "datenbasis", schema = SchemaName.LEGACY_NAME)
+@Table(name = "regulation", schema = SchemaName.NAME)
 public class Datenbasis implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    private String beschreibung;
+    private String descr;
 
-    private String datenbasis;
+    private String regulation;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public Datenbasis() {
     }
@@ -45,28 +45,28 @@ public class Datenbasis implements Serializable {
         this.id = id;
     }
 
-    public String getBeschreibung() {
-        return this.beschreibung;
+    public String getDescr() {
+        return this.descr;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setDescr(String descr) {
+        this.descr = descr;
     }
 
-    public String getDatenbasis() {
-        return this.datenbasis;
+    public String getRegulation() {
+        return this.regulation;
     }
 
-    public void setDatenbasis(String datenbasis) {
-        this.datenbasis = datenbasis;
+    public void setRegulation(String regulation) {
+        this.regulation = regulation;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }

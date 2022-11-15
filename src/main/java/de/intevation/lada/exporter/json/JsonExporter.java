@@ -254,7 +254,7 @@ public class JsonExporter implements Exporter {
             probe.put("probenart",
                 art == null ? "" : art.getProbenart());
             probe.put("datenbasis",
-                datenbasis == null ? "" : datenbasis.getDatenbasis());
+                datenbasis == null ? "" : datenbasis.getRegulation());
             probe.put("umw", umw == null ? "" : umw.getUmweltBereich());
             if (probe.get("baId").asInt() != 0) {
                 OprMode ba = repository.getByIdPlain(

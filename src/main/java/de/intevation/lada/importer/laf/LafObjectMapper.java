@@ -2167,7 +2167,7 @@ public class LafObjectMapper {
             }
             QueryBuilder<Datenbasis> builder =
                 repository.queryBuilder(Datenbasis.class);
-            builder.and("datenbasis", attr);
+            builder.and("regulation", attr);
             List<Datenbasis> datenbasis =
                 (List<Datenbasis>) repository.filterPlain(builder.getQuery());
             if (datenbasis == null || datenbasis.isEmpty()) {
