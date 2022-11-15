@@ -13,7 +13,7 @@ import java.util.List;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
-import de.intevation.lada.model.stammdaten.AuthLstUmw;
+import de.intevation.lada.model.stammdaten.AuthCoordOfcEnvMediumMp;
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -173,10 +173,10 @@ public class MessungAuthorizer extends BaseAuthorizer {
                 || stufe == 2
                 || stufe == 3)
         ) {
-            QueryBuilder<AuthLstUmw> lstFilter =
-                repository.queryBuilder(AuthLstUmw.class);
+            QueryBuilder<AuthCoordOfcEnvMediumMp> lstFilter =
+                repository.queryBuilder(AuthCoordOfcEnvMediumMp.class);
             lstFilter.or("mstId", userInfo.getMessstellen());
-            List<AuthLstUmw> lsts =
+            List<AuthCoordOfcEnvMediumMp> lsts =
                 repository.filterPlain(lstFilter.getQuery());
             for (int i = 0; i < lsts.size(); i++) {
                 if (lsts.get(i).getEnvMediumId().equals(probe.getEnvMediumId())) {

@@ -21,7 +21,7 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name = "auth_coord_ofc_env_medium_mp", schema = SchemaName.NAME)
-public class AuthLstUmw implements Serializable {
+public class AuthCoordOfcEnvMediumMp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,7 +34,7 @@ public class AuthLstUmw implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public AuthLstUmw() {
+    public AuthCoordOfcEnvMediumMp() {
     }
 
     public Integer getId() {
