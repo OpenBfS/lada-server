@@ -10,7 +10,7 @@ package de.intevation.lada.importer;
 import java.util.List;
 import java.util.Map;
 
-import de.intevation.lada.model.stammdaten.ImporterConfig;
+import de.intevation.lada.model.stammdaten.ImportConf;
 import de.intevation.lada.util.auth.UserInfo;
 
 /**
@@ -51,5 +51,5 @@ public interface Importer {
     void doImport(
         String content,
         UserInfo userInfo,
-        List<ImporterConfig> config);
+        List<ImportConf> config);
 }

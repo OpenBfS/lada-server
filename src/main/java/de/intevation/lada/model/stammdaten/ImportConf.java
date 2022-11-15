@@ -16,8 +16,8 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "import_conf", schema = SchemaName.NAME)
-public class ImporterConfig implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class ImportConf implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -38,7 +38,7 @@ public class ImporterConfig implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public ImporterConfig() {
+    public ImportConf() {
     }
 
     public Integer getId() {

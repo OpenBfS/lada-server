@@ -29,7 +29,7 @@ import javax.json.JsonValue;
 import de.intevation.lada.importer.ImportConfig;
 import de.intevation.lada.importer.ImportFormat;
 import de.intevation.lada.importer.Importer;
-import de.intevation.lada.model.stammdaten.ImporterConfig;
+import de.intevation.lada.model.stammdaten.ImportConf;
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.data.Job;
@@ -155,13 +155,13 @@ public class LafImportJob extends Job {
         String mstId = this.mst.getId();
         files.forEach((fileName, content) -> {
             logLAFFile(mstId, content, charset);
-            List<ImporterConfig> config = new ArrayList<ImporterConfig>();
+            List<ImportConf> config = new ArrayList<ImportConf>();
             if (!"".equals(mstId)) {
-                QueryBuilder<ImporterConfig> builder =
-                    repository.queryBuilder(ImporterConfig.class);
+                QueryBuilder<ImportConf> builder =
+                    repository.queryBuilder(ImportConf.class);
                 builder.and("measFacilId", mstId);
                 config =
-                    (List<ImporterConfig>) repository.filterPlain(
+                    (List<ImportConf>) repository.filterPlain(
                         builder.getQuery());
             }
             importer.doImport(content, userInfo, config);

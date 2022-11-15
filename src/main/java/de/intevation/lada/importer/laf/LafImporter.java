@@ -30,7 +30,7 @@ import de.intevation.lada.importer.ImportConfig;
 import de.intevation.lada.importer.ImportFormat;
 import de.intevation.lada.importer.Importer;
 import de.intevation.lada.importer.ReportItem;
-import de.intevation.lada.model.stammdaten.ImporterConfig;
+import de.intevation.lada.model.stammdaten.ImportConf;
 import de.intevation.lada.util.auth.UserInfo;
 
 /**
@@ -64,7 +64,7 @@ public class LafImporter implements Importer {
     public void doImport(
         String lafString,
         UserInfo userInfo,
-        List<ImporterConfig> config
+        List<ImportConf> config
     ) {
         // Append newline to avoid parser errors.
         // Every line can be the last line, so it is easier to append a

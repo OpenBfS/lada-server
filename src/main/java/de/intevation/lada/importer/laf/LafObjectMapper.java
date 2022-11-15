@@ -46,7 +46,7 @@ import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.stammdaten.Regulation;
 import de.intevation.lada.model.stammdaten.DatasetCreator;
-import de.intevation.lada.model.stammdaten.ImporterConfig;
+import de.intevation.lada.model.stammdaten.ImportConf;
 import de.intevation.lada.model.stammdaten.KoordinatenArt;
 import de.intevation.lada.model.stammdaten.KtaGruppe;
 import de.intevation.lada.model.stammdaten.MessEinheit;
@@ -144,7 +144,7 @@ public class LafObjectMapper {
 
     private UserInfo userInfo;
 
-    private List<ImporterConfig> config;
+    private List<ImportConf> config;
 
     /**
      * Map the raw data to database objects.
@@ -167,9 +167,9 @@ public class LafObjectMapper {
         Sample probe = new Sample();
         String netzbetreiberId = null;
 
-        Iterator<ImporterConfig> importerConfig = config.iterator();
+        Iterator<ImportConf> importerConfig = config.iterator();
         while (importerConfig.hasNext()) {
-            ImporterConfig current = importerConfig.next();
+            ImportConf current = importerConfig.next();
             if ("ZEITBASIS".equals(current.getName().toUpperCase())) {
                 currentZeitbasis = Integer.valueOf(current.getToVal());
             }
@@ -206,7 +206,7 @@ public class LafObjectMapper {
         }
 
         if (object.getAttributes().containsKey("ZEITBASIS")) {
-            List<ImporterConfig> cfg =
+            List<ImportConf> cfg =
             getImporterConfigByAttributeUpper("ZEITBASIS");
             String attribute = object.getAttributes().get("ZEITBASIS");
             if (!cfg.isEmpty() && attribute.equals(cfg.get(0).getFromVal())) {
@@ -764,9 +764,9 @@ public class LafObjectMapper {
     }
 
     private <T> void doDefaults(Object object, Class<T> clazz, String table) {
-        Iterator<ImporterConfig> i = config.iterator();
+        Iterator<ImportConf> i = config.iterator();
         while (i.hasNext()) {
-            ImporterConfig current = i.next();
+            ImportConf current = i.next();
             if (table.equals(current.getName())
                 && "default".equals(current.getAction())
             ) {
@@ -822,13 +822,13 @@ public class LafObjectMapper {
         }
     }
 
-    private List<ImporterConfig> getImporterConfigByAttributeUpper(
+    private List<ImportConf> getImporterConfigByAttributeUpper(
         String attribute
     ) {
-        Iterator<ImporterConfig> i = config.iterator();
-        List<ImporterConfig> result = new ArrayList<ImporterConfig>();
+        Iterator<ImportConf> i = config.iterator();
+        List<ImportConf> result = new ArrayList<ImportConf>();
         while (i.hasNext()) {
-            ImporterConfig current = i.next();
+            ImportConf current = i.next();
             if (current.getAttribute().toUpperCase().equals(attribute)) {
                 result.add(current);
             }
@@ -837,9 +837,9 @@ public class LafObjectMapper {
     }
 
     private <T> void doConverts(Object object, Class<T> clazz, String table) {
-        Iterator<ImporterConfig> i = config.iterator();
+        Iterator<ImportConf> i = config.iterator();
         while (i.hasNext()) {
-            ImporterConfig current = i.next();
+            ImportConf current = i.next();
             if (table.equals(current.getName())
                 && "convert".equals(current.getAction())
             ) {
@@ -888,9 +888,9 @@ public class LafObjectMapper {
         Class<T> clazz,
         String table
     ) {
-        Iterator<ImporterConfig> i = config.iterator();
+        Iterator<ImportConf> i = config.iterator();
         while (i.hasNext()) {
-            ImporterConfig current = i.next();
+            ImportConf current = i.next();
             if (table.equals(current.getName())
                 && "transform".equals(current.getAction())
             ) {
@@ -1220,7 +1220,7 @@ public class LafObjectMapper {
             zusatzwert.setKleinerAls("<");
         }
         zusatzwert.setMesswertPzs(Double.valueOf(wert.replaceAll(",", ".")));
-        List<ImporterConfig> cfgs =
+        List<ImportConf> cfgs =
             getImporterConfigByAttributeUpper("ZUSATZWERT");
         String attribute = attributes.get("PZS");
         boolean isId = false;
@@ -1229,7 +1229,7 @@ public class LafObjectMapper {
             isId = true;
         }
         for (int i = 0; i < cfgs.size(); i++) {
-            ImporterConfig cfg = cfgs.get(i);
+            ImportConf cfg = cfgs.get(i);
             if (cfg.getAction().equals("convert")
                 && cfg.getFromVal().equals(attribute)
             ) {
@@ -1288,11 +1288,11 @@ public class LafObjectMapper {
             messwert.setMessgroesseId(
                 Integer.valueOf(attributes.get("MESSGROESSE_ID")));
         } else if (attributes.containsKey("MESSGROESSE")) {
-            List<ImporterConfig> cfgs =
+            List<ImportConf> cfgs =
                 getImporterConfigByAttributeUpper("MESSGROESSE");
             String attribute = attributes.get("MESSGROESSE");
             for (int i = 0; i < cfgs.size(); i++) {
-                ImporterConfig cfg = cfgs.get(i);
+                ImportConf cfg = cfgs.get(i);
                 if (cfg != null
                     && cfg.getAction().equals("convert")
                     && cfg.getFromVal().equals(attribute)
@@ -1349,11 +1349,11 @@ public class LafObjectMapper {
             messwert.setMehId(
                 Integer.valueOf(attributes.get("MESSEINHEIT_ID")));
         } else if (attributes.containsKey("MESSEINHEIT")) {
-            List<ImporterConfig> cfgs =
+            List<ImportConf> cfgs =
                 getImporterConfigByAttributeUpper("MESSEINHEIT");
             String attribute = attributes.get("MESSEINHEIT");
             for (int i = 0; i < cfgs.size(); i++) {
-                ImporterConfig cfg = cfgs.get(i);
+                ImportConf cfg = cfgs.get(i);
                 if (cfg != null
                     && cfg.getAction().equals("convert")
                     && cfg.getFromVal().equals(attribute)
@@ -2147,11 +2147,11 @@ public class LafObjectMapper {
         if ("DATENBASIS".equals(key)
             && probe.getRegulationId() == null
         ) {
-            List<ImporterConfig> cfgs =
+            List<ImportConf> cfgs =
                 getImporterConfigByAttributeUpper("DATENBASIS");
             String attr = value.toString();
             for (int i = 0; i < cfgs.size(); i++) {
-                ImporterConfig cfg = cfgs.get(i);
+                ImportConf cfg = cfgs.get(i);
                 if (cfg != null
                     && cfg.getAction().equals("convert")
                     && cfg.getFromVal().equals(attr)
@@ -2412,11 +2412,11 @@ public class LafObjectMapper {
         }
 
         if ("PROBENART".equals(key) && value != null) {
-            List<ImporterConfig> cfgs =
+            List<ImportConf> cfgs =
                 getImporterConfigByAttributeUpper("PROBENART");
             String attr = value.toString();
             for (int i = 0; i < cfgs.size(); i++) {
-                ImporterConfig cfg = cfgs.get(i);
+                ImportConf cfg = cfgs.get(i);
                 if (cfg != null
                     && cfg.getAction().equals("convert")
                     && cfg.getFromVal().equals(attr)
@@ -2548,14 +2548,14 @@ public class LafObjectMapper {
     /**
      * @return the config
      */
-    public List<ImporterConfig> getConfig() {
+    public List<ImportConf> getConfig() {
         return config;
     }
 
     /**
      * @param config the config to set
      */
-    public void setConfig(List<ImporterConfig> config) {
+    public void setConfig(List<ImportConf> config) {
         this.config = config;
     }
 }
