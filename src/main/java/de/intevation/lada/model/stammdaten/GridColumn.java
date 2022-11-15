@@ -17,14 +17,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-
-
-/**
- * The persistent class for the grid_column database table.
- *
- */
 @Entity
-@Table(name = "grid_column", schema = SchemaName.LEGACY_NAME)
+@Table(name = "grid_col_mp", schema = SchemaName.NAME)
 public class GridColumn implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -42,7 +36,7 @@ public class GridColumn implements Serializable {
     @JoinColumn(name = "filter")
     private Filter filter;
 
-    private String name;
+    private String gridCol;
 
     private Integer position;
 
@@ -84,12 +78,12 @@ public class GridColumn implements Serializable {
         this.filter = filter;
     }
 
-    public String getName() {
-        return this.name;
+    public String getGridCol() {
+        return this.gridCol;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setGridCol(String gridCol) {
+        this.gridCol = gridCol;
     }
 
     public Integer getPosition() {

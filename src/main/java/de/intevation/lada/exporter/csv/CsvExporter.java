@@ -119,7 +119,7 @@ public class CsvExporter implements Exporter {
             String name = key;
             if (result.size() > 0) {
                 GridColumn column = result.get(0);
-                name = column.getName();
+                name = column.getGridCol();
             } else {
                 name = subDataColumnNames.containsKey(key)
                     ? subDataColumnNames.getString(key)
