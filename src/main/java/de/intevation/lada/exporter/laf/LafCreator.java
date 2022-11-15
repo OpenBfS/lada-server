@@ -30,7 +30,7 @@ import de.intevation.lada.model.stammdaten.MessEinheit;
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.model.stammdaten.Ort;
-import de.intevation.lada.model.stammdaten.GemeindeUntergliederung;
+import de.intevation.lada.model.stammdaten.MunicDiv;
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
 import de.intevation.lada.model.stammdaten.Probenart;
 import de.intevation.lada.model.stammdaten.DatasetCreator;
@@ -374,8 +374,8 @@ implements Creator {
         }
 
         if (sOrte.get(0).getGemUntId() != null) {
-            GemeindeUntergliederung gu = repository.getByIdPlain(
-                GemeindeUntergliederung.class, sOrte.get(0).getGemUntId());
+            MunicDiv gu = repository.getByIdPlain(
+                MunicDiv.class, sOrte.get(0).getGemUntId());
             laf += lafLine(typePrefix + "ORTS_ZUSATZKENNZAHL",
                 gu.getSiteId(), CN);
         }

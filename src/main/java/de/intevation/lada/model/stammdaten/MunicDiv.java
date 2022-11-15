@@ -19,8 +19,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "munic_div", schema = SchemaName.NAME)
-public class GemeindeUntergliederung implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class MunicDiv implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -41,7 +41,7 @@ public class GemeindeUntergliederung implements Serializable {
     @Transient
     private boolean readonly;
 
-    public GemeindeUntergliederung() {
+    public MunicDiv() {
     }
 
     public Integer getId() {

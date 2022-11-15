@@ -17,7 +17,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.stammdaten.GemeindeUntergliederung;
+import de.intevation.lada.model.stammdaten.MunicDiv;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -78,9 +78,9 @@ public class GemeindeUntergliederungService extends LadaService {
     @GET
     @Path("/")
     public Response get() {
-        List<GemeindeUntergliederung> gemUntergliederung =
-            repository.getAllPlain(GemeindeUntergliederung.class);
-        for (GemeindeUntergliederung gu: gemUntergliederung) {
+        List<MunicDiv> gemUntergliederung =
+            repository.getAllPlain(MunicDiv.class);
+        for (MunicDiv gu: gemUntergliederung) {
             // TODO Do not iterate all the objects if its not necessary
             gu.setReadonly(true);
                 // !authorization.isAuthorized(
@@ -102,13 +102,13 @@ public class GemeindeUntergliederungService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        GemeindeUntergliederung gu = repository.getByIdPlain(
-            GemeindeUntergliederung.class, id);
+        MunicDiv gu = repository.getByIdPlain(
+            MunicDiv.class, id);
         gu.setReadonly(
             !authorization.isAuthorized(
                 gu,
                 RequestMethod.POST,
-                GemeindeUntergliederung.class
+                MunicDiv.class
             )
         );
         return new Response(true, StatusCodes.OK, gu);
@@ -117,20 +117,20 @@ public class GemeindeUntergliederungService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        GemeindeUntergliederung gemUntergliederung
+        MunicDiv gemUntergliederung
     ) {
         if (!authorization.isAuthorized(
             gemUntergliederung,
             RequestMethod.POST,
-            GemeindeUntergliederung.class)
+            MunicDiv.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, gemUntergliederung);
         }
-        QueryBuilder<GemeindeUntergliederung> builder =
-            repository.queryBuilder(GemeindeUntergliederung.class);
+        QueryBuilder<MunicDiv> builder =
+            repository.queryBuilder(MunicDiv.class);
         builder.and("ozkId", gemUntergliederung.getSiteId());
         builder.and("netzbetreiberId", gemUntergliederung.getNetworkId());
-        List<GemeindeUntergliederung> gemUntergliederungn =
+        List<MunicDiv> gemUntergliederungn =
             repository.filterPlain(builder.getQuery());
         if (gemUntergliederungn.isEmpty()) {
             return repository.create(gemUntergliederung);
@@ -142,20 +142,20 @@ public class GemeindeUntergliederungService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        GemeindeUntergliederung gemUntergliederung
+        MunicDiv gemUntergliederung
     ) {
         if (!authorization.isAuthorized(
             gemUntergliederung,
             RequestMethod.PUT,
-            GemeindeUntergliederung.class)
+            MunicDiv.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, gemUntergliederung);
         }
-        QueryBuilder<GemeindeUntergliederung> builder =
-            repository.queryBuilder(GemeindeUntergliederung.class);
+        QueryBuilder<MunicDiv> builder =
+            repository.queryBuilder(MunicDiv.class);
         builder.and("ozkId", gemUntergliederung.getSiteId());
         builder.and("netzbetreiberId", gemUntergliederung.getNetworkId());
-        List<GemeindeUntergliederung> gemUntergliederungn =
+        List<MunicDiv> gemUntergliederungn =
             repository.filterPlain(builder.getQuery());
         if (!gemUntergliederungn.isEmpty()
             && !gemUntergliederungn.get(0).getId().equals(gemUntergliederung.getId())
@@ -170,13 +170,13 @@ public class GemeindeUntergliederungService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        GemeindeUntergliederung gemUntergliederung = repository.getByIdPlain(
-            GemeindeUntergliederung.class, id);
+        MunicDiv gemUntergliederung = repository.getByIdPlain(
+            MunicDiv.class, id);
         if (gemUntergliederung == null
             || !authorization.isAuthorized(
                 gemUntergliederung,
                 RequestMethod.DELETE,
-                GemeindeUntergliederung.class
+                MunicDiv.class
             )
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
