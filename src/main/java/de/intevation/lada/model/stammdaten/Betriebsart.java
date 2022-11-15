@@ -20,7 +20,7 @@ import javax.persistence.Column;
  *
  */
 @Entity
-@Table(name = "betriebsart", schema = SchemaName.LEGACY_NAME)
+@Table(name = "opr_mode", schema = SchemaName.NAME)
 public class Betriebsart implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -29,8 +29,8 @@ public class Betriebsart implements Serializable {
 
     private String name;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public Betriebsart() {
     }
@@ -51,12 +51,12 @@ public class Betriebsart implements Serializable {
         this.name = name;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }
