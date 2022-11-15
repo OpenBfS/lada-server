@@ -13,7 +13,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.stammdaten.DeskriptorUmwelt;
+import de.intevation.lada.model.stammdaten.EnvDescripEnvMediumMp;
 import de.intevation.lada.model.stammdaten.EnvDescrip;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -113,12 +113,12 @@ public class DeskriptorToUmwelt implements Rule {
             return violation;
         }
 
-        QueryBuilder<DeskriptorUmwelt> builder =
-            repository.queryBuilder(DeskriptorUmwelt.class);
+        QueryBuilder<EnvDescripEnvMediumMp> builder =
+            repository.queryBuilder(EnvDescripEnvMediumMp.class);
 
         for (int i = 0; i < media.size(); i++) {
             String field = "s" + (i > 9 ? i : "0" + i);
-            QueryBuilder<DeskriptorUmwelt> tmp = builder.getEmptyBuilder();
+            QueryBuilder<EnvDescripEnvMediumMp> tmp = builder.getEmptyBuilder();
             if (media.get(i) != -1) {
                 tmp.and(field, media.get(i));
                 tmp.or(field, null);
@@ -132,8 +132,8 @@ public class DeskriptorToUmwelt implements Rule {
         Response response =
         repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
-        List<DeskriptorUmwelt> data =
-            (List<DeskriptorUmwelt>) response.getData();
+        List<EnvDescripEnvMediumMp> data =
+            (List<EnvDescripEnvMediumMp>) response.getData();
         if (data.isEmpty()) {
             Violation violation = new Violation();
             violation.addWarning(
@@ -344,7 +344,7 @@ public class DeskriptorToUmwelt implements Rule {
         }
     }
 
-    private boolean isUnique(List<DeskriptorUmwelt> list) {
+    private boolean isUnique(List<EnvDescripEnvMediumMp> list) {
         if (list.isEmpty()) {
             return false;
         }

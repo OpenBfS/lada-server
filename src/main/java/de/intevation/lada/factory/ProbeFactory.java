@@ -30,7 +30,7 @@ import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.ZusatzWert;
-import de.intevation.lada.model.stammdaten.DeskriptorUmwelt;
+import de.intevation.lada.model.stammdaten.EnvDescripEnvMediumMp;
 import de.intevation.lada.model.stammdaten.EnvDescrip;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
@@ -678,8 +678,8 @@ public class ProbeFactory {
      * @return The umwelt id or an empty string.
      */
     private String getUmwelt(List<Integer> media, boolean isZebs) {
-        QueryBuilder<DeskriptorUmwelt> builder =
-            repository.queryBuilder(DeskriptorUmwelt.class);
+        QueryBuilder<EnvDescripEnvMediumMp> builder =
+            repository.queryBuilder(EnvDescripEnvMediumMp.class);
 
         if (media.size() == 0) {
             return null;
@@ -688,7 +688,7 @@ public class ProbeFactory {
         int size = 1;
         for (int i = 0; i < media.size(); i++) {
             String field = "s" + (i > POS9 ? i : "0" + i);
-            QueryBuilder<DeskriptorUmwelt> tmp = builder.getEmptyBuilder();
+            QueryBuilder<EnvDescripEnvMediumMp> tmp = builder.getEmptyBuilder();
             if (media.get(i) != -1) {
                 tmp.and(field, media.get(i));
                 tmp.or(field, null);
@@ -700,8 +700,8 @@ public class ProbeFactory {
         Response response =
             repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
-        List<DeskriptorUmwelt> data =
-            (List<DeskriptorUmwelt>) response.getData();
+        List<EnvDescripEnvMediumMp> data =
+            (List<EnvDescripEnvMediumMp>) response.getData();
         if (data.isEmpty()) {
             return null;
         }
@@ -815,7 +815,7 @@ public class ProbeFactory {
      *
      * @return true if the objects have the same umwelt id else false.
      */
-    private boolean isUnique(List<DeskriptorUmwelt> list) {
+    private boolean isUnique(List<EnvDescripEnvMediumMp> list) {
         if (list.isEmpty()) {
             return false;
         }
@@ -872,14 +872,14 @@ public class ProbeFactory {
     private String getInitialMediaDesk(String umwId) {
         logger.debug("getInitialMediaDesk - umw_id: " + umwId);
         String mediaDesk = "D:";
-        QueryBuilder<DeskriptorUmwelt> builder =
-            repository.queryBuilder(DeskriptorUmwelt.class);
+        QueryBuilder<EnvDescripEnvMediumMp> builder =
+            repository.queryBuilder(EnvDescripEnvMediumMp.class);
         builder.and("envMediumId",umwId);
         Response response =
             repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
-        List<DeskriptorUmwelt> data =
-            (List<DeskriptorUmwelt>) response.getData();
+        List<EnvDescripEnvMediumMp> data =
+            (List<EnvDescripEnvMediumMp>) response.getData();
         if (data.isEmpty()) {
             logger.debug("getInitialMediaDesk - media_desk : D: 00 00 00 00 00 00 00 00 00 00 00 00");
             return "D: 00 00 00 00 00 00 00 00 00 00 00 00";

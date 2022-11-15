@@ -21,7 +21,7 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name = "env_descrip_env_medium_mp", schema = SchemaName.NAME)
-public class DeskriptorUmwelt implements Serializable {
+public class EnvDescripEnvMediumMp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -56,7 +56,7 @@ public class DeskriptorUmwelt implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public DeskriptorUmwelt() {
+    public EnvDescripEnvMediumMp() {
     }
 
     public Integer getId() {
