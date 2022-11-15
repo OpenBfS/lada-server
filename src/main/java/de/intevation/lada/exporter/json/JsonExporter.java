@@ -49,7 +49,7 @@ import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.stammdaten.OprMode;
 import de.intevation.lada.model.stammdaten.Regulation;
-import de.intevation.lada.model.stammdaten.Deskriptoren;
+import de.intevation.lada.model.stammdaten.EnvDescrip;
 import de.intevation.lada.model.stammdaten.MessEinheit;
 import de.intevation.lada.model.stammdaten.MessMethode;
 import de.intevation.lada.model.stammdaten.MessStelle;
@@ -409,8 +409,8 @@ public class JsonExporter implements Exporter {
             return;
         }
 
-        QueryBuilder<Deskriptoren> builder =
-            repository.queryBuilder(Deskriptoren.class);
+        QueryBuilder<EnvDescrip> builder =
+            repository.queryBuilder(EnvDescrip.class);
         int vorgaenger = 0;
         ObjectNode node = new ObjectNode(JsonNodeFactory.instance);
         boolean isZebs = Integer.parseInt(parts[1]) == 1;
@@ -424,7 +424,7 @@ public class JsonExporter implements Exporter {
                 if (i != 0) {
                     builder.and("predId", vorgaenger);
                 }
-                List<Deskriptoren> found =
+                List<EnvDescrip> found =
                     repository.filterPlain(builder.getQuery());
                 if (!found.isEmpty()) {
                     beschreibung = found.get(0).getName();

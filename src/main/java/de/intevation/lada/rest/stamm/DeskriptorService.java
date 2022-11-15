@@ -16,7 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.stammdaten.Deskriptoren;
+import de.intevation.lada.model.stammdaten.EnvDescrip;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
@@ -76,8 +76,8 @@ public class DeskriptorService extends LadaService {
         @QueryParam("layer") @NotNull Integer layer,
         @QueryParam("parents") List<Integer> parents
     ) {
-        QueryBuilder<Deskriptoren> builder =
-            repository.queryBuilder(Deskriptoren.class);
+        QueryBuilder<EnvDescrip> builder =
+            repository.queryBuilder(EnvDescrip.class);
         builder.and("levVal", 0).not();
         builder.and("lev", layer);
         if (parents != null && !parents.isEmpty()) {
@@ -97,6 +97,6 @@ public class DeskriptorService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        return repository.getById(Deskriptoren.class, id);
+        return repository.getById(EnvDescrip.class, id);
     }
 }

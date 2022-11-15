@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.stammdaten.DatasetCreator;
-import de.intevation.lada.model.stammdaten.Deskriptoren;
+import de.intevation.lada.model.stammdaten.EnvDescrip;
 import de.intevation.lada.model.stammdaten.KoordinatenArt;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Ort;
@@ -595,7 +595,7 @@ public class StammdatenTest extends BaseTest {
         protocol.setType("insert deskriptor");
         protocol.addInfo("database", "Insert deskriptor into database");
         testProtocol.add(protocol);
-        Deskriptoren deskriptor = em.find(Deskriptoren.class, ID1000);
+        EnvDescrip deskriptor = em.find(EnvDescrip.class, ID1000);
         Assert.assertNotNull(deskriptor);
         protocol.setPassed(true);
     }

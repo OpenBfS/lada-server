@@ -14,7 +14,7 @@ import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.stammdaten.DeskriptorUmwelt;
-import de.intevation.lada.model.stammdaten.Deskriptoren;
+import de.intevation.lada.model.stammdaten.EnvDescrip;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -70,8 +70,8 @@ public class DeskriptorToUmwelt implements Rule {
             } else {
                 parent = ndParent;
             }
-            QueryBuilder<Deskriptoren> builder = repository.queryBuilder(
-                 Deskriptoren.class);
+            QueryBuilder<EnvDescrip> builder = repository.queryBuilder(
+                 EnvDescrip.class);
             if (parent != null) {
                 builder.and("predId", parent);
             }
@@ -80,7 +80,7 @@ public class DeskriptorToUmwelt implements Rule {
             Response response = repository.filter(
                 builder.getQuery());
             @SuppressWarnings("unchecked")
-            List<Deskriptoren> data = (List<Deskriptoren>) response.getData();
+            List<EnvDescrip> data = (List<EnvDescrip>) response.getData();
             if (data.isEmpty()) {
                 Violation violation = new Violation();
                 violation.addWarning("mediaDesk", StatusCodes.VAL_DESK);
