@@ -28,7 +28,7 @@ public class Filter implements Serializable {
 
     private String name;
 
-    private String parameter;
+    private String param;
 
     private String sql;
 
@@ -56,12 +56,12 @@ public class Filter implements Serializable {
         this.name = name;
     }
 
-    public String getParameter() {
-        return this.parameter;
+    public String getParam() {
+        return this.param;
     }
 
-    public void setParameter(String parameter) {
-        this.parameter = parameter;
+    public void setParam(String param) {
+        this.param = param;
     }
 
     public String getSql() {

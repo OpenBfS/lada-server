@@ -171,7 +171,7 @@ public class QueryTools {
                 Filter filter = customColumn.getGridColumn().getFilter();
                 String filterValue = customColumn.getFilterValue();
                 String currentFilterString = filter.getSql();
-                String currentFilterParam = filter.getParameter();
+                String currentFilterParam = filter.getParam();
                 String filterType = filter.getFilterType().getType();
                 if (GENERICTEXT_FILTER_TYPE.equals(filterType)
                     || GENERICID_FILTER_TYPE.equals(filterType)
@@ -180,8 +180,8 @@ public class QueryTools {
                     generic = true;
                 }
                 if (GENERICTEXT_FILTER_TYPE.equals(filterType)) {
-                    String genTextParam = ":" + filter.getParameter() + "Param";
-                    String genTextValue = filter.getParameter() + "Value";
+                    String genTextParam = ":" + filter.getParam() + "Param";
+                    String genTextValue = filter.getParam() + "Value";
                     currentFilterString =
                         currentFilterString.replace(
                             genTextParam,
@@ -195,7 +195,7 @@ public class QueryTools {
                     String[] tagIds = filterValue.split(",");
                     int tagNumber = tagIds.length;
                     String paramlist = "";
-                    String param = filter.getParameter();
+                    String param = filter.getParam();
                     String tagFilterSql = filter.getSql();
                     for (int i = 0; i < tagNumber; i++) {
                         if (i != tagNumber - 1) {
@@ -206,7 +206,7 @@ public class QueryTools {
                     }
                     tagFilterSql =
                         tagFilterSql.replace(
-                            ":" + filter.getParameter(), paramlist);
+                            ":" + filter.getParam(), paramlist);
                     if (filterSql.isEmpty()) {
                         filterSql += " WHERE " + tagFilterSql;
                     } else {
@@ -346,12 +346,12 @@ public class QueryTools {
 
                 Filter filter = customColumn.getGridColumn().getFilter();
                 String filterValue = customColumn.getFilterValue();
-                String currentFilterParam = filter.getParameter();
+                String currentFilterParam = filter.getParam();
                 String filterType = filter.getFilterType().getType();
 
                 //Check if filter is generic and replace param and value param
                 if (GENERICTEXT_FILTER_TYPE.equals(filterType)) {
-                    String genTextValue = filter.getParameter() + "Value";
+                    String genTextValue = filter.getParam() + "Value";
                     currentFilterParam =
                         genTextValue + customColumn.getGridColumnId();
                 }
@@ -361,7 +361,7 @@ public class QueryTools {
                 if (TAG_FILTER_TYPE.equals(filterType)) {
                     String[] tagIds = filterValue.split(",");
                     int tagNumber = tagIds.length;
-                    String param = filter.getParameter();
+                    String param = filter.getParam();
                     for (int i = 0; i < tagNumber; i++) {
                         String tag =
                             repository.getByIdPlain(
@@ -391,7 +391,7 @@ public class QueryTools {
 
                 if (!filter.getFilterType().getIsMultiselect()) {
                     if (filter.getFilterType().getType().equals("number")) {
-                        String[] params = filter.getParameter().split(",");
+                        String[] params = filter.getParam().split(",");
                         String[] values = filterValue.split(",", -1);
                         if (values.length != 2) {
                             throw new IllegalArgumentException(
@@ -423,7 +423,7 @@ public class QueryTools {
                     ) {
                         // Get parameters as comma separated values,
                         // expected to be in milliseconds
-                        String[] params = filter.getParameter().split(",");
+                        String[] params = filter.getParam().split(",");
                         Matcher matcher =
                             multiselectPattern.matcher(filterValue);
                         if (matcher.find()) {
@@ -450,12 +450,12 @@ public class QueryTools {
                                 Integer vNumber =
                                     Integer.valueOf(value.toString());
                                 this.filterValues.add(
-                                    filter.getParameter(), vNumber);
+                                    filter.getParam(), vNumber);
                             }
                         } else {
                             for (String value : multiselect) {
                                 this.filterValues.add(
-                                    filter.getParameter(), value);
+                                    filter.getParam(), value);
                             }
                         }
                     }

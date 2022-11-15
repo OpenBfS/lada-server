@@ -123,7 +123,7 @@ public abstract class QueryExportJob extends ExportJob {
         //Create filter object
         Filter filter = new Filter();
         filter.setFilterType(filterType);
-        filter.setParameter(dataIndex);
+        filter.setParam(dataIndex);
         filter.setSql(String.format(
                 "CAST(%1$s AS text) IN ( :%1$s )", dataIndex));
         return filter;
