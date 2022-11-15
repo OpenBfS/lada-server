@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 
 /**
- * The persistent class for the auth_funktion database table.
+ * The persistent class for the auth_funct database table.
  *
  */
 @Entity

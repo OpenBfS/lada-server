@@ -16,7 +16,7 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 /**
- * The persistent class for the auth_lst_umw database table.
+ * The persistent class for the auth_coord_ofc_env_medium_mp database table.
  *
  */
 @Entity
