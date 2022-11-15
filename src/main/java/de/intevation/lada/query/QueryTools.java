@@ -389,7 +389,7 @@ public class QueryTools {
                     }
                 }
 
-                if (!filter.getFilterType().getMultiselect()) {
+                if (!filter.getFilterType().getIsMultiselect()) {
                     if (filter.getFilterType().getType().equals("number")) {
                         String[] params = filter.getParameter().split(",");
                         String[] values = filterValue.split(",", -1);

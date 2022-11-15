@@ -14,13 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-
-/**
- * The persistent class for the filter_type database table.
- *
- */
 @Entity
-@Table(name = "filter_type", schema = SchemaName.LEGACY_NAME)
+@Table(schema = SchemaName.NAME)
 @NamedQuery(name = "FilterType.findAll", query = "SELECT f FROM FilterType f")
 public class FilterType implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -28,7 +23,7 @@ public class FilterType implements Serializable {
     @Id
     private Integer id;
 
-    private Boolean multiselect;
+    private Boolean isMultiselect;
 
     private String type;
 
@@ -43,12 +38,12 @@ public class FilterType implements Serializable {
         this.id = id;
     }
 
-    public Boolean getMultiselect() {
-        return this.multiselect;
+    public Boolean getIsMultiselect() {
+        return this.isMultiselect;
     }
 
-    public void setMultiselect(Boolean multiselect) {
-        this.multiselect = multiselect;
+    public void setIsMultiselect(Boolean isMultiselect) {
+        this.isMultiselect = isMultiselect;
     }
 
     public String getType() {
