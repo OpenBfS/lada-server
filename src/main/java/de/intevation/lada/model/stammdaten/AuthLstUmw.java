@@ -20,21 +20,19 @@ import java.sql.Timestamp;
  *
  */
 @Entity
-@Table(name = "auth_lst_umw", schema = SchemaName.LEGACY_NAME)
+@Table(name = "auth_coord_ofc_env_medium_mp", schema = SchemaName.NAME)
 public class AuthLstUmw implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    @Column(name = "mst_id")
-    private String mstId;
+    private String measFacilId;
 
-    @Column(name = "umw_id")
-    private String umwId;
+    private String envMediumId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public AuthLstUmw() {
     }
@@ -47,28 +45,28 @@ public class AuthLstUmw implements Serializable {
         this.id = id;
     }
 
-    public String getMstId() {
-        return this.mstId;
+    public String getMeasFacilId() {
+        return this.measFacilId;
     }
 
-    public void setMstId(String mstId) {
-        this.mstId = mstId;
+    public void setMeasFacilId(String mstId) {
+        this.measFacilId = mstId;
     }
 
-    public String getUmwId() {
-        return this.umwId;
+    public String getEnvMediumId() {
+        return this.envMediumId;
     }
 
-    public void setUmwId(String umwId) {
-        this.umwId = umwId;
+    public void setEnvMediumId(String envMediumId) {
+        this.envMediumId = envMediumId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }

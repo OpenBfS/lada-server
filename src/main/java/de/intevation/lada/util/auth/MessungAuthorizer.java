@@ -179,7 +179,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
             List<AuthLstUmw> lsts =
                 repository.filterPlain(lstFilter.getQuery());
             for (int i = 0; i < lsts.size(); i++) {
-                if (lsts.get(i).getUmwId().equals(probe.getEnvMediumId())) {
+                if (lsts.get(i).getEnvMediumId().equals(probe.getEnvMediumId())) {
                     messung.setStatusEditLst(true);
                 }
                 if (messung.getStatusEditLst()) {
