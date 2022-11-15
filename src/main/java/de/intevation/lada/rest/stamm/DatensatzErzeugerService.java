@@ -17,7 +17,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
+import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -33,27 +33,6 @@ import de.intevation.lada.rest.LadaService;
  * <p>
  * The services produce data in the application/json media type.
  * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "bezeichnung": [string],
- *      "daErzeugerId": [string],
- *      "letzteAenderung": [timestamp],
- *      "mstId": [string],
- *      "netzbetreiberId": [string]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "notifications": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
@@ -78,10 +57,10 @@ public class DatensatzErzeugerService extends LadaService {
     @GET
     @Path("/")
     public Response get() {
-        List<DatensatzErzeuger> erzeuger =
-            repository.getAllPlain(DatensatzErzeuger.class);
+        List<DatasetCreator> datasetCreators =
+            repository.getAllPlain(DatasetCreator.class);
 
-        for (DatensatzErzeuger erz : erzeuger) {
+        for (DatasetCreator erz : datasetCreators) {
             // TODO Do not iterate all the objects if its not necessary
             erz.setReadonly(true);
                 // !authorization.isAuthorized(
@@ -89,7 +68,8 @@ public class DatensatzErzeugerService extends LadaService {
                 //     RequestMethod.POST,
                 //     DatensatzErzeuger.class));
         }
-        return new Response(true, StatusCodes.OK, erzeuger, erzeuger.size());
+        return new Response(true, StatusCodes.OK,
+            datasetCreators, datasetCreators.size());
     }
 
     /**
@@ -103,13 +83,13 @@ public class DatensatzErzeugerService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        DatensatzErzeuger erzeuger = repository.getByIdPlain(
-            DatensatzErzeuger.class, id);
+        DatasetCreator erzeuger = repository.getByIdPlain(
+            DatasetCreator.class, id);
         erzeuger.setReadonly(
             !authorization.isAuthorized(
                 erzeuger,
                 RequestMethod.POST,
-                DatensatzErzeuger.class
+                DatasetCreator.class
             )
         );
         return new Response(true, StatusCodes.OK, erzeuger);
@@ -118,23 +98,23 @@ public class DatensatzErzeugerService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        DatensatzErzeuger datensatzerzeuger
+        DatasetCreator datensatzerzeuger
     ) {
         if (!authorization.isAuthorized(
             datensatzerzeuger,
             RequestMethod.POST,
-            DatensatzErzeuger.class)
+            DatasetCreator.class)
         ) {
             return new Response(
                 false, StatusCodes.NOT_ALLOWED, datensatzerzeuger);
         }
-        QueryBuilder<DatensatzErzeuger> builder =
-            repository.queryBuilder(DatensatzErzeuger.class);
+        QueryBuilder<DatasetCreator> builder =
+            repository.queryBuilder(DatasetCreator.class);
         builder.and(
             "extId", datensatzerzeuger.getExtId());
         builder.and("networkId", datensatzerzeuger.getNetworkId());
         builder.and("measFacilId", datensatzerzeuger.getMeasFacilId());
-        List<DatensatzErzeuger> erzeuger =
+        List<DatasetCreator> erzeuger =
             repository.filterPlain(builder.getQuery());
         if (erzeuger.isEmpty()) {
             return repository.create(datensatzerzeuger);
@@ -146,23 +126,23 @@ public class DatensatzErzeugerService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        DatensatzErzeuger datensatzerzeuger
+        DatasetCreator datensatzerzeuger
     ) {
         if (!authorization.isAuthorized(
             datensatzerzeuger,
             RequestMethod.PUT,
-            DatensatzErzeuger.class)
+            DatasetCreator.class)
         ) {
             return new Response(
                 false, StatusCodes.NOT_ALLOWED, datensatzerzeuger);
         }
-        QueryBuilder<DatensatzErzeuger> builder =
-            repository.queryBuilder(DatensatzErzeuger.class);
+        QueryBuilder<DatasetCreator> builder =
+            repository.queryBuilder(DatasetCreator.class);
         builder.and(
             "extId", datensatzerzeuger.getExtId());
         builder.and("networkId", datensatzerzeuger.getNetworkId());
         builder.and("measFacilId", datensatzerzeuger.getMeasFacilId());
-        List<DatensatzErzeuger> erzeuger =
+        List<DatasetCreator> erzeuger =
             repository.filterPlain(builder.getQuery());
         if (!erzeuger.isEmpty()
             && !erzeuger.get(0).getId().equals(datensatzerzeuger.getId())
@@ -177,13 +157,13 @@ public class DatensatzErzeugerService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        DatensatzErzeuger datensatzerzeuger = repository.getByIdPlain(
-            DatensatzErzeuger.class, id);
+        DatasetCreator datensatzerzeuger = repository.getByIdPlain(
+            DatasetCreator.class, id);
         if (datensatzerzeuger == null
             || !authorization.isAuthorized(
                 datensatzerzeuger,
                 RequestMethod.DELETE,
-                DatensatzErzeuger.class
+                DatasetCreator.class
             )
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);

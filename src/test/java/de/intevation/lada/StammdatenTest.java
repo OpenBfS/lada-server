@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
 
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
+import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.Deskriptoren;
 import de.intevation.lada.model.stammdaten.KoordinatenArt;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
@@ -161,7 +161,7 @@ public class StammdatenTest extends BaseTest {
         protocol.setType("insert datensatzerzeuger");
         protocol.addInfo("database", "Insert datensatzerzeuger into database");
         testProtocol.add(protocol);
-        DatensatzErzeuger erzeuger = em.find(DatensatzErzeuger.class, ID1000);
+        DatasetCreator erzeuger = em.find(DatasetCreator.class, ID1000);
         Assert.assertNotNull(erzeuger);
         protocol.setPassed(true);
     }

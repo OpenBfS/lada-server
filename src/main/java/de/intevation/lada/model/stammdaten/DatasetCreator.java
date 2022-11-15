@@ -26,7 +26,7 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "dataset_creator", schema = SchemaName.NAME)
-public class DatensatzErzeuger implements Serializable {
+public class DatasetCreator implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -47,7 +47,7 @@ public class DatensatzErzeuger implements Serializable {
     @Transient
     private boolean readonly;
 
-    public DatensatzErzeuger() {
+    public DatasetCreator() {
     }
 
     public Integer getId() {

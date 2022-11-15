@@ -33,7 +33,7 @@ import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.GemeindeUntergliederung;
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
 import de.intevation.lada.model.stammdaten.Probenart;
-import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
+import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGruppe;
@@ -247,8 +247,8 @@ implements Creator {
             ? lafLine("TESTDATEN", "1")
             : lafLine("TESTDATEN", "0");
         if (probe.getDatasetCreatorId() != null) {
-            DatensatzErzeuger erz = repository.getByIdPlain(
-                DatensatzErzeuger.class, probe.getDatasetCreatorId());
+            DatasetCreator erz = repository.getByIdPlain(
+                DatasetCreator.class, probe.getDatasetCreatorId());
             laf += lafLine("ERZEUGER", erz.getExtId(), CN);
         }
         if (probe.getStateMpgId() != null) {

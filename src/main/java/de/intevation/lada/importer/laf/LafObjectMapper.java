@@ -45,7 +45,7 @@ import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.stammdaten.Datenbasis;
-import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
+import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.ImporterConfig;
 import de.intevation.lada.model.stammdaten.KoordinatenArt;
 import de.intevation.lada.model.stammdaten.KtaGruppe;
@@ -2250,13 +2250,13 @@ public class LafObjectMapper {
         }
 
         if ("ERZEUGER".equals(key)) {
-            QueryBuilder<DatensatzErzeuger> builder =
-                repository.queryBuilder(DatensatzErzeuger.class);
+            QueryBuilder<DatasetCreator> builder =
+                repository.queryBuilder(DatasetCreator.class);
             builder.and("networkId", netzbetreiberId);
             builder.and("measFacilId", probe.getMeasFacilId());
             builder.and("extId", value);
-            List<DatensatzErzeuger> datensatzErzeuger =
-                    (List<DatensatzErzeuger>) repository.filterPlain(
+            List<DatasetCreator> datensatzErzeuger =
+                    (List<DatasetCreator>) repository.filterPlain(
                             builder.getQuery());
             if (datensatzErzeuger == null || datensatzErzeuger.isEmpty()) {
                 currentWarnings.add(

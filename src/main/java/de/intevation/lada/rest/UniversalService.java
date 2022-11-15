@@ -22,7 +22,7 @@ import de.intevation.lada.model.QueryColumns;
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
+import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.GridColumn;
 import de.intevation.lada.model.stammdaten.GridColumnValue;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
@@ -111,7 +111,7 @@ public class UniversalService extends LadaService {
             = new LinkedHashMap<String, Class<?>>();
         hierarchy.put("tagId",       Tag.class);
         hierarchy.put("mprkat",      MessprogrammKategorie.class);
-        hierarchy.put("dsatzerz",    DatensatzErzeuger.class);
+        hierarchy.put("dsatzerz",    DatasetCreator.class);
         hierarchy.put("probenehmer", Probenehmer.class);
         hierarchy.put("ortId",       Ort.class);
         hierarchy.put("mpId",        Messprogramm.class);
@@ -176,9 +176,9 @@ public class UniversalService extends LadaService {
                                 Ort.class, idToAuthorize);
                             idToAuthorize = ort.getNetzbetreiberId();
                         }
-                        if (authorizationColumnType == DatensatzErzeuger.class) {
-                            DatensatzErzeuger de = repository.getByIdPlain(
-                                DatensatzErzeuger.class, idToAuthorize);
+                        if (authorizationColumnType == DatasetCreator.class) {
+                            DatasetCreator de = repository.getByIdPlain(
+                                DatasetCreator.class, idToAuthorize);
                             idToAuthorize = de.getNetworkId();
                         }
                         if (authorizationColumnType == Probenehmer.class) {
