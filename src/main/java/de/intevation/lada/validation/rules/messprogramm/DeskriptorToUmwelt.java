@@ -138,9 +138,9 @@ public class DeskriptorToUmwelt implements Rule {
         }
 
         boolean unique = isUnique(data);
-        if (unique && umwId.equals(data.get(0).getUmwId())) {
+        if (unique && umwId.equals(data.get(0).getEnvMediumId())) {
             return null;
-        } else if (unique && !umwId.equals(data.get(0).getUmwId())) {
+        } else if (unique && !umwId.equals(data.get(0).getEnvMediumId())) {
             Violation violation = new Violation();
             violation.addWarning(
                 "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
@@ -241,7 +241,7 @@ public class DeskriptorToUmwelt implements Rule {
                     }
                 }
             }
-            if (found >= 0 && data.get(found).getUmwId().equals(umwId)) {
+            if (found >= 0 && data.get(found).getEnvMediumId().equals(umwId)) {
                 return null;
             }
             return violation;
@@ -252,9 +252,9 @@ public class DeskriptorToUmwelt implements Rule {
         if (list.isEmpty()) {
             return false;
         }
-        String element = list.get(0).getUmwId();
+        String element = list.get(0).getEnvMediumId();
         for (int i = 1; i < list.size(); i++) {
-            if (!element.equals(list.get(i).getUmwId())) {
+            if (!element.equals(list.get(i).getEnvMediumId())) {
                 return false;
             }
         }

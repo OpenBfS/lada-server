@@ -16,58 +16,45 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 /**
- * The persistent class for the deskriptor_umwelt database table.
+ * The persistent class for the env_descrip_env_medium_mp database table.
  *
  */
 @Entity
-@Table(name = "deskriptor_umwelt", schema = SchemaName.LEGACY_NAME)
+@Table(name = "env_descrip_env_medium_mp", schema = SchemaName.NAME)
 public class DeskriptorUmwelt implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    @Column(name = "s00")
     private Integer s00;
 
-    @Column(name = "s01")
     private Integer s01;
 
-    @Column(name = "s02")
     private Integer s02;
 
-    @Column(name = "s03")
     private Integer s03;
 
-    @Column(name = "s04")
     private Integer s04;
 
-    @Column(name = "s05")
     private Integer s05;
 
-    @Column(name = "s06")
     private Integer s06;
 
-    @Column(name = "s07")
     private Integer s07;
 
-    @Column(name = "s08")
     private Integer s08;
 
-    @Column(name = "s09")
     private Integer s09;
 
-    @Column(name = "s10")
     private Integer s10;
 
-    @Column(name = "s11")
     private Integer s11;
 
-    @Column(name = "umw_id")
-    private String umwId;
+    private String envMediumId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public DeskriptorUmwelt() {
     }
@@ -176,20 +163,20 @@ public class DeskriptorUmwelt implements Serializable {
         this.s11 = s11;
     }
 
-    public String getUmwId() {
-        return this.umwId;
+    public String getEnvMediumId() {
+        return this.envMediumId;
     }
 
-    public void setUmwId(String umwId) {
-        this.umwId = umwId;
+    public void setEnvMediumId(String envMediumId) {
+        this.envMediumId = envMediumId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }

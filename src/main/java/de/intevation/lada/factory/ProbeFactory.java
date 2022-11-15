@@ -708,7 +708,7 @@ public class ProbeFactory {
 
         boolean unique = isUnique(data);
         if (unique) {
-            return data.get(0).getUmwId();
+            return data.get(0).getEnvMediumId();
         } else {
             int found = -1;
             int lastMatch = -LM12;
@@ -802,7 +802,7 @@ public class ProbeFactory {
                 }
             }
             if (found >= 0) {
-                return data.get(found).getUmwId();
+                return data.get(found).getEnvMediumId();
             }
             return null;
         }
@@ -819,9 +819,9 @@ public class ProbeFactory {
         if (list.isEmpty()) {
             return false;
         }
-        String element = list.get(0).getUmwId();
+        String element = list.get(0).getEnvMediumId();
         for (int i = 1; i < list.size(); i++) {
-            if (!element.equals(list.get(i).getUmwId())) {
+            if (!element.equals(list.get(i).getEnvMediumId())) {
                 return false;
             }
         }
@@ -874,7 +874,7 @@ public class ProbeFactory {
         String mediaDesk = "D:";
         QueryBuilder<DeskriptorUmwelt> builder =
             repository.queryBuilder(DeskriptorUmwelt.class);
-        builder.and("umwId",umwId);
+        builder.and("envMediumId",umwId);
         Response response =
             repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
