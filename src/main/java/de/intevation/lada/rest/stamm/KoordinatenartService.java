@@ -13,7 +13,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.stammdaten.KoordinatenArt;
+import de.intevation.lada.model.stammdaten.SpatRefSys;
 import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -90,7 +90,7 @@ public class KoordinatenartService extends LadaService {
     @GET
     @Path("/")
     public Response get() {
-        return repository.getAll(KoordinatenArt.class);
+        return repository.getAll(SpatRefSys.class);
     }
 
     /**
@@ -104,7 +104,7 @@ public class KoordinatenartService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        return repository.getById(KoordinatenArt.class, id);
+        return repository.getById(SpatRefSys.class, id);
     }
 
     @POST

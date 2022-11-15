@@ -15,13 +15,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the koordinaten_art database table.
- *
- */
 @Entity
-@Table(name = "spat_ref_sys", schema = SchemaName.NAME)
-public class KoordinatenArt implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class SpatRefSys implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -35,7 +31,7 @@ public class KoordinatenArt implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public KoordinatenArt() {
+    public SpatRefSys() {
     }
 
     public Integer getId() {

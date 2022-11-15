@@ -32,7 +32,7 @@ import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.EnvDescrip;
-import de.intevation.lada.model.stammdaten.KoordinatenArt;
+import de.intevation.lada.model.stammdaten.SpatRefSys;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Probenehmer;
@@ -631,8 +631,8 @@ public class StammdatenTest extends BaseTest {
         protocol.setType("insert koordinatenart");
         protocol.addInfo("database", "Insert koordinatenart into database");
         testProtocol.add(protocol);
-        KoordinatenArt kda = em.find(
-            KoordinatenArt.class, KoordinatenartTest.KDA_ID);
+        SpatRefSys kda = em.find(
+            SpatRefSys.class, KoordinatenartTest.KDA_ID);
         Assert.assertNotNull(kda);
         protocol.setPassed(true);
     }

@@ -47,7 +47,7 @@ import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.stammdaten.Regulation;
 import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.ImportConf;
-import de.intevation.lada.model.stammdaten.KoordinatenArt;
+import de.intevation.lada.model.stammdaten.SpatRefSys;
 import de.intevation.lada.model.stammdaten.KtaGruppe;
 import de.intevation.lada.model.stammdaten.MessEinheit;
 import de.intevation.lada.model.stammdaten.MessMethode;
@@ -1873,8 +1873,8 @@ public class LafObjectMapper {
             if (attributes.get(type + "KOORDINATEN_ART_S") != null) {
                 o.setKdaId(Integer.valueOf(
                     attributes.get(type + "KOORDINATEN_ART_S")));
-                KoordinatenArt koordinatenArt = repository.getByIdPlain(
-                    KoordinatenArt.class, o.getKdaId());
+                SpatRefSys koordinatenArt = repository.getByIdPlain(
+                    SpatRefSys.class, o.getKdaId());
                 if (koordinatenArt == null) {
                     currentWarnings.add(
                         new ReportItem(
@@ -1884,11 +1884,11 @@ public class LafObjectMapper {
                     o.setKdaId(null);
                 }
             } else {
-                QueryBuilder<KoordinatenArt> kdaBuilder =
-                    repository.queryBuilder(KoordinatenArt.class);
+                QueryBuilder<SpatRefSys> kdaBuilder =
+                    repository.queryBuilder(SpatRefSys.class);
                 kdaBuilder.and(
                     "koordinatenart", attributes.get(type + "KOORDINATEN_ART"));
-                List<KoordinatenArt> arten =
+                List<SpatRefSys> arten =
                     repository.filterPlain(
                         kdaBuilder.getQuery());
                 if (arten == null || arten.isEmpty()) {
