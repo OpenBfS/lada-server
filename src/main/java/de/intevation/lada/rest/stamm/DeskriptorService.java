@@ -78,10 +78,10 @@ public class DeskriptorService extends LadaService {
     ) {
         QueryBuilder<Deskriptoren> builder =
             repository.queryBuilder(Deskriptoren.class);
-        builder.and("sn", 0).not();
-        builder.and("ebene", layer);
+        builder.and("levVal", 0).not();
+        builder.and("lev", layer);
         if (parents != null && !parents.isEmpty()) {
-            builder.andIn("vorgaenger", parents);
+            builder.andIn("predId", parents);
         }
         return repository.filter(builder.getQuery());
     }

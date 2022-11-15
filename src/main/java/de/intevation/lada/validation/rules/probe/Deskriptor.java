@@ -79,10 +79,10 @@ public class Deskriptor implements Rule {
             QueryBuilder<Deskriptoren> builder =
                 repository.queryBuilder(Deskriptoren.class);
             if (parent != null) {
-                builder.and("vorgaenger", parent);
+                builder.and("predId", parent);
             }
-            builder.and("sn", mediaDesk[i]);
-            builder.and("ebene", i - 1);
+            builder.and("levVal", mediaDesk[i]);
+            builder.and("lev", i - 1);
             Response response =
                 repository.filter(builder.getQuery());
             @SuppressWarnings("unchecked")

@@ -419,15 +419,15 @@ public class JsonExporter implements Exporter {
         for (int i = 0; i < parts.length - 1; i++) {
             String beschreibung = "";
             if (Integer.parseInt(parts[i + 1]) != 0) {
-                builder.and("ebene", i);
-                builder.and("sn", Integer.parseInt(parts[i + 1]));
+                builder.and("lev", i);
+                builder.and("levVal", Integer.parseInt(parts[i + 1]));
                 if (i != 0) {
-                    builder.and("vorgaenger", vorgaenger);
+                    builder.and("predId", vorgaenger);
                 }
                 List<Deskriptoren> found =
                     repository.filterPlain(builder.getQuery());
                 if (!found.isEmpty()) {
-                    beschreibung = found.get(0).getBeschreibung();
+                    beschreibung = found.get(0).getName();
                     if ((isZebs && i < ZEBS_COUNTER)
                         || (!isZebs && i < 1)
                     ) {

@@ -16,32 +16,32 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 /**
- * The persistent class for the deskriptoren database table.
+ * The persistent class for the env_descrip database table.
  *
  */
 @Entity
-@Table(name = "deskriptoren", schema = SchemaName.LEGACY_NAME)
+@Table(name = "env_descrip", schema = SchemaName.NAME)
 public class Deskriptoren implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    private String bedeutung;
+    private String implication;
 
-    private String beschreibung;
+    private String name;
 
-    private Integer ebene;
+    private Integer lev;
 
     @Column(name = "s_xx")
     private Integer sXx;
 
-    private Integer sn;
+    private Integer levVal;
 
-    private Integer vorgaenger;
+    private Integer predId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public Deskriptoren() {
     }
@@ -54,28 +54,28 @@ public class Deskriptoren implements Serializable {
         this.id = id;
     }
 
-    public String getBedeutung() {
-        return this.bedeutung;
+    public String getImplication() {
+        return this.implication;
     }
 
-    public void setBedeutung(String bedeutung) {
-        this.bedeutung = bedeutung;
+    public void setImplication(String implication) {
+        this.implication = implication;
     }
 
-    public String getBeschreibung() {
-        return this.beschreibung;
+    public String getName() {
+        return this.name;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Integer getEbene() {
-        return this.ebene;
+    public Integer getLev() {
+        return this.lev;
     }
 
-    public void setEbene(Integer ebene) {
-        this.ebene = ebene;
+    public void setLev(Integer lev) {
+        this.lev = lev;
     }
 
     public Integer getSXx() {
@@ -86,28 +86,28 @@ public class Deskriptoren implements Serializable {
         this.sXx = s;
     }
 
-    public Integer getSn() {
-        return this.sn;
+    public Integer getLevVal() {
+        return this.levVal;
     }
 
-    public void setSn(Integer sn) {
-        this.sn = sn;
+    public void setLevVal(Integer levVal) {
+        this.levVal = levVal;
     }
 
-    public Integer getVorgaenger() {
-        return this.vorgaenger;
+    public Integer getPredId() {
+        return this.predId;
     }
 
-    public void setVorgaenger(Integer vorgaenger) {
-        this.vorgaenger = vorgaenger;
+    public void setPredId(Integer predId) {
+        this.predId = predId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }
