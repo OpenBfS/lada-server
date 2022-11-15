@@ -15,12 +15,8 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 import javax.persistence.Column;
 
-/**
- * The persistent class for the auth_funct database table.
- *
- */
 @Entity
-@Table(name = "auth_funct", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 public class AuthFunct implements Serializable {
     private static final long serialVersionUID = 1L;
 

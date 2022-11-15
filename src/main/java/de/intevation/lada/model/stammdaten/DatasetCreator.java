@@ -20,12 +20,8 @@ import javax.persistence.Transient;
 
 
 
-/**
- * The persistent class for the dataset_creator database table.
- *
- */
 @Entity
-@Table(name = "dataset_creator", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 public class DatasetCreator implements Serializable {
     private static final long serialVersionUID = 1L;
 

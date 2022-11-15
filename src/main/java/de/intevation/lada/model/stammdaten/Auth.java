@@ -16,12 +16,8 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 
-/**
- * The persistent class for the auth database table.
- *
- */
 @Entity
-@Table(name = "auth", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 public class Auth implements Serializable {
     private static final long serialVersionUID = 1L;
 

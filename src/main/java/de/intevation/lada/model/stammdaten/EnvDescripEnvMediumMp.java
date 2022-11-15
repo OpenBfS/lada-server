@@ -15,12 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the env_descrip_env_medium_mp database table.
- *
- */
 @Entity
-@Table(name = "env_descrip_env_medium_mp", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 public class EnvDescripEnvMediumMp implements Serializable {
     private static final long serialVersionUID = 1L;
 

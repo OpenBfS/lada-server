@@ -17,13 +17,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 
-/**
- * The persistent class for the filter database table.
- *
- */
 @Entity
 @NamedQuery(name = "Filter.findAll", query = "SELECT f FROM Filter f")
-@Table(name = "filter", schema = SchemaName.LEGACY_NAME)
+@Table(schema = SchemaName.NAME)
 public class Filter implements Serializable {
     private static final long serialVersionUID = 1L;
 

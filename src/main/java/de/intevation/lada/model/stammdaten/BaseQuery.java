@@ -13,13 +13,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
-/**
- * The persistent class for the base_query database table.
- *
- */
 @Entity
-@Table(name = "base_query", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 public class BaseQuery implements Serializable {
 
     private static final long serialVersionUID = 1L;

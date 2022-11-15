@@ -20,7 +20,7 @@ import java.sql.Timestamp;
  *
  */
 @Entity
-@Table(name = "auth_coord_ofc_env_medium_mp", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 public class AuthCoordOfcEnvMediumMp implements Serializable {
     private static final long serialVersionUID = 1L;
 

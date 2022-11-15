@@ -15,12 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the env_descrip database table.
- *
- */
 @Entity
-@Table(name = "env_descrip", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 public class EnvDescrip implements Serializable {
     private static final long serialVersionUID = 1L;
 
