@@ -157,9 +157,9 @@ public class Stammdaten extends ServiceTest {
         matchers.put("koordinatenart",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
+                "lastMod",
                 "idfGeoKey",
-                "koordinatenart"
+                "name"
             )
         );
         matchers.put("staat",

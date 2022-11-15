@@ -20,7 +20,7 @@ import java.sql.Timestamp;
  *
  */
 @Entity
-@Table(name = "koordinaten_art", schema = SchemaName.LEGACY_NAME)
+@Table(name = "spat_ref_sys", schema = SchemaName.NAME)
 public class KoordinatenArt implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -30,10 +30,10 @@ public class KoordinatenArt implements Serializable {
     @Column(name = "idf_geo_key")
     private String idfGeoKey;
 
-    private String koordinatenart;
+    private String name;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public KoordinatenArt() {
     }
@@ -54,20 +54,20 @@ public class KoordinatenArt implements Serializable {
         this.idfGeoKey = idfGeoKey;
     }
 
-    public String getKoordinatenart() {
-        return this.koordinatenart;
+    public String getName() {
+        return this.name;
     }
 
-    public void setKoordinatenart(String koordinatenart) {
-        this.koordinatenart = koordinatenart;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }
