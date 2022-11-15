@@ -65,10 +65,10 @@ public class QueryTools {
         this.repository = repository;
 
         for (GridColumnValue columnValue : customColumns) {
-            if (columnValue.getGridColumn() == null) {
+            if (columnValue.getGridColMp() == null) {
                 GridColMp gridColumn = repository.getByIdPlain(
-                    GridColMp.class, columnValue.getGridColumnId());
-                columnValue.setGridColumn(gridColumn);
+                    GridColMp.class, columnValue.getGridColMpId());
+                columnValue.setGridColMp(gridColumn);
             }
         }
         this.customColumns = customColumns;
@@ -77,7 +77,7 @@ public class QueryTools {
             customColumns,
             repository.getByIdPlain(
                 BaseQuery.class,
-                customColumns.get(0).getGridColumn().getBaseQuery()
+                customColumns.get(0).getGridColMp().getBaseQuery()
             ).getSql());
 
         this.sortSql = prepareSortSql(customColumns);
@@ -127,10 +127,10 @@ public class QueryTools {
             Map<String, Object> set = new HashMap<String, Object>();
             for (GridColumnValue column: this.customColumns) {
                 set.put(
-                    column.getGridColumn().getDataIndex(),
+                    column.getGridColMp().getDataIndex(),
                     row instanceof Object[]
                         ? ((Object[]) row)[
-                            column.getGridColumn().getPosition() - 1]
+                            column.getGridColMp().getPosition() - 1]
                         : row);
             }
             ret.add(set);
@@ -163,13 +163,13 @@ public class QueryTools {
 
         for (GridColumnValue customColumn : customColumns) {
             boolean generic = false;
-            if (customColumn.getFilterActive()
-                && customColumn.getFilterValue() != null
-                && !customColumn.getFilterValue().isEmpty()
-                && !customColumn.getFilterIsNull()
+            if (customColumn.getIsFilterActive()
+                && customColumn.getFilterVal() != null
+                && !customColumn.getFilterVal().isEmpty()
+                && !customColumn.getIsFilterIsNull()
             ) {
-                Filter filter = customColumn.getGridColumn().getFilter();
-                String filterValue = customColumn.getFilterValue();
+                Filter filter = customColumn.getGridColMp().getFilter();
+                String filterValue = customColumn.getFilterVal();
                 String currentFilterString = filter.getSql();
                 String currentFilterParam = filter.getParam();
                 String filterType = filter.getFilterType().getType();
@@ -185,9 +185,9 @@ public class QueryTools {
                     currentFilterString =
                         currentFilterString.replace(
                             genTextParam,
-                            customColumn.getGridColumn().getDataIndex());
+                            customColumn.getGridColMp().getDataIndex());
                     currentFilterParam =
-                        genTextValue + customColumn.getGridColumnId();
+                        genTextValue + customColumn.getGridColMpId();
                     currentFilterString =
                         currentFilterString.replace(
                             ":" + genTextValue, ":" + currentFilterParam);
@@ -214,7 +214,7 @@ public class QueryTools {
                     }
                     continue;
                 }
-                if (customColumn.getFilterNegate()) {
+                if (customColumn.getIsFilterNegate()) {
                     currentFilterString = "NOT(" + currentFilterString + ")";
                 }
                 if (generic) {
@@ -231,17 +231,17 @@ public class QueryTools {
                         filterSql += " AND " + currentFilterString;
                     }
                 }
-            } else if (customColumn.getFilterActive()
-                       && customColumn.getFilterIsNull()
+            } else if (customColumn.getIsFilterActive()
+                       && customColumn.getIsFilterIsNull()
             ) {
-                Filter filter = customColumn.getGridColumn().getFilter();
+                Filter filter = customColumn.getGridColMp().getFilter();
                 String currentFilterString = filter.getSql();
                 String filterType = filter.getFilterType().getType();
                 if (GENERICTEXT_FILTER_TYPE.equals(filterType)) {
                     currentFilterString =
-                        customColumn.getGridColumn().getDataIndex()
+                        customColumn.getGridColMp().getDataIndex()
                         + " IS NULL";
-                    if (customColumn.getFilterNegate()) {
+                    if (customColumn.getIsFilterNegate()) {
                         currentFilterString =
                             "NOT(" + currentFilterString + ")";
                     }
@@ -257,7 +257,7 @@ public class QueryTools {
                         currentFilterString.replaceAll(" .*", " IS NULL ");
                     currentFilterString =
                         currentFilterString.replaceAll(".*\\(", "");
-                    if (customColumn.getFilterNegate()) {
+                    if (customColumn.getIsFilterNegate()) {
                         currentFilterString =
                             "NOT(" + currentFilterString + ")";
                     }
@@ -295,7 +295,7 @@ public class QueryTools {
             if (customColumn.getSort() != null
                 && !customColumn.getSort().isEmpty()) {
                     String sortValue =
-                        customColumn.getGridColumn().getDataIndex() + " "
+                        customColumn.getGridColMp().getDataIndex() + " "
                         + customColumn.getSort() + " ";
                 Integer key =
                     customColumn.getSortIndex() != null
@@ -338,14 +338,14 @@ public class QueryTools {
         this.filterValues = new MultivaluedHashMap<String, Object>();
 
         for (GridColumnValue customColumn : this.customColumns) {
-            if (customColumn.getFilterActive()
-                && customColumn.getFilterValue() != null
-                && !customColumn.getFilterValue().isEmpty()
-                && !customColumn.getFilterIsNull()
+            if (customColumn.getIsFilterActive()
+                && customColumn.getFilterVal() != null
+                && !customColumn.getFilterVal().isEmpty()
+                && !customColumn.getIsFilterIsNull()
             ) {
 
-                Filter filter = customColumn.getGridColumn().getFilter();
-                String filterValue = customColumn.getFilterValue();
+                Filter filter = customColumn.getGridColMp().getFilter();
+                String filterValue = customColumn.getFilterVal();
                 String currentFilterParam = filter.getParam();
                 String filterType = filter.getFilterType().getType();
 
@@ -353,7 +353,7 @@ public class QueryTools {
                 if (GENERICTEXT_FILTER_TYPE.equals(filterType)) {
                     String genTextValue = filter.getParam() + "Value";
                     currentFilterParam =
-                        genTextValue + customColumn.getGridColumnId();
+                        genTextValue + customColumn.getGridColMpId();
                 }
 
                 // If a tag filter is applied, split param into n
@@ -377,7 +377,7 @@ public class QueryTools {
                 if (GENERICTEXT_FILTER_TYPE.equals(filterType)
                     || TEXT_FILTER_TYPE.equals(filterType)
                 ) {
-                    if (!customColumn.getFilterRegex()) {
+                    if (!customColumn.getIsFilterRegex()) {
                         filterValue += "%";
                         filterValue = translateToRegex(filterValue);
                     }

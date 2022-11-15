@@ -92,7 +92,7 @@ public class ColumnValueService extends LadaService {
             repository.filterPlain(criteriaQuery);
 
         for (GridColumnValue gcv : queries) {
-            gcv.setgridColumnId(gcv.getGridColumn().getId());
+            gcv.setGridColMpId(gcv.getGridColMp().getId());
             gcv.setQueryUserId(gcv.getQueryUser().getId());
         }
 
@@ -116,8 +116,8 @@ public class ColumnValueService extends LadaService {
         } else {
             gridColumnValue.setUserId(userInfo.getUserId());
             GridColMp gridColumn = new GridColMp();
-            gridColumn.setId(gridColumnValue.getGridColumnId());
-            gridColumnValue.setGridColumn(gridColumn);
+            gridColumn.setId(gridColumnValue.getGridColMpId());
+            gridColumnValue.setGridColMp(gridColumn);
 
 
             QueryUser queryUser = repository.getByIdPlain(
@@ -146,14 +146,14 @@ public class ColumnValueService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         } else {
             GridColMp gridColumn = repository.getByIdPlain(
-                GridColMp.class, gridColumnValue.getGridColumnId());
+                GridColMp.class, gridColumnValue.getGridColMpId());
             QueryUser queryUser = repository.getByIdPlain(
                 QueryUser.class, gridColumnValue.getQueryUserId());
             if (gridColumn == null || queryUser == null) {
                 return new Response(false, StatusCodes.VALUE_MISSING, null);
             }
 
-            gridColumnValue.setGridColumn(gridColumn);
+            gridColumnValue.setGridColMp(gridColumn);
             gridColumnValue.setQueryUser(queryUser);
 
             return repository.update(gridColumnValue);

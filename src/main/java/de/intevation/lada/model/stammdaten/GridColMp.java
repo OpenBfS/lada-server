@@ -9,7 +9,6 @@ package de.intevation.lada.model.stammdaten;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -25,7 +24,6 @@ public class GridColMp implements Serializable {
     @Id
     private Integer id;
 
-    @Column(name = "data_index")
     private String dataIndex;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -40,7 +38,6 @@ public class GridColMp implements Serializable {
 
     private Integer position;
 
-    @Column(name = "base_query")
     private Integer baseQuery;
 
     public GridColMp() {

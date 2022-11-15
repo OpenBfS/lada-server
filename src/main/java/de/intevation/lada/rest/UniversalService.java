@@ -121,7 +121,7 @@ public class UniversalService extends LadaService {
         for (GridColumnValue columnValue : gridColumnValues) {
             GridColMp gridColumn = repository.getByIdPlain(
                 GridColMp.class,
-                Integer.valueOf(columnValue.getGridColumnId())
+                Integer.valueOf(columnValue.getGridColMpId())
             );
             //Check if column can be used for authorization
             ResultType resultType =
@@ -144,7 +144,7 @@ public class UniversalService extends LadaService {
                         resultType.getName());
                 }
             }
-            columnValue.setGridColumn(gridColumn);
+            columnValue.setGridColMp(gridColumn);
         }
 
         try {

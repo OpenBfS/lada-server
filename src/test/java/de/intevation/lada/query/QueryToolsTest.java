@@ -58,7 +58,7 @@ public class QueryToolsTest {
     @Test
     public void prepareSortSqlOneColTest() {
         column1.setDataIndex("test");
-        columnValue1.setGridColumn(column1);
+        columnValue1.setGridColMp(column1);
         // TODO: Schema should allow only ASC/DESC or just make it a boolean!
         columnValue1.setSort("xxx");
         assertEquals(
@@ -73,12 +73,12 @@ public class QueryToolsTest {
     @Test
     public void prepareSortSqlTwoColTest() {
         column1.setDataIndex("test");
-        columnValue1.setGridColumn(column1);
+        columnValue1.setGridColMp(column1);
         // TODO: Schema should allow only ASC/DESC or just make it a boolean!
         columnValue1.setSort("xxx");
 
         column2.setDataIndex("another");
-        columnValue2.setGridColumn(column2);
+        columnValue2.setGridColMp(column2);
         // TODO: Schema should allow only ASC/DESC or just make it a boolean!
         columnValue2.setSort("yyy");
 
@@ -94,18 +94,18 @@ public class QueryToolsTest {
     @Test
     public void prepareSortSqlOrderedColTest() {
         column1.setDataIndex("test");
-        columnValue1.setGridColumn(column1);
+        columnValue1.setGridColMp(column1);
         // TODO: Schema should allow only ASC/DESC or just make it a boolean!
         columnValue1.setSort("xxx");
 
         column2.setDataIndex("second");
-        columnValue2.setGridColumn(column2);
+        columnValue2.setGridColMp(column2);
         // TODO: Schema should allow only ASC/DESC or just make it a boolean!
         columnValue2.setSort("yyy");
         columnValue2.setSortIndex(2);
 
         column3.setDataIndex("first");
-        columnValue3.setGridColumn(column3);
+        columnValue3.setGridColMp(column3);
         // TODO: Schema should allow only ASC/DESC or just make it a boolean!
         columnValue3.setSort("zzz");
         columnValue3.setSortIndex(1);
@@ -151,9 +151,9 @@ public class QueryToolsTest {
 
         column1.setFilter(filter);
 
-        columnValue1.setGridColumn(column1);
-        columnValue1.setFilterValue(filterValue);
-        columnValue1.setFilterActive(true);
-        columnValue1.setFilterIsNull(false);
+        columnValue1.setGridColMp(column1);
+        columnValue1.setFilterVal(filterValue);
+        columnValue1.setIsFilterActive(true);
+        columnValue1.setIsFilterNull(false);
     }
 }

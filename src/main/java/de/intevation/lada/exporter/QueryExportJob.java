@@ -336,7 +336,7 @@ public abstract class QueryExportJob extends ExportJob {
         exportParameters.getJsonArray("columns").forEach(jsonValue -> {
             JsonObject columnObj = (JsonObject) jsonValue;
             GridColumnValue columnValue = new GridColumnValue();
-            columnValue.setgridColumnId(columnObj.getInt("gridColumnId"));
+            columnValue.setGridColMpId(columnObj.getInt("gridColumnId"));
             String sort = columnObj.get("sort") != null
                 && columnObj.get("sort").getValueType() == ValueType.STRING
                 ? columnObj.getString("sort") : null;
@@ -345,18 +345,18 @@ public abstract class QueryExportJob extends ExportJob {
                 && columnObj.get("sortIndex").getValueType() == ValueType.NUMBER
                 ? columnObj.getInt("sortIndex") : null;
             columnValue.setSortIndex(sortIndex);
-            columnValue.setFilterValue(columnObj.getString("filterValue"));
-            columnValue.setFilterActive(columnObj.getBoolean("filterActive"));
-            columnValue.setFilterIsNull(columnObj.getBoolean("filterIsNull"));
-            columnValue.setFilterNegate(columnObj.getBoolean("filterNegate"));
-            columnValue.setFilterRegex(columnObj.getBoolean("filterRegex"));
+            columnValue.setFilterVal(columnObj.getString("filterValue"));
+            columnValue.setIsFilterActive(columnObj.getBoolean("filterActive"));
+            columnValue.setIsFilterNull(columnObj.getBoolean("filterIsNull"));
+            columnValue.setIsFilterNegate(columnObj.getBoolean("filterNegate"));
+            columnValue.setIsFilterRegex(columnObj.getBoolean("filterRegex"));
             GridColMp gridColumn = repository.getByIdPlain(
-                GridColMp.class, columnValue.getGridColumnId());
+                GridColMp.class, columnValue.getGridColMpId());
 
-            columnValue.setGridColumn(gridColumn);
+            columnValue.setGridColMp(gridColumn);
 
             //Check if the column contains the id
-            if (columnValue.getGridColumn().getDataIndex().equals(idColumn)) {
+            if (columnValue.getGridColMp().getDataIndex().equals(idColumn)) {
                 // Get the column type
                 idType = gridColumn.getDataType().getName();
 
@@ -401,17 +401,17 @@ public abstract class QueryExportJob extends ExportJob {
                             filterValue.append(",");
                         }
                     }
-                    columnValue.setFilterValue(filterValue.toString());
-                    columnValue.setFilterActive(true);
-                    columnValue.setFilterIsNull(false);
-                    columnValue.setFilterNegate(false);
-                    columnValue.setFilterRegex(false);
+                    columnValue.setFilterVal(filterValue.toString());
+                    columnValue.setIsFilterActive(true);
+                    columnValue.setIsFilterNull(false);
+                    columnValue.setIsFilterNegate(false);
+                    columnValue.setIsFilterRegex(false);
                 }
 
             }
             columns.add(columnValue);
             if (columnObj.getBoolean("export")) {
-                columnsToExport.add(columnValue.getGridColumn().getDataIndex());
+                columnsToExport.add(columnValue.getGridColMp().getDataIndex());
             }
         });
 
@@ -422,7 +422,7 @@ public abstract class QueryExportJob extends ExportJob {
         //Get query id
         GridColMp gridColumn = repository.getByIdPlain(
             GridColMp.class,
-            Integer.valueOf(columns.get(0).getGridColumnId())
+            Integer.valueOf(columns.get(0).getGridColMpId())
         );
         qId = gridColumn.getBaseQuery();
     }

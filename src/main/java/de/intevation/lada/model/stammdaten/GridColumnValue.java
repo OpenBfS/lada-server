@@ -10,7 +10,6 @@ package de.intevation.lada.model.stammdaten;
 import java.io.Serializable;
 
 import javax.json.bind.annotation.JsonbTransient;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,12 +20,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-/**
- * The persistent class for the grid_column_values database table.
- *
- */
 @Entity
-@Table(name = "grid_column_values", schema = SchemaName.LEGACY_NAME)
+@Table(name = "grid_col_conf", schema = SchemaName.NAME)
 public class GridColumnValue implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -34,48 +29,40 @@ public class GridColumnValue implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "column_index")
-    private Integer columnIndex;
+    private Integer colIndex;
 
-    @Column(name = "filter_active")
-    private boolean filterActive;
+    private boolean isFilterActive;
 
-    @Column(name = "filter_value")
-    private String filterValue;
+    private String filterVal;
 
-    @Column(name = "filter_negate")
-    private boolean filterNegate;
+    private boolean isFilterNegate;
 
-    @Column(name = "filter_regex")
-    private boolean filterRegex;
+    private boolean isFilterRegex;
 
-    @Column(name = "filter_is_null")
-    private boolean filterIsNull;
+    private boolean isFilterNull;
 
     private String sort;
 
-    @Column(name = "sort_index")
     private Integer sortIndex;
 
-    @Column(name = "user_id")
     private Integer userId;
 
-    private boolean visible;
+    private boolean isVisible;
 
     private Integer width;
 
     //bi-directional one-to-one association to GridColumn
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "grid_column")
-    private GridColMp gridColumn;
+    @JoinColumn(name = "grid_col_mp_id")
+    private GridColMp gridColMp;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "query_user")
+    @JoinColumn(name = "query_user_id")
     private QueryUser queryUser;
 
     //Connected grid column's id, used for creating/updating grid_column_values
     @Transient
-    private Integer gridColumnId;
+    private Integer gridColMpId;
 
     @Transient
     private Integer queryUserId;
@@ -91,28 +78,28 @@ public class GridColumnValue implements Serializable {
         this.id = id;
     }
 
-    public Integer getColumnIndex() {
-        return this.columnIndex;
+    public Integer getColIndex() {
+        return this.colIndex;
     }
 
-    public void setColumnIndex(Integer columnIndex) {
-        this.columnIndex = columnIndex;
+    public void setColIndex(Integer colIndex) {
+        this.colIndex = colIndex;
     }
 
-    public boolean getFilterActive() {
-        return this.filterActive;
+    public boolean getIsFilterActive() {
+        return this.isFilterActive;
     }
 
-    public void setFilterActive(boolean filterActive) {
-        this.filterActive = filterActive;
+    public void setIsFilterActive(boolean isFilterActive) {
+        this.isFilterActive = isFilterActive;
     }
 
-    public String getFilterValue() {
-        return this.filterValue;
+    public String getFilterVal() {
+        return this.filterVal;
     }
 
-    public void setFilterValue(String filterValue) {
-        this.filterValue = filterValue;
+    public void setFilterVal(String filterVal) {
+        this.filterVal = filterVal;
     }
 
     public String getSort() {
@@ -139,12 +126,12 @@ public class GridColumnValue implements Serializable {
         this.userId = userId;
     }
 
-    public boolean getVisible() {
-        return this.visible;
+    public boolean getIsVisible() {
+        return this.isVisible;
     }
 
-    public void setVisible(boolean visible) {
-        this.visible = visible;
+    public void setIsVisible(boolean isVisible) {
+        this.isVisible = isVisible;
     }
 
     public Integer getWidth() {
@@ -158,28 +145,28 @@ public class GridColumnValue implements Serializable {
     /**
      * @return the grid column ID
      */
-    public Integer getGridColumnId() {
-        if (this.gridColumnId == null && this.gridColumn != null) {
-            this.gridColumnId = this.gridColumn.getId();
+    public Integer getGridColMpId() {
+        if (this.gridColMpId == null && this.gridColMp != null) {
+            this.gridColMpId = this.gridColMp.getId();
         }
-        return this.gridColumnId;
+        return this.gridColMpId;
     }
 
     /**
      * Set the grid column id.
-     * @param gid the id
+     * @param gridColMpId the id
      */
-    public void setgridColumnId(int gid) {
-        this.gridColumnId = gid;
+    public void setGridColMpId(int gridColMpId) {
+        this.gridColMpId = gridColMpId;
     }
 
     @JsonbTransient
-    public GridColMp getGridColumn() {
-        return this.gridColumn;
+    public GridColMp getGridColMp() {
+        return this.gridColMp;
     }
 
-    public void setGridColumn(GridColMp gridColumn) {
-        this.gridColumn = gridColumn;
+    public void setGridColMp(GridColMp gridColMp) {
+        this.gridColMp = gridColMp;
     }
 
     @JsonbTransient
@@ -205,27 +192,27 @@ public class GridColumnValue implements Serializable {
         this.queryUserId = queryUserId;
     }
 
-    public boolean getFilterNegate() {
-        return filterNegate;
+    public boolean getIsFilterNegate() {
+        return isFilterNegate;
     }
 
-    public void setFilterNegate(boolean filterNegate) {
-        this.filterNegate = filterNegate;
+    public void setIsFilterNegate(boolean isFilterNegate) {
+        this.isFilterNegate = isFilterNegate;
     }
 
-    public boolean getFilterRegex() {
-        return filterRegex;
+    public boolean getIsFilterRegex() {
+        return isFilterRegex;
     }
 
-    public void setFilterRegex(boolean filterRegex) {
-        this.filterRegex = filterRegex;
+    public void setIsFilterRegex(boolean isFilterRegex) {
+        this.isFilterRegex = isFilterRegex;
     }
 
-    public boolean getFilterIsNull() {
-        return filterIsNull;
+    public boolean getIsFilterIsNull() {
+        return isFilterNull;
     }
 
-    public void setFilterIsNull(boolean filterIsNull) {
-        this.filterIsNull = filterIsNull;
+    public void setIsFilterNull(boolean isFilterNull) {
+        this.isFilterNull = isFilterNull;
     }
 }
