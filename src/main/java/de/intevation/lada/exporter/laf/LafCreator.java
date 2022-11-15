@@ -377,7 +377,7 @@ implements Creator {
             GemeindeUntergliederung gu = repository.getByIdPlain(
                 GemeindeUntergliederung.class, sOrte.get(0).getGemUntId());
             laf += lafLine(typePrefix + "ORTS_ZUSATZKENNZAHL",
-                gu.getOzkId(), CN);
+                gu.getSiteId(), CN);
         }
 
         String koord = String.format("%02d", sOrte.get(0).getKdaId());

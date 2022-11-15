@@ -18,13 +18,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-
-/**
- * The persistent class for the ort database table.
- *
- */
 @Entity
-@Table(name = "gemeindeuntergliederung", schema = SchemaName.LEGACY_NAME)
+@Table(name = "munic_div", schema = SchemaName.NAME)
 public class GemeindeUntergliederung implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -32,20 +27,16 @@ public class GemeindeUntergliederung implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "netzbetreiber_id")
-    private String netzbetreiberId;
+    private String networkId;
 
-    @Column(name = "gem_id")
-    private String gemId;
+    private String municId;
 
-    @Column(name = "ozk_id")
-    private Integer ozkId;
+    private Integer siteId;
 
-    @Column(name = "gemeindeuntergliederung")
-    private String gemeindeUntergliederung;
+    private String name;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     @Transient
     private boolean readonly;
@@ -61,44 +52,44 @@ public class GemeindeUntergliederung implements Serializable {
         this.id = id;
     }
 
-    public String getNetzbetreiberId() {
-        return this.netzbetreiberId;
+    public String getNetworkId() {
+        return this.networkId;
     }
 
-    public void setNetzbetreiberId(String netzbetreiberId) {
-        this.netzbetreiberId = netzbetreiberId;
+    public void setNetworkId(String networkId) {
+        this.networkId = networkId;
     }
 
-    public String getGemId() {
-        return this.gemId;
+    public String getMunicId() {
+        return this.municId;
     }
 
-    public void setGemId(String gemId) {
-        this.gemId = gemId;
+    public void setMunicId(String municId) {
+        this.municId = municId;
     }
 
-    public Integer getOzkId() {
-        return this.ozkId;
+    public Integer getSiteId() {
+        return this.siteId;
     }
 
-    public void setOzkId(Integer ozkId) {
-        this.ozkId = ozkId;
+    public void setSiteId(Integer siteId) {
+        this.siteId = siteId;
     }
 
-    public String getGemeindeUntergliederung() {
-        return this.gemeindeUntergliederung;
+    public String getName() {
+        return this.name;
     }
 
-    public void setGemeindeUntergliederung(String gemeindeUntergliederung) {
-        this.gemeindeUntergliederung = gemeindeUntergliederung;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
     public boolean isReadonly() {

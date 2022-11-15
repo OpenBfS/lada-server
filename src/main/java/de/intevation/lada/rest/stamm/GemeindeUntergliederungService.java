@@ -128,8 +128,8 @@ public class GemeindeUntergliederungService extends LadaService {
         }
         QueryBuilder<GemeindeUntergliederung> builder =
             repository.queryBuilder(GemeindeUntergliederung.class);
-        builder.and("ozkId", gemUntergliederung.getOzkId());
-        builder.and("netzbetreiberId", gemUntergliederung.getNetzbetreiberId());
+        builder.and("ozkId", gemUntergliederung.getSiteId());
+        builder.and("netzbetreiberId", gemUntergliederung.getNetworkId());
         List<GemeindeUntergliederung> gemUntergliederungn =
             repository.filterPlain(builder.getQuery());
         if (gemUntergliederungn.isEmpty()) {
@@ -153,8 +153,8 @@ public class GemeindeUntergliederungService extends LadaService {
         }
         QueryBuilder<GemeindeUntergliederung> builder =
             repository.queryBuilder(GemeindeUntergliederung.class);
-        builder.and("ozkId", gemUntergliederung.getOzkId());
-        builder.and("netzbetreiberId", gemUntergliederung.getNetzbetreiberId());
+        builder.and("ozkId", gemUntergliederung.getSiteId());
+        builder.and("netzbetreiberId", gemUntergliederung.getNetworkId());
         List<GemeindeUntergliederung> gemUntergliederungn =
             repository.filterPlain(builder.getQuery());
         if (!gemUntergliederungn.isEmpty()
