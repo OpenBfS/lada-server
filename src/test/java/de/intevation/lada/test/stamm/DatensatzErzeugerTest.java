@@ -37,7 +37,7 @@ public class DatensatzErzeugerTest extends ServiceTest {
         super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung"
+            "lastMod"
         });
 
         // Prepare expected object
@@ -66,7 +66,7 @@ public class DatensatzErzeugerTest extends ServiceTest {
         update(
             "datensatzerzeuger",
             "rest/datensatzerzeuger/1000",
-            "bezeichnung",
+            "descr",
             "Testbezeichnung",
             "geändert");
         create(
