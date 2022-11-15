@@ -20,17 +20,17 @@ import javax.persistence.Column;
  *
  */
 @Entity
-@Table(name = "auth_funktion", schema = SchemaName.LEGACY_NAME)
+@Table(name = "auth_funct", schema = SchemaName.NAME)
 public class AuthFunktion implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    private String funktion;
+    private String funct;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public AuthFunktion() {
     }
@@ -43,20 +43,20 @@ public class AuthFunktion implements Serializable {
         this.id = id;
     }
 
-    public String getFunktion() {
-        return this.funktion;
+    public String getFunct() {
+        return this.funct;
     }
 
-    public void setFunktion(String funktion) {
-        this.funktion = funktion;
+    public void setFunct(String funct) {
+        this.funct = funct;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp letzteAenderung) {
+        this.lastMod = letzteAenderung;
     }
 
 }
