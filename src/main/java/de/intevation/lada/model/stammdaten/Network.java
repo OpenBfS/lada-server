@@ -17,11 +17,11 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "network", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 @NamedQuery(
-    name = "NetzBetreiber.findAll",
-    query = "SELECT n FROM NetzBetreiber n")
-public class NetzBetreiber implements Serializable {
+    name = "Network.findAll",
+    query = "SELECT n FROM Network n")
+public class Network implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -41,7 +41,7 @@ public class NetzBetreiber implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public NetzBetreiber() {
+    public Network() {
     }
 
     public String getId() {

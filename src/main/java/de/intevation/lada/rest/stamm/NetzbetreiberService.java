@@ -14,7 +14,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.stammdaten.NetzBetreiber;
+import de.intevation.lada.model.stammdaten.Network;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -55,7 +55,7 @@ public class NetzbetreiberService extends LadaService {
     @GET
     @Path("/")
     public Response get() {
-        return repository.getAll(NetzBetreiber.class);
+        return repository.getAll(Network.class);
     }
 
     /**
@@ -71,9 +71,9 @@ public class NetzbetreiberService extends LadaService {
     ) {
         UserInfo userInfo = authorization.getInfo();
         if (userInfo.getNetzbetreiber().contains(id)) {
-            return repository.getById(NetzBetreiber.class, id);
+            return repository.getById(Network.class, id);
         }
         return new Response(
-            false, StatusCodes.CHANGED_VALUE, new ArrayList<NetzBetreiber>());
+            false, StatusCodes.CHANGED_VALUE, new ArrayList<Network>());
     }
 }
