@@ -161,22 +161,22 @@ public class OrtService extends LadaService {
         Predicate filter = null;
         if (netzbetreiberId != null) {
             Predicate netzbetreiberFilter =
-                builder.equal(root.get("netzbetreiberId"), netzbetreiberId);
+                builder.equal(root.get("networkId"), netzbetreiberId);
             filter = builder.and(netzbetreiberFilter);
         } else {
             for (String nb : user.getNetzbetreiber()) {
-                builder.or(builder.equal(root.get("netzbetreiberId"), nb));
+                builder.or(builder.equal(root.get("networkId"), nb));
             }
         }
         if (search != null) {
             Join<Ort, Verwaltungseinheit> join =
                 root.join("gemeinde", JoinType.LEFT);
             String pattern = "%" + search + "%";
-            Predicate idFilter = builder.like(root.get("ortId"), pattern);
+            Predicate idFilter = builder.like(root.get("extId"), pattern);
             Predicate kurzTextFilter =
-                builder.like(root.get("kurztext"), pattern);
+                builder.like(root.get("shortText"), pattern);
             Predicate langtextFilter =
-                builder.like(root.get("langtext"), pattern);
+                builder.like(root.get("longText"), pattern);
             Predicate bezFilter =
                 builder.like(join.get("bezeichnung"), pattern);
             Predicate searchFilter =
@@ -373,18 +373,18 @@ public class OrtService extends LadaService {
         if (dbOrt == null) {
             return new Response(false, StatusCodes.NOT_EXISTING, ort);
         }
-        String dbCoordX = dbOrt.getKoordXExtern();
-        String dbCoordY = dbOrt.getKoordYExtern();
+        String dbCoordX = dbOrt.getXCoordExt();
+        String dbCoordY = dbOrt.getYCoordExt();
 
         if (getPlausibleRefCount(getOrtsZuordnungs(dbOrt)) > 0
-                && (!dbCoordX.equals(ort.getKoordXExtern())
-                || !dbCoordY.equals(ort.getKoordYExtern()))) {
+                && (!dbCoordX.equals(ort.getXCoordExt())
+                || !dbCoordY.equals(ort.getYCoordExt()))) {
             MultivaluedMap<String, Integer> error =
                 new MultivaluedHashMap<String, Integer>();
-            if (!dbCoordX.equals(ort.getKoordXExtern())) {
+            if (!dbCoordX.equals(ort.getXCoordExt())) {
                 error.add("koordXExtern", StatusCodes.GEO_UNCHANGEABLE_COORD);
             }
-            if (!dbCoordY.equals(ort.getKoordYExtern())) {
+            if (!dbCoordY.equals(ort.getYCoordExt())) {
                 error.add("koordYExtern", StatusCodes.GEO_UNCHANGEABLE_COORD);
             }
             Response response =

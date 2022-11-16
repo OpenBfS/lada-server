@@ -32,13 +32,13 @@ public class IsUnique implements Rule {
             // Consider UPDATE
             builder.and("id", ort.getId()).not();
         }
-        builder.and("netzbetreiberId", ort.getNetzbetreiberId());
-        builder.and("ortId", ort.getOrtId());
+        builder.and("networkId", ort.getNetworkId());
+        builder.and("extId", ort.getExtId());
         if (!repository.filterPlain(
                 builder.getQuery()).isEmpty()
         ) {
             Violation violation = new Violation();
-            violation.addError("ortId", StatusCodes.IMP_DUPLICATE);
+            violation.addError("extId", StatusCodes.IMP_DUPLICATE);
             return violation;
         }
 

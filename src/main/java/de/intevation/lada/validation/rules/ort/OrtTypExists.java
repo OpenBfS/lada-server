@@ -35,10 +35,10 @@ public class OrtTypExists implements Rule {
     public Violation execute(Object object) {
         Ort ort = (Ort) object;
 
-        if (ort.getOrtTyp() != null) {
+        if (ort.getSiteClassId() != null) {
             QueryBuilder<OrtTyp> builder =
                 repository.queryBuilder(OrtTyp.class);
-            builder.and("id", ort.getOrtTyp());
+            builder.and("id", ort.getSiteClassId());
             List<OrtTyp> ots = repository.filterPlain(
                 builder.getQuery());
             if (ots == null || ots.isEmpty()) {

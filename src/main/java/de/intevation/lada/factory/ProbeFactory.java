@@ -439,7 +439,7 @@ public class ProbeFactory {
             for (OrtszuordnungMp ort : orte) {
                 Ort o = repository.getByIdPlain(
                     Ort.class, ort.getOrtId());
-                currentProtocol.put("gemId", o.getGemId());
+                currentProtocol.put("gemId", o.getMunicId());
             }
             return proben.get(0);
         }
@@ -523,7 +523,7 @@ public class ProbeFactory {
             createObject(ortP, dryrun);
             Ort o = repository.getByIdPlain(
                 Ort.class, ortP.getOrtId());
-            currentProtocol.put("gemId", o.getGemId());
+            currentProtocol.put("gemId", o.getMunicId());
         }
         // Reolad the probe to have the old id
         if (!dryrun) {

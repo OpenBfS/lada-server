@@ -174,7 +174,7 @@ public class UniversalService extends LadaService {
                         if (authorizationColumnType == Ort.class) {
                             Ort ort = repository.getByIdPlain(
                                 Ort.class, idToAuthorize);
-                            idToAuthorize = ort.getNetzbetreiberId();
+                            idToAuthorize = ort.getNetworkId();
                         }
                         if (authorizationColumnType == DatasetCreator.class) {
                             DatasetCreator de = repository.getByIdPlain(

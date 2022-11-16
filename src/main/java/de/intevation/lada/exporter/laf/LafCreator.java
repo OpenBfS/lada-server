@@ -361,29 +361,29 @@ implements Creator {
                 oBuilder.getQuery()
             ).getData();
 
-        if (sOrte.get(0).getStaatId() != null) {
+        if (sOrte.get(0).getStateId() != null) {
             laf += lafLine(typePrefix + "HERKUNFTSLAND_S",
-                String.format("%08d", sOrte.get(0).getStaatId()));
+                String.format("%08d", sOrte.get(0).getStateId()));
         }
 
-        if (sOrte.get(0).getGemId() != null
-            && sOrte.get(0).getGemId().length() > 0
+        if (sOrte.get(0).getMunicId() != null
+            && sOrte.get(0).getMunicId().length() > 0
         ) {
             laf += lafLine(typePrefix + "GEMEINDESCHLUESSEL",
-                sOrte.get(0).getGemId());
+                sOrte.get(0).getMunicId());
         }
 
-        if (sOrte.get(0).getGemUntId() != null) {
+        if (sOrte.get(0).getMunicDivId() != null) {
             MunicDiv gu = repository.getByIdPlain(
-                MunicDiv.class, sOrte.get(0).getGemUntId());
+                MunicDiv.class, sOrte.get(0).getMunicDivId());
             laf += lafLine(typePrefix + "ORTS_ZUSATZKENNZAHL",
                 gu.getSiteId(), CN);
         }
 
-        String koord = String.format("%02d", sOrte.get(0).getKdaId());
+        String koord = String.format("%02d", sOrte.get(0).getSpatRefSysId());
         koord += " \"";
-        koord += sOrte.get(0).getKoordXExtern() + "\" \"";
-        koord += sOrte.get(0).getKoordYExtern() + "\"";
+        koord += sOrte.get(0).getXCoordExt() + "\" \"";
+        koord += sOrte.get(0).getYCoordExt() + "\"";
         laf += lafLine(typePrefix + "KOORDINATEN_S", koord);
 
         if ("P_".equals(typePrefix) && o.getOzId() != null) {
@@ -396,7 +396,7 @@ implements Creator {
         ) {
             laf += lafLine(
                 typePrefix + "ORTS_ZUSATZCODE",
-                sOrte.get(0).getOrtId(),
+                sOrte.get(0).getExtId(),
                 CN);
         } else if ("U_".equals(typePrefix)
             && o.getOzId() != null

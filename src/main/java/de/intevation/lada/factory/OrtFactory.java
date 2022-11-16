@@ -53,25 +53,25 @@ public class OrtFactory {
         if (errors == null) {
             errors = new ArrayList<>();
         }
-        if (ort.getKdaId() == null
-            || ort.getKoordXExtern() == null
-            || ort.getKoordXExtern().equals("")
-            || ort.getKoordYExtern() == null
-            || ort.getKoordYExtern().equals("")
+        if (ort.getSpatRefSysId() == null
+            || ort.getXCoordExt() == null
+            || ort.getXCoordExt().equals("")
+            || ort.getYCoordExt() == null
+            || ort.getYCoordExt().equals("")
         ) {
             /* TODO: The checked conditions are mostly also checked in KdaUtil.
              * Do we really need a different StatusCode here? */
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.IMP_INVALID_VALUE);
             err.setKey("coordinates");
-            err.setValue(ort.getKdaId()
-                + " " + ort.getKoordXExtern() + " " + ort.getKoordYExtern());
+            err.setValue(ort.getSpatRefSysId()
+                + " " + ort.getXCoordExt() + " " + ort.getYCoordExt());
             errors.add(err);
             return;
         }
-        Integer kda = ort.getKdaId();
-        String xCoord = ort.getKoordXExtern();
-        String yCoord = ort.getKoordYExtern();
+        Integer kda = ort.getSpatRefSysId();
+        String xCoord = ort.getXCoordExt();
+        String yCoord = ort.getYCoordExt();
 
         KdaUtil.Result coords = new KdaUtil().transform(
             kda, KdaUtil.KDA_GD, xCoord, yCoord);
@@ -79,8 +79,8 @@ public class OrtFactory {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.GEO_NOT_MATCHING);
             err.setKey("kdaId");
-            err.setValue(ort.getKdaId()
-                + " " + ort.getKoordXExtern() + " " + ort.getKoordYExtern());
+            err.setValue(ort.getSpatRefSysId()
+                + " " + ort.getXCoordExt() + " " + ort.getYCoordExt());
             errors.add(err);
             return;
         }
@@ -109,22 +109,22 @@ public class OrtFactory {
             errors.clear();
         }
         QueryBuilder<Ort> builder = repository.queryBuilder(Ort.class);
-        if (ort.getKdaId() != null
-            && ort.getKoordXExtern() != null
-            && ort.getKoordYExtern() != null
+        if (ort.getSpatRefSysId() != null
+            && ort.getXCoordExt() != null
+            && ort.getYCoordExt() != null
         ) {
-            builder.and("kdaId", ort.getKdaId());
-            builder.and("koordXExtern", ort.getKoordXExtern());
-            builder.and("koordYExtern", ort.getKoordYExtern());
-            builder.and("netzbetreiberId", ort.getNetzbetreiberId());
+            builder.and("spatRefSysId", ort.getSpatRefSysId());
+            builder.and("xCoordExt", ort.getXCoordExt());
+            builder.and("yCoordExt", ort.getYCoordExt());
+            builder.and("networkId", ort.getNetworkId());
             List<Ort> orte =
                 repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
                 return orte.get(0);
             }
-        } else if (ort.getGemId() != null) {
-            builder.and("gemId", ort.getGemId());
-            builder.and("netzbetreiberId", ort.getNetzbetreiberId());
+        } else if (ort.getMunicId() != null) {
+            builder.and("municId", ort.getMunicId());
+            builder.and("networkId", ort.getNetworkId());
             List<Ort> orte =
                 repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
@@ -133,12 +133,12 @@ public class OrtFactory {
                 } else {
                     //get verwaltungseinheiten
                     Verwaltungseinheit v = repository.getByIdPlain(
-                        Verwaltungseinheit.class, ort.getGemId());
+                        Verwaltungseinheit.class, ort.getMunicId());
                     if (v != null) {
                         for (Ort oElem : orte) {
                             //Todo: Check for different kda-types
-                            if (oElem.getKoordXExtern().equals(String.valueOf(v.getMittelpunkt().getX()))
-                            && oElem.getKoordYExtern().equals(String.valueOf(v.getMittelpunkt().getY()))
+                            if (oElem.getXCoordExt().equals(String.valueOf(v.getMittelpunkt().getX()))
+                            && oElem.getYCoordExt().equals(String.valueOf(v.getMittelpunkt().getY()))
                              ){
                                 return oElem;
                             }
@@ -148,10 +148,10 @@ public class OrtFactory {
                     }
                 }
             }
-        } else  if (ort.getStaatId() != null) {
-            builder.and("staatId", ort.getStaatId());
-            builder.and("ortTyp", ORTTYP5);
-            builder.and("netzbetreiberId", ort.getNetzbetreiberId());
+        } else  if (ort.getStateId() != null) {
+            builder.and("stateId", ort.getStateId());
+            builder.and("siteClassId", ORTTYP5);
+            builder.and("networkId", ort.getNetworkId());
             List<Ort> orte =
                 repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
@@ -170,74 +170,74 @@ public class OrtFactory {
         boolean hasGem = false;
         boolean hasStaat = false;
         //set default value for attribute "unscharf"
-        ort.setUnscharf(false);
-        if (ort.getKdaId() != null
-            && ort.getKoordXExtern() != null
-            && ort.getKoordYExtern() != null
+        ort.setIsFuzzy(false);
+        if (ort.getSpatRefSysId() != null
+            && ort.getXCoordExt() != null
+            && ort.getYCoordExt() != null
         ) {
             transformCoordinates(ort);
             hasKoord = true;
         }
-        if (ort.getGemId() == null && hasKoord) {
+        if (ort.getMunicId() == null && hasKoord) {
             findVerwaltungseinheit(ort);
         }
-        if (ort.getGemId() != null) {
-            if (ort.getStaatId() == null) {
-                ort.setStaatId(0);
+        if (ort.getMunicId() != null) {
+            if (ort.getStateId() == null) {
+                ort.setStateId(0);
             }
             Verwaltungseinheit v = repository.getByIdPlain(
-                Verwaltungseinheit.class, ort.getGemId());
+                Verwaltungseinheit.class, ort.getMunicId());
             //Ort exists - check for OrtId
             QueryBuilder<Ort> builderExists = repository.queryBuilder(Ort.class);
-            builderExists.and("netzbetreiberId", ort.getNetzbetreiberId());
-            builderExists.andLike("ortId", "%"+ort.getGemId());
+            builderExists.and("networkId", ort.getNetworkId());
+            builderExists.andLike("municId", "%"+ort.getMunicId());
             List<Ort> ortExists =  repository.filterPlain(builderExists.getQuery());
             if (v == null) {
                 ReportItem err = new ReportItem();
                 err.setCode(StatusCodes.IMP_INVALID_VALUE);
                 err.setKey("gem_id");
-                err.setValue(ort.getGemId());
+                err.setValue(ort.getMunicId());
                 errors.add(err);
                 return null;
             } else if (ortExists.isEmpty()) {
                 if (!hasKoord) {
-                    if (ort.getKdaId() == null) {
-                        ort.setKdaId(KdaUtil.KDA_GD);
-                        ort.setKoordYExtern(
+                    if (ort.getSpatRefSysId() == null) {
+                        ort.setSpatRefSysId(KdaUtil.KDA_GD);
+                        ort.setYCoordExt(
                             String.valueOf(v.getMittelpunkt().getY()));
-                        ort.setKoordXExtern(
+                        ort.setXCoordExt(
                             String.valueOf(v.getMittelpunkt().getX()));
                     } else {
                         KdaUtil.Result coords = new KdaUtil().transform(
                             KdaUtil.KDA_GD,
-                            ort.getKdaId(),
+                            ort.getSpatRefSysId(),
                             String.valueOf(v.getMittelpunkt().getX()),
                             String.valueOf(v.getMittelpunkt().getY()));
-                        ort.setKoordYExtern(coords.getY());
-                        ort.setKoordXExtern(coords.getX());
+                        ort.setYCoordExt(coords.getY());
+                        ort.setXCoordExt(coords.getX());
                     }
-                    ort.setOrtTyp(ORTTYP4);
+                    ort.setSiteClassId(ORTTYP4);
                     //set ortId
                     if ( v.getIsGemeinde() ) {
-                        ort.setOrtId("GEM_"+ort.getGemId());
+                        ort.setExtId("GEM_"+ort.getMunicId());
                     } else if ( !v.getIsGemeinde() && v.getIsLandkreis() ){
-                       ort.setOrtId("LK_"+ort.getGemId());
+                       ort.setExtId("LK_"+ort.getMunicId());
                     } else if ( !v.getIsGemeinde() && !v.getIsLandkreis() && v.getIsRegbezirk() ) {
-                        ort.setOrtId("RB_"+ort.getGemId());
+                        ort.setExtId("RB_"+ort.getMunicId());
                     } else if ( !v.getIsGemeinde() && !v.getIsLandkreis() && !v.getIsRegbezirk() && v.getIsBundesland() ) {
-                        ort.setOrtId("BL_"+ort.getGemId());
+                        ort.setExtId("BL_"+ort.getMunicId());
                     }
                 }
-                if (ort.getKurztext() == null || ort.getKurztext().equals("")) {
-                    ort.setKurztext(ort.getOrtId());
+                if (ort.getShortText() == null || ort.getShortText().equals("")) {
+                    ort.setShortText(ort.getExtId());
                 }
-                if (ort.getLangtext() == null || ort.getLangtext().equals("")) {
-                    ort.setLangtext(v.getBezeichnung());
+                if (ort.getLongText() == null || ort.getLongText().equals("")) {
+                    ort.setLongText(v.getBezeichnung());
                 }
-                if (ort.getBerichtstext() == null
-                    || ort.getBerichtstext().equals("")
+                if (ort.getReiReportText() == null
+                    || ort.getReiReportText().equals("")
                 ) {
-                    ort.setBerichtstext(v.getBezeichnung());
+                    ort.setReiReportText(v.getBezeichnung());
                 }
                 transformCoordinates(ort);
 
@@ -248,25 +248,25 @@ public class OrtFactory {
                 return ort;
             }
         }
-        if (ort.getStaatId() != null
+        if (ort.getStateId() != null
             && !hasKoord
             && !hasGem
         ) {
             Staat staat =
                 repository.getByIdPlain(
-                    Staat.class, ort.getStaatId());
-            ort.setKdaId(staat.getKdaId());
-            ort.setKoordXExtern(staat.getKoordXExtern());
-            ort.setKoordYExtern(staat.getKoordYExtern());
-            ort.setLangtext(staat.getStaat());
-            ort.setOrtTyp(ORTTYP5);
-            ort.setOrtId("STAAT_" + staat.getId());
+                    Staat.class, ort.getStateId());
+            ort.setSpatRefSysId(staat.getKdaId());
+            ort.setXCoordExt(staat.getKoordXExtern());
+            ort.setYCoordExt(staat.getKoordYExtern());
+            ort.setLongText(staat.getStaat());
+            ort.setSiteClassId(ORTTYP5);
+            ort.setExtId("STAAT_" + staat.getId());
             if (staat.getStaatIso() != null) {
-                ort.setKurztext("STAAT_" + staat.getStaatIso());
+                ort.setShortText("STAAT_" + staat.getStaatIso());
             } else {
-                ort.setKurztext("STAAT_" + staat.getId());
+                ort.setShortText("STAAT_" + staat.getId());
             }
-            ort.setBerichtstext(staat.getStaat());
+            ort.setReiReportText(staat.getStaat());
             transformCoordinates(ort);
             hasStaat = true;
         }
@@ -299,8 +299,8 @@ public class OrtFactory {
         q.setParameter("geom", ort.getGeom());
         List<?> ret = q.getResultList();
         if (!ret.isEmpty()) {
-            ort.setGemId(ret.get(0).toString());
-            ort.setStaatId(0);
+            ort.setMunicId(ret.get(0).toString());
+            ort.setStateId(0);
         }
         return;
     }

@@ -1704,7 +1704,7 @@ public class LafObjectMapper {
             // Search for the ort in db
             Map<String, String> uo = uort.get(0);
             QueryBuilder<Ort> builder1 = repository.queryBuilder(Ort.class);
-            builder1.and("ortId", uo.get("U_ORTS_ZUSATZCODE"));
+            builder1.and("extId", uo.get("U_ORTS_ZUSATZCODE"));
             List<Ort> messpunkte =
                 repository.filterPlain(builder1.getQuery());
             if (!messpunkte.isEmpty()) {
@@ -1712,12 +1712,12 @@ public class LafObjectMapper {
                 ort.setOrtszuordnungTyp("R");
                 ort.setProbeId(probe.getId());
                 ort.setOrtId(messpunkte.get(0).getId());
-                ort.setOzId(messpunkte.get(0).getOzId());
+                ort.setOzId(messpunkte.get(0).getPoiId());
                 if (uo.containsKey("U_ORTS_ZUSATZTEXT")) {
                     ort.setOrtszusatztext(uo.get("U_ORTS_ZUSATZTEXT"));
                 }
                 repository.create(ort);
-                probe.setNuclFacilGrId(messpunkte.get(0).getKtaGruppeId());
+                probe.setNuclFacilGrId(messpunkte.get(0).getReiNuclFacilGrId());
                 repository.update(probe);
             } else if (uo.get("U_ORTS_ZUSATZCODE").length() == 4) {
                 QueryBuilder<NuclFacilGr> builderKta =
@@ -1752,15 +1752,15 @@ public class LafObjectMapper {
                             o = oE;
                         }
                     } else {
-                        o.setOrtTyp(1);
-                        o.setKtaGruppeId(ktaGrp.get(0).getId());
+                        o.setSiteClassId(1);
+                        o.setReiNuclFacilGrId(ktaGrp.get(0).getId());
                         repository.update(o);
 
                         Ortszuordnung ort = new Ortszuordnung();
                         ort.setOrtId(o.getId());
                         ort.setOrtszuordnungTyp("R");
                         ort.setProbeId(probe.getId());
-                        ort.setOzId(o.getOzId());
+                        ort.setOzId(o.getPoiId());
 
                         repository.create(ort);
 
@@ -1792,7 +1792,7 @@ public class LafObjectMapper {
             if (o == null) {
                 return;
             }
-            o.setOrtTyp(3);
+            o.setSiteClassId(3);
             repository.update(o);
             Ortszuordnung ort = new Ortszuordnung();
             ort.setOrtId(o.getId());
@@ -1802,7 +1802,7 @@ public class LafObjectMapper {
                 && uort.get(0).containsKey("U_ORTS_ZUSATZCODE")
             ) {
                 Map<String, String> uo = uort.get(0);
-                o.setOrtId(uo.get("U_ORTS_ZUSATZCODE"));
+                o.setExtId(uo.get("U_ORTS_ZUSATZCODE"));
                 if (uo.containsKey("U_ORTS_ZUSATZTEXT")) {
                     ort.setOrtszusatztext(uo.get("U_ORTS_ZUSATZTEXT"));
                 }
@@ -1829,7 +1829,7 @@ public class LafObjectMapper {
             return null;
         }
         ort.setOrtId(o.getId());
-        ort.setOzId(o.getOzId());
+        ort.setOzId(o.getPoiId());
         if (rawOrt.containsKey(type+"_ORTS_ZUSATZCODE")) {
             Ortszusatz zusatz = repository.getByIdPlain(
                 Ortszusatz.class,
@@ -1871,17 +1871,17 @@ public class LafObjectMapper {
             && attributes.get(type + "KOORDINATEN_Y") != null
         ) {
             if (attributes.get(type + "KOORDINATEN_ART_S") != null) {
-                o.setKdaId(Integer.valueOf(
+                o.setSpatRefSysId(Integer.valueOf(
                     attributes.get(type + "KOORDINATEN_ART_S")));
                 SpatRefSys koordinatenArt = repository.getByIdPlain(
-                    SpatRefSys.class, o.getKdaId());
+                    SpatRefSys.class, o.getSpatRefSysId());
                 if (koordinatenArt == null) {
                     currentWarnings.add(
                         new ReportItem(
                             type + "KOORDINATEN_ART_S",
                             attributes.get(type + "KOORDINATEN_ART_S"),
                             StatusCodes.IMP_INVALID_VALUE));
-                    o.setKdaId(null);
+                    o.setSpatRefSysId(null);
                 }
             } else {
                 QueryBuilder<SpatRefSys> kdaBuilder =
@@ -1897,13 +1897,13 @@ public class LafObjectMapper {
                             type + "KOORDINATEN_ART",
                             attributes.get(type + "KOORDINATEN_ART"),
                             StatusCodes.IMP_INVALID_VALUE));
-                    o.setKdaId(null);
+                    o.setSpatRefSysId(null);
                 } else {
-                    o.setKdaId(arten.get(0).getId());
+                    o.setSpatRefSysId(arten.get(0).getId());
                 }
             }
-            o.setKoordXExtern(attributes.get(type + "KOORDINATEN_X"));
-            o.setKoordYExtern(attributes.get(type + "KOORDINATEN_Y"));
+            o.setXCoordExt(attributes.get(type + "KOORDINATEN_X"));
+            o.setYCoordExt(attributes.get(type + "KOORDINATEN_Y"));
         }
         // If laf contains gemeinde attributes, find a ort with matching gemId
         // or create one.
@@ -1920,19 +1920,19 @@ public class LafObjectMapper {
                         attributes.get(type + "GEMEINDENAME"),
                         StatusCodes.IMP_INVALID_VALUE));
             } else {
-                o.setGemId(ves.get(0).getId());
+                o.setMunicId(ves.get(0).getId());
             }
         } else if (attributes.get(type + "GEMEINDESCHLUESSEL") != null) {
-            o.setGemId(attributes.get(type + "GEMEINDESCHLUESSEL"));
+            o.setMunicId(attributes.get(type + "GEMEINDESCHLUESSEL"));
             Verwaltungseinheit v =
                 repository.getByIdPlain(
-                    Verwaltungseinheit.class, o.getGemId());
+                    Verwaltungseinheit.class, o.getMunicId());
             if (v == null) {
                 currentWarnings.add(
                     new ReportItem(
-                        type + "GEMEINDESCHLUESSEL", o.getGemId(),
+                        type + "GEMEINDESCHLUESSEL", o.getMunicId(),
                         StatusCodes.IMP_INVALID_VALUE));
-                o.setGemId(null);
+                o.setMunicId(null);
             }
         }
         String key = "";
@@ -1962,23 +1962,23 @@ public class LafObjectMapper {
                 currentWarnings.add(
                     new ReportItem(key, hLand, StatusCodes.IMP_INVALID_VALUE));
             } else if (staat.size() > 0) {
-                o.setStaatId(staat.get(0).getId());
+                o.setStateId(staat.get(0).getId());
             }
         }
         if (attributes.containsKey(type + "HOEHE_NN")) {
-            o.setHoeheUeberNn(Float.valueOf(attributes.get(type + "HOEHE_NN")));
+            o.setHeightAsl(Float.valueOf(attributes.get(type + "HOEHE_NN")));
         }
 
         // checkk if all attributes are empty
-        if (o.getKdaId() == null
-            && o.getGemId() == null
-            && o.getStaatId() == null) {
+        if (o.getSpatRefSysId() == null
+            && o.getMunicId() == null
+            && o.getStateId() == null) {
             return null;
         }
 
         MeasFacil mst = repository.getByIdPlain(
             MeasFacil.class, probe.getMeasFacilId());
-        o.setNetzbetreiberId(mst.getNetworkId());
+        o.setNetworkId(mst.getNetworkId());
         o = ortFactory.completeOrt(o);
         if (o == null || o.getGeom() == null) {
             currentWarnings.addAll(ortFactory.getErrors());

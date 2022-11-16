@@ -41,9 +41,9 @@ public class CoordinatesInVE implements Rule {
     @Override
     public Violation execute(Object object) {
         Ort ort = (Ort) object;
-        String gemId = "".equals(ort.getGemId())
+        String gemId = "".equals(ort.getMunicId())
             ? null
-            : ort.getGemId();
+            : ort.getMunicId();
 
         if (gemId != null && ort.getGeom() != null) {
 
@@ -64,24 +64,24 @@ public class CoordinatesInVE implements Rule {
                     + "Probably OrtFactory.transformCoordinates() has not "
                     + "been called on this ort.");
             }
-            Boolean unscharf = ort.getUnscharf();
+            Boolean unscharf = ort.getIsFuzzy();
             Violation violation = new Violation();
             for (Verwaltungsgrenze singlevg : vgs) {
                 if (singlevg.getShape().contains(p)) {
                     if (unscharf != null && !unscharf) {
                         return null;
                     } else {
-                        ort.setUnscharf(false);
+                        ort.setIsFuzzy(false);
                         return null;
                     }
                 } else {
                     double dist = singlevg.getShape().distance(p);
                     dist = dist * (3.1415926 / 180) * 6378137;
                     if (dist < 1000) {
-                        ort.setUnscharf(true);
+                        ort.setIsFuzzy(true);
                         return null;
                     } else {
-                        ort.setUnscharf(false);
+                        ort.setIsFuzzy(false);
                         violation.addWarning(
                             "koordXExtern", StatusCodes.GEO_POINT_OUTSIDE);
                         violation.addWarning(

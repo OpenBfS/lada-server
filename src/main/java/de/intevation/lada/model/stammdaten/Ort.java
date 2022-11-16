@@ -24,17 +24,10 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.locationtech.jts.geom.Point;
 
-
 import org.hibernate.annotations.Type;
 
-
-
-/**
- * The persistent class for the ort database table.
- *
- */
 @Entity
-@Table(name = "ort", schema = SchemaName.LEGACY_NAME)
+@Table(name = "site", schema = SchemaName.NAME)
 public class Ort implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -42,73 +35,58 @@ public class Ort implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Boolean aktiv;
+    private Boolean isReiActive;
 
-    @Column(name = "kta_gruppe_id")
-    private Integer ktaGruppeId;
+    private Integer reiNuclFacilGrId;
 
-    private String berichtstext;
+    private String reiReportText;
 
     @ManyToOne
-    @JoinColumn(name = "gem_id", updatable = false, insertable = false)
-    private Verwaltungseinheit gemeinde;
+    @JoinColumn(name = "munic_id", updatable = false, insertable = false)
+    private Verwaltungseinheit munic;
 
-    @Column(name = "gem_id")
-    private String gemId;
+    private String municId;
 
-    @Column(name = "gem_unt_id")
-    private Integer gemUntId;
+    private Integer municDivId;
 
-    @Column(name = "hoehe_ueber_nn")
-    private Float hoeheUeberNn;
+    private Float heightAsl;
 
-    @Column(name = "hoehe_land")
-    private Float hoeheLand;
+    private Float alt;
 
-    @Column(name = "koord_x_extern")
-    private String koordXExtern;
+    private String xCoordExt;
 
-    @Column(name = "koord_y_extern")
-    private String koordYExtern;
+    private String yCoordExt;
 
-    private String kurztext;
+    private String shortText;
 
-    private String langtext;
+    private String longText;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
-    @Column(name = "mp_art")
-    private String mpArt;
+    private String reiOprMode;
 
-    @Column(name = "netzbetreiber_id")
-    private String netzbetreiberId;
+    private String networkId;
 
-    @Column(name = "ort_id")
-    private String ortId;
+    private String extId;
 
-    @Column(name = "ort_typ")
-    private Integer ortTyp;
+    private Integer siteClassId;
 
-    @Column(name = "oz_id")
-    private String ozId;
+    private String poiId;
 
-    private String sektor;
+    private String reiSector;
 
-    @Column(name = "staat_id")
-    private Integer staatId;
+    private Integer stateId;
 
-    private Boolean unscharf;
+    private Boolean isFuzzy;
 
-    private String zone;
+    private String reiZone;
 
-    private String zustaendigkeit;
+    private String reiCompetence;
 
-    @Column(name = "kda_id")
-    private Integer kdaId;
+    private Integer spatRefSysId;
 
-    @Column(name = "rei_progpunkt_grp_id")
-    private Integer reiProgpunktGrpId;
+    private Integer reiAgGrId;
 
     @Type(type = "jts_geometry")
     @Column(columnDefinition = "geometry(Point, 4326)")
@@ -152,109 +130,109 @@ public class Ort implements Serializable {
         this.id = id;
     }
 
-    public Boolean getAktiv() {
-        return this.aktiv;
+    public Boolean getIsReiActive() {
+        return this.isReiActive;
     }
 
-    public void setAktiv(Boolean aktiv) {
-        this.aktiv = aktiv;
+    public void setIsReiActive(Boolean isReiActive) {
+        this.isReiActive = isReiActive;
     }
 
-    public Integer getKtaGruppeId() {
-        return this.ktaGruppeId;
+    public Integer getReiNuclFacilGrId() {
+        return this.reiNuclFacilGrId;
     }
 
-    public void setKtaGruppeId(Integer ktaGruppeId) {
-        this.ktaGruppeId = ktaGruppeId;
+    public void setReiNuclFacilGrId(Integer reiNuclFacilGrId) {
+        this.reiNuclFacilGrId = reiNuclFacilGrId;
     }
 
-    public String getBerichtstext() {
-        return this.berichtstext;
+    public String getReiReportText() {
+        return this.reiReportText;
     }
 
-    public void setBerichtstext(String berichtstext) {
-        this.berichtstext = berichtstext;
+    public void setReiReportText(String reiReportText) {
+        this.reiReportText = reiReportText;
     }
 
     @JsonbTransient
-    public Verwaltungseinheit getGemeinde() {
-        return this.gemeinde;
+    public Verwaltungseinheit getMunic() {
+        return this.munic;
     }
 
-    public void setGemeinde(Verwaltungseinheit gemeinde) {
-        this.gemeinde = gemeinde;
+    public void setMunic(Verwaltungseinheit munic) {
+        this.munic = munic;
     }
 
-    public String getGemId() {
-        return this.gemId;
+    public String getMunicId() {
+        return this.municId;
     }
 
-    public void setGemId(String gemId) {
-        this.gemId = gemId;
+    public void setMunicId(String municId) {
+        this.municId = municId;
     }
 
-    public Integer getGemUntId() {
-        return this.gemUntId;
+    public Integer getMunicDivId() {
+        return this.municDivId;
     }
 
-    public void setGemUntId(Integer gemUntId) {
-        this.gemUntId = gemUntId;
+    public void setMunicDivId(Integer municDivId) {
+        this.municDivId = municDivId;
     }
 
-    public Integer getReiProgpunktGrpId() {
-        return this.reiProgpunktGrpId;
+    public Integer getReiAgGrId() {
+        return this.reiAgGrId;
     }
 
-    public void setReiProgpunktGrpId(Integer reiProgpunktGrpId) {
-        this.reiProgpunktGrpId = reiProgpunktGrpId;
+    public void setAgGrId(Integer reiAgGrId) {
+        this.reiAgGrId = reiAgGrId;
     }
 
-    public Float getHoeheUeberNn() {
-        return this.hoeheUeberNn;
+    public Float getHeightAsl() {
+        return this.heightAsl;
     }
 
-    public void setHoeheUeberNn(Float hoeheUeberNn) {
-        this.hoeheUeberNn = hoeheUeberNn;
+    public void setHeightAsl(Float heightAsl) {
+        this.heightAsl = heightAsl;
     }
 
-    public Float getHoeheLand() {
-        return this.hoeheLand;
+    public Float getAlt() {
+        return this.alt;
     }
 
-    public void setHoeheLand(Float hoeheLand) {
-        this.hoeheLand = hoeheLand;
+    public void setAlt(Float alt) {
+        this.alt = alt;
     }
 
-    public String getKoordXExtern() {
-        return this.koordXExtern;
+    public String getXCoordExt() {
+        return this.xCoordExt;
     }
 
-    public void setKoordXExtern(String koordXExtern) {
-        this.koordXExtern = koordXExtern;
+    public void setXCoordExt(String xCoordExt) {
+        this.xCoordExt = xCoordExt;
     }
 
-    public String getKoordYExtern() {
-        return this.koordYExtern;
+    public String getYCoordExt() {
+        return this.yCoordExt;
     }
 
-    public void setKoordYExtern(String koordYExtern) {
-        this.koordYExtern = koordYExtern;
+    public void setYCoordExt(String yCoordExt) {
+        this.yCoordExt = yCoordExt;
     }
 
-    public String getKurztext() {
-        return this.kurztext;
+    public String getShortText() {
+        return this.shortText;
     }
 
-    public void setKurztext(String kurztext) {
-        this.kurztext = kurztext;
+    public void setShortText(String shortText) {
+        this.shortText = shortText;
     }
 
-    public String getLangtext() {
-        return this.langtext;
+    public String getLongText() {
+        return this.longText;
     }
 
-    public void setLangtext(String langtext) {
-        this.langtext = langtext;
+    public void setLongText(String longText) {
+        this.longText = longText;
     }
 
     /**
@@ -268,12 +246,12 @@ public class Ort implements Serializable {
             : null;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
     /**
@@ -287,92 +265,92 @@ public class Ort implements Serializable {
             : null;
     }
 
-    public String getMpArt() {
-        return this.mpArt;
+    public String getReiOprMode() {
+        return this.reiOprMode;
     }
 
-    public void setMpArt(String mpArt) {
-        this.mpArt = mpArt;
+    public void setReiOprMode(String reiOprMode) {
+        this.reiOprMode = reiOprMode;
     }
 
-    public String getNetzbetreiberId() {
-        return this.netzbetreiberId;
+    public String getNetworkId() {
+        return this.networkId;
     }
 
-    public void setNetzbetreiberId(String netzbetreiberId) {
-        this.netzbetreiberId = netzbetreiberId;
+    public void setNetworkId(String networkId) {
+        this.networkId = networkId;
     }
 
-    public String getOrtId() {
-        return this.ortId;
+    public String getExtId() {
+        return this.extId;
     }
 
-    public void setOrtId(String ortId) {
-        this.ortId = ortId;
+    public void setExtId(String extId) {
+        this.extId = extId;
     }
 
-    public Integer getOrtTyp() {
-        return this.ortTyp;
+    public Integer getSiteClassId() {
+        return this.siteClassId;
     }
 
-    public void setOrtTyp(Integer ortTyp) {
-        this.ortTyp = ortTyp;
+    public void setSiteClassId(Integer siteClassId) {
+        this.siteClassId = siteClassId;
     }
 
-    public String getOzId() {
-        return this.ozId;
+    public String getPoiId() {
+        return this.poiId;
     }
 
-    public void setOzId(String ozId) {
-        this.ozId = ozId;
+    public void setPoiId(String poiId) {
+        this.poiId = poiId;
     }
 
-    public String getSektor() {
-        return this.sektor;
+    public String getReiSector() {
+        return this.reiSector;
     }
 
-    public void setSektor(String sektor) {
-        this.sektor = sektor;
+    public void setReiSector(String reiSector) {
+        this.reiSector = reiSector;
     }
 
-    public Integer getStaatId() {
-        return this.staatId;
+    public Integer getStateId() {
+        return this.stateId;
     }
 
-    public void setStaatId(Integer staatId) {
-        this.staatId = staatId;
+    public void setStateId(Integer stateId) {
+        this.stateId = stateId;
     }
 
-    public Boolean getUnscharf() {
-        return this.unscharf;
+    public Boolean getIsFuzzy() {
+        return this.isFuzzy;
     }
 
-    public void setUnscharf(Boolean unscharf) {
-        this.unscharf = unscharf;
+    public void setIsFuzzy(Boolean isFuzzy) {
+        this.isFuzzy = isFuzzy;
     }
 
-    public String getZone() {
-        return this.zone;
+    public String getReiZone() {
+        return this.reiZone;
     }
 
-    public void setZone(String zone) {
-        this.zone = zone;
+    public void setReiZone(String reiZone) {
+        this.reiZone = reiZone;
     }
 
-    public String getZustaendigkeit() {
-        return this.zustaendigkeit;
+    public String getReiCompetence() {
+        return this.reiCompetence;
     }
 
-    public void setZustaendigkeit(String zustaendigkeit) {
-        this.zustaendigkeit = zustaendigkeit;
+    public void setReiCompetence(String reiCompetence) {
+        this.reiCompetence = reiCompetence;
     }
 
-    public Integer getKdaId() {
-        return this.kdaId;
+    public Integer getSpatRefSysId() {
+        return this.spatRefSysId;
     }
 
-    public void setKdaId(Integer kdaId) {
-        this.kdaId = kdaId;
+    public void setSpatRefSysId(Integer spatRefSysId) {
+        this.spatRefSysId = spatRefSysId;
     }
 
     @JsonbTransient
