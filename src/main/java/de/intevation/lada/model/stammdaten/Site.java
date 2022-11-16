@@ -183,7 +183,7 @@ public class Site implements Serializable {
         return this.reiAgGrId;
     }
 
-    public void setAgGrId(Integer reiAgGrId) {
+    public void setReiAgGrId(Integer reiAgGrId) {
         this.reiAgGrId = reiAgGrId;
     }
 
