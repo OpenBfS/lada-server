@@ -27,7 +27,7 @@ import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.GridColMp;
 import de.intevation.lada.model.stammdaten.GridColConf;
-import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.QueryUser;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -73,7 +73,7 @@ public class ColumnValueService extends LadaService {
         Root<GridColConf> root = criteriaQuery.from(GridColConf.class);
         Join<GridColConf, QueryUser> value =
             root.join("queryUser", javax.persistence.criteria.JoinType.LEFT);
-        Join<MessStelle, QueryUser> mess =
+        Join<MeasFacil, QueryUser> mess =
             value.join("messStelles", javax.persistence.criteria.JoinType.LEFT);
         Predicate filter = builder.equal(root.get("queryUser"), qid);
         Predicate uId = builder.equal(root.get("userId"), userInfo.getUserId());

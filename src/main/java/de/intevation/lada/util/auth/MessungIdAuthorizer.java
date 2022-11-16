@@ -14,7 +14,7 @@ import java.util.List;
 
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
@@ -114,9 +114,9 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
 
             boolean readOnly = true;
             boolean owner = false;
-            MessStelle mst =
+            MeasFacil mst =
                 repository.getByIdPlain(
-                    MessStelle.class, probe.getMeasFacilId());
+                    MeasFacil.class, probe.getMeasFacilId());
             if (!userInfo.getNetzbetreiber().contains(
                     mst.getNetworkId())) {
                 owner = false;

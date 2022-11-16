@@ -12,7 +12,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -74,7 +74,7 @@ public class MessstelleService extends LadaService {
     @GET
     @Path("/")
     public Response get() {
-        return repository.getAll(MessStelle.class);
+        return repository.getAll(MeasFacil.class);
     }
 
     /**
@@ -88,6 +88,6 @@ public class MessstelleService extends LadaService {
     public Response getById(
         @PathParam("id") String id
     ) {
-        return repository.getById(MessStelle.class, id);
+        return repository.getById(MeasFacil.class, id);
     }
 }

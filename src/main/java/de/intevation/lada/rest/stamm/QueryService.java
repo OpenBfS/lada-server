@@ -27,7 +27,7 @@ import javax.ws.rs.PathParam;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.QueryMessstelle;
 import de.intevation.lada.model.stammdaten.QueryUser;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -100,7 +100,7 @@ public class QueryService extends LadaService {
         CriteriaQuery<QueryUser> criteriaQuery =
             builder.createQuery(QueryUser.class);
         Root<QueryUser> root = criteriaQuery.from(QueryUser.class);
-        Join<MessStelle, QueryUser> mess =
+        Join<MeasFacil, QueryUser> mess =
             root.join("messStelles", javax.persistence.criteria.JoinType.LEFT);
         Predicate filter =
             builder.equal(root.get("userId"), userInfo.getUserId());

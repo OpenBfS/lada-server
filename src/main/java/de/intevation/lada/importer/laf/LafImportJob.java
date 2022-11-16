@@ -30,7 +30,7 @@ import de.intevation.lada.importer.ImportConfig;
 import de.intevation.lada.importer.ImportFormat;
 import de.intevation.lada.importer.Importer;
 import de.intevation.lada.model.stammdaten.ImportConf;
-import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -53,7 +53,7 @@ public class LafImportJob extends Job {
 
     private JsonObject jsonInput;
 
-    private MessStelle mst;
+    private MeasFacil mst;
 
     private JsonObject result;
 
@@ -216,7 +216,7 @@ public class LafImportJob extends Job {
          this.jsonInput = jsonInput;
     }
 
-    public void setMst(MessStelle mst) {
+    public void setMst(MeasFacil mst) {
         this.mst = mst;
     }
 }

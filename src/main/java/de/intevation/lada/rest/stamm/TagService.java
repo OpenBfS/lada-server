@@ -27,7 +27,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.TagZuordnung;
-import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -161,8 +161,8 @@ public class TagService extends LadaService {
         Timestamp gueltigBis = tag.getGueltigBis();
 
         if (tag.getMstId() != null) {
-            MessStelle mst = repository.getByIdPlain(
-                MessStelle.class, tag.getMstId());
+            MeasFacil mst = repository.getByIdPlain(
+                MeasFacil.class, tag.getMstId());
             if (tag.getNetzbetreiberId() == null) {
                 tag.setNetzbetreiberId(mst.getNetworkId());
             } else if (!tag.getNetzbetreiberId().equals(mst.getNetworkId())) {
@@ -236,8 +236,8 @@ public class TagService extends LadaService {
         tag.setUserId(authorization.getInfo().getUserId());
 
         if (tag.getMstId() != null) {
-            MessStelle mst = repository.getByIdPlain(
-                MessStelle.class, tag.getMstId());
+            MeasFacil mst = repository.getByIdPlain(
+                MeasFacil.class, tag.getMstId());
             if (tag.getNetzbetreiberId() == null) {
                 tag.setNetzbetreiberId(mst.getNetworkId());
             } else if (!tag.getNetzbetreiberId().equals(mst.getNetworkId())) {

@@ -12,7 +12,7 @@ import java.util.List;
 
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.MessprogrammMmt;
-import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
@@ -50,8 +50,8 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         }
         String mstId = messprogramm.getMstId();
         if (mstId != null) {
-            MessStelle mst = repository.getByIdPlain(
-                MessStelle.class, mstId);
+            MeasFacil mst = repository.getByIdPlain(
+                MeasFacil.class, mstId);
             if (userInfo.getFunktionenForNetzbetreiber(
                     mst.getNetworkId()).contains(4)
             ) {
@@ -107,9 +107,9 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Messprogramm messprogramm
     ) {
-        MessStelle mst =
+        MeasFacil mst =
             repository.getByIdPlain(
-                MessStelle.class, messprogramm.getMstId());
+                MeasFacil.class, messprogramm.getMstId());
         if (userInfo.getFunktionenForNetzbetreiber(
                 mst.getNetworkId()).contains(4)
         ) {

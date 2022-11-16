@@ -52,7 +52,7 @@ import de.intevation.lada.model.stammdaten.Regulation;
 import de.intevation.lada.model.stammdaten.EnvDescrip;
 import de.intevation.lada.model.stammdaten.MeasUnit;
 import de.intevation.lada.model.stammdaten.Mmt;
-import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Ort;
@@ -293,12 +293,12 @@ public class JsonExporter implements Exporter {
     }
 
     private void addMessstelle(JsonNode node) {
-        MessStelle messstelle = repository.getByIdPlain(
-            MessStelle.class,
+        MeasFacil messstelle = repository.getByIdPlain(
+            MeasFacil.class,
             node.get("mstId").asText()
         );
-        MessStelle laborMessstelle = repository.getByIdPlain(
-            MessStelle.class,
+        MeasFacil laborMessstelle = repository.getByIdPlain(
+            MeasFacil.class,
             node.get("laborMstId").asText()
         );
         final ObjectMapper mapper = new ObjectMapper();
@@ -353,8 +353,8 @@ public class JsonExporter implements Exporter {
             String tmp = mapper.writeValueAsString(kommentare);
             JsonNode nodes = mapper.readTree(tmp);
             for (int i = 0; i < nodes.size(); i++) {
-                MessStelle mst = repository.getByIdPlain(
-                    MessStelle.class,
+                MeasFacil mst = repository.getByIdPlain(
+                    MeasFacil.class,
                     nodes.get(i).get("mstId").asText()
                 );
                 ((ObjectNode) nodes.get(i)).put(
@@ -494,8 +494,8 @@ public class JsonExporter implements Exporter {
             String tmp = mapper.writeValueAsString(kommentare);
             JsonNode nodes = mapper.readTree(tmp);
             for (int i = 0; i < nodes.size(); i++) {
-                MessStelle mst = repository.getByIdPlain(
-                    MessStelle.class,
+                MeasFacil mst = repository.getByIdPlain(
+                    MeasFacil.class,
                     nodes.get(i).get("mstId").asText()
                 );
                 ((ObjectNode) nodes.get(i)).put(
@@ -530,8 +530,8 @@ public class JsonExporter implements Exporter {
                 ((ObjectNode) nodes.get(i)).put(
                     "statusWert",
                     kombi.getStatusWert().getWert());
-                MessStelle mst = repository.getByIdPlain(
-                    MessStelle.class,
+                MeasFacil mst = repository.getByIdPlain(
+                    MeasFacil.class,
                     nodes.get(i).get("mstId").asText()
                 );
                 ((ObjectNode) nodes.get(i)).put(

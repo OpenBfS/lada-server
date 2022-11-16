@@ -38,7 +38,7 @@ import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.importer.Importer;
 import de.intevation.lada.importer.laf.LafImporter;
 import de.intevation.lada.model.stammdaten.ImportConf;
-import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -156,7 +156,7 @@ public class LafImportService extends LadaService {
                 StatusCodes.NOT_ALLOWED,
                 "Missing header for messtelle.");
         }
-        MessStelle mst = repository.getByIdPlain(MessStelle.class, mstId);
+        MeasFacil mst = repository.getByIdPlain(MeasFacil.class, mstId);
         if (mst == null) {
             return new Response(
                 false,
@@ -278,7 +278,7 @@ public class LafImportService extends LadaService {
     ) {
         UserInfo userInfo = authorization.getInfo();
         String mstId = request.getHeader("X-LADA-MST");
-        MessStelle mst = repository.getByIdPlain(MessStelle.class, mstId);
+        MeasFacil mst = repository.getByIdPlain(MeasFacil.class, mstId);
         if (mst == null) {
             return new Response(
                 false,

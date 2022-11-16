@@ -14,7 +14,7 @@ import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.AuthCoordOfcEnvMediumMp;
-import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -105,9 +105,9 @@ public class MessungAuthorizer extends BaseAuthorizer {
         Sample probe =
             (Sample) repository.getById(
                 Sample.class, messung.getProbeId()).getData();
-        MessStelle mst =
+        MeasFacil mst =
             repository.getByIdPlain(
-                MessStelle.class, probe.getMeasFacilId());
+                MeasFacil.class, probe.getMeasFacilId());
 
         if (userInfo.belongsTo(probe.getMeasFacilId(), probe.getApprLabId())) {
             messung.setOwner(true);

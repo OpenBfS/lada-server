@@ -51,7 +51,7 @@ import de.intevation.lada.model.stammdaten.SpatRefSys;
 import de.intevation.lada.model.stammdaten.NuclFacilGr;
 import de.intevation.lada.model.stammdaten.MeasUnit;
 import de.intevation.lada.model.stammdaten.Mmt;
-import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.MessprogrammTransfer;
@@ -190,8 +190,8 @@ public class LafObjectMapper {
                 new ArrayList<ReportItem>(currentErrors));
             return;
         } else {
-            MessStelle mst = repository.getByIdPlain(
-                MessStelle.class, probe.getMeasFacilId());
+            MeasFacil mst = repository.getByIdPlain(
+                MeasFacil.class, probe.getMeasFacilId());
             if (mst == null) {
                 currentErrors.add(
                     new ReportItem(
@@ -1652,8 +1652,8 @@ public class LafObjectMapper {
         }
 
         // check auth
-        MessStelle messStelle =
-            repository.getByIdPlain(MessStelle.class, mstId);
+        MeasFacil messStelle =
+            repository.getByIdPlain(MeasFacil.class, mstId);
         if ((statusStufe == 1
             && userInfo.getFunktionenForMst(mstId).contains(1))
             || (statusStufe == 2
@@ -1976,8 +1976,8 @@ public class LafObjectMapper {
             return null;
         }
 
-        MessStelle mst = repository.getByIdPlain(
-            MessStelle.class, probe.getMeasFacilId());
+        MeasFacil mst = repository.getByIdPlain(
+            MeasFacil.class, probe.getMeasFacilId());
         o.setNetzbetreiberId(mst.getNetworkId());
         o = ortFactory.completeOrt(o);
         if (o == null || o.getGeom() == null) {
@@ -2199,8 +2199,8 @@ public class LafObjectMapper {
         }
 
         if ("MESSLABOR".equals(key)) {
-            MessStelle mst = repository.getByIdPlain(
-                MessStelle.class, value.toString());
+            MeasFacil mst = repository.getByIdPlain(
+                MeasFacil.class, value.toString());
             if (mst == null) {
                 currentWarnings.add(
                     new ReportItem(

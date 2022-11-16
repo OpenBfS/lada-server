@@ -27,7 +27,7 @@ import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.stammdaten.MeasUnit;
-import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.MunicDiv;
@@ -158,9 +158,9 @@ implements Creator {
             probenart = probenarten.get(0).getProbenart();
         }
 
-        MessStelle messstelle =
+        MeasFacil messstelle =
             repository.getByIdPlain(
-                MessStelle.class, probe.getMeasFacilId());
+                MeasFacil.class, probe.getMeasFacilId());
 
         QueryBuilder<ZusatzWert> zusatzBuilder =
             repository.queryBuilder(ZusatzWert.class);

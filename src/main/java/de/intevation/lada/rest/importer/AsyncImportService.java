@@ -26,7 +26,7 @@ import de.intevation.lada.importer.ImportConfig;
 import de.intevation.lada.importer.ImportFormat;
 import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.importer.Importer;
-import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -84,7 +84,7 @@ public class AsyncImportService extends LadaService {
             errBuilder.add("data", "Missing header for messtelle.");
             return Response.ok(errBuilder.build().toString()).build();
         }
-        MessStelle mst = repository.getByIdPlain(MessStelle.class, mstId);
+        MeasFacil mst = repository.getByIdPlain(MeasFacil.class, mstId);
         if (mst == null) {
             errBuilder.add("data", "Wrong header for messtelle.");
             return Response.ok(errBuilder.build().toString()).build();
