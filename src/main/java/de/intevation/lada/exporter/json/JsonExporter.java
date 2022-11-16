@@ -268,8 +268,8 @@ public class JsonExporter implements Exporter {
                     MessprogrammKategorie.class,
                     probe.get("mplId").asInt()
                 );
-                probe.put("mplCode", mpl.getCode());
-                probe.put("mpl", mpl.getBezeichnung());
+                probe.put("mplCode", mpl.getExtId());
+                probe.put("mpl", mpl.getName());
             }
             if (probe.get("probeNehmerId").asInt() != 0) {
                 Probenehmer probenehmer = repository.getByIdPlain(

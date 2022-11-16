@@ -189,7 +189,7 @@ public class UniversalService extends LadaService {
                         if (authorizationColumnType == MessprogrammKategorie.class) {
                             MessprogrammKategorie mk = repository.getByIdPlain(
                                 MessprogrammKategorie.class, idToAuthorize);
-                            idToAuthorize = mk.getNetzbetreiberId();
+                            idToAuthorize = mk.getNetworkId();
                         }
                         if (authorizationColumnType == Tag.class) {
                             Tag tag = repository.getByIdPlain(

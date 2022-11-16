@@ -127,8 +127,8 @@ public class MessprogrammKategorieService extends LadaService {
         }
         QueryBuilder<MessprogrammKategorie> builder =
             repository.queryBuilder(MessprogrammKategorie.class);
-        builder.and("code", kategorie.getCode());
-        builder.and("netzbetreiberId", kategorie.getNetzbetreiberId());
+        builder.and("extId", kategorie.getExtId());
+        builder.and("networkId", kategorie.getNetworkId());
         List<MessprogrammKategorie> kategorien =
             repository.filterPlain(builder.getQuery());
         if (kategorien.isEmpty()) {
@@ -152,8 +152,8 @@ public class MessprogrammKategorieService extends LadaService {
         }
         QueryBuilder<MessprogrammKategorie> builder =
             repository.queryBuilder(MessprogrammKategorie.class);
-        builder.and("code", kategorie.getCode());
-        builder.and("netzbetreiberId", kategorie.getNetzbetreiberId());
+        builder.and("extId", kategorie.getExtId());
+        builder.and("networkId", kategorie.getNetworkId());
         List<MessprogrammKategorie> kategorien =
             repository.filterPlain(builder.getQuery());
         if (!kategorien.isEmpty()

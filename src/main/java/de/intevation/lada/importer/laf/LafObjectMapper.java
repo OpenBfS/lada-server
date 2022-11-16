@@ -2270,8 +2270,8 @@ public class LafObjectMapper {
         if ("MESSPROGRAMM_LAND".equals(key)) {
             QueryBuilder<MessprogrammKategorie> builder =
                 repository.queryBuilder(MessprogrammKategorie.class);
-            builder.and("netzbetreiberId", netzbetreiberId);
-            builder.and("code", value);
+            builder.and("networkId", netzbetreiberId);
+            builder.and("extId", value);
             List<MessprogrammKategorie> kategorie =
                     (List<MessprogrammKategorie>) repository.filterPlain(
                             builder.getQuery());

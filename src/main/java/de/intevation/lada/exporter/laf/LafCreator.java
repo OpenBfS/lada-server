@@ -254,7 +254,7 @@ implements Creator {
         if (probe.getStateMpgId() != null) {
             MessprogrammKategorie mpkat = repository.getByIdPlain(
                 MessprogrammKategorie.class, probe.getStateMpgId());
-            laf += lafLine("MESSPROGRAMM_LAND", mpkat.getCode(), CN);
+            laf += lafLine("MESSPROGRAMM_LAND", mpkat.getExtId(), CN);
         }
         if (probe.getSamplerId() != null) {
             Probenehmer prn = repository.getByIdPlain(
