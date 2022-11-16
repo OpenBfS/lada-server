@@ -574,7 +574,7 @@ implements Creator {
         value += mw.getMesswertNwg() == null ? " " : mw.getMesswertNwg();
         value += mw.getMesswertNwg() == null
             ? mw.getMesswert() : mw.getNwgZuMesswert();
-        value += " \"" + einheiten.get(0).getEinheit() + "\"";
+        value += " \"" + einheiten.get(0).getUnitSymbol() + "\"";
         value += mw.getMessfehler() == null ? " 0.0" : " " + mw.getMessfehler();
         if (mw.getGrenzwertueberschreitung() == null
             || !mw.getGrenzwertueberschreitung()

@@ -265,7 +265,7 @@ public abstract class QueryExportJob extends ExportJob {
             MessEinheit.class);
         builder.and("id", messwert.getMehId());
         List<MessEinheit> messeinheit = repository.filterPlain(builder.getQuery());
-        return messeinheit.get(0).getEinheit();
+        return messeinheit.get(0).getUnitSymbol();
     }
 
     /**

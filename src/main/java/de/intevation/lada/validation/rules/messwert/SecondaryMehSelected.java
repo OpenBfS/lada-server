@@ -67,7 +67,7 @@ public class SecondaryMehSelected implements Rule {
                 repository.getByIdPlain(
                     MessEinheit.class, secMehId);
             AtomicBoolean primary = new AtomicBoolean(false);
-            meh.getMassEinheitUmrechnungZus().forEach(umrechnung -> {
+            meh.getUnitConversTo().forEach(umrechnung -> {
                 if (umrechnung.getFromUnit().getId()
                     .equals(messwert.getMehId())
                 ) {
@@ -77,7 +77,7 @@ public class SecondaryMehSelected implements Rule {
             if (primary.get()) {
                 return null;
             }
-            secMeh.getMassEinheitUmrechnungZus().forEach(secUmrechnung -> {
+            secMeh.getUnitConversTo().forEach(secUmrechnung -> {
                 if (secUmrechnung.getFromUnit().getId()
                     .equals(messwert.getMehId())
                 ) {

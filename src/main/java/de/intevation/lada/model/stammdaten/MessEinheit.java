@@ -20,22 +20,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-
-/**
- * The persistent class for the mess_einheit database table.
- *
- */
 @Entity
-@Table(name = "mess_einheit", schema = SchemaName.LEGACY_NAME)
+@Table(name = "meas_unit", schema = SchemaName.NAME)
 public class MessEinheit implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    private String beschreibung;
+    private String name;
 
-    private String einheit;
+    private String unitSymbol;
 
     /**
      * Get all MasseinheitUmrechnungs for units that can be converted into
@@ -43,13 +38,11 @@ public class MessEinheit implements Serializable {
      */
     @OneToMany(mappedBy = "toUnitId", fetch = FetchType.EAGER)
     @JsonbTransient
-    private List<UnitConvers> massEinheitUmrechnungZus;
+    private List<UnitConvers> unitConversTo;
 
-    @Column(name = "eudf_messeinheit_id")
-    private String eudfMesseinheitId;
+    private String eudfUnitId;
 
-    @Column(name = "umrechnungs_faktor_eudf")
-    private Long umrechnungsFaktorEudf;
+    private Long eudfConversFactor;
 
     /**
      * Attribute used to distinguish between primary and secondary messeinheit
@@ -58,8 +51,8 @@ public class MessEinheit implements Serializable {
     @Transient
     private Boolean primary;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public MessEinheit() {
     }
@@ -72,40 +65,40 @@ public class MessEinheit implements Serializable {
         this.id = id;
     }
 
-    public String getBeschreibung() {
-        return this.beschreibung;
+    public String getName() {
+        return this.name;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getEinheit() {
-        return this.einheit;
+    public String getUnitSymbol() {
+        return this.unitSymbol;
     }
 
-    public void setEinheit(String einheit) {
-        this.einheit = einheit;
+    public void setUnitSymbol(String unitSymbol) {
+        this.unitSymbol = unitSymbol;
     }
 
-    public String getEudfMesseinheitId() {
-        return this.eudfMesseinheitId;
+    public String getEudfUnitId() {
+        return this.eudfUnitId;
     }
 
-    public void setEudfMesseinheitId(String eudfMesseinheitId) {
-        this.eudfMesseinheitId = eudfMesseinheitId;
+    public void setEudfUnitId(String eudfUnitId) {
+        this.eudfUnitId = eudfUnitId;
     }
 
-    public Long getUmrechnungsFaktorEudf() {
-        return this.umrechnungsFaktorEudf;
+    public Long getEudfConversFactor() {
+        return this.eudfConversFactor;
     }
 
-    public void setUmrechnungsFaktorEudf(Long umrechnungsFaktorEudf) {
-        this.umrechnungsFaktorEudf = umrechnungsFaktorEudf;
+    public void setEudfConversFactor(Long eudfConversFactor) {
+        this.eudfConversFactor = eudfConversFactor;
     }
 
-    public List<UnitConvers> getMassEinheitUmrechnungZus() {
-        return this.massEinheitUmrechnungZus;
+    public List<UnitConvers> getUnitConversTo() {
+        return this.unitConversTo;
     }
 
     public Boolean getPrimary() {
@@ -116,12 +109,12 @@ public class MessEinheit implements Serializable {
         this.primary = primary;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }

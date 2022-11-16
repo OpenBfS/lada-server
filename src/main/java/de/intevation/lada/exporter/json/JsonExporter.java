@@ -390,7 +390,7 @@ public class JsonExporter implements Exporter {
                 MessEinheit meh = repository.getByIdPlain(
                     MessEinheit.class, mehId);
                 ((ObjectNode) nodes.get(i)).put(
-                    "meh", meh.getEinheit());
+                    "meh", meh.getUnitSymbol());
                 } else {
                     continue;
                 }
@@ -468,7 +468,7 @@ public class JsonExporter implements Exporter {
                     nodes.get(i).get("mehId").asInt()
                 );
                 ((ObjectNode) nodes.get(i)).put("meh",
-                    meh == null ? "" : meh.getEinheit());
+                    meh == null ? "" : meh.getUnitSymbol());
                 Messgroesse mg = repository.getByIdPlain(
                     Messgroesse.class,
                     nodes.get(i).get("messgroesseId").asInt()

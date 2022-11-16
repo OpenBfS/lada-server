@@ -1369,7 +1369,7 @@ public class LafObjectMapper {
             }
             QueryBuilder<MessEinheit> builder =
                 repository.queryBuilder(MessEinheit.class);
-            builder.and("einheit", attribute);
+            builder.and("unitSymbol", attribute);
             List<MessEinheit> einheit =
                 (List<MessEinheit>) repository.filterPlain(builder.getQuery());
             if (einheit == null || einheit.isEmpty()) {

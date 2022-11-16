@@ -54,11 +54,11 @@ public class Stammdaten extends ServiceTest {
         matchers.put("messeinheit",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "beschreibung",
-                "einheit",
-                "eudfMesseinheitId",
-                "umrechnungsFaktorEudf",
+                "lastMod",
+                "name",
+                "unitSymbol",
+                "eudfUnitId",
+                "eudfConversFactor",
                 "primary"
             )
         );

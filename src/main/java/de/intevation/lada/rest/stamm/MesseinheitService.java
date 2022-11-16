@@ -91,7 +91,7 @@ public class MesseinheitService extends LadaService {
         }
         List<MessEinheit> einheits =
             new ArrayList<MessEinheit>(
-                meh.getMassEinheitUmrechnungZus().size());
+                meh.getUnitConversTo().size());
         meh.setPrimary(true);
         einheits.add(meh);
         if (secMeh != null) {
@@ -99,14 +99,14 @@ public class MesseinheitService extends LadaService {
             einheits.add(secMeh);
         }
         for (UnitConvers umrechnung
-            : meh.getMassEinheitUmrechnungZus()
+            : meh.getUnitConversTo()
         ) {
             MessEinheit einheit = umrechnung.getFromUnit();
             einheit.setPrimary(true);
             einheits.add(einheit);
         }
         if (secMeh != null) {
-            secMeh.getMassEinheitUmrechnungZus().forEach(umrechnung -> {
+            secMeh.getUnitConversTo().forEach(umrechnung -> {
                 MessEinheit einheit = umrechnung.getFromUnit();
                 //If unit was not already added
                 if (!einheits.contains(einheit)) {
