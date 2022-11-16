@@ -642,21 +642,27 @@ public class JsonExporter implements Exporter {
         final ObjectMapper mapper = new ObjectMapper();
         try {
             JsonNode oNode = mapper.readTree(tmp);
-            Verwaltungseinheit ve = repository.getByIdPlain(
-                Verwaltungseinheit.class,
-                oNode.get("gemId").asText()
-            );
-            ((ObjectNode) oNode).put("gem",
-                ve == null ? "" : ve.getBezeichnung());
-            if (oNode.get("staatId").isNull()) {
-                ((ObjectNode) oNode).put("staat", "");
-            } else {
+
+            final String gemIdKey = "gemId";
+            if (oNode.hasNonNull(gemIdKey)) {
+                Verwaltungseinheit ve = repository.getByIdPlain(
+                    Verwaltungseinheit.class,
+                    oNode.get(gemIdKey).asText()
+                );
+                ((ObjectNode) oNode).put("gem",
+                    ve == null ? "" : ve.getBezeichnung());
+            }
+
+            final String staatIdKey = "staatId";
+            if (oNode.hasNonNull(staatIdKey)) {
                 Staat staat = repository.getByIdPlain(
                     Staat.class,
-                    oNode.get("staatId").asInt()
+                    oNode.get(staatIdKey).asInt()
                 );
-                ((ObjectNode) oNode).put("staat", staat.getStaat());
+                ((ObjectNode) oNode).put("staat",
+                    staat == null ? "" : staat.getStaat());
             }
+
             ((ObjectNode) node).set("ort", oNode);
         } catch (IOException e) {
             logger.debug("Could not export Ort for Ortszuordnung "
