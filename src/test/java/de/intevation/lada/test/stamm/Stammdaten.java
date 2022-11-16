@@ -78,9 +78,9 @@ public class Stammdaten extends ServiceTest {
         matchers.put("messmethode",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "beschreibung",
-                "messmethode"
+                "lastMod",
+                "descr",
+                "name"
             )
         );
         matchers.put("messstelle",

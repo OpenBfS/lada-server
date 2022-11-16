@@ -15,24 +15,20 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 import javax.persistence.Column;
 
-/**
- * The persistent class for the mess_methode database table.
- *
- */
 @Entity
-@Table(name = "mess_methode", schema = SchemaName.LEGACY_NAME)
+@Table(name = "mmt", schema = SchemaName.NAME)
 public class MessMethode implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private String id;
 
-    private String beschreibung;
+    private String descr;
 
-    private String messmethode;
+    private String name;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public MessMethode() {
     }
@@ -45,28 +41,28 @@ public class MessMethode implements Serializable {
         this.id = id;
     }
 
-    public String getBeschreibung() {
-        return this.beschreibung;
+    public String getDescr() {
+        return this.descr;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setDescr(String descr) {
+        this.descr = descr;
     }
 
-    public String getMessmethode() {
-        return this.messmethode;
+    public String getName() {
+        return this.name;
     }
 
-    public void setMessmethode(String messmethode) {
-        this.messmethode = messmethode;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }

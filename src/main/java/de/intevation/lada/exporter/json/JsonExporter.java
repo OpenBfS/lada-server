@@ -330,7 +330,7 @@ public class JsonExporter implements Exporter {
                     nodes.get(i).get("mmtId").asText()
                 );
                 ((ObjectNode) nodes.get(i)).put("mmt",
-                    mmt == null ? "" : mmt.getMessmethode());
+                    mmt == null ? "" : mmt.getName());
                 addMesswerte(nodes.get(i));
                 addMessungsKommentare(nodes.get(i));
                 addStatusProtokoll(nodes.get(i));

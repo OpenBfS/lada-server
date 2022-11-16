@@ -2480,7 +2480,7 @@ public class LafObjectMapper {
         } else if ("MESSMETHODE_C".equals(key)) {
             QueryBuilder<MessMethode> builder =
                 repository.queryBuilder(MessMethode.class);
-            builder.and("messmethode", value.toString());
+            builder.and("name", value.toString());
             List<MessMethode> mm =
                 (List<MessMethode>) repository.filterPlain(builder.getQuery());
             if (mm == null || mm.isEmpty()) {
