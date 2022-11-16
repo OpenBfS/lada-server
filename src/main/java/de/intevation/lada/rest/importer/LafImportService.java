@@ -240,7 +240,7 @@ public class LafImportService extends LadaService {
             success = true;
             //Generate a tag for the imported probe records
             Response tagCreation = tagUtil.generateTag(
-                "IMP", mst.getNetzbetreiberId());
+                "IMP", mst.getNetworkId());
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
                 success = false;
@@ -333,7 +333,7 @@ public class LafImportService extends LadaService {
         if (importedProbeids.size() > 0 && !mstId.equals("null") && success) {
             //Generate a tag for the imported probe records
             Response tagCreation = tagUtil.generateTag(
-                "IMP", mst.getNetzbetreiberId());
+                "IMP", mst.getNetworkId());
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
                 success = false;

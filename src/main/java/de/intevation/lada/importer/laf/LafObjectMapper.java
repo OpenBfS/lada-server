@@ -202,7 +202,7 @@ public class LafObjectMapper {
                     new ArrayList<ReportItem>(currentErrors));
                 return;
             }
-            netzbetreiberId = mst.getNetzbetreiberId();
+            netzbetreiberId = mst.getNetworkId();
         }
 
         if (object.getAttributes().containsKey("ZEITBASIS")) {
@@ -1658,9 +1658,9 @@ public class LafObjectMapper {
             && userInfo.getFunktionenForMst(mstId).contains(1))
             || (statusStufe == 2
                 && userInfo.getNetzbetreiber().contains(
-                    messStelle.getNetzbetreiberId())
+                    messStelle.getNetworkId())
                 && userInfo.getFunktionenForNetzbetreiber(
-                    messStelle.getNetzbetreiberId()).contains(2))
+                    messStelle.getNetworkId()).contains(2))
             || (statusStufe == 3
                 && userInfo.getFunktionen().contains(3))
         ) {
@@ -1978,7 +1978,7 @@ public class LafObjectMapper {
 
         MessStelle mst = repository.getByIdPlain(
             MessStelle.class, probe.getMeasFacilId());
-        o.setNetzbetreiberId(mst.getNetzbetreiberId());
+        o.setNetzbetreiberId(mst.getNetworkId());
         o = ortFactory.completeOrt(o);
         if (o == null || o.getGeom() == null) {
             currentWarnings.addAll(ortFactory.getErrors());

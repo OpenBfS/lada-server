@@ -193,7 +193,7 @@ public class LafImportJob extends Job {
         if (importedProbeids.size() > 0) {
             //Generate a tag for the imported probe records
             Response tagCreation =
-                tagUtil.generateTag("IMP", mst.getNetzbetreiberId());
+                tagUtil.generateTag("IMP", mst.getNetworkId());
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
                 importData = importResponseData;

@@ -359,7 +359,7 @@ public class JsonExporter implements Exporter {
                 );
                 ((ObjectNode) nodes.get(i)).put(
                     "mst",
-                    mst.getMessStelle());
+                    mst.getName());
             }
             ((ObjectNode) probe).set("kommentare", nodes);
         } catch (IOException e) {
@@ -500,7 +500,7 @@ public class JsonExporter implements Exporter {
                 );
                 ((ObjectNode) nodes.get(i)).put(
                     "mst",
-                    mst.getMessStelle());
+                    mst.getName());
             }
             ((ObjectNode) node).set("kommentare", nodes);
         } catch (IOException e) {
@@ -536,7 +536,7 @@ public class JsonExporter implements Exporter {
                 );
                 ((ObjectNode) nodes.get(i)).put(
                     "mst",
-                    mst.getMessStelle());
+                    mst.getName());
             }
             ((ObjectNode) node).set("statusprotokoll", nodes);
         } catch (IOException e) {

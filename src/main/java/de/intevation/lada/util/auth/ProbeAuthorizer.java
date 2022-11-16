@@ -80,7 +80,7 @@ public class ProbeAuthorizer extends BaseAuthorizer {
         MessStelle mst =
             repository.getByIdPlain(
                 MessStelle.class, probe.getMeasFacilId());
-        if (!userInfo.getNetzbetreiber().contains(mst.getNetzbetreiberId())) {
+        if (!userInfo.getNetzbetreiber().contains(mst.getNetworkId())) {
             probe.setOwner(false);
             probe.setReadonly(true);
             return probe;

@@ -53,7 +53,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
             MessStelle mst = repository.getByIdPlain(
                 MessStelle.class, mstId);
             if (userInfo.getFunktionenForNetzbetreiber(
-                    mst.getNetzbetreiberId()).contains(4)
+                    mst.getNetworkId()).contains(4)
             ) {
                 return true;
             }
@@ -111,7 +111,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
             repository.getByIdPlain(
                 MessStelle.class, messprogramm.getMstId());
         if (userInfo.getFunktionenForNetzbetreiber(
-                mst.getNetzbetreiberId()).contains(4)
+                mst.getNetworkId()).contains(4)
         ) {
             messprogramm.setReadonly(false);
             return messprogramm;

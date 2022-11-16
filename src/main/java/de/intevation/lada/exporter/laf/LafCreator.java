@@ -177,7 +177,7 @@ implements Creator {
                 String.format("%02d", probe.getRegulationId()));
         laf += messstelle == null
             ? ""
-            : lafLine("NETZKENNUNG", messstelle.getNetzbetreiberId(), CN);
+            : lafLine("NETZKENNUNG", messstelle.getNetworkId(), CN);
         laf += probe.getMeasFacilId() == null
             ? ""
             : lafLine("MESSSTELLE", probe.getMeasFacilId(), CN);

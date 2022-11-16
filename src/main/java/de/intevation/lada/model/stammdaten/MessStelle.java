@@ -15,33 +15,26 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the mess_stelle database table.
- *
- */
 @Entity
-@Table(name = "mess_stelle", schema = SchemaName.LEGACY_NAME)
+@Table(name = "meas_facil", schema = SchemaName.NAME)
 public class MessStelle implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private String id;
 
-    private String amtskennung;
+    private String trunkCode;
 
-    private String beschreibung;
+    private String address;
 
-    @Column(name = "mess_stelle")
-    private String messStelle;
+    private String name;
 
-    @Column(name = "mst_typ")
-    private String mstTyp;
+    private String measFacilType;
 
-    @Column(name = "netzbetreiber_id")
-    private String netzbetreiberId;
+    private String networkId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public MessStelle() {
     }
@@ -54,48 +47,48 @@ public class MessStelle implements Serializable {
         this.id = id;
     }
 
-    public String getAmtskennung() {
-        return this.amtskennung;
+    public String getTrunkCode() {
+        return this.trunkCode;
     }
 
-    public void setAmtskennung(String amtskennung) {
-        this.amtskennung = amtskennung;
+    public void setTrunkCode(String trunkCode) {
+        this.trunkCode = trunkCode;
     }
 
-    public String getBeschreibung() {
-        return this.beschreibung;
+    public String getAddress() {
+        return this.address;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public String getMessStelle() {
-        return this.messStelle;
+    public String getName() {
+        return this.name;
     }
 
-    public void setMessStelle(String messStelle) {
-        this.messStelle = messStelle;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getMstTyp() {
-        return this.mstTyp;
+    public String getMeasFacilType() {
+        return this.measFacilType;
     }
 
-    public void setMstTyp(String mstTyp) {
-        this.mstTyp = mstTyp;
+    public void setMeasFacilType(String measFacilType) {
+        this.measFacilType = measFacilType;
     }
 
-    public String getNetzbetreiberId() {
-        return this.netzbetreiberId;
+    public String getNetworkId() {
+        return this.networkId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }

@@ -153,7 +153,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
 
         // Has the user the right to edit status for the 'Netzbetreiber'?
         if (userInfo.getFunktionenForNetzbetreiber(
-                mst.getNetzbetreiberId()).contains(2)
+                mst.getNetworkId()).contains(2)
             && (stufe == 0 && messung.getStatusEditMst()
             || stufe == 1
             || stufe == 2)

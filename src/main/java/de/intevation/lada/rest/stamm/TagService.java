@@ -164,8 +164,8 @@ public class TagService extends LadaService {
             MessStelle mst = repository.getByIdPlain(
                 MessStelle.class, tag.getMstId());
             if (tag.getNetzbetreiberId() == null) {
-                tag.setNetzbetreiberId(mst.getNetzbetreiberId());
-            } else if (!tag.getNetzbetreiberId().equals(mst.getNetzbetreiberId())) {
+                tag.setNetzbetreiberId(mst.getNetworkId());
+            } else if (!tag.getNetzbetreiberId().equals(mst.getNetworkId())) {
                 return new Response(false, StatusCodes.VALUE_NOT_MATCHING, "mst");
             }
         }
@@ -239,8 +239,8 @@ public class TagService extends LadaService {
             MessStelle mst = repository.getByIdPlain(
                 MessStelle.class, tag.getMstId());
             if (tag.getNetzbetreiberId() == null) {
-                tag.setNetzbetreiberId(mst.getNetzbetreiberId());
-            } else if (!tag.getNetzbetreiberId().equals(mst.getNetzbetreiberId())) {
+                tag.setNetzbetreiberId(mst.getNetworkId());
+            } else if (!tag.getNetzbetreiberId().equals(mst.getNetworkId())) {
                 return new Response(false, StatusCodes.VALUE_NOT_MATCHING, "mst");
             }
         }

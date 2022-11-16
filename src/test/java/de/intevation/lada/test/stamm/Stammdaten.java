@@ -86,12 +86,12 @@ public class Stammdaten extends ServiceTest {
         matchers.put("messstelle",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "amtskennung",
-                "beschreibung",
-                "messStelle",
-                "mstTyp",
-                "netzbetreiberId"
+                "lastMod",
+                "trunkCode",
+                "address",
+                "name",
+                "measFacilType",
+                "networkId"
             )
         );
         matchers.put("netzbetreiber",
