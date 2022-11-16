@@ -2215,7 +2215,7 @@ public class LafObjectMapper {
         ) {
             QueryBuilder<MessprogrammTransfer> builder =
                 repository.queryBuilder(MessprogrammTransfer.class);
-            builder.and("messprogrammS", value);
+            builder.and("extId", value);
             List<MessprogrammTransfer> transfer =
                 (List<MessprogrammTransfer>) repository.filterPlain(
                     builder.getQuery());
@@ -2225,15 +2225,15 @@ public class LafObjectMapper {
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setOprModeId(transfer.get(0).getBaId());
+            probe.setOprModeId(transfer.get(0).getOprModeId());
             if (probe.getRegulationId() == null) {
-                probe.setRegulationId(transfer.get(0).getDatenbasisId());
+                probe.setRegulationId(transfer.get(0).getRegulationId());
             }
         }
         if ("MESSPROGRAMM_C".equals(key)) {
             QueryBuilder<MessprogrammTransfer> builder =
                 repository.queryBuilder(MessprogrammTransfer.class);
-            builder.and("messprogrammC", value);
+            builder.and("name", value);
             List<MessprogrammTransfer> transfer =
                 (List<MessprogrammTransfer>) repository.filterPlain(
                     builder.getQuery());
@@ -2243,9 +2243,9 @@ public class LafObjectMapper {
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setOprModeId(transfer.get(0).getBaId());
+            probe.setOprModeId(transfer.get(0).getOprModeId());
             if (probe.getRegulationId() == null) {
-                probe.setRegulationId(transfer.get(0).getDatenbasisId());
+                probe.setRegulationId(transfer.get(0).getRegulationId());
             }
         }
 

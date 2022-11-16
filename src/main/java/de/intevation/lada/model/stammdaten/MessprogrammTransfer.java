@@ -9,20 +9,14 @@ package de.intevation.lada.model.stammdaten;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
-/**
- * The persistent class for the messprogramm_transfer database table.
- *
- */
 @Entity
-@Table(name = "messprogramm_transfer", schema = SchemaName.LEGACY_NAME)
+@Table(name = "mpg_transf", schema = SchemaName.NAME)
 public class MessprogrammTransfer implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -30,17 +24,13 @@ public class MessprogrammTransfer implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "ba_id")
-    private Integer baId;
+    private Integer oprModeId;
 
-    @Column(name = "datenbasis_id")
-    private Integer datenbasisId;
+    private Integer regulationId;
 
-    @Column(name = "messprogramm_c")
-    private String messprogrammC;
+    private String name;
 
-    @Column(name = "messprogramm_s")
-    private String messprogrammS;
+    private String extId;
 
     public MessprogrammTransfer() {
     }
@@ -53,36 +43,36 @@ public class MessprogrammTransfer implements Serializable {
         this.id = id;
     }
 
-    public Integer getBaId() {
-        return this.baId;
+    public Integer getOprModeId() {
+        return this.oprModeId;
     }
 
-    public void setBaId(Integer baId) {
-        this.baId = baId;
+    public void setOprModeId(Integer oprModeId) {
+        this.oprModeId = oprModeId;
     }
 
-    public Integer getDatenbasisId() {
-        return this.datenbasisId;
+    public Integer getRegulationId() {
+        return this.regulationId;
     }
 
-    public void setDatenbasisId(Integer datenbasisId) {
-        this.datenbasisId = datenbasisId;
+    public void setRegulationId(Integer regulationId) {
+        this.regulationId = regulationId;
     }
 
-    public String getMessprogrammC() {
-        return this.messprogrammC;
+    public String getName() {
+        return this.name;
     }
 
-    public void setMessprogrammC(String messprogrammC) {
-        this.messprogrammC = messprogrammC;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getMessprogrammS() {
-        return this.messprogrammS;
+    public String getExtId() {
+        return this.extId;
     }
 
-    public void setMessprogrammS(String messprogrammS) {
-        this.messprogrammS = messprogrammS;
+    public void setExtId(String extId) {
+        this.extId = extId;
     }
 
 }
