@@ -48,7 +48,7 @@ import de.intevation.lada.model.stammdaten.Regulation;
 import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.ImportConf;
 import de.intevation.lada.model.stammdaten.SpatRefSys;
-import de.intevation.lada.model.stammdaten.KtaGruppe;
+import de.intevation.lada.model.stammdaten.NuclFacilGr;
 import de.intevation.lada.model.stammdaten.MessEinheit;
 import de.intevation.lada.model.stammdaten.MessMethode;
 import de.intevation.lada.model.stammdaten.MessStelle;
@@ -1720,10 +1720,10 @@ public class LafObjectMapper {
                 probe.setNuclFacilGrId(messpunkte.get(0).getKtaGruppeId());
                 repository.update(probe);
             } else if (uo.get("U_ORTS_ZUSATZCODE").length() == 4) {
-                QueryBuilder<KtaGruppe> builderKta =
-                    repository.queryBuilder(KtaGruppe.class);
+                QueryBuilder<NuclFacilGr> builderKta =
+                    repository.queryBuilder(NuclFacilGr.class);
                 builderKta.and("extId", uo.get("U_ORTS_ZUSATZCODE"));
-                List<KtaGruppe> ktaGrp =
+                List<NuclFacilGr> ktaGrp =
                     repository.filterPlain(builderKta.getQuery());
                 if (!ktaGrp.isEmpty()) {
                     Ort o = null;

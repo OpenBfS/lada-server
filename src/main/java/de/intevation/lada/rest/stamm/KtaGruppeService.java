@@ -17,7 +17,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.NuclFacilGrMp;
-import de.intevation.lada.model.stammdaten.KtaGruppe;
+import de.intevation.lada.model.stammdaten.NuclFacilGr;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -70,7 +70,7 @@ public class KtaGruppeService extends LadaService {
         @QueryParam("kta") Integer kta
     ) {
         if (kta == null) {
-            return repository.getAll(KtaGruppe.class);
+            return repository.getAll(NuclFacilGr.class);
         }
         QueryBuilder<NuclFacilGrMp> builder =
             repository.queryBuilder(NuclFacilGrMp.class);
@@ -80,8 +80,8 @@ public class KtaGruppeService extends LadaService {
         if (zuord.isEmpty()) {
             return new Response(true, StatusCodes.OK, null);
         }
-        QueryBuilder<KtaGruppe> builder1 =
-            repository.queryBuilder(KtaGruppe.class);
+        QueryBuilder<NuclFacilGr> builder1 =
+            repository.queryBuilder(NuclFacilGr.class);
         List<Integer> ids = new ArrayList<Integer>();
         for (int i = 0; i < zuord.size(); i++) {
             ids.add(zuord.get(i).getNuclFacilGrId());
@@ -101,6 +101,6 @@ public class KtaGruppeService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        return repository.getById(KtaGruppe.class, id);
+        return repository.getById(NuclFacilGr.class, id);
     }
 }
