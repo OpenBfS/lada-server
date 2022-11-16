@@ -38,7 +38,7 @@ public class MessprogrammKategorieTest extends ServiceTest {
         super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung"
+            "lastMod"
         });
 
         // Prepare expected object
@@ -68,7 +68,7 @@ public class MessprogrammKategorieTest extends ServiceTest {
         update(
             "messprogrammkategorie",
             "rest/messprogrammkategorie/1000",
-            "bezeichnung",
+            "name",
             "Testbezeichnung",
             "geändert");
         JsonObject created =

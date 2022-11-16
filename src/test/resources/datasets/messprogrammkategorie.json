@@ -1,5 +1,5 @@
 {
-    "bezeichnung": "Testbezeichnung",
-    "netzbetreiberId": "06",
-    "code": "mp5"
+    "name": "Testbezeichnung",
+    "networkId": "06",
+    "extId": "mp5"
 }
