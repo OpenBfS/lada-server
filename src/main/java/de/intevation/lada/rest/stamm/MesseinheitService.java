@@ -16,7 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.stammdaten.MassEinheitUmrechnung;
+import de.intevation.lada.model.stammdaten.UnitConvers;
 import de.intevation.lada.model.stammdaten.MessEinheit;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -98,7 +98,7 @@ public class MesseinheitService extends LadaService {
             secMeh.setPrimary(false);
             einheits.add(secMeh);
         }
-        for (MassEinheitUmrechnung umrechnung
+        for (UnitConvers umrechnung
             : meh.getMassEinheitUmrechnungZus()
         ) {
             MessEinheit einheit = umrechnung.getFromUnit();

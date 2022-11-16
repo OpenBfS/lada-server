@@ -19,8 +19,8 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "unit_convers", schema = SchemaName.NAME)
-public class MassEinheitUmrechnung implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class UnitConvers implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -37,7 +37,7 @@ public class MassEinheitUmrechnung implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public MassEinheitUmrechnung() {
+    public UnitConvers() {
 
     }
 

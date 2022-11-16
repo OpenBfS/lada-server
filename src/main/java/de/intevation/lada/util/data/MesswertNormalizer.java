@@ -12,7 +12,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.stammdaten.MassEinheitUmrechnung;
+import de.intevation.lada.model.stammdaten.UnitConvers;
 import de.intevation.lada.model.stammdaten.Umwelt;
 
 
@@ -31,12 +31,12 @@ public class MesswertNormalizer {
      * @param mehIdFrom MehId to convert from
      * @return Conversions as list
      */
-    private List<MassEinheitUmrechnung> getConversions(
+    private List<UnitConvers> getConversions(
         Integer mehIdTo,
         Integer mehIdFrom
     ) {
-        QueryBuilder<MassEinheitUmrechnung> builder =
-            repository.queryBuilder(MassEinheitUmrechnung.class);
+        QueryBuilder<UnitConvers> builder =
+            repository.queryBuilder(UnitConvers.class);
         builder.and("toUnitId", mehIdTo);
         builder.and("fromUnit", mehIdFrom);
         return repository.filterPlain(builder.getQuery());
@@ -71,15 +71,15 @@ public class MesswertNormalizer {
                 continue;
             }
             //Get the conversion factors
-            List<MassEinheitUmrechnung> primaryMeu = getConversions(
+            List<UnitConvers> primaryMeu = getConversions(
                     mehIdToConvertTo, messwert.getMehId());
-            List<MassEinheitUmrechnung> secondaryMeu = getConversions(
+            List<UnitConvers> secondaryMeu = getConversions(
                     secMehIdToConvertTo, messwert.getMehId());
             if (primaryMeu.size() == 0 && secondaryMeu.size() == 0) {
                 //No suitable conversion found: continue
                 continue;
             }
-            MassEinheitUmrechnung meu = primaryMeu.size() > 0
+            UnitConvers meu = primaryMeu.size() > 0
                     ? primaryMeu.get(0) : secondaryMeu.get(0);
             Double factor = meu.getFactor();
 

@@ -13,7 +13,7 @@ import java.util.List;
 
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.stammdaten.Umwelt;
-import de.intevation.lada.model.stammdaten.MassEinheitUmrechnung;
+import de.intevation.lada.model.stammdaten.UnitConvers;
 import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -62,18 +62,18 @@ public class IsNormalized implements Rule {
             Boolean convert = false;
 
             if (mehId != null && !mehId.equals(messwert.getMehId())) {
-                QueryBuilder<MassEinheitUmrechnung> builder =
-                repository.queryBuilder(MassEinheitUmrechnung.class);
+                QueryBuilder<UnitConvers> builder =
+                repository.queryBuilder(UnitConvers.class);
                 builder.and("toUnitId", mehId);
                 builder.and("fromUnit", messwert.getMehId());
-                List<MassEinheitUmrechnung> result = repository.filterPlain(builder.getQuery());
+                List<UnitConvers> result = repository.filterPlain(builder.getQuery());
                 convert = result.size() > 0;
             } else if (secMehId != null && !secMehId.equals(messwert.getMehId())) {
-                QueryBuilder<MassEinheitUmrechnung> builder =
-                repository.queryBuilder(MassEinheitUmrechnung.class);
+                QueryBuilder<UnitConvers> builder =
+                repository.queryBuilder(UnitConvers.class);
                 builder.and("toUnitId", secMehId);
                 builder.and("fromUnit", messwert.getMehId());
-                List<MassEinheitUmrechnung> result = repository.filterPlain(builder.getQuery());
+                List<UnitConvers> result = repository.filterPlain(builder.getQuery());
                 convert = result.size() > 0;
             }
 

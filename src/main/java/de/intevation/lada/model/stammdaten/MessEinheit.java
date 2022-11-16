@@ -43,7 +43,7 @@ public class MessEinheit implements Serializable {
      */
     @OneToMany(mappedBy = "toUnitId", fetch = FetchType.EAGER)
     @JsonbTransient
-    private List<MassEinheitUmrechnung> massEinheitUmrechnungZus;
+    private List<UnitConvers> massEinheitUmrechnungZus;
 
     @Column(name = "eudf_messeinheit_id")
     private String eudfMesseinheitId;
@@ -104,7 +104,7 @@ public class MessEinheit implements Serializable {
         this.umrechnungsFaktorEudf = umrechnungsFaktorEudf;
     }
 
-    public List<MassEinheitUmrechnung> getMassEinheitUmrechnungZus() {
+    public List<UnitConvers> getMassEinheitUmrechnungZus() {
         return this.massEinheitUmrechnungZus;
     }
 
