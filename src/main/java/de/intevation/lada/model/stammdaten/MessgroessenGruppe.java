@@ -20,20 +20,19 @@ import java.sql.Timestamp;
  *
  */
 @Entity
-@Table(name = "messgroessen_gruppe", schema = SchemaName.LEGACY_NAME)
+@Table(name = "measd_gr", schema = SchemaName.LEGACY_NAME)
 public class MessgroessenGruppe implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    private String bezeichnung;
+    private String name;
 
-    @Column(name = "ist_leitnuklidgruppe")
-    private String istLeitnuklidgruppe;
+    private String refNuclGr;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public MessgroessenGruppe() {
     }
@@ -46,28 +45,28 @@ public class MessgroessenGruppe implements Serializable {
         this.id = id;
     }
 
-    public String getBezeichnung() {
-        return this.bezeichnung;
+    public String getName() {
+        return this.name;
     }
 
-    public void setBezeichnung(String bezeichnung) {
-        this.bezeichnung = bezeichnung;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getIstLeitnuklidgruppe() {
-        return this.istLeitnuklidgruppe;
+    public String getRefNuclGr() {
+        return this.refNuclGr;
     }
 
-    public void setIstLeitnuklidgruppe(String istLeitnuklidgruppe) {
-        this.istLeitnuklidgruppe = istLeitnuklidgruppe;
+    public void setRefNuclGr(String refNuclGr) {
+        this.refNuclGr = refNuclGr;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }
