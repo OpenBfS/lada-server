@@ -15,24 +15,20 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 import javax.persistence.Column;
 
-/**
- * The persistent class for the kta database table.
- *
- */
 @Entity
-@Table(name = "kta", schema = SchemaName.LEGACY_NAME)
+@Table(name = "nucl_facil", schema = SchemaName.NAME)
 public class Kta implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    private String bezeichnung;
+    private String name;
 
-    private String code;
+    private String extId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public Kta() {
     }
@@ -45,28 +41,28 @@ public class Kta implements Serializable {
         this.id = id;
     }
 
-    public String getBezeichnung() {
-        return this.bezeichnung;
+    public String getName() {
+        return this.name;
     }
 
-    public void setBezeichnung(String bezeichnung) {
-        this.bezeichnung = bezeichnung;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getCode() {
-        return this.code;
+    public String getExtId() {
+        return this.extId;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setExtId(String extId) {
+        this.extId = extId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }
