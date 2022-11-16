@@ -9,7 +9,6 @@ package de.intevation.lada.model.stammdaten;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
@@ -20,19 +19,17 @@ public class MmtMessgroessePK implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "messgroesse_id")
-    private Integer messgroesseId;
+    private Integer measdId;
 
-    @Column(name = "mmt_id")
     private String mmtId;
 
     public MmtMessgroessePK() {
     }
-    public Integer getMessgroessengruppeId() {
-        return this.messgroesseId;
+    public Integer getMeasdId() {
+        return this.measdId;
     }
-    public void setMessgroessengruppeId(Integer mgId) {
-        this.messgroesseId = mgId;
+    public void setMeasdId(Integer measdId) {
+        this.measdId = measdId;
     }
     public String getMmtId() {
         return this.mmtId;
@@ -55,7 +52,7 @@ public class MmtMessgroessePK implements Serializable {
         }
         MmtMessgroessePK castOther = (MmtMessgroessePK) other;
         return
-            this.messgroesseId.equals(castOther.messgroesseId)
+            this.measdId.equals(castOther.measdId)
             && this.mmtId.equals(castOther.mmtId);
     }
 
@@ -66,7 +63,7 @@ public class MmtMessgroessePK implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int hash = 17;
-        hash = hash * prime + this.messgroesseId.hashCode();
+        hash = hash * prime + this.measdId.hashCode();
         hash = hash * prime + this.mmtId.hashCode();
         return hash;
     }

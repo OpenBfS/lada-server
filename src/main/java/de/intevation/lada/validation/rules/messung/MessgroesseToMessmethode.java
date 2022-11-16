@@ -54,7 +54,7 @@ public class MessgroesseToMessmethode implements Rule {
             boolean hit = false;
             for (MmtMessgroesse mmtM: mmtMs) {
                 if (messwert.getMessgroesseId().equals(
-                        mmtM.getMessgroesseId())) {
+                        mmtM.getMeasdId())) {
                     hit = true;
                 }
             }

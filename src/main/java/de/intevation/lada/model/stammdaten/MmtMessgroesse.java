@@ -14,23 +14,18 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-
-/**
- * The persistent class for the mmt_messgroesse database table.
- *
- */
 @Entity
-@Table(name = "mmt_messgroesse", schema = SchemaName.LEGACY_NAME)
+@Table(name = "mmt_measd_view", schema = SchemaName.NAME)
 public class MmtMessgroesse implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
     private MmtMessgroessePK id;
 
-    @Column(name = "messgroesse_id", insertable = false, updatable = false)
-    private Integer messgroesseId;
+    @Column(insertable = false, updatable = false)
+    private Integer measdId;
 
-    @Column(name = "mmt_id", insertable = false, updatable = false)
+    @Column(insertable = false, updatable = false)
     private String mmtId;
 
     public MmtMessgroesse() {
@@ -44,12 +39,12 @@ public class MmtMessgroesse implements Serializable {
         this.id = i;
     }
 
-    public Integer getMessgroesseId() {
-        return this.messgroesseId;
+    public Integer getMeasdId() {
+        return this.measdId;
     }
 
-    public void setMessgroesseId(Integer messgroesseId) {
-        this.messgroesseId = messgroesseId;
+    public void setMeasdId(Integer measdId) {
+        this.measdId = measdId;
     }
 
     public String getMmtId() {
