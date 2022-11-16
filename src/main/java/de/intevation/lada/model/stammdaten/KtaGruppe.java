@@ -15,25 +15,20 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the kta_gruppe database table.
- *
- */
 @Entity
-@Table(name = "kta_gruppe", schema = SchemaName.LEGACY_NAME)
+@Table(name = "nucl_facil_gr", schema = SchemaName.NAME)
 public class KtaGruppe implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    private String beschreibung;
+    private String name;
 
-    @Column(name = "kta_gruppe")
-    private String ktaGruppe;
+    private String extId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public KtaGruppe() {
     }
@@ -46,28 +41,28 @@ public class KtaGruppe implements Serializable {
         this.id = id;
     }
 
-    public String getBeschreibung() {
-        return this.beschreibung;
+    public String getName() {
+        return this.name;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getKtaGruppe() {
-        return this.ktaGruppe;
+    public String getExtId() {
+        return this.extId;
     }
 
-    public void setKtaGruppe(String ktaGruppe) {
-        this.ktaGruppe = ktaGruppe;
+    public void setExtId(String extId) {
+        this.extId = extId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }

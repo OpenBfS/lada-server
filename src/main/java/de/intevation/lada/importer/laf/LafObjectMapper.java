@@ -1722,7 +1722,7 @@ public class LafObjectMapper {
             } else if (uo.get("U_ORTS_ZUSATZCODE").length() == 4) {
                 QueryBuilder<KtaGruppe> builderKta =
                     repository.queryBuilder(KtaGruppe.class);
-                builderKta.and("ktaGruppe", uo.get("U_ORTS_ZUSATZCODE"));
+                builderKta.and("extId", uo.get("U_ORTS_ZUSATZCODE"));
                 List<KtaGruppe> ktaGrp =
                     repository.filterPlain(builderKta.getQuery());
                 if (!ktaGrp.isEmpty()) {
