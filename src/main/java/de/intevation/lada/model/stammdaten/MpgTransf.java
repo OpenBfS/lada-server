@@ -16,8 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "mpg_transf", schema = SchemaName.NAME)
-public class MessprogrammTransfer implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class MpgTransf implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -32,7 +32,7 @@ public class MessprogrammTransfer implements Serializable {
 
     private String extId;
 
-    public MessprogrammTransfer() {
+    public MpgTransf() {
     }
 
     public Integer getId() {

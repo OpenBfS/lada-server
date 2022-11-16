@@ -54,7 +54,7 @@ import de.intevation.lada.model.stammdaten.Mmt;
 import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.model.stammdaten.MpgCateg;
-import de.intevation.lada.model.stammdaten.MessprogrammTransfer;
+import de.intevation.lada.model.stammdaten.MpgTransf;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Ortszusatz;
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
@@ -2213,11 +2213,11 @@ public class LafObjectMapper {
         if ("MESSPROGRAMM_S".equals(key)
             && probe.getOprModeId() == null
         ) {
-            QueryBuilder<MessprogrammTransfer> builder =
-                repository.queryBuilder(MessprogrammTransfer.class);
+            QueryBuilder<MpgTransf> builder =
+                repository.queryBuilder(MpgTransf.class);
             builder.and("extId", value);
-            List<MessprogrammTransfer> transfer =
-                (List<MessprogrammTransfer>) repository.filterPlain(
+            List<MpgTransf> transfer =
+                (List<MpgTransf>) repository.filterPlain(
                     builder.getQuery());
             if (transfer == null || transfer.isEmpty()) {
                 currentWarnings.add(
@@ -2231,11 +2231,11 @@ public class LafObjectMapper {
             }
         }
         if ("MESSPROGRAMM_C".equals(key)) {
-            QueryBuilder<MessprogrammTransfer> builder =
-                repository.queryBuilder(MessprogrammTransfer.class);
+            QueryBuilder<MpgTransf> builder =
+                repository.queryBuilder(MpgTransf.class);
             builder.and("name", value);
-            List<MessprogrammTransfer> transfer =
-                (List<MessprogrammTransfer>) repository.filterPlain(
+            List<MpgTransf> transfer =
+                (List<MpgTransf>) repository.filterPlain(
                     builder.getQuery());
             if (transfer == null || transfer.isEmpty()) {
                 currentWarnings.add(
