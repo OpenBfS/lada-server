@@ -12,7 +12,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.stammdaten.MessMethode;
+import de.intevation.lada.model.stammdaten.Mmt;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
@@ -61,7 +61,7 @@ public class MessmethodeService extends LadaService {
     @GET
     @Path("/")
     public Response get() {
-        return repository.getAll(MessMethode.class);
+        return repository.getAll(Mmt.class);
     }
 
     /**
@@ -75,6 +75,6 @@ public class MessmethodeService extends LadaService {
     public Response getById(
         @PathParam("id") String id
     ) {
-        return repository.getById(MessMethode.class, id);
+        return repository.getById(Mmt.class, id);
     }
 }

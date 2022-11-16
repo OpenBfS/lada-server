@@ -16,8 +16,8 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 
 @Entity
-@Table(name = "mmt", schema = SchemaName.NAME)
-public class MessMethode implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class Mmt implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -30,7 +30,7 @@ public class MessMethode implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public MessMethode() {
+    public Mmt() {
     }
 
     public String getId() {

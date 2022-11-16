@@ -50,7 +50,7 @@ import de.intevation.lada.model.stammdaten.ImportConf;
 import de.intevation.lada.model.stammdaten.SpatRefSys;
 import de.intevation.lada.model.stammdaten.NuclFacilGr;
 import de.intevation.lada.model.stammdaten.MeasUnit;
-import de.intevation.lada.model.stammdaten.MessMethode;
+import de.intevation.lada.model.stammdaten.Mmt;
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
@@ -2468,8 +2468,8 @@ public class LafObjectMapper {
             Integer i = Integer.valueOf(value.toString());
             messung.setMessdauer(i);
         } else if ("MESSMETHODE_S".equals(key)) {
-            MessMethode mmt = repository.getByIdPlain(
-                MessMethode.class, value.toString());
+            Mmt mmt = repository.getByIdPlain(
+                Mmt.class, value.toString());
             if (mmt == null) {
                 currentWarnings.add(
                     new ReportItem(
@@ -2478,11 +2478,11 @@ public class LafObjectMapper {
                 messung.setMmtId(value.toString());
             }
         } else if ("MESSMETHODE_C".equals(key)) {
-            QueryBuilder<MessMethode> builder =
-                repository.queryBuilder(MessMethode.class);
+            QueryBuilder<Mmt> builder =
+                repository.queryBuilder(Mmt.class);
             builder.and("name", value.toString());
-            List<MessMethode> mm =
-                (List<MessMethode>) repository.filterPlain(builder.getQuery());
+            List<Mmt> mm =
+                (List<Mmt>) repository.filterPlain(builder.getQuery());
             if (mm == null || mm.isEmpty()) {
                 ReportItem warn = new ReportItem();
                 warn.setCode(StatusCodes.IMP_MISSING_VALUE);

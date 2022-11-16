@@ -51,7 +51,7 @@ import de.intevation.lada.model.stammdaten.OprMode;
 import de.intevation.lada.model.stammdaten.Regulation;
 import de.intevation.lada.model.stammdaten.EnvDescrip;
 import de.intevation.lada.model.stammdaten.MeasUnit;
-import de.intevation.lada.model.stammdaten.MessMethode;
+import de.intevation.lada.model.stammdaten.Mmt;
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
@@ -325,8 +325,8 @@ public class JsonExporter implements Exporter {
             String tmp = mapper.writeValueAsString(messungen);
             JsonNode nodes = mapper.readTree(tmp);
             for (int i = 0; i < nodes.size(); i++) {
-                MessMethode mmt = repository.getByIdPlain(
-                    MessMethode.class,
+                Mmt mmt = repository.getByIdPlain(
+                    Mmt.class,
                     nodes.get(i).get("mmtId").asText()
                 );
                 ((ObjectNode) nodes.get(i)).put("mmt",
