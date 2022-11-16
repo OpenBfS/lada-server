@@ -22,7 +22,7 @@ import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.MessprogrammMmt;
-import de.intevation.lada.model.stammdaten.Messgroesse;
+import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -250,9 +250,9 @@ public class MessprogrammMmtService extends LadaService {
      * Initialize referenced objects from given IDs.
      */
     private void setMessgroesseObjects(MessprogrammMmt mm) {
-        Set<Messgroesse> mos = new HashSet<>();
+        Set<Measd> mos = new HashSet<>();
         for (Integer mId: mm.getMessgroessen()) {
-            Messgroesse m = repository.getByIdPlain(Messgroesse.class, mId);
+            Measd m = repository.getByIdPlain(Measd.class, mId);
             if (m != null) {
                 mos.add(m);
             }

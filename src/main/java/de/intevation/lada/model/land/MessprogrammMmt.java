@@ -24,7 +24,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import de.intevation.lada.model.stammdaten.Messgroesse;
+import de.intevation.lada.model.stammdaten.Measd;
 
 /**
  * The persistent class for the messprogramm_mmt database table.
@@ -49,7 +49,7 @@ public class MessprogrammMmt implements Serializable {
         joinColumns = @JoinColumn(name = "messprogramm_mmt_id"),
         inverseJoinColumns = @JoinColumn(name = "messgroesse_id")
     )
-    private Set<Messgroesse> messgroesseObjects;
+    private Set<Measd> messgroesseObjects;
 
     @Column(name = "messprogramm_id")
     private Integer messprogrammId;
@@ -79,7 +79,7 @@ public class MessprogrammMmt implements Serializable {
         this.letzteAenderung = letzteAenderung;
     }
 
-    public void setMessgroesseObjects(Set<Messgroesse> messgroesseObjects) {
+    public void setMessgroesseObjects(Set<Measd> messgroesseObjects) {
         this.messgroesseObjects = messgroesseObjects;
     }
 
@@ -89,7 +89,7 @@ public class MessprogrammMmt implements Serializable {
     public Integer[] getMessgroessen() {
         if (this.messgroessen == null && this.messgroesseObjects != null) {
             Set<Integer> ids = new HashSet<>();
-            for (Messgroesse m: this.messgroesseObjects) {
+            for (Measd m: this.messgroesseObjects) {
                 ids.add(m.getId());
             }
             this.messgroessen = ids.toArray(new Integer[ids.size()]);

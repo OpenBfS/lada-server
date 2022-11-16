@@ -28,7 +28,7 @@ import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.stammdaten.MeasUnit;
 import de.intevation.lada.model.stammdaten.MeasFacil;
-import de.intevation.lada.model.stammdaten.Messgroesse;
+import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.MunicDiv;
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
@@ -554,11 +554,11 @@ implements Creator {
      */
     @SuppressWarnings("unchecked")
     private String writeMesswert(Messwert mw) {
-        QueryBuilder<Messgroesse> builder =
-            repository.queryBuilder(Messgroesse.class);
+        QueryBuilder<Measd> builder =
+            repository.queryBuilder(Measd.class);
         builder.and("id", mw.getMessgroesseId());
-        List<Messgroesse> groessen =
-            (List<Messgroesse>) repository.filter(
+        List<Measd> groessen =
+            (List<Measd>) repository.filter(
                 builder.getQuery()).getData();
 
         QueryBuilder<MeasUnit> eBuilder =

@@ -15,7 +15,7 @@ import javax.inject.Inject;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.stammdaten.Messgroesse;
+import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.model.stammdaten.PflichtMessgroesse;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -108,9 +108,9 @@ public class HasPflichtmessgroessen implements Rule {
         pflicht.removeAll(tmp);
         if (!pflicht.isEmpty()) {
             for (PflichtMessgroesse p : pflicht) {
-                Messgroesse mg =
+                Measd mg =
                     repository.getByIdPlain(
-                        Messgroesse.class, p.getMessgroesseId());
+                        Measd.class, p.getMessgroesseId());
                 violation.addNotification(
                     "messgroesse#" + mg.getName(),
                     StatusCodes.VAL_OBL_MEASURE);

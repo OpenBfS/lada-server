@@ -33,7 +33,7 @@ import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.model.stammdaten.StatusStufe;
 import de.intevation.lada.model.stammdaten.StatusWert;
 import de.intevation.lada.model.stammdaten.MeasUnit;
-import de.intevation.lada.model.stammdaten.Messgroesse;
+import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.data.QueryBuilder;
 
@@ -274,10 +274,10 @@ public abstract class QueryExportJob extends ExportJob {
     * @return messgroesse
      */
     protected String getMessgroesse(Messwert messwert) {
-        QueryBuilder<Messgroesse> builder = repository.queryBuilder(
-            Messgroesse.class);
+        QueryBuilder<Measd> builder = repository.queryBuilder(
+            Measd.class);
         builder.and("id", messwert.getMessgroesseId());
-        List<Messgroesse> messgroesse = repository.filterPlain(builder.getQuery());
+        List<Measd> messgroesse = repository.filterPlain(builder.getQuery());
         return messgroesse.get(0).getName();
     }
 

@@ -14,7 +14,7 @@ import java.util.List;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.stammdaten.Umwelt;
 import de.intevation.lada.model.stammdaten.UnitConvers;
-import de.intevation.lada.model.stammdaten.Messgroesse;
+import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.StatusCodes;
@@ -78,16 +78,16 @@ public class IsNormalized implements Rule {
             }
 
             if (convert) {
-                QueryBuilder<Messgroesse> builder_messgr = repository.queryBuilder(Messgroesse.class);
+                QueryBuilder<Measd> builder_messgr = repository.queryBuilder(Measd.class);
                 builder_messgr.and("id", messwert.getMessgroesseId());
-                List<Messgroesse> messgroesse = repository.filterPlain(builder_messgr.getQuery());
+                List<Measd> messgroesse = repository.filterPlain(builder_messgr.getQuery());
                 violation.addWarning("mehId#"+messgroesse.get(0).getName(), StatusCodes.VAL_UNIT_NORMALIZE);
             } else if ( (mehId != null && mehId.equals(messwert.getMehId())) || (secMehId != null && secMehId.equals(messwert.getMehId())) ) {
                 return null;
             } else {
-                QueryBuilder<Messgroesse> builder_messgr = repository.queryBuilder(Messgroesse.class);
+                QueryBuilder<Measd> builder_messgr = repository.queryBuilder(Measd.class);
                 builder_messgr.and("id", messwert.getMessgroesseId());
-                List<Messgroesse> messgroesse = repository.filterPlain(builder_messgr.getQuery());
+                List<Measd> messgroesse = repository.filterPlain(builder_messgr.getQuery());
                 violation.addWarning("mehId#"+messgroesse.get(0).getName(), StatusCodes.VAL_UNIT_UMW);
             }
         }

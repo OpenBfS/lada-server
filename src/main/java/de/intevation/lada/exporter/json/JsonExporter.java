@@ -53,7 +53,7 @@ import de.intevation.lada.model.stammdaten.EnvDescrip;
 import de.intevation.lada.model.stammdaten.MeasUnit;
 import de.intevation.lada.model.stammdaten.Mmt;
 import de.intevation.lada.model.stammdaten.MeasFacil;
-import de.intevation.lada.model.stammdaten.Messgroesse;
+import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
@@ -469,8 +469,8 @@ public class JsonExporter implements Exporter {
                 );
                 ((ObjectNode) nodes.get(i)).put("meh",
                     meh == null ? "" : meh.getUnitSymbol());
-                Messgroesse mg = repository.getByIdPlain(
-                    Messgroesse.class,
+                Measd mg = repository.getByIdPlain(
+                    Measd.class,
                     nodes.get(i).get("messgroesseId").asInt()
                 );
                 ((ObjectNode) nodes.get(i)).put("messgroesse",

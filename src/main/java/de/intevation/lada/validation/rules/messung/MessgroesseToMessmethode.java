@@ -13,7 +13,7 @@ import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.stammdaten.Messgroesse;
+import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.model.stammdaten.MmtMessgroesse;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -59,8 +59,8 @@ public class MessgroesseToMessmethode implements Rule {
                 }
             }
             if (!hit) {
-                Messgroesse mg = repository.getByIdPlain(
-                    Messgroesse.class, messwert.getMessgroesseId());
+                Measd mg = repository.getByIdPlain(
+                    Measd.class, messwert.getMessgroesseId());
                 violation.addError(
                     "messgroesse#" + messung.getMmtId()
                     + " " + mg.getName(),

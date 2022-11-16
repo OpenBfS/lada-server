@@ -17,7 +17,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.stammdaten.Messgroesse;
+import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
@@ -75,7 +75,7 @@ public class MessgroesseService extends LadaService {
         @QueryParam("mmtId") @Pattern(regexp = ".+") String mmtId
     ) {
         if (mmtId == null) {
-            return repository.getAll(Messgroesse.class);
+            return repository.getAll(Measd.class);
         }
 
         Query query =
@@ -87,8 +87,8 @@ public class MessgroesseService extends LadaService {
             ).setParameter("mmt", mmtId);
         @SuppressWarnings("unchecked")
         List<Integer> ids = query.getResultList();
-        QueryBuilder<Messgroesse> builder2 =
-            repository.queryBuilder(Messgroesse.class);
+        QueryBuilder<Measd> builder2 =
+            repository.queryBuilder(Measd.class);
         builder2.orIntList("id", ids);
         return repository.filter(builder2.getQuery());
     }
@@ -104,6 +104,6 @@ public class MessgroesseService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        return repository.getById(Messgroesse.class, id);
+        return repository.getById(Measd.class, id);
     }
 }

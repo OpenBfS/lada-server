@@ -10,7 +10,7 @@ package de.intevation.lada.validation.rules.messprogrammMmt;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.MessprogrammMmt;
-import de.intevation.lada.model.stammdaten.Messgroesse;
+import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
@@ -36,7 +36,7 @@ public class MessgroesseExist implements Rule {
         if (mIds != null) {
             for (Integer mId: mIds) {
                 if (
-                    repository.getByIdPlain(Messgroesse.class, mId) == null
+                    repository.getByIdPlain(Measd.class, mId) == null
                 ) {
                     violation.addError(
                         "messgroessen", StatusCodes.NOT_EXISTING);

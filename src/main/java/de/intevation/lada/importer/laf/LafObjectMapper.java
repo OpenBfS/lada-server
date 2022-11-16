@@ -52,7 +52,7 @@ import de.intevation.lada.model.stammdaten.NuclFacilGr;
 import de.intevation.lada.model.stammdaten.MeasUnit;
 import de.intevation.lada.model.stammdaten.Mmt;
 import de.intevation.lada.model.stammdaten.MeasFacil;
-import de.intevation.lada.model.stammdaten.Messgroesse;
+import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
 import de.intevation.lada.model.stammdaten.MessprogrammTransfer;
 import de.intevation.lada.model.stammdaten.Ort;
@@ -1273,8 +1273,8 @@ public class LafObjectMapper {
         Messwert messwert = new Messwert();
         messwert.setMessungsId(messungsId);
         if (attributes.containsKey("MESSGROESSE_ID")) {
-                Messgroesse messgreosse = repository.getByIdPlain(
-                    Messgroesse.class,
+                Measd messgreosse = repository.getByIdPlain(
+                    Measd.class,
                     Integer.valueOf(attributes.get("MESSGROESSE_ID"))
                 );
             if (messgreosse == null) {
@@ -1306,8 +1306,8 @@ public class LafObjectMapper {
                         "[" + String.valueOf(from) + "]", String.valueOf(to));
                 }
             }
-            QueryBuilder<Messgroesse> builder =
-                repository.queryBuilder(Messgroesse.class);
+            QueryBuilder<Measd> builder =
+                repository.queryBuilder(Measd.class);
             // accept various nuclide notations (e.g.
             // "Cs-134", "CS 134", "Cs134", "CS134", ...)
             String messgroesseString = attribute;
@@ -1321,8 +1321,8 @@ public class LafObjectMapper {
             }
 
             builder.and("messgroesse", messgroesseString);
-            List<Messgroesse> groesse =
-                (List<Messgroesse>) repository.filterPlain(builder.getQuery());
+            List<Measd> groesse =
+                (List<Measd>) repository.filterPlain(builder.getQuery());
             if (groesse == null || groesse.isEmpty()) {
                 currentWarnings.add(
                     new ReportItem(
