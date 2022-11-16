@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import java.util.List;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.NuclFacil;
-import de.intevation.lada.model.stammdaten.KtaGrpZuord;
+import de.intevation.lada.model.stammdaten.NuclFacilGrMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -38,10 +38,10 @@ public class ValidREIMesspunkt implements Rule {
         }
 
         if (ort.getKtaGruppeId()!=null) {
-            QueryBuilder<KtaGrpZuord> builder =
-                repository.queryBuilder(KtaGrpZuord.class);
+            QueryBuilder<NuclFacilGrMp> builder =
+                repository.queryBuilder(NuclFacilGrMp.class);
             builder.and("nuclFacilGrId", ort.getKtaGruppeId());
-            List<KtaGrpZuord> ktas = (List<KtaGrpZuord>) repository.filterPlain(builder.getQuery());
+            List<NuclFacilGrMp> ktas = (List<NuclFacilGrMp>) repository.filterPlain(builder.getQuery());
 
             //Compare first 4 characters of Ort ID to stored KTAs
             if ((ort.getOrtId() == null || ort.getOrtId().length() < 4 ) || ktas.size() < 1) {
@@ -58,7 +58,7 @@ public class ValidREIMesspunkt implements Rule {
                     return violation;
                 }
 
-                for (KtaGrpZuord kta : ktas){
+                for (NuclFacilGrMp kta : ktas){
                     if ( kta.getNuclFacilId() != KtaList.get(0).getId() ) {
                         violation.addWarning("ktaGruppeId", StatusCodes.VALUE_NOT_MATCHING);
                     } else if ( ort.getOrtId().length() < 5

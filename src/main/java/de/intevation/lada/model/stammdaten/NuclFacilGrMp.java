@@ -15,8 +15,8 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "nucl_facil_gr_mp", schema = SchemaName.NAME)
-public class KtaGrpZuord implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class NuclFacilGrMp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -28,7 +28,7 @@ public class KtaGrpZuord implements Serializable {
 
     private Timestamp lastMod;
 
-    public KtaGrpZuord() {
+    public NuclFacilGrMp() {
     }
 
     public Integer getId() {

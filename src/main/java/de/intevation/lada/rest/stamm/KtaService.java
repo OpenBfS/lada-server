@@ -17,7 +17,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.NuclFacil;
-import de.intevation.lada.model.stammdaten.KtaGrpZuord;
+import de.intevation.lada.model.stammdaten.NuclFacilGrMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -72,10 +72,10 @@ public class KtaService extends LadaService {
         if (ktagruppe == null) {
             return repository.getAll(NuclFacil.class);
         }
-        QueryBuilder<KtaGrpZuord> builder =
-            repository.queryBuilder(KtaGrpZuord.class);
+        QueryBuilder<NuclFacilGrMp> builder =
+            repository.queryBuilder(NuclFacilGrMp.class);
         builder.and("nuclFacilGrId", ktagruppe);
-        List<KtaGrpZuord> zuord =
+        List<NuclFacilGrMp> zuord =
             repository.filterPlain(builder.getQuery());
         if (zuord.isEmpty()) {
             return new Response(true, StatusCodes.OK, null);
