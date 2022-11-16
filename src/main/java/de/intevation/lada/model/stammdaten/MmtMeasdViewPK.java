@@ -15,7 +15,7 @@ import javax.persistence.Embeddable;
  * The MmtMessgroesse primary key.
  */
 @Embeddable
-public class MmtMessgroessePK implements Serializable {
+public class MmtMeasdViewPK implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -23,7 +23,7 @@ public class MmtMessgroessePK implements Serializable {
 
     private String mmtId;
 
-    public MmtMessgroessePK() {
+    public MmtMeasdViewPK() {
     }
     public Integer getMeasdId() {
         return this.measdId;
@@ -47,10 +47,10 @@ public class MmtMessgroessePK implements Serializable {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof MmtMessgroessePK)) {
+        if (!(other instanceof MmtMeasdViewPK)) {
             return false;
         }
-        MmtMessgroessePK castOther = (MmtMessgroessePK) other;
+        MmtMeasdViewPK castOther = (MmtMeasdViewPK) other;
         return
             this.measdId.equals(castOther.measdId)
             && this.mmtId.equals(castOther.mmtId);

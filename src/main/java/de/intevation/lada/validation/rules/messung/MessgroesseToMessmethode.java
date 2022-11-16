@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.stammdaten.Measd;
-import de.intevation.lada.model.stammdaten.MmtMessgroesse;
+import de.intevation.lada.model.stammdaten.MmtMeasdView;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -43,16 +43,16 @@ public class MessgroesseToMessmethode implements Rule {
                 .and("messungsId", messung.getId());
         List<Messwert> messwerte = repository.filterPlain(builder.getQuery());
 
-        QueryBuilder<MmtMessgroesse> mmtBuilder =
-            repository.queryBuilder(MmtMessgroesse.class)
+        QueryBuilder<MmtMeasdView> mmtBuilder =
+            repository.queryBuilder(MmtMeasdView.class)
                 .and("mmtId", messung.getMmtId());
-        List<MmtMessgroesse> mmtMs =
+        List<MmtMeasdView> mmtMs =
             repository.filterPlain(mmtBuilder.getQuery());
 
         Violation violation = new Violation();
         for (Messwert messwert : messwerte) {
             boolean hit = false;
-            for (MmtMessgroesse mmtM: mmtMs) {
+            for (MmtMeasdView mmtM: mmtMs) {
                 if (messwert.getMessgroesseId().equals(
                         mmtM.getMeasdId())) {
                     hit = true;

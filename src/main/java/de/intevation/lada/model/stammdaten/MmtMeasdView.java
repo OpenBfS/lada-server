@@ -16,11 +16,11 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "mmt_measd_view", schema = SchemaName.NAME)
-public class MmtMessgroesse implements Serializable {
+public class MmtMeasdView implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
-    private MmtMessgroessePK id;
+    private MmtMeasdViewPK id;
 
     @Column(insertable = false, updatable = false)
     private Integer measdId;
@@ -28,14 +28,14 @@ public class MmtMessgroesse implements Serializable {
     @Column(insertable = false, updatable = false)
     private String mmtId;
 
-    public MmtMessgroesse() {
+    public MmtMeasdView() {
     }
 
-    public MmtMessgroessePK getMmtMessgroessePK() {
+    public MmtMeasdViewPK getMmtMessgroessePK() {
         return this.id;
     }
 
-    public void setMmtMessgroessePK(MmtMessgroessePK i) {
+    public void setMmtMessgroessePK(MmtMeasdViewPK i) {
         this.id = i;
     }
 
