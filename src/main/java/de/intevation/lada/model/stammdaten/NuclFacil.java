@@ -16,8 +16,8 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 
 @Entity
-@Table(name = "nucl_facil", schema = SchemaName.NAME)
-public class Kta implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class NuclFacil implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -30,7 +30,7 @@ public class Kta implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public Kta() {
+    public NuclFacil() {
     }
 
     public Integer getId() {

@@ -11,7 +11,7 @@ import javax.inject.Inject;
 
 import java.util.List;
 import de.intevation.lada.model.stammdaten.Ort;
-import de.intevation.lada.model.stammdaten.Kta;
+import de.intevation.lada.model.stammdaten.NuclFacil;
 import de.intevation.lada.model.stammdaten.KtaGrpZuord;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -48,10 +48,10 @@ public class ValidREIMesspunkt implements Rule {
                 violation.addWarning("ortId", StatusCodes.VALUE_OUTSIDE_RANGE);
             } else {
                 String KTAOrtId = ort.getOrtId().substring(0,4);
-                QueryBuilder<Kta> builderKtaList =
-                    repository.queryBuilder(Kta.class);
+                QueryBuilder<NuclFacil> builderKtaList =
+                    repository.queryBuilder(NuclFacil.class);
                     builderKtaList.and("code", KTAOrtId);
-                List<Kta> KtaList = repository.filterPlain(builderKtaList.getQuery());
+                List<NuclFacil> KtaList = repository.filterPlain(builderKtaList.getQuery());
 
                 if (KtaList.size() < 1 || KtaList == null) {
                     violation.addWarning("ortId", StatusCodes.ORT_ANLAGE_MISSING);
