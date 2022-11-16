@@ -55,7 +55,7 @@ import de.intevation.lada.model.stammdaten.Mmt;
 import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.model.stammdaten.MpgCateg;
-import de.intevation.lada.model.stammdaten.Ort;
+import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
 import de.intevation.lada.model.stammdaten.Probenart;
 import de.intevation.lada.model.stammdaten.Probenehmer;
@@ -566,7 +566,7 @@ public class JsonExporter implements Exporter {
     }
 
     private void addOrt(JsonNode node) {
-        Ort ort = repository.getByIdPlain(Ort.class, node.get("ortId").asInt());
+        Site ort = repository.getByIdPlain(Site.class, node.get("ortId").asInt());
         final ObjectMapper mapper = new ObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(ort);

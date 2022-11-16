@@ -9,7 +9,7 @@ package de.intevation.lada.validation.rules.ort;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.stammdaten.Ort;
+import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -25,9 +25,9 @@ public class IsUnique implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Ort ort = (Ort) object;
+        Site ort = (Site) object;
 
-        QueryBuilder<Ort> builder = repository.queryBuilder(Ort.class);
+        QueryBuilder<Site> builder = repository.queryBuilder(Site.class);
         if (ort.getId() != null) {
             // Consider UPDATE
             builder.and("id", ort.getId()).not();

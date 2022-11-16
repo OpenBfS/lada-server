@@ -40,7 +40,7 @@ import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.model.land.StatusProtokoll;
-import de.intevation.lada.model.stammdaten.Ort;
+import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -152,12 +152,12 @@ public class OrtService extends LadaService {
         @QueryParam("start") Integer start,
         @QueryParam("limit") Integer limit
     ) {
-        List<Ort> orte = new ArrayList<>();
+        List<Site> orte = new ArrayList<>();
         UserInfo user = authorization.getInfo();
         EntityManager em = repository.entityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Ort> query = builder.createQuery(Ort.class);
-        Root<Ort> root = query.from(Ort.class);
+        CriteriaQuery<Site> query = builder.createQuery(Site.class);
+        Root<Site> root = query.from(Site.class);
         Predicate filter = null;
         if (netzbetreiberId != null) {
             Predicate netzbetreiberFilter =
@@ -169,7 +169,7 @@ public class OrtService extends LadaService {
             }
         }
         if (search != null) {
-            Join<Ort, Verwaltungseinheit> join =
+            Join<Site, Verwaltungseinheit> join =
                 root.join("gemeinde", JoinType.LEFT);
             String pattern = "%" + search + "%";
             Predicate idFilter = builder.like(root.get("extId"), pattern);
@@ -199,7 +199,7 @@ public class OrtService extends LadaService {
             }
             orte = orte.subList(start, end);
         }
-        for (Ort o : orte) {
+        for (Site o : orte) {
             List<Ortszuordnung> zuordnungs = getOrtsZuordnungs(o);
             o.setReferenceCount(zuordnungs.size());
             o.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
@@ -209,7 +209,7 @@ public class OrtService extends LadaService {
                 !authorization.isAuthorized(
                     o,
                     RequestMethod.PUT,
-                    Ort.class));
+                    Site.class));
             Violation violation = validator.validate(o);
             if (violation.hasErrors() || violation.hasWarnings()) {
                 o.setErrors(violation.getErrors());
@@ -231,7 +231,7 @@ public class OrtService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        Ort ort = repository.getByIdPlain(Ort.class, id);
+        Site ort = repository.getByIdPlain(Site.class, id);
         if (ort == null) {
             return new Response(false, StatusCodes.NOT_EXISTING, null);
         }
@@ -244,7 +244,7 @@ public class OrtService extends LadaService {
             !authorization.isAuthorized(
                 ort,
                 RequestMethod.PUT,
-                Ort.class
+                Site.class
             )
         );
         Violation violation = validator.validate(ort);
@@ -284,12 +284,12 @@ public class OrtService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        Ort ort
+        Site ort
     ) {
         if (!authorization.isAuthorized(
             ort,
             RequestMethod.POST,
-            Ort.class)
+            Site.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, ort);
         }
@@ -358,18 +358,18 @@ public class OrtService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        Ort ort
+        Site ort
     ) {
         if (!authorization.isAuthorized(
             ort,
             RequestMethod.PUT,
-            Ort.class)
+            Site.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, ort);
         }
 
-        Ort dbOrt = repository.getByIdPlain(
-            Ort.class, ort.getId());
+        Site dbOrt = repository.getByIdPlain(
+            Site.class, ort.getId());
         if (dbOrt == null) {
             return new Response(false, StatusCodes.NOT_EXISTING, ort);
         }
@@ -435,11 +435,11 @@ public class OrtService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(Ort.class, id);
+        Response response = repository.getById(Site.class, id);
         if (!response.getSuccess()) {
             return response;
         }
-        Ort ort = (Ort) response.getData();
+        Site ort = (Site) response.getData();
         if (getOrtsZuordnungs(ort).size() > 0
                 || getOrtsZuordnungsMp(ort).size() > 0) {
             return new Response(false, StatusCodes.ERROR_DELETE, ort);
@@ -447,7 +447,7 @@ public class OrtService extends LadaService {
         if (!authorization.isAuthorized(
             ort,
             RequestMethod.DELETE,
-            Ort.class)
+            Site.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, ort);
         }
@@ -460,7 +460,7 @@ public class OrtService extends LadaService {
      * @param o Ort instance
      * @return Ortszuordnung instances as list
      */
-    private List<Ortszuordnung> getOrtsZuordnungs(Ort o) {
+    private List<Ortszuordnung> getOrtsZuordnungs(Site o) {
         QueryBuilder<Ortszuordnung> refBuilder =
             repository.queryBuilder(Ortszuordnung.class);
         refBuilder.and("ortId", o.getId());
@@ -504,7 +504,7 @@ public class OrtService extends LadaService {
      * @param o Ort instance
      * @return Ortszuordnung instances as list
      */
-    private List<OrtszuordnungMp> getOrtsZuordnungsMp(Ort o) {
+    private List<OrtszuordnungMp> getOrtsZuordnungsMp(Site o) {
         QueryBuilder<OrtszuordnungMp> refBuilder =
             repository.queryBuilder(OrtszuordnungMp.class);
         refBuilder.and("ortId", o.getId());

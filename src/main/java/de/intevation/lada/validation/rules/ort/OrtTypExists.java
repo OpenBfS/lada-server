@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.stammdaten.Ort;
+import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.OrtTyp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -33,7 +33,7 @@ public class OrtTypExists implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Ort ort = (Ort) object;
+        Site ort = (Site) object;
 
         if (ort.getSiteClassId() != null) {
             QueryBuilder<OrtTyp> builder =

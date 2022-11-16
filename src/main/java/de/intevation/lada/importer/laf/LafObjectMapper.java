@@ -55,7 +55,7 @@ import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.MpgTransf;
-import de.intevation.lada.model.stammdaten.Ort;
+import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.Ortszusatz;
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
 import de.intevation.lada.model.stammdaten.Probenart;
@@ -759,8 +759,8 @@ public class LafObjectMapper {
         doTransformations(ort, Ortszuordnung.class, "ortszuordnung");
     }
 
-    private void doDefaults(Ort o) {
-        doDefaults(o, Ort.class, "ort");
+    private void doDefaults(Site o) {
+        doDefaults(o, Site.class, "ort");
     }
 
     private <T> void doDefaults(Object object, Class<T> clazz, String table) {
@@ -1703,9 +1703,9 @@ public class LafObjectMapper {
             // WE HAVE A REI-MESSPUNKT!
             // Search for the ort in db
             Map<String, String> uo = uort.get(0);
-            QueryBuilder<Ort> builder1 = repository.queryBuilder(Ort.class);
+            QueryBuilder<Site> builder1 = repository.queryBuilder(Site.class);
             builder1.and("extId", uo.get("U_ORTS_ZUSATZCODE"));
-            List<Ort> messpunkte =
+            List<Site> messpunkte =
                 repository.filterPlain(builder1.getQuery());
             if (!messpunkte.isEmpty()) {
                 Ortszuordnung ort = new Ortszuordnung();
@@ -1726,7 +1726,7 @@ public class LafObjectMapper {
                 List<NuclFacilGr> ktaGrp =
                     repository.filterPlain(builderKta.getQuery());
                 if (!ktaGrp.isEmpty()) {
-                    Ort o = null;
+                    Site o = null;
                     //check for Koordinates U_Ort (primary): If none are present, assume Koordinates
                     //in P_Ort. If P_Ort is not valid - this import must fail.
                     if (uort.get(0).get("U_KOORDINATEN_ART_S") != null
@@ -1740,7 +1740,7 @@ public class LafObjectMapper {
                     }
 
                     if (o == null) {
-                        Ort oE = findOrCreateOrt(object.getEntnahmeOrt(), "P_", probe);
+                        Site oE = findOrCreateOrt(object.getEntnahmeOrt(), "P_", probe);
                         if (oE == null) {
                             ReportItem warn = new ReportItem();
                             warn.setCode(StatusCodes.VALUE_MISSING);
@@ -1782,7 +1782,7 @@ public class LafObjectMapper {
                 currentWarnings.add(warn);
             }
         } else {
-            Ort o = null;
+            Site o = null;
             if (uort.size() > 0) {
                 o = findOrCreateOrt(uort.get(0), "U_", probe);
             }
@@ -1824,7 +1824,7 @@ public class LafObjectMapper {
         ort.setOrtszuordnungTyp(type);
         ort.setProbeId(probe.getId());
         if (type.equals("E")) {type = "P";}
-        Ort o = findOrCreateOrt(rawOrt, type+"_", probe);
+        Site o = findOrCreateOrt(rawOrt, type+"_", probe);
         if (o == null) {
             return null;
         }
@@ -1854,12 +1854,12 @@ public class LafObjectMapper {
         return ort;
     }
 
-    private Ort findOrCreateOrt(
+    private Site findOrCreateOrt(
         Map<String, String> attributes,
         String type,
         Sample probe
     ) {
-        Ort o = new Ort();
+        Site o = new Site();
         doDefaults(o);
         // If laf contains coordinates, find a ort with matching coordinates or
         // create one.

@@ -32,7 +32,7 @@ import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.stammdaten.EnvDescripEnvMediumMp;
 import de.intevation.lada.model.stammdaten.EnvDescrip;
-import de.intevation.lada.model.stammdaten.Ort;
+import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -437,8 +437,8 @@ public class ProbeFactory {
             }
             currentProtocol.put("mmt", messungProtocol);
             for (OrtszuordnungMp ort : orte) {
-                Ort o = repository.getByIdPlain(
-                    Ort.class, ort.getOrtId());
+                Site o = repository.getByIdPlain(
+                    Site.class, ort.getOrtId());
                 currentProtocol.put("gemId", o.getMunicId());
             }
             return proben.get(0);
@@ -521,8 +521,8 @@ public class ProbeFactory {
             ortP.setOzId(ort.getOzId());
             ortP.setOrtszusatztext(ort.getOrtszusatztext());
             createObject(ortP, dryrun);
-            Ort o = repository.getByIdPlain(
-                Ort.class, ortP.getOrtId());
+            Site o = repository.getByIdPlain(
+                Site.class, ortP.getOrtId());
             currentProtocol.put("gemId", o.getMunicId());
         }
         // Reolad the probe to have the old id

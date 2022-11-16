@@ -19,7 +19,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.importer.ReportItem;
-import de.intevation.lada.model.stammdaten.Ort;
+import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.Staat;
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
 import de.intevation.lada.util.data.KdaUtil;
@@ -49,7 +49,7 @@ public class OrtFactory {
      * Transform the external coordinates to the geom representation.
      * @param ort the ort
      */
-    public void transformCoordinates(Ort ort) {
+    public void transformCoordinates(Site ort) {
         if (errors == null) {
             errors = new ArrayList<>();
         }
@@ -102,13 +102,13 @@ public class OrtFactory {
      * @param ort The incomplete ort
      * @return The resulting ort.
      */
-    public Ort completeOrt(Ort ort) {
+    public Site completeOrt(Site ort) {
         if (errors == null) {
             errors = new ArrayList<ReportItem>();
         } else {
             errors.clear();
         }
-        QueryBuilder<Ort> builder = repository.queryBuilder(Ort.class);
+        QueryBuilder<Site> builder = repository.queryBuilder(Site.class);
         if (ort.getSpatRefSysId() != null
             && ort.getXCoordExt() != null
             && ort.getYCoordExt() != null
@@ -117,7 +117,7 @@ public class OrtFactory {
             builder.and("xCoordExt", ort.getXCoordExt());
             builder.and("yCoordExt", ort.getYCoordExt());
             builder.and("networkId", ort.getNetworkId());
-            List<Ort> orte =
+            List<Site> orte =
                 repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
                 return orte.get(0);
@@ -125,7 +125,7 @@ public class OrtFactory {
         } else if (ort.getMunicId() != null) {
             builder.and("municId", ort.getMunicId());
             builder.and("networkId", ort.getNetworkId());
-            List<Ort> orte =
+            List<Site> orte =
                 repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
                 if (orte.size() == 1) {
@@ -135,7 +135,7 @@ public class OrtFactory {
                     Verwaltungseinheit v = repository.getByIdPlain(
                         Verwaltungseinheit.class, ort.getMunicId());
                     if (v != null) {
-                        for (Ort oElem : orte) {
+                        for (Site oElem : orte) {
                             //Todo: Check for different kda-types
                             if (oElem.getXCoordExt().equals(String.valueOf(v.getMittelpunkt().getX()))
                             && oElem.getYCoordExt().equals(String.valueOf(v.getMittelpunkt().getY()))
@@ -152,7 +152,7 @@ public class OrtFactory {
             builder.and("stateId", ort.getStateId());
             builder.and("siteClassId", ORTTYP5);
             builder.and("networkId", ort.getNetworkId());
-            List<Ort> orte =
+            List<Site> orte =
                 repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
                 return orte.get(0);
@@ -162,7 +162,7 @@ public class OrtFactory {
         return createOrt(ort);
     }
 
-    private Ort createOrt(Ort ort) {
+    private Site createOrt(Site ort) {
         if (errors == null) {
             errors = new ArrayList<>();
         }
@@ -188,10 +188,10 @@ public class OrtFactory {
             Verwaltungseinheit v = repository.getByIdPlain(
                 Verwaltungseinheit.class, ort.getMunicId());
             //Ort exists - check for OrtId
-            QueryBuilder<Ort> builderExists = repository.queryBuilder(Ort.class);
+            QueryBuilder<Site> builderExists = repository.queryBuilder(Site.class);
             builderExists.and("networkId", ort.getNetworkId());
             builderExists.andLike("municId", "%"+ort.getMunicId());
-            List<Ort> ortExists =  repository.filterPlain(builderExists.getQuery());
+            List<Site> ortExists =  repository.filterPlain(builderExists.getQuery());
             if (v == null) {
                 ReportItem err = new ReportItem();
                 err.setCode(StatusCodes.IMP_INVALID_VALUE);
@@ -287,7 +287,7 @@ public class OrtFactory {
      *
      * @param ort   The ort object
      */
-    public void findVerwaltungseinheit(Ort ort) {
+    public void findVerwaltungseinheit(Site ort) {
         if (ort.getGeom() == null) {
             return;
         }

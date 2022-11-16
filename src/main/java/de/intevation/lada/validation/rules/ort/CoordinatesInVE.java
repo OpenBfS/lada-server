@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import org.jboss.logging.Logger;
 import org.locationtech.jts.geom.Point;
 
-import de.intevation.lada.model.stammdaten.Ort;
+import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.Verwaltungsgrenze;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -40,7 +40,7 @@ public class CoordinatesInVE implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Ort ort = (Ort) object;
+        Site ort = (Site) object;
         String gemId = "".equals(ort.getMunicId())
             ? null
             : ort.getMunicId();

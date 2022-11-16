@@ -27,8 +27,8 @@ import org.locationtech.jts.geom.Point;
 import org.hibernate.annotations.Type;
 
 @Entity
-@Table(name = "site", schema = SchemaName.NAME)
-public class Ort implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class Site implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -119,7 +119,7 @@ public class Ort implements Serializable {
     @Transient
     private MultivaluedMap<String, Integer> notifications;
 
-    public Ort() {
+    public Site() {
     }
 
     public Integer getId() {

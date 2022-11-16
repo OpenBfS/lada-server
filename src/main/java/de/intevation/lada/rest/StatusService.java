@@ -28,7 +28,7 @@ import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
-import de.intevation.lada.model.stammdaten.Ort;
+import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -341,7 +341,7 @@ public class StatusService extends LadaService {
             List<Ortszuordnung> assignedOrte = repository.filterPlain(ortBuilder.getQuery());
 
             for (Ortszuordnung o : assignedOrte){
-                violation = ortValidator.validate(repository.getByIdPlain(Ort.class, o.getOrtId()));
+                violation = ortValidator.validate(repository.getByIdPlain(Site.class, o.getOrtId()));
                 violationCollection.addErrors(violation.getErrors());
                 violationCollection.addWarnings(violation.getWarnings());
                 violationCollection.addNotifications(violation.getNotifications());

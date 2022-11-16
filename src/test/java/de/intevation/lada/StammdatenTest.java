@@ -34,7 +34,7 @@ import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.EnvDescrip;
 import de.intevation.lada.model.stammdaten.SpatRefSys;
 import de.intevation.lada.model.stammdaten.MpgCateg;
-import de.intevation.lada.model.stammdaten.Ort;
+import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.test.land.TagZuordnungTest;
@@ -267,7 +267,7 @@ public class StammdatenTest extends BaseTest {
         protocol.setType("insert ort");
         protocol.addInfo("database", "Insert Ort into database");
         testProtocol.add(protocol);
-        Ort ort = em.find(Ort.class, ID1000);
+        Site ort = em.find(Site.class, ID1000);
         Assert.assertNotNull(ort);
         protocol.setPassed(true);
     }

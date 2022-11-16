@@ -10,7 +10,7 @@ package de.intevation.lada.validation.rules.ort;
 import javax.inject.Inject;
 
 import java.util.List;
-import de.intevation.lada.model.stammdaten.Ort;
+import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.NuclFacil;
 import de.intevation.lada.model.stammdaten.NuclFacilGrMp;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -30,7 +30,7 @@ public class ValidREIMesspunkt implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Ort ort = (Ort) object;
+        Site ort = (Site) object;
 
         Violation violation = new Violation();
         if ( ort == null || ort.getSiteClassId()==null || ort.getSiteClassId() != 3)  {

@@ -29,7 +29,7 @@ import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.stammdaten.MeasUnit;
 import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.Measd;
-import de.intevation.lada.model.stammdaten.Ort;
+import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.MunicDiv;
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
 import de.intevation.lada.model.stammdaten.Probenart;
@@ -354,10 +354,10 @@ implements Creator {
             laf += lafLine(typePrefix + "ORTS_ZUSATZTEXT",
                 o.getOrtszusatztext(), CN);
         }
-        QueryBuilder<Ort> oBuilder = repository.queryBuilder(Ort.class);
+        QueryBuilder<Site> oBuilder = repository.queryBuilder(Site.class);
         oBuilder.and("id", o.getOrtId());
-        List<Ort> sOrte =
-            (List<Ort>) repository.filter(
+        List<Site> sOrte =
+            (List<Site>) repository.filter(
                 oBuilder.getQuery()
             ).getData();
 

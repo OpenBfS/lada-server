@@ -59,7 +59,7 @@ public class NetzbetreiberAuthorizer extends BaseAuthorizer {
            - If user tries to create: Can user edit probe objects?
         */
         if (clazz.isAssignableFrom(
-                de.intevation.lada.model.stammdaten.Ort.class)
+                de.intevation.lada.model.stammdaten.Site.class)
         ) {
             return
             ((method == RequestMethod.PUT
