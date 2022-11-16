@@ -15,13 +15,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the messgroessen_gruppe database table.
- *
- */
 @Entity
-@Table(name = "measd_gr", schema = SchemaName.LEGACY_NAME)
-public class MessgroessenGruppe implements Serializable {
+@Table(schema = SchemaName.LEGACY_NAME)
+public class MeasdGr implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,7 +30,7 @@ public class MessgroessenGruppe implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public MessgroessenGruppe() {
+    public MeasdGr() {
     }
 
     public Integer getId() {
