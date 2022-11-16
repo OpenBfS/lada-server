@@ -34,7 +34,7 @@ import de.intevation.lada.model.stammdaten.MunicDiv;
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
 import de.intevation.lada.model.stammdaten.Probenart;
 import de.intevation.lada.model.stammdaten.DatasetCreator;
-import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
+import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGruppe;
 import de.intevation.lada.model.stammdaten.StatusKombi;
@@ -252,8 +252,8 @@ implements Creator {
             laf += lafLine("ERZEUGER", erz.getExtId(), CN);
         }
         if (probe.getStateMpgId() != null) {
-            MessprogrammKategorie mpkat = repository.getByIdPlain(
-                MessprogrammKategorie.class, probe.getStateMpgId());
+            MpgCateg mpkat = repository.getByIdPlain(
+                MpgCateg.class, probe.getStateMpgId());
             laf += lafLine("MESSPROGRAMM_LAND", mpkat.getExtId(), CN);
         }
         if (probe.getSamplerId() != null) {

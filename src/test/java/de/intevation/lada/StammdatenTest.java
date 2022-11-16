@@ -33,7 +33,7 @@ import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.EnvDescrip;
 import de.intevation.lada.model.stammdaten.SpatRefSys;
-import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
+import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.Tag;
@@ -231,8 +231,8 @@ public class StammdatenTest extends BaseTest {
             "database",
             "Insert messprogrammkategorie into database");
         testProtocol.add(protocol);
-        MessprogrammKategorie kategorie =
-            em.find(MessprogrammKategorie.class, ID1000);
+        MpgCateg kategorie =
+            em.find(MpgCateg.class, ID1000);
         Assert.assertNotNull(kategorie);
         protocol.setPassed(true);
     }

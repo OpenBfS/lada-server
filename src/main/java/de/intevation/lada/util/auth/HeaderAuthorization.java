@@ -33,7 +33,7 @@ import de.intevation.lada.model.stammdaten.Auth;
 import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.MunicDiv;
 import de.intevation.lada.model.stammdaten.LadaUser;
-import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
+import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.Tag;
@@ -135,7 +135,7 @@ public class HeaderAuthorization implements Authorization {
             Map.entry(Probenehmer.class, netzAuthorizer),
             Map.entry(DatasetCreator.class, netzAuthorizer),
             Map.entry(MunicDiv.class, netzAuthorizer),
-            Map.entry(MessprogrammKategorie.class, netzAuthorizer),
+            Map.entry(MpgCateg.class, netzAuthorizer),
             Map.entry(Ort.class, netzAuthorizer),
             Map.entry(Messprogramm.class, messprogrammAuthorizer),
             Map.entry(MessprogrammMmt.class, messprogrammAuthorizer),

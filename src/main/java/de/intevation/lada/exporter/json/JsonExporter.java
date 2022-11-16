@@ -54,7 +54,7 @@ import de.intevation.lada.model.stammdaten.MeasUnit;
 import de.intevation.lada.model.stammdaten.Mmt;
 import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.Measd;
-import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
+import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
 import de.intevation.lada.model.stammdaten.Probenart;
@@ -264,8 +264,8 @@ public class JsonExporter implements Exporter {
                 probe.put("messRegime", ba.getName());
             }
             if (probe.get("mplId").asInt() != 0) {
-                MessprogrammKategorie mpl = repository.getByIdPlain(
-                    MessprogrammKategorie.class,
+                MpgCateg mpl = repository.getByIdPlain(
+                    MpgCateg.class,
                     probe.get("mplId").asInt()
                 );
                 probe.put("mplCode", mpl.getExtId());

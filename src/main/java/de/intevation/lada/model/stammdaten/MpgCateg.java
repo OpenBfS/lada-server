@@ -25,8 +25,8 @@ import javax.persistence.Transient;
  *
  */
 @Entity
-@Table(name = "mpg_categ", schema = SchemaName.NAME)
-public class MessprogrammKategorie implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class MpgCateg implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -45,7 +45,7 @@ public class MessprogrammKategorie implements Serializable {
     @Transient
     private boolean readonly;
 
-    public MessprogrammKategorie() {
+    public MpgCateg() {
     }
 
     public Integer getId() {

@@ -17,7 +17,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
+import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -77,9 +77,9 @@ public class MessprogrammKategorieService extends LadaService {
     @GET
     @Path("/")
     public Response get() {
-        List<MessprogrammKategorie> kategorie =
-            repository.getAllPlain(MessprogrammKategorie.class);
-        for (MessprogrammKategorie kat: kategorie) {
+        List<MpgCateg> kategorie =
+            repository.getAllPlain(MpgCateg.class);
+        for (MpgCateg kat: kategorie) {
             // TODO Do not iterate all the objects if its not necessary
             kat.setReadonly(true);
                 // !authorization.isAuthorized(
@@ -101,13 +101,13 @@ public class MessprogrammKategorieService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        MessprogrammKategorie mpk = repository.getByIdPlain(
-            MessprogrammKategorie.class, id);
+        MpgCateg mpk = repository.getByIdPlain(
+            MpgCateg.class, id);
         mpk.setReadonly(
             !authorization.isAuthorized(
                 mpk,
                 RequestMethod.POST,
-                MessprogrammKategorie.class
+                MpgCateg.class
             )
         );
         return new Response(true, StatusCodes.OK, mpk);
@@ -116,20 +116,20 @@ public class MessprogrammKategorieService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        MessprogrammKategorie kategorie
+        MpgCateg kategorie
     ) {
         if (!authorization.isAuthorized(
             kategorie,
             RequestMethod.POST,
-            MessprogrammKategorie.class)
+            MpgCateg.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, kategorie);
         }
-        QueryBuilder<MessprogrammKategorie> builder =
-            repository.queryBuilder(MessprogrammKategorie.class);
+        QueryBuilder<MpgCateg> builder =
+            repository.queryBuilder(MpgCateg.class);
         builder.and("extId", kategorie.getExtId());
         builder.and("networkId", kategorie.getNetworkId());
-        List<MessprogrammKategorie> kategorien =
+        List<MpgCateg> kategorien =
             repository.filterPlain(builder.getQuery());
         if (kategorien.isEmpty()) {
             return repository.create(kategorie);
@@ -141,20 +141,20 @@ public class MessprogrammKategorieService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        MessprogrammKategorie kategorie
+        MpgCateg kategorie
     ) {
         if (!authorization.isAuthorized(
             kategorie,
             RequestMethod.PUT,
-            MessprogrammKategorie.class)
+            MpgCateg.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, kategorie);
         }
-        QueryBuilder<MessprogrammKategorie> builder =
-            repository.queryBuilder(MessprogrammKategorie.class);
+        QueryBuilder<MpgCateg> builder =
+            repository.queryBuilder(MpgCateg.class);
         builder.and("extId", kategorie.getExtId());
         builder.and("networkId", kategorie.getNetworkId());
-        List<MessprogrammKategorie> kategorien =
+        List<MpgCateg> kategorien =
             repository.filterPlain(builder.getQuery());
         if (!kategorien.isEmpty()
             && !kategorien.get(0).getId().equals(kategorie.getId())
@@ -169,13 +169,13 @@ public class MessprogrammKategorieService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        MessprogrammKategorie kategorie = repository.getByIdPlain(
-            MessprogrammKategorie.class, id);
+        MpgCateg kategorie = repository.getByIdPlain(
+            MpgCateg.class, id);
         if (kategorie == null
             || !authorization.isAuthorized(
                 kategorie,
                 RequestMethod.DELETE,
-                MessprogrammKategorie.class
+                MpgCateg.class
             )
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);

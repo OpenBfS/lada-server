@@ -53,7 +53,7 @@ import de.intevation.lada.model.stammdaten.MeasUnit;
 import de.intevation.lada.model.stammdaten.Mmt;
 import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.Measd;
-import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
+import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.MessprogrammTransfer;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Ortszusatz;
@@ -2268,12 +2268,12 @@ public class LafObjectMapper {
         }
 
         if ("MESSPROGRAMM_LAND".equals(key)) {
-            QueryBuilder<MessprogrammKategorie> builder =
-                repository.queryBuilder(MessprogrammKategorie.class);
+            QueryBuilder<MpgCateg> builder =
+                repository.queryBuilder(MpgCateg.class);
             builder.and("networkId", netzbetreiberId);
             builder.and("extId", value);
-            List<MessprogrammKategorie> kategorie =
-                    (List<MessprogrammKategorie>) repository.filterPlain(
+            List<MpgCateg> kategorie =
+                    (List<MpgCateg>) repository.filterPlain(
                             builder.getQuery());
             if (kategorie == null || kategorie.isEmpty()) {
                 currentWarnings.add(
