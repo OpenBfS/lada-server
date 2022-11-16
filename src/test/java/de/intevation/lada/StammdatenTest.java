@@ -278,7 +278,6 @@ public class StammdatenTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore("Service payload not yet translated")
     @InSequence(T8)
     @RunAsClient
     public final void testOrt(@ArquillianResource URL baseUrl)

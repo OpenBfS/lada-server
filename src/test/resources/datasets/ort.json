@@ -1,14 +1,14 @@
 {
-    "netzbetreiberId": "06",
-    "ortId": "D_ 00192",
-    "langtext": "Langer Text",
-    "staatId": 0,
-    "gemId": "11000000",
-    "unscharf": true,
-    "kdaId": 5,
-    "koordXExtern": "32487030",
-    "koordYExtern": "5519780",
-    "ortTyp": 1,
-    "kurztext": "kurz",
-    "berichtstext": "bericht"
+    "networkId": "06",
+    "extId": "D_ 00192",
+    "longText": "Langer Text",
+    "stateId": 0,
+    "municId": "11000000",
+    "isFuzzy": true,
+    "spatRefSysId": 5,
+    "xCoordExt": "32487030",
+    "yCoordExt": "5519780",
+    "siteClassId": 1,
+    "shortText": "kurz",
+    "reiReportText": "bericht"
 }
