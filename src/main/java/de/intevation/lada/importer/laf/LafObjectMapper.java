@@ -49,7 +49,7 @@ import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.ImportConf;
 import de.intevation.lada.model.stammdaten.SpatRefSys;
 import de.intevation.lada.model.stammdaten.NuclFacilGr;
-import de.intevation.lada.model.stammdaten.MessEinheit;
+import de.intevation.lada.model.stammdaten.MeasUnit;
 import de.intevation.lada.model.stammdaten.MessMethode;
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.Messgroesse;
@@ -1334,8 +1334,8 @@ public class LafObjectMapper {
             messwert.setMessgroesseId(groesse.get(0).getId());
         }
         if (attributes.containsKey("MESSEINHEIT_ID")) {
-                MessEinheit messEinheit = repository.getByIdPlain(
-                    MessEinheit.class,
+                MeasUnit messEinheit = repository.getByIdPlain(
+                    MeasUnit.class,
                     Integer.valueOf(attributes.get("MESSEINHEIT_ID"))
                 );
             if (messEinheit == null) {
@@ -1367,11 +1367,11 @@ public class LafObjectMapper {
                         "[" + String.valueOf(from) + "]", String.valueOf(to));
                 }
             }
-            QueryBuilder<MessEinheit> builder =
-                repository.queryBuilder(MessEinheit.class);
+            QueryBuilder<MeasUnit> builder =
+                repository.queryBuilder(MeasUnit.class);
             builder.and("unitSymbol", attribute);
-            List<MessEinheit> einheit =
-                (List<MessEinheit>) repository.filterPlain(builder.getQuery());
+            List<MeasUnit> einheit =
+                (List<MeasUnit>) repository.filterPlain(builder.getQuery());
             if (einheit == null || einheit.isEmpty()) {
                 currentWarnings.add(
                     new ReportItem(

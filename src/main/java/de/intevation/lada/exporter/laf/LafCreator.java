@@ -26,7 +26,7 @@ import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.land.ZusatzWert;
-import de.intevation.lada.model.stammdaten.MessEinheit;
+import de.intevation.lada.model.stammdaten.MeasUnit;
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.model.stammdaten.Ort;
@@ -561,11 +561,11 @@ implements Creator {
             (List<Messgroesse>) repository.filter(
                 builder.getQuery()).getData();
 
-        QueryBuilder<MessEinheit> eBuilder =
-            repository.queryBuilder(MessEinheit.class);
+        QueryBuilder<MeasUnit> eBuilder =
+            repository.queryBuilder(MeasUnit.class);
         eBuilder.and("id", mw.getMehId());
-        List<MessEinheit> einheiten =
-            (List<MessEinheit>) repository.filter(
+        List<MeasUnit> einheiten =
+            (List<MeasUnit>) repository.filter(
                 eBuilder.getQuery()).getData();
 
         String tag = "MESSWERT";

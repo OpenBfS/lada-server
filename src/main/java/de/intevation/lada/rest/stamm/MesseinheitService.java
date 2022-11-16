@@ -17,7 +17,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.UnitConvers;
-import de.intevation.lada.model.stammdaten.MessEinheit;
+import de.intevation.lada.model.stammdaten.MeasUnit;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
@@ -81,16 +81,16 @@ public class MesseinheitService extends LadaService {
         @QueryParam("secMehId") Integer secMehId
     ) {
         if (mehId == null) {
-            return repository.getAll(MessEinheit.class);
+            return repository.getAll(MeasUnit.class);
         }
 
-        MessEinheit meh = repository.getByIdPlain(MessEinheit.class, mehId);
-        MessEinheit secMeh = null;
+        MeasUnit meh = repository.getByIdPlain(MeasUnit.class, mehId);
+        MeasUnit secMeh = null;
         if (secMehId != null) {
-            secMeh = repository.getByIdPlain(MessEinheit.class, secMehId);
+            secMeh = repository.getByIdPlain(MeasUnit.class, secMehId);
         }
-        List<MessEinheit> einheits =
-            new ArrayList<MessEinheit>(
+        List<MeasUnit> einheits =
+            new ArrayList<MeasUnit>(
                 meh.getUnitConversTo().size());
         meh.setPrimary(true);
         einheits.add(meh);
@@ -101,13 +101,13 @@ public class MesseinheitService extends LadaService {
         for (UnitConvers umrechnung
             : meh.getUnitConversTo()
         ) {
-            MessEinheit einheit = umrechnung.getFromUnit();
+            MeasUnit einheit = umrechnung.getFromUnit();
             einheit.setPrimary(true);
             einheits.add(einheit);
         }
         if (secMeh != null) {
             secMeh.getUnitConversTo().forEach(umrechnung -> {
-                MessEinheit einheit = umrechnung.getFromUnit();
+                MeasUnit einheit = umrechnung.getFromUnit();
                 //If unit was not already added
                 if (!einheits.contains(einheit)) {
                     //Add as secondary unit
@@ -130,6 +130,6 @@ public class MesseinheitService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        return repository.getById(MessEinheit.class, id);
+        return repository.getById(MeasUnit.class, id);
     }
 }

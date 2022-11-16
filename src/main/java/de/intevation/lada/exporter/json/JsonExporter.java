@@ -50,7 +50,7 @@ import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.stammdaten.OprMode;
 import de.intevation.lada.model.stammdaten.Regulation;
 import de.intevation.lada.model.stammdaten.EnvDescrip;
-import de.intevation.lada.model.stammdaten.MessEinheit;
+import de.intevation.lada.model.stammdaten.MeasUnit;
 import de.intevation.lada.model.stammdaten.MessMethode;
 import de.intevation.lada.model.stammdaten.MessStelle;
 import de.intevation.lada.model.stammdaten.Messgroesse;
@@ -387,8 +387,8 @@ public class JsonExporter implements Exporter {
                     "pzwGroesse", pz.getBeschreibung());
                 Integer mehId = pz.getMessEinheitId();
                 if (mehId != null) {
-                MessEinheit meh = repository.getByIdPlain(
-                    MessEinheit.class, mehId);
+                MeasUnit meh = repository.getByIdPlain(
+                    MeasUnit.class, mehId);
                 ((ObjectNode) nodes.get(i)).put(
                     "meh", meh.getUnitSymbol());
                 } else {
@@ -463,8 +463,8 @@ public class JsonExporter implements Exporter {
             String tmp = mapper.writeValueAsString(messwerte);
             JsonNode nodes = mapper.readTree(tmp);
             for (int i = 0; i < nodes.size(); i++) {
-                MessEinheit meh = repository.getByIdPlain(
-                    MessEinheit.class,
+                MeasUnit meh = repository.getByIdPlain(
+                    MeasUnit.class,
                     nodes.get(i).get("mehId").asInt()
                 );
                 ((ObjectNode) nodes.get(i)).put("meh",

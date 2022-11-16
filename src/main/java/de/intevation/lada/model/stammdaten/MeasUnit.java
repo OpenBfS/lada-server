@@ -21,8 +21,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "meas_unit", schema = SchemaName.NAME)
-public class MessEinheit implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class MeasUnit implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -54,7 +54,7 @@ public class MessEinheit implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public MessEinheit() {
+    public MeasUnit() {
     }
 
     public Integer getId() {

@@ -32,7 +32,7 @@ import de.intevation.lada.model.stammdaten.GridColConf;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.model.stammdaten.StatusStufe;
 import de.intevation.lada.model.stammdaten.StatusWert;
-import de.intevation.lada.model.stammdaten.MessEinheit;
+import de.intevation.lada.model.stammdaten.MeasUnit;
 import de.intevation.lada.model.stammdaten.Messgroesse;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -261,10 +261,10 @@ public abstract class QueryExportJob extends ExportJob {
     * @return messeinheit
      */
     protected String getMesseinheit(Messwert messwert) {
-        QueryBuilder<MessEinheit> builder = repository.queryBuilder(
-            MessEinheit.class);
+        QueryBuilder<MeasUnit> builder = repository.queryBuilder(
+            MeasUnit.class);
         builder.and("id", messwert.getMehId());
-        List<MessEinheit> messeinheit = repository.filterPlain(builder.getQuery());
+        List<MeasUnit> messeinheit = repository.filterPlain(builder.getQuery());
         return messeinheit.get(0).getUnitSymbol();
     }
 

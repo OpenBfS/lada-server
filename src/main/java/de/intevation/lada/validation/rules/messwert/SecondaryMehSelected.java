@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.stammdaten.MessEinheit;
+import de.intevation.lada.model.stammdaten.MeasUnit;
 import de.intevation.lada.model.stammdaten.Umwelt;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -60,12 +60,12 @@ public class SecondaryMehSelected implements Rule {
             }
             /*Check if the messwert is convertable into the secondary unit but
             not into the primary */
-            MessEinheit meh =
+            MeasUnit meh =
                 repository.getByIdPlain(
-                    MessEinheit.class, mehId);
-            MessEinheit secMeh =
+                    MeasUnit.class, mehId);
+            MeasUnit secMeh =
                 repository.getByIdPlain(
-                    MessEinheit.class, secMehId);
+                    MeasUnit.class, secMehId);
             AtomicBoolean primary = new AtomicBoolean(false);
             meh.getUnitConversTo().forEach(umrechnung -> {
                 if (umrechnung.getFromUnit().getId()
