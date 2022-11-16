@@ -18,11 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the mess_einheit_umrechung database table.
- */
 @Entity
-@Table(name = "mass_einheit_umrechnung", schema = SchemaName.LEGACY_NAME)
+@Table(name = "unit_convers", schema = SchemaName.NAME)
 public class MassEinheitUmrechnung implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -30,16 +27,15 @@ public class MassEinheitUmrechnung implements Serializable {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "meh_id_von")
-    private MessEinheit mehVon;
+    @JoinColumn(name = "from_unit_id")
+    private MessEinheit fromUnit;
 
-    @Column(name = "meh_id_zu")
-    private Integer mehIdZu;
+    private Integer toUnitId;
 
-    private Double faktor;
+    private Double factor;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public MassEinheitUmrechnung() {
 
@@ -49,24 +45,24 @@ public class MassEinheitUmrechnung implements Serializable {
         return this.id;
     }
 
-    public MessEinheit getMehVon() {
-        return this.mehVon;
+    public MessEinheit getFromUnit() {
+        return this.fromUnit;
     }
 
-    public Integer getMehIdZu() {
-        return this.mehIdZu;
+    public Integer getToUnitId() {
+        return this.toUnitId;
     }
 
-    public Double getFaktor() {
-        return this.faktor;
+    public Double getFactor() {
+        return this.factor;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }

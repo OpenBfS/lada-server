@@ -101,13 +101,13 @@ public class MesseinheitService extends LadaService {
         for (MassEinheitUmrechnung umrechnung
             : meh.getMassEinheitUmrechnungZus()
         ) {
-            MessEinheit einheit = umrechnung.getMehVon();
+            MessEinheit einheit = umrechnung.getFromUnit();
             einheit.setPrimary(true);
             einheits.add(einheit);
         }
         if (secMeh != null) {
             secMeh.getMassEinheitUmrechnungZus().forEach(umrechnung -> {
-                MessEinheit einheit = umrechnung.getMehVon();
+                MessEinheit einheit = umrechnung.getFromUnit();
                 //If unit was not already added
                 if (!einheits.contains(einheit)) {
                     //Add as secondary unit

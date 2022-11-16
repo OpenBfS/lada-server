@@ -41,7 +41,7 @@ public class MessEinheit implements Serializable {
      * Get all MasseinheitUmrechnungs for units that can be converted into
      * this one.
      */
-    @OneToMany(mappedBy = "mehIdZu", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "toUnitId", fetch = FetchType.EAGER)
     @JsonbTransient
     private List<MassEinheitUmrechnung> massEinheitUmrechnungZus;
 

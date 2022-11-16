@@ -64,15 +64,15 @@ public class IsNormalized implements Rule {
             if (mehId != null && !mehId.equals(messwert.getMehId())) {
                 QueryBuilder<MassEinheitUmrechnung> builder =
                 repository.queryBuilder(MassEinheitUmrechnung.class);
-                builder.and("mehIdZu", mehId);
-                builder.and("mehVon", messwert.getMehId());
+                builder.and("toUnitId", mehId);
+                builder.and("fromUnit", messwert.getMehId());
                 List<MassEinheitUmrechnung> result = repository.filterPlain(builder.getQuery());
                 convert = result.size() > 0;
             } else if (secMehId != null && !secMehId.equals(messwert.getMehId())) {
                 QueryBuilder<MassEinheitUmrechnung> builder =
                 repository.queryBuilder(MassEinheitUmrechnung.class);
-                builder.and("mehIdZu", secMehId);
-                builder.and("mehVon", messwert.getMehId());
+                builder.and("toUnitId", secMehId);
+                builder.and("fromUnit", messwert.getMehId());
                 List<MassEinheitUmrechnung> result = repository.filterPlain(builder.getQuery());
                 convert = result.size() > 0;
             }

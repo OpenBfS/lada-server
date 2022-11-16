@@ -37,8 +37,8 @@ public class MesswertNormalizer {
     ) {
         QueryBuilder<MassEinheitUmrechnung> builder =
             repository.queryBuilder(MassEinheitUmrechnung.class);
-        builder.and("mehIdZu", mehIdTo);
-        builder.and("mehVon", mehIdFrom);
+        builder.and("toUnitId", mehIdTo);
+        builder.and("fromUnit", mehIdFrom);
         return repository.filterPlain(builder.getQuery());
     }
 
@@ -81,7 +81,7 @@ public class MesswertNormalizer {
             }
             MassEinheitUmrechnung meu = primaryMeu.size() > 0
                     ? primaryMeu.get(0) : secondaryMeu.get(0);
-            Double factor = meu.getFaktor();
+            Double factor = meu.getFactor();
 
             //Update einheit
             messwert.setMehId(
