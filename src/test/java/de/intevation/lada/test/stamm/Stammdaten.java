@@ -97,12 +97,12 @@ public class Stammdaten extends ServiceTest {
         matchers.put("netzbetreiber",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "aktiv",
-                "idfNetzbetreiber",
-                "isBmn",
-                "mailverteiler",
-                "netzbetreiber"
+                "lastMod",
+                "isActive",
+                "idfNetworkId",
+                "isFmn",
+                "mailList",
+                "name"
             )
         );
         matchers.put("pflichtmessgroesse",

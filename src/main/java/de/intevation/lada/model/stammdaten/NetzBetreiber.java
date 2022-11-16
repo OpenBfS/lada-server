@@ -16,12 +16,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the netz_betreiber database table.
- *
- */
 @Entity
-@Table(name = "netz_betreiber", schema = SchemaName.LEGACY_NAME)
+@Table(name = "network", schema = SchemaName.NAME)
 @NamedQuery(
     name = "NetzBetreiber.findAll",
     query = "SELECT n FROM NetzBetreiber n")
@@ -32,20 +28,18 @@ public class NetzBetreiber implements Serializable {
     private String id;
 
     @Column(insertable = false, updatable = false)
-    private Boolean aktiv;
+    private Boolean isActive;
 
-    @Column(name = "idf_netzbetreiber")
-    private String idfNetzbetreiber;
+    private String idfNetworkId;
 
-    @Column(name = "is_bmn")
-    private Boolean isBmn;
+    private Boolean isFmn;
 
-    private String mailverteiler;
+    private String mailList;
 
-    private String netzbetreiber;
+    private String name;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public NetzBetreiber() {
     }
@@ -58,52 +52,52 @@ public class NetzBetreiber implements Serializable {
         this.id = id;
     }
 
-    public Boolean getAktiv() {
-        return this.aktiv;
+    public Boolean getIsActive() {
+        return this.isActive;
     }
 
-    public void setAktiv(Boolean aktiv) {
-        this.aktiv = aktiv;
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 
-    public String getIdfNetzbetreiber() {
-        return this.idfNetzbetreiber;
+    public String getIdfNetworkId() {
+        return this.idfNetworkId;
     }
 
-    public void setIdfNetzbetreiber(String idfNetzbetreiber) {
-        this.idfNetzbetreiber = idfNetzbetreiber;
+    public void setIdfNetworkId(String idfNetworkId) {
+        this.idfNetworkId = idfNetworkId;
     }
 
-    public Boolean getIsBmn() {
-        return this.isBmn;
+    public Boolean getIsFmn() {
+        return this.isFmn;
     }
 
-    public void setIsBmn(Boolean isBmn) {
-        this.isBmn = isBmn;
+    public void setIsFmn(Boolean isFmn) {
+        this.isFmn = isFmn;
     }
 
-    public String getMailverteiler() {
-        return this.mailverteiler;
+    public String getMailList() {
+        return this.mailList;
     }
 
-    public void setMailverteiler(String mailverteiler) {
-        this.mailverteiler = mailverteiler;
+    public void setMailList(String mailList) {
+        this.mailList = mailList;
     }
 
-    public String getNetzbetreiber() {
-        return this.netzbetreiber;
+    public String getName() {
+        return this.name;
     }
 
-    public void setNetzbetreiber(String netzbetreiber) {
-        this.netzbetreiber = netzbetreiber;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }
