@@ -15,13 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
-/**
- * The persistent class for the lada_user database table.
- *
- */
 @Entity
-@Table(name = "lada_user", schema = SchemaName.LEGACY_NAME)
+@Table(schema = SchemaName.NAME)
 public class LadaUser implements Serializable {
     private static final long serialVersionUID = 1L;
 
