@@ -40,7 +40,7 @@ public class ValidREIMesspunkt implements Rule {
         if (ort.getKtaGruppeId()!=null) {
             QueryBuilder<KtaGrpZuord> builder =
                 repository.queryBuilder(KtaGrpZuord.class);
-            builder.and("ktaGrpId", ort.getKtaGruppeId());
+            builder.and("nuclFacilGrId", ort.getKtaGruppeId());
             List<KtaGrpZuord> ktas = (List<KtaGrpZuord>) repository.filterPlain(builder.getQuery());
 
             //Compare first 4 characters of Ort ID to stored KTAs
@@ -59,12 +59,12 @@ public class ValidREIMesspunkt implements Rule {
                 }
 
                 for (KtaGrpZuord kta : ktas){
-                    if ( kta.getKtaId() != KtaList.get(0).getId() ) {
+                    if ( kta.getNuclFacilId() != KtaList.get(0).getId() ) {
                         violation.addWarning("ktaGruppeId", StatusCodes.VALUE_NOT_MATCHING);
                     } else if ( ort.getOrtId().length() < 5
-                        && kta.getKtaId() == KtaList.get(0).getId() ){
+                        && kta.getNuclFacilId() == KtaList.get(0).getId() ){
                         violation.addWarning("ortId", StatusCodes.ORT_REIMP_MISSING);
-                    } else if (  ort.getOrtId().length() > 12  && kta.getKtaId() == KtaList.get(0).getId() ){
+                    } else if (  ort.getOrtId().length() > 12  && kta.getNuclFacilId() == KtaList.get(0).getId() ){
                         violation.addWarning("ortId", StatusCodes.ORT_REIMP_TOO_LONG);
                     } else {
                         break;

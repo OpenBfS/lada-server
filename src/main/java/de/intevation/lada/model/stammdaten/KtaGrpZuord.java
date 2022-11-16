@@ -9,32 +9,24 @@ package de.intevation.lada.model.stammdaten;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the kta_grp_zuord database table.
- *
- */
 @Entity
-@Table(name = "kta_grp_zuord", schema = SchemaName.LEGACY_NAME)
+@Table(name = "nucl_facil_gr_mp", schema = SchemaName.NAME)
 public class KtaGrpZuord implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    @Column(name = "kta_grp_id")
-    private Integer ktaGrpId;
+    private Integer nuclFacilGrId;
 
-    @Column(name = "kta_id")
-    private Integer ktaId;
+    private Integer nuclFacilId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    private Timestamp lastMod;
 
     public KtaGrpZuord() {
     }
@@ -47,28 +39,28 @@ public class KtaGrpZuord implements Serializable {
         this.id = id;
     }
 
-    public Integer getKtaGrpId() {
-        return this.ktaGrpId;
+    public Integer getNuclFacilGrId() {
+        return this.nuclFacilGrId;
     }
 
-    public void setKtaGrpId(Integer ktaGrpId) {
-        this.ktaGrpId = ktaGrpId;
+    public void setNuclFacilGrId(Integer nuclFacilGrId) {
+        this.nuclFacilGrId = nuclFacilGrId;
     }
 
-    public Integer getKtaId() {
-        return this.ktaId;
+    public Integer getNuclFacilId() {
+        return this.nuclFacilId;
     }
 
-    public void setKtaId(Integer ktaId) {
-        this.ktaId = ktaId;
+    public void setNuclFacilId(Integer nuclFacilId) {
+        this.nuclFacilId = nuclFacilId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }

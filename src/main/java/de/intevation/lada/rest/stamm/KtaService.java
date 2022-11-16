@@ -74,7 +74,7 @@ public class KtaService extends LadaService {
         }
         QueryBuilder<KtaGrpZuord> builder =
             repository.queryBuilder(KtaGrpZuord.class);
-        builder.and("ktaGrpId", ktagruppe);
+        builder.and("nuclFacilGrId", ktagruppe);
         List<KtaGrpZuord> zuord =
             repository.filterPlain(builder.getQuery());
         if (zuord.isEmpty()) {
@@ -84,7 +84,7 @@ public class KtaService extends LadaService {
             repository.queryBuilder(NuclFacil.class);
         List<Integer> ids = new ArrayList<Integer>();
         for (int i = 0; i < zuord.size(); i++) {
-            ids.add(zuord.get(i).getKtaId());
+            ids.add(zuord.get(i).getNuclFacilId());
         }
         builder1.orIn("id", ids);
         return repository.filter(builder1.getQuery());
