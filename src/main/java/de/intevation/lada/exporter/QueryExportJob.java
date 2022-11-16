@@ -278,7 +278,7 @@ public abstract class QueryExportJob extends ExportJob {
             Messgroesse.class);
         builder.and("id", messwert.getMessgroesseId());
         List<Messgroesse> messgroesse = repository.filterPlain(builder.getQuery());
-        return messgroesse.get(0).getMessgroesse();
+        return messgroesse.get(0).getName();
     }
 
     /**

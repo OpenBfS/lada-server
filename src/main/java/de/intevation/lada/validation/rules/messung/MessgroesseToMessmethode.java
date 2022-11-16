@@ -63,7 +63,7 @@ public class MessgroesseToMessmethode implements Rule {
                     Messgroesse.class, messwert.getMessgroesseId());
                 violation.addError(
                     "messgroesse#" + messung.getMmtId()
-                    + " " + mg.getMessgroesse(),
+                    + " " + mg.getName(),
                     StatusCodes.VALUE_NOT_MATCHING);
             }
         }

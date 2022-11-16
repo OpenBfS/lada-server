@@ -569,7 +569,7 @@ implements Creator {
                 eBuilder.getQuery()).getData();
 
         String tag = "MESSWERT";
-        String value = "\"" + groessen.get(0).getMessgroesse() + "\"";
+        String value = "\"" + groessen.get(0).getName() + "\"";
         value += " ";
         value += mw.getMesswertNwg() == null ? " " : mw.getMesswertNwg();
         value += mw.getMesswertNwg() == null

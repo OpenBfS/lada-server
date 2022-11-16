@@ -15,39 +15,30 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the messgroesse database table.
- *
- */
 @Entity
-@Table(name = "messgroesse", schema = SchemaName.LEGACY_NAME)
+@Table(name = "measd", schema = SchemaName.NAME)
 public class Messgroesse implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    private String beschreibung;
+    private String descr;
 
-    @Column(name = "default_farbe")
-    private String defaultFarbe;
+    private String defColor;
 
-    @Column(name = "eudf_nuklid_id")
-    private Long eudfNuklidId;
+    private Long eudfNuclId;
 
-    @Column(name = "idf_nuklid_key")
-    private String idfNuklidKey;
+    private String idfExtId;
 
-    @Column(name = "ist_leitnuklid")
-    private Boolean istLeitnuklid;
+    private Boolean isRefNucl;
 
-    @Column(name = "kennung_bvl")
-    private String kennungBvl;
+    private String bvlFormatId;
 
-    private String messgroesse;
+    private String name;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public Messgroesse() {
     }
@@ -60,67 +51,67 @@ public class Messgroesse implements Serializable {
         this.id = id;
     }
 
-    public String getBeschreibung() {
-        return this.beschreibung;
+    public String getDescr() {
+        return this.descr;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setDescr(String descr) {
+        this.descr = descr;
     }
 
-    public String getDefaultFarbe() {
-        return this.defaultFarbe;
+    public String getDefColor() {
+        return this.defColor;
     }
 
-    public void setDefaultFarbe(String defaultFarbe) {
-        this.defaultFarbe = defaultFarbe;
+    public void setDefColor(String defColor) {
+        this.defColor = defColor;
     }
 
-    public Long getEudfNuklidId() {
-        return this.eudfNuklidId;
+    public Long getEudfNuclId() {
+        return this.eudfNuclId;
     }
 
-    public void setEudfNuklidId(Long eudfNuklidId) {
-        this.eudfNuklidId = eudfNuklidId;
+    public void setEudfNuclId(Long eudfNuclId) {
+        this.eudfNuclId = eudfNuclId;
     }
 
-    public String getIdfNuklidKey() {
-        return this.idfNuklidKey;
+    public String getIdfExtId() {
+        return this.idfExtId;
     }
 
-    public void setIdfNuklidKey(String idfNuklidKey) {
-        this.idfNuklidKey = idfNuklidKey;
+    public void setIdfExtId(String idfExtId) {
+        this.idfExtId = idfExtId;
     }
 
-    public Boolean getIstLeitnuklid() {
-        return this.istLeitnuklid;
+    public Boolean getIsRefNucl() {
+        return this.isRefNucl;
     }
 
-    public void setIstLeitnuklid(Boolean istLeitnuklid) {
-        this.istLeitnuklid = istLeitnuklid;
+    public void setIsRefNucl(Boolean istRefNucl) {
+        this.isRefNucl = istRefNucl;
     }
 
-    public String getKennungBvl() {
-        return this.kennungBvl;
+    public String getBvlFormatId() {
+        return this.bvlFormatId;
     }
 
-    public void setKennungBvl(String kennungBvl) {
-        this.kennungBvl = kennungBvl;
+    public void setBvlFormatId(String bvlFormatId) {
+        this.bvlFormatId = bvlFormatId;
     }
 
-    public String getMessgroesse() {
-        return this.messgroesse;
+    public String getName() {
+        return this.name;
     }
 
-    public void setMessgroesse(String messgroesse) {
-        this.messgroesse = messgroesse;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 }

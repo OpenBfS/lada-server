@@ -81,14 +81,14 @@ public class IsNormalized implements Rule {
                 QueryBuilder<Messgroesse> builder_messgr = repository.queryBuilder(Messgroesse.class);
                 builder_messgr.and("id", messwert.getMessgroesseId());
                 List<Messgroesse> messgroesse = repository.filterPlain(builder_messgr.getQuery());
-                violation.addWarning("mehId#"+messgroesse.get(0).getMessgroesse(), StatusCodes.VAL_UNIT_NORMALIZE);
+                violation.addWarning("mehId#"+messgroesse.get(0).getName(), StatusCodes.VAL_UNIT_NORMALIZE);
             } else if ( (mehId != null && mehId.equals(messwert.getMehId())) || (secMehId != null && secMehId.equals(messwert.getMehId())) ) {
                 return null;
             } else {
                 QueryBuilder<Messgroesse> builder_messgr = repository.queryBuilder(Messgroesse.class);
                 builder_messgr.and("id", messwert.getMessgroesseId());
                 List<Messgroesse> messgroesse = repository.filterPlain(builder_messgr.getQuery());
-                violation.addWarning("mehId#"+messgroesse.get(0).getMessgroesse(), StatusCodes.VAL_UNIT_UMW);
+                violation.addWarning("mehId#"+messgroesse.get(0).getName(), StatusCodes.VAL_UNIT_UMW);
             }
         }
         return violation;

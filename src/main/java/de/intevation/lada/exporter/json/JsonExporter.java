@@ -474,7 +474,7 @@ public class JsonExporter implements Exporter {
                     nodes.get(i).get("messgroesseId").asInt()
                 );
                 ((ObjectNode) nodes.get(i)).put("messgroesse",
-                    mg == null ? "" : mg.getMessgroesse());
+                    mg == null ? "" : mg.getName());
             }
             ((ObjectNode) node).set("messwerte", nodes);
         } catch (IOException e) {

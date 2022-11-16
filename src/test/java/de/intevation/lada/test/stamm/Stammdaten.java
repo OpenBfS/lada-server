@@ -65,14 +65,14 @@ public class Stammdaten extends ServiceTest {
         matchers.put("messgroesse",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "beschreibung",
-                "defaultFarbe",
-                "eudfNuklidId",
-                "idfNuklidKey",
-                "istLeitnuklid",
-                "kennungBvl",
-                "messgroesse"
+                "lastMod",
+                "descr",
+                "defColor",
+                "eudfNuclId",
+                "idfExtId",
+                "isRefNucl",
+                "bvlFormatId",
+                "name"
             )
         );
         matchers.put("messmethode",
