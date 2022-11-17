@@ -60,7 +60,7 @@ import de.intevation.lada.model.stammdaten.Poi;
 import de.intevation.lada.model.stammdaten.SampleSpecif;
 import de.intevation.lada.model.stammdaten.SampleMeth;
 import de.intevation.lada.model.stammdaten.Sampler;
-import de.intevation.lada.model.stammdaten.ReiProgpunktGruppe;
+import de.intevation.lada.model.stammdaten.ReiAgGr;
 import de.intevation.lada.model.stammdaten.Staat;
 import de.intevation.lada.model.stammdaten.StatusErreichbar;
 import de.intevation.lada.model.stammdaten.StatusKombi;
@@ -2393,10 +2393,10 @@ public class LafObjectMapper {
 
         if ("REI_PROGRAMMPUNKTGRUPPE".equals(key)
             || "REI_PROGRAMMPUNKT".equals(key)) {
-            QueryBuilder<ReiProgpunktGruppe> builder =
-                repository.queryBuilder(ReiProgpunktGruppe.class);
+            QueryBuilder<ReiAgGr> builder =
+                repository.queryBuilder(ReiAgGr.class);
             builder.and("name", value.toString());
-            List<ReiProgpunktGruppe> list =
+            List<ReiAgGr> list =
                 repository.filterPlain(builder.getQuery());
             if (!list.isEmpty()) {
                 probe.setReiAgGrId(list.get(0).getId());

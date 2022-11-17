@@ -36,7 +36,7 @@ import de.intevation.lada.model.stammdaten.SampleMeth;
 import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.Sampler;
-import de.intevation.lada.model.stammdaten.ReiProgpunktGruppe;
+import de.intevation.lada.model.stammdaten.ReiAgGr;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.util.auth.HeaderAuthorization;
 import de.intevation.lada.util.auth.UserInfo;
@@ -262,8 +262,8 @@ implements Creator {
             laf += lafLine("PROBENAHMEINSTITUTION", prn.getExtId(), CN);
         }
         if (probe.getReiAgGrId() != null) {
-            ReiProgpunktGruppe rpg = repository.getByIdPlain(
-                ReiProgpunktGruppe.class,
+            ReiAgGr rpg = repository.getByIdPlain(
+                ReiAgGr.class,
                 probe.getReiAgGrId());
             laf += lafLine(
                 "REI_PROGRAMMPUNKTGRUPPE",

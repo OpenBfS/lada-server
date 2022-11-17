@@ -19,7 +19,7 @@ import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.ReiProgpunktGrpUmwZuord;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGrpZuord;
-import de.intevation.lada.model.stammdaten.ReiProgpunktGruppe;
+import de.intevation.lada.model.stammdaten.ReiAgGr;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -76,9 +76,9 @@ public class ReiProgpunktGruppeService extends LadaService {
         @QueryParam("umwelt") @Pattern(regexp = ".+") String umwelt
     ) {
         if (reiProgpunktId == null && umwelt == null) {
-            return repository.getAll(ReiProgpunktGruppe.class);
+            return repository.getAll(ReiAgGr.class);
         }
-        List<ReiProgpunktGruppe> list = new ArrayList<ReiProgpunktGruppe>();
+        List<ReiAgGr> list = new ArrayList<ReiAgGr>();
         if (reiProgpunktId != null) {
             QueryBuilder<ReiProgpunktGrpZuord> builder =
                 repository.queryBuilder(ReiProgpunktGrpZuord.class);
@@ -88,8 +88,8 @@ public class ReiProgpunktGruppeService extends LadaService {
             if (zuord.isEmpty()) {
                 return new Response(true, StatusCodes.OK, null);
             }
-            QueryBuilder<ReiProgpunktGruppe> builder1 =
-                repository.queryBuilder(ReiProgpunktGruppe.class);
+            QueryBuilder<ReiAgGr> builder1 =
+                repository.queryBuilder(ReiAgGr.class);
             List<Integer> ids = new ArrayList<Integer>();
             for (int i = 0; i < zuord.size(); i++) {
                 ids.add(zuord.get(i).getReiProgpunktGrpId());
@@ -105,8 +105,8 @@ public class ReiProgpunktGruppeService extends LadaService {
             if (zuord.isEmpty()) {
                 return new Response(true, StatusCodes.OK, null);
             }
-            QueryBuilder<ReiProgpunktGruppe> builder1 =
-                repository.queryBuilder(ReiProgpunktGruppe.class);
+            QueryBuilder<ReiAgGr> builder1 =
+                repository.queryBuilder(ReiAgGr.class);
             List<Integer> ids = new ArrayList<Integer>();
             for (int i = 0; i < zuord.size(); i++) {
                 ids.add(zuord.get(i).getReiProgpunktGrpId());
@@ -129,6 +129,6 @@ public class ReiProgpunktGruppeService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        return repository.getById(ReiProgpunktGruppe.class, id);
+        return repository.getById(ReiAgGr.class, id);
     }
 }

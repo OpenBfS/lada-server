@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "rei_ag_gr", schema = SchemaName.NAME)
-public class ReiProgpunktGruppe implements Serializable {
+public class ReiAgGr implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -30,7 +30,7 @@ public class ReiProgpunktGruppe implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public ReiProgpunktGruppe() {
+    public ReiAgGr() {
     }
 
     public Integer getId() {
