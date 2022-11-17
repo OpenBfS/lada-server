@@ -127,11 +127,11 @@ public class Stammdaten extends ServiceTest {
         matchers.put("probenzusatz",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "beschreibung",
+                "lastMod",
+                "name",
                 "eudfKeyword",
-                "zusatzwert",
-                "messEinheitId"
+                "extId",
+                "unitId"
             )
         );
         matchers.put("location",

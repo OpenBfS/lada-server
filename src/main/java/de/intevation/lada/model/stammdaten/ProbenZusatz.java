@@ -15,30 +15,24 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the proben_zusatz database table.
- *
- */
 @Entity
-@Table(name = "proben_zusatz", schema = SchemaName.LEGACY_NAME)
+@Table(name = "sample_specif", schema = SchemaName.NAME)
 public class ProbenZusatz implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private String id;
 
-    private String beschreibung;
+    private String name;
 
-    @Column(name = "eudf_keyword")
     private String eudfKeyword;
 
-    private String zusatzwert;
+    private String extId;
 
-    @Column(name = "meh_id")
-    private Integer messEinheitId;
+    private Integer unitId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public ProbenZusatz() {
     }
@@ -51,12 +45,12 @@ public class ProbenZusatz implements Serializable {
         this.id = id;
     }
 
-    public String getBeschreibung() {
-        return this.beschreibung;
+    public String getName() {
+        return this.name;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEudfKeyword() {
@@ -67,28 +61,28 @@ public class ProbenZusatz implements Serializable {
         this.eudfKeyword = eudfKeyword;
     }
 
-    public String getZusatzwert() {
-        return this.zusatzwert;
+    public String getExtId() {
+        return this.extId;
     }
 
-    public void setZusatzwert(String zusatzwert) {
-        this.zusatzwert = zusatzwert;
+    public void setExtId(String extId) {
+        this.extId = extId;
     }
 
-    public Integer getMessEinheitId() {
-        return this.messEinheitId;
+    public Integer getUnitId() {
+        return this.unitId;
     }
 
-    public void setMessEinheitId(Integer messEinheitId) {
-        this.messEinheitId = messEinheitId;
+    public void setUnitId(Integer unitId) {
+        this.unitId = unitId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }

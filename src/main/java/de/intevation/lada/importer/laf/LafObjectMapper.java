@@ -1247,7 +1247,7 @@ public class LafObjectMapper {
         if (isId) {
             builder.and("id", attribute);
         } else {
-            builder.and("zusatzwert", attribute);
+            builder.and("extId", attribute);
         }
         List<ProbenZusatz> zusatz =
             (List<ProbenZusatz>) repository.filterPlain(builder.getQuery());

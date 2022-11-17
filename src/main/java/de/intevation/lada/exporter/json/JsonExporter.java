@@ -384,8 +384,8 @@ public class JsonExporter implements Exporter {
                     nodes.get(i).get("pzsId").asText()
                 );
                 ((ObjectNode) nodes.get(i)).put(
-                    "pzwGroesse", pz.getBeschreibung());
-                Integer mehId = pz.getMessEinheitId();
+                    "pzwGroesse", pz.getName());
+                Integer mehId = pz.getUnitId();
                 if (mehId != null) {
                 MeasUnit meh = repository.getByIdPlain(
                     MeasUnit.class, mehId);

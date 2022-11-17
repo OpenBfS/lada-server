@@ -301,8 +301,8 @@ implements Creator {
             ? " "
             : " " + zw.getKleinerAls());
         value += zw.getMesswertPzs();
-        value += " " + ((zusatz.get(0).getMessEinheitId() == null)
-            ? "\"\"" : zusatz.get(0).getMessEinheitId());
+        value += " " + ((zusatz.get(0).getUnitId() == null)
+            ? "\"\"" : zusatz.get(0).getUnitId());
         value += " " + ((zw.getMessfehler() == null) ? "" : zw.getMessfehler());
         return lafLine("PZB_S", value);
     }
