@@ -16,8 +16,8 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 
 @Entity
-@Table(name = "type_regulation", schema = SchemaName.NAME)
-public class OrtszuordnungTyp implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class TypeRegulation implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -28,7 +28,7 @@ public class OrtszuordnungTyp implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public OrtszuordnungTyp() {
+    public TypeRegulation() {
     }
 
     public String getId() {

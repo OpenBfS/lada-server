@@ -12,7 +12,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.stammdaten.OrtszuordnungTyp;
+import de.intevation.lada.model.stammdaten.TypeRegulation;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
@@ -60,7 +60,7 @@ public class OrtszuordnungTypService extends LadaService {
     @GET
     @Path("/")
     public Response get() {
-        return repository.getAll(OrtszuordnungTyp.class);
+        return repository.getAll(TypeRegulation.class);
     }
 
     /**
@@ -74,6 +74,6 @@ public class OrtszuordnungTypService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        return repository.getById(OrtszuordnungTyp.class, id);
+        return repository.getById(TypeRegulation.class, id);
     }
 }
