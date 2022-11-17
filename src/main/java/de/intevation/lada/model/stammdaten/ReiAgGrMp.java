@@ -16,8 +16,8 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "rei_ag_gr_mp", schema = SchemaName.NAME)
-public class ReiProgpunktGrpZuord implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class ReiAgGrMp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -30,7 +30,7 @@ public class ReiProgpunktGrpZuord implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public ReiProgpunktGrpZuord() {
+    public ReiAgGrMp() {
     }
 
     public Integer getId() {

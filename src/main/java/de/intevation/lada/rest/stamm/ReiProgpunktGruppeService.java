@@ -18,7 +18,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.ReiProgpunktGrpUmwZuord;
-import de.intevation.lada.model.stammdaten.ReiProgpunktGrpZuord;
+import de.intevation.lada.model.stammdaten.ReiAgGrMp;
 import de.intevation.lada.model.stammdaten.ReiAgGr;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -80,10 +80,10 @@ public class ReiProgpunktGruppeService extends LadaService {
         }
         List<ReiAgGr> list = new ArrayList<ReiAgGr>();
         if (reiProgpunktId != null) {
-            QueryBuilder<ReiProgpunktGrpZuord> builder =
-                repository.queryBuilder(ReiProgpunktGrpZuord.class);
+            QueryBuilder<ReiAgGrMp> builder =
+                repository.queryBuilder(ReiAgGrMp.class);
             builder.and("reiAgId", reiProgpunktId);
-            List<ReiProgpunktGrpZuord> zuord =
+            List<ReiAgGrMp> zuord =
                 repository.filterPlain(builder.getQuery());
             if (zuord.isEmpty()) {
                 return new Response(true, StatusCodes.OK, null);
