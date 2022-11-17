@@ -2395,7 +2395,7 @@ public class LafObjectMapper {
             || "REI_PROGRAMMPUNKT".equals(key)) {
             QueryBuilder<ReiProgpunktGruppe> builder =
                 repository.queryBuilder(ReiProgpunktGruppe.class);
-            builder.and("reiProgPunktGruppe", value.toString());
+            builder.and("name", value.toString());
             List<ReiProgpunktGruppe> list =
                 repository.filterPlain(builder.getQuery());
             if (!list.isEmpty()) {

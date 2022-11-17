@@ -267,7 +267,7 @@ implements Creator {
                 probe.getReiAgGrId());
             laf += lafLine(
                 "REI_PROGRAMMPUNKTGRUPPE",
-                rpg.getReiProgPunktGruppe(), CN);
+                rpg.getName(), CN);
         }
         for (ZusatzWert zw : zusatzwerte) {
             laf += writeZusatzwert(zw);

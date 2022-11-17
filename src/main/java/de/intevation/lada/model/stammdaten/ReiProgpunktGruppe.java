@@ -15,25 +15,20 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the rei_progpunkt_gruppe database table.
- *
- */
 @Entity
-@Table(name = "rei_progpunkt_gruppe", schema = SchemaName.LEGACY_NAME)
+@Table(name = "rei_ag_gr", schema = SchemaName.NAME)
 public class ReiProgpunktGruppe implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    private String beschreibung;
+    private String descr;
 
-    @Column(name = "rei_prog_punkt_gruppe")
-    private String reiProgPunktGruppe;
+    private String name;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public ReiProgpunktGruppe() {
     }
@@ -46,28 +41,28 @@ public class ReiProgpunktGruppe implements Serializable {
         this.id = id;
     }
 
-    public String getBeschreibung() {
-        return this.beschreibung;
+    public String getDescr() {
+        return this.descr;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setDescr(String descr) {
+        this.descr = descr;
     }
 
-    public String getReiProgPunktGruppe() {
-        return this.reiProgPunktGruppe;
+    public String getName() {
+        return this.name;
     }
 
-    public void setReiProgPunktGruppe(String reiProgPunktGruppe) {
-        this.reiProgPunktGruppe = reiProgPunktGruppe;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }
