@@ -9,28 +9,21 @@ package de.intevation.lada.model.stammdaten;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
-/**
- * The persistent class for the sollist_umwgrp database table.
- *
- */
 @Entity
-@Table(name="sollist_umwgrp", schema = SchemaName.LEGACY_NAME)
+@Table(name = "targ_env_gr", schema = SchemaName.NAME)
 public class SollistUmwGrp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    private String beschreibung;
+    private String targEnvGrDispl;
 
-    @Column(name="bezeichnung")
-    private String bezeichnung;
+    private String name;
 
     public SollistUmwGrp() {
     }
@@ -43,20 +36,20 @@ public class SollistUmwGrp implements Serializable {
         this.id = id;
     }
 
-    public String getBeschreibung() {
-        return this.beschreibung;
+    public String getTargEnvGrDispl() {
+        return this.targEnvGrDispl;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setTargEnvGrDispl(String tarEnvGrDispl) {
+        this.targEnvGrDispl = tarEnvGrDispl;
     }
 
-    public String getBezeichnung() {
-        return this.bezeichnung;
+    public String getName() {
+        return this.name;
     }
 
-    public void setBezeichnung(String bezeichnung) {
-        this.bezeichnung = bezeichnung;
+    public void setName(String name) {
+        this.name = name;
     }
 
 }
