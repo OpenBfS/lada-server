@@ -16,7 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.stammdaten.ProbenZusatz;
+import de.intevation.lada.model.stammdaten.SampleSpecif;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
@@ -82,14 +82,14 @@ public class ProbenzusatzService extends LadaService {
             List<String> ids = query.getResultList();
 
             if (!ids.isEmpty()) {
-            QueryBuilder<ProbenZusatz> builder2 =
-                repository.queryBuilder(ProbenZusatz.class);
+            QueryBuilder<SampleSpecif> builder2 =
+                repository.queryBuilder(SampleSpecif.class);
             builder2.orIn("id", ids);
             return repository.filter(builder2.getQuery());
             }
         }
 
-        return repository.getAll(ProbenZusatz.class);
+        return repository.getAll(SampleSpecif.class);
     }
 
     /**
@@ -103,6 +103,6 @@ public class ProbenzusatzService extends LadaService {
     public Response getById(
         @PathParam("id") String id
     ) {
-        return repository.getById(ProbenZusatz.class, id);
+        return repository.getById(SampleSpecif.class, id);
     }
 }

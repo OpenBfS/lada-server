@@ -56,7 +56,7 @@ import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.Site;
-import de.intevation.lada.model.stammdaten.ProbenZusatz;
+import de.intevation.lada.model.stammdaten.SampleSpecif;
 import de.intevation.lada.model.stammdaten.Probenart;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.Staat;
@@ -379,8 +379,8 @@ public class JsonExporter implements Exporter {
             String tmp = mapper.writeValueAsString(zusatzwerte);
             JsonNode nodes = mapper.readTree(tmp);
             for (int i = 0; i < nodes.size(); i++) {
-                ProbenZusatz pz = repository.getByIdPlain(
-                    ProbenZusatz.class,
+                SampleSpecif pz = repository.getByIdPlain(
+                    SampleSpecif.class,
                     nodes.get(i).get("pzsId").asText()
                 );
                 ((ObjectNode) nodes.get(i)).put(

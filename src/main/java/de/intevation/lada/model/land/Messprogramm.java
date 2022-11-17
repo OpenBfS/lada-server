@@ -27,7 +27,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
 
-import de.intevation.lada.model.stammdaten.ProbenZusatz;
+import de.intevation.lada.model.stammdaten.SampleSpecif;
 
 
 /**
@@ -137,7 +137,7 @@ public class Messprogramm implements Serializable {
         joinColumns = @JoinColumn(name = "messprogramm_id"),
         inverseJoinColumns = @JoinColumn(name = "proben_zusatz_id")
     )
-    private Set<ProbenZusatz> probenZusatzs;
+    private Set<SampleSpecif> probenZusatzs;
 
     @Transient
     private int referenceCount;
@@ -362,11 +362,11 @@ public class Messprogramm implements Serializable {
         this.probenahmeMenge = probenahmeMenge;
     }
 
-    public Set<ProbenZusatz> getProbenZusatzs() {
+    public Set<SampleSpecif> getProbenZusatzs() {
         return probenZusatzs;
     }
 
-    public void setProbenZusatzs(Set<ProbenZusatz> probenZusatzs) {
+    public void setProbenZusatzs(Set<SampleSpecif> probenZusatzs) {
         this.probenZusatzs = probenZusatzs;
     }
 

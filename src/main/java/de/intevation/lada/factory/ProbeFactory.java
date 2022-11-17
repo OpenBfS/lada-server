@@ -33,7 +33,7 @@ import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.stammdaten.EnvDescripEnvMediumMp;
 import de.intevation.lada.model.stammdaten.EnvDescrip;
 import de.intevation.lada.model.stammdaten.Site;
-import de.intevation.lada.model.stammdaten.ProbenZusatz;
+import de.intevation.lada.model.stammdaten.SampleSpecif;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
@@ -466,10 +466,10 @@ public class ProbeFactory {
         toProtocol(probe, dryrun);
 
         //Create zusatzwert objects
-        Set<ProbenZusatz> pZusatzs = messprogramm.getProbenZusatzs();
+        Set<SampleSpecif> pZusatzs = messprogramm.getProbenZusatzs();
         List<String> zusatzWerts = new ArrayList<String>();
         if (pZusatzs != null) {
-            for (ProbenZusatz pZusatz: pZusatzs) {
+            for (SampleSpecif pZusatz: pZusatzs) {
                 ZusatzWert zusatz = new ZusatzWert();
                 zusatz.setProbeId(probe.getId());
                 zusatz.setPzsId(pZusatz.getId());

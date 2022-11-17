@@ -10,7 +10,7 @@ package de.intevation.lada.validation.rules.messprogramm;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Messprogramm;
-import de.intevation.lada.model.stammdaten.ProbenZusatz;
+import de.intevation.lada.model.stammdaten.SampleSpecif;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
@@ -33,9 +33,9 @@ public class ProbenZusatzsExist implements Rule {
         Violation violation = new Violation();
 
         if (messprogramm.getProbenZusatzs() != null) {
-            for (ProbenZusatz pz: messprogramm.getProbenZusatzs()) {
+            for (SampleSpecif pz: messprogramm.getProbenZusatzs()) {
                 if (repository.getByIdPlain(
-                        ProbenZusatz.class, pz.getId()) == null
+                        SampleSpecif.class, pz.getId()) == null
                 ) {
                     violation.addError(
                         "probenZusatzs", StatusCodes.NOT_EXISTING);

@@ -57,7 +57,7 @@ import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.MpgTransf;
 import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.Poi;
-import de.intevation.lada.model.stammdaten.ProbenZusatz;
+import de.intevation.lada.model.stammdaten.SampleSpecif;
 import de.intevation.lada.model.stammdaten.Probenart;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGruppe;
@@ -1242,15 +1242,15 @@ public class LafObjectMapper {
                     "[" + String.valueOf(from) + "]", String.valueOf(to));
             }
         }
-        QueryBuilder<ProbenZusatz> builder =
-            repository.queryBuilder(ProbenZusatz.class);
+        QueryBuilder<SampleSpecif> builder =
+            repository.queryBuilder(SampleSpecif.class);
         if (isId) {
             builder.and("id", attribute);
         } else {
             builder.and("extId", attribute);
         }
-        List<ProbenZusatz> zusatz =
-            (List<ProbenZusatz>) repository.filterPlain(builder.getQuery());
+        List<SampleSpecif> zusatz =
+            (List<SampleSpecif>) repository.filterPlain(builder.getQuery());
 
         doDefaults(zusatzwert);
         doConverts(zusatzwert);

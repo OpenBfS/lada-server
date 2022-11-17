@@ -16,8 +16,8 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "sample_specif", schema = SchemaName.NAME)
-public class ProbenZusatz implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class SampleSpecif implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,7 +34,7 @@ public class ProbenZusatz implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public ProbenZusatz() {
+    public SampleSpecif() {
     }
 
     public String getId() {

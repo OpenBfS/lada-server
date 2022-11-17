@@ -31,7 +31,7 @@ import de.intevation.lada.model.stammdaten.MeasFacil;
 import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.MunicDiv;
-import de.intevation.lada.model.stammdaten.ProbenZusatz;
+import de.intevation.lada.model.stammdaten.SampleSpecif;
 import de.intevation.lada.model.stammdaten.Probenart;
 import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.MpgCateg;
@@ -288,11 +288,11 @@ implements Creator {
      */
     @SuppressWarnings("unchecked")
     private String writeZusatzwert(ZusatzWert zw) {
-        QueryBuilder<ProbenZusatz> builder =
-            repository.queryBuilder(ProbenZusatz.class);
+        QueryBuilder<SampleSpecif> builder =
+            repository.queryBuilder(SampleSpecif.class);
         builder.and("id", zw.getPzsId());
-        List<ProbenZusatz> zusatz =
-            (List<ProbenZusatz>) repository.filter(
+        List<SampleSpecif> zusatz =
+            (List<SampleSpecif>) repository.filter(
                 builder.getQuery()
             ).getData();
 
