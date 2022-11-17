@@ -12,7 +12,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.stammdaten.OrtTyp;
+import de.intevation.lada.model.stammdaten.SiteClass;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
@@ -61,7 +61,7 @@ public class OrtTypService extends LadaService {
     @GET
     @Path("/")
     public Response get() {
-        return repository.getAll(OrtTyp.class);
+        return repository.getAll(SiteClass.class);
     }
 
     /**
@@ -75,6 +75,6 @@ public class OrtTypService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        return repository.getById(OrtTyp.class, id);
+        return repository.getById(SiteClass.class, id);
     }
 }

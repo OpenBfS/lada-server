@@ -16,8 +16,8 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "site_class", schema = SchemaName.NAME)
-public class OrtTyp implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class SiteClass implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -30,7 +30,7 @@ public class OrtTyp implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public OrtTyp() {
+    public SiteClass() {
     }
 
     public Integer getId() {

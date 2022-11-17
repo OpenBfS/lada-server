@@ -12,7 +12,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.stammdaten.Site;
-import de.intevation.lada.model.stammdaten.OrtTyp;
+import de.intevation.lada.model.stammdaten.SiteClass;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -36,10 +36,10 @@ public class OrtTypExists implements Rule {
         Site ort = (Site) object;
 
         if (ort.getSiteClassId() != null) {
-            QueryBuilder<OrtTyp> builder =
-                repository.queryBuilder(OrtTyp.class);
+            QueryBuilder<SiteClass> builder =
+                repository.queryBuilder(SiteClass.class);
             builder.and("id", ort.getSiteClassId());
-            List<OrtTyp> ots = repository.filterPlain(
+            List<SiteClass> ots = repository.filterPlain(
                 builder.getQuery());
             if (ots == null || ots.isEmpty()) {
                 Violation violation = new Violation();
