@@ -24,7 +24,6 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -218,7 +217,6 @@ public class StammdatenTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore("Service payload not yet translated")
     @InSequence(T4)
     @RunAsClient
     public final void testProbenehmer(@ArquillianResource URL baseUrl)

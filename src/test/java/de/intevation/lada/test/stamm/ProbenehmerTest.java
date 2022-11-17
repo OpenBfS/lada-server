@@ -64,7 +64,7 @@ public class ProbenehmerTest extends ServiceTest {
         update(
             "probenehmer",
             "rest/probenehmer/1000",
-            "bezeichnung",
+            "descr",
             "Testbezeichnung",
             "geändert");
         JsonObject created = create("probenehmer", "rest/probenehmer", create);
