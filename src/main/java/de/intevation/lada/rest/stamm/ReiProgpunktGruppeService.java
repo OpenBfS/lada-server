@@ -99,7 +99,7 @@ public class ReiProgpunktGruppeService extends LadaService {
         } else if (umwelt != null) {
             QueryBuilder<ReiProgpunktGrpUmwZuord> builder =
                 repository.queryBuilder(ReiProgpunktGrpUmwZuord.class);
-            builder.and("umwId", umwelt);
+            builder.and("envMediumId", umwelt);
             List<ReiProgpunktGrpUmwZuord> zuord =
                 repository.filterPlain(builder.getQuery());
             if (zuord.isEmpty()) {
@@ -109,7 +109,7 @@ public class ReiProgpunktGruppeService extends LadaService {
                 repository.queryBuilder(ReiAgGr.class);
             List<Integer> ids = new ArrayList<Integer>();
             for (int i = 0; i < zuord.size(); i++) {
-                ids.add(zuord.get(i).getReiProgpunktGrpId());
+                ids.add(zuord.get(i).getReiAgGrId());
             }
             builder1.orIn("id", ids);
             list = repository.filterPlain(builder1.getQuery());

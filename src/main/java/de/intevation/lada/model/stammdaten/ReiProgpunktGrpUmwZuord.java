@@ -15,26 +15,20 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the rei_progpunkt_grp_umw_zuord database table.
- *
- */
 @Entity
-@Table(name = "rei_progpunkt_grp_umw_zuord", schema = SchemaName.LEGACY_NAME)
+@Table(name = "rei_ag_gr_env_medium_mp", schema = SchemaName.NAME)
 public class ReiProgpunktGrpUmwZuord implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    @Column(name = "rei_progpunkt_grp_id")
-    private Integer reiProgpunktGrpId;
+    private Integer reiAgGrId;
 
-    @Column(name = "umw_id")
-    private String umwId;
+    private String envMediumId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public ReiProgpunktGrpUmwZuord() {
     }
@@ -47,28 +41,28 @@ public class ReiProgpunktGrpUmwZuord implements Serializable {
         this.id = id;
     }
 
-    public Integer getReiProgpunktGrpId() {
-        return this.reiProgpunktGrpId;
+    public Integer getReiAgGrId() {
+        return this.reiAgGrId;
     }
 
-    public void setReiProgpunktGrpId(Integer reiProgpunktGrpId) {
-        this.reiProgpunktGrpId = reiProgpunktGrpId;
+    public void setReiAgGrId(Integer reiAgGrId) {
+        this.reiAgGrId = reiAgGrId;
     }
 
-    public String getUmwId() {
-        return this.umwId;
+    public String getEnvMediumId() {
+        return this.envMediumId;
     }
 
-    public void setUmwId(String umwId) {
-        this.umwId = umwId;
+    public void setEnvMediumId(String envMediumId) {
+        this.envMediumId = envMediumId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }
