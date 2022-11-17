@@ -46,8 +46,8 @@ public class HasPflichtmessgroessen implements Rule {
         QueryBuilder<PflichtMessgroesse> builder =
             repository.queryBuilder(PflichtMessgroesse.class);
         builder.and("mmtId", messung.getMmtId());
-        builder.and("umwId", probe.getEnvMediumId());
-        builder.and("datenbasisId", probe.getRegulationId());
+        builder.and("envMediumId", probe.getEnvMediumId());
+        builder.and("regulationId", probe.getRegulationId());
         Response response =
             repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
@@ -59,10 +59,10 @@ public class HasPflichtmessgroessen implements Rule {
                 repository.queryBuilder(PflichtMessgroesse.class);
             builderGrp.and("mmtId", messung.getMmtId());
             builderGrp.and(
-                "umwId",
+                "envMediumId",
                 probe.getEnvMediumId() == null
                     ? null : probe.getEnvMediumId().substring(0, 1));
-            builderGrp.and("datenbasisId", probe.getRegulationId());
+            builderGrp.and("regulationId", probe.getRegulationId());
             Response responseGrp =
                 repository.filter(builderGrp.getQuery());
             @SuppressWarnings("unchecked")
@@ -76,11 +76,11 @@ public class HasPflichtmessgroessen implements Rule {
                 repository.queryBuilder(PflichtMessgroesse.class);
             builderGrpS2.and("mmtId", messung.getMmtId());
             builderGrpS2.and(
-                "umwId",
+                "envMediumId",
                 probe.getEnvMediumId() == null
                     ? null : probe.getEnvMediumId().length() >= 1
                         ? null : probe.getEnvMediumId().substring(0, 2));
-            builderGrpS2.and("datenbasisId", probe.getRegulationId());
+            builderGrpS2.and("regulationId", probe.getRegulationId());
             Response responseGrpS2 =
                 repository.filter(builderGrpS2.getQuery());
             @SuppressWarnings("unchecked")
@@ -100,7 +100,7 @@ public class HasPflichtmessgroessen implements Rule {
         List<PflichtMessgroesse> tmp = new ArrayList<PflichtMessgroesse>();
         for (Messwert wert : messwerte) {
             for (PflichtMessgroesse p : pflicht) {
-                if (p.getMessgroesseId().equals(wert.getMessgroesseId())) {
+                if (p.getMeasdId().equals(wert.getMessgroesseId())) {
                     tmp.add(p);
                 }
             }
@@ -110,7 +110,7 @@ public class HasPflichtmessgroessen implements Rule {
             for (PflichtMessgroesse p : pflicht) {
                 Measd mg =
                     repository.getByIdPlain(
-                        Measd.class, p.getMessgroesseId());
+                        Measd.class, p.getMeasdId());
                 violation.addNotification(
                     "messgroesse#" + mg.getName(),
                     StatusCodes.VAL_OBL_MEASURE);

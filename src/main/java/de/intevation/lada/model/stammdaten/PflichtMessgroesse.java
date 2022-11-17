@@ -15,32 +15,24 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the pflicht_messgroesse database table.
- *
- */
 @Entity
-@Table(name = "pflicht_messgroesse", schema = SchemaName.LEGACY_NAME)
+@Table(name = "oblig_measd_mp", schema = SchemaName.NAME)
 public class PflichtMessgroesse implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    @Column(name = "messgroesse_id")
-    private Integer messgroesseId;
+    private Integer measdId;
 
-    @Column(name = "datenbasis_id")
-    private Integer datenbasisId;
+    private Integer regulationId;
 
-    @Column(name = "mmt_id")
     private String mmtId;
 
-    @Column(name = "umw_id")
-    private String umwId;
+    private String envMediumId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public PflichtMessgroesse() {
     }
@@ -53,20 +45,20 @@ public class PflichtMessgroesse implements Serializable {
         this.id = id;
     }
 
-    public Integer getMessgroesseId() {
-        return this.messgroesseId;
+    public Integer getMeasdId() {
+        return this.measdId;
     }
 
-    public void setMessgroesseId(Integer messgroesseId) {
-        this.messgroesseId = messgroesseId;
+    public void setMeasdId(Integer measdId) {
+        this.measdId = measdId;
     }
 
-    public Integer getDatenbasisId() {
-        return this.datenbasisId;
+    public Integer getRegulationId() {
+        return this.regulationId;
     }
 
-    public void setDatenbasisId(Integer datenbasisId) {
-        this.datenbasisId = datenbasisId;
+    public void setRegulationId(Integer regulationId) {
+        this.regulationId = regulationId;
     }
 
     public String getMmtId() {
@@ -77,20 +69,20 @@ public class PflichtMessgroesse implements Serializable {
         this.mmtId = mmtId;
     }
 
-    public String getUmwId() {
-        return this.umwId;
+    public String getEnvMediumId() {
+        return this.envMediumId;
     }
 
-    public void setUmwId(String umwId) {
-        this.umwId = umwId;
+    public void setEnvMediumId(String envMediumId) {
+        this.envMediumId = envMediumId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }
