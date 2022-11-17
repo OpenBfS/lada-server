@@ -16,7 +16,7 @@ import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.stammdaten.Measd;
-import de.intevation.lada.model.stammdaten.PflichtMessgroesse;
+import de.intevation.lada.model.stammdaten.ObligMeasdMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -43,20 +43,20 @@ public class HasPflichtmessgroessen implements Rule {
         Sample probe = repository.getByIdPlain(
             Sample.class, messung.getProbeId());
 
-        QueryBuilder<PflichtMessgroesse> builder =
-            repository.queryBuilder(PflichtMessgroesse.class);
+        QueryBuilder<ObligMeasdMp> builder =
+            repository.queryBuilder(ObligMeasdMp.class);
         builder.and("mmtId", messung.getMmtId());
         builder.and("envMediumId", probe.getEnvMediumId());
         builder.and("regulationId", probe.getRegulationId());
         Response response =
             repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
-        List<PflichtMessgroesse> pflicht =
-            (List<PflichtMessgroesse>) response.getData();
+        List<ObligMeasdMp> pflicht =
+            (List<ObligMeasdMp>) response.getData();
 
         if (pflicht.isEmpty()) {
-            QueryBuilder<PflichtMessgroesse> builderGrp =
-                repository.queryBuilder(PflichtMessgroesse.class);
+            QueryBuilder<ObligMeasdMp> builderGrp =
+                repository.queryBuilder(ObligMeasdMp.class);
             builderGrp.and("mmtId", messung.getMmtId());
             builderGrp.and(
                 "envMediumId",
@@ -66,14 +66,14 @@ public class HasPflichtmessgroessen implements Rule {
             Response responseGrp =
                 repository.filter(builderGrp.getQuery());
             @SuppressWarnings("unchecked")
-            List<PflichtMessgroesse> pflichtGrp =
-                (List<PflichtMessgroesse>) responseGrp.getData();
+            List<ObligMeasdMp> pflichtGrp =
+                (List<ObligMeasdMp>) responseGrp.getData();
             pflicht.addAll(pflichtGrp);
         }
 
         if (pflicht.isEmpty()) {
-            QueryBuilder<PflichtMessgroesse> builderGrpS2 =
-                repository.queryBuilder(PflichtMessgroesse.class);
+            QueryBuilder<ObligMeasdMp> builderGrpS2 =
+                repository.queryBuilder(ObligMeasdMp.class);
             builderGrpS2.and("mmtId", messung.getMmtId());
             builderGrpS2.and(
                 "envMediumId",
@@ -84,8 +84,8 @@ public class HasPflichtmessgroessen implements Rule {
             Response responseGrpS2 =
                 repository.filter(builderGrpS2.getQuery());
             @SuppressWarnings("unchecked")
-            List<PflichtMessgroesse> pflichtGrpS2 =
-                (List<PflichtMessgroesse>) responseGrpS2.getData();
+            List<ObligMeasdMp> pflichtGrpS2 =
+                (List<ObligMeasdMp>) responseGrpS2.getData();
             pflicht.addAll(pflichtGrpS2);
         }
 
@@ -97,9 +97,9 @@ public class HasPflichtmessgroessen implements Rule {
         @SuppressWarnings("unchecked")
         List<Messwert> messwerte = (List<Messwert>) wertResponse.getData();
         Violation violation = new Violation();
-        List<PflichtMessgroesse> tmp = new ArrayList<PflichtMessgroesse>();
+        List<ObligMeasdMp> tmp = new ArrayList<ObligMeasdMp>();
         for (Messwert wert : messwerte) {
-            for (PflichtMessgroesse p : pflicht) {
+            for (ObligMeasdMp p : pflicht) {
                 if (p.getMeasdId().equals(wert.getMessgroesseId())) {
                     tmp.add(p);
                 }
@@ -107,7 +107,7 @@ public class HasPflichtmessgroessen implements Rule {
         }
         pflicht.removeAll(tmp);
         if (!pflicht.isEmpty()) {
-            for (PflichtMessgroesse p : pflicht) {
+            for (ObligMeasdMp p : pflicht) {
                 Measd mg =
                     repository.getByIdPlain(
                         Measd.class, p.getMeasdId());

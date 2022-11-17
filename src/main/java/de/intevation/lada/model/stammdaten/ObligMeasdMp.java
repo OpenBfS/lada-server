@@ -16,8 +16,8 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "oblig_measd_mp", schema = SchemaName.NAME)
-public class PflichtMessgroesse implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class ObligMeasdMp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,7 +34,7 @@ public class PflichtMessgroesse implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public PflichtMessgroesse() {
+    public ObligMeasdMp() {
     }
 
     public Integer getId() {
