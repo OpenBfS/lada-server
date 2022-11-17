@@ -198,6 +198,13 @@ public class Stammdaten extends ServiceTest {
                 "kdaId"
             )
         );
+        matchers.put("sollistmmtgruppe",
+            Matchers.containsInAnyOrder(
+                "id",
+                "name",
+                "descr"
+            )
+        );
         matchers.put("umwelt",
             Matchers.containsInAnyOrder(
                 "id",

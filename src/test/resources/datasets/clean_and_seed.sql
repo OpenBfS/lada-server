@@ -42,6 +42,7 @@ DELETE FROM result_type;
 DELETE FROM query_user;
 DELETE FROM base_query;
 DELETE FROM lada_user;
+DELETE FROM sollist_mmtgrp;
 
 -- seed
 -- minimal master data to make interface tests runnable
@@ -88,7 +89,7 @@ INSERT INTO probenehmer (
 			id, netzbetreiber_id, prn_id, bezeichnung, kurz_bezeichnung)
 		VALUES (726, '06', 'prn', 'test', 'test');
 INSERT INTO messprogramm_transfer VALUES (1, 1, 'Routinemessprogramm', 1, 2);
-
+INSERT INTO sollist_mmtgrp VALUES (1, 'descr', 'name');
 -- authorization data needed for tests
 INSERT INTO lada_user (id, name) VALUES (2, 'testeins');
 INSERT INTO auth (ldap_group, netzbetreiber_id, mst_id, funktion_id)

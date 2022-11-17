@@ -109,6 +109,7 @@ public class StammdatenTest extends BaseTest {
     private static final int T48 = 48;
     private static final int T49 = 49;
     private static final int T50 = 50;
+    private static final int T51 = 51;
 
     private static final int ID5 = 5;
     private static final int ID9 = 9;
@@ -882,5 +883,17 @@ public class StammdatenTest extends BaseTest {
     public final void testPoiById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
         stammdatenTest.getById("ortszusatz", IDA);
+    }
+
+    /**
+     * Tests for TargActMmtGr operations.
+     * @param baseUrl The server url used for the request.
+     */
+    @Test
+    @InSequence(T51)
+    @RunAsClient
+    public final void testTargActMmtGrAll(@ArquillianResource URL baseUrl) {
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("sollistmmtgruppe");
     }
 }
