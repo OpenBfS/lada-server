@@ -15,26 +15,20 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the ort_typ database table.
- *
- */
 @Entity
-@Table(name = "ort_typ", schema = SchemaName.LEGACY_NAME)
+@Table(name = "site_class", schema = SchemaName.NAME)
 public class OrtTyp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    @Column(name = "ort_typ")
-    private String ortTyp;
+    private String name;
 
-    @Column(name = "code")
-    private String code;
+    private String extId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public OrtTyp() {
     }
@@ -47,28 +41,28 @@ public class OrtTyp implements Serializable {
         this.id = id;
     }
 
-    public String getOrtTyp() {
-        return this.ortTyp;
+    public String getName() {
+        return this.name;
     }
 
-    public void setOrtTyp(String ortTyp) {
-        this.ortTyp = ortTyp;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getCode() {
-        return this.code;
+    public String getExtId() {
+        return this.extId;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setExtId(String extId) {
+        this.extId = extId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }
