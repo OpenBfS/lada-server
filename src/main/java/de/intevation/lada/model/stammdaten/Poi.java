@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "poi", schema = SchemaName.LEGACY_NAME)
-public class Ortszusatz implements Serializable {
+public class Poi implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -28,7 +28,7 @@ public class Ortszusatz implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public Ortszusatz() {
+    public Poi() {
     }
 
     public String getId() {

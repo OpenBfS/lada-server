@@ -12,7 +12,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.stammdaten.Ortszusatz;
+import de.intevation.lada.model.stammdaten.Poi;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
@@ -60,7 +60,7 @@ public class OrtszusatzService extends LadaService {
     @GET
     @Path("/")
     public Response get() {
-        return repository.getAll(Ortszusatz.class);
+        return repository.getAll(Poi.class);
     }
 
     /**
@@ -74,6 +74,6 @@ public class OrtszusatzService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        return repository.getById(Ortszusatz.class, id);
+        return repository.getById(Poi.class, id);
     }
 }

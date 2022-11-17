@@ -56,7 +56,7 @@ import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.MpgTransf;
 import de.intevation.lada.model.stammdaten.Site;
-import de.intevation.lada.model.stammdaten.Ortszusatz;
+import de.intevation.lada.model.stammdaten.Poi;
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
 import de.intevation.lada.model.stammdaten.Probenart;
 import de.intevation.lada.model.stammdaten.Probenehmer;
@@ -1831,8 +1831,8 @@ public class LafObjectMapper {
         ort.setOrtId(o.getId());
         ort.setOzId(o.getPoiId());
         if (rawOrt.containsKey(type+"_ORTS_ZUSATZCODE")) {
-            Ortszusatz zusatz = repository.getByIdPlain(
-                Ortszusatz.class,
+            Poi zusatz = repository.getByIdPlain(
+                Poi.class,
                 rawOrt.get(type+"_ORTS_ZUSATZCODE")
             );
             if (zusatz == null) {
