@@ -10,6 +10,7 @@ package de.intevation.lada.model.stammdaten;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -203,18 +204,22 @@ public class Site implements Serializable {
         this.alt = alt;
     }
 
+    @JsonbProperty("xCoordExt")
     public String getXCoordExt() {
         return this.xCoordExt;
     }
 
+    @JsonbProperty("xCoordExt")
     public void setXCoordExt(String xCoordExt) {
         this.xCoordExt = xCoordExt;
     }
 
+    @JsonbProperty("yCoordExt")
     public String getYCoordExt() {
         return this.yCoordExt;
     }
 
+    @JsonbProperty("yCoordExt")
     public void setYCoordExt(String yCoordExt) {
         this.yCoordExt = yCoordExt;
     }
