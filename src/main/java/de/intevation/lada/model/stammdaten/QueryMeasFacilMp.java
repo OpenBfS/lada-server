@@ -20,8 +20,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "query_meas_facil_mp", schema = SchemaName.NAME)
-public class QueryMessstelle implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class QueryMeasFacilMp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -35,7 +35,7 @@ public class QueryMessstelle implements Serializable {
     @JoinColumn(name = "query")
     private QueryUser queryUser;
 
-    public QueryMessstelle() {
+    public QueryMeasFacilMp() {
     }
 
     public Integer getId() {

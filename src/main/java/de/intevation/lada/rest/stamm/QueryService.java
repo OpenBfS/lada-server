@@ -28,7 +28,7 @@ import javax.ws.rs.PathParam;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.stammdaten.MeasFacil;
-import de.intevation.lada.model.stammdaten.QueryMessstelle;
+import de.intevation.lada.model.stammdaten.QueryMeasFacilMp;
 import de.intevation.lada.model.stammdaten.QueryUser;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -120,7 +120,7 @@ public class QueryService extends LadaService {
                 && query.getMessStelles().size() > 0
             ) {
                 List<String> mstIds = new ArrayList<String>();
-                for (QueryMessstelle mst: query.getMessStelles()) {
+                for (QueryMeasFacilMp mst: query.getMessStelles()) {
                     mstIds.add(mst.getMeasFacilId());
                 }
                 query.setMessStellesIds(
@@ -146,7 +146,7 @@ public class QueryService extends LadaService {
         } else {
             query.setUserId(userInfo.getUserId());
             for (String m : query.getMessStellesIds()) {
-                QueryMessstelle qms = new QueryMessstelle();
+                QueryMeasFacilMp qms = new QueryMeasFacilMp();
                 qms.setMeasFacilId(m);
                 qms.setQueryUser(query);
                 query.addMessStelle(qms);
@@ -171,16 +171,16 @@ public class QueryService extends LadaService {
         }
 
         query.setUserId(userInfo.getUserId());
-        QueryBuilder<QueryMessstelle> builder =
-            repository.queryBuilder(QueryMessstelle.class);
+        QueryBuilder<QueryMeasFacilMp> builder =
+            repository.queryBuilder(QueryMeasFacilMp.class);
         builder.and("queryUser", query.getId());
-        List<QueryMessstelle> qms =
+        List<QueryMeasFacilMp> qms =
             repository.filterPlain(builder.getQuery());
-        List<QueryMessstelle> delete = new ArrayList<>();
+        List<QueryMeasFacilMp> delete = new ArrayList<>();
         List<String> create = new ArrayList<>();
         for (String mst : query.getMessStellesIds()) {
             boolean hit = false;
-            for (QueryMessstelle qm : qms) {
+            for (QueryMeasFacilMp qm : qms) {
                 if (mst.equals(qm.getMeasFacilId())) {
                     hit = true;
                 }
@@ -189,7 +189,7 @@ public class QueryService extends LadaService {
                 create.add(mst);
             }
         }
-        for (QueryMessstelle qm : qms) {
+        for (QueryMeasFacilMp qm : qms) {
             boolean hit = false;
             for (String mst : query.getMessStellesIds()) {
                 if (mst.equals(qm.getMeasFacilId())) {
@@ -200,16 +200,16 @@ public class QueryService extends LadaService {
                 delete.add(qm);
             }
         }
-        List<QueryMessstelle> dbMesstelles =
+        List<QueryMeasFacilMp> dbMesstelles =
             repository.getByIdPlain(
                 QueryUser.class, query.getId()).getMessStelles();
         query.setMessStelles(dbMesstelles);
 
-        for (QueryMessstelle qm : delete) {
-            Iterator<QueryMessstelle> qmIter =
+        for (QueryMeasFacilMp qm : delete) {
+            Iterator<QueryMeasFacilMp> qmIter =
                 query.getMessStelles().iterator();
             while (qmIter.hasNext()) {
-                QueryMessstelle qmi = qmIter.next();
+                QueryMeasFacilMp qmi = qmIter.next();
                 if (qmi.getId().equals(qm.getId())) {
                     repository.delete(qmi);
                     qmIter.remove();
@@ -218,7 +218,7 @@ public class QueryService extends LadaService {
             }
         }
         for (String mst : create) {
-            QueryMessstelle qm = new QueryMessstelle();
+            QueryMeasFacilMp qm = new QueryMeasFacilMp();
             qm.setMeasFacilId(mst);
             qm.setQueryUser(query);
             query.addMessStelle(qm);

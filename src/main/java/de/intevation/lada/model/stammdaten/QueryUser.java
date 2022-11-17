@@ -54,7 +54,7 @@ public class QueryUser implements Serializable {
         fetch = FetchType.EAGER,
         cascade = CascadeType.ALL,
         orphanRemoval = true)
-    private List<QueryMessstelle> messStelles;
+    private List<QueryMeasFacilMp> messStelles;
 
     @Transient
     private String[] messStellesIds;
@@ -107,14 +107,14 @@ public class QueryUser implements Serializable {
      * @return the messstelle objects
      */
     @JsonbTransient
-    public List<QueryMessstelle> getMessStelles() {
+    public List<QueryMeasFacilMp> getMessStelles() {
         if (this.messStelles == null) {
-            this.messStelles = new ArrayList<QueryMessstelle>();
+            this.messStelles = new ArrayList<QueryMeasFacilMp>();
         }
         return this.messStelles;
     }
 
-    public void setMessStelles(List<QueryMessstelle> messStelles) {
+    public void setMessStelles(List<QueryMeasFacilMp> messStelles) {
         this.messStelles = messStelles;
     }
 
@@ -123,7 +123,7 @@ public class QueryUser implements Serializable {
      * @param messStelle the query messstelle
      * @return the query messstelle obejct
      */
-    public QueryMessstelle addMessStelle(QueryMessstelle messStelle) {
+    public QueryMeasFacilMp addMessStelle(QueryMeasFacilMp messStelle) {
         getMessStelles().add(messStelle);
         messStelle.setQueryUser(this);
 
@@ -135,7 +135,7 @@ public class QueryUser implements Serializable {
      * @param messStelle the query messstelle
      * @return the query messstelle obejct
      */
-    public QueryMessstelle removeMessStelle(QueryMessstelle messStelle) {
+    public QueryMeasFacilMp removeMessStelle(QueryMeasFacilMp messStelle) {
         getMessStelles().remove(messStelle);
         messStelle.setQueryUser(null);
 
@@ -148,7 +148,7 @@ public class QueryUser implements Serializable {
     public String[] getMessStellesIds() {
         if (this.messStellesIds == null && this.messStelles != null) {
             List<String> ids = new ArrayList<>();
-            for (QueryMessstelle ms: this.messStelles) {
+            for (QueryMeasFacilMp ms: this.messStelles) {
                 ids.add(ms.getMeasFacilId());
             }
             this.messStellesIds = ids.toArray(new String[ids.size()]);
