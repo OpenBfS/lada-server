@@ -109,7 +109,7 @@ public class QueryService extends LadaService {
             && !userInfo.getMessstellen().isEmpty()
         ) {
             filter = builder.or(
-                filter, mess.get("messStelle").in(userInfo.getMessstellen()));
+                filter, mess.get("measFacilId").in(userInfo.getMessstellen()));
         }
         criteriaQuery.where(filter);
 
@@ -121,7 +121,7 @@ public class QueryService extends LadaService {
             ) {
                 List<String> mstIds = new ArrayList<String>();
                 for (QueryMessstelle mst: query.getMessStelles()) {
-                    mstIds.add(mst.getMessStelle());
+                    mstIds.add(mst.getMeasFacilId());
                 }
                 query.setMessStellesIds(
                     mstIds.toArray(new String[mstIds.size()]));
@@ -147,7 +147,7 @@ public class QueryService extends LadaService {
             query.setUserId(userInfo.getUserId());
             for (String m : query.getMessStellesIds()) {
                 QueryMessstelle qms = new QueryMessstelle();
-                qms.setMessStelle(m);
+                qms.setMeasFacilId(m);
                 qms.setQueryUser(query);
                 query.addMessStelle(qms);
             }
@@ -181,7 +181,7 @@ public class QueryService extends LadaService {
         for (String mst : query.getMessStellesIds()) {
             boolean hit = false;
             for (QueryMessstelle qm : qms) {
-                if (mst.equals(qm.getMessStelle())) {
+                if (mst.equals(qm.getMeasFacilId())) {
                     hit = true;
                 }
             }
@@ -192,7 +192,7 @@ public class QueryService extends LadaService {
         for (QueryMessstelle qm : qms) {
             boolean hit = false;
             for (String mst : query.getMessStellesIds()) {
-                if (mst.equals(qm.getMessStelle())) {
+                if (mst.equals(qm.getMeasFacilId())) {
                     hit = true;
                 }
             }
@@ -219,7 +219,7 @@ public class QueryService extends LadaService {
         }
         for (String mst : create) {
             QueryMessstelle qm = new QueryMessstelle();
-            qm.setMessStelle(mst);
+            qm.setMeasFacilId(mst);
             qm.setQueryUser(query);
             query.addMessStelle(qm);
         }
