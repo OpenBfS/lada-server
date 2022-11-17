@@ -103,8 +103,8 @@ public class QueryService extends LadaService {
         Join<MeasFacil, QueryUser> mess =
             root.join("messStelles", javax.persistence.criteria.JoinType.LEFT);
         Predicate filter =
-            builder.equal(root.get("userId"), userInfo.getUserId());
-        filter = builder.or(filter, root.get("userId").in(DEFAULT_USER_ID));
+            builder.equal(root.get("ladaUserId"), userInfo.getUserId());
+        filter = builder.or(filter, root.get("ladaUserId").in(DEFAULT_USER_ID));
         if (userInfo.getMessstellen() != null
             && !userInfo.getMessstellen().isEmpty()
         ) {
@@ -139,12 +139,12 @@ public class QueryService extends LadaService {
         QueryUser query
     ) {
         UserInfo userInfo = authorization.getInfo();
-        if (query.getUserId() != null
-            && !query.getUserId().equals(userInfo.getUserId())
+        if (query.getLadaUserId() != null
+            && !query.getLadaUserId().equals(userInfo.getUserId())
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         } else {
-            query.setUserId(userInfo.getUserId());
+            query.setLadaUserId(userInfo.getUserId());
             for (String m : query.getMessStellesIds()) {
                 QueryMeasFacilMp qms = new QueryMeasFacilMp();
                 qms.setMeasFacilId(m);
@@ -164,13 +164,13 @@ public class QueryService extends LadaService {
         QueryUser query
     ) {
         UserInfo userInfo = authorization.getInfo();
-        if (query.getUserId() != null
-            && !query.getUserId().equals(userInfo.getUserId())
+        if (query.getLadaUserId() != null
+            && !query.getLadaUserId().equals(userInfo.getUserId())
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
-        query.setUserId(userInfo.getUserId());
+        query.setLadaUserId(userInfo.getUserId());
         QueryBuilder<QueryMeasFacilMp> builder =
             repository.queryBuilder(QueryMeasFacilMp.class);
         builder.and("queryUser", query.getId());
@@ -237,7 +237,7 @@ public class QueryService extends LadaService {
         if (query == null) {
             return new Response(false, StatusCodes.NOT_EXISTING, null);
         }
-        if (query.getUserId().equals(userInfo.getUserId())) {
+        if (query.getLadaUserId().equals(userInfo.getUserId())) {
             return repository.delete(query);
         }
         return new Response(false, StatusCodes.NOT_ALLOWED, null);

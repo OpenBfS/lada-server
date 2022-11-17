@@ -13,7 +13,6 @@ import java.util.List;
 
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -23,13 +22,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-
-/**
- * The persistent class for the query_user database table.
- *
- */
 @Entity
-@Table(name = "query_user", schema = SchemaName.LEGACY_NAME)
+@Table(name = "query_user", schema = SchemaName.NAME)
 public class QueryUser implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -37,16 +31,14 @@ public class QueryUser implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String description;
+    private String descr;
 
     private String name;
 
-    @Column(name = "user_id")
-    private Integer userId;
+    private Integer ladaUserId;
 
     //uni-directional many-to-one association to Query
-    @Column(name = "base_query")
-    private Integer baseQuery;
+    private Integer baseQueryId;
 
     //bi-directional many-to-one association to QueryMessstelle
     @OneToMany(
@@ -70,12 +62,12 @@ public class QueryUser implements Serializable {
         this.id = id;
     }
 
-    public String getDescription() {
-        return this.description;
+    public String getDescr() {
+        return this.descr;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescr(String descr) {
+        this.descr = descr;
     }
 
     public String getName() {
@@ -86,20 +78,20 @@ public class QueryUser implements Serializable {
         this.name = name;
     }
 
-    public Integer getUserId() {
-        return this.userId;
+    public Integer getLadaUserId() {
+        return this.ladaUserId;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setLadaUserId(Integer userId) {
+        this.ladaUserId = userId;
     }
 
-    public Integer getBaseQuery() {
-        return this.baseQuery;
+    public Integer getBaseQueryId() {
+        return this.baseQueryId;
     }
 
-    public void setBaseQuery(Integer query) {
-        this.baseQuery = query;
+    public void setBaseQueryId(Integer query) {
+        this.baseQueryId = query;
     }
 
     /**
