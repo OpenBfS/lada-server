@@ -35,6 +35,7 @@ import de.intevation.lada.model.stammdaten.EnvDescrip;
 import de.intevation.lada.model.stammdaten.SpatRefSys;
 import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.Site;
+import de.intevation.lada.model.stammdaten.SiteClass;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.test.land.TagZuordnungTest;
@@ -98,6 +99,9 @@ public class StammdatenTest extends BaseTest {
     private static final int T39 = 39;
     private static final int T40 = 40;
     private static final int T41 = 41;
+    private static final int T42 = 42;
+    private static final int T43 = 43;
+    private static final int T44 = 44;
 
     private static final int ID5 = 5;
     private static final int ID9 = 9;
@@ -727,5 +731,53 @@ public class StammdatenTest extends BaseTest {
     throws Exception {
         tagZuordnungTest.init(this.client, baseUrl, testProtocol);
         tagZuordnungTest.execute();
+    }
+
+    /**
+     * Prepare database for site class test.
+     * @throws Exception that can occur during test
+     */
+    @Test
+    @InSequence(T42)
+    @ApplyScriptBefore("datasets/clean_and_seed.sql")
+    @UsingDataSet("datasets/dbUnit_site_class.json")
+    @DataSource("java:jboss/lada-test")
+    @Cleanup(phase = TestExecutionPhase.NONE)
+    public final void prepareSiteClass() throws Exception {
+        Protocol protocol = new Protocol();
+        protocol.setName("database");
+        protocol.setType("insert for site class");
+        protocol.addInfo("database",
+            "Insert site classes into database");
+        testProtocol.add(protocol);
+        SiteClass sc101 = em.find(SiteClass.class, ID101);
+        Assert.assertNotNull(sc101);
+        SiteClass sc102 = em.find(SiteClass.class, ID102);
+        Assert.assertNotNull(sc102);
+        protocol.setPassed(true);
+    }
+
+    /**
+     * Tests site class get all operation.
+     * @param baseUrl The server url used for the request.
+     */
+    @Test
+    @InSequence(T43)
+    @RunAsClient
+    public final void testSiteClassAll(@ArquillianResource URL baseUrl) {
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("orttyp");
+    }
+
+    /**
+     * Tests site class get by id operation.
+     * @param baseUrl The server url used for the request.
+     */
+    @Test
+    @InSequence(T44)
+    @RunAsClient
+    public final void testSiteClassById(@ArquillianResource URL baseUrl) {
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("orttyp", ID101);
     }
 }
