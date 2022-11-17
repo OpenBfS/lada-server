@@ -7,6 +7,8 @@ DELETE FROM tag;
 DELETE FROM land.ortszuordnung;
 DELETE FROM ort;
 DELETE FROM ort_typ;
+DELETE FROM ortszuordnung_typ;
+DELETE FROM ortszusatz;
 DELETE FROM land.probe;
 DELETE FROM land.messprogramm;
 DELETE FROM land.messung;
