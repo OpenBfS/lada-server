@@ -177,6 +177,13 @@ public class Stammdaten extends ServiceTest {
             "lastMod"
             )
         );
+        matchers.put("ortszusatz",
+            Matchers.containsInAnyOrder(
+            "id",
+            "name",
+            "lastMod"
+            )
+        );
         matchers.put("staat",
             Matchers.containsInAnyOrder(
                 "id",

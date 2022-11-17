@@ -34,6 +34,7 @@ import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.EnvDescrip;
 import de.intevation.lada.model.stammdaten.SpatRefSys;
 import de.intevation.lada.model.stammdaten.MpgCateg;
+import de.intevation.lada.model.stammdaten.Poi;
 import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.SiteClass;
 import de.intevation.lada.model.stammdaten.Probenehmer;
@@ -106,6 +107,9 @@ public class StammdatenTest extends BaseTest {
     private static final int T45 = 45;
     private static final int T46 = 46;
     private static final int T47 = 47;
+    private static final int T48 = 48;
+    private static final int T49 = 49;
+    private static final int T50 = 50;
 
     private static final int ID5 = 5;
     private static final int ID9 = 9;
@@ -811,7 +815,7 @@ public class StammdatenTest extends BaseTest {
     }
 
     /**
-     * Tests site class get all operation.
+     * Tests type regulation get all operation.
      * @param baseUrl The server url used for the request.
      */
     @Test
@@ -823,7 +827,7 @@ public class StammdatenTest extends BaseTest {
     }
 
     /**
-     * Tests site class get by id operation.
+     * Tests type regulation get by id operation.
      * @param baseUrl The server url used for the request.
      */
     @Test
@@ -832,5 +836,53 @@ public class StammdatenTest extends BaseTest {
     public final void testTypeRegulationById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
         stammdatenTest.getById("ortszuordnungtyp", IDA);
+    }
+
+    /**
+     * Prepare database for poi test.
+     * @throws Exception that can occur during test
+     */
+    @Test
+    @InSequence(T48)
+    @ApplyScriptBefore("datasets/clean_and_seed.sql")
+    @UsingDataSet("datasets/dbUnit_poi.json")
+    @DataSource("java:jboss/lada-test")
+    @Cleanup(phase = TestExecutionPhase.NONE)
+    public final void preparePoi() throws Exception {
+        Protocol protocol = new Protocol();
+        protocol.setName("database");
+        protocol.setType("insert for poi test");
+        protocol.addInfo("database",
+            "Insert pois into database");
+        testProtocol.add(protocol);
+        Poi poiA = em.find(Poi.class, IDA);
+        Assert.assertNotNull(poiA);
+        Poi poiB = em.find(Poi.class, IDB);
+        Assert.assertNotNull(poiB);
+        protocol.setPassed(true);
+    }
+
+    /**
+     * Tests poi get all operation.
+     * @param baseUrl The server url used for the request.
+     */
+    @Test
+    @InSequence(T49)
+    @RunAsClient
+    public final void testPoiAll(@ArquillianResource URL baseUrl) {
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("ortszusatz");
+    }
+
+    /**
+     * Tests poi get by id operation.
+     * @param baseUrl The server url used for the request.
+     */
+    @Test
+    @InSequence(T50)
+    @RunAsClient
+    public final void testPoiById(@ArquillianResource URL baseUrl) {
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("ortszusatz", IDA);
     }
 }
