@@ -16,7 +16,7 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "poi", schema = SchemaName.LEGACY_NAME)
+@Table(name = "poi", schema = SchemaName.NAME)
 public class Poi implements Serializable {
     private static final long serialVersionUID = 1L;
 
