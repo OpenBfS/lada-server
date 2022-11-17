@@ -1842,7 +1842,7 @@ public class LafObjectMapper {
                         rawOrt.get(type+"_ORTS_ZUSATZCODE"),
                         StatusCodes.IMP_INVALID_VALUE));
             } else {
-                ort.setOzId(zusatz.getOzsId());
+                ort.setOzId(zusatz.getId());
             }
         }
         if (rawOrt.containsKey(type+"_ORTS_ZUSATZTEXT")) {

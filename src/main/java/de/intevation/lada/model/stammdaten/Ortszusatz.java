@@ -15,49 +15,44 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the ortszusatz database table.
- *
- */
 @Entity
-@Table(name = "ortszusatz", schema = SchemaName.LEGACY_NAME)
+@Table(name = "poi", schema = SchemaName.LEGACY_NAME)
 public class Ortszusatz implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "ozs_id")
-    private String ozsId;
+    private String id;
 
-    private String ortszusatz;
+    private String name;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public Ortszusatz() {
     }
 
-    public String getOzsId() {
-        return this.ozsId;
+    public String getId() {
+        return this.id;
     }
 
-    public void setOzsId(String ozsId) {
-        this.ozsId = ozsId;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getOrtszusatz() {
-        return this.ortszusatz;
+    public String getName() {
+        return this.name;
     }
 
-    public void setOrtszusatz(String ortszusatz) {
-        this.ortszusatz = ortszusatz;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }
