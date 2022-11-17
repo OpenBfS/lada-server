@@ -58,7 +58,7 @@ import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.SampleSpecif;
 import de.intevation.lada.model.stammdaten.SampleMeth;
-import de.intevation.lada.model.stammdaten.Probenehmer;
+import de.intevation.lada.model.stammdaten.Sampler;
 import de.intevation.lada.model.stammdaten.Staat;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.model.stammdaten.Umwelt;
@@ -272,8 +272,8 @@ public class JsonExporter implements Exporter {
                 probe.put("mpl", mpl.getName());
             }
             if (probe.get("probeNehmerId").asInt() != 0) {
-                Probenehmer probenehmer = repository.getByIdPlain(
-                    Probenehmer.class,
+                Sampler probenehmer = repository.getByIdPlain(
+                    Sampler.class,
                     probe.get("probeNehmerId").asInt()
                 );
                 probe.put("prnId", probenehmer.getExtId());

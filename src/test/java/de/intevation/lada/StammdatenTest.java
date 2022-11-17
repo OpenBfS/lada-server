@@ -37,7 +37,7 @@ import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.Poi;
 import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.SiteClass;
-import de.intevation.lada.model.stammdaten.Probenehmer;
+import de.intevation.lada.model.stammdaten.Sampler;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.model.stammdaten.TypeRegulation;
 import de.intevation.lada.test.land.TagZuordnungTest;
@@ -207,7 +207,7 @@ public class StammdatenTest extends BaseTest {
         protocol.setType("insert probenehmer");
         protocol.addInfo("database", "Insert Probenehmer into database");
         testProtocol.add(protocol);
-        Probenehmer probenehmer = em.find(Probenehmer.class, ID1000);
+        Sampler probenehmer = em.find(Sampler.class, ID1000);
         Assert.assertNotNull(probenehmer);
         protocol.setPassed(true);
     }

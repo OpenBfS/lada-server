@@ -21,8 +21,8 @@ import javax.persistence.Transient;
 
 
 @Entity
-@Table(name = "sampler", schema = SchemaName.NAME)
-public class Probenehmer implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class Sampler implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -64,7 +64,7 @@ public class Probenehmer implements Serializable {
     @Transient
     private boolean readonly;
 
-    public Probenehmer() {
+    public Sampler() {
     }
 
     public Integer getId() {

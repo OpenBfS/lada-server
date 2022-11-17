@@ -35,7 +35,7 @@ import de.intevation.lada.model.stammdaten.SampleSpecif;
 import de.intevation.lada.model.stammdaten.SampleMeth;
 import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.MpgCateg;
-import de.intevation.lada.model.stammdaten.Probenehmer;
+import de.intevation.lada.model.stammdaten.Sampler;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGruppe;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.util.auth.HeaderAuthorization;
@@ -257,8 +257,8 @@ implements Creator {
             laf += lafLine("MESSPROGRAMM_LAND", mpkat.getExtId(), CN);
         }
         if (probe.getSamplerId() != null) {
-            Probenehmer prn = repository.getByIdPlain(
-                Probenehmer.class, probe.getSamplerId());
+            Sampler prn = repository.getByIdPlain(
+                Sampler.class, probe.getSamplerId());
             laf += lafLine("PROBENAHMEINSTITUTION", prn.getExtId(), CN);
         }
         if (probe.getReiAgGrId() != null) {

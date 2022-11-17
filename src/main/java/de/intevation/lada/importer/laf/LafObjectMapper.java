@@ -59,7 +59,7 @@ import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.Poi;
 import de.intevation.lada.model.stammdaten.SampleSpecif;
 import de.intevation.lada.model.stammdaten.SampleMeth;
-import de.intevation.lada.model.stammdaten.Probenehmer;
+import de.intevation.lada.model.stammdaten.Sampler;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGruppe;
 import de.intevation.lada.model.stammdaten.Staat;
 import de.intevation.lada.model.stammdaten.StatusErreichbar;
@@ -2285,12 +2285,12 @@ public class LafObjectMapper {
         }
 
         if ("PROBENAHMEINSTITUTION".equals(key)) {
-            QueryBuilder<Probenehmer> builder =
-                repository.queryBuilder(Probenehmer.class);
+            QueryBuilder<Sampler> builder =
+                repository.queryBuilder(Sampler.class);
             builder.and("networkId", netzbetreiberId);
             builder.and("exitId", value);
-            List<Probenehmer> prn =
-                    (List<Probenehmer>) repository.filterPlain(
+            List<Sampler> prn =
+                    (List<Sampler>) repository.filterPlain(
                         builder.getQuery());
             if (prn == null || prn.isEmpty()) {
                 currentWarnings.add(

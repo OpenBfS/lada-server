@@ -17,7 +17,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.stammdaten.Probenehmer;
+import de.intevation.lada.model.stammdaten.Sampler;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -91,9 +91,9 @@ public class ProbenehmerService extends LadaService {
     @GET
     @Path("/")
     public Response get() {
-        List<Probenehmer> nehmer =
-            repository.getAllPlain(Probenehmer.class);
-        for (Probenehmer p : nehmer) {
+        List<Sampler> nehmer =
+            repository.getAllPlain(Sampler.class);
+        for (Sampler p : nehmer) {
             // TODO Do not iterate all the objects if its not necessary
             p.setReadonly(true);
                 // !authorization.isAuthorized(
@@ -115,12 +115,12 @@ public class ProbenehmerService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        Probenehmer p = repository.getByIdPlain(Probenehmer.class, id);
+        Sampler p = repository.getByIdPlain(Sampler.class, id);
         p.setReadonly(
             !authorization.isAuthorized(
                 p,
                 RequestMethod.POST,
-                Probenehmer.class
+                Sampler.class
             )
         );
         List<Sample> referencedProbes = getPRNZuordnungs(p);
@@ -131,20 +131,20 @@ public class ProbenehmerService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        Probenehmer probenehmer
+        Sampler probenehmer
     ) {
         if (!authorization.isAuthorized(
             probenehmer,
             RequestMethod.POST,
-            Probenehmer.class)
+            Sampler.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, probenehmer);
         }
-        QueryBuilder<Probenehmer> builder =
-            repository.queryBuilder(Probenehmer.class);
+        QueryBuilder<Sampler> builder =
+            repository.queryBuilder(Sampler.class);
         builder.and("extId", probenehmer.getExtId());
         builder.and("networkId", probenehmer.getNetworkId());
-        List<Probenehmer> nehmer =
+        List<Sampler> nehmer =
             repository.filterPlain(builder.getQuery());
         if (nehmer.isEmpty()) {
             return repository.create(probenehmer);
@@ -156,20 +156,20 @@ public class ProbenehmerService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        Probenehmer probenehmer
+        Sampler probenehmer
     ) {
         if (!authorization.isAuthorized(
             probenehmer,
             RequestMethod.PUT,
-            Probenehmer.class)
+            Sampler.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, probenehmer);
         }
-        QueryBuilder<Probenehmer> builder =
-            repository.queryBuilder(Probenehmer.class);
+        QueryBuilder<Sampler> builder =
+            repository.queryBuilder(Sampler.class);
         builder.and("extId", probenehmer.getExtId());
         builder.and("networkId", probenehmer.getNetworkId());
-        List<Probenehmer> nehmer =
+        List<Sampler> nehmer =
             repository.filterPlain(builder.getQuery());
         if (!nehmer.isEmpty()
             && !nehmer.get(0).getId().equals(probenehmer.getId())
@@ -184,13 +184,13 @@ public class ProbenehmerService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        Probenehmer probenehmer = repository.getByIdPlain(
-            Probenehmer.class, id);
+        Sampler probenehmer = repository.getByIdPlain(
+            Sampler.class, id);
         if (probenehmer == null
             || !authorization.isAuthorized(
                 probenehmer,
                 RequestMethod.DELETE,
-                Probenehmer.class
+                Sampler.class
             )
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
@@ -201,7 +201,7 @@ public class ProbenehmerService extends LadaService {
         return repository.delete(probenehmer);
     }
 
-    private List<Sample> getPRNZuordnungs(Probenehmer probenehmer) {
+    private List<Sample> getPRNZuordnungs(Sampler probenehmer) {
             //check for references
             QueryBuilder<Sample> refBuilder =
             repository.queryBuilder(Sample.class);
