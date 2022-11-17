@@ -24,6 +24,7 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -110,6 +111,7 @@ public class StammdatenTest extends BaseTest {
     private static final int T49 = 49;
     private static final int T50 = 50;
     private static final int T51 = 51;
+    private static final int T52 = 52;
 
     private static final int ID5 = 5;
     private static final int ID9 = 9;
@@ -895,5 +897,18 @@ public class StammdatenTest extends BaseTest {
     public final void testTargActMmtGrAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
         stammdatenTest.getAll("sollistmmtgruppe");
+    }
+
+    /**
+     * Tests for TargEnvGr operations.
+     * @param baseUrl The server url used for the request.
+     */
+    @Test
+    @InSequence(T52)
+    @Ignore("targ_env_gr.targ_env__gr_displ column name needs to be fixed")
+    @RunAsClient
+    public final void testTargEnvGrAll(@ArquillianResource URL baseUrl) {
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("sollistumwgruppe");
     }
 }

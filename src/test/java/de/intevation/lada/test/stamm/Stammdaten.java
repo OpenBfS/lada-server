@@ -202,6 +202,13 @@ public class Stammdaten extends ServiceTest {
             Matchers.containsInAnyOrder(
                 "id",
                 "name",
+                "targEnvGrDispl"
+            )
+        );
+        matchers.put("sollistumwgruppe",
+            Matchers.containsInAnyOrder(
+                "id",
+                "name",
                 "descr"
             )
         );
