@@ -15,26 +15,20 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the rei_progpunkt_grp_zuord database table.
- *
- */
 @Entity
-@Table(name = "rei_progpunkt_grp_zuord", schema = SchemaName.LEGACY_NAME)
+@Table(name = "rei_ag_gr_mp", schema = SchemaName.NAME)
 public class ReiProgpunktGrpZuord implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    @Column(name = "rei_progpunkt_grp_id")
-    private Integer reiProgpunktGrpId;
+    private Integer reiAgGrId;
 
-    @Column(name = "rei_progpunkt_id")
-    private Integer reiProgpunktId;
+    private Integer reiAgId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public ReiProgpunktGrpZuord() {
     }
@@ -47,28 +41,28 @@ public class ReiProgpunktGrpZuord implements Serializable {
         this.id = id;
     }
 
-    public Integer getReiProgpunktGrpId() {
-        return this.reiProgpunktGrpId;
+    public Integer getReiAgGrId() {
+        return this.reiAgGrId;
     }
 
-    public void setReiProgpunktGrpId(Integer reiProgpunktGrpId) {
-        this.reiProgpunktGrpId = reiProgpunktGrpId;
+    public void setReiAgGrId(Integer reiAgGrId) {
+        this.reiAgGrId = reiAgGrId;
     }
 
-    public Integer getReiProgpunktId() {
-        return this.reiProgpunktId;
+    public Integer getReiAgId() {
+        return this.reiAgId;
     }
 
-    public void setReiProgpunktId(Integer reiProgpunktId) {
-        this.reiProgpunktId = reiProgpunktId;
+    public void setReiAgId(Integer reiAgId) {
+        this.reiAgId = reiAgId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }
