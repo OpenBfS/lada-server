@@ -14,8 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "targ_env_gr", schema = SchemaName.NAME)
-public class SollistUmwGrp implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class TargEnvGr implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -25,7 +25,7 @@ public class SollistUmwGrp implements Serializable {
 
     private String name;
 
-    public SollistUmwGrp() {
+    public TargEnvGr() {
     }
 
     public Integer getId() {
