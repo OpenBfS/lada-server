@@ -67,7 +67,7 @@ public class OrtTest extends ServiceTest {
         int createdId = create("ort", "rest/ort", create)
             .getJsonObject("data").getInt("id");
         update("ort", "rest/ort/" + createdId,
-            "langtext", "Langer Text", "Längerer Text");
+            "longText", "Langer Text", "Längerer Text");
         delete("ort", "rest/ort/" + createdId);
     }
 }
