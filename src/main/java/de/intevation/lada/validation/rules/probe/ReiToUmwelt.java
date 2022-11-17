@@ -12,7 +12,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.stammdaten.ReiProgpunktGrpUmwZuord;
+import de.intevation.lada.model.stammdaten.ReiAgGrEnvMediumMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -47,12 +47,12 @@ public class ReiToUmwelt implements Rule {
         if (probe.getReiAgGrId() == null) {
             return null;
         }
-        QueryBuilder<ReiProgpunktGrpUmwZuord> builder =
-            repository.queryBuilder(ReiProgpunktGrpUmwZuord.class);
+        QueryBuilder<ReiAgGrEnvMediumMp> builder =
+            repository.queryBuilder(ReiAgGrEnvMediumMp.class);
         builder.and("reiAgGrId", probe.getReiAgGrId());
-        List<ReiProgpunktGrpUmwZuord> zuord =
+        List<ReiAgGrEnvMediumMp> zuord =
             repository.filterPlain(builder.getQuery());
-        for (ReiProgpunktGrpUmwZuord entry : zuord) {
+        for (ReiAgGrEnvMediumMp entry : zuord) {
             if (entry.getEnvMediumId().equals(probe.getEnvMediumId())) {
                 return null;
             }

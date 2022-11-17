@@ -16,7 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.stammdaten.ReiProgpunktGrpUmwZuord;
+import de.intevation.lada.model.stammdaten.ReiAgGrEnvMediumMp;
 import de.intevation.lada.model.stammdaten.Umwelt;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -74,10 +74,10 @@ public class UmweltService extends LadaService {
         if (reiProgpunktGrpId == null) {
             return repository.getAll(Umwelt.class);
         }
-        QueryBuilder<ReiProgpunktGrpUmwZuord> builder =
-            repository.queryBuilder(ReiProgpunktGrpUmwZuord.class);
+        QueryBuilder<ReiAgGrEnvMediumMp> builder =
+            repository.queryBuilder(ReiAgGrEnvMediumMp.class);
         builder.and("reiAgGrId", reiProgpunktGrpId);
-        List<ReiProgpunktGrpUmwZuord> zuord =
+        List<ReiAgGrEnvMediumMp> zuord =
             repository.filterPlain(builder.getQuery());
         if (zuord.isEmpty()) {
             return new Response(true, StatusCodes.OK, null);
