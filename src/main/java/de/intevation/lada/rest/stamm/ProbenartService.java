@@ -12,7 +12,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.stammdaten.Probenart;
+import de.intevation.lada.model.stammdaten.SampleMeth;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
@@ -62,7 +62,7 @@ public class ProbenartService extends LadaService {
     @GET
     @Path("/")
     public Response get() {
-        return repository.getAll(Probenart.class);
+        return repository.getAll(SampleMeth.class);
     }
 
     /**
@@ -76,6 +76,6 @@ public class ProbenartService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        return repository.getById(Probenart.class, id);
+        return repository.getById(SampleMeth.class, id);
     }
 }

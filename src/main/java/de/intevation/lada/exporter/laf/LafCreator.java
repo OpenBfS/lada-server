@@ -32,7 +32,7 @@ import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.MunicDiv;
 import de.intevation.lada.model.stammdaten.SampleSpecif;
-import de.intevation.lada.model.stammdaten.Probenart;
+import de.intevation.lada.model.stammdaten.SampleMeth;
 import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.Probenehmer;
@@ -148,11 +148,11 @@ implements Creator {
 
         String probenart = null;
         if (probe.getSampleMethId() != null) {
-            QueryBuilder<Probenart> builder =
-                repository.queryBuilder(Probenart.class);
+            QueryBuilder<SampleMeth> builder =
+                repository.queryBuilder(SampleMeth.class);
             builder.and("id", probe.getSampleMethId());
-            List<Probenart> probenarten =
-                (List<Probenart>) repository.filter(
+            List<SampleMeth> probenarten =
+                (List<SampleMeth>) repository.filter(
                     builder.getQuery()
                 ).getData();
             probenart = probenarten.get(0).getExtId();

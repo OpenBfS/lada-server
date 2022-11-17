@@ -58,7 +58,7 @@ import de.intevation.lada.model.stammdaten.MpgTransf;
 import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.Poi;
 import de.intevation.lada.model.stammdaten.SampleSpecif;
-import de.intevation.lada.model.stammdaten.Probenart;
+import de.intevation.lada.model.stammdaten.SampleMeth;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.ReiProgpunktGruppe;
 import de.intevation.lada.model.stammdaten.Staat;
@@ -2430,11 +2430,11 @@ public class LafObjectMapper {
                         "[" + String.valueOf(from) + "]", String.valueOf(to));
                 }
             }
-            QueryBuilder<Probenart> builder =
-                repository.queryBuilder(Probenart.class);
+            QueryBuilder<SampleMeth> builder =
+                repository.queryBuilder(SampleMeth.class);
             builder.and("extId", attr);
-            List<Probenart> probenart =
-                (List<Probenart>) repository.filterPlain(builder.getQuery());
+            List<SampleMeth> probenart =
+                (List<SampleMeth>) repository.filterPlain(builder.getQuery());
             if (probenart == null || probenart.isEmpty()) {
                 currentWarnings.add(
                     new ReportItem(

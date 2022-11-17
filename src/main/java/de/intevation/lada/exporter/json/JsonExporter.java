@@ -57,7 +57,7 @@ import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.SampleSpecif;
-import de.intevation.lada.model.stammdaten.Probenart;
+import de.intevation.lada.model.stammdaten.SampleMeth;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.Staat;
 import de.intevation.lada.model.stammdaten.StatusKombi;
@@ -239,8 +239,8 @@ public class JsonExporter implements Exporter {
     private JsonNode addSubObjects(JsonNode proben) {
         for (int i = 0; i < proben.size(); i++) {
             ObjectNode probe = (ObjectNode) proben.get(i);
-            Probenart art = repository.getByIdPlain(
-                Probenart.class,
+            SampleMeth art = repository.getByIdPlain(
+                SampleMeth.class,
                 probe.get("probenartId").asInt()
             );
             Regulation datenbasis = repository.getByIdPlain(

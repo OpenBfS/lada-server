@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "sample_meth", schema = SchemaName.NAME)
-public class Probenart implements Serializable {
+public class SampleMeth implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -32,7 +32,7 @@ public class Probenart implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public Probenart() {
+    public SampleMeth() {
     }
 
     public Integer getId() {
