@@ -155,7 +155,7 @@ implements Creator {
                 (List<Probenart>) repository.filter(
                     builder.getQuery()
                 ).getData();
-            probenart = probenarten.get(0).getProbenart();
+            probenart = probenarten.get(0).getExtId();
         }
 
         MeasFacil messstelle =

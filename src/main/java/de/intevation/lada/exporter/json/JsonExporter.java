@@ -252,7 +252,7 @@ public class JsonExporter implements Exporter {
                 probe.get("umwId").asText()
             );
             probe.put("probenart",
-                art == null ? "" : art.getProbenart());
+                art == null ? "" : art.getExtId());
             probe.put("datenbasis",
                 datenbasis == null ? "" : datenbasis.getRegulation());
             probe.put("umw", umw == null ? "" : umw.getUmweltBereich());

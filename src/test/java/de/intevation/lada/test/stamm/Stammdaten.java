@@ -118,10 +118,10 @@ public class Stammdaten extends ServiceTest {
         matchers.put("probenart",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "beschreibung",
-                "probenart",
-                "probenartEudfId"
+                "lastMod",
+                "name",
+                "extId",
+                "eudfSampleMethId"
             )
         );
         matchers.put("probenzusatz",

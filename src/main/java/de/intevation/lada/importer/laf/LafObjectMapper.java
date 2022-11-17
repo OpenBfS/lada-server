@@ -2432,7 +2432,7 @@ public class LafObjectMapper {
             }
             QueryBuilder<Probenart> builder =
                 repository.queryBuilder(Probenart.class);
-            builder.and("probenart", attr);
+            builder.and("extId", attr);
             List<Probenart> probenart =
                 (List<Probenart>) repository.filterPlain(builder.getQuery());
             if (probenart == null || probenart.isEmpty()) {

@@ -15,27 +15,22 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the probenart database table.
- *
- */
 @Entity
-@Table(name = "probenart", schema = SchemaName.LEGACY_NAME)
+@Table(name = "sample_meth", schema = SchemaName.NAME)
 public class Probenart implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    private String beschreibung;
+    private String name;
 
-    private String probenart;
+    private String extId;
 
-    @Column(name = "probenart_eudf_id")
-    private String probenartEudfId;
+    private String eudfSampleMethId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public Probenart() {
     }
@@ -48,36 +43,36 @@ public class Probenart implements Serializable {
         this.id = id;
     }
 
-    public String getBeschreibung() {
-        return this.beschreibung;
+    public String getName() {
+        return this.name;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getProbenart() {
-        return this.probenart;
+    public String getExtId() {
+        return this.extId;
     }
 
-    public void setProbenart(String probenart) {
-        this.probenart = probenart;
+    public void setExtId(String extId) {
+        this.extId = extId;
     }
 
-    public String getProbenartEudfId() {
-        return this.probenartEudfId;
+    public String getEudfSampleMethId() {
+        return this.eudfSampleMethId;
     }
 
-    public void setProbenartEudfId(String probenartEudfId) {
-        this.probenartEudfId = probenartEudfId;
+    public void setEudfSampleMethId(String eudfSampleMethId) {
+        this.eudfSampleMethId = eudfSampleMethId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }
