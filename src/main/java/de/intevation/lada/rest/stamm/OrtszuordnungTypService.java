@@ -72,7 +72,7 @@ public class OrtszuordnungTypService extends LadaService {
     @GET
     @Path("/{id}")
     public Response getById(
-        @PathParam("id") Integer id
+        @PathParam("id") String id
     ) {
         return repository.getById(TypeRegulation.class, id);
     }
