@@ -28,7 +28,7 @@ public class GridColMp implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "data_type")
-    private ResultType dataType;
+    private Disp dataType;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "filter")
@@ -59,11 +59,11 @@ public class GridColMp implements Serializable {
         this.dataIndex = dataIndex;
     }
 
-    public ResultType getDataType() {
+    public Disp getDataType() {
         return this.dataType;
     }
 
-    public void setDataType(ResultType dataType) {
+    public void setDataType(Disp dataType) {
         this.dataType = dataType;
     }
 

@@ -28,7 +28,7 @@ import de.intevation.lada.model.stammdaten.GridColConf;
 import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.Sampler;
-import de.intevation.lada.model.stammdaten.ResultType;
+import de.intevation.lada.model.stammdaten.Disp;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -124,9 +124,9 @@ public class UniversalService extends LadaService {
                 Integer.valueOf(columnValue.getGridColMpId())
             );
             //Check if column can be used for authorization
-            ResultType resultType =
+            Disp resultType =
                 repository.getByIdPlain(
-                    ResultType.class,
+                    Disp.class,
                     gridColumn.getDataType().getId()
                 );
             if (resultType != null) {

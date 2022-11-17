@@ -14,15 +14,10 @@ import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-
-/**
- * The persistent class for the result_type database table.
- *
- */
 @Entity
-@Table(name = "result_type", schema = SchemaName.LEGACY_NAME)
-@NamedQuery(name = "ResultType.findAll", query = "SELECT r FROM ResultType r")
-public class ResultType implements Serializable {
+@Table(schema = SchemaName.NAME)
+@NamedQuery(name = "Disp.findAll", query = "SELECT r FROM Disp r")
+public class Disp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -32,7 +27,7 @@ public class ResultType implements Serializable {
 
     private String name;
 
-    public ResultType() {
+    public Disp() {
     }
 
     public Integer getId() {
