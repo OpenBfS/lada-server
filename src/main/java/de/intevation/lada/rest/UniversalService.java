@@ -184,7 +184,7 @@ public class UniversalService extends LadaService {
                         if (authorizationColumnType == Probenehmer.class) {
                             Probenehmer pn = repository.getByIdPlain(
                                 Probenehmer.class, idToAuthorize);
-                            idToAuthorize = pn.getNetzbetreiberId();
+                            idToAuthorize = pn.getNetworkId();
                         }
                         if (authorizationColumnType == MpgCateg.class) {
                             MpgCateg mk = repository.getByIdPlain(

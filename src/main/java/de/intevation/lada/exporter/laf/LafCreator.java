@@ -259,7 +259,7 @@ implements Creator {
         if (probe.getSamplerId() != null) {
             Probenehmer prn = repository.getByIdPlain(
                 Probenehmer.class, probe.getSamplerId());
-            laf += lafLine("PROBENAHMEINSTITUTION", prn.getPrnId(), CN);
+            laf += lafLine("PROBENAHMEINSTITUTION", prn.getExtId(), CN);
         }
         if (probe.getReiAgGrId() != null) {
             ReiProgpunktGruppe rpg = repository.getByIdPlain(

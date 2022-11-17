@@ -276,10 +276,10 @@ public class JsonExporter implements Exporter {
                     Probenehmer.class,
                     probe.get("probeNehmerId").asInt()
                 );
-                probe.put("prnId", probenehmer.getPrnId());
-                probe.put("prnBezeichnung", probenehmer.getBezeichnung());
+                probe.put("prnId", probenehmer.getExtId());
+                probe.put("prnBezeichnung", probenehmer.getDescr());
                 probe.put(
-                    "prnKurzBezeichnung", probenehmer.getKurzBezeichnung());
+                    "prnKurzBezeichnung", probenehmer.getShortText());
             }
 
             addMessungen(proben.get(i));

@@ -142,8 +142,8 @@ public class ProbenehmerService extends LadaService {
         }
         QueryBuilder<Probenehmer> builder =
             repository.queryBuilder(Probenehmer.class);
-        builder.and("prnId", probenehmer.getPrnId());
-        builder.and("netzbetreiberId", probenehmer.getNetzbetreiberId());
+        builder.and("extId", probenehmer.getExtId());
+        builder.and("networkId", probenehmer.getNetworkId());
         List<Probenehmer> nehmer =
             repository.filterPlain(builder.getQuery());
         if (nehmer.isEmpty()) {
@@ -167,8 +167,8 @@ public class ProbenehmerService extends LadaService {
         }
         QueryBuilder<Probenehmer> builder =
             repository.queryBuilder(Probenehmer.class);
-        builder.and("prnId", probenehmer.getPrnId());
-        builder.and("netzbetreiberId", probenehmer.getNetzbetreiberId());
+        builder.and("extId", probenehmer.getExtId());
+        builder.and("networkId", probenehmer.getNetworkId());
         List<Probenehmer> nehmer =
             repository.filterPlain(builder.getQuery());
         if (!nehmer.isEmpty()

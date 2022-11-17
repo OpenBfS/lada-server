@@ -2287,8 +2287,8 @@ public class LafObjectMapper {
         if ("PROBENAHMEINSTITUTION".equals(key)) {
             QueryBuilder<Probenehmer> builder =
                 repository.queryBuilder(Probenehmer.class);
-            builder.and("netzbetreiberId", netzbetreiberId);
-            builder.and("prnId", value);
+            builder.and("networkId", netzbetreiberId);
+            builder.and("exitId", value);
             List<Probenehmer> prn =
                     (List<Probenehmer>) repository.filterPlain(
                         builder.getQuery());

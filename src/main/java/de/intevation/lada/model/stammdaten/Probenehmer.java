@@ -20,12 +20,8 @@ import javax.persistence.Transient;
 
 
 
-/**
- * The persistent class for the probenehmer database table.
- *
- */
 @Entity
-@Table(name = "probenehmer", schema = SchemaName.LEGACY_NAME)
+@Table(name = "sampler", schema = SchemaName.NAME)
 public class Probenehmer implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -33,37 +29,34 @@ public class Probenehmer implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String bearbeiter;
+    private String editor;
 
-    private String bemerkung;
+    private String comm;
 
-    private String betrieb;
+    private String inst;
 
-    private String bezeichnung;
+    private String descr;
 
-    @Column(name = "kurz_bezeichnung")
-    private String kurzBezeichnung;
+    private String shortText;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
-    @Column(name = "netzbetreiber_id")
-    private String netzbetreiberId;
+    private String networkId;
 
-    private String ort;
+    private String city;
 
-    private String plz;
+    private String zip;
 
-    @Column(name = "prn_id")
-    private String prnId;
+    private String extId;
 
-    private String strasse;
+    private String street;
 
-    private String telefon;
+    private String phone;
 
-    private String tourenplan;
+    private String routePlanning;
 
-    private String typ;
+    private String type;
 
     @Transient
     private Integer referenceCount;
@@ -82,116 +75,116 @@ public class Probenehmer implements Serializable {
         this.id = id;
     }
 
-    public String getBearbeiter() {
-        return this.bearbeiter;
+    public String getEditor() {
+        return this.editor;
     }
 
-    public void setBearbeiter(String bearbeiter) {
-        this.bearbeiter = bearbeiter;
+    public void setEditor(String editor) {
+        this.editor = editor;
     }
 
-    public String getBemerkung() {
-        return this.bemerkung;
+    public String getComm() {
+        return this.comm;
     }
 
-    public void setBemerkung(String bemerkung) {
-        this.bemerkung = bemerkung;
+    public void setComm(String comm) {
+        this.comm = comm;
     }
 
-    public String getBetrieb() {
-        return this.betrieb;
+    public String getInst() {
+        return this.inst;
     }
 
-    public void setBetrieb(String betrieb) {
-        this.betrieb = betrieb;
+    public void setInst(String inst) {
+        this.inst = inst;
     }
 
-    public String getBezeichnung() {
-        return this.bezeichnung;
+    public String getDescr() {
+        return this.descr;
     }
 
-    public void setBezeichnung(String bezeichnung) {
-        this.bezeichnung = bezeichnung;
+    public void setDescr(String descr) {
+        this.descr = descr;
     }
 
-    public String getKurzBezeichnung() {
-        return this.kurzBezeichnung;
+    public String getShortText() {
+        return this.shortText;
     }
 
-    public void setKurzBezeichnung(String kurzBezeichnung) {
-        this.kurzBezeichnung = kurzBezeichnung;
+    public void setShortText(String shortText) {
+        this.shortText = shortText;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
-    public String getNetzbetreiberId() {
-        return this.netzbetreiberId;
+    public String getNetworkId() {
+        return this.networkId;
     }
 
-    public void setNetzbetreiberId(String netzbetreiberId) {
-        this.netzbetreiberId = netzbetreiberId;
+    public void setNetworkId(String networkId) {
+        this.networkId = networkId;
     }
 
-    public String getOrt() {
-        return this.ort;
+    public String getCity() {
+        return this.city;
     }
 
-    public void setOrt(String ort) {
-        this.ort = ort;
+    public void setCity(String city) {
+        this.city = city;
     }
 
-    public String getPlz() {
-        return this.plz;
+    public String getZip() {
+        return this.zip;
     }
 
-    public void setPlz(String plz) {
-        this.plz = plz;
+    public void setZip(String zip) {
+        this.zip = zip;
     }
 
-    public String getPrnId() {
-        return this.prnId;
+    public String getExtId() {
+        return this.extId;
     }
 
-    public void setPrnId(String prnId) {
-        this.prnId = prnId;
+    public void setExtId(String extId) {
+        this.extId = extId;
     }
 
-    public String getStrasse() {
-        return this.strasse;
+    public String getStreet() {
+        return this.street;
     }
 
-    public void setStrasse(String strasse) {
-        this.strasse = strasse;
+    public void setStreet(String street) {
+        this.street = street;
     }
 
-    public String getTelefon() {
-        return this.telefon;
+    public String getPhone() {
+        return this.phone;
     }
 
-    public void setTelefon(String telefon) {
-        this.telefon = telefon;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public String getTourenplan() {
-        return this.tourenplan;
+    public String getRoutePlanning() {
+        return this.routePlanning;
     }
 
-    public void setTourenplan(String tourenplan) {
-        this.tourenplan = tourenplan;
+    public void setRoutePlanning(String routePlanning) {
+        this.routePlanning = routePlanning;
     }
 
-    public String getTyp() {
-        return this.typ;
+    public String getType() {
+        return this.type;
     }
 
-    public void setTyp(String typ) {
-        this.typ = typ;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Integer getReferenceCount() {
