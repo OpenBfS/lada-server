@@ -38,6 +38,7 @@ import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.SiteClass;
 import de.intevation.lada.model.stammdaten.Probenehmer;
 import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.stammdaten.TypeRegulation;
 import de.intevation.lada.test.land.TagZuordnungTest;
 import de.intevation.lada.test.stamm.DatensatzErzeugerTest;
 import de.intevation.lada.test.stamm.DeskriptorenTest;
@@ -102,6 +103,9 @@ public class StammdatenTest extends BaseTest {
     private static final int T42 = 42;
     private static final int T43 = 43;
     private static final int T44 = 44;
+    private static final int T45 = 45;
+    private static final int T46 = 46;
+    private static final int T47 = 47;
 
     private static final int ID5 = 5;
     private static final int ID9 = 9;
@@ -112,7 +116,8 @@ public class StammdatenTest extends BaseTest {
     private static final int ID1000 = 1000;
     private static final int ID1801 = 1801;
     private static final int ID1901 = 1901;
-
+    private static final String IDA = "A";
+    private static final String IDB = "B";
 
     private static Logger logger = Logger.getLogger(StammdatenTest.class);
 
@@ -779,5 +784,53 @@ public class StammdatenTest extends BaseTest {
     public final void testSiteClassById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
         stammdatenTest.getById("orttyp", ID101);
+    }
+
+    /**
+     * Prepare database for type regulation test.
+     * @throws Exception that can occur during test
+     */
+    @Test
+    @InSequence(T45)
+    @ApplyScriptBefore("datasets/clean_and_seed.sql")
+    @UsingDataSet("datasets/dbUnit_type_regulation.json")
+    @DataSource("java:jboss/lada-test")
+    @Cleanup(phase = TestExecutionPhase.NONE)
+    public final void prepareTypeRegulation() throws Exception {
+        Protocol protocol = new Protocol();
+        protocol.setName("database");
+        protocol.setType("insert for type regulation test");
+        protocol.addInfo("database",
+            "Insert type regulation into database");
+        testProtocol.add(protocol);
+        TypeRegulation tra = em.find(TypeRegulation.class, IDA);
+        Assert.assertNotNull(tra);
+        TypeRegulation trb = em.find(TypeRegulation.class, IDB);
+        Assert.assertNotNull(trb);
+        protocol.setPassed(true);
+    }
+
+    /**
+     * Tests site class get all operation.
+     * @param baseUrl The server url used for the request.
+     */
+    @Test
+    @InSequence(T46)
+    @RunAsClient
+    public final void testTypeRegulationAll(@ArquillianResource URL baseUrl) {
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("ortszuordnungtyp");
+    }
+
+    /**
+     * Tests site class get by id operation.
+     * @param baseUrl The server url used for the request.
+     */
+    @Test
+    @InSequence(T47)
+    @RunAsClient
+    public final void testTypeRegulationById(@ArquillianResource URL baseUrl) {
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("ortszuordnungtyp", IDA);
     }
 }

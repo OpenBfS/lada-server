@@ -1,0 +1,9 @@
+{
+    "master.type_regulation": [{
+        "id": "A",
+        "name": "type_regulation-A"
+    }, {
+        "id": "B",
+        "name": "type_regulation-B"
+    }]
+}
