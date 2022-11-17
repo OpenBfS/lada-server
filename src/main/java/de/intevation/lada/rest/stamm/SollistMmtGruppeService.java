@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-import de.intevation.lada.model.stammdaten.SollistMmtGrp;
+import de.intevation.lada.model.stammdaten.TargActMmtGr;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
@@ -61,6 +61,6 @@ public class SollistMmtGruppeService extends LadaService {
     @GET
     @Path("/")
     public Response get() {
-        return repository.getAll(SollistMmtGrp.class);
+        return repository.getAll(TargActMmtGr.class);
     }
 }
