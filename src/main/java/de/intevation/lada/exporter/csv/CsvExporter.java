@@ -89,7 +89,7 @@ public class CsvExporter implements Exporter {
         StatusLev stufe = kombi.getStatusLev();
         StatusWert wert = kombi.getStatusVal();
 
-        return String.format("%s - %s", stufe.getLev(), wert.getWert());
+        return String.format("%s - %s", stufe.getLev(), wert.getVal());
     }
 
     /**
