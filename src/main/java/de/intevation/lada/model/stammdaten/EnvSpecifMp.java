@@ -16,8 +16,8 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "env_specif_mp", schema = SchemaName.NAME)
-public class UmweltZusatz implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class EnvSpecifMp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -27,7 +27,7 @@ public class UmweltZusatz implements Serializable {
 
     private String envMediumId;
 
-    public UmweltZusatz() {
+    public EnvSpecifMp() {
     }
 
     @Column(insertable = false)

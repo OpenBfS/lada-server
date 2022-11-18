@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.ZusatzWert;
-import de.intevation.lada.model.stammdaten.UmweltZusatz;
+import de.intevation.lada.model.stammdaten.EnvSpecifMp;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -41,10 +41,10 @@ public class UmweltToProbezusatz implements Rule {
             return null;
         } else {
             String umwId = probe.getEnvMediumId();
-            QueryBuilder<UmweltZusatz> builderUmwZus =
-                repository.queryBuilder(UmweltZusatz.class);
+            QueryBuilder<EnvSpecifMp> builderUmwZus =
+                repository.queryBuilder(EnvSpecifMp.class);
                 builderUmwZus.and("envMediumId", umwId);
-            List <UmweltZusatz> UmwZus = repository.filterPlain(builderUmwZus.getQuery());
+            List <EnvSpecifMp> UmwZus = repository.filterPlain(builderUmwZus.getQuery());
 
             QueryBuilder<ZusatzWert> builderZusatz =
                 repository.queryBuilder(ZusatzWert.class);
