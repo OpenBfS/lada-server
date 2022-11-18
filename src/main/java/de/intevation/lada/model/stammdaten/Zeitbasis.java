@@ -16,23 +16,19 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 import javax.persistence.Column;
 
-/**
- * The persistent class for the zeitbasis database table.
- *
- */
 @Entity
 @NamedQuery(name = "Zeitbasis.findAll", query = "SELECT z FROM Zeitbasis z")
-@Table(name = "zeitbasis", schema = SchemaName.LEGACY_NAME)
+@Table(name = "tz", schema = SchemaName.NAME)
 public class Zeitbasis implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    private String bezeichnung;
+    private String name;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public Zeitbasis() {
     }
@@ -45,20 +41,20 @@ public class Zeitbasis implements Serializable {
         this.id = id;
     }
 
-    public String getBezeichnung() {
-        return this.bezeichnung;
+    public String getName() {
+        return this.name;
     }
 
-    public void setBezeichnung(String bezeichnung) {
-        this.bezeichnung = bezeichnung;
+    public void setName(String bezeichnung) {
+        this.name = bezeichnung;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }

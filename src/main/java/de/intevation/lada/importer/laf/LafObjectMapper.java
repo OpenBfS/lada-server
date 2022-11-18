@@ -214,7 +214,7 @@ public class LafObjectMapper {
             }
             QueryBuilder<Zeitbasis> builder =
                 repository.queryBuilder(Zeitbasis.class);
-            builder.and("bezeichnung", attribute);
+            builder.and("name", attribute);
             List<Zeitbasis> zb = repository.filterPlain(builder.getQuery());
             if (zb == null || zb.isEmpty()) {
                 currentWarnings.add(
