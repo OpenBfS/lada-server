@@ -10,7 +10,6 @@ package de.intevation.lada.model.land;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -29,7 +28,7 @@ import de.intevation.lada.util.data.JsonObjectType;
  *
  */
 @Entity
-@Table(name = "audit_trail_messung", schema = SchemaName.LEGACY_NAME)
+@Table(name = "audit_trail_measm_view", schema = SchemaName.NAME)
 @TypeDefs({ @TypeDef(name = "JsonObject", typeClass = JsonObjectType.class) })
 public class AuditTrailMessung implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -39,24 +38,18 @@ public class AuditTrailMessung implements Serializable {
 
     private String action;
 
-    @Column(name = "tstamp")
     private Timestamp tstamp;
 
-    @Column(name = "changed_fields")
     @Type(type = "JsonObject")
     private JsonNode changedFields;
 
-    @Column(name = "messungs_id")
-    private String messungsId;
+    private String measmId;
 
-    @Column(name = "object_id")
     private Integer objectId;
 
-    @Column(name = "row_data")
     @Type(type = "JsonObject")
     private JsonNode rowData;
 
-    @Column(name = "table_name")
     private String tableName;
 
     public AuditTrailMessung() {
@@ -94,12 +87,12 @@ public class AuditTrailMessung implements Serializable {
         this.id = id;
     }
 
-    public String getMessungsId() {
-        return this.messungsId;
+    public String getMeasmId() {
+        return this.measmId;
     }
 
-    public void setMessungsId(String messungsId) {
-        this.messungsId = messungsId;
+    public void setMeasmId(String measmId) {
+        this.measmId = measmId;
     }
 
     public Integer getObjectId() {

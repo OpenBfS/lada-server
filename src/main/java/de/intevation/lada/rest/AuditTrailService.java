@@ -318,8 +318,8 @@ public class AuditTrailService extends LadaService {
         QueryBuilder<AuditTrailMessung> builder =
             repository.queryBuilder(AuditTrailMessung.class);
         builder.and("objectId", mId);
-        builder.and("tableName", "messung");
-        builder.or("messungsId", mId);
+        builder.and("tableName", "measm");
+        builder.or("measmId", mId);
         builder.orderBy("tstamp", true);
         List<AuditTrailMessung> audit =
             repository.filterPlain(builder.getQuery());
