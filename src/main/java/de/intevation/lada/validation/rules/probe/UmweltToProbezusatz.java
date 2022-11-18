@@ -43,7 +43,7 @@ public class UmweltToProbezusatz implements Rule {
             String umwId = probe.getEnvMediumId();
             QueryBuilder<UmweltZusatz> builderUmwZus =
                 repository.queryBuilder(UmweltZusatz.class);
-                builderUmwZus.and("umwId", umwId);
+                builderUmwZus.and("envMediumId", umwId);
             List <UmweltZusatz> UmwZus = repository.filterPlain(builderUmwZus.getQuery());
 
             QueryBuilder<ZusatzWert> builderZusatz =
@@ -51,7 +51,7 @@ public class UmweltToProbezusatz implements Rule {
                 builderZusatz.and("probeId", probe.getId());
             List <ZusatzWert> ZusWert = repository.filterPlain(builderZusatz.getQuery());
             for (ZusatzWert zusW: ZusWert) {
-                Boolean ZusWertFound = UmwZus.stream().anyMatch(u -> u.getPzsId().equals(zusW.getPzsId()));
+                Boolean ZusWertFound = UmwZus.stream().anyMatch(u -> u.getSampleSpecifId().equals(zusW.getPzsId()));
                 if (ZusWertFound) {
                     return null;
                 } else {

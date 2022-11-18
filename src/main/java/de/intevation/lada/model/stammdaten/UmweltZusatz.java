@@ -15,28 +15,23 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the umwelt_zusatz database table.
- *
- */
 @Entity
-@Table(name = "umwelt_zusatz", schema = SchemaName.LEGACY_NAME)
+@Table(name = "env_specif_mp", schema = SchemaName.NAME)
 public class UmweltZusatz implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    @Column(name = "pzs_id")
-    private String pzsId;
+    private String sampleSpecifId;
 
-    @Column(name = "UMW_id")
-    private String umwId;
+    private String envMediumId;
+
     public UmweltZusatz() {
     }
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public Integer getId() {
         return this.id;
@@ -46,28 +41,28 @@ public class UmweltZusatz implements Serializable {
         this.id = id;
     }
 
-    public String getPzsId() {
-        return this.pzsId;
+    public String getSampleSpecifId() {
+        return this.sampleSpecifId;
     }
 
-    public void setPzsId(String pzsId) {
-        this.pzsId = pzsId;
+    public void setSampleSpecifId(String sampleSpecifId) {
+        this.sampleSpecifId = sampleSpecifId;
     }
 
-    public String getUmwId() {
-        return this.umwId;
+    public String getEnvMediumId() {
+        return this.envMediumId;
     }
 
-    public void setUmwId(String umwId) {
-        this.pzsId = umwId;
+    public void setEnvMediumId(String envMediumId) {
+        this.sampleSpecifId = envMediumId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }
