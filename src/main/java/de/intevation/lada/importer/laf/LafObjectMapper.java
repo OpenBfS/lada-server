@@ -1943,11 +1943,11 @@ public class LafObjectMapper {
             key = "HERKUNFTSLAND_S";
             hLand = attributes.get(type + "HERKUNFTSLAND_S");
         } else if (attributes.get(type + "HERKUNFTSLAND_KURZ") != null) {
-            staatFilter = "staatKurz";
+            staatFilter = "intVehRegCode";
             key = "HERKUNFTSLAND_KURZ";
             hLand = attributes.get(type + "HERKUNFTSLAND_KURZ");
         } else if (attributes.get(type + "HERKUNFTSLAND_LANG") != null) {
-            staatFilter = "staat";
+            staatFilter = "ctry";
             key = "HERKUNFTSLAND_LANG";
             hLand = attributes.get(type + "HERKUNFTSLAND_LANG");
         }

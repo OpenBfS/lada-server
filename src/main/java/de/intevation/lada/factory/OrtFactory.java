@@ -255,18 +255,18 @@ public class OrtFactory {
             Staat staat =
                 repository.getByIdPlain(
                     Staat.class, ort.getStateId());
-            ort.setSpatRefSysId(staat.getKdaId());
-            ort.setXCoordExt(staat.getKoordXExtern());
-            ort.setYCoordExt(staat.getKoordYExtern());
-            ort.setLongText(staat.getStaat());
+            ort.setSpatRefSysId(staat.getSpatRefSysId());
+            ort.setXCoordExt(staat.getXCoordExt());
+            ort.setYCoordExt(staat.getYCoordExt());
+            ort.setLongText(staat.getCtry());
             ort.setSiteClassId(ORTTYP5);
             ort.setExtId("STAAT_" + staat.getId());
-            if (staat.getStaatIso() != null) {
-                ort.setShortText("STAAT_" + staat.getStaatIso());
+            if (staat.getIso3166() != null) {
+                ort.setShortText("STAAT_" + staat.getIso3166());
             } else {
                 ort.setShortText("STAAT_" + staat.getId());
             }
-            ort.setReiReportText(staat.getStaat());
+            ort.setReiReportText(staat.getCtry());
             transformCoordinates(ort);
             hasStaat = true;
         }

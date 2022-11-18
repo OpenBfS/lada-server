@@ -187,15 +187,15 @@ public class Stammdaten extends ServiceTest {
         matchers.put("staat",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "eu",
-                "hklId",
-                "koordXExtern",
-                "koordYExtern",
-                "staat",
-                "staatIso",
-                "staatKurz",
-                "kdaId"
+                "lastMod",
+                "isEuCountry",
+                "ctryOrigId",
+                "xCoordExt",
+                "yCoordExt",
+                "ctry",
+                "iso3166",
+                "intVehRegCode",
+                "spatRefSysId"
             )
         );
         matchers.put("sollistmmtgruppe",

@@ -584,7 +584,7 @@ public class JsonExporter implements Exporter {
                     Staat.class,
                     oNode.get("staatId").asInt()
                 );
-                ((ObjectNode) oNode).put("staat", staat.getStaat());
+                ((ObjectNode) oNode).put("staat", staat.getCtry());
             }
             ((ObjectNode) node).set("ort", oNode);
         } catch (IOException e) {

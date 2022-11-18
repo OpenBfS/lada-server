@@ -9,48 +9,39 @@ package de.intevation.lada.model.stammdaten;
 
 import java.io.Serializable;
 
+import javax.json.bind.annotation.JsonbProperty;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
-/**
- * The persistent class for the staat database table.
- *
- */
 @Entity
-@Table(name = "staat", schema = SchemaName.LEGACY_NAME)
+@Table(name = "state", schema = SchemaName.NAME)
 public class Staat implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    private Boolean eu;
+    private Boolean isEuCountry;
 
-    @Column(name = "hkl_id")
-    private Integer hklId;
+    private Integer ctryOrigId;
 
-    @Column(name = "kda_id")
-    private Integer kdaId;
+    private Integer spatRefSysId;
 
-    @Column(name = "koord_x_extern")
-    private String koordXExtern;
+    private String xCoordExt;
 
-    @Column(name = "koord_y_extern")
-    private String koordYExtern;
+    private String yCoordExt;
 
-    private String staat;
+    private String ctry;
 
-    @Column(name = "staat_iso")
-    private String staatIso;
+    private String iso3166;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
-    @Column(name = "staat_kurz")
-    private String staatKurz;
+    private String intVehRegCode;
 
     public Staat() {
     }
@@ -63,76 +54,80 @@ public class Staat implements Serializable {
         this.id = id;
     }
 
-    public Boolean getEu() {
-        return this.eu;
+    public Boolean getIsEuCountry() {
+        return this.isEuCountry;
     }
 
-    public void setEu(Boolean eu) {
-        this.eu = eu;
+    public void setIsEuCountry(Boolean isEuCountry) {
+        this.isEuCountry = isEuCountry;
     }
 
-    public Integer getHklId() {
-        return this.hklId;
+    public Integer getCtryOrigId() {
+        return this.ctryOrigId;
     }
 
-    public void setHklId(Integer hklId) {
-        this.hklId = hklId;
+    public void setCtryOrigId(Integer ctryOrigId) {
+        this.ctryOrigId = ctryOrigId;
     }
 
-    public Integer getKdaId() {
-        return this.kdaId;
+    public Integer getSpatRefSysId() {
+        return this.spatRefSysId;
     }
 
-    public void setKdaId(Integer kdaId) {
-        this.kdaId = kdaId;
+    public void setSpatRefSysId(Integer spatRefSysId) {
+        this.spatRefSysId = spatRefSysId;
     }
 
-    public String getKoordXExtern() {
-        return this.koordXExtern;
+    @JsonbProperty("xCoordExt")
+    public String getXCoordExt() {
+        return this.xCoordExt;
     }
 
-    public void setKoordXExtern(String koordXExtern) {
-        this.koordXExtern = koordXExtern;
+    @JsonbProperty("xCoordExt")
+    public void setXCoordExt(String xCoordExt) {
+        this.xCoordExt = xCoordExt;
     }
 
-    public String getKoordYExtern() {
-        return this.koordYExtern;
+    @JsonbProperty("yCoordExt")
+    public String getYCoordExt() {
+        return this.yCoordExt;
     }
 
-    public void setKoordYExtern(String koordYExtern) {
-        this.koordYExtern = koordYExtern;
+    @JsonbProperty("yCoordExt")
+    public void setYCoordExt(String yCoordExt) {
+        this.yCoordExt = yCoordExt;
     }
 
-    public String getStaat() {
-        return this.staat;
+    public String getCtry() {
+        return this.ctry;
     }
 
-    public void setStaat(String staat) {
-        this.staat = staat;
+    public void setCtry(String ctry) {
+        this.ctry = ctry;
     }
 
-    public String getStaatIso() {
-        return this.staatIso;
+    public String getIso3166() {
+        return this.iso3166;
     }
 
-    public void setStaatIso(String staatIso) {
-        this.staatIso = staatIso;
+    public void setIso3166(String iso3166) {
+        this.iso3166 = iso3166;
     }
 
-    public String getStaatKurz() {
-        return this.staatKurz;
+    public String getIntVehRegCode() {
+        return this.intVehRegCode;
         }
 
-    public void setStaatKurz(String staatKurz) {
-            this.staatKurz = staatKurz;
-            }
-
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public void setIntVehRegCode(String intVehRegCode) {
+        this.intVehRegCode = intVehRegCode;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
+    }
+
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }

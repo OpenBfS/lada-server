@@ -80,8 +80,8 @@ INSERT INTO proben_zusatz (id, beschreibung, zusatzwert)
 INSERT INTO proben_zusatz (id, beschreibung, zusatzwert)
        VALUES ('A76', 'Volumenstrom', 'VOLSTR');
 INSERT INTO koordinaten_art (id) VALUES (5);
-INSERT INTO staat (id, staat, hkl_id, staat_iso)
-       VALUES (0, 'Deutschland', 0, 'DE');
+INSERT INTO staat (id, staat, hkl_id, staat_iso, koord_x_extern, koord_y_extern)
+       VALUES (0, 'Deutschland', 0, 'DE', '123123', '321321');
 INSERT INTO verwaltungseinheit (
             id, bundesland, bezeichnung,
             is_bundesland, is_gemeinde, is_landkreis, is_regbezirk)
