@@ -23,9 +23,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import de.intevation.lada.util.data.JsonObjectType;
 
 @Entity
-@Table(name = "audit_trail_site_view", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 @TypeDefs({ @TypeDef(name = "JsonObject", typeClass = JsonObjectType.class) })
-public class AuditTrailOrt implements Serializable {
+public class AuditTrailSiteView implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -47,7 +47,7 @@ public class AuditTrailOrt implements Serializable {
 
     private String tableName;
 
-    public AuditTrailOrt() {
+    public AuditTrailSiteView() {
     }
 
     public String getAction() {
