@@ -10,7 +10,6 @@ package de.intevation.lada.model.stammdaten;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -23,13 +22,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import de.intevation.lada.util.data.JsonObjectType;
 
-
-/**
- * The persistent class for the audit_trail_ort database table.
- *
- */
 @Entity
-@Table(name = "audit_trail_ort", schema = SchemaName.LEGACY_NAME)
+@Table(name = "audit_trail_site_view", schema = SchemaName.NAME)
 @TypeDefs({ @TypeDef(name = "JsonObject", typeClass = JsonObjectType.class) })
 public class AuditTrailOrt implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -39,24 +33,18 @@ public class AuditTrailOrt implements Serializable {
 
     private String action;
 
-    @Column(name = "tstamp")
-    private Timestamp tstamp;
+    private Timestamp lastMod;
 
-    @Column(name = "changed_fields")
     @Type(type = "JsonObject")
     private JsonNode changedFields;
 
-    @Column(name = "ort_id")
-    private String ortId;
+    private String siteId;
 
-    @Column(name = "object_id")
     private Integer objectId;
 
-    @Column(name = "row_data")
     @Type(type = "JsonObject")
     private JsonNode rowData;
 
-    @Column(name = "table_name")
     private String tableName;
 
     public AuditTrailOrt() {
@@ -70,12 +58,12 @@ public class AuditTrailOrt implements Serializable {
         this.action = action;
     }
 
-    public Timestamp getTstamp() {
-        return this.tstamp;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setTstamp(Timestamp tstamp) {
-        this.tstamp = tstamp;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
     public JsonNode getChangedFields() {
@@ -94,12 +82,12 @@ public class AuditTrailOrt implements Serializable {
         this.id = id;
     }
 
-    public String getOrtId() {
-        return this.ortId;
+    public String getSiteId() {
+        return this.siteId;
     }
 
-    public void setOrtId(String ortId) {
-        this.ortId = ortId;
+    public void setSiteId(String siteId) {
+        this.siteId = siteId;
     }
 
     public Integer getObjectId() {
