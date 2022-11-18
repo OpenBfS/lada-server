@@ -180,10 +180,10 @@ public class AuditTrailService extends LadaService {
         QueryBuilder<AuditTrailProbe> builder =
             repository.queryBuilder(AuditTrailProbe.class);
         builder.and("objectId", pId);
-        builder.and("tableName", "probe");
-        builder.or("probeId", pId);
+        builder.and("tableName", "sample");
+        builder.or("sampleId", pId);
         if (ortIds.size() > 0) {
-            builder.orIn("ortId", ortIds);
+            builder.orIn("siteId", ortIds);
         }
         builder.orderBy("tstamp", true);
         List<AuditTrailProbe> audit =
@@ -210,7 +210,7 @@ public class AuditTrailService extends LadaService {
             if (a.getTableName().equals("messwert")) {
                 Messung messung =
                     repository.getByIdPlain(
-                        Messung.class, a.getMessungsId());
+                        Messung.class, a.getMeasmId());
                 StatusProtokoll status =
                     repository.getByIdPlain(
                         StatusProtokoll.class, messung.getStatus());
@@ -272,9 +272,9 @@ public class AuditTrailService extends LadaService {
                     : m.getNebenprobenNr()
                 );
         }
-        if (audit.getMessungsId() != null) {
+        if (audit.getMeasmId() != null) {
             Messung m = repository.getByIdPlain(
-                Messung.class, audit.getMessungsId());
+                Messung.class, audit.getMeasmId());
             ObjectNode identifier = node.putObject("identifier");
             identifier.put("messung",
                 (m.getNebenprobenNr() == null)

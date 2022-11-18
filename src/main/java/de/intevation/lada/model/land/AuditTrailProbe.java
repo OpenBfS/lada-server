@@ -10,7 +10,6 @@ package de.intevation.lada.model.land;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -23,12 +22,8 @@ import org.hibernate.annotations.TypeDefs;
 
 import de.intevation.lada.util.data.JsonObjectType;
 
-/**
- * The persistent class for the audit_trail_probe database table.
- *
- */
 @Entity
-@Table(name = "audit_trail_probe", schema = SchemaName.LEGACY_NAME)
+@Table(name = "audit_trail_sample_view", schema = SchemaName.NAME)
 @TypeDefs({ @TypeDef(name = "JsonObject", typeClass = JsonObjectType.class) })
 public class AuditTrailProbe implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -36,33 +31,24 @@ public class AuditTrailProbe implements Serializable {
     @Id
     private Long id;
 
-    @Column(name = "changed_fields")
     @Type(type = "JsonObject")
     private JsonNode changedFields;
 
-    @Column(name = "row_data")
     @Type(type = "JsonObject")
     private JsonNode rowData;
 
-    @Column(name = "tstamp")
     private Timestamp tstamp;
 
-    @Column(name = "action")
     private String action;
 
-    @Column(name = "messungs_id")
-    private Integer messungsId;
+    private Integer measmId;
 
-    @Column(name = "object_id")
     private Integer objectId;
 
-    @Column(name = "ort_id")
-    private Integer ortId;
+    private Integer siteId;
 
-    @Column(name = "probe_id")
-    private Integer probeId;
+    private Integer sampleId;
 
-    @Column(name = "table_name")
     private String tableName;
 
     public AuditTrailProbe() {
@@ -100,12 +86,12 @@ public class AuditTrailProbe implements Serializable {
         this.action = action;
     }
 
-    public Integer getMessungsId() {
-        return this.messungsId;
+    public Integer getMeasmId() {
+        return this.measmId;
     }
 
-    public void setMessungsId(Integer messungsId) {
-        this.messungsId = messungsId;
+    public void setMeasmId(Integer measmId) {
+        this.measmId = measmId;
     }
 
     public Integer getObjectId() {
@@ -116,20 +102,20 @@ public class AuditTrailProbe implements Serializable {
         this.objectId = objectId;
     }
 
-    public Integer getOrtId() {
-        return this.ortId;
+    public Integer getSiteId() {
+        return this.siteId;
     }
 
-    public void setOrtId(Integer ortId) {
-        this.ortId = ortId;
+    public void setSiteId(Integer siteId) {
+        this.siteId = siteId;
     }
 
-    public Integer getProbeId() {
-        return this.probeId;
+    public Integer getSampleId() {
+        return this.sampleId;
     }
 
-    public void setProbeId(Integer probeId) {
-        this.probeId = probeId;
+    public void setSampleId(Integer sampleId) {
+        this.sampleId = sampleId;
     }
 
     public String getTableName() {
