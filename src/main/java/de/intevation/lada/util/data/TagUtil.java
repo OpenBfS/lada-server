@@ -26,7 +26,7 @@ import javax.persistence.criteria.Root;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.TagZuordnung;
-import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.rest.Response;
 
 /**

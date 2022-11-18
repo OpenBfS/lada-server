@@ -25,7 +25,7 @@ import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.stammdaten.EnvMedium;
+import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;

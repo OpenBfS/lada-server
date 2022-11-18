@@ -12,7 +12,7 @@ import java.util.List;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
-import de.intevation.lada.model.stammdaten.StatusMp;
+import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;

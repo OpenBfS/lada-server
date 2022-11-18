@@ -12,8 +12,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.stammdaten.UnitConvers;
-import de.intevation.lada.model.stammdaten.EnvMedium;
+import de.intevation.lada.model.master.EnvMedium;
+import de.intevation.lada.model.master.UnitConvers;
 
 
 public class MesswertNormalizer {

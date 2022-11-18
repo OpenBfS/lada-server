@@ -14,7 +14,7 @@ import java.util.List;
 
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.stammdaten.MeasFacil;
+import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;

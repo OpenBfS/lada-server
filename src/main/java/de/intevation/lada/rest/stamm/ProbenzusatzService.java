@@ -16,10 +16,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.stammdaten.SampleSpecif;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.rest.LadaService;
 
 /**
@@ -74,7 +74,7 @@ public class ProbenzusatzService extends LadaService {
             Query query =
                 repository.queryFromString(
                     "SELECT pzs_id FROM "
-                    + de.intevation.lada.model.stammdaten.SchemaName.LEGACY_NAME
+                    + de.intevation.lada.model.master.SchemaName.LEGACY_NAME
                     + ".umwelt_zusatz "
                     + "WHERE umw_id = :umw"
                 ).setParameter("umw", umwId);

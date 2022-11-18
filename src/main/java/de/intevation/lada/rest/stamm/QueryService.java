@@ -27,9 +27,6 @@ import javax.ws.rs.PathParam;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.model.stammdaten.MeasFacil;
-import de.intevation.lada.model.stammdaten.QueryMeasFacilMp;
-import de.intevation.lada.model.stammdaten.QueryUser;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -38,6 +35,9 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.model.master.MeasFacil;
+import de.intevation.lada.model.master.QueryMeasFacilMp;
+import de.intevation.lada.model.master.QueryUser;
 import de.intevation.lada.rest.LadaService;
 
 

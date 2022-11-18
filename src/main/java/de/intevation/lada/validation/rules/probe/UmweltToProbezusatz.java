@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.ZusatzWert;
-import de.intevation.lada.model.stammdaten.EnvSpecifMp;
+import de.intevation.lada.model.master.EnvSpecifMp;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;

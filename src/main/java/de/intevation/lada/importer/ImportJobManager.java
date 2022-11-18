@@ -19,7 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.intevation.lada.importer.laf.LafImportJob;
-import de.intevation.lada.model.stammdaten.MeasFacil;
+import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.JobManager;
 

@@ -19,9 +19,9 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.importer.ReportItem;
-import de.intevation.lada.model.stammdaten.Site;
-import de.intevation.lada.model.stammdaten.State;
-import de.intevation.lada.model.stammdaten.AdminUnit;
+import de.intevation.lada.model.master.AdminUnit;
+import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.State;
 import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;

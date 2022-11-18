@@ -17,7 +17,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.MultivaluedHashMap;
 
 import de.intevation.lada.model.QueryColumns;
-import de.intevation.lada.model.stammdaten.GridColConf;
+import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;

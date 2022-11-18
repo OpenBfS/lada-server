@@ -25,7 +25,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.hibernate.annotations.DynamicInsert;
 
-import de.intevation.lada.model.stammdaten.EnvMedium;
+import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.util.data.EmptyStringConverter;
 
 

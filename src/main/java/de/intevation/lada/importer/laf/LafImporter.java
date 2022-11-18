@@ -30,7 +30,7 @@ import de.intevation.lada.importer.ImportConfig;
 import de.intevation.lada.importer.ImportFormat;
 import de.intevation.lada.importer.Importer;
 import de.intevation.lada.importer.ReportItem;
-import de.intevation.lada.model.stammdaten.ImportConf;
+import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.util.auth.UserInfo;
 
 /**

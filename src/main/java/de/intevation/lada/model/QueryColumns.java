@@ -7,12 +7,12 @@
  */
 package de.intevation.lada.model;
 
-import de.intevation.lada.model.stammdaten.GridColConf;
-
 import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.FetchType;
+
+import de.intevation.lada.model.master.GridColConf;
 
 /**
  * Persistent class containing user column definitions, used for

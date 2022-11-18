@@ -11,7 +11,7 @@ package de.intevation.lada.util.auth;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;

@@ -10,9 +10,10 @@ package de.intevation.lada.validation.rules.ort;
 import javax.inject.Inject;
 
 import java.util.List;
-import de.intevation.lada.model.stammdaten.Site;
-import de.intevation.lada.model.stammdaten.NuclFacil;
-import de.intevation.lada.model.stammdaten.NuclFacilGrMp;
+
+import de.intevation.lada.model.master.NuclFacil;
+import de.intevation.lada.model.master.NuclFacilGrMp;
+import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;

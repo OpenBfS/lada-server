@@ -16,11 +16,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.stammdaten.UnitConvers;
-import de.intevation.lada.model.stammdaten.MeasUnit;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.model.master.MeasUnit;
+import de.intevation.lada.model.master.UnitConvers;
 import de.intevation.lada.rest.LadaService;
 
 /**

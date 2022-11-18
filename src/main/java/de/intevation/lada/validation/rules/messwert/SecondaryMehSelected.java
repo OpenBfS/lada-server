@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.stammdaten.MeasUnit;
-import de.intevation.lada.model.stammdaten.EnvMedium;
+import de.intevation.lada.model.master.EnvMedium;
+import de.intevation.lada.model.master.MeasUnit;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;

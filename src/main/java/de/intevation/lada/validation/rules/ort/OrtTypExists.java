@@ -11,8 +11,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.stammdaten.Site;
-import de.intevation.lada.model.stammdaten.SiteClass;
+import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.SiteClass;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;

@@ -14,8 +14,8 @@ import javax.inject.Inject;
 import org.jboss.logging.Logger;
 import org.locationtech.jts.geom.Point;
 
-import de.intevation.lada.model.stammdaten.Site;
-import de.intevation.lada.model.stammdaten.AdminBorderView;
+import de.intevation.lada.model.master.AdminBorderView;
+import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;

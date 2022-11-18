@@ -14,10 +14,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.stammdaten.Auth;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.model.master.Auth;
 import de.intevation.lada.rest.LadaService;
 
 /**

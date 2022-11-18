@@ -17,7 +17,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -26,6 +25,7 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.model.master.MpgCateg;
 import de.intevation.lada.rest.LadaService;
 
 /**

@@ -26,7 +26,7 @@ import de.intevation.lada.importer.ImportConfig;
 import de.intevation.lada.importer.ImportFormat;
 import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.importer.Importer;
-import de.intevation.lada.model.stammdaten.MeasFacil;
+import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;

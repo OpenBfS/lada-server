@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import de.intevation.lada.model.stammdaten.Auth;
+import de.intevation.lada.model.master.Auth;
 
 /**
  * Container for user specific information.

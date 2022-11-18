@@ -19,7 +19,7 @@ import javax.ws.rs.client.Client;
 import org.junit.Assert;
 
 import de.intevation.lada.Protocol;
-import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.test.ServiceTest;
 
 /**

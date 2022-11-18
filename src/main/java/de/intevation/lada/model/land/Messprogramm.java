@@ -27,7 +27,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
 
-import de.intevation.lada.model.stammdaten.SampleSpecif;
+import de.intevation.lada.model.master.SampleSpecif;
 
 
 /**

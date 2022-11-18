@@ -37,7 +37,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.intevation.lada.model.stammdaten.BaseQuery;
+import de.intevation.lada.model.master.BaseQuery;
 import de.intevation.lada.util.data.Job;
 
 

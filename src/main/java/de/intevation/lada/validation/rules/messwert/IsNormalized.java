@@ -12,9 +12,9 @@ import javax.inject.Inject;
 import java.util.List;
 
 import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.stammdaten.EnvMedium;
-import de.intevation.lada.model.stammdaten.UnitConvers;
-import de.intevation.lada.model.stammdaten.Measd;
+import de.intevation.lada.model.master.EnvMedium;
+import de.intevation.lada.model.master.Measd;
+import de.intevation.lada.model.master.UnitConvers;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.StatusCodes;

@@ -13,8 +13,8 @@ import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.stammdaten.Measd;
-import de.intevation.lada.model.stammdaten.MmtMeasdView;
+import de.intevation.lada.model.master.Measd;
+import de.intevation.lada.model.master.MmtMeasdView;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;

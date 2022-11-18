@@ -10,7 +10,7 @@ package de.intevation.lada.importer;
 import java.util.List;
 import java.util.Map;
 
-import de.intevation.lada.model.stammdaten.ImportConf;
+import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.util.auth.UserInfo;
 
 /**

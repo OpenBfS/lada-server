@@ -13,10 +13,10 @@ import java.util.List;
 
 import org.junit.Test;
 
-import de.intevation.lada.model.stammdaten.Filter;
-import de.intevation.lada.model.stammdaten.FilterType;
-import de.intevation.lada.model.stammdaten.GridColConf;
-import de.intevation.lada.model.stammdaten.GridColMp;
+import de.intevation.lada.model.master.Filter;
+import de.intevation.lada.model.master.FilterType;
+import de.intevation.lada.model.master.GridColConf;
+import de.intevation.lada.model.master.GridColMp;
 
 /**
  * Unit test for QueryTools.

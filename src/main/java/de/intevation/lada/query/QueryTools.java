@@ -22,11 +22,11 @@ import javax.persistence.Query;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
-import de.intevation.lada.model.stammdaten.Filter;
-import de.intevation.lada.model.stammdaten.GridColMp;
-import de.intevation.lada.model.stammdaten.GridColConf;
-import de.intevation.lada.model.stammdaten.BaseQuery;
-import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.master.BaseQuery;
+import de.intevation.lada.model.master.Filter;
+import de.intevation.lada.model.master.GridColConf;
+import de.intevation.lada.model.master.GridColMp;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Repository;
 
 /**

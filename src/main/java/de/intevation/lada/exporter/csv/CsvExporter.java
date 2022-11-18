@@ -38,10 +38,10 @@ import org.jboss.logging.Logger;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
-import de.intevation.lada.model.stammdaten.GridColMp;
-import de.intevation.lada.model.stammdaten.StatusMp;
-import de.intevation.lada.model.stammdaten.StatusLev;
-import de.intevation.lada.model.stammdaten.StatusVal;
+import de.intevation.lada.model.master.GridColMp;
+import de.intevation.lada.model.master.StatusLev;
+import de.intevation.lada.model.master.StatusMp;
+import de.intevation.lada.model.master.StatusVal;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 

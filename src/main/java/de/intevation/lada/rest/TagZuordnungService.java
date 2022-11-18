@@ -17,7 +17,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import de.intevation.lada.model.land.TagZuordnung;
-import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;

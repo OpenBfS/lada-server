@@ -22,7 +22,7 @@ import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.MessprogrammMmt;
-import de.intevation.lada.model.stammdaten.Measd;
+import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;

@@ -29,7 +29,7 @@ import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;

@@ -17,10 +17,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.rest.LadaService;
 
 /**
@@ -81,7 +81,7 @@ public class MessgroesseService extends LadaService {
         Query query =
             repository.queryFromString(
                 "SELECT messgroesse_id FROM "
-                + de.intevation.lada.model.stammdaten.SchemaName.LEGACY_NAME
+                + de.intevation.lada.model.master.SchemaName.LEGACY_NAME
                 + ".mmt_messgroesse "
                 + "WHERE mmt_id = :mmt"
             ).setParameter("mmt", mmtId);

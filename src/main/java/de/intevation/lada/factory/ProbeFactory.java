@@ -30,10 +30,10 @@ import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.ZusatzWert;
-import de.intevation.lada.model.stammdaten.EnvDescripEnvMediumMp;
-import de.intevation.lada.model.stammdaten.EnvDescrip;
-import de.intevation.lada.model.stammdaten.Site;
-import de.intevation.lada.model.stammdaten.SampleSpecif;
+import de.intevation.lada.model.master.EnvDescrip;
+import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
+import de.intevation.lada.model.master.SampleSpecif;
+import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
@@ -589,7 +589,7 @@ public class ProbeFactory {
         if (mediaDesk != null) {
             Object result = repository.queryFromString(
                 "SELECT "
-                + de.intevation.lada.model.stammdaten.SchemaName.NAME
+                + de.intevation.lada.model.master.SchemaName.NAME
                 + ".get_media_from_media_desk( :mediaDesk );")
                     .setParameter("mediaDesk", mediaDesk)
                     .getSingleResult();

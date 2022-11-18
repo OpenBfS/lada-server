@@ -27,8 +27,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.TagZuordnung;
-import de.intevation.lada.model.stammdaten.MeasFacil;
-import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.master.MeasFacil;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;

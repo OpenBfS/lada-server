@@ -10,7 +10,7 @@ package de.intevation.lada.validation.rules.messprogrammMmt;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.MessprogrammMmt;
-import de.intevation.lada.model.stammdaten.Measd;
+import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;

@@ -13,11 +13,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.stammdaten.SpatRefSys;
 import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.model.master.SpatRefSys;
 import de.intevation.lada.rest.LadaService;
 
 /**

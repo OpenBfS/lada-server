@@ -25,10 +25,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.stammdaten.GridColMp;
-import de.intevation.lada.model.stammdaten.GridColConf;
-import de.intevation.lada.model.stammdaten.MeasFacil;
-import de.intevation.lada.model.stammdaten.QueryUser;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -36,6 +32,10 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.model.master.GridColConf;
+import de.intevation.lada.model.master.GridColMp;
+import de.intevation.lada.model.master.MeasFacil;
+import de.intevation.lada.model.master.QueryUser;
 import de.intevation.lada.rest.LadaService;
 
 

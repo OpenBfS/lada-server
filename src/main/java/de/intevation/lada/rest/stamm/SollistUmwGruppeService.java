@@ -11,9 +11,9 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-import de.intevation.lada.model.stammdaten.TargEnvGr;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.model.master.TargEnvGr;
 import de.intevation.lada.rest.LadaService;
 
 /**

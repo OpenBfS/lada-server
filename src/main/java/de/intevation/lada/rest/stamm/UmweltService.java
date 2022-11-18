@@ -16,12 +16,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.stammdaten.ReiAgGrEnvMediumMp;
-import de.intevation.lada.model.stammdaten.EnvMedium;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.model.master.EnvMedium;
+import de.intevation.lada.model.master.ReiAgGrEnvMediumMp;
 import de.intevation.lada.rest.LadaService;
 
 /**

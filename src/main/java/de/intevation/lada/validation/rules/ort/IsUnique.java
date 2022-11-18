@@ -9,7 +9,7 @@ package de.intevation.lada.validation.rules.ort;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.stammdaten.Site;
+import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;

@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.land.StatusProtokoll;
-import de.intevation.lada.model.stammdaten.StatusMp;
+import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;

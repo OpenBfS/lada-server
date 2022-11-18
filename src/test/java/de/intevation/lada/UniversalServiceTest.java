@@ -31,7 +31,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.intevation.lada.model.stammdaten.BaseQuery;
+import de.intevation.lada.model.master.BaseQuery;
 
 /**
  * Class to test the Lada server 'universal' service and related SqlService.

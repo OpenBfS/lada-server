@@ -24,7 +24,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import de.intevation.lada.model.stammdaten.Measd;
+import de.intevation.lada.model.master.Measd;
 
 /**
  * The persistent class for the messprogramm_mmt database table.
