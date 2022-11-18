@@ -526,7 +526,7 @@ public class JsonExporter implements Exporter {
                 );
                 ((ObjectNode) nodes.get(i)).put(
                     "statusStufe",
-                    kombi.getStatusLev().getStufe());
+                    kombi.getStatusLev().getLev());
                 ((ObjectNode) nodes.get(i)).put(
                     "statusWert",
                     kombi.getStatusVal().getWert());

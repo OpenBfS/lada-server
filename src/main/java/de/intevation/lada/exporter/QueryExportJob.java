@@ -239,7 +239,7 @@ public abstract class QueryExportJob extends ExportJob {
                 StatusMp.class, protokoll.getStatusKombi());
         StatusStufe stufe = kombi.getStatusLev();
         StatusWert wert = kombi.getStatusVal();
-        return String.format("%s - %s", stufe.getStufe(), wert.getWert());
+        return String.format("%s - %s", stufe.getLev(), wert.getWert());
     }
 
     /**

@@ -13,20 +13,15 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
-/**
- * The persistent class for the status_stufe database table.
- *
- */
 @Entity
-@Table(name = "status_stufe", schema = SchemaName.LEGACY_NAME)
+@Table(name = "status_lev", schema = SchemaName.NAME)
 public class StatusStufe implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    private String stufe;
+    private String lev;
 
     public StatusStufe() {
     }
@@ -39,11 +34,11 @@ public class StatusStufe implements Serializable {
         this.id = id;
     }
 
-    public String getStufe() {
-        return this.stufe;
+    public String getLev() {
+        return this.lev;
     }
 
-    public void setStufe(String stufe) {
-        this.stufe = stufe;
+    public void setLev(String lev) {
+        this.lev = lev;
     }
 }
