@@ -235,17 +235,17 @@ public class StatusService extends LadaService {
             // status_kombi
             if (userInfo.getFunktionenForMst(
                     status.getMstId()).contains(
-                        newKombi.getStatusStufe().getId())
-                && (newKombi.getStatusStufe().getId().equals(1)
+                        newKombi.getStatusLev().getId())
+                && (newKombi.getStatusLev().getId().equals(1)
                     && messung.getStatusEditMst()
-                    || newKombi.getStatusStufe().getId().equals(2)
+                    || newKombi.getStatusLev().getId().equals(2)
                     && messung.getStatusEditLand()
-                    || newKombi.getStatusStufe().getId().equals(3)
+                    || newKombi.getStatusLev().getId().equals(3)
                     && messung.getStatusEditLst())
                 ) {
                 // 1. user user wants to reset the current status
                 //    'status wert' == 8
-                if (newKombi.getStatusWert().getId() == 8) {
+                if (newKombi.getStatusVal().getId() == 8) {
                     return authorization.filter(
                         resetStatus(status, oldStatus, messung),
                         StatusProtokoll.class);
@@ -267,7 +267,7 @@ public class StatusService extends LadaService {
     ) {
         Violation violation = new Violation();
         Violation violationCollection = new Violation();
-        int newStatusWert = newKombi.getStatusWert().getId();
+        int newStatusWert = newKombi.getStatusVal().getId();
         if (newStatusWert == 1
             || newStatusWert == 2
             || newStatusWert == 7
@@ -428,8 +428,8 @@ public class StatusService extends LadaService {
             repository.getByIdPlain(
                 StatusKombi.class, oldStatus.getStatusKombi());
 
-        kombiFilter.and("statusStufe", oldKombi.getStatusStufe().getId());
-        kombiFilter.and("statusWert", 8);
+        kombiFilter.and("statusLev", oldKombi.getStatusLev().getId());
+        kombiFilter.and("statusVal", 8);
         List<StatusKombi> newKombi =
             repository.filterPlain(kombiFilter.getQuery());
         StatusProtokoll statusNew = new StatusProtokoll();
@@ -446,7 +446,7 @@ public class StatusService extends LadaService {
             StatusKombi.class,
             oldStatus.getStatusKombi()
         );
-        if (kombi.getStatusStufe().getId() == 1) {
+        if (kombi.getStatusLev().getId() == 1) {
             StatusProtokoll nV = new StatusProtokoll();
             nV.setDatum(new Timestamp(new Date().getTime()));
             nV.setMstId(newStatus.getMstId());
@@ -468,8 +468,8 @@ public class StatusService extends LadaService {
                 StatusKombi sk =
                     repository.getByIdPlain(
                         StatusKombi.class, curKom);
-                if (sk.getStatusStufe().getId()
-                    < kombi.getStatusStufe().getId()
+                if (sk.getStatusLev().getId()
+                    < kombi.getStatusLev().getId()
                 ) {
                     ndx = i;
                     break;

@@ -1540,8 +1540,8 @@ public class LafObjectMapper {
         int newKombi = 0;
         QueryBuilder<StatusKombi> builder =
             repository.queryBuilder(StatusKombi.class);
-        builder.and("statusWert", statusWert);
-        builder.and("statusStufe", statusStufe);
+        builder.and("statusVal", statusWert);
+        builder.and("statusLev", statusStufe);
         List<StatusKombi> kombi =
             (List<StatusKombi>) repository.filterPlain(builder.getQuery());
         if (kombi != null && !kombi.isEmpty()) {
@@ -1562,10 +1562,10 @@ public class LafObjectMapper {
         // check if erreichbar
         QueryBuilder<StatusAccessMpView> errFilter =
             repository.queryBuilder(StatusAccessMpView.class);
-        errFilter.and("stufeId", statusStufe);
-        errFilter.and("wertId", statusWert);
-        errFilter.and("curStufe", currentKombi.getStatusStufe().getId());
-        errFilter.and("curWert", currentKombi.getStatusWert().getId());
+        errFilter.and("levId", statusStufe);
+        errFilter.and("valId", statusWert);
+        errFilter.and("curLev", currentKombi.getStatusLev().getId());
+        errFilter.and("curVal", currentKombi.getStatusVal().getId());
         List<StatusAccessMpView> erreichbar =
             repository.filterPlain(errFilter.getQuery());
         if (erreichbar.isEmpty()) {

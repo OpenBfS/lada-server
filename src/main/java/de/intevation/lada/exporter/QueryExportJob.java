@@ -237,8 +237,8 @@ public abstract class QueryExportJob extends ExportJob {
         StatusKombi kombi =
             repository.getByIdPlain(
                 StatusKombi.class, protokoll.getStatusKombi());
-        StatusStufe stufe = kombi.getStatusStufe();
-        StatusWert wert = kombi.getStatusWert();
+        StatusStufe stufe = kombi.getStatusLev();
+        StatusWert wert = kombi.getStatusVal();
         return String.format("%s - %s", stufe.getStufe(), wert.getWert());
     }
 

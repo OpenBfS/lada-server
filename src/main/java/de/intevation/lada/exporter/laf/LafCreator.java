@@ -520,8 +520,8 @@ implements Creator {
                 StatusKombi.class,
                 statusEntry.getStatusKombi()
             );
-            st = stKombi.getStatusStufe().getId();
-            w = stKombi.getStatusWert().getId();
+            st = stKombi.getStatusLev().getId();
+            w = stKombi.getStatusVal().getId();
             if (st < stufe) {
                 stufe = st;
                 status[stufe-1] = w;

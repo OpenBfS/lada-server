@@ -120,9 +120,9 @@ public class StatusKombiService extends LadaService {
 
             QueryBuilder<StatusAccessMpView> errFilter =
                 repository.queryBuilder(StatusAccessMpView.class);
-            errFilter.andIn("stufeId", user.getFunktionen());
-            errFilter.and("curStufe", kombi.getStatusStufe().getId());
-            errFilter.and("curWert", kombi.getStatusWert().getId());
+            errFilter.andIn("levId", user.getFunktionen());
+            errFilter.and("curLevId", kombi.getStatusLev().getId());
+            errFilter.and("curValId", kombi.getStatusVal().getId());
             List<StatusAccessMpView> err = repository.filterPlain(
                     errFilter.getQuery());
             for (StatusAccessMpView e : err) {
@@ -140,8 +140,8 @@ public class StatusKombiService extends LadaService {
             : erreichbare.entrySet()
         ) {
                 QueryBuilder<StatusKombi> tmp = kombiFilter.getEmptyBuilder();
-                tmp.and("statusWert", erreichbar.getValue().getValId())
-                    .and("statusStufe", erreichbar.getValue().getLevId());
+                tmp.and("statusVal", erreichbar.getValue().getValId())
+                    .and("statusLev", erreichbar.getValue().getLevId());
                 kombiFilter.or(tmp);
         }
 

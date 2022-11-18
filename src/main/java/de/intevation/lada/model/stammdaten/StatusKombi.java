@@ -16,13 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-
-/**
- * The persistent class for the status_kombi database table.
- *
- */
 @Entity
-@Table(name = "status_kombi", schema = SchemaName.LEGACY_NAME)
+@Table(name = "status_mp", schema = SchemaName.NAME)
 public class StatusKombi implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -31,13 +26,13 @@ public class StatusKombi implements Serializable {
 
     //bi-directional many-to-one association to StatusStufe
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "stufe_id")
-    private StatusStufe statusStufe;
+    @JoinColumn(name = "status_lev_id")
+    private StatusStufe statusLev;
 
     //bi-directional many-to-one association to StatusWert
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "wert_id")
-    private StatusWert statusWert;
+    @JoinColumn(name = "status_val_id")
+    private StatusWert statusVal;
 
     public StatusKombi() {
     }
@@ -50,20 +45,20 @@ public class StatusKombi implements Serializable {
         this.id = id;
     }
 
-    public StatusStufe getStatusStufe() {
-        return this.statusStufe;
+    public StatusStufe getStatusLev() {
+        return this.statusLev;
     }
 
-    public void setStatusStufe(StatusStufe statusStufe) {
-        this.statusStufe = statusStufe;
+    public void setStatusLev(StatusStufe statusLev) {
+        this.statusLev = statusLev;
     }
 
-    public StatusWert getStatusWert() {
-        return this.statusWert;
+    public StatusWert getStatusVal() {
+        return this.statusVal;
     }
 
-    public void setStatusWert(StatusWert statusWert) {
-        this.statusWert = statusWert;
+    public void setStatusVal(StatusWert statusVal) {
+        this.statusVal = statusVal;
     }
 
 }

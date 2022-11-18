@@ -526,10 +526,10 @@ public class JsonExporter implements Exporter {
                 );
                 ((ObjectNode) nodes.get(i)).put(
                     "statusStufe",
-                    kombi.getStatusStufe().getStufe());
+                    kombi.getStatusLev().getStufe());
                 ((ObjectNode) nodes.get(i)).put(
                     "statusWert",
-                    kombi.getStatusWert().getWert());
+                    kombi.getStatusVal().getWert());
                 MeasFacil mst = repository.getByIdPlain(
                     MeasFacil.class,
                     nodes.get(i).get("mstId").asText()

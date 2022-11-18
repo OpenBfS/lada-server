@@ -113,9 +113,9 @@ public class StatusWertService extends LadaService {
 
         QueryBuilder<StatusAccessMpView> errFilter = repository
             .queryBuilder(StatusAccessMpView.class)
-            .andIn("stufeId", authorization.getInfo().getFunktionen())
-            .and("curStufe", kombi.getStatusStufe().getId())
-            .and("curWert", kombi.getStatusWert().getId());
+            .andIn("levId", authorization.getInfo().getFunktionen())
+            .and("curLev", kombi.getStatusLev().getId())
+            .and("curVal", kombi.getStatusVal().getId());
         List<StatusAccessMpView> erreichbare = repository.filterPlain(
             errFilter.getQuery());
 

@@ -86,8 +86,8 @@ public class CsvExporter implements Exporter {
     private String getStatusStringByid(Integer id) {
         StatusKombi kombi =
             repository.getByIdPlain(StatusKombi.class, id);
-        StatusStufe stufe = kombi.getStatusStufe();
-        StatusWert wert = kombi.getStatusWert();
+        StatusStufe stufe = kombi.getStatusLev();
+        StatusWert wert = kombi.getStatusVal();
 
         return String.format("%s - %s", stufe.getStufe(), wert.getWert());
     }
