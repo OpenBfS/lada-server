@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 import javax.json.JsonObject;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -22,12 +21,8 @@ import org.hibernate.annotations.TypeDefs;
 
 import de.intevation.lada.util.data.JsonObjectType;
 
-/**
- * The persistent class for the audit_trail database table.
- *
- */
 @Entity
-@Table(name = "audit_trail", schema = SchemaName.LEGACY_NAME)
+@Table(schema = SchemaName.NAME)
 @TypeDefs({ @TypeDef(name = "JsonObject", typeClass = JsonObjectType.class) })
 public class AuditTrail implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -37,21 +32,16 @@ public class AuditTrail implements Serializable {
 
     private String action;
 
-    @Column(name = "action_tstamp_clk")
     private Timestamp actionTstampClk;
 
-    @Column(name = "changed_fields")
     @Type(type = "JsonObject")
     private JsonObject changedFields;
 
-    @Column(name = "object_id")
     private Integer objectId;
 
-    @Column(name = "row_data")
     @Type(type = "JsonObject")
     private JsonObject rowData;
 
-    @Column(name = "table_name")
     private String tableName;
 
     public AuditTrail() {
