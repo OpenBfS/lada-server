@@ -15,8 +15,8 @@ import javax.persistence.Table;
 
 
 @Entity
-@Table(name = "status_val", schema = SchemaName.NAME)
-public class StatusWert implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class StatusVal implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -24,7 +24,7 @@ public class StatusWert implements Serializable {
 
     private String val;
 
-    public StatusWert() {
+    public StatusVal() {
     }
 
     public Integer getId() {

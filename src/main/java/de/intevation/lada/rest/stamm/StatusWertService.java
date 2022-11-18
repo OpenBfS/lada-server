@@ -19,7 +19,7 @@ import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.StatusAccessMpView;
 import de.intevation.lada.model.stammdaten.StatusMp;
-import de.intevation.lada.model.stammdaten.StatusWert;
+import de.intevation.lada.model.stammdaten.StatusVal;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -77,7 +77,7 @@ public class StatusWertService extends LadaService {
         @QueryParam("messungsId") Integer messungsId
     ) {
         if (messungsId == null) {
-            return repository.getAll(StatusWert.class);
+            return repository.getAll(StatusVal.class);
         }
         return getReachable(messungsId);
     }
@@ -93,7 +93,7 @@ public class StatusWertService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        return repository.getById(StatusWert.class, id);
+        return repository.getById(StatusVal.class, id);
     }
 
     /**
@@ -119,8 +119,8 @@ public class StatusWertService extends LadaService {
         List<StatusAccessMpView> erreichbare = repository.filterPlain(
             errFilter.getQuery());
 
-        QueryBuilder<StatusWert> werteFilter =
-            repository.queryBuilder(StatusWert.class);
+        QueryBuilder<StatusVal> werteFilter =
+            repository.queryBuilder(StatusVal.class);
         for (StatusAccessMpView erreichbar: erreichbare) {
             werteFilter.or("id", erreichbar.getValId());
         }
