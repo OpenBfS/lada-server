@@ -122,7 +122,7 @@ public class StatusWertService extends LadaService {
         QueryBuilder<StatusWert> werteFilter =
             repository.queryBuilder(StatusWert.class);
         for (StatusErreichbar erreichbar: erreichbare) {
-            werteFilter.or("id", erreichbar.getWertId());
+            werteFilter.or("id", erreichbar.getValId());
         }
         return repository.filter(werteFilter.getQuery());
     }

@@ -140,8 +140,8 @@ public class StatusKombiService extends LadaService {
             : erreichbare.entrySet()
         ) {
                 QueryBuilder<StatusKombi> tmp = kombiFilter.getEmptyBuilder();
-                tmp.and("statusWert", erreichbar.getValue().getWertId())
-                    .and("statusStufe", erreichbar.getValue().getStufeId());
+                tmp.and("statusWert", erreichbar.getValue().getValId())
+                    .and("statusStufe", erreichbar.getValue().getLevId());
                 kombiFilter.or(tmp);
         }
 

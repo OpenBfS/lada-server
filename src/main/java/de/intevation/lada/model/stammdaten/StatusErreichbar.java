@@ -9,35 +9,25 @@ package de.intevation.lada.model.stammdaten;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-
-/**
- * The persistent class for the status_erreichbar database table.
- *
- */
 @Entity
-@Table(name = "status_erreichbar", schema = SchemaName.LEGACY_NAME)
+@Table(name = "status_access_mp_view", schema = SchemaName.NAME)
 public class StatusErreichbar implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    @Column(name = "cur_stufe")
-    private Integer curStufe;
+    private Integer curLevId;
 
-    @Column(name = "cur_wert")
-    private Integer curWert;
+    private Integer curValId;
 
-    @Column(name = "stufe_id")
-    private Integer stufeId;
+    private Integer levId;
 
-    @Column(name = "wert_id")
-    private Integer wertId;
+    private Integer valId;
 
     public StatusErreichbar() {
     }
@@ -56,36 +46,36 @@ public class StatusErreichbar implements Serializable {
         this.id = id;
     }
 
-    public Integer getCurStufe() {
-        return this.curStufe;
+    public Integer getCurLevId() {
+        return this.curLevId;
     }
 
-    public void setCurStufe(Integer curStufe) {
-        this.curStufe = curStufe;
+    public void setCurLevId(Integer curLev) {
+        this.curLevId = curLev;
     }
 
-    public Integer getCurWert() {
-        return this.curWert;
+    public Integer getCurValId() {
+        return this.curValId;
     }
 
-    public void setCurWert(Integer curWert) {
-        this.curWert = curWert;
+    public void setCurValId(Integer curVal) {
+        this.curValId = curVal;
     }
 
-    public Integer getStufeId() {
-        return this.stufeId;
+    public Integer getLevId() {
+        return this.levId;
     }
 
-    public void setStufeId(Integer stufeId) {
-        this.stufeId = stufeId;
+    public void setLevId(Integer levId) {
+        this.levId = levId;
     }
 
-    public Integer getWertId() {
-        return this.wertId;
+    public Integer getValId() {
+        return this.valId;
     }
 
-    public void setWertId(Integer wertId) {
-        this.wertId = wertId;
+    public void setValId(Integer valId) {
+        this.valId = valId;
     }
 
 }
