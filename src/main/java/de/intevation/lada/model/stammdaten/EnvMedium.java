@@ -16,8 +16,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "env_medium", schema = SchemaName.NAME)
-public class Umwelt implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class EnvMedium implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,7 +34,7 @@ public class Umwelt implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public Umwelt() {
+    public EnvMedium() {
     }
 
     public String getId() {

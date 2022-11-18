@@ -65,7 +65,7 @@ import de.intevation.lada.model.stammdaten.State;
 import de.intevation.lada.model.stammdaten.StatusAccessMpView;
 import de.intevation.lada.model.stammdaten.StatusMp;
 import de.intevation.lada.model.stammdaten.Tag;
-import de.intevation.lada.model.stammdaten.Umwelt;
+import de.intevation.lada.model.stammdaten.EnvMedium;
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
 import de.intevation.lada.model.stammdaten.Zeitbasis;
 import de.intevation.lada.util.auth.HeaderAuthorization;
@@ -2320,8 +2320,8 @@ public class LafObjectMapper {
         if ("UMWELTBEREICH_S".equals(key)
             && probe.getEnvMediumId() == null
         ) {
-            Umwelt umw = repository.getByIdPlain(
-                Umwelt.class, value.toString());
+            EnvMedium umw = repository.getByIdPlain(
+                EnvMedium.class, value.toString());
             if (umw == null) {
                 currentWarnings.add(
                     new ReportItem(
@@ -2340,14 +2340,14 @@ public class LafObjectMapper {
             && probe.getEnvMediumId() == null
             && value != null
         ) {
-            QueryBuilder<Umwelt> builder =
-                repository.queryBuilder(Umwelt.class);
+            QueryBuilder<EnvMedium> builder =
+                repository.queryBuilder(EnvMedium.class);
             int length = value.toString().length() > 80
                 ? 80
                 : value.toString().length();
             builder.and("name", value.toString().substring(0, length));
-            List<Umwelt> umwelt =
-                (List<Umwelt>) repository.filterPlain(builder.getQuery());
+            List<EnvMedium> umwelt =
+                (List<EnvMedium>) repository.filterPlain(builder.getQuery());
             if (umwelt == null || umwelt.isEmpty()) {
                 currentWarnings.add(
                     new ReportItem(

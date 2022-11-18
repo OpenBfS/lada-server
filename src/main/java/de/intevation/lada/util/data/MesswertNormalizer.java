@@ -13,7 +13,7 @@ import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.stammdaten.UnitConvers;
-import de.intevation.lada.model.stammdaten.Umwelt;
+import de.intevation.lada.model.stammdaten.EnvMedium;
 
 
 public class MesswertNormalizer {
@@ -56,8 +56,8 @@ public class MesswertNormalizer {
         if (umwId == null || umwId.equals("")) {
             return messwerte;
         }
-        Umwelt umwelt =
-            repository.getByIdPlain(Umwelt.class, umwId);
+        EnvMedium umwelt =
+            repository.getByIdPlain(EnvMedium.class, umwId);
         Integer mehIdToConvertTo = umwelt.getUnit1();
         Integer secMehIdToConvertTo = umwelt.getUnit2();
 

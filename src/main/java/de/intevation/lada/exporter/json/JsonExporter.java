@@ -61,7 +61,7 @@ import de.intevation.lada.model.stammdaten.SampleMeth;
 import de.intevation.lada.model.stammdaten.Sampler;
 import de.intevation.lada.model.stammdaten.State;
 import de.intevation.lada.model.stammdaten.StatusMp;
-import de.intevation.lada.model.stammdaten.Umwelt;
+import de.intevation.lada.model.stammdaten.EnvMedium;
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -247,8 +247,8 @@ public class JsonExporter implements Exporter {
                 Regulation.class,
                 probe.get("datenbasisId").asInt()
             );
-            Umwelt umw = repository.getByIdPlain(
-                Umwelt.class,
+            EnvMedium umw = repository.getByIdPlain(
+                EnvMedium.class,
                 probe.get("umwId").asText()
             );
             probe.put("probenart",

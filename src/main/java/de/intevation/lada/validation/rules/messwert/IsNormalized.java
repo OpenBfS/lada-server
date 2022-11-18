@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import java.util.List;
 
 import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.stammdaten.Umwelt;
+import de.intevation.lada.model.stammdaten.EnvMedium;
 import de.intevation.lada.model.stammdaten.UnitConvers;
 import de.intevation.lada.model.stammdaten.Measd;
 import de.intevation.lada.util.data.Repository;
@@ -39,7 +39,7 @@ public class IsNormalized implements Rule {
     @Override
     public Violation execute(Object object) {
         Messwert messwert = (Messwert) object;
-        Umwelt umwelt = null;
+        EnvMedium umwelt = null;
         Violation violation = new Violation();
 
         if (messwert.getMessung() != null

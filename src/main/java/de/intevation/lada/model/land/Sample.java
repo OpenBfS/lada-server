@@ -25,7 +25,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.hibernate.annotations.DynamicInsert;
 
-import de.intevation.lada.model.stammdaten.Umwelt;
+import de.intevation.lada.model.stammdaten.EnvMedium;
 import de.intevation.lada.util.data.EmptyStringConverter;
 
 
@@ -89,7 +89,7 @@ public class Sample implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "env_medium_id", insertable = false, updatable = false)
-    private Umwelt umwelt;
+    private EnvMedium umwelt;
 
     private String envMediumId;
 
@@ -304,7 +304,7 @@ public class Sample implements Serializable {
     }
 
     @JsonbTransient
-    public Umwelt getUmwelt() {
+    public EnvMedium getUmwelt() {
         return this.umwelt;
     }
 

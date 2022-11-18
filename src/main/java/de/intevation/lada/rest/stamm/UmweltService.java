@@ -17,7 +17,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.stammdaten.ReiAgGrEnvMediumMp;
-import de.intevation.lada.model.stammdaten.Umwelt;
+import de.intevation.lada.model.stammdaten.EnvMedium;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -72,7 +72,7 @@ public class UmweltService extends LadaService {
         @QueryParam("reiprogpunktgruppe") Integer reiProgpunktGrpId
     ) {
         if (reiProgpunktGrpId == null) {
-            return repository.getAll(Umwelt.class);
+            return repository.getAll(EnvMedium.class);
         }
         QueryBuilder<ReiAgGrEnvMediumMp> builder =
             repository.queryBuilder(ReiAgGrEnvMediumMp.class);
@@ -82,8 +82,8 @@ public class UmweltService extends LadaService {
         if (zuord.isEmpty()) {
             return new Response(true, StatusCodes.OK, null);
         }
-        QueryBuilder<Umwelt> builder1 =
-            repository.queryBuilder(Umwelt.class);
+        QueryBuilder<EnvMedium> builder1 =
+            repository.queryBuilder(EnvMedium.class);
         List<String> ids = new ArrayList<String>();
         for (int i = 0; i < zuord.size(); i++) {
             ids.add(zuord.get(i).getEnvMediumId());
@@ -103,6 +103,6 @@ public class UmweltService extends LadaService {
     public Response getById(
         @PathParam("id") String id
     ) {
-        return repository.getById(Umwelt.class, id);
+        return repository.getById(EnvMedium.class, id);
     }
 }

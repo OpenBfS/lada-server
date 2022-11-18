@@ -25,7 +25,7 @@ import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.stammdaten.Umwelt;
+import de.intevation.lada.model.stammdaten.EnvMedium;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -352,9 +352,9 @@ public class MesswertService extends LadaService {
         ) {
             return new Response(true, StatusCodes.OP_NOT_POSSIBLE, null);
         }
-        Umwelt umwelt =
+        EnvMedium umwelt =
             repository.getByIdPlain(
-                Umwelt.class, probe.getEnvMediumId());
+                EnvMedium.class, probe.getEnvMediumId());
         //Get all Messwert objects to convert
         QueryBuilder<Messwert> messwertBuilder =
             repository.queryBuilder(Messwert.class);

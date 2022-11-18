@@ -13,7 +13,7 @@ import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.stammdaten.MeasUnit;
-import de.intevation.lada.model.stammdaten.Umwelt;
+import de.intevation.lada.model.stammdaten.EnvMedium;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
@@ -37,7 +37,7 @@ public class SecondaryMehSelected implements Rule {
     @Override
     public Violation execute(Object object) {
         Messwert messwert = (Messwert) object;
-        Umwelt umwelt = null;
+        EnvMedium umwelt = null;
         Violation violation = new Violation();
 
         if (messwert.getMessung() != null
