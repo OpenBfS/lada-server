@@ -17,7 +17,7 @@ import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 
-import de.intevation.lada.model.land.KommentarM;
+import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.MessprogrammMmt;
@@ -129,7 +129,7 @@ public class HeaderAuthorization implements Authorization {
             Map.entry(Ortszuordnung.class, pIdAuthorizer),
             Map.entry(KommentarP.class, pIdAuthorizer),
             Map.entry(ZusatzWert.class, pIdAuthorizer),
-            Map.entry(KommentarM.class, mIdAuthorizer),
+            Map.entry(CommMeasm.class, mIdAuthorizer),
             Map.entry(Messwert.class, mIdAuthorizer),
             Map.entry(StatusProtokoll.class, mIdAuthorizer),
             Map.entry(Sampler.class, netzAuthorizer),

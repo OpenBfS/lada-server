@@ -47,7 +47,7 @@ import de.intevation.lada.importer.Identified;
 import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.IdentifierConfig;
 import de.intevation.lada.importer.ObjectMerger;
-import de.intevation.lada.model.land.KommentarM;
+import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
@@ -658,14 +658,14 @@ public class ImporterTest extends BaseTest {
 
         Messung messung =
             repository.getByIdPlain(Messung.class, MID1200);
-        List<KommentarM> kommentare = new ArrayList<KommentarM>();
-        KommentarM komm1 = new KommentarM();
+        List<CommMeasm> kommentare = new ArrayList<CommMeasm>();
+        CommMeasm komm1 = new CommMeasm();
         komm1.setMeasmId(MID1200);
         komm1.setDate(Timestamp.valueOf("2012-05-08 12:00:00"));
         komm1.setMeasFacilId("06010");
         komm1.setText("Testtext2");
 
-        KommentarM komm2 = new KommentarM();
+        CommMeasm komm2 = new CommMeasm();
         komm2.setMeasmId(MID1200);
         komm2.setDate(Timestamp.valueOf("2012-03-08 12:00:00"));
         komm2.setMeasFacilId("06010");

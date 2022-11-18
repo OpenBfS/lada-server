@@ -39,7 +39,7 @@ import org.jboss.logging.Logger;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
-import de.intevation.lada.model.land.KommentarM;
+import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
@@ -484,10 +484,10 @@ public class JsonExporter implements Exporter {
     }
 
     private void addMessungsKommentare(JsonNode node) {
-        QueryBuilder<KommentarM> builder =
-            repository.queryBuilder(KommentarM.class);
+        QueryBuilder<CommMeasm> builder =
+            repository.queryBuilder(CommMeasm.class);
         builder.and("measmId", node.get("id").asInt());
-        List<KommentarM> kommentare =
+        List<CommMeasm> kommentare =
             repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();
         try {

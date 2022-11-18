@@ -17,11 +17,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-
-
 @Entity
 @Table(name = "comm_measm", schema = SchemaName.NAME)
-public class KommentarM implements Serializable {
+public class CommMeasm implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -42,7 +40,7 @@ public class KommentarM implements Serializable {
     @Transient
     private boolean readonly;
 
-    public KommentarM() {
+    public CommMeasm() {
     }
 
     public Integer getId() {

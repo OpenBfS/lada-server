@@ -35,7 +35,7 @@ import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.IdentifierConfig;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.ReportItem;
-import de.intevation.lada.model.land.KommentarM;
+import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
@@ -723,16 +723,16 @@ public class LafObjectMapper {
         doTransformations(zusatzwert, ZusatzWert.class, "zusatwert");
     }
 
-    private void doDefaults(KommentarM kommentar) {
-        doDefaults(kommentar, KommentarM.class, "kommentarm");
+    private void doDefaults(CommMeasm kommentar) {
+        doDefaults(kommentar, CommMeasm.class, "kommentarm");
     }
 
-    private void doConverts(KommentarM kommentar) {
-        doConverts(kommentar, KommentarM.class, "kommentarm");
+    private void doConverts(CommMeasm kommentar) {
+        doConverts(kommentar, CommMeasm.class, "kommentarm");
     }
 
-    private void doTransforms(KommentarM kommentar) {
-        doTransformations(kommentar, KommentarM.class, "kommentarm");
+    private void doTransforms(CommMeasm kommentar) {
+        doTransformations(kommentar, CommMeasm.class, "kommentarm");
     }
 
     private void doDefaults(KommentarP kommentar) {
@@ -1030,9 +1030,9 @@ public class LafObjectMapper {
                 "Identified with unexpected enum constant");
         }
 
-        List<KommentarM> kommentare = new ArrayList<KommentarM>();
+        List<CommMeasm> kommentare = new ArrayList<CommMeasm>();
         for (int i = 0; i < object.getKommentare().size(); i++) {
-            KommentarM tmp =
+            CommMeasm tmp =
                 createMessungKommentar(
                     object.getKommentare().get(i), newMessung.getId(), probe);
             if (tmp != null) {
@@ -1428,7 +1428,7 @@ public class LafObjectMapper {
         return messwert;
     }
 
-    private KommentarM createMessungKommentar(
+    private CommMeasm createMessungKommentar(
         Map<String, String> attributes,
         int messungsId,
         Sample probe
@@ -1438,7 +1438,7 @@ public class LafObjectMapper {
                 new ReportItem("KOMMENTAR", "Text", StatusCodes.VALUE_MISSING));
             return null;
         }
-        KommentarM kommentar = new KommentarM();
+        CommMeasm kommentar = new CommMeasm();
         kommentar.setMeasmId(messungsId);
         if (attributes.containsKey("MST_ID")) {
             kommentar.setMeasFacilId(attributes.get("MST_ID"));
@@ -1455,10 +1455,10 @@ public class LafObjectMapper {
         }
 
         // TODO: Why does the following duplicate a validation rule?
-        QueryBuilder<KommentarM> kommentarBuilder = repository
-            .queryBuilder(KommentarM.class)
+        QueryBuilder<CommMeasm> kommentarBuilder = repository
+            .queryBuilder(CommMeasm.class)
             .and("measmId", messungsId);
-        List<KommentarM> kommentarExist = repository.filterPlain(
+        List<CommMeasm> kommentarExist = repository.filterPlain(
             kommentarBuilder.getQuery());
 
         // TODO: Should be the job of EXISTS and a WHERE-clause in database

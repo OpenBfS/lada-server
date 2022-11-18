@@ -11,7 +11,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.KommentarM;
+import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.annotation.ValidationConfig;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -35,7 +35,7 @@ public class KommentarMValidator implements Validator {
     @Override
     public Violation validate(Object object) {
         Violation violations = new Violation();
-        if (!(object instanceof KommentarM)) {
+        if (!(object instanceof CommMeasm)) {
             violations.addError("Kommentar", StatusCodes.NOT_A_PROBE);
             return violations;
         }

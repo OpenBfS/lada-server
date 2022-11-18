@@ -18,7 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import de.intevation.lada.exporter.Creator;
-import de.intevation.lada.model.land.KommentarM;
+import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.KommentarP;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
@@ -454,13 +454,13 @@ implements Creator {
             Response messw =
                 repository.filter(wertBuilder.getQuery());
             List<Messwert> werte = (List<Messwert>) messw.getData();
-            QueryBuilder<KommentarM> kommBuilder =
-                repository.queryBuilder(KommentarM.class);
+            QueryBuilder<CommMeasm> kommBuilder =
+                repository.queryBuilder(CommMeasm.class);
             kommBuilder.and("measmId", m.getId());
             Response kommentar =
                 repository.filter(kommBuilder.getQuery());
-            List<KommentarM> kommentare =
-                (List<KommentarM>) kommentar.getData();
+            List<CommMeasm> kommentare =
+                (List<CommMeasm>) kommentar.getData();
             laf += lafLine("MESSUNGS_ID", m.getExterneMessungsId().toString());
             laf += m.getNebenprobenNr() == null
                 ? ""
@@ -488,7 +488,7 @@ implements Creator {
                     laf += writeMesswert(mw);
                 }
             }
-            for (KommentarM mk: kommentare) {
+            for (CommMeasm mk: kommentare) {
                 laf += writeKommentar(mk);
             }
         }
@@ -540,7 +540,7 @@ implements Creator {
      * @param mk    The {@link LKommentarM} object.
      * @return Single LAF line.
      */
-    private String writeKommentar(KommentarM mk) {
+    private String writeKommentar(CommMeasm mk) {
         String value = "\"" + mk.getMeasFacilId() + "\" "
             + toUTCString(mk.getDate()) + " "
             + "\"" + mk.getText() + "\"";

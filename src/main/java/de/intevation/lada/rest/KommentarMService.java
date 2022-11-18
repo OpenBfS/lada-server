@@ -17,7 +17,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.land.KommentarM;
+import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -104,12 +104,12 @@ public class KommentarMService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
-        QueryBuilder<KommentarM> builder =
-            repository.queryBuilder(KommentarM.class);
+        QueryBuilder<CommMeasm> builder =
+            repository.queryBuilder(CommMeasm.class);
         builder.and("measmId", messungsId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
-            KommentarM.class);
+            CommMeasm.class);
     }
 
     /**
@@ -123,8 +123,8 @@ public class KommentarMService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(KommentarM.class, id);
-        KommentarM kommentar = (KommentarM) response.getData();
+        Response response = repository.getById(CommMeasm.class, id);
+        CommMeasm kommentar = (CommMeasm) response.getData();
         Messung messung = repository.getByIdPlain(
             Messung.class, kommentar.getMeasmId());
         if (!authorization.isAuthorized(
@@ -135,7 +135,7 @@ public class KommentarMService extends LadaService {
 
         return authorization.filter(
             response,
-            KommentarM.class);
+            CommMeasm.class);
     }
 
     /**
@@ -159,12 +159,12 @@ public class KommentarMService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        KommentarM kommentar
+        CommMeasm kommentar
     ) {
         if (!authorization.isAuthorized(
                 kommentar,
                 RequestMethod.POST,
-                KommentarM.class)
+                CommMeasm.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -177,7 +177,7 @@ public class KommentarMService extends LadaService {
         /* Persist the new object*/
         return authorization.filter(
             repository.create(kommentar),
-            KommentarM.class);
+            CommMeasm.class);
         }
     }
 
@@ -204,12 +204,12 @@ public class KommentarMService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        KommentarM kommentar
+        CommMeasm kommentar
     ) {
         if (!authorization.isAuthorized(
                 kommentar,
                 RequestMethod.PUT,
-                KommentarM.class)
+                CommMeasm.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -221,7 +221,7 @@ public class KommentarMService extends LadaService {
         } else {
         return authorization.filter(
             repository.update(kommentar),
-            KommentarM.class);
+            CommMeasm.class);
         }
     }
 
@@ -236,11 +236,11 @@ public class KommentarMService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        KommentarM kommentarObj = repository.getByIdPlain(KommentarM.class, id);
+        CommMeasm kommentarObj = repository.getByIdPlain(CommMeasm.class, id);
         if (!authorization.isAuthorized(
                 kommentarObj,
                 RequestMethod.DELETE,
-                KommentarM.class)
+                CommMeasm.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
