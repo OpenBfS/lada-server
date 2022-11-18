@@ -67,7 +67,7 @@ import de.intevation.lada.model.stammdaten.StatusMp;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.model.stammdaten.EnvMedium;
 import de.intevation.lada.model.stammdaten.AdminUnit;
-import de.intevation.lada.model.stammdaten.Zeitbasis;
+import de.intevation.lada.model.stammdaten.Tz;
 import de.intevation.lada.util.auth.HeaderAuthorization;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.MesswertNormalizer;
@@ -212,10 +212,10 @@ public class LafObjectMapper {
             if (!cfg.isEmpty() && attribute.equals(cfg.get(0).getFromVal())) {
                 attribute = cfg.get(0).getToVal();
             }
-            QueryBuilder<Zeitbasis> builder =
-                repository.queryBuilder(Zeitbasis.class);
+            QueryBuilder<Tz> builder =
+                repository.queryBuilder(Tz.class);
             builder.and("name", attribute);
-            List<Zeitbasis> zb = repository.filterPlain(builder.getQuery());
+            List<Tz> zb = repository.filterPlain(builder.getQuery());
             if (zb == null || zb.isEmpty()) {
                 currentWarnings.add(
                     new ReportItem(
@@ -228,8 +228,8 @@ public class LafObjectMapper {
         } else if (object.getAttributes().containsKey("ZEITBASIS_S")) {
             currentZeitbasis =
                 Integer.valueOf(object.getAttributes().get("ZEITBASIS_S"));
-            Zeitbasis zeitbasis = repository.getByIdPlain(
-                Zeitbasis.class,
+            Tz zeitbasis = repository.getByIdPlain(
+                Tz.class,
                 currentZeitbasis
             );
             if (zeitbasis == null) {

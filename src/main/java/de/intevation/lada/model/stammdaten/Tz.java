@@ -17,9 +17,9 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 
 @Entity
-@NamedQuery(name = "Zeitbasis.findAll", query = "SELECT z FROM Zeitbasis z")
-@Table(name = "tz", schema = SchemaName.NAME)
-public class Zeitbasis implements Serializable {
+@NamedQuery(name = "Tz.findAll", query = "SELECT z FROM Tz z")
+@Table(schema = SchemaName.NAME)
+public class Tz implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -30,7 +30,7 @@ public class Zeitbasis implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    public Zeitbasis() {
+    public Tz() {
     }
 
     public Integer getId() {
