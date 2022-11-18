@@ -15,7 +15,7 @@ import org.jboss.logging.Logger;
 import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.model.stammdaten.Site;
-import de.intevation.lada.model.stammdaten.Verwaltungsgrenze;
+import de.intevation.lada.model.stammdaten.AdminBorderView;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -47,10 +47,10 @@ public class CoordinatesInVE implements Rule {
 
         if (gemId != null && ort.getGeom() != null) {
 
-            QueryBuilder<Verwaltungsgrenze> vg =
-                repository.queryBuilder(Verwaltungsgrenze.class);
+            QueryBuilder<AdminBorderView> vg =
+                repository.queryBuilder(AdminBorderView.class);
             vg.and("municId", gemId);
-            List<Verwaltungsgrenze> vgs = repository.filterPlain(
+            List<AdminBorderView> vgs = repository.filterPlain(
                 vg.getQuery());
             if (vgs == null || vgs.isEmpty()) {
                 Violation violation = new Violation();
@@ -66,7 +66,7 @@ public class CoordinatesInVE implements Rule {
             }
             Boolean unscharf = ort.getIsFuzzy();
             Violation violation = new Violation();
-            for (Verwaltungsgrenze singlevg : vgs) {
+            for (AdminBorderView singlevg : vgs) {
                 if (singlevg.getShape().contains(p)) {
                     if (unscharf != null && !unscharf) {
                         return null;

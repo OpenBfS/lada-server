@@ -19,8 +19,8 @@ import org.hibernate.annotations.Type;
 import org.locationtech.jts.geom.MultiPolygon;
 
 @Entity
-@Table(name = "admin_border_view", schema = SchemaName.NAME)
-public class Verwaltungsgrenze implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class AdminBorderView implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,7 +34,7 @@ public class Verwaltungsgrenze implements Serializable {
     @Column(columnDefinition = "geometry(MultiPolygon, 4326)")
     private MultiPolygon shape;
 
-    public Verwaltungsgrenze() {
+    public AdminBorderView() {
     }
 
     public Integer getId() {
