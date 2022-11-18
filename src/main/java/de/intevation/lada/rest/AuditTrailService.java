@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.intevation.lada.model.land.AuditTrailMeasmView;
-import de.intevation.lada.model.land.AuditTrailProbe;
+import de.intevation.lada.model.land.AuditTrailSampleView;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
@@ -177,8 +177,8 @@ public class AuditTrailService extends LadaService {
         }
 
         // Get all entries for the probe and its sub objects.
-        QueryBuilder<AuditTrailProbe> builder =
-            repository.queryBuilder(AuditTrailProbe.class);
+        QueryBuilder<AuditTrailSampleView> builder =
+            repository.queryBuilder(AuditTrailSampleView.class);
         builder.and("objectId", pId);
         builder.and("tableName", "sample");
         builder.or("sampleId", pId);
@@ -186,7 +186,7 @@ public class AuditTrailService extends LadaService {
             builder.orIn("siteId", ortIds);
         }
         builder.orderBy("tstamp", true);
-        List<AuditTrailProbe> audit =
+        List<AuditTrailSampleView> audit =
             repository.filterPlain(builder.getQuery());
 
         // Create an empty JsonObject
@@ -203,7 +203,7 @@ public class AuditTrailService extends LadaService {
             ? probe.getExtId()
             : probe.getMainSampleId()
         );
-        for (AuditTrailProbe a : audit) {
+        for (AuditTrailSampleView a : audit) {
             //If audit entry shows a messwert, do not show if:
             // - StatusKombi is 1 (MST - nicht vergeben)
             // - User is not owner of the messung
@@ -234,7 +234,7 @@ public class AuditTrailService extends LadaService {
      * @param mapper JSON object mapper
      */
     private ObjectNode createEntry(
-        AuditTrailProbe audit, ObjectMapper mapper
+        AuditTrailSampleView audit, ObjectMapper mapper
     ) {
         ObjectNode node = mapper.createObjectNode();
         node.put("timestamp", audit.getTstamp().getTime());

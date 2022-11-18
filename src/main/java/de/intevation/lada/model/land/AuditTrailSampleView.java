@@ -23,9 +23,9 @@ import org.hibernate.annotations.TypeDefs;
 import de.intevation.lada.util.data.JsonObjectType;
 
 @Entity
-@Table(name = "audit_trail_sample_view", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 @TypeDefs({ @TypeDef(name = "JsonObject", typeClass = JsonObjectType.class) })
-public class AuditTrailProbe implements Serializable {
+public class AuditTrailSampleView implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -51,7 +51,7 @@ public class AuditTrailProbe implements Serializable {
 
     private String tableName;
 
-    public AuditTrailProbe() {
+    public AuditTrailSampleView() {
     }
 
     public JsonNode getChangedFields() {
