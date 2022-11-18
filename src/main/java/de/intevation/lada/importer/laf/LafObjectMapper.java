@@ -61,7 +61,7 @@ import de.intevation.lada.model.stammdaten.SampleSpecif;
 import de.intevation.lada.model.stammdaten.SampleMeth;
 import de.intevation.lada.model.stammdaten.Sampler;
 import de.intevation.lada.model.stammdaten.ReiAgGr;
-import de.intevation.lada.model.stammdaten.Staat;
+import de.intevation.lada.model.stammdaten.State;
 import de.intevation.lada.model.stammdaten.StatusErreichbar;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.model.stammdaten.Tag;
@@ -1953,10 +1953,10 @@ public class LafObjectMapper {
         }
 
         if (staatFilter.length() > 0) {
-            QueryBuilder<Staat> builderStaat =
-                repository.queryBuilder(Staat.class);
+            QueryBuilder<State> builderStaat =
+                repository.queryBuilder(State.class);
             builderStaat.and(staatFilter, hLand);
-            List<Staat> staat =
+            List<State> staat =
                 repository.filterPlain(builderStaat.getQuery());
             if (staat == null || staat.size() == 0) {
                 currentWarnings.add(

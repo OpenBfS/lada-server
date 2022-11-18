@@ -12,7 +12,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.stammdaten.Staat;
+import de.intevation.lada.model.stammdaten.State;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
@@ -67,7 +67,7 @@ public class StaatService extends LadaService {
     @GET
     @Path("/")
     public Response get() {
-        return repository.getAll(Staat.class);
+        return repository.getAll(State.class);
     }
 
     /**
@@ -81,6 +81,6 @@ public class StaatService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        return repository.getById(Staat.class, id);
+        return repository.getById(State.class, id);
     }
 }

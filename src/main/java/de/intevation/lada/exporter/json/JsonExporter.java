@@ -59,7 +59,7 @@ import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.SampleSpecif;
 import de.intevation.lada.model.stammdaten.SampleMeth;
 import de.intevation.lada.model.stammdaten.Sampler;
-import de.intevation.lada.model.stammdaten.Staat;
+import de.intevation.lada.model.stammdaten.State;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.model.stammdaten.Umwelt;
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
@@ -580,8 +580,8 @@ public class JsonExporter implements Exporter {
             if (oNode.get("staatId").isNull()) {
                 ((ObjectNode) oNode).put("staat", "");
             } else {
-                Staat staat = repository.getByIdPlain(
-                    Staat.class,
+                State staat = repository.getByIdPlain(
+                    State.class,
                     oNode.get("staatId").asInt()
                 );
                 ((ObjectNode) oNode).put("staat", staat.getCtry());

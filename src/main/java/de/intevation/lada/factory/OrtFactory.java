@@ -20,7 +20,7 @@ import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.stammdaten.Site;
-import de.intevation.lada.model.stammdaten.Staat;
+import de.intevation.lada.model.stammdaten.State;
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
 import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -252,9 +252,9 @@ public class OrtFactory {
             && !hasKoord
             && !hasGem
         ) {
-            Staat staat =
+            State staat =
                 repository.getByIdPlain(
-                    Staat.class, ort.getStateId());
+                    State.class, ort.getStateId());
             ort.setSpatRefSysId(staat.getSpatRefSysId());
             ort.setXCoordExt(staat.getXCoordExt());
             ort.setYCoordExt(staat.getYCoordExt());

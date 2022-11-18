@@ -17,8 +17,8 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "state", schema = SchemaName.NAME)
-public class Staat implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class State implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -43,7 +43,7 @@ public class Staat implements Serializable {
 
     private String intVehRegCode;
 
-    public Staat() {
+    public State() {
     }
 
     public Integer getId() {
