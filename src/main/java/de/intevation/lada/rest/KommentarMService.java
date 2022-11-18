@@ -106,7 +106,7 @@ public class KommentarMService extends LadaService {
 
         QueryBuilder<KommentarM> builder =
             repository.queryBuilder(KommentarM.class);
-        builder.and("messungsId", messungsId);
+        builder.and("measmId", messungsId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
             KommentarM.class);
@@ -126,7 +126,7 @@ public class KommentarMService extends LadaService {
         Response response = repository.getById(KommentarM.class, id);
         KommentarM kommentar = (KommentarM) response.getData();
         Messung messung = repository.getByIdPlain(
-            Messung.class, kommentar.getMessungsId());
+            Messung.class, kommentar.getMeasmId());
         if (!authorization.isAuthorized(
                 messung, RequestMethod.GET, Messung.class)
         ) {

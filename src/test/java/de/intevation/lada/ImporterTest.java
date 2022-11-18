@@ -660,15 +660,15 @@ public class ImporterTest extends BaseTest {
             repository.getByIdPlain(Messung.class, MID1200);
         List<KommentarM> kommentare = new ArrayList<KommentarM>();
         KommentarM komm1 = new KommentarM();
-        komm1.setMessungsId(MID1200);
-        komm1.setDatum(Timestamp.valueOf("2012-05-08 12:00:00"));
-        komm1.setMstId("06010");
+        komm1.setMeasmId(MID1200);
+        komm1.setDate(Timestamp.valueOf("2012-05-08 12:00:00"));
+        komm1.setMeasFacilId("06010");
         komm1.setText("Testtext2");
 
         KommentarM komm2 = new KommentarM();
-        komm2.setMessungsId(MID1200);
-        komm2.setDatum(Timestamp.valueOf("2012-03-08 12:00:00"));
-        komm2.setMstId("06010");
+        komm2.setMeasmId(MID1200);
+        komm2.setDate(Timestamp.valueOf("2012-03-08 12:00:00"));
+        komm2.setMeasFacilId("06010");
         komm2.setText("Testtext3");
 
         kommentare.add(komm1);

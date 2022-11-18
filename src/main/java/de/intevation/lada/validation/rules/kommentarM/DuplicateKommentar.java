@@ -33,11 +33,11 @@ public class DuplicateKommentar implements Rule {
     @Override
     public Violation execute(Object object) {
         KommentarM kommentar = (KommentarM) object;
-        Integer messungID  = kommentar.getMessungsId();
+        Integer messungID  = kommentar.getMeasmId();
 
         QueryBuilder<KommentarM> kommentarBuilder = repository
             .queryBuilder(KommentarM.class)
-            .and("messungsId", messungID);
+            .and("measmId", messungID);
         List<KommentarM> kommentarExist = repository.filterPlain(
             kommentarBuilder.getQuery());
 

@@ -10,7 +10,6 @@ package de.intevation.lada.model.land;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,12 +19,8 @@ import javax.persistence.Transient;
 
 
 
-/**
- * The persistent class for the kommentar_m database table.
- *
- */
 @Entity
-@Table(name = "kommentar_m", schema = SchemaName.LEGACY_NAME)
+@Table(name = "comm_measm", schema = SchemaName.NAME)
 public class KommentarM implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -33,13 +28,11 @@ public class KommentarM implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Timestamp datum;
+    private Timestamp date;
 
-    @Column(name = "messungs_id")
-    private Integer messungsId;
+    private Integer measmId;
 
-    @Column(name = "mst_id")
-    private String mstId;
+    private String measFacilId;
 
     private String text;
 
@@ -60,28 +53,28 @@ public class KommentarM implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getDatum() {
-        return this.datum;
+    public Timestamp getDate() {
+        return this.date;
     }
 
-    public void setDatum(Timestamp datum) {
-        this.datum = datum;
+    public void setDate(Timestamp datum) {
+        this.date = datum;
     }
 
-    public Integer getMessungsId() {
-        return this.messungsId;
+    public Integer getMeasmId() {
+        return this.measmId;
     }
 
-    public void setMessungsId(Integer messungsId) {
-        this.messungsId = messungsId;
+    public void setMeasmId(Integer measmId) {
+        this.measmId = measmId;
     }
 
-    public String getMstId() {
-        return this.mstId;
+    public String getMeasFacilId() {
+        return this.measFacilId;
     }
 
-    public void setMstId(String mstId) {
-        this.mstId = mstId;
+    public void setMeasFacilId(String measFacil) {
+        this.measFacilId = measFacil;
     }
 
     public String getText() {

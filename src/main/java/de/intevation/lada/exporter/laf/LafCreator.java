@@ -456,7 +456,7 @@ implements Creator {
             List<Messwert> werte = (List<Messwert>) messw.getData();
             QueryBuilder<KommentarM> kommBuilder =
                 repository.queryBuilder(KommentarM.class);
-            kommBuilder.and("messungsId", m.getId());
+            kommBuilder.and("measmId", m.getId());
             Response kommentar =
                 repository.filter(kommBuilder.getQuery());
             List<KommentarM> kommentare =
@@ -541,8 +541,8 @@ implements Creator {
      * @return Single LAF line.
      */
     private String writeKommentar(KommentarM mk) {
-        String value = "\"" + mk.getMstId() + "\" "
-            + toUTCString(mk.getDatum()) + " "
+        String value = "\"" + mk.getMeasFacilId() + "\" "
+            + toUTCString(mk.getDate()) + " "
             + "\"" + mk.getText() + "\"";
         return lafLine("KOMMENTAR", value);
     }

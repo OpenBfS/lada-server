@@ -486,7 +486,7 @@ public class JsonExporter implements Exporter {
     private void addMessungsKommentare(JsonNode node) {
         QueryBuilder<KommentarM> builder =
             repository.queryBuilder(KommentarM.class);
-        builder.and("messungsId", node.get("id").asInt());
+        builder.and("measmId", node.get("id").asInt());
         List<KommentarM> kommentare =
             repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();

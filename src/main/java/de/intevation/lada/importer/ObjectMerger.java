@@ -230,9 +230,9 @@ public class ObjectMerger {
         QueryBuilder<KommentarM> builder =
             repository.queryBuilder(KommentarM.class);
         for (int i = 0; i < kommentare.size(); i++) {
-            builder.and("messungsId", target.getId());
-            builder.and("mstId", kommentare.get(i).getMstId());
-            builder.and("datum", kommentare.get(i).getDatum());
+            builder.and("measmId", target.getId());
+            builder.and("measFacilId", kommentare.get(i).getMeasFacilId());
+            builder.and("date", kommentare.get(i).getDate());
             List<KommentarM> found =
                 repository.filterPlain(builder.getQuery());
             if (found.isEmpty()) {
