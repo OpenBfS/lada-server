@@ -49,7 +49,7 @@ public class CoordinatesInVE implements Rule {
 
             QueryBuilder<Verwaltungsgrenze> vg =
                 repository.queryBuilder(Verwaltungsgrenze.class);
-            vg.and("gemId", gemId);
+            vg.and("municId", gemId);
             List<Verwaltungsgrenze> vgs = repository.filterPlain(
                 vg.getQuery());
             if (vgs == null || vgs.isEmpty()) {

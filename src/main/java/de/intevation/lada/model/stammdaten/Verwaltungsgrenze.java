@@ -18,24 +18,17 @@ import org.hibernate.annotations.Type;
 
 import org.locationtech.jts.geom.MultiPolygon;
 
-
-/**
- * The persistent class for the verwaltungsgrenze database table.
- *
- */
 @Entity
-@Table(name = "verwaltungsgrenze", schema = SchemaName.LEGACY_NAME)
+@Table(name = "admin_border_view", schema = SchemaName.NAME)
 public class Verwaltungsgrenze implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    @Column(name = "gem_id")
-    private String gemId;
+    private String municId;
 
-    @Column(name = "is_gemeinde")
-    private Boolean isGemeinde;
+    private Boolean isMunic;
 
     @Type(type = "jts_geometry")
     @Column(columnDefinition = "geometry(MultiPolygon, 4326)")
@@ -52,12 +45,20 @@ public class Verwaltungsgrenze implements Serializable {
         this.id = id;
     }
 
-    public String getGemId() {
-        return this.gemId;
+    public String getMunicId() {
+        return this.municId;
     }
 
-    public void setGemId(String gemId) {
-        this.gemId = gemId;
+    public void setMunicId(String gemId) {
+        this.municId = gemId;
+    }
+
+    public Boolean getIsMunic() {
+        return this.isMunic;
+    }
+
+    public void setIsMunic(Boolean isMunic) {
+        this.isMunic = isMunic;
     }
 
     public MultiPolygon getShape() {
