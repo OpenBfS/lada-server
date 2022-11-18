@@ -24,7 +24,7 @@ import javax.ws.rs.PathParam;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.StatusAccessMpView;
-import de.intevation.lada.model.stammdaten.StatusKombi;
+import de.intevation.lada.model.stammdaten.StatusMp;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -63,7 +63,7 @@ public class StatusKombiService extends LadaService {
     @GET
     @Path("/")
     public Response get() {
-        return repository.getAll(StatusKombi.class);
+        return repository.getAll(StatusMp.class);
     }
 
     /**
@@ -77,7 +77,7 @@ public class StatusKombiService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        return repository.getById(StatusKombi.class, id);
+        return repository.getById(StatusMp.class, id);
     }
 
     @POST
@@ -100,7 +100,7 @@ public class StatusKombiService extends LadaService {
      *
      * @return Disjunction of possible status values for all Messungen
      */
-    private List<StatusKombi> getReachable(
+    private List<StatusMp> getReachable(
         List<Integer> messIds,
         UserInfo user
     ) {
@@ -115,8 +115,8 @@ public class StatusKombiService extends LadaService {
         for (Messung messung : messungen) {
             StatusProtokoll status = repository.getByIdPlain(
                 StatusProtokoll.class, messung.getStatus());
-            StatusKombi kombi = repository.getByIdPlain(
-                StatusKombi.class, status.getStatusKombi());
+            StatusMp kombi = repository.getByIdPlain(
+                StatusMp.class, status.getStatusKombi());
 
             QueryBuilder<StatusAccessMpView> errFilter =
                 repository.queryBuilder(StatusAccessMpView.class);
@@ -131,15 +131,15 @@ public class StatusKombiService extends LadaService {
         }
 
         if (erreichbare.size() == 0) {
-            return new ArrayList<StatusKombi>();
+            return new ArrayList<StatusMp>();
         }
 
-        QueryBuilder<StatusKombi> kombiFilter =
-            repository.queryBuilder(StatusKombi.class);
+        QueryBuilder<StatusMp> kombiFilter =
+            repository.queryBuilder(StatusMp.class);
         for (Entry<Integer, StatusAccessMpView> erreichbar
             : erreichbare.entrySet()
         ) {
-                QueryBuilder<StatusKombi> tmp = kombiFilter.getEmptyBuilder();
+                QueryBuilder<StatusMp> tmp = kombiFilter.getEmptyBuilder();
                 tmp.and("statusVal", erreichbar.getValue().getValId())
                     .and("statusLev", erreichbar.getValue().getLevId());
                 kombiFilter.or(tmp);

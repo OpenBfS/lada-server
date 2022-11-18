@@ -39,7 +39,7 @@ import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.model.stammdaten.GridColMp;
-import de.intevation.lada.model.stammdaten.StatusKombi;
+import de.intevation.lada.model.stammdaten.StatusMp;
 import de.intevation.lada.model.stammdaten.StatusStufe;
 import de.intevation.lada.model.stammdaten.StatusWert;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -84,8 +84,8 @@ public class CsvExporter implements Exporter {
     }
 
     private String getStatusStringByid(Integer id) {
-        StatusKombi kombi =
-            repository.getByIdPlain(StatusKombi.class, id);
+        StatusMp kombi =
+            repository.getByIdPlain(StatusMp.class, id);
         StatusStufe stufe = kombi.getStatusLev();
         StatusWert wert = kombi.getStatusVal();
 

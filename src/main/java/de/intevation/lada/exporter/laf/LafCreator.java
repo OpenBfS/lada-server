@@ -37,7 +37,7 @@ import de.intevation.lada.model.stammdaten.DatasetCreator;
 import de.intevation.lada.model.stammdaten.MpgCateg;
 import de.intevation.lada.model.stammdaten.Sampler;
 import de.intevation.lada.model.stammdaten.ReiAgGr;
-import de.intevation.lada.model.stammdaten.StatusKombi;
+import de.intevation.lada.model.stammdaten.StatusMp;
 import de.intevation.lada.util.auth.HeaderAuthorization;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -516,8 +516,8 @@ implements Creator {
         Integer stufe = 4;
         Integer st, w;
         for (StatusProtokoll statusEntry : statusHistory) {
-            StatusKombi stKombi = repository.getByIdPlain(
-                StatusKombi.class,
+            StatusMp stKombi = repository.getByIdPlain(
+                StatusMp.class,
                 statusEntry.getStatusKombi()
             );
             st = stKombi.getStatusLev().getId();

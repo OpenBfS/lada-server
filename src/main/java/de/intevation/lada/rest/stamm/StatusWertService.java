@@ -18,7 +18,7 @@ import javax.ws.rs.QueryParam;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.StatusAccessMpView;
-import de.intevation.lada.model.stammdaten.StatusKombi;
+import de.intevation.lada.model.stammdaten.StatusMp;
 import de.intevation.lada.model.stammdaten.StatusWert;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -108,8 +108,8 @@ public class StatusWertService extends LadaService {
 
         StatusProtokoll status = repository.getByIdPlain(
             StatusProtokoll.class, messung.getStatus());
-        StatusKombi kombi = repository.getByIdPlain(
-            StatusKombi.class, status.getStatusKombi());
+        StatusMp kombi = repository.getByIdPlain(
+            StatusMp.class, status.getStatusKombi());
 
         QueryBuilder<StatusAccessMpView> errFilter = repository
             .queryBuilder(StatusAccessMpView.class)

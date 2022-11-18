@@ -15,7 +15,7 @@ import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.AuthCoordOfcEnvMediumMp;
 import de.intevation.lada.model.stammdaten.MeasFacil;
-import de.intevation.lada.model.stammdaten.StatusKombi;
+import de.intevation.lada.model.stammdaten.StatusMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -50,8 +50,8 @@ public class MessungAuthorizer extends BaseAuthorizer {
             StatusProtokoll.class,
             messung.getStatus()
         );
-        StatusKombi kombi = repository.getByIdPlain(
-            StatusKombi.class,
+        StatusMp kombi = repository.getByIdPlain(
+            StatusMp.class,
             status.getStatusKombi()
         );
         return kombi.getStatusVal().getId() > 0
@@ -133,8 +133,8 @@ public class MessungAuthorizer extends BaseAuthorizer {
             StatusProtokoll.class,
             messung.getStatus()
         );
-        StatusKombi kombi = repository.getByIdPlain(
-            StatusKombi.class, status.getStatusKombi());
+        StatusMp kombi = repository.getByIdPlain(
+            StatusMp.class, status.getStatusKombi());
         int stufe = kombi.getStatusLev().getId();
         int wert  = kombi.getStatusVal().getId();
 

@@ -17,8 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "status_mp", schema = SchemaName.NAME)
-public class StatusKombi implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class StatusMp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,7 +34,7 @@ public class StatusKombi implements Serializable {
     @JoinColumn(name = "status_val_id")
     private StatusWert statusVal;
 
-    public StatusKombi() {
+    public StatusMp() {
     }
 
     public Integer getId() {

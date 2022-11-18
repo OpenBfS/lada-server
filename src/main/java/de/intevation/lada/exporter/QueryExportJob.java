@@ -29,7 +29,7 @@ import de.intevation.lada.model.stammdaten.Filter;
 import de.intevation.lada.model.stammdaten.FilterType;
 import de.intevation.lada.model.stammdaten.GridColMp;
 import de.intevation.lada.model.stammdaten.GridColConf;
-import de.intevation.lada.model.stammdaten.StatusKombi;
+import de.intevation.lada.model.stammdaten.StatusMp;
 import de.intevation.lada.model.stammdaten.StatusStufe;
 import de.intevation.lada.model.stammdaten.StatusWert;
 import de.intevation.lada.model.stammdaten.MeasUnit;
@@ -234,9 +234,9 @@ public abstract class QueryExportJob extends ExportJob {
         StatusProtokoll protokoll =
             repository.getByIdPlain(
                 StatusProtokoll.class, messung.getStatus());
-        StatusKombi kombi =
+        StatusMp kombi =
             repository.getByIdPlain(
-                StatusKombi.class, protokoll.getStatusKombi());
+                StatusMp.class, protokoll.getStatusKombi());
         StatusStufe stufe = kombi.getStatusLev();
         StatusWert wert = kombi.getStatusVal();
         return String.format("%s - %s", stufe.getStufe(), wert.getWert());

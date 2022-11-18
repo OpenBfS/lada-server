@@ -29,7 +29,7 @@ import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.Site;
-import de.intevation.lada.model.stammdaten.StatusKombi;
+import de.intevation.lada.model.stammdaten.StatusMp;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -227,9 +227,9 @@ public class StatusService extends LadaService {
         } else {
             StatusProtokoll oldStatus = repository.getByIdPlain(
                 StatusProtokoll.class, messung.getStatus());
-            StatusKombi newKombi =
+            StatusMp newKombi =
                 repository.getByIdPlain(
-                    StatusKombi.class, status.getStatusKombi());
+                    StatusMp.class, status.getStatusKombi());
 
             // Check if the user is allowed to change to the requested
             // status_kombi
@@ -262,7 +262,7 @@ public class StatusService extends LadaService {
 
     private Response setNewStatus(
         StatusProtokoll status,
-        StatusKombi newKombi,
+        StatusMp newKombi,
         Messung messung
     ) {
         Violation violation = new Violation();
@@ -422,15 +422,15 @@ public class StatusService extends LadaService {
         Messung messung
     ) {
         // Create a new Status with value = 8.
-        QueryBuilder<StatusKombi> kombiFilter =
-            repository.queryBuilder(StatusKombi.class);
-        StatusKombi oldKombi =
+        QueryBuilder<StatusMp> kombiFilter =
+            repository.queryBuilder(StatusMp.class);
+        StatusMp oldKombi =
             repository.getByIdPlain(
-                StatusKombi.class, oldStatus.getStatusKombi());
+                StatusMp.class, oldStatus.getStatusKombi());
 
         kombiFilter.and("statusLev", oldKombi.getStatusLev().getId());
         kombiFilter.and("statusVal", 8);
-        List<StatusKombi> newKombi =
+        List<StatusMp> newKombi =
             repository.filterPlain(kombiFilter.getQuery());
         StatusProtokoll statusNew = new StatusProtokoll();
         statusNew.setDatum(new Timestamp(new Date().getTime()));
@@ -442,8 +442,8 @@ public class StatusService extends LadaService {
         repository.create(statusNew);
 
         Response retValue;
-        StatusKombi kombi = repository.getByIdPlain(
-            StatusKombi.class,
+        StatusMp kombi = repository.getByIdPlain(
+            StatusMp.class,
             oldStatus.getStatusKombi()
         );
         if (kombi.getStatusLev().getId() == 1) {
@@ -465,9 +465,9 @@ public class StatusService extends LadaService {
             int ndx = -1;
             for (int i = proto.size() - 1; i >= 0; i--) {
                 int curKom = proto.get(i).getStatusKombi();
-                StatusKombi sk =
+                StatusMp sk =
                     repository.getByIdPlain(
-                        StatusKombi.class, curKom);
+                        StatusMp.class, curKom);
                 if (sk.getStatusLev().getId()
                     < kombi.getStatusLev().getId()
                 ) {

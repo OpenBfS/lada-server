@@ -60,7 +60,7 @@ import de.intevation.lada.model.stammdaten.SampleSpecif;
 import de.intevation.lada.model.stammdaten.SampleMeth;
 import de.intevation.lada.model.stammdaten.Sampler;
 import de.intevation.lada.model.stammdaten.State;
-import de.intevation.lada.model.stammdaten.StatusKombi;
+import de.intevation.lada.model.stammdaten.StatusMp;
 import de.intevation.lada.model.stammdaten.Umwelt;
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
 import de.intevation.lada.util.auth.UserInfo;
@@ -520,8 +520,8 @@ public class JsonExporter implements Exporter {
             String tmp = mapper.writeValueAsString(status);
             JsonNode nodes = mapper.readTree(tmp);
             for (int i = 0; i < nodes.size(); i++) {
-                StatusKombi kombi = repository.getByIdPlain(
-                    StatusKombi.class,
+                StatusMp kombi = repository.getByIdPlain(
+                    StatusMp.class,
                     nodes.get(i).get("statusKombi").asInt()
                 );
                 ((ObjectNode) nodes.get(i)).put(

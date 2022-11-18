@@ -63,7 +63,7 @@ import de.intevation.lada.model.stammdaten.Sampler;
 import de.intevation.lada.model.stammdaten.ReiAgGr;
 import de.intevation.lada.model.stammdaten.State;
 import de.intevation.lada.model.stammdaten.StatusAccessMpView;
-import de.intevation.lada.model.stammdaten.StatusKombi;
+import de.intevation.lada.model.stammdaten.StatusMp;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.model.stammdaten.Umwelt;
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
@@ -1538,12 +1538,12 @@ public class LafObjectMapper {
     ) {
         // validation check of new status entries
         int newKombi = 0;
-        QueryBuilder<StatusKombi> builder =
-            repository.queryBuilder(StatusKombi.class);
+        QueryBuilder<StatusMp> builder =
+            repository.queryBuilder(StatusMp.class);
         builder.and("statusVal", statusWert);
         builder.and("statusLev", statusStufe);
-        List<StatusKombi> kombi =
-            (List<StatusKombi>) repository.filterPlain(builder.getQuery());
+        List<StatusMp> kombi =
+            (List<StatusMp>) repository.filterPlain(builder.getQuery());
         if (kombi != null && !kombi.isEmpty()) {
             newKombi = kombi.get(0).getId();
         } else {
@@ -1557,8 +1557,8 @@ public class LafObjectMapper {
         // get current status kombi
         StatusProtokoll currentStatus = repository.getByIdPlain(
             StatusProtokoll.class, messung.getStatus());
-        StatusKombi currentKombi = repository.getByIdPlain(
-            StatusKombi.class, currentStatus.getStatusKombi());
+        StatusMp currentKombi = repository.getByIdPlain(
+            StatusMp.class, currentStatus.getStatusKombi());
         // check if erreichbar
         QueryBuilder<StatusAccessMpView> errFilter =
             repository.queryBuilder(StatusAccessMpView.class);
