@@ -14,7 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
+import de.intevation.lada.model.stammdaten.AdminUnit;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
@@ -49,10 +49,10 @@ public class VerwaltungseinheitService extends LadaService {
         @QueryParam("query") @Pattern(regexp = ".+") String query
     ) {
         if (query == null) {
-            return repository.getAll(Verwaltungseinheit.class);
+            return repository.getAll(AdminUnit.class);
         }
-        QueryBuilder<Verwaltungseinheit> builder =
-            repository.queryBuilder(Verwaltungseinheit.class);
+        QueryBuilder<AdminUnit> builder =
+            repository.queryBuilder(AdminUnit.class);
         builder.andLike("name", query + "%");
         return repository.filter(builder.getQuery());
     }
@@ -68,6 +68,6 @@ public class VerwaltungseinheitService extends LadaService {
     public Response getById(
         @PathParam("id") String id
     ) {
-        return repository.getById(Verwaltungseinheit.class, id);
+        return repository.getById(AdminUnit.class, id);
     }
 }

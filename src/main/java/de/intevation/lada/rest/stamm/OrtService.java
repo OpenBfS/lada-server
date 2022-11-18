@@ -41,7 +41,7 @@ import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.Site;
-import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
+import de.intevation.lada.model.stammdaten.AdminUnit;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -169,7 +169,7 @@ public class OrtService extends LadaService {
             }
         }
         if (search != null) {
-            Join<Site, Verwaltungseinheit> join =
+            Join<Site, AdminUnit> join =
                 root.join("munic", JoinType.LEFT);
             String pattern = "%" + search + "%";
             Predicate idFilter = builder.like(root.get("extId"), pattern);

@@ -19,8 +19,8 @@ import org.hibernate.annotations.Type;
 import org.locationtech.jts.geom.Point;
 
 @Entity
-@Table(name = "admin_unit", schema = SchemaName.NAME)
-public class Verwaltungseinheit implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class AdminUnit implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -50,7 +50,7 @@ public class Verwaltungseinheit implements Serializable {
     @JsonbTransient
     private Point geomCenter;
 
-    public Verwaltungseinheit() {
+    public AdminUnit() {
     }
 
     public String getId() {

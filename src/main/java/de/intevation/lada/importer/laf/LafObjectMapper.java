@@ -66,7 +66,7 @@ import de.intevation.lada.model.stammdaten.StatusAccessMpView;
 import de.intevation.lada.model.stammdaten.StatusMp;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.model.stammdaten.EnvMedium;
-import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
+import de.intevation.lada.model.stammdaten.AdminUnit;
 import de.intevation.lada.model.stammdaten.Zeitbasis;
 import de.intevation.lada.util.auth.HeaderAuthorization;
 import de.intevation.lada.util.auth.UserInfo;
@@ -1908,10 +1908,10 @@ public class LafObjectMapper {
         // If laf contains gemeinde attributes, find a ort with matching gemId
         // or create one.
         if (attributes.get(type + "GEMEINDENAME") != null) {
-            QueryBuilder<Verwaltungseinheit> builder =
-                repository.queryBuilder(Verwaltungseinheit.class);
+            QueryBuilder<AdminUnit> builder =
+                repository.queryBuilder(AdminUnit.class);
             builder.and("name", attributes.get(type + "GEMEINDENAME"));
-            List<Verwaltungseinheit> ves =
+            List<AdminUnit> ves =
                 repository.filterPlain(builder.getQuery());
             if (ves == null || ves.size() == 0) {
                 currentWarnings.add(
@@ -1924,9 +1924,9 @@ public class LafObjectMapper {
             }
         } else if (attributes.get(type + "GEMEINDESCHLUESSEL") != null) {
             o.setMunicId(attributes.get(type + "GEMEINDESCHLUESSEL"));
-            Verwaltungseinheit v =
+            AdminUnit v =
                 repository.getByIdPlain(
-                    Verwaltungseinheit.class, o.getMunicId());
+                    AdminUnit.class, o.getMunicId());
             if (v == null) {
                 currentWarnings.add(
                     new ReportItem(

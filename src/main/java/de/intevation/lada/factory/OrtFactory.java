@@ -21,7 +21,7 @@ import org.locationtech.jts.geom.Point;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.stammdaten.Site;
 import de.intevation.lada.model.stammdaten.State;
-import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
+import de.intevation.lada.model.stammdaten.AdminUnit;
 import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -132,8 +132,8 @@ public class OrtFactory {
                     return orte.get(0);
                 } else {
                     //get verwaltungseinheiten
-                    Verwaltungseinheit v = repository.getByIdPlain(
-                        Verwaltungseinheit.class, ort.getMunicId());
+                    AdminUnit v = repository.getByIdPlain(
+                        AdminUnit.class, ort.getMunicId());
                     if (v != null) {
                         for (Site oElem : orte) {
                             //Todo: Check for different kda-types
@@ -185,8 +185,8 @@ public class OrtFactory {
             if (ort.getStateId() == null) {
                 ort.setStateId(0);
             }
-            Verwaltungseinheit v = repository.getByIdPlain(
-                Verwaltungseinheit.class, ort.getMunicId());
+            AdminUnit v = repository.getByIdPlain(
+                AdminUnit.class, ort.getMunicId());
             //Ort exists - check for OrtId
             QueryBuilder<Site> builderExists = repository.queryBuilder(Site.class);
             builderExists.and("networkId", ort.getNetworkId());

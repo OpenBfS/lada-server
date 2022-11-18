@@ -62,7 +62,7 @@ import de.intevation.lada.model.stammdaten.Sampler;
 import de.intevation.lada.model.stammdaten.State;
 import de.intevation.lada.model.stammdaten.StatusMp;
 import de.intevation.lada.model.stammdaten.EnvMedium;
-import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
+import de.intevation.lada.model.stammdaten.AdminUnit;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -571,8 +571,8 @@ public class JsonExporter implements Exporter {
         try {
             String tmp = mapper.writeValueAsString(ort);
             JsonNode oNode = mapper.readTree(tmp);
-            Verwaltungseinheit ve = repository.getByIdPlain(
-                Verwaltungseinheit.class,
+            AdminUnit ve = repository.getByIdPlain(
+                AdminUnit.class,
                 oNode.get("gemId").asText()
             );
             ((ObjectNode) oNode).put("gem",

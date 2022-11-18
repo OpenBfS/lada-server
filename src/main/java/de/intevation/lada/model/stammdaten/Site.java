@@ -44,7 +44,7 @@ public class Site implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "munic_id", updatable = false, insertable = false)
-    private Verwaltungseinheit munic;
+    private AdminUnit munic;
 
     private String municId;
 
@@ -156,11 +156,11 @@ public class Site implements Serializable {
     }
 
     @JsonbTransient
-    public Verwaltungseinheit getMunic() {
+    public AdminUnit getMunic() {
         return this.munic;
     }
 
-    public void setMunic(Verwaltungseinheit munic) {
+    public void setMunic(AdminUnit munic) {
         this.munic = munic;
     }
 
