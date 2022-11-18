@@ -15,6 +15,7 @@ DELETE FROM land.messung;
 DELETE FROM pflicht_messgroesse;
 DELETE FROM messprogramm_transfer;
 DELETE FROM datenbasis;
+DELETE FROM umwelt_zusatz;
 DELETE FROM umwelt;
 DELETE FROM mass_einheit_umrechnung;
 DELETE FROM mess_einheit;
@@ -79,6 +80,7 @@ INSERT INTO proben_zusatz (id, beschreibung, zusatzwert)
        VALUES ('A75', 'Volumenstrom', 'VOLSTR');
 INSERT INTO proben_zusatz (id, beschreibung, zusatzwert)
        VALUES ('A76', 'Volumenstrom', 'VOLSTR');
+INSERT INTO umwelt_zusatz (id, pzs_id, umw_id) VALUES (101, 'A74', 'A6');
 INSERT INTO koordinaten_art (id) VALUES (5);
 INSERT INTO staat (id, staat, hkl_id, staat_iso, koord_x_extern, koord_y_extern)
        VALUES (0, 'Deutschland', 0, 'DE', '123123', '321321');

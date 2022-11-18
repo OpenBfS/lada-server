@@ -222,6 +222,14 @@ public class Stammdaten extends ServiceTest {
                 "unit2"
             )
         );
+        matchers.put("umweltzusatz",
+            Matchers.containsInAnyOrder(
+                "id",
+                "sampleSpecifId",
+                "envMediumId",
+                "lastMod"
+            )
+        );
         matchers.put("verwaltungseinheit",
             Matchers.containsInAnyOrder(
                 "id",

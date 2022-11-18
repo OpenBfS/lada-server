@@ -112,6 +112,8 @@ public class StammdatenTest extends BaseTest {
     private static final int T50 = 50;
     private static final int T51 = 51;
     private static final int T52 = 52;
+    private static final int T53 = 53;
+    private static final int T54 = 54;
 
     private static final int ID5 = 5;
     private static final int ID9 = 9;
@@ -910,5 +912,29 @@ public class StammdatenTest extends BaseTest {
     public final void testTargEnvGrAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
         stammdatenTest.getAll("sollistumwgruppe");
+    }
+
+    /**
+     * Tests EnvSpecifMp get all operation.
+     * @param baseUrl The server url used for the request
+     */
+    @Test
+    @InSequence(T53)
+    @RunAsClient
+    public final void testEnvSpecifMpAll(@ArquillianResource URL baseUrl) {
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("umweltzusatz");
+    }
+
+    /**
+     * Tests EnvSpecifMp get all operation.
+     * @param baseUrl The server url used for the request
+     */
+    @Test
+    @InSequence(T54)
+    @RunAsClient
+    public final void testEnvSpecifMpGetById(@ArquillianResource URL baseUrl) {
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("umweltzusatz", ID101);
     }
 }
