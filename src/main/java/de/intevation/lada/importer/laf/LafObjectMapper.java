@@ -62,7 +62,7 @@ import de.intevation.lada.model.stammdaten.SampleMeth;
 import de.intevation.lada.model.stammdaten.Sampler;
 import de.intevation.lada.model.stammdaten.ReiAgGr;
 import de.intevation.lada.model.stammdaten.State;
-import de.intevation.lada.model.stammdaten.StatusErreichbar;
+import de.intevation.lada.model.stammdaten.StatusAccessMpView;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.model.stammdaten.Tag;
 import de.intevation.lada.model.stammdaten.Umwelt;
@@ -1560,13 +1560,13 @@ public class LafObjectMapper {
         StatusKombi currentKombi = repository.getByIdPlain(
             StatusKombi.class, currentStatus.getStatusKombi());
         // check if erreichbar
-        QueryBuilder<StatusErreichbar> errFilter =
-            repository.queryBuilder(StatusErreichbar.class);
+        QueryBuilder<StatusAccessMpView> errFilter =
+            repository.queryBuilder(StatusAccessMpView.class);
         errFilter.and("stufeId", statusStufe);
         errFilter.and("wertId", statusWert);
         errFilter.and("curStufe", currentKombi.getStatusStufe().getId());
         errFilter.and("curWert", currentKombi.getStatusWert().getId());
-        List<StatusErreichbar> erreichbar =
+        List<StatusAccessMpView> erreichbar =
             repository.filterPlain(errFilter.getQuery());
         if (erreichbar.isEmpty()) {
             currentWarnings.add(

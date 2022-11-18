@@ -23,7 +23,7 @@ import javax.ws.rs.PathParam;
 
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.StatusProtokoll;
-import de.intevation.lada.model.stammdaten.StatusErreichbar;
+import de.intevation.lada.model.stammdaten.StatusAccessMpView;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -110,22 +110,22 @@ public class StatusKombiService extends LadaService {
         List<Messung> messungen = repository.filterPlain(
             messungQuery.getQuery());
 
-        Map<Integer, StatusErreichbar> erreichbare =
-            new HashMap<Integer, StatusErreichbar>();
+        Map<Integer, StatusAccessMpView> erreichbare =
+            new HashMap<Integer, StatusAccessMpView>();
         for (Messung messung : messungen) {
             StatusProtokoll status = repository.getByIdPlain(
                 StatusProtokoll.class, messung.getStatus());
             StatusKombi kombi = repository.getByIdPlain(
                 StatusKombi.class, status.getStatusKombi());
 
-            QueryBuilder<StatusErreichbar> errFilter =
-                repository.queryBuilder(StatusErreichbar.class);
+            QueryBuilder<StatusAccessMpView> errFilter =
+                repository.queryBuilder(StatusAccessMpView.class);
             errFilter.andIn("stufeId", user.getFunktionen());
             errFilter.and("curStufe", kombi.getStatusStufe().getId());
             errFilter.and("curWert", kombi.getStatusWert().getId());
-            List<StatusErreichbar> err = repository.filterPlain(
+            List<StatusAccessMpView> err = repository.filterPlain(
                     errFilter.getQuery());
-            for (StatusErreichbar e : err) {
+            for (StatusAccessMpView e : err) {
                 erreichbare.put(e.getId(), e);
             }
         }
@@ -136,7 +136,7 @@ public class StatusKombiService extends LadaService {
 
         QueryBuilder<StatusKombi> kombiFilter =
             repository.queryBuilder(StatusKombi.class);
-        for (Entry<Integer, StatusErreichbar> erreichbar
+        for (Entry<Integer, StatusAccessMpView> erreichbar
             : erreichbare.entrySet()
         ) {
                 QueryBuilder<StatusKombi> tmp = kombiFilter.getEmptyBuilder();

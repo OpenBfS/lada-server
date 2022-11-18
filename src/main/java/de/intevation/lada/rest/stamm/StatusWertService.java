@@ -17,7 +17,7 @@ import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.StatusProtokoll;
-import de.intevation.lada.model.stammdaten.StatusErreichbar;
+import de.intevation.lada.model.stammdaten.StatusAccessMpView;
 import de.intevation.lada.model.stammdaten.StatusKombi;
 import de.intevation.lada.model.stammdaten.StatusWert;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -111,17 +111,17 @@ public class StatusWertService extends LadaService {
         StatusKombi kombi = repository.getByIdPlain(
             StatusKombi.class, status.getStatusKombi());
 
-        QueryBuilder<StatusErreichbar> errFilter = repository
-            .queryBuilder(StatusErreichbar.class)
+        QueryBuilder<StatusAccessMpView> errFilter = repository
+            .queryBuilder(StatusAccessMpView.class)
             .andIn("stufeId", authorization.getInfo().getFunktionen())
             .and("curStufe", kombi.getStatusStufe().getId())
             .and("curWert", kombi.getStatusWert().getId());
-        List<StatusErreichbar> erreichbare = repository.filterPlain(
+        List<StatusAccessMpView> erreichbare = repository.filterPlain(
             errFilter.getQuery());
 
         QueryBuilder<StatusWert> werteFilter =
             repository.queryBuilder(StatusWert.class);
-        for (StatusErreichbar erreichbar: erreichbare) {
+        for (StatusAccessMpView erreichbar: erreichbare) {
             werteFilter.or("id", erreichbar.getValId());
         }
         return repository.filter(werteFilter.getQuery());

@@ -14,8 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "status_access_mp_view", schema = SchemaName.NAME)
-public class StatusErreichbar implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class StatusAccessMpView implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -29,7 +29,7 @@ public class StatusErreichbar implements Serializable {
 
     private Integer valId;
 
-    public StatusErreichbar() {
+    public StatusAccessMpView() {
     }
 
     /**
