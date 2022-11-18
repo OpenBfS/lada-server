@@ -53,7 +53,7 @@ public class VerwaltungseinheitService extends LadaService {
         }
         QueryBuilder<Verwaltungseinheit> builder =
             repository.queryBuilder(Verwaltungseinheit.class);
-        builder.andLike("bezeichnung", query + "%");
+        builder.andLike("name", query + "%");
         return repository.filter(builder.getQuery());
     }
 

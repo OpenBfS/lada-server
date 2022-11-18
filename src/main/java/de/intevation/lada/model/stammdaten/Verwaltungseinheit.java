@@ -18,45 +18,37 @@ import org.hibernate.annotations.Type;
 
 import org.locationtech.jts.geom.Point;
 
-/**
- * The persistent class for the verwaltungseinheit database table.
- *
- */
 @Entity
-@Table(name = "verwaltungseinheit", schema = SchemaName.LEGACY_NAME)
+@Table(name = "admin_unit", schema = SchemaName.NAME)
 public class Verwaltungseinheit implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private String id;
 
-    private String bezeichnung;
+    private String name;
 
-    private String bundesland;
+    private String stateId;
 
-    @Column(name = "is_bundesland")
-    private Boolean isBundesland;
+    private Boolean isState;
 
-    @Column(name = "is_gemeinde")
-    private Boolean isGemeinde;
+    private Boolean isMunic;
 
-    @Column(name = "is_landkreis")
-    private Boolean isLandkreis;
+    private Boolean isRuralDist;
 
-    @Column(name = "is_regbezirk")
-    private Boolean isRegbezirk;
+    private Boolean isGovDist;
 
-    private String kreis;
+    private String ruralDistId;
 
-    private String plz;
+    private String zip;
 
-    private String regbezirk;
+    private String govDistId;
 
 
     @Type(type = "jts_geometry")
     @Column(columnDefinition = "geometry(Point, 4326)")
     @JsonbTransient
-    private Point mittelpunkt;
+    private Point geomCenter;
 
     public Verwaltungseinheit() {
     }
@@ -69,96 +61,96 @@ public class Verwaltungseinheit implements Serializable {
         this.id = id;
     }
 
-    public String getBezeichnung() {
-        return this.bezeichnung;
+    public String getName() {
+        return this.name;
     }
 
-    public void setBezeichnung(String bezeichnung) {
-        this.bezeichnung = bezeichnung;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getBundesland() {
-        return this.bundesland;
+    public String getStateId() {
+        return this.stateId;
     }
 
-    public void setBundesland(String bundesland) {
-        this.bundesland = bundesland;
+    public void setStateId(String stateId) {
+        this.stateId = stateId;
     }
 
-    public Boolean getIsBundesland() {
-        return this.isBundesland;
+    public Boolean getIsState() {
+        return this.isState;
     }
 
-    public void setIsBundesland(Boolean isBundesland) {
-        this.isBundesland = isBundesland;
+    public void setIsState(Boolean isState) {
+        this.isState = isState;
     }
 
-    public Boolean getIsGemeinde() {
-        return this.isGemeinde;
+    public Boolean getIsMunic() {
+        return this.isMunic;
     }
 
-    public void setIsGemeinde(Boolean isGemeinde) {
-        this.isGemeinde = isGemeinde;
+    public void setIsMunic(Boolean isMunic) {
+        this.isMunic = isMunic;
     }
 
-    public Boolean getIsLandkreis() {
-        return this.isLandkreis;
+    public Boolean getIsRuralDist() {
+        return this.isRuralDist;
     }
 
-    public void setIsLandkreis(Boolean isLandkreis) {
-        this.isLandkreis = isLandkreis;
+    public void setIsRuralDist(Boolean isRuralDist) {
+        this.isRuralDist = isRuralDist;
     }
 
-    public Boolean getIsRegbezirk() {
-        return this.isRegbezirk;
+    public Boolean getIsGovDist() {
+        return this.isGovDist;
     }
 
-    public void setIsRegbezirk(Boolean isRegbezirk) {
-        this.isRegbezirk = isRegbezirk;
+    public void setIsGovDist(Boolean isGovDist) {
+        this.isGovDist = isGovDist;
     }
 
-    public String getKreis() {
-        return this.kreis;
+    public String getRuralDistId() {
+        return this.ruralDistId;
     }
 
-    public void setKreis(String kreis) {
-        this.kreis = kreis;
+    public void setRuralDistId(String ruralDistId) {
+        this.ruralDistId = ruralDistId;
     }
 
     public Double getLatitude() {
-        return this.mittelpunkt != null
-            ? this.mittelpunkt.getY()
+        return this.geomCenter != null
+            ? this.geomCenter.getY()
             : null;
     }
 
     public Double getLongitude() {
-        return this.mittelpunkt != null
-            ? this.mittelpunkt.getX()
+        return this.geomCenter != null
+            ? this.geomCenter.getX()
             : null;
     }
 
-    public String getPlz() {
-        return this.plz;
+    public String getZip() {
+        return this.zip;
     }
 
-    public void setPlz(String plz) {
-        this.plz = plz;
+    public void setZip(String zip) {
+        this.zip = zip;
     }
 
-    public String getRegbezirk() {
-        return this.regbezirk;
+    public String getGovDistId() {
+        return this.govDistId;
     }
 
-    public void setRegbezirk(String regbezirk) {
-        this.regbezirk = regbezirk;
+    public void setGovDistId(String govDistId) {
+        this.govDistId = govDistId;
     }
 
-    public Point getMittelpunkt() {
-        return mittelpunkt;
+    public Point getGeomCenter() {
+        return geomCenter;
     }
 
-    public void setMittelpunkt(Point mittelpunkt) {
-        this.mittelpunkt = mittelpunkt;
+    public void setGeomCenter(Point geomCenter) {
+        this.geomCenter = geomCenter;
     }
 
 }

@@ -170,7 +170,7 @@ public class OrtService extends LadaService {
         }
         if (search != null) {
             Join<Site, Verwaltungseinheit> join =
-                root.join("gemeinde", JoinType.LEFT);
+                root.join("munic", JoinType.LEFT);
             String pattern = "%" + search + "%";
             Predicate idFilter = builder.like(root.get("extId"), pattern);
             Predicate kurzTextFilter =

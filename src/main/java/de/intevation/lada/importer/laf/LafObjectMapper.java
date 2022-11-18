@@ -1910,7 +1910,7 @@ public class LafObjectMapper {
         if (attributes.get(type + "GEMEINDENAME") != null) {
             QueryBuilder<Verwaltungseinheit> builder =
                 repository.queryBuilder(Verwaltungseinheit.class);
-            builder.and("bezeichnung", attributes.get(type + "GEMEINDENAME"));
+            builder.and("name", attributes.get(type + "GEMEINDENAME"));
             List<Verwaltungseinheit> ves =
                 repository.filterPlain(builder.getQuery());
             if (ves == null || ves.size() == 0) {

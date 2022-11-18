@@ -576,7 +576,7 @@ public class JsonExporter implements Exporter {
                 oNode.get("gemId").asText()
             );
             ((ObjectNode) oNode).put("gem",
-                ve == null ? "" : ve.getBezeichnung());
+                ve == null ? "" : ve.getName());
             if (oNode.get("staatId").isNull()) {
                 ((ObjectNode) oNode).put("staat", "");
             } else {

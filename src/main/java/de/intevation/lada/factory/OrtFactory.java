@@ -137,8 +137,8 @@ public class OrtFactory {
                     if (v != null) {
                         for (Site oElem : orte) {
                             //Todo: Check for different kda-types
-                            if (oElem.getXCoordExt().equals(String.valueOf(v.getMittelpunkt().getX()))
-                            && oElem.getYCoordExt().equals(String.valueOf(v.getMittelpunkt().getY()))
+                            if (oElem.getXCoordExt().equals(String.valueOf(v.getGeomCenter().getX()))
+                            && oElem.getYCoordExt().equals(String.valueOf(v.getGeomCenter().getY()))
                              ){
                                 return oElem;
                             }
@@ -204,27 +204,27 @@ public class OrtFactory {
                     if (ort.getSpatRefSysId() == null) {
                         ort.setSpatRefSysId(KdaUtil.KDA_GD);
                         ort.setYCoordExt(
-                            String.valueOf(v.getMittelpunkt().getY()));
+                            String.valueOf(v.getGeomCenter().getY()));
                         ort.setXCoordExt(
-                            String.valueOf(v.getMittelpunkt().getX()));
+                            String.valueOf(v.getGeomCenter().getX()));
                     } else {
                         KdaUtil.Result coords = new KdaUtil().transform(
                             KdaUtil.KDA_GD,
                             ort.getSpatRefSysId(),
-                            String.valueOf(v.getMittelpunkt().getX()),
-                            String.valueOf(v.getMittelpunkt().getY()));
+                            String.valueOf(v.getGeomCenter().getX()),
+                            String.valueOf(v.getGeomCenter().getY()));
                         ort.setYCoordExt(coords.getY());
                         ort.setXCoordExt(coords.getX());
                     }
                     ort.setSiteClassId(ORTTYP4);
                     //set ortId
-                    if ( v.getIsGemeinde() ) {
+                    if ( v.getIsMunic() ) {
                         ort.setExtId("GEM_"+ort.getMunicId());
-                    } else if ( !v.getIsGemeinde() && v.getIsLandkreis() ){
+                    } else if ( !v.getIsMunic() && v.getIsRuralDist() ){
                        ort.setExtId("LK_"+ort.getMunicId());
-                    } else if ( !v.getIsGemeinde() && !v.getIsLandkreis() && v.getIsRegbezirk() ) {
+                    } else if ( !v.getIsMunic() && !v.getIsRuralDist() && v.getIsGovDist() ) {
                         ort.setExtId("RB_"+ort.getMunicId());
-                    } else if ( !v.getIsGemeinde() && !v.getIsLandkreis() && !v.getIsRegbezirk() && v.getIsBundesland() ) {
+                    } else if ( !v.getIsMunic() && !v.getIsRuralDist() && !v.getIsGovDist() && v.getIsState() ) {
                         ort.setExtId("BL_"+ort.getMunicId());
                     }
                 }
@@ -232,12 +232,12 @@ public class OrtFactory {
                     ort.setShortText(ort.getExtId());
                 }
                 if (ort.getLongText() == null || ort.getLongText().equals("")) {
-                    ort.setLongText(v.getBezeichnung());
+                    ort.setLongText(v.getName());
                 }
                 if (ort.getReiReportText() == null
                     || ort.getReiReportText().equals("")
                 ) {
-                    ort.setReiReportText(v.getBezeichnung());
+                    ort.setReiReportText(v.getName());
                 }
                 transformCoordinates(ort);
 

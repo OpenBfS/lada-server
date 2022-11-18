@@ -233,17 +233,17 @@ public class Stammdaten extends ServiceTest {
         matchers.put("verwaltungseinheit",
             Matchers.containsInAnyOrder(
                 "id",
-                "bezeichnung",
-                "bundesland",
-                "isBundesland",
-                "isGemeinde",
-                "isLandkreis",
-                "isRegbezirk",
-                "kreis",
+                "name",
+                "stateId",
+                "isState",
+                "isMunic",
+                "isRuralDist",
+                "isGovDist",
+                "ruralDistId",
                 "latitude",
                 "longitude",
-                "plz",
-                "regbezirk"
+                "zip",
+                "govDistId"
             )
         );
     }
