@@ -9,29 +9,22 @@ package de.intevation.lada.model.stammdaten;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 
-/**
- * The persistent class for the status_reihenfolge database table.
- *
- */
 @Entity
-@Table(name = "status_reihenfolge", schema = SchemaName.LEGACY_NAME)
+@Table(name = "status_ord_mp", schema = SchemaName.NAME)
 public class StatusReihenfolge implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Integer id;
 
-    @Column(name = "von_id")
-    private Integer vonId;
+    private Integer fromId;
 
-    @Column(name = "zu_id")
-    private Integer zuId;
+    private Integer toId;
 
     public StatusReihenfolge() {
     }
@@ -44,20 +37,20 @@ public class StatusReihenfolge implements Serializable {
         this.id = id;
     }
 
-    public Integer getVonId() {
-        return this.vonId;
+    public Integer getFromId() {
+        return this.fromId;
     }
 
-    public void setVonId(Integer vonId) {
-        this.vonId = vonId;
+    public void setFromId(Integer fromId) {
+        this.fromId = fromId;
     }
 
-    public Integer getZuId() {
-        return this.zuId;
+    public Integer getToId() {
+        return this.toId;
     }
 
-    public void setZuId(Integer zuId) {
-        this.zuId = zuId;
+    public void setToId(Integer toId) {
+        this.toId = toId;
     }
 
 }

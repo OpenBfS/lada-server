@@ -53,8 +53,8 @@ public class StatusFolge implements Rule {
         StatusProtokoll last = protos.get(protos.size() - 1);
         QueryBuilder<StatusReihenfolge> folgeFilter =
             repository.queryBuilder(StatusReihenfolge.class);
-        folgeFilter.and("vonId", last.getStatusKombi());
-        folgeFilter.and("zuId", status.getStatusKombi());
+        folgeFilter.and("fromId", last.getStatusKombi());
+        folgeFilter.and("toId", status.getStatusKombi());
         List<StatusReihenfolge> reihenfolge =
             repository.filterPlain(folgeFilter.getQuery());
         if (reihenfolge.isEmpty()) {
