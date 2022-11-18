@@ -215,11 +215,11 @@ public class Stammdaten extends ServiceTest {
         matchers.put("umwelt",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "beschreibung",
-                "umweltBereich",
-                "mehId",
-                "secMehId"
+                "lastMod",
+                "descr",
+                "name",
+                "unit1",
+                "unit2"
             )
         );
         matchers.put("verwaltungseinheit",

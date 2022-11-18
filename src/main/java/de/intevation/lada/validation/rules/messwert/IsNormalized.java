@@ -49,8 +49,8 @@ public class IsNormalized implements Rule {
 
         // If umwelt record is present
         if (umwelt != null) {
-            Integer mehId = umwelt.getMehId();
-            Integer secMehId = umwelt.getSecMehId();
+            Integer mehId = umwelt.getUnit1();
+            Integer secMehId = umwelt.getUnit2();
 
             //If  meh is not set
             if (mehId == null && secMehId == null){

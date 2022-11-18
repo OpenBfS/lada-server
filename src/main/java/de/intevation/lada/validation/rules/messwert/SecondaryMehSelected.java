@@ -47,8 +47,8 @@ public class SecondaryMehSelected implements Rule {
 
         // If umwelt record is present
         if (umwelt != null) {
-            Integer mehId = umwelt.getMehId();
-            Integer secMehId = umwelt.getSecMehId();
+            Integer mehId = umwelt.getUnit1();
+            Integer secMehId = umwelt.getUnit2();
             //If secondary meh is set
             if (secMehId == null) {
                 return null;

@@ -2345,7 +2345,7 @@ public class LafObjectMapper {
             int length = value.toString().length() > 80
                 ? 80
                 : value.toString().length();
-            builder.and("umweltBereich", value.toString().substring(0, length));
+            builder.and("name", value.toString().substring(0, length));
             List<Umwelt> umwelt =
                 (List<Umwelt>) repository.filterPlain(builder.getQuery());
             if (umwelt == null || umwelt.isEmpty()) {

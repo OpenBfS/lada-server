@@ -255,7 +255,7 @@ public class JsonExporter implements Exporter {
                 art == null ? "" : art.getExtId());
             probe.put("datenbasis",
                 datenbasis == null ? "" : datenbasis.getRegulation());
-            probe.put("umw", umw == null ? "" : umw.getUmweltBereich());
+            probe.put("umw", umw == null ? "" : umw.getName());
             if (probe.get("baId").asInt() != 0) {
                 OprMode ba = repository.getByIdPlain(
                     OprMode.class,

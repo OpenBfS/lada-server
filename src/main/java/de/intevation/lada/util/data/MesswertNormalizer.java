@@ -58,8 +58,8 @@ public class MesswertNormalizer {
         }
         Umwelt umwelt =
             repository.getByIdPlain(Umwelt.class, umwId);
-        Integer mehIdToConvertTo = umwelt.getMehId();
-        Integer secMehIdToConvertTo = umwelt.getSecMehId();
+        Integer mehIdToConvertTo = umwelt.getUnit1();
+        Integer secMehIdToConvertTo = umwelt.getUnit2();
 
         for (Messwert messwert: messwerte) {
             if (mehIdToConvertTo != null

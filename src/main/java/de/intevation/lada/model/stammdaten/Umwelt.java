@@ -15,31 +15,24 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-/**
- * The persistent class for the umwelt database table.
- *
- */
 @Entity
-@Table(name = "umwelt", schema = SchemaName.LEGACY_NAME)
+@Table(name = "env_medium", schema = SchemaName.NAME)
 public class Umwelt implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private String id;
 
-    private String beschreibung;
+    private String descr;
 
-    @Column(name = "meh_id")
-    private Integer mehId;
+    private Integer unit1;
 
-    @Column(name = "meh_id_2")
-    private Integer secMehId;
+    private Integer unit2;
 
-    @Column(name = "umwelt_bereich")
-    private String umweltBereich;
+    private String name;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     public Umwelt() {
     }
@@ -52,44 +45,44 @@ public class Umwelt implements Serializable {
         this.id = id;
     }
 
-    public String getBeschreibung() {
-        return this.beschreibung;
+    public String getDescr() {
+        return this.descr;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setDescr(String descr) {
+        this.descr = descr;
     }
 
-    public Integer getMehId() {
-        return this.mehId;
+    public Integer getUnit1() {
+        return this.unit1;
     }
 
-    public void setMehId(Integer mehId) {
-        this.mehId = mehId;
+    public void setUnit1(Integer unit1) {
+        this.unit1 = unit1;
     }
 
-    public Integer getSecMehId() {
-        return this.secMehId;
+    public Integer getUnit2() {
+        return this.unit2;
     }
 
-    public void setSecMehId(Integer secMehId) {
-        this.secMehId = secMehId;
+    public void setUnit2(Integer unit2) {
+        this.unit2 = unit2;
     }
 
-    public String getUmweltBereich() {
-        return this.umweltBereich;
+    public String getName() {
+        return this.name;
     }
 
-    public void setUmweltBereich(String umweltBereich) {
-        this.umweltBereich = umweltBereich;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
 }
