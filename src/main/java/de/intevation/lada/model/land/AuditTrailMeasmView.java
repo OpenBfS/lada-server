@@ -23,14 +23,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import de.intevation.lada.util.data.JsonObjectType;
 
 
-/**
- * The persistent class for the audit_trail_messung database table.
- *
- */
 @Entity
-@Table(name = "audit_trail_measm_view", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 @TypeDefs({ @TypeDef(name = "JsonObject", typeClass = JsonObjectType.class) })
-public class AuditTrailMessung implements Serializable {
+public class AuditTrailMeasmView implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -52,7 +48,7 @@ public class AuditTrailMessung implements Serializable {
 
     private String tableName;
 
-    public AuditTrailMessung() {
+    public AuditTrailMeasmView() {
     }
 
     public String getAction() {

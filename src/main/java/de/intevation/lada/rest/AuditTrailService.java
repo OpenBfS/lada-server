@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import de.intevation.lada.model.land.AuditTrailMessung;
+import de.intevation.lada.model.land.AuditTrailMeasmView;
 import de.intevation.lada.model.land.AuditTrailProbe;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Ortszuordnung;
@@ -315,13 +315,13 @@ public class AuditTrailService extends LadaService {
         Sample probe =
             repository.getByIdPlain(Sample.class, messung.getProbeId());
         UserInfo userInfo = authorization.getInfo();
-        QueryBuilder<AuditTrailMessung> builder =
-            repository.queryBuilder(AuditTrailMessung.class);
+        QueryBuilder<AuditTrailMeasmView> builder =
+            repository.queryBuilder(AuditTrailMeasmView.class);
         builder.and("objectId", mId);
         builder.and("tableName", "measm");
         builder.or("measmId", mId);
         builder.orderBy("tstamp", true);
-        List<AuditTrailMessung> audit =
+        List<AuditTrailMeasmView> audit =
             repository.filterPlain(builder.getQuery());
 
         // Create an empty JsonObject
@@ -338,7 +338,7 @@ public class AuditTrailService extends LadaService {
             ? messung.getExterneMessungsId().toString()
             : messung.getNebenprobenNr()
         );
-        for (AuditTrailMessung a : audit) {
+        for (AuditTrailMeasmView a : audit) {
             //If audit entry shows a messwert, do not show if:
             // - StatusKombi is 1 (MST - nicht vergeben)
             // - User is not owner of the messung
@@ -361,7 +361,7 @@ public class AuditTrailService extends LadaService {
      * @param mapper JSON object mapper
      */
     private ObjectNode createEntry(
-        AuditTrailMessung audit,
+        AuditTrailMeasmView audit,
         ObjectMapper mapper
     ) {
         ObjectNode node = mapper.createObjectNode();
