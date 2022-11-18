@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.land.StatusProtokoll;
-import de.intevation.lada.model.stammdaten.StatusReihenfolge;
+import de.intevation.lada.model.stammdaten.StatusOrdMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -51,11 +51,11 @@ public class StatusFolge implements Rule {
             return null;
         }
         StatusProtokoll last = protos.get(protos.size() - 1);
-        QueryBuilder<StatusReihenfolge> folgeFilter =
-            repository.queryBuilder(StatusReihenfolge.class);
+        QueryBuilder<StatusOrdMp> folgeFilter =
+            repository.queryBuilder(StatusOrdMp.class);
         folgeFilter.and("fromId", last.getStatusKombi());
         folgeFilter.and("toId", status.getStatusKombi());
-        List<StatusReihenfolge> reihenfolge =
+        List<StatusOrdMp> reihenfolge =
             repository.filterPlain(folgeFilter.getQuery());
         if (reihenfolge.isEmpty()) {
             Violation violation = new Violation();

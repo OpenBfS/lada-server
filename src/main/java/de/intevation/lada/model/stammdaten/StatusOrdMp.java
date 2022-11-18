@@ -15,8 +15,8 @@ import javax.persistence.Table;
 
 
 @Entity
-@Table(name = "status_ord_mp", schema = SchemaName.NAME)
-public class StatusReihenfolge implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class StatusOrdMp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -26,7 +26,7 @@ public class StatusReihenfolge implements Serializable {
 
     private Integer toId;
 
-    public StatusReihenfolge() {
+    public StatusOrdMp() {
     }
 
     public Integer getId() {
