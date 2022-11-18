@@ -104,13 +104,13 @@ public class TagZuordnungService extends LadaService {
 
             //Extend tag expiring time
             Tag tag = repository.getByIdPlain(Tag.class, tagId);
-            if (Tag.TAG_TYPE_MST.equals(tag.getTypId())) {
+            if (Tag.TAG_TYPE_MST.equals(tag.getTagType())) {
                 Timestamp defaultExpiration =
                     TagUtil.getMstTagDefaultExpiration();
-                if (tag.getGueltigBis() == null
-                    || defaultExpiration.after(tag.getGueltigBis())
+                if (tag.getValUntil() == null
+                    || defaultExpiration.after(tag.getValUntil())
                 ) {
-                    tag.setGueltigBis(defaultExpiration);
+                    tag.setValUntil(defaultExpiration);
                 }
             }
 

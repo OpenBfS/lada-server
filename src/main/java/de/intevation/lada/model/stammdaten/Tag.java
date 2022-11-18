@@ -23,11 +23,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-/**
- * The persistent class for the tag database table.
- */
 @Entity
-@Table(name = "tag", schema = SchemaName.LEGACY_NAME)
+@Table(schema = SchemaName.NAME)
 public class Tag {
 
     // Default time after which mst tags expire in days
@@ -45,25 +42,19 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "tag")
-    private String tag;
+    private String name;
 
-    @Column(name = "mst_id")
-    private String mstId;
+    private String measFacilId;
 
-    @Column(name = "netzbetreiber_id")
-    private String netzbetreiberId;
+    private String networkId;
 
-    @Column(name = "user_id")
-    private Integer userId;
+    private Integer ladaUserId;
 
-    @Column(name = "tag_typ")
-    private String typId;
+    private String tagType;
 
-    @Column(name = "gueltig_bis")
-    private Timestamp gueltigBis;
+    private Timestamp valUntil;
 
-    @Column(name = "created_at", insertable = false, updatable = false)
+    @Column(insertable = false, updatable = false)
     private Timestamp createdAt;
 
     @OneToMany
@@ -71,8 +62,7 @@ public class Tag {
     @JsonbTransient
     private Set<TagZuordnung> tagZuordnungs;
 
-    @Column(name = "auto_tag")
-    private boolean autoTag;
+    private boolean isAutoTag;
 
     @Transient
     private boolean readonly;
@@ -87,20 +77,20 @@ public class Tag {
         this.id = id;
     }
 
-    public String getTag() {
-        return this.tag;
+    public String getName() {
+        return this.name;
     }
 
-    public void setTag(String tag) {
-        this.tag = tag;
+    public void setName(String tag) {
+        this.name = tag;
     }
 
-    public String getMstId() {
-        return this.mstId;
+    public String getMeasFacilId() {
+        return this.measFacilId;
     }
 
-    public void setMstId(String mstId) {
-        this.mstId = mstId;
+    public void setMeasFacilId(String measFacilId) {
+        this.measFacilId = measFacilId;
     }
 
     public Set<TagZuordnung> getTagZuordnungs() {
@@ -111,21 +101,21 @@ public class Tag {
         this.tagZuordnungs = tagZuordnungs;
     }
 
-    public boolean getAutoTag() {
-        return this.autoTag;
+    public boolean getIsAutoTag() {
+        return this.isAutoTag;
     }
 
-    public void setAutoTag(boolean autoTag) {
-        this.autoTag = autoTag;
+    public void setIsAutoTag(boolean isAutoTag) {
+        this.isAutoTag = isAutoTag;
     }
 
 
-    public Timestamp getGueltigBis() {
-        return gueltigBis;
+    public Timestamp getValUntil() {
+        return valUntil;
     }
 
-    public void setGueltigBis(Timestamp gueltigBis) {
-        this.gueltigBis = gueltigBis;
+    public void setValUntil(Timestamp valUntil) {
+        this.valUntil = valUntil;
     }
 
     public Timestamp getCreatedAt() {
@@ -143,27 +133,27 @@ public class Tag {
     /**
      * @return ID of Netzbetreiber associated to this tag.
      */
-    public String getNetzbetreiberId() {
-        return netzbetreiberId;
+    public String getNetworkId() {
+        return networkId;
     }
 
-    public void setNetzbetreiberId(String netzbetreiberId) {
-        this.netzbetreiberId = netzbetreiberId;
+    public void setNetworkId(String networkId) {
+        this.networkId = networkId;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getLadaUserId() {
+        return ladaUserId;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setLadaUserId(Integer ladaUserId) {
+        this.ladaUserId = ladaUserId;
     }
 
-    public String getTypId() {
-        return typId;
+    public String getTagType() {
+        return tagType;
     }
 
-    public void setTypId(String typId) {
-        this.typId = typId;
+    public void setTagType(String tagType) {
+        this.tagType = tagType;
     }
 }

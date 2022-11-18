@@ -47,7 +47,7 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
                 return false;
             }
 
-            switch (tag.getTypId()) {
+            switch (tag.getTagType()) {
             case Tag.TAG_TYPE_GLOBAL:
                 if (zuordnung.getMessungId() != null) {
                     return messungAuthorizer.isAuthorized(
@@ -71,9 +71,9 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
                 return false;
             case Tag.TAG_TYPE_NETZBETREIBER:
                 return userInfo.getNetzbetreiber().contains(
-                    tag.getNetzbetreiberId());
+                    tag.getNetworkId());
             case Tag.TAG_TYPE_MST:
-                return userInfo.getMessstellen().contains(tag.getMstId());
+                return userInfo.getMessstellen().contains(tag.getMeasFacilId());
             default:
                 throw new IllegalArgumentException("Unknown tag type");
             }

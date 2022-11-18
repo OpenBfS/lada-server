@@ -205,7 +205,7 @@ public class LafImportJob extends Job {
 
             //Put new tag in import response
             importResponseData.forEach((file, responseData) -> {
-                responseData.put("tag", newTag.getTag());
+                responseData.put("tag", newTag.getName());
             });
         }
         importData = importResponseData;

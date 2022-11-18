@@ -254,7 +254,7 @@ public class LafImportService extends LadaService {
 
             //Put new tag in import response
             importResponseData.forEach((file, responseData) -> {
-                responseData.put("tag", newTag.getTag());
+                responseData.put("tag", newTag.getName());
             });
         }
         System.out.println(importResponseData.get("errors"));
@@ -342,7 +342,7 @@ public class LafImportService extends LadaService {
             Tag newTag = (Tag) tagCreation.getData();
             tagUtil.setTagsByProbeIds(importedProbeids, newTag.getId());
 
-            respData.put("tag", newTag.getTag());
+            respData.put("tag", newTag.getName());
         }
 
         return new Response(success, StatusCodes.OK, respData);

@@ -2033,8 +2033,8 @@ public class LafObjectMapper {
     private void assignGlobalTag(String szenario, Object object) {
         QueryBuilder<Tag> builderTag =
                 repository.queryBuilder(Tag.class);
-            builderTag.and("tag", szenario);
-            builderTag.and("typId", "global");
+            builderTag.and("name", szenario);
+            builderTag.and("tagType", "global");
             List<Tag> globalTag =
                 repository.filterPlain(builderTag.getQuery());
 

@@ -156,16 +156,16 @@ public class TagService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
-        String tagTyp = tag.getTypId();
-        String origTagTyp = origTag.getTypId();
-        Timestamp gueltigBis = tag.getGueltigBis();
+        String tagTyp = tag.getTagType();
+        String origTagTyp = origTag.getTagType();
+        Timestamp gueltigBis = tag.getValUntil();
 
-        if (tag.getMstId() != null) {
+        if (tag.getMeasFacilId() != null) {
             MeasFacil mst = repository.getByIdPlain(
-                MeasFacil.class, tag.getMstId());
-            if (tag.getNetzbetreiberId() == null) {
-                tag.setNetzbetreiberId(mst.getNetworkId());
-            } else if (!tag.getNetzbetreiberId().equals(mst.getNetworkId())) {
+                MeasFacil.class, tag.getMeasFacilId());
+            if (tag.getNetworkId() == null) {
+                tag.setNetworkId(mst.getNetworkId());
+            } else if (!tag.getNetworkId().equals(mst.getNetworkId())) {
                 return new Response(false, StatusCodes.VALUE_NOT_MATCHING, "mst");
             }
         }
@@ -176,16 +176,16 @@ public class TagService extends LadaService {
             switch (tagTyp) {
             // Remove expiration timestamp for 'advanced' tags
             case Tag.TAG_TYPE_GLOBAL:
-                tag.setGueltigBis(null);
+                tag.setValUntil(null);
                 break;
             case Tag.TAG_TYPE_NETZBETREIBER:
                 if (!Tag.TAG_TYPE_GLOBAL.equals(origTagTyp)) {
-                    tag.setGueltigBis(null);
+                    tag.setValUntil(null);
                 }
                 break;
             case Tag.TAG_TYPE_MST:
                 // Set default expiration for tags downgraded to 'mst'
-                tag.setGueltigBis(TagUtil.getMstTagDefaultExpiration());
+                tag.setValUntil(TagUtil.getMstTagDefaultExpiration());
                 break;
             default:
                 throw new IllegalArgumentException("Unknown tag type");
@@ -193,7 +193,7 @@ public class TagService extends LadaService {
         } else {
             // tagType messstelle never without gueltigBis
             if (tagTyp.equals(Tag.TAG_TYPE_MST) && gueltigBis == null) {
-                tag.setGueltigBis(TagUtil.getMstTagDefaultExpiration());
+                tag.setValUntil(TagUtil.getMstTagDefaultExpiration());
             }
         }
 
@@ -233,22 +233,22 @@ public class TagService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
-        tag.setUserId(authorization.getInfo().getUserId());
+        tag.setLadaUserId(authorization.getInfo().getUserId());
 
-        if (tag.getMstId() != null) {
+        if (tag.getMeasFacilId() != null) {
             MeasFacil mst = repository.getByIdPlain(
-                MeasFacil.class, tag.getMstId());
-            if (tag.getNetzbetreiberId() == null) {
-                tag.setNetzbetreiberId(mst.getNetworkId());
-            } else if (!tag.getNetzbetreiberId().equals(mst.getNetworkId())) {
+                MeasFacil.class, tag.getMeasFacilId());
+            if (tag.getNetworkId() == null) {
+                tag.setNetworkId(mst.getNetworkId());
+            } else if (!tag.getNetworkId().equals(mst.getNetworkId())) {
                 return new Response(false, StatusCodes.VALUE_NOT_MATCHING, "mst");
             }
         }
 
-        if (tag.getGueltigBis() == null
-            && Tag.TAG_TYPE_MST.equals(tag.getTypId())
+        if (tag.getValUntil() == null
+            && Tag.TAG_TYPE_MST.equals(tag.getTagType())
         ) {
-            tag.setGueltigBis(TagUtil.getMstTagDefaultExpiration());
+            tag.setValUntil(TagUtil.getMstTagDefaultExpiration());
         }
         return repository.create(tag);
     }

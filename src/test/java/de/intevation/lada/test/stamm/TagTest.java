@@ -32,6 +32,8 @@ public class TagTest extends ServiceTest {
 
     private final String dataKey = "data";
 
+    private final String tagNameAttribute = "name";
+
     @Override
     public void init(
         Client c,
@@ -78,7 +80,7 @@ public class TagTest extends ServiceTest {
             Tag.TAG_TYPE_MST, "mstTagPromoted");
         JsonObject createResponse = create(name, tagUrl, tagToTest);
         long createdId = createResponse.getJsonObject(dataKey).getInt("id");
-        update(name, tagUrl + createdId, "typId",
+        update(name, tagUrl + createdId, "tagType",
             "mst",
             "global");
     }
@@ -91,16 +93,17 @@ public class TagTest extends ServiceTest {
         JsonObject createResponse = create(name, tagUrl, tagToTest);
         long createdId = createResponse.getJsonObject(dataKey).getInt("id");
         String createdTyp = createResponse
-            .getJsonObject(dataKey).getString("typId");
+            .getJsonObject(dataKey).getString("tagType");
         if (createdTyp.equals("mst") || createdTyp.equals("auto")) {
             String createdGueltigBis = createResponse.getJsonObject(dataKey)
-                .getString("gueltigBis");
+                .getString("valUntil");
             long diff = getDaysFromNow(createdGueltigBis);
             Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diff);
         }
-        String tagUpdated = tagToTest.getString(name) + "-mod";
-        JsonObject updateResponse = update(name, tagUrl + createdId, name,
-            tagToTest.getString(name),
+        String tagUpdated = tagToTest.getString(tagNameAttribute) + "-mod";
+        JsonObject updateResponse = update(name, tagUrl + createdId,
+            tagNameAttribute,
+            tagToTest.getString(tagNameAttribute),
             tagUpdated);
         JsonObject getResponse = get(name, tagUrl);
         Assert.assertFalse(getResponse.getJsonArray(dataKey).isEmpty());
@@ -115,7 +118,7 @@ public class TagTest extends ServiceTest {
      */
     private JsonObject createTagJson(String type, String tag) {
         JsonObjectBuilder builder = convertObject(create);
-        builder.add("typId", type);
+        builder.add("tagType", type);
         builder.add(name, tag);
         return builder.build();
     }

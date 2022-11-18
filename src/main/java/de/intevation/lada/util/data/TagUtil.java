@@ -63,8 +63,8 @@ public class TagUtil {
         CriteriaQuery<Tag> criteriaQuery = builder.createQuery(Tag.class);
         Root<Tag> tagRoot = criteriaQuery.from(Tag.class);
         Predicate nameFilter =
-            builder.like(tagRoot.get("tag"), prefix + "\\_" + today + "\\_%");
-        Order nameOrder = builder.asc(tagRoot.get("tag"));
+            builder.like(tagRoot.get("name"), prefix + "\\_" + today + "\\_%");
+        Order nameOrder = builder.asc(tagRoot.get("name"));
         criteriaQuery.where(nameFilter);
         criteriaQuery.orderBy(nameOrder);
         List<Tag> tags = repository.filterPlain(criteriaQuery);
@@ -76,7 +76,7 @@ public class TagUtil {
             tags.forEach(item -> {
                 try {
                     Integer currentserial =
-                        Integer.parseInt(item.getTag().split("_")[2]);
+                        Integer.parseInt(item.getName().split("_")[2]);
                     if (lastSerNumber.get() < currentserial) {
                         lastSerNumber.set(currentserial);
                     }
@@ -90,16 +90,16 @@ public class TagUtil {
 
         //Create next tag
         Tag currentTag = new Tag();
-        currentTag.setAutoTag(true);
-        currentTag.setNetzbetreiberId(netzbetreiberId);
-        currentTag.setTypId(Tag.TAG_TYPE_NETZBETREIBER);
-        currentTag.setTag(prefix + "_" + today + "_" + serNumber);
+        currentTag.setIsAutoTag(true);
+        currentTag.setNetworkId(netzbetreiberId);
+        currentTag.setTagType(Tag.TAG_TYPE_NETZBETREIBER);
+        currentTag.setName(prefix + "_" + today + "_" + serNumber);
 
         // Generated tags expire after 548 days
         Instant then = Instant.now()
             .plus(Tag.GENERATED_EXPIRATION_TIME, ChronoUnit.DAYS)
             .truncatedTo(ChronoUnit.DAYS);
-        currentTag.setGueltigBis(Timestamp.from(then));
+        currentTag.setValUntil(Timestamp.from(then));
 
         return repository.create(currentTag);
     }

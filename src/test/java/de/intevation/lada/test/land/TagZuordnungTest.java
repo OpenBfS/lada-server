@@ -73,7 +73,7 @@ public class TagZuordnungTest extends ServiceTest {
         // Test validity of newly assigned tags
         tags.forEach(tagVal -> {
             JsonObject tag = (JsonObject) tagVal;
-            String gueltigBisLong = tag.getString("gueltigBis");
+            String gueltigBisLong = tag.getString("valUntil");
             long diffInDays = getDaysFromNow(gueltigBisLong);
             Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diffInDays);
         });

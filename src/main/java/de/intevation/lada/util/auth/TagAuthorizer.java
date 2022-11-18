@@ -35,24 +35,24 @@ public class TagAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         Tag tag = (Tag) data;
-        switch (tag.getTypId()) {
+        switch (tag.getTagType()) {
             // Netzbetreiber tags may only be edited by stamm users
             case Tag.TAG_TYPE_NETZBETREIBER:
                 switch (method) {
                 case GET:
                 case POST:
                     return userInfo.getNetzbetreiber().contains(
-                        tag.getNetzbetreiberId());
+                        tag.getNetworkId());
                 case PUT:
                 case DELETE:
                     return userInfo.getFunktionenForNetzbetreiber(
-                        tag.getNetzbetreiberId()).contains(4);
+                        tag.getNetworkId()).contains(4);
                 default:
                     return false;
                 }
             // Tags my only be edited by members of the referenced Messstelle
             case Tag.TAG_TYPE_MST:
-                return userInfo.getMessstellen().contains(tag.getMstId());
+                return userInfo.getMessstellen().contains(tag.getMeasFacilId());
             // Global tags (and anything unknown) can not be edited
             default:
                 return false;

@@ -1,5 +1,6 @@
 {
-    "mstId": "06010",
-    "netzbetreiberId": "06",
-    "userId": 2
+    "measFacilId": "06010",
+    "networkId": "06",
+    "ladaUserId": 2,
+    "name": "createTag"
 }

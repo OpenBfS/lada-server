@@ -296,7 +296,7 @@ public class SampleService extends LadaService {
             if (tagCreation.getSuccess()) {
                 Tag newTag = (Tag) tagCreation.getData();
                 tagUtil.setTagsByProbeIds(generatedProbeIds, newTag.getId());
-                responseData.put("tag", newTag.getTag());
+                responseData.put("tag", newTag.getName());
             } else {
                 /* TODO: The whole request should be handled in one
                  * transaction that should be rolled back at this point. */

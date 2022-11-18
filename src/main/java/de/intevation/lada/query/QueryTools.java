@@ -367,7 +367,7 @@ public class QueryTools {
                             repository.getByIdPlain(
                                 Tag.class,
                                 Integer.parseInt(tagIds[i])
-                            ).getTag();
+                            ).getName();
                         this.filterValues.add(param + i, tag);
                     }
                     continue;
