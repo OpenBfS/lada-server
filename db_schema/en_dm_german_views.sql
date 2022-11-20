@@ -932,12 +932,12 @@ FROM master.targ_act_targ;
 CREATE VIEW stamm.sollist_umwgrp AS SELECT
 	id,
 	name AS bezeichnung,
-	targ_env__gr_displ AS beschreibung
+	targ_env_gr_displ AS beschreibung
 FROM master.targ_env_gr;
 
 CREATE VIEW stamm.sollist_umwgrp_zuord AS SELECT
 	id,
-	targ_env__gr_id AS sollist_umwgrp_id,
+	targ_env_gr_id AS sollist_umwgrp_id,
 	env_medium_id AS umw_id
 FROM master.targ_env_gr_mp;
 

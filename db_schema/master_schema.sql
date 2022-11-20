@@ -1091,7 +1091,7 @@ CREATE TABLE IF NOT EXISTS master.targ_env_gr
 (
     id serial NOT NULL PRIMARY KEY,
     name character varying(20) COLLATE pg_catalog."default",
-    targ_env__gr_displ character varying(120) COLLATE pg_catalog."default",
+    targ_env_gr_displ character varying(120) COLLATE pg_catalog."default",
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_targ_env_gr BEFORE UPDATE ON master.targ_env_gr FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
@@ -1099,9 +1099,9 @@ CREATE TRIGGER last_mod_targ_env_gr BEFORE UPDATE ON master.targ_env_gr FOR EACH
 CREATE TABLE IF NOT EXISTS master.targ_env_gr_mp
 (
     id serial NOT NULL PRIMARY KEY,
-    targ_env__gr_id integer NOT NULL,
+    targ_env_gr_id integer NOT NULL,
     env_medium_id character varying(3) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT sollist_umwgrp_zuord_sollist_umwgrp_id_fkey FOREIGN KEY (targ_env__gr_id)
+    CONSTRAINT sollist_umwgrp_zuord_sollist_umwgrp_id_fkey FOREIGN KEY (targ_env_gr_id)
         REFERENCES targ_env_gr (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
