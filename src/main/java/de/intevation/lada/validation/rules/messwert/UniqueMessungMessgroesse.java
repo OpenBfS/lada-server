@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -31,12 +31,12 @@ public class UniqueMessungMessgroesse implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messwert messwert = (Messwert) object;
-        QueryBuilder<Messwert> messwertQuery =
-            repository.queryBuilder(Messwert.class);
+        MeasVal messwert = (MeasVal) object;
+        QueryBuilder<MeasVal> messwertQuery =
+            repository.queryBuilder(MeasVal.class);
         messwertQuery.and("measmId", messwert.getMeasmId());
         messwertQuery.and("measdId", messwert.getMeasdId());
-        List<Messwert> result =
+        List<MeasVal> result =
             repository.filterPlain(messwertQuery.getQuery());
         if (!result.isEmpty()
             && !result.get(0).getId().equals(messwert.getId())

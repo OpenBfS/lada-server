@@ -22,7 +22,7 @@ import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.land.MpgMmtMp;
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.model.land.Sample;
@@ -130,7 +130,7 @@ public class HeaderAuthorization implements Authorization {
             Map.entry(CommSample.class, pIdAuthorizer),
             Map.entry(ZusatzWert.class, pIdAuthorizer),
             Map.entry(CommMeasm.class, mIdAuthorizer),
-            Map.entry(Messwert.class, mIdAuthorizer),
+            Map.entry(MeasVal.class, mIdAuthorizer),
             Map.entry(StatusProtokoll.class, mIdAuthorizer),
             Map.entry(Sampler.class, netzAuthorizer),
             Map.entry(DatasetCreator.class, netzAuthorizer),

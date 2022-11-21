@@ -12,7 +12,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.MmtMeasdView;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -38,10 +38,10 @@ public class MessgroesseToMessmethode implements Rule {
     public Violation execute(Object object) {
         Measm messung = (Measm) object;
 
-        QueryBuilder<Messwert> builder =
-            repository.queryBuilder(Messwert.class)
+        QueryBuilder<MeasVal> builder =
+            repository.queryBuilder(MeasVal.class)
                 .and("measmId", messung.getId());
-        List<Messwert> messwerte = repository.filterPlain(builder.getQuery());
+        List<MeasVal> messwerte = repository.filterPlain(builder.getQuery());
 
         QueryBuilder<MmtMeasdView> mmtBuilder =
             repository.queryBuilder(MmtMeasdView.class)
@@ -50,7 +50,7 @@ public class MessgroesseToMessmethode implements Rule {
             repository.filterPlain(mmtBuilder.getQuery());
 
         Violation violation = new Violation();
-        for (Messwert messwert : messwerte) {
+        for (MeasVal messwert : messwerte) {
             boolean hit = false;
             for (MmtMeasdView mmtM: mmtMs) {
                 if (messwert.getMeasdId().equals(

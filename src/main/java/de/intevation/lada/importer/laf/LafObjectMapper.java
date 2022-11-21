@@ -38,7 +38,7 @@ import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
@@ -711,16 +711,16 @@ public class LafObjectMapper {
         doTransformations(messung, Measm.class, "messung");
     }
 
-    private void doDefaults(Messwert messwert) {
-        doDefaults(messwert, Messwert.class, "messwert");
+    private void doDefaults(MeasVal messwert) {
+        doDefaults(messwert, MeasVal.class, "messwert");
     }
 
-    private void doConverts(Messwert messwert) {
-        doConverts(messwert, Messwert.class, "messwert");
+    private void doConverts(MeasVal messwert) {
+        doConverts(messwert, MeasVal.class, "messwert");
     }
 
-    private void doTransforms(Messwert messwert) {
-        doTransformations(messwert, Messwert.class, "messwert");
+    private void doTransforms(MeasVal messwert) {
+        doTransformations(messwert, MeasVal.class, "messwert");
     }
 
     private void doDefaults(ZusatzWert zusatzwert) {
@@ -1052,10 +1052,10 @@ public class LafObjectMapper {
             }
         }
         merger.mergeMessungKommentare(newMessung, kommentare);
-        List<Messwert> messwerte = new ArrayList<Messwert>();
+        List<MeasVal> messwerte = new ArrayList<MeasVal>();
         List<Integer> messgroessenListe = new ArrayList<Integer>();
         for (int i = 0; i < object.getMesswerte().size(); i++) {
-            Messwert tmp =
+            MeasVal tmp =
                 createMesswert(
                     object.getMesswerte().get(i), newMessung.getId());
             if (tmp != null) {
@@ -1111,10 +1111,10 @@ public class LafObjectMapper {
             }
         }
         // ... and messwerte
-        QueryBuilder<Messwert> messwBuilder =
-            repository.queryBuilder(Messwert.class);
+        QueryBuilder<MeasVal> messwBuilder =
+            repository.queryBuilder(MeasVal.class);
         messwBuilder.and("measmId", newMessung.getId());
-        for (Messwert messwert: messwerte) {
+        for (MeasVal messwert: messwerte) {
             Violation messwViolation = messwertValidator.validate(messwert);
             if (messwViolation.hasWarnings()) {
                 messwViolation.getWarnings().forEach((k, v) -> {
@@ -1278,11 +1278,11 @@ public class LafObjectMapper {
         return zusatzwert;
     }
 
-    private Messwert createMesswert(
+    private MeasVal createMesswert(
         Map<String, String> attributes,
         int messungsId
     ) {
-        Messwert messwert = new Messwert();
+        MeasVal messwert = new MeasVal();
         messwert.setMeasmId(messungsId);
         if (attributes.containsKey("MESSGROESSE_ID")) {
                 Measd messgreosse = repository.getByIdPlain(
@@ -1589,16 +1589,16 @@ public class LafObjectMapper {
             return false;
         }
         //Cleanup Messwerte for Status 7
-            QueryBuilder<Messwert> builderMW =
-                repository.queryBuilder(Messwert.class);
+            QueryBuilder<MeasVal> builderMW =
+                repository.queryBuilder(MeasVal.class);
             builderMW.and("measmId", messung.getId());
             Response messwertQry =
                 repository.filter(builderMW.getQuery());
             @SuppressWarnings("unchecked")
-            List<Messwert> messwerte = (List<Messwert>) messwertQry.getData();
+            List<MeasVal> messwerte = (List<MeasVal>) messwertQry.getData();
             boolean hasValidMesswerte = false;
             if (!messwerte.isEmpty() && statusWert == 7) {
-            for (Messwert messwert: messwerte) {
+            for (MeasVal messwert: messwerte) {
 
                 boolean hasNoMesswert = false;
 

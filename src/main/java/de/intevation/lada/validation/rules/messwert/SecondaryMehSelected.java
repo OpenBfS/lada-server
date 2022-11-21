@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.MeasUnit;
 import de.intevation.lada.util.data.Repository;
@@ -36,7 +36,7 @@ public class SecondaryMehSelected implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messwert messwert = (Messwert) object;
+        MeasVal messwert = (MeasVal) object;
         EnvMedium umwelt = null;
         Violation violation = new Violation();
 

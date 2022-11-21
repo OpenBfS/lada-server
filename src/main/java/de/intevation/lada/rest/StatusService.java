@@ -24,7 +24,7 @@ import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
@@ -288,16 +288,16 @@ public class StatusService extends LadaService {
             violationCollection.addNotifications(violation.getNotifications());
 
             //validate messwert objects
-            QueryBuilder<Messwert> builder =
-                repository.queryBuilder(Messwert.class);
+            QueryBuilder<MeasVal> builder =
+                repository.queryBuilder(MeasVal.class);
             builder.and("measmId", messung.getId());
             Response messwertQry =
                 repository.filter(builder.getQuery());
             @SuppressWarnings("unchecked")
-            List<Messwert> messwerte = (List<Messwert>) messwertQry.getData();
+            List<MeasVal> messwerte = (List<MeasVal>) messwertQry.getData();
             boolean hasValidMesswerte = false;
             if (!messwerte.isEmpty()) {
-            for (Messwert messwert: messwerte) {
+            for (MeasVal messwert: messwerte) {
                 violation = messwertValidator.validate(messwert);
 
                 boolean hasNoMesswert = false;

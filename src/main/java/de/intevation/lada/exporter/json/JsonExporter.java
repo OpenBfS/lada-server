@@ -46,7 +46,7 @@ import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
@@ -524,10 +524,10 @@ public class JsonExporter implements Exporter {
     }
 
     private void addMesswerte(JsonNode node) {
-        QueryBuilder<Messwert> builder =
-            repository.queryBuilder(Messwert.class);
+        QueryBuilder<MeasVal> builder =
+            repository.queryBuilder(MeasVal.class);
         builder.and("measmId", node.get("id").asInt());
-        List<Messwert> messwerte =
+        List<MeasVal> messwerte =
             repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();
         try {

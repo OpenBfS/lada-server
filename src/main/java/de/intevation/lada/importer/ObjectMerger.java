@@ -17,7 +17,7 @@ import org.jboss.logging.Logger;
 import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.ZusatzWert;
@@ -257,12 +257,12 @@ public class ObjectMerger {
      */
     public ObjectMerger mergeMesswerte(
         Measm target,
-        List<Messwert> messwerte
+        List<MeasVal> messwerte
     ) {
-        QueryBuilder<Messwert> builder =
-            repository.queryBuilder(Messwert.class);
+        QueryBuilder<MeasVal> builder =
+            repository.queryBuilder(MeasVal.class);
         builder.and("measmId", target.getId());
-        List<Messwert> found =
+        List<MeasVal> found =
             repository.filterPlain(builder.getQuery());
         if (found.isEmpty()) {
             for (int i = 0; i < messwerte.size(); i++) {

@@ -25,7 +25,7 @@ import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 
 
 /**
@@ -73,7 +73,7 @@ public class CsvExportJob extends QueryExportJob {
                 mergedData = mergeMessungData((List<Measm>) subData);
                 break;
             case "messwert":
-                mergedData = mergeMesswertData((List<Messwert>) subData);
+                mergedData = mergeMesswertData((List<MeasVal>) subData);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid type");
@@ -178,7 +178,7 @@ public class CsvExportJob extends QueryExportJob {
      * @return Merged data as list
      */
     private List<Map<String, Object>> mergeMesswertData(
-        List<Messwert> messwertData
+        List<MeasVal> messwertData
     ) {
         // Create a map of id->record
         Map<Integer, Map<String, Object>> idMap =

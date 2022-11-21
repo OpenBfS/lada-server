@@ -25,8 +25,8 @@ import javax.ws.rs.core.MultivaluedMap;
 
 
 @Entity
-@Table(name = "meas_val", schema = SchemaName.NAME)
-public class Messwert implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class MeasVal implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -77,7 +77,7 @@ public class Messwert implements Serializable {
     @Transient
     private MultivaluedMap<String, Integer> notifications;
 
-    public Messwert() {
+    public MeasVal() {
     }
 
     public Integer getId() {

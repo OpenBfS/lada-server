@@ -50,7 +50,7 @@ import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.util.data.Job;
@@ -702,8 +702,8 @@ public class ImporterTest extends BaseTest {
 
         Measm messung =
             repository.getByIdPlain(Measm.class, MID1200);
-        List<Messwert> messwerte = new ArrayList<Messwert>();
-        Messwert wert1 = new Messwert();
+        List<MeasVal> messwerte = new ArrayList<MeasVal>();
+        MeasVal wert1 = new MeasVal();
         wert1.setMeasmId(MID1200);
         wert1.setUnitId(MEHID207);
         wert1.setMeasdId(MGID56);
@@ -711,10 +711,10 @@ public class ImporterTest extends BaseTest {
         messwerte.add(wert1);
 
         merger.mergeMesswerte(messung, messwerte);
-        QueryBuilder<Messwert> builder =
-            repository.queryBuilder(Messwert.class);
+        QueryBuilder<MeasVal> builder =
+            repository.queryBuilder(MeasVal.class);
         builder.and("measmId", messung.getId());
-        List<Messwert> dbWerte =
+        List<MeasVal> dbWerte =
             repository.filterPlain(builder.getQuery());
         Assert.assertEquals(1, dbWerte.size());
 

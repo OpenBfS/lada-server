@@ -13,7 +13,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.ObligMeasdMp;
@@ -89,16 +89,16 @@ public class HasPflichtmessgroessen implements Rule {
             pflicht.addAll(pflichtGrpS2);
         }
 
-        QueryBuilder<Messwert> wertBuilder =
-            repository.queryBuilder(Messwert.class);
+        QueryBuilder<MeasVal> wertBuilder =
+            repository.queryBuilder(MeasVal.class);
         wertBuilder.and("measmId", messung.getId());
         Response wertResponse =
             repository.filter(wertBuilder.getQuery());
         @SuppressWarnings("unchecked")
-        List<Messwert> messwerte = (List<Messwert>) wertResponse.getData();
+        List<MeasVal> messwerte = (List<MeasVal>) wertResponse.getData();
         Violation violation = new Violation();
         List<ObligMeasdMp> tmp = new ArrayList<ObligMeasdMp>();
-        for (Messwert wert : messwerte) {
+        for (MeasVal wert : messwerte) {
             for (ObligMeasdMp p : pflicht) {
                 if (p.getMeasdId().equals(wert.getMeasdId())) {
                     tmp.add(p);

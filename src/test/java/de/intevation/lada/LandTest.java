@@ -32,7 +32,7 @@ import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.ZusatzWert;
@@ -426,7 +426,7 @@ public class LandTest extends BaseTest {
         protocol.setType("insert messwert");
         protocol.addInfo("database", "Insert Messwert into database");
         testProtocol.add(protocol);
-        Messwert messwert = em.find(Messwert.class, ID10000);
+        MeasVal messwert = em.find(MeasVal.class, ID10000);
         Assert.assertNotNull(messwert);
         protocol.setPassed(true);
     }

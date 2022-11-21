@@ -21,7 +21,7 @@ import de.intevation.lada.exporter.Creator;
 import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
@@ -448,12 +448,12 @@ implements Creator {
         String laf = "";
         for (Measm m : mess) {
             laf += "%MESSUNG%\n";
-            QueryBuilder<Messwert> wertBuilder =
-                repository.queryBuilder(Messwert.class);
+            QueryBuilder<MeasVal> wertBuilder =
+                repository.queryBuilder(MeasVal.class);
             wertBuilder.and("measmId", m.getId());
             Response messw =
                 repository.filter(wertBuilder.getQuery());
-            List<Messwert> werte = (List<Messwert>) messw.getData();
+            List<MeasVal> werte = (List<MeasVal>) messw.getData();
             QueryBuilder<CommMeasm> kommBuilder =
                 repository.queryBuilder(CommMeasm.class);
             kommBuilder.and("measmId", m.getId());
@@ -484,7 +484,7 @@ implements Creator {
                 && authorization.isAuthorized(
                     m, RequestMethod.GET, Measm.class)
             ) {
-                for (Messwert mw : werte) {
+                for (MeasVal mw : werte) {
                     laf += writeMesswert(mw);
                 }
             }
@@ -553,7 +553,7 @@ implements Creator {
      * @return Single LAF line.
      */
     @SuppressWarnings("unchecked")
-    private String writeMesswert(Messwert mw) {
+    private String writeMesswert(MeasVal mw) {
         QueryBuilder<Measd> builder =
             repository.queryBuilder(Measd.class);
         builder.and("id", mw.getMeasdId());

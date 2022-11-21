@@ -25,7 +25,7 @@ import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.land.MpgMmtMp;
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.model.land.Sample;
@@ -501,7 +501,7 @@ public class ProbeFactory {
             createObject(messung, dryrun);
             messungProtocol.add(mmt.getMmtId());
             for (int mw : mmt.getMeasds()) {
-                Messwert wert = new Messwert();
+                MeasVal wert = new MeasVal();
                 wert.setMeasdId(mw);
                 wert.setMeasmId(messung.getId());
                 if (messprogramm.getUnitId() != null) {

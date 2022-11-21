@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.UnitConvers;
 
@@ -49,8 +49,8 @@ public class MesswertNormalizer {
      * @param umwId UmweltId to get the standard unit from
      * @return List<Messwert> with converted units.
      */
-    public List<Messwert> normalizeMesswerte(
-        List<Messwert> messwerte,
+    public List<MeasVal> normalizeMesswerte(
+        List<MeasVal> messwerte,
         String umwId
     ) {
         if (umwId == null || umwId.equals("")) {
@@ -61,7 +61,7 @@ public class MesswertNormalizer {
         Integer mehIdToConvertTo = umwelt.getUnit1();
         Integer secMehIdToConvertTo = umwelt.getUnit2();
 
-        for (Messwert messwert: messwerte) {
+        for (MeasVal messwert: messwerte) {
             if (mehIdToConvertTo != null
                 && mehIdToConvertTo.equals(messwert.getUnitId())
                 || secMehIdToConvertTo != null

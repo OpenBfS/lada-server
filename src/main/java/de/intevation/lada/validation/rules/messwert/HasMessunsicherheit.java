@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.messwert;
 
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -24,7 +24,7 @@ public class HasMessunsicherheit implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messwert messwert = (Messwert) object;
+        MeasVal messwert = (MeasVal) object;
         Float unsicherheit = messwert.getError();
         if (messwert.getLessThanLOD() == null
             && (unsicherheit == null || unsicherheit == 0f)) {

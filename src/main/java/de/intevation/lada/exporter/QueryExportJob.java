@@ -23,7 +23,7 @@ import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.master.Filter;
 import de.intevation.lada.model.master.FilterType;
@@ -217,9 +217,9 @@ public abstract class QueryExportJob extends ExportJob {
      * @param primaryDataIds Ids to filter for
      * @return Messwert records as list
      */
-    private List<Messwert> getMesswertSubData(List<Integer> primaryDataIds) {
-        QueryBuilder<Messwert> messwertBuilder = repository.queryBuilder(
-            Messwert.class);
+    private List<MeasVal> getMesswertSubData(List<Integer> primaryDataIds) {
+        QueryBuilder<MeasVal> messwertBuilder = repository.queryBuilder(
+            MeasVal.class);
         messwertBuilder.andIn("measmId", primaryDataIds);
         return repository.filterPlain(messwertBuilder.getQuery());
     }
@@ -248,8 +248,8 @@ public abstract class QueryExportJob extends ExportJob {
      * @return Number of messwert records
      */
     protected int getMesswertCount(Measm messung) {
-        QueryBuilder<Messwert> builder = repository.queryBuilder(
-            Messwert.class);
+        QueryBuilder<MeasVal> builder = repository.queryBuilder(
+            MeasVal.class);
         builder.and("measmId", messung.getId());
         // TODO: This is a nice example of ORM-induced database misuse:
         return repository.filterPlain(builder.getQuery()).size();
@@ -260,7 +260,7 @@ public abstract class QueryExportJob extends ExportJob {
     * @param messwert messwertId sungId to get messeinheit for
     * @return messeinheit
      */
-    protected String getMesseinheit(Messwert messwert) {
+    protected String getMesseinheit(MeasVal messwert) {
         QueryBuilder<MeasUnit> builder = repository.queryBuilder(
             MeasUnit.class);
         builder.and("id", messwert.getUnitId());
@@ -273,7 +273,7 @@ public abstract class QueryExportJob extends ExportJob {
     * @param messwert messwertId sungId to get messgroesse for
     * @return messgroesse
      */
-    protected String getMessgroesse(Messwert messwert) {
+    protected String getMessgroesse(MeasVal messwert) {
         QueryBuilder<Measd> builder = repository.queryBuilder(
             Measd.class);
         builder.and("id", messwert.getMeasdId());

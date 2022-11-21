@@ -23,7 +23,7 @@ import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -132,16 +132,16 @@ public class MesswertService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
-        QueryBuilder<Messwert> builder =
-            repository.queryBuilder(Messwert.class);
+        QueryBuilder<MeasVal> builder =
+            repository.queryBuilder(MeasVal.class);
         builder.and("measmId", messungsId);
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
-            Messwert.class);
+            MeasVal.class);
         if (r.getSuccess()) {
             @SuppressWarnings("unchecked")
-            List<Messwert> messwerts = (List<Messwert>) r.getData();
-            for (Messwert messwert: messwerts) {
+            List<MeasVal> messwerts = (List<MeasVal>) r.getData();
+            for (MeasVal messwert: messwerts) {
                 Violation violation = validator.validate(messwert);
                 if (violation.hasErrors()
                     || violation.hasWarnings()
@@ -169,8 +169,8 @@ public class MesswertService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(Messwert.class, id);
-        Messwert messwert = (Messwert) response.getData();
+        Response response = repository.getById(MeasVal.class, id);
+        MeasVal messwert = (MeasVal) response.getData();
         Measm messung = repository.getByIdPlain(
             Measm.class, messwert.getMeasmId());
         if (!authorization.isAuthorized(
@@ -188,7 +188,7 @@ public class MesswertService extends LadaService {
         }
         return authorization.filter(
             response,
-            Messwert.class);
+            MeasVal.class);
     }
 
     /**
@@ -220,12 +220,12 @@ public class MesswertService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        Messwert messwert
+        MeasVal messwert
     ) {
         if (!authorization.isAuthorized(
                 messwert,
                 RequestMethod.POST,
-                Messwert.class)
+                MeasVal.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -249,7 +249,7 @@ public class MesswertService extends LadaService {
         }
         return authorization.filter(
             response,
-            Messwert.class);
+            MeasVal.class);
     }
 
     /**
@@ -282,12 +282,12 @@ public class MesswertService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        Messwert messwert
+        MeasVal messwert
     ) {
         if (!authorization.isAuthorized(
                 messwert,
                 RequestMethod.PUT,
-                Messwert.class)
+                MeasVal.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -316,7 +316,7 @@ public class MesswertService extends LadaService {
         }
         return authorization.filter(
             response,
-            Messwert.class);
+            MeasVal.class);
     }
 
     /**
@@ -356,18 +356,18 @@ public class MesswertService extends LadaService {
             repository.getByIdPlain(
                 EnvMedium.class, probe.getEnvMediumId());
         //Get all Messwert objects to convert
-        QueryBuilder<Messwert> messwertBuilder =
-            repository.queryBuilder(Messwert.class);
+        QueryBuilder<MeasVal> messwertBuilder =
+            repository.queryBuilder(MeasVal.class);
         messwertBuilder.and("measmId", messungsId);
-        List<Messwert> messwerte = messwertNormalizer.normalizeMesswerte(
+        List<MeasVal> messwerte = messwertNormalizer.normalizeMesswerte(
             repository.filterPlain(messwertBuilder.getQuery()),
             umwelt.getId());
 
-        for (Messwert messwert: messwerte) {
+        for (MeasVal messwert: messwerte) {
             if (!authorization.isAuthorized(
                 messwert,
                 RequestMethod.PUT,
-                Messwert.class)
+                MeasVal.class)
             ) {
                 return new Response(false, StatusCodes.NOT_ALLOWED, null);
             }
@@ -388,8 +388,8 @@ public class MesswertService extends LadaService {
                 return response;
             }
             Response updated = repository.getById(
-                Messwert.class,
-                ((Messwert) response.getData()).getId());
+                MeasVal.class,
+                ((MeasVal) response.getData()).getId());
             if (violation.hasWarnings()) {
                 updated.setWarnings(violation.getWarnings());
             }
@@ -398,7 +398,7 @@ public class MesswertService extends LadaService {
             }
             authorization.filter(
                     updated,
-                    Messwert.class);
+                    MeasVal.class);
         }
         return new Response(true, StatusCodes.OK, messwerte);
     }
@@ -414,11 +414,11 @@ public class MesswertService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        Messwert messwertObj = repository.getByIdPlain(Messwert.class, id);
+        MeasVal messwertObj = repository.getByIdPlain(MeasVal.class, id);
         if (!authorization.isAuthorized(
                 messwertObj,
                 RequestMethod.DELETE,
-                Messwert.class)
+                MeasVal.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
