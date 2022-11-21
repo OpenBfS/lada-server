@@ -53,7 +53,7 @@ public class MessprogrammMmtTest extends ServiceTest {
         JsonObject messprogrammMmt =
             content.getJsonArray("lada.mpg_mmt_mp").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messprogrammMmt);
-        builder.add("messgroessen", Json.createArrayBuilder().add(56));
+        builder.add("measds", Json.createArrayBuilder().add(56));
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);
 
