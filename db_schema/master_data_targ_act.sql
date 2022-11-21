@@ -49,7 +49,7 @@ COPY master.targ_act_mmt_gr_mp (id, mmt_id, targ_act_mmt_gr_id) FROM stdin;
 -- Data for Name: targ_env_gr; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.targ_env_gr (id, name, targ_env__gr_displ) FROM stdin;
+COPY master.targ_env_gr (id, name, targ_env_gr_displ) FROM stdin;
 31	Schwebstoff	Schwebstoff
 1	Gemüse	Freilandgemüse
 2	Getreide	Getreide
@@ -1489,7 +1489,7 @@ COPY master.targ_act_targ (id, network_id, targ_act_mmt_gr_id, targ_env_medium_g
 -- Data for Name: targ_env_gr_mp; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.targ_env_gr_mp (id, targ_env__gr_id, env_medium_id) FROM stdin;
+COPY master.targ_env_gr_mp (id, targ_env_gr_id, env_medium_id) FROM stdin;
 17	3	N46
 76	12	N56
 77	12	N5Z

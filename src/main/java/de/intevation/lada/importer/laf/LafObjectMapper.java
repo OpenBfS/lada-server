@@ -502,8 +502,14 @@ public class LafObjectMapper {
                         if (presentUOrte.size() > 0 && eOrt!= null && presentUOrte.stream().anyMatch(uOrt -> uOrt.getOrtId().equals(eOrt.getOrtId()))){
                             rOrt = true;
                         }
-                        if (presentROrte.size() > 0 && eOrt!= null && presentROrte.stream().anyMatch(rtypeOrt -> rtypeOrt.getOrtId().equals(eOrt.getOrtId()))){
+                        else if (presentROrte.size() > 0 && eOrt!= null && presentROrte.stream().anyMatch(rtypeOrt -> rtypeOrt.getOrtId().equals(eOrt.getOrtId()))){
                             rOrt = true;
+                        } else if (presentROrte.size() > 0 && eOrt!= null){
+                            for (int i = 0; i < presentROrte.size(); i++) {
+                                presentROrte.get(i).setOrtszuordnungTyp("U");
+                                repository.update(presentROrte.get(i));
+                            }
+                            rOrt = false;
                         }
                     }
 
@@ -514,9 +520,15 @@ public class LafObjectMapper {
                             if (presentEOrte.size() > 0 && uOrte.size() > 0 && presentEOrte.stream().anyMatch(etypeOrt -> etypeOrt.getOrtId().equals(uOrte.get(0).getOrtId()))){
                                 rOrt = true;
                             }
-                            if (presentROrte.size() > 0 && uOrte.size() > 0 && presentROrte.stream().anyMatch(rtypeOrt -> rtypeOrt.getOrtId().equals(uOrte.get(0).getOrtId()))){
+                            else if (presentROrte.size() > 0 && uOrte.size() > 0 && presentROrte.stream().anyMatch(rtypeOrt -> rtypeOrt.getOrtId().equals(uOrte.get(0).getOrtId()))){
                                 //ToDo: We need to handle R-Orte!
                                 rOrt = true;
+                            } else if (presentROrte.size() > 0 && uOrte.size() > 0){
+                                for (int i = 0; i < presentROrte.size(); i++) {
+                                    presentROrte.get(i).setOrtszuordnungTyp("E");
+                                    repository.update(presentROrte.get(i));
+                                }
+                                rOrt = false;
                             }
                     }
 

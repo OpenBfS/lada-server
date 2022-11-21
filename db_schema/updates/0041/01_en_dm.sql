@@ -1110,21 +1110,21 @@ FROM master.targ_act_targ;
 
 ALTER TABLE IF EXISTS master.sollist_umwgrp RENAME TO targ_env_gr;
 ALTER TABLE IF EXISTS master.targ_env_gr RENAME COLUMN bezeichnung TO name;
-ALTER TABLE IF EXISTS master.targ_env_gr RENAME COLUMN beschreibung TO targ_env__gr_displ;
+ALTER TABLE IF EXISTS master.targ_env_gr RENAME COLUMN beschreibung TO targ_env_gr_displ;
 ALTER TABLE IF EXISTS master.targ_env_gr RENAME COLUMN letzte_aenderung TO last_mod;
 CREATE VIEW stamm.sollist_umwgrp AS SELECT
 	id,
 	name AS bezeichnung,
-	targ_env__gr_displ AS beschreibung
+	targ_env_gr_displ AS beschreibung
 FROM master.targ_env_gr;
 
 ALTER TABLE IF EXISTS master.sollist_umwgrp_zuord RENAME TO targ_env_gr_mp;
-ALTER TABLE IF EXISTS master.targ_env_gr_mp RENAME COLUMN sollist_umwgrp_id TO targ_env__gr_id;
+ALTER TABLE IF EXISTS master.targ_env_gr_mp RENAME COLUMN sollist_umwgrp_id TO targ_env_gr_id;
 ALTER TABLE IF EXISTS master.targ_env_gr_mp RENAME COLUMN umw_id TO env_medium_id;
 ALTER TABLE IF EXISTS master.targ_env_gr_mp RENAME COLUMN letzte_aenderung TO last_mod;
 CREATE VIEW stamm.sollist_umwgrp_zuord AS SELECT
 	id,
-	targ_env__gr_id AS sollist_umwgrp_id,
+	targ_env_gr_id AS sollist_umwgrp_id,
 	env_medium_id AS umw_id
 FROM master.targ_env_gr_mp;
 
