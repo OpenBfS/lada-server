@@ -21,7 +21,7 @@ import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.model.land.KommentarP;
+import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.MessprogrammMmt;
 import de.intevation.lada.model.land.Messung;
@@ -482,7 +482,7 @@ public class ProbeFactory {
         if (messprogramm.getProbeKommentar() != null
             && !messprogramm.getProbeKommentar().equals("")
         ) {
-            KommentarP kommentar = new KommentarP();
+            CommSample kommentar = new CommSample();
             kommentar.setDate(new Timestamp(new Date().getTime()));
             kommentar.setSampleId(probe.getId());
             kommentar.setText(messprogramm.getProbeKommentar());

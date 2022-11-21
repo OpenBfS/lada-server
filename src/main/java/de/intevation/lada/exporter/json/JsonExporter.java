@@ -44,7 +44,7 @@ import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.model.land.CommMeasm;
-import de.intevation.lada.model.land.KommentarP;
+import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
@@ -414,10 +414,10 @@ public class JsonExporter implements Exporter {
     }
 
     private void addKommentare(JsonNode probe) {
-        QueryBuilder<KommentarP> builder =
-            repository.queryBuilder(KommentarP.class);
+        QueryBuilder<CommSample> builder =
+            repository.queryBuilder(CommSample.class);
         builder.and("sampleId", probe.get("id").asInt());
-        List<KommentarP> kommentare =
+        List<CommSample> kommentare =
             repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();
         try {

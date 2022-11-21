@@ -15,7 +15,7 @@ import javax.persistence.PersistenceException;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.land.CommMeasm;
-import de.intevation.lada.model.land.KommentarP;
+import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
@@ -193,15 +193,15 @@ public class ObjectMerger {
      */
     public ObjectMerger mergeKommentare(
         Sample target,
-        List<KommentarP> kommentare
+        List<CommSample> kommentare
     ) {
-        QueryBuilder<KommentarP> builder =
-            repository.queryBuilder(KommentarP.class);
+        QueryBuilder<CommSample> builder =
+            repository.queryBuilder(CommSample.class);
         for (int i = 0; i < kommentare.size(); i++) {
             builder.and("sampleId", target.getId());
             builder.and("measFacilId", kommentare.get(i).getMeasFacilId());
             builder.and("date", kommentare.get(i).getDate());
-            List<KommentarP> found =
+            List<CommSample> found =
                 repository.filterPlain(builder.getQuery());
             if (found.isEmpty()) {
                 repository.create(kommentare.get(i));

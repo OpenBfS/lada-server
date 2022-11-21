@@ -36,7 +36,7 @@ import de.intevation.lada.importer.IdentifierConfig;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.land.CommMeasm;
-import de.intevation.lada.model.land.KommentarP;
+import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
@@ -420,9 +420,9 @@ public class LafObjectMapper {
         if (newProbe != null) {
             if (!oldProbeIsReadonly) {
                 // Create kommentar objects
-                List<KommentarP> kommentare = new ArrayList<>();
+                List<CommSample> kommentare = new ArrayList<>();
                 for (int i = 0; i < object.getKommentare().size(); i++) {
-                    KommentarP tmp =
+                    CommSample tmp =
                         createProbeKommentar(
                             object.getKommentare().get(i), newProbe);
                     if (tmp != null) {
@@ -747,16 +747,16 @@ public class LafObjectMapper {
         doTransformations(kommentar, CommMeasm.class, "kommentarm");
     }
 
-    private void doDefaults(KommentarP kommentar) {
-        doDefaults(kommentar, KommentarP.class, "kommentarp");
+    private void doDefaults(CommSample kommentar) {
+        doDefaults(kommentar, CommSample.class, "kommentarp");
     }
 
-    private void doConverts(KommentarP kommentar) {
-        doConverts(kommentar, KommentarP.class, "kommentarp");
+    private void doConverts(CommSample kommentar) {
+        doConverts(kommentar, CommSample.class, "kommentarp");
     }
 
-    private void doTransforms(KommentarP kommentar) {
-        doTransformations(kommentar, KommentarP.class, "kommentarp");
+    private void doTransforms(CommSample kommentar) {
+        doTransformations(kommentar, CommSample.class, "kommentarp");
     }
 
     private void doDefaults(Ortszuordnung ort) {
@@ -1154,7 +1154,7 @@ public class LafObjectMapper {
         }
     }
 
-    private KommentarP createProbeKommentar(
+    private CommSample createProbeKommentar(
         Map<String, String> attributes,
         Sample probe
     ) {
@@ -1166,10 +1166,10 @@ public class LafObjectMapper {
         }
 
         // TODO: Why does the following duplicate a validation rule?
-        QueryBuilder<KommentarP> kommentarBuilder = repository
-            .queryBuilder(KommentarP.class)
+        QueryBuilder<CommSample> kommentarBuilder = repository
+            .queryBuilder(CommSample.class)
             .and("sampleId", probe.getId());
-        List<KommentarP> kommentarExist = repository.filterPlain(
+        List<CommSample> kommentarExist = repository.filterPlain(
             kommentarBuilder.getQuery());
 
         // TODO: Should be the job of EXISTS and a WHERE-clause in database
@@ -1185,7 +1185,7 @@ public class LafObjectMapper {
                     StatusCodes.IMP_DUPLICATE));
             return null;
         }
-        KommentarP kommentar = new KommentarP();
+        CommSample kommentar = new CommSample();
         kommentar.setSampleId(probe.getId());
         kommentar.setText(attributes.get("TEXT"));
         if (attributes.containsKey("MST_ID")) {

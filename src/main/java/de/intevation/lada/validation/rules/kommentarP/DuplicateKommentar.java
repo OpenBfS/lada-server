@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.KommentarP;
+import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -32,13 +32,13 @@ public class DuplicateKommentar implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        KommentarP kommentar = (KommentarP) object;
+        CommSample kommentar = (CommSample) object;
         Integer probeID  = kommentar.getSampleId();
 
-        QueryBuilder<KommentarP> kommentarBuilder = repository
-            .queryBuilder(KommentarP.class)
+        QueryBuilder<CommSample> kommentarBuilder = repository
+            .queryBuilder(CommSample.class)
             .and("sampleId", probeID);
-        List<KommentarP> kommentarExist = repository.filterPlain(
+        List<CommSample> kommentarExist = repository.filterPlain(
             kommentarBuilder.getQuery());
 
         // TODO: Should be the job of EXISTS and a WHERE-clause in database

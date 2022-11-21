@@ -20,8 +20,8 @@ import javax.persistence.Transient;
 
 
 @Entity
-@Table(name = "comm_sample", schema = SchemaName.NAME)
-public class KommentarP implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class CommSample implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -42,7 +42,7 @@ public class KommentarP implements Serializable {
     @Transient
     private boolean readonly;
 
-    public KommentarP() {
+    public CommSample() {
     }
 
     public Integer getId() {

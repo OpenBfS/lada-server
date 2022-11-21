@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import de.intevation.lada.model.land.CommMeasm;
-import de.intevation.lada.model.land.KommentarP;
+import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Messprogramm;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
@@ -327,7 +327,7 @@ public class LandTest extends BaseTest {
         protocol.setType("insert kommentar_p");
         protocol.addInfo("database", "Insert KommentarP into database");
         testProtocol.add(protocol);
-        KommentarP kommentar = em.find(KommentarP.class, ID1000);
+        CommSample kommentar = em.find(CommSample.class, ID1000);
         Assert.assertNotNull(kommentar);
         protocol.setPassed(true);
     }

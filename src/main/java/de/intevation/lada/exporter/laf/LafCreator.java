@@ -19,7 +19,7 @@ import javax.inject.Named;
 
 import de.intevation.lada.exporter.Creator;
 import de.intevation.lada.model.land.CommMeasm;
-import de.intevation.lada.model.land.KommentarP;
+import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
@@ -139,12 +139,12 @@ implements Creator {
      */
     @SuppressWarnings("unchecked")
     private String writeAttributes(Sample probe, List<Integer> messungen) {
-        QueryBuilder<KommentarP> kommBuilder =
-            repository.queryBuilder(KommentarP.class);
+        QueryBuilder<CommSample> kommBuilder =
+            repository.queryBuilder(CommSample.class);
         kommBuilder.and("sampleId", probe.getId());
         Response kommentar =
             repository.filter(kommBuilder.getQuery());
-        List<KommentarP> kommentare = (List<KommentarP>) kommentar.getData();
+        List<CommSample> kommentare = (List<CommSample>) kommentar.getData();
 
         String probenart = null;
         if (probe.getSampleMethId() != null) {
@@ -272,7 +272,7 @@ implements Creator {
         for (ZusatzWert zw : zusatzwerte) {
             laf += writeZusatzwert(zw);
         }
-        for (KommentarP kp : kommentare) {
+        for (CommSample kp : kommentare) {
             laf += writeKommentar(kp);
         }
         laf += writeOrt(probe);
@@ -419,7 +419,7 @@ implements Creator {
      * @param kp    The {@link LKommentarP} object.
      * @return Single LAF line.
      */
-    private String writeKommentar(KommentarP kp) {
+    private String writeKommentar(CommSample kp) {
         String value = "\"" + kp.getMeasFacilId()
             + "\" "
             + toUTCString(kp.getDate()) + " "
