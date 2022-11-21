@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.land.CommSample;
-import de.intevation.lada.model.land.Messprogramm;
+import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.land.MessprogrammMmt;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
@@ -141,11 +141,11 @@ public class ProbeFactory {
          * start date, which will be adjusted to the next possible start
          * of an intervall of the type given by the Messprogramm.
          *
-         * @param Messprogramm the Messprogramm to use
+         * @param Mpg the Messprogramm to use
          * @param Calendar initial start date
          */
         Intervall(
-            Messprogramm messprogramm,
+            Mpg messprogramm,
             Calendar start
         ) {
             this.teilVon = messprogramm.getSamplePdStartDate();
@@ -321,7 +321,7 @@ public class ProbeFactory {
      * @return List of probe objects.
      */
     public List<Sample> create(
-        Messprogramm messprogramm, Calendar start, Calendar end, boolean dryrun
+        Mpg messprogramm, Calendar start, Calendar end, boolean dryrun
     ) {
         protocol = new ArrayList<>();
 
@@ -399,7 +399,7 @@ public class ProbeFactory {
      * @return The new probe object.
      */
     private Sample createObjects(
-        Messprogramm messprogramm,
+        Mpg messprogramm,
         Date startDate,
         Date endDate,
         boolean dryrun
@@ -605,7 +605,7 @@ public class ProbeFactory {
      *
      * @return The updated messprogramm.
      */
-    public Messprogramm findUmweltId(Messprogramm messprogramm) {
+    public Mpg findUmweltId(Mpg messprogramm) {
         String mediaDesk = messprogramm.getEnvDescripId();
         if (mediaDesk != null) {
             String[] mediaDeskParts = mediaDesk.split(" ");
@@ -854,7 +854,7 @@ public class ProbeFactory {
      *
      * @return The updated messprogramm.
      */
-    public Messprogramm getInitialMediaDesk(Messprogramm messprogramm) {
+    public Mpg getInitialMediaDesk(Mpg messprogramm) {
         String umweltId = messprogramm.getEnvMediumId();
         if (umweltId != null) {
             messprogramm.setEnvDescripId(getInitialMediaDesk(umweltId));

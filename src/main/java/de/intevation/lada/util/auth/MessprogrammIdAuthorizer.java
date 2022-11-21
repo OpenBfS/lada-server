@@ -11,7 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import de.intevation.lada.model.land.Messprogramm;
+import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -46,8 +46,8 @@ public class MessprogrammIdAuthorizer extends BaseAuthorizer {
         ) {
             return false;
         }
-        Messprogramm messprogramm =
-            repository.getByIdPlain(Messprogramm.class, id);
+        Mpg messprogramm =
+            repository.getByIdPlain(Mpg.class, id);
         String mstId = messprogramm.getMeasFacilId();
         if (mstId != null) {
             MeasFacil mst = repository.getByIdPlain(
@@ -107,8 +107,8 @@ public class MessprogrammIdAuthorizer extends BaseAuthorizer {
         try {
             Method getMessprogrammId = clazz.getMethod("getMessprogrammId");
             Integer id = (Integer) getMessprogrammId.invoke(data);
-            Messprogramm messprogramm = repository.getByIdPlain(
-                Messprogramm.class, id);
+            Mpg messprogramm = repository.getByIdPlain(
+                Mpg.class, id);
             String mstId = messprogramm.getMeasFacilId();
             boolean owner = false;
             if (mstId != null) {

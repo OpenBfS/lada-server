@@ -30,8 +30,8 @@ import javax.ws.rs.core.MultivaluedMap;
 import de.intevation.lada.model.master.SampleSpecif;
 
 @Entity
-@Table(name = "mpg", schema = SchemaName.NAME)
-public class Messprogramm implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class Mpg implements Serializable {
     private static final long serialVersionUID = 1L;
 
     // Has to be kept in sync with database schema
@@ -125,7 +125,7 @@ public class Messprogramm implements Serializable {
     @Transient
     private boolean readonly;
 
-    public Messprogramm() {
+    public Mpg() {
     }
 
     public Integer getId() {

@@ -19,7 +19,7 @@ import javax.ws.rs.core.Context;
 
 import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
-import de.intevation.lada.model.land.Messprogramm;
+import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.land.MessprogrammMmt;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
@@ -137,7 +137,7 @@ public class HeaderAuthorization implements Authorization {
             Map.entry(MunicDiv.class, netzAuthorizer),
             Map.entry(MpgCateg.class, netzAuthorizer),
             Map.entry(Site.class, netzAuthorizer),
-            Map.entry(Messprogramm.class, messprogrammAuthorizer),
+            Map.entry(Mpg.class, messprogrammAuthorizer),
             Map.entry(MessprogrammMmt.class, messprogrammAuthorizer),
             Map.entry(OrtszuordnungMp.class, mpIdAuthorizer),
             Map.entry(Tag.class, tagAuthorizer),

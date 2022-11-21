@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
 
 import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
-import de.intevation.lada.model.land.Messprogramm;
+import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
@@ -450,7 +450,7 @@ public class LandTest extends BaseTest {
         protocol.setType("insert messprogramm");
         protocol.addInfo("database", "Insert Messprogramm into database");
         testProtocol.add(protocol);
-        Messprogramm messprogramm = em.find(Messprogramm.class, ID1000);
+        Mpg messprogramm = em.find(Mpg.class, ID1000);
         Assert.assertNotNull(messprogramm);
         protocol.setPassed(true);
     }
@@ -469,7 +469,7 @@ public class LandTest extends BaseTest {
         protocol.setType("insert messprogramm");
         protocol.addInfo("database", "Insert Messprogramm into database");
         testProtocol.add(protocol);
-        Messprogramm messprogramm = em.find(Messprogramm.class, ID1000);
+        Mpg messprogramm = em.find(Mpg.class, ID1000);
         Assert.assertNotNull(messprogramm);
         protocol.setPassed(true);
     }

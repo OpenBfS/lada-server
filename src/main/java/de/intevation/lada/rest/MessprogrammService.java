@@ -23,7 +23,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import de.intevation.lada.factory.ProbeFactory;
-import de.intevation.lada.model.land.Messprogramm;
+import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -122,8 +122,8 @@ public class MessprogrammService extends LadaService {
     ) {
         Response response =
             authorization.filter(
-                repository.getById(Messprogramm.class, id),
-                Messprogramm.class);
+                repository.getById(Mpg.class, id),
+                Mpg.class);
         return response;
     }
 
@@ -163,12 +163,12 @@ public class MessprogrammService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        Messprogramm messprogramm
+        Mpg messprogramm
     ) {
         if (!authorization.isAuthorized(
                 messprogramm,
                 RequestMethod.POST,
-                Messprogramm.class)
+                Mpg.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -197,7 +197,7 @@ public class MessprogrammService extends LadaService {
         /* Persist the new messprogramm object*/
         return authorization.filter(
             repository.create(messprogramm),
-            Messprogramm.class);
+            Mpg.class);
     }
 
     /**
@@ -237,12 +237,12 @@ public class MessprogrammService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        Messprogramm messprogramm
+        Mpg messprogramm
     ) {
         if (!authorization.isAuthorized(
                 messprogramm,
                 RequestMethod.PUT,
-                Messprogramm.class)
+                Mpg.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -275,7 +275,7 @@ public class MessprogrammService extends LadaService {
         }
         return authorization.filter(
             response,
-            Messprogramm.class);
+            Mpg.class);
     }
 
     /**
@@ -320,19 +320,19 @@ public class MessprogrammService extends LadaService {
             return new Response(false, StatusCodes.NOT_EXISTING, null);
         }
 
-        QueryBuilder<Messprogramm> builder =
-            repository.queryBuilder(Messprogramm.class);
+        QueryBuilder<Mpg> builder =
+            repository.queryBuilder(Mpg.class);
         builder.orIn("id", idList);
-        List<Messprogramm> messprogramme =
+        List<Mpg> messprogramme =
             repository.filterPlain(builder.getQuery());
 
         List<Map<String, Integer>> result = new ArrayList<>();
-        for (Messprogramm m : messprogramme) {
+        for (Mpg m : messprogramme) {
             Map<String, Integer> mpResult = new HashMap<>();
             int id = m.getId().intValue();
             mpResult.put("id", id);
             if (authorization.isAuthorized(
-                    m, RequestMethod.PUT, Messprogramm.class)
+                    m, RequestMethod.PUT, Mpg.class)
             ) {
                 m.setIsActive(active);
                 Response r = repository.update(m);
@@ -358,8 +358,8 @@ public class MessprogrammService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        Messprogramm messprogrammObj = repository.getByIdPlain(
-            Messprogramm.class, id);
+        Mpg messprogrammObj = repository.getByIdPlain(
+            Mpg.class, id);
         /* check if probe references to the messprogramm exists */
         // TODO: This is a nice example of ORM-induced database misuse:
         QueryBuilder<Sample> builder = repository.queryBuilder(Sample.class);
@@ -373,7 +373,7 @@ public class MessprogrammService extends LadaService {
         if (!authorization.isAuthorized(
                 messprogrammObj,
                 RequestMethod.DELETE,
-                Messprogramm.class)
+                Mpg.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }

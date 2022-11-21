@@ -20,7 +20,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.land.Messprogramm;
+import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.land.MessprogrammMmt;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -238,7 +238,7 @@ public class MessprogrammMmtService extends LadaService {
         if (!authorization.isAuthorized(
                 messprogrammmmtObj,
                 RequestMethod.DELETE,
-                Messprogramm.class)
+                Mpg.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }

@@ -12,7 +12,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Messprogramm;
+import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -37,7 +37,7 @@ public class DeskriptorToUmwelt implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messprogramm messprogramm = (Messprogramm) object;
+        Mpg messprogramm = (Mpg) object;
         if (messprogramm.getEnvDescripId() == null
             || messprogramm.getEnvDescripId().equals("")
         ) {

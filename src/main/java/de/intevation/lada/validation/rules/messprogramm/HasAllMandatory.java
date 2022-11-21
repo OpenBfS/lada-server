@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.messprogramm;
 
-import de.intevation.lada.model.land.Messprogramm;
+import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -22,7 +22,7 @@ public class HasAllMandatory implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messprogramm messprogramm = (Messprogramm) object;
+        Mpg messprogramm = (Mpg) object;
         Violation violation = new Violation();
 
         if (messprogramm.getMeasFacilId() == null

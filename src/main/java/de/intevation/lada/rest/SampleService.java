@@ -27,7 +27,7 @@ import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
-import de.intevation.lada.model.land.Messprogramm;
+import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -231,8 +231,8 @@ public class SampleService extends LadaService {
 
         object.ids.forEach(id -> {
             HashMap<String, Object> data = new HashMap<String, Object>();
-            Messprogramm messprogramm = repository.getByIdPlain(
-                Messprogramm.class, id);
+            Mpg messprogramm = repository.getByIdPlain(
+                Mpg.class, id);
             if (messprogramm == null) {
                 data.put("success", false);
                 data.put("message", StatusCodes.NOT_EXISTING);

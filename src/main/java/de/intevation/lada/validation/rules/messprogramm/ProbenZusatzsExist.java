@@ -9,7 +9,7 @@ package de.intevation.lada.validation.rules.messprogramm;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Messprogramm;
+import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -29,7 +29,7 @@ public class ProbenZusatzsExist implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messprogramm messprogramm = (Messprogramm) object;
+        Mpg messprogramm = (Mpg) object;
         Violation violation = new Violation();
 
         if (messprogramm.getSampleSpecifs() != null) {

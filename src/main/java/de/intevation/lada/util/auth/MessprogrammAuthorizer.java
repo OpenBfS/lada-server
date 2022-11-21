@@ -10,7 +10,7 @@ package de.intevation.lada.util.auth;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.intevation.lada.model.land.Messprogramm;
+import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.land.MessprogrammMmt;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
@@ -34,12 +34,12 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
             // Allow read access to everybody
             return true;
         }
-        Messprogramm messprogramm;
-        if (data instanceof Messprogramm) {
-            messprogramm = (Messprogramm) data;
+        Mpg messprogramm;
+        if (data instanceof Mpg) {
+            messprogramm = (Mpg) data;
         } else if (data instanceof MessprogrammMmt) {
             messprogramm = repository.getByIdPlain(
-                Messprogramm.class,
+                Mpg.class,
                 ((MessprogrammMmt) data).getMessprogrammId()
             );
             if (messprogramm == null) {
@@ -68,9 +68,9 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Messprogramm mp =
-            repository.getByIdPlain(Messprogramm.class, id);
-        return isAuthorized(mp, method, userInfo, Messprogramm.class);
+        Mpg mp =
+            repository.getByIdPlain(Mpg.class, id);
+        return isAuthorized(mp, method, userInfo, Mpg.class);
     }
 
     @Override
@@ -83,14 +83,14 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         if (data.getData() instanceof List<?>
             && !clazz.isAssignableFrom(MessprogrammMmt.class)
         ) {
-            List<Messprogramm> messprogramme = new ArrayList<Messprogramm>();
-            for (Messprogramm messprogramm
-                : (List<Messprogramm>) data.getData()) {
+            List<Mpg> messprogramme = new ArrayList<Mpg>();
+            for (Mpg messprogramm
+                : (List<Mpg>) data.getData()) {
                 messprogramme.add(setAuthData(userInfo, messprogramm));
             }
             data.setData(messprogramme);
-        } else if (data.getData() instanceof Messprogramm) {
-            Messprogramm messprogramm = (Messprogramm) data.getData();
+        } else if (data.getData() instanceof Mpg) {
+            Mpg messprogramm = (Mpg) data.getData();
             data.setData(setAuthData(userInfo, messprogramm));
         }
         return data;
@@ -103,9 +103,9 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
      * @param probe     The probe object.
      * @return The probe.
      */
-    private Messprogramm setAuthData(
+    private Mpg setAuthData(
         UserInfo userInfo,
-        Messprogramm messprogramm
+        Mpg messprogramm
     ) {
         MeasFacil mst =
             repository.getByIdPlain(
