@@ -48,7 +48,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         } else {
             return false;
         }
-        String mstId = messprogramm.getMstId();
+        String mstId = messprogramm.getMeasFacilId();
         if (mstId != null) {
             MeasFacil mst = repository.getByIdPlain(
                 MeasFacil.class, mstId);
@@ -109,7 +109,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
     ) {
         MeasFacil mst =
             repository.getByIdPlain(
-                MeasFacil.class, messprogramm.getMstId());
+                MeasFacil.class, messprogramm.getMeasFacilId());
         if (userInfo.getFunktionenForNetzbetreiber(
                 mst.getNetworkId()).contains(4)
         ) {

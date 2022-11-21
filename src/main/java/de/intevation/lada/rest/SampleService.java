@@ -245,7 +245,7 @@ public class SampleService extends LadaService {
                 // Use a dummy probe with same mstId as the messprogramm to
                 // authorize the user to create probe objects.
                 Sample testProbe = new Sample();
-                testProbe.setMeasFacilId(messprogramm.getMstId());
+                testProbe.setMeasFacilId(messprogramm.getMeasFacilId());
                 if (!authorization.isAuthorized(
                         testProbe,
                         RequestMethod.POST,

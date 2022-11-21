@@ -48,7 +48,7 @@ public class MessprogrammIdAuthorizer extends BaseAuthorizer {
         }
         Messprogramm messprogramm =
             repository.getByIdPlain(Messprogramm.class, id);
-        String mstId = messprogramm.getMstId();
+        String mstId = messprogramm.getMeasFacilId();
         if (mstId != null) {
             MeasFacil mst = repository.getByIdPlain(
                 MeasFacil.class, mstId);
@@ -109,7 +109,7 @@ public class MessprogrammIdAuthorizer extends BaseAuthorizer {
             Integer id = (Integer) getMessprogrammId.invoke(data);
             Messprogramm messprogramm = repository.getByIdPlain(
                 Messprogramm.class, id);
-            String mstId = messprogramm.getMstId();
+            String mstId = messprogramm.getMeasFacilId();
             boolean owner = false;
             if (mstId != null) {
                 MeasFacil mst = repository.getByIdPlain(

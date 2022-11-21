@@ -38,15 +38,15 @@ public class DeskriptorToUmwelt implements Rule {
     @Override
     public Violation execute(Object object) {
         Messprogramm messprogramm = (Messprogramm) object;
-        if (messprogramm.getMediaDesk() == null
-            || messprogramm.getMediaDesk().equals("")
+        if (messprogramm.getEnvDescripId() == null
+            || messprogramm.getEnvDescripId().equals("")
         ) {
             return null;
         }
-        if (messprogramm.getUmwId() == null) {
+        if (messprogramm.getEnvMediumId() == null) {
             return null;
         }
-        String[] mediaDesk = messprogramm.getMediaDesk().split(" ");
+        String[] mediaDesk = messprogramm.getEnvDescripId().split(" ");
         if (mediaDesk.length <= 1) {
             return null;
         }
@@ -93,7 +93,7 @@ public class DeskriptorToUmwelt implements Rule {
             }
         }
         Violation violation =
-            validateUmwelt(mediaIds, messprogramm.getUmwId(), zebs, 0);
+            validateUmwelt(mediaIds, messprogramm.getEnvMediumId(), zebs, 0);
         return violation;
     }
 

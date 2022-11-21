@@ -29,24 +29,19 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import de.intevation.lada.model.master.SampleSpecif;
 
-
-/**
- * The persistent class for the messprogramm database table.
- *
- */
 @Entity
-@Table(name = "messprogramm", schema = SchemaName.LEGACY_NAME)
+@Table(name = "mpg", schema = SchemaName.NAME)
 public class Messprogramm implements Serializable {
     private static final long serialVersionUID = 1L;
 
     // Has to be kept in sync with database schema
     @PrePersist
     void setDefaults() {
-        if (baId == null) {
-            baId = 1;
+        if (oprModeId == null) {
+            oprModeId = 1;
         }
-        if (intervallOffset == null) {
-            intervallOffset = 0;
+        if (samplePdOffset == null) {
+            samplePdOffset = 0;
         }
     }
 
@@ -54,90 +49,69 @@ public class Messprogramm implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "ba_id")
-    private Integer baId;
+    private Integer oprModeId;
 
-    @Column(name = "datenbasis_id")
-    private Integer datenbasisId;
+    private Integer regulationId;
 
-    @Column(name = "gem_id")
-    private String gemId;
+    private String municId;
 
-    @Column(name = "gueltig_bis")
-    private Integer gueltigBis;
+    private Integer validEndDate;
 
-    @Column(name = "gueltig_von")
-    private Integer gueltigVon;
+    private Integer validStartDate;
 
-    @Column(name = "intervall_offset")
-    private Integer intervallOffset;
+    private Integer samplePdOffset;
 
-    private String kommentar;
+    private String commMpg;
 
-    @Column(name = "labor_mst_id")
-    private String laborMstId;
+    private String apprLabId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
-    @Column(name = "media_desk")
-    private String mediaDesk;
+    private String envDescripId;
 
-    @Column(name = "mst_id")
-    private String mstId;
+    private String measFacilId;
 
-    @Column(name = "mpl_id")
-    private Integer mplId;
+    private Integer stateMpgId;
 
-    @Column(name = "probe_kommentar")
-    private String probeKommentar;
+    private String commSample;
 
-    @Column(name = "probe_nehmer_id")
-    private Integer probeNehmerId;
+    private Integer samplerId;
 
-    @Column(name = "probenart_id")
-    private Integer probenartId;
+    private Integer sampleMethId;
 
-    private String probenintervall;
+    private String samplePd;
 
-    @Column(name = "teilintervall_bis")
-    private Integer teilintervallBis;
+    private Integer samplePdEndDate;
 
-    @Column(name = "teilintervall_von")
-    private Integer teilintervallVon;
+    private Integer samplePdStartDate;
 
-    private Boolean test;
+    private Boolean isTest;
 
-    @Column(name = "umw_id")
-    private String umwId;
+    private String envMediumId;
 
-    @Column(name = "rei_progpunkt_grp_id")
-    private Integer reiProgpunktGrpId;
+    private Integer reiAgGrId;
 
-    @Column(name = "kta_gruppe_id")
-    private Integer ktaGruppeId;
+    private Integer nuclFacilGrId;
 
-    @Column(name = "aktiv")
-    private Boolean aktiv;
+    private Boolean isActive;
 
-    @Column(name = "meh_id")
-    private Integer mehId;
+    private Integer unitId;
 
-    @Column(name = "probenahmemenge")
-    private String probenahmeMenge;
+    private String sampleQuant;
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "mpg_id")
-    private Set<Sample> proben;
+    private Set<Sample> samples;
 
     @ManyToMany (fetch = FetchType.EAGER)
     @JoinTable(
-        name = "messprogramm_proben_zusatz",
-        schema = SchemaName.LEGACY_NAME,
-        joinColumns = @JoinColumn(name = "messprogramm_id"),
-        inverseJoinColumns = @JoinColumn(name = "proben_zusatz_id")
+        name = "mpg_sample_specif",
+        schema = SchemaName.NAME,
+        joinColumns = @JoinColumn(name = "mpg_id"),
+        inverseJoinColumns = @JoinColumn(name = "sample_specif_id")
     )
-    private Set<SampleSpecif> probenZusatzs;
+    private Set<SampleSpecif> sampleSpecifs;
 
     @Transient
     private int referenceCount;
@@ -162,220 +136,220 @@ public class Messprogramm implements Serializable {
         this.id = id;
     }
 
-    public Integer getBaId() {
-        return this.baId;
+    public Integer getOprModeId() {
+        return this.oprModeId;
     }
 
-    public void setBaId(Integer baId) {
-        this.baId = baId;
+    public void setOprModeId(Integer oprModeId) {
+        this.oprModeId = oprModeId;
     }
 
-    public Integer getDatenbasisId() {
-        return this.datenbasisId;
+    public Integer getRegulationId() {
+        return this.regulationId;
     }
 
-    public void setDatenbasisId(Integer datenbasisId) {
-        this.datenbasisId = datenbasisId;
+    public void setRegulationId(Integer regulationId) {
+        this.regulationId = regulationId;
     }
 
-    public String getGemId() {
-        return this.gemId;
+    public String getMunicId() {
+        return this.municId;
     }
 
-    public void setGemId(String gemId) {
-        this.gemId = gemId;
+    public void setMunicId(String municId) {
+        this.municId = municId;
     }
 
-    public Integer getGueltigBis() {
-        return this.gueltigBis;
+    public Integer getValidEndDate() {
+        return this.validEndDate;
     }
 
-    public void setGueltigBis(Integer gueltigBis) {
-        this.gueltigBis = gueltigBis;
+    public void setValidEndDate(Integer validEndDate) {
+        this.validEndDate = validEndDate;
     }
 
-    public Integer getGueltigVon() {
-        return this.gueltigVon;
+    public Integer getValidStartDate() {
+        return this.validStartDate;
     }
 
-    public void setGueltigVon(Integer gueltigVon) {
-        this.gueltigVon = gueltigVon;
+    public void setValidStartDate(Integer validStartDate) {
+        this.validStartDate = validStartDate;
     }
 
-    public Integer getIntervallOffset() {
-        return this.intervallOffset;
+    public Integer getSamplePdOffset() {
+        return this.samplePdOffset;
     }
 
-    public void setIntervallOffset(Integer intervallOffset) {
-        this.intervallOffset = intervallOffset;
+    public void setSamplePdOffset(Integer samplePdOffset) {
+        this.samplePdOffset = samplePdOffset;
     }
 
-    public String getKommentar() {
-        return this.kommentar;
+    public String getCommMpg() {
+        return this.commMpg;
     }
 
-    public void setKommentar(String kommentar) {
-        this.kommentar = kommentar;
+    public void setCommMpg(String commMpg) {
+        this.commMpg = commMpg;
     }
 
-    public String getLaborMstId() {
-        return this.laborMstId;
+    public String getApprLabId() {
+        return this.apprLabId;
     }
 
-    public void setLaborMstId(String laborMstId) {
-        this.laborMstId = laborMstId;
+    public void setApprLabId(String apprLabId) {
+        this.apprLabId = apprLabId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
-    public String getMediaDesk() {
-        return this.mediaDesk;
+    public String getEnvDescripId() {
+        return this.envDescripId;
     }
 
-    public void setMediaDesk(String mediaDesk) {
-        this.mediaDesk = mediaDesk;
+    public void setEnvDescripId(String envDescripId) {
+        this.envDescripId = envDescripId;
     }
 
-    public String getMstId() {
-        return this.mstId;
+    public String getMeasFacilId() {
+        return this.measFacilId;
     }
 
-    public void setMstId(String mstId) {
-        this.mstId = mstId;
+    public void setMeasFacilId(String measFacilId) {
+        this.measFacilId = measFacilId;
     }
 
-    public Integer getMplId() {
-        return this.mplId;
+    public Integer getStateMpgId() {
+        return this.stateMpgId;
     }
 
-    public void setMplId(Integer mplId) {
-        this.mplId = mplId;
+    public void setStateMpgId(Integer stateMpgId) {
+        this.stateMpgId = stateMpgId;
     }
 
-    public String getProbeKommentar() {
-        return this.probeKommentar;
+    public String getCommSample() {
+        return this.commSample;
     }
 
-    public void setProbeKommentar(String probeKommentar) {
-        this.probeKommentar = probeKommentar;
+    public void setCommSample(String commSample) {
+        this.commSample = commSample;
     }
 
-    public Integer getProbeNehmerId() {
-        return this.probeNehmerId;
+    public Integer getSamplerId() {
+        return this.samplerId;
     }
 
-    public void setProbeNehmerId(Integer probeNehmerId) {
-        this.probeNehmerId = probeNehmerId;
+    public void setSamplerId(Integer sampleId) {
+        this.samplerId = sampleId;
     }
 
-    public Integer getProbenartId() {
-        return this.probenartId;
+    public Integer getSampleMethId() {
+        return this.sampleMethId;
     }
 
-    public void setProbenartId(Integer probenartId) {
-        this.probenartId = probenartId;
+    public void setSampleMethId(Integer sampleMethId) {
+        this.sampleMethId = sampleMethId;
     }
 
-    public String getProbenintervall() {
-        return this.probenintervall;
+    public String getSamplePd() {
+        return this.samplePd;
     }
 
-    public void setProbenintervall(String probenintervall) {
-        this.probenintervall = probenintervall;
+    public void setSamplePd(String samplePd) {
+        this.samplePd = samplePd;
     }
 
-    public Integer getTeilintervallBis() {
-        return this.teilintervallBis;
+    public Integer getSamplePdEndDate() {
+        return this.samplePdEndDate;
     }
 
-    public void setTeilintervallBis(Integer teilintervallBis) {
-        this.teilintervallBis = teilintervallBis;
+    public void setSamplePdEndDate(Integer samplePdEndDate) {
+        this.samplePdEndDate = samplePdEndDate;
     }
 
-    public Integer getTeilintervallVon() {
-        return this.teilintervallVon;
+    public Integer getSamplePdStartDate() {
+        return this.samplePdStartDate;
     }
 
-    public void setTeilintervallVon(Integer teilintervallVon) {
-        this.teilintervallVon = teilintervallVon;
+    public void setSamplePdStartDate(Integer samplePdStartDate) {
+        this.samplePdStartDate = samplePdStartDate;
     }
 
-    public Boolean getTest() {
-        return this.test;
+    public Boolean getIsTest() {
+        return this.isTest;
     }
 
-    public void setTest(Boolean test) {
-        this.test = test;
+    public void setIsTest(Boolean isTest) {
+        this.isTest = isTest;
     }
 
-    public String getUmwId() {
-        return this.umwId;
+    public String getEnvMediumId() {
+        return this.envMediumId;
     }
 
-    public void setUmwId(String umwId) {
-        this.umwId = umwId;
+    public void setEnvMediumId(String envMediumId) {
+        this.envMediumId = envMediumId;
     }
 
-    public Integer getReiProgpunktGrpId() {
-        return reiProgpunktGrpId;
+    public Integer getReiAgGrId() {
+        return reiAgGrId;
     }
 
-    public void setReiProgpunktGrpId(Integer reiProgpunktGrpId) {
-        this.reiProgpunktGrpId = reiProgpunktGrpId;
+    public void setAgGrId(Integer reiAgGrId) {
+        this.reiAgGrId = reiAgGrId;
     }
 
-    public Integer getKtaGruppeId() {
-        return ktaGruppeId;
+    public Integer getNuclFacilGrId() {
+        return nuclFacilGrId;
     }
 
-    public void setKtaGruppeId(Integer ktaGruppeId) {
-        this.ktaGruppeId = ktaGruppeId;
+    public void setNuclFacilGrId(Integer nuclFacilGrId) {
+        this.nuclFacilGrId = nuclFacilGrId;
     }
 
-    public Boolean getAktiv() {
-        return aktiv;
+    public Boolean getIsActive() {
+        return isActive;
     }
 
-    public void setAktiv(Boolean aktiv) {
-        this.aktiv = aktiv;
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 
-    public Integer getMehId() {
-        return this.mehId;
+    public Integer getUnitId() {
+        return this.unitId;
     }
 
-    public void setMehId(Integer mehId) {
-        this.mehId = mehId;
+    public void setUnitId(Integer unitId) {
+        this.unitId = unitId;
     }
 
-    public String getProbenahmeMenge() {
-        return this.probenahmeMenge;
+    public String getSampleQuant() {
+        return this.sampleQuant;
     }
 
-    public void setProbenahmeMenge(String probenahmeMenge) {
-        this.probenahmeMenge = probenahmeMenge;
+    public void setSampleQuant(String sampleQuant) {
+        this.sampleQuant = sampleQuant;
     }
 
-    public Set<SampleSpecif> getProbenZusatzs() {
-        return probenZusatzs;
+    public Set<SampleSpecif> getSampleSpecifs() {
+        return sampleSpecifs;
     }
 
-    public void setProbenZusatzs(Set<SampleSpecif> probenZusatzs) {
-        this.probenZusatzs = probenZusatzs;
+    public void setSampleSpecifs(Set<SampleSpecif> sampleSpecifs) {
+        this.sampleSpecifs = sampleSpecifs;
     }
 
     /**
      * @return The number of Sample objects referencing this Messprogramm.
      */
     public int getReferenceCount() {
-        if (this.proben != null) {
-            return this.proben.size();
+        if (this.samples != null) {
+            return this.samples.size();
         }
         return 0;
     }

@@ -30,16 +30,16 @@ public class ValidFromTo implements Rule {
         Messprogramm messprogramm = (Messprogramm) object;
         Violation violation = new Violation();
 
-        if (messprogramm.getGueltigVon() != null
-            && (messprogramm.getGueltigVon() < DOY_MIN
-                || messprogramm.getGueltigVon() > DOY_MAX)) {
+        if (messprogramm.getValidStartDate() != null
+            && (messprogramm.getValidStartDate() < DOY_MIN
+                || messprogramm.getValidStartDate() > DOY_MAX)) {
                 violation.addError(
                     "gueltigVon", StatusCodes.VALUE_OUTSIDE_RANGE);
             }
 
-        if (messprogramm.getGueltigBis() != null
-            && (messprogramm.getGueltigBis() < DOY_MIN
-                || messprogramm.getGueltigBis() > DOY_MAX)) {
+        if (messprogramm.getValidEndDate() != null
+            && (messprogramm.getValidEndDate() < DOY_MIN
+                || messprogramm.getValidEndDate() > DOY_MAX)) {
                 violation.addError(
                     "gueltigBis", StatusCodes.VALUE_OUTSIDE_RANGE);
             }

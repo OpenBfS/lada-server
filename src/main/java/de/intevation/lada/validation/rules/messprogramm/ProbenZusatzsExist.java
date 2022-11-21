@@ -32,8 +32,8 @@ public class ProbenZusatzsExist implements Rule {
         Messprogramm messprogramm = (Messprogramm) object;
         Violation violation = new Violation();
 
-        if (messprogramm.getProbenZusatzs() != null) {
-            for (SampleSpecif pz: messprogramm.getProbenZusatzs()) {
+        if (messprogramm.getSampleSpecifs() != null) {
+            for (SampleSpecif pz: messprogramm.getSampleSpecifs()) {
                 if (repository.getByIdPlain(
                         SampleSpecif.class, pz.getId()) == null
                 ) {

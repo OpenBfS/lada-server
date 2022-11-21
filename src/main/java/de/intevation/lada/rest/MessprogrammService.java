@@ -182,14 +182,14 @@ public class MessprogrammService extends LadaService {
             return response;
         }
 
-        if (messprogramm.getUmwId() == null
-            || messprogramm.getUmwId().length() == 0
+        if (messprogramm.getEnvMediumId() == null
+            || messprogramm.getEnvMediumId().length() == 0
         ) {
             messprogramm = factory.findUmweltId(messprogramm);
-        } else if ((messprogramm.getUmwId() != null
-                || !messprogramm.getUmwId().equals(""))
-            && (messprogramm.getMediaDesk() == null
-                || messprogramm.getMediaDesk().equals(""))
+        } else if ((messprogramm.getEnvMediumId() != null
+                || !messprogramm.getEnvMediumId().equals(""))
+            && (messprogramm.getEnvDescripId() == null
+                || messprogramm.getEnvDescripId().equals(""))
         ) {
             messprogramm = factory.getInitialMediaDesk(messprogramm);
         }
@@ -256,16 +256,16 @@ public class MessprogrammService extends LadaService {
             return response;
         }
 
-        if ((messprogramm.getUmwId() == null
-                || messprogramm.getUmwId().equals(""))
-            && !(messprogramm.getMediaDesk() == null
-                || messprogramm.getMediaDesk().equals(""))
+        if ((messprogramm.getEnvMediumId() == null
+                || messprogramm.getEnvMediumId().equals(""))
+            && !(messprogramm.getEnvDescripId() == null
+                || messprogramm.getEnvDescripId().equals(""))
         ) {
             messprogramm = factory.findUmweltId(messprogramm);
-        } else if (!(messprogramm.getUmwId() == null
-                || messprogramm.getUmwId().equals(""))
-            && (messprogramm.getMediaDesk() == null
-                || messprogramm.getMediaDesk().equals(""))
+        } else if (!(messprogramm.getEnvMediumId() == null
+                || messprogramm.getEnvMediumId().equals(""))
+            && (messprogramm.getEnvDescripId() == null
+                || messprogramm.getEnvDescripId().equals(""))
             ) {
             messprogramm = factory.getInitialMediaDesk(messprogramm);
         }
@@ -334,7 +334,7 @@ public class MessprogrammService extends LadaService {
             if (authorization.isAuthorized(
                     m, RequestMethod.PUT, Messprogramm.class)
             ) {
-                m.setAktiv(active);
+                m.setIsActive(active);
                 Response r = repository.update(m);
                 int code = Integer.valueOf(r.getMessage()).intValue();
                 mpResult.put("success", code);

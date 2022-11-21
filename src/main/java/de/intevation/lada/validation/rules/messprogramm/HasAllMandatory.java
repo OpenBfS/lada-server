@@ -25,34 +25,34 @@ public class HasAllMandatory implements Rule {
         Messprogramm messprogramm = (Messprogramm) object;
         Violation violation = new Violation();
 
-        if (messprogramm.getMstId() == null
-            || "".equals(messprogramm.getMstId())) {
+        if (messprogramm.getMeasFacilId() == null
+            || "".equals(messprogramm.getMeasFacilId())) {
             violation.addError("mstlabor", StatusCodes.VALUE_MISSING);
         }
-        if (messprogramm.getLaborMstId() == null
-            || "".equals(messprogramm.getLaborMstId())) {
+        if (messprogramm.getApprLabId() == null
+            || "".equals(messprogramm.getApprLabId())) {
             violation.addError("mstlabor", StatusCodes.VALUE_MISSING);
         }
-        if (messprogramm.getDatenbasisId() == null) {
+        if (messprogramm.getRegulationId() == null) {
             violation.addError("datenbasisId", StatusCodes.VALUE_MISSING);
         }
-        if (messprogramm.getProbenartId() == null) {
+        if (messprogramm.getSampleMethId() == null) {
             violation.addError("probenartId", StatusCodes.VALUE_MISSING);
         }
-        if (messprogramm.getProbenintervall() == null
-            || "".equals(messprogramm.getProbenintervall())) {
+        if (messprogramm.getSamplePd() == null
+            || "".equals(messprogramm.getSamplePd())) {
             violation.addError("probenintervall", StatusCodes.VALUE_MISSING);
         }
-        if (messprogramm.getTeilintervallVon() == null) {
+        if (messprogramm.getSamplePdStartDate() == null) {
             violation.addError("teilintervallVon", StatusCodes.VALUE_MISSING);
         }
-        if (messprogramm.getTeilintervallBis() == null) {
+        if (messprogramm.getSamplePdEndDate() == null) {
             violation.addError("teilintervallBis", StatusCodes.VALUE_MISSING);
         }
-        if (messprogramm.getGueltigVon() == null) {
+        if (messprogramm.getValidStartDate() == null) {
             violation.addError("gueltigVon", StatusCodes.VALUE_MISSING);
         }
-        if (messprogramm.getGueltigBis() == null) {
+        if (messprogramm.getValidEndDate() == null) {
             violation.addError("gueltigBis", StatusCodes.VALUE_MISSING);
         }
 

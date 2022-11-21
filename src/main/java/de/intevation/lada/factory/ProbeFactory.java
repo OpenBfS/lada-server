@@ -148,15 +148,15 @@ public class ProbeFactory {
             Messprogramm messprogramm,
             Calendar start
         ) {
-            this.teilVon = messprogramm.getTeilintervallVon();
-            this.teilBis = messprogramm.getTeilintervallBis();
+            this.teilVon = messprogramm.getSamplePdStartDate();
+            this.teilBis = messprogramm.getSamplePdEndDate();
 
             this.intervallField = fieldsTable
-                .get(messprogramm.getProbenintervall())[0];
+                .get(messprogramm.getSamplePd())[0];
             this.subIntField = fieldsTable
-                .get(messprogramm.getProbenintervall())[1];
+                .get(messprogramm.getSamplePd())[1];
             this.intervallFactor = fieldsTable
-                .get(messprogramm.getProbenintervall())[2];
+                .get(messprogramm.getSamplePd())[2];
 
             this.from = (Calendar) start.clone();
 
@@ -331,9 +331,9 @@ public class ProbeFactory {
         end.set(Calendar.MINUTE, MIN59);
         end.set(Calendar.SECOND, SEC59);
 
-        int gueltigVon = messprogramm.getGueltigVon();
-        int gueltigBis = messprogramm.getGueltigBis();
-        int offset = messprogramm.getIntervallOffset();
+        int gueltigVon = messprogramm.getValidStartDate();
+        int gueltigBis = messprogramm.getValidEndDate();
+        int offset = messprogramm.getSamplePdOffset();
 
         List<Sample> proben = new ArrayList<Sample>();
 
@@ -444,29 +444,29 @@ public class ProbeFactory {
             return proben.get(0);
         }
         Sample probe = new Sample();
-        probe.setOprModeId(messprogramm.getBaId());
-        probe.setRegulationId(messprogramm.getDatenbasisId());
-        probe.setEnvDescripDisplay(messprogramm.getMediaDesk());
+        probe.setOprModeId(messprogramm.getOprModeId());
+        probe.setRegulationId(messprogramm.getRegulationId());
+        probe.setEnvDescripDisplay(messprogramm.getEnvDescripId());
         probe = findMedia(probe);
-        probe.setMeasFacilId(messprogramm.getMstId());
-        probe.setApprLabId(messprogramm.getLaborMstId());
-        probe.setSampleMethId(messprogramm.getProbenartId());
-        probe.setSamplerId(messprogramm.getProbeNehmerId());
+        probe.setMeasFacilId(messprogramm.getMeasFacilId());
+        probe.setApprLabId(messprogramm.getApprLabId());
+        probe.setSampleMethId(messprogramm.getSampleMethId());
+        probe.setSamplerId(messprogramm.getSamplerId());
         probe.setSchedStartDate(new Timestamp(startDate.getTime()));
         probe.setSchedEndDate(new Timestamp(endDate.getTime()));
-        probe.setIsTest(messprogramm.getTest());
-        probe.setEnvMediumId(messprogramm.getUmwId());
+        probe.setIsTest(messprogramm.getIsTest());
+        probe.setEnvMediumId(messprogramm.getEnvMediumId());
         probe.setMpgId(messprogramm.getId());
-        probe.setStateMpgId(messprogramm.getMplId());
-        probe.setReiAgGrId(messprogramm.getReiProgpunktGrpId());
-        probe.setNuclFacilGrId(messprogramm.getKtaGruppeId());
+        probe.setStateMpgId(messprogramm.getStateMpgId());
+        probe.setReiAgGrId(messprogramm.getReiAgGrId());
+        probe.setNuclFacilGrId(messprogramm.getNuclFacilGrId());
         probe.setFound(false);
 
         createObject(probe, dryrun);
         toProtocol(probe, dryrun);
 
         //Create zusatzwert objects
-        Set<SampleSpecif> pZusatzs = messprogramm.getProbenZusatzs();
+        Set<SampleSpecif> pZusatzs = messprogramm.getSampleSpecifs();
         List<String> zusatzWerts = new ArrayList<String>();
         if (pZusatzs != null) {
             for (SampleSpecif pZusatz: pZusatzs) {
@@ -479,14 +479,14 @@ public class ProbeFactory {
             currentProtocol.put("pZws", zusatzWerts);
         }
 
-        if (messprogramm.getProbeKommentar() != null
-            && !messprogramm.getProbeKommentar().equals("")
+        if (messprogramm.getCommSample() != null
+            && !messprogramm.getCommSample().equals("")
         ) {
             CommSample kommentar = new CommSample();
             kommentar.setDate(new Timestamp(new Date().getTime()));
             kommentar.setSampleId(probe.getId());
-            kommentar.setText(messprogramm.getProbeKommentar());
-            kommentar.setMeasFacilId(messprogramm.getMstId());
+            kommentar.setText(messprogramm.getCommSample());
+            kommentar.setMeasFacilId(messprogramm.getMeasFacilId());
 
             createObject(kommentar, dryrun);
         }
@@ -504,8 +504,8 @@ public class ProbeFactory {
                 Messwert wert = new Messwert();
                 wert.setMessgroesseId(mw);
                 wert.setMessungsId(messung.getId());
-                if (messprogramm.getMehId() != null) {
-                    wert.setMehId(messprogramm.getMehId());
+                if (messprogramm.getUnitId() != null) {
+                    wert.setMehId(messprogramm.getUnitId());
                 } else {
                     wert.setMehId(0);
                 }
@@ -606,13 +606,13 @@ public class ProbeFactory {
      * @return The updated messprogramm.
      */
     public Messprogramm findUmweltId(Messprogramm messprogramm) {
-        String mediaDesk = messprogramm.getMediaDesk();
+        String mediaDesk = messprogramm.getEnvDescripId();
         if (mediaDesk != null) {
             String[] mediaDeskParts = mediaDesk.split(" ");
             if (mediaDeskParts.length <= 1) {
                 return messprogramm;
             }
-            messprogramm.setUmwId(findUmwelt(mediaDeskParts));
+            messprogramm.setEnvMediumId(findUmwelt(mediaDeskParts));
         }
         return messprogramm;
     }
@@ -855,9 +855,9 @@ public class ProbeFactory {
      * @return The updated messprogramm.
      */
     public Messprogramm getInitialMediaDesk(Messprogramm messprogramm) {
-        String umweltId = messprogramm.getUmwId();
+        String umweltId = messprogramm.getEnvMediumId();
         if (umweltId != null) {
-            messprogramm.setMediaDesk(getInitialMediaDesk(umweltId));
+            messprogramm.setEnvDescripId(getInitialMediaDesk(umweltId));
         }
         return messprogramm;
     }

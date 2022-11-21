@@ -43,12 +43,12 @@ public class SubIntervall implements Rule {
         Messprogramm messprogramm = (Messprogramm) object;
         Violation violation = new Violation();
 
-        String probenintervall = messprogramm.getProbenintervall();
-        Integer teilVon = messprogramm.getTeilintervallVon();
-        Integer teilBis = messprogramm.getTeilintervallBis();
-        Integer offset = messprogramm.getIntervallOffset();
-        Integer gueltigVon = messprogramm.getGueltigVon();
-        Integer gueltigBis = messprogramm.getGueltigBis();
+        String probenintervall = messprogramm.getSamplePd();
+        Integer teilVon = messprogramm.getSamplePdStartDate();
+        Integer teilBis = messprogramm.getSamplePdEndDate();
+        Integer offset = messprogramm.getSamplePdOffset();
+        Integer gueltigVon = messprogramm.getValidStartDate();
+        Integer gueltigBis = messprogramm.getValidEndDate();
 
         // skip this validation if relevant mandatory fields not given
         if (probenintervall != null
