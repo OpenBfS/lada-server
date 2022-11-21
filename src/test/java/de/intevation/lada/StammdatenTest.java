@@ -24,7 +24,6 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -907,7 +906,6 @@ public class StammdatenTest extends BaseTest {
      */
     @Test
     @InSequence(T52)
-    @Ignore("targ_env_gr.targ_env__gr_displ column name needs to be fixed")
     @RunAsClient
     public final void testTargEnvGrAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
