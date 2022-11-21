@@ -36,7 +36,7 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
 
         Method m;
         try {
-            m = clazz.getMethod("getMessungsId");
+            m = clazz.getMethod("getMeasmId");
         } catch (NoSuchMethodException | SecurityException e1) {
             return false;
         }
@@ -105,7 +105,7 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         try {
-            Method getMessungsId = clazz.getMethod("getMessungsId");
+            Method getMessungsId = clazz.getMethod("getMeasmId");
             Integer id = (Integer) getMessungsId.invoke(data);
             Measm messung = repository.getByIdPlain(
                 Measm.class, id);
