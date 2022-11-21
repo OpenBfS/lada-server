@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.intevation.lada.model.land.Mpg;
-import de.intevation.lada.model.land.MessprogrammMmt;
+import de.intevation.lada.model.land.MpgMmtMp;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -37,10 +37,10 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         Mpg messprogramm;
         if (data instanceof Mpg) {
             messprogramm = (Mpg) data;
-        } else if (data instanceof MessprogrammMmt) {
+        } else if (data instanceof MpgMmtMp) {
             messprogramm = repository.getByIdPlain(
                 Mpg.class,
-                ((MessprogrammMmt) data).getMpgId()
+                ((MpgMmtMp) data).getMpgId()
             );
             if (messprogramm == null) {
                 return false;
@@ -81,7 +81,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         if (data.getData() instanceof List<?>
-            && !clazz.isAssignableFrom(MessprogrammMmt.class)
+            && !clazz.isAssignableFrom(MpgMmtMp.class)
         ) {
             List<Mpg> messprogramme = new ArrayList<Mpg>();
             for (Mpg messprogramm

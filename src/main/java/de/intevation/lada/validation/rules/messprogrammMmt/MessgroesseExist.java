@@ -9,7 +9,7 @@ package de.intevation.lada.validation.rules.messprogrammMmt;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.MessprogrammMmt;
+import de.intevation.lada.model.land.MpgMmtMp;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -29,7 +29,7 @@ public class MessgroesseExist implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        MessprogrammMmt messprogrammMmt = (MessprogrammMmt) object;
+        MpgMmtMp messprogrammMmt = (MpgMmtMp) object;
         Violation violation = new Violation();
 
         Integer[] mIds = messprogrammMmt.getMeasds();

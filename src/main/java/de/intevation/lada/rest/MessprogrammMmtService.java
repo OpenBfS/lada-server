@@ -21,7 +21,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.Mpg;
-import de.intevation.lada.model.land.MessprogrammMmt;
+import de.intevation.lada.model.land.MpgMmtMp;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -98,12 +98,12 @@ public class MessprogrammMmtService extends LadaService {
     public Response get(
         @QueryParam("messprogrammId") @NotNull Integer messprogrammId
     ) {
-        QueryBuilder<MessprogrammMmt> builder =
-            repository.queryBuilder(MessprogrammMmt.class);
+        QueryBuilder<MpgMmtMp> builder =
+            repository.queryBuilder(MpgMmtMp.class);
         builder.and("mpgId", messprogrammId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
-            MessprogrammMmt.class);
+            MpgMmtMp.class);
     }
 
     /**
@@ -118,8 +118,8 @@ public class MessprogrammMmtService extends LadaService {
         @PathParam("id") Integer id
     ) {
         return authorization.filter(
-            repository.getById(MessprogrammMmt.class, id),
-            MessprogrammMmt.class);
+            repository.getById(MpgMmtMp.class, id),
+            MpgMmtMp.class);
     }
 
     /**
@@ -143,12 +143,12 @@ public class MessprogrammMmtService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        MessprogrammMmt messprogrammmmt
+        MpgMmtMp messprogrammmmt
     ) {
         if (!authorization.isAuthorized(
                 messprogrammmmt,
                 RequestMethod.POST,
-                MessprogrammMmt.class)
+                MpgMmtMp.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -167,7 +167,7 @@ public class MessprogrammMmtService extends LadaService {
         /* Persist the new messprogrammmmt object*/
         return authorization.filter(
             repository.create(messprogrammmmt),
-            MessprogrammMmt.class);
+            MpgMmtMp.class);
     }
 
     /**
@@ -192,12 +192,12 @@ public class MessprogrammMmtService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        MessprogrammMmt messprogrammmmt
+        MpgMmtMp messprogrammmmt
     ) {
         if (!authorization.isAuthorized(
                 messprogrammmmt,
                 RequestMethod.PUT,
-                MessprogrammMmt.class)
+                MpgMmtMp.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -219,7 +219,7 @@ public class MessprogrammMmtService extends LadaService {
         }
         return authorization.filter(
             response,
-            MessprogrammMmt.class);
+            MpgMmtMp.class);
     }
 
     /**
@@ -233,8 +233,8 @@ public class MessprogrammMmtService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        MessprogrammMmt messprogrammmmtObj = repository.getByIdPlain(
-            MessprogrammMmt.class, id);
+        MpgMmtMp messprogrammmmtObj = repository.getByIdPlain(
+            MpgMmtMp.class, id);
         if (!authorization.isAuthorized(
                 messprogrammmmtObj,
                 RequestMethod.DELETE,
@@ -249,7 +249,7 @@ public class MessprogrammMmtService extends LadaService {
     /**
      * Initialize referenced objects from given IDs.
      */
-    private void setMessgroesseObjects(MessprogrammMmt mm) {
+    private void setMessgroesseObjects(MpgMmtMp mm) {
         Set<Measd> mos = new HashSet<>();
         for (Integer mId: mm.getMeasds()) {
             Measd m = repository.getByIdPlain(Measd.class, mId);

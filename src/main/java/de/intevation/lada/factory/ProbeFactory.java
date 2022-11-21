@@ -23,7 +23,7 @@ import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Mpg;
-import de.intevation.lada.model.land.MessprogrammMmt;
+import de.intevation.lada.model.land.MpgMmtMp;
 import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
@@ -411,12 +411,12 @@ public class ProbeFactory {
         builderProbe.and("schedStartDate", startDate);
         builderProbe.and("schedEndDate", endDate);
 
-        QueryBuilder<MessprogrammMmt> builder =
-            repository.queryBuilder(MessprogrammMmt.class);
+        QueryBuilder<MpgMmtMp> builder =
+            repository.queryBuilder(MpgMmtMp.class);
         builder.and("mpgId", messprogramm.getId());
         Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
-        List<MessprogrammMmt> mmts = (List<MessprogrammMmt>) response.getData();
+        List<MpgMmtMp> mmts = (List<MpgMmtMp>) response.getData();
         List<String> messungProtocol = new ArrayList<>();
         List<Sample> proben =
             repository.filterPlain(builderProbe.getQuery());
@@ -432,7 +432,7 @@ public class ProbeFactory {
             toProtocol(proben.get(0), dryrun);
             protocol.add(currentProtocol);
             for (int i = 0; i < mmts.size(); i++) {
-                MessprogrammMmt mmt = mmts.get(i);
+                MpgMmtMp mmt = mmts.get(i);
                 messungProtocol.add(mmt.getMmtId());
             }
             currentProtocol.put("mmt", messungProtocol);
@@ -492,7 +492,7 @@ public class ProbeFactory {
         }
 
         for (int i = 0; i < mmts.size(); i++) {
-            MessprogrammMmt mmt = mmts.get(i);
+            MpgMmtMp mmt = mmts.get(i);
             Messung messung = new Messung();
             messung.setFertig(false);
             messung.setGeplant(true);

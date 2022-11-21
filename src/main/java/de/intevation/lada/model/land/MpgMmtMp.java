@@ -27,8 +27,8 @@ import javax.persistence.Transient;
 import de.intevation.lada.model.master.Measd;
 
 @Entity
-@Table(name = "mpg_mmt_mp", schema = SchemaName.NAME)
-public class MessprogrammMmt implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class MpgMmtMp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -54,7 +54,7 @@ public class MessprogrammMmt implements Serializable {
     @Transient
     private Integer[] measds;
 
-    public MessprogrammMmt() {
+    public MpgMmtMp() {
     }
 
     public Integer getId() {
