@@ -26,12 +26,8 @@ import javax.persistence.Transient;
 
 import de.intevation.lada.model.master.Measd;
 
-/**
- * The persistent class for the messprogramm_mmt database table.
- *
- */
 @Entity
-@Table(name = "messprogramm_mmt", schema = SchemaName.LEGACY_NAME)
+@Table(name = "mpg_mmt_mp", schema = SchemaName.NAME)
 public class MessprogrammMmt implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -39,26 +35,24 @@ public class MessprogrammMmt implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "messprogramm_mmt_messgroesse",
-        schema = SchemaName.LEGACY_NAME,
-        joinColumns = @JoinColumn(name = "messprogramm_mmt_id"),
-        inverseJoinColumns = @JoinColumn(name = "messgroesse_id")
+        name = "mpg_mmt_measd_mp",
+        schema = SchemaName.NAME,
+        joinColumns = @JoinColumn(name = "mpg_mmt_id"),
+        inverseJoinColumns = @JoinColumn(name = "measd_id")
     )
-    private Set<Measd> messgroesseObjects;
+    private Set<Measd> measdObjects;
 
-    @Column(name = "messprogramm_id")
-    private Integer messprogrammId;
+    private Integer mpgId;
 
-    @Column(name = "mmt_id")
     private String mmtId;
 
     @Transient
-    private Integer[] messgroessen;
+    private Integer[] measds;
 
     public MessprogrammMmt() {
     }
@@ -71,42 +65,42 @@ public class MessprogrammMmt implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
-    public void setMessgroesseObjects(Set<Measd> messgroesseObjects) {
-        this.messgroesseObjects = messgroesseObjects;
+    public void setMeasdObjects(Set<Measd> measdObjects) {
+        this.measdObjects = measdObjects;
     }
 
     /**
      * @return Integer[] IDs of associated Messgroesse objects.
      */
-    public Integer[] getMessgroessen() {
-        if (this.messgroessen == null && this.messgroesseObjects != null) {
+    public Integer[] getMeasds() {
+        if (this.measds == null && this.measdObjects != null) {
             Set<Integer> ids = new HashSet<>();
-            for (Measd m: this.messgroesseObjects) {
+            for (Measd m: this.measdObjects) {
                 ids.add(m.getId());
             }
-            this.messgroessen = ids.toArray(new Integer[ids.size()]);
+            this.measds = ids.toArray(new Integer[ids.size()]);
         }
-        return this.messgroessen;
+        return this.measds;
     }
 
-    public void setMessgroessen(Integer[] messgroessen) {
-        this.messgroessen = messgroessen;
+    public void setMeasds(Integer[] measds) {
+        this.measds = measds;
     }
 
-    public Integer getMessprogrammId() {
-        return this.messprogrammId;
+    public Integer getMpgId() {
+        return this.mpgId;
     }
 
-    public void setMessprogrammId(Integer messprogrammId) {
-        this.messprogrammId = messprogrammId;
+    public void setMpgId(Integer mpgId) {
+        this.mpgId = mpgId;
     }
 
     public String getMmtId() {

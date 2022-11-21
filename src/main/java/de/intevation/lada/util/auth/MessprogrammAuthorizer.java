@@ -40,7 +40,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         } else if (data instanceof MessprogrammMmt) {
             messprogramm = repository.getByIdPlain(
                 Mpg.class,
-                ((MessprogrammMmt) data).getMessprogrammId()
+                ((MessprogrammMmt) data).getMpgId()
             );
             if (messprogramm == null) {
                 return false;

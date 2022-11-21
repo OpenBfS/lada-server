@@ -413,7 +413,7 @@ public class ProbeFactory {
 
         QueryBuilder<MessprogrammMmt> builder =
             repository.queryBuilder(MessprogrammMmt.class);
-        builder.and("messprogrammId", messprogramm.getId());
+        builder.and("mpgId", messprogramm.getId());
         Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<MessprogrammMmt> mmts = (List<MessprogrammMmt>) response.getData();
@@ -500,7 +500,7 @@ public class ProbeFactory {
             messung.setProbeId(probe.getId());
             createObject(messung, dryrun);
             messungProtocol.add(mmt.getMmtId());
-            for (int mw : mmt.getMessgroessen()) {
+            for (int mw : mmt.getMeasds()) {
                 Messwert wert = new Messwert();
                 wert.setMessgroesseId(mw);
                 wert.setMessungsId(messung.getId());

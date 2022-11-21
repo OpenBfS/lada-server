@@ -100,7 +100,7 @@ public class MessprogrammMmtService extends LadaService {
     ) {
         QueryBuilder<MessprogrammMmt> builder =
             repository.queryBuilder(MessprogrammMmt.class);
-        builder.and("messprogrammId", messprogrammId);
+        builder.and("mpgId", messprogrammId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
             MessprogrammMmt.class);
@@ -251,12 +251,12 @@ public class MessprogrammMmtService extends LadaService {
      */
     private void setMessgroesseObjects(MessprogrammMmt mm) {
         Set<Measd> mos = new HashSet<>();
-        for (Integer mId: mm.getMessgroessen()) {
+        for (Integer mId: mm.getMeasds()) {
             Measd m = repository.getByIdPlain(Measd.class, mId);
             if (m != null) {
                 mos.add(m);
             }
         }
-        mm.setMessgroesseObjects(mos);
+        mm.setMeasdObjects(mos);
     }
 }

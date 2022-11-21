@@ -32,7 +32,7 @@ public class MessgroesseExist implements Rule {
         MessprogrammMmt messprogrammMmt = (MessprogrammMmt) object;
         Violation violation = new Violation();
 
-        Integer[] mIds = messprogrammMmt.getMessgroessen();
+        Integer[] mIds = messprogrammMmt.getMeasds();
         if (mIds != null) {
             for (Integer mId: mIds) {
                 if (
