@@ -42,8 +42,8 @@ public class MesswertTest extends ServiceTest {
         super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung",
-            "treeModified"
+            "lastMod",
+            "treeMod"
         });
 
         // Prepare expected probe object
@@ -70,7 +70,7 @@ public class MesswertTest extends ServiceTest {
         getById("messwert", "rest/messwert/10000", expectedById);
         normalize(expectedById);
         JsonObject created = create("messwert", "rest/messwert", create);
-        update("messwert", "rest/messwert/10000", "messwertNwg", "<", ">");
+        update("messwert", "rest/messwert/10000", "lessThanLOD", "<", ">");
         delete(
             "messwert",
             "rest/messwert/" + created.getJsonObject("data").get("id"));
@@ -99,14 +99,14 @@ public class MesswertTest extends ServiceTest {
             normalizedObject.getJsonArray("data").getJsonObject(0);
 
         /* Verify normalized unit */
-        final String unitK = "mehId";
+        final String unitK = "unitId";
         final int unitV = 208; // converted from 207
         Assert.assertEquals(
             unitV,
             normalizedMesswert.getInt(unitK));
 
         /* Verify normalized value */
-        final String valueK = "nwgZuMesswert";
+        final String valueK = "detectLim";
         final double valueFactor = 2; // factor for 207 -> 208
         final double epsilon = 1e-10;
         Assert.assertEquals(
