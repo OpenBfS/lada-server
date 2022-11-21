@@ -40,9 +40,9 @@ public class SecondaryMehSelected implements Rule {
         EnvMedium umwelt = null;
         Violation violation = new Violation();
 
-        if (messwert.getMessung() != null
-                && messwert.getMessung().getSample() != null) {
-            umwelt = messwert.getMessung().getSample().getUmwelt();
+        if (messwert.getMeasm() != null
+                && messwert.getMeasm().getSample() != null) {
+            umwelt = messwert.getMeasm().getSample().getUmwelt();
         }
 
         // If umwelt record is present
@@ -54,7 +54,7 @@ public class SecondaryMehSelected implements Rule {
                 return null;
             }
             //Check if the messwert is the secondary mehId
-            if (secMehId.equals(messwert.getMehId())) {
+            if (secMehId.equals(messwert.getUnitId())) {
                 violation.addNotification("mehId", StatusCodes.VAL_SEC_UNIT);
                 return violation;
             }
@@ -69,7 +69,7 @@ public class SecondaryMehSelected implements Rule {
             AtomicBoolean primary = new AtomicBoolean(false);
             meh.getUnitConversTo().forEach(umrechnung -> {
                 if (umrechnung.getFromUnit().getId()
-                    .equals(messwert.getMehId())
+                    .equals(messwert.getUnitId())
                 ) {
                     primary.set(true);
                 }
@@ -79,7 +79,7 @@ public class SecondaryMehSelected implements Rule {
             }
             secMeh.getUnitConversTo().forEach(secUmrechnung -> {
                 if (secUmrechnung.getFromUnit().getId()
-                    .equals(messwert.getMehId())
+                    .equals(messwert.getUnitId())
                 ) {
                     violation.addNotification(
                         "mehId", StatusCodes.VAL_SEC_UNIT);

@@ -25,8 +25,8 @@ public class HasMesswert implements Rule {
     @Override
     public Violation execute(Object object) {
         Messwert messwert = (Messwert) object;
-        String messwertNwg = messwert.getMesswertNwg();
-        Double wert = messwert.getMesswert();
+        String messwertNwg = messwert.getLessThanLOD();
+        Double wert = messwert.getMeasVal();
         Violation violation = new Violation();
         if (messwertNwg == null && wert == null) {
             violation.addWarning("messwert", StatusCodes.VALUE_MISSING);

@@ -704,16 +704,16 @@ public class ImporterTest extends BaseTest {
             repository.getByIdPlain(Measm.class, MID1200);
         List<Messwert> messwerte = new ArrayList<Messwert>();
         Messwert wert1 = new Messwert();
-        wert1.setMessungsId(MID1200);
-        wert1.setMehId(MEHID207);
-        wert1.setMessgroesseId(MGID56);
-        wert1.setMesswert(MESS15D);
+        wert1.setMeasmId(MID1200);
+        wert1.setUnitId(MEHID207);
+        wert1.setMeasdId(MGID56);
+        wert1.setMeasVal(MESS15D);
         messwerte.add(wert1);
 
         merger.mergeMesswerte(messung, messwerte);
         QueryBuilder<Messwert> builder =
             repository.queryBuilder(Messwert.class);
-        builder.and("messungsId", messung.getId());
+        builder.and("measmId", messung.getId());
         List<Messwert> dbWerte =
             repository.filterPlain(builder.getQuery());
         Assert.assertEquals(1, dbWerte.size());

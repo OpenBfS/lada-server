@@ -40,7 +40,7 @@ public class MessgroesseToMessmethode implements Rule {
 
         QueryBuilder<Messwert> builder =
             repository.queryBuilder(Messwert.class)
-                .and("messungsId", messung.getId());
+                .and("measmId", messung.getId());
         List<Messwert> messwerte = repository.filterPlain(builder.getQuery());
 
         QueryBuilder<MmtMeasdView> mmtBuilder =
@@ -53,14 +53,14 @@ public class MessgroesseToMessmethode implements Rule {
         for (Messwert messwert : messwerte) {
             boolean hit = false;
             for (MmtMeasdView mmtM: mmtMs) {
-                if (messwert.getMessgroesseId().equals(
+                if (messwert.getMeasdId().equals(
                         mmtM.getMeasdId())) {
                     hit = true;
                 }
             }
             if (!hit) {
                 Measd mg = repository.getByIdPlain(
-                    Measd.class, messwert.getMessgroesseId());
+                    Measd.class, messwert.getMeasdId());
                 violation.addError(
                     "messgroesse#" + messung.getMmtId()
                     + " " + mg.getName(),

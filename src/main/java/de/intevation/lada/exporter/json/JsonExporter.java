@@ -526,7 +526,7 @@ public class JsonExporter implements Exporter {
     private void addMesswerte(JsonNode node) {
         QueryBuilder<Messwert> builder =
             repository.queryBuilder(Messwert.class);
-        builder.and("messungsId", node.get("id").asInt());
+        builder.and("measmId", node.get("id").asInt());
         List<Messwert> messwerte =
             repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();

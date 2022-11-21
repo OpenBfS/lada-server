@@ -63,18 +63,18 @@ public class MesswertNormalizer {
 
         for (Messwert messwert: messwerte) {
             if (mehIdToConvertTo != null
-                && mehIdToConvertTo.equals(messwert.getMehId())
+                && mehIdToConvertTo.equals(messwert.getUnitId())
                 || secMehIdToConvertTo != null
-                && secMehIdToConvertTo.equals(messwert.getMehId())
+                && secMehIdToConvertTo.equals(messwert.getUnitId())
             ) {
                 // no conversion needed
                 continue;
             }
             //Get the conversion factors
             List<UnitConvers> primaryMeu = getConversions(
-                    mehIdToConvertTo, messwert.getMehId());
+                    mehIdToConvertTo, messwert.getUnitId());
             List<UnitConvers> secondaryMeu = getConversions(
-                    secMehIdToConvertTo, messwert.getMehId());
+                    secMehIdToConvertTo, messwert.getUnitId());
             if (primaryMeu.size() == 0 && secondaryMeu.size() == 0) {
                 //No suitable conversion found: continue
                 continue;
@@ -84,15 +84,15 @@ public class MesswertNormalizer {
             Double factor = meu.getFactor();
 
             //Update einheit
-            messwert.setMehId(
+            messwert.setUnitId(
                 primaryMeu.size() > 0 ? mehIdToConvertTo : secMehIdToConvertTo);
             //Update messwert
-            if (messwert.getMesswert() != null) {
-                messwert.setMesswert(messwert.getMesswert() * factor);
+            if (messwert.getMeasVal() != null) {
+                messwert.setMeasVal(messwert.getMeasVal() * factor);
             }
             //update nwgZuMesswert
-            if (messwert.getNwgZuMesswert() != null) {
-                messwert.setNwgZuMesswert(messwert.getNwgZuMesswert() * factor);
+            if (messwert.getDetectLim() != null) {
+                messwert.setDetectLim(messwert.getDetectLim() * factor);
             }
         }
         return messwerte;

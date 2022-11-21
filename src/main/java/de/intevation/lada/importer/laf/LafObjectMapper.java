@@ -1060,7 +1060,7 @@ public class LafObjectMapper {
                     object.getMesswerte().get(i), newMessung.getId());
             if (tmp != null) {
                 //find duplicates
-                if (messgroessenListe.contains(tmp.getMessgroesseId())) {
+                if (messgroessenListe.contains(tmp.getMeasdId())) {
                     currentWarnings.add(new ReportItem(
                         (object.getMesswerte().get(i).get("MESSGROESSE_ID")
                             == null)
@@ -1076,7 +1076,7 @@ public class LafObjectMapper {
                 } else {
                    //temporary messwertobjects
                     messwerte.add(tmp);
-                    messgroessenListe.add(tmp.getMessgroesseId());
+                    messgroessenListe.add(tmp.getMeasdId());
                 }
             }
         }
@@ -1113,7 +1113,7 @@ public class LafObjectMapper {
         // ... and messwerte
         QueryBuilder<Messwert> messwBuilder =
             repository.queryBuilder(Messwert.class);
-        messwBuilder.and("messungsId", newMessung.getId());
+        messwBuilder.and("measmId", newMessung.getId());
         for (Messwert messwert: messwerte) {
             Violation messwViolation = messwertValidator.validate(messwert);
             if (messwViolation.hasWarnings()) {
@@ -1283,7 +1283,7 @@ public class LafObjectMapper {
         int messungsId
     ) {
         Messwert messwert = new Messwert();
-        messwert.setMessungsId(messungsId);
+        messwert.setMeasmId(messungsId);
         if (attributes.containsKey("MESSGROESSE_ID")) {
                 Measd messgreosse = repository.getByIdPlain(
                     Measd.class,
@@ -1297,7 +1297,7 @@ public class LafObjectMapper {
                         StatusCodes.IMP_INVALID_VALUE));
                 return null;
             }
-            messwert.setMessgroesseId(
+            messwert.setMeasdId(
                 Integer.valueOf(attributes.get("MESSGROESSE_ID")));
         } else if (attributes.containsKey("MESSGROESSE")) {
             List<ImportConf> cfgs =
@@ -1343,7 +1343,7 @@ public class LafObjectMapper {
                         StatusCodes.IMP_INVALID_VALUE));
                 return null;
             }
-            messwert.setMessgroesseId(groesse.get(0).getId());
+            messwert.setMeasdId(groesse.get(0).getId());
         }
         if (attributes.containsKey("MESSEINHEIT_ID")) {
                 MeasUnit messEinheit = repository.getByIdPlain(
@@ -1358,7 +1358,7 @@ public class LafObjectMapper {
                         StatusCodes.IMP_INVALID_VALUE));
                 return null;
             }
-            messwert.setMehId(
+            messwert.setUnitId(
                 Integer.valueOf(attributes.get("MESSEINHEIT_ID")));
         } else if (attributes.containsKey("MESSEINHEIT")) {
             List<ImportConf> cfgs =
@@ -1392,49 +1392,49 @@ public class LafObjectMapper {
                         StatusCodes.IMP_INVALID_VALUE));
                 return null;
             }
-            messwert.setMehId(einheit.get(0).getId());
+            messwert.setUnitId(einheit.get(0).getId());
         }
 
         String wert = attributes.get("MESSWERT");
         if (wert.startsWith("<")) {
             wert = wert.substring(1);
-            messwert.setMesswertNwg("<");
+            messwert.setLessThanLOD("<");
         }
-        messwert.setMesswert(Double.valueOf(wert.replaceAll(",", ".")));
+        messwert.setMeasVal(Double.valueOf(wert.replaceAll(",", ".")));
         if (attributes.containsKey("MESSFEHLER")) {
-            messwert.setMessfehler(
+            messwert.setError(
                 Double.valueOf(
                     attributes.get("MESSFEHLER")
                         .replaceAll(",", ".")).floatValue());
         }
         if (attributes.containsKey("NWG")) {
-            messwert.setNwgZuMesswert(
+            messwert.setDetectLim(
                 Double.valueOf(attributes.get("NWG").replaceAll(",", ".")));
         }
         if (attributes.containsKey("GRENZWERT")) {
-            messwert.setGrenzwertueberschreitung(
+            messwert.setIsThreshold(
                 attributes.get("GRENZWERT").equalsIgnoreCase("J"));
         }
         doDefaults(messwert);
         doConverts(messwert);
         doTransforms(messwert);
-        if (messwert.getMesswertNwg() != null
-            && messwert.getNwgZuMesswert() == null
+        if (messwert.getLessThanLOD() != null
+            && messwert.getDetectLim() == null
         ) {
-            messwert.setNwgZuMesswert(messwert.getMesswert());
-            messwert.setMesswert(null);
-        } else if (messwert.getMesswertNwg() != null
-            && messwert.getMesswert().equals(messwert.getNwgZuMesswert())
-            || messwert.getMesswertNwg() != null
-            && messwert.getMesswert() == 0.0
+            messwert.setDetectLim(messwert.getMeasVal());
+            messwert.setMeasVal(null);
+        } else if (messwert.getLessThanLOD() != null
+            && messwert.getMeasVal().equals(messwert.getDetectLim())
+            || messwert.getLessThanLOD() != null
+            && messwert.getMeasVal() == 0.0
         ) {
-            messwert.setMesswert(null);
+            messwert.setMeasVal(null);
         }
-        if (messwert.getMessfehler() != null) {
-            if (messwert.getMesswertNwg() != null
-                && messwert.getMessfehler() == 0
+        if (messwert.getError() != null) {
+            if (messwert.getLessThanLOD() != null
+                && messwert.getError() == 0
             ) {
-                messwert.setMessfehler(null);
+                messwert.setError(null);
             }
         }
         return messwert;
@@ -1591,7 +1591,7 @@ public class LafObjectMapper {
         //Cleanup Messwerte for Status 7
             QueryBuilder<Messwert> builderMW =
                 repository.queryBuilder(Messwert.class);
-            builderMW.and("messungsId", messung.getId());
+            builderMW.and("measmId", messung.getId());
             Response messwertQry =
                 repository.filter(builderMW.getQuery());
             @SuppressWarnings("unchecked")
@@ -1602,8 +1602,8 @@ public class LafObjectMapper {
 
                 boolean hasNoMesswert = false;
 
-                if (messwert.getMesswert() == null
-                     && messwert.getMesswertNwg() == null) {
+                if (messwert.getMeasVal() == null
+                     && messwert.getLessThanLOD() == null) {
                      hasNoMesswert = true;
                 }
                 if (!hasNoMesswert) {

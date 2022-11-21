@@ -220,7 +220,7 @@ public abstract class QueryExportJob extends ExportJob {
     private List<Messwert> getMesswertSubData(List<Integer> primaryDataIds) {
         QueryBuilder<Messwert> messwertBuilder = repository.queryBuilder(
             Messwert.class);
-        messwertBuilder.andIn("messungsId", primaryDataIds);
+        messwertBuilder.andIn("measmId", primaryDataIds);
         return repository.filterPlain(messwertBuilder.getQuery());
     }
 
@@ -250,7 +250,7 @@ public abstract class QueryExportJob extends ExportJob {
     protected int getMesswertCount(Measm messung) {
         QueryBuilder<Messwert> builder = repository.queryBuilder(
             Messwert.class);
-        builder.and("messungsId", messung.getId());
+        builder.and("measmId", messung.getId());
         // TODO: This is a nice example of ORM-induced database misuse:
         return repository.filterPlain(builder.getQuery()).size();
     }
@@ -263,7 +263,7 @@ public abstract class QueryExportJob extends ExportJob {
     protected String getMesseinheit(Messwert messwert) {
         QueryBuilder<MeasUnit> builder = repository.queryBuilder(
             MeasUnit.class);
-        builder.and("id", messwert.getMehId());
+        builder.and("id", messwert.getUnitId());
         List<MeasUnit> messeinheit = repository.filterPlain(builder.getQuery());
         return messeinheit.get(0).getUnitSymbol();
     }
@@ -276,7 +276,7 @@ public abstract class QueryExportJob extends ExportJob {
     protected String getMessgroesse(Messwert messwert) {
         QueryBuilder<Measd> builder = repository.queryBuilder(
             Measd.class);
-        builder.and("id", messwert.getMessgroesseId());
+        builder.and("id", messwert.getMeasdId());
         List<Measd> messgroesse = repository.filterPlain(builder.getQuery());
         return messgroesse.get(0).getName();
     }

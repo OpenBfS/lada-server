@@ -134,7 +134,7 @@ public class MesswertService extends LadaService {
 
         QueryBuilder<Messwert> builder =
             repository.queryBuilder(Messwert.class);
-        builder.and("messungsId", messungsId);
+        builder.and("measmId", messungsId);
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
             Messwert.class);
@@ -172,7 +172,7 @@ public class MesswertService extends LadaService {
         Response response = repository.getById(Messwert.class, id);
         Messwert messwert = (Messwert) response.getData();
         Measm messung = repository.getByIdPlain(
-            Measm.class, messwert.getMessungsId());
+            Measm.class, messwert.getMeasmId());
         if (!authorization.isAuthorized(
             messung,
             RequestMethod.GET,
@@ -358,7 +358,7 @@ public class MesswertService extends LadaService {
         //Get all Messwert objects to convert
         QueryBuilder<Messwert> messwertBuilder =
             repository.queryBuilder(Messwert.class);
-        messwertBuilder.and("messungsId", messungsId);
+        messwertBuilder.and("measmId", messungsId);
         List<Messwert> messwerte = messwertNormalizer.normalizeMesswerte(
             repository.filterPlain(messwertBuilder.getQuery()),
             umwelt.getId());

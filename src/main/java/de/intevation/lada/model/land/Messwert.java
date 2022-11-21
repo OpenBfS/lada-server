@@ -24,12 +24,8 @@ import javax.ws.rs.core.MultivaluedMap;
 
 
 
-/**
- * The persistent class for the messwert database table.
- *
- */
 @Entity
-@Table(name = "messwert", schema = SchemaName.LEGACY_NAME)
+@Table(name = "meas_val", schema = SchemaName.NAME)
 public class Messwert implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -37,36 +33,31 @@ public class Messwert implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Boolean grenzwertueberschreitung;
+    private Boolean isThreshold;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
-    @Column(name = "meh_id")
-    private Integer mehId;
+    private Integer unitId;
 
-    private Float messfehler;
+    private Float error;
 
-    @Column(name = "messgroesse_id")
-    private Integer messgroesseId;
+    private Integer measdId;
 
-    @Column(name = "messungs_id")
-    private Integer messungsId;
+    private Integer measmId;
 
-    private Double messwert;
+    private Double measVal;
 
-    @Column(name = "messwert_nwg")
-    private String messwertNwg;
+    private String lessThanLOD;
 
-    @Column(name = "nwg_zu_messwert")
-    private Double nwgZuMesswert;
+    private Double detectLim;
 
-    @Column(name = "tree_modified", insertable = false, updatable = false)
-    private Timestamp treeModified;
+    @Column(insertable = false, updatable = false)
+    private Timestamp treeMod;
 
     @OneToOne
-    @JoinColumn(name = "messungs_id", insertable = false, updatable = false)
-    private Measm messung;
+    @JoinColumn(name = "measm_id", insertable = false, updatable = false)
+    private Measm measm;
 
     @Transient
     private boolean owner;
@@ -97,89 +88,89 @@ public class Messwert implements Serializable {
         this.id = id;
     }
 
-    public Boolean getGrenzwertueberschreitung() {
-        return this.grenzwertueberschreitung;
+    public Boolean getIsThreshold() {
+        return this.isThreshold;
     }
 
-    public void setGrenzwertueberschreitung(Boolean grenzwertueberschreitung) {
-        this.grenzwertueberschreitung = grenzwertueberschreitung;
+    public void setIsThreshold(Boolean isThreshold) {
+        this.isThreshold = isThreshold;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
-    public Integer getMehId() {
-        return this.mehId;
+    public Integer getUnitId() {
+        return this.unitId;
     }
 
-    public void setMehId(Integer mehId) {
-        this.mehId = mehId;
+    public void setUnitId(Integer unitId) {
+        this.unitId = unitId;
     }
 
-    public Float getMessfehler() {
-        return this.messfehler;
+    public Float getError() {
+        return this.error;
     }
 
-    public void setMessfehler(Float messfehler) {
-        this.messfehler = messfehler;
+    public void setError(Float error) {
+        this.error = error;
     }
 
-    public Integer getMessgroesseId() {
-        return this.messgroesseId;
+    public Integer getMeasdId() {
+        return this.measdId;
     }
 
-    public void setMessgroesseId(Integer messgroesseId) {
-        this.messgroesseId = messgroesseId;
+    public void setMeasdId(Integer measdId) {
+        this.measdId = measdId;
     }
 
     @JsonbTransient
-    public Measm getMessung() {
-        return this.messung;
+    public Measm getMeasm() {
+        return this.measm;
     }
 
-    public Integer getMessungsId() {
-        return this.messungsId;
+    public Integer getMeasmId() {
+        return this.measmId;
     }
 
-    public void setMessungsId(Integer messungsId) {
-        this.messungsId = messungsId;
+    public void setMeasmId(Integer measmId) {
+        this.measmId = measmId;
     }
 
-    public Double getMesswert() {
-        return this.messwert;
+    public Double getMeasVal() {
+        return this.measVal;
     }
 
-    public void setMesswert(Double messwert) {
-        this.messwert = messwert;
+    public void setMeasVal(Double measVal) {
+        this.measVal = measVal;
     }
 
-    public String getMesswertNwg() {
-        return this.messwertNwg;
+    public String getLessThanLOD() {
+        return this.lessThanLOD;
     }
 
-    public void setMesswertNwg(String messwertNwg) {
-        this.messwertNwg = messwertNwg;
+    public void setLessThanLOD(String lessThanLOD) {
+        this.lessThanLOD = lessThanLOD;
     }
 
-    public Double getNwgZuMesswert() {
-        return this.nwgZuMesswert;
+    public Double getDetectLim() {
+        return this.detectLim;
     }
 
-    public void setNwgZuMesswert(Double nwgZuMesswert) {
-        this.nwgZuMesswert = nwgZuMesswert;
+    public void setDetectLim(Double detectLim) {
+        this.detectLim = detectLim;
     }
 
-    public Timestamp getTreeModified() {
-        return this.treeModified;
+    public Timestamp getTreeMod() {
+        return this.treeMod;
     }
 
-    public void setTreeModified(Timestamp treeModified) {
-        this.treeModified = treeModified;
+    public void setTreeMod(Timestamp treeMod) {
+        this.treeMod = treeMod;
     }
 
     /**
@@ -215,8 +206,8 @@ public class Messwert implements Serializable {
      * @return timestamp when the parent was modified
      */
     public Timestamp getParentModified() {
-        if (this.parentModified == null && this.messung != null) {
-            return this.messung.getTreeMod();
+        if (this.parentModified == null && this.measm != null) {
+            return this.measm.getTreeMod();
         }
         return this.parentModified;
     }

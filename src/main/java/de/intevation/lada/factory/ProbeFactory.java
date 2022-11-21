@@ -502,12 +502,12 @@ public class ProbeFactory {
             messungProtocol.add(mmt.getMmtId());
             for (int mw : mmt.getMeasds()) {
                 Messwert wert = new Messwert();
-                wert.setMessgroesseId(mw);
-                wert.setMessungsId(messung.getId());
+                wert.setMeasdId(mw);
+                wert.setMeasmId(messung.getId());
                 if (messprogramm.getUnitId() != null) {
-                    wert.setMehId(messprogramm.getUnitId());
+                    wert.setUnitId(messprogramm.getUnitId());
                 } else {
-                    wert.setMehId(0);
+                    wert.setUnitId(0);
                 }
                 createObject(wert, dryrun);
             }

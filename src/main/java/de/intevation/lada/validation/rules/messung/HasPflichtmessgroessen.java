@@ -91,7 +91,7 @@ public class HasPflichtmessgroessen implements Rule {
 
         QueryBuilder<Messwert> wertBuilder =
             repository.queryBuilder(Messwert.class);
-        wertBuilder.and("messungsId", messung.getId());
+        wertBuilder.and("measmId", messung.getId());
         Response wertResponse =
             repository.filter(wertBuilder.getQuery());
         @SuppressWarnings("unchecked")
@@ -100,7 +100,7 @@ public class HasPflichtmessgroessen implements Rule {
         List<ObligMeasdMp> tmp = new ArrayList<ObligMeasdMp>();
         for (Messwert wert : messwerte) {
             for (ObligMeasdMp p : pflicht) {
-                if (p.getMeasdId().equals(wert.getMessgroesseId())) {
+                if (p.getMeasdId().equals(wert.getMeasdId())) {
                     tmp.add(p);
                 }
             }

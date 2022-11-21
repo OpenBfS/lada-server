@@ -34,8 +34,8 @@ public class UniqueMessungMessgroesse implements Rule {
         Messwert messwert = (Messwert) object;
         QueryBuilder<Messwert> messwertQuery =
             repository.queryBuilder(Messwert.class);
-        messwertQuery.and("messungsId", messwert.getMessungsId());
-        messwertQuery.and("messgroesseId", messwert.getMessgroesseId());
+        messwertQuery.and("measmId", messwert.getMeasmId());
+        messwertQuery.and("measdId", messwert.getMeasdId());
         List<Messwert> result =
             repository.filterPlain(messwertQuery.getQuery());
         if (!result.isEmpty()

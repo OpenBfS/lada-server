@@ -25,13 +25,13 @@ public class HasMessunsicherheit implements Rule {
     @Override
     public Violation execute(Object object) {
         Messwert messwert = (Messwert) object;
-        Float unsicherheit = messwert.getMessfehler();
-        if (messwert.getMesswertNwg() == null
+        Float unsicherheit = messwert.getError();
+        if (messwert.getLessThanLOD() == null
             && (unsicherheit == null || unsicherheit == 0f)) {
             Violation violation = new Violation();
             violation.addWarning("messfehler", StatusCodes.VALUE_MISSING);
             return violation;
-        } else if (messwert.getMesswertNwg() != null && unsicherheit != null) {
+        } else if (messwert.getLessThanLOD() != null && unsicherheit != null) {
             Violation violation = new Violation();
             violation.addWarning("messfehler", StatusCodes.VAL_UNCERT);
             return violation;

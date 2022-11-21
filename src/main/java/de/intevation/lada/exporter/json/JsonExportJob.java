@@ -164,7 +164,7 @@ public class JsonExportJob extends QueryExportJob {
         AtomicBoolean success = new AtomicBoolean(true);
         List<Map<String, Object>> merged = primaryData;
         messwertData.forEach(messwert -> {
-            Integer primaryId = messwert.getMessungsId();
+            Integer primaryId = messwert.getMeasmId();
             if (primaryId == null) {
                 logger.error("No primary id set");
                 success.set(false);

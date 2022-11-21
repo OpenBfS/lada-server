@@ -450,7 +450,7 @@ implements Creator {
             laf += "%MESSUNG%\n";
             QueryBuilder<Messwert> wertBuilder =
                 repository.queryBuilder(Messwert.class);
-            wertBuilder.and("messungsId", m.getId());
+            wertBuilder.and("measmId", m.getId());
             Response messw =
                 repository.filter(wertBuilder.getQuery());
             List<Messwert> werte = (List<Messwert>) messw.getData();
@@ -556,14 +556,14 @@ implements Creator {
     private String writeMesswert(Messwert mw) {
         QueryBuilder<Measd> builder =
             repository.queryBuilder(Measd.class);
-        builder.and("id", mw.getMessgroesseId());
+        builder.and("id", mw.getMeasdId());
         List<Measd> groessen =
             (List<Measd>) repository.filter(
                 builder.getQuery()).getData();
 
         QueryBuilder<MeasUnit> eBuilder =
             repository.queryBuilder(MeasUnit.class);
-        eBuilder.and("id", mw.getMehId());
+        eBuilder.and("id", mw.getUnitId());
         List<MeasUnit> einheiten =
             (List<MeasUnit>) repository.filter(
                 eBuilder.getQuery()).getData();
@@ -571,25 +571,25 @@ implements Creator {
         String tag = "MESSWERT";
         String value = "\"" + groessen.get(0).getName() + "\"";
         value += " ";
-        value += mw.getMesswertNwg() == null ? " " : mw.getMesswertNwg();
-        value += mw.getMesswertNwg() == null
-            ? mw.getMesswert() : mw.getNwgZuMesswert();
+        value += mw.getLessThanLOD() == null ? " " : mw.getLessThanLOD();
+        value += mw.getLessThanLOD() == null
+            ? mw.getMeasVal() : mw.getDetectLim();
         value += " \"" + einheiten.get(0).getUnitSymbol() + "\"";
-        value += mw.getMessfehler() == null ? " 0.0" : " " + mw.getMessfehler();
-        if (mw.getGrenzwertueberschreitung() == null
-            || !mw.getGrenzwertueberschreitung()
+        value += mw.getError() == null ? " 0.0" : " " + mw.getError();
+        if (mw.getIsThreshold() == null
+            || !mw.getIsThreshold()
         ) {
-            if (mw.getNwgZuMesswert() != null) {
+            if (mw.getDetectLim() != null) {
                 tag += "_NWG";
-                value += " " + mw.getNwgZuMesswert();
+                value += " " + mw.getDetectLim();
             }
         } else {
             tag += "_NWG_G";
             value += " "
-                + (mw.getNwgZuMesswert() == null
-                    ? "0.0" : mw.getNwgZuMesswert());
-            value += " " + (mw.getGrenzwertueberschreitung() == null
-                ? " N" : mw.getGrenzwertueberschreitung() ? " J" : " N");
+                + (mw.getDetectLim() == null
+                    ? "0.0" : mw.getDetectLim());
+            value += " " + (mw.getIsThreshold() == null
+                ? " N" : mw.getIsThreshold() ? " J" : " N");
         }
         return lafLine(tag, value);
     }

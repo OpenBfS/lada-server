@@ -42,9 +42,9 @@ public class IsNormalized implements Rule {
         EnvMedium umwelt = null;
         Violation violation = new Violation();
 
-        if (messwert.getMessung() != null
-                && messwert.getMessung().getSample() != null) {
-            umwelt = messwert.getMessung().getSample().getUmwelt();
+        if (messwert.getMeasm() != null
+                && messwert.getMeasm().getSample() != null) {
+            umwelt = messwert.getMeasm().getSample().getUmwelt();
         }
 
         // If umwelt record is present
@@ -61,32 +61,32 @@ public class IsNormalized implements Rule {
             //Check if the messwert mehId can be converted to primary or secondary meh
             Boolean convert = false;
 
-            if (mehId != null && !mehId.equals(messwert.getMehId())) {
+            if (mehId != null && !mehId.equals(messwert.getUnitId())) {
                 QueryBuilder<UnitConvers> builder =
                 repository.queryBuilder(UnitConvers.class);
                 builder.and("toUnitId", mehId);
-                builder.and("fromUnit", messwert.getMehId());
+                builder.and("fromUnit", messwert.getUnitId());
                 List<UnitConvers> result = repository.filterPlain(builder.getQuery());
                 convert = result.size() > 0;
-            } else if (secMehId != null && !secMehId.equals(messwert.getMehId())) {
+            } else if (secMehId != null && !secMehId.equals(messwert.getUnitId())) {
                 QueryBuilder<UnitConvers> builder =
                 repository.queryBuilder(UnitConvers.class);
                 builder.and("toUnitId", secMehId);
-                builder.and("fromUnit", messwert.getMehId());
+                builder.and("fromUnit", messwert.getUnitId());
                 List<UnitConvers> result = repository.filterPlain(builder.getQuery());
                 convert = result.size() > 0;
             }
 
             if (convert) {
                 QueryBuilder<Measd> builder_messgr = repository.queryBuilder(Measd.class);
-                builder_messgr.and("id", messwert.getMessgroesseId());
+                builder_messgr.and("id", messwert.getMeasdId());
                 List<Measd> messgroesse = repository.filterPlain(builder_messgr.getQuery());
                 violation.addWarning("mehId#"+messgroesse.get(0).getName(), StatusCodes.VAL_UNIT_NORMALIZE);
-            } else if ( (mehId != null && mehId.equals(messwert.getMehId())) || (secMehId != null && secMehId.equals(messwert.getMehId())) ) {
+            } else if ( (mehId != null && mehId.equals(messwert.getUnitId())) || (secMehId != null && secMehId.equals(messwert.getUnitId())) ) {
                 return null;
             } else {
                 QueryBuilder<Measd> builder_messgr = repository.queryBuilder(Measd.class);
-                builder_messgr.and("id", messwert.getMessgroesseId());
+                builder_messgr.and("id", messwert.getMeasdId());
                 List<Measd> messgroesse = repository.filterPlain(builder_messgr.getQuery());
                 violation.addWarning("mehId#"+messgroesse.get(0).getName(), StatusCodes.VAL_UNIT_UMW);
             }

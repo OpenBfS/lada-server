@@ -261,7 +261,7 @@ public class ObjectMerger {
     ) {
         QueryBuilder<Messwert> builder =
             repository.queryBuilder(Messwert.class);
-        builder.and("messungsId", target.getId());
+        builder.and("measmId", target.getId());
         List<Messwert> found =
             repository.filterPlain(builder.getQuery());
         if (found.isEmpty()) {

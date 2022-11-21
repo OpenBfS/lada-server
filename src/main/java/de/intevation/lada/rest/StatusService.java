@@ -290,7 +290,7 @@ public class StatusService extends LadaService {
             //validate messwert objects
             QueryBuilder<Messwert> builder =
                 repository.queryBuilder(Messwert.class);
-            builder.and("messungsId", messung.getId());
+            builder.and("measmId", messung.getId());
             Response messwertQry =
                 repository.filter(builder.getQuery());
             @SuppressWarnings("unchecked")
@@ -302,8 +302,8 @@ public class StatusService extends LadaService {
 
                 boolean hasNoMesswert = false;
 
-                if (messwert.getMesswert() == null
-                     && messwert.getMesswertNwg() == null) {
+                if (messwert.getMeasVal() == null
+                     && messwert.getLessThanLOD() == null) {
                      hasNoMesswert = true;
                 }
                 if (newStatusWert == 7
