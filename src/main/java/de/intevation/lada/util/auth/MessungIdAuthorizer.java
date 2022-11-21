@@ -61,7 +61,7 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
         Messung messung =
             repository.getByIdPlain(Messung.class, id);
         Sample probe = repository.getByIdPlain(
-            Sample.class, messung.getProbeId());
+            Sample.class, messung.getSampleId());
         if (messung.getStatus() == null) {
             return false;
         }
@@ -110,7 +110,7 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
             Messung messung = repository.getByIdPlain(
                 Messung.class, id);
             Sample probe = repository.getByIdPlain(
-                Sample.class, messung.getProbeId());
+                Sample.class, messung.getSampleId());
 
             boolean readOnly = true;
             boolean owner = false;

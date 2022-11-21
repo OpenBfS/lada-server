@@ -36,7 +36,7 @@ public class DateMesszeitpunkt implements Rule {
     @Override
     public Violation execute(Object object) {
         Messung messung = (Messung) object;
-        Integer probeId = messung.getProbeId();
+        Integer probeId = messung.getSampleId();
         Response response =
             repository.getById(Sample.class, probeId);
         Sample probe = (Sample) response.getData();
@@ -47,11 +47,11 @@ public class DateMesszeitpunkt implements Rule {
             return violation;
         }
 
-        if (messung.getMesszeitpunkt() == null) {
+        if (messung.getMeasmStartDate() == null) {
             return null;
         }
 
-        if (messung.getMesszeitpunkt().after(new Date())) {
+        if (messung.getMeasmStartDate().after(new Date())) {
             Violation violation = new Violation();
             violation.addWarning("messzeitpunkt", StatusCodes.DATE_IN_FUTURE);
             return violation;
@@ -63,15 +63,15 @@ public class DateMesszeitpunkt implements Rule {
         }
 
         if ((probe.getSampleStartDate() != null
-            && probe.getSampleStartDate().after(messung.getMesszeitpunkt())
+            && probe.getSampleStartDate().after(messung.getMeasmStartDate())
             || probe.getSampleEndDate() != null
-            && probe.getSampleEndDate().after(messung.getMesszeitpunkt()))
+            && probe.getSampleEndDate().after(messung.getMeasmStartDate()))
             && (probe.getSampleMethId() != null
                 && (probe.getSampleMethId() == 3 || probe.getSampleMethId() == 9))
         ) {
             Violation violation = new Violation();
             violation.addWarning(
-                "messzeitpunkt#" + messung.getNebenprobenNr(),
+                "messzeitpunkt#" + messung.getMinSampleId(),
                 StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }

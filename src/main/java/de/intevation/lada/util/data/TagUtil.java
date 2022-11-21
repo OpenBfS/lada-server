@@ -120,7 +120,7 @@ public class TagUtil {
             repository.queryBuilder(Sample.class).andIn("id", probeIds)
             .getQuery());
         List<Messung> messungs = repository.filterPlain(
-            repository.queryBuilder(Messung.class).andIn("probeId", probeIds)
+            repository.queryBuilder(Messung.class).andIn("sampleId", probeIds)
             .getQuery());
 
         //Set tags

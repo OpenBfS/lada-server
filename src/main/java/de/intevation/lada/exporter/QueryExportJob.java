@@ -208,7 +208,7 @@ public abstract class QueryExportJob extends ExportJob {
     private List<Messung> getMessungSubData(List<Integer> primaryDataIds) {
         QueryBuilder<Messung> messungBuilder = repository.queryBuilder(
             Messung.class);
-        messungBuilder.andIn("probeId", primaryDataIds);
+        messungBuilder.andIn("sampleId", primaryDataIds);
         return repository.filterPlain(messungBuilder.getQuery());
     }
 

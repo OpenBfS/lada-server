@@ -216,7 +216,7 @@ public class Messwert implements Serializable {
      */
     public Timestamp getParentModified() {
         if (this.parentModified == null && this.messung != null) {
-            return this.messung.getTreeModified();
+            return this.messung.getTreeMod();
         }
         return this.parentModified;
     }

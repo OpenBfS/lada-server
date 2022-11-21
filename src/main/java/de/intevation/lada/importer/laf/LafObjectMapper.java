@@ -653,7 +653,7 @@ public class LafObjectMapper {
                 //assign to messung objects
                 QueryBuilder<Messung> builderMessung =
                     repository.queryBuilder(Messung.class);
-                builderMessung.and("probeId", newProbe.getId());
+                builderMessung.and("sampleId", newProbe.getId());
                 List<Messung> messungen =  repository.filterPlain(builderMessung.getQuery());
                 for (Messung messung: messungen) {
                     assignGlobalTag(object.getAttributes().get("SZENARIO"), messung);
@@ -961,7 +961,7 @@ public class LafObjectMapper {
         Sample probe, String mstId
     ) {
         Messung messung = new Messung();
-        messung.setProbeId(probe.getId());
+        messung.setSampleId(probe.getId());
 
         // Fill the new messung with data
         for (Entry<String, String> attribute
@@ -979,7 +979,7 @@ public class LafObjectMapper {
             ReportItem warn = new ReportItem();
             warn.setCode(StatusCodes.NOT_ALLOWED);
             warn.setKey(userInfo.getName());
-            warn.setValue("Messung: " + messung.getNebenprobenNr());
+            warn.setValue("Messung: " + messung.getMinSampleId());
             currentErrors.add(warn);
             return;
         }
@@ -992,7 +992,7 @@ public class LafObjectMapper {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.ERROR_VALIDATION);
             err.setKey("not valid");
-            err.setValue("Messung: " + messung.getNebenprobenNr());
+            err.setValue("Messung: " + messung.getMinSampleId());
             currentErrors.add(err);
             return;
         }
@@ -1007,7 +1007,7 @@ public class LafObjectMapper {
                 currentNotifications.add(
                     new ReportItem(
                         "messung",
-                        old.getExterneMessungsId(),
+                        old.getExtId(),
                         StatusCodes.IMP_UNCHANGABLE));
                 return;
             } else {
@@ -1029,7 +1029,7 @@ public class LafObjectMapper {
                 ReportItem err2 = new ReportItem();
                 err2.setCode(StatusCodes.VALUE_MISSING);
                 err2.setKey("not valid (missing Messmethode)");
-                err2.setValue("Messung: " + messung.getNebenprobenNr());
+                err2.setValue("Messung: " + messung.getMinSampleId());
                 currentErrors.add(err2);
                 return;
             }
@@ -1679,9 +1679,9 @@ public class LafObjectMapper {
             //persist newStatus if authorized to do so
             repository.create(newStatus);
             if (newKombi == 0 || newKombi == 9 || newKombi == 13) {
-                messung.setFertig(false);
+                messung.setIsCompleted(false);
             } else {
-                messung.setFertig(true);
+                messung.setIsCompleted(true);
             }
             messung.setStatus(newStatus.getId());
             repository.update(messung);
@@ -2470,15 +2470,15 @@ public class LafObjectMapper {
         String key = attribute.getKey();
         String value = attribute.getValue();
         if ("MESSUNGS_ID".equals(key)) {
-            messung.setExterneMessungsId(Integer.valueOf(value));
+            messung.setExtId(Integer.valueOf(value));
         }
         if ("NEBENPROBENNUMMER".equals(key)) {
-            messung.setNebenprobenNr(value.toString());
+            messung.setMinSampleId(value.toString());
         } else if ("MESS_DATUM_UHRZEIT".equals(key)) {
-            messung.setMesszeitpunkt(getDate(value.toString()));
+            messung.setMeasmStartDate(getDate(value.toString()));
         } else if ("MESSZEIT_SEKUNDEN".equals(key)) {
             Integer i = Integer.valueOf(value.toString());
-            messung.setMessdauer(i);
+            messung.setMeasPd(i);
         } else if ("MESSMETHODE_S".equals(key)) {
             Mmt mmt = repository.getByIdPlain(
                 Mmt.class, value.toString());
@@ -2506,9 +2506,9 @@ public class LafObjectMapper {
             }
         } else if ("ERFASSUNG_ABGESCHLOSSEN".equals(key)) {
             if (value.toString().equals("1")) {
-                messung.setFertig(true);
+                messung.setIsCompleted(true);
             } else if (value.toString().equals("0")) {
-                messung.setFertig(false);
+                messung.setIsCompleted(false);
             }
         }
         return messung;

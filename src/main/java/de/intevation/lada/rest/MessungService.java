@@ -112,7 +112,7 @@ public class MessungService extends LadaService {
         @QueryParam("probeId") @NotNull Integer probeId
     ) {
         QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class)
-            .and("probeId", probeId);
+            .and("sampleId", probeId);
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
             Messung.class);

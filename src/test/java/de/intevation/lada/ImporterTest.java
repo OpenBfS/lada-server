@@ -313,8 +313,8 @@ public class ImporterTest extends BaseTest {
             "Compare and find Messung by NP-Nr., Update");
 
         Messung messung = new Messung();
-        messung.setProbeId(PID1000);
-        messung.setNebenprobenNr("06A0");
+        messung.setSampleId(PID1000);
+        messung.setMinSampleId("06A0");
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.UPDATE, found);
@@ -339,8 +339,8 @@ public class ImporterTest extends BaseTest {
         protocol.addInfo("import", "Compare and find Messung by NP-Nr., New");
 
         Messung messung = new Messung();
-        messung.setProbeId(PID1000);
-        messung.setNebenprobenNr("06A1");
+        messung.setSampleId(PID1000);
+        messung.setMinSampleId("06A1");
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.NEW, found);
@@ -367,8 +367,8 @@ public class ImporterTest extends BaseTest {
             "Compare and find Messung by externeMessungsId, Update");
 
         Messung messung = new Messung();
-        messung.setProbeId(PID1000);
-        messung.setExterneMessungsId(1);
+        messung.setSampleId(PID1000);
+        messung.setExtId(1);
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.UPDATE, found);
@@ -395,8 +395,8 @@ public class ImporterTest extends BaseTest {
             "Compare and find Messung by externeMessungsId, New");
 
         Messung messung = new Messung();
-        messung.setProbeId(PID1000);
-        messung.setExterneMessungsId(2);
+        messung.setSampleId(PID1000);
+        messung.setExtId(2);
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.NEW, found);
@@ -424,9 +424,9 @@ public class ImporterTest extends BaseTest {
             "Compare and find Messung by externeMessungsId, Reject");
 
         Messung messung = new Messung();
-        messung.setProbeId(PID1000);
-        messung.setExterneMessungsId(1);
-        messung.setNebenprobenNr("06A2");
+        messung.setSampleId(PID1000);
+        messung.setExtId(1);
+        messung.setMinSampleId("06A2");
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.REJECT, found);
@@ -454,9 +454,9 @@ public class ImporterTest extends BaseTest {
             "Compare and find Messung by externeMessungsId, Update");
 
         Messung messung = new Messung();
-        messung.setProbeId(PID1000);
-        messung.setExterneMessungsId(1);
-        messung.setNebenprobenNr("");
+        messung.setSampleId(PID1000);
+        messung.setExtId(1);
+        messung.setMinSampleId("");
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.UPDATE, found);
@@ -527,12 +527,12 @@ public class ImporterTest extends BaseTest {
         protocol.addInfo("import", "Merge objects");
 
         Messung messung = new Messung();
-        messung.setNebenprobenNr("06A0");
-        messung.setGeplant(true);
-        messung.setFertig(false);
-        messung.setMessdauer(MDAUER1000);
+        messung.setMinSampleId("06A0");
+        messung.setIsScheduled(true);
+        messung.setIsCompleted(false);
+        messung.setMeasPd(MDAUER1000);
         messung.setMmtId("A3");
-        messung.setMesszeitpunkt(Timestamp.valueOf("2012-05-06 14:00:00"));
+        messung.setMeasmStartDate(Timestamp.valueOf("2012-05-06 14:00:00"));
         Messung dbMessung =
             repository.getByIdPlain(Messung.class, MID1200);
         merger.mergeMessung(dbMessung, messung);

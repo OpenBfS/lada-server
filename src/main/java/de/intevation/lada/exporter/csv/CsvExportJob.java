@@ -129,7 +129,7 @@ public class CsvExportJob extends QueryExportJob {
         AtomicBoolean success = new AtomicBoolean(true);
         List<Map<String, Object>> merged = new ArrayList<Map<String, Object>>();
         messungData.forEach(messung -> {
-            Integer primaryId = messung.getProbeId();
+            Integer primaryId = messung.getSampleId();
             if (primaryId == null) {
                 logger.error("No primary id set");
                 success.set(false);

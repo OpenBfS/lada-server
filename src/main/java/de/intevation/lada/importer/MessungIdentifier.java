@@ -39,11 +39,11 @@ public class MessungIdentifier implements Identifier {
         QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
 
         // externeMessungsId null and nebenprobenNr not null and mstId not null.
-        if (messung.getExterneMessungsId() == null
-            && messung.getNebenprobenNr() != null
+        if (messung.getExtId() == null
+            && messung.getMinSampleId() != null
         ) {
-            builder.and("probeId", messung.getProbeId());
-            builder.and("nebenprobenNr", messung.getNebenprobenNr());
+            builder.and("sampleId", messung.getSampleId());
+            builder.and("minSampleId", messung.getMinSampleId());
             List<Messung> messungen =
                 repository.filterPlain(builder.getQuery());
             if (messungen.size() > 1) {
@@ -53,7 +53,7 @@ public class MessungIdentifier implements Identifier {
             }
             if (messungen.isEmpty()) {
                 builder = builder.getEmptyBuilder();
-                builder.and("probeId", messung.getProbeId());
+                builder.and("sampleId", messung.getSampleId());
                 builder.and("mmtId", messung.getMmtId());
                 messungen =
                     repository.filterPlain(builder.getQuery());
@@ -63,7 +63,7 @@ public class MessungIdentifier implements Identifier {
                 if (messungen.size() > 1) {
                     return Identified.NEW;
                 }
-                if (messungen.get(0).getNebenprobenNr() == null) {
+                if (messungen.get(0).getMinSampleId() == null) {
                     found = messungen.get(0);
                     return Identified.UPDATE;
                 } else {
@@ -72,9 +72,9 @@ public class MessungIdentifier implements Identifier {
             }
             found = messungen.get(0);
             return Identified.UPDATE;
-        } else if (messung.getExterneMessungsId() != null) {
-            builder.and("probeId", messung.getProbeId());
-            builder.and("externeMessungsId", messung.getExterneMessungsId());
+        } else if (messung.getExtId() != null) {
+            builder.and("sampleId", messung.getSampleId());
+            builder.and("extId", messung.getExtId());
             List<Messung> messungen =
                 repository.filterPlain(builder.getQuery());
             if (messungen.size() > 1) {
@@ -88,7 +88,7 @@ public class MessungIdentifier implements Identifier {
             found = messungen.get(0);
             return Identified.UPDATE;
         } else if (messung.getMmtId() != null) {
-            builder.and("probeId", messung.getProbeId());
+            builder.and("sampleId", messung.getSampleId());
             builder.and("mmtId", messung.getMmtId());
             List<Messung> messungen =
                 repository.filterPlain(builder.getQuery());

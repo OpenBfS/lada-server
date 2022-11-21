@@ -47,7 +47,7 @@ public abstract class BaseAuthorizer implements Authorizer {
      */
     public boolean isProbeReadOnly(Integer probeId) {
         QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
-        builder.and("probeId", probeId);
+        builder.and("sampleId", probeId);
         Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<Messung> messungen = (List<Messung>) response.getData();

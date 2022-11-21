@@ -250,7 +250,7 @@ public class JsonExporter implements Exporter {
         for (Messung m : messungen) {
             Sample p = repository.getByIdPlain(
                 Sample.class,
-                m.getProbeId()
+                m.getSampleId()
             );
             try {
                 String tmp = mapper.writeValueAsString(p);
@@ -388,7 +388,7 @@ public class JsonExporter implements Exporter {
 
     private void addMessungen(JsonNode probe) {
         QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
-        builder.and("probeId", probe.get("id").asInt());
+        builder.and("sampleId", probe.get("id").asInt());
         List<Messung> messungen =
             repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();

@@ -32,9 +32,9 @@ public class HasMessdauer implements Rule {
     public Violation execute(Object object) {
         Messung messung = (Messung) object;
         Sample probe =
-            repository.getByIdPlain(Sample.class, messung.getProbeId());
+            repository.getByIdPlain(Sample.class, messung.getSampleId());
 
-        if (messung.getMessdauer() == null) {
+        if (messung.getMeasPd() == null) {
             //Exception for continous samples or Datenbasis = §161
             if (probe.getSampleMethId() != null
                 && probe.getSampleMethId() == 9
@@ -48,7 +48,7 @@ public class HasMessdauer implements Rule {
             } else {
                 Violation violation = new Violation();
                 violation.addWarning(
-                    "messdauer#" + messung.getNebenprobenNr(),
+                    "messdauer#" + messung.getMinSampleId(),
                     StatusCodes.VALUE_MISSING);
                 return violation;
             }

@@ -37,7 +37,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
         Messung messung = (Messung) data;
         Sample probe =
             repository.getByIdPlain(
-                Sample.class, messung.getProbeId());
+                Sample.class, messung.getSampleId());
         if (method == RequestMethod.PUT
             || method == RequestMethod.DELETE) {
             return !this.isMessungReadOnly(messung.getId())
@@ -104,7 +104,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
     ) {
         Sample probe =
             (Sample) repository.getById(
-                Sample.class, messung.getProbeId()).getData();
+                Sample.class, messung.getSampleId()).getData();
         MeasFacil mst =
             repository.getByIdPlain(
                 MeasFacil.class, probe.getMeasFacilId());

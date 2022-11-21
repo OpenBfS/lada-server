@@ -438,7 +438,7 @@ implements Creator {
         QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
         if (messungen.isEmpty()) {
             // Get all messungen
-            builder.and("probeId", probe.getId());
+            builder.and("sampleId", probe.getId());
         } else {
             builder.andIn("id", messungen);
         }
@@ -461,23 +461,23 @@ implements Creator {
                 repository.filter(kommBuilder.getQuery());
             List<CommMeasm> kommentare =
                 (List<CommMeasm>) kommentar.getData();
-            laf += lafLine("MESSUNGS_ID", m.getExterneMessungsId().toString());
-            laf += m.getNebenprobenNr() == null
+            laf += lafLine("MESSUNGS_ID", m.getExtId().toString());
+            laf += m.getMinSampleId() == null
                 ? ""
-                : lafLine("NEBENPROBENNUMMER", m.getNebenprobenNr(), CN);
-            laf += m.getMesszeitpunkt() == null
+                : lafLine("NEBENPROBENNUMMER", m.getMinSampleId(), CN);
+            laf += m.getMeasmStartDate() == null
                 ? ""
                 : lafLine(
-                    "MESS_DATUM_UHRZEIT", toUTCString(m.getMesszeitpunkt()));
-            laf += m.getMessdauer() == null
+                    "MESS_DATUM_UHRZEIT", toUTCString(m.getMeasmStartDate()));
+            laf += m.getMeasPd() == null
                 ? ""
-                : lafLine("MESSZEIT_SEKUNDEN", m.getMessdauer().toString());
+                : lafLine("MESSZEIT_SEKUNDEN", m.getMeasPd().toString());
             laf += m.getMmtId() == null
                 ? ""
                 : lafLine("MESSMETHODE_S", m.getMmtId(), CN);
             laf += lafLine(
                 "ERFASSUNG_ABGESCHLOSSEN",
-                (m.getFertig() ? "1" : "0"));
+                (m.getIsCompleted() ? "1" : "0"));
             laf += lafLine("BEARBEITUNGSSTATUS", writeStatus(m));
             if (this.userInfo != null
                 // TODO: GET is correct RequestMethod here?

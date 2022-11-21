@@ -25,8 +25,8 @@ public class HasNebenprobenNr implements Rule {
     @Override
     public Violation execute(Object object) {
         Messung messung = (Messung) object;
-        if (messung.getNebenprobenNr() == null
-            || messung.getNebenprobenNr().equals("")) {
+        if (messung.getMinSampleId() == null
+            || messung.getMinSampleId().equals("")) {
             Violation violation = new Violation();
             violation.addNotification(
                 "nebenprobenNr", StatusCodes.VALUE_MISSING);

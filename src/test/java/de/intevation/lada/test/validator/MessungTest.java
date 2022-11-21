@@ -45,8 +45,8 @@ public class MessungTest {
         prot.setPassed(false);
         protocol.add(prot);
         Messung messung = new Messung();
-        messung.setNebenprobenNr("10R1");
-        messung.setProbeId(ID4);
+        messung.setMinSampleId("10R1");
+        messung.setSampleId(ID4);
         Violation violation = validator.validate(messung);
         if (violation.hasWarnings()) {
             Assert.assertFalse(
@@ -66,7 +66,7 @@ public class MessungTest {
         prot.setPassed(false);
         protocol.add(prot);
         Messung messung = new Messung();
-        messung.setProbeId(ID4);
+        messung.setSampleId(ID4);
         Violation violation = validator.validate(messung);
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey("nebenprobenNr"));
@@ -86,8 +86,8 @@ public class MessungTest {
         prot.setPassed(false);
         protocol.add(prot);
         Messung messung = new Messung();
-        messung.setNebenprobenNr("");
-        messung.setProbeId(ID4);
+        messung.setMinSampleId("");
+        messung.setSampleId(ID4);
         Violation violation = validator.validate(messung);
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey("nebenprobenNr"));
@@ -107,8 +107,8 @@ public class MessungTest {
         prot.setPassed(false);
         protocol.add(prot);
         Messung messung = new Messung();
-        messung.setNebenprobenNr("00G1");
-        messung.setProbeId(ID4);
+        messung.setMinSampleId("00G1");
+        messung.setSampleId(ID4);
         Violation violation = validator.validate(messung);
         Assert.assertTrue(violation.hasErrors());
         Assert.assertTrue(violation.getErrors().containsKey("nebenprobenNr"));
@@ -128,8 +128,8 @@ public class MessungTest {
         prot.setPassed(false);
         protocol.add(prot);
         Messung messung = new Messung();
-        messung.setNebenprobenNr("00G2");
-        messung.setProbeId(ID4);
+        messung.setMinSampleId("00G2");
+        messung.setSampleId(ID4);
         Violation violation = validator.validate(messung);
         if (violation.hasErrors()) {
             Assert.assertFalse(
@@ -150,8 +150,8 @@ public class MessungTest {
         protocol.add(prot);
         Messung messung = new Messung();
         messung.setId(ID45);
-        messung.setProbeId(ID4);
-        messung.setNebenprobenNr("00G2");
+        messung.setSampleId(ID4);
+        messung.setMinSampleId("00G2");
         Violation violation = validator.validate(messung);
         if (violation.hasErrors()) {
             Assert.assertFalse(
@@ -173,8 +173,8 @@ public class MessungTest {
         protocol.add(prot);
         Messung messung = new Messung();
         messung.setId(ID776);
-        messung.setProbeId(1);
-        messung.setNebenprobenNr("0003");
+        messung.setSampleId(1);
+        messung.setMinSampleId("0003");
         Violation violation = validator.validate(messung);
         Assert.assertTrue(violation.hasErrors());
         Assert.assertTrue(violation.getErrors().containsKey("nebenprobenNr"));
@@ -195,7 +195,7 @@ public class MessungTest {
         protocol.add(prot);
         Messung messung = new Messung();
         messung.setId(1);
-        messung.setProbeId(ID4);
+        messung.setSampleId(ID4);
         Violation violation = validator.validate(messung);
         if (violation.hasWarnings()) {
             Assert.assertFalse(violation.getWarnings().containsKey("messwert"));
@@ -215,7 +215,7 @@ public class MessungTest {
         protocol.add(prot);
         Messung messung = new Messung();
         messung.setId(ID990);
-        messung.setProbeId(ID4);
+        messung.setSampleId(ID4);
         Violation violation = validator.validate(messung);
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey("messwert"));

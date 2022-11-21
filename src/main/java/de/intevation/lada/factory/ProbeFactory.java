@@ -494,10 +494,10 @@ public class ProbeFactory {
         for (int i = 0; i < mmts.size(); i++) {
             MpgMmtMp mmt = mmts.get(i);
             Messung messung = new Messung();
-            messung.setFertig(false);
-            messung.setGeplant(true);
+            messung.setIsCompleted(false);
+            messung.setIsScheduled(true);
             messung.setMmtId(mmt.getMmtId());
-            messung.setProbeId(probe.getId());
+            messung.setSampleId(probe.getId());
             createObject(messung, dryrun);
             messungProtocol.add(mmt.getMmtId());
             for (int mw : mmt.getMeasds()) {

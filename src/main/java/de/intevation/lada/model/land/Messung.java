@@ -28,16 +28,12 @@ import org.hibernate.annotations.DynamicInsert;
 import de.intevation.lada.util.data.EmptyStringConverter;
 
 
-/**
- * The persistent class for the messung database table.
- *
- */
 // The DynamicInsert Annotation has the effect, that the persisted object still
 // has all the "null"-values. There is no reloading after the persistence
 // process!
 @Entity
 @DynamicInsert(true)
-@Table(name = "messung", schema = SchemaName.LEGACY_NAME)
+@Table(name = "measm", schema = SchemaName.NAME)
 public class Messung implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -45,42 +41,38 @@ public class Messung implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Boolean fertig;
+    private Boolean isCompleted;
 
-    private Boolean geplant;
+    private Boolean isScheduled;
 
-    @Column(name = "ext_id")
-    private Integer externeMessungsId;
+    private Integer extId;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
-    private Integer messdauer;
+    private Integer measPd;
 
-    private Timestamp messzeitpunkt;
+    private Timestamp measmStartDate;
 
-    @Column(name = "mmt_id")
     private String mmtId;
 
-    @Column(name = "nebenproben_nr")
     @Convert(converter = EmptyStringConverter.class)
-    private String nebenprobenNr;
+    private String minSampleId;
 
-    @Column(name = "probe_id")
-    private Integer probeId;
+    private Integer sampleId;
 
     @OneToOne
-    @JoinColumn(name = "probe_id", insertable = false, updatable = false)
-    private Sample probe;
+    @JoinColumn(name = "sample_id", insertable = false, updatable = false)
+    private Sample sample;
 
     private Integer status;
 
     @OneToOne
     @JoinColumn(name = "status", insertable = false, updatable = false)
-    private StatusProtokoll statusProtokoll;
+    private StatusProtokoll statusProtocol;
 
-    @Column(name = "tree_modified", insertable = false, updatable = false)
-    private Timestamp treeModified;
+    @Column(insertable = false, updatable = false)
+    private Timestamp treeMod;
 
     @Transient
     private Boolean statusEdit;
@@ -124,52 +116,52 @@ public class Messung implements Serializable {
         this.id = id;
     }
 
-    public Boolean getFertig() {
-        return this.fertig;
+    public Boolean getIsCompleted() {
+        return this.isCompleted;
     }
 
-    public void setFertig(Boolean fertig) {
-        this.fertig = fertig;
+    public void setIsCompleted(Boolean isCompleted) {
+        this.isCompleted = isCompleted;
     }
 
-    public Boolean getGeplant() {
-        return this.geplant;
+    public Boolean getIsScheduled() {
+        return this.isScheduled;
     }
 
-    public void setGeplant(Boolean geplant) {
-        this.geplant = geplant;
+    public void setIsScheduled(Boolean isScheduled) {
+        this.isScheduled = isScheduled;
     }
 
-    public Integer getExterneMessungsId() {
-        return this.externeMessungsId;
+    public Integer getExtId() {
+        return this.extId;
     }
 
-    public void setExterneMessungsId(Integer externeMessungsId) {
-        this.externeMessungsId = externeMessungsId;
+    public void setExtId(Integer extId) {
+        this.extId = extId;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
-    public Integer getMessdauer() {
-        return this.messdauer;
+    public Integer getMeasPd() {
+        return this.measPd;
     }
 
-    public void setMessdauer(Integer messdauer) {
-        this.messdauer = messdauer;
+    public void setMeasPd(Integer measPd) {
+        this.measPd = measPd;
     }
 
-    public Timestamp getMesszeitpunkt() {
-        return this.messzeitpunkt;
+    public Timestamp getMeasmStartDate() {
+        return this.measmStartDate;
     }
 
-    public void setMesszeitpunkt(Timestamp messzeitpunkt) {
-        this.messzeitpunkt = messzeitpunkt;
+    public void setMeasmStartDate(Timestamp measmStartDate) {
+        this.measmStartDate = measmStartDate;
     }
 
     public String getMmtId() {
@@ -180,25 +172,25 @@ public class Messung implements Serializable {
         this.mmtId = mmtId;
     }
 
-    public String getNebenprobenNr() {
-        return this.nebenprobenNr;
+    public String getMinSampleId() {
+        return this.minSampleId;
     }
 
-    public void setNebenprobenNr(String nebenprobenNr) {
-        this.nebenprobenNr = nebenprobenNr;
+    public void setMinSampleId(String minSampleId) {
+        this.minSampleId = minSampleId;
     }
 
     @JsonbTransient
-    public Sample getProbe() {
-        return this.probe;
+    public Sample getSample() {
+        return this.sample;
     }
 
-    public Integer getProbeId() {
-        return this.probeId;
+    public Integer getSampleId() {
+        return this.sampleId;
     }
 
-    public void setProbeId(Integer probeId) {
-        this.probeId = probeId;
+    public void setSampleId(Integer sampleId) {
+        this.sampleId = sampleId;
     }
 
     public Integer getStatus() {
@@ -209,12 +201,12 @@ public class Messung implements Serializable {
         this.status = status;
     }
 
-    public Timestamp getTreeModified() {
-        return this.treeModified;
+    public Timestamp getTreeMod() {
+        return this.treeMod;
     }
 
-    public void setTreeModified(Timestamp treeModified) {
-        this.treeModified = treeModified;
+    public void setTreeMod(Timestamp treeMod) {
+        this.treeMod = treeMod;
     }
 
     /**
@@ -253,8 +245,8 @@ public class Messung implements Serializable {
      * @return the parentModified
      */
     public Timestamp getParentModified() {
-        if (this.parentModified == null && this.probe != null) {
-            return this.probe.getTreeMod();
+        if (this.parentModified == null && this.sample != null) {
+            return this.sample.getTreeMod();
         }
         return parentModified;
     }
@@ -323,12 +315,12 @@ public class Messung implements Serializable {
         this.readonly = readonly;
     }
 
-    public StatusProtokoll getStatusProtokoll() {
-        return this.statusProtokoll;
+    public StatusProtokoll getStatusProtocol() {
+        return this.statusProtocol;
     }
 
-    public void setStatusProtokoll(StatusProtokoll statusProtokoll) {
-        this.statusProtokoll = statusProtokoll;
+    public void setStatusProtocol(StatusProtokoll statusProtocol) {
+        this.statusProtocol = statusProtocol;
     }
 
 }

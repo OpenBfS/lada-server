@@ -36,11 +36,11 @@ public class UniqueNebenprobenNr implements Rule {
     @Override
     public Violation execute(Object object) {
         Messung messung = (Messung) object;
-        if (messung.getNebenprobenNr() != null) {
+        if (messung.getMinSampleId() != null) {
             QueryBuilder<Messung> builder =
                 repository.queryBuilder(Messung.class);
-            builder.and("nebenprobenNr", messung.getNebenprobenNr());
-            builder.and("probeId", messung.getProbeId());
+            builder.and("minSampleId", messung.getMinSampleId());
+            builder.and("sampleId", messung.getSampleId());
             Response response = repository.filter(builder.getQuery());
             if (!((List<Messung>) response.getData()).isEmpty()) {
                 Messung found = ((List<Messung>) response.getData()).get(0);

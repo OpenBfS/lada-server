@@ -32,8 +32,8 @@ public class HasMessbeginn implements Rule {
     public Violation execute(Object object) {
         Messung messung = (Messung) object;
         Sample probe =
-            repository.getByIdPlain(Sample.class, messung.getProbeId());
-        if (messung.getMesszeitpunkt() == null
+            repository.getByIdPlain(Sample.class, messung.getSampleId());
+        if (messung.getMeasmStartDate() == null
             && (
                 probe.getRegulationId() != null
                 && probe.getRegulationId() != 1
@@ -41,7 +41,7 @@ public class HasMessbeginn implements Rule {
             Violation violation = new Violation();
             violation.addWarning("messzeitpunkt", StatusCodes.VALUE_MISSING);
             return violation;
-        } else if (messung.getMesszeitpunkt() == null) {
+        } else if (messung.getMeasmStartDate() == null) {
             Violation violation = new Violation();
             violation.addNotification(
                 "messzeitpunkt", StatusCodes.VALUE_MISSING);

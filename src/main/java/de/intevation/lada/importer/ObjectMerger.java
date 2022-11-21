@@ -116,28 +116,28 @@ public class ObjectMerger {
      * @return the merger instance
      */
     public ObjectMerger mergeMessung(Messung target, Messung src) {
-        if (target.getNebenprobenNr() == null
-            || target.getNebenprobenNr().isEmpty()
+        if (target.getMinSampleId() == null
+            || target.getMinSampleId().isEmpty()
         ) {
-            target.setNebenprobenNr(src.getNebenprobenNr());
+            target.setMinSampleId(src.getMinSampleId());
         }
-        if (src.getFertig() != null) {
-            target.setFertig(src.getFertig());
-        } else if (target.getFertig() == null) {
-            target.setFertig(false);
+        if (src.getIsCompleted() != null) {
+            target.setIsCompleted(src.getIsCompleted());
+        } else if (target.getIsCompleted() == null) {
+            target.setIsCompleted(false);
         }
-        if (src.getGeplant() != null) {
-            if (target.getGeplant() == null) {
-                target.setGeplant(src.getGeplant());
+        if (src.getIsScheduled() != null) {
+            if (target.getIsScheduled() == null) {
+                target.setIsScheduled(src.getIsScheduled());
             }
-        } else if (target.getGeplant() == null) {
-            target.setGeplant(false);
+        } else if (target.getIsScheduled() == null) {
+            target.setIsScheduled(false);
         }
-        if (src.getMessdauer() != null) {
-            target.setMessdauer(src.getMessdauer());
+        if (src.getMeasPd() != null) {
+            target.setMeasPd(src.getMeasPd());
         }
-        if (src.getMesszeitpunkt() != null) {
-            target.setMesszeitpunkt(src.getMesszeitpunkt());
+        if (src.getMeasmStartDate() != null) {
+            target.setMeasmStartDate(src.getMeasmStartDate());
         }
         if (src.getMmtId() != null) {
             target.setMmtId(src.getMmtId());

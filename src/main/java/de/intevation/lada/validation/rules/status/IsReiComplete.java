@@ -41,7 +41,7 @@ public class IsReiComplete implements Rule {
             repository.getByIdPlain(
                 Messung.class, status.getMessungsId());
         Sample probe =
-            repository.getByIdPlain(Sample.class, messung.getProbeId());
+            repository.getByIdPlain(Sample.class, messung.getSampleId());
         if (!Integer.valueOf(3).equals(probe.getRegulationId())
             && !Integer.valueOf(4).equals(probe.getRegulationId())) {
             return null;

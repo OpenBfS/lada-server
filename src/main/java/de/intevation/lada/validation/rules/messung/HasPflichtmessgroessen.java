@@ -41,7 +41,7 @@ public class HasPflichtmessgroessen implements Rule {
     public Violation execute(Object object) {
         Messung messung = (Messung) object;
         Sample probe = repository.getByIdPlain(
-            Sample.class, messung.getProbeId());
+            Sample.class, messung.getSampleId());
 
         QueryBuilder<ObligMeasdMp> builder =
             repository.queryBuilder(ObligMeasdMp.class);

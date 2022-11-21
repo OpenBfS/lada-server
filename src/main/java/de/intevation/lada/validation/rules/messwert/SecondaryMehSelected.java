@@ -41,8 +41,8 @@ public class SecondaryMehSelected implements Rule {
         Violation violation = new Violation();
 
         if (messwert.getMessung() != null
-                && messwert.getMessung().getProbe() != null) {
-            umwelt = messwert.getMessung().getProbe().getUmwelt();
+                && messwert.getMessung().getSample() != null) {
+            umwelt = messwert.getMessung().getSample().getUmwelt();
         }
 
         // If umwelt record is present

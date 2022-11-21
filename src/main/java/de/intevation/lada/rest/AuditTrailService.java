@@ -267,9 +267,9 @@ public class AuditTrailService extends LadaService {
             node.put("identifier",
                 (m == null)
                 ? "(deleted)"
-                : (m.getNebenprobenNr() == null)
-                    ? m.getExterneMessungsId().toString()
-                    : m.getNebenprobenNr()
+                : (m.getMinSampleId() == null)
+                    ? m.getExtId().toString()
+                    : m.getMinSampleId()
                 );
         }
         if (audit.getMeasmId() != null) {
@@ -277,8 +277,8 @@ public class AuditTrailService extends LadaService {
                 Messung.class, audit.getMeasmId());
             ObjectNode identifier = node.putObject("identifier");
             identifier.put("messung",
-                (m.getNebenprobenNr() == null)
-                ? m.getExterneMessungsId().toString() : m.getNebenprobenNr());
+                (m.getMinSampleId() == null)
+                ? m.getExtId().toString() : m.getMinSampleId());
             if ("kommentar_m".equals(audit.getTableName())) {
                 identifier.put("identifier",
                     audit.getRowData().get("datum").toString());
@@ -313,7 +313,7 @@ public class AuditTrailService extends LadaService {
         StatusProtokoll status =
             repository.getByIdPlain(StatusProtokoll.class, messung.getStatus());
         Sample probe =
-            repository.getByIdPlain(Sample.class, messung.getProbeId());
+            repository.getByIdPlain(Sample.class, messung.getSampleId());
         UserInfo userInfo = authorization.getInfo();
         QueryBuilder<AuditTrailMeasmView> builder =
             repository.queryBuilder(AuditTrailMeasmView.class);
@@ -334,9 +334,9 @@ public class AuditTrailService extends LadaService {
         auditJson.put("id", messung.getId());
         auditJson.put(
             "identifier",
-            (messung.getNebenprobenNr() == null)
-            ? messung.getExterneMessungsId().toString()
-            : messung.getNebenprobenNr()
+            (messung.getMinSampleId() == null)
+            ? messung.getExtId().toString()
+            : messung.getMinSampleId()
         );
         for (AuditTrailMeasmView a : audit) {
             //If audit entry shows a messwert, do not show if:

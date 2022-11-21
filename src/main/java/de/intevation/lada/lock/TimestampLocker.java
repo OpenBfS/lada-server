@@ -72,7 +72,7 @@ public class TimestampLocker implements ObjectLocker {
                     }
                     Messung messung =
                         repository.getByIdPlain(Messung.class, id);
-                    return isNewer(o, messung.getTreeModified());
+                    return isNewer(o, messung.getTreeMod());
                 }
             }
         }

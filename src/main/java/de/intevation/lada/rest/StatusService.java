@@ -273,7 +273,7 @@ public class StatusService extends LadaService {
             || newStatusWert == 7
         ) {
             Sample probe = repository.getByIdPlain(
-                Sample.class, messung.getProbeId());
+                Sample.class, messung.getSampleId());
             // init violation_collection with probe validation
             Violation probeViolation = probeValidator.validate(probe);
             violationCollection.addErrors(probeViolation.getErrors());

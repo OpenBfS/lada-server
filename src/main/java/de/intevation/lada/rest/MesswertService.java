@@ -346,7 +346,7 @@ public class MesswertService extends LadaService {
 
         Sample probe =
             repository.getByIdPlain(
-                Sample.class, messung.getProbeId());
+                Sample.class, messung.getSampleId());
         if (probe.getEnvMediumId() == null
             || probe.getEnvMediumId().equals("")
         ) {

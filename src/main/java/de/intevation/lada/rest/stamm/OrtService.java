@@ -483,9 +483,9 @@ public class OrtService extends LadaService {
                 mesBuilder.createQuery(Messung.class);
             Root<Messung> root = criteriaQuery.from(Messung.class);
             Join<Messung, StatusProtokoll> join =
-                root.join("statusProtokoll", JoinType.LEFT);
+                root.join("statusProtocol", JoinType.LEFT);
             Predicate filter =
-                mesBuilder.equal(root.get("probeId"), zuordnung.getProbeId());
+                mesBuilder.equal(root.get("sampleId"), zuordnung.getProbeId());
             filter = mesBuilder
                 .and(filter, join.get("statusKombi")
                 .in(Arrays.asList("2", "6", "10")));
