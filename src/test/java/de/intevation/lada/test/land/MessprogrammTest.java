@@ -38,7 +38,7 @@ public class MessprogrammTest extends ServiceTest {
         super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung",
+            "lastMod",
             "treeModified"
         });
 
@@ -48,10 +48,10 @@ public class MessprogrammTest extends ServiceTest {
         JsonObject messprogramm =
             content.getJsonArray("lada.mpg").getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messprogramm);
-        builder.add("baId", 1);
-        builder.add("intervallOffset", 0);
-        builder.addNull("probeKommentar");
-        builder.addNull("probeNehmerId");
+        builder.add("oprModeId", 1);
+        builder.add("samplePdOffset", 0);
+        builder.addNull("commSample");
+        builder.addNull("samplerId");
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);
 
@@ -69,7 +69,7 @@ public class MessprogrammTest extends ServiceTest {
         update(
             "messprogramm",
             "rest/messprogramm/1000",
-            "mediaDesk",
+            "envDescripId",
             "D: 50 90 01 06 02 05 00 00 00 00 00 00",
             "D: 50 90 01 06 02 05 00 00 00 00 00 01");
         JsonObject created =
