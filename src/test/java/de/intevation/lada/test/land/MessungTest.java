@@ -41,9 +41,9 @@ public class MessungTest extends ServiceTest {
         super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung",
-            "messzeitpunkt",
-            "treeModified"
+            "lastMod",
+            "measmStartDate",
+            "treeMod"
         });
 
         // Prepare expected probe object
@@ -53,7 +53,7 @@ public class MessungTest extends ServiceTest {
         // Automatic conversion of key for external ID does not work
         final String extIdKey = "ext_id";
         expectedById = convertObject(messung, extIdKey)
-            .add("externeMessungsId", messung.get(extIdKey))
+            .add("extId", messung.get(extIdKey))
             .add("parentModified", TS1)
             .add("readonly", JsonValue.FALSE)
             .add("owner", JsonValue.TRUE)
@@ -74,7 +74,7 @@ public class MessungTest extends ServiceTest {
         get("messung", "rest/messung?probeId=1000");
         getById("messung", "rest/messung/1200", expectedById);
         JsonObject created = create("messung", "rest/messung", create);
-        update("messung", "rest/messung/1200", "nebenprobenNr", "T100", "U200");
+        update("messung", "rest/messung/1200", "minSampleId", "T100", "U200");
         delete(
             "messung",
             "rest/messung/" + created.getJsonObject("data").get("id"));

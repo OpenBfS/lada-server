@@ -1,9 +1,9 @@
 {
-    "probeId":"1000",
+    "sampleId":"1000",
     "mmtId": "A3",
-    "nebenprobenNr":"10R1",
-    "messdauer":10,
-    "fertig":false,
-    "geplant":true,
-    "messzeitpunkt": "1423475916000"
+    "minSampleId":"10R1",
+    "measPd":10,
+    "isCompleted":false,
+    "isScheduled":true,
+    "measmStartDate": "1423475916000"
 }
