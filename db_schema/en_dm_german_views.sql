@@ -649,140 +649,14 @@ CREATE VIEW stamm.ort AS SELECT
 	rei_ag_gr_id AS rei_progpunkt_grp_id,
 	munic_div_id AS gem_unt_id
 FROM master.site;
-/*
-CREATE VIEW stamm.ort_backup AS SELECT
-	id,
-	network_id AS netzbetreiber_id,
-	ext_id AS ort_id,
-	long_text AS langtext,
-	state_id AS staat_id,
-	munic_id AS gem_id,
-	is_fuzzy AS unscharf,
-	nuts_id AS nuts_code,
-	spat_ref_sys_id AS kda_id,
-	x_coord_ext AS koord_x_extern,
-	y_coord_ext AS koord_y_extern,
-	alt AS hoehe_land,
-	last_mod AS letzte_aenderung,
-	geom,
-	shape,
-	site_class_id AS ort_typ,
-	short_text AS kurztext,
-	rei_report_text AS berichtstext,
-	rei_zone AS zone,
-	rei_sector AS sektor,
-	rei_competence AS zustaendigkeit,
-	rei_opr_mode AS mp_art,
-	is_rei_active AS aktiv,
-	nucl_facil_gr_id AS kta_gruppe_id,
-	poi_id AS oz_id,
-	height_asl AS hoehe_ueber_nn,
-	rei_ag_gr_id AS rei_progpunkt_grp_id,
-	munic_div_id AS gem_unt_id
-FROM master.site_bak;
 
-CREATE VIEW stamm.ort_backup_mgrs AS SELECT
-	id,
-	network_id AS netzbetreiber_id,
-	ext_id AS ort_id,
-	long_text AS langtext,
-	state_id AS staat_id,
-	munic_id AS gem_id,
-	is_fuzzy AS unscharf,
-	nuts_id AS nuts_code,
-	spat_ref_sys_id AS kda_id,
-	x_coord_ext AS koord_x_extern,
-	y_coord_ext AS koord_y_extern,
-	alt AS hoehe_land,
-	last_mod AS letzte_aenderung,
-	geom,
-	shape,
-	site_class_id AS ort_typ,
-	short_text AS kurztext,
-	rei_report_text AS berichtstext,
-	rei_zone AS zone,
-	rei_sector AS sektor,
-	rei_competence AS zustaendigkeit,
-	rei_opr_mode AS mp_art,
-	is_rei_active AS aktiv,
-	nucl_facil_gr_id AS kta_gruppe_id,
-	poi_id AS oz_id,
-	height_asl AS hoehe_ueber_nn,
-	rei_ag_gr_id AS rei_progpunkt_grp_id,
-	munic_div_id AS gem_unt_id
-FROM master.site_bak_mgrs;
-
-CREATE VIEW stamm.ort_bb AS SELECT
-	site_class_id AS ort_typ,
-	ext_id AS ort_id,
-	short_text AS kurztext,
-	long_text AS langtext
-FROM master.site_bb;
-
-CREATE VIEW stamm.ort_bsh AS SELECT
-	appr_lab_id AS mst_labor,
-	network AS netzbetreiber,
-	ctry AS staat,
-	x_coord_ext AS x_koordinate,
-	y_coord_ext AS y_koordinate,
-	spat_ref_sys AS koordinatenart,
-	site_class_ext_id AS ortsklassifizierung,
-	site_ext_id AS ort_id,
-	short_text AS kurztext,
-	long_text AS langtext
-FROM master.site_bsh;
-
-CREATE VIEW stamm.ort_th AS SELECT
-	descr AS bezeichnung,
-	munic_id AS gem_id,
-	meas_facil_id AS mst,
-	gk_north AS hw,
-	gk_east AS rw,
-	poi AS ortszusatz,
-	wgs_dez_north AS geo_h_w,
-	wgs_dez_east AS geo_r_w,
-	utm_east AS utm_ost,
-	utm_north AS utm_nord,
-	utm_32_east AS utm_32_ost,
-	utm_32_north AS utm_32_nord
-FROM master.site_th;
-*/
 CREATE VIEW stamm.ort_typ AS SELECT
 	id,
 	name AS ort_typ,
 	ext_id AS code,
 	last_mod AS letzte_aenderung
 FROM master.site_class;
-/*
-CREATE VIEW stamm.ort_view AS SELECT
-	id,
-	network_id AS netzbetreiber_id,
-	ext_id AS ort_id,
-	long_text AS langtext,
-	ctry_id AS staat_id,
-	munic_id AS gem_id,
-	is_fuzzy AS unscharf,
-	nuts_id AS nuts_code,
-	spat_ref_sys_id AS kda_id,
-	x_coord_ext AS koord_x_extern,
-	y_coord_ext AS koord_y_extern,
-	alt AS hoehe_land,
-	last_mod AS letzte_aenderung,
-	site_class AS ort_typ,
-	short_text AS kurztext,
-	rei_report_text AS berichtstext,
-	rei_zone AS zone,
-	rei_sector AS sektor,
-	rei_competence AS zustaendigkeit,
-	rei_opr_mode AS mp_art,
-	is_rei_active AS aktiv,
-	rei_nucl_facil_gr_id AS kta_gruppe_id,
-	poi_id AS oz_id,
-	height_asl AS hoehe_ueber_nn,
-	rei_ag_gr_id AS rei_progpunkt_grp_id,
-	munic_div_id AS gem_unt_id
-FROM master.site_view;
-*/
+
 CREATE VIEW stamm.ortszuordnung_typ AS SELECT
 	id,
 	name AS ortstyp,

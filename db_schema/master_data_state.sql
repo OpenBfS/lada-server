@@ -20,7 +20,7 @@ SET search_path = master, pg_catalog;
 -- Data for Name: state; Type: TABLE DATA; Schema: stammdaten; Owner: postgres
 --
 
-COPY state (id, ctry, ctry_orig_id, iso_3166, int_veh_reg_code, is_eu_country, x_coord_ext, y_coord_ext, spat_ref_sys_id) FROM stdin;
+COPY state (id, ctry, ctry_orig_id, iso_3166, int_veh_reg_code, is_eu_country, coord_x_ext, coord_y_ext, spat_ref_sys_id) FROM stdin;
 242	Cabo Verde	242	CV	CV	0	-23,516667	14,916667	4
 640	Serbien und Montenegro bis 2006	132	CS	SCG	0	20,412556	44,799683	4
 395	Britisch abhängige Gebiete in Amerika bis 2016	395	\N	\N	0	0	0	4

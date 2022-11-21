@@ -20,7 +20,7 @@ SET search_path = master, pg_catalog;
 -- Data for Name: env_descrip; Type: TABLE DATA; Schema: stammdaten; Owner: postgres
 --
 
-COPY env_descrip (id, pred_id, lev, s_xx, lev_val, name, implication) FROM stdin;
+COPY env_descrip (id, pred_id, lev, imis2_id, lev_val, name, implication) FROM stdin;
 2	\N	0	1	1	ZEBS-Medien	\N
 3	\N	0	11682	2	Futtermittel	\N
 4	\N	0	11940	3	Tierische u. pflanzliche Produkte	\N
