@@ -11,7 +11,7 @@ import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.util.data.Repository;
@@ -37,9 +37,9 @@ public class IsReiComplete implements Rule {
     public Violation execute(Object object) {
         StatusProtokoll status = (StatusProtokoll) object;
 
-        Messung messung =
+        Measm messung =
             repository.getByIdPlain(
-                Messung.class, status.getMessungsId());
+                Measm.class, status.getMessungsId());
         Sample probe =
             repository.getByIdPlain(Sample.class, messung.getSampleId());
         if (!Integer.valueOf(3).equals(probe.getRegulationId())

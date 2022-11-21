@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Mpg;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
@@ -385,7 +385,7 @@ public class LandTest extends BaseTest {
         protocol.setType("insert messung");
         protocol.addInfo("database", "Insert Messung into database");
         testProtocol.add(protocol);
-        Messung messung = em.find(Messung.class, ID1200);
+        Measm messung = em.find(Measm.class, ID1200);
         messung.setStatus(ID1000);
         em.merge(messung);
         Assert.assertNotNull(messung);

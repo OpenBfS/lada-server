@@ -12,7 +12,7 @@ import java.util.List;
 import org.junit.Assert;
 
 import de.intevation.lada.Protocol;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
 
@@ -44,7 +44,7 @@ public class MessungTest {
         prot.setType("has nebenprobenNr");
         prot.setPassed(false);
         protocol.add(prot);
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setMinSampleId("10R1");
         messung.setSampleId(ID4);
         Violation violation = validator.validate(messung);
@@ -65,7 +65,7 @@ public class MessungTest {
         prot.setType("has no nebenprobenNr");
         prot.setPassed(false);
         protocol.add(prot);
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setSampleId(ID4);
         Violation violation = validator.validate(messung);
         Assert.assertTrue(violation.hasWarnings());
@@ -85,7 +85,7 @@ public class MessungTest {
         prot.setType("has empty nebenprobenNr");
         prot.setPassed(false);
         protocol.add(prot);
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setMinSampleId("");
         messung.setSampleId(ID4);
         Violation violation = validator.validate(messung);
@@ -106,7 +106,7 @@ public class MessungTest {
         prot.setType("existing nebenprobenNr (new)");
         prot.setPassed(false);
         protocol.add(prot);
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setMinSampleId("00G1");
         messung.setSampleId(ID4);
         Violation violation = validator.validate(messung);
@@ -127,7 +127,7 @@ public class MessungTest {
         prot.setType("unique nebenprobenNr (new)");
         prot.setPassed(false);
         protocol.add(prot);
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setMinSampleId("00G2");
         messung.setSampleId(ID4);
         Violation violation = validator.validate(messung);
@@ -148,7 +148,7 @@ public class MessungTest {
         prot.setType("unique nebenprobenNr (update)");
         prot.setPassed(false);
         protocol.add(prot);
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setId(ID45);
         messung.setSampleId(ID4);
         messung.setMinSampleId("00G2");
@@ -171,7 +171,7 @@ public class MessungTest {
         prot.setType("existing nebenprobenNr (update)");
         prot.setPassed(false);
         protocol.add(prot);
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setId(ID776);
         messung.setSampleId(1);
         messung.setMinSampleId("0003");
@@ -193,7 +193,7 @@ public class MessungTest {
         prot.setType("has messwert");
         prot.setPassed(false);
         protocol.add(prot);
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setId(1);
         messung.setSampleId(ID4);
         Violation violation = validator.validate(messung);
@@ -213,7 +213,7 @@ public class MessungTest {
         prot.setType("has no messwert");
         prot.setPassed(false);
         protocol.add(prot);
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setId(ID990);
         messung.setSampleId(ID4);
         Violation violation = validator.validate(messung);

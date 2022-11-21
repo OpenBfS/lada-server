@@ -21,7 +21,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.master.StatusAccessMpView;
 import de.intevation.lada.model.master.StatusMp;
@@ -104,15 +104,15 @@ public class StatusKombiService extends LadaService {
         List<Integer> messIds,
         UserInfo user
     ) {
-        QueryBuilder<Messung> messungQuery =
-            repository.queryBuilder(Messung.class);
+        QueryBuilder<Measm> messungQuery =
+            repository.queryBuilder(Measm.class);
         messungQuery.orIn("id", messIds);
-        List<Messung> messungen = repository.filterPlain(
+        List<Measm> messungen = repository.filterPlain(
             messungQuery.getQuery());
 
         Map<Integer, StatusAccessMpView> erreichbare =
             new HashMap<Integer, StatusAccessMpView>();
-        for (Messung messung : messungen) {
+        for (Measm messung : messungen) {
             StatusProtokoll status = repository.getByIdPlain(
                 StatusProtokoll.class, messung.getStatus());
             StatusMp kombi = repository.getByIdPlain(

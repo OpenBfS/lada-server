@@ -33,8 +33,8 @@ import de.intevation.lada.util.data.EmptyStringConverter;
 // process!
 @Entity
 @DynamicInsert(true)
-@Table(name = "measm", schema = SchemaName.NAME)
-public class Messung implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class Measm implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -105,7 +105,7 @@ public class Messung implements Serializable {
     @Transient
     private boolean readonly;
 
-    public Messung() {
+    public Measm() {
     }
 
     public Integer getId() {

@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.util.data.Repository;
 
@@ -70,8 +70,8 @@ public class TimestampLocker implements ObjectLocker {
                             | InvocationTargetException e) {
                         return true;
                     }
-                    Messung messung =
-                        repository.getByIdPlain(Messung.class, id);
+                    Measm messung =
+                        repository.getByIdPlain(Measm.class, id);
                     return isNewer(o, messung.getTreeMod());
                 }
             }

@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.MmtMeasdView;
@@ -36,7 +36,7 @@ public class MessgroesseToMessmethode implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messung messung = (Messung) object;
+        Measm messung = (Measm) object;
 
         QueryBuilder<Messwert> builder =
             repository.queryBuilder(Messwert.class)

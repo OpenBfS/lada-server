@@ -20,7 +20,7 @@ import javax.inject.Named;
 import de.intevation.lada.exporter.Creator;
 import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
@@ -435,18 +435,18 @@ implements Creator {
      */
     @SuppressWarnings("unchecked")
     private String writeMessung(Sample probe, List<Integer> messungen) {
-        QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
+        QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
         if (messungen.isEmpty()) {
             // Get all messungen
             builder.and("sampleId", probe.getId());
         } else {
             builder.andIn("id", messungen);
         }
-        List<Messung> mess = repository.filterPlain(
+        List<Measm> mess = repository.filterPlain(
             builder.getQuery());
 
         String laf = "";
-        for (Messung m : mess) {
+        for (Measm m : mess) {
             laf += "%MESSUNG%\n";
             QueryBuilder<Messwert> wertBuilder =
                 repository.queryBuilder(Messwert.class);
@@ -482,7 +482,7 @@ implements Creator {
             if (this.userInfo != null
                 // TODO: GET is correct RequestMethod here?
                 && authorization.isAuthorized(
-                    m, RequestMethod.GET, Messung.class)
+                    m, RequestMethod.GET, Measm.class)
             ) {
                 for (Messwert mw : werte) {
                     laf += writeMesswert(mw);
@@ -505,7 +505,7 @@ implements Creator {
      * @param messung the messung containing the status
      * @return 4 character string
      */
-    private String writeStatus(Messung messung) {
+    private String writeStatus(Measm messung) {
         Integer[] status = {0, 0, 0};
         QueryBuilder<StatusProtokoll> builder =
         repository.queryBuilder(StatusProtokoll.class);

@@ -45,7 +45,7 @@ import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
@@ -236,18 +236,18 @@ public class JsonExporter implements Exporter {
         Charset encoding,
         UserInfo userInfo
     ) {
-        QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
+        QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
         for (Integer id : messungsIds) {
             builder.or("id", id);
         }
-        List<Messung> messungen =
+        List<Measm> messungen =
             repository.filterPlain(builder.getQuery());
         if (messungen.isEmpty()) {
             return null;
         }
         final ObjectMapper mapper = new ObjectMapper();
         ArrayNode json = mapper.createArrayNode();
-        for (Messung m : messungen) {
+        for (Measm m : messungen) {
             Sample p = repository.getByIdPlain(
                 Sample.class,
                 m.getSampleId()
@@ -387,9 +387,9 @@ public class JsonExporter implements Exporter {
     }
 
     private void addMessungen(JsonNode probe) {
-        QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
+        QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
         builder.and("sampleId", probe.get("id").asInt());
-        List<Messung> messungen =
+        List<Measm> messungen =
             repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();
         try {

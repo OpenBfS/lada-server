@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.intevation.lada.model.land.AuditTrailMeasmView;
 import de.intevation.lada.model.land.AuditTrailSampleView;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
@@ -208,9 +208,9 @@ public class AuditTrailService extends LadaService {
             // - StatusKombi is 1 (MST - nicht vergeben)
             // - User is not owner of the messung
             if (a.getTableName().equals("messwert")) {
-                Messung messung =
+                Measm messung =
                     repository.getByIdPlain(
-                        Messung.class, a.getMeasmId());
+                        Measm.class, a.getMeasmId());
                 StatusProtokoll status =
                     repository.getByIdPlain(
                         StatusProtokoll.class, messung.getStatus());
@@ -262,8 +262,8 @@ public class AuditTrailService extends LadaService {
             node.put("identifier", value);
         }
         if ("messung".equals(audit.getTableName())) {
-            Messung m = repository.getByIdPlain(
-                Messung.class, audit.getObjectId());
+            Measm m = repository.getByIdPlain(
+                Measm.class, audit.getObjectId());
             node.put("identifier",
                 (m == null)
                 ? "(deleted)"
@@ -273,8 +273,8 @@ public class AuditTrailService extends LadaService {
                 );
         }
         if (audit.getMeasmId() != null) {
-            Messung m = repository.getByIdPlain(
-                Messung.class, audit.getMeasmId());
+            Measm m = repository.getByIdPlain(
+                Measm.class, audit.getMeasmId());
             ObjectNode identifier = node.putObject("identifier");
             identifier.put("messung",
                 (m.getMinSampleId() == null)
@@ -306,7 +306,7 @@ public class AuditTrailService extends LadaService {
     public String getMessung(
         @PathParam("id") Integer mId
     ) {
-        Messung messung = repository.getByIdPlain(Messung.class, mId);
+        Measm messung = repository.getByIdPlain(Measm.class, mId);
         if (messung == null) {
             return "{\"success\": false,\"message\":600,\"data\":null}";
         }

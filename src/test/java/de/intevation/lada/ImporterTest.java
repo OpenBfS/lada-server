@@ -49,7 +49,7 @@ import de.intevation.lada.importer.IdentifierConfig;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.ZusatzWert;
@@ -312,7 +312,7 @@ public class ImporterTest extends BaseTest {
             "import",
             "Compare and find Messung by NP-Nr., Update");
 
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setSampleId(PID1000);
         messung.setMinSampleId("06A0");
 
@@ -338,7 +338,7 @@ public class ImporterTest extends BaseTest {
         protocol.setType("identify messung");
         protocol.addInfo("import", "Compare and find Messung by NP-Nr., New");
 
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setSampleId(PID1000);
         messung.setMinSampleId("06A1");
 
@@ -366,7 +366,7 @@ public class ImporterTest extends BaseTest {
             "import",
             "Compare and find Messung by externeMessungsId, Update");
 
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setSampleId(PID1000);
         messung.setExtId(1);
 
@@ -394,7 +394,7 @@ public class ImporterTest extends BaseTest {
             "import",
             "Compare and find Messung by externeMessungsId, New");
 
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setSampleId(PID1000);
         messung.setExtId(2);
 
@@ -423,7 +423,7 @@ public class ImporterTest extends BaseTest {
             "import",
             "Compare and find Messung by externeMessungsId, Reject");
 
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setSampleId(PID1000);
         messung.setExtId(1);
         messung.setMinSampleId("06A2");
@@ -453,7 +453,7 @@ public class ImporterTest extends BaseTest {
             "import",
             "Compare and find Messung by externeMessungsId, Update");
 
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setSampleId(PID1000);
         messung.setExtId(1);
         messung.setMinSampleId("");
@@ -526,15 +526,15 @@ public class ImporterTest extends BaseTest {
         protocol.setType("merge messung");
         protocol.addInfo("import", "Merge objects");
 
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setMinSampleId("06A0");
         messung.setIsScheduled(true);
         messung.setIsCompleted(false);
         messung.setMeasPd(MDAUER1000);
         messung.setMmtId("A3");
         messung.setMeasmStartDate(Timestamp.valueOf("2012-05-06 14:00:00"));
-        Messung dbMessung =
-            repository.getByIdPlain(Messung.class, MID1200);
+        Measm dbMessung =
+            repository.getByIdPlain(Measm.class, MID1200);
         merger.mergeMessung(dbMessung, messung);
 
         protocol.setPassed(true);
@@ -656,8 +656,8 @@ public class ImporterTest extends BaseTest {
         protocol.setType("merge messung kommentar");
         protocol.addInfo("import", "Merge objects");
 
-        Messung messung =
-            repository.getByIdPlain(Messung.class, MID1200);
+        Measm messung =
+            repository.getByIdPlain(Measm.class, MID1200);
         List<CommMeasm> kommentare = new ArrayList<CommMeasm>();
         CommMeasm komm1 = new CommMeasm();
         komm1.setMeasmId(MID1200);
@@ -700,8 +700,8 @@ public class ImporterTest extends BaseTest {
         protocol.setType("merge messwerte");
         protocol.addInfo("import", "Merge objects");
 
-        Messung messung =
-            repository.getByIdPlain(Messung.class, MID1200);
+        Measm messung =
+            repository.getByIdPlain(Measm.class, MID1200);
         List<Messwert> messwerte = new ArrayList<Messwert>();
         Messwert wert1 = new Messwert();
         wert1.setMessungsId(MID1200);

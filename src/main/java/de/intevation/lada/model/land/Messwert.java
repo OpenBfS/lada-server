@@ -66,7 +66,7 @@ public class Messwert implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "messungs_id", insertable = false, updatable = false)
-    private Messung messung;
+    private Measm messung;
 
     @Transient
     private boolean owner;
@@ -138,7 +138,7 @@ public class Messwert implements Serializable {
     }
 
     @JsonbTransient
-    public Messung getMessung() {
+    public Measm getMessung() {
         return this.messung;
     }
 

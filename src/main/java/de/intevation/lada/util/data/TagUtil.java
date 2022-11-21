@@ -23,7 +23,7 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.master.Tag;
@@ -119,8 +119,8 @@ public class TagUtil {
         List<Sample> probes = repository.filterPlain(
             repository.queryBuilder(Sample.class).andIn("id", probeIds)
             .getQuery());
-        List<Messung> messungs = repository.filterPlain(
-            repository.queryBuilder(Messung.class).andIn("sampleId", probeIds)
+        List<Measm> messungs = repository.filterPlain(
+            repository.queryBuilder(Measm.class).andIn("sampleId", probeIds)
             .getQuery());
 
         //Set tags

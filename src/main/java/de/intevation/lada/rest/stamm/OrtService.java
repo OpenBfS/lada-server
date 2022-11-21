@@ -36,7 +36,7 @@ import org.jboss.logging.Logger;
 
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.importer.ReportItem;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.model.land.StatusProtokoll;
@@ -479,10 +479,10 @@ public class OrtService extends LadaService {
             EntityManager em = repository.entityManager();
 
             CriteriaBuilder mesBuilder = em.getCriteriaBuilder();
-            CriteriaQuery<Messung> criteriaQuery =
-                mesBuilder.createQuery(Messung.class);
-            Root<Messung> root = criteriaQuery.from(Messung.class);
-            Join<Messung, StatusProtokoll> join =
+            CriteriaQuery<Measm> criteriaQuery =
+                mesBuilder.createQuery(Measm.class);
+            Root<Measm> root = criteriaQuery.from(Measm.class);
+            Join<Measm, StatusProtokoll> join =
                 root.join("statusProtocol", JoinType.LEFT);
             Predicate filter =
                 mesBuilder.equal(root.get("sampleId"), zuordnung.getProbeId());
@@ -490,7 +490,7 @@ public class OrtService extends LadaService {
                 .and(filter, join.get("statusKombi")
                 .in(Arrays.asList("2", "6", "10")));
             criteriaQuery.where(filter);
-            List<Messung> messungs =
+            List<Measm> messungs =
                 repository.filterPlain(criteriaQuery);
             if (messungs.size() > 0) {
                 plausibleMap.put(zuordnung.getProbeId(), 1);

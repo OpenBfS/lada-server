@@ -8,7 +8,7 @@
 
 package de.intevation.lada.util.auth;
 
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.TagZuordnung;
 import de.intevation.lada.model.master.Tag;
@@ -52,10 +52,10 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
                 if (zuordnung.getMessungId() != null) {
                     return messungAuthorizer.isAuthorized(
                         repository.getByIdPlain(
-                            Messung.class, zuordnung.getMessungId()),
+                            Measm.class, zuordnung.getMessungId()),
                         RequestMethod.PUT,
                         userInfo,
-                        Messung.class
+                        Measm.class
                     );
                 }
                 if (zuordnung.getProbeId() != null) {

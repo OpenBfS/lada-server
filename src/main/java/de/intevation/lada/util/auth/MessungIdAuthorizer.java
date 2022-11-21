@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
@@ -58,8 +58,8 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Messung messung =
-            repository.getByIdPlain(Messung.class, id);
+        Measm messung =
+            repository.getByIdPlain(Measm.class, id);
         Sample probe = repository.getByIdPlain(
             Sample.class, messung.getSampleId());
         if (messung.getStatus() == null) {
@@ -107,8 +107,8 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
         try {
             Method getMessungsId = clazz.getMethod("getMessungsId");
             Integer id = (Integer) getMessungsId.invoke(data);
-            Messung messung = repository.getByIdPlain(
-                Messung.class, id);
+            Measm messung = repository.getByIdPlain(
+                Measm.class, id);
             Sample probe = repository.getByIdPlain(
                 Sample.class, messung.getSampleId());
 

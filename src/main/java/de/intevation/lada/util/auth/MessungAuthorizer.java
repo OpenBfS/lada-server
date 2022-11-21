@@ -10,7 +10,7 @@ package de.intevation.lada.util.auth;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.master.AuthCoordOfcEnvMediumMp;
@@ -34,7 +34,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Messung messung = (Messung) data;
+        Measm messung = (Measm) data;
         Sample probe =
             repository.getByIdPlain(
                 Sample.class, messung.getSampleId());
@@ -65,8 +65,8 @@ public class MessungAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Messung messung;
-        messung = repository.getByIdPlain(Messung.class, id);
+        Measm messung;
+        messung = repository.getByIdPlain(Measm.class, id);
         return isAuthorized(messung, method, userInfo, clazz);
     }
 
@@ -79,13 +79,13 @@ public class MessungAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         if (data.getData() instanceof List<?>) {
-            List<Messung> messungen = new ArrayList<Messung>();
-            for (Messung messung :(List<Messung>) data.getData()) {
+            List<Measm> messungen = new ArrayList<Measm>();
+            for (Measm messung :(List<Measm>) data.getData()) {
                 messungen.add(setAuthData(userInfo, messung));
             }
             data.setData(messungen);
-        } else if (data.getData() instanceof Messung) {
-            Messung messung = (Messung) data.getData();
+        } else if (data.getData() instanceof Measm) {
+            Measm messung = (Measm) data.getData();
             data.setData(setAuthData(userInfo, messung));
         }
         return data;
@@ -98,9 +98,9 @@ public class MessungAuthorizer extends BaseAuthorizer {
      * @param messung     The messung object.
      * @return The messung.
      */
-    private Messung setAuthData(
+    private Measm setAuthData(
         UserInfo userInfo,
-        Messung messung
+        Measm messung
     ) {
         Sample probe =
             (Sample) repository.getById(

@@ -12,7 +12,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.master.Measd;
@@ -39,7 +39,7 @@ public class HasPflichtmessgroessen implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messung messung = (Messung) object;
+        Measm messung = (Measm) object;
         Sample probe = repository.getByIdPlain(
             Sample.class, messung.getSampleId());
 

@@ -9,7 +9,7 @@ package de.intevation.lada.util.auth;
 
 import java.util.List;
 
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.master.StatusMp;
@@ -46,11 +46,11 @@ public abstract class BaseAuthorizer implements Authorizer {
      * @return True if the probe is readonly.
      */
     public boolean isProbeReadOnly(Integer probeId) {
-        QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class);
+        QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
         builder.and("sampleId", probeId);
         Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
-        List<Messung> messungen = (List<Messung>) response.getData();
+        List<Measm> messungen = (List<Measm>) response.getData();
         for (int i = 0; i < messungen.size(); i++) {
             if (messungen.get(i).getStatus() == null) {
                 continue;
@@ -72,8 +72,8 @@ public abstract class BaseAuthorizer implements Authorizer {
     }
 
     public boolean isMessungReadOnly(Integer messungsId) {
-        Messung messung =
-            repository.getByIdPlain(Messung.class, messungsId);
+        Measm messung =
+            repository.getByIdPlain(Measm.class, messungsId);
         if (messung.getStatus() == null) {
             return false;
         }

@@ -22,7 +22,7 @@ import javax.ws.rs.QueryParam;
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.master.EnvMedium;
@@ -123,11 +123,11 @@ public class MesswertService extends LadaService {
     public Response get(
         @QueryParam("messungsId") @NotNull Integer messungsId
     ) {
-        Messung messung = repository.getByIdPlain(Messung.class, messungsId);
+        Measm messung = repository.getByIdPlain(Measm.class, messungsId);
         if (!authorization.isAuthorized(
                 messung,
                 RequestMethod.GET,
-                Messung.class)
+                Measm.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -171,12 +171,12 @@ public class MesswertService extends LadaService {
     ) {
         Response response = repository.getById(Messwert.class, id);
         Messwert messwert = (Messwert) response.getData();
-        Messung messung = repository.getByIdPlain(
-            Messung.class, messwert.getMessungsId());
+        Measm messung = repository.getByIdPlain(
+            Measm.class, messwert.getMessungsId());
         if (!authorization.isAuthorized(
             messung,
             RequestMethod.GET,
-            Messung.class)
+            Measm.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -335,11 +335,11 @@ public class MesswertService extends LadaService {
         }
 
         //Load messung, probe and umwelt to get MessEinheit to convert to
-        Messung messung = repository.getByIdPlain(Messung.class, messungsId);
+        Measm messung = repository.getByIdPlain(Measm.class, messungsId);
         if (!authorization.isAuthorized(
             messung,
             RequestMethod.PUT,
-            Messung.class)
+            Measm.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }

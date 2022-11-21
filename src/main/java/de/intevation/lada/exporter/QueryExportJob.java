@@ -22,7 +22,7 @@ import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.master.Filter;
@@ -205,9 +205,9 @@ public abstract class QueryExportJob extends ExportJob {
      * @param primaryDataIds Ids to filter for
      * @return Messwert records as list
      */
-    private List<Messung> getMessungSubData(List<Integer> primaryDataIds) {
-        QueryBuilder<Messung> messungBuilder = repository.queryBuilder(
-            Messung.class);
+    private List<Measm> getMessungSubData(List<Integer> primaryDataIds) {
+        QueryBuilder<Measm> messungBuilder = repository.queryBuilder(
+            Measm.class);
         messungBuilder.andIn("sampleId", primaryDataIds);
         return repository.filterPlain(messungBuilder.getQuery());
     }
@@ -230,7 +230,7 @@ public abstract class QueryExportJob extends ExportJob {
      * @param messung Messung to get status for
      * @return Status as string
      */
-    protected String getStatusString(Messung messung) {
+    protected String getStatusString(Measm messung) {
         StatusProtokoll protokoll =
             repository.getByIdPlain(
                 StatusProtokoll.class, messung.getStatus());
@@ -247,7 +247,7 @@ public abstract class QueryExportJob extends ExportJob {
      * @param messung Messung to get messwert count for
      * @return Number of messwert records
      */
-    protected int getMesswertCount(Messung messung) {
+    protected int getMesswertCount(Measm messung) {
         QueryBuilder<Messwert> builder = repository.queryBuilder(
             Messwert.class);
         builder.and("messungsId", messung.getId());

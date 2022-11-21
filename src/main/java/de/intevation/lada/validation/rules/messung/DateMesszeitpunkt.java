@@ -11,7 +11,7 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -35,7 +35,7 @@ public class DateMesszeitpunkt implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messung messung = (Messung) object;
+        Measm messung = (Measm) object;
         Integer probeId = messung.getSampleId();
         Response response =
             repository.getById(Sample.class, probeId);

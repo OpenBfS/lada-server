@@ -16,7 +16,7 @@ import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
@@ -115,7 +115,7 @@ public class ObjectMerger {
      * @param src the source object
      * @return the merger instance
      */
-    public ObjectMerger mergeMessung(Messung target, Messung src) {
+    public ObjectMerger mergeMessung(Measm target, Measm src) {
         if (target.getMinSampleId() == null
             || target.getMinSampleId().isEmpty()
         ) {
@@ -224,7 +224,7 @@ public class ObjectMerger {
      * @return the merger instance
      */
     public ObjectMerger mergeMessungKommentare(
-        Messung target,
+        Measm target,
         List<CommMeasm> kommentare
     ) {
         QueryBuilder<CommMeasm> builder =
@@ -256,7 +256,7 @@ public class ObjectMerger {
      * @return the merger instance
      */
     public ObjectMerger mergeMesswerte(
-        Messung target,
+        Measm target,
         List<Messwert> messwerte
     ) {
         QueryBuilder<Messwert> builder =

@@ -24,7 +24,7 @@ import org.jboss.logging.Logger;
 import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.land.MpgMmtMp;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.OrtszuordnungMp;
@@ -493,7 +493,7 @@ public class ProbeFactory {
 
         for (int i = 0; i < mmts.size(); i++) {
             MpgMmtMp mmt = mmts.get(i);
-            Messung messung = new Messung();
+            Measm messung = new Measm();
             messung.setIsCompleted(false);
             messung.setIsScheduled(true);
             messung.setMmtId(mmt.getMmtId());

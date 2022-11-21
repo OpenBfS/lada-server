@@ -21,7 +21,7 @@ import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.land.MpgMmtMp;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.OrtszuordnungMp;
@@ -125,7 +125,7 @@ public class HeaderAuthorization implements Authorization {
 
         this.authorizers = Map.ofEntries(
             Map.entry(Sample.class, probeAuthorizer),
-            Map.entry(Messung.class, messungAuthorizer),
+            Map.entry(Measm.class, messungAuthorizer),
             Map.entry(Ortszuordnung.class, pIdAuthorizer),
             Map.entry(CommSample.class, pIdAuthorizer),
             Map.entry(ZusatzWert.class, pIdAuthorizer),
@@ -236,7 +236,7 @@ public class HeaderAuthorization implements Authorization {
      */
     @Override
     public boolean isMessungReadOnly(Integer messungId) {
-        Authorizer a = authorizers.get(Messung.class);
+        Authorizer a = authorizers.get(Measm.class);
         return a.isMessungReadOnly(messungId);
     }
 }

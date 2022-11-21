@@ -37,7 +37,7 @@ import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
@@ -651,11 +651,11 @@ public class LafObjectMapper {
                 //assign to probe object
                 assignGlobalTag(object.getAttributes().get("SZENARIO"), newProbe);
                 //assign to messung objects
-                QueryBuilder<Messung> builderMessung =
-                    repository.queryBuilder(Messung.class);
+                QueryBuilder<Measm> builderMessung =
+                    repository.queryBuilder(Measm.class);
                 builderMessung.and("sampleId", newProbe.getId());
-                List<Messung> messungen =  repository.filterPlain(builderMessung.getQuery());
-                for (Messung messung: messungen) {
+                List<Measm> messungen =  repository.filterPlain(builderMessung.getQuery());
+                for (Measm messung: messungen) {
                     assignGlobalTag(object.getAttributes().get("SZENARIO"), messung);
                 }
             }
@@ -699,16 +699,16 @@ public class LafObjectMapper {
         doTransformations(probe, Sample.class, "probe");
     }
 
-    private void doDefaults(Messung messung) {
-        doDefaults(messung, Messung.class, "messung");
+    private void doDefaults(Measm messung) {
+        doDefaults(messung, Measm.class, "messung");
     }
 
-    private void doConverts(Messung messung) {
-        doConverts(messung, Messung.class, "messung");
+    private void doConverts(Measm messung) {
+        doConverts(messung, Measm.class, "messung");
     }
 
-    private void doTransforms(Messung messung) {
-        doTransformations(messung, Messung.class, "messung");
+    private void doTransforms(Measm messung) {
+        doTransformations(messung, Measm.class, "messung");
     }
 
     private void doDefaults(Messwert messwert) {
@@ -960,7 +960,7 @@ public class LafObjectMapper {
         LafRawData.Messung object,
         Sample probe, String mstId
     ) {
-        Messung messung = new Messung();
+        Measm messung = new Measm();
         messung.setSampleId(probe.getId());
 
         // Fill the new messung with data
@@ -974,7 +974,7 @@ public class LafObjectMapper {
         doTransforms(messung);
         // Check if the user is authorized to create the object
         if (
-            !authorizer.isAuthorized(messung, RequestMethod.POST, Messung.class)
+            !authorizer.isAuthorized(messung, RequestMethod.POST, Measm.class)
         ) {
             ReportItem warn = new ReportItem();
             warn.setCode(StatusCodes.NOT_ALLOWED);
@@ -996,9 +996,9 @@ public class LafObjectMapper {
             currentErrors.add(err);
             return;
         }
-        Messung newMessung;
+        Measm newMessung;
         boolean oldMessungIsReadonly = false;
-        Messung old = (Messung) messungIdentifier.getExisting();
+        Measm old = (Measm) messungIdentifier.getExisting();
         switch (ident) {
         case UPDATE:
             oldMessungIsReadonly =
@@ -1035,7 +1035,7 @@ public class LafObjectMapper {
             }
 
             // Create a new messung and the first status
-            newMessung = (Messung) repository.create(messung).getData();
+            newMessung = (Measm) repository.create(messung).getData();
             break;
         default:
             throw new IllegalArgumentException(
@@ -1503,7 +1503,7 @@ public class LafObjectMapper {
 
     private void createStatusProtokoll(
         String status,
-        Messung messung,
+        Measm messung,
         String mstId
     ) {
         //check for warnings in Probeobject - if true prevent status 7
@@ -1545,7 +1545,7 @@ public class LafObjectMapper {
     private boolean addStatusProtokollEntry(
         int statusStufe,
         int statusWert,
-        Messung messung,
+        Measm messung,
         String mstId
     ) {
         // validation check of new status entries
@@ -2077,8 +2077,8 @@ public class LafObjectMapper {
                     tagZuord.setProbeId(probe.getId());
                     repository.create(tagZuord);
                 }
-            } else if (object instanceof Messung) {
-                Messung messung = (Messung) object;
+            } else if (object instanceof Measm) {
+                Measm messung = (Measm) object;
                 QueryBuilder<TagZuordnung> builderZuord =
                     repository.queryBuilder(TagZuordnung.class);
                 builderZuord.and("messungId", messung.getId());
@@ -2463,9 +2463,9 @@ public class LafObjectMapper {
      * @param messung   The entity object.
      * @return The updated entity object.
      */
-    public Messung addMessungAttribute(
+    public Measm addMessungAttribute(
         Entry<String, String> attribute,
-        Messung messung
+        Measm messung
     ) {
         String key = attribute.getKey();
         String value = attribute.getValue();

@@ -23,7 +23,7 @@ import javax.ws.rs.QueryParam;
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Messwert;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.Sample;
@@ -205,8 +205,8 @@ public class StatusService extends LadaService {
         }
 
         UserInfo userInfo = authorization.getInfo();
-        Messung messung = repository.getByIdPlain(
-            Messung.class, status.getMessungsId());
+        Measm messung = repository.getByIdPlain(
+            Measm.class, status.getMessungsId());
         if (lock.isLocked(messung)) {
             return new Response(false, StatusCodes.CHANGED_VALUE, status);
         }
@@ -214,8 +214,8 @@ public class StatusService extends LadaService {
         // Is user authorized to edit status at all?
         Response r = authorization.filter(
             new Response(true, StatusCodes.OK, messung),
-            Messung.class);
-        Messung filteredMessung = (Messung) r.getData();
+            Measm.class);
+        Measm filteredMessung = (Measm) r.getData();
         if (!filteredMessung.getStatusEdit()) {
             return new Response(false, StatusCodes.NOT_ALLOWED, status);
         }
@@ -263,7 +263,7 @@ public class StatusService extends LadaService {
     private Response setNewStatus(
         StatusProtokoll status,
         StatusMp newKombi,
-        Messung messung
+        Measm messung
     ) {
         Violation violation = new Violation();
         Violation violationCollection = new Violation();
@@ -419,7 +419,7 @@ public class StatusService extends LadaService {
     private Response resetStatus(
         StatusProtokoll newStatus,
         StatusProtokoll oldStatus,
-        Messung messung
+        Measm messung
     ) {
         // Create a new Status with value = 8.
         QueryBuilder<StatusMp> kombiFilter =

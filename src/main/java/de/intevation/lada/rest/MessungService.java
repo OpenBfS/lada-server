@@ -22,7 +22,7 @@ import javax.ws.rs.QueryParam;
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -111,20 +111,20 @@ public class MessungService extends LadaService {
     public Response get(
         @QueryParam("probeId") @NotNull Integer probeId
     ) {
-        QueryBuilder<Messung> builder = repository.queryBuilder(Messung.class)
+        QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class)
             .and("sampleId", probeId);
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
-            Messung.class);
+            Measm.class);
         @SuppressWarnings("unchecked")
-        List<Messung> messungs = (List<Messung>) r.getData();
-        for (Messung messung: messungs) {
+        List<Measm> messungs = (List<Measm>) r.getData();
+        for (Measm messung: messungs) {
             // TODO: Should have been set by authorization.filter() already
             messung.setReadonly(
                 !authorization.isAuthorized(
                     messung,
                     RequestMethod.PUT,
-                    Messung.class));
+                    Measm.class));
             Violation violation = validator.validate(messung);
             if (violation.hasErrors()
                 || violation.hasWarnings()
@@ -150,8 +150,8 @@ public class MessungService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(Messung.class, id);
-        Messung messung = (Messung) response.getData();
+        Response response = repository.getById(Measm.class, id);
+        Measm messung = (Measm) response.getData();
         Violation violation = validator.validate(messung);
         if (violation.hasErrors()
             || violation.hasWarnings()
@@ -163,7 +163,7 @@ public class MessungService extends LadaService {
         }
         return authorization.filter(
             response,
-            Messung.class);
+            Measm.class);
     }
 
     /**
@@ -195,12 +195,12 @@ public class MessungService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        Messung messung
+        Measm messung
     ) {
         if (!authorization.isAuthorized(
                 messung,
                 RequestMethod.POST,
-                Messung.class)
+                Measm.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -225,7 +225,7 @@ public class MessungService extends LadaService {
         }
         return authorization.filter(
             response,
-            Messung.class);
+            Measm.class);
     }
 
     /**
@@ -258,12 +258,12 @@ public class MessungService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        Messung messung
+        Measm messung
     ) {
         if (!authorization.isAuthorized(
                 messung,
                 RequestMethod.PUT,
-                Messung.class)
+                Measm.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -291,7 +291,7 @@ public class MessungService extends LadaService {
         }
         return authorization.filter(
             response,
-            Messung.class);
+            Measm.class);
     }
 
     /**
@@ -305,11 +305,11 @@ public class MessungService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        Messung messungObj = repository.getByIdPlain(Messung.class, id);
+        Measm messungObj = repository.getByIdPlain(Measm.class, id);
         if (!authorization.isAuthorized(
                 messungObj,
                 RequestMethod.DELETE,
-                Messung.class)
+                Measm.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }

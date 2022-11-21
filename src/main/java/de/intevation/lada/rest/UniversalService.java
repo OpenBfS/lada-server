@@ -20,7 +20,7 @@ import javax.ws.rs.core.MultivaluedHashMap;
 
 import de.intevation.lada.model.QueryColumns;
 import de.intevation.lada.model.land.Mpg;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.Disp;
@@ -116,7 +116,7 @@ public class UniversalService extends LadaService {
         hierarchy.put("ortId",       Site.class);
         hierarchy.put("mpId",        Mpg.class);
         hierarchy.put("probeId",     Sample.class);
-        hierarchy.put("messungId",   Messung.class);
+        hierarchy.put("messungId",   Measm.class);
         int resultNdx = hierarchy.size();
         for (GridColConf columnValue : gridColumnValues) {
             GridColMp gridColumn = repository.getByIdPlain(

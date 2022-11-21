@@ -19,7 +19,7 @@ import javax.inject.Inject;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 
@@ -65,8 +65,8 @@ public class LafExporter implements Exporter {
             laf += creator.createProbe(probeId.toString());
         }
         for (Integer messungId: messungen) {
-            Messung m = repository.getByIdPlain(
-                Messung.class, messungId);
+            Measm m = repository.getByIdPlain(
+                Measm.class, messungId);
             List<Integer> mList = new ArrayList<>();
             mList.add(messungId);
             laf += creator.createMessung(

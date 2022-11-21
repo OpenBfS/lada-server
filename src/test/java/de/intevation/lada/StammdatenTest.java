@@ -27,7 +27,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.EnvDescrip;
@@ -721,7 +721,7 @@ public class StammdatenTest extends BaseTest {
         testProtocol.add(protocol);
         Sample probe = em.find(Sample.class, ID1901);
         Assert.assertNotNull(probe);
-        Messung messung = em.find(Messung.class, ID1801);
+        Measm messung = em.find(Measm.class, ID1801);
         Assert.assertNotNull(messung);
         Tag probeTag = em.find(Tag.class, ID101);
         Assert.assertNotNull(probeTag);

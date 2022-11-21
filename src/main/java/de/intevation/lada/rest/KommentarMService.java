@@ -18,7 +18,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.CommMeasm;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -97,9 +97,9 @@ public class KommentarMService extends LadaService {
     public Response get(
         @QueryParam("messungsId") @NotNull Integer messungsId
     ) {
-        Messung messung = repository.getByIdPlain(Messung.class, messungsId);
+        Measm messung = repository.getByIdPlain(Measm.class, messungsId);
         if (!authorization.isAuthorized(
-                messung, RequestMethod.GET, Messung.class)
+                messung, RequestMethod.GET, Measm.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -125,10 +125,10 @@ public class KommentarMService extends LadaService {
     ) {
         Response response = repository.getById(CommMeasm.class, id);
         CommMeasm kommentar = (CommMeasm) response.getData();
-        Messung messung = repository.getByIdPlain(
-            Messung.class, kommentar.getMeasmId());
+        Measm messung = repository.getByIdPlain(
+            Measm.class, kommentar.getMeasmId());
         if (!authorization.isAuthorized(
-                messung, RequestMethod.GET, Messung.class)
+                messung, RequestMethod.GET, Measm.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }

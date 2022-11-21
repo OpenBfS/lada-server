@@ -25,7 +25,7 @@ import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.exporter.ExportFormat;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Messwert;
 
 
@@ -73,7 +73,7 @@ public class JsonExportJob extends QueryExportJob {
                 primaryData.size()));
         switch (getSubDataType(idType)) {
             case "messung":
-                mergedData = mergeMessungData((List<Messung>) subData);
+                mergedData = mergeMessungData((List<Measm>) subData);
                 break;
             case "messwert":
                 mergedData = mergeMesswertData((List<Messwert>) subData);
@@ -91,7 +91,7 @@ public class JsonExportJob extends QueryExportJob {
      */
     @SuppressWarnings("unchecked")
     private List<Map<String, Object>> mergeMessungData(
-        List<Messung> messungData
+        List<Measm> messungData
     ) {
         // Create a map of id->record
         Map<Integer, Map<String, Object>> idMap =

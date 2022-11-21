@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -35,15 +35,15 @@ public class UniqueNebenprobenNr implements Rule {
     @SuppressWarnings("unchecked")
     @Override
     public Violation execute(Object object) {
-        Messung messung = (Messung) object;
+        Measm messung = (Measm) object;
         if (messung.getMinSampleId() != null) {
-            QueryBuilder<Messung> builder =
-                repository.queryBuilder(Messung.class);
+            QueryBuilder<Measm> builder =
+                repository.queryBuilder(Measm.class);
             builder.and("minSampleId", messung.getMinSampleId());
             builder.and("sampleId", messung.getSampleId());
             Response response = repository.filter(builder.getQuery());
-            if (!((List<Messung>) response.getData()).isEmpty()) {
-                Messung found = ((List<Messung>) response.getData()).get(0);
+            if (!((List<Measm>) response.getData()).isEmpty()) {
+                Measm found = ((List<Measm>) response.getData()).get(0);
                 // The messung found in the db equals the new messung. (Update)
                 if (messung.getId() != null
                     && messung.getId().equals(found.getId())) {
