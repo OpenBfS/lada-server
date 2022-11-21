@@ -266,7 +266,9 @@ public class JsonExporter implements Exporter {
                 addMesswerte(jsMessung);
                 addMessungsKommentare(jsMessung);
                 addStatusProtokoll(jsMessung);
-                ((ObjectNode) jsProbe).set("messung", jsMessung);
+                ArrayNode mArry = mapper.createArrayNode();
+                mArry.add(jsMessung);
+                ((ObjectNode) jsProbe).set("messungen", mArry);
                 addKommentare(jsProbe);
                 addZusatzwerte(jsProbe);
                 addDeskriptoren(jsProbe);
