@@ -363,7 +363,7 @@ public class MessprogrammService extends LadaService {
         /* check if probe references to the messprogramm exists */
         // TODO: This is a nice example of ORM-induced database misuse:
         QueryBuilder<Sample> builder = repository.queryBuilder(Sample.class);
-        builder.and("mprId", messprogrammObj.getId());
+        builder.and("mpgId", messprogrammObj.getId());
         List<Sample> probes =
             repository.filterPlain(builder.getQuery());
         if (probes.size() > 0) {
