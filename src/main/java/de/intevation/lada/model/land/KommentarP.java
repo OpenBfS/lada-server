@@ -10,7 +10,6 @@ package de.intevation.lada.model.land;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,12 +19,8 @@ import javax.persistence.Transient;
 
 
 
-/**
- * The persistent class for the kommentar_p database table.
- *
- */
 @Entity
-@Table(name = "kommentar_p", schema = SchemaName.LEGACY_NAME)
+@Table(name = "comm_sample", schema = SchemaName.NAME)
 public class KommentarP implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -33,13 +28,11 @@ public class KommentarP implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Timestamp datum;
+    private Timestamp date;
 
-    @Column(name = "mst_id")
-    private String mstId;
+    private String measFacilId;
 
-    @Column(name = "probe_id")
-    private Integer probeId;
+    private Integer sampleId;
 
     private String text;
 
@@ -60,28 +53,28 @@ public class KommentarP implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getDatum() {
-        return this.datum;
+    public Timestamp getDate() {
+        return this.date;
     }
 
-    public void setDatum(Timestamp datum) {
-        this.datum = datum;
+    public void setDate(Timestamp date) {
+        this.date = date;
     }
 
-    public String getMstId() {
-        return this.mstId;
+    public String getMeasFacilId() {
+        return this.measFacilId;
     }
 
-    public void setMstId(String mstId) {
-        this.mstId = mstId;
+    public void setMeasFacilId(String measFacilId) {
+        this.measFacilId = measFacilId;
     }
 
-    public Integer getProbeId() {
-        return this.probeId;
+    public Integer getSampleId() {
+        return this.sampleId;
     }
 
-    public void setProbeId(Integer probeId) {
-        this.probeId = probeId;
+    public void setSampleId(Integer sampleId) {
+        this.sampleId = sampleId;
     }
 
     public String getText() {

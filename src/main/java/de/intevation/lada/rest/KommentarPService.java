@@ -98,7 +98,7 @@ public class KommentarPService extends LadaService {
     ) {
         QueryBuilder<KommentarP> builder =
             repository.queryBuilder(KommentarP.class);
-        builder.and("probeId", probeId);
+        builder.and("sampleId", probeId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
             KommentarP.class);

@@ -616,15 +616,15 @@ public class ImporterTest extends BaseTest {
         Sample probe = repository.getByIdPlain(Sample.class, PID1000);
         List<KommentarP> kommentare = new ArrayList<KommentarP>();
         KommentarP komm1 = new KommentarP();
-        komm1.setProbeId(PID1000);
-        komm1.setDatum(Timestamp.valueOf("2012-05-08 12:00:00"));
-        komm1.setMstId("06010");
+        komm1.setSampleId(PID1000);
+        komm1.setDate(Timestamp.valueOf("2012-05-08 12:00:00"));
+        komm1.setMeasFacilId("06010");
         komm1.setText("Testtext2");
 
         KommentarP komm2 = new KommentarP();
-        komm2.setProbeId(PID1000);
-        komm2.setDatum(Timestamp.valueOf("2012-04-08 12:00:00"));
-        komm2.setMstId("06010");
+        komm2.setSampleId(PID1000);
+        komm2.setDate(Timestamp.valueOf("2012-04-08 12:00:00"));
+        komm2.setMeasFacilId("06010");
         komm2.setText("Testtext3");
 
         kommentare.add(komm1);

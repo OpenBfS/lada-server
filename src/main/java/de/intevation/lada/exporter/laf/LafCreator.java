@@ -141,7 +141,7 @@ implements Creator {
     private String writeAttributes(Sample probe, List<Integer> messungen) {
         QueryBuilder<KommentarP> kommBuilder =
             repository.queryBuilder(KommentarP.class);
-        kommBuilder.and("probeId", probe.getId());
+        kommBuilder.and("sampleId", probe.getId());
         Response kommentar =
             repository.filter(kommBuilder.getQuery());
         List<KommentarP> kommentare = (List<KommentarP>) kommentar.getData();
@@ -420,9 +420,9 @@ implements Creator {
      * @return Single LAF line.
      */
     private String writeKommentar(KommentarP kp) {
-        String value = "\"" + kp.getMstId()
+        String value = "\"" + kp.getMeasFacilId()
             + "\" "
-            + toUTCString(kp.getDatum()) + " "
+            + toUTCString(kp.getDate()) + " "
             + "\"" + kp.getText() + "\"";
         return lafLine("PROBENKOMMENTAR", value);
     }

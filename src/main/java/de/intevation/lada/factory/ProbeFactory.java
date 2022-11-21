@@ -483,10 +483,10 @@ public class ProbeFactory {
             && !messprogramm.getProbeKommentar().equals("")
         ) {
             KommentarP kommentar = new KommentarP();
-            kommentar.setDatum(new Timestamp(new Date().getTime()));
-            kommentar.setProbeId(probe.getId());
+            kommentar.setDate(new Timestamp(new Date().getTime()));
+            kommentar.setSampleId(probe.getId());
             kommentar.setText(messprogramm.getProbeKommentar());
-            kommentar.setMstId(messprogramm.getMstId());
+            kommentar.setMeasFacilId(messprogramm.getMstId());
 
             createObject(kommentar, dryrun);
         }

@@ -1168,7 +1168,7 @@ public class LafObjectMapper {
         // TODO: Why does the following duplicate a validation rule?
         QueryBuilder<KommentarP> kommentarBuilder = repository
             .queryBuilder(KommentarP.class)
-            .and("probeId", probe.getId());
+            .and("sampleId", probe.getId());
         List<KommentarP> kommentarExist = repository.filterPlain(
             kommentarBuilder.getQuery());
 
@@ -1186,29 +1186,29 @@ public class LafObjectMapper {
             return null;
         }
         KommentarP kommentar = new KommentarP();
-        kommentar.setProbeId(probe.getId());
+        kommentar.setSampleId(probe.getId());
         kommentar.setText(attributes.get("TEXT"));
         if (attributes.containsKey("MST_ID")) {
-            kommentar.setMstId(attributes.get("MST_ID"));
+            kommentar.setMeasFacilId(attributes.get("MST_ID"));
         } else {
-            kommentar.setMstId(probe.getMeasFacilId());
+            kommentar.setMeasFacilId(probe.getMeasFacilId());
         }
         if (attributes.containsKey("DATE")) {
             String date = attributes.get("DATE") + " " + attributes.get("TIME");
-            kommentar.setDatum(getDate(date));
+            kommentar.setDate(getDate(date));
         } else {
-            kommentar.setDatum(
+            kommentar.setDate(
                 Timestamp.from(
                     Instant.now().atZone(ZoneOffset.UTC).toInstant()));
         }
         doDefaults(kommentar);
         doConverts(kommentar);
         doTransforms(kommentar);
-        if (!userInfo.getMessstellen().contains(kommentar.getMstId())) {
+        if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
             currentWarnings.add(
                 new ReportItem(
                     userInfo.getName(),
-                    "Kommentar: " + kommentar.getMstId(),
+                    "Kommentar: " + kommentar.getMeasFacilId(),
                     StatusCodes.NOT_ALLOWED));
             return null;
         }
