@@ -455,22 +455,22 @@ public class LafObjectMapper {
                     // Check if we have EOrte present
                     QueryBuilder<Ortszuordnung> builderPresentEOrte =
                         repository.queryBuilder(Ortszuordnung.class);
-                        builderPresentEOrte.and("probeId", newProbe.getId());
-                        builderPresentEOrte.and("ortszuordnungTyp", "E");
+                        builderPresentEOrte.and("sampleId", newProbe.getId());
+                        builderPresentEOrte.and("typeRegulation", "E");
                     List<Ortszuordnung> presentEOrte = repository.filterPlain(builderPresentEOrte.getQuery());
 
                     // Check if we have UOrte present
                     QueryBuilder<Ortszuordnung> builderPresentUOrte =
                         repository.queryBuilder(Ortszuordnung.class);
-                        builderPresentUOrte.and("probeId", newProbe.getId());
-                        builderPresentUOrte.and("ortszuordnungTyp", "U");
+                        builderPresentUOrte.and("sampleId", newProbe.getId());
+                        builderPresentUOrte.and("typeRegulation", "U");
                     List<Ortszuordnung> presentUOrte = repository.filterPlain(builderPresentUOrte.getQuery());
 
                     // Check if we have ROrte present
                     QueryBuilder<Ortszuordnung> builderPresentROrte =
                         repository.queryBuilder(Ortszuordnung.class);
-                        builderPresentROrte.and("probeId", newProbe.getId());
-                        builderPresentROrte.and("ortszuordnungTyp", "R");
+                        builderPresentROrte.and("sampleId", newProbe.getId());
+                        builderPresentROrte.and("typeRegulation", "R");
                     List<Ortszuordnung> presentROrte = repository.filterPlain(builderPresentROrte.getQuery());
 
                     //Switch if we need to create an R-Ort
@@ -492,21 +492,21 @@ public class LafObjectMapper {
                     }
 
                     //If the LAF delivers eOrt and uOrt and those are a match by created/found - Id -- we need to create an R-Ort
-                    if (uOrte.size() > 0 && eOrt!= null && uOrte.stream().anyMatch(uOrt -> uOrt.getOrtId().equals(eOrt.getOrtId()))){
+                    if (uOrte.size() > 0 && eOrt!= null && uOrte.stream().anyMatch(uOrt -> uOrt.getSiteId().equals(eOrt.getSiteId()))){
                         rOrt = true;
                     }
 
                     //further conditionals for eOrt
                     if (eOrt != null) {
                         //Check if the new Ort matches an U-Ort if exists
-                        if (presentUOrte.size() > 0 && eOrt!= null && presentUOrte.stream().anyMatch(uOrt -> uOrt.getOrtId().equals(eOrt.getOrtId()))){
+                        if (presentUOrte.size() > 0 && eOrt!= null && presentUOrte.stream().anyMatch(uOrt -> uOrt.getSiteId().equals(eOrt.getSiteId()))){
                             rOrt = true;
                         }
-                        else if (presentROrte.size() > 0 && eOrt!= null && presentROrte.stream().anyMatch(rtypeOrt -> rtypeOrt.getOrtId().equals(eOrt.getOrtId()))){
+                        else if (presentROrte.size() > 0 && eOrt!= null && presentROrte.stream().anyMatch(rtypeOrt -> rtypeOrt.getSiteId().equals(eOrt.getSiteId()))){
                             rOrt = true;
                         } else if (presentROrte.size() > 0 && eOrt!= null){
                             for (int i = 0; i < presentROrte.size(); i++) {
-                                presentROrte.get(i).setOrtszuordnungTyp("U");
+                                presentROrte.get(i).setTypeRegulation("U");
                                 repository.update(presentROrte.get(i));
                             }
                             rOrt = false;
@@ -517,15 +517,15 @@ public class LafObjectMapper {
                     if (uOrte.size()==1) {
                         //Check if the new Ort matches the U-Ort if exists, this only works if we have 1 Ursprungsort in the LAF, if we have more we must assume multiple
                         //ursprungsorte
-                            if (presentEOrte.size() > 0 && uOrte.size() > 0 && presentEOrte.stream().anyMatch(etypeOrt -> etypeOrt.getOrtId().equals(uOrte.get(0).getOrtId()))){
+                            if (presentEOrte.size() > 0 && uOrte.size() > 0 && presentEOrte.stream().anyMatch(etypeOrt -> etypeOrt.getSiteId().equals(uOrte.get(0).getSiteId()))){
                                 rOrt = true;
                             }
-                            else if (presentROrte.size() > 0 && uOrte.size() > 0 && presentROrte.stream().anyMatch(rtypeOrt -> rtypeOrt.getOrtId().equals(uOrte.get(0).getOrtId()))){
+                            else if (presentROrte.size() > 0 && uOrte.size() > 0 && presentROrte.stream().anyMatch(rtypeOrt -> rtypeOrt.getSiteId().equals(uOrte.get(0).getSiteId()))){
                                 //ToDo: We need to handle R-Orte!
                                 rOrt = true;
                             } else if (presentROrte.size() > 0 && uOrte.size() > 0){
                                 for (int i = 0; i < presentROrte.size(); i++) {
-                                    presentROrte.get(i).setOrtszuordnungTyp("E");
+                                    presentROrte.get(i).setTypeRegulation("E");
                                     repository.update(presentROrte.get(i));
                                 }
                                 rOrt = false;
@@ -545,8 +545,8 @@ public class LafObjectMapper {
                             //we may have additional information for the ortszuordnung such as an ortszusatz, we make an update.
                             QueryBuilder<Ortszuordnung> builderUOrt =
                             repository.queryBuilder(Ortszuordnung.class);
-                            builderUOrt.and("probeId", newProbe.getId());
-                            builderUOrt.and("ortszuordnungTyp", "R");
+                            builderUOrt.and("sampleId", newProbe.getId());
+                            builderUOrt.and("typeRegulation", "R");
                             Response uOrtQuery =
                                 repository.filter(builderUOrt.getQuery());
                             @SuppressWarnings("unchecked")
@@ -558,11 +558,11 @@ public class LafObjectMapper {
                             }
 
                             if ((eOrt != null)) {
-                                eOrt.setOrtszuordnungTyp(("R"));
+                                eOrt.setTypeRegulation(("R"));
                                 merger.mergeEntnahmeOrt(newProbe.getId(), eOrt);
                             }
                             if (uOrte.size()==1 && eOrt == null){
-                                uOrte.get(0).setOrtszuordnungTyp("R");
+                                uOrte.get(0).setTypeRegulation("R");
                                 merger.mergeUrsprungsOrte(newProbe.getId(), uOrte);
                             }
                         }
@@ -570,8 +570,8 @@ public class LafObjectMapper {
                         if (object.getUrsprungsOrte().size() > 0 || presentUOrte.size() > 0){
                             QueryBuilder<Ortszuordnung> builderUOrt =
                                 repository.queryBuilder(Ortszuordnung.class);
-                                builderUOrt.and("probeId", newProbe.getId());
-                                builderUOrt.and("ortszuordnungTyp", "U");
+                                builderUOrt.and("sampleId", newProbe.getId());
+                                builderUOrt.and("typeRegulation", "U");
                             Response uOrtQuery =
                                 repository.filter(builderUOrt.getQuery());
                             @SuppressWarnings("unchecked")
@@ -583,7 +583,7 @@ public class LafObjectMapper {
                             }
                         }
                         if (eOrt != null){
-                            eOrt.setOrtszuordnungTyp("R");
+                            eOrt.setTypeRegulation("R");
                             //Merging the entnahmeOrt cleans it up!
                             merger.mergeEntnahmeOrt(newProbe.getId(), eOrt);
                         } else {
@@ -593,8 +593,8 @@ public class LafObjectMapper {
 
                                 QueryBuilder<Ortszuordnung> builderEOrt =
                                     repository.queryBuilder(Ortszuordnung.class);
-                                    builderEOrt.and("probeId", newProbe.getId());
-                                    builderEOrt.and("ortszuordnungTyp", "E");
+                                    builderEOrt.and("sampleId", newProbe.getId());
+                                    builderEOrt.and("typeRegulation", "E");
                                 Response eOrtQuery =
                                     repository.filter(builderEOrt.getQuery());
                                 @SuppressWarnings("unchecked")
@@ -605,7 +605,7 @@ public class LafObjectMapper {
                                     }
                                 }
 
-                                uOrte.get(0).setOrtszuordnungTyp("R");
+                                uOrte.get(0).setTypeRegulation("R");
                                 merger.mergeUrsprungsOrte(newProbe.getId(), uOrte);
                             }
                         }
@@ -1700,7 +1700,7 @@ public class LafObjectMapper {
 
         QueryBuilder<Ortszuordnung> builder =
             repository.queryBuilder(Ortszuordnung.class);
-        builder.and("probeId", probe.getId());
+        builder.and("sampleId", probe.getId());
         List<Ortszuordnung> zuordnungen =
             repository.filterPlain(builder.getQuery());
         if (!zuordnungen.isEmpty()) {
@@ -1721,12 +1721,12 @@ public class LafObjectMapper {
                 repository.filterPlain(builder1.getQuery());
             if (!messpunkte.isEmpty()) {
                 Ortszuordnung ort = new Ortszuordnung();
-                ort.setOrtszuordnungTyp("R");
-                ort.setProbeId(probe.getId());
-                ort.setOrtId(messpunkte.get(0).getId());
-                ort.setOzId(messpunkte.get(0).getPoiId());
+                ort.setTypeRegulation("R");
+                ort.setSampleId(probe.getId());
+                ort.setSiteId(messpunkte.get(0).getId());
+                ort.setPoiId(messpunkte.get(0).getPoiId());
                 if (uo.containsKey("U_ORTS_ZUSATZTEXT")) {
-                    ort.setOrtszusatztext(uo.get("U_ORTS_ZUSATZTEXT"));
+                    ort.setAddSiteText(uo.get("U_ORTS_ZUSATZTEXT"));
                 }
                 repository.create(ort);
                 probe.setNuclFacilGrId(messpunkte.get(0).getReiNuclFacilGrId());
@@ -1769,10 +1769,10 @@ public class LafObjectMapper {
                         repository.update(o);
 
                         Ortszuordnung ort = new Ortszuordnung();
-                        ort.setOrtId(o.getId());
-                        ort.setOrtszuordnungTyp("R");
-                        ort.setProbeId(probe.getId());
-                        ort.setOzId(o.getPoiId());
+                        ort.setSiteId(o.getId());
+                        ort.setTypeRegulation("R");
+                        ort.setSampleId(probe.getId());
+                        ort.setPoiId(o.getPoiId());
 
                         repository.create(ort);
 
@@ -1807,16 +1807,16 @@ public class LafObjectMapper {
             o.setSiteClassId(3);
             repository.update(o);
             Ortszuordnung ort = new Ortszuordnung();
-            ort.setOrtId(o.getId());
-            ort.setOrtszuordnungTyp("R");
-            ort.setProbeId(probe.getId());
+            ort.setSiteId(o.getId());
+            ort.setTypeRegulation("R");
+            ort.setSampleId(probe.getId());
             if (uort.size() > 0
                 && uort.get(0).containsKey("U_ORTS_ZUSATZCODE")
             ) {
                 Map<String, String> uo = uort.get(0);
                 o.setExtId(uo.get("U_ORTS_ZUSATZCODE"));
                 if (uo.containsKey("U_ORTS_ZUSATZTEXT")) {
-                    ort.setOrtszusatztext(uo.get("U_ORTS_ZUSATZTEXT"));
+                    ort.setAddSiteText(uo.get("U_ORTS_ZUSATZTEXT"));
                 }
             }
             repository.create(ort);
@@ -1833,15 +1833,15 @@ public class LafObjectMapper {
             return null;
         }
         Ortszuordnung ort = new Ortszuordnung();
-        ort.setOrtszuordnungTyp(type);
-        ort.setProbeId(probe.getId());
+        ort.setTypeRegulation(type);
+        ort.setSampleId(probe.getId());
         if (type.equals("E")) {type = "P";}
         Site o = findOrCreateOrt(rawOrt, type+"_", probe);
         if (o == null) {
             return null;
         }
-        ort.setOrtId(o.getId());
-        ort.setOzId(o.getPoiId());
+        ort.setSiteId(o.getId());
+        ort.setPoiId(o.getPoiId());
         if (rawOrt.containsKey(type+"_ORTS_ZUSATZCODE")) {
             Poi zusatz = repository.getByIdPlain(
                 Poi.class,
@@ -1854,11 +1854,11 @@ public class LafObjectMapper {
                         rawOrt.get(type+"_ORTS_ZUSATZCODE"),
                         StatusCodes.IMP_INVALID_VALUE));
             } else {
-                ort.setOzId(zusatz.getId());
+                ort.setPoiId(zusatz.getId());
             }
         }
         if (rawOrt.containsKey(type+"_ORTS_ZUSATZTEXT")) {
-            ort.setOrtszusatztext(rawOrt.get(type+"_ORTS_ZUSATZTEXT"));
+            ort.setAddSiteText(rawOrt.get(type+"_ORTS_ZUSATZTEXT"));
         }
         doDefaults(ort);
         doConverts(ort);

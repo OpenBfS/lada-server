@@ -168,12 +168,12 @@ public class AuditTrailService extends LadaService {
         //Get ort ids connected to this probe
         QueryBuilder<Ortszuordnung> refBuilder =
             repository.queryBuilder(Ortszuordnung.class);
-        refBuilder.and("probeId", pId);
+        refBuilder.and("sampleId", pId);
         List<Integer> ortIds = new LinkedList<Integer>();
         for (Ortszuordnung zuordnung
             : repository.filterPlain(refBuilder.getQuery())
         ) {
-            ortIds.add(zuordnung.getOrtId());
+            ortIds.add(zuordnung.getSiteId());
         }
 
         // Get all entries for the probe and its sub objects.

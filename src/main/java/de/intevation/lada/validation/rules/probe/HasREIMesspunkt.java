@@ -46,12 +46,12 @@ public class HasREIMesspunkt implements Rule {
             || Integer.valueOf(4).equals(probe.getRegulationId())) {
             QueryBuilder<Ortszuordnung> builder =
                 repository.queryBuilder(Ortszuordnung.class);
-            builder.and("probeId", id);
+            builder.and("sampleId", id);
             Response response = repository.filter(builder.getQuery());
             @SuppressWarnings("unchecked")
             List<Ortszuordnung> orte = (List<Ortszuordnung>) response.getData();
             for (Ortszuordnung ort: orte) {
-                if ("R".equals(ort.getOrtszuordnungTyp())) {
+                if ("R".equals(ort.getTypeRegulation())) {
                     return null;
                 }
             }

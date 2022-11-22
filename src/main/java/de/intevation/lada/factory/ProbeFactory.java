@@ -515,14 +515,14 @@ public class ProbeFactory {
         currentProtocol.put("mmt", messungProtocol);
         for (OrtszuordnungMp ort : orte) {
             Ortszuordnung ortP = new Ortszuordnung();
-            ortP.setOrtszuordnungTyp(ort.getOrtszuordnungTyp());
-            ortP.setProbeId(probe.getId());
-            ortP.setOrtId(ort.getOrtId());
-            ortP.setOzId(ort.getOzId());
-            ortP.setOrtszusatztext(ort.getOrtszusatztext());
+            ortP.setTypeRegulation(ort.getOrtszuordnungTyp());
+            ortP.setSampleId(probe.getId());
+            ortP.setSiteId(ort.getOrtId());
+            ortP.setPoiId(ort.getOzId());
+            ortP.setAddSiteText(ort.getOrtszusatztext());
             createObject(ortP, dryrun);
             Site o = repository.getByIdPlain(
-                Site.class, ortP.getOrtId());
+                Site.class, ortP.getSiteId());
             currentProtocol.put("gemId", o.getMunicId());
         }
         // Reolad the probe to have the old id

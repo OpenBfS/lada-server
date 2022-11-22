@@ -463,7 +463,7 @@ public class OrtService extends LadaService {
     private List<Ortszuordnung> getOrtsZuordnungs(Site o) {
         QueryBuilder<Ortszuordnung> refBuilder =
             repository.queryBuilder(Ortszuordnung.class);
-        refBuilder.and("ortId", o.getId());
+        refBuilder.and("siteId", o.getId());
         return repository.filterPlain(refBuilder.getQuery());
     }
 
@@ -485,7 +485,7 @@ public class OrtService extends LadaService {
             Join<Measm, StatusProtokoll> join =
                 root.join("statusProtocol", JoinType.LEFT);
             Predicate filter =
-                mesBuilder.equal(root.get("sampleId"), zuordnung.getProbeId());
+                mesBuilder.equal(root.get("sampleId"), zuordnung.getSampleId());
             filter = mesBuilder
                 .and(filter, join.get("statusKombi")
                 .in(Arrays.asList("2", "6", "10")));
@@ -493,7 +493,7 @@ public class OrtService extends LadaService {
             List<Measm> messungs =
                 repository.filterPlain(criteriaQuery);
             if (messungs.size() > 0) {
-                plausibleMap.put(zuordnung.getProbeId(), 1);
+                plausibleMap.put(zuordnung.getSampleId(), 1);
             }
         }
         return plausibleMap.size();

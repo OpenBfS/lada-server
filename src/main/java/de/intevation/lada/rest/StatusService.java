@@ -337,11 +337,11 @@ public class StatusService extends LadaService {
             // validate orte
             QueryBuilder<Ortszuordnung> ortBuilder =
                 repository.queryBuilder(Ortszuordnung.class);
-                ortBuilder.and("probeId", probe.getId());
+                ortBuilder.and("sampleId", probe.getId());
             List<Ortszuordnung> assignedOrte = repository.filterPlain(ortBuilder.getQuery());
 
             for (Ortszuordnung o : assignedOrte){
-                violation = ortValidator.validate(repository.getByIdPlain(Site.class, o.getOrtId()));
+                violation = ortValidator.validate(repository.getByIdPlain(Site.class, o.getSiteId()));
                 violationCollection.addErrors(violation.getErrors());
                 violationCollection.addWarnings(violation.getWarnings());
                 violationCollection.addNotifications(violation.getNotifications());

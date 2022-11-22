@@ -52,8 +52,8 @@ public class HasOneUrsprungsOrt implements Rule {
 
         QueryBuilder<Ortszuordnung> builder =
             repository.queryBuilder(Ortszuordnung.class);
-        builder.and("probeId", id);
-        builder.andIn("ortszuordnungTyp", zuordTypeFilter);
+        builder.and("sampleId", id);
+        builder.andIn("typeRegulation", zuordTypeFilter);
         Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<Ortszuordnung> orte = (List<Ortszuordnung>) response.getData();

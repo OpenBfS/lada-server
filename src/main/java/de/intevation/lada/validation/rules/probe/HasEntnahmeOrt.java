@@ -51,8 +51,8 @@ public class HasEntnahmeOrt implements Rule {
         List<String> zuordTypeFilter = Arrays.asList("E", "R");
         QueryBuilder<Ortszuordnung> builder =
             repository.queryBuilder(Ortszuordnung.class);
-        builder.and("probeId", id);
-        builder.andIn("ortszuordnungTyp", zuordTypeFilter);
+        builder.and("sampleId", id);
+        builder.andIn("typeRegulation", zuordTypeFilter);
         Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
         List<Ortszuordnung> orte = (List<Ortszuordnung>) response.getData();
@@ -64,10 +64,10 @@ public class HasEntnahmeOrt implements Rule {
         }
 
         for (Ortszuordnung ort: orte) {
-            if (("E".equals(ort.getOrtszuordnungTyp())
-                    || "R".equals(ort.getOrtszuordnungTyp())
+            if (("E".equals(ort.getTypeRegulation())
+                    || "R".equals(ort.getTypeRegulation())
                     && probe.getRegulationId() != 4)
-                    || "R".equals(ort.getOrtszuordnungTyp())
+                    || "R".equals(ort.getTypeRegulation())
                 && probe.getRegulationId() == 4
             ) {
                 return null;

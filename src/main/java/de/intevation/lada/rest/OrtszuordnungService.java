@@ -111,7 +111,7 @@ public class OrtszuordnungService extends LadaService {
     ) {
         QueryBuilder<Ortszuordnung> builder =
             repository.queryBuilder(Ortszuordnung.class);
-        builder.and("probeId", probeId);
+        builder.and("sampleId", probeId);
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
             Ortszuordnung.class);

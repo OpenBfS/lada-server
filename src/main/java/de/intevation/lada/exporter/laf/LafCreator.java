@@ -317,21 +317,21 @@ implements Creator {
     private String writeOrt(Sample probe) {
         QueryBuilder<Ortszuordnung> builder =
             repository.queryBuilder(Ortszuordnung.class);
-        builder.and("probeId", probe.getId());
+        builder.and("sampleId", probe.getId());
         Response objects = repository.filter(builder.getQuery());
         List<Ortszuordnung> orte =
             (List<Ortszuordnung>) objects.getData();
 
         String laf = "";
         for (Ortszuordnung o : orte) {
-            if ("E".equals(o.getOrtszuordnungTyp())
-                || "R".equals(o.getOrtszuordnungTyp())) {
+            if ("E".equals(o.getTypeRegulation())
+                || "R".equals(o.getTypeRegulation())) {
                 laf += writeOrtData(o, "P_");
             }
         }
         for (Ortszuordnung o : orte) {
-            if ("U".equals(o.getOrtszuordnungTyp())
-                || "R".equals(o.getOrtszuordnungTyp())) {
+            if ("U".equals(o.getTypeRegulation())
+                || "R".equals(o.getTypeRegulation())) {
                 laf += "%URSPRUNGSORT%\n";
                 laf += writeOrtData(o, "U_");
             }
@@ -348,14 +348,14 @@ implements Creator {
     @SuppressWarnings("unchecked")
     private String writeOrtData(Ortszuordnung o, String typePrefix) {
         String laf = "";
-        if (o.getOrtszusatztext() != null
-            && o.getOrtszusatztext().length() > 0
+        if (o.getAddSiteText() != null
+            && o.getAddSiteText().length() > 0
         ) {
             laf += lafLine(typePrefix + "ORTS_ZUSATZTEXT",
-                o.getOrtszusatztext(), CN);
+                o.getAddSiteText(), CN);
         }
         QueryBuilder<Site> oBuilder = repository.queryBuilder(Site.class);
-        oBuilder.and("id", o.getOrtId());
+        oBuilder.and("id", o.getSiteId());
         List<Site> sOrte =
             (List<Site>) repository.filter(
                 oBuilder.getQuery()
@@ -386,24 +386,24 @@ implements Creator {
         koord += sOrte.get(0).getCoordYExt() + "\"";
         laf += lafLine(typePrefix + "KOORDINATEN_S", koord);
 
-        if ("P_".equals(typePrefix) && o.getOzId() != null) {
+        if ("P_".equals(typePrefix) && o.getPoiId() != null) {
             laf += lafLine(
                 typePrefix + "ORTS_ZUSATZCODE",
-                o.getOzId(),
+                o.getPoiId(),
                 CN);
         } else if ("U_".equals(typePrefix)
-            && "R".equals(o.getOrtszuordnungTyp())
+            && "R".equals(o.getTypeRegulation())
         ) {
             laf += lafLine(
                 typePrefix + "ORTS_ZUSATZCODE",
                 sOrte.get(0).getExtId(),
                 CN);
         } else if ("U_".equals(typePrefix)
-            && o.getOzId() != null
+            && o.getPoiId() != null
         ) {
             laf += lafLine(
                 typePrefix + "ORTS_ZUSATZCODE",
-                o.getOzId(),
+                o.getPoiId(),
                 CN);
         }
 //        if (sOrte.get(0).getHoeheUeberNn() != null) {

@@ -621,7 +621,7 @@ public class JsonExporter implements Exporter {
     private void addOrtszuordung(JsonNode node) {
         QueryBuilder<Ortszuordnung> builder =
             repository.queryBuilder(Ortszuordnung.class);
-        builder.and("probeId", node.get("id").asInt());
+        builder.and("sampleId", node.get("id").asInt());
         List<Ortszuordnung> ortszuordnung =
             repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();

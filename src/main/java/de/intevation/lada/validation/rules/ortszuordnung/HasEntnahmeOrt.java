@@ -31,18 +31,18 @@ public class HasEntnahmeOrt implements Rule {
         Integer id = null;
         if (object instanceof Ortszuordnung) {
             Ortszuordnung ort = (Ortszuordnung) object;
-            if (!"E".equals(ort.getOrtszuordnungTyp())) {
+            if (!"E".equals(ort.getTypeRegulation())) {
                 return null;
             }
-            id = ort.getProbeId();
+            id = ort.getSampleId();
             QueryBuilder<Ortszuordnung> builder =
                 repository.queryBuilder(Ortszuordnung.class);
 
-            builder.and("probeId", id);
+            builder.and("sampleId", id);
             List<Ortszuordnung> orte = repository.filterPlain(
                 builder.getQuery());
             for (Ortszuordnung o : orte) {
-                if ("E".equals(o.getOrtszuordnungTyp())
+                if ("E".equals(o.getTypeRegulation())
                     && !o.getId().equals(ort.getId())
                 ) {
                     Violation violation = new Violation();

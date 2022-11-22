@@ -302,8 +302,8 @@ public class ObjectMerger {
     ) {
         QueryBuilder<Ortszuordnung> builder =
             repository.queryBuilder(Ortszuordnung.class);
-        builder.and("probeId", probeId);
-        builder.and("ortszuordnungTyp", "E");
+        builder.and("sampleId", probeId);
+        builder.and("typeRegulation", "E");
         List<Ortszuordnung> found =
             repository.filterPlain(builder.getQuery());
         if (found.isEmpty()) {
@@ -341,9 +341,9 @@ public class ObjectMerger {
         QueryBuilder<Ortszuordnung> builder =
             repository.queryBuilder(Ortszuordnung.class);
         for (int i = 0; i < orte.size(); i++) {
-            builder.and("probeId", probeId);
-            builder.and("ortszuordnungTyp", "U");
-            builder.and("ortId", orte.get(i).getOrtId());
+            builder.and("sampleId", probeId);
+            builder.and("typeRegulation", "U");
+            builder.and("siteId", orte.get(i).getSiteId());
             List<Ortszuordnung> found =
                 repository.filterPlain(builder.getQuery());
             if (found.isEmpty()) {
