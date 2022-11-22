@@ -18,7 +18,7 @@ import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
-import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -298,13 +298,13 @@ public class ObjectMerger {
      */
     public ObjectMerger mergeEntnahmeOrt(
         int probeId,
-        Ortszuordnung ort
+        Geolocat ort
     ) {
-        QueryBuilder<Ortszuordnung> builder =
-            repository.queryBuilder(Ortszuordnung.class);
+        QueryBuilder<Geolocat> builder =
+            repository.queryBuilder(Geolocat.class);
         builder.and("sampleId", probeId);
         builder.and("typeRegulation", "E");
-        List<Ortszuordnung> found =
+        List<Geolocat> found =
             repository.filterPlain(builder.getQuery());
         if (found.isEmpty()) {
             repository.create(ort);
@@ -336,15 +336,15 @@ public class ObjectMerger {
      */
     public ObjectMerger mergeUrsprungsOrte(
         int probeId,
-        List<Ortszuordnung> orte
+        List<Geolocat> orte
     ) {
-        QueryBuilder<Ortszuordnung> builder =
-            repository.queryBuilder(Ortszuordnung.class);
+        QueryBuilder<Geolocat> builder =
+            repository.queryBuilder(Geolocat.class);
         for (int i = 0; i < orte.size(); i++) {
             builder.and("sampleId", probeId);
             builder.and("typeRegulation", "U");
             builder.and("siteId", orte.get(i).getSiteId());
-            List<Ortszuordnung> found =
+            List<Geolocat> found =
                 repository.filterPlain(builder.getQuery());
             if (found.isEmpty()) {
                 repository.create(orte.get(i));

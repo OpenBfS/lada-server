@@ -25,8 +25,8 @@ import javax.ws.rs.core.MultivaluedMap;
 
 
 @Entity
-@Table(name = "geolocat", schema = SchemaName.NAME)
-public class Ortszuordnung implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class Geolocat implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -68,7 +68,7 @@ public class Ortszuordnung implements Serializable {
     @Transient
     private Timestamp parentModified;
 
-    public Ortszuordnung() {
+    public Geolocat() {
     }
 
     public Integer getId() {

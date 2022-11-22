@@ -22,7 +22,7 @@ import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
-import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.land.ZusatzWert;
@@ -315,21 +315,21 @@ implements Creator {
      */
     @SuppressWarnings("unchecked")
     private String writeOrt(Sample probe) {
-        QueryBuilder<Ortszuordnung> builder =
-            repository.queryBuilder(Ortszuordnung.class);
+        QueryBuilder<Geolocat> builder =
+            repository.queryBuilder(Geolocat.class);
         builder.and("sampleId", probe.getId());
         Response objects = repository.filter(builder.getQuery());
-        List<Ortszuordnung> orte =
-            (List<Ortszuordnung>) objects.getData();
+        List<Geolocat> orte =
+            (List<Geolocat>) objects.getData();
 
         String laf = "";
-        for (Ortszuordnung o : orte) {
+        for (Geolocat o : orte) {
             if ("E".equals(o.getTypeRegulation())
                 || "R".equals(o.getTypeRegulation())) {
                 laf += writeOrtData(o, "P_");
             }
         }
-        for (Ortszuordnung o : orte) {
+        for (Geolocat o : orte) {
             if ("U".equals(o.getTypeRegulation())
                 || "R".equals(o.getTypeRegulation())) {
                 laf += "%URSPRUNGSORT%\n";
@@ -342,11 +342,11 @@ implements Creator {
     /**
      * Write {@link LOrt} attributes.
      *
-     * @param Ortszuordnung
+     * @param Geolocat
      * @return LAF conform string
      */
     @SuppressWarnings("unchecked")
-    private String writeOrtData(Ortszuordnung o, String typePrefix) {
+    private String writeOrtData(Geolocat o, String typePrefix) {
         String laf = "";
         if (o.getAddSiteText() != null
             && o.getAddSiteText().length() > 0

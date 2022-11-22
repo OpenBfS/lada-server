@@ -37,7 +37,7 @@ import org.jboss.logging.Logger;
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.master.AdminUnit;
@@ -200,7 +200,7 @@ public class OrtService extends LadaService {
             orte = orte.subList(start, end);
         }
         for (Site o : orte) {
-            List<Ortszuordnung> zuordnungs = getOrtsZuordnungs(o);
+            List<Geolocat> zuordnungs = getOrtsZuordnungs(o);
             o.setReferenceCount(zuordnungs.size());
             o.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
             List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(o);
@@ -235,7 +235,7 @@ public class OrtService extends LadaService {
         if (ort == null) {
             return new Response(false, StatusCodes.NOT_EXISTING, null);
         }
-        List<Ortszuordnung> zuordnungs = getOrtsZuordnungs(ort);
+        List<Geolocat> zuordnungs = getOrtsZuordnungs(ort);
         ort.setReferenceCount(zuordnungs.size());
         ort.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
         List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(ort);
@@ -460,9 +460,9 @@ public class OrtService extends LadaService {
      * @param o Ort instance
      * @return Ortszuordnung instances as list
      */
-    private List<Ortszuordnung> getOrtsZuordnungs(Site o) {
-        QueryBuilder<Ortszuordnung> refBuilder =
-            repository.queryBuilder(Ortszuordnung.class);
+    private List<Geolocat> getOrtsZuordnungs(Site o) {
+        QueryBuilder<Geolocat> refBuilder =
+            repository.queryBuilder(Geolocat.class);
         refBuilder.and("siteId", o.getId());
         return repository.filterPlain(refBuilder.getQuery());
     }
@@ -473,9 +473,9 @@ public class OrtService extends LadaService {
      *                   the ort to check
      * @return Number of references as int
      */
-    private int getPlausibleRefCount(List<Ortszuordnung> zuordnungs) {
+    private int getPlausibleRefCount(List<Geolocat> zuordnungs) {
         Map<Integer, Integer> plausibleMap = new HashMap<Integer, Integer>();
-        for (Ortszuordnung zuordnung: zuordnungs) {
+        for (Geolocat zuordnung: zuordnungs) {
             EntityManager em = repository.entityManager();
 
             CriteriaBuilder mesBuilder = em.getCriteriaBuilder();

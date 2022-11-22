@@ -22,7 +22,7 @@ import javax.ws.rs.QueryParam;
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
-import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -109,17 +109,17 @@ public class OrtszuordnungService extends LadaService {
     public Response get(
         @QueryParam("probeId") @NotNull Integer probeId
     ) {
-        QueryBuilder<Ortszuordnung> builder =
-            repository.queryBuilder(Ortszuordnung.class);
+        QueryBuilder<Geolocat> builder =
+            repository.queryBuilder(Geolocat.class);
         builder.and("sampleId", probeId);
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
-            Ortszuordnung.class);
+            Geolocat.class);
         if (r.getSuccess()) {
             @SuppressWarnings("unchecked")
-            List<Ortszuordnung> ortszuordnungs =
-                (List<Ortszuordnung>) r.getData();
-            for (Ortszuordnung otz: ortszuordnungs) {
+            List<Geolocat> ortszuordnungs =
+                (List<Geolocat>) r.getData();
+            for (Geolocat otz: ortszuordnungs) {
                 Violation violation = validator.validate(otz);
                 if (violation.hasErrors() || violation.hasWarnings()) {
                     otz.setErrors(violation.getErrors());
@@ -143,8 +143,8 @@ public class OrtszuordnungService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(Ortszuordnung.class, id);
-        Ortszuordnung ort = (Ortszuordnung) response.getData();
+        Response response = repository.getById(Geolocat.class, id);
+        Geolocat ort = (Geolocat) response.getData();
         Violation violation = validator.validate(ort);
         if (violation.hasErrors() || violation.hasWarnings()) {
             response.setErrors(violation.getErrors());
@@ -152,7 +152,7 @@ public class OrtszuordnungService extends LadaService {
         }
         return authorization.filter(
             response,
-            Ortszuordnung.class);
+            Geolocat.class);
     }
 
     /**
@@ -180,12 +180,12 @@ public class OrtszuordnungService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        Ortszuordnung ort
+        Geolocat ort
     ) {
         if (!authorization.isAuthorized(
                 ort,
                 RequestMethod.POST,
-                Ortszuordnung.class)) {
+                Geolocat.class)) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         Violation violation = validator.validate(ort);
@@ -205,7 +205,7 @@ public class OrtszuordnungService extends LadaService {
 
         return authorization.filter(
             response,
-            Ortszuordnung.class);
+            Geolocat.class);
     }
 
     /**
@@ -234,12 +234,12 @@ public class OrtszuordnungService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        Ortszuordnung ort
+        Geolocat ort
     ) {
         if (!authorization.isAuthorized(
                 ort,
                 RequestMethod.PUT,
-                Ortszuordnung.class)) {
+                Geolocat.class)) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         if (lock.isLocked(ort)) {
@@ -263,7 +263,7 @@ public class OrtszuordnungService extends LadaService {
         }
         return authorization.filter(
             response,
-            Ortszuordnung.class);
+            Geolocat.class);
     }
 
     /**
@@ -277,11 +277,11 @@ public class OrtszuordnungService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        Ortszuordnung ortObj = repository.getByIdPlain(Ortszuordnung.class, id);
+        Geolocat ortObj = repository.getByIdPlain(Geolocat.class, id);
         if (!authorization.isAuthorized(
                 ortObj,
                 RequestMethod.PUT,
-                Ortszuordnung.class)) {
+                Geolocat.class)) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         if (lock.isLocked(ortObj)) {

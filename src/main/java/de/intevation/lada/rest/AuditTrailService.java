@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.intevation.lada.model.land.AuditTrailMeasmView;
 import de.intevation.lada.model.land.AuditTrailSampleView;
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -166,11 +166,11 @@ public class AuditTrailService extends LadaService {
         UserInfo userInfo = authorization.getInfo();
 
         //Get ort ids connected to this probe
-        QueryBuilder<Ortszuordnung> refBuilder =
-            repository.queryBuilder(Ortszuordnung.class);
+        QueryBuilder<Geolocat> refBuilder =
+            repository.queryBuilder(Geolocat.class);
         refBuilder.and("sampleId", pId);
         List<Integer> ortIds = new LinkedList<Integer>();
-        for (Ortszuordnung zuordnung
+        for (Geolocat zuordnung
             : repository.filterPlain(refBuilder.getQuery())
         ) {
             ortIds.add(zuordnung.getSiteId());

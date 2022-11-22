@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -44,13 +44,13 @@ public class HasREIMesspunkt implements Rule {
         }
         if (probe.getReiAgGrId() != null
             || Integer.valueOf(4).equals(probe.getRegulationId())) {
-            QueryBuilder<Ortszuordnung> builder =
-                repository.queryBuilder(Ortszuordnung.class);
+            QueryBuilder<Geolocat> builder =
+                repository.queryBuilder(Geolocat.class);
             builder.and("sampleId", id);
             Response response = repository.filter(builder.getQuery());
             @SuppressWarnings("unchecked")
-            List<Ortszuordnung> orte = (List<Ortszuordnung>) response.getData();
-            for (Ortszuordnung ort: orte) {
+            List<Geolocat> orte = (List<Geolocat>) response.getData();
+            for (Geolocat ort: orte) {
                 if ("R".equals(ort.getTypeRegulation())) {
                     return null;
                 }

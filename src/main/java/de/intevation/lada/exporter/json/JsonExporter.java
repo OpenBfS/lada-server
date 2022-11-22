@@ -47,7 +47,7 @@ import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
-import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.land.ZusatzWert;
@@ -619,10 +619,10 @@ public class JsonExporter implements Exporter {
     }
 
     private void addOrtszuordung(JsonNode node) {
-        QueryBuilder<Ortszuordnung> builder =
-            repository.queryBuilder(Ortszuordnung.class);
+        QueryBuilder<Geolocat> builder =
+            repository.queryBuilder(Geolocat.class);
         builder.and("sampleId", node.get("id").asInt());
-        List<Ortszuordnung> ortszuordnung =
+        List<Geolocat> ortszuordnung =
             repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();
         try {

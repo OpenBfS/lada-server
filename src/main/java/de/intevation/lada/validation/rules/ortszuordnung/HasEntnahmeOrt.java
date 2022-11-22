@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -29,19 +29,19 @@ public class HasEntnahmeOrt implements Rule {
     @Override
     public Violation execute(Object object) {
         Integer id = null;
-        if (object instanceof Ortszuordnung) {
-            Ortszuordnung ort = (Ortszuordnung) object;
+        if (object instanceof Geolocat) {
+            Geolocat ort = (Geolocat) object;
             if (!"E".equals(ort.getTypeRegulation())) {
                 return null;
             }
             id = ort.getSampleId();
-            QueryBuilder<Ortszuordnung> builder =
-                repository.queryBuilder(Ortszuordnung.class);
+            QueryBuilder<Geolocat> builder =
+                repository.queryBuilder(Geolocat.class);
 
             builder.and("sampleId", id);
-            List<Ortszuordnung> orte = repository.filterPlain(
+            List<Geolocat> orte = repository.filterPlain(
                 builder.getQuery());
-            for (Ortszuordnung o : orte) {
+            for (Geolocat o : orte) {
                 if ("E".equals(o.getTypeRegulation())
                     && !o.getId().equals(ort.getId())
                 ) {

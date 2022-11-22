@@ -25,7 +25,7 @@ import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
-import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.master.Site;
@@ -335,12 +335,12 @@ public class StatusService extends LadaService {
             }
 
             // validate orte
-            QueryBuilder<Ortszuordnung> ortBuilder =
-                repository.queryBuilder(Ortszuordnung.class);
+            QueryBuilder<Geolocat> ortBuilder =
+                repository.queryBuilder(Geolocat.class);
                 ortBuilder.and("sampleId", probe.getId());
-            List<Ortszuordnung> assignedOrte = repository.filterPlain(ortBuilder.getQuery());
+            List<Geolocat> assignedOrte = repository.filterPlain(ortBuilder.getQuery());
 
-            for (Ortszuordnung o : assignedOrte){
+            for (Geolocat o : assignedOrte){
                 violation = ortValidator.validate(repository.getByIdPlain(Site.class, o.getSiteId()));
                 violationCollection.addErrors(violation.getErrors());
                 violationCollection.addWarnings(violation.getWarnings());

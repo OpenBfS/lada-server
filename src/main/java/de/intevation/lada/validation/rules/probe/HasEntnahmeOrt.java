@@ -12,7 +12,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -49,13 +49,13 @@ public class HasEntnahmeOrt implements Rule {
                 return null;
         }
         List<String> zuordTypeFilter = Arrays.asList("E", "R");
-        QueryBuilder<Ortszuordnung> builder =
-            repository.queryBuilder(Ortszuordnung.class);
+        QueryBuilder<Geolocat> builder =
+            repository.queryBuilder(Geolocat.class);
         builder.and("sampleId", id);
         builder.andIn("typeRegulation", zuordTypeFilter);
         Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
-        List<Ortszuordnung> orte = (List<Ortszuordnung>) response.getData();
+        List<Geolocat> orte = (List<Geolocat>) response.getData();
 
         if (orte.size()>1) {
             Violation violation = new Violation();
@@ -63,7 +63,7 @@ public class HasEntnahmeOrt implements Rule {
             return violation;
         }
 
-        for (Ortszuordnung ort: orte) {
+        for (Geolocat ort: orte) {
             if (("E".equals(ort.getTypeRegulation())
                     || "R".equals(ort.getTypeRegulation())
                     && probe.getRegulationId() != 4)

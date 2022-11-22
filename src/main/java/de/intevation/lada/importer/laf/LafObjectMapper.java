@@ -39,7 +39,7 @@ import de.intevation.lada.model.land.CommMeasm;
 import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
-import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.land.ZusatzWert;
@@ -453,37 +453,37 @@ public class LafObjectMapper {
                     createReiMesspunkt(object, newProbe);
                 } else {
                     // Check if we have EOrte present
-                    QueryBuilder<Ortszuordnung> builderPresentEOrte =
-                        repository.queryBuilder(Ortszuordnung.class);
+                    QueryBuilder<Geolocat> builderPresentEOrte =
+                        repository.queryBuilder(Geolocat.class);
                         builderPresentEOrte.and("sampleId", newProbe.getId());
                         builderPresentEOrte.and("typeRegulation", "E");
-                    List<Ortszuordnung> presentEOrte = repository.filterPlain(builderPresentEOrte.getQuery());
+                    List<Geolocat> presentEOrte = repository.filterPlain(builderPresentEOrte.getQuery());
 
                     // Check if we have UOrte present
-                    QueryBuilder<Ortszuordnung> builderPresentUOrte =
-                        repository.queryBuilder(Ortszuordnung.class);
+                    QueryBuilder<Geolocat> builderPresentUOrte =
+                        repository.queryBuilder(Geolocat.class);
                         builderPresentUOrte.and("sampleId", newProbe.getId());
                         builderPresentUOrte.and("typeRegulation", "U");
-                    List<Ortszuordnung> presentUOrte = repository.filterPlain(builderPresentUOrte.getQuery());
+                    List<Geolocat> presentUOrte = repository.filterPlain(builderPresentUOrte.getQuery());
 
                     // Check if we have ROrte present
-                    QueryBuilder<Ortszuordnung> builderPresentROrte =
-                        repository.queryBuilder(Ortszuordnung.class);
+                    QueryBuilder<Geolocat> builderPresentROrte =
+                        repository.queryBuilder(Geolocat.class);
                         builderPresentROrte.and("sampleId", newProbe.getId());
                         builderPresentROrte.and("typeRegulation", "R");
-                    List<Ortszuordnung> presentROrte = repository.filterPlain(builderPresentROrte.getQuery());
+                    List<Geolocat> presentROrte = repository.filterPlain(builderPresentROrte.getQuery());
 
                     //Switch if we need to create an R-Ort
                     Boolean rOrt = false;
                     // First create or find entnahmeOrte and ursprungsOrte
                     // Create the new entnahmeOrt but do not persist
-                    Ortszuordnung eOrt = createOrtszuordnung(object.getEntnahmeOrt(), "E" , newProbe);
+                    Geolocat eOrt = createOrtszuordnung(object.getEntnahmeOrt(), "E" , newProbe);
 
                     //Create/Find Ursprungsort(e) from LAF
-                    List<Ortszuordnung> uOrte = new ArrayList<>();
+                    List<Geolocat> uOrte = new ArrayList<>();
                     //If object.getUrsprungsOrte().size() > 1
                     for (int i = 0; i < object.getUrsprungsOrte().size(); i++) {
-                        Ortszuordnung tmp =
+                        Geolocat tmp =
                             createOrtszuordnung(
                                 object.getUrsprungsOrte().get(i), "U", newProbe);
                         if (tmp != null) {
@@ -543,16 +543,16 @@ public class LafObjectMapper {
                     } else {
                         if (rOrt && presentROrte.size() == 1){
                             //we may have additional information for the ortszuordnung such as an ortszusatz, we make an update.
-                            QueryBuilder<Ortszuordnung> builderUOrt =
-                            repository.queryBuilder(Ortszuordnung.class);
+                            QueryBuilder<Geolocat> builderUOrt =
+                            repository.queryBuilder(Geolocat.class);
                             builderUOrt.and("sampleId", newProbe.getId());
                             builderUOrt.and("typeRegulation", "R");
                             Response uOrtQuery =
                                 repository.filter(builderUOrt.getQuery());
                             @SuppressWarnings("unchecked")
-                            List<Ortszuordnung> uOrteProbe = (List<Ortszuordnung>) uOrtQuery.getData();
+                            List<Geolocat> uOrteProbe = (List<Geolocat>) uOrtQuery.getData();
                             if (!uOrteProbe.isEmpty()){
-                                for (Ortszuordnung elemOrt : uOrteProbe){
+                                for (Geolocat elemOrt : uOrteProbe){
                                     repository.delete(elemOrt);
                                 }
                             }
@@ -568,16 +568,16 @@ public class LafObjectMapper {
                         }
                         // clean up ursprungsorte before!
                         if (object.getUrsprungsOrte().size() > 0 || presentUOrte.size() > 0){
-                            QueryBuilder<Ortszuordnung> builderUOrt =
-                                repository.queryBuilder(Ortszuordnung.class);
+                            QueryBuilder<Geolocat> builderUOrt =
+                                repository.queryBuilder(Geolocat.class);
                                 builderUOrt.and("sampleId", newProbe.getId());
                                 builderUOrt.and("typeRegulation", "U");
                             Response uOrtQuery =
                                 repository.filter(builderUOrt.getQuery());
                             @SuppressWarnings("unchecked")
-                            List<Ortszuordnung> uOrteProbe = (List<Ortszuordnung>) uOrtQuery.getData();
+                            List<Geolocat> uOrteProbe = (List<Geolocat>) uOrtQuery.getData();
                             if (!uOrteProbe.isEmpty()){
-                                for (Ortszuordnung elemOrt : uOrteProbe){
+                                for (Geolocat elemOrt : uOrteProbe){
                                     repository.delete(elemOrt);
                                 }
                             }
@@ -591,16 +591,16 @@ public class LafObjectMapper {
 
                                 //clean up entnahmeOrte before merge
 
-                                QueryBuilder<Ortszuordnung> builderEOrt =
-                                    repository.queryBuilder(Ortszuordnung.class);
+                                QueryBuilder<Geolocat> builderEOrt =
+                                    repository.queryBuilder(Geolocat.class);
                                     builderEOrt.and("sampleId", newProbe.getId());
                                     builderEOrt.and("typeRegulation", "E");
                                 Response eOrtQuery =
                                     repository.filter(builderEOrt.getQuery());
                                 @SuppressWarnings("unchecked")
-                                List<Ortszuordnung> eOrteProbe = (List<Ortszuordnung>) eOrtQuery.getData();
+                                List<Geolocat> eOrteProbe = (List<Geolocat>) eOrtQuery.getData();
                                 if (!eOrteProbe.isEmpty()){
-                                    for (Ortszuordnung elemOrt : eOrteProbe){
+                                    for (Geolocat elemOrt : eOrteProbe){
                                         repository.delete(elemOrt);
                                     }
                                 }
@@ -759,16 +759,16 @@ public class LafObjectMapper {
         doTransformations(kommentar, CommSample.class, "kommentarp");
     }
 
-    private void doDefaults(Ortszuordnung ort) {
-        doDefaults(ort, Ortszuordnung.class, "ortszuordnung");
+    private void doDefaults(Geolocat ort) {
+        doDefaults(ort, Geolocat.class, "ortszuordnung");
     }
 
-    private void doConverts(Ortszuordnung ort) {
-        doConverts(ort, Ortszuordnung.class, "ortszuordnung");
+    private void doConverts(Geolocat ort) {
+        doConverts(ort, Geolocat.class, "ortszuordnung");
     }
 
-    private void doTransforms(Ortszuordnung ort) {
-        doTransformations(ort, Ortszuordnung.class, "ortszuordnung");
+    private void doTransforms(Geolocat ort) {
+        doTransformations(ort, Geolocat.class, "ortszuordnung");
     }
 
     private void doDefaults(Site o) {
@@ -1698,10 +1698,10 @@ public class LafObjectMapper {
 
     private void createReiMesspunkt(LafRawData.Sample object, Sample probe) {
 
-        QueryBuilder<Ortszuordnung> builder =
-            repository.queryBuilder(Ortszuordnung.class);
+        QueryBuilder<Geolocat> builder =
+            repository.queryBuilder(Geolocat.class);
         builder.and("sampleId", probe.getId());
-        List<Ortszuordnung> zuordnungen =
+        List<Geolocat> zuordnungen =
             repository.filterPlain(builder.getQuery());
         if (!zuordnungen.isEmpty()) {
             // Sample already has an ort.
@@ -1720,7 +1720,7 @@ public class LafObjectMapper {
             List<Site> messpunkte =
                 repository.filterPlain(builder1.getQuery());
             if (!messpunkte.isEmpty()) {
-                Ortszuordnung ort = new Ortszuordnung();
+                Geolocat ort = new Geolocat();
                 ort.setTypeRegulation("R");
                 ort.setSampleId(probe.getId());
                 ort.setSiteId(messpunkte.get(0).getId());
@@ -1768,7 +1768,7 @@ public class LafObjectMapper {
                         o.setReiNuclFacilGrId(ktaGrp.get(0).getId());
                         repository.update(o);
 
-                        Ortszuordnung ort = new Ortszuordnung();
+                        Geolocat ort = new Geolocat();
                         ort.setSiteId(o.getId());
                         ort.setTypeRegulation("R");
                         ort.setSampleId(probe.getId());
@@ -1806,7 +1806,7 @@ public class LafObjectMapper {
             }
             o.setSiteClassId(3);
             repository.update(o);
-            Ortszuordnung ort = new Ortszuordnung();
+            Geolocat ort = new Geolocat();
             ort.setSiteId(o.getId());
             ort.setTypeRegulation("R");
             ort.setSampleId(probe.getId());
@@ -1824,7 +1824,7 @@ public class LafObjectMapper {
         return;
     }
 
-    private Ortszuordnung createOrtszuordnung(
+    private Geolocat createOrtszuordnung(
         Map<String, String> rawOrt,
         String type,
         Sample probe
@@ -1832,7 +1832,7 @@ public class LafObjectMapper {
         if (rawOrt.isEmpty()) {
             return null;
         }
-        Ortszuordnung ort = new Ortszuordnung();
+        Geolocat ort = new Geolocat();
         ort.setTypeRegulation(type);
         ort.setSampleId(probe.getId());
         if (type.equals("E")) {type = "P";}

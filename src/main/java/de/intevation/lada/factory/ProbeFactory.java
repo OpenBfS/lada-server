@@ -26,7 +26,7 @@ import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.land.MpgMmtMp;
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
-import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.ZusatzWert;
@@ -514,7 +514,7 @@ public class ProbeFactory {
         }
         currentProtocol.put("mmt", messungProtocol);
         for (OrtszuordnungMp ort : orte) {
-            Ortszuordnung ortP = new Ortszuordnung();
+            Geolocat ortP = new Geolocat();
             ortP.setTypeRegulation(ort.getOrtszuordnungTyp());
             ortP.setSampleId(probe.getId());
             ortP.setSiteId(ort.getOrtId());

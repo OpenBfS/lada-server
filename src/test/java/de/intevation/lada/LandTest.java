@@ -33,7 +33,7 @@ import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
-import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.test.land.KommentarMTest;
@@ -343,7 +343,7 @@ public class LandTest extends BaseTest {
         protocol.setType("insert ortszuordnung");
         protocol.addInfo("database", "Insert Ortszuordnung into database");
         testProtocol.add(protocol);
-        Ortszuordnung ortszuordnung = em.find(Ortszuordnung.class, ID1000);
+        Geolocat ortszuordnung = em.find(Geolocat.class, ID1000);
         Assert.assertNotNull(ortszuordnung);
         protocol.setPassed(true);
     }

@@ -11,7 +11,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.annotation.ValidationConfig;
@@ -37,7 +37,7 @@ public class OrtszuordnungValidator implements Validator {
     @Override
     public Violation validate(Object object) {
         Violation violations = new Violation();
-        if (!(object instanceof Ortszuordnung)
+        if (!(object instanceof Geolocat)
             && !(object instanceof OrtszuordnungMp)
         ) {
             violations.addError("ortszuordnung", StatusCodes.NOT_A_PROBE);

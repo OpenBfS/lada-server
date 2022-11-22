@@ -23,7 +23,7 @@ import de.intevation.lada.model.land.Mpg;
 import de.intevation.lada.model.land.MpgMmtMp;
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
-import de.intevation.lada.model.land.Ortszuordnung;
+import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.OrtszuordnungMp;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProtokoll;
@@ -126,7 +126,7 @@ public class HeaderAuthorization implements Authorization {
         this.authorizers = Map.ofEntries(
             Map.entry(Sample.class, probeAuthorizer),
             Map.entry(Measm.class, messungAuthorizer),
-            Map.entry(Ortszuordnung.class, pIdAuthorizer),
+            Map.entry(Geolocat.class, pIdAuthorizer),
             Map.entry(CommSample.class, pIdAuthorizer),
             Map.entry(ZusatzWert.class, pIdAuthorizer),
             Map.entry(CommMeasm.class, mIdAuthorizer),
