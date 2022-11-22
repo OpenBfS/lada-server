@@ -1,8 +1,8 @@
 {
-    "mstId": "06010",
-    "messungsId": 1200,
-    "statusKombi":1,
-    "datum": "1336633740000",
+    "measFacilId": "06010",
+    "measmId": 1200,
+    "statusComb":1,
+    "date": "1336633740000",
     "text": "Status geändert"
 }
 
