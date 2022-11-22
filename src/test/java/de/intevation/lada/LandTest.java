@@ -177,7 +177,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore("Service payload not yet translated")
     @InSequence(T8)
     @RunAsClient
     public final void testZusatzwert(@ArquillianResource URL baseUrl)

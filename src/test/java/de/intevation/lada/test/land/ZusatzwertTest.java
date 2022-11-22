@@ -40,8 +40,8 @@ public class ZusatzwertTest extends ServiceTest {
         super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung",
-            "treeModified"
+            "lastMod",
+            "treeMod"
         });
 
         // Prepare expected probe object
@@ -68,7 +68,7 @@ public class ZusatzwertTest extends ServiceTest {
         get("zusatzwert", "rest/zusatzwert?probeId=1000");
         getById("zusatzwert", "rest/zusatzwert/1000", expectedById);
         JsonObject created = create("zusatzwert", "rest/zusatzwert", create);
-        update("zusatzwert", "rest/zusatzwert/1000", "pzsId", "A75", "A74");
+        update("zusatzwert", "rest/zusatzwert/1000", "sampleSpecifId", "A75", "A74");
         delete(
             "zusatzwert",
             "rest/zusatzwert/" + created.getJsonObject("data").get("id"));
