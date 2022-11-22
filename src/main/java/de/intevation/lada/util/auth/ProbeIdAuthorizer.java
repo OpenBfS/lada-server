@@ -34,7 +34,7 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         Integer id;
         Method m;
         try {
-            m = clazz.getMethod("getProbeId");
+            m = clazz.getMethod("getSampleId");
         } catch (NoSuchMethodException | SecurityException e1) {
             return false;
         }
@@ -94,7 +94,7 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         try {
-            Method getProbeId = clazz.getMethod("getProbeId");
+            Method getProbeId = clazz.getMethod("getSampleId");
             Integer id = (Integer) getProbeId.invoke(data);
             Sample probe =
                 (Sample) repository.getById(
