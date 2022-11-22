@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.model.master;
 
-import de.intevation.lada.model.land.TagZuordnung;
+import de.intevation.lada.model.land.TagLink;
 
 import java.sql.Timestamp;
 import java.util.Set;
@@ -60,7 +60,7 @@ public class Tag {
     @OneToMany
     @JoinColumn(name = "tag_id", updatable = false)
     @JsonbTransient
-    private Set<TagZuordnung> tagZuordnungs;
+    private Set<TagLink> tagZuordnungs;
 
     private boolean isAutoTag;
 
@@ -93,11 +93,11 @@ public class Tag {
         this.measFacilId = measFacilId;
     }
 
-    public Set<TagZuordnung> getTagZuordnungs() {
+    public Set<TagLink> getTagZuordnungs() {
         return this.tagZuordnungs;
     }
 
-    public void setTagZuordnungs(Set<TagZuordnung> tagZuordnungs) {
+    public void setTagZuordnungs(Set<TagLink> tagZuordnungs) {
         this.tagZuordnungs = tagZuordnungs;
     }
 

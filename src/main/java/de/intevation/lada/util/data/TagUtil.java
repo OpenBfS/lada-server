@@ -25,7 +25,7 @@ import javax.persistence.criteria.Root;
 
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.TagZuordnung;
+import de.intevation.lada.model.land.TagLink;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.rest.Response;
 
@@ -125,14 +125,14 @@ public class TagUtil {
 
         //Set tags
         probes.forEach(probe -> {
-            TagZuordnung zuordnung = new TagZuordnung();
+            TagLink zuordnung = new TagLink();
             zuordnung.setTagId(tagId);
             zuordnung.setSampleId(probe.getId());
             repository.create(zuordnung);
         });
 
         messungs.forEach(messung -> {
-            TagZuordnung zuordnung = new TagZuordnung();
+            TagLink zuordnung = new TagLink();
             zuordnung.setTagId(tagId);
             zuordnung.setMeasmId(messung.getId());
             repository.create(zuordnung);

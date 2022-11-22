@@ -15,8 +15,8 @@ import javax.persistence.Table;
 
 
 @Entity
-@Table(name = "tag_link", schema = SchemaName.NAME)
-public class TagZuordnung {
+@Table(schema = SchemaName.NAME)
+public class TagLink {
     public static final long serialVersionUID = 1L;
 
     @Id

@@ -16,7 +16,7 @@ import javax.persistence.Query;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import de.intevation.lada.model.land.TagZuordnung;
+import de.intevation.lada.model.land.TagLink;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -71,12 +71,12 @@ public class TagZuordnungService extends LadaService {
     @POST
     @Path("/")
     public Response createTagReference(
-        List<TagZuordnung> zuordnungs
+        List<TagLink> zuordnungs
     ) {
         //Create Response
         List<Response> responseList = new ArrayList<>();
 
-        for (TagZuordnung zuordnung: zuordnungs) {
+        for (TagLink zuordnung: zuordnungs) {
             // Check if payload contains sensible information
             Integer tagId = zuordnung.getTagId();
             if (tagId == null
@@ -95,7 +95,7 @@ public class TagZuordnungService extends LadaService {
             }
 
             if (!authorization.isAuthorized(
-                    zuordnung, RequestMethod.POST, TagZuordnung.class)
+                    zuordnung, RequestMethod.POST, TagLink.class)
             ) {
                 responseList.add(new Response(
                         false, StatusCodes.NOT_ALLOWED, zuordnung));
@@ -143,11 +143,11 @@ public class TagZuordnungService extends LadaService {
     @POST
     @Path("/delete")
     public Response deleteTagReference(
-        List<TagZuordnung> zuordnungs
+        List<TagLink> zuordnungs
     ) {
         List<Response> responseList = new ArrayList<>();
 
-        for (TagZuordnung zuordnung: zuordnungs) {
+        for (TagLink zuordnung: zuordnungs) {
             if (!isExisting(zuordnung)) {
                 responseList.add(new Response(
                         true, StatusCodes.OK, zuordnung));
@@ -157,7 +157,7 @@ public class TagZuordnungService extends LadaService {
             if (!authorization.isAuthorized(
                     zuordnung,
                     RequestMethod.DELETE,
-                    TagZuordnung.class)
+                    TagLink.class)
             ) {
                 responseList.add(new Response(
                         false,
@@ -170,7 +170,7 @@ public class TagZuordnungService extends LadaService {
             responseList.add(
                 repository.delete(
                     repository.getSinglePlain(
-                        repository.queryBuilder(TagZuordnung.class)
+                        repository.queryBuilder(TagLink.class)
                         .and("tagId", zuordnung.getTagId())
                         .and("sampleId", zuordnung.getSampleId())
                         .and("measmId", zuordnung.getMeasmId())
@@ -179,7 +179,7 @@ public class TagZuordnungService extends LadaService {
         return new Response(true, StatusCodes.OK, responseList);
     }
 
-    private Boolean isExisting(TagZuordnung zuordnung) {
+    private Boolean isExisting(TagLink zuordnung) {
         // Check if tag is already assigned
         final String tagIdParam = "tagId",
             taggedIdParam = "taggedId";

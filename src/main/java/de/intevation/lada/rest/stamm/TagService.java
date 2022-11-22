@@ -26,7 +26,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.land.TagZuordnung;
+import de.intevation.lada.model.land.TagLink;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -99,7 +99,7 @@ public class TagService extends LadaService {
         List<Tag> result;
         if (!pIds.isEmpty() || !mIds.isEmpty()) {
             // Return only tags assigned to all given Sample or Messung objects
-            Join<Tag, TagZuordnung> joinTagZuordnung =
+            Join<Tag, TagLink> joinTagZuordnung =
                 root.join("tagZuordnungs");
             // Work-around missing SQL INTERSECTION in JPA:
             final String filterBy = pIds.isEmpty() ? "measmId" : "sampleId";
