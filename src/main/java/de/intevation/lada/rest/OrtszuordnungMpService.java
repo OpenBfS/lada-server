@@ -111,7 +111,7 @@ public class OrtszuordnungMpService extends LadaService {
     ) {
         QueryBuilder<OrtszuordnungMp> builder =
             repository.queryBuilder(OrtszuordnungMp.class);
-        builder.and("messprogrammId", messprogrammId);
+        builder.and("mpgId", messprogrammId);
         Response r =  authorization.filter(
             repository.filter(builder.getQuery()),
             OrtszuordnungMp.class);

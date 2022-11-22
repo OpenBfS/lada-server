@@ -423,7 +423,7 @@ public class ProbeFactory {
 
         QueryBuilder<OrtszuordnungMp> builderOrt =
             repository.queryBuilder(OrtszuordnungMp.class);
-        builderOrt.and("messprogrammId", messprogramm.getId());
+        builderOrt.and("mpgId", messprogramm.getId());
         List<OrtszuordnungMp> orte =
             repository.filterPlain(builderOrt.getQuery());
 
@@ -438,7 +438,7 @@ public class ProbeFactory {
             currentProtocol.put("mmt", messungProtocol);
             for (OrtszuordnungMp ort : orte) {
                 Site o = repository.getByIdPlain(
-                    Site.class, ort.getOrtId());
+                    Site.class, ort.getSiteId());
                 currentProtocol.put("gemId", o.getMunicId());
             }
             return proben.get(0);
@@ -515,11 +515,11 @@ public class ProbeFactory {
         currentProtocol.put("mmt", messungProtocol);
         for (OrtszuordnungMp ort : orte) {
             Geolocat ortP = new Geolocat();
-            ortP.setTypeRegulation(ort.getOrtszuordnungTyp());
+            ortP.setTypeRegulation(ort.getTypeRegulation());
             ortP.setSampleId(probe.getId());
-            ortP.setSiteId(ort.getOrtId());
-            ortP.setPoiId(ort.getOzId());
-            ortP.setAddSiteText(ort.getOrtszusatztext());
+            ortP.setSiteId(ort.getSiteId());
+            ortP.setPoiId(ort.getPoiId());
+            ortP.setAddSiteText(ort.getAddSiteText());
             createObject(ortP, dryrun);
             Site o = repository.getByIdPlain(
                 Site.class, ortP.getSiteId());

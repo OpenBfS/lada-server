@@ -507,7 +507,7 @@ public class OrtService extends LadaService {
     private List<OrtszuordnungMp> getOrtsZuordnungsMp(Site o) {
         QueryBuilder<OrtszuordnungMp> refBuilder =
             repository.queryBuilder(OrtszuordnungMp.class);
-        refBuilder.and("ortId", o.getId());
+        refBuilder.and("siteId", o.getId());
         return repository.filterPlain(refBuilder.getQuery());
     }
 }

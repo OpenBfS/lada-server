@@ -53,18 +53,18 @@ public class HasEntnahmeOrt implements Rule {
             }
         } else if (object instanceof OrtszuordnungMp) {
             OrtszuordnungMp ort = (OrtszuordnungMp) object;
-            if (!"E".equals(ort.getOrtszuordnungTyp())) {
+            if (!"E".equals(ort.getTypeRegulation())) {
                 return null;
             }
-            id = ort.getMessprogrammId();
+            id = ort.getMpgId();
             QueryBuilder<OrtszuordnungMp> builder =
                 repository.queryBuilder(OrtszuordnungMp.class);
 
-            builder.and("messprogrammId", id);
+            builder.and("mpgId", id);
             List<OrtszuordnungMp> orte = repository.filterPlain(
                 builder.getQuery());
             for (OrtszuordnungMp o : orte) {
-                if ("E".equals(o.getOrtszuordnungTyp())
+                if ("E".equals(o.getTypeRegulation())
                     && !o.getId().equals(ort.getId())
                 ) {
                     Violation violation = new Violation();

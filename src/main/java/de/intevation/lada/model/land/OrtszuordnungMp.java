@@ -22,12 +22,8 @@ import javax.ws.rs.core.MultivaluedMap;
 
 
 
-/**
- * The persistent class for the ortszuordnung_mp database table.
- *
- */
 @Entity
-@Table(name = "ortszuordnung_mp", schema = SchemaName.LEGACY_NAME)
+@Table(name = "geolocat_mpg", schema = SchemaName.NAME)
 public class OrtszuordnungMp implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -35,25 +31,21 @@ public class OrtszuordnungMp implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
-    @Column(name = "messprogramm_id")
-    private Integer messprogrammId;
+    private Integer mpgId;
 
-    @Column(name = "ort_id")
-    private Integer ortId;
+    private Integer siteId;
 
-    @Column(name = "ortszuordnung_typ")
-    private String ortszuordnungTyp;
+    private String typeRegulation;
 
-    private String ortszusatztext;
+    private String addSiteText;
 
-    @Column(name = "oz_id")
-    private String ozId;
+    private String poiId;
 
-    @Column(name = "tree_modified", insertable = false, updatable = false)
-    private Timestamp treeModified;
+    @Column(insertable = false, updatable = false)
+    private Timestamp treeMod;
 
     @Transient
     private MultivaluedMap<String, Integer> errors;
@@ -78,60 +70,60 @@ public class OrtszuordnungMp implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
-    public Integer getMessprogrammId() {
-        return this.messprogrammId;
+    public Integer getMpgId() {
+        return this.mpgId;
     }
 
-    public void setMessprogrammId(Integer messprogrammId) {
-        this.messprogrammId = messprogrammId;
+    public void setMpgId(Integer mpgId) {
+        this.mpgId = mpgId;
     }
 
-    public Integer getOrtId() {
-        return this.ortId;
+    public Integer getSiteId() {
+        return this.siteId;
     }
 
-    public void setOrtId(Integer ortId) {
-        this.ortId = ortId;
+    public void setSiteId(Integer siteId) {
+        this.siteId = siteId;
     }
 
-    public String getOrtszuordnungTyp() {
-        return this.ortszuordnungTyp;
+    public String getTypeRegulation() {
+        return this.typeRegulation;
     }
 
-    public void setOrtszuordnungTyp(String ortszuordnungTyp) {
-        this.ortszuordnungTyp = ortszuordnungTyp;
+    public void setTypeRegulation(String typeRegulation) {
+        this.typeRegulation = typeRegulation;
     }
 
-    public String getOrtszusatztext() {
-        return this.ortszusatztext;
+    public String getAddSiteText() {
+        return this.addSiteText;
     }
 
-    public void setOrtszusatztext(String ortszusatztext) {
-        this.ortszusatztext = ortszusatztext;
+    public void setAddSiteText(String addSiteText) {
+        this.addSiteText = addSiteText;
     }
 
-    public String getOzId() {
-        return this.ozId;
+    public String getPoiId() {
+        return this.poiId;
     }
 
-    public void setOzId(String ozId) {
-        this.ozId = ozId;
+    public void setPoiId(String poiId) {
+        this.poiId = poiId;
     }
 
-    public Timestamp getTreeModified() {
-        return this.treeModified;
+    public Timestamp getTreeMod() {
+        return this.treeMod;
     }
 
-    public void setTreeModified(Timestamp treeModified) {
-        this.treeModified = treeModified;
+    public void setTreeMod(Timestamp treeModified) {
+        this.treeMod = treeModified;
     }
 
     public MultivaluedMap<String, Integer> getErrors() {
