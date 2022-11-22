@@ -5,7 +5,7 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.validation.rules.messung;
+package de.intevation.lada.validation.rules.messwert;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationRule("Messung")
+@ValidationRule("Messwert")
 public class MessgroesseToMessmethode implements Rule {
 
     @Inject
@@ -36,12 +36,9 @@ public class MessgroesseToMessmethode implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Measm messung = (Measm) object;
-
-        QueryBuilder<MeasVal> builder =
-            repository.queryBuilder(MeasVal.class)
-                .and("measmId", messung.getId());
-        List<MeasVal> messwerte = repository.filterPlain(builder.getQuery());
+        MeasVal messwert = (MeasVal) object;
+        Measm messung = repository.getByIdPlain(
+                Measm.class, messwert.getMeasmId());
 
         QueryBuilder<MmtMeasdView> mmtBuilder =
             repository.queryBuilder(MmtMeasdView.class)
@@ -50,24 +47,22 @@ public class MessgroesseToMessmethode implements Rule {
             repository.filterPlain(mmtBuilder.getQuery());
 
         Violation violation = new Violation();
-        for (MeasVal messwert : messwerte) {
-            boolean hit = false;
-            for (MmtMeasdView mmtM: mmtMs) {
-                if (messwert.getMeasdId().equals(
-                        mmtM.getMeasdId())) {
-                    hit = true;
-                }
-            }
-            if (!hit) {
-                Measd mg = repository.getByIdPlain(
-                    Measd.class, messwert.getMeasdId());
-                violation.addError(
-                    "messgroesse#" + messung.getMmtId()
-                    + " " + mg.getName(),
-                    StatusCodes.VALUE_NOT_MATCHING);
+        boolean hit = false;
+        for (MmtMeasdView mmtM: mmtMs) {
+            if (messwert.getMeasdId().equals(
+                    mmtM.getMeasdId())) {
+                hit = true;
             }
         }
-        if (violation.hasErrors()) {
+        if (!hit) {
+            Measd mg = repository.getByIdPlain(
+                Measd.class, messwert.getMeasdId());
+            violation.addWarning(
+                "messgroesse#" + messung.getMmtId()
+                + " " + mg.getName(),
+                StatusCodes.VALUE_NOT_MATCHING);
+        }
+        if (violation.hasWarnings()) {
             return violation;
         }
         return null;

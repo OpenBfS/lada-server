@@ -505,6 +505,7 @@ FROM master.env_descrip_env_medium_mp;
 ALTER TABLE IF EXISTS master.deskriptoren RENAME TO env_descrip;
 ALTER TABLE IF EXISTS master.env_descrip RENAME COLUMN vorgaenger TO pred_id;
 ALTER TABLE IF EXISTS master.env_descrip RENAME COLUMN ebene TO lev;
+ALTER TABLE IF EXISTS master.env_descrip RENAME COLUMN s_xx TO imis2_id;
 ALTER TABLE IF EXISTS master.env_descrip RENAME COLUMN sn TO lev_val;
 ALTER TABLE IF EXISTS master.env_descrip RENAME COLUMN beschreibung TO name;
 ALTER TABLE IF EXISTS master.env_descrip RENAME COLUMN bedeutung TO implication;
@@ -513,7 +514,7 @@ CREATE VIEW stamm.deskriptoren AS SELECT
 	id,
 	pred_id AS vorgaenger,
 	lev AS ebene,
-	s_xx,
+	imis2_id AS s_xx,
 	lev_val AS sn,
 	name AS beschreibung,
 	implication AS bedeutung,
@@ -824,8 +825,8 @@ ALTER TABLE IF EXISTS master.site RENAME COLUMN staat_id TO state_id;
 ALTER TABLE IF EXISTS master.site RENAME COLUMN gem_id TO munic_id;
 ALTER TABLE IF EXISTS master.site RENAME COLUMN unscharf TO is_fuzzy;
 ALTER TABLE IF EXISTS master.site RENAME COLUMN kda_id TO spat_ref_sys_id;
-ALTER TABLE IF EXISTS master.site RENAME COLUMN koord_x_extern TO x_coord_ext;
-ALTER TABLE IF EXISTS master.site RENAME COLUMN koord_y_extern TO y_coord_ext;
+ALTER TABLE IF EXISTS master.site RENAME COLUMN koord_x_extern TO coord_x_ext;
+ALTER TABLE IF EXISTS master.site RENAME COLUMN koord_y_extern TO coord_y_ext;
 ALTER TABLE IF EXISTS master.site RENAME COLUMN hoehe_land TO alt;
 ALTER TABLE IF EXISTS master.site RENAME COLUMN letzte_aenderung TO last_mod;
 ALTER TABLE IF EXISTS master.site RENAME COLUMN ort_typ TO site_class_id;
@@ -850,8 +851,8 @@ CREATE VIEW stamm.ort AS SELECT
 	munic_id AS gem_id,
 	is_fuzzy AS unscharf,
 	spat_ref_sys_id AS kda_id,
-	x_coord_ext AS koord_x_extern,
-	y_coord_ext AS koord_y_extern,
+	coord_x_ext AS koord_x_extern,
+	coord_y_ext AS koord_y_extern,
 	alt AS hoehe_land,
 	last_mod AS letzte_aenderung,
 	geom,
@@ -1134,8 +1135,8 @@ ALTER TABLE IF EXISTS master.state RENAME COLUMN hkl_id TO ctry_orig_id;
 ALTER TABLE IF EXISTS master.state RENAME COLUMN staat_iso TO iso_3166;
 ALTER TABLE IF EXISTS master.state RENAME COLUMN staat_kurz TO int_veh_reg_code;
 ALTER TABLE IF EXISTS master.state RENAME COLUMN eu TO is_eu_country;
-ALTER TABLE IF EXISTS master.state RENAME COLUMN koord_x_extern TO x_coord_ext;
-ALTER TABLE IF EXISTS master.state RENAME COLUMN koord_y_extern TO y_coord_ext;
+ALTER TABLE IF EXISTS master.state RENAME COLUMN koord_x_extern TO coord_x_ext;
+ALTER TABLE IF EXISTS master.state RENAME COLUMN koord_y_extern TO coord_y_ext;
 ALTER TABLE IF EXISTS master.state RENAME COLUMN kda_id TO spat_ref_sys_id;
 ALTER TABLE IF EXISTS master.state RENAME COLUMN letzte_aenderung TO last_mod;
 CREATE VIEW stamm.staat AS SELECT
@@ -1145,8 +1146,8 @@ CREATE VIEW stamm.staat AS SELECT
 	iso_3166 AS staat_iso,
 	int_veh_reg_code AS staat_kurz,
 	is_eu_country AS eu,
-	x_coord_ext AS koord_x_extern,
-	y_coord_ext AS koord_y_extern,
+	coord_x_ext AS koord_x_extern,
+	coord_y_ext AS koord_y_extern,
 	spat_ref_sys_id AS kda_id,
 	last_mod AS letzte_aenderung
 FROM master.state;

@@ -330,8 +330,8 @@ CREATE TABLE state (
     iso_3166 character varying(2) UNIQUE,
     int_veh_reg_code character varying(5) UNIQUE,
     is_eu_country boolean NOT NULL DEFAULT false,
-    x_coord_ext character varying(22),
-    y_coord_ext character varying(22),
+    coord_x_ext character varying(22),
+    coord_y_ext character varying(22),
     spat_ref_sys_id integer REFERENCES spat_ref_sys,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
@@ -461,7 +461,7 @@ CREATE TABLE env_descrip (
     id serial PRIMARY KEY,
     pred_id integer REFERENCES env_descrip,
     lev smallint,
-    s_xx serial,
+    imis2_id serial,
     lev_val smallint,
     name character varying(100),
     implication character varying(300),
@@ -694,8 +694,8 @@ CREATE TABLE site (
     munic_id character varying(8) REFERENCES admin_unit,
     is_fuzzy boolean NOT NULL DEFAULT false,
     spat_ref_sys_id integer NOT NULL REFERENCES spat_ref_sys,
-    x_coord_ext character varying(22) NOT NULL,
-    y_coord_ext character varying(22) NOT NULL,
+    coord_x_ext character varying(22) NOT NULL,
+    coord_y_ext character varying(22) NOT NULL,
     alt real,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     geom public.geometry(Point,4326) NOT NULL,
@@ -857,67 +857,6 @@ CREATE TABLE master.tag_type (id text PRIMARY KEY, tag_type TEXT);
 INSERT INTO master.tag_type VALUES('global', 'Global');
 INSERT INTO master.tag_type VALUES('netz', 'Netzbetreiber');
 INSERT INTO master.tag_type VALUES('mst', 'Messstelle');
-
-/*
-CREATE FUNCTION populate_status_ord_mp() RETURNS void AS $$
-DECLARE kombi_from RECORD;
-DECLARE s_from integer;
-DECLARE w_from integer;
-DECLARE kombi_to RECORD;
-DECLARE s_to integer;
-DECLARE w_to integer;
-
-BEGIN
-FOR kombi_from IN SELECT * FROM status_mp LOOP
-    s_from := kombi_from.stufe_id;
-    w_from := kombi_from.wert_id;
-
-    FOR kombi_to IN SELECT * FROM status_mp LOOP
-        s_to := kombi_to.stufe_id;
-        w_to := kombi_to.wert_id;
-
-        IF s_from = s_to AND w_to <> 0 THEN
-           -- At the same 'stufe', all permutations occur,
-           -- but 'nicht vergeben' is only allowed for von_id
-           INSERT INTO status_ord_mp (from_id, to_id)
-                  VALUES (kombi_from.id, kombi_to.id);
-
-        ELSEIF s_to = s_from + 1
-               AND w_from <> 0 AND w_from <> 4
-               AND w_from <> 8 AND w_to <> 8 THEN
-           -- Going to the next 'stufe' all available status_mp are allowed
-           -- in case current wert is not 'nicht vergeben', 'Rückfrage' or
-           -- 'zurückgesetzt' and we are not trying to set 'zurückgesetzt'
-           INSERT INTO status_ord_mp (from_id, to_id)
-                  VALUES (kombi_from.id, kombi_to.id);
-
-        ELSEIF w_from = 4 AND s_to = 1 AND w_to >= 1 AND w_to <= 3 THEN
-           -- After 'Rückfrage' follows 'MST' with
-           -- 'plausibel', 'nicht plausibel' or 'nicht repräsentativ'
-           INSERT INTO status_ord_mp (from_id, to_id)
-                  VALUES (kombi_from.id, kombi_to.id);
-
-        ELSEIF w_to = 8 AND s_from = s_to THEN
-           -- 'zurückgesetzt' can only be set on the same 'stufe'
-           INSERT INTO status_ord_mp (from_id, to_id)
-                  VALUES (kombi_from.id, kombi_to.id);
-
-        ELSEIF w_from = 8 AND s_to = s_from - 1 THEN
-           -- after 'zurückgesetzt' always follows the next lower 'stufe'
-           INSERT INTO status_ord_mp (from_id, to_id)
-                  VALUES (kombi_from.id, kombi_to.id);
-
-        END IF;
-    END LOOP;
-END LOOP;
-END;
-$$ LANGUAGE plpgsql;
-
-SELECT populate_status_reihenfolge();
-DROP FUNCTION populate_status_reihenfolge();
-ALTER TABLE status_ord_mp ALTER COLUMN id DROP DEFAULT;
-DROP SEQUENCE status_reihenfolge_id_seq;
-*/
 
 CREATE VIEW status_access_mp_view AS (
     SELECT r.id,
