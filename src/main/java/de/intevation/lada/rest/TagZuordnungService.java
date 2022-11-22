@@ -44,7 +44,7 @@ public class TagZuordnungService extends LadaService {
 
     private static final String EXISTS_QUERY_TEMPLATE =
         "SELECT EXISTS("
-        + "SELECT 1 FROM land.tagzuordnung "
+        + "SELECT 1 FROM lada.tag_link "
         + "WHERE tag_id=:%s"
         + " AND %s=:%s)";
 
@@ -80,8 +80,8 @@ public class TagZuordnungService extends LadaService {
             // Check if payload contains sensible information
             Integer tagId = zuordnung.getTagId();
             if (tagId == null
-                || zuordnung.getProbeId() != null
-                && zuordnung.getMessungId() != null
+                || zuordnung.getSampleId() != null
+                && zuordnung.getMeasmId() != null
             ) {
                 responseList.add(new Response(
                         false, StatusCodes.ERROR_VALIDATION, zuordnung));
@@ -172,8 +172,8 @@ public class TagZuordnungService extends LadaService {
                     repository.getSinglePlain(
                         repository.queryBuilder(TagZuordnung.class)
                         .and("tagId", zuordnung.getTagId())
-                        .and("probeId", zuordnung.getProbeId())
-                        .and("messungId", zuordnung.getMessungId())
+                        .and("sampleId", zuordnung.getSampleId())
+                        .and("measmId", zuordnung.getMeasmId())
                         .getQuery())));
         }
         return new Response(true, StatusCodes.OK, responseList);
@@ -183,16 +183,16 @@ public class TagZuordnungService extends LadaService {
         // Check if tag is already assigned
         final String tagIdParam = "tagId",
             taggedIdParam = "taggedId";
-        String idField = zuordnung.getProbeId() != null
-            ? "probe_id" : "messung_id";
+        String idField = zuordnung.getSampleId() != null
+            ? "sample_id" : "measm_id";
         Query isAssigned = repository.queryFromString(
             String.format(EXISTS_QUERY_TEMPLATE,
                 tagIdParam, idField, taggedIdParam));
         isAssigned.setParameter(tagIdParam, zuordnung.getTagId());
         isAssigned.setParameter(taggedIdParam,
-            zuordnung.getProbeId() != null
-            ? zuordnung.getProbeId()
-            : zuordnung.getMessungId());
+            zuordnung.getSampleId() != null
+            ? zuordnung.getSampleId()
+            : zuordnung.getMeasmId());
         return (Boolean) isAssigned.getSingleResult();
     }
 }

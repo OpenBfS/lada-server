@@ -2063,7 +2063,7 @@ public class LafObjectMapper {
                 Sample probe = (Sample) object;
                 QueryBuilder<TagZuordnung> builderZuord =
                         repository.queryBuilder(TagZuordnung.class);
-                    builderZuord.and("probeId", probe.getId());
+                    builderZuord.and("sampleId", probe.getId());
                     List<TagZuordnung> globalTagZuord =
                         repository.filterPlain(builderZuord.getQuery());
                  if (globalTagZuord.stream().anyMatch(z -> z.getTagId().equals(globalTag.get(0).getId()))) {
@@ -2074,14 +2074,14 @@ public class LafObjectMapper {
                     currentNotifications.add(note);
                 } else {
                     tagZuord.setTagId(globalTag.get(0).getId());
-                    tagZuord.setProbeId(probe.getId());
+                    tagZuord.setSampleId(probe.getId());
                     repository.create(tagZuord);
                 }
             } else if (object instanceof Measm) {
                 Measm messung = (Measm) object;
                 QueryBuilder<TagZuordnung> builderZuord =
                     repository.queryBuilder(TagZuordnung.class);
-                builderZuord.and("messungId", messung.getId());
+                builderZuord.and("measmId", messung.getId());
                 List<TagZuordnung> globalTagZuord =
                     repository.filterPlain(builderZuord.getQuery());
 
@@ -2093,7 +2093,7 @@ public class LafObjectMapper {
                     currentNotifications.add(note);
                 } else {
                     tagZuord.setTagId(globalTag.get(0).getId());
-                    tagZuord.setMessungId(messung.getId());
+                    tagZuord.setMeasmId(messung.getId());
                     repository.create(tagZuord);
                 }
             }

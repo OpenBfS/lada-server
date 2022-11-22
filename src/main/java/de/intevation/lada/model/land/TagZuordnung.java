@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.model.land;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,11 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 
-/**
- * The persistent class for the tagzuordnung database table.
- */
 @Entity
-@Table(name = "tagzuordnung", schema = SchemaName.LEGACY_NAME)
+@Table(name = "tag_link", schema = SchemaName.NAME)
 public class TagZuordnung {
     public static final long serialVersionUID = 1L;
 
@@ -27,13 +23,10 @@ public class TagZuordnung {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "probe_id")
-    private Integer probeId;
+    private Integer sampleId;
 
-    @Column(name = "messung_id")
-    private Integer messungId;
+    private Integer measmId;
 
-    @Column(name = "tag_id")
     private Integer tagId;
 
     public Integer getId() {
@@ -44,20 +37,20 @@ public class TagZuordnung {
         this.id = id;
     }
 
-    public Integer getMessungId() {
-        return this.messungId;
+    public Integer getMeasmId() {
+        return this.measmId;
     }
 
-    public void setMessungId(Integer messungId) {
-        this.messungId = messungId;
+    public void setMeasmId(Integer measmId) {
+        this.measmId = measmId;
     }
 
-    public Integer getProbeId() {
-        return this.probeId;
+    public Integer getSampleId() {
+        return this.sampleId;
     }
 
-    public void setProbeId(Integer probe) {
-        this.probeId = probe;
+    public void setSampleId(Integer sampleId) {
+        this.sampleId = sampleId;
     }
 
     /**

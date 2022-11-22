@@ -49,19 +49,19 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
 
             switch (tag.getTagType()) {
             case Tag.TAG_TYPE_GLOBAL:
-                if (zuordnung.getMessungId() != null) {
+                if (zuordnung.getMeasmId() != null) {
                     return messungAuthorizer.isAuthorized(
                         repository.getByIdPlain(
-                            Measm.class, zuordnung.getMessungId()),
+                            Measm.class, zuordnung.getMeasmId()),
                         RequestMethod.PUT,
                         userInfo,
                         Measm.class
                     );
                 }
-                if (zuordnung.getProbeId() != null) {
+                if (zuordnung.getSampleId() != null) {
                     return probeAuthorizer.isAuthorized(
                         repository.getByIdPlain(
-                            Sample.class, zuordnung.getProbeId()),
+                            Sample.class, zuordnung.getSampleId()),
                         RequestMethod.PUT,
                         userInfo,
                         Sample.class

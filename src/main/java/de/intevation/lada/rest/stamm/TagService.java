@@ -102,7 +102,7 @@ public class TagService extends LadaService {
             Join<Tag, TagZuordnung> joinTagZuordnung =
                 root.join("tagZuordnungs");
             // Work-around missing SQL INTERSECTION in JPA:
-            final String filterBy = pIds.isEmpty() ? "messungId" : "probeId";
+            final String filterBy = pIds.isEmpty() ? "measmId" : "sampleId";
             final Iterator<Integer> filterIds =
                 pIds.isEmpty() ? mIds.iterator() : pIds.iterator();
             Predicate idFilter = builder.equal(

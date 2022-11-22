@@ -127,14 +127,14 @@ public class TagUtil {
         probes.forEach(probe -> {
             TagZuordnung zuordnung = new TagZuordnung();
             zuordnung.setTagId(tagId);
-            zuordnung.setProbeId(probe.getId());
+            zuordnung.setSampleId(probe.getId());
             repository.create(zuordnung);
         });
 
         messungs.forEach(messung -> {
             TagZuordnung zuordnung = new TagZuordnung();
             zuordnung.setTagId(tagId);
-            zuordnung.setMessungId(messung.getId());
+            zuordnung.setMeasmId(messung.getId());
             repository.create(zuordnung);
         });
     }
