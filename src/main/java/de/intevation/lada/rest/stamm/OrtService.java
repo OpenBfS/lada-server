@@ -38,7 +38,7 @@ import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Geolocat;
-import de.intevation.lada.model.land.OrtszuordnungMp;
+import de.intevation.lada.model.land.GeolocatMpg;
 import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.Site;
@@ -203,7 +203,7 @@ public class OrtService extends LadaService {
             List<Geolocat> zuordnungs = getOrtsZuordnungs(o);
             o.setReferenceCount(zuordnungs.size());
             o.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
-            List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(o);
+            List<GeolocatMpg> zuordnungsMp = getOrtsZuordnungsMp(o);
             o.setReferenceCountMp(zuordnungsMp.size());
             o.setReadonly(
                 !authorization.isAuthorized(
@@ -238,7 +238,7 @@ public class OrtService extends LadaService {
         List<Geolocat> zuordnungs = getOrtsZuordnungs(ort);
         ort.setReferenceCount(zuordnungs.size());
         ort.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
-        List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(ort);
+        List<GeolocatMpg> zuordnungsMp = getOrtsZuordnungsMp(ort);
         ort.setReferenceCountMp(zuordnungsMp.size());
         ort.setReadonly(
             !authorization.isAuthorized(
@@ -504,9 +504,9 @@ public class OrtService extends LadaService {
      * @param o Ort instance
      * @return Ortszuordnung instances as list
      */
-    private List<OrtszuordnungMp> getOrtsZuordnungsMp(Site o) {
-        QueryBuilder<OrtszuordnungMp> refBuilder =
-            repository.queryBuilder(OrtszuordnungMp.class);
+    private List<GeolocatMpg> getOrtsZuordnungsMp(Site o) {
+        QueryBuilder<GeolocatMpg> refBuilder =
+            repository.queryBuilder(GeolocatMpg.class);
         refBuilder.and("siteId", o.getId());
         return repository.filterPlain(refBuilder.getQuery());
     }

@@ -22,7 +22,7 @@ import javax.ws.rs.QueryParam;
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
-import de.intevation.lada.model.land.OrtszuordnungMp;
+import de.intevation.lada.model.land.GeolocatMpg;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -109,17 +109,17 @@ public class OrtszuordnungMpService extends LadaService {
     public Response get(
         @QueryParam("messprogrammId") @NotNull Integer messprogrammId
     ) {
-        QueryBuilder<OrtszuordnungMp> builder =
-            repository.queryBuilder(OrtszuordnungMp.class);
+        QueryBuilder<GeolocatMpg> builder =
+            repository.queryBuilder(GeolocatMpg.class);
         builder.and("mpgId", messprogrammId);
         Response r =  authorization.filter(
             repository.filter(builder.getQuery()),
-            OrtszuordnungMp.class);
+            GeolocatMpg.class);
             if (r.getSuccess()) {
                 @SuppressWarnings("unchecked")
-                List<OrtszuordnungMp> ortszuordnungs =
-                    (List<OrtszuordnungMp>) r.getData();
-                for (OrtszuordnungMp otz: ortszuordnungs) {
+                List<GeolocatMpg> ortszuordnungs =
+                    (List<GeolocatMpg>) r.getData();
+                for (GeolocatMpg otz: ortszuordnungs) {
                     Violation violation = validator.validate(otz);
                     if (violation.hasErrors() || violation.hasWarnings()) {
                         otz.setErrors(violation.getErrors());
@@ -143,8 +143,8 @@ public class OrtszuordnungMpService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(OrtszuordnungMp.class, id);
-        OrtszuordnungMp ort = (OrtszuordnungMp) response.getData();
+        Response response = repository.getById(GeolocatMpg.class, id);
+        GeolocatMpg ort = (GeolocatMpg) response.getData();
         Violation violation = validator.validate(ort);
         if (violation.hasErrors() || violation.hasWarnings()) {
             response.setErrors(violation.getErrors());
@@ -152,7 +152,7 @@ public class OrtszuordnungMpService extends LadaService {
         }
         return authorization.filter(
             response,
-            OrtszuordnungMp.class);
+            GeolocatMpg.class);
     }
 
     /**
@@ -180,12 +180,12 @@ public class OrtszuordnungMpService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        OrtszuordnungMp ort
+        GeolocatMpg ort
     ) {
         if (!authorization.isAuthorized(
                 ort,
                 RequestMethod.POST,
-                OrtszuordnungMp.class)) {
+                GeolocatMpg.class)) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         Violation violation = validator.validate(ort);
@@ -205,7 +205,7 @@ public class OrtszuordnungMpService extends LadaService {
 
         return authorization.filter(
             response,
-            OrtszuordnungMp.class);
+            GeolocatMpg.class);
     }
 
     /**
@@ -234,12 +234,12 @@ public class OrtszuordnungMpService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        OrtszuordnungMp ort
+        GeolocatMpg ort
     ) {
         if (!authorization.isAuthorized(
                 ort,
                 RequestMethod.PUT,
-                OrtszuordnungMp.class)) {
+                GeolocatMpg.class)) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         Violation violation = validator.validate(ort);
@@ -261,7 +261,7 @@ public class OrtszuordnungMpService extends LadaService {
 
         return authorization.filter(
             response,
-            OrtszuordnungMp.class);
+            GeolocatMpg.class);
     }
 
     /**
@@ -275,12 +275,12 @@ public class OrtszuordnungMpService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        OrtszuordnungMp ortObj = repository.getByIdPlain(
-            OrtszuordnungMp.class, id);
+        GeolocatMpg ortObj = repository.getByIdPlain(
+            GeolocatMpg.class, id);
         if (!authorization.isAuthorized(
                 ortObj,
                 RequestMethod.PUT,
-                OrtszuordnungMp.class)) {
+                GeolocatMpg.class)) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 

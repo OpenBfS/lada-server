@@ -12,7 +12,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Geolocat;
-import de.intevation.lada.model.land.OrtszuordnungMp;
+import de.intevation.lada.model.land.GeolocatMpg;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -51,19 +51,19 @@ public class HasEntnahmeOrt implements Rule {
                     return violation;
                 }
             }
-        } else if (object instanceof OrtszuordnungMp) {
-            OrtszuordnungMp ort = (OrtszuordnungMp) object;
+        } else if (object instanceof GeolocatMpg) {
+            GeolocatMpg ort = (GeolocatMpg) object;
             if (!"E".equals(ort.getTypeRegulation())) {
                 return null;
             }
             id = ort.getMpgId();
-            QueryBuilder<OrtszuordnungMp> builder =
-                repository.queryBuilder(OrtszuordnungMp.class);
+            QueryBuilder<GeolocatMpg> builder =
+                repository.queryBuilder(GeolocatMpg.class);
 
             builder.and("mpgId", id);
-            List<OrtszuordnungMp> orte = repository.filterPlain(
+            List<GeolocatMpg> orte = repository.filterPlain(
                 builder.getQuery());
-            for (OrtszuordnungMp o : orte) {
+            for (GeolocatMpg o : orte) {
                 if ("E".equals(o.getTypeRegulation())
                     && !o.getId().equals(ort.getId())
                 ) {

@@ -27,7 +27,7 @@ import de.intevation.lada.model.land.MpgMmtMp;
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Geolocat;
-import de.intevation.lada.model.land.OrtszuordnungMp;
+import de.intevation.lada.model.land.GeolocatMpg;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.master.EnvDescrip;
@@ -421,10 +421,10 @@ public class ProbeFactory {
         List<Sample> proben =
             repository.filterPlain(builderProbe.getQuery());
 
-        QueryBuilder<OrtszuordnungMp> builderOrt =
-            repository.queryBuilder(OrtszuordnungMp.class);
+        QueryBuilder<GeolocatMpg> builderOrt =
+            repository.queryBuilder(GeolocatMpg.class);
         builderOrt.and("mpgId", messprogramm.getId());
-        List<OrtszuordnungMp> orte =
+        List<GeolocatMpg> orte =
             repository.filterPlain(builderOrt.getQuery());
 
         if (!proben.isEmpty()) {
@@ -436,7 +436,7 @@ public class ProbeFactory {
                 messungProtocol.add(mmt.getMmtId());
             }
             currentProtocol.put("mmt", messungProtocol);
-            for (OrtszuordnungMp ort : orte) {
+            for (GeolocatMpg ort : orte) {
                 Site o = repository.getByIdPlain(
                     Site.class, ort.getSiteId());
                 currentProtocol.put("gemId", o.getMunicId());
@@ -513,7 +513,7 @@ public class ProbeFactory {
             }
         }
         currentProtocol.put("mmt", messungProtocol);
-        for (OrtszuordnungMp ort : orte) {
+        for (GeolocatMpg ort : orte) {
             Geolocat ortP = new Geolocat();
             ortP.setTypeRegulation(ort.getTypeRegulation());
             ortP.setSampleId(probe.getId());
