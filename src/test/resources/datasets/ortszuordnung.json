@@ -1,5 +1,5 @@
 {
-    "ortszusatztext": "textzusatz",
-    "probeId": 1000,
-    "ortId": 1000
+    "addSiteText": "textzusatz",
+    "sampleId": 1000,
+    "siteId": 1000
 }

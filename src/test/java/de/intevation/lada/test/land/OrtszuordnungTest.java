@@ -40,7 +40,7 @@ public class OrtszuordnungTest extends ServiceTest {
         super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung"
+            "lastMod"
         });
 
         // Prepare expected probe object
@@ -71,7 +71,7 @@ public class OrtszuordnungTest extends ServiceTest {
         update(
             "ortszuordnung",
             "rest/ortszuordnung/1000",
-            "ortszusatztext",
+            "addSiteText",
             "Test",
             "Test geändert");
         delete(
