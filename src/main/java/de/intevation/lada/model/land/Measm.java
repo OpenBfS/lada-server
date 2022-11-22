@@ -69,7 +69,7 @@ public class Measm implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "status", insertable = false, updatable = false)
-    private StatusProtokoll statusProtocol;
+    private StatusProt statusProtocol;
 
     @Column(insertable = false, updatable = false)
     private Timestamp treeMod;
@@ -315,11 +315,11 @@ public class Measm implements Serializable {
         this.readonly = readonly;
     }
 
-    public StatusProtokoll getStatusProtocol() {
+    public StatusProt getStatusProtocol() {
         return this.statusProtocol;
     }
 
-    public void setStatusProtocol(StatusProtokoll statusProtocol) {
+    public void setStatusProtocol(StatusProt statusProtocol) {
         this.statusProtocol = statusProtocol;
     }
 

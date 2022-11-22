@@ -49,7 +49,7 @@ import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.land.StatusProt;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.EnvDescrip;
@@ -583,10 +583,10 @@ public class JsonExporter implements Exporter {
     }
 
     private void addStatusProtokoll(JsonNode node) {
-        QueryBuilder<StatusProtokoll> builder =
-            repository.queryBuilder(StatusProtokoll.class);
+        QueryBuilder<StatusProt> builder =
+            repository.queryBuilder(StatusProt.class);
         builder.and("measmId", node.get("id").asInt());
-        List<StatusProtokoll> status =
+        List<StatusProt> status =
             repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();
         try {

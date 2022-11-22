@@ -41,7 +41,7 @@ import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.land.StatusProt;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.DatasetCreator;
@@ -1567,8 +1567,8 @@ public class LafObjectMapper {
             return false;
         }
         // get current status kombi
-        StatusProtokoll currentStatus = repository.getByIdPlain(
-            StatusProtokoll.class, messung.getStatus());
+        StatusProt currentStatus = repository.getByIdPlain(
+            StatusProt.class, messung.getStatus());
         StatusMp currentKombi = repository.getByIdPlain(
             StatusMp.class, currentStatus.getStatusComb());
         // check if erreichbar
@@ -1627,7 +1627,7 @@ public class LafObjectMapper {
         }
 
         // Validator: StatusAssignment
-        StatusProtokoll newStatus = new StatusProtokoll();
+        StatusProt newStatus = new StatusProt();
         newStatus.setDate(new Timestamp(new Date().getTime()));
         newStatus.setMeasmId(messung.getId());
         newStatus.setMeasFacilId(mstId);

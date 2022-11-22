@@ -39,7 +39,7 @@ import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.GeolocatMpg;
-import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.land.StatusProt;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -482,7 +482,7 @@ public class OrtService extends LadaService {
             CriteriaQuery<Measm> criteriaQuery =
                 mesBuilder.createQuery(Measm.class);
             Root<Measm> root = criteriaQuery.from(Measm.class);
-            Join<Measm, StatusProtokoll> join =
+            Join<Measm, StatusProt> join =
                 root.join("statusProtocol", JoinType.LEFT);
             Predicate filter =
                 mesBuilder.equal(root.get("sampleId"), zuordnung.getSampleId());

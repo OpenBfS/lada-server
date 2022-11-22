@@ -12,7 +12,7 @@ import java.util.List;
 import org.junit.Assert;
 
 import de.intevation.lada.Protocol;
-import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.land.StatusProt;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
 
@@ -42,7 +42,7 @@ public class StatusTest {
         prot.setType("check status kombi");
         prot.setPassed(false);
         protocol.add(prot);
-        StatusProtokoll status = new StatusProtokoll();
+        StatusProt status = new StatusProt();
         status.setStatusLev(ID2);
         status.setStatusVal(ID7);
         Violation violation = validator.validate(status);
@@ -63,7 +63,7 @@ public class StatusTest {
         prot.setType("check status kombi");
         prot.setPassed(false);
         protocol.add(prot);
-        StatusProtokoll status = new StatusProtokoll();
+        StatusProt status = new StatusProt();
         status.setStatusLev(ID1);
         status.setStatusVal(ID1);
         Violation violation = validator.validate(status);

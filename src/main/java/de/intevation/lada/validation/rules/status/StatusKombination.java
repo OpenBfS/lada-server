@@ -13,7 +13,7 @@ import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.land.StatusProt;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -37,7 +37,7 @@ public class StatusKombination implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        StatusProtokoll status = (StatusProtokoll) object;
+        StatusProt status = (StatusProt) object;
         QueryBuilder<StatusMp> kombi =
             repository.queryBuilder(StatusMp.class);
         kombi.and("id", status.getStatusComb());

@@ -12,7 +12,7 @@ import java.util.List;
 
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.land.StatusProt;
 import de.intevation.lada.model.master.AuthCoordOfcEnvMediumMp;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.StatusMp;
@@ -46,8 +46,8 @@ public class MessungAuthorizer extends BaseAuthorizer {
         if (method == RequestMethod.POST) {
             return getAuthorization(userInfo, probe);
         }
-        StatusProtokoll status = repository.getByIdPlain(
-            StatusProtokoll.class,
+        StatusProt status = repository.getByIdPlain(
+            StatusProt.class,
             messung.getStatus()
         );
         StatusMp kombi = repository.getByIdPlain(
@@ -129,8 +129,8 @@ public class MessungAuthorizer extends BaseAuthorizer {
             return messung;
         }
 
-        StatusProtokoll status = repository.getByIdPlain(
-            StatusProtokoll.class,
+        StatusProt status = repository.getByIdPlain(
+            StatusProt.class,
             messung.getStatus()
         );
         StatusMp kombi = repository.getByIdPlain(

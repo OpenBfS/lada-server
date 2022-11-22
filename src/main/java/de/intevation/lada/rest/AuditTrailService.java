@@ -31,7 +31,7 @@ import de.intevation.lada.model.land.AuditTrailSampleView;
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.land.StatusProt;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -211,9 +211,9 @@ public class AuditTrailService extends LadaService {
                 Measm messung =
                     repository.getByIdPlain(
                         Measm.class, a.getMeasmId());
-                StatusProtokoll status =
+                StatusProt status =
                     repository.getByIdPlain(
-                        StatusProtokoll.class, messung.getStatus());
+                        StatusProt.class, messung.getStatus());
                 if (status.getStatusComb() == 1
                     && !userInfo.getMessstellen().contains(
                         probe.getMeasFacilId())
@@ -310,8 +310,8 @@ public class AuditTrailService extends LadaService {
         if (messung == null) {
             return "{\"success\": false,\"message\":600,\"data\":null}";
         }
-        StatusProtokoll status =
-            repository.getByIdPlain(StatusProtokoll.class, messung.getStatus());
+        StatusProt status =
+            repository.getByIdPlain(StatusProt.class, messung.getStatus());
         Sample probe =
             repository.getByIdPlain(Sample.class, messung.getSampleId());
         UserInfo userInfo = authorization.getInfo();

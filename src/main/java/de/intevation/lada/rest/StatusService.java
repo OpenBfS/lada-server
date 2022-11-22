@@ -27,7 +27,7 @@ import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.land.StatusProt;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -135,15 +135,15 @@ public class StatusService extends LadaService {
     public Response get(
         @QueryParam("messungsId") @NotNull Integer messungsId
     ) {
-        QueryBuilder<StatusProtokoll> builder =
-            repository.queryBuilder(StatusProtokoll.class);
+        QueryBuilder<StatusProt> builder =
+            repository.queryBuilder(StatusProt.class);
         builder.and("measmId", messungsId);
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
-            StatusProtokoll.class);
+            StatusProt.class);
         @SuppressWarnings("unchecked")
-        List<StatusProtokoll> status = (List<StatusProtokoll>) r.getData();
-        for (StatusProtokoll s: status) {
+        List<StatusProt> status = (List<StatusProt>) r.getData();
+        for (StatusProt s: status) {
             Violation violation = validator.validate(s);
             if (violation.hasErrors() || violation.hasWarnings()) {
                 s.setErrors(violation.getErrors());
@@ -165,10 +165,10 @@ public class StatusService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(StatusProtokoll.class, id);
+        Response response = repository.getById(StatusProt.class, id);
         return authorization.filter(
             response,
-            StatusProtokoll.class);
+            StatusProt.class);
     }
 
     /**
@@ -196,7 +196,7 @@ public class StatusService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        StatusProtokoll status
+        StatusProt status
     ) {
         if (status.getMeasmId() == null
             || status.getMeasFacilId() == null
@@ -225,8 +225,8 @@ public class StatusService extends LadaService {
             status.setStatusComb(1);
             return new Response(false, StatusCodes.OP_NOT_POSSIBLE, status);
         } else {
-            StatusProtokoll oldStatus = repository.getByIdPlain(
-                StatusProtokoll.class, messung.getStatus());
+            StatusProt oldStatus = repository.getByIdPlain(
+                StatusProt.class, messung.getStatus());
             StatusMp newKombi =
                 repository.getByIdPlain(
                     StatusMp.class, status.getStatusComb());
@@ -248,7 +248,7 @@ public class StatusService extends LadaService {
                 if (newKombi.getStatusVal().getId() == 8) {
                     return authorization.filter(
                         resetStatus(status, oldStatus, messung),
-                        StatusProtokoll.class);
+                        StatusProt.class);
                 } else {
                     // 2. user wants to set new status
                     return setNewStatus(status, newKombi, messung);
@@ -261,7 +261,7 @@ public class StatusService extends LadaService {
     }
 
     private Response setNewStatus(
-        StatusProtokoll status,
+        StatusProt status,
         StatusMp newKombi,
         Measm messung
     ) {
@@ -386,7 +386,7 @@ public class StatusService extends LadaService {
         }
         return authorization.filter(
             response,
-            StatusProtokoll.class);
+            StatusProt.class);
     }
 
     /**
@@ -400,12 +400,12 @@ public class StatusService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        StatusProtokoll obj = repository.getByIdPlain(
-            StatusProtokoll.class, id);
+        StatusProt obj = repository.getByIdPlain(
+            StatusProt.class, id);
         if (!authorization.isAuthorized(
                 obj,
                 RequestMethod.DELETE,
-                StatusProtokoll.class)
+                StatusProt.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -417,8 +417,8 @@ public class StatusService extends LadaService {
     }
 
     private Response resetStatus(
-        StatusProtokoll newStatus,
-        StatusProtokoll oldStatus,
+        StatusProt newStatus,
+        StatusProt oldStatus,
         Measm messung
     ) {
         // Create a new Status with value = 8.
@@ -432,7 +432,7 @@ public class StatusService extends LadaService {
         kombiFilter.and("statusVal", 8);
         List<StatusMp> newKombi =
             repository.filterPlain(kombiFilter.getQuery());
-        StatusProtokoll statusNew = new StatusProtokoll();
+        StatusProt statusNew = new StatusProt();
         statusNew.setDate(new Timestamp(new Date().getTime()));
         statusNew.setMeasFacilId(newStatus.getMeasFacilId());
         statusNew.setMeasmId(newStatus.getMeasmId());
@@ -447,7 +447,7 @@ public class StatusService extends LadaService {
             oldStatus.getStatusComb()
         );
         if (kombi.getStatusLev().getId() == 1) {
-            StatusProtokoll nV = new StatusProtokoll();
+            StatusProt nV = new StatusProt();
             nV.setDate(new Timestamp(new Date().getTime()));
             nV.setMeasFacilId(newStatus.getMeasFacilId());
             nV.setMeasmId(newStatus.getMeasmId());
@@ -455,11 +455,11 @@ public class StatusService extends LadaService {
             nV.setText("");
             retValue = repository.create(nV);
         } else {
-            QueryBuilder<StatusProtokoll> lastFilter =
-                repository.queryBuilder(StatusProtokoll.class);
+            QueryBuilder<StatusProt> lastFilter =
+                repository.queryBuilder(StatusProt.class);
             lastFilter.and("measmId", newStatus.getMeasmId());
             lastFilter.orderBy("date", true);
-            List<StatusProtokoll> proto =
+            List<StatusProt> proto =
                 repository.filterPlain(lastFilter.getQuery());
             // Find a status that has "status_stufe" = "old status_stufe - 1"
             int ndx = -1;
@@ -475,8 +475,8 @@ public class StatusService extends LadaService {
                     break;
                 }
             }
-            StatusProtokoll copy = new StatusProtokoll();
-            StatusProtokoll orig = proto.get(ndx);
+            StatusProt copy = new StatusProt();
+            StatusProt orig = proto.get(ndx);
             copy.setDate(new Timestamp(new Date().getTime()));
             copy.setMeasFacilId(orig.getMeasFacilId());
             copy.setMeasmId(orig.getMeasmId());

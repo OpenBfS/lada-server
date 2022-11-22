@@ -11,7 +11,7 @@ import java.util.List;
 
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.land.StatusProt;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -55,9 +55,9 @@ public abstract class BaseAuthorizer implements Authorizer {
             if (messungen.get(i).getStatus() == null) {
                 continue;
             }
-            StatusProtokoll status =
+            StatusProt status =
                 repository.getByIdPlain(
-                    StatusProtokoll.class,
+                    StatusProt.class,
                     messungen.get(i).getStatus()
                 );
             StatusMp kombi = repository.getByIdPlain(
@@ -77,8 +77,8 @@ public abstract class BaseAuthorizer implements Authorizer {
         if (messung.getStatus() == null) {
             return false;
         }
-        StatusProtokoll status = repository.getByIdPlain(
-            StatusProtokoll.class, messung.getStatus());
+        StatusProt status = repository.getByIdPlain(
+            StatusProt.class, messung.getStatus());
         StatusMp kombi = repository.getByIdPlain(
             StatusMp.class, status.getStatusComb());
         return (kombi.getStatusVal().getId() != 0

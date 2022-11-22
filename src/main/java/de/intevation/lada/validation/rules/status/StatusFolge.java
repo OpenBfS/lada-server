@@ -13,7 +13,7 @@ import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.land.StatusProt;
 import de.intevation.lada.model.master.StatusOrdMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -37,20 +37,20 @@ public class StatusFolge implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        StatusProtokoll status = (StatusProtokoll) object;
+        StatusProt status = (StatusProt) object;
 
         // Get the previous status
-        QueryBuilder<StatusProtokoll> lastFilter =
-            repository.queryBuilder(StatusProtokoll.class);
+        QueryBuilder<StatusProt> lastFilter =
+            repository.queryBuilder(StatusProt.class);
 
         lastFilter.and("measmId", status.getMeasmId());
         lastFilter.orderBy("id", true);
-        List<StatusProtokoll> protos =
+        List<StatusProt> protos =
             repository.filterPlain(lastFilter.getQuery());
         if (protos.isEmpty()) {
             return null;
         }
-        StatusProtokoll last = protos.get(protos.size() - 1);
+        StatusProt last = protos.get(protos.size() - 1);
         QueryBuilder<StatusOrdMp> folgeFilter =
             repository.queryBuilder(StatusOrdMp.class);
         folgeFilter.and("fromId", last.getStatusComb());

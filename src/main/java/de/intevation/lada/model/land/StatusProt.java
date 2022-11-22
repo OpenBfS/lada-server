@@ -21,8 +21,8 @@ import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
 
 @Entity
-@Table(name = "status_prot", schema = SchemaName.NAME)
-public class StatusProtokoll implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class StatusProt implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -67,7 +67,7 @@ public class StatusProtokoll implements Serializable {
     @Transient
     private MultivaluedMap<String, Integer> notifications;
 
-    public StatusProtokoll() {
+    public StatusProt() {
     }
 
     public Integer getId() {

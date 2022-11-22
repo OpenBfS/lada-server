@@ -24,7 +24,7 @@ import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.land.StatusProt;
 import de.intevation.lada.model.land.ZusatzWert;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.MeasFacil;
@@ -507,15 +507,15 @@ implements Creator {
      */
     private String writeStatus(Measm messung) {
         Integer[] status = {0, 0, 0};
-        QueryBuilder<StatusProtokoll> builder =
-        repository.queryBuilder(StatusProtokoll.class);
+        QueryBuilder<StatusProt> builder =
+        repository.queryBuilder(StatusProt.class);
             builder.and("measmId", messung.getId());
         builder.orderBy("id", false);
-        List<StatusProtokoll> statusHistory = repository.filterPlain(
+        List<StatusProt> statusHistory = repository.filterPlain(
                 builder.getQuery());
         Integer stufe = 4;
         Integer st, w;
-        for (StatusProtokoll statusEntry : statusHistory) {
+        for (StatusProt statusEntry : statusHistory) {
             StatusMp stKombi = repository.getByIdPlain(
                 StatusMp.class,
                 statusEntry.getStatusComb()

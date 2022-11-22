@@ -24,7 +24,7 @@ import javax.json.JsonValue.ValueType;
 
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
-import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.land.StatusProt;
 import de.intevation.lada.model.master.Filter;
 import de.intevation.lada.model.master.FilterType;
 import de.intevation.lada.model.master.GridColConf;
@@ -231,9 +231,9 @@ public abstract class QueryExportJob extends ExportJob {
      * @return Status as string
      */
     protected String getStatusString(Measm messung) {
-        StatusProtokoll protokoll =
+        StatusProt protokoll =
             repository.getByIdPlain(
-                StatusProtokoll.class, messung.getStatus());
+                StatusProt.class, messung.getStatus());
         StatusMp kombi =
             repository.getByIdPlain(
                 StatusMp.class, protokoll.getStatusComb());

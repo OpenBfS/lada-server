@@ -13,7 +13,7 @@ import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.land.StatusProt;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
@@ -35,7 +35,7 @@ public class IsReiComplete implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        StatusProtokoll status = (StatusProtokoll) object;
+        StatusProt status = (StatusProt) object;
 
         Measm messung =
             repository.getByIdPlain(

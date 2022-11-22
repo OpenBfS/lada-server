@@ -22,7 +22,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.land.StatusProt;
 import de.intevation.lada.model.master.StatusAccessMpView;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -113,8 +113,8 @@ public class StatusKombiService extends LadaService {
         Map<Integer, StatusAccessMpView> erreichbare =
             new HashMap<Integer, StatusAccessMpView>();
         for (Measm messung : messungen) {
-            StatusProtokoll status = repository.getByIdPlain(
-                StatusProtokoll.class, messung.getStatus());
+            StatusProt status = repository.getByIdPlain(
+                StatusProt.class, messung.getStatus());
             StatusMp kombi = repository.getByIdPlain(
                 StatusMp.class, status.getStatusComb());
 

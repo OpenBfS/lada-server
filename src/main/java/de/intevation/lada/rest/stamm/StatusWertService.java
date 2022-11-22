@@ -16,7 +16,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
 import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.StatusProtokoll;
+import de.intevation.lada.model.land.StatusProt;
 import de.intevation.lada.model.master.StatusAccessMpView;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.model.master.StatusVal;
@@ -106,8 +106,8 @@ public class StatusWertService extends LadaService {
     private Response getReachable(Integer messungsId) {
         Measm messung = repository.getByIdPlain(Measm.class, messungsId);
 
-        StatusProtokoll status = repository.getByIdPlain(
-            StatusProtokoll.class, messung.getStatus());
+        StatusProt status = repository.getByIdPlain(
+            StatusProt.class, messung.getStatus());
         StatusMp kombi = repository.getByIdPlain(
             StatusMp.class, status.getStatusComb());
 
