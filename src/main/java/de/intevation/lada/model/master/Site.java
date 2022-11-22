@@ -10,7 +10,6 @@ package de.intevation.lada.model.master;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,9 +53,9 @@ public class Site implements Serializable {
 
     private Float alt;
 
-    private String xCoordExt;
+    private String coordXExt;
 
-    private String yCoordExt;
+    private String coordYExt;
 
     private String shortText;
 
@@ -204,24 +203,20 @@ public class Site implements Serializable {
         this.alt = alt;
     }
 
-    @JsonbProperty("xCoordExt")
-    public String getXCoordExt() {
-        return this.xCoordExt;
+    public String getCoordXExt() {
+        return this.coordXExt;
     }
 
-    @JsonbProperty("xCoordExt")
-    public void setXCoordExt(String xCoordExt) {
-        this.xCoordExt = xCoordExt;
+    public void setCoordXExt(String coordXExt) {
+        this.coordXExt = coordXExt;
     }
 
-    @JsonbProperty("yCoordExt")
-    public String getYCoordExt() {
-        return this.yCoordExt;
+    public String getCoordYExt() {
+        return this.coordYExt;
     }
 
-    @JsonbProperty("yCoordExt")
-    public void setYCoordExt(String yCoordExt) {
-        this.yCoordExt = yCoordExt;
+    public void setCoordYExt(String coordYExt) {
+        this.coordYExt = coordYExt;
     }
 
     public String getShortText() {

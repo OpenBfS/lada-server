@@ -29,8 +29,8 @@ public class EnvDescrip implements Serializable {
 
     private Integer lev;
 
-    @Column(name = "s_xx")
-    private Integer sXx;
+    @Column(name = "imis2_id")
+    private Integer imis2Id;
 
     private Integer levVal;
 
@@ -74,12 +74,12 @@ public class EnvDescrip implements Serializable {
         this.lev = lev;
     }
 
-    public Integer getSXx() {
-        return this.sXx;
+    public Integer getImis2Id() {
+        return this.imis2Id;
     }
 
-    public void setSXx(Integer s) {
-        this.sXx = s;
+    public void setImis2Id(Integer imis2Id) {
+        this.imis2Id = imis2Id;
     }
 
     public Integer getLevVal() {

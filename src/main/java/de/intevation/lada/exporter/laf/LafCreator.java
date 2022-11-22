@@ -382,8 +382,8 @@ implements Creator {
 
         String koord = String.format("%02d", sOrte.get(0).getSpatRefSysId());
         koord += " \"";
-        koord += sOrte.get(0).getXCoordExt() + "\" \"";
-        koord += sOrte.get(0).getYCoordExt() + "\"";
+        koord += sOrte.get(0).getCoordXExt() + "\" \"";
+        koord += sOrte.get(0).getCoordYExt() + "\"";
         laf += lafLine(typePrefix + "KOORDINATEN_S", koord);
 
         if ("P_".equals(typePrefix) && o.getOzId() != null) {

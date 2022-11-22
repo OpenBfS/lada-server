@@ -1914,8 +1914,8 @@ public class LafObjectMapper {
                     o.setSpatRefSysId(arten.get(0).getId());
                 }
             }
-            o.setXCoordExt(attributes.get(type + "KOORDINATEN_X"));
-            o.setYCoordExt(attributes.get(type + "KOORDINATEN_Y"));
+            o.setCoordXExt(attributes.get(type + "KOORDINATEN_X"));
+            o.setCoordYExt(attributes.get(type + "KOORDINATEN_Y"));
         }
         // If laf contains gemeinde attributes, find a ort with matching gemId
         // or create one.

@@ -373,18 +373,18 @@ public class OrtService extends LadaService {
         if (dbOrt == null) {
             return new Response(false, StatusCodes.NOT_EXISTING, ort);
         }
-        String dbCoordX = dbOrt.getXCoordExt();
-        String dbCoordY = dbOrt.getYCoordExt();
+        String dbCoordX = dbOrt.getCoordXExt();
+        String dbCoordY = dbOrt.getCoordYExt();
 
         if (getPlausibleRefCount(getOrtsZuordnungs(dbOrt)) > 0
-                && (!dbCoordX.equals(ort.getXCoordExt())
-                || !dbCoordY.equals(ort.getYCoordExt()))) {
+                && (!dbCoordX.equals(ort.getCoordXExt())
+                || !dbCoordY.equals(ort.getCoordYExt()))) {
             MultivaluedMap<String, Integer> error =
                 new MultivaluedHashMap<String, Integer>();
-            if (!dbCoordX.equals(ort.getXCoordExt())) {
+            if (!dbCoordX.equals(ort.getCoordXExt())) {
                 error.add("koordXExtern", StatusCodes.GEO_UNCHANGEABLE_COORD);
             }
-            if (!dbCoordY.equals(ort.getYCoordExt())) {
+            if (!dbCoordY.equals(ort.getCoordYExt())) {
                 error.add("koordYExtern", StatusCodes.GEO_UNCHANGEABLE_COORD);
             }
             Response response =

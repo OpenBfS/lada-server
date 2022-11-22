@@ -9,7 +9,6 @@ package de.intevation.lada.model.master;
 
 import java.io.Serializable;
 
-import javax.json.bind.annotation.JsonbProperty;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -30,9 +29,9 @@ public class State implements Serializable {
 
     private Integer spatRefSysId;
 
-    private String xCoordExt;
+    private String coordXExt;
 
-    private String yCoordExt;
+    private String coordYExt;
 
     private String ctry;
 
@@ -78,24 +77,20 @@ public class State implements Serializable {
         this.spatRefSysId = spatRefSysId;
     }
 
-    @JsonbProperty("xCoordExt")
-    public String getXCoordExt() {
-        return this.xCoordExt;
+    public String getCoordXExt() {
+        return this.coordXExt;
     }
 
-    @JsonbProperty("xCoordExt")
-    public void setXCoordExt(String xCoordExt) {
-        this.xCoordExt = xCoordExt;
+    public void setCoordXExt(String coordXExt) {
+        this.coordXExt = coordXExt;
     }
 
-    @JsonbProperty("yCoordExt")
-    public String getYCoordExt() {
-        return this.yCoordExt;
+    public String getCoordYExt() {
+        return this.coordYExt;
     }
 
-    @JsonbProperty("yCoordExt")
-    public void setYCoordExt(String yCoordExt) {
-        this.yCoordExt = yCoordExt;
+    public void setCoordYExt(String coordYExt) {
+        this.coordYExt = coordYExt;
     }
 
     public String getCtry() {

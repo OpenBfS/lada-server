@@ -54,10 +54,10 @@ public class OrtFactory {
             errors = new ArrayList<>();
         }
         if (ort.getSpatRefSysId() == null
-            || ort.getXCoordExt() == null
-            || ort.getXCoordExt().equals("")
-            || ort.getYCoordExt() == null
-            || ort.getYCoordExt().equals("")
+            || ort.getCoordXExt() == null
+            || ort.getCoordXExt().equals("")
+            || ort.getCoordYExt() == null
+            || ort.getCoordYExt().equals("")
         ) {
             /* TODO: The checked conditions are mostly also checked in KdaUtil.
              * Do we really need a different StatusCode here? */
@@ -65,13 +65,13 @@ public class OrtFactory {
             err.setCode(StatusCodes.IMP_INVALID_VALUE);
             err.setKey("coordinates");
             err.setValue(ort.getSpatRefSysId()
-                + " " + ort.getXCoordExt() + " " + ort.getYCoordExt());
+                + " " + ort.getCoordXExt() + " " + ort.getCoordYExt());
             errors.add(err);
             return;
         }
         Integer kda = ort.getSpatRefSysId();
-        String xCoord = ort.getXCoordExt();
-        String yCoord = ort.getYCoordExt();
+        String xCoord = ort.getCoordXExt();
+        String yCoord = ort.getCoordYExt();
 
         KdaUtil.Result coords = new KdaUtil().transform(
             kda, KdaUtil.KDA_GD, xCoord, yCoord);
@@ -80,7 +80,7 @@ public class OrtFactory {
             err.setCode(StatusCodes.GEO_NOT_MATCHING);
             err.setKey("kdaId");
             err.setValue(ort.getSpatRefSysId()
-                + " " + ort.getXCoordExt() + " " + ort.getYCoordExt());
+                + " " + ort.getCoordXExt() + " " + ort.getCoordYExt());
             errors.add(err);
             return;
         }
@@ -110,12 +110,12 @@ public class OrtFactory {
         }
         QueryBuilder<Site> builder = repository.queryBuilder(Site.class);
         if (ort.getSpatRefSysId() != null
-            && ort.getXCoordExt() != null
-            && ort.getYCoordExt() != null
+            && ort.getCoordXExt() != null
+            && ort.getCoordYExt() != null
         ) {
             builder.and("spatRefSysId", ort.getSpatRefSysId());
-            builder.and("xCoordExt", ort.getXCoordExt());
-            builder.and("yCoordExt", ort.getYCoordExt());
+            builder.and("xCoordExt", ort.getCoordXExt());
+            builder.and("yCoordExt", ort.getCoordYExt());
             builder.and("networkId", ort.getNetworkId());
             List<Site> orte =
                 repository.filterPlain(builder.getQuery());
@@ -137,8 +137,8 @@ public class OrtFactory {
                     if (v != null) {
                         for (Site oElem : orte) {
                             //Todo: Check for different kda-types
-                            if (oElem.getXCoordExt().equals(String.valueOf(v.getGeomCenter().getX()))
-                            && oElem.getYCoordExt().equals(String.valueOf(v.getGeomCenter().getY()))
+                            if (oElem.getCoordXExt().equals(String.valueOf(v.getGeomCenter().getX()))
+                            && oElem.getCoordYExt().equals(String.valueOf(v.getGeomCenter().getY()))
                              ){
                                 return oElem;
                             }
@@ -172,8 +172,8 @@ public class OrtFactory {
         //set default value for attribute "unscharf"
         ort.setIsFuzzy(false);
         if (ort.getSpatRefSysId() != null
-            && ort.getXCoordExt() != null
-            && ort.getYCoordExt() != null
+            && ort.getCoordXExt() != null
+            && ort.getCoordYExt() != null
         ) {
             transformCoordinates(ort);
             hasKoord = true;
@@ -203,9 +203,9 @@ public class OrtFactory {
                 if (!hasKoord) {
                     if (ort.getSpatRefSysId() == null) {
                         ort.setSpatRefSysId(KdaUtil.KDA_GD);
-                        ort.setYCoordExt(
+                        ort.setCoordYExt(
                             String.valueOf(v.getGeomCenter().getY()));
-                        ort.setXCoordExt(
+                        ort.setCoordXExt(
                             String.valueOf(v.getGeomCenter().getX()));
                     } else {
                         KdaUtil.Result coords = new KdaUtil().transform(
@@ -213,8 +213,8 @@ public class OrtFactory {
                             ort.getSpatRefSysId(),
                             String.valueOf(v.getGeomCenter().getX()),
                             String.valueOf(v.getGeomCenter().getY()));
-                        ort.setYCoordExt(coords.getY());
-                        ort.setXCoordExt(coords.getX());
+                        ort.setCoordYExt(coords.getY());
+                        ort.setCoordXExt(coords.getX());
                     }
                     ort.setSiteClassId(ORTTYP4);
                     //set ortId
@@ -256,8 +256,8 @@ public class OrtFactory {
                 repository.getByIdPlain(
                     State.class, ort.getStateId());
             ort.setSpatRefSysId(staat.getSpatRefSysId());
-            ort.setXCoordExt(staat.getXCoordExt());
-            ort.setYCoordExt(staat.getYCoordExt());
+            ort.setCoordXExt(staat.getCoordXExt());
+            ort.setCoordYExt(staat.getCoordYExt());
             ort.setLongText(staat.getCtry());
             ort.setSiteClassId(ORTTYP5);
             ort.setExtId("STAAT_" + staat.getId());
