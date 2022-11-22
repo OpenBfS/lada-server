@@ -236,7 +236,7 @@ public abstract class QueryExportJob extends ExportJob {
                 StatusProtokoll.class, messung.getStatus());
         StatusMp kombi =
             repository.getByIdPlain(
-                StatusMp.class, protokoll.getStatusKombi());
+                StatusMp.class, protokoll.getStatusComb());
         StatusLev stufe = kombi.getStatusLev();
         StatusVal wert = kombi.getStatusVal();
         return String.format("%s - %s", stufe.getLev(), wert.getVal());

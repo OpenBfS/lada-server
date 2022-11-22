@@ -40,7 +40,7 @@ public class StatusKombination implements Rule {
         StatusProtokoll status = (StatusProtokoll) object;
         QueryBuilder<StatusMp> kombi =
             repository.queryBuilder(StatusMp.class);
-        kombi.and("id", status.getStatusKombi());
+        kombi.and("id", status.getStatusComb());
         List<StatusMp> result =
             repository.filterPlain(kombi.getQuery());
         if (result.isEmpty()) {

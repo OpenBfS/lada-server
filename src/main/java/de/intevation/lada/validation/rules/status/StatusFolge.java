@@ -43,7 +43,7 @@ public class StatusFolge implements Rule {
         QueryBuilder<StatusProtokoll> lastFilter =
             repository.queryBuilder(StatusProtokoll.class);
 
-        lastFilter.and("messungsId", status.getMessungsId());
+        lastFilter.and("measmId", status.getMeasmId());
         lastFilter.orderBy("id", true);
         List<StatusProtokoll> protos =
             repository.filterPlain(lastFilter.getQuery());
@@ -53,8 +53,8 @@ public class StatusFolge implements Rule {
         StatusProtokoll last = protos.get(protos.size() - 1);
         QueryBuilder<StatusOrdMp> folgeFilter =
             repository.queryBuilder(StatusOrdMp.class);
-        folgeFilter.and("fromId", last.getStatusKombi());
-        folgeFilter.and("toId", status.getStatusKombi());
+        folgeFilter.and("fromId", last.getStatusComb());
+        folgeFilter.and("toId", status.getStatusComb());
         List<StatusOrdMp> reihenfolge =
             repository.filterPlain(folgeFilter.getQuery());
         if (reihenfolge.isEmpty()) {

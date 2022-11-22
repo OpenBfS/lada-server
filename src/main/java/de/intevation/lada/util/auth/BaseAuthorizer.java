@@ -61,7 +61,7 @@ public abstract class BaseAuthorizer implements Authorizer {
                     messungen.get(i).getStatus()
                 );
             StatusMp kombi = repository.getByIdPlain(
-                StatusMp.class, status.getStatusKombi());
+                StatusMp.class, status.getStatusComb());
             if (kombi.getStatusVal().getId() != 0
                 && kombi.getStatusVal().getId() != 4
             ) {
@@ -80,7 +80,7 @@ public abstract class BaseAuthorizer implements Authorizer {
         StatusProtokoll status = repository.getByIdPlain(
             StatusProtokoll.class, messung.getStatus());
         StatusMp kombi = repository.getByIdPlain(
-            StatusMp.class, status.getStatusKombi());
+            StatusMp.class, status.getStatusComb());
         return (kombi.getStatusVal().getId() != 0
                 && kombi.getStatusVal().getId() != 4);
     }

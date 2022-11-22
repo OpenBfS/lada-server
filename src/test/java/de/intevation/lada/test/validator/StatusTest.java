@@ -43,8 +43,8 @@ public class StatusTest {
         prot.setPassed(false);
         protocol.add(prot);
         StatusProtokoll status = new StatusProtokoll();
-        status.setStatusStufe(ID2);
-        status.setStatusWert(ID7);
+        status.setStatusLev(ID2);
+        status.setStatusVal(ID7);
         Violation violation = validator.validate(status);
         Assert.assertTrue(violation.hasErrors());
         Assert.assertTrue(violation.getErrors().containsKey("kombi"));
@@ -64,8 +64,8 @@ public class StatusTest {
         prot.setPassed(false);
         protocol.add(prot);
         StatusProtokoll status = new StatusProtokoll();
-        status.setStatusStufe(ID1);
-        status.setStatusWert(ID1);
+        status.setStatusLev(ID1);
+        status.setStatusVal(ID1);
         Violation violation = validator.validate(status);
         if (violation.hasErrors()) {
             Assert.assertFalse(violation.getErrors().containsKey("kombi"));

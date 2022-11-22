@@ -214,7 +214,7 @@ public class AuditTrailService extends LadaService {
                 StatusProtokoll status =
                     repository.getByIdPlain(
                         StatusProtokoll.class, messung.getStatus());
-                if (status.getStatusKombi() == 1
+                if (status.getStatusComb() == 1
                     && !userInfo.getMessstellen().contains(
                         probe.getMeasFacilId())
                 ) {
@@ -343,7 +343,7 @@ public class AuditTrailService extends LadaService {
             // - StatusKombi is 1 (MST - nicht vergeben)
             // - User is not owner of the messung
             if (a.getTableName().equals("messwert")
-                    && status.getStatusKombi() == 1
+                    && status.getStatusComb() == 1
                     && !userInfo.getMessstellen().contains(
                         probe.getMeasFacilId())) {
                 continue;

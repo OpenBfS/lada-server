@@ -137,7 +137,7 @@ public class StatusService extends LadaService {
     ) {
         QueryBuilder<StatusProtokoll> builder =
             repository.queryBuilder(StatusProtokoll.class);
-        builder.and("messungsId", messungsId);
+        builder.and("measmId", messungsId);
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
             StatusProtokoll.class);
@@ -198,15 +198,15 @@ public class StatusService extends LadaService {
     public Response create(
         StatusProtokoll status
     ) {
-        if (status.getMessungsId() == null
-            || status.getMstId() == null
+        if (status.getMeasmId() == null
+            || status.getMeasFacilId() == null
         ) {
             return new Response(false, StatusCodes.VALUE_MISSING, status);
         }
 
         UserInfo userInfo = authorization.getInfo();
         Measm messung = repository.getByIdPlain(
-            Measm.class, status.getMessungsId());
+            Measm.class, status.getMeasmId());
         if (lock.isLocked(messung)) {
             return new Response(false, StatusCodes.CHANGED_VALUE, status);
         }
@@ -222,19 +222,19 @@ public class StatusService extends LadaService {
 
         if (messung.getStatus() == null) {
             // set the first status as default
-            status.setStatusKombi(1);
+            status.setStatusComb(1);
             return new Response(false, StatusCodes.OP_NOT_POSSIBLE, status);
         } else {
             StatusProtokoll oldStatus = repository.getByIdPlain(
                 StatusProtokoll.class, messung.getStatus());
             StatusMp newKombi =
                 repository.getByIdPlain(
-                    StatusMp.class, status.getStatusKombi());
+                    StatusMp.class, status.getStatusComb());
 
             // Check if the user is allowed to change to the requested
             // status_kombi
             if (userInfo.getFunktionenForMst(
-                    status.getMstId()).contains(
+                    status.getMeasFacilId()).contains(
                         newKombi.getStatusLev().getId())
                 && (newKombi.getStatusLev().getId().equals(1)
                     && messung.getStatusEditMst()
@@ -378,7 +378,7 @@ public class StatusService extends LadaService {
             }
         }
         //Set datum to null to use database timestamp
-        status.setDatum(null);
+        status.setDate(null);
         Response response = repository.create(status);
         //NOTE: The referenced messung status field is updated by a DB trigger
         if (violationCollection != null) {
@@ -426,17 +426,17 @@ public class StatusService extends LadaService {
             repository.queryBuilder(StatusMp.class);
         StatusMp oldKombi =
             repository.getByIdPlain(
-                StatusMp.class, oldStatus.getStatusKombi());
+                StatusMp.class, oldStatus.getStatusComb());
 
         kombiFilter.and("statusLev", oldKombi.getStatusLev().getId());
         kombiFilter.and("statusVal", 8);
         List<StatusMp> newKombi =
             repository.filterPlain(kombiFilter.getQuery());
         StatusProtokoll statusNew = new StatusProtokoll();
-        statusNew.setDatum(new Timestamp(new Date().getTime()));
-        statusNew.setMstId(newStatus.getMstId());
-        statusNew.setMessungsId(newStatus.getMessungsId());
-        statusNew.setStatusKombi(newKombi.get(0).getId());
+        statusNew.setDate(new Timestamp(new Date().getTime()));
+        statusNew.setMeasFacilId(newStatus.getMeasFacilId());
+        statusNew.setMeasmId(newStatus.getMeasmId());
+        statusNew.setStatusComb(newKombi.get(0).getId());
         statusNew.setText(newStatus.getText());
 
         repository.create(statusNew);
@@ -444,27 +444,27 @@ public class StatusService extends LadaService {
         Response retValue;
         StatusMp kombi = repository.getByIdPlain(
             StatusMp.class,
-            oldStatus.getStatusKombi()
+            oldStatus.getStatusComb()
         );
         if (kombi.getStatusLev().getId() == 1) {
             StatusProtokoll nV = new StatusProtokoll();
-            nV.setDatum(new Timestamp(new Date().getTime()));
-            nV.setMstId(newStatus.getMstId());
-            nV.setMessungsId(newStatus.getMessungsId());
-            nV.setStatusKombi(1);
+            nV.setDate(new Timestamp(new Date().getTime()));
+            nV.setMeasFacilId(newStatus.getMeasFacilId());
+            nV.setMeasmId(newStatus.getMeasmId());
+            nV.setStatusComb(1);
             nV.setText("");
             retValue = repository.create(nV);
         } else {
             QueryBuilder<StatusProtokoll> lastFilter =
                 repository.queryBuilder(StatusProtokoll.class);
-            lastFilter.and("messungsId", newStatus.getMessungsId());
-            lastFilter.orderBy("datum", true);
+            lastFilter.and("measmId", newStatus.getMeasmId());
+            lastFilter.orderBy("date", true);
             List<StatusProtokoll> proto =
                 repository.filterPlain(lastFilter.getQuery());
             // Find a status that has "status_stufe" = "old status_stufe - 1"
             int ndx = -1;
             for (int i = proto.size() - 1; i >= 0; i--) {
-                int curKom = proto.get(i).getStatusKombi();
+                int curKom = proto.get(i).getStatusComb();
                 StatusMp sk =
                     repository.getByIdPlain(
                         StatusMp.class, curKom);
@@ -477,10 +477,10 @@ public class StatusService extends LadaService {
             }
             StatusProtokoll copy = new StatusProtokoll();
             StatusProtokoll orig = proto.get(ndx);
-            copy.setDatum(new Timestamp(new Date().getTime()));
-            copy.setMstId(orig.getMstId());
-            copy.setMessungsId(orig.getMessungsId());
-            copy.setStatusKombi(orig.getStatusKombi());
+            copy.setDate(new Timestamp(new Date().getTime()));
+            copy.setMeasFacilId(orig.getMeasFacilId());
+            copy.setMeasmId(orig.getMeasmId());
+            copy.setStatusComb(orig.getStatusComb());
             copy.setText("");
             retValue = repository.create(copy);
         }

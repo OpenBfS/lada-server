@@ -509,7 +509,7 @@ implements Creator {
         Integer[] status = {0, 0, 0};
         QueryBuilder<StatusProtokoll> builder =
         repository.queryBuilder(StatusProtokoll.class);
-            builder.and("messungsId", messung.getId());
+            builder.and("measmId", messung.getId());
         builder.orderBy("id", false);
         List<StatusProtokoll> statusHistory = repository.filterPlain(
                 builder.getQuery());
@@ -518,7 +518,7 @@ implements Creator {
         for (StatusProtokoll statusEntry : statusHistory) {
             StatusMp stKombi = repository.getByIdPlain(
                 StatusMp.class,
-                statusEntry.getStatusKombi()
+                statusEntry.getStatusComb()
             );
             st = stKombi.getStatusLev().getId();
             w = stKombi.getStatusVal().getId();

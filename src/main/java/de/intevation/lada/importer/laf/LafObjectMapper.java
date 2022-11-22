@@ -1570,7 +1570,7 @@ public class LafObjectMapper {
         StatusProtokoll currentStatus = repository.getByIdPlain(
             StatusProtokoll.class, messung.getStatus());
         StatusMp currentKombi = repository.getByIdPlain(
-            StatusMp.class, currentStatus.getStatusKombi());
+            StatusMp.class, currentStatus.getStatusComb());
         // check if erreichbar
         QueryBuilder<StatusAccessMpView> errFilter =
             repository.queryBuilder(StatusAccessMpView.class);
@@ -1628,10 +1628,10 @@ public class LafObjectMapper {
 
         // Validator: StatusAssignment
         StatusProtokoll newStatus = new StatusProtokoll();
-        newStatus.setDatum(new Timestamp(new Date().getTime()));
-        newStatus.setMessungsId(messung.getId());
-        newStatus.setMstId(mstId);
-        newStatus.setStatusKombi(newKombi);
+        newStatus.setDate(new Timestamp(new Date().getTime()));
+        newStatus.setMeasmId(messung.getId());
+        newStatus.setMeasFacilId(mstId);
+        newStatus.setStatusComb(newKombi);
         Violation statusViolation = statusValidator.validate(newStatus);
 
         if (statusViolation.hasWarnings()) {

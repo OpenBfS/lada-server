@@ -20,14 +20,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
 
-
-
-/**
- * The persistent class for the status_protokoll database table.
- *
- */
 @Entity
-@Table(name = "status_protokoll", schema = SchemaName.LEGACY_NAME)
+@Table(name = "status_prot", schema = SchemaName.NAME)
 public class StatusProtokoll implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -35,22 +29,19 @@ public class StatusProtokoll implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "datum", insertable = false, updatable = false)
-    private Timestamp datum;
+    @Column(insertable = false, updatable = false)
+    private Timestamp date;
 
-    @Column(name = "messungs_id")
-    private Integer messungsId;
+    private Integer measmId;
 
-    @Column(name = "mst_id")
-    private String mstId;
+    private String measFacilId;
 
-    @Column(name = "status_kombi")
-    private Integer statusKombi;
+    private Integer statusComb;
 
     private String text;
 
-    @Column(name = "tree_modified", insertable = false, updatable = false)
-    private Timestamp treeModified;
+    @Column(insertable = false, updatable = false)
+    private Timestamp treeMod;
 
     @Transient
     private boolean owner;
@@ -62,10 +53,10 @@ public class StatusProtokoll implements Serializable {
     private Timestamp parentModified;
 
     @Transient
-    private Integer statusStufe;
+    private Integer statusLev;
 
     @Transient
-    private Integer statusWert;
+    private Integer statusVal;
 
     @Transient
     private MultivaluedMap<String, Integer> errors;
@@ -87,36 +78,36 @@ public class StatusProtokoll implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getDatum() {
-        return this.datum;
+    public Timestamp getDate() {
+        return this.date;
     }
 
-    public void setDatum(Timestamp datum) {
-        this.datum = datum;
+    public void setDate(Timestamp date) {
+        this.date = date;
     }
 
-    public Integer getMessungsId() {
-        return this.messungsId;
+    public Integer getMeasmId() {
+        return this.measmId;
     }
 
-    public void setMessungsId(Integer messungsId) {
-        this.messungsId = messungsId;
+    public void setMeasmId(Integer measmId) {
+        this.measmId = measmId;
     }
 
-    public String getMstId() {
-        return this.mstId;
+    public String getMeasFacilId() {
+        return this.measFacilId;
     }
 
-    public void setMstId(String mstId) {
-        this.mstId = mstId;
+    public void setMeasFacilId(String measFacilId) {
+        this.measFacilId = measFacilId;
     }
 
-    public Integer getStatusKombi() {
-        return this.statusKombi;
+    public Integer getStatusComb() {
+        return this.statusComb;
     }
 
-    public void setStatusKombi(Integer statusKombi) {
-        this.statusKombi = statusKombi;
+    public void setStatusComb(Integer statusComb) {
+        this.statusComb = statusComb;
     }
 
     public String getText() {
@@ -127,12 +118,12 @@ public class StatusProtokoll implements Serializable {
         this.text = text;
     }
 
-    public Timestamp getTreeModified() {
-        return this.treeModified;
+    public Timestamp getTreeMod() {
+        return this.treeMod;
     }
 
-    public void setTreeModified(Timestamp treeModified) {
-        this.treeModified = treeModified;
+    public void setTreeMod(Timestamp treeMod) {
+        this.treeMod = treeMod;
     }
 
     /**
@@ -178,31 +169,31 @@ public class StatusProtokoll implements Serializable {
     }
 
     /**
-     * @return the statusStufe
+     * @return the status level
      */
-    public Integer getStatusStufe() {
-        return statusStufe;
+    public Integer getStatusLev() {
+        return statusLev;
     }
 
     /**
-     * @param statusStufe the statusStufe to set
+     * @param statusLev the status level to set
      */
-    public void setStatusStufe(Integer statusStufe) {
-        this.statusStufe = statusStufe;
+    public void setStatusLev(Integer statusLev) {
+        this.statusLev = statusLev;
     }
 
     /**
-     * @return the statusWert
+     * @return the status value
      */
-    public Integer getStatusWert() {
-        return statusWert;
+    public Integer getStatusVal() {
+        return statusVal;
     }
 
     /**
-     * @param statusWert the statusWert to set
+     * @param statusVal the status value to set
      */
-    public void setStatusWert(Integer statusWert) {
-        this.statusWert = statusWert;
+    public void setStatusVal(Integer statusVal) {
+        this.statusVal = statusVal;
     }
 
     public MultivaluedMap<String, Integer> getErrors() {

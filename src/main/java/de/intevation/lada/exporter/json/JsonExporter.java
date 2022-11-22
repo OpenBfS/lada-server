@@ -585,7 +585,7 @@ public class JsonExporter implements Exporter {
     private void addStatusProtokoll(JsonNode node) {
         QueryBuilder<StatusProtokoll> builder =
             repository.queryBuilder(StatusProtokoll.class);
-        builder.and("messungsId", node.get("id").asInt());
+        builder.and("measmId", node.get("id").asInt());
         List<StatusProtokoll> status =
             repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();

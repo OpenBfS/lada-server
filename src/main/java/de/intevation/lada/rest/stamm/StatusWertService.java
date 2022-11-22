@@ -109,7 +109,7 @@ public class StatusWertService extends LadaService {
         StatusProtokoll status = repository.getByIdPlain(
             StatusProtokoll.class, messung.getStatus());
         StatusMp kombi = repository.getByIdPlain(
-            StatusMp.class, status.getStatusKombi());
+            StatusMp.class, status.getStatusComb());
 
         QueryBuilder<StatusAccessMpView> errFilter = repository
             .queryBuilder(StatusAccessMpView.class)
