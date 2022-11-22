@@ -35,7 +35,7 @@ import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.ZusatzWert;
+import de.intevation.lada.model.land.SampleSpecifMeasVal;
 import de.intevation.lada.test.land.KommentarMTest;
 import de.intevation.lada.test.land.KommentarPTest;
 import de.intevation.lada.test.land.MessprogrammTest;
@@ -361,7 +361,7 @@ public class LandTest extends BaseTest {
         protocol.setType("insert zusatzwert");
         protocol.addInfo("database", "Insert Zusatzwert into database");
         testProtocol.add(protocol);
-        ZusatzWert zusatzwert = em.find(ZusatzWert.class, ID1000);
+        SampleSpecifMeasVal zusatzwert = em.find(SampleSpecifMeasVal.class, ID1000);
         Assert.assertNotNull(zusatzwert);
         protocol.setPassed(true);
     }

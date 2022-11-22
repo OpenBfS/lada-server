@@ -25,7 +25,7 @@ import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProt;
-import de.intevation.lada.model.land.ZusatzWert;
+import de.intevation.lada.model.land.SampleSpecifMeasVal;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.MeasUnit;
@@ -162,12 +162,12 @@ implements Creator {
             repository.getByIdPlain(
                 MeasFacil.class, probe.getMeasFacilId());
 
-        QueryBuilder<ZusatzWert> zusatzBuilder =
-            repository.queryBuilder(ZusatzWert.class);
+        QueryBuilder<SampleSpecifMeasVal> zusatzBuilder =
+            repository.queryBuilder(SampleSpecifMeasVal.class);
         zusatzBuilder.and("sampleId", probe.getId());
         Response zusatz =
             repository.filter(zusatzBuilder.getQuery());
-        List<ZusatzWert> zusatzwerte = (List<ZusatzWert>) zusatz.getData();
+        List<SampleSpecifMeasVal> zusatzwerte = (List<SampleSpecifMeasVal>) zusatz.getData();
 
         String laf = "";
         laf += lafLine("PROBE_ID", probe.getExtId(), CN);
@@ -269,7 +269,7 @@ implements Creator {
                 "REI_PROGRAMMPUNKTGRUPPE",
                 rpg.getName(), CN);
         }
-        for (ZusatzWert zw : zusatzwerte) {
+        for (SampleSpecifMeasVal zw : zusatzwerte) {
             laf += writeZusatzwert(zw);
         }
         for (CommSample kp : kommentare) {
@@ -287,7 +287,7 @@ implements Creator {
      * @return Single LAF line.
      */
     @SuppressWarnings("unchecked")
-    private String writeZusatzwert(ZusatzWert zw) {
+    private String writeZusatzwert(SampleSpecifMeasVal zw) {
         QueryBuilder<SampleSpecif> builder =
             repository.queryBuilder(SampleSpecif.class);
         builder.and("id", zw.getSampleSpecifId());

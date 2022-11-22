@@ -42,7 +42,7 @@ import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProt;
-import de.intevation.lada.model.land.ZusatzWert;
+import de.intevation.lada.model.land.SampleSpecifMeasVal;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.EnvMedium;
@@ -433,9 +433,9 @@ public class LafObjectMapper {
                 merger.mergeKommentare(newProbe, kommentare);
 
                 // Create zusatzwert objects
-                List<ZusatzWert> zusatzwerte = new ArrayList<>();
+                List<SampleSpecifMeasVal> zusatzwerte = new ArrayList<>();
                 for (int i = 0; i < object.getZusatzwerte().size(); i++) {
-                    ZusatzWert tmp =
+                    SampleSpecifMeasVal tmp =
                         createZusatzwert(
                             object.getZusatzwerte().get(i), newProbe.getId());
                     if (tmp != null) {
@@ -723,16 +723,16 @@ public class LafObjectMapper {
         doTransformations(messwert, MeasVal.class, "messwert");
     }
 
-    private void doDefaults(ZusatzWert zusatzwert) {
-        doDefaults(zusatzwert, ZusatzWert.class, "zusatwert");
+    private void doDefaults(SampleSpecifMeasVal zusatzwert) {
+        doDefaults(zusatzwert, SampleSpecifMeasVal.class, "zusatwert");
     }
 
-    private void doConverts(ZusatzWert zusatzwert) {
-        doConverts(zusatzwert, ZusatzWert.class, "zusatzwert");
+    private void doConverts(SampleSpecifMeasVal zusatzwert) {
+        doConverts(zusatzwert, SampleSpecifMeasVal.class, "zusatzwert");
     }
 
-    private void doTransforms(ZusatzWert zusatzwert) {
-        doTransformations(zusatzwert, ZusatzWert.class, "zusatwert");
+    private void doTransforms(SampleSpecifMeasVal zusatzwert) {
+        doTransformations(zusatzwert, SampleSpecifMeasVal.class, "zusatwert");
     }
 
     private void doDefaults(CommMeasm kommentar) {
@@ -1215,11 +1215,11 @@ public class LafObjectMapper {
         return kommentar;
     }
 
-    private ZusatzWert createZusatzwert(
+    private SampleSpecifMeasVal createZusatzwert(
         Map<String, String> attributes,
         int probeId
     ) {
-        ZusatzWert zusatzwert = new ZusatzWert();
+        SampleSpecifMeasVal zusatzwert = new SampleSpecifMeasVal();
         zusatzwert.setSampleId(probeId);
         if (attributes.containsKey("MESSFEHLER")) {
             zusatzwert.setError(

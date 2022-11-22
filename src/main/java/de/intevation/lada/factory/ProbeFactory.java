@@ -29,7 +29,7 @@ import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.GeolocatMpg;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.ZusatzWert;
+import de.intevation.lada.model.land.SampleSpecifMeasVal;
 import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
 import de.intevation.lada.model.master.SampleSpecif;
@@ -470,7 +470,7 @@ public class ProbeFactory {
         List<String> zusatzWerts = new ArrayList<String>();
         if (pZusatzs != null) {
             for (SampleSpecif pZusatz: pZusatzs) {
-                ZusatzWert zusatz = new ZusatzWert();
+                SampleSpecifMeasVal zusatz = new SampleSpecifMeasVal();
                 zusatz.setSampleId(probe.getId());
                 zusatz.setSampleSpecifId(pZusatz.getId());
                 createObject(zusatz, dryrun);

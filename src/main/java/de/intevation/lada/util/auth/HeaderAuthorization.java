@@ -28,7 +28,7 @@ import de.intevation.lada.model.land.GeolocatMpg;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProt;
 import de.intevation.lada.model.land.TagLink;
-import de.intevation.lada.model.land.ZusatzWert;
+import de.intevation.lada.model.land.SampleSpecifMeasVal;
 import de.intevation.lada.model.master.Auth;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.LadaUser;
@@ -128,7 +128,7 @@ public class HeaderAuthorization implements Authorization {
             Map.entry(Measm.class, messungAuthorizer),
             Map.entry(Geolocat.class, pIdAuthorizer),
             Map.entry(CommSample.class, pIdAuthorizer),
-            Map.entry(ZusatzWert.class, pIdAuthorizer),
+            Map.entry(SampleSpecifMeasVal.class, pIdAuthorizer),
             Map.entry(CommMeasm.class, mIdAuthorizer),
             Map.entry(MeasVal.class, mIdAuthorizer),
             Map.entry(StatusProt.class, mIdAuthorizer),

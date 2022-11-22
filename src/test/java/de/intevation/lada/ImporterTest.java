@@ -52,7 +52,7 @@ import de.intevation.lada.model.land.CommSample;
 import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.ZusatzWert;
+import de.intevation.lada.model.land.SampleSpecifMeasVal;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -564,21 +564,21 @@ public class ImporterTest extends BaseTest {
         protocol.addInfo("import", "Merge objects");
 
         Sample probe = repository.getByIdPlain(Sample.class, PID1000);
-        List<ZusatzWert> zusatzwerte = new ArrayList<ZusatzWert>();
-        ZusatzWert wert1 = new ZusatzWert();
+        List<SampleSpecifMeasVal> zusatzwerte = new ArrayList<SampleSpecifMeasVal>();
+        SampleSpecifMeasVal wert1 = new SampleSpecifMeasVal();
         wert1.setSampleId(PID1000);
         wert1.setError(MESSFEHLER12F);
         wert1.setSmallerThan("<");
         wert1.setSampleSpecifId("A74");
 
-        ZusatzWert wert2 = new ZusatzWert();
+        SampleSpecifMeasVal wert2 = new SampleSpecifMeasVal();
         wert2.setSampleId(PID1000);
         wert2.setError(MESSFEHLER02F);
         wert2.setMeasVal(MESS18D);
         wert1.setSmallerThan(null);
         wert2.setSampleSpecifId("A75");
 
-        ZusatzWert wert3 = new ZusatzWert();
+        SampleSpecifMeasVal wert3 = new SampleSpecifMeasVal();
         wert3.setSampleId(PID1000);
         wert3.setError(MESSFEHLER02F);
         wert3.setMeasVal(MESS18D);

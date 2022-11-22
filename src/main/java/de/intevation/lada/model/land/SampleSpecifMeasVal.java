@@ -24,8 +24,8 @@ import javax.persistence.Transient;
 import de.intevation.lada.util.data.EmptyStringConverter;
 
 @Entity
-@Table(name = "sample_specif_meas_val", schema = SchemaName.NAME)
-public class ZusatzWert implements Serializable {
+@Table(schema = SchemaName.NAME)
+public class SampleSpecifMeasVal implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -62,7 +62,7 @@ public class ZusatzWert implements Serializable {
     @Transient
     private Timestamp parentModified;
 
-    public ZusatzWert() {
+    public SampleSpecifMeasVal() {
     }
 
     public Integer getId() {

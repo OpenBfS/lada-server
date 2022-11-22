@@ -20,7 +20,7 @@ import javax.ws.rs.QueryParam;
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
-import de.intevation.lada.model.land.ZusatzWert;
+import de.intevation.lada.model.land.SampleSpecifMeasVal;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -102,12 +102,12 @@ public class ZusatzwertService extends LadaService {
     public Response get(
         @QueryParam("probeId") @NotNull Integer probeId
     ) {
-        QueryBuilder<ZusatzWert> builder =
-            repository.queryBuilder(ZusatzWert.class);
+        QueryBuilder<SampleSpecifMeasVal> builder =
+            repository.queryBuilder(SampleSpecifMeasVal.class);
         builder.and("sampleId", probeId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
-            ZusatzWert.class);
+            SampleSpecifMeasVal.class);
     }
 
     /**
@@ -122,8 +122,8 @@ public class ZusatzwertService extends LadaService {
         @PathParam("id") Integer id
     ) {
         return authorization.filter(
-            repository.getById(ZusatzWert.class, id),
-            ZusatzWert.class);
+            repository.getById(SampleSpecifMeasVal.class, id),
+            SampleSpecifMeasVal.class);
     }
 
     /**
@@ -152,12 +152,12 @@ public class ZusatzwertService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        ZusatzWert zusatzwert
+        SampleSpecifMeasVal zusatzwert
     ) {
         if (!authorization.isAuthorized(
                 zusatzwert,
                 RequestMethod.POST,
-                ZusatzWert.class)
+                SampleSpecifMeasVal.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -165,7 +165,7 @@ public class ZusatzwertService extends LadaService {
         // TODO: perform validation to avoid violating database constraints
         return authorization.filter(
             repository.create(zusatzwert),
-            ZusatzWert.class);
+            SampleSpecifMeasVal.class);
     }
 
     /**
@@ -195,12 +195,12 @@ public class ZusatzwertService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        ZusatzWert zusatzwert
+        SampleSpecifMeasVal zusatzwert
     ) {
         if (!authorization.isAuthorized(
                 zusatzwert,
                 RequestMethod.PUT,
-                ZusatzWert.class)
+                SampleSpecifMeasVal.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
@@ -213,7 +213,7 @@ public class ZusatzwertService extends LadaService {
         }
         return authorization.filter(
             response,
-            ZusatzWert.class);
+            SampleSpecifMeasVal.class);
     }
 
     /**
@@ -227,11 +227,11 @@ public class ZusatzwertService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        ZusatzWert obj = repository.getByIdPlain(ZusatzWert.class, id);
+        SampleSpecifMeasVal obj = repository.getByIdPlain(SampleSpecifMeasVal.class, id);
         if (!authorization.isAuthorized(
                 obj,
                 RequestMethod.DELETE,
-                ZusatzWert.class)
+                SampleSpecifMeasVal.class)
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }

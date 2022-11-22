@@ -11,7 +11,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.ZusatzWert;
+import de.intevation.lada.model.land.SampleSpecifMeasVal;
 import de.intevation.lada.model.master.EnvSpecifMp;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
@@ -46,11 +46,11 @@ public class UmweltToProbezusatz implements Rule {
                 builderUmwZus.and("envMediumId", umwId);
             List <EnvSpecifMp> UmwZus = repository.filterPlain(builderUmwZus.getQuery());
 
-            QueryBuilder<ZusatzWert> builderZusatz =
-                repository.queryBuilder(ZusatzWert.class);
+            QueryBuilder<SampleSpecifMeasVal> builderZusatz =
+                repository.queryBuilder(SampleSpecifMeasVal.class);
                 builderZusatz.and("sampleId", probe.getId());
-            List <ZusatzWert> ZusWert = repository.filterPlain(builderZusatz.getQuery());
-            for (ZusatzWert zusW: ZusWert) {
+            List <SampleSpecifMeasVal> ZusWert = repository.filterPlain(builderZusatz.getQuery());
+            for (SampleSpecifMeasVal zusW: ZusWert) {
                 Boolean ZusWertFound = UmwZus.stream().anyMatch(u -> u.getSampleSpecifId().equals(zusW.getSampleSpecifId()));
                 if (ZusWertFound) {
                     return null;

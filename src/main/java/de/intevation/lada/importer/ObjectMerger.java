@@ -20,7 +20,7 @@ import de.intevation.lada.model.land.Measm;
 import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.ZusatzWert;
+import de.intevation.lada.model.land.SampleSpecifMeasVal;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
@@ -154,14 +154,14 @@ public class ObjectMerger {
      */
     public ObjectMerger mergeZusatzwerte(
         Sample target,
-        List<ZusatzWert> zusatzwerte
+        List<SampleSpecifMeasVal> zusatzwerte
     ) {
-        QueryBuilder<ZusatzWert> builder =
-            repository.queryBuilder(ZusatzWert.class);
+        QueryBuilder<SampleSpecifMeasVal> builder =
+            repository.queryBuilder(SampleSpecifMeasVal.class);
         for (int i = 0; i < zusatzwerte.size(); i++) {
             builder.and("sampleId", target.getId());
             builder.and("sampleSpecifId", zusatzwerte.get(i).getSampleSpecifId());
-            List<ZusatzWert> found =
+            List<SampleSpecifMeasVal> found =
                 repository.filterPlain(builder.getQuery());
             if (found.isEmpty()) {
                 repository.create(zusatzwerte.get(i));

@@ -50,7 +50,7 @@ import de.intevation.lada.model.land.MeasVal;
 import de.intevation.lada.model.land.Geolocat;
 import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.model.land.StatusProt;
-import de.intevation.lada.model.land.ZusatzWert;
+import de.intevation.lada.model.land.SampleSpecifMeasVal;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.model.master.EnvMedium;
@@ -442,10 +442,10 @@ public class JsonExporter implements Exporter {
     }
 
     private void addZusatzwerte(JsonNode probe) {
-        QueryBuilder<ZusatzWert> builder =
-            repository.queryBuilder(ZusatzWert.class);
+        QueryBuilder<SampleSpecifMeasVal> builder =
+            repository.queryBuilder(SampleSpecifMeasVal.class);
         builder.and("sampleId", probe.get("id").asInt());
-        List<ZusatzWert> zusatzwerte =
+        List<SampleSpecifMeasVal> zusatzwerte =
             repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();
         try {
