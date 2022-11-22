@@ -11,7 +11,7 @@ SELECT pg_catalog.setval('dataset_creator_id_seq', (SELECT max(id) FROM dataset_
 SELECT pg_catalog.setval('env_descrip_env_medium_mp_id_seq', (SELECT max(id) FROM env_descrip_env_medium_mp), true);
 
 SELECT pg_catalog.setval('env_descrip_id_seq', (SELECT max(id) FROM env_descrip), true);
-SELECT pg_catalog.setval('master.env_descrip_s_xx_seq', (SELECT max(s_xx) FROM master.env_descrip), true);
+SELECT pg_catalog.setval('master.env_descrip_imis2_id_seq', (SELECT max(imis2_id) FROM master.env_descrip), true);
 
 SELECT pg_catalog.setval('filter_id_seq', (SELECT max(id) FROM filter), true);
 
