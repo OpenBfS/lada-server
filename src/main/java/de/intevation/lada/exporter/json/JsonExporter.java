@@ -444,7 +444,7 @@ public class JsonExporter implements Exporter {
     private void addZusatzwerte(JsonNode probe) {
         QueryBuilder<ZusatzWert> builder =
             repository.queryBuilder(ZusatzWert.class);
-        builder.and("probeId", probe.get("id").asInt());
+        builder.and("sampleId", probe.get("id").asInt());
         List<ZusatzWert> zusatzwerte =
             repository.filterPlain(builder.getQuery());
         final ObjectMapper mapper = new ObjectMapper();

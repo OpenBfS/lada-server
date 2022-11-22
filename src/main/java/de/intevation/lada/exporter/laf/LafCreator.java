@@ -164,7 +164,7 @@ implements Creator {
 
         QueryBuilder<ZusatzWert> zusatzBuilder =
             repository.queryBuilder(ZusatzWert.class);
-        zusatzBuilder.and("probeId", probe.getId());
+        zusatzBuilder.and("sampleId", probe.getId());
         Response zusatz =
             repository.filter(zusatzBuilder.getQuery());
         List<ZusatzWert> zusatzwerte = (List<ZusatzWert>) zusatz.getData();
@@ -290,20 +290,20 @@ implements Creator {
     private String writeZusatzwert(ZusatzWert zw) {
         QueryBuilder<SampleSpecif> builder =
             repository.queryBuilder(SampleSpecif.class);
-        builder.and("id", zw.getPzsId());
+        builder.and("id", zw.getSampleSpecifId());
         List<SampleSpecif> zusatz =
             (List<SampleSpecif>) repository.filter(
                 builder.getQuery()
             ).getData();
 
         String value = "\"" + zusatz.get(0).getId() + "\"";
-        value += ((zw.getKleinerAls() == null)
+        value += ((zw.getSmallerThan() == null)
             ? " "
-            : " " + zw.getKleinerAls());
-        value += zw.getMesswertPzs();
+            : " " + zw.getSmallerThan());
+        value += zw.getMeasVal();
         value += " " + ((zusatz.get(0).getUnitId() == null)
             ? "\"\"" : zusatz.get(0).getUnitId());
-        value += " " + ((zw.getMessfehler() == null) ? "" : zw.getMessfehler());
+        value += " " + ((zw.getError() == null) ? "" : zw.getError());
         return lafLine("PZB_S", value);
     }
 

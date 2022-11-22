@@ -471,10 +471,10 @@ public class ProbeFactory {
         if (pZusatzs != null) {
             for (SampleSpecif pZusatz: pZusatzs) {
                 ZusatzWert zusatz = new ZusatzWert();
-                zusatz.setProbeId(probe.getId());
-                zusatz.setPzsId(pZusatz.getId());
+                zusatz.setSampleId(probe.getId());
+                zusatz.setSampleSpecifId(pZusatz.getId());
                 createObject(zusatz, dryrun);
-                zusatzWerts.add(zusatz.getPzsId());
+                zusatzWerts.add(zusatz.getSampleSpecifId());
             }
             currentProtocol.put("pZws", zusatzWerts);
         }

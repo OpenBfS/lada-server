@@ -1220,18 +1220,18 @@ public class LafObjectMapper {
         int probeId
     ) {
         ZusatzWert zusatzwert = new ZusatzWert();
-        zusatzwert.setProbeId(probeId);
+        zusatzwert.setSampleId(probeId);
         if (attributes.containsKey("MESSFEHLER")) {
-            zusatzwert.setMessfehler(
+            zusatzwert.setError(
                 Float.valueOf(
                     attributes.get("MESSFEHLER").replaceAll(",", ".")));
         }
         String wert = attributes.get("MESSWERT_PZS");
         if (wert.startsWith("<")) {
             wert = wert.substring(1);
-            zusatzwert.setKleinerAls("<");
+            zusatzwert.setSmallerThan("<");
         }
-        zusatzwert.setMesswertPzs(Double.valueOf(wert.replaceAll(",", ".")));
+        zusatzwert.setMeasVal(Double.valueOf(wert.replaceAll(",", ".")));
         List<ImportConf> cfgs =
             getImporterConfigByAttributeUpper("ZUSATZWERT");
         String attribute = attributes.get("PZS");
@@ -1274,7 +1274,7 @@ public class LafObjectMapper {
                 StatusCodes.IMP_INVALID_VALUE));
             return null;
         }
-        zusatzwert.setPzsId(zusatz.get(0).getId());
+        zusatzwert.setSampleSpecifId(zusatz.get(0).getId());
         return zusatzwert;
     }
 

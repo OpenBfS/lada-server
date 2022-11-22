@@ -566,24 +566,24 @@ public class ImporterTest extends BaseTest {
         Sample probe = repository.getByIdPlain(Sample.class, PID1000);
         List<ZusatzWert> zusatzwerte = new ArrayList<ZusatzWert>();
         ZusatzWert wert1 = new ZusatzWert();
-        wert1.setProbeId(PID1000);
-        wert1.setMessfehler(MESSFEHLER12F);
-        wert1.setKleinerAls("<");
-        wert1.setPzsId("A74");
+        wert1.setSampleId(PID1000);
+        wert1.setError(MESSFEHLER12F);
+        wert1.setSmallerThan("<");
+        wert1.setSampleSpecifId("A74");
 
         ZusatzWert wert2 = new ZusatzWert();
-        wert2.setProbeId(PID1000);
-        wert2.setMessfehler(MESSFEHLER02F);
-        wert2.setMesswertPzs(MESS18D);
-        wert1.setKleinerAls(null);
-        wert2.setPzsId("A75");
+        wert2.setSampleId(PID1000);
+        wert2.setError(MESSFEHLER02F);
+        wert2.setMeasVal(MESS18D);
+        wert1.setSmallerThan(null);
+        wert2.setSampleSpecifId("A75");
 
         ZusatzWert wert3 = new ZusatzWert();
-        wert3.setProbeId(PID1000);
-        wert3.setMessfehler(MESSFEHLER02F);
-        wert3.setMesswertPzs(MESS18D);
-        wert1.setKleinerAls(null);
-        wert3.setPzsId("A76");
+        wert3.setSampleId(PID1000);
+        wert3.setError(MESSFEHLER02F);
+        wert3.setMeasVal(MESS18D);
+        wert1.setSmallerThan(null);
+        wert3.setSampleSpecifId("A76");
 
         zusatzwerte.add(wert1);
         zusatzwerte.add(wert2);

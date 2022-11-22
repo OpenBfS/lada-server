@@ -159,8 +159,8 @@ public class ObjectMerger {
         QueryBuilder<ZusatzWert> builder =
             repository.queryBuilder(ZusatzWert.class);
         for (int i = 0; i < zusatzwerte.size(); i++) {
-            builder.and("probeId", target.getId());
-            builder.and("pzsId", zusatzwerte.get(i).getPzsId());
+            builder.and("sampleId", target.getId());
+            builder.and("sampleSpecifId", zusatzwerte.get(i).getSampleSpecifId());
             List<ZusatzWert> found =
                 repository.filterPlain(builder.getQuery());
             if (found.isEmpty()) {
@@ -177,8 +177,8 @@ public class ObjectMerger {
             //
             // Current solution:
             // Remove all db objects to be able to create new ones.
-            found.get(0).setMessfehler(zusatzwerte.get(i).getMessfehler());
-            found.get(0).setMesswertPzs(zusatzwerte.get(i).getMesswertPzs());
+            found.get(0).setError(zusatzwerte.get(i).getError());
+            found.get(0).setMeasVal(zusatzwerte.get(i).getMeasVal());
             repository.update(found.get(0));
             builder = builder.getEmptyBuilder();
         }

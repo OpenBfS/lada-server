@@ -23,13 +23,8 @@ import javax.persistence.Transient;
 
 import de.intevation.lada.util.data.EmptyStringConverter;
 
-
-/**
- * The persistent class for the zusatz_wert database table.
- *
- */
 @Entity
-@Table(name = "zusatz_wert", schema = SchemaName.LEGACY_NAME)
+@Table(name = "sample_specif_meas_val", schema = SchemaName.NAME)
 public class ZusatzWert implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -37,30 +32,26 @@ public class ZusatzWert implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "letzte_aenderung", insertable = false)
-    private Timestamp letzteAenderung;
+    @Column(insertable = false)
+    private Timestamp lastMod;
 
-    private Float messfehler;
+    private Float error;
 
-    @Column(name = "messwert_pzs")
-    private Double messwertPzs;
+    private Double measVal;
 
-    @Column(name = "kleiner_als")
     @Convert(converter = EmptyStringConverter.class)
-    private String kleinerAls;
+    private String smallerThan;
 
-    @Column(name = "probe_id")
-    private Integer probeId;
+    private Integer sampleId;
 
-    @Column(name = "pzs_id")
-    private String pzsId;
+    private String sampleSpecifId;
 
-    @Column(name = "tree_modified", insertable = false, updatable = false)
-    private Timestamp treeModified;
+    @Column(insertable = false, updatable = false)
+    private Timestamp treeMod;
 
     @OneToOne
-    @JoinColumn(name = "probe_id", insertable = false, updatable = false)
-    private Sample probe;
+    @JoinColumn(name = "sample_id", insertable = false, updatable = false)
+    private Sample sample;
 
     @Transient
     private boolean owner;
@@ -82,60 +73,60 @@ public class ZusatzWert implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getLetzteAenderung() {
-        return this.letzteAenderung;
+    public Timestamp getLastMod() {
+        return this.lastMod;
     }
 
-    public void setLetzteAenderung(Timestamp letzteAenderung) {
-        this.letzteAenderung = letzteAenderung;
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
     }
 
-    public Float getMessfehler() {
-        return this.messfehler;
+    public Float getError() {
+        return this.error;
     }
 
-    public void setMessfehler(Float messfehler) {
-        this.messfehler = messfehler;
+    public void setError(Float error) {
+        this.error = error;
     }
 
-    public Double getMesswertPzs() {
-        return this.messwertPzs;
+    public Double getMeasVal() {
+        return this.measVal;
     }
 
-    public void setMesswertPzs(Double messwertPzs) {
-        this.messwertPzs = messwertPzs;
+    public void setMeasVal(Double measVal) {
+        this.measVal = measVal;
     }
 
-    public Integer getProbeId() {
-        return this.probeId;
+    public Integer getSampleId() {
+        return this.sampleId;
     }
 
-    public void setProbeId(Integer probeId) {
-        this.probeId = probeId;
+    public void setSampleId(Integer sampleId) {
+        this.sampleId = sampleId;
     }
 
-    public String getPzsId() {
-        return this.pzsId;
+    public String getSampleSpecifId() {
+        return this.sampleSpecifId;
     }
 
-    public void setPzsId(String pzsId) {
-        this.pzsId = pzsId;
+    public void setSampleSpecifId(String sampleSpecifId) {
+        this.sampleSpecifId = sampleSpecifId;
     }
 
-    public String getKleinerAls() {
-        return this.kleinerAls;
+    public String getSmallerThan() {
+        return this.smallerThan;
     }
 
-    public void setKleinerAls(String kleinerAls) {
-        this.kleinerAls = kleinerAls;
+    public void setSmallerThan(String smallerThan) {
+        this.smallerThan = smallerThan;
     }
 
-    public Timestamp getTreeModified() {
-        return this.treeModified;
+    public Timestamp getTreeMod() {
+        return this.treeMod;
     }
 
-    public void setTreeModified(Timestamp treeModified) {
-        this.treeModified = treeModified;
+    public void setTreeMod(Timestamp treeMod) {
+        this.treeMod = treeMod;
     }
 
     /**
@@ -171,8 +162,8 @@ public class ZusatzWert implements Serializable {
      * @return timestamp when the parent was modified
      */
     public Timestamp getParentModified() {
-        if (this.parentModified == null && this.probe != null) {
-            return this.probe.getTreeMod();
+        if (this.parentModified == null && this.sample != null) {
+            return this.sample.getTreeMod();
         }
         return this.parentModified;
     }

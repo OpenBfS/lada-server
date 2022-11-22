@@ -104,7 +104,7 @@ public class ZusatzwertService extends LadaService {
     ) {
         QueryBuilder<ZusatzWert> builder =
             repository.queryBuilder(ZusatzWert.class);
-        builder.and("probeId", probeId);
+        builder.and("sampleId", probeId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
             ZusatzWert.class);
