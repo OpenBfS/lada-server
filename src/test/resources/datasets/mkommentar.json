@@ -1,7 +1,7 @@
 {
-    "messungsId":1200,
-    "mstId": "06010",
+    "measmId":1200,
+    "measFacilId": "06010",
     "text":"test",
-    "datum": "1423475916000"
+    "date": "1423475916000"
 }
 
