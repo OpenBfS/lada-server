@@ -34,7 +34,7 @@ public class MessprogrammIdAuthorizer extends BaseAuthorizer {
     ) {
         Method m;
         try {
-            m = clazz.getMethod("getMessprogrammId");
+            m = clazz.getMethod("getMpgId");
         } catch (NoSuchMethodException | SecurityException e1) {
             return false;
         }
