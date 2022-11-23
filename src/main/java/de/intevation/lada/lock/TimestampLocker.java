@@ -51,7 +51,7 @@ public class TimestampLocker implements ObjectLocker {
         } else {
             Method[] methods = o.getClass().getMethods();
             for (Method m: methods) {
-                if (m.getName().equals("getProbeId")) {
+                if (m.getName().equals("getSampleId")) {
                     Integer id;
                     try {
                         id = (Integer) m.invoke(o);
@@ -62,7 +62,7 @@ public class TimestampLocker implements ObjectLocker {
                     Sample probe = repository.getByIdPlain(Sample.class, id);
                     return isNewer(o, probe.getTreeMod());
                 }
-                if (m.getName().equals("getMessungsId")) {
+                if (m.getName().equals("getMeasmId")) {
                     Integer id;
                     try {
                         id = (Integer) m.invoke(o);
