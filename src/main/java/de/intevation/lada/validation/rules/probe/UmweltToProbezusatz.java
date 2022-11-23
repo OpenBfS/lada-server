@@ -10,8 +10,8 @@ package de.intevation.lada.validation.rules.probe;
 import java.util.List;
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.master.EnvSpecifMp;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;

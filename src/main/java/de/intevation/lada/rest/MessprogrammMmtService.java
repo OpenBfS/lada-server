@@ -20,8 +20,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.land.Mpg;
-import de.intevation.lada.model.land.MpgMmtMp;
+import de.intevation.lada.model.lada.Mpg;
+import de.intevation.lada.model.lada.MpgMmtMp;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;

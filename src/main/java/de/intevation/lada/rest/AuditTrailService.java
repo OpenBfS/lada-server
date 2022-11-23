@@ -26,12 +26,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import de.intevation.lada.model.land.AuditTrailMeasmView;
-import de.intevation.lada.model.land.AuditTrailSampleView;
-import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Geolocat;
-import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.StatusProt;
+import de.intevation.lada.model.lada.AuditTrailMeasmView;
+import de.intevation.lada.model.lada.AuditTrailSampleView;
+import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;

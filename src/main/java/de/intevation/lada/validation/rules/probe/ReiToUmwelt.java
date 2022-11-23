@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.ReiAgGrEnvMediumMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;

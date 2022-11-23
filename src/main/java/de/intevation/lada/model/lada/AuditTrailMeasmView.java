@@ -5,7 +5,7 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.model.land;
+package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -14,44 +14,57 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import de.intevation.lada.util.data.JsonObjectType;
+
 
 @Entity
 @Table(schema = SchemaName.NAME)
 @TypeDefs({ @TypeDef(name = "JsonObject", typeClass = JsonObjectType.class) })
-public class AuditTrailSampleView implements Serializable {
+public class AuditTrailMeasmView implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     private Long id;
 
+    private String action;
+
+    private Timestamp tstamp;
+
     @Type(type = "JsonObject")
     private JsonNode changedFields;
+
+    private String measmId;
+
+    private Integer objectId;
 
     @Type(type = "JsonObject")
     private JsonNode rowData;
 
-    private Timestamp tstamp;
-
-    private String action;
-
-    private Integer measmId;
-
-    private Integer objectId;
-
-    private Integer siteId;
-
-    private Integer sampleId;
-
     private String tableName;
 
-    public AuditTrailSampleView() {
+    public AuditTrailMeasmView() {
+    }
+
+    public String getAction() {
+        return this.action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public Timestamp getTstamp() {
+        return this.tstamp;
+    }
+
+    public void setTstamp(Timestamp tstamp) {
+        this.tstamp = tstamp;
     }
 
     public JsonNode getChangedFields() {
@@ -62,35 +75,19 @@ public class AuditTrailSampleView implements Serializable {
         this.changedFields = changedFields;
     }
 
-    public JsonNode getRowData() {
-        return rowData;
+    public Long getId() {
+        return this.id;
     }
 
-    public void setRowData(JsonNode rowData) {
-        this.rowData = rowData;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Timestamp getTstamp() {
-        return tstamp;
-    }
-
-    public void setTstamp(Timestamp tstamp) {
-        this.tstamp = tstamp;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public Integer getMeasmId() {
+    public String getMeasmId() {
         return this.measmId;
     }
 
-    public void setMeasmId(Integer measmId) {
+    public void setMeasmId(String measmId) {
         this.measmId = measmId;
     }
 
@@ -102,20 +99,12 @@ public class AuditTrailSampleView implements Serializable {
         this.objectId = objectId;
     }
 
-    public Integer getSiteId() {
-        return this.siteId;
+    public JsonNode getRowData() {
+        return this.rowData;
     }
 
-    public void setSiteId(Integer siteId) {
-        this.siteId = siteId;
-    }
-
-    public Integer getSampleId() {
-        return this.sampleId;
-    }
-
-    public void setSampleId(Integer sampleId) {
-        this.sampleId = sampleId;
+    public void setRowData(JsonNode rowData) {
+        this.rowData = rowData;
     }
 
     public String getTableName() {

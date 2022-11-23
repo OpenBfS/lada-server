@@ -12,9 +12,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.MeasVal;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.ObligMeasdMp;
 import de.intevation.lada.util.data.QueryBuilder;

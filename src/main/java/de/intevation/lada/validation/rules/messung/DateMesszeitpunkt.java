@@ -11,8 +11,8 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;

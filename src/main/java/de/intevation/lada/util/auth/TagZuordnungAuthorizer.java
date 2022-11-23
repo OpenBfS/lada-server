@@ -8,9 +8,9 @@
 
 package de.intevation.lada.util.auth;
 
-import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.TagLink;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.TagLink;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;

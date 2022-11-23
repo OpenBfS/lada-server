@@ -12,7 +12,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 

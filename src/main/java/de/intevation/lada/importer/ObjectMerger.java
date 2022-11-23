@@ -14,13 +14,13 @@ import javax.persistence.PersistenceException;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.model.land.CommMeasm;
-import de.intevation.lada.model.land.CommSample;
-import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.MeasVal;
-import de.intevation.lada.model.land.Geolocat;
-import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.CommMeasm;
+import de.intevation.lada.model.lada.CommSample;
+import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;

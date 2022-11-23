@@ -20,10 +20,10 @@ import javax.json.JsonValue;
 
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.Exporter;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.ExportJob;
-import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Sample;
 import de.intevation.lada.util.data.QueryBuilder;
 
 /**

@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.probe;
 
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;

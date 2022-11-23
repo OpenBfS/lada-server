@@ -26,7 +26,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import de.intevation.lada.model.land.TagLink;
+import de.intevation.lada.model.lada.TagLink;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;

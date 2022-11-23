@@ -10,7 +10,7 @@ package de.intevation.lada.validation.rules.messprogramm;
 import java.util.Hashtable;
 import java.util.Set;
 
-import de.intevation.lada.model.land.Mpg;
+import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;

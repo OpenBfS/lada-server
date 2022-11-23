@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.messwert;
 
-import de.intevation.lada.model.land.MeasVal;
+import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;

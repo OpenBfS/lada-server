@@ -23,8 +23,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import de.intevation.lada.factory.ProbeFactory;
-import de.intevation.lada.model.land.Mpg;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.lada.Mpg;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;

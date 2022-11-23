@@ -9,9 +9,9 @@ package de.intevation.lada.util.auth;
 
 import java.util.List;
 
-import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.StatusProt;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;

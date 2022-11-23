@@ -12,7 +12,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
 import de.intevation.lada.util.data.QueryBuilder;

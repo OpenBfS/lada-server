@@ -5,13 +5,13 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.model.land;
+package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,12 +20,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.ws.rs.core.MultivaluedMap;
 
-import de.intevation.lada.util.data.EmptyStringConverter;
+
 
 @Entity
 @Table(schema = SchemaName.NAME)
-public class SampleSpecifMeasVal implements Serializable {
+public class Geolocat implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -35,16 +36,15 @@ public class SampleSpecifMeasVal implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    private Float error;
+    private Integer siteId;
 
-    private Double measVal;
+    private String typeRegulation;
 
-    @Convert(converter = EmptyStringConverter.class)
-    private String smallerThan;
+    private String addSiteText;
 
     private Integer sampleId;
 
-    private String sampleSpecifId;
+    private String poiId;
 
     @Column(insertable = false, updatable = false)
     private Timestamp treeMod;
@@ -52,6 +52,12 @@ public class SampleSpecifMeasVal implements Serializable {
     @OneToOne
     @JoinColumn(name = "sample_id", insertable = false, updatable = false)
     private Sample sample;
+
+    @Transient
+    private MultivaluedMap<String, Integer> errors;
+
+    @Transient
+    private MultivaluedMap<String, Integer> warnings;
 
     @Transient
     private boolean owner;
@@ -62,7 +68,7 @@ public class SampleSpecifMeasVal implements Serializable {
     @Transient
     private Timestamp parentModified;
 
-    public SampleSpecifMeasVal() {
+    public Geolocat() {
     }
 
     public Integer getId() {
@@ -81,20 +87,28 @@ public class SampleSpecifMeasVal implements Serializable {
         this.lastMod = lastMod;
     }
 
-    public Float getError() {
-        return this.error;
+    public Integer getSiteId() {
+        return this.siteId;
     }
 
-    public void setError(Float error) {
-        this.error = error;
+    public void setSiteId(Integer siteId) {
+        this.siteId = siteId;
     }
 
-    public Double getMeasVal() {
-        return this.measVal;
+    public String getTypeRegulation() {
+        return this.typeRegulation;
     }
 
-    public void setMeasVal(Double measVal) {
-        this.measVal = measVal;
+    public void setTypeRegulation(String typeRegulation) {
+        this.typeRegulation = typeRegulation;
+    }
+
+    public String getAddSiteText() {
+        return this.addSiteText;
+    }
+
+    public void setAddSiteText(String addSiteText) {
+        this.addSiteText = addSiteText;
     }
 
     public Integer getSampleId() {
@@ -105,20 +119,12 @@ public class SampleSpecifMeasVal implements Serializable {
         this.sampleId = sampleId;
     }
 
-    public String getSampleSpecifId() {
-        return this.sampleSpecifId;
+    public String getPoiId() {
+        return this.poiId;
     }
 
-    public void setSampleSpecifId(String sampleSpecifId) {
-        this.sampleSpecifId = sampleSpecifId;
-    }
-
-    public String getSmallerThan() {
-        return this.smallerThan;
-    }
-
-    public void setSmallerThan(String smallerThan) {
-        this.smallerThan = smallerThan;
+    public void setPoiId(String poiId) {
+        this.poiId = poiId;
     }
 
     public Timestamp getTreeMod() {
@@ -127,6 +133,24 @@ public class SampleSpecifMeasVal implements Serializable {
 
     public void setTreeMod(Timestamp treeMod) {
         this.treeMod = treeMod;
+    }
+
+    public MultivaluedMap<String, Integer> getErrors() {
+        return this.errors;
+    }
+
+    @JsonbTransient
+    public void setErrors(MultivaluedMap<String, Integer> errors) {
+        this.errors = errors;
+    }
+
+    public MultivaluedMap<String, Integer> getWarnings() {
+        return this.warnings;
+    }
+
+    @JsonbTransient
+    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
+        this.warnings = warnings;
     }
 
     /**

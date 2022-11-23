@@ -20,7 +20,7 @@ import javax.ws.rs.QueryParam;
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
-import de.intevation.lada.model.land.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;

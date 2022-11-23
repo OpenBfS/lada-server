@@ -21,15 +21,15 @@ import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.model.land.CommSample;
-import de.intevation.lada.model.land.Mpg;
-import de.intevation.lada.model.land.MpgMmtMp;
-import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.MeasVal;
-import de.intevation.lada.model.land.Geolocat;
-import de.intevation.lada.model.land.GeolocatMpg;
-import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.CommSample;
+import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.GeolocatMpg;
+import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Mpg;
+import de.intevation.lada.model.lada.MpgMmtMp;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
 import de.intevation.lada.model.master.SampleSpecif;

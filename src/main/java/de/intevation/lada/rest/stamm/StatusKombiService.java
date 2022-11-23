@@ -21,8 +21,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.StatusProt;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.StatusAccessMpView;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.annotation.AuthorizationConfig;

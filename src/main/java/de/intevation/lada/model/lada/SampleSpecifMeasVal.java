@@ -5,13 +5,13 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.model.land;
+package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,44 +20,38 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.ws.rs.core.MultivaluedMap;
 
-
+import de.intevation.lada.util.data.EmptyStringConverter;
 
 @Entity
 @Table(schema = SchemaName.NAME)
-public class MeasVal implements Serializable {
+public class SampleSpecifMeasVal implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Boolean isThreshold;
-
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    private Integer unitId;
-
     private Float error;
-
-    private Integer measdId;
-
-    private Integer measmId;
 
     private Double measVal;
 
-    private String lessThanLOD;
+    @Convert(converter = EmptyStringConverter.class)
+    private String smallerThan;
 
-    private Double detectLim;
+    private Integer sampleId;
+
+    private String sampleSpecifId;
 
     @Column(insertable = false, updatable = false)
     private Timestamp treeMod;
 
     @OneToOne
-    @JoinColumn(name = "measm_id", insertable = false, updatable = false)
-    private Measm measm;
+    @JoinColumn(name = "sample_id", insertable = false, updatable = false)
+    private Sample sample;
 
     @Transient
     private boolean owner;
@@ -68,16 +62,7 @@ public class MeasVal implements Serializable {
     @Transient
     private Timestamp parentModified;
 
-    @Transient
-    private MultivaluedMap<String, Integer> errors;
-
-    @Transient
-    private MultivaluedMap<String, Integer> warnings;
-
-    @Transient
-    private MultivaluedMap<String, Integer> notifications;
-
-    public MeasVal() {
+    public SampleSpecifMeasVal() {
     }
 
     public Integer getId() {
@@ -88,28 +73,12 @@ public class MeasVal implements Serializable {
         this.id = id;
     }
 
-    public Boolean getIsThreshold() {
-        return this.isThreshold;
-    }
-
-    public void setIsThreshold(Boolean isThreshold) {
-        this.isThreshold = isThreshold;
-    }
-
     public Timestamp getLastMod() {
         return this.lastMod;
     }
 
     public void setLastMod(Timestamp lastMod) {
         this.lastMod = lastMod;
-    }
-
-    public Integer getUnitId() {
-        return this.unitId;
-    }
-
-    public void setUnitId(Integer unitId) {
-        this.unitId = unitId;
     }
 
     public Float getError() {
@@ -120,27 +89,6 @@ public class MeasVal implements Serializable {
         this.error = error;
     }
 
-    public Integer getMeasdId() {
-        return this.measdId;
-    }
-
-    public void setMeasdId(Integer measdId) {
-        this.measdId = measdId;
-    }
-
-    @JsonbTransient
-    public Measm getMeasm() {
-        return this.measm;
-    }
-
-    public Integer getMeasmId() {
-        return this.measmId;
-    }
-
-    public void setMeasmId(Integer measmId) {
-        this.measmId = measmId;
-    }
-
     public Double getMeasVal() {
         return this.measVal;
     }
@@ -149,20 +97,28 @@ public class MeasVal implements Serializable {
         this.measVal = measVal;
     }
 
-    public String getLessThanLOD() {
-        return this.lessThanLOD;
+    public Integer getSampleId() {
+        return this.sampleId;
     }
 
-    public void setLessThanLOD(String lessThanLOD) {
-        this.lessThanLOD = lessThanLOD;
+    public void setSampleId(Integer sampleId) {
+        this.sampleId = sampleId;
     }
 
-    public Double getDetectLim() {
-        return this.detectLim;
+    public String getSampleSpecifId() {
+        return this.sampleSpecifId;
     }
 
-    public void setDetectLim(Double detectLim) {
-        this.detectLim = detectLim;
+    public void setSampleSpecifId(String sampleSpecifId) {
+        this.sampleSpecifId = sampleSpecifId;
+    }
+
+    public String getSmallerThan() {
+        return this.smallerThan;
+    }
+
+    public void setSmallerThan(String smallerThan) {
+        this.smallerThan = smallerThan;
     }
 
     public Timestamp getTreeMod() {
@@ -206,42 +162,13 @@ public class MeasVal implements Serializable {
      * @return timestamp when the parent was modified
      */
     public Timestamp getParentModified() {
-        if (this.parentModified == null && this.measm != null) {
-            return this.measm.getTreeMod();
+        if (this.parentModified == null && this.sample != null) {
+            return this.sample.getTreeMod();
         }
         return this.parentModified;
     }
 
     public void setParentModified(Timestamp parentModified) {
         this.parentModified = parentModified;
-    }
-
-    public MultivaluedMap<String, Integer> getErrors() {
-        return this.errors;
-    }
-
-    @JsonbTransient
-    public void setErrors(MultivaluedMap<String, Integer> errors) {
-        this.errors = errors;
-    }
-
-    public MultivaluedMap<String, Integer> getWarnings() {
-        return this.warnings;
-    }
-
-    @JsonbTransient
-    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
-        this.warnings = warnings;
-    }
-
-    public MultivaluedMap<String, Integer> getNotifications() {
-        return this.notifications;
-    }
-
-    @JsonbTransient
-    public void setNotifications(
-        MultivaluedMap<String, Integer> notifications
-    ) {
-        this.notifications = notifications;
     }
 }

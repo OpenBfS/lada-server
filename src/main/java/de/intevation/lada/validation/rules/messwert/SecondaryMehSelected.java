@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.MeasVal;
+import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.MeasUnit;
 import de.intevation.lada.util.data.Repository;

@@ -11,7 +11,7 @@ import javax.inject.Inject;
 
 import java.util.List;
 
-import de.intevation.lada.model.land.MeasVal;
+import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.UnitConvers;

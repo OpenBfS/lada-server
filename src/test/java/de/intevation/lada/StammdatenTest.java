@@ -27,8 +27,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.model.master.MpgCateg;

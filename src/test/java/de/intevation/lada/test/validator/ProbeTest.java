@@ -13,7 +13,7 @@ import java.util.List;
 import org.junit.Assert;
 
 import de.intevation.lada.Protocol;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
 

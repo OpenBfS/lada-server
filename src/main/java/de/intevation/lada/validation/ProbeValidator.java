@@ -11,7 +11,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.annotation.ValidationConfig;
 import de.intevation.lada.validation.annotation.ValidationRule;

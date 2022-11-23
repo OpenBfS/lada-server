@@ -13,7 +13,7 @@ import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.model.land.StatusProt;
+import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;

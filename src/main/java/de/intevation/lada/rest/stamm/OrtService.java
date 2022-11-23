@@ -36,10 +36,10 @@ import org.jboss.logging.Logger;
 
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.importer.ReportItem;
-import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Geolocat;
-import de.intevation.lada.model.land.GeolocatMpg;
-import de.intevation.lada.model.land.StatusProt;
+import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.GeolocatMpg;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.annotation.AuthorizationConfig;

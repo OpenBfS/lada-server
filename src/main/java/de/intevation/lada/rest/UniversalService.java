@@ -19,9 +19,9 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.MultivaluedHashMap;
 
 import de.intevation.lada.model.QueryColumns;
-import de.intevation.lada.model.land.Mpg;
-import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Mpg;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.Disp;
 import de.intevation.lada.model.master.GridColConf;

@@ -13,8 +13,8 @@ import java.sql.Timestamp;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Sample;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.Repository;
 
 

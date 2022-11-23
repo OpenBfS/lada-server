@@ -5,11 +5,12 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.model.land;
+package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.json.JsonObject;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -18,15 +19,12 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import de.intevation.lada.util.data.JsonObjectType;
-
 
 @Entity
 @Table(schema = SchemaName.NAME)
 @TypeDefs({ @TypeDef(name = "JsonObject", typeClass = JsonObjectType.class) })
-public class AuditTrailMeasmView implements Serializable {
+public class AuditTrail implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,21 +32,27 @@ public class AuditTrailMeasmView implements Serializable {
 
     private String action;
 
-    private Timestamp tstamp;
+    private Timestamp actionTstampClk;
 
     @Type(type = "JsonObject")
-    private JsonNode changedFields;
-
-    private String measmId;
+    private JsonObject changedFields;
 
     private Integer objectId;
 
     @Type(type = "JsonObject")
-    private JsonNode rowData;
+    private JsonObject rowData;
 
     private String tableName;
 
-    public AuditTrailMeasmView() {
+    public AuditTrail() {
+    }
+
+    public Long getId() {
+        return this.id;
+}
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getAction() {
@@ -59,36 +63,20 @@ public class AuditTrailMeasmView implements Serializable {
         this.action = action;
     }
 
-    public Timestamp getTstamp() {
-        return this.tstamp;
+    public Timestamp getActionTstampClk() {
+        return this.actionTstampClk;
     }
 
-    public void setTstamp(Timestamp tstamp) {
-        this.tstamp = tstamp;
+    public void setActionTstampClk(Timestamp actionTstampClk) {
+        this.actionTstampClk = actionTstampClk;
     }
 
-    public JsonNode getChangedFields() {
+    public JsonObject getChangedFields() {
         return this.changedFields;
     }
 
-    public void setChangedFields(JsonNode changedFields) {
+    public void setChangedFields(JsonObject changedFields) {
         this.changedFields = changedFields;
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getMeasmId() {
-        return this.measmId;
-    }
-
-    public void setMeasmId(String measmId) {
-        this.measmId = measmId;
     }
 
     public Integer getObjectId() {
@@ -99,11 +87,11 @@ public class AuditTrailMeasmView implements Serializable {
         this.objectId = objectId;
     }
 
-    public JsonNode getRowData() {
+    public JsonObject getRowData() {
         return this.rowData;
     }
 
-    public void setRowData(JsonNode rowData) {
+    public void setRowData(JsonObject rowData) {
         this.rowData = rowData;
     }
 

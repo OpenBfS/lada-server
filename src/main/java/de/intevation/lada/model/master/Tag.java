@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.model.master;
 
-import de.intevation.lada.model.land.TagLink;
-
 import java.sql.Timestamp;
 import java.util.Set;
 
@@ -22,6 +20,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import de.intevation.lada.model.lada.TagLink;
 
 @Entity
 @Table(schema = SchemaName.NAME)

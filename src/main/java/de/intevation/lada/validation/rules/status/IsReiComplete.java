@@ -11,9 +11,9 @@ import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.Sample;
-import de.intevation.lada.model.land.StatusProt;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;

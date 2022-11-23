@@ -21,11 +21,11 @@ import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
 import de.intevation.lada.exporter.QueryExportJob;
+import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.exporter.ExportFormat;
-import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.MeasVal;
 
 
 /**

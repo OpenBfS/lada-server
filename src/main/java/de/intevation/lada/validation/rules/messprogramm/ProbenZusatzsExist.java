@@ -9,7 +9,7 @@ package de.intevation.lada.validation.rules.messprogramm;
 
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Mpg;
+import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;

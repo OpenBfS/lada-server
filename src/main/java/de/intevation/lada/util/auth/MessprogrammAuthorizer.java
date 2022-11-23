@@ -10,8 +10,8 @@ package de.intevation.lada.util.auth;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.intevation.lada.model.land.Mpg;
-import de.intevation.lada.model.land.MpgMmtMp;
+import de.intevation.lada.model.lada.Mpg;
+import de.intevation.lada.model.lada.MpgMmtMp;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;

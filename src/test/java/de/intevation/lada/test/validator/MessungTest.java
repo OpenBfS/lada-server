@@ -12,7 +12,7 @@ import java.util.List;
 import org.junit.Assert;
 
 import de.intevation.lada.Protocol;
-import de.intevation.lada.model.land.Measm;
+import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
 

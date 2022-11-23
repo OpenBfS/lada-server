@@ -11,8 +11,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import de.intevation.lada.model.land.Geolocat;
-import de.intevation.lada.model.land.GeolocatMpg;
+import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.annotation.ValidationConfig;
 import de.intevation.lada.validation.annotation.ValidationRule;

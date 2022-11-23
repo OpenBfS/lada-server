@@ -5,7 +5,7 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.model.land;
+package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -16,32 +16,48 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
 
+
+
 @Entity
 @Table(schema = SchemaName.NAME)
-public class StatusProt implements Serializable {
+public class MeasVal implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(insertable = false, updatable = false)
-    private Timestamp date;
+    private Boolean isThreshold;
+
+    @Column(insertable = false)
+    private Timestamp lastMod;
+
+    private Integer unitId;
+
+    private Float error;
+
+    private Integer measdId;
 
     private Integer measmId;
 
-    private String measFacilId;
+    private Double measVal;
 
-    private Integer statusComb;
+    private String lessThanLOD;
 
-    private String text;
+    private Double detectLim;
 
     @Column(insertable = false, updatable = false)
     private Timestamp treeMod;
+
+    @OneToOne
+    @JoinColumn(name = "measm_id", insertable = false, updatable = false)
+    private Measm measm;
 
     @Transient
     private boolean owner;
@@ -53,12 +69,6 @@ public class StatusProt implements Serializable {
     private Timestamp parentModified;
 
     @Transient
-    private Integer statusLev;
-
-    @Transient
-    private Integer statusVal;
-
-    @Transient
     private MultivaluedMap<String, Integer> errors;
 
     @Transient
@@ -67,7 +77,7 @@ public class StatusProt implements Serializable {
     @Transient
     private MultivaluedMap<String, Integer> notifications;
 
-    public StatusProt() {
+    public MeasVal() {
     }
 
     public Integer getId() {
@@ -78,12 +88,49 @@ public class StatusProt implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getDate() {
-        return this.date;
+    public Boolean getIsThreshold() {
+        return this.isThreshold;
     }
 
-    public void setDate(Timestamp date) {
-        this.date = date;
+    public void setIsThreshold(Boolean isThreshold) {
+        this.isThreshold = isThreshold;
+    }
+
+    public Timestamp getLastMod() {
+        return this.lastMod;
+    }
+
+    public void setLastMod(Timestamp lastMod) {
+        this.lastMod = lastMod;
+    }
+
+    public Integer getUnitId() {
+        return this.unitId;
+    }
+
+    public void setUnitId(Integer unitId) {
+        this.unitId = unitId;
+    }
+
+    public Float getError() {
+        return this.error;
+    }
+
+    public void setError(Float error) {
+        this.error = error;
+    }
+
+    public Integer getMeasdId() {
+        return this.measdId;
+    }
+
+    public void setMeasdId(Integer measdId) {
+        this.measdId = measdId;
+    }
+
+    @JsonbTransient
+    public Measm getMeasm() {
+        return this.measm;
     }
 
     public Integer getMeasmId() {
@@ -94,28 +141,28 @@ public class StatusProt implements Serializable {
         this.measmId = measmId;
     }
 
-    public String getMeasFacilId() {
-        return this.measFacilId;
+    public Double getMeasVal() {
+        return this.measVal;
     }
 
-    public void setMeasFacilId(String measFacilId) {
-        this.measFacilId = measFacilId;
+    public void setMeasVal(Double measVal) {
+        this.measVal = measVal;
     }
 
-    public Integer getStatusComb() {
-        return this.statusComb;
+    public String getLessThanLOD() {
+        return this.lessThanLOD;
     }
 
-    public void setStatusComb(Integer statusComb) {
-        this.statusComb = statusComb;
+    public void setLessThanLOD(String lessThanLOD) {
+        this.lessThanLOD = lessThanLOD;
     }
 
-    public String getText() {
-        return this.text;
+    public Double getDetectLim() {
+        return this.detectLim;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setDetectLim(Double detectLim) {
+        this.detectLim = detectLim;
     }
 
     public Timestamp getTreeMod() {
@@ -155,45 +202,18 @@ public class StatusProt implements Serializable {
     }
 
     /**
-     * @return the parentModified
+     * Check if a parent object was modified.
+     * @return timestamp when the parent was modified
      */
     public Timestamp getParentModified() {
-        return parentModified;
+        if (this.parentModified == null && this.measm != null) {
+            return this.measm.getTreeMod();
+        }
+        return this.parentModified;
     }
 
-    /**
-     * @param parentModified the parentModified to set
-     */
     public void setParentModified(Timestamp parentModified) {
         this.parentModified = parentModified;
-    }
-
-    /**
-     * @return the status level
-     */
-    public Integer getStatusLev() {
-        return statusLev;
-    }
-
-    /**
-     * @param statusLev the status level to set
-     */
-    public void setStatusLev(Integer statusLev) {
-        this.statusLev = statusLev;
-    }
-
-    /**
-     * @return the status value
-     */
-    public Integer getStatusVal() {
-        return statusVal;
-    }
-
-    /**
-     * @param statusVal the status value to set
-     */
-    public void setStatusVal(Integer statusVal) {
-        this.statusVal = statusVal;
     }
 
     public MultivaluedMap<String, Integer> getErrors() {
@@ -214,12 +234,14 @@ public class StatusProt implements Serializable {
         this.warnings = warnings;
     }
 
-   public MultivaluedMap<String, Integer> getNotifications() {
-     return this.notifications;
-   }
+    public MultivaluedMap<String, Integer> getNotifications() {
+        return this.notifications;
+    }
 
-   @JsonbTransient
-   public void setNotifications(MultivaluedMap<String, Integer> notifications) {
-     this.notifications = notifications;
-   }
+    @JsonbTransient
+    public void setNotifications(
+        MultivaluedMap<String, Integer> notifications
+    ) {
+        this.notifications = notifications;
+    }
 }

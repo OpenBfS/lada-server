@@ -16,7 +16,7 @@ import javax.persistence.Query;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import de.intevation.lada.model.land.TagLink;
+import de.intevation.lada.model.lada.TagLink;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;

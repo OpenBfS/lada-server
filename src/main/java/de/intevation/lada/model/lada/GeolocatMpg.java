@@ -1,11 +1,11 @@
-/* Copyright (C) 2015 by Bundesamt fuer Strahlenschutz
+/* Copyright (C) 2013 by Bundesamt fuer Strahlenschutz
  * Software engineering by Intevation GmbH
  *
  * This file is Free Software under the GNU GPL (v>=3)
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.model.land;
+package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -16,8 +16,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
@@ -26,7 +24,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 @Entity
 @Table(schema = SchemaName.NAME)
-public class Geolocat implements Serializable {
+public class GeolocatMpg implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -36,22 +34,18 @@ public class Geolocat implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
+    private Integer mpgId;
+
     private Integer siteId;
 
     private String typeRegulation;
 
     private String addSiteText;
 
-    private Integer sampleId;
-
     private String poiId;
 
     @Column(insertable = false, updatable = false)
     private Timestamp treeMod;
-
-    @OneToOne
-    @JoinColumn(name = "sample_id", insertable = false, updatable = false)
-    private Sample sample;
 
     @Transient
     private MultivaluedMap<String, Integer> errors;
@@ -65,10 +59,7 @@ public class Geolocat implements Serializable {
     @Transient
     private boolean readonly;
 
-    @Transient
-    private Timestamp parentModified;
-
-    public Geolocat() {
+    public GeolocatMpg() {
     }
 
     public Integer getId() {
@@ -85,6 +76,14 @@ public class Geolocat implements Serializable {
 
     public void setLastMod(Timestamp lastMod) {
         this.lastMod = lastMod;
+    }
+
+    public Integer getMpgId() {
+        return this.mpgId;
+    }
+
+    public void setMpgId(Integer mpgId) {
+        this.mpgId = mpgId;
     }
 
     public Integer getSiteId() {
@@ -111,14 +110,6 @@ public class Geolocat implements Serializable {
         this.addSiteText = addSiteText;
     }
 
-    public Integer getSampleId() {
-        return this.sampleId;
-    }
-
-    public void setSampleId(Integer sampleId) {
-        this.sampleId = sampleId;
-    }
-
     public String getPoiId() {
         return this.poiId;
     }
@@ -131,8 +122,8 @@ public class Geolocat implements Serializable {
         return this.treeMod;
     }
 
-    public void setTreeMod(Timestamp treeMod) {
-        this.treeMod = treeMod;
+    public void setTreeMod(Timestamp treeModified) {
+        this.treeMod = treeModified;
     }
 
     public MultivaluedMap<String, Integer> getErrors() {
@@ -179,20 +170,5 @@ public class Geolocat implements Serializable {
      */
     public void setReadonly(boolean readonly) {
         this.readonly = readonly;
-    }
-
-    /**
-     * Check if a parent object was modified.
-     * @return timestamp when the parent was modified
-     */
-    public Timestamp getParentModified() {
-        if (this.parentModified == null && this.sample != null) {
-            return this.sample.getTreeMod();
-        }
-        return this.parentModified;
-    }
-
-    public void setParentModified(Timestamp parentModified) {
-        this.parentModified = parentModified;
     }
 }

@@ -22,9 +22,9 @@ import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
-import de.intevation.lada.model.land.Measm;
-import de.intevation.lada.model.land.MeasVal;
-import de.intevation.lada.model.land.StatusProt;
+import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.Filter;
 import de.intevation.lada.model.master.FilterType;
 import de.intevation.lada.model.master.GridColConf;
