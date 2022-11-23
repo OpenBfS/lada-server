@@ -1,6 +1,6 @@
 {
-    "probeId": "1000",
-    "mstId": "06010",
+    "sampleId": "1000",
+    "measFacilId": "06010",
     "text": "test",
-    "datum": "1423475916000"
+    "date": "1423475916000"
 }

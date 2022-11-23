@@ -40,7 +40,7 @@ public class KommentarPTest extends ServiceTest {
         super.init(c, baseUrl, protocol);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "datum",
+            "date",
             "treeModified"
         });
 
