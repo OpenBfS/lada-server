@@ -149,7 +149,7 @@ DECLARE
 $BODY$;
 
 
-CREATE OR REPLACE FUNCTION get_desk_sxx(
+CREATE OR REPLACE FUNCTION get_desk_imis2_id(
 	media_desk character varying,
 	stufe integer)
     RETURNS integer
@@ -158,21 +158,21 @@ CREATE OR REPLACE FUNCTION get_desk_sxx(
     VOLATILE PARALLEL UNSAFE
 AS $BODY$
 DECLARE
-    s_xx INTEGER;
+    imis2_id INTEGER;
   BEGIN
     IF substr(media_desk, 4+stufe*3, 2) = '00' THEN 
       RETURN NULL; 
     END IF;
     IF stufe = 0 THEN
-      SELECT d00.s_xx
-      INTO s_xx
+      SELECT d00.imis2_id
+      INTO imis2_id
       FROM master.env_descrip d00
       WHERE d00.lev = 0
         AND d00.lev_val = cast(substr(media_desk, 4, 2) AS SMALLINT);
 
     ELSEIF stufe = 1 THEN
-      SELECT d01.s_xx
-      INTO s_xx
+      SELECT d01.imis2_id
+      INTO imis2_id
       FROM master.env_descrip d01
       JOIN master.env_descrip d00 ON d00.id = d01.pred_id
         AND d00.lev = 0
@@ -181,8 +181,8 @@ DECLARE
         AND d01.lev_val = cast(substr(media_desk, 7, 2) AS SMALLINT);
 
     ELSEIF stufe = 2 THEN
-      SELECT d02.s_xx
-      INTO s_xx
+      SELECT d02.imis2_id
+      INTO imis2_id
       FROM master.env_descrip d02
       JOIN master.env_descrip d01 ON d01.id = d02.pred_id
         AND d01.lev = 1
@@ -194,8 +194,8 @@ DECLARE
         AND d02.lev_val = cast(substr(media_desk, 10, 2) AS SMALLINT);
 
     ELSEIF stufe = 3 AND substr(media_desk, 4, 2) = '01' THEN
-      SELECT d03.s_xx
-      INTO s_xx
+      SELECT d03.imis2_id
+      INTO imis2_id
       FROM master.env_descrip d03
       JOIN master.env_descrip d02 ON d02.id = d03.pred_id
         AND d02.lev = 2
@@ -210,8 +210,8 @@ DECLARE
         AND d03.lev_val = cast(substr(media_desk, 13, 2) AS SMALLINT);
 
     ELSEIF stufe = 3 AND substr(media_desk, 4, 2) <> '01' OR stufe > 3 THEN
-      SELECT dxx.s_xx
-      INTO s_xx
+      SELECT dxx.imis2_id
+      INTO imis2_id
       FROM master.env_descrip dxx
       JOIN master.env_descrip d01 ON d01.id = dxx.pred_id
         AND d01.lev = 1
@@ -223,8 +223,8 @@ DECLARE
         AND dxx.lev_val = cast(substr(media_desk, (stufe * 3 + 4), 2) AS SMALLINT);
 
     ELSE
-      s_xx := NULL;
+      imis2_id := NULL;
     END IF;
-    return s_xx;
+    return imis2_id;
   END;
 $BODY$;

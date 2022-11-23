@@ -20,7 +20,7 @@ ALTER SEQUENCE IF EXISTS master.datenbasis_id_seq RENAME TO regulation_id_seq;
 ALTER SEQUENCE IF EXISTS master.datensatz_erzeuger_id_seq RENAME TO dataset_creator_id_seq;
 ALTER SEQUENCE IF EXISTS master.deskriptor_umwelt_id_seq RENAME TO env_descrip_env_medium_mp_id_seq;
 ALTER SEQUENCE IF EXISTS master.deskriptoren_id_seq RENAME TO env_descrip_id_seq;
-ALTER SEQUENCE IF EXISTS master.deskriptoren_s_xx_seq RENAME TO env_descrip_s_xx_seq;
+ALTER SEQUENCE IF EXISTS master.deskriptoren_s_xx_seq RENAME TO env_descrip_imis2_id_seq;
 ALTER SEQUENCE IF EXISTS master.gemeindeuntergliederung_id_seq RENAME TO munic_div_id_seq;
 ALTER SEQUENCE IF EXISTS master.grid_column_id_seq RENAME TO grid_col_mp_id_seq;
 ALTER SEQUENCE IF EXISTS master.grid_column_values_id_seq RENAME TO grid_col_conf_id_seq;
