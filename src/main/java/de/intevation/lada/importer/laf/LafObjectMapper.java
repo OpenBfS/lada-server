@@ -1332,7 +1332,7 @@ public class LafObjectMapper {
                         .toLowerCase();
             }
 
-            builder.and("messgroesse", messgroesseString);
+            builder.and("name", messgroesseString);
             List<Measd> groesse =
                 (List<Measd>) repository.filterPlain(builder.getQuery());
             if (groesse == null || groesse.isEmpty()) {
@@ -1899,7 +1899,7 @@ public class LafObjectMapper {
                 QueryBuilder<SpatRefSys> kdaBuilder =
                     repository.queryBuilder(SpatRefSys.class);
                 kdaBuilder.and(
-                    "koordinatenart", attributes.get(type + "KOORDINATEN_ART"));
+                    "name", attributes.get(type + "KOORDINATEN_ART"));
                 List<SpatRefSys> arten =
                     repository.filterPlain(
                         kdaBuilder.getQuery());
