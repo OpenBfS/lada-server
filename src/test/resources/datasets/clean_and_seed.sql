@@ -24,6 +24,7 @@ DELETE FROM mg_grp;
 DELETE FROM messgroessen_gruppe;
 DELETE FROM messgroesse;
 DELETE FROM mess_methode;
+DELETE FROM gemeindeuntergliederung;
 DELETE FROM datensatz_erzeuger;
 DELETE FROM mess_stelle;
 DELETE FROM probenehmer;

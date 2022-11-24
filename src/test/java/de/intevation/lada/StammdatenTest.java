@@ -32,6 +32,7 @@ import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.model.master.MpgCateg;
+import de.intevation.lada.model.master.MunicDiv;
 import de.intevation.lada.model.master.Poi;
 import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.model.master.Site;
@@ -44,6 +45,7 @@ import de.intevation.lada.test.stamm.DatensatzErzeugerTest;
 import de.intevation.lada.test.stamm.DeskriptorenTest;
 import de.intevation.lada.test.stamm.KoordinatenartTest;
 import de.intevation.lada.test.stamm.MessprogrammKategorieTest;
+import de.intevation.lada.test.stamm.MunicDivTest;
 import de.intevation.lada.test.stamm.OrtTest;
 import de.intevation.lada.test.stamm.ProbenehmerTest;
 import de.intevation.lada.test.stamm.Stammdaten;
@@ -113,6 +115,8 @@ public class StammdatenTest extends BaseTest {
     private static final int T52 = 52;
     private static final int T53 = 53;
     private static final int T54 = 54;
+    private static final int T55 = 55;
+    private static final int T56 = 56;
 
     private static final int ID5 = 5;
     private static final int ID9 = 9;
@@ -140,6 +144,7 @@ public class StammdatenTest extends BaseTest {
     private KoordinatenartTest kdaTest;
     private TagTest tagTest;
     private TagZuordnungTest tagZuordnungTest;
+    private MunicDivTest municDivTest;
 
     public StammdatenTest() {
         stammdatenTest = new Stammdaten();
@@ -151,6 +156,7 @@ public class StammdatenTest extends BaseTest {
         kdaTest = new KoordinatenartTest();
         tagTest = new TagTest();
         tagZuordnungTest = new TagZuordnungTest();
+        municDivTest = new MunicDivTest();
         verboseLogging = false;
     }
 
@@ -934,5 +940,37 @@ public class StammdatenTest extends BaseTest {
     public final void testEnvSpecifMpGetById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
         stammdatenTest.getById("umweltzusatz", ID101);
+    }
+
+    /**
+     * Prepare munic div test.
+     * @throws Exception that can occur during the test
+     */
+    @Test
+    @InSequence(T55)
+    @UsingDataSet("datasets/dbUnit_municDiv.json")
+    @DataSource("java:jboss/lada-test")
+    @Cleanup(phase = TestExecutionPhase.NONE)
+    public final void prepareTestMunicDiv() throws Exception {
+        Protocol protocol = new Protocol();
+        protocol.setName("database");
+        protocol.setType("insert munic div");
+        protocol.addInfo("database", "Insert munic div into database");
+        testProtocol.add(protocol);
+        MunicDiv municDIv = em.find(MunicDiv.class, ID1000);
+        Assert.assertNotNull(municDIv);
+        protocol.setPassed(true);
+    }
+
+    /**
+     * Test MunicDiv serivce operations.
+     * @param baseUrl The server url used for the request
+     */
+    @Test
+    @InSequence(T56)
+    @RunAsClient
+    public final void testMunicDiv(@ArquillianResource URL baseUrl) {
+        municDivTest.init(this.client, baseUrl, testProtocol);
+        municDivTest.execute();
     }
 }
