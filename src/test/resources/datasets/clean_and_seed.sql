@@ -5,6 +5,7 @@ DELETE FROM auth;
 DELETE FROM land.tagzuordnung;
 DELETE FROM tag;
 DELETE FROM land.ortszuordnung;
+DELETE FROM land.ortszuordnung_mp;
 DELETE FROM ort;
 DELETE FROM ort_typ;
 DELETE FROM ortszuordnung_typ;

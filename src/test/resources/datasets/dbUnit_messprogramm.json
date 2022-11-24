@@ -25,5 +25,12 @@
     "lada.mpg_mmt_measd_mp": [{
         "mpg_mmt_id": 1000,
         "measd_id": 56
+    }],
+    "lada.geolocat_mpg": [{
+        "id": 1000,
+        "mpg_id": 1000,
+        "site_id": 1000,
+        "add_site_text": "is_test",
+        "last_mod": "2012-05-07 09:00:00"
     }]
 }

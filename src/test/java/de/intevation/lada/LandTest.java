@@ -30,11 +30,13 @@ import org.junit.runner.RunWith;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.test.land.GeolocatMpgTest;
 import de.intevation.lada.test.land.KommentarMTest;
 import de.intevation.lada.test.land.KommentarPTest;
 import de.intevation.lada.test.land.MessprogrammTest;
@@ -82,6 +84,8 @@ public class LandTest extends BaseTest {
     private static final int T20 = 20;
     private static final int T21 = 21;
     private static final int T22 = 22;
+    private static final int T23 = 23;
+    private static final int T24 = 24;
 
     private static Logger logger = Logger.getLogger(StammdatenTest.class);
 
@@ -100,6 +104,7 @@ public class LandTest extends BaseTest {
     private MessprogrammMmtTest messprogrammMmtTest;
     private QueryTest queryTest;
     private PepGenerationTest pepGenerationTest;
+    private GeolocatMpgTest geolocatMpgTest;
 
     public LandTest() {
         probeTest = new ProbeTest();
@@ -114,6 +119,7 @@ public class LandTest extends BaseTest {
         messprogrammMmtTest = new MessprogrammMmtTest();
         queryTest = new QueryTest();
         pepGenerationTest = new PepGenerationTest();
+        geolocatMpgTest = new GeolocatMpgTest();
         verboseLogging = false;
     }
 
@@ -477,5 +483,39 @@ public class LandTest extends BaseTest {
             throws Exception {
         pepGenerationTest.init(this.client, baseUrl, testProtocol);
         pepGenerationTest.execute();
+    }
+
+    /**
+     * Prepare geolocat mpg tests.
+     */
+    @Test
+    @UsingDataSet("datasets/dbUnit_messprogramm.json")
+    @DataSource("java:jboss/lada-test")
+    @InSequence(T23)
+    @Cleanup(phase = TestExecutionPhase.NONE)
+    public final void prepareGeolocatMpgTest() {
+        Protocol protocol = new Protocol();
+        protocol.setName("database");
+        protocol.setType("insert geolocat mpg");
+        protocol.addInfo("database", "Insert geolocat mpg into database");
+        testProtocol.add(protocol);
+        GeolocatMpg geolocat = em.find(GeolocatMpg.class, ID1000);
+        Assert.assertNotNull(geolocat);
+        protocol.setPassed(true);
+    }
+
+    /**
+     * Test geolocat mpg service operations.
+     * @param baseUrl The server url used for the request.
+     * @throws Exception that can occur during the test.
+     */
+    @Test
+    @DataSource("java:jboss/lada-test")
+    @InSequence(T24)
+    @RunAsClient
+    public final void testGeolocatMpg(@ArquillianResource URL baseUrl)
+            throws Exception {
+        geolocatMpgTest.init(this.client, baseUrl, testProtocol);
+        geolocatMpgTest.execute();
     }
 }
