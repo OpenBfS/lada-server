@@ -752,6 +752,7 @@ public class PepGenerationTest extends ServiceTest {
             JsonArray zwData = responseJson.getJsonArray("data");
             Assert.assertTrue(zwData.size() > 0);
         });
+        prot.setPassed(true);
     }
 
     /**
