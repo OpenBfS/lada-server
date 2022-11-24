@@ -57,9 +57,8 @@ public class MessgroesseToMessmethode implements Rule {
             Messgroesse mg = repository.getByIdPlain(
                 Messgroesse.class, messwert.getMessgroesseId());
             violation.addWarning(
-                "messgroesse#" + messung.getMmtId()
-                + " " + mg.getMessgroesse(),
-                StatusCodes.VALUE_NOT_MATCHING);
+                "messgroesseId#" + mg.getMessgroesse(),
+                StatusCodes.VAL_MESSGROESSE_NOT_MATCHING_MMT);
         }
         if (violation.hasWarnings()) {
             return violation;
