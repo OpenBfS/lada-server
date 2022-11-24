@@ -106,7 +106,7 @@ public class MessprogrammIdAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         try {
-            Method getMessprogrammId = clazz.getMethod("getMessprogrammId");
+            Method getMessprogrammId = clazz.getMethod("getMpgId");
             Integer id = (Integer) getMessprogrammId.invoke(data);
             Mpg messprogramm = repository.getByIdPlain(
                 Mpg.class, id);
