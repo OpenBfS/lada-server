@@ -1,6 +1,6 @@
 SET search_path TO master;
 
-ALTER FUNCTION master.get_desk_beschreibung(media_desk character varying, stufe integer) RENAME TO get_desk_description;
+ALTER FUNCTION master.get_desk_beschreibung(media_desk character varying, stufe integer) SET SCHEMA stamm;
 
 ALTER FUNCTION master.if_modified_func()
     SET search_path=master, public;
