@@ -117,6 +117,8 @@ public class StammdatenTest extends BaseTest {
     private static final int T54 = 54;
     private static final int T55 = 55;
     private static final int T56 = 56;
+    private static final int T57 = 55;
+    private static final int T58 = 56;
 
     private static final int ID5 = 5;
     private static final int ID9 = 9;
@@ -972,5 +974,29 @@ public class StammdatenTest extends BaseTest {
     public final void testMunicDiv(@ArquillianResource URL baseUrl) {
         municDivTest.init(this.client, baseUrl, testProtocol);
         municDivTest.execute();
+    }
+
+    /**
+     * Tests ReiAgGr get all operation.
+     * @param baseUrl The server url used for the request
+     */
+    @Test
+    @InSequence(T57)
+    @RunAsClient
+    public final void testReiAgGrAll(@ArquillianResource URL baseUrl) {
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getAll("reiprogpunktgruppe");
+    }
+
+    /**
+     * Tests ReiAgGR get all operation.
+     * @param baseUrl The server url used for the request
+     */
+    @Test
+    @InSequence(T58)
+    @RunAsClient
+    public final void testReiAgGrById(@ArquillianResource URL baseUrl) {
+        stammdatenTest.init(this.client, baseUrl, testProtocol);
+        stammdatenTest.getById("reiprogpunktgruppe", ID101);
     }
 }

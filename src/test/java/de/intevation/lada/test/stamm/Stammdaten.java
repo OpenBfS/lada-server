@@ -246,6 +246,14 @@ public class Stammdaten extends ServiceTest {
                 "govDistId"
             )
         );
+        matchers.put("reiprogpunktgruppe",
+            Matchers.containsInAnyOrder(
+                "id",
+                "name",
+                "descr",
+                "lastMod"
+            )
+        );
     }
 
     /**
