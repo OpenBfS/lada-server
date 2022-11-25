@@ -24,34 +24,9 @@ import de.intevation.lada.rest.LadaService;
 
 /**
  * REST-Service for preconfigured columns.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [string],
- *      "name": [string],
- *      "base_query": [number],
- *      "data_index": [string],
- *      "position": [number],
- *      "filter": [object],
- *      "data_type": [object]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
- *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/column")
+@Path("rest/gridcolmp")
 public class ColumnService extends LadaService {
 
     @Inject
@@ -62,18 +37,18 @@ public class ColumnService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Request all predefined grid_column objects connected to the given query.
-     * @return All GridColumn objects referencing the given query.
+     * Request all predefined GridColMp objects connected to the given query.
+     * @return All GridColMp objects referencing the given query.
      */
     @GET
     @Path("/")
     public Response getQueries(
-        @QueryParam("qid") @NotNull Integer qid
+        @QueryParam("baseQuery") @NotNull Integer baseQuery
     ) {
 
         QueryBuilder<GridColMp> builder =
             repository.queryBuilder(GridColMp.class);
-        builder.and("baseQuery", qid);
+        builder.and("baseQuery", baseQuery);
 
         return repository.filter(builder.getQuery());
     }
