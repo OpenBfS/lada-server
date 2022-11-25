@@ -25,31 +25,11 @@ import de.intevation.lada.model.master.NuclFacilGrMp;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for KtaGruppe objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "beschreibung": [string],
- *      "ktaGruppe": [string]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for NuclFacilGr objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/ktagruppe")
+@Path("rest/nuclfacilgr")
 public class KtaGruppeService extends LadaService {
 
     /**
@@ -59,22 +39,22 @@ public class KtaGruppeService extends LadaService {
     private Repository repository;
 
     /**
-     * Get KtaGruppe objects.
+     * Get NuclFacilGr objects.
      *
-     * @param kta URL parameter to filter by ktaId
+     * @param nuclFacilId URL parameter to filter by nuclFacilId
      * @return Response containing the requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("kta") Integer kta
+        @QueryParam("nuclFacilId") Integer nuclFacilId
     ) {
-        if (kta == null) {
+        if (nuclFacilId == null) {
             return repository.getAll(NuclFacilGr.class);
         }
         QueryBuilder<NuclFacilGrMp> builder =
             repository.queryBuilder(NuclFacilGrMp.class);
-        builder.and("nuclFacilId", kta);
+        builder.and("nuclFacilId", nuclFacilId);
         List<NuclFacilGrMp> zuord =
             repository.filterPlain(builder.getQuery());
         if (zuord.isEmpty()) {
@@ -91,10 +71,10 @@ public class KtaGruppeService extends LadaService {
     }
 
     /**
-     * Get a single KtaGruppe object by id.
+     * Get a single NuclFacilGr object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single KtaGruppe.
+     * @return Response object containing a single NuclFacilGr.
      */
     @GET
     @Path("/{id}")
