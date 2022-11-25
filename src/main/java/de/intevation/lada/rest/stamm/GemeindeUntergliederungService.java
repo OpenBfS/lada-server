@@ -29,35 +29,10 @@ import de.intevation.lada.model.master.MunicDiv;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for GemeindeUntergliederung objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean],
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "netzbetreiber_id": [string],
- *      "gemId": [string],
- *      "ozkId": [number],
- *      "letzteAenderung": [timestamp],
- *      "readonly": [boolean]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "notifications": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
- *
+ * REST service for MunicDiv objects.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/gemeindeuntergliederung")
+@Path("rest/municdiv")
 public class GemeindeUntergliederungService extends LadaService {
 
     /**
@@ -71,7 +46,7 @@ public class GemeindeUntergliederungService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get all GemeindeUntergliederung objects.
+     * Get all MunicDiv objects.
      *
      * @return Response containing requested objects.
      */

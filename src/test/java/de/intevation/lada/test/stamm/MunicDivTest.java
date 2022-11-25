@@ -55,17 +55,17 @@ public class MunicDivTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("gemeindeuntergliederung", "rest/gemeindeuntergliederung");
-        getById("gemeindeuntergliederung", "rest/gemeindeuntergliederung/1000", expectedById);
+        get("municdiv", "rest/municdiv");
+        getById("municdiv", "rest/municdiv/1000", expectedById);
         update(
-            "gemeindeuntergliederung",
-            "rest/gemeindeuntergliederung/1000",
+            "municdiv",
+            "rest/municdiv/1000",
             "name",
             "Testname",
             "UpdatedName");
-        JsonObject created = create("gemeindeuntergliederung", "rest/gemeindeuntergliederung", create);
+        JsonObject created = create("municdiv", "rest/municdiv", create);
         delete(
-            "gemeindeuntergliederung",
-            "rest/gemeindeuntergliederung/" + created.getJsonObject("data").get("id"));
+            "municdiv",
+            "rest/municdiv/" + created.getJsonObject("data").get("id"));
     }
 }
