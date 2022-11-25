@@ -29,14 +29,14 @@ import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for DatensatzErzeuger objects.
+ * REST service for DatasetCreator objects.
  * <p>
  * The services produce data in the application/json media type.
  * A typical response holds information about the action performed and the data.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/datensatzerzeuger")
+@Path("rest/datasetcreator")
 public class DatensatzErzeugerService extends LadaService {
 
     /**
@@ -50,7 +50,7 @@ public class DatensatzErzeugerService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get all DatensatzErzeuger objects.
+     * Get all DatasetCreator objects.
      *
      * @return Response containing requested objects.
      */

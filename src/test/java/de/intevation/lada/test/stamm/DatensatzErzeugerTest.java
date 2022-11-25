@@ -58,19 +58,19 @@ public class DatensatzErzeugerTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("datensatzerzeuger", "rest/datensatzerzeuger");
+        get("datasetcreator", "rest/datasetcreator");
         getById(
-            "datensatzerzeuger",
-            "rest/datensatzerzeuger/1000",
+            "datasetcreator",
+            "rest/datasetcreator/1000",
             expectedById);
         update(
-            "datensatzerzeuger",
-            "rest/datensatzerzeuger/1000",
+            "datasetcreator",
+            "rest/datasetcreator/1000",
             "descr",
             "Testbezeichnung",
             "geändert");
         create(
-            "datensatzerzeuger", "rest/datensatzerzeuger", create);
+            "datasetcreator", "rest/datasetcreator", create);
 /*        delete("datensatzerzeuger",
             "rest/datensatzerzeuger/"
             + created.getJsonObject("data").get("id"));*/
