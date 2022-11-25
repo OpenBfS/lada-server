@@ -37,7 +37,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/datasetcreator")
-public class DatensatzErzeugerService extends LadaService {
+public class DatasetCreatorService extends LadaService {
 
     /**
      * The data repository granting read access.
