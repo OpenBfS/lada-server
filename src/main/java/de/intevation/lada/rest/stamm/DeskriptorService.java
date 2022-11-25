@@ -27,31 +27,9 @@ import de.intevation.lada.rest.LadaService;
  * All HTTP methods use the authorization module to determine if the user is
  * allowed to perform the requested action.
  * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "bedeutung": [string],
- *      "beschreibung": [string],
- *      "ebene": [number],
- *      "sn": [number],
- *      "vorgaenger": [number],
- *      "sxx": [number]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
- *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/deskriptor")
+@Path("rest/envdescrip")
 public class DeskriptorService extends LadaService {
 
     /**
@@ -61,36 +39,36 @@ public class DeskriptorService extends LadaService {
     private Repository repository;
 
     /**
-     * Get Deskriptor objects.
+     * Get EnvDescrip objects.
      *
      * The requested objects can be filtered using the following URL
      * parameters:
-     * @param layer The layer of the reqested deskriptor
-     * @param parents The parents of the requested deskriptor, each given
-     * using an URL parameter named "parents".
-     * @return Response object containing the Deskriptor objects.
+     * @param lev The layer of the requested EnvDescrip
+     * @param predId The parents of the requested EnvDescrip, each given
+     * using an URL parameter named "predId".
+     * @return Response object containing the EnvDescrip objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("layer") @NotNull Integer layer,
-        @QueryParam("parents") List<Integer> parents
+        @QueryParam("lev") @NotNull Integer lev,
+        @QueryParam("predId") List<Integer> predId
     ) {
         QueryBuilder<EnvDescrip> builder =
             repository.queryBuilder(EnvDescrip.class);
         builder.and("levVal", 0).not();
-        builder.and("lev", layer);
-        if (parents != null && !parents.isEmpty()) {
-            builder.andIn("predId", parents);
+        builder.and("lev", lev);
+        if (predId != null && !predId.isEmpty()) {
+            builder.andIn("predId", predId);
         }
         return repository.filter(builder.getQuery());
     }
 
     /**
-     * Get a single Deskriptor object by id.
+     * Get a single EnvDescrip object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Deskriptor.
+     * @return Response object containing a single EnvDescrip.
      */
     @GET
     @Path("/{id}")

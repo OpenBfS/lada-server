@@ -48,8 +48,8 @@ public class DeskriptorenTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("deskriptor", "rest/deskriptor?layer=1");
-        get("deskriptor", "rest/deskriptor?layer=1&parents=1&parents=2");
-        getById("deskriptor", "rest/deskriptor/1000", expectedById);
+        get("envdescrip", "rest/envdescrip?lev=1");
+        get("envdescrip", "rest/envdescrip?lev=1&predId=1&predId=2");
+        getById("envdescrip", "rest/envdescrip/1000", expectedById);
     }
 }
