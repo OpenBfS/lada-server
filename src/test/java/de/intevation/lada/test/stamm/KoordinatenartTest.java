@@ -34,9 +34,9 @@ public class KoordinatenartTest extends ServiceTest {
 
     private JsonObject expectedById;
 
-    private final String name = "koordinatenart";
+    private final String name = "spatrefsys";
 
-    private final String url = "rest/koordinatenart/";
+    private final String url = "rest/spatrefsys/";
 
     @Override
     public void init(

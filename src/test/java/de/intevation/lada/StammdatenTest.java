@@ -510,7 +510,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testKoordinatenartAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getAll("koordinatenart");
+        stammdatenTest.getAll("spatrefsys");
     }
 
     /**
@@ -522,7 +522,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testKoordinatenartById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getById("koordinatenart", ID5);
+        stammdatenTest.getById("spatrefsys", ID5);
     }
 
     /**

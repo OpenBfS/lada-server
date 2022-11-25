@@ -21,31 +21,10 @@ import de.intevation.lada.model.master.SpatRefSys;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for KoordinatenArt objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "idfGeoKey": [string],
- *      "koordinatenArt": [string]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
- *
+ * REST service for SpatRefSys objects.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/koordinatenart")
+@Path("rest/spatrefsys")
 public class KoordinatenartService extends LadaService {
 
     /**
@@ -81,11 +60,8 @@ public class KoordinatenartService extends LadaService {
     }
 
     /**
-     * Get all KoordinatenArt objects.
-     * <p>
-     * Example: http://example.com/koordinatenart
-     *
-     * @return Response object containing all KoordinatenArt objects.
+     * Get all SpatRefSys objects.
+     * @return Response object containing all SpatRefSys objects.
      */
     @GET
     @Path("/")
@@ -94,10 +70,10 @@ public class KoordinatenartService extends LadaService {
     }
 
     /**
-     * Get a single KoordinatenArt object by id.
+     * Get a single SpatRefSys object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single KoordinatenArt.
+     * @return Response object containing a single SpatRefSys.
      */
     @GET
     @Path("/{id}")

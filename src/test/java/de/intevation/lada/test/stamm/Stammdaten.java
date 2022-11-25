@@ -154,7 +154,7 @@ public class Stammdaten extends ServiceTest {
                 "geom"
             )
         );
-        matchers.put("koordinatenart",
+        matchers.put("spatrefsys",
             Matchers.containsInAnyOrder(
                 "id",
                 "lastMod",
