@@ -15,7 +15,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -53,11 +52,9 @@ public class GridColConf implements Serializable {
 
     //bi-directional one-to-one association to GridColumn
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn
     private GridColMp gridColMp;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn
     private QueryUser queryUser;
 
     //Connected grid column's id, used for creating/updating grid_column_values

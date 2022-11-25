@@ -12,7 +12,6 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -26,12 +25,10 @@ public class StatusMp implements Serializable {
 
     //bi-directional many-to-one association to StatusStufe
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn
     private StatusLev statusLev;
 
     //bi-directional many-to-one association to StatusWert
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn
     private StatusVal statusVal;
 
     public StatusMp() {
