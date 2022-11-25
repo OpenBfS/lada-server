@@ -43,7 +43,7 @@ public class Stammdaten extends ServiceTest {
         super.init(c, baseUrl, protocol);
 
         matchers = new HashMap<>();
-        matchers.put("datenbasis",
+        matchers.put("regulation",
             Matchers.containsInAnyOrder(
                 "id",
                 "lastMod",

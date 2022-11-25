@@ -18,31 +18,10 @@ import de.intevation.lada.model.master.Regulation;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for Datenbasis objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "beschreibung": [string],
- *      "datenbasis": [string}
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
- *
+ * REST service for Regulation objects.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/datenbasis")
+@Path("rest/regulation")
 public class DatenbasisService extends LadaService {
 
     /**
@@ -52,11 +31,8 @@ public class DatenbasisService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all Datenbasis objects.
-     * <p>
-     * Example: http://example.com/datenbasis
-     *
-     * @return Response object containing all Datenbasis objects.
+     * Get all Regulation objects.
+     * @return Response object containing all Regulation objects.
      */
     @GET
     @Path("/")
@@ -65,10 +41,10 @@ public class DatenbasisService extends LadaService {
     }
 
     /**
-     * Get a single Datenbasis object by id.
+     * Get a single Regulation object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Datenabasis.
+     * @return Response object containing a single Regulation.
      */
     @GET
     @Path("/{id}")
