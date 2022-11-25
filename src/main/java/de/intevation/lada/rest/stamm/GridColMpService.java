@@ -27,7 +27,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/gridcolmp")
-public class ColumnService extends LadaService {
+public class GridColMpService extends LadaService {
 
     @Inject
     private Repository repository;
