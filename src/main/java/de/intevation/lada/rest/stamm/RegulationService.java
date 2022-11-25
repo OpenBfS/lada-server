@@ -22,7 +22,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/regulation")
-public class DatenbasisService extends LadaService {
+public class RegulationService extends LadaService {
 
     /**
      * The data repository granting read access.
