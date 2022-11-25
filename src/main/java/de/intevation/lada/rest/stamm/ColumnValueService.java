@@ -45,7 +45,7 @@ import de.intevation.lada.rest.LadaService;
  * The services produce data in the application/json media type.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/columnvalue")
+@Path("rest/gridcolconf")
 public class ColumnValueService extends LadaService {
 
     @Inject
@@ -56,14 +56,14 @@ public class ColumnValueService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Request user defined GridColumnValue objects.
-     * @param qid query ID
-     * @return GridColumnValue objects referencing the given query ID.
+     * Request user defined GridColConf objects.
+     * @param queryUser query ID
+     * @return GridColConf objects referencing the given query ID.
      */
     @GET
     @Path("/")
     public Response getQueries(
-        @QueryParam("qid") @NotNull Integer qid
+        @QueryParam("queryUser") @NotNull Integer queryUser
     ) {
         UserInfo userInfo = authorization.getInfo();
         EntityManager em = repository.entityManager();
@@ -75,7 +75,7 @@ public class ColumnValueService extends LadaService {
             root.join("queryUser", javax.persistence.criteria.JoinType.LEFT);
         Join<MeasFacil, QueryUser> mess =
             value.join("messStelles", javax.persistence.criteria.JoinType.LEFT);
-        Predicate filter = builder.equal(root.get("queryUser"), qid);
+        Predicate filter = builder.equal(root.get("queryUser"), queryUser);
         Predicate uId = builder.equal(root.get("userId"), userInfo.getUserId());
         Predicate zeroIdFilter = builder.equal(root.get("userId"), "0");
         Predicate userFilter = builder.or(uId, zeroIdFilter);
@@ -100,7 +100,7 @@ public class ColumnValueService extends LadaService {
     }
 
     /**
-     * Creates a new grid_column_value in the database.
+     * Creates a new GridColConf in the database.
      * @return Response containing the created record.
      */
     @POST
@@ -130,7 +130,7 @@ public class ColumnValueService extends LadaService {
     }
 
     /**
-     * Update an existing grid_column_value in the database.
+     * Update an existing GridColConf in the database.
      * @return Response containing the updated record.
      */
     @PUT
@@ -161,7 +161,7 @@ public class ColumnValueService extends LadaService {
     }
 
     /**
-     * Delete the given column.
+     * Delete the given GridColConf.
      * @param id The id is appended to the URL as a path parameter.
      * @return Response containing the deleted record.
      */
