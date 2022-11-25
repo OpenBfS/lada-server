@@ -33,7 +33,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/municdiv")
-public class GemeindeUntergliederungService extends LadaService {
+public class MunicDivService extends LadaService {
 
     /**
      * The data repository granting read access.
