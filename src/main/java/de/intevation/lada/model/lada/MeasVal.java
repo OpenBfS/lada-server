@@ -56,7 +56,7 @@ public class MeasVal implements Serializable {
     private Timestamp treeMod;
 
     @OneToOne
-    @JoinColumn(name = "measm_id", insertable = false, updatable = false)
+    @JoinColumn(insertable = false, updatable = false)
     private Measm measm;
 
     @Transient

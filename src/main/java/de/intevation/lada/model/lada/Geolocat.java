@@ -50,7 +50,7 @@ public class Geolocat implements Serializable {
     private Timestamp treeMod;
 
     @OneToOne
-    @JoinColumn(name = "sample_id", insertable = false, updatable = false)
+    @JoinColumn(insertable = false, updatable = false)
     private Sample sample;
 
     @Transient

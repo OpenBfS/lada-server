@@ -53,11 +53,11 @@ public class GridColConf implements Serializable {
 
     //bi-directional one-to-one association to GridColumn
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "grid_col_mp_id")
+    @JoinColumn
     private GridColMp gridColMp;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "query_user_id")
+    @JoinColumn
     private QueryUser queryUser;
 
     //Connected grid column's id, used for creating/updating grid_column_values

@@ -62,7 +62,7 @@ public class Measm implements Serializable {
     private Integer sampleId;
 
     @OneToOne
-    @JoinColumn(name = "sample_id", insertable = false, updatable = false)
+    @JoinColumn(insertable = false, updatable = false)
     private Sample sample;
 
     private Integer status;

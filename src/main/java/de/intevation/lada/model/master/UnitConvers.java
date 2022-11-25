@@ -27,7 +27,7 @@ public class UnitConvers implements Serializable {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "from_unit_id")
+    @JoinColumn
     private MeasUnit fromUnit;
 
     private Integer toUnitId;

@@ -26,12 +26,12 @@ public class StatusMp implements Serializable {
 
     //bi-directional many-to-one association to StatusStufe
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "status_lev_id")
+    @JoinColumn
     private StatusLev statusLev;
 
     //bi-directional many-to-one association to StatusWert
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "status_val_id")
+    @JoinColumn
     private StatusVal statusVal;
 
     public StatusMp() {

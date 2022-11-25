@@ -42,7 +42,7 @@ public class Site implements Serializable {
     private String reiReportText;
 
     @ManyToOne
-    @JoinColumn(name = "munic_id", updatable = false, insertable = false)
+    @JoinColumn(updatable = false, insertable = false)
     private AdminUnit munic;
 
     private String municId;
