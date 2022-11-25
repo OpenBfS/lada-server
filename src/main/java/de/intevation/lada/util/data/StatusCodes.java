@@ -32,6 +32,7 @@ public class StatusCodes {
     public static final int VAL_S1_NOTSET = 637;
     public static final int VAL_OBL_MEASURE = 638;
     public static final int VAL_SINGLE_DATE = 639;
+    public static final int VAL_MESSGROESSE_NOT_MATCHING_MMT = 640;
     public static final int VAL_DATE_IN_FUTURE = 641;
     public static final int VAL_MEAS_DATE_BEFORE = 642;
     public static final int VAL_END_BEFORE_BEGIN = 643;

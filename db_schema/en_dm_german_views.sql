@@ -274,6 +274,16 @@ CREATE VIEW land.zusatz_wert AS SELECT
 	smaller_than AS kleiner_als
 FROM lada.sample_specif_meas_val;
 
+CREATE OR REPLACE FUNCTION stamm.get_desk_beschreibung(media_desk character varying, tufe integer)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+AS $BODY$
+DECLARE
+  BEGIN
+    return master.get_desc_description(media_desk, stufe);
+  END;
+$BODY$;
+
 CREATE FUNCTION stamm.get_media_from_media_desk(media_desk character varying)
 	RETURNS character varying
 	LANGUAGE sql
