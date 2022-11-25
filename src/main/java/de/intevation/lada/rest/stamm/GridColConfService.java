@@ -46,7 +46,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/gridcolconf")
-public class ColumnValueService extends LadaService {
+public class GridColConfService extends LadaService {
 
     @Inject
     private Repository repository;
