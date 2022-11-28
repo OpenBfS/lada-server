@@ -412,8 +412,9 @@ CREATE TRIGGER last_mod_auth BEFORE UPDATE ON auth FOR EACH ROW EXECUTE PROCEDUR
 
 CREATE TABLE auth_coord_ofc_env_medium_mp (
     id serial PRIMARY KEY,
-    meas_facil_id character varying(5) REFERENCES meas_facil,
-    env_medium_id character varying(3) REFERENCES env_medium,
+    meas_facil_id character varying(5) NOT NULL REFERENCES meas_facil,
+    env_medium_id character varying(3) NOT NULL REFERENCES env_medium,
+    UNIQUE(meas_facil_id, env_medium_id),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_auth_coord_ofc_env_medium_mp BEFORE UPDATE ON master.auth_coord_ofc_env_medium_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
@@ -753,8 +754,8 @@ CREATE TRIGGER last_mod_sample_specif BEFORE UPDATE ON master.sample_specif FOR 
 
 CREATE TABLE env_specif_mp (
     id serial PRIMARY KEY,
-    sample_specif_id character varying(3) REFERENCES sample_specif,
-    env_medium_id character varying(3) REFERENCES env_medium,
+    sample_specif_id character varying(3) NOT NULL REFERENCES sample_specif,
+    env_medium_id character varying(3) NOT NULL REFERENCES env_medium,
     UNIQUE (sample_specif_id, env_medium_id),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );

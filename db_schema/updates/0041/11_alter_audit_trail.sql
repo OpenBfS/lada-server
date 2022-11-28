@@ -83,7 +83,7 @@ FROM
 (SELECT jsonb_rename_keys(row_data, ARRAY['netzbetreiber_id', 'network_id', 'ort_id', 'ext_id', 'langtext', 'long_text', 'staat_id', 'state_id', 'gem_id', 'munic_id', 'unscharf', 'is_fuzzy', 'nuts_code', 'nuts_id', 'kda_id', 'spat_ref_sys_id', 'koord_x_extern', 'x_coord_ext', 'koord_y_extern', 'y_coord_ext', 'hoehe_land', 'alt', 'letzte_aenderung', 'last_mod', 'ort_typ', 'site_class_id', 'kurztext', 'short_text', 'berichtstext', 'rei_report_text', 'zone', 'rei_zone', 'sektor', 'rei_sector', 'zustaendigkeit', 'rei_competence', 'mp_art', 'rei_opr_mode', 'aktiv', 'is_rei_active', 'kta_gruppe_id', 'rei_nucl_facil_gr_id', 'oz_id', 'poi_id', 'hoehe_ueber_nn', 'height_asl', 'rei_progpunkt_grp_id', 'rei_ag_gr_id', 'gem_unt_id', 'munic_div_id']) row_data_en
 , jsonb_rename_keys(changed_fields, ARRAY['netzbetreiber_id', 'network_id', 'ort_id', 'ext_id', 'langtext', 'long_text', 'staat_id', 'state_id', 'gem_id', 'munic_id', 'unscharf', 'is_fuzzy', 'nuts_code', 'nuts_id', 'kda_id', 'spat_ref_sys_id', 'koord_x_extern', 'x_coord_ext', 'koord_y_extern', 'y_coord_ext', 'hoehe_land', 'alt', 'letzte_aenderung', 'last_mod', 'ort_typ', 'site_class_id', 'kurztext', 'short_text', 'berichtstext', 'rei_report_text', 'zone', 'rei_zone', 'sektor', 'rei_sector', 'zustaendigkeit', 'rei_competence', 'mp_art', 'rei_opr_mode', 'aktiv', 'is_rei_active', 'kta_gruppe_id', 'rei_nucl_facil_gr_id', 'oz_id', 'poi_id', 'hoehe_ueber_nn', 'height_asl', 'rei_progpunkt_grp_id', 'rei_ag_gr_id', 'gem_unt_id', 'munic_div_id']) changed_fields_en 
 FROM master.audit_trail WHERE table_name='ort') as foo WHERE table_name='ort';
-*/
+
 
 CREATE OR REPLACE VIEW land.audit_trail
  AS
@@ -149,3 +149,4 @@ ALTER TABLE stamm.audit_trail
 
 \echo finished 
 SELECT NOW();
+*/
