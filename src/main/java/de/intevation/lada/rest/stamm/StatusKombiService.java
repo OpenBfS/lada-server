@@ -36,11 +36,11 @@ import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for StatusKombi objects.
+ * REST service for StatusMp objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/statuskombi")
+@Path("rest/statusmp")
 public class StatusKombiService extends LadaService {
 
     /**
@@ -54,11 +54,9 @@ public class StatusKombiService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get all StatusKombi objects.
-     * <p>
-     * Example: http://example.com/statuskombi
+     * Get all StatusMp objects.
      *
-     * @return Response object containing all StatusStufe objects.
+     * @return Response object containing all StatusMp objects.
      */
     @GET
     @Path("/")
@@ -67,7 +65,7 @@ public class StatusKombiService extends LadaService {
     }
 
     /**
-     * Get a single StatusKombi object by id.
+     * Get a single StatusMp object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
      * @return Response object
