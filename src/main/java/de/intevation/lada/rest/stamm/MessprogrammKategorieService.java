@@ -29,34 +29,11 @@ import de.intevation.lada.model.master.MpgCateg;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for DatensatzErzeuger objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean],
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "bezeichnung": [string],
- *      "letzteAenderung": [timestamp],
- *      "netzbetreiberId": [string],
- *      "readonly": [boolean]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "notifications": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for MpgCateg objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/messprogrammkategorie")
+@Path("rest/mpgcateg")
 public class MessprogrammKategorieService extends LadaService {
 
     /**
@@ -70,7 +47,7 @@ public class MessprogrammKategorieService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get all MessprogrammKategorie objects.
+     * Get all MpgCateg objects.
      *
      * @return Response containing requested objects.
      */

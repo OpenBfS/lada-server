@@ -60,25 +60,25 @@ public class MessprogrammKategorieTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("messprogrammkategorie", "rest/messprogrammkategorie");
+        get("mpgcateg", "rest/mpgcateg");
         getById(
-            "messprogrammkategorie",
-            "rest/messprogrammkategorie/1000",
+            "mpgcateg",
+            "rest/mpgcateg/1000",
             expectedById);
         update(
-            "messprogrammkategorie",
-            "rest/messprogrammkategorie/1000",
+            "mpgcateg",
+            "rest/mpgcateg/1000",
             "name",
             "Testbezeichnung",
             "geändert");
         JsonObject created =
             create(
-                "messprogrammkategorie",
-                "rest/messprogrammkategorie",
+                "mpgcateg",
+                "rest/mpgcateg",
                 create);
         delete(
-            "messprogrammkategorie",
-            "rest/messprogrammkategorie/"
+            "mpgcateg",
+            "rest/mpgcateg/"
                 + created.getJsonObject("data").get("id"));
     }
 }
