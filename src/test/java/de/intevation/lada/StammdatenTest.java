@@ -929,7 +929,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testEnvSpecifMpAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getAll("umweltzusatz");
+        stammdatenTest.getAll("envspecifmp");
     }
 
     /**
@@ -941,7 +941,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testEnvSpecifMpGetById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getById("umweltzusatz", ID101);
+        stammdatenTest.getById("envspecifmp", ID101);
     }
 
     /**

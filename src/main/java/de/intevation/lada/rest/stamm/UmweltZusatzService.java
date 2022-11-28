@@ -19,31 +19,11 @@ import de.intevation.lada.rest.LadaService;
 
 
 /**
- * REST service for UmweltZustz objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "pzsId": [string],
- *      "umwId": [string],
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for EnvSpecifMp objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/umweltzusatz")
+@Path("rest/envspecifmp")
 public class UmweltZusatzService extends LadaService {
 
     /**
@@ -53,9 +33,7 @@ public class UmweltZusatzService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all UmweltZusatz objects.
-     * <p>
-     * Example: http://example.com/umweltzustz
+     * Get all EnvSpecifMp objects.
      *
      * @return Response containing requested objects.
      */
@@ -66,7 +44,7 @@ public class UmweltZusatzService extends LadaService {
     }
 
     /**
-     * Get a single UmweltZusatz object by id.
+     * Get a single EnvSpecifMp object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
      * @return Response object

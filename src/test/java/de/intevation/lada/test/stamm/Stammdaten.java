@@ -222,7 +222,7 @@ public class Stammdaten extends ServiceTest {
                 "unit2"
             )
         );
-        matchers.put("umweltzusatz",
+        matchers.put("envspecifmp",
             Matchers.containsInAnyOrder(
                 "id",
                 "sampleSpecifId",
