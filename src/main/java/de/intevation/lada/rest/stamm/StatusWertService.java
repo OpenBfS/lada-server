@@ -29,30 +29,12 @@ import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for StatusWert objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "wert": [string],
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
+ * REST service for StatusVal objects.
  * </pre>
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/statuswert")
+@Path("rest/statusval")
 public class StatusWertService extends LadaService {
 
     /**
@@ -66,27 +48,27 @@ public class StatusWertService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get StatusWert objects.
+     * Get StatusVal objects.
      *
-     * @param messungsId URL parameter to filter using messungsId
-     * @return Response object containing all StatusWert objects.
+     * @param measmId URL parameter to filter using measmId
+     * @return Response object containing all StatusVal objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("messungsId") Integer messungsId
+        @QueryParam("measmId") Integer measmId
     ) {
-        if (messungsId == null) {
+        if (measmId == null) {
             return repository.getAll(StatusVal.class);
         }
-        return getReachable(messungsId);
+        return getReachable(measmId);
     }
 
     /**
-     * Get a single StatusWert object by id.
+     * Get a single StatusVal object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single StatusWert.
+     * @return Response object containing a single StatusVal.
      */
     @GET
     @Path("/{id}")
