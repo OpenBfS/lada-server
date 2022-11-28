@@ -115,7 +115,7 @@ public class Stammdaten extends ServiceTest {
                 "umwId"
             )
         );
-        matchers.put("probenart",
+        matchers.put("samplemeth",
             Matchers.containsInAnyOrder(
                 "id",
                 "lastMod",

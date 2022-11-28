@@ -462,7 +462,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testProbenartAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getAll("probenart");
+        stammdatenTest.getAll("samplemeth");
     }
 
     /**
@@ -474,7 +474,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testProbenartById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getById("probenart", 1);
+        stammdatenTest.getById("samplemeth", 1);
     }
 
     /**

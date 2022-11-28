@@ -18,32 +18,11 @@ import de.intevation.lada.model.master.SampleMeth;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for Probenart objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "beschreibung": [string],
- *      "probenart": [string],
- *      "probenartEudfId": [string]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for SampleMeth objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/probenart")
+@Path("rest/samplemeth")
 public class ProbenartService extends LadaService {
 
     /**
@@ -53,11 +32,9 @@ public class ProbenartService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all Probenart objects.
-     * <p>
-     * Example: http://example.com/probenart
+     * Get all SampleMeth objects.
      *
-     * @return Response object containing all Probenart objects.
+     * @return Response object containing all SampleMeth objects.
      */
     @GET
     @Path("/")
@@ -66,10 +43,10 @@ public class ProbenartService extends LadaService {
     }
 
     /**
-     * Get a single Probenart object by id.
+     * Get a single SampleMeth object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Probenart.
+     * @return Response object containing a single SampleMeth.
      */
     @GET
     @Path("/{id}")
