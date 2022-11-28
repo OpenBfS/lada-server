@@ -18,30 +18,11 @@ import de.intevation.lada.model.master.TypeRegulation;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for OrtszuordnungTyp objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "ortstyp": [string],
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for TypeRegulation objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/ortszuordnungtyp")
+@Path("rest/typeregulation")
 public class OrtszuordnungTypService extends LadaService {
 
     /**
@@ -51,11 +32,9 @@ public class OrtszuordnungTypService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all OrtszuordnungTyp objects.
-     * <p>
-     * Example: http://example.com/ortszuordnungtyp
+     * Get all TypeRegulation objects.
      *
-     * @return Response object containing all OrtszuordnungTyp objects.
+     * @return Response object containing all TypeRegulation objects.
      */
     @GET
     @Path("/")
@@ -64,10 +43,10 @@ public class OrtszuordnungTypService extends LadaService {
     }
 
     /**
-     * Get a single OrtszuordnungTyp object by id.
+     * Get a single TypeRegulation object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single OrtszuordnungTyp.
+     * @return Response object containing a single TypeRegulation.
      */
     @GET
     @Path("/{id}")

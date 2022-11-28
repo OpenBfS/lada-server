@@ -833,7 +833,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testTypeRegulationAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getAll("ortszuordnungtyp");
+        stammdatenTest.getAll("typeregulation");
     }
 
     /**
@@ -845,7 +845,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testTypeRegulationById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getById("ortszuordnungtyp", IDA);
+        stammdatenTest.getById("typeregulation", IDA);
     }
 
     /**

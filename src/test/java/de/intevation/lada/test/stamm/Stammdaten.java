@@ -170,7 +170,7 @@ public class Stammdaten extends ServiceTest {
             "extId"
             )
         );
-        matchers.put("ortszuordnungtyp",
+        matchers.put("typeregulation",
             Matchers.containsInAnyOrder(
             "id",
             "name",
