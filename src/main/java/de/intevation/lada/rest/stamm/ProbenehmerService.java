@@ -30,45 +30,11 @@ import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for Probenehmer objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean],
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "bearbeiter": [string],
- *      "bemerkung": [string],
- *      "betrieb": [string],
- *      "bezeichnung": [string]",
- *      "kurzBezeichnung": [string],
- *      "letzteAenderung": [timestamp],
- *      "netzbetreiberId": [string]
- *      "ort": [string],
- *      "plz": [string],
- *      "prnId": [string],
- *      "strasse": [string],
- *      "telefon": [string],
- *      "tourenplan": [string],
- *      "typ": [string],
- *      "readonly": [boolean]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "notifications": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for Sampler objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/probenehmer")
+@Path("rest/sampler")
 public class ProbenehmerService extends LadaService {
 
     /**
@@ -82,9 +48,7 @@ public class ProbenehmerService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get all Probenehmer objects.
-     * <p>
-     * Example: http://example.com/probenehmer
+     * Get all Sampler objects.
      *
      * @return Response object containing all objects.
      */
@@ -105,7 +69,7 @@ public class ProbenehmerService extends LadaService {
     }
 
     /**
-     * Get a single Datenbasis object by id.
+     * Get a single Sampler object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
      * @return Response object containing a single object.
