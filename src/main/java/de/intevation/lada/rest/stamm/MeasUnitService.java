@@ -29,7 +29,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/measunit")
-public class MesseinheitService extends LadaService {
+public class MeasUnitService extends LadaService {
 
     /**
      * The data repository granting read access.
