@@ -558,7 +558,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testUmweltAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getAll("umwelt");
+        stammdatenTest.getAll("envmedium");
     }
 
     /**
@@ -570,7 +570,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testUmweltById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getById("umwelt", "L6");
+        stammdatenTest.getById("envmedium", "L6");
     }
 
     /**

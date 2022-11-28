@@ -25,32 +25,11 @@ import de.intevation.lada.model.master.ReiAgGrEnvMediumMp;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for Umwelt objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [string],
- *      "beschreibung": [string],
- *      "umweltBereich": [string],
- *      "mehId": [number]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for EnvMedium objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/umwelt")
+@Path("rest/envmedium")
 public class UmweltService extends LadaService {
 
     /**
@@ -62,21 +41,21 @@ public class UmweltService extends LadaService {
     /**
      * Get Umwelt objects.
      *
-     * @param reiProgpunktGrpId URL parameter "reiprogpunktgruppe" to filter
-     * using reiProgpunktGrpId.
+     * @param reiAgGrId URL parameter "reiAgGrId" to filter
+     * using reiAgGrId.
      * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("reiprogpunktgruppe") Integer reiProgpunktGrpId
+        @QueryParam("reiAgGrId") Integer reiAgGrId
     ) {
-        if (reiProgpunktGrpId == null) {
+        if (reiAgGrId == null) {
             return repository.getAll(EnvMedium.class);
         }
         QueryBuilder<ReiAgGrEnvMediumMp> builder =
             repository.queryBuilder(ReiAgGrEnvMediumMp.class);
-        builder.and("reiAgGrId", reiProgpunktGrpId);
+        builder.and("reiAgGrId", reiAgGrId);
         List<ReiAgGrEnvMediumMp> zuord =
             repository.filterPlain(builder.getQuery());
         if (zuord.isEmpty()) {
@@ -93,10 +72,10 @@ public class UmweltService extends LadaService {
     }
 
     /**
-     * Get a single Umwelt object by id.
+     * Get a single EnvMedium object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Umwelt.
+     * @return Response object containing a single EnvMedium.
      */
     @GET
     @Path("/{id}")

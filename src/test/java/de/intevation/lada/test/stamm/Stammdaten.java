@@ -212,7 +212,7 @@ public class Stammdaten extends ServiceTest {
                 "descr"
             )
         );
-        matchers.put("umwelt",
+        matchers.put("envmedium",
             Matchers.containsInAnyOrder(
                 "id",
                 "lastMod",
