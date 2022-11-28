@@ -23,33 +23,11 @@ import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for ProbenZusatz objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [string],
- *      "beschreibung": [string],
- *      "eudfKeyword": [string],
- *      "zusatzwert": [string],
- *      "mehId": [number]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for SampleSpecif objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/probenzusatz")
+@Path("rest/samplespecif")
 public class ProbenzusatzService extends LadaService {
 
     /**
@@ -59,25 +37,25 @@ public class ProbenzusatzService extends LadaService {
     private Repository repository;
 
     /**
-     * Get ProbenZusatz objects.
+     * Get SampleSpecif objects.
      *
-     * @param umwId URL parameter to filter using umwId. Might be null
+     * @param envMediumId URL parameter to filter using envMediumId. Might be null
      * (i.e. not given at all) but not an empty string.
      * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("umwId") @Pattern(regexp = ".+") String umwId
+        @QueryParam("envMediumId") @Pattern(regexp = ".+") String envMediumId
     ) {
-        if (umwId != null) {
+        if (envMediumId != null) {
             Query query =
                 repository.queryFromString(
-                    "SELECT pzs_id FROM "
-                    + de.intevation.lada.model.master.SchemaName.LEGACY_NAME
-                    + ".umwelt_zusatz "
-                    + "WHERE umw_id = :umw"
-                ).setParameter("umw", umwId);
+                    "SELECT sample_specif_id FROM "
+                    + de.intevation.lada.model.master.SchemaName.NAME
+                    + ".env_specif_mp "
+                    + "WHERE env_medium_id = :envMediumId"
+                ).setParameter("envMediumId", envMediumId);
             @SuppressWarnings("unchecked")
             List<String> ids = query.getResultList();
 
@@ -93,10 +71,10 @@ public class ProbenzusatzService extends LadaService {
     }
 
     /**
-     * Get a single ProbenZusatz object by id.
+     * Get a single SampleSpecif object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single ProbenZusatz.
+     * @return Response object containing a single SampleSpecif.
      */
     @GET
     @Path("/{id}")

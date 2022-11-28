@@ -124,7 +124,7 @@ public class Stammdaten extends ServiceTest {
                 "eudfSampleMethId"
             )
         );
-        matchers.put("probenzusatz",
+        matchers.put("samplespecif",
             Matchers.containsInAnyOrder(
                 "id",
                 "lastMod",
