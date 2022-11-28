@@ -25,31 +25,11 @@ import de.intevation.lada.model.master.NuclFacilGrMp;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for Kta objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "bezeichnung": [string],
- *      "code": [string}
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for NuclFacil objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/kta")
+@Path("rest/nuclfacil")
 public class KtaService extends LadaService {
 
     /**
@@ -59,22 +39,22 @@ public class KtaService extends LadaService {
     private Repository repository;
 
     /**
-     * Get Kta objects.
+     * Get NuclFacil objects.
      *
-     * @param ktagruppe URL parameter to filter by ktaGrpId
-     * @return Response object containing all Kta objects.
+     * @param nuclFacilGrId URL parameter to filter by nuclFacilGrId
+     * @return Response object containing all NuclFacil objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("ktagruppe") Integer ktagruppe
+        @QueryParam("nuclFacilGrId") Integer nuclFacilGrId
     ) {
-        if (ktagruppe == null) {
+        if (nuclFacilGrId == null) {
             return repository.getAll(NuclFacil.class);
         }
         QueryBuilder<NuclFacilGrMp> builder =
             repository.queryBuilder(NuclFacilGrMp.class);
-        builder.and("nuclFacilGrId", ktagruppe);
+        builder.and("nuclFacilGrId", nuclFacilGrId);
         List<NuclFacilGrMp> zuord =
             repository.filterPlain(builder.getQuery());
         if (zuord.isEmpty()) {
@@ -91,10 +71,10 @@ public class KtaService extends LadaService {
     }
 
     /**
-     * Get a single Kta object by id.
+     * Get a single NuclFacil object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Kta.
+     * @return Response object containing a single NuclFacil.
      */
     @GET
     @Path("/{id}")
