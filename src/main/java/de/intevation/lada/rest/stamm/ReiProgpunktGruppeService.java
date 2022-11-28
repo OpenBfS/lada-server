@@ -27,31 +27,11 @@ import de.intevation.lada.model.master.ReiAgGrMp;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for ReiProgpunktGruppe objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "beschreibung": [string],
- *      "reiProgpunktGruppe": [string]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for ReiAgGr objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/reiprogpunktgruppe")
+@Path("rest/reiaggr")
 public class ReiProgpunktGruppeService extends LadaService {
 
     /**
@@ -61,28 +41,28 @@ public class ReiProgpunktGruppeService extends LadaService {
     private Repository repository;
 
     /**
-     * Get ReiProgpunktGruppe objects.
+     * Get ReiAgGr objects.
      *
-     * @param reiProgpunktId URL parameter "reiprogpunkt" to filter
-     * using reiProgpunktId
-     * @param umwelt URL parameter to filter using umwId. Might be null
+     * @param reiAgId URL parameter "reiAgId" to filter
+     * using reiAgId
+     * @param envMediumId URL parameter to filter using envMediumId. Might be null
      * (i.e. not given at all) but not an empty string.
      * @return Response object containing all Datenbasis objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("reiprogpunkt") Integer reiProgpunktId,
-        @QueryParam("umwelt") @Pattern(regexp = ".+") String umwelt
+        @QueryParam("reiAgId") Integer reiAgId,
+        @QueryParam("envMediumId") @Pattern(regexp = ".+") String envMediumId
     ) {
-        if (reiProgpunktId == null && umwelt == null) {
+        if (reiAgId == null && envMediumId == null) {
             return repository.getAll(ReiAgGr.class);
         }
         List<ReiAgGr> list = new ArrayList<ReiAgGr>();
-        if (reiProgpunktId != null) {
+        if (reiAgId != null) {
             QueryBuilder<ReiAgGrMp> builder =
                 repository.queryBuilder(ReiAgGrMp.class);
-            builder.and("reiAgId", reiProgpunktId);
+            builder.and("reiAgId", reiAgId);
             List<ReiAgGrMp> zuord =
                 repository.filterPlain(builder.getQuery());
             if (zuord.isEmpty()) {
@@ -96,10 +76,10 @@ public class ReiProgpunktGruppeService extends LadaService {
             }
             builder1.orIn("id", ids);
             list = repository.filterPlain(builder1.getQuery());
-        } else if (umwelt != null) {
+        } else if (envMediumId != null) {
             QueryBuilder<ReiAgGrEnvMediumMp> builder =
                 repository.queryBuilder(ReiAgGrEnvMediumMp.class);
-            builder.and("envMediumId", umwelt);
+            builder.and("envMediumId", envMediumId);
             List<ReiAgGrEnvMediumMp> zuord =
                 repository.filterPlain(builder.getQuery());
             if (zuord.isEmpty()) {
@@ -119,10 +99,10 @@ public class ReiProgpunktGruppeService extends LadaService {
     }
 
     /**
-     * Get a single ReiProgpunktGruppe object by id.
+     * Get a single ReiAgGr object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single ReiProgpunktGruppe.
+     * @return Response object containing a single ReiAgGr.
      */
     @GET
     @Path("/{id}")

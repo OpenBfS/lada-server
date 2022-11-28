@@ -985,7 +985,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testReiAgGrAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getAll("reiprogpunktgruppe");
+        stammdatenTest.getAll("reiaggr");
     }
 
     /**
@@ -997,6 +997,6 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testReiAgGrById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getById("reiprogpunktgruppe", ID101);
+        stammdatenTest.getById("reiaggr", ID101);
     }
 }

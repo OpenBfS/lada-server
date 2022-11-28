@@ -246,7 +246,7 @@ public class Stammdaten extends ServiceTest {
                 "govDistId"
             )
         );
-        matchers.put("reiprogpunktgruppe",
+        matchers.put("reiaggr",
             Matchers.containsInAnyOrder(
                 "id",
                 "name",
