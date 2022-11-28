@@ -342,7 +342,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testMesseinheitAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getAll("messeinheit");
+        stammdatenTest.getAll("measunit");
     }
 
     /**
@@ -354,7 +354,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testMesseinheitById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getById("messeinheit", ID207);
+        stammdatenTest.getById("measunit", ID207);
     }
 
     /**

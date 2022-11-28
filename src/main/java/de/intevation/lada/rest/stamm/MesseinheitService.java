@@ -24,33 +24,11 @@ import de.intevation.lada.model.master.UnitConvers;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for MessEinheit objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "beschreibung": [string],
- *      "einheit": [string],
- *      "eudfMesseinheitId": [string],
- *      "umrechnungsFaktorEudf": [number]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for MeasUnit objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/messeinheit")
+@Path("rest/measunit")
 public class MesseinheitService extends LadaService {
 
     /**
@@ -60,16 +38,16 @@ public class MesseinheitService extends LadaService {
     private Repository repository;
 
     /**
-     * Get MessEinheit objects.
+     * Get MeasUnit objects.
      *
      * The requested Objects can be filtered using two URL parameters:
-     * @param mehId
-     * @param secMehId
+     * @param measUnitId
+     * @param secMeasUnitId
      * If these parameters are used, the filter only returns records that are
      * convertable into one of these units.
-     * Records, convertable into the primary messeinheit (mehId) will have the
+     * Records, convertable into the primary MeasUnit (measUnitId) will have the
      * attribute 'primary' set to true.
-     * Records convertable into the secondary messeinheit (secMehId) will have
+     * Records convertable into the secondary MeasUnit (secMeasUnitId) will have
      * the attribute 'primary' set to false.
      *
      * @return Response containing requested objects.
@@ -77,17 +55,17 @@ public class MesseinheitService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("mehId") Integer mehId,
-        @QueryParam("secMehId") Integer secMehId
+        @QueryParam("measUnitId") Integer measUnitId,
+        @QueryParam("secMeasUnitId") Integer secMeasUnitId
     ) {
-        if (mehId == null) {
+        if (measUnitId == null) {
             return repository.getAll(MeasUnit.class);
         }
 
-        MeasUnit meh = repository.getByIdPlain(MeasUnit.class, mehId);
+        MeasUnit meh = repository.getByIdPlain(MeasUnit.class, measUnitId);
         MeasUnit secMeh = null;
-        if (secMehId != null) {
-            secMeh = repository.getByIdPlain(MeasUnit.class, secMehId);
+        if (secMeasUnitId != null) {
+            secMeh = repository.getByIdPlain(MeasUnit.class, secMeasUnitId);
         }
         List<MeasUnit> einheits =
             new ArrayList<MeasUnit>(
@@ -120,10 +98,10 @@ public class MesseinheitService extends LadaService {
     }
 
     /**
-     * Get a single MessEinheit object by id.
+     * Get a single MeasUnit object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single MessEinheit.
+     * @return Response object containing a single MeasUnit.
      */
     @GET
     @Path("/{id}")

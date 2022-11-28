@@ -51,7 +51,7 @@ public class Stammdaten extends ServiceTest {
                 "regulation"
             )
         );
-        matchers.put("messeinheit",
+        matchers.put("measunit",
             Matchers.containsInAnyOrder(
                 "id",
                 "lastMod",
