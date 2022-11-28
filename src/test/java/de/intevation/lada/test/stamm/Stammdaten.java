@@ -62,7 +62,7 @@ public class Stammdaten extends ServiceTest {
                 "primary"
             )
         );
-        matchers.put("messgroesse",
+        matchers.put("measd",
             Matchers.containsInAnyOrder(
                 "id",
                 "lastMod",

@@ -24,36 +24,11 @@ import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for Messgroesse objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id":[number],
- *      "beschreibung": [string],
- *      "defaultFarbe": [string],
- *      "eudfNuklidId": [number],
- *      "idfNuklidKey": [string],
- *      "istLeitnuklid": [boolean],
- *      "kennungBvl": [string],
- *      "messgroesse": [string]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for Measd objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/messgroesse")
+@Path("rest/measd")
 public class MessgroesseService extends LadaService {
 
     /**
@@ -63,7 +38,7 @@ public class MessgroesseService extends LadaService {
     private Repository repository;
 
     /**
-     * Get Messgroesse objects.
+     * Get Measd objects.
      *
      * @param mmtId URL parameter to filter by mmtId. Might be null
      * (i.e. not given at all) but not an empty string.
@@ -80,9 +55,9 @@ public class MessgroesseService extends LadaService {
 
         Query query =
             repository.queryFromString(
-                "SELECT messgroesse_id FROM "
-                + de.intevation.lada.model.master.SchemaName.LEGACY_NAME
-                + ".mmt_messgroesse "
+                "SELECT measd_id FROM "
+                + de.intevation.lada.model.master.SchemaName.NAME
+                + ".mmt_measd_view "
                 + "WHERE mmt_id = :mmt"
             ).setParameter("mmt", mmtId);
         @SuppressWarnings("unchecked")
@@ -94,10 +69,10 @@ public class MessgroesseService extends LadaService {
     }
 
     /**
-     * Get a single Messgroesse object by id.
+     * Get a single Measd object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Messgroesse.
+     * @return Response object containing a single Measd.
      */
     @GET
     @Path("/{id}")

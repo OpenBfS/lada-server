@@ -366,7 +366,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testMessgroesseAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getAll("messgroesse");
+        stammdatenTest.getAll("measd");
     }
 
     /**
@@ -378,7 +378,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testMessgroesseById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getById("messgroesse", ID56);
+        stammdatenTest.getById("measd", ID56);
     }
 
     /**
