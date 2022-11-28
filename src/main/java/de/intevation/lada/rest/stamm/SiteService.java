@@ -57,12 +57,12 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for Ort objects.
+ * REST service for Site objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/site")
-public class OrtService extends LadaService {
+public class SiteService extends LadaService {
 
     @Inject
     private Logger logger;
