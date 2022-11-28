@@ -34,7 +34,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/mpgcateg")
-public class MessprogrammKategorieService extends LadaService {
+public class MpgCategService extends LadaService {
 
     /**
      * The data repository granting read access.
