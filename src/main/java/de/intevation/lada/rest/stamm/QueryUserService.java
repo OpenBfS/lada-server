@@ -47,7 +47,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/queryuser")
-public class QueryService extends LadaService {
+public class QueryUserService extends LadaService {
 
     @Inject
     private Repository repository;
