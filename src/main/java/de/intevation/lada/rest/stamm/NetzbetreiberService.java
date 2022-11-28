@@ -25,11 +25,11 @@ import de.intevation.lada.model.master.Network;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for NetzBetreiber objects.
+ * REST service for Network objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/netzbetreiber")
+@Path("rest/network")
 public class NetzbetreiberService extends LadaService {
 
     /**
@@ -46,9 +46,7 @@ public class NetzbetreiberService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get all NetzBetreiber objects.
-     * <p>
-     * Example: http://example.com/netzbetreiber
+     * Get all Network objects.
      *
      * @return Response object containing all NetzBetreiber objects.
      */
@@ -59,10 +57,10 @@ public class NetzbetreiberService extends LadaService {
     }
 
     /**
-     * Get a single NetzBetreiber object by id.
+     * Get a single Network object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single NetzBetreiber.
+     * @return Response object containing a single Network.
      */
     @GET
     @Path("/{id}")

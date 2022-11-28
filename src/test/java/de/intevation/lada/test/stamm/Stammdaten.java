@@ -94,7 +94,7 @@ public class Stammdaten extends ServiceTest {
                 "networkId"
             )
         );
-        matchers.put("netzbetreiber",
+        matchers.put("network",
             Matchers.containsInAnyOrder(
                 "id",
                 "lastMod",

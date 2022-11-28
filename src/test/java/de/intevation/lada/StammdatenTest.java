@@ -438,7 +438,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testNetzbetreiberAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getAll("netzbetreiber");
+        stammdatenTest.getAll("network");
     }
 
     /**
@@ -450,7 +450,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testNetzbetreiberById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getById("netzbetreiber", "06");
+        stammdatenTest.getById("network", "06");
     }
 
     /**
