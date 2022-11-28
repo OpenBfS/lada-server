@@ -44,7 +44,7 @@ public class EnvDescripService extends LadaService {
      * The requested objects can be filtered using the following URL
      * parameters:
      * @param lev The layer of the requested EnvDescrip
-     * @param predId The parents of the requested EnvDescrip, each given
+     * @param predIds The parents of the requested EnvDescrip, each given
      * using an URL parameter named "predId".
      * @return Response object containing the EnvDescrip objects.
      */
@@ -52,14 +52,14 @@ public class EnvDescripService extends LadaService {
     @Path("/")
     public Response get(
         @QueryParam("lev") @NotNull Integer lev,
-        @QueryParam("predId") List<Integer> predId
+        @QueryParam("predId") List<Integer> predIds
     ) {
         QueryBuilder<EnvDescrip> builder =
             repository.queryBuilder(EnvDescrip.class);
         builder.and("levVal", 0).not();
         builder.and("lev", lev);
-        if (predId != null && !predId.isEmpty()) {
-            builder.andIn("predId", predId);
+        if (predIds != null && !predIds.isEmpty()) {
+            builder.andIn("predId", predIds);
         }
         return repository.filter(builder.getQuery());
     }
