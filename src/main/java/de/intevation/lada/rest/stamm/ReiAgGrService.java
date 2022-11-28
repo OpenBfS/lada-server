@@ -32,7 +32,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/reiaggr")
-public class ReiProgpunktGruppeService extends LadaService {
+public class ReiAgGrService extends LadaService {
 
     /**
      * The data repository granting read access.
@@ -47,7 +47,7 @@ public class ReiProgpunktGruppeService extends LadaService {
      * using reiAgId
      * @param envMediumId URL parameter to filter using envMediumId. Might be null
      * (i.e. not given at all) but not an empty string.
-     * @return Response object containing all Datenbasis objects.
+     * @return Response object containing all ReiAgGr objects.
      */
     @GET
     @Path("/")
