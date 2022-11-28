@@ -30,7 +30,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/network")
-public class NetzbetreiberService extends LadaService {
+public class NetworkService extends LadaService {
 
     /**
      * The data repository granting read access.
