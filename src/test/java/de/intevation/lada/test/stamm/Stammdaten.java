@@ -75,7 +75,7 @@ public class Stammdaten extends ServiceTest {
                 "name"
             )
         );
-        matchers.put("messmethode",
+        matchers.put("mmt",
             Matchers.containsInAnyOrder(
                 "id",
                 "lastMod",

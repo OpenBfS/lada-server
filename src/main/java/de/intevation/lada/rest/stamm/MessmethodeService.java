@@ -18,31 +18,11 @@ import de.intevation.lada.model.master.Mmt;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for MessMethode objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [string],
- *      "beschreibung": [string],
- *      "messmethode": [string]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for Mmt objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/messmethode")
+@Path("rest/mmt")
 public class MessmethodeService extends LadaService {
 
     /**
@@ -52,11 +32,9 @@ public class MessmethodeService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all MessMethode objects.
-     * <p>
-     * Example: http://example.com/messmethode
+     * Get all Mmt objects.
      *
-     * @return Response object containing all MessMethode objects.
+     * @return Response object containing all Mmt objects.
      */
     @GET
     @Path("/")
@@ -65,10 +43,10 @@ public class MessmethodeService extends LadaService {
     }
 
     /**
-     * Get a single MessMethode object by id.
+     * Get a single Mmt object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single MessMethode.
+     * @return Response object containing a single Mmt.
      */
     @GET
     @Path("/{id}")
