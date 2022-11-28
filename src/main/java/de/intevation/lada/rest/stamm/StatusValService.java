@@ -35,7 +35,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/statusval")
-public class StatusWertService extends LadaService {
+public class StatusValService extends LadaService {
 
     /**
      * The data repository granting read access.
