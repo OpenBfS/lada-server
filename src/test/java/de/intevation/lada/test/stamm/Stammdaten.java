@@ -177,7 +177,7 @@ public class Stammdaten extends ServiceTest {
             "lastMod"
             )
         );
-        matchers.put("ortszusatz",
+        matchers.put("poi",
             Matchers.containsInAnyOrder(
             "id",
             "name",

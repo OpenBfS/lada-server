@@ -881,7 +881,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testPoiAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getAll("ortszusatz");
+        stammdatenTest.getAll("poi");
     }
 
     /**
@@ -893,7 +893,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testPoiById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getById("ortszusatz", IDA);
+        stammdatenTest.getById("poi", IDA);
     }
 
     /**

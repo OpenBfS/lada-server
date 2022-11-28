@@ -18,30 +18,11 @@ import de.intevation.lada.model.master.Poi;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for Ortszusatz objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "ozsId": [number],
- *      "ortszusatz": [string],
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for Poi objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/ortszusatz")
+@Path("rest/poi")
 public class OrtszusatzService extends LadaService {
 
     /**
@@ -51,11 +32,9 @@ public class OrtszusatzService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all Ortszusatz objects.
-     * <p>
-     * Example: http://example.com/ortszusatz
+     * Get all Poi objects.
      *
-     * @return Response object containing all Ortszusatz objects.
+     * @return Response object containing all Poi objects.
      */
     @GET
     @Path("/")
@@ -64,10 +43,10 @@ public class OrtszusatzService extends LadaService {
     }
 
     /**
-     * Get a single Ortszusatz object by id.
+     * Get a single Poi object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Ortszusatz.
+     * @return Response object containing a single Poi.
      */
     @GET
     @Path("/{id}")
