@@ -18,31 +18,11 @@ import de.intevation.lada.model.master.SiteClass;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for OrtTyp objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "ortTyp": [string],
- *      "code": [string]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for SiteClass objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/orttyp")
+@Path("rest/siteclass")
 public class OrtTypService extends LadaService {
 
     /**
@@ -52,11 +32,9 @@ public class OrtTypService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all OrtTyp objects.
-     * <p>
-     * Example: http://example.com/orttyp
+     * Get all SiteClass objects.
      *
-     * @return Response object containing all OrtTyp objects.
+     * @return Response object containing all SiteClass objects.
      */
     @GET
     @Path("/")
@@ -65,10 +43,10 @@ public class OrtTypService extends LadaService {
     }
 
     /**
-     * Get a single OrtTyp object by id.
+     * Get a single SiteClass object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single OrtTyp.
+     * @return Response object containing a single SiteClass.
      */
     @GET
     @Path("/{id}")

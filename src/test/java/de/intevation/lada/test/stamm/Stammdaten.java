@@ -162,7 +162,7 @@ public class Stammdaten extends ServiceTest {
                 "name"
             )
         );
-        matchers.put("orttyp",
+        matchers.put("siteclass",
             Matchers.containsInAnyOrder(
             "id",
             "lastMod",

@@ -785,7 +785,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testSiteClassAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getAll("orttyp");
+        stammdatenTest.getAll("siteclass");
     }
 
     /**
@@ -797,7 +797,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testSiteClassById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getById("orttyp", ID101);
+        stammdatenTest.getById("siteclass", ID101);
     }
 
     /**
