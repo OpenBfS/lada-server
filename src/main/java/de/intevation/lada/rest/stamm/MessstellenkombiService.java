@@ -45,7 +45,7 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/messstellenkombi")
+@Path("rest/auth")
 public class MessstellenkombiService extends LadaService {
 
     /**
@@ -55,7 +55,7 @@ public class MessstellenkombiService extends LadaService {
     private Repository repository;
 
     /**
-     * @param netzbetreiberIds Multiple URL parameters "netzbetreiberId"
+     * @param networkIds Multiple URL parameters "networkId"
      * can be given to filter the result.
      *
      * @return Response containing requested objects.
@@ -63,13 +63,13 @@ public class MessstellenkombiService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("netzbetreiberId") List<String> netzbetreiberIds
+        @QueryParam("networkId") List<String> networkIds
     ) {
         QueryBuilder<Auth> mstMlQuery = repository.queryBuilder(Auth.class);
-        mstMlQuery.orIntList("funktionId", List.of(0, 1));
+        mstMlQuery.orIntList("authFunctId", List.of(0, 1));
 
-        if (netzbetreiberIds != null && !netzbetreiberIds.isEmpty()) {
-            mstMlQuery.andIn("netzbetreiberId", netzbetreiberIds);
+        if (networkIds != null && !networkIds.isEmpty()) {
+            mstMlQuery.andIn("networkId", networkIds);
         }
 
         return repository.filter(mstMlQuery.getQuery());
