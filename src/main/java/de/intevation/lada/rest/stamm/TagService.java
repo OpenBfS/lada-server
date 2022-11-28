@@ -71,25 +71,16 @@ public class TagService extends LadaService {
     /**
      * Get tags.
      *
-     * If IDs of Sample or Messung objects are given as URL parameters like
-     * <pre>
-     * <code>
-     * ?pid=42&pid=24
-     * </code>
-     * </pre>
-     * only those tags are returned that are associated to all of them.
-     * Otherwise, return only tags the user is allowed to assign.
-     *
-     * @param pIds filter by IDs of Sample objects.
-     * @param mIds filter by IDs of Messung objects. Ignored if pid is given.
+     * @param sampleIds filter by IDs of Sample objects.
+     * @param measmIds filter by IDs of Measm objects. Ignored if sampleId is given.
      *
      * @return Response with list of Tag objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("pid") Set<Integer> pIds,
-        @QueryParam("mid") Set<Integer> mIds
+        @QueryParam("sampleId") Set<Integer> sampleIds,
+        @QueryParam("measmId") Set<Integer> measmIds
     ) {
         CriteriaBuilder builder =
             repository.entityManager().getCriteriaBuilder();
@@ -97,14 +88,14 @@ public class TagService extends LadaService {
         Root<Tag> root = criteriaQuery.from(Tag.class);
 
         List<Tag> result;
-        if (!pIds.isEmpty() || !mIds.isEmpty()) {
+        if (!sampleIds.isEmpty() || !measmIds.isEmpty()) {
             // Return only tags assigned to all given Sample or Messung objects
             Join<Tag, TagLink> joinTagZuordnung =
                 root.join("tagZuordnungs");
             // Work-around missing SQL INTERSECTION in JPA:
-            final String filterBy = pIds.isEmpty() ? "measmId" : "sampleId";
+            final String filterBy = sampleIds.isEmpty() ? "measmId" : "sampleId";
             final Iterator<Integer> filterIds =
-                pIds.isEmpty() ? mIds.iterator() : pIds.iterator();
+                sampleIds.isEmpty() ? measmIds.iterator() : sampleIds.iterator();
             Predicate idFilter = builder.equal(
                 joinTagZuordnung.get(filterBy), filterIds.next());
             result = repository.filterPlain(criteriaQuery.where(idFilter));
@@ -126,20 +117,6 @@ public class TagService extends LadaService {
      * Update an existing tag object.
      *
      * @param tag Tag to update using payload like
-     * <pre>
-     * <code>
-     * {
-     *   id: [int], //Tag id
-     *   tag: [string], //Tag text
-     *   netzbetreiberId: [string], //Tag netzbetreiber
-     *   mstId: [string], //Owner mst id
-     *   userId: [integer], //Creator user id
-     *   typId: [string], //Tag type id
-     *   gueltigBis: [integer] //Optional: Expiration date
-     * }
-     * </code>
-     * </pre>
-     *
      * @param id Tag id
      * @return Response object containing the updated tag object
      */
@@ -206,19 +183,6 @@ public class TagService extends LadaService {
     /**
      * Creates a new tag.
      *
-     * Request:
-     * <pre>
-     * <code>
-     * {
-     *   tag: [string], //Tag text
-     *   netzbetreiberId: [string], //Tag netzbetreiber
-     *   mstId: [string], //Owner mst id
-     *   userId: [integer], //Creator user id
-     *   typId: [string], //Tag type id
-     *   gueltigBis: [integer] //Optional: Expiration date
-     * }
-     * </code>
-     * </pre>
      * @param tag Tag to create.
      * @return Response object
      */

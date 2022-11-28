@@ -79,28 +79,28 @@ public class TagZuordnungTest extends ServiceTest {
         });
 
         // test filtering tags by assignment
-        tagResponse = get("tag", "rest/tag?pid=9999");
+        tagResponse = get("tag", "rest/tag?sampleId=9999");
         Assert.assertTrue(
             "Returned data despite filtering for non-existent ID",
             tagResponse.getJsonArray(data).isEmpty());
 
-        tagResponse = get("tag", "rest/tag?pid=1901");
+        tagResponse = get("tag", "rest/tag?sampleId=1901");
         Assert.assertEquals(
             "Number of tags for given Sample ID:",
             2, tagResponse.getJsonArray(data).size());
 
-        tagResponse = get("tag", "rest/tag?mid=1801");
+        tagResponse = get("tag", "rest/tag?measmId=1801");
         Assert.assertEquals(
             "Number of tags for given Messung ID:",
             1, tagResponse.getJsonArray(data).size());
 
-        tagResponse = get("tag", "rest/tag?mid=1801&mid=1802");
+        tagResponse = get("tag", "rest/tag?measmId=1801&measmId=1802");
         Assert.assertTrue(
             "Expected empty result filtering by tagged and un-tagged object",
             tagResponse.getJsonArray(data).isEmpty());
 
         bulkOperation(name, tagUrl, create2);
-        tagResponse = get("tag", "rest/tag?mid=1801&mid=1802");
+        tagResponse = get("tag", "rest/tag?measmId=1801&measmId=1802");
         Assert.assertEquals(
             "Number of tags for given Messung IDs:",
             1, tagResponse.getJsonArray(data).size());
