@@ -18,30 +18,11 @@ import de.intevation.lada.model.master.StatusLev;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for StatusStufe objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "stufe": [string],
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for StatusLev objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/statusstufe")
+@Path("rest/statuslev")
 public class StatusStufeService extends LadaService {
 
     /**
@@ -51,11 +32,9 @@ public class StatusStufeService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all StatusStufe objects.
-     * <p>
-     * Example: http://example.com/statustufe
+     * Get all StatusLev objects.
      *
-     * @return Response object containing all StatusStufe objects.
+     * @return Response object containing all StatusLev objects.
      */
     @GET
     @Path("/")
@@ -64,10 +43,10 @@ public class StatusStufeService extends LadaService {
     }
 
     /**
-     * Get a single StatusStufe object by id.
+     * Get a single StatusLev object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single StatusStufe.
+     * @return Response object containing a single StatusLev.
      */
     @GET
     @Path("/{id}")
