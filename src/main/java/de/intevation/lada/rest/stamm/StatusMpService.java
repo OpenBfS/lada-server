@@ -41,7 +41,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/statusmp")
-public class StatusKombiService extends LadaService {
+public class StatusMpService extends LadaService {
 
     /**
      * The data repository granting read access.
