@@ -62,12 +62,12 @@ public class OrtTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("ort", "rest/ort");
-        getById("ort", "rest/ort/1000", expectedById);
-        int createdId = create("ort", "rest/ort", create)
+        get("ort", "rest/site");
+        getById("ort", "rest/site/1000", expectedById);
+        int createdId = create("site", "rest/site", create)
             .getJsonObject("data").getInt("id");
-        update("ort", "rest/ort/" + createdId,
+        update("site", "rest/site/" + createdId,
             "longText", "Langer Text", "Längerer Text");
-        delete("ort", "rest/ort/" + createdId);
+        delete("site", "rest/site/" + createdId);
     }
 }

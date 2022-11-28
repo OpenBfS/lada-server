@@ -58,58 +58,10 @@ import de.intevation.lada.rest.LadaService;
 
 /**
  * REST service for Ort objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "aktiv": [boolean],
- *      "berichtstext": [string],
- *      "gemId": [string],
- *      "gemUntId": [string],
- *      "hoeheLand": [number],
- *      "hoeheUeberNn": [number],
- *      "kdaId": [number],
- *      "koordXExtern": [string],
- *      "koordYExtern": [string],
- *      "ktaGruppeId": [number],
- *      "kurztext": [string],
- *      "langtext": [string],
- *      "latitude": [number],
- *      "letzteAenderung": [timestamp],
- *      "longitude": [number],
- *      "mpArt": [string],
- *      "netzbetreiberId": [string],
- *      "ortId": [string],
- *      "ortTyp": [number],
- *      "ozId": [string],
- *      "plausibleReferenceCount": [number],
- *      "readonly": [boolean],
- *      "referenceCount": [number],
- *      "referenceCountMp": [number],
- *      "sektor": [string],
- *      "staatId": [number],
- *      "unscharf": [boolean],
- *      "zone": [string],
- *      "zustaendigkeit": [string]
- *  }],
- *  "errors": [object],
- *  "notifications": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number],
- *  "warnings": [object]
- * }
- * </code>
- * </pre>
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/ort")
+@Path("rest/site")
 public class OrtService extends LadaService {
 
     @Inject
@@ -133,21 +85,21 @@ public class OrtService extends LadaService {
     private Validator validator;
 
     /**
-     * Get Ort objects.
+     * Get Site objects.
      *
-     * @param netzbetreiberId URL parameter to filter using Netzbetreiber.
+     * @param networkId URL parameter to filter using Network.
      * Might be null (i.e. not given at all) but not an empty string.
      * @param search URL parameter to filter using given pattern. Might be null
      * (i.e. not given at all) but not an empty string.
      * @param start URL parameter used as offset for paging
      * @param limit URL parameter used as limit for paging
-     * @return Response object containing all (filtered) Ort objects.
+     * @return Response object containing all (filtered) Site objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("netzbetreiberId")
-        @Pattern(regexp = ".+") String netzbetreiberId,
+        @QueryParam("networkId")
+        @Pattern(regexp = ".+") String networkId,
         @QueryParam("search") @Pattern(regexp = ".+") String search,
         @QueryParam("start") Integer start,
         @QueryParam("limit") Integer limit
@@ -159,9 +111,9 @@ public class OrtService extends LadaService {
         CriteriaQuery<Site> query = builder.createQuery(Site.class);
         Root<Site> root = query.from(Site.class);
         Predicate filter = null;
-        if (netzbetreiberId != null) {
+        if (networkId != null) {
             Predicate netzbetreiberFilter =
-                builder.equal(root.get("networkId"), netzbetreiberId);
+                builder.equal(root.get("networkId"), networkId);
             filter = builder.and(netzbetreiberFilter);
         } else {
             for (String nb : user.getNetzbetreiber()) {
@@ -221,10 +173,10 @@ public class OrtService extends LadaService {
     }
 
     /**
-     * Get a single Ort object by id.
+     * Get a single Site object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Ort.
+     * @return Response object containing a single Site.
      */
     @GET
     @Path("/{id}")
@@ -257,29 +209,9 @@ public class OrtService extends LadaService {
     }
 
     /**
-     * Create a Ort object.
-     * <p>
-     * The new object is embedded in the post data as JSON formatted string.
-     * <p>
-     * <pre>
-     * <code>
-     * {
-     *  "bezeichnung": [string],
-     *  "beschreibung": [string],
-     *  "unscharf": [boolean],
-     *  "koordXExtern": [string],
-     *  "koordYExtern": [string],
-     *  "hoeheLand": [string],
-     *  "longitude": [number],
-     *  "latitude": [number],
-     *  "staatId": [number],
-     *  "verwaltungseinheitId": [string],
-     *  "otyp": [string],
-     *  "letzteAenderung": [date]
-     * }
-     * </code>
-     * </pre>
-     * @return A response object containing the created Ort.
+     * Create a Site object.
+     *
+     * @return A response object containing the created Site.
      */
     @POST
     @Path("/")
@@ -329,30 +261,9 @@ public class OrtService extends LadaService {
     }
 
     /**
-     * Update an existing Ort object.
-     * <p>
-     * The object to update should come as JSON formatted string.
-     * <pre>
-     * <code>
-     * {
-     *  "id": [number],
-     *  "bezeichnung": [string],
-     *  "beschreibung": [string],
-     *  "unscharf": [boolean],
-     *  "koordXExtern": [string],
-     *  "koordYExtern": [string],
-     *  "hoeheLand": [number],
-     *  "longitude": [number],
-     *  "latitude": [number],
-     *  "staatId": [number],
-     *  "verwaltungseinheitId": [string],
-     *  "otyp": [string],
-     *  "letzteAenderung": [date]
-     * }
-     * </code>
-     * </pre>
+     * Update an existing Site object.
      *
-     * @return Response object containing the updated Ort object.
+     * @return Response object containing the updated Site object.
      */
     @PUT
     @Path("/{id}")
@@ -425,7 +336,7 @@ public class OrtService extends LadaService {
     }
 
     /**
-     * Delete an existing Ort object by id.
+     * Delete an existing Site object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
