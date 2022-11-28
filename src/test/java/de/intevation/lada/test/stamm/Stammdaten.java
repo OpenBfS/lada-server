@@ -83,7 +83,7 @@ public class Stammdaten extends ServiceTest {
                 "name"
             )
         );
-        matchers.put("messstelle",
+        matchers.put("measfacil",
             Matchers.containsInAnyOrder(
                 "id",
                 "lastMod",

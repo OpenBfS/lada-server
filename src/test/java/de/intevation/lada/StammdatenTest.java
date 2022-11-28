@@ -414,7 +414,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testMessstelleAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getAll("messstelle");
+        stammdatenTest.getAll("measfacil");
     }
 
     /**
@@ -426,7 +426,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testMessstelleById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getById("messstelle", "06010");
+        stammdatenTest.getById("measfacil", "06010");
     }
 
     /**

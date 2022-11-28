@@ -21,34 +21,11 @@ import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for MessStelle objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [string],
- *      "amtskennung": [string],
- *      "beschreibung": [string],
- *      "messStelle": [string],
- *      "mstTyp": [string],
- *      "netzbetreiberId": [string]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for MeasFacil objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/messstelle")
+@Path("rest/measfacil")
 public class MessstelleService extends LadaService {
 
     /**
@@ -65,11 +42,9 @@ public class MessstelleService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get all MessStelle objects.
-     * <p>
-     * Example: http://example.com/messstelle
+     * Get all MeasFacil objects.
      *
-     * @return Response object containing all MessStelle objects.
+     * @return Response object containing all MeasFacil objects.
      */
     @GET
     @Path("/")
@@ -78,10 +53,10 @@ public class MessstelleService extends LadaService {
     }
 
     /**
-     * Get a single MessStelle object by id.
+     * Get a single MeasFacil object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single MessStelle.
+     * @return Response object containing a single MeasFacil.
      */
     @GET
     @Path("/{id}")
