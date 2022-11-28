@@ -23,7 +23,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/siteclass")
-public class OrtTypService extends LadaService {
+public class SiteClassService extends LadaService {
 
     /**
      * The data repository granting read access.
