@@ -184,7 +184,7 @@ public class Stammdaten extends ServiceTest {
             "lastMod"
             )
         );
-        matchers.put("staat",
+        matchers.put("state",
             Matchers.containsInAnyOrder(
                 "id",
                 "lastMod",

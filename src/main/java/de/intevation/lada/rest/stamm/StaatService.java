@@ -18,37 +18,11 @@ import de.intevation.lada.model.master.State;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for Staat objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "eu": [string],
- *      "hklId": [number],
- *      "koordXExtern": [string],
- *      "koordYExtern": [string],
- *      "staat": [string],
- *      "staatIso": [string],
- *      "staatKurz": [string],
- *      "koordinatenartId": [number]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for State objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/staat")
+@Path("rest/state")
 public class StaatService extends LadaService {
 
     /**
@@ -58,11 +32,9 @@ public class StaatService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all Staat objects.
-     * <p>
-     * Example: http://example.com/staat
+     * Get all State objects.
      *
-     * @return Response object containing all Staat objects.
+     * @return Response object containing all State objects.
      */
     @GET
     @Path("/")
@@ -71,10 +43,10 @@ public class StaatService extends LadaService {
     }
 
     /**
-     * Get a single Staat object by id.
+     * Get a single State object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Staat.
+     * @return Response object containing a single State.
      */
     @GET
     @Path("/{id}")
