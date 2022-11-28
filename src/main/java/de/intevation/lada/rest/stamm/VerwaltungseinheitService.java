@@ -21,11 +21,11 @@ import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for Verwaltungseinheit  objects.
+ * REST service for AdminUnit objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/verwaltungseinheit")
+@Path("rest/adminunit")
 public class VerwaltungseinheitService extends LadaService {
 
     /**
@@ -35,10 +35,10 @@ public class VerwaltungseinheitService extends LadaService {
     private Repository repository;
 
     /**
-     * Get Verwaltungseinheit objects.
+     * Get AdminUnit objects.
      *
-     * @param query The result list can be filtered using the URL parameter
-     * 'query'. A filter is defined as the first letters of the 'bezeichnung'.
+     * @param name The result list can be filtered using the URL parameter
+     * 'query'. A filter is defined as the first letters of the 'name'.
      * Might be null (i.e. not given at all) but not an empty string.
      *
      * @return Response containing requested objects.
@@ -46,22 +46,22 @@ public class VerwaltungseinheitService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("query") @Pattern(regexp = ".+") String query
+        @QueryParam("name") @Pattern(regexp = ".+") String name
     ) {
-        if (query == null) {
+        if (name == null) {
             return repository.getAll(AdminUnit.class);
         }
         QueryBuilder<AdminUnit> builder =
             repository.queryBuilder(AdminUnit.class);
-        builder.andLike("name", query + "%");
+        builder.andLike("name", name + "%");
         return repository.filter(builder.getQuery());
     }
 
     /**
-     * Get a single Verwaltungseinheit object by id.
+     * Get a single AdminUnit object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Verwaltungseinheit.
+     * @return Response object containing a single AdminUnit.
      */
     @GET
     @Path("/{id}")

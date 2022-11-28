@@ -584,7 +584,7 @@ public class StammdatenTest extends BaseTest {
         @ArquillianResource URL baseUrl
     ) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getAll("verwaltungseinheit");
+        stammdatenTest.getAll("adminunit");
     }
 
     /**
@@ -598,7 +598,7 @@ public class StammdatenTest extends BaseTest {
         @ArquillianResource URL baseUrl
     ) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getById("verwaltungseinheit", "11000000");
+        stammdatenTest.getById("adminunit", "11000000");
     }
 
     /**

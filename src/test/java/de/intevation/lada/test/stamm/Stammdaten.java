@@ -230,7 +230,7 @@ public class Stammdaten extends ServiceTest {
                 "lastMod"
             )
         );
-        matchers.put("verwaltungseinheit",
+        matchers.put("adminunit",
             Matchers.containsInAnyOrder(
                 "id",
                 "name",
