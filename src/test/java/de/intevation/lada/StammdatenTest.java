@@ -905,7 +905,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testTargActMmtGrAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getAll("sollistmmtgruppe");
+        stammdatenTest.getAll("targactmmtgr");
     }
 
     /**

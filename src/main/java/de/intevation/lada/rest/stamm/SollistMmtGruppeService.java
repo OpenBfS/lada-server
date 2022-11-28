@@ -17,32 +17,11 @@ import de.intevation.lada.model.master.TargActMmtGr;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for SollistMmtGrp objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "beschreibung": [string],
- *      "bezeichnung": [string]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "notifications": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for TargActMmtGr objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/sollistmmtgruppe")
+@Path("rest/targactmmtgr")
 public class SollistMmtGruppeService extends LadaService {
 
     /**
@@ -52,11 +31,9 @@ public class SollistMmtGruppeService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all SollistMmtGrp objects.
-     * <p>
-     * Example: http://example.com/sollistmmtgruppe
+     * Get all TargActMmtGr objects.
      *
-     * @return Response object containing all SollistMmtGrp objects.
+     * @return Response object containing all TargActMmtGr objects.
      */
     @GET
     @Path("/")

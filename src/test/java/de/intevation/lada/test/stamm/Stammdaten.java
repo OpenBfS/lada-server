@@ -198,7 +198,7 @@ public class Stammdaten extends ServiceTest {
                 "spatRefSysId"
             )
         );
-        matchers.put("sollistmmtgruppe",
+        matchers.put("targactmmtgr",
             Matchers.containsInAnyOrder(
                 "id",
                 "name",
