@@ -43,35 +43,10 @@ import de.intevation.lada.rest.LadaService;
 
 /**
  * REST-Service for preconfigured queries.
- * <p>
- * The services produce data in the application/json media type.
- * All HTTP methods use the authorization module to determine if the user is
- * allowed to perform the requested action.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [string],
- *      "name": [string],
- *      "description": [string],
- *      "sql": [string],
- *      "filters": [array],
- *      "results": [array]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/query")
+@Path("rest/queryuser")
 public class QueryService extends LadaService {
 
     @Inject
