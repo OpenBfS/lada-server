@@ -30,7 +30,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/nuclfacil")
-public class KtaService extends LadaService {
+public class NuclFacilService extends LadaService {
 
     /**
      * The data repository granting read access.
