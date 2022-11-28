@@ -17,32 +17,11 @@ import de.intevation.lada.model.master.TargEnvGr;
 import de.intevation.lada.rest.LadaService;
 
 /**
- * REST service for SollistUmwGruppe objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "beschreibung": [string],
- *      "bezeichnung": [string]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "notifications": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for TargEnvGr objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/sollistumwgruppe")
+@Path("rest/targenvgr")
 public class SollistUmwGruppeService extends LadaService {
 
     /**
@@ -52,11 +31,9 @@ public class SollistUmwGruppeService extends LadaService {
     private Repository repository;
 
     /**
-     * Get all SollistUmwGruppe objects.
-     * <p>
-     * Example: http://example.com/sollistumwgruppe
+     * Get all TargEnvGr objects.
      *
-     * @return Response object containing all SollistUmwGruppe objects.
+     * @return Response object containing all TargEnvGr objects.
      */
     @GET
     @Path("/")

@@ -917,7 +917,7 @@ public class StammdatenTest extends BaseTest {
     @RunAsClient
     public final void testTargEnvGrAll(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
-        stammdatenTest.getAll("sollistumwgruppe");
+        stammdatenTest.getAll("targenvgr");
     }
 
     /**
