@@ -22,7 +22,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/targenvgr")
-public class SollistUmwGruppeService extends LadaService {
+public class TargEnvGrService extends LadaService {
 
     /**
      * The data repository granting read access.
