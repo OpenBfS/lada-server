@@ -23,7 +23,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/poi")
-public class OrtszusatzService extends LadaService {
+public class PoiService extends LadaService {
 
     /**
      * The data repository granting read access.
