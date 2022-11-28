@@ -23,7 +23,7 @@ import de.intevation.lada.rest.LadaService;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/mmt")
-public class MessmethodeService extends LadaService {
+public class MmtService extends LadaService {
 
     /**
      * The data repository granting read/write access.
