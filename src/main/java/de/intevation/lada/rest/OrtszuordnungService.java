@@ -36,40 +36,11 @@ import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
- * REST service for Ort objects.
- * <p>
- * The services produce data in the application/json media type.
- * All HTTP methods use the authorization module to determine if the user is
- * allowed to perform the requested action.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "letzteAenderung": [timestamp],
- *      "ortsTyp": [string],
- *      "ortszusatztext": [string],
- *      "probeId": [number],
- *      "ort": [number],
- *      "owner": [boolean],
- *      "readonly": [boolean],
- *      "treeModified": [timestamp],
- *      "parentModified": [timestamp]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for Geolocat objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/ortszuordnung")
+@Path("rest/geolocat")
 public class OrtszuordnungService extends LadaService {
 
     /**
@@ -97,21 +68,21 @@ public class OrtszuordnungService extends LadaService {
     private Validator validator;
 
     /**
-     * Get Ortszuordnung objects.
+     * Get Geolocat objects.
      *
-     * @param probeId The requested objects can be filtered using
-     * a URL parameter named probeId.
+     * @param sampleId The requested objects can be filtered using
+     * a URL parameter named sampleId.
      *
      * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("probeId") @NotNull Integer probeId
+        @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
         QueryBuilder<Geolocat> builder =
             repository.queryBuilder(Geolocat.class);
-        builder.and("sampleId", probeId);
+        builder.and("sampleId", sampleId);
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
             Geolocat.class);
@@ -133,10 +104,10 @@ public class OrtszuordnungService extends LadaService {
     }
 
     /**
-     * Get a Ort object by id.
+     * Get a Geolocat object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Ort.
+     * @return Response object containing a single Geolocat.
      */
     @GET
     @Path("/{id}")
@@ -156,24 +127,7 @@ public class OrtszuordnungService extends LadaService {
     }
 
     /**
-     * Create a new Ort object.
-     * <p>
-     * The new object is embedded in the post data as JSON formatted string.
-     * <p>
-     * <pre>
-     * <code>
-     * {
-     *  "owner": [boolean],
-     *  "ort": [number],
-     *  "probeId": [number],
-     *  "ortsTyp": [string],
-     *  "ortszusatztext": [string],
-     *  "treeModified": null,
-     *  "parentModified": null,
-     *  "letzteAenderung": [date]
-     * }
-     * </code>
-     * </pre>
+     * Create a new Geolocat object.
      *
      * @return A response object containing the created Ort.
      */
@@ -209,26 +163,9 @@ public class OrtszuordnungService extends LadaService {
     }
 
     /**
-     * Update an existing Ort object.
-     * <p>
-     * The object to update should come as JSON formatted string.
-     * <pre>
-     * <code>
-     * {
-     *  "id": [number],
-     *  "owner": [boolean],
-     *  "ort": [number],
-     *  "probeId": [number],
-     *  "ortsTyp": [string],
-     *  "ortszusatztext": [string],
-     *  "treeModified": [timestamp],
-     *  "parentModified": [timestamp],
-     *  "letzteAenderung": [date]
-     * }
-     * </code>
-     * </pre>
+     * Update an existing Geolocat object.
      *
-     * @return Response object containing the updated Ort object.
+     * @return Response object containing the updated Geolocat object.
      */
     @PUT
     @Path("/{id}")
@@ -267,7 +204,7 @@ public class OrtszuordnungService extends LadaService {
     }
 
     /**
-     * Delete an existing Ort object by id.
+     * Delete an existing Geolocat object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
