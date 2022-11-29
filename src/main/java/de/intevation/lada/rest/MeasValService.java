@@ -45,7 +45,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/measval")
-public class MesswertService extends LadaService {
+public class MeasValService extends LadaService {
 
     /**
      * The data repository granting read/write access.
