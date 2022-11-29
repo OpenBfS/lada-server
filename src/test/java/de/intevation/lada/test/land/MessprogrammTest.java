@@ -64,18 +64,18 @@ public class MessprogrammTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("messprogramm", "rest/messprogramm", Status.METHOD_NOT_ALLOWED);
-        getById("messprogramm", "rest/messprogramm/1000", expectedById);
+        get("mpg", "rest/mpg", Status.METHOD_NOT_ALLOWED);
+        getById("mpg", "rest/mpg/1000", expectedById);
         update(
-            "messprogramm",
-            "rest/messprogramm/1000",
+            "mpg",
+            "rest/mpg/1000",
             "envDescripId",
             "D: 50 90 01 06 02 05 00 00 00 00 00 00",
             "D: 50 90 01 06 02 05 00 00 00 00 00 01");
         JsonObject created =
-            create("messprogramm", "rest/messprogramm", create);
+            create("mpg", "rest/mpg", create);
         delete(
-            "messprogramm",
-            "rest/messprogramm/" + created.getJsonObject("data").get("id"));
+            "mpg",
+            "rest/mpg/" + created.getJsonObject("data").get("id"));
     }
 }

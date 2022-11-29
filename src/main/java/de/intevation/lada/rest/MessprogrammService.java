@@ -38,52 +38,11 @@ import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
- * REST service for Messprogramm objects.
- * <p>
- * The services produce data in the application/json media type.
- * All HTTP methods use the authorization module to determine if the user is
- * allowed to perform the requested action.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "baId": [string],
- *      "datenbasisId": [number],
- *      "gemId": [string],
- *      "gueltigBis": [date],
- *      "gueltigVon": [date],
- *      "intervallOffset": [number],
- *      "letzteAenderung": [timestamp],
- *      "mediaDesk": [string],
- *      "mstId": [string],
- *      "mplId": [number],
- *      "name": [string],
- *      "netzbetreiberId": [string],
- *      "ortId": [string],
- *      "probeKommentar": [string],
- *      "probeNehmerId": [number],
- *      "probenartId": [number],
- *      "probenintervall": [string],
- *      "teilintervallBis": [number],
- *      "teilintervallVon": [number],
- *      "test": [boolean],
- *      "umwId": [string]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for Mpg objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/messprogramm")
+@Path("rest/mpg")
 public class MessprogrammService extends LadaService {
 
     /**
@@ -100,7 +59,7 @@ public class MessprogrammService extends LadaService {
     private Authorization authorization;
 
     /**
-     * The validator used for Messprogramm objects.
+     * The validator used for Mpg objects.
      */
     @Inject
     @ValidationConfig(type = "Messprogramm")
@@ -110,10 +69,10 @@ public class MessprogrammService extends LadaService {
     private ProbeFactory factory;
 
     /**
-     * Get a Messprogramm object by id.
+     * Get a Mpg object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Messprogramm.
+     * @return Response object containing a single Mpg.
      */
     @GET
     @Path("/{id}")
@@ -128,37 +87,9 @@ public class MessprogrammService extends LadaService {
     }
 
     /**
-     * Create a Messprogramm object.
-     * <p>
-     * The new object is embedded in the post data as JSON formatted string.
-     * <p>
-     * <pre>
-     * <code>
-     * {
-     *  "test": [boolean],
-     *  "netzbetreiberId": [string],
-     *  "mstId": [string],
-     *  "name": [string],
-     *  "datenbasisId": [number],
-     *  "baId": [string],
-     *  "gemId": [string],
-     *  "ortId": [string],
-     *  "mediaDesk": [string],
-     *  "mplId": [number],
-     *  "umwId": [string],
-     *  "probenartId": [number],
-     *  "probenintervall": [string],
-     *  "teilintervallVon": [number],
-     *  "teilintervallBis": [number],
-     *  "intervallOffset": [string],
-     *  "probeNehmerId": [number],
-     *  "probeKommentar": [string],
-     *  "letzteAenderung": [date]
-     * }
-     * </code>
-     * </pre>
+     * Create a Mpg object.
      *
-     * @return A response object containing the created Messprogramm.
+     * @return A response object containing the created Mpg.
      */
     @POST
     @Path("/")
@@ -201,37 +132,9 @@ public class MessprogrammService extends LadaService {
     }
 
     /**
-     * Update an existing Messprogramm object.
-     * <p>
-     * The object to update should come as JSON formatted string.
-     * <pre>
-     * <code>
-     * {
-     *  "id": [number],
-     *  "test": [boolean],
-     *  "netzbetreiberId": [string],
-     *  "mstId": [string],
-     *  "name": [string],
-     *  "datenbasisId": [number],
-     *  "baId": [string],
-     *  "gemId": [string],
-     *  "mplId": [number],
-     *  "ortId": [string],
-     *  "mediaDesk": [string],
-     *  "umwId": [string],
-     *  "probenartId": [number],
-     *  "probenintervall": [string],
-     *  "teilintervallVon": [number],
-     *  "teilintervallBis": [number],
-     *  "intervallOffset": [string],
-     *  "probeNehmerId": [number],
-     *  "probeKommentar": [string],
-     *  "letzteAenderung": [date]
-     * }
-     * </code>
-     * </pre>
+     * Update an existing Mpg object.
      *
-     * @return Response object containing the updated Messprogramm object.
+     * @return Response object containing the updated Mpg object.
      */
     @PUT
     @Path("/{id}")
@@ -279,21 +182,11 @@ public class MessprogrammService extends LadaService {
     }
 
     /**
-     * Update the active attribute of existing Messprogramm objects as bulk
+     * Update the active attribute of existing Mpg objects as bulk
      * operation.
-     * <p>
-     * The object to update should come as JSON formatted string.
-     * <pre>
-     * <code>
-     * {
-     *  "aktiv: [boolean],
-     *  "ids": [Array[Number]]
-     * }
-     * </code>
-     * </pre>
      *
      * @return Response object containing the success status of the operation
-     * per messprogramm.
+     * per Mpg.
      */
     @PUT
     @Path("/aktiv")
@@ -348,7 +241,7 @@ public class MessprogrammService extends LadaService {
     }
 
     /**
-     * Delete an existing Messprogramm object by id.
+     * Delete an existing Mpg object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
