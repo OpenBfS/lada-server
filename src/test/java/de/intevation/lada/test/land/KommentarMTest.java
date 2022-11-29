@@ -65,17 +65,17 @@ public class KommentarMTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("mkommentar", "rest/mkommentar?messungsId=1200");
-        getById("mkommentar", "rest/mkommentar/1000", expectedById);
-        JsonObject created = create("mkommentar", "rest/mkommentar", create);
+        get("commmeasm", "rest/commmeasm?measmId=1200");
+        getById("commmeasm", "rest/commmeasm/1000", expectedById);
+        JsonObject created = create("commmeasm", "rest/commmeasm", create);
         update(
-            "mkommentar",
-            "rest/mkommentar/1000",
+            "commmeasm",
+            "rest/commmeasm/1000",
             "text", "Testkommentar",
             "Testkommentar geändert");
         delete(
-            "mkommentar",
-            "rest/mkommentar/" + created.getJsonObject("data").get("id"));
+            "commmeasm",
+            "rest/commmeasm/" + created.getJsonObject("data").get("id"));
     }
 
 }

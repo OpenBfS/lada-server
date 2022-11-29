@@ -31,37 +31,11 @@ import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationConfig;
 /**
- * REST service for KommentarM objects.
- * <p>
- * The services produce data in the application/json media type.
- * All HTTP methods use the authorization module to determine if the user is
- * allowed to perform the requested action.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "messungsId": [number],
- *      "datum": [timestamp],
- *      "erzeuger": [string],
- *      "id": [number],
- *      "text": [string],
- *      "owner": [boolean],
- *      "readonly": [boolean]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for CommMeasm objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/mkommentar")
+@Path("rest/commmeasm")
 public class KommentarMService extends LadaService {
 
     /**
@@ -82,22 +56,21 @@ public class KommentarMService extends LadaService {
     private Validator validator;
 
     /**
-     * Get KommentarM objects.
+     * Get CommMeasm objects.
      *
-     * @param messungsId The requested objects have to be filtered
-     * using an URL parameter named messungsId.
-     * Example: http://example.com/mkommentar?messungsId=[ID]
+     * @param measmId The requested objects have to be filtered
+     * using an URL parameter named measmId.
      *
-     * @return Response object containing filtered KommentarM objects.
+     * @return Response object containing filtered CommMeasm objects.
      * Status-Code 699 if requested objects are
      * not authorized.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("messungsId") @NotNull Integer messungsId
+        @QueryParam("measmId") @NotNull Integer measmId
     ) {
-        Measm messung = repository.getByIdPlain(Measm.class, messungsId);
+        Measm messung = repository.getByIdPlain(Measm.class, measmId);
         if (!authorization.isAuthorized(
                 messung, RequestMethod.GET, Measm.class)
         ) {
@@ -106,17 +79,17 @@ public class KommentarMService extends LadaService {
 
         QueryBuilder<CommMeasm> builder =
             repository.queryBuilder(CommMeasm.class);
-        builder.and("measmId", messungsId);
+        builder.and("measmId", measmId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
             CommMeasm.class);
     }
 
     /**
-     * Get a single KommentarM object by id.
+     * Get a single CommMeasm object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single KommentarM.
+     * @return Response object containing a single CommMeasm.
      */
     @GET
     @Path("/{id}")
@@ -139,22 +112,8 @@ public class KommentarMService extends LadaService {
     }
 
     /**
-     * Create a KommentarM object.
-     * <p>
-     * The new object is embedded in the post data as JSON formatted string.
-     * <p>
-     * <pre>
-     * <code>
-     * {
-     *  messungsId: [number],
-     *  erzeuger: [string],
-     *  text: [string],
-     *  datum: [date]
-     *  owner: [boolean],
-     * }
-     * </code>
-     * </pre>
-     * @return A response object containing the created KommentarM.
+     * Create a CommMeasm object.
+     * @return A response object containing the created CommMeasm.
      */
     @POST
     @Path("/")
@@ -182,23 +141,9 @@ public class KommentarMService extends LadaService {
     }
 
     /**
-     * Update an existing KommentarM object.
-     * <p>
-     * The object to update should come as JSON formatted string.
-     * <pre>
-     * <code>
-     * {
-     *  "id": [number],
-     *  "owner": [boolean],
-     *  "messungsId": [number],
-     *  "erzeuger": [string],
-     *  "text": [string],
-     *  "datum": [date]
-     * }
-     * </code>
-     * </pre>
+     * Update an existing CommMeasm object.
      *
-     * @return Response object containing the updated KommentarM object.
+     * @return Response object containing the updated CommMeasm object.
      */
     @PUT
     @Path("/{id}")
@@ -226,7 +171,7 @@ public class KommentarMService extends LadaService {
     }
 
     /**
-     * Delete an existing KommentarM object by id.
+     * Delete an existing CommMeasm object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
