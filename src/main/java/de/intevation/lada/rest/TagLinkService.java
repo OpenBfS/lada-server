@@ -33,7 +33,7 @@ import de.intevation.lada.util.rest.Response;
  */
 
 @Path("rest/tag/taglink")
-public class TagZuordnungService extends LadaService {
+public class TagLinkService extends LadaService {
 
     @Inject
     private Repository repository;
