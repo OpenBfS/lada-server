@@ -1,7 +1,5 @@
 SET search_path TO master;
 
-ALTER FUNCTION master.get_desk_beschreibung(media_desk character varying, stufe integer) SET SCHEMA stamm;
-
 ALTER FUNCTION master.if_modified_func()
     SET search_path=master, public;
 
@@ -148,6 +146,15 @@ DECLARE
   END;
 $BODY$;
 
+CREATE OR REPLACE FUNCTION stamm.get_desk_beschreibung(media_desk character varying, tufe integer)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+AS $BODY$
+DECLARE
+  BEGIN
+    return master.get_desc_description(media_desk, stufe);
+  END;
+$BODY$;
 
 CREATE OR REPLACE FUNCTION get_desk_imis2_id(
 	media_desk character varying,
