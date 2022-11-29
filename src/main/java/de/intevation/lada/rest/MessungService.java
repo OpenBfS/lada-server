@@ -36,44 +36,11 @@ import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
- * REST service for Messung objects.
- * <p>
- * The services produce data in the application/json media type.
- * All HTTP methods use the authorization module to determine if the user is
- * allowed to perform the requested action.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "fertig": [boolean],
- *      "letzteAenderung": [timestamp],
- *      "messdauer": [number],
- *      "messzeitpunkt": [timestamp],
- *      "mmtId": [string],
- *      "probeId": [number],
- *      "owner": [boolean],
- *      "readonly": [boolean],
- *      "nebenprobenNr": [string],
- *      "geplant": [boolean],
- *      "treeModified": [timestamp],
- *      "parentModified": [timestamp],
- *      "externeMessunsgsId": [number]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for Measm objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/messung")
+@Path("rest/measm")
 public class MessungService extends LadaService {
 
     /**
@@ -101,18 +68,18 @@ public class MessungService extends LadaService {
     private Validator validator;
 
     /**
-     * Get Messung objects.
+     * Get Measm objects.
      *
-     * @param probeId URL parameter probeId to use as filter (required).
+     * @param sampleId URL parameter sampleId to use as filter (required).
      * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("probeId") @NotNull Integer probeId
+        @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class)
-            .and("sampleId", probeId);
+            .and("sampleId", sampleId);
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
             Measm.class);
@@ -140,10 +107,10 @@ public class MessungService extends LadaService {
     }
 
     /**
-     * Get a Messung object by id.
+     * Get a Measm object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Messung.
+     * @return Response object containing a single Measm.
      */
     @GET
     @Path("/{id}")
@@ -167,30 +134,9 @@ public class MessungService extends LadaService {
     }
 
     /**
-     * Create a Messung object.
-     * <p>
-     * The new object is embedded in the post data as JSON formatted string.
-     * <p>
-     * <pre>
-     * <code>
-     * {
-     *  "owner": [boolean],
-     *  "probeId": [number],
-     *  "mmtId": [string],
-     *  "nebenprobenNr": [string],
-     *  "messdauer": [number],
-     *  "fertig": [boolean],
-     *  "geplant": [boolean],
-     *  "externeMessungsId": [string],
-     *  "treeModified": null,
-     *  "parentModified": null,
-     *  "messzeitpunkt": [date],
-     *  "letzteAenderung": [date]
-     * }
-     * </code>
-     * </pre>
+     * Create a Measm object.
      *
-     * @return A response object containing the created Messung.
+     * @return A response object containing the created Measm.
      */
     @POST
     @Path("/")
@@ -229,30 +175,9 @@ public class MessungService extends LadaService {
     }
 
     /**
-     * Update an existing Messung object.
-     * <p>
-     * The object to update should come as JSON formatted string.
-     * <pre>
-     * <code>
-     * {
-     *  "id": [number],
-     *  "owner": [boolean],
-     *  "probeId": [number],
-     *  "mmtId": [string],
-     *  "nebenprobenNr": [string],
-     *  "messdauer": [number],
-     *  "fertig": [boolean],
-     *  "geplant": [boolean],
-     *  "externeMessungsId": [number],
-     *  "treeModified": [timestamp],
-     *  "parentModified": [timestamp],
-     *  "messzeitpunkt": [date],
-     *  "letzteAenderung": [date]
-     * }
-     * </code>
-     * </pre>
+     * Update an existing Measm object.
      *
-     * @return Response object containing the updated Messung object.
+     * @return Response object containing the updated Measm object.
      */
     @PUT
     @Path("/{id}")
@@ -295,7 +220,7 @@ public class MessungService extends LadaService {
     }
 
     /**
-     * Delete an existing Messung object by id.
+     * Delete an existing Measm object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
      * @return Response object.

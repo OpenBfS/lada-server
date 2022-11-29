@@ -70,13 +70,13 @@ public class MessungTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("messung", "rest/messung", Response.Status.BAD_REQUEST);
-        get("messung", "rest/messung?probeId=1000");
-        getById("messung", "rest/messung/1200", expectedById);
-        JsonObject created = create("messung", "rest/messung", create);
-        update("messung", "rest/messung/1200", "minSampleId", "T100", "U200");
+        get("measm", "rest/measm", Response.Status.BAD_REQUEST);
+        get("measm", "rest/measm?sampleId=1000");
+        getById("measm", "rest/measm/1200", expectedById);
+        JsonObject created = create("measm", "rest/measm", create);
+        update("measm", "rest/measm/1200", "minSampleId", "T100", "U200");
         delete(
-            "messung",
-            "rest/messung/" + created.getJsonObject("data").get("id"));
+            "measm",
+            "rest/measm/" + created.getJsonObject("data").get("id"));
     }
 }
