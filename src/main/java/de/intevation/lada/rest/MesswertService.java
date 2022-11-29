@@ -40,44 +40,11 @@ import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
- * REST service for Messwert objects.
- * <p>
- * The services produce data in the application/json media type.
- * All HTTP methods use the authorization module to determine if the user is
- * allowed to perform the requested action.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "grenzwertueberschreitung": [boolean],
- *      "letzteAenderung": [timestamp],
- *      "mehId": [number],
- *      "messfehler": [number],
- *      "messgroesseId": [number],
- *      "messungsId": [number],
- *      "messwert": [number],
- *      "messwertNwg": [string],
- *      "nwgZuMesswert": [number],
- *      "owner": [boolean],
- *      "readonly":[boolean],
- *      "treeModified": [timestamp],
- *      "parentModified": [timestamp]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for MeasVal objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/messwert")
+@Path("rest/measval")
 public class MesswertService extends LadaService {
 
     /**
@@ -108,11 +75,10 @@ public class MesswertService extends LadaService {
     private MesswertNormalizer messwertNormalizer;
 
     /**
-     * Get Messwert objects.
+     * Get MeasVal objects.
      *
-     * @param messungsId The requested objects have to be filtered
-     * using an URL parameter named messungsId.
-     * Example: http://example.com/messwert?messungsId=[ID]
+     * @param measmId The requested objects have to be filtered
+     * using an URL parameter named measmId.
      *
      * @return Response object containing filtered Messwert objects.
      * Status-Code 699 if parameter is missing or requested objects are
@@ -121,9 +87,9 @@ public class MesswertService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("messungsId") @NotNull Integer messungsId
+        @QueryParam("measmId") @NotNull Integer measmId
     ) {
-        Measm messung = repository.getByIdPlain(Measm.class, messungsId);
+        Measm messung = repository.getByIdPlain(Measm.class, measmId);
         if (!authorization.isAuthorized(
                 messung,
                 RequestMethod.GET,
@@ -134,7 +100,7 @@ public class MesswertService extends LadaService {
 
         QueryBuilder<MeasVal> builder =
             repository.queryBuilder(MeasVal.class);
-        builder.and("measmId", messungsId);
+        builder.and("measmId", measmId);
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
             MeasVal.class);
@@ -159,10 +125,10 @@ public class MesswertService extends LadaService {
     }
 
     /**
-     * Get a Messwert object by id.
+     * Get a MeasVal object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Messwert.
+     * @return Response object containing a single MeasVal.
      */
     @GET
     @Path("/{id}")
@@ -192,30 +158,9 @@ public class MesswertService extends LadaService {
     }
 
     /**
-     * Create a Messwert object.
-     * <p>
-     * The new object is embedded in the post data as JSON formatted string.
-     * <p>
-     * <pre>
-     * <code>
-     * {
-     *  "owner": [boolean],
-     *  "messungsId": [number],
-     *  "messgroesseId": [number],
-     *  "messwert": [number],
-     *  "messwertNwg": [string],
-     *  "messfehler": [number],
-     *  "nwgZuMesswert": [number],
-     *  "mehId": [number],
-     *  "grenzwertueberschreitung": [boolean],
-     *  "treeModified": null,
-     *  "parentModified": null,
-     *  "letzteAenderung": [date]
-     * }
-     * </code>
-     * </pre>
+     * Create a MeasVal object.
      *
-     * @return A response object containing the created Messwert.
+     * @return A response object containing the created MeasVal.
      */
     @POST
     @Path("/")
@@ -253,30 +198,9 @@ public class MesswertService extends LadaService {
     }
 
     /**
-     * Update an existing Messwert object.
-     * <p>
-     * The object to update should come as JSON formatted string.
-     * <pre>
-     * <code>
-     * {
-     *  "id": [number],
-     *  "owner": [boolean],
-     *  "messungsId": [number],
-     *  "messgroesseId": [number],
-     *  "messwert": [number],
-     *  "messwertNwg": [string],
-     *  "messfehler": [number],
-     *  "nwgZuMesswert": [number],
-     *  "mehId": [number],
-     *  "grenzwertueberschreitung": [boolean],
-     *  "treeModified": [timestamp],
-     *  "parentModified": [timestamp],
-     *  "letzteAenderung": [date]
-     * }
-     * </code>
-     * </pre>
+     * Update an existing MeasVal object.
      *
-     * @return Response object containing the updated Messwert object.
+     * @return Response object containing the updated MeasVal object.
      */
     @PUT
     @Path("/{id}")
@@ -320,22 +244,22 @@ public class MesswertService extends LadaService {
     }
 
     /**
-     * Normalise all Messwert objects connected to the given Messung.
-     * @param messungsId The messung id needs to be given
-     * as URL parameter 'messungsId'.
-     * @return Response object containing the updated Messwert objects.
+     * Normalise all MeasVal objects connected to the given Messung.
+     * @param measmId The measm id needs to be given
+     * as URL parameter 'measmId'.
+     * @return Response object containing the updated MeasVal objects.
      */
     @PUT
     @Path("/normalize")
     public Response normalize(
-        @QueryParam("messungsId") Integer messungsId
+        @QueryParam("measmId") Integer measmId
     ) {
-        if (messungsId == null) {
+        if (measmId == null) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
         //Load messung, probe and umwelt to get MessEinheit to convert to
-        Measm messung = repository.getByIdPlain(Measm.class, messungsId);
+        Measm messung = repository.getByIdPlain(Measm.class, measmId);
         if (!authorization.isAuthorized(
             messung,
             RequestMethod.PUT,
@@ -358,7 +282,7 @@ public class MesswertService extends LadaService {
         //Get all Messwert objects to convert
         QueryBuilder<MeasVal> messwertBuilder =
             repository.queryBuilder(MeasVal.class);
-        messwertBuilder.and("measmId", messungsId);
+        messwertBuilder.and("measmId", measmId);
         List<MeasVal> messwerte = messwertNormalizer.normalizeMesswerte(
             repository.filterPlain(messwertBuilder.getQuery()),
             umwelt.getId());
@@ -404,7 +328,7 @@ public class MesswertService extends LadaService {
     }
 
     /**
-     * Delete an existing Messwert object by id.
+     * Delete an existing MeasVal object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
      * @return Response object.

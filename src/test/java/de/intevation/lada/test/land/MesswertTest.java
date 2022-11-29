@@ -66,14 +66,14 @@ public class MesswertTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("messwert", "rest/messwert?messungsId=1200");
-        getById("messwert", "rest/messwert/10000", expectedById);
+        get("measval", "rest/measval?measmId=1200");
+        getById("measval", "rest/measval/10000", expectedById);
         normalize(expectedById);
-        JsonObject created = create("messwert", "rest/messwert", create);
-        update("messwert", "rest/messwert/10000", "lessThanLOD", "<", ">");
+        JsonObject created = create("measval", "rest/measval", create);
+        update("measval", "rest/measval/10000", "lessThanLOD", "<", ">");
         delete(
-            "messwert",
-            "rest/messwert/" + created.getJsonObject("data").get("id"));
+            "measval",
+            "rest/measval/" + created.getJsonObject("data").get("id"));
     }
 
     /**
@@ -87,7 +87,7 @@ public class MesswertTest extends ServiceTest {
         protocol.add(prot);
 
         Response normalized = client.target(
-            baseUrl + "rest/messwert/normalize?messungsId=1200")
+            baseUrl + "rest/measval/normalize?measmId=1200")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
