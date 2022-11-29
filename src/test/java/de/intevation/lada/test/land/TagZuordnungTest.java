@@ -27,7 +27,7 @@ import de.intevation.lada.test.ServiceTest;
  */
 public class TagZuordnungTest extends ServiceTest {
     private final String name = "tagzuordnung";
-    private final String tagUrl = "rest/tag/zuordnung/";
+    private final String tagUrl = "rest/tag/taglink/";
 
     private JsonArray create;
     private JsonArray create2;

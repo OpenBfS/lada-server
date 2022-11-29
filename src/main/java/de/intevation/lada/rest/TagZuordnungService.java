@@ -32,7 +32,7 @@ import de.intevation.lada.util.rest.Response;
  * REST-Service for associations of tags to objects.
  */
 
-@Path("rest/tag/zuordnung")
+@Path("rest/tag/taglink")
 public class TagZuordnungService extends LadaService {
 
     @Inject
@@ -49,34 +49,20 @@ public class TagZuordnungService extends LadaService {
         + " AND %s=:%s)";
 
     /**
-     * Create new references between tags and Sample or Messung objects.
+     * Create new references between tags and Sample or Measm objects.
      *
-     * @param zuordnungs A list of references like
-     * <pre>
-     * <code>
-     * [{
-     *   "probeId": [Integer],
-     *   "tagId": [Integer]
-     * }, {
-     *   "messungId": [Integer],
-     *   "tagId": [Integer]
-     * }, {
-     *    ...
-     * }]
-     * </code>
-     * </pre>
-     *
+     * @param tagLinks A list of references like
      * @return Response with list of Response objects for each reference.
      */
     @POST
     @Path("/")
     public Response createTagReference(
-        List<TagLink> zuordnungs
+        List<TagLink> tagLinks
     ) {
         //Create Response
         List<Response> responseList = new ArrayList<>();
 
-        for (TagLink zuordnung: zuordnungs) {
+        for (TagLink zuordnung: tagLinks) {
             // Check if payload contains sensible information
             Integer tagId = zuordnung.getTagId();
             if (tagId == null
@@ -123,31 +109,18 @@ public class TagZuordnungService extends LadaService {
     /**
      * Delete references between tags and Sample or Messung objects.
      *
-     * @param zuordnungs A list of references like
-     * <pre>
-     * <code>
-     * [{
-     *   "probeId": [Integer],
-     *   "tagId": [Integer]
-     * }, {
-     *   "messungId": [Integer],
-     *   "tagId": [Integer]
-     * }, {
-     *    ...
-     * }]
-     * </code>
-     * </pre>
+     * @param tagLinks A list of references like
      *
      * @return Response with list of Response objects for each reference.
      */
     @POST
     @Path("/delete")
     public Response deleteTagReference(
-        List<TagLink> zuordnungs
+        List<TagLink> tagLinks
     ) {
         List<Response> responseList = new ArrayList<>();
 
-        for (TagLink zuordnung: zuordnungs) {
+        for (TagLink zuordnung: tagLinks) {
             if (!isExisting(zuordnung)) {
                 responseList.add(new Response(
                         true, StatusCodes.OK, zuordnung));
