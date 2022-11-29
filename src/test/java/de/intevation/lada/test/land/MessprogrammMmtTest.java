@@ -66,12 +66,12 @@ public class MessprogrammMmtTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        final String name = "messprogrammmmt";
-        final String url = "rest/messprogrammmmt/";
+        final String name = "mpgmmtmp";
+        final String url = "rest/mpgmmtmp/";
         final String id = "1000";
 
         getById(name, url + id, expectedById);
-        get(name, url + "?messprogrammId=1000");
+        get(name, url + "?mpgId=1000");
         update(
             name,
             url + id,

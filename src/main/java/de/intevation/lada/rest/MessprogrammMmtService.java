@@ -36,35 +36,11 @@ import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
- * REST service for MessprogrammMmt objects.
- * <p>
- * The services produce data in the application/json media type.
- * All HTTP methods use the authorization module to determine if the user is
- * allowed to perform the requested action.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "letzteAenderung": [timestamp],
- *      "messgroessen": [array],
- *      "mmtId": [string],
- *      "messprogrammId": [number]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for MpgMmtMp objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/messprogrammmmt")
+@Path("rest/mpgmmtmp")
 public class MessprogrammMmtService extends LadaService {
 
     /**
@@ -85,32 +61,31 @@ public class MessprogrammMmtService extends LadaService {
     private Validator validator;
 
     /**
-     * Get MessprogrammMmt objects.
+     * Get MpgMmtMp objects.
      *
-     * @param messprogrammId The requested objects will be filtered
-     * using a URL parameter named messprogrammId.
-     * Example: http://example.com/messprogrammmmt?messprogrammId=[ID]
+     * @param mpgId The requested objects will be filtered
+     * using a URL parameter named mpgId.
      *
      * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("messprogrammId") @NotNull Integer messprogrammId
+        @QueryParam("mpgId") @NotNull Integer mpgId
     ) {
         QueryBuilder<MpgMmtMp> builder =
             repository.queryBuilder(MpgMmtMp.class);
-        builder.and("mpgId", messprogrammId);
+        builder.and("mpgId", mpgId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
             MpgMmtMp.class);
     }
 
     /**
-     * Get a MessprogrammMmt object by id.
+     * Get a MpgMmtMp object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single MessprogrammMmt.
+     * @return Response object containing a single MpgMmtMp.
      */
     @GET
     @Path("/{id}")
@@ -123,22 +98,8 @@ public class MessprogrammMmtService extends LadaService {
     }
 
     /**
-     * Create a MessprogrammMmt object.
-     * <p>
-     * The new object is embedded in the post data as JSON formatted string.
-     * <p>
-     * <pre>
-     * <code>
-     * {
-     *  "messprogrammId": [number],
-     *  "mmtId": [string],
-     *  "messgroessen": [array],
-     *  "letzteAenderung": [date]
-     * }
-     * </code>
-     * </pre>
-     *
-     * @return A response object containing the created MessprogrammMmt.
+     * Create a MpgMmtMp object.
+     * @return A response object containing the created MpgMmtMp.
      */
     @POST
     @Path("/")
@@ -171,22 +132,9 @@ public class MessprogrammMmtService extends LadaService {
     }
 
     /**
-     * Update an existing MessprogrammMmt object.
-     * <p>
-     * The object to update should come as JSON formatted string.
-     * <pre>
-     * <code>
-     * {
-     *  "id": [number],
-     *  "messprogrammId": [number],
-     *  "mmtId": [string],
-     *  "messgroessen": [array],
-     *  "letzteAenderung": [date]
-     * }
-     * </code>
-     * </pre>
+     * Update an existing MpgMmtMp object.
      *
-     * @return Response object containing the updated MessprogrammMmt object.
+     * @return Response object containing the updated MpgMmtMp object.
      */
     @PUT
     @Path("/{id}")
