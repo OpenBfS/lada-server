@@ -36,7 +36,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/commmeasm")
-public class KommentarMService extends LadaService {
+public class CommMeasmService extends LadaService {
 
     /**
      * The data repository granting read/write access.
