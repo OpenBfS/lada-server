@@ -41,7 +41,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/geolocat")
-public class OrtszuordnungService extends LadaService {
+public class GeolocatService extends LadaService {
 
     /**
      * The data repository granting read/write access.
