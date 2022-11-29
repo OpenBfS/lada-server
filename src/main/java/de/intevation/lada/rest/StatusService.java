@@ -44,40 +44,11 @@ import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
- * REST service for Status objects.
- * <p>
- * The services produce data in the application/json media type.
- * All HTTP methods use the authorization module to determine if the user is
- * allowed to perform the requested action.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "erzeuger": [string],
- *      "messungsId": [number],
- *      "status": [number],
- *      "owner": [boolean],
- *      "readonly": [boolean],
- *      "treeModified": [timestamp],
- *      "parentModified": [timestamp],
- *      "sdatum": [timestamp],
- *      "skommentar": [string]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for StatusProt objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/status")
+@Path("rest/statusprot")
 public class StatusService extends LadaService {
 
     /**
@@ -121,11 +92,10 @@ public class StatusService extends LadaService {
     private Validator ortValidator;
 
     /**
-     * Get StatusProtokoll objects.
+     * Get StatusProt objects.
      *
-     * @param messungsId The requested objects have to be filtered
-     * using an URL parameter named messungsId.
-     * Example: http://example.com/status?messungsId=[ID]
+     * @param measmId The requested objects have to be filtered
+     * using an URL parameter named measmId.
      *
      * @return Response containing requested objects.
      * Status-Code 699 if parameter is missing.
@@ -133,11 +103,11 @@ public class StatusService extends LadaService {
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("messungsId") @NotNull Integer messungsId
+        @QueryParam("measmId") @NotNull Integer measmId
     ) {
         QueryBuilder<StatusProt> builder =
             repository.queryBuilder(StatusProt.class);
-        builder.and("measmId", messungsId);
+        builder.and("measmId", measmId);
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
             StatusProt.class);
@@ -155,10 +125,10 @@ public class StatusService extends LadaService {
     }
 
     /**
-     * Get a single Status object by id.
+     * Get a single StatusProt object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Status.
+     * @return Response object containing a single StatusProt.
      */
     @GET
     @Path("/{id}")
@@ -172,26 +142,9 @@ public class StatusService extends LadaService {
     }
 
     /**
-     * Create a Status object.
-     * <p>
-     * The new object is embedded in the post data as JSON formatted string.
-     * <p>
-     * <pre>
-     * <code>
-     * {
-     *  "owner": [boolean],
-     *  "messungsId": [number],
-     *  "erzeuger": [string],
-     *  "status": [number],
-     *  "skommentar": [string],
-     *  "treeModified":null,
-     *  "parentModified":null,
-     *  "sdatum": [date]
-     * }
-     * </code>
-     * </pre>
+     * Create a StatusProt object.
      *
-     * @return A response object containing the created Status.
+     * @return A response object containing the created StatusProt.
      */
     @POST
     @Path("/")
@@ -390,7 +343,7 @@ public class StatusService extends LadaService {
     }
 
     /**
-     * Delete an existing Status object by id.
+     * Delete an existing StatusProt object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
