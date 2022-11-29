@@ -31,37 +31,11 @@ import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
- * REST service to operate on KommentarP objects.
- * <p>
- * The services produce data in the application/json media type.
- * All HTTP methods use the authorization module to determine if the user is
- * allowed to perform the requested action.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean],
- *  "message": [string],
- *  "data":[{
- *      "datum": [timestamp],
- *      "erzeuger": [string],
- *      "id": [number],
- *      "text": [string],
- *      "probeId": [number],
- *      "owner": [boolean],
- *      "readonly": [boolean]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service to operate on CommSample objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/pkommentar")
+@Path("rest/commsample")
 public class KommentarPService extends LadaService {
 
     /**
@@ -83,32 +57,31 @@ public class KommentarPService extends LadaService {
 
 
     /**
-     * Get KommentarP objects.
+     * Get CommSample objects.
      *
-     * @param probeId The requested objects will be filtered
-     * using an URL parameter named probeId.
-     * Example: http://example.com/pkommentar?probeId=[ID]
+     * @param sampleId The requested objects will be filtered
+     * using an URL parameter named sampleId.
      *
      * @return Response object containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("probeId") @NotNull Integer probeId
+        @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
         QueryBuilder<CommSample> builder =
             repository.queryBuilder(CommSample.class);
-        builder.and("sampleId", probeId);
+        builder.and("sampleId", sampleId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
             CommSample.class);
     }
 
     /**
-     * Get a single KommentarP object by id.
+     * Get a single CommSample object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single KommentarP.
+     * @return Response object containing a single CommSample.
      */
     @GET
     @Path("/{id}")
@@ -121,23 +94,9 @@ public class KommentarPService extends LadaService {
     }
 
     /**
-     * Create a new KommentarP object.
-     * <p>
-     * The new object is embedded in the post data as JSON formatted string.
-     * <p>
-     * <pre>
-     * <code>
-     * {
-     *  "probeId": [number],
-     *  "erzeuger": [string],
-     *  "text": [string],
-     *  "datum": [date],
-     *  "owner": [boolean]
-     * }
-     * </code>
-     * </pre>
+     * Create a new CommSample object.
      *
-     * @return Response object containing the new KommentarP.
+     * @return Response object containing the new CommSample.
      */
     @POST
     @Path("/")
@@ -165,23 +124,9 @@ public class KommentarPService extends LadaService {
     }
 
     /**
-     * Update an existing KommentarP object.
-     * <p>
-     * The object to update should come as JSON formatted string.
-     * <pre>
-     * <code>
-     * {
-     *  "id": [number],
-     *  "owner": [boolean],
-     *  "probeId": [number],
-     *  "erzeuger": [string],
-     *  "text": [string],
-     *  "datum": [date]
-     * }
-     * </code>
-     * </pre>
+     * Update an existing CommSample object.
      *
-     * @return Response object containing the updated KommentarP object.
+     * @return Response object containing the updated CommSample object.
      */
     @PUT
     @Path("/{id}")
@@ -209,7 +154,7 @@ public class KommentarPService extends LadaService {
     }
 
     /**
-     * Delete an existing KommentarP by id.
+     * Delete an existing CommSample by id.
      *
      * @param id The id is appended to the URL as a path parameter.
      * @return Response object.

@@ -65,16 +65,16 @@ public class KommentarPTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("pkommentar", "rest/pkommentar?probeId=1000");
-        getById("pkommentar", "rest/pkommentar/1000", expectedById);
-        JsonObject created = create("pkommentar", "rest/pkommentar", create);
+        get("commsample", "rest/commsample?sampleId=1000");
+        getById("commsample", "rest/commsample/1000", expectedById);
+        JsonObject created = create("commsample", "rest/commsample", create);
         update(
-            "pkommentar",
-            "rest/pkommentar/1000",
+            "commsample",
+            "rest/commsample/1000",
             "text", "Testkommentar",
             "Testkommentar geändert");
         delete(
-            "pkommentar",
-            "rest/pkommentar/" + created.getJsonObject("data").get("id"));
+            "commsample",
+            "rest/commsample/" + created.getJsonObject("data").get("id"));
     }
 }
