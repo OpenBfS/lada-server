@@ -31,41 +31,11 @@ import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
 /**
- * REST service for Zusatzwert objects.
- * <p>
- * The services produce data in the application/json media type.
- * All HTTP methods use the authorization module to determine if the user is
- * allowed to perform the requested action.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "letzteAenderung": [timestamp],
- *      "messfehler": [number],
- *      "messwertPzs": [number],
- *      "nwgZuMesswert": [number],
- *      "probeId": [number],
- *      "pzsId": [string],
- *      "owner": [boolean],
- *      "readonly": [boolean],
- *      "treeModified": [timestamp],
- *      "parentModified": [timestamp]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for SampleSpecifMeasVal objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/zusatzwert")
+@Path("rest/samplespecifmeasval")
 public class ZusatzwertService extends LadaService {
 
     /**
@@ -89,32 +59,31 @@ public class ZusatzwertService extends LadaService {
     private Authorization authorization;
 
     /**
-     * Get Zusatzwert objects.
+     * Get SampleSpecifMeasVal objects.
      *
-     * @param probeId The requested objects will be filtered using
-     * a URL parameter named probeId.
-     * Example: http://example.com/zusatzwert?probeId=[ID]
+     * @param sampleId The requested objects will be filtered using
+     * a URL parameter named sampleId.
      *
      * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("probeId") @NotNull Integer probeId
+        @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
         QueryBuilder<SampleSpecifMeasVal> builder =
             repository.queryBuilder(SampleSpecifMeasVal.class);
-        builder.and("sampleId", probeId);
+        builder.and("sampleId", sampleId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
             SampleSpecifMeasVal.class);
     }
 
     /**
-     * Get a Zusatzwert object by id.
+     * Get a SampleSpecifMeasVal object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Zusatzwert.
+     * @return Response object containing a single SampleSpecifMeasVal.
      */
     @GET
     @Path("/{id}")
@@ -127,27 +96,9 @@ public class ZusatzwertService extends LadaService {
     }
 
     /**
-     * Create a Zusatzwert object.
-     * <p>
-     * The new object is embedded in the post data as JSON formatted string.
-     * <p>
-     * <pre>
-     * <code>
-     * {
-     *  "owner": [boolean],
-     *  "probeId": [number],
-     *  "pzsId": [string],
-     *  "nwgZuMesswert": [number],
-     *  "messwertPzs": [number],
-     *  "messfehler": [number],
-     *  "treeModified": null,
-     *  "parentModified": null,
-     *  "letzteAenderung": [date]
-     * }
-     * </code>
-     * </pre>
+     * Create a SampleSpecifMeasVal object.
      *
-     * @return A response object containing the created Zusatzwert.
+     * @return A response object containing the created SampleSpecifMeasVal.
      */
     @POST
     @Path("/")
@@ -169,27 +120,9 @@ public class ZusatzwertService extends LadaService {
     }
 
     /**
-     * Update an existing Zusatzwert object.
-     * <p>
-     * The object to update should come as JSON formatted string.
-     * <pre>
-     * <code>
-     * {
-     *  "id": [number],
-     *  "owner": [boolean],
-     *  "probeId": [number],
-     *  "pzsId": [string],
-     *  "nwgZuMesswert": [number],
-     *  "messwertPzs": [number],
-     *  "messfehler": [number],
-     *  "treeModified": [timestamp],
-     *  "parentModified": [timestamp],
-     *  "letzteAenderung": [date]
-     * }
-     * </code>
-     * </pre>
+     * Update an existing SampleSpecifMeasVal object.
      *
-     * @return Response object containing the updated Zusatzwert object.
+     * @return Response object containing the updated SampleSpecifMeasVal object.
      */
     @PUT
     @Path("/{id}")
