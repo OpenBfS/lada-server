@@ -60,18 +60,18 @@ public class GeolocatMpgTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("ortszuordnungmp", "rest/ortszuordnungmp?messprogrammId=1000");
-        getById("ortszuordnungmp", "rest/ortszuordnungmp/1000", expectedById);
+        get("geolocatmpg", "rest/geolocatmpg?mpgId=1000");
+        getById("geolocatmpg", "rest/geolocatmpg/1000", expectedById);
         JsonObject created =
-            create("ortszuordnungmp", "rest/ortszuordnungmp", create);
+            create("geolocatmpg", "rest/geolocatmpg", create);
         update(
-            "ortszuordnungmp",
-            "rest/ortszuordnungmp/1000",
+            "geolocatmpg",
+            "rest/geolocatmpg/1000",
             "addSiteText",
             "Test",
             "Test geändert");
         delete(
-            "ortszuordnungmp",
-            "rest/ortszuordnungmp/" + created.getJsonObject("data").get("id"));
+            "geolocatmpg",
+            "rest/geolocatmpg/" + created.getJsonObject("data").get("id"));
     }
 }

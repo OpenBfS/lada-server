@@ -36,40 +36,11 @@ import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
- * REST service for Ort objects.
- * <p>
- * The services produce data in the application/json media type.
- * All HTTP methods use the authorization module to determine if the user is
- * allowed to perform the requested action.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "id": [number],
- *      "letzteAenderung": [timestamp],
- *      "ortsTyp": [string],
- *      "ortszusatztext": [string],
- *      "messprogrammId": [number],
- *      "ort": [number],
- *      "owner": [boolean],
- *      "readonly": [boolean],
- *      "treeModified": [timestamp],
- *      "parentModified": [timestamp]
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for GeolocatMpg objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/ortszuordnungmp")
+@Path("rest/geolocatmpg")
 public class OrtszuordnungMpService extends LadaService {
 
     /**
@@ -97,21 +68,21 @@ public class OrtszuordnungMpService extends LadaService {
     private Validator validator;
 
     /**
-     * Get OrtszuordnungMp objects.
+     * Get GeolocatMpg objects.
      *
-     * @param messprogrammId The requested objects will be filtered
-     * using a URL parameter named messprogrammId.
+     * @param mpgId The requested objects will be filtered
+     * using a URL parameter named mpgId.
      *
      * @return Response containing requested objects.
      */
     @GET
     @Path("/")
     public Response get(
-        @QueryParam("messprogrammId") @NotNull Integer messprogrammId
+        @QueryParam("mpgId") @NotNull Integer mpgId
     ) {
         QueryBuilder<GeolocatMpg> builder =
             repository.queryBuilder(GeolocatMpg.class);
-        builder.and("mpgId", messprogrammId);
+        builder.and("mpgId", mpgId);
         Response r =  authorization.filter(
             repository.filter(builder.getQuery()),
             GeolocatMpg.class);
@@ -156,24 +127,7 @@ public class OrtszuordnungMpService extends LadaService {
     }
 
     /**
-     * Create a new Ort object.
-     * <p>
-     * The new object is embedded in the post data as JSON formatted string.
-     * <p>
-     * <pre>
-     * <code>
-     * {
-     *  "owner": [boolean],
-     *  "ort": [number],
-     *  "messprogrammId": [number],
-     *  "ortsTyp": [string],
-     *  "ortszusatztext": [string],
-     *  "treeModified": null,
-     *  "parentModified": null,
-     *  "letzteAenderung": [date]
-     * }
-     * </code>
-     * </pre>
+     * Create a new GeolocatMpg object.
      *
      * @return A response object containing the created Ort.
      */
@@ -209,26 +163,9 @@ public class OrtszuordnungMpService extends LadaService {
     }
 
     /**
-     * Update an existing Ort object.
-     * <p>
-     * The object to update should come as JSON formatted string.
-     * <pre>
-     * <code>
-     * {
-     *  "id": [number],
-     *  "owner": [boolean],
-     *  "ort": [number],
-     *  "messprogrammId": [number],
-     *  "ortsTyp": [string],
-     *  "ortszusatztext": [string],
-     *  "treeModified": [timestamp],
-     *  "parentModified": [timestamp],
-     *  "letzteAenderung": [date]
-     * }
-     * </code>
-     * </pre>
+     * Update an existing GeolocatMpg object.
      *
-     * @return Response object containing the updated Ort object.
+     * @return Response object containing the updated GeolocatMpg object.
      */
     @PUT
     @Path("/{id}")
