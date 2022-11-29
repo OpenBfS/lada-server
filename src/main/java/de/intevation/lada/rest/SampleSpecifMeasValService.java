@@ -36,7 +36,7 @@ import de.intevation.lada.util.rest.Response;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("rest/samplespecifmeasval")
-public class ZusatzwertService extends LadaService {
+public class SampleSpecifMeasValService extends LadaService {
 
     /**
      * The data repository granting read/write access.
@@ -150,7 +150,7 @@ public class ZusatzwertService extends LadaService {
     }
 
     /**
-     * Delete an existing Zusatzwert object by id.
+     * Delete an existing SampleSpecifMeasVal object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
      * @return Response object.
