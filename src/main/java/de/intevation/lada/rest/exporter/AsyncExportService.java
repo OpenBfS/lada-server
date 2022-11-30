@@ -357,12 +357,11 @@ public class AsyncExportService extends LadaService {
      */
     @GET
     @Path("download/{id}")
-    @Produces("application/octet-stream")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response download(
         @PathParam("id") String id
     ) {
         ByteArrayInputStream resultStream;
-        String encoding;
         String filename;
         UserInfo originalCreator;
         UserInfo requestingUser = authorization.getInfo();
@@ -381,7 +380,6 @@ public class AsyncExportService extends LadaService {
                 return Response.status(Response.Status.FORBIDDEN).build();
             }
 
-            encoding = exportJobManager.getJobEncoding(id);
             filename = exportJobManager.getJobDownloadFilename(id);
             resultStream = exportJobManager.getResultFileAsStream(id);
 
@@ -400,8 +398,6 @@ public class AsyncExportService extends LadaService {
             .header(
                 HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + filename + "\"")
-            .type(
-                MediaType.APPLICATION_OCTET_STREAM_TYPE.withCharset(encoding))
             .build();
     }
 
