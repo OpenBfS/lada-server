@@ -161,7 +161,7 @@ CREATE VIEW land.ortszuordnung_mp AS SELECT
 	poi_id AS oz_id
 FROM lada.geolocat_mpg;
 
-REATE VIEW land.probe AS SELECT
+CREATE VIEW land.probe AS SELECT
 	id,
 	ext_id AS ext_id,
 	is_test AS test,
