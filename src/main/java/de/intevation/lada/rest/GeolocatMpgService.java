@@ -40,7 +40,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/geolocatmpg")
+@Path("/geolocatmpg")
 public class GeolocatMpgService extends LadaService {
 
     /**

@@ -24,7 +24,7 @@ import de.intevation.lada.rest.LadaService;
  * REST service for SpatRefSys objects.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/spatrefsys")
+@Path("/spatrefsys")
 public class SpatRefSysService extends LadaService {
 
     /**

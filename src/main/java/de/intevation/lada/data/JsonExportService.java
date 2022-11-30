@@ -49,7 +49,7 @@ import org.jboss.logging.Logger;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("data/export")
+@Path("/export")
 public class JsonExportService extends LadaService {
 
     @Inject private Logger logger;

@@ -63,7 +63,7 @@ import de.intevation.lada.util.data.StatusCodes;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/audit")
+@Path("/audit")
 public class AuditTrailService extends LadaService {
 
     /**

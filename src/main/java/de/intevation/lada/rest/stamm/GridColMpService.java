@@ -26,7 +26,7 @@ import de.intevation.lada.rest.LadaService;
  * REST-Service for preconfigured columns.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/gridcolmp")
+@Path("/gridcolmp")
 public class GridColMpService extends LadaService {
 
     @Inject

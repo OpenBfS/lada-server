@@ -55,7 +55,7 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
-@Path("data/asyncexport")
+@Path("/asyncexport")
 public class AsyncExportService extends LadaService {
 
     @Inject

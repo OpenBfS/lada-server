@@ -21,7 +21,7 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/targactmmtgr")
+@Path("/targactmmtgr")
 public class TargActMmtGrService extends LadaService {
 
     /**

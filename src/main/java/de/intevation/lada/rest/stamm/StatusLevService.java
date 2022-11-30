@@ -22,7 +22,7 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/statuslev")
+@Path("/statuslev")
 public class StatusLevService extends LadaService {
 
     /**

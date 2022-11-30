@@ -32,7 +32,7 @@ import de.intevation.lada.util.rest.Response;
  * REST-Service for associations of tags to objects.
  */
 
-@Path("rest/tag/taglink")
+@Path("/tag/taglink")
 public class TagLinkService extends LadaService {
 
     @Inject

@@ -31,7 +31,7 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/reiaggr")
+@Path("/reiaggr")
 public class ReiAgGrService extends LadaService {
 
     /**

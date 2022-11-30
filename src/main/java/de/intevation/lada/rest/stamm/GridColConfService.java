@@ -45,7 +45,7 @@ import de.intevation.lada.rest.LadaService;
  * The services produce data in the application/json media type.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/gridcolconf")
+@Path("/gridcolconf")
 public class GridColConfService extends LadaService {
 
     @Inject

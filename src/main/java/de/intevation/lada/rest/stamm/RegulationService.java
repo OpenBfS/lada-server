@@ -21,7 +21,7 @@ import de.intevation.lada.rest.LadaService;
  * REST service for Regulation objects.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/regulation")
+@Path("/regulation")
 public class RegulationService extends LadaService {
 
     /**

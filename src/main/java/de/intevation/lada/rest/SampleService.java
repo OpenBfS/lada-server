@@ -52,7 +52,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/sample")
+@Path("/sample")
 public class SampleService extends LadaService {
 
     /**

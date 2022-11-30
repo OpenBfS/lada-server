@@ -25,7 +25,7 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/adminunit")
+@Path("/adminunit")
 public class AdminUnitService extends LadaService {
 
     /**

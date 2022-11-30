@@ -34,7 +34,7 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/sampler")
+@Path("/sampler")
 public class SamplerService extends LadaService {
 
     /**

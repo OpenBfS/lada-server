@@ -33,7 +33,7 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/mpgcateg")
+@Path("/mpgcateg")
 public class MpgCategService extends LadaService {
 
     /**

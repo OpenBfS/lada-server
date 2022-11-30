@@ -29,7 +29,7 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/envmedium")
+@Path("/envmedium")
 public class EnvMediumService extends LadaService {
 
     /**
