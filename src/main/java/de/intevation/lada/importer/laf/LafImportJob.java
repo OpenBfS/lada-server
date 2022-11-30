@@ -8,7 +8,7 @@
 
 package de.intevation.lada.importer.laf;
 
-import static de.intevation.lada.rest.importer.LafImportService.logLAFFile;
+import static de.intevation.lada.data.LafImportService.logLAFFile;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;

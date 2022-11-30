@@ -5,7 +5,7 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.rest.importer;
+package de.intevation.lada.data;
 
 import javax.inject.Inject;
 import javax.json.Json;
