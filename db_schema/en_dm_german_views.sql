@@ -391,7 +391,7 @@ CREATE VIEW stamm.grid_column_values AS SELECT
 	is_filter_null AS filter_is_null
 FROM master.grid_col_conf;
 
-REATE VIEW stamm.importer_config AS SELECT
+CREATE VIEW stamm.importer_config AS SELECT
 	id,
 	name,
 	attribute,
@@ -531,7 +531,7 @@ CREATE VIEW stamm.netz_betreiber AS SELECT
 	last_mod AS letzte_aenderung
 FROM master.network;
 
-REATE VIEW stamm.ort AS SELECT
+CREATE VIEW stamm.ort AS SELECT
 	id,
 	network_id AS netzbetreiber_id,
 	ext_id AS ort_id,
@@ -630,7 +630,7 @@ CREATE VIEW stamm.query_messstelle AS SELECT
 	meas_facil_id AS mess_stelle
 FROM master.query_meas_facil_mp;
 
-REATE VIEW stamm.query_user AS SELECT
+CREATE VIEW stamm.query_user AS SELECT
 	id,
 	name,
 	lada_user_id AS user_id,
@@ -747,7 +747,7 @@ CREATE VIEW stamm.status_kombi AS SELECT
 	status_val_id AS wert_id
 FROM master.status_mp;
 
-REATE VIEW stamm.status_reihenfolge AS SELECT
+CREATE VIEW stamm.status_reihenfolge AS SELECT
 	id,
 	from_id AS von_id,
 	to_id AS zu_id
@@ -807,7 +807,7 @@ CREATE VIEW stamm.umwelt_zusatz AS SELECT
 	last_mod AS letzte_aenderung
 FROM master.env_specif_mp;
 
-REATE VIEW stamm.verwaltungseinheit AS SELECT
+CREATE VIEW stamm.verwaltungseinheit AS SELECT
 	id,
 	name AS bezeichnung,
 	gov_dist_id AS regbezirk,
@@ -821,7 +821,7 @@ REATE VIEW stamm.verwaltungseinheit AS SELECT
 	geom_center AS mittelpunkt
 FROM master.admin_unit;
 
-REATE VIEW stamm.verwaltungsgrenze AS
+CREATE VIEW stamm.verwaltungsgrenze AS
  SELECT id,
        munic_id AS gem_id,
        is_munic AS is_gemeinde,
