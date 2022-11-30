@@ -163,6 +163,13 @@
                         <artifactId>checkstyle</artifactId>
                         <version>10.2</version>
                     </dependency>
+                    <!-- Needed for running Checkstyle directly without Maven,
+                         which can be useful e.g. for editor integration. -->
+                    <dependency>
+                        <groupId>commons-collections</groupId>
+                        <artifactId>commons-collections</artifactId>
+                        <version>3.2.2</version>
+                    </dependency>
                 </dependencies>
                 <executions>
                     <execution>
@@ -587,5 +594,5 @@
             <url>https://repo.osgeo.org/repository/release</url>
         </repository>
     </repositories>
-    <version>4.6.0-SNAPSHOT</version>
+    <version>4.6.1</version>
 </project>

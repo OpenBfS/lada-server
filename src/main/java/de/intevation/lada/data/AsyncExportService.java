@@ -28,9 +28,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
@@ -146,7 +146,7 @@ public class AsyncExportService extends LadaService {
                 .build();
         }
 
-        String localeRange = request.getHeader("Accept-Language");
+        String localeRange = request.getHeader(HttpHeaders.ACCEPT_LANGUAGE);
         if (localeRange == null || localeRange.equals("")) {
             localeRange = "de-DE";
         }
@@ -215,7 +215,7 @@ public class AsyncExportService extends LadaService {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        String localeRange = request.getHeader("Accept-Language");
+        String localeRange = request.getHeader(HttpHeaders.ACCEPT_LANGUAGE);
         if (localeRange == null || localeRange.equals("")) {
             localeRange = "de-DE";
         }
@@ -285,7 +285,7 @@ public class AsyncExportService extends LadaService {
         JsonObject objects,
         @Context HttpServletRequest request
     ) {
-        String localeRange = request.getHeader("Accept-Language");
+        String localeRange = request.getHeader(HttpHeaders.ACCEPT_LANGUAGE);
         if (localeRange == null || localeRange.equals("")) {
             localeRange = "de-DE";
         }
@@ -396,16 +396,13 @@ public class AsyncExportService extends LadaService {
                 Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
-        ResponseBuilder response = Response.ok(resultStream);
-            response.header(
-                "Content-Disposition",
-                "attachment; filename=\"" + filename + "\"");
-            response.encoding(encoding);
-            response.header(
-                "Content-Type",
-                "application/octet-stream; charset=" + encoding);
-
-        return response.build();
+        return Response.ok(resultStream)
+            .header(
+                HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + filename + "\"")
+            .type(
+                MediaType.APPLICATION_OCTET_STREAM_TYPE.withCharset(encoding))
+            .build();
     }
 
     private Charset getCharsetFromRequest(HttpServletRequest request) {

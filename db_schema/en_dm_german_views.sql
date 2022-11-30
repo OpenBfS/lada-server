@@ -90,50 +90,12 @@ CREATE VIEW land.messprogramm_mmt_messgroesse AS SELECT
 	mpg_mmt_id AS messprogramm_mmt_id,
 	measd_id AS messgroesse_id
 FROM lada.mpg_mmt_measd_mp;
-/*
-CREATE VIEW land.messprogramm_mmt_view AS SELECT
-	id,
-	network_id AS netzbetreiber_id,
-	mpg_id AS messprogramm_id,
-	mmt_id,
-	measd AS messgroessen,
-	last_mod AS letzte_aenderung
-FROM lada.mpg_mmt_mp_view;
-*/
+
 CREATE VIEW land.messprogramm_proben_zusatz AS SELECT
 	sample_specif_id AS proben_zusatz_id,
 	mpg_id AS messprogramm_id
 FROM lada.mpg_sample_specif;
-/*
-CREATE VIEW land.messprogramm_view AS SELECT
-	id,
-	network_id AS netzbetreiber_id,
-	comm_mpg_view AS kommentar,
-	is_test AS test,
-	is_active AS aktiv,
-	meas_facil_id AS mst_id,
-	appr_lab_id AS labor_mst_id,
-	regulation_id AS datenbasis_id,
-	opr_mode_id AS ba_id,
-	env_descrip_id AS media_desk,
-	env_medium_id AS umw_id,
-	sample_meth_id AS probenart_id,
-	sample_pd AS probenintervall,
-	sample_pd_start_date AS teilintervall_von,
-	sample_pd_end_date AS teilintervall_bis,
-	sample_pd_offset AS intervall_offset,
-	valid_start_date AS gueltig_von,
-	valid_end_date AS gueltig_bis,
-	sampleer_id AS probe_nehmer_id,
-	state_mpg_id AS mpl_id,
-	comm_sample AS probe_kommentar,
-	rei_ag_gr_id AS rei_progpunkt_grp_id,
-	nucl_facil_gr_id AS kta_gruppe_id,
-	unit_id AS meh_id,
-	sample_quant AS probenahmemenge,
-	last_mod AS letzte_aenderung
-FROM lada.mpg_view;
-*/
+
 CREATE VIEW land.messung AS SELECT
 	id,
 	ext_id AS ext_id,
@@ -198,18 +160,6 @@ CREATE VIEW land.ortszuordnung_mp AS SELECT
 	tree_mod AS tree_modified,
 	poi_id AS oz_id
 FROM lada.geolocat_mpg;
-
-/*
-CREATE VIEW land.ortszuordnung_mp_view AS SELECT
-	id,
-	network_id AS netzbetreiber_id,
-	mpg_id AS messprogramm_id,
-	site_id AS ort_id,
-	type_regulation AS ortszuordnung_typ,
-	add_site_text AS ortszusatztext,
-	last_mod AS letzte_aenderung
-FROM lada.geolocat_mpg_view;
-*/
 
 CREATE VIEW land.probe AS SELECT
 	id,
@@ -390,22 +340,7 @@ CREATE VIEW stamm.deskriptoren AS SELECT
 	implication AS bedeutung,
 	last_mod AS letzte_aenderung
 FROM master.env_descrip;
-/*
-CREATE VIEW stamm.dom AS SELECT
-	dom_unit,
-	durat AS duration,
-	durat_unit AS duration_unit,
-	env_medium AS envmedium,
-	dom_text,
-	delay,
-	durat_text AS duration_text,
-	measd_idf_nucl_mp_id AS idf_nuclide
-FROM master.idf_dom;
 
-CREATE VIEW stamm.envmedium AS SELECT
-	text AS envmedium_text
-FROM master.idf_env_medium;
-*/
 CREATE VIEW stamm.filter AS SELECT
 	id,
 	sql,
@@ -455,27 +390,7 @@ CREATE VIEW stamm.grid_column_values AS SELECT
 	is_filter_regex AS filter_regex,
 	is_filter_null AS filter_is_null
 FROM master.grid_col_conf;
-/*
-CREATE VIEW stamm.idf_country AS SELECT
-	name AS idf_country,
-	idf_country_ger AS idf_country_ge
-FROM master.idf_country;
 
-CREATE VIEW stamm.idf_lada_translation AS SELECT
-	id,
-	dom,
-	env_medium_id AS umw_id,
-	mmt_id,
-	meas_facil_id AS mst_id,
-	val_status_comb AS validated_status_kombi,
-	factor AS faktor,
-	unit_id AS meh_id
-FROM master.idf_lada_mp;
-
-CREATE VIEW stamm.idf_network AS SELECT
-	name AS network
-FROM master.idf_grid_oper;
-*/
 CREATE VIEW stamm.importer_config AS SELECT
 	id,
 	name,
@@ -615,21 +530,7 @@ CREATE VIEW stamm.netz_betreiber AS SELECT
 	is_active AS aktiv,
 	last_mod AS letzte_aenderung
 FROM master.network;
-/*
-CREATE VIEW stamm.nuclide AS SELECT
-	measd AS nuclide,
-	text AS nuclide_text,
-	idf_ext_id AS idf_nuklid_key
-FROM master.measd_idf_nucl_mp;
 
-CREATE VIEW stamm.nuts AS SELECT
-	state_id AS staat_id,
-	name AS bezeichnung,
-	spat_ref_sys_id AS kda_id,
-	x_coord_ext AS koord_x_extern,
-	y_coord_ext AS koord_y_extern
-FROM master.nuts;
-*/
 CREATE VIEW stamm.ort AS SELECT
 	id,
 	network_id AS netzbetreiber_id,
@@ -728,13 +629,7 @@ CREATE VIEW stamm.query_messstelle AS SELECT
 	query,
 	meas_facil_id AS mess_stelle
 FROM master.query_meas_facil_mp;
-/*
-CREATE VIEW stamm.query_messstelle_bak AS SELECT
-	id,
-	query,
-	meas_facil_id AS mess_stelle
-FROM master.query_meas_facil_mp_bak;
-*/
+
 CREATE VIEW stamm.query_user AS SELECT
 	id,
 	name,
@@ -851,11 +746,7 @@ CREATE VIEW stamm.status_kombi AS SELECT
 	status_lev_id AS stufe_id,
 	status_val_id AS wert_id
 FROM master.status_mp;
-/*
-CREATE VIEW stamm.status_kombi_view AS SELECT
-	status_comb AS kombi
-FROM master.status_mp_view;
-*/
+
 CREATE VIEW stamm.status_reihenfolge AS SELECT
 	id,
 	from_id AS von_id,
@@ -915,21 +806,7 @@ CREATE VIEW stamm.umwelt_zusatz AS SELECT
 	env_medium_id AS umw_id,
 	last_mod AS letzte_aenderung
 FROM master.env_specif_mp;
-/*
-CREATE VIEW stamm.unit AS SELECT
-	unit_symbol AS unit,
-	name AS unit_text,
-	eudf_unit_id AS unit_eudf
-FROM master.meas_unit_dom;
 
-CREATE VIEW stamm.user_overview AS SELECT
-	meas_facil AS mess_stelle,
-	meas_facil_addr AS beschreibung,
-	appr_lab_id AS labor_mst_id,
-	function AS funktion,
-	ldap_gr_uid AS ldap_group
-FROM master.user_overv_view;
-*/
 CREATE VIEW stamm.verwaltungseinheit AS SELECT
 	id,
 	name AS bezeichnung,
@@ -943,29 +820,7 @@ CREATE VIEW stamm.verwaltungseinheit AS SELECT
 	zip AS plz,
 	geom_center AS mittelpunkt
 FROM master.admin_unit;
-/*
-CREATE VIEW stamm.verwaltungseinheit_view AS SELECT
-	id,
-	admin_unit AS bezeichnung,
-	gov_dist_id AS regbezirk,
-	rural_dist_id AS kreis,
-	state_id AS bundesland,
-	is_munic AS is_gemeinde,
-	is_rural_dist AS is_landkreis,
-	is_gov_dist AS is_regbezirk,
-	is_state AS is_bundesland,
-	zip AS plz,
-	nuts,
-	geom_center AS mittelpunkt
-FROM master.admin_unit_view;
 
-CREATE VIEW stamm.verwaltungsgrenze AS SELECT
-	id,
-	munic_id AS gem_id,
-	is_munic AS is_gemeinde,
-	shape
-FROM master.admin_border_view;
-*/
 CREATE VIEW stamm.verwaltungsgrenze AS
  SELECT id,
        munic_id AS gem_id,
@@ -979,7 +834,6 @@ CREATE VIEW stamm.zeitbasis AS SELECT
 	last_mod AS letzte_aenderung
 FROM master.tz;
 
---NEW
 CREATE VIEW public.lada_messwert AS
  SELECT meas_val.id,
     meas_val.measm_id AS messungs_id,
