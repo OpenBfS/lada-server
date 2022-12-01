@@ -40,7 +40,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/mpgmmtmp")
+@Path("mpgmmtmp")
 public class MpgMmtMpService extends LadaService {
 
     /**
@@ -69,7 +69,6 @@ public class MpgMmtMpService extends LadaService {
      * @return Response containing requested objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("mpgId") @NotNull Integer mpgId
     ) {
@@ -88,7 +87,7 @@ public class MpgMmtMpService extends LadaService {
      * @return Response object containing a single MpgMmtMp.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -102,7 +101,6 @@ public class MpgMmtMpService extends LadaService {
      * @return A response object containing the created MpgMmtMp.
      */
     @POST
-    @Path("/")
     public Response create(
         MpgMmtMp messprogrammmmt
     ) {
@@ -137,7 +135,7 @@ public class MpgMmtMpService extends LadaService {
      * @return Response object containing the updated MpgMmtMp object.
      */
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
         MpgMmtMp messprogrammmmt
@@ -177,7 +175,7 @@ public class MpgMmtMpService extends LadaService {
      * @return Response object.
      */
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

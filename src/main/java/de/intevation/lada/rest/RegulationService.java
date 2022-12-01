@@ -20,7 +20,7 @@ import de.intevation.lada.model.master.Regulation;
  * REST service for Regulation objects.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/regulation")
+@Path("regulation")
 public class RegulationService extends LadaService {
 
     /**
@@ -34,7 +34,6 @@ public class RegulationService extends LadaService {
      * @return Response object containing all Regulation objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         return repository.getAll(Regulation.class);
     }
@@ -46,7 +45,7 @@ public class RegulationService extends LadaService {
      * @return Response object containing a single Regulation.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {

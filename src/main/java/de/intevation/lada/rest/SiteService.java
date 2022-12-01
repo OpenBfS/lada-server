@@ -60,7 +60,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/site")
+@Path("site")
 public class SiteService extends LadaService {
 
     @Inject
@@ -95,7 +95,6 @@ public class SiteService extends LadaService {
      * @return Response object containing all (filtered) Site objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("networkId")
         @Pattern(regexp = ".+") String networkId,
@@ -178,7 +177,7 @@ public class SiteService extends LadaService {
      * @return Response object containing a single Site.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -213,7 +212,6 @@ public class SiteService extends LadaService {
      * @return A response object containing the created Site.
      */
     @POST
-    @Path("/")
     public Response create(
         Site ort
     ) {
@@ -265,7 +263,7 @@ public class SiteService extends LadaService {
      * @return Response object containing the updated Site object.
      */
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
         Site ort
@@ -341,7 +339,7 @@ public class SiteService extends LadaService {
      * @return Response object.
      */
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

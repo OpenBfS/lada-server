@@ -35,7 +35,7 @@ import de.intevation.lada.util.rest.Response;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/samplespecifmeasval")
+@Path("samplespecifmeasval")
 public class SampleSpecifMeasValService extends LadaService {
 
     /**
@@ -67,7 +67,6 @@ public class SampleSpecifMeasValService extends LadaService {
      * @return Response containing requested objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
@@ -86,7 +85,7 @@ public class SampleSpecifMeasValService extends LadaService {
      * @return Response object containing a single SampleSpecifMeasVal.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -101,7 +100,6 @@ public class SampleSpecifMeasValService extends LadaService {
      * @return A response object containing the created SampleSpecifMeasVal.
      */
     @POST
-    @Path("/")
     public Response create(
         SampleSpecifMeasVal zusatzwert
     ) {
@@ -125,7 +123,7 @@ public class SampleSpecifMeasValService extends LadaService {
      * @return Response object containing the updated SampleSpecifMeasVal object.
      */
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
         SampleSpecifMeasVal zusatzwert
@@ -156,7 +154,7 @@ public class SampleSpecifMeasValService extends LadaService {
      * @return Response object.
      */
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

@@ -39,7 +39,7 @@ import de.intevation.lada.util.rest.Response;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/statusmp")
+@Path("statusmp")
 public class StatusMpService extends LadaService {
 
     /**
@@ -58,7 +58,6 @@ public class StatusMpService extends LadaService {
      * @return Response object containing all StatusMp objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         return repository.getAll(StatusMp.class);
     }
@@ -70,7 +69,7 @@ public class StatusMpService extends LadaService {
      * @return Response object
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -78,7 +77,7 @@ public class StatusMpService extends LadaService {
     }
 
     @POST
-    @Path("/getbyids")
+    @Path("getbyids")
     public Response getById(
         JsonArray ids
     ) {

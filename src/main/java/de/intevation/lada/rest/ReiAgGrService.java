@@ -30,7 +30,7 @@ import de.intevation.lada.model.master.ReiAgGrMp;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/reiaggr")
+@Path("reiaggr")
 public class ReiAgGrService extends LadaService {
 
     /**
@@ -49,7 +49,6 @@ public class ReiAgGrService extends LadaService {
      * @return Response object containing all ReiAgGr objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("reiAgId") Integer reiAgId,
         @QueryParam("envMediumId") @Pattern(regexp = ".+") String envMediumId
@@ -104,7 +103,7 @@ public class ReiAgGrService extends LadaService {
      * @return Response object containing a single ReiAgGr.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {

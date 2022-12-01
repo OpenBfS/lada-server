@@ -21,7 +21,7 @@ import de.intevation.lada.model.master.Mmt;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/mmt")
+@Path("mmt")
 public class MmtService extends LadaService {
 
     /**
@@ -36,7 +36,6 @@ public class MmtService extends LadaService {
      * @return Response object containing all Mmt objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         return repository.getAll(Mmt.class);
     }
@@ -48,7 +47,7 @@ public class MmtService extends LadaService {
      * @return Response object containing a single Mmt.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") String id
     ) {

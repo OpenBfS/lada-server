@@ -48,7 +48,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/statusprot")
+@Path("statusprot")
 public class StatusProtService extends LadaService {
 
     /**
@@ -101,7 +101,6 @@ public class StatusProtService extends LadaService {
      * Status-Code 699 if parameter is missing.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
@@ -131,7 +130,7 @@ public class StatusProtService extends LadaService {
      * @return Response object containing a single StatusProt.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -147,7 +146,6 @@ public class StatusProtService extends LadaService {
      * @return A response object containing the created StatusProt.
      */
     @POST
-    @Path("/")
     public Response create(
         StatusProt status
     ) {
@@ -349,7 +347,7 @@ public class StatusProtService extends LadaService {
      * @return Response object.
      */
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

@@ -44,7 +44,7 @@ import de.intevation.lada.model.master.Auth;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/auth")
+@Path("auth")
 public class AuthService extends LadaService {
 
     /**
@@ -60,7 +60,6 @@ public class AuthService extends LadaService {
      * @return Response containing requested objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("networkId") List<String> networkIds
     ) {

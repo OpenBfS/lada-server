@@ -21,7 +21,7 @@ import de.intevation.lada.model.master.StatusLev;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/statuslev")
+@Path("statuslev")
 public class StatusLevService extends LadaService {
 
     /**
@@ -36,7 +36,6 @@ public class StatusLevService extends LadaService {
      * @return Response object containing all StatusLev objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         return repository.getAll(StatusLev.class);
     }
@@ -48,7 +47,7 @@ public class StatusLevService extends LadaService {
      * @return Response object containing a single StatusLev.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {

@@ -44,7 +44,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/measval")
+@Path("measval")
 public class MeasValService extends LadaService {
 
     /**
@@ -85,7 +85,6 @@ public class MeasValService extends LadaService {
      * not authorized.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
@@ -131,7 +130,7 @@ public class MeasValService extends LadaService {
      * @return Response object containing a single MeasVal.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -163,7 +162,6 @@ public class MeasValService extends LadaService {
      * @return A response object containing the created MeasVal.
      */
     @POST
-    @Path("/")
     public Response create(
         MeasVal messwert
     ) {
@@ -203,7 +201,7 @@ public class MeasValService extends LadaService {
      * @return Response object containing the updated MeasVal object.
      */
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
         MeasVal messwert
@@ -250,7 +248,7 @@ public class MeasValService extends LadaService {
      * @return Response object containing the updated MeasVal objects.
      */
     @PUT
-    @Path("/normalize")
+    @Path("normalize")
     public Response normalize(
         @QueryParam("measmId") Integer measmId
     ) {
@@ -334,7 +332,7 @@ public class MeasValService extends LadaService {
      * @return Response object.
      */
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

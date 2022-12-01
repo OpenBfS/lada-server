@@ -28,7 +28,7 @@ import de.intevation.lada.model.master.Network;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/network")
+@Path("network")
 public class NetworkService extends LadaService {
 
     /**
@@ -50,7 +50,6 @@ public class NetworkService extends LadaService {
      * @return Response object containing all NetzBetreiber objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         return repository.getAll(Network.class);
     }
@@ -62,7 +61,7 @@ public class NetworkService extends LadaService {
      * @return Response object containing a single Network.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") String id
     ) {

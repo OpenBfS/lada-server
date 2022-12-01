@@ -49,7 +49,7 @@ import de.intevation.lada.util.rest.Response;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/universal")
+@Path("universal")
 public class UniversalService extends LadaService {
 
     /**
@@ -87,7 +87,6 @@ public class UniversalService extends LadaService {
      * @return JSON encoded query results
      */
     @POST
-    @Path("/")
     public Response execute(
         @QueryParam("start") int start, // default for primitive type: 0
         @QueryParam("limit") Integer limit,

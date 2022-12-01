@@ -21,7 +21,7 @@ import de.intevation.lada.model.master.SiteClass;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/siteclass")
+@Path("siteclass")
 public class SiteClassService extends LadaService {
 
     /**
@@ -36,7 +36,6 @@ public class SiteClassService extends LadaService {
      * @return Response object containing all SiteClass objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         return repository.getAll(SiteClass.class);
     }
@@ -48,7 +47,7 @@ public class SiteClassService extends LadaService {
      * @return Response object containing a single SiteClass.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {

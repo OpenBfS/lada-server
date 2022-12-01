@@ -33,7 +33,7 @@ import de.intevation.lada.util.rest.Response;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/sampler")
+@Path("sampler")
 public class SamplerService extends LadaService {
 
     /**
@@ -52,7 +52,6 @@ public class SamplerService extends LadaService {
      * @return Response object containing all objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         List<Sampler> nehmer =
             repository.getAllPlain(Sampler.class);
@@ -74,7 +73,7 @@ public class SamplerService extends LadaService {
      * @return Response object containing a single object.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -92,7 +91,6 @@ public class SamplerService extends LadaService {
     }
 
     @POST
-    @Path("/")
     public Response create(
         Sampler probenehmer
     ) {
@@ -116,7 +114,7 @@ public class SamplerService extends LadaService {
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
         Sampler probenehmer
@@ -143,7 +141,7 @@ public class SamplerService extends LadaService {
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

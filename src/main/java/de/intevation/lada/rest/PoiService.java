@@ -21,7 +21,7 @@ import de.intevation.lada.model.master.Poi;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/poi")
+@Path("poi")
 public class PoiService extends LadaService {
 
     /**
@@ -36,7 +36,6 @@ public class PoiService extends LadaService {
      * @return Response object containing all Poi objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         return repository.getAll(Poi.class);
     }
@@ -48,7 +47,7 @@ public class PoiService extends LadaService {
      * @return Response object containing a single Poi.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") String id
     ) {

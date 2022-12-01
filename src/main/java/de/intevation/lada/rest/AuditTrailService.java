@@ -63,7 +63,7 @@ import de.intevation.lada.util.data.StatusCodes;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/audit")
+@Path("audit")
 public class AuditTrailService extends LadaService {
 
     /**
@@ -153,7 +153,7 @@ public class AuditTrailService extends LadaService {
      * @param pId ID of probe given in URL path.
      */
     @GET
-    @Path("/probe/{id}")
+    @Path("probe/{id}")
     public String getProbe(
         @PathParam("id") Integer pId
     ) {
@@ -302,7 +302,7 @@ public class AuditTrailService extends LadaService {
      * @param mId ID of Messung given in URL path.
      */
     @GET
-    @Path("/messung/{id}")
+    @Path("messung/{id}")
     public String getMessung(
         @PathParam("id") Integer mId
     ) {

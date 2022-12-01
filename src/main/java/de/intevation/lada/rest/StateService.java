@@ -21,7 +21,7 @@ import de.intevation.lada.model.master.State;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/state")
+@Path("state")
 public class StateService extends LadaService {
 
     /**
@@ -36,7 +36,6 @@ public class StateService extends LadaService {
      * @return Response object containing all State objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         return repository.getAll(State.class);
     }
@@ -48,7 +47,7 @@ public class StateService extends LadaService {
      * @return Response object containing a single State.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {

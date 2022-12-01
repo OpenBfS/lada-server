@@ -35,7 +35,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/commmeasm")
+@Path("commmeasm")
 public class CommMeasmService extends LadaService {
 
     /**
@@ -66,7 +66,6 @@ public class CommMeasmService extends LadaService {
      * not authorized.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
@@ -92,7 +91,7 @@ public class CommMeasmService extends LadaService {
      * @return Response object containing a single CommMeasm.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -116,7 +115,6 @@ public class CommMeasmService extends LadaService {
      * @return A response object containing the created CommMeasm.
      */
     @POST
-    @Path("/")
     public Response create(
         CommMeasm kommentar
     ) {
@@ -146,7 +144,7 @@ public class CommMeasmService extends LadaService {
      * @return Response object containing the updated CommMeasm object.
      */
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
         CommMeasm kommentar
@@ -177,7 +175,7 @@ public class CommMeasmService extends LadaService {
      * @return Response object.
      */
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

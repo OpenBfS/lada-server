@@ -25,7 +25,7 @@ import de.intevation.lada.model.master.GridColMp;
  * REST-Service for preconfigured columns.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/gridcolmp")
+@Path("gridcolmp")
 public class GridColMpService extends LadaService {
 
     @Inject
@@ -40,7 +40,6 @@ public class GridColMpService extends LadaService {
      * @return All GridColMp objects referencing the given query.
      */
     @GET
-    @Path("/")
     public Response getQueries(
         @QueryParam("baseQuery") @NotNull Integer baseQuery
     ) {

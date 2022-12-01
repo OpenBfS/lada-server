@@ -35,7 +35,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/commsample")
+@Path("commsample")
 public class CommSampleService extends LadaService {
 
     /**
@@ -65,7 +65,6 @@ public class CommSampleService extends LadaService {
      * @return Response object containing requested objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
@@ -84,7 +83,7 @@ public class CommSampleService extends LadaService {
      * @return Response object containing a single CommSample.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -99,7 +98,6 @@ public class CommSampleService extends LadaService {
      * @return Response object containing the new CommSample.
      */
     @POST
-    @Path("/")
     public Response create(
         CommSample kommentar
     ) {
@@ -129,7 +127,7 @@ public class CommSampleService extends LadaService {
      * @return Response object containing the updated CommSample object.
      */
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
         CommSample kommentar
@@ -160,7 +158,7 @@ public class CommSampleService extends LadaService {
      * @return Response object.
      */
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

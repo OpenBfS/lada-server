@@ -40,7 +40,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/measm")
+@Path("measm")
 public class MeasmService extends LadaService {
 
     /**
@@ -74,7 +74,6 @@ public class MeasmService extends LadaService {
      * @return Response containing requested objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
@@ -113,7 +112,7 @@ public class MeasmService extends LadaService {
      * @return Response object containing a single Measm.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -139,7 +138,6 @@ public class MeasmService extends LadaService {
      * @return A response object containing the created Measm.
      */
     @POST
-    @Path("/")
     public Response create(
         Measm messung
     ) {
@@ -180,7 +178,7 @@ public class MeasmService extends LadaService {
      * @return Response object containing the updated Measm object.
      */
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
         Measm messung
@@ -226,7 +224,7 @@ public class MeasmService extends LadaService {
      * @return Response object.
      */
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

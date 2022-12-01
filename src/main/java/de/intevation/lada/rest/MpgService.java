@@ -42,7 +42,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/mpg")
+@Path("mpg")
 public class MpgService extends LadaService {
 
     /**
@@ -75,7 +75,7 @@ public class MpgService extends LadaService {
      * @return Response object containing a single Mpg.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -92,7 +92,6 @@ public class MpgService extends LadaService {
      * @return A response object containing the created Mpg.
      */
     @POST
-    @Path("/")
     public Response create(
         Mpg messprogramm
     ) {
@@ -137,7 +136,7 @@ public class MpgService extends LadaService {
      * @return Response object containing the updated Mpg object.
      */
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
         Mpg messprogramm
@@ -189,7 +188,7 @@ public class MpgService extends LadaService {
      * per Mpg.
      */
     @PUT
-    @Path("/aktiv")
+    @Path("aktiv")
     public Response setAktiv(
         JsonObject data
     ) {
@@ -247,7 +246,7 @@ public class MpgService extends LadaService {
      * @return Response object.
      */
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

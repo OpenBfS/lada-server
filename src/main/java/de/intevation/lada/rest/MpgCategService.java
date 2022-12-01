@@ -32,7 +32,7 @@ import de.intevation.lada.model.master.MpgCateg;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/mpgcateg")
+@Path("mpgcateg")
 public class MpgCategService extends LadaService {
 
     /**
@@ -51,7 +51,6 @@ public class MpgCategService extends LadaService {
      * @return Response containing requested objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         List<MpgCateg> kategorie =
             repository.getAllPlain(MpgCateg.class);
@@ -73,7 +72,7 @@ public class MpgCategService extends LadaService {
      * @return Response object containing a single object.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -90,7 +89,6 @@ public class MpgCategService extends LadaService {
     }
 
     @POST
-    @Path("/")
     public Response create(
         MpgCateg kategorie
     ) {
@@ -114,7 +112,7 @@ public class MpgCategService extends LadaService {
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
         MpgCateg kategorie
@@ -141,7 +139,7 @@ public class MpgCategService extends LadaService {
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

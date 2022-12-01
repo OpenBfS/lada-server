@@ -20,7 +20,7 @@ import de.intevation.lada.model.master.TargActMmtGr;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/targactmmtgr")
+@Path("targactmmtgr")
 public class TargActMmtGrService extends LadaService {
 
     /**
@@ -35,7 +35,6 @@ public class TargActMmtGrService extends LadaService {
      * @return Response object containing all TargActMmtGr objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         return repository.getAll(TargActMmtGr.class);
     }

@@ -23,7 +23,7 @@ import de.intevation.lada.model.master.SpatRefSys;
  * REST service for SpatRefSys objects.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/spatrefsys")
+@Path("spatrefsys")
 public class SpatRefSysService extends LadaService {
 
     /**
@@ -63,7 +63,6 @@ public class SpatRefSysService extends LadaService {
      * @return Response object containing all SpatRefSys objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         return repository.getAll(SpatRefSys.class);
     }
@@ -75,7 +74,7 @@ public class SpatRefSysService extends LadaService {
      * @return Response object containing a single SpatRefSys.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -83,7 +82,6 @@ public class SpatRefSysService extends LadaService {
     }
 
     @POST
-    @Path("/")
     public Response recalculate(
         PostData object
     ) {

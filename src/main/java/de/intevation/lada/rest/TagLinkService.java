@@ -32,7 +32,7 @@ import de.intevation.lada.util.rest.Response;
  * REST-Service for associations of tags to objects.
  */
 
-@Path("/tag/taglink")
+@Path("tag/taglink")
 public class TagLinkService extends LadaService {
 
     @Inject
@@ -55,7 +55,6 @@ public class TagLinkService extends LadaService {
      * @return Response with list of Response objects for each reference.
      */
     @POST
-    @Path("/")
     public Response createTagReference(
         List<TagLink> tagLinks
     ) {
@@ -114,7 +113,7 @@ public class TagLinkService extends LadaService {
      * @return Response with list of Response objects for each reference.
      */
     @POST
-    @Path("/delete")
+    @Path("delete")
     public Response deleteTagReference(
         List<TagLink> tagLinks
     ) {

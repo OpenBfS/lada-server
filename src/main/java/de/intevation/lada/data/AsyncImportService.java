@@ -43,7 +43,7 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href = "mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/import/async")
+@Path("import/async")
 public class AsyncImportService extends LadaService {
 
     /**
@@ -70,7 +70,7 @@ public class AsyncImportService extends LadaService {
     ImportJobManager importJobManager;
 
     @POST
-    @Path("/laf")
+    @Path("laf")
     public Response createAsyncImport(
         JsonObject jsonInput,
         @Context HttpServletRequest request
@@ -125,7 +125,7 @@ public class AsyncImportService extends LadaService {
      *         or status 404 if job was not found
      */
     @GET
-    @Path("/status/{id}")
+    @Path("status/{id}")
     public Response getStatus(
         @PathParam("id") String id
     ) {
@@ -155,7 +155,7 @@ public class AsyncImportService extends LadaService {
     }
 
     @GET
-    @Path("/result/{id}")
+    @Path("result/{id}")
     public Response getResult(
         @PathParam("id") String id
     ) {

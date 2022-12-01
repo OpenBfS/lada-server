@@ -28,7 +28,7 @@ import de.intevation.lada.model.master.ReiAgGrEnvMediumMp;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/envmedium")
+@Path("envmedium")
 public class EnvMediumService extends LadaService {
 
     /**
@@ -45,7 +45,6 @@ public class EnvMediumService extends LadaService {
      * @return Response containing requested objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("reiAgGrId") Integer reiAgGrId
     ) {
@@ -77,7 +76,7 @@ public class EnvMediumService extends LadaService {
      * @return Response object containing a single EnvMedium.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") String id
     ) {

@@ -35,7 +35,7 @@ import de.intevation.lada.model.master.DatasetCreator;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/datasetcreator")
+@Path("datasetcreator")
 public class DatasetCreatorService extends LadaService {
 
     /**
@@ -54,7 +54,6 @@ public class DatasetCreatorService extends LadaService {
      * @return Response containing requested objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         List<DatasetCreator> datasetCreators =
             repository.getAllPlain(DatasetCreator.class);
@@ -78,7 +77,7 @@ public class DatasetCreatorService extends LadaService {
      * @return Response object
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -95,7 +94,6 @@ public class DatasetCreatorService extends LadaService {
     }
 
     @POST
-    @Path("/")
     public Response create(
         DatasetCreator datensatzerzeuger
     ) {
@@ -122,7 +120,7 @@ public class DatasetCreatorService extends LadaService {
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
         DatasetCreator datensatzerzeuger
@@ -152,7 +150,7 @@ public class DatasetCreatorService extends LadaService {
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

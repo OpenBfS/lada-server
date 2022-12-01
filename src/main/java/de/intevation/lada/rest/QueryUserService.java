@@ -45,7 +45,7 @@ import de.intevation.lada.model.master.QueryUser;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/queryuser")
+@Path("queryuser")
 public class QueryUserService extends LadaService {
 
     @Inject
@@ -66,7 +66,6 @@ public class QueryUserService extends LadaService {
      *         messstelle or owned by the default user.
      */
     @GET
-    @Path("/")
     public Response getQueries() {
         UserInfo userInfo = authorization.getInfo();
         EntityManager em = repository.entityManager();
@@ -108,7 +107,6 @@ public class QueryUserService extends LadaService {
      * Create a new query_user object in the database.
      */
     @POST
-    @Path("/")
     public Response create(
         QueryUser query
     ) {
@@ -133,7 +131,7 @@ public class QueryUserService extends LadaService {
      * Update an existing query_user object in the database.
      */
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         QueryUser query
     ) {
@@ -202,7 +200,7 @@ public class QueryUserService extends LadaService {
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

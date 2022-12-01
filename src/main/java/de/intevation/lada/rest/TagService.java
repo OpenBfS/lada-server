@@ -42,7 +42,7 @@ import de.intevation.lada.util.rest.Response;
  * REST-Service for tags.
  */
 
-@Path("/tag")
+@Path("tag")
 public class TagService extends LadaService {
 
     @Inject
@@ -58,7 +58,7 @@ public class TagService extends LadaService {
      * @return Response containing the tag
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") String id
     ) {
@@ -76,7 +76,6 @@ public class TagService extends LadaService {
      * @return Response with list of Tag objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("sampleId") Set<Integer> sampleIds,
         @QueryParam("measmId") Set<Integer> measmIds
@@ -120,7 +119,7 @@ public class TagService extends LadaService {
      * @return Response object containing the updated tag object
      */
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         @PathParam("id") String id,
         Tag tag
@@ -186,7 +185,6 @@ public class TagService extends LadaService {
      * @return Response object
      */
     @POST
-    @Path("/")
     public Response create(
         Tag tag
     ) {
@@ -222,7 +220,7 @@ public class TagService extends LadaService {
      * @return Response object
      */
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

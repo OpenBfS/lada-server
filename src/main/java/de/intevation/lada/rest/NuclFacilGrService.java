@@ -28,7 +28,7 @@ import de.intevation.lada.model.master.NuclFacilGrMp;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/nuclfacilgr")
+@Path("nuclfacilgr")
 public class NuclFacilGrService extends LadaService {
 
     /**
@@ -44,7 +44,6 @@ public class NuclFacilGrService extends LadaService {
      * @return Response containing the requested objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("nuclFacilId") Integer nuclFacilId
     ) {
@@ -76,7 +75,7 @@ public class NuclFacilGrService extends LadaService {
      * @return Response object containing a single NuclFacilGr.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {

@@ -27,7 +27,7 @@ import de.intevation.lada.model.master.Measd;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/measd")
+@Path("measd")
 public class MeasdService extends LadaService {
 
     /**
@@ -44,7 +44,6 @@ public class MeasdService extends LadaService {
      * @return Response containing requested objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("mmtId") @Pattern(regexp = ".+") String mmtId
     ) {
@@ -74,7 +73,7 @@ public class MeasdService extends LadaService {
      * @return Response object containing a single Measd.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {

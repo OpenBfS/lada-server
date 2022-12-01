@@ -21,7 +21,7 @@ import de.intevation.lada.model.master.SampleMeth;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/samplemeth")
+@Path("samplemeth")
 public class SampleMethService extends LadaService {
 
     /**
@@ -36,7 +36,6 @@ public class SampleMethService extends LadaService {
      * @return Response object containing all SampleMeth objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         return repository.getAll(SampleMeth.class);
     }
@@ -48,7 +47,7 @@ public class SampleMethService extends LadaService {
      * @return Response object containing a single SampleMeth.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {

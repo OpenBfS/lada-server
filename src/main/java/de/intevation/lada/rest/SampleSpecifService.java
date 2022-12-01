@@ -26,7 +26,7 @@ import de.intevation.lada.model.master.SampleSpecif;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/samplespecif")
+@Path("samplespecif")
 public class SampleSpecifService extends LadaService {
 
     /**
@@ -43,7 +43,6 @@ public class SampleSpecifService extends LadaService {
      * @return Response containing requested objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("envMediumId") @Pattern(regexp = ".+") String envMediumId
     ) {
@@ -76,7 +75,7 @@ public class SampleSpecifService extends LadaService {
      * @return Response object containing a single SampleSpecif.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") String id
     ) {

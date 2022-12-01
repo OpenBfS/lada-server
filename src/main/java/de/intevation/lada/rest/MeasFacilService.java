@@ -24,7 +24,7 @@ import de.intevation.lada.model.master.MeasFacil;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/measfacil")
+@Path("measfacil")
 public class MeasFacilService extends LadaService {
 
     /**
@@ -46,7 +46,6 @@ public class MeasFacilService extends LadaService {
      * @return Response object containing all MeasFacil objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         return repository.getAll(MeasFacil.class);
     }
@@ -58,7 +57,7 @@ public class MeasFacilService extends LadaService {
      * @return Response object containing a single MeasFacil.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") String id
     ) {

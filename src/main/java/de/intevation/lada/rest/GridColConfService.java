@@ -44,7 +44,7 @@ import de.intevation.lada.model.master.QueryUser;
  * The services produce data in the application/json media type.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/gridcolconf")
+@Path("gridcolconf")
 public class GridColConfService extends LadaService {
 
     @Inject
@@ -60,7 +60,6 @@ public class GridColConfService extends LadaService {
      * @return GridColConf objects referencing the given query ID.
      */
     @GET
-    @Path("/")
     public Response getQueries(
         @QueryParam("queryUser") @NotNull Integer queryUser
     ) {
@@ -103,7 +102,6 @@ public class GridColConfService extends LadaService {
      * @return Response containing the created record.
      */
     @POST
-    @Path("/")
     public Response create(
         GridColConf gridColumnValue
     ) {
@@ -133,7 +131,7 @@ public class GridColConfService extends LadaService {
      * @return Response containing the updated record.
      */
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         GridColConf gridColumnValue
     ) {
@@ -165,7 +163,7 @@ public class GridColConfService extends LadaService {
      * @return Response containing the deleted record.
      */
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

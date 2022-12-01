@@ -40,7 +40,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/geolocat")
+@Path("geolocat")
 public class GeolocatService extends LadaService {
 
     /**
@@ -76,7 +76,6 @@ public class GeolocatService extends LadaService {
      * @return Response containing requested objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
@@ -110,7 +109,7 @@ public class GeolocatService extends LadaService {
      * @return Response object containing a single Geolocat.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -132,7 +131,6 @@ public class GeolocatService extends LadaService {
      * @return A response object containing the created Ort.
      */
     @POST
-    @Path("/")
     public Response create(
         Geolocat ort
     ) {
@@ -168,7 +166,7 @@ public class GeolocatService extends LadaService {
      * @return Response object containing the updated Geolocat object.
      */
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
         Geolocat ort
@@ -210,7 +208,7 @@ public class GeolocatService extends LadaService {
      * @return Response object.
      */
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

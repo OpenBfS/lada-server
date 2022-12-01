@@ -27,7 +27,7 @@ import de.intevation.lada.model.master.UnitConvers;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/measunit")
+@Path("measunit")
 public class MeasUnitService extends LadaService {
 
     /**
@@ -52,7 +52,6 @@ public class MeasUnitService extends LadaService {
      * @return Response containing requested objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("measUnitId") Integer measUnitId,
         @QueryParam("secMeasUnitId") Integer secMeasUnitId
@@ -103,7 +102,7 @@ public class MeasUnitService extends LadaService {
      * @return Response object containing a single MeasUnit.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {

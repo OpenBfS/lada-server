@@ -21,7 +21,7 @@ import de.intevation.lada.model.master.TypeRegulation;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/typeregulation")
+@Path("typeregulation")
 public class TypeRegulationService extends LadaService {
 
     /**
@@ -36,7 +36,6 @@ public class TypeRegulationService extends LadaService {
      * @return Response object containing all TypeRegulation objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         return repository.getAll(TypeRegulation.class);
     }
@@ -48,7 +47,7 @@ public class TypeRegulationService extends LadaService {
      * @return Response object containing a single TypeRegulation.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") String id
     ) {

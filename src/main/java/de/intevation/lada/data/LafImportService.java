@@ -56,7 +56,7 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href = "mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/import")
+@Path("import")
 public class LafImportService extends LadaService {
 
     /**
@@ -124,7 +124,7 @@ public class LafImportService extends LadaService {
      * </pre>
      */
     @POST
-    @Path("/laf/list")
+    @Path("laf/list")
     public Response multiUpload(
         UploadJson jsonInput,
         @Context HttpServletRequest request
@@ -270,7 +270,7 @@ public class LafImportService extends LadaService {
      */
     @Deprecated(since = "2021-02-10", forRemoval = true)
     @POST
-    @Path("/laf")
+    @Path("laf")
     @Consumes(MediaType.TEXT_PLAIN)
     public Response upload(
         String content,

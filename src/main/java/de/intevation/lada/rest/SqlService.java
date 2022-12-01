@@ -31,7 +31,7 @@ import de.intevation.lada.util.rest.Response;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/sql")
+@Path("sql")
 public class SqlService extends LadaService {
 
     /**
@@ -66,7 +66,6 @@ public class SqlService extends LadaService {
      * @return JSON object with query string as data element
      */
     @POST
-    @Path("/")
     public Response execute(
         QueryColumns columns
     ) {

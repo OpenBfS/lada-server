@@ -31,7 +31,7 @@ import de.intevation.lada.model.master.MunicDiv;
  * REST service for MunicDiv objects.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/municdiv")
+@Path("municdiv")
 public class MunicDivService extends LadaService {
 
     /**
@@ -50,7 +50,6 @@ public class MunicDivService extends LadaService {
      * @return Response containing requested objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         List<MunicDiv> gemUntergliederung =
             repository.getAllPlain(MunicDiv.class);
@@ -72,7 +71,7 @@ public class MunicDivService extends LadaService {
      * @return Response object containing a single object.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -89,7 +88,6 @@ public class MunicDivService extends LadaService {
     }
 
     @POST
-    @Path("/")
     public Response create(
         MunicDiv gemUntergliederung
     ) {
@@ -115,7 +113,7 @@ public class MunicDivService extends LadaService {
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
         MunicDiv gemUntergliederung
@@ -142,7 +140,7 @@ public class MunicDivService extends LadaService {
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

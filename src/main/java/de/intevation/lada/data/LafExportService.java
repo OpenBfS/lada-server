@@ -56,7 +56,7 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href = "mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/export")
+@Path("export")
 public class LafExportService extends LadaService {
 
     @Inject
@@ -87,7 +87,7 @@ public class LafExportService extends LadaService {
      * @return The LAF file to export.
      */
     @POST
-    @Path("/laf")
+    @Path("laf")
     @Produces("application/octet-stream")
     public Response download(
         JsonObject objects,

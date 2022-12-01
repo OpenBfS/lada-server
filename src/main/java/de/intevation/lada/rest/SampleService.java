@@ -52,7 +52,7 @@ import de.intevation.lada.validation.annotation.ValidationConfig;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/sample")
+@Path("sample")
 public class SampleService extends LadaService {
 
     /**
@@ -125,7 +125,7 @@ public class SampleService extends LadaService {
      * @return Response object containing a single Sample.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {
@@ -149,7 +149,6 @@ public class SampleService extends LadaService {
      * @return Response object containing the new probe object.
      */
     @POST
-    @Path("/")
     public Response create(
         Sample probe
     ) {
@@ -217,7 +216,7 @@ public class SampleService extends LadaService {
      * @return Response object containing the new probe objects.
      */
     @POST
-    @Path("/messprogramm")
+    @Path("messprogramm")
     public Response createFromMessprogramm(
         PostData object
     ) {
@@ -314,7 +313,7 @@ public class SampleService extends LadaService {
      * @return Response object containing the updated Sample object.
      */
     @PUT
-    @Path("/{id}")
+    @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
         Sample probe
@@ -374,7 +373,7 @@ public class SampleService extends LadaService {
      * @return Response object.
      */
     @DELETE
-    @Path("/{id}")
+    @Path("{id}")
     public Response delete(
         @PathParam("id") Integer id
     ) {

@@ -50,7 +50,7 @@ import org.jboss.logging.Logger;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/user")
+@Path("user")
 public class UserService extends LadaService {
 
     @Inject
@@ -82,7 +82,6 @@ public class UserService extends LadaService {
      * @return Response object containing login data.
      */
     @GET
-    @Path("/")
     public Response get() {
         UserInfo userInfo = authorization.getInfo();
         Map<String, Object> response = new HashMap<String, Object>();

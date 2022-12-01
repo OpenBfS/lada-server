@@ -33,7 +33,7 @@ import de.intevation.lada.util.rest.Response;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/statusval")
+@Path("statusval")
 public class StatusValService extends LadaService {
 
     /**
@@ -53,7 +53,6 @@ public class StatusValService extends LadaService {
      * @return Response object containing all StatusVal objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("measmId") Integer measmId
     ) {
@@ -70,7 +69,7 @@ public class StatusValService extends LadaService {
      * @return Response object containing a single StatusVal.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {

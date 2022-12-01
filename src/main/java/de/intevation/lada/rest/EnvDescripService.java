@@ -28,7 +28,7 @@ import de.intevation.lada.model.master.EnvDescrip;
  * A typical response holds information about the action performed and the data.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/envdescrip")
+@Path("envdescrip")
 public class EnvDescripService extends LadaService {
 
     /**
@@ -48,7 +48,6 @@ public class EnvDescripService extends LadaService {
      * @return Response object containing the EnvDescrip objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("lev") @NotNull Integer lev,
         @QueryParam("predId") List<Integer> predIds
@@ -70,7 +69,7 @@ public class EnvDescripService extends LadaService {
      * @return Response object containing a single EnvDescrip.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {

@@ -22,7 +22,7 @@ import de.intevation.lada.model.master.EnvSpecifMp;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/envspecifmp")
+@Path("envspecifmp")
 public class EnvSpecifMpService extends LadaService {
 
     /**
@@ -37,7 +37,6 @@ public class EnvSpecifMpService extends LadaService {
      * @return Response containing requested objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         return repository.getAll(EnvSpecifMp.class);
     }
@@ -49,7 +48,7 @@ public class EnvSpecifMpService extends LadaService {
      * @return Response object
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") Integer id
     ) {

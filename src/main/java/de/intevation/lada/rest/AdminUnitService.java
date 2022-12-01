@@ -24,7 +24,7 @@ import de.intevation.lada.model.master.AdminUnit;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/adminunit")
+@Path("adminunit")
 public class AdminUnitService extends LadaService {
 
     /**
@@ -43,7 +43,6 @@ public class AdminUnitService extends LadaService {
      * @return Response containing requested objects.
      */
     @GET
-    @Path("/")
     public Response get(
         @QueryParam("name") @Pattern(regexp = ".+") String name
     ) {
@@ -63,7 +62,7 @@ public class AdminUnitService extends LadaService {
      * @return Response object containing a single AdminUnit.
      */
     @GET
-    @Path("/{id}")
+    @Path("{id}")
     public Response getById(
         @PathParam("id") String id
     ) {

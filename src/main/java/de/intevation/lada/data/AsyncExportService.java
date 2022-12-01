@@ -55,7 +55,7 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
-@Path("/asyncexport")
+@Path("asyncexport")
 public class AsyncExportService extends LadaService {
 
     @Inject
@@ -131,7 +131,7 @@ public class AsyncExportService extends LadaService {
      * @return Response containing the new export ref id
      */
     @POST
-    @Path("/csv")
+    @Path("csv")
     public Response createCsvExportJob(
         JsonObject objects,
         @Context HttpServletRequest request
@@ -194,7 +194,7 @@ public class AsyncExportService extends LadaService {
      * @return The job identifier.
      */
     @POST
-    @Path("/laf")
+    @Path("laf")
     public Response createLafExportJob(
         JsonObject objects,
         @Context HttpServletRequest request
@@ -280,7 +280,7 @@ public class AsyncExportService extends LadaService {
      * @return Response containing the new export ref id
      */
     @POST
-    @Path("/json")
+    @Path("json")
     public Response createJsonExportJob(
         JsonObject objects,
         @Context HttpServletRequest request
@@ -319,7 +319,7 @@ public class AsyncExportService extends LadaService {
      *         or status 404 if job was not found
      */
     @GET
-    @Path("/status/{id}")
+    @Path("status/{id}")
     public Response getStatus(
         @PathParam("id") String id
     ) {

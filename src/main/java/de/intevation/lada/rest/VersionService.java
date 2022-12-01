@@ -42,7 +42,7 @@ import de.intevation.lada.util.rest.Response;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/version")
+@Path("version")
 public class VersionService extends LadaService {
 
     @Inject
@@ -56,7 +56,6 @@ public class VersionService extends LadaService {
      * @return Response object containing version.
      */
     @GET
-    @Path("/")
     public Response get() {
         String version = "unknown";
         try {

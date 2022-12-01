@@ -20,7 +20,7 @@ import de.intevation.lada.model.master.TargEnvGr;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("/targenvgr")
+@Path("targenvgr")
 public class TargEnvGrService extends LadaService {
 
     /**
@@ -35,7 +35,6 @@ public class TargEnvGrService extends LadaService {
      * @return Response object containing all TargEnvGr objects.
      */
     @GET
-    @Path("/")
     public Response get() {
         return repository.getAll(TargEnvGr.class);
     }
