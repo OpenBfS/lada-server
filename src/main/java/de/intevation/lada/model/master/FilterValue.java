@@ -9,7 +9,6 @@ package de.intevation.lada.model.master;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
@@ -25,10 +24,8 @@ public class FilterValue implements Serializable {
     @Id
     private Integer id;
 
-    @Column(name = "filter_id")
     private Integer filterId;
 
-    @Column(name = "user_id")
     private Integer userId;
 
     private String value;

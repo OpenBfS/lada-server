@@ -23,7 +23,6 @@ public class SpatRefSys implements Serializable {
     @Id
     private Integer id;
 
-    @Column(name = "idf_geo_key")
     private String idfGeoKey;
 
     private String name;
