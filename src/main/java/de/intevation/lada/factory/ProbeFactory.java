@@ -36,7 +36,7 @@ import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
+
 
 /**
  * This factory creates probe objects and its children using a messprogramm
@@ -395,7 +395,7 @@ public class ProbeFactory {
      * @param   messprogramm    The messprogramm containing probe details
      * @param   startDate       The date for 'solldatumbeginn'
      * @param   endDate         The date for 'solldatumende'
-     *
+     * @param   dryrun          Do not persist created objects
      * @return The new probe object.
      */
     private Probe createObjects(
@@ -414,9 +414,7 @@ public class ProbeFactory {
         QueryBuilder<MessprogrammMmt> builder =
             repository.queryBuilder(MessprogrammMmt.class);
         builder.and("messprogrammId", messprogramm.getId());
-        Response response = repository.filter(builder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<MessprogrammMmt> mmts = (List<MessprogrammMmt>) response.getData();
+        List<MessprogrammMmt> mmts = repository.filterPlain(builder.getQuery());
         List<String> messungProtocol = new ArrayList<>();
         List<Probe> proben =
             repository.filterPlain(builderProbe.getQuery());
@@ -653,10 +651,7 @@ public class ProbeFactory {
             }
             builder.and("sn", mediaDesk[i]);
             builder.and("ebene", i - 1);
-            Response response =
-                repository.filter(builder.getQuery());
-            @SuppressWarnings("unchecked")
-            List<Deskriptoren> data = (List<Deskriptoren>) response.getData();
+            List<Deskriptoren> data = repository.filterPlain(builder.getQuery());
             if (data.isEmpty()) {
                 return null;
             }
@@ -697,11 +692,7 @@ public class ProbeFactory {
                 builder.and(field, null);
             }
         }
-        Response response =
-            repository.filter(builder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<DeskriptorUmwelt> data =
-            (List<DeskriptorUmwelt>) response.getData();
+        List<DeskriptorUmwelt> data = repository.filterPlain(builder.getQuery());
         if (data.isEmpty()) {
             return null;
         }
@@ -863,23 +854,19 @@ public class ProbeFactory {
     }
 
     /**
-     * Find the minimal deskriptor string for the specified umwelt id
+     * Find the minimal deskriptor string for the specified umwelt id.
      *
-     * @param   umId  The umwelt id.
+     * @param   umwId  The umwelt id.
      *
-     * @return The deskripto string.
+     * @return The deskriptor string.
      */
     private String getInitialMediaDesk(String umwId) {
         logger.debug("getInitialMediaDesk - umw_id: " + umwId);
         String mediaDesk = "D:";
         QueryBuilder<DeskriptorUmwelt> builder =
             repository.queryBuilder(DeskriptorUmwelt.class);
-        builder.and("umwId",umwId);
-        Response response =
-            repository.filter(builder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<DeskriptorUmwelt> data =
-            (List<DeskriptorUmwelt>) response.getData();
+        builder.and("umwId", umwId);
+        List<DeskriptorUmwelt> data = repository.filterPlain(builder.getQuery());
         if (data.isEmpty()) {
             logger.debug("getInitialMediaDesk - media_desk : D: 00 00 00 00 00 00 00 00 00 00 00 00");
             return "D: 00 00 00 00 00 00 00 00 00 00 00 00";
