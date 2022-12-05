@@ -83,27 +83,24 @@ Vollständigen Setup inklusive LADA-Client, in dem jeweils der auf dem Host
 vorhandene Quellcode in die Container gemounted wird, so dass auf dem Host
 durchgeführte Änderungen leicht innerhalb der Container getestet werden können.
 
-Aufsetzen von Datenbank und LADA-Server:
- $ docker-compose up -d
-
-Bauen des Client-Images:
- $ cd your/repo/of/lada-client
+Bauen des Client-Images (es wird angenommen, dass der Client-Quellcode sich im
+Verzeichnis "client" neben diesem Verzeichnis befindet):
+ $ cd ../client
  $ docker build -t koala/lada_client .
 
 Oder für Shibboleth-Unterstützung:
  $ docker build -f shibboleth/Dockerfile -t koala/lada_idp shibboleth
- $ cd your/repo/of/lada-client
+ $ cd ../client
  $ docker build -f Dockerfile.shibboleth -t koala/lada_client .
 
-Starten der Container:
+Starten der Anwendung:
+ $ docker-compose up -d
+
+Zusätzlich (optional) für Shibboleth-Unterstützung:
  $ docker run --name lada-idp --net=lada_network \
              -p 20080:80 -p 28080:8080 -p 20443:443 -p 28443:8443 \
              -v $PWD/shibboleth:/usr/local/lada_shib/sources \
              -d koala/lada_idp
- $ cd your/repo/of/lada-client
- $ docker run --name lada-client --net=lada_network \
-              -v $PWD:/usr/local/lada \
-              -p 8180-8185:80-85 -d koala/lada_client
 
 Innerhalb des Client-Containers muss dann noch folgendes ausgeführt werden,
 wenn zum ersten mal your/repo/of/lada-client als Volume in einen Container

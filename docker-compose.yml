@@ -25,6 +25,17 @@ services:
       - 9990:9990 # Wildfly management console
       - 8787:8787 # Remote debugging of server code
       - 5005:5005 # Remote debugging of test code
+  client:
+    container_name: "lada-client"
+    image: "koala/lada_client"
+    networks:
+      - lada_network
+    depends_on:
+      - server
+    volumes:
+      - ../client:/usr/local/lada # Assumes client checkout in ../client
+    ports:
+      - 8180-8185:80-85
 networks:
   lada_network:
     name: lada_network
