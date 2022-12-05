@@ -97,7 +97,7 @@ RUN $JBOSS_HOME/bin/jboss-cli.sh --file=wildfly/commands.cli
 #
 # Build and deploy LADA-server
 #
-RUN mvn compile package && \
+RUN mvn -q package && \
     mv target/lada-server-*.war \
        $JBOSS_HOME/standalone/deployments/lada-server.war && \
     touch $JBOSS_HOME/standalone/deployments/lada-server.war.dodeploy
