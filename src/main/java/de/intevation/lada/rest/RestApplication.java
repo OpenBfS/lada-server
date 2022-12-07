@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.ApplicationPath;
@@ -19,8 +20,12 @@ import de.intevation.lada.util.rest.LadaApplication;
  */
 @ApplicationPath("/rest")
 public class RestApplication extends LadaApplication {
+
     @Override
     public Set<Class<?>> getClasses() {
-        return getClassesInPackage(RestApplication.class.getPackageName());
+        Set<Class<?>> classes = new HashSet<>();
+        classes.addAll(getServiceClasses(RestApplication.class.getPackageName()));
+        classes.addAll(getProviderClasses());
+        return classes;
     }
 }

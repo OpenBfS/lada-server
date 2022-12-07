@@ -386,6 +386,12 @@
             <version>31.1-jre</version>
         </dependency>
 
+        <!-- Classgraph -->
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.8.151</version>
+        </dependency>
 
         <!-- Arquillian/Testing -->
         <dependency>

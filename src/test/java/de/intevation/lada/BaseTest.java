@@ -102,7 +102,7 @@ public class BaseTest {
         addWithDependencies("org.geotools:gt-referencing", archive);
         addWithDependencies("org.geotools:gt-epsg-hsql", archive);
         addWithDependencies("org.geotools:gt-opengis", archive);
-        addWithDependencies("com.google.guava:guava", archive);
+        addWithDependencies("io.github.classgraph:classgraph", archive);
         return archive;
     }
 

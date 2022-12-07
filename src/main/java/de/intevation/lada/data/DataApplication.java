@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.data;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.ApplicationPath;
@@ -18,8 +19,12 @@ import de.intevation.lada.util.rest.LadaApplication;
  */
 @ApplicationPath("/data")
 public class DataApplication extends LadaApplication {
+
     @Override
     public Set<Class<?>> getClasses() {
-        return getClassesInPackage(DataApplication.class.getPackageName());
+        Set<Class<?>> classes = new HashSet<>();
+        classes.addAll(getServiceClasses(DataApplication.class.getPackageName()));
+        classes.addAll(getProviderClasses());
+        return classes;
     }
 }

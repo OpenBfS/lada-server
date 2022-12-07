@@ -7,13 +7,16 @@
  */
 package de.intevation.lada.util.rest;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.core.Application;
+import javax.ws.rs.ext.Provider;
 
-import com.google.common.reflect.ClassPath;
+import de.intevation.lada.rest.LadaService;
+
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 
 
 /**
@@ -21,17 +24,40 @@ import com.google.common.reflect.ClassPath;
  */
 public class LadaApplication extends Application {
 
-    protected Set<Class<?>> getClassesInPackage(String packageName) {
-        ClassPath cp;
-        try {
-            cp = ClassPath.from(LadaApplication.class.getClassLoader());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-        Set<ClassPath.ClassInfo> infos = cp.getTopLevelClasses(packageName);
+    /**
+     * Get all service classes in the given package.
+     *
+     * Service classes are all classes extending LadaService
+     * @param packageName Package name to check
+     * @return Set of classes
+     */
+    protected Set<Class<?>> getServiceClasses(String packageName) {
         Set<Class<?>> classes = new HashSet<>();
-        infos.forEach(info -> classes.add(info.load()));
+
+        try (ScanResult packageResult = new ClassGraph().enableAllInfo()
+                .acceptPackages(packageName).scan()) {
+            classes.addAll(packageResult.getAllClasses()
+                .filter(info -> info.extendsSuperclass(LadaService.class)
+                    && !info.isInnerClass())
+                .loadClasses());
+        }
+        return classes;
+    }
+
+    /**
+     * Get all classes annotated with javax.ws.rs.ext.Provider
+     *
+     * Note: Scan results are limited to the de.intevation.lada package.
+     * @return Set of classes
+     */
+    protected Set<Class<?>> getProviderClasses() {
+        Set<Class<?>> classes = new HashSet<>();
+        try (ScanResult packageResult = new ClassGraph().enableAllInfo()
+                .acceptPackages("de.intevation.lada").scan()) {
+            classes.addAll(packageResult.getAllClasses()
+                .filter(info -> info.hasAnnotation(Provider.class))
+                .loadClasses());
+        }
         return classes;
     }
 }
