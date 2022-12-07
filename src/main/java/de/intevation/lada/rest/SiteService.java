@@ -395,7 +395,7 @@ public class SiteService extends LadaService {
             Predicate filter =
                 mesBuilder.equal(root.get("sampleId"), zuordnung.getSampleId());
             filter = mesBuilder
-                .and(filter, join.get("statusKombi")
+                .and(filter, join.get("statusComb")
                 .in(Arrays.asList("2", "6", "10")));
             criteriaQuery.where(filter);
             List<Measm> messungs =
