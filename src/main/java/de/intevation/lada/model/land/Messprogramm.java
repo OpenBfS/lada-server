@@ -127,7 +127,7 @@ public class Messprogramm implements Serializable {
     private String probenahmeMenge;
 
     @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "mpr_id")
+    @JoinColumn(name = "mpr_id", updatable = false, insertable = false)
     private Set<Probe> proben;
 
     @ManyToMany (fetch = FetchType.EAGER)
