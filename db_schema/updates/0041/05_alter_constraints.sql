@@ -28,7 +28,7 @@ ALTER TABLE lada.measm RENAME CONSTRAINT messung_id_ext_id_key TO measm_id_ext_i
 ALTER TABLE lada.measm RENAME CONSTRAINT messung_id_nebenproben_nr_key TO measm_id_min_sample_id_key;
 ALTER TABLE lada.measm RENAME CONSTRAINT messung_probe_id_fkey TO measm_sample_id_fkey;
 ALTER TABLE lada.measm RENAME CONSTRAINT messung_mmt_id_fkey TO measm_mmt_id_fkey;
-ALTER TABLE lada.mpg RENAME CONSTRAINT messprogramm_media_desk_check TO mpg_env_descrip_id_check;
+ALTER TABLE lada.mpg RENAME CONSTRAINT messprogramm_media_desk_check TO mpg_env_descrip_display_check;
 ALTER TABLE lada.mpg RENAME CONSTRAINT messprogramm_gueltig_von_check TO mpg_valid_start_date_check;
 ALTER TABLE lada.mpg RENAME CONSTRAINT messprogramm_gueltig_bis_check TO mpg_valid_end_date_check;
 ALTER TABLE lada.mpg RENAME CONSTRAINT messprogramm_check TO mpg_check;

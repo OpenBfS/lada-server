@@ -11,7 +11,8 @@ COMMENT ON COLUMN sample.main_sample_id IS 'external sample id';
 COMMENT ON COLUMN sample.opr_mode_id IS 'ID of operation mode (normal/Routine oder Störfall/intensiv)';
 COMMENT ON COLUMN sample.sample_meth_id IS 'ID of sample method (Einzel-, Sammel-, Misch- ...Probe)';
 COMMENT ON COLUMN sample.env_descrip_name IS 'dekodierte Medienbezeichnung (aus env_descrip_display abgeleitet)';
+COMMENT ON COLUMN mpg.env_descrip_display IS 'Mediencodierung (Deskriptoren oder ADV-Codierung)';
 COMMENT ON COLUMN sample.env_medium_id IS 'ID for environmental medium';
-COMMENT ON COLUMN mpg.env_descrip_id IS 'dekodierte Medienbezeichnung (aus env_descrip_id abgeleitet)';
+
 
 --COMMIT;
