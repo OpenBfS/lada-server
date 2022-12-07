@@ -8,7 +8,9 @@
 package de.intevation.lada.util.rest;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Application;
 import javax.ws.rs.ext.Provider;
@@ -31,15 +33,19 @@ public class LadaApplication extends Application {
      * @param packageName Package name to check
      * @return Set of classes
      */
-    protected Set<Class<?>> getServiceClasses(String packageName) {
-        Set<Class<?>> classes = new HashSet<>();
+    @SuppressWarnings("unchecked")
+    protected Set<Class<? extends LadaService>> getServiceClasses(String packageName) {
+        Set<Class<? extends LadaService>> classes;
 
         try (ScanResult packageResult = new ClassGraph().enableAllInfo()
                 .acceptPackages(packageName).scan()) {
-            classes.addAll(packageResult.getAllClasses()
+            List<Class<?>> result = packageResult.getAllClasses()
                 .filter(info -> info.extendsSuperclass(LadaService.class)
                     && !info.isInnerClass())
-                .loadClasses());
+                .loadClasses();
+            classes = result.stream()
+                .map(clazz -> (Class<? extends LadaService>) clazz)
+                .collect(Collectors.toSet());
         }
         return classes;
     }
