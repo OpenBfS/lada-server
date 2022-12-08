@@ -25,6 +25,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.MultivaluedMap;
 
 import de.intevation.lada.model.stammdaten.ProbenZusatz;
@@ -80,6 +81,7 @@ public class Messprogramm implements Serializable {
     @Column(name = "letzte_aenderung", insertable = false)
     private Timestamp letzteAenderung;
 
+    @Pattern(regexp = ".* .*")
     @Column(name = "media_desk")
     private String mediaDesk;
 

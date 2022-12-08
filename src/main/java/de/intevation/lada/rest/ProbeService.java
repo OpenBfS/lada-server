@@ -16,6 +16,7 @@ import java.util.Map;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.inject.Inject;
 import javax.persistence.TransactionRequiredException;
+import javax.validation.Valid;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -220,7 +221,7 @@ public class ProbeService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        Probe probe
+        @Valid Probe probe
     ) {
         if (!authorization.isAuthorized(
                 probe,
@@ -411,7 +412,7 @@ public class ProbeService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        Probe probe
+        @Valid Probe probe
     ) {
         if (!authorization.isAuthorized(
                 probe,

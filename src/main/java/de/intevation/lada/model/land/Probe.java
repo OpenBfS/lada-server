@@ -23,6 +23,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.hibernate.annotations.DynamicInsert;
@@ -65,6 +66,7 @@ public class Probe implements Serializable {
 
     private String media;
 
+    @Pattern(regexp = ".* .*")
     private String mediaDesk;
 
     private Long mittelungsdauer;

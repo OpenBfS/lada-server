@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.validation.Valid;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -163,7 +164,7 @@ public class MessprogrammService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        Messprogramm messprogramm
+        @Valid Messprogramm messprogramm
     ) {
         if (!authorization.isAuthorized(
                 messprogramm,
@@ -237,7 +238,7 @@ public class MessprogrammService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        Messprogramm messprogramm
+        @Valid Messprogramm messprogramm
     ) {
         if (!authorization.isAuthorized(
                 messprogramm,
