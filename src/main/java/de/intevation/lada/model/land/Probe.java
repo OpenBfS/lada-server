@@ -9,6 +9,8 @@ package de.intevation.lada.model.land;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
@@ -121,7 +123,18 @@ public class Probe implements Serializable {
     @Transient
     private MultivaluedMap<String, Integer> notifications;
 
+    //Transient fields used for Probe object generation
+    @Transient
+    private Boolean dryRun;
+
+    @Transient
+    private List<String> mmt;
+
+    @Transient
+    private String gemId;
+
     public Probe() {
+        mmt = new ArrayList<>();
     }
 
     public Integer getId() {
@@ -388,5 +401,29 @@ public class Probe implements Serializable {
 
     public void setFound(boolean found) {
         this.found = found;
+    }
+
+    public Boolean isDryRun() {
+        return this.dryRun;
+    }
+
+    public void setDryRun(Boolean dryRun) {
+        this.dryRun = dryRun;
+    }
+
+    public List<String> getMmt() {
+        return mmt;
+    }
+
+    public void setMmt(List<String> mmt) {
+        this.mmt = mmt;
+    }
+
+    public String getGemId() {
+        return gemId;
+    }
+
+    public void setGemId(String gemId) {
+        this.gemId = gemId;
     }
 }

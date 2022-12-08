@@ -342,10 +342,9 @@ public class ProbeService extends LadaService {
                     generatedProbeIds.add(probe.getId());
                 }
             }
-            List<Map<String, Object>> returnValue = factory.getProtocol();
             data.put("success", true);
             data.put("message", StatusCodes.OK);
-            data.put("data", returnValue);
+            data.put("data", proben);
             probenData.put(messprogramm.getId().toString(), data);
         });
         responseData.put("proben", probenData);
