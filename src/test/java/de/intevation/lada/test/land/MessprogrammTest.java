@@ -69,7 +69,7 @@ public class MessprogrammTest extends ServiceTest {
         update(
             "mpg",
             "rest/mpg/1000",
-            "envDescripId",
+            "envDescripDisplay",
             "D: 50 90 01 06 02 05 00 00 00 00 00 00",
             "D: 50 90 01 06 02 05 00 00 00 00 00 01");
         JsonObject created =

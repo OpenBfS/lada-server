@@ -433,7 +433,7 @@ public class ProbeFactory {
         Sample probe = new Sample();
         probe.setOprModeId(messprogramm.getOprModeId());
         probe.setRegulationId(messprogramm.getRegulationId());
-        probe.setEnvDescripDisplay(messprogramm.getEnvDescripId());
+        probe.setEnvDescripDisplay(messprogramm.getEnvDescripDisplay());
         probe = findMedia(probe);
         probe.setMeasFacilId(messprogramm.getMeasFacilId());
         probe.setApprLabId(messprogramm.getApprLabId());
@@ -570,7 +570,7 @@ public class ProbeFactory {
      * @return The updated messprogramm.
      */
     public Mpg findUmweltId(Mpg messprogramm) {
-        String mediaDesk = messprogramm.getEnvDescripId();
+        String mediaDesk = messprogramm.getEnvDescripDisplay();
         if (mediaDesk != null) {
             String[] mediaDeskParts = mediaDesk.split(" ");
             if (mediaDeskParts.length <= 1) {
@@ -811,7 +811,7 @@ public class ProbeFactory {
     public Mpg getInitialMediaDesk(Mpg messprogramm) {
         String umweltId = messprogramm.getEnvMediumId();
         if (umweltId != null) {
-            messprogramm.setEnvDescripId(getInitialMediaDesk(umweltId));
+            messprogramm.setEnvDescripDisplay(getInitialMediaDesk(umweltId));
         }
         return messprogramm;
     }

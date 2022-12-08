@@ -328,7 +328,7 @@ public class PepGenerationTest extends ServiceTest {
         checkGeneratedTag(entity, prot);
 
         //Check return data
-        String startAttribute = "solldatumBeginn";
+        String startAttribute = "schedStartDate";
         Map<Integer, String> expectedValues = new HashMap<>();
         //Expected first record: 02/29/2020 @ 12:00am (UTC)
         expectedValues.put(0, TS12);
@@ -364,7 +364,7 @@ public class PepGenerationTest extends ServiceTest {
         checkGeneratedTag(entity, prot);
 
         //Check return data
-        String startAttribute = "solldatumBeginn";
+        String startAttribute = "schedStartDate";
         Map<Integer, String> expectedValues = new HashMap<>();
         //Expected first record: 08/28/2016 @ 12:00am (UTC)
         expectedValues.put(0, TS15);
@@ -398,7 +398,7 @@ public class PepGenerationTest extends ServiceTest {
         checkGeneratedTag(entity, prot);
 
         //Check return data
-        String startAttribute = "solldatumBeginn";
+        String startAttribute = "schedStartDate";
         Map<Integer, String> expectedValues = new HashMap<>();
         //Expected first record: 05/30/2016 @ 12:00am (UTC)
         expectedValues.put(0, TS16);
@@ -433,7 +433,7 @@ public class PepGenerationTest extends ServiceTest {
         checkGeneratedTag(entity, prot);
 
         //Check return data
-        String startAttribute = "solldatumBeginn";
+        String startAttribute = "schedStartDate";
         Map<Integer, String> expectedValues = new HashMap<>();
         //Expected first record: 02/29/2020 @ 12:00am (UTC)
         expectedValues.put(0, TS12);
@@ -468,7 +468,7 @@ public class PepGenerationTest extends ServiceTest {
         checkGeneratedTag(entity, prot);
 
         //Check return data
-        String startAttribute = "solldatumBeginn";
+        String startAttribute = "schedStartDate";
         Map<Integer, String> expectedValues = new HashMap<>();
         //Expected first record: 02/29/2020 @ 12:00am (UTC)
         expectedValues.put(0, TS12);
@@ -504,7 +504,7 @@ public class PepGenerationTest extends ServiceTest {
         checkGeneratedTag(entity, prot);
 
         //Check return data
-        String startAttribute = "solldatumBeginn";
+        String startAttribute = "schedStartDate";
         Map<Integer, String> expectedValues = new HashMap<>();
         //Expected first record: 02/29/2020 @ 12:00am (UTC)
         expectedValues.put(0, TS12);
@@ -539,7 +539,7 @@ public class PepGenerationTest extends ServiceTest {
         checkGeneratedTag(entity, prot);
 
         //Check return data
-        String startAttribute = "solldatumBeginn";
+        String startAttribute = "schedStartDate";
         Map<Integer, String> expectedValues = new HashMap<>();
         //Expected first record: 02/29/2020 @ 12:00am (UTC)
         expectedValues.put(0, TS12);
@@ -575,7 +575,7 @@ public class PepGenerationTest extends ServiceTest {
         checkGeneratedTag(entity, prot);
 
         //Check return data
-        String startAttribute = "solldatumBeginn";
+        String startAttribute = "schedStartDate";
         Map<Integer, String> expectedValues = new HashMap<>();
         //Expected first record: 02/28/2020 @ 12:00am (UTC)
         expectedValues.put(0, TS21);

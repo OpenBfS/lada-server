@@ -38,15 +38,15 @@ public class DeskriptorToUmwelt implements Rule {
     @Override
     public Violation execute(Object object) {
         Mpg messprogramm = (Mpg) object;
-        if (messprogramm.getEnvDescripId() == null
-            || messprogramm.getEnvDescripId().equals("")
+        if (messprogramm.getEnvDescripDisplay() == null
+            || messprogramm.getEnvDescripDisplay().equals("")
         ) {
             return null;
         }
         if (messprogramm.getEnvMediumId() == null) {
             return null;
         }
-        String[] mediaDesk = messprogramm.getEnvDescripId().split(" ");
+        String[] mediaDesk = messprogramm.getEnvDescripDisplay().split(" ");
         if (mediaDesk.length <= 1) {
             return null;
         }

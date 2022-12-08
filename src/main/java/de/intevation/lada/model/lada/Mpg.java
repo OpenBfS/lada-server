@@ -68,7 +68,7 @@ public class Mpg implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    private String envDescripId;
+    private String envDescripDisplay;
 
     private String measFacilId;
 
@@ -208,12 +208,12 @@ public class Mpg implements Serializable {
         this.lastMod = lastMod;
     }
 
-    public String getEnvDescripId() {
-        return this.envDescripId;
+    public String getEnvDescripDisplay() {
+        return this.envDescripDisplay;
     }
 
-    public void setEnvDescripId(String envDescripId) {
-        this.envDescripId = envDescripId;
+    public void setEnvDescripDisplay(String envDescripDisplay) {
+        this.envDescripDisplay = envDescripDisplay;
     }
 
     public String getMeasFacilId() {
