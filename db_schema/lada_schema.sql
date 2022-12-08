@@ -176,7 +176,7 @@ CREATE TABLE mpg (
     regulation_id integer NOT NULL REFERENCES master.regulation,
     opr_mode_id integer DEFAULT 1 REFERENCES master.opr_mode,
     munic_id character varying(8) REFERENCES master.admin_unit,
-    env_descrip_id character varying(100) CHECK(env_descrip_id LIKE '% %'),
+    env_descrip_display character varying(100) CHECK(env_descrip_display LIKE '% %'),
     env_medium_id character varying(3) REFERENCES master.env_medium,
     sample_meth_id integer NOT NULL REFERENCES master.sample_meth,
     sample_pd character varying(2) NOT NULL,
@@ -564,7 +564,7 @@ COMMENT ON COLUMN sample.sample_meth_id IS 'ID of sample method (Einzel-, Sammel
 
 
 --
--- Name: COLUMN sample.env_descrip_name_desk; Type: COMMENT; Schema: lada; Owner: -
+-- Name: COLUMN sample.env_descrip_display; Type: COMMENT; Schema: lada; Owner: -
 --
 
 COMMENT ON COLUMN sample.env_descrip_display IS 'Mediencodierung (Deskriptoren oder ADV-Codierung)';
@@ -588,7 +588,7 @@ COMMENT ON COLUMN sample.env_medium_id IS 'ID for environmental medium';
 -- Name: COLUMN mpg.media_desk; Type: COMMENT; Schema: lada; Owner: -
 --
 
-COMMENT ON COLUMN mpg.env_descrip_id IS 'dekodierte Medienbezeichnung (aus env_descrip_id abgeleitet)';
+COMMENT ON COLUMN mpg.env_descrip_display IS 'dekodierte Medienbezeichnung (aus env_descrip_display abgeleitet)';
 
 
 COMMIT;

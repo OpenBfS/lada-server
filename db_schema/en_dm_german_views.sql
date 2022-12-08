@@ -60,7 +60,7 @@ CREATE VIEW land.messprogramm AS SELECT
 	regulation_id AS datenbasis_id,
 	opr_mode_id AS ba_id,
 	munic_id AS gem_id,
-	env_descrip_id AS media_desk,
+	env_descrip_display AS media_desk,
 	env_medium_id AS umw_id,
 	sample_meth_id AS probenart_id,
 	sample_pd AS probenintervall,

@@ -6,7 +6,7 @@
         "appr_lab_id": "06010",
         "regulation_id": 9,
         "munic_id": "11000000",
-        "env_descrip_id": "D: 50 90 01 06 02 05 00 00 00 00 00 00",
+        "env_descrip_display": "D: 50 90 01 06 02 05 00 00 00 00 00 00",
         "env_medium_id": "L6",
         "sample_meth_id": 1,
         "sample_pd": "M",

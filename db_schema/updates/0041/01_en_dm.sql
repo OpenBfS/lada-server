@@ -78,7 +78,7 @@ ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN labor_mst_id TO appr_lab_id;
 ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN datenbasis_id TO regulation_id;
 ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN ba_id TO opr_mode_id;
 ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN gem_id TO munic_id;
-ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN media_desk TO env_descrip_id;
+ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN media_desk TO env_descrip_display;
 ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN umw_id TO env_medium_id;
 ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN probenart_id TO sample_meth_id;
 ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN probenintervall TO sample_pd;
@@ -105,7 +105,7 @@ CREATE VIEW land.messprogramm AS SELECT
 	regulation_id AS datenbasis_id,
 	opr_mode_id AS ba_id,
 	munic_id AS gem_id,
-	env_descrip_id AS media_desk,
+	env_descrip_display AS media_desk,
 	env_medium_id AS umw_id,
 	sample_meth_id AS probenart_id,
 	sample_pd AS probenintervall,
