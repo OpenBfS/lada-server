@@ -448,7 +448,6 @@ public class ProbeFactory {
         probe.setReiProgpunktGrpId(messprogramm.getReiProgpunktGrpId());
         probe.setKtaGruppeId(messprogramm.getKtaGruppeId());
         probe.setFound(false);
-        probe.setDryRun(dryrun);
 
         createObject(probe, dryrun);
 

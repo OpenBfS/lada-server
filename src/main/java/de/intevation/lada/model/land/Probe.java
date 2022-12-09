@@ -125,8 +125,6 @@ public class Probe implements Serializable {
     private MultivaluedMap<String, Integer> notifications;
 
     //Transient fields used for Probe object generation
-    @Transient
-    private Boolean dryRun;
 
     @Transient
     private List<String> mmt;
@@ -402,14 +400,6 @@ public class Probe implements Serializable {
 
     public void setFound(boolean found) {
         this.found = found;
-    }
-
-    public Boolean isDryRun() {
-        return this.dryRun;
-    }
-
-    public void setDryRun(Boolean dryRun) {
-        this.dryRun = dryRun;
     }
 
     public List<String> getMmt() {
