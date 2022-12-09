@@ -113,9 +113,6 @@ public class Probe implements Serializable {
     private boolean owner;
 
     @Transient
-    private boolean found;
-
-    @Transient
     private MultivaluedMap<String, Integer> errors;
 
     @Transient
@@ -125,6 +122,8 @@ public class Probe implements Serializable {
     private MultivaluedMap<String, Integer> notifications;
 
     //Transient fields used for Probe object generation
+    @Transient
+    private boolean found;
 
     @Transient
     private List<String> mmt;

@@ -396,40 +396,47 @@ public class ProbeFactory {
         Date endDate,
         boolean dryrun
     ) {
-        QueryBuilder<Probe> builderProbe =
-            repository.queryBuilder(Probe.class);
-        builderProbe.and("mprId", messprogramm.getId());
-        builderProbe.and("solldatumBeginn", startDate);
-        builderProbe.and("solldatumEnde", endDate);
-
-        QueryBuilder<MessprogrammMmt> builder =
-            repository.queryBuilder(MessprogrammMmt.class);
-        builder.and("messprogrammId", messprogramm.getId());
+        QueryBuilder<MessprogrammMmt> builder = repository
+            .queryBuilder(MessprogrammMmt.class)
+            .and("messprogrammId", messprogramm.getId());
         List<MessprogrammMmt> mmts = repository.filterPlain(builder.getQuery());
-        List<String> messungProtocol = new ArrayList<>();
-        List<Probe> proben =
-            repository.filterPlain(builderProbe.getQuery());
 
-        QueryBuilder<OrtszuordnungMp> builderOrt =
-            repository.queryBuilder(OrtszuordnungMp.class);
-        builderOrt.and("messprogrammId", messprogramm.getId());
+        QueryBuilder<OrtszuordnungMp> builderOrt = repository
+            .queryBuilder(OrtszuordnungMp.class)
+            .and("messprogrammId", messprogramm.getId());
         List<OrtszuordnungMp> orte =
             repository.filterPlain(builderOrt.getQuery());
 
+        // Prepare data for informative transient attributes
+        List<String> messungProtocol = new ArrayList<>();
+        for (MessprogrammMmt mmt: mmts) {
+            messungProtocol.add(mmt.getMmtId());
+        }
+
+        String gemId = "";
+        for (OrtszuordnungMp ort : orte) {
+            if ("E".equals(ort.getOrtszuordnungTyp())) {
+                gemId = repository.getByIdPlain(
+                    Ort.class, ort.getOrtId()).getGemId();
+            }
+        }
+
+        // Check for existing matching entity
+        QueryBuilder<Probe> builderProbe = repository.queryBuilder(Probe.class)
+            .and("mprId", messprogramm.getId())
+            .and("solldatumBeginn", startDate)
+            .and("solldatumEnde", endDate);
+        List<Probe> proben = repository.filterPlain(builderProbe.getQuery());
+
+        // Add informative transient attributes to existing entity
         if (!proben.isEmpty()) {
             proben.get(0).setFound(true);
-            for (int i = 0; i < mmts.size(); i++) {
-                MessprogrammMmt mmt = mmts.get(i);
-                messungProtocol.add(mmt.getMmtId());
-            }
             proben.get(0).setMmt(messungProtocol);
-            for (OrtszuordnungMp ort : orte) {
-                Ort o = repository.getByIdPlain(
-                    Ort.class, ort.getOrtId());
-                proben.get(0).setGemId(o.getGemId());
-            }
+            proben.get(0).setGemId(gemId);
             return proben.get(0);
         }
+
+        // Create new entity
         Probe probe = new Probe();
         probe.setBaId(messprogramm.getBaId());
         probe.setDatenbasisId(messprogramm.getDatenbasisId());
@@ -448,6 +455,8 @@ public class ProbeFactory {
         probe.setReiProgpunktGrpId(messprogramm.getReiProgpunktGrpId());
         probe.setKtaGruppeId(messprogramm.getKtaGruppeId());
         probe.setFound(false);
+        probe.setMmt(messungProtocol);
+        probe.setGemId(gemId);
 
         createObject(probe, dryrun);
 
@@ -476,15 +485,13 @@ public class ProbeFactory {
             createObject(kommentar, dryrun);
         }
 
-        for (int i = 0; i < mmts.size(); i++) {
-            MessprogrammMmt mmt = mmts.get(i);
+        for (MessprogrammMmt mmt: mmts) {
             Messung messung = new Messung();
             messung.setFertig(false);
             messung.setGeplant(true);
             messung.setMmtId(mmt.getMmtId());
             messung.setProbeId(probe.getId());
             createObject(messung, dryrun);
-            messungProtocol.add(mmt.getMmtId());
             for (int mw : mmt.getMessgroessen()) {
                 Messwert wert = new Messwert();
                 wert.setMessgroesseId(mw);
