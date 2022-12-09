@@ -113,7 +113,6 @@ public class Probe implements Serializable {
     private boolean owner;
 
     @Transient
-    @JsonbTransient
     private boolean found;
 
     @Transient
