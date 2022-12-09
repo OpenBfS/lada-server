@@ -448,7 +448,6 @@ public class ProbeFactory {
         probe.setReiAgGrId(messprogramm.getReiAgGrId());
         probe.setNuclFacilGrId(messprogramm.getNuclFacilGrId());
         probe.setFound(false);
-        probe.setDryRun(dryrun);
 
         createObject(probe, dryrun);
 

@@ -323,6 +323,7 @@ FROM lada.sample;
 ALTER TABLE IF EXISTS lada.rueckfrage_messung RENAME TO query_measm_view;
 ALTER TABLE IF EXISTS lada.query_measm_view RENAME COLUMN messungs_id TO measm_id;
 CREATE VIEW land.rueckfrage_messung AS SELECT
+	measm_id AS messungs_id
 FROM lada.query_measm_view;
 
 ALTER TABLE IF EXISTS lada.status_protokoll RENAME TO status_prot;

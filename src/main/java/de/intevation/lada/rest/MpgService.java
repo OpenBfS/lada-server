@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.validation.Valid;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -93,7 +94,7 @@ public class MpgService extends LadaService {
      */
     @POST
     public Response create(
-        Mpg messprogramm
+        @Valid Mpg messprogramm
     ) {
         if (!authorization.isAuthorized(
                 messprogramm,
@@ -139,7 +140,7 @@ public class MpgService extends LadaService {
     @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
-        Mpg messprogramm
+        @Valid Mpg messprogramm
     ) {
         if (!authorization.isAuthorized(
                 messprogramm,

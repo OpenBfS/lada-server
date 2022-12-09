@@ -25,6 +25,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.MultivaluedMap;
 
 import de.intevation.lada.model.master.SampleSpecif;
@@ -68,6 +69,7 @@ public class Mpg implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
+    @Pattern(regexp = ".* .*")
     private String envDescripDisplay;
 
     private String measFacilId;

@@ -22,6 +22,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.hibernate.annotations.DynamicInsert;
@@ -59,6 +60,7 @@ public class Sample implements Serializable {
 
     private String envDescripName;
 
+    @Pattern(regexp = ".* .*")
     private String envDescripDisplay;
 
     private Long midSampleDate;
@@ -118,9 +120,6 @@ public class Sample implements Serializable {
     private MultivaluedMap<String, Integer> notifications;
 
     //Transient fields used for Site object generation
-    @Transient
-    private Boolean dryRun;
-
     @Transient
     private List<String> mmt;
 
@@ -395,14 +394,6 @@ public class Sample implements Serializable {
 
     public void setFound(boolean found) {
         this.found = found;
-    }
-
-    public Boolean isDryRun() {
-        return this.dryRun;
-    }
-
-    public void setDryRun(Boolean dryRun) {
-        this.dryRun = dryRun;
     }
 
     public List<String> getMmt() {
