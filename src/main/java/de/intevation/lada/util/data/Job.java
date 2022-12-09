@@ -171,8 +171,8 @@ public abstract class Job implements Runnable {
         private String message;
         private boolean done;
         private boolean notifications;
-        private Boolean warnings;
-        private Boolean errors;
+        private boolean warnings;
+        private boolean errors;
 
         private static class StatusSerializer
             implements JsonbSerializer<Status> {
@@ -191,8 +191,6 @@ public abstract class Job implements Runnable {
             this.status = s;
             this.message = m != null ? m : "";
             this.done = d;
-            warnings = null;
-            errors = null;
         }
 
         public boolean isDone() {

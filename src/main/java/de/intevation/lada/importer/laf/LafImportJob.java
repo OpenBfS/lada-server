@@ -165,6 +165,7 @@ public class LafImportJob extends Job {
                         builder.getQuery());
             }
             importer.doImport(content, userInfo, config);
+
             Map<String, Object> fileResponseData =
                 new HashMap<String, Object>();
             if (!importer.getErrors().isEmpty()) {
@@ -180,11 +181,7 @@ public class LafImportJob extends Job {
                     "notifications", importer.getNotifications());
                 this.currentStatus.setNotifications(true);
             }
-            if (currentStatus.getErrors()){
-                fileResponseData.put("success", false);
-            } else {
-            fileResponseData.put("success", true);
-            }
+            fileResponseData.put("success", currentStatus.getErrors());
             fileResponseData.put(
                 "probeIds", ((LafImporter) importer).getImportedIds());
             importResponseData.put(fileName, fileResponseData);
