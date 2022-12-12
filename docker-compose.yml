@@ -35,7 +35,7 @@ services:
     volumes:
       - ../client:/usr/local/lada # Assumes client checkout in ../client
     ports:
-      - 8180-8185:80-85
+      - 8180-8186:80-86
 networks:
   lada_network:
     name: lada_network
