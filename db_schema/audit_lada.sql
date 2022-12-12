@@ -11,8 +11,40 @@ CREATE TABLE audit_trail(
       action varchar(1) NOT NULL CHECK (action IN ('I','D','U', 'T')),
       object_id integer not null,
       row_data JSONB,
-      changed_fields JSONB
+      changed_fields JSONB,
+      sample_id INTEGER,
+      measm_id INTEGER GENERATED always AS 
+        (cast(row_data ->> 'measm_id' AS integer)) STORED
 );
+CREATE INDEX audit_trail_sample_id_idx
+    ON lada.audit_trail USING btree (sample_id ASC NULLS LAST);
+CREATE INDEX audit_trail_measm_id_idx
+    ON lada.audit_trail USING btree (measm_id ASC NULLS LAST);
+
+CREATE OR REPLACE FUNCTION update_audit_sample_id()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+    BEGIN
+        IF NEW.table_name = 'sample' THEN 
+            NEW.sample_id = NEW.object_id;
+        ELSE 
+            NEW.sample_id =
+                coalesce(cast(NEW.row_data ->> 'sample_id' AS integer),
+                    (SELECT sample_id FROM lada.measm
+                     WHERE id = cast(NEW.row_data ->> 'measm_id' AS integer)));
+        END IF;
+        RETURN NEW;
+    END;
+$BODY$;
+
+CREATE TRIGGER tree_mod_sample
+    BEFORE INSERT OR UPDATE 
+    ON lada.audit_trail
+    FOR EACH ROW
+    EXECUTE FUNCTION lada.update_audit_sample_id();
 
 CREATE OR REPLACE FUNCTION jsonb_delete_left(a jsonb, b jsonb)
   RETURNS jsonb AS
@@ -81,7 +113,15 @@ BEGIN
         RAISE EXCEPTION '[lada.if_modified_func] - Trigger func added as trigger for unhandled case: %, %',TG_OP, TG_LEVEL;
         RETURN NULL;
     END IF;
-    INSERT INTO lada.audit_trail VALUES (audit_row.*);
+    INSERT INTO audit_trail(id, table_name, tstamp, action, object_id, row_data, changed_fields)
+    VALUES (
+        audit_row.id, 
+        audit_row.table_name,
+        audit_row.tstamp,
+        audit_row.action,
+        audit_row.object_id,
+        audit_row.row_data,
+        audit_row.changed_fields);
     RETURN NULL;
 END;
 $body$
@@ -100,39 +140,39 @@ SELECT
     lada_audit.action,
     lada_audit.object_id,
     lada_audit.tstamp,
-    cast(row_data ->> 'measm_id' AS integer) AS measm_id,
-    coalesce(cast(row_data ->> 'sample_id' AS integer),
-        (SELECT sample_id FROM lada.measm WHERE id = cast(
-            row_data ->> 'measm_id' AS integer))) AS sample_id,
     lada_audit.row_data,
     lada_audit.changed_fields,
-    null as site_id
-FROM lada.audit_trail as lada_audit
+    lada_audit.sample_id,
+    lada_audit.measm_id,
+    NULL::integer AS site_id
+FROM lada.audit_trail lada_audit
 UNION
 SELECT master_audit.id,
     master_audit.table_name,
     master_audit.action,
     master_audit.object_id,
     master_audit.tstamp,
-    null as messungs_id,
-    null as probe_id,
     master_audit.row_data,
     master_audit.changed_fields,
-    cast(row_data ->> 'id' AS integer) AS site_id
-FROM master.audit_trail as master_audit;
+    NULL::integer AS measm_id,
+    NULL::integer AS sample_id,
+    master_audit.site_id
+FROM master.audit_trail master_audit;
 
 
 -- View for measm audit trail
 CREATE OR REPLACE VIEW audit_trail_measm_view AS
-SELECT audit_trail.id,
+SELECT
+    audit_trail.id,
     audit_trail.table_name,
     audit_trail.tstamp,
     audit_trail.action,
     audit_trail.object_id,
     audit_trail.row_data,
     audit_trail.changed_fields,
-    cast(row_data ->> 'measm_id' AS int) AS measm_id
-FROM audit_trail;
+    audit_trail.measm_id
+FROM audit_trail
+WHERE audit_trail.table_name = 'measm' OR audit_trail.measm_id IS NOT NULL;
 
 
 SELECT master.audit_table('sample', true, false, '{id, tree_mod, last_mod}'::text[]);

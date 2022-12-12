@@ -81,7 +81,6 @@ CREATE FUNCTION update_tree_mod_measm() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN
-        RAISE NOTICE 'measm is %',NEW.id;
         NEW.tree_mod = now() AT TIME ZONE 'utc';
         UPDATE lada.meas_val SET tree_mod = now() AT TIME ZONE 'utc' WHERE measm_id = NEW.id;
         UPDATE lada.status_prot SET tree_mod = now() AT TIME ZONE 'utc' WHERE measm_id = NEW.id;
@@ -98,9 +97,7 @@ CREATE FUNCTION update_tree_mod_sample() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN
-        RAISE NOTICE 'sample is %',NEW.id;
         NEW.tree_mod = now() AT TIME ZONE 'utc';
-        RAISE NOTICE 'updating other rows';
         UPDATE lada.measm SET tree_mod = now() AT TIME ZONE 'utc' WHERE sample_id = NEW.id;
         UPDATE lada.geolocat SET tree_mod = now() AT TIME ZONE 'utc' WHERE sample_id = NEW.id;
         UPDATE lada.sample_specif_meas_val SET tree_mod = now() AT TIME ZONE 'utc' WHERE sample_id = NEW.id;
