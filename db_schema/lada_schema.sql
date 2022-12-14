@@ -173,7 +173,8 @@ CREATE TABLE mpg (
     regulation_id integer NOT NULL REFERENCES master.regulation,
     opr_mode_id integer DEFAULT 1 REFERENCES master.opr_mode,
     munic_id character varying(8) REFERENCES master.admin_unit,
-    env_descrip_display character varying(100) CHECK(env_descrip_display LIKE '% %'),
+    env_descrip_display character varying(100) CHECK
+        (env_descrip_display ~ '^D:( [0-9][0-9]){12}$'),
     env_medium_id character varying(3) REFERENCES master.env_medium,
     sample_meth_id integer NOT NULL REFERENCES master.sample_meth,
     sample_pd character varying(2) NOT NULL,
