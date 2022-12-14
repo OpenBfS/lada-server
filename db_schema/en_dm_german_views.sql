@@ -34,7 +34,7 @@ CREATE VIEW land.audit_trail AS SELECT
         WHEN table_name = 'sample' THEN 'probe'
         WHEN table_name = 'geolocat' THEN 'ortszuordnung'
         WHEN table_name = 'meas_val' THEN 'messwert'
-        WHEN table_name = 'measm' THEN ' messung'
+        WHEN table_name = 'measm' THEN 'messung'
         ELSE table_name
     END AS table_name,
     tstamp,
@@ -71,7 +71,7 @@ CREATE VIEW land.audit_trail_messung AS SELECT
         WHEN table_name = 'sample' THEN 'probe'
         WHEN table_name = 'geolocat' THEN 'ortszuordnung'
         WHEN table_name = 'meas_val' THEN 'messwert'
-        WHEN table_name = 'measm' THEN ' messung'
+        WHEN table_name = 'measm' THEN 'messung'
         ELSE table_name
     END AS table_name,
     tstamp,
@@ -109,7 +109,7 @@ CREATE VIEW land.audit_trail_probe AS SELECT
         WHEN table_name = 'sample' THEN 'probe'
         WHEN table_name = 'geolocat' THEN 'ortszuordnung'
         WHEN table_name = 'meas_val' THEN 'messwert'
-        WHEN table_name = 'measm' THEN ' messung'
+        WHEN table_name = 'measm' THEN 'messung'
 		WHEN table_name = 'site' THEN 'ort'
         ELSE table_name
     END AS table_name,
