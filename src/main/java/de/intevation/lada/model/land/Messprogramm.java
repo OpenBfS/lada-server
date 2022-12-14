@@ -81,7 +81,7 @@ public class Messprogramm implements Serializable {
     @Column(name = "letzte_aenderung", insertable = false)
     private Timestamp letzteAenderung;
 
-    @Pattern(regexp = ".* .*")
+    @Pattern(regexp = "D:( [0-9][0-9]){12}")
     @Column(name = "media_desk")
     private String mediaDesk;
 
