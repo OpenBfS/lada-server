@@ -64,8 +64,8 @@ WHERE table_name='ortszuordnung';
 \echo messwert
 UPDATE lada.audit_trail
 SET table_name='meas_val',
-row_data=public.jsonb_rename_keys(row_data, ARRAY['messungs_id', 'measm_id', 'messgroesse_id', 'measd_id', 'messwert_nwg', 'less_than_LOD', 'messwert', 'meas_val', 'messfehler', 'error', 'nwg_zu_messwert', 'detect_lim', 'meh_id', 'unit_id', 'grenzwertueberschreitung', 'is_threshold', 'letzte_aenderung', 'last_mod', 'tree_modified', 'tree_mod']),
-changed_fields=public.jsonb_rename_keys(changed_fields, ARRAY['messungs_id', 'measm_id', 'messgroesse_id', 'measd_id', 'messwert_nwg', 'less_than_LOD', 'messwert', 'meas_val', 'messfehler', 'error', 'nwg_zu_messwert', 'detect_lim', 'meh_id', 'unit_id', 'grenzwertueberschreitung', 'is_threshold', 'letzte_aenderung', 'last_mod', 'tree_modified', 'tree_mod'])
+row_data=public.jsonb_rename_keys(row_data, ARRAY['messungs_id', 'measm_id', 'messgroesse_id', 'measd_id', 'messwert_nwg', 'less_than_lod', 'messwert', 'meas_val', 'messfehler', 'error', 'nwg_zu_messwert', 'detect_lim', 'meh_id', 'unit_id', 'grenzwertueberschreitung', 'is_threshold', 'letzte_aenderung', 'last_mod', 'tree_modified', 'tree_mod']),
+changed_fields=public.jsonb_rename_keys(changed_fields, ARRAY['messungs_id', 'measm_id', 'messgroesse_id', 'measd_id', 'messwert_nwg', 'less_than_lod', 'messwert', 'meas_val', 'messfehler', 'error', 'nwg_zu_messwert', 'detect_lim', 'meh_id', 'unit_id', 'grenzwertueberschreitung', 'is_threshold', 'letzte_aenderung', 'last_mod', 'tree_modified', 'tree_mod'])
 WHERE table_name='messwert';
 
 \echo messung

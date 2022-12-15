@@ -412,7 +412,7 @@ CREATE TABLE meas_val (
     id serial PRIMARY KEY,
     measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE,
     measd_id integer NOT NULL REFERENCES master.measd,
-    less_than_LOD character varying(1),
+    less_than_lod character varying(1),
     meas_val double precision,
     error real,
     detect_lim double precision,
