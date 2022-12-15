@@ -178,7 +178,7 @@ FROM lada.measm;
 ALTER TABLE IF EXISTS lada.messwert RENAME TO meas_val;
 ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN messungs_id TO measm_id;
 ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN messgroesse_id TO measd_id;
-ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN messwert_nwg TO less_than_LOD;
+ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN messwert_nwg TO less_than_lod;
 ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN messwert TO meas_val;
 ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN messfehler TO error;
 ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN nwg_zu_messwert TO detect_lim;
@@ -190,7 +190,7 @@ CREATE VIEW land.messwert AS SELECT
 	id,
 	measm_id AS messungs_id,
 	measd_id AS messgroesse_id,
-	less_than_LOD AS messwert_nwg,
+	less_than_lod AS messwert_nwg,
 	meas_val AS messwert,
 	error AS messfehler,
 	detect_lim AS nwg_zu_messwert,
@@ -203,7 +203,7 @@ FROM lada.meas_val;
 ALTER TABLE IF EXISTS lada.messwert_view RENAME TO meas_val_view;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messungs_id TO measm_id;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messgroesse_id TO measd_id;
-ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messwert_nwg TO less_than_LOD;
+ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messwert_nwg TO less_than_lod;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messwert TO meas_val;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messfehler TO error;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN nwg_zu_messwert TO detect_lim;
@@ -215,7 +215,7 @@ CREATE VIEW land.messwert_view AS SELECT
 	id,
 	measm_id AS messungs_id,
 	measd_id AS messgroesse_id,
-	less_than_LOD AS messwert_nwg,
+	less_than_lod AS messwert_nwg,
 	meas_val AS messwert,
 	error AS messfehler,
 	detect_lim AS nwg_zu_messwert,

@@ -26,6 +26,11 @@ public class IsUnique implements Rule {
     @Override
     public Violation execute(Object object) {
         Ort ort = (Ort) object;
+        if (ort.getOrtId()  == null || ort.getOrtId().equals("")) {
+            Violation violation = new Violation();
+            violation.addError("ortId", StatusCodes.VALUE_MISSING);
+            return violation;
+        }
 
         QueryBuilder<Ort> builder = repository.queryBuilder(Ort.class);
         if (ort.getId() != null) {

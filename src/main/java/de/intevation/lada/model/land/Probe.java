@@ -66,7 +66,7 @@ public class Probe implements Serializable {
 
     private String media;
 
-    @Pattern(regexp = ".* .*")
+    @Pattern(regexp = "D:( [0-9][0-9]){12}")
     private String mediaDesk;
 
     private Long mittelungsdauer;

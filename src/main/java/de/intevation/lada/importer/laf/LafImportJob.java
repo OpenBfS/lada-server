@@ -181,7 +181,11 @@ public class LafImportJob extends Job {
                     "notifications", importer.getNotifications());
                 this.currentStatus.setNotifications(true);
             }
-            fileResponseData.put("success", currentStatus.getErrors());
+            if (currentStatus.getErrors()){
+                fileResponseData.put("success", false);
+            } else {
+                fileResponseData.put("success", true);
+            }
             fileResponseData.put(
                 "probeIds", ((LafImporter) importer).getImportedIds());
             importResponseData.put(fileName, fileResponseData);

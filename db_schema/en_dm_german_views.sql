@@ -34,7 +34,7 @@ CREATE VIEW land.audit_trail AS SELECT
         WHEN table_name = 'sample' THEN 'probe'
         WHEN table_name = 'geolocat' THEN 'ortszuordnung'
         WHEN table_name = 'meas_val' THEN 'messwert'
-        WHEN table_name = 'measm' THEN ' messung'
+        WHEN table_name = 'measm' THEN 'messung'
         ELSE table_name
     END AS table_name,
     tstamp,
@@ -46,7 +46,7 @@ CREATE VIEW land.audit_trail AS SELECT
         WHEN table_name = 'comm_sample' THEN public.jsonb_rename_keys(row_data, ARRAY['meas_facil_id', 'mst_id', 'date', 'datum', 'sample_id', 'probe_id'])
         WHEN table_name = 'sample' THEN public.jsonb_rename_keys(row_data, ARRAY['is_test', 'test', 'meas_facil_id', 'mst_id', 'appr_lab_id', 'labor_mst_id', 'main_sample_id', 'hauptproben_nr', 'regulation_id', 'datenbasis_id', 'opr_mode_id', 'ba_id', 'sample_meth_id', 'probenart_id', 'env_descrip_display', 'media_desk', 'env_descrip_name', 'media', 'env_medium_id', 'umw_id', 'sample_start_date', 'probeentnahme_beginn', 'sample_end_date', 'probeentnahme_ende', 'mid_sample_date', 'mittelungsdauer', 'last_mod', 'letzte_aenderung', 'dataset_creator_id', 'erzeuger_id', 'sampler_id', 'probe_nehmer_id', 'state_mpg_id', 'mpl_id', 'mpg_id', 'mpr_id', 'sched_start_date', 'solldatum_beginn', 'sched_end_date', 'solldatum_ende', 'tree_mod', 'tree_modified', 'rei_ag_gr_id', 'rei_progpunkt_grp_id', 'nucl_facil_gr_id', 'kta_gruppe_id', 'orig_date', 'ursprungszeit', 'mid_coll_pd', 'mitte_sammelzeitraum'])
         WHEN table_name = 'geolocat' THEN public.jsonb_rename_keys(row_data, ARRAY['sample_id', 'probe_id', 'site_id', 'ort_id', 'type_regulation', 'ortszuordnung_typ', 'add_site_text', 'ortszusatztext', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified', 'poi_id', 'oz_id'])
-        WHEN table_name = 'meas_val' THEN public.jsonb_rename_keys(row_data, ARRAY['measm_id', 'messungs_id', 'measd_id', 'messgroesse_id', 'less_than_LOD', 'messwert_nwg', 'meas_val', 'messwert', 'error', 'messfehler', 'detect_lim', 'nwg_zu_messwert', 'unit_id', 'meh_id', 'is_threshold', 'grenzwertueberschreitung', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified'])
+        WHEN table_name = 'meas_val' THEN public.jsonb_rename_keys(row_data, ARRAY['measm_id', 'messungs_id', 'measd_id', 'messgroesse_id', 'less_than_lod', 'messwert_nwg', 'meas_val', 'messwert', 'error', 'messfehler', 'detect_lim', 'nwg_zu_messwert', 'unit_id', 'meh_id', 'is_threshold', 'grenzwertueberschreitung', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified'])
         WHEN table_name = 'measm' THEN public.jsonb_rename_keys(row_data, ARRAY['sample_id', 'probe_id', 'min_sample_id', 'nebenproben_nr', 'meas_pd', 'messdauer', 'measm_start_date', 'messzeitpunkt', 'is_completed', 'fertig', 'last_mod', 'letzte_aenderung', 'is_scheduled', 'geplant', 'tree_mod', 'tree_modified'])
         ELSE row_data
     END AS row_data,
@@ -56,7 +56,7 @@ CREATE VIEW land.audit_trail AS SELECT
         WHEN table_name = 'comm_sample' THEN public.jsonb_rename_keys(changed_fields, ARRAY['meas_facil_id', 'mst_id', 'date', 'datum', 'sample_id', 'probe_id'])
         WHEN table_name = 'sample' THEN public.jsonb_rename_keys(changed_fields, ARRAY['is_test', 'test', 'meas_facil_id', 'mst_id', 'appr_lab_id', 'labor_mst_id', 'main_sample_id', 'hauptproben_nr', 'regulation_id', 'datenbasis_id', 'opr_mode_id', 'ba_id', 'sample_meth_id', 'probenart_id', 'env_descrip_display', 'media_desk', 'env_descrip_name', 'media', 'env_medium_id', 'umw_id', 'sample_start_date', 'probeentnahme_beginn', 'sample_end_date', 'probeentnahme_ende', 'mid_sample_date', 'mittelungsdauer', 'last_mod', 'letzte_aenderung', 'dataset_creator_id', 'erzeuger_id', 'sampler_id', 'probe_nehmer_id', 'state_mpg_id', 'mpl_id', 'mpg_id', 'mpr_id', 'sched_start_date', 'solldatum_beginn', 'sched_end_date', 'solldatum_ende', 'tree_mod', 'tree_modified', 'rei_ag_gr_id', 'rei_progpunkt_grp_id', 'nucl_facil_gr_id', 'kta_gruppe_id', 'orig_date', 'ursprungszeit', 'mid_coll_pd', 'mitte_sammelzeitraum'])
         WHEN table_name = 'geolocat' THEN public.jsonb_rename_keys(changed_fields, ARRAY['sample_id', 'probe_id', 'site_id', 'ort_id', 'type_regulation', 'ortszuordnung_typ', 'add_site_text', 'ortszusatztext', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified', 'poi_id', 'oz_id'])
-        WHEN table_name = 'meas_val' THEN public.jsonb_rename_keys(changed_fields, ARRAY['measm_id', 'messungs_id', 'measd_id', 'messgroesse_id', 'less_than_LOD', 'messwert_nwg', 'meas_val', 'messwert', 'error', 'messfehler', 'detect_lim', 'nwg_zu_messwert', 'unit_id', 'meh_id', 'is_threshold', 'grenzwertueberschreitung', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified'])
+        WHEN table_name = 'meas_val' THEN public.jsonb_rename_keys(changed_fields, ARRAY['measm_id', 'messungs_id', 'measd_id', 'messgroesse_id', 'less_than_lod', 'messwert_nwg', 'meas_val', 'messwert', 'error', 'messfehler', 'detect_lim', 'nwg_zu_messwert', 'unit_id', 'meh_id', 'is_threshold', 'grenzwertueberschreitung', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified'])
         WHEN table_name = 'measm' THEN public.jsonb_rename_keys(changed_fields, ARRAY['sample_id', 'probe_id', 'min_sample_id', 'nebenproben_nr', 'meas_pd', 'messdauer', 'measm_start_date', 'messzeitpunkt', 'is_completed', 'fertig', 'last_mod', 'letzte_aenderung', 'is_scheduled', 'geplant', 'tree_mod', 'tree_modified'])
         ELSE changed_fields
     END AS changed_fields
@@ -71,7 +71,7 @@ CREATE VIEW land.audit_trail_messung AS SELECT
         WHEN table_name = 'sample' THEN 'probe'
         WHEN table_name = 'geolocat' THEN 'ortszuordnung'
         WHEN table_name = 'meas_val' THEN 'messwert'
-        WHEN table_name = 'measm' THEN ' messung'
+        WHEN table_name = 'measm' THEN 'messung'
         ELSE table_name
     END AS table_name,
     tstamp,
@@ -83,7 +83,7 @@ CREATE VIEW land.audit_trail_messung AS SELECT
         WHEN table_name = 'comm_sample' THEN public.jsonb_rename_keys(row_data, ARRAY['meas_facil_id', 'mst_id', 'date', 'datum', 'sample_id', 'probe_id'])
         WHEN table_name = 'sample' THEN public.jsonb_rename_keys(row_data, ARRAY['is_test', 'test', 'meas_facil_id', 'mst_id', 'appr_lab_id', 'labor_mst_id', 'main_sample_id', 'hauptproben_nr', 'regulation_id', 'datenbasis_id', 'opr_mode_id', 'ba_id', 'sample_meth_id', 'probenart_id', 'env_descrip_display', 'media_desk', 'env_descrip_name', 'media', 'env_medium_id', 'umw_id', 'sample_start_date', 'probeentnahme_beginn', 'sample_end_date', 'probeentnahme_ende', 'mid_sample_date', 'mittelungsdauer', 'last_mod', 'letzte_aenderung', 'dataset_creator_id', 'erzeuger_id', 'sampler_id', 'probe_nehmer_id', 'state_mpg_id', 'mpl_id', 'mpg_id', 'mpr_id', 'sched_start_date', 'solldatum_beginn', 'sched_end_date', 'solldatum_ende', 'tree_mod', 'tree_modified', 'rei_ag_gr_id', 'rei_progpunkt_grp_id', 'nucl_facil_gr_id', 'kta_gruppe_id', 'orig_date', 'ursprungszeit', 'mid_coll_pd', 'mitte_sammelzeitraum'])
         WHEN table_name = 'geolocat' THEN public.jsonb_rename_keys(row_data, ARRAY['sample_id', 'probe_id', 'site_id', 'ort_id', 'type_regulation', 'ortszuordnung_typ', 'add_site_text', 'ortszusatztext', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified', 'poi_id', 'oz_id'])
-        WHEN table_name = 'meas_val' THEN public.jsonb_rename_keys(row_data, ARRAY['measm_id', 'messungs_id', 'measd_id', 'messgroesse_id', 'less_than_LOD', 'messwert_nwg', 'meas_val', 'messwert', 'error', 'messfehler', 'detect_lim', 'nwg_zu_messwert', 'unit_id', 'meh_id', 'is_threshold', 'grenzwertueberschreitung', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified'])
+        WHEN table_name = 'meas_val' THEN public.jsonb_rename_keys(row_data, ARRAY['measm_id', 'messungs_id', 'measd_id', 'messgroesse_id', 'less_than_lod', 'messwert_nwg', 'meas_val', 'messwert', 'error', 'messfehler', 'detect_lim', 'nwg_zu_messwert', 'unit_id', 'meh_id', 'is_threshold', 'grenzwertueberschreitung', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified'])
         WHEN table_name = 'measm' THEN public.jsonb_rename_keys(row_data, ARRAY['sample_id', 'probe_id', 'min_sample_id', 'nebenproben_nr', 'meas_pd', 'messdauer', 'measm_start_date', 'messzeitpunkt', 'is_completed', 'fertig', 'last_mod', 'letzte_aenderung', 'is_scheduled', 'geplant', 'tree_mod', 'tree_modified'])
         ELSE row_data
     END AS row_data,
@@ -93,7 +93,7 @@ CREATE VIEW land.audit_trail_messung AS SELECT
         WHEN table_name = 'comm_sample' THEN public.jsonb_rename_keys(changed_fields, ARRAY['meas_facil_id', 'mst_id', 'date', 'datum', 'sample_id', 'probe_id'])
         WHEN table_name = 'sample' THEN public.jsonb_rename_keys(changed_fields, ARRAY['is_test', 'test', 'meas_facil_id', 'mst_id', 'appr_lab_id', 'labor_mst_id', 'main_sample_id', 'hauptproben_nr', 'regulation_id', 'datenbasis_id', 'opr_mode_id', 'ba_id', 'sample_meth_id', 'probenart_id', 'env_descrip_display', 'media_desk', 'env_descrip_name', 'media', 'env_medium_id', 'umw_id', 'sample_start_date', 'probeentnahme_beginn', 'sample_end_date', 'probeentnahme_ende', 'mid_sample_date', 'mittelungsdauer', 'last_mod', 'letzte_aenderung', 'dataset_creator_id', 'erzeuger_id', 'sampler_id', 'probe_nehmer_id', 'state_mpg_id', 'mpl_id', 'mpg_id', 'mpr_id', 'sched_start_date', 'solldatum_beginn', 'sched_end_date', 'solldatum_ende', 'tree_mod', 'tree_modified', 'rei_ag_gr_id', 'rei_progpunkt_grp_id', 'nucl_facil_gr_id', 'kta_gruppe_id', 'orig_date', 'ursprungszeit', 'mid_coll_pd', 'mitte_sammelzeitraum'])
         WHEN table_name = 'geolocat' THEN public.jsonb_rename_keys(changed_fields, ARRAY['sample_id', 'probe_id', 'site_id', 'ort_id', 'type_regulation', 'ortszuordnung_typ', 'add_site_text', 'ortszusatztext', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified', 'poi_id', 'oz_id'])
-        WHEN table_name = 'meas_val' THEN public.jsonb_rename_keys(changed_fields, ARRAY['measm_id', 'messungs_id', 'measd_id', 'messgroesse_id', 'less_than_LOD', 'messwert_nwg', 'meas_val', 'messwert', 'error', 'messfehler', 'detect_lim', 'nwg_zu_messwert', 'unit_id', 'meh_id', 'is_threshold', 'grenzwertueberschreitung', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified'])
+        WHEN table_name = 'meas_val' THEN public.jsonb_rename_keys(changed_fields, ARRAY['measm_id', 'messungs_id', 'measd_id', 'messgroesse_id', 'less_than_lod', 'messwert_nwg', 'meas_val', 'messwert', 'error', 'messfehler', 'detect_lim', 'nwg_zu_messwert', 'unit_id', 'meh_id', 'is_threshold', 'grenzwertueberschreitung', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified'])
         WHEN table_name = 'measm' THEN public.jsonb_rename_keys(changed_fields, ARRAY['sample_id', 'probe_id', 'min_sample_id', 'nebenproben_nr', 'meas_pd', 'messdauer', 'measm_start_date', 'messzeitpunkt', 'is_completed', 'fertig', 'last_mod', 'letzte_aenderung', 'is_scheduled', 'geplant', 'tree_mod', 'tree_modified'])
         ELSE changed_fields
     END AS changed_fields,
@@ -109,7 +109,7 @@ CREATE VIEW land.audit_trail_probe AS SELECT
         WHEN table_name = 'sample' THEN 'probe'
         WHEN table_name = 'geolocat' THEN 'ortszuordnung'
         WHEN table_name = 'meas_val' THEN 'messwert'
-        WHEN table_name = 'measm' THEN ' messung'
+        WHEN table_name = 'measm' THEN 'messung'
 		WHEN table_name = 'site' THEN 'ort'
         ELSE table_name
     END AS table_name,
@@ -122,7 +122,7 @@ CREATE VIEW land.audit_trail_probe AS SELECT
         WHEN table_name = 'comm_sample' THEN public.jsonb_rename_keys(row_data, ARRAY['meas_facil_id', 'mst_id', 'date', 'datum', 'sample_id', 'probe_id'])
         WHEN table_name = 'sample' THEN public.jsonb_rename_keys(row_data, ARRAY['is_test', 'test', 'meas_facil_id', 'mst_id', 'appr_lab_id', 'labor_mst_id', 'main_sample_id', 'hauptproben_nr', 'regulation_id', 'datenbasis_id', 'opr_mode_id', 'ba_id', 'sample_meth_id', 'probenart_id', 'env_descrip_display', 'media_desk', 'env_descrip_name', 'media', 'env_medium_id', 'umw_id', 'sample_start_date', 'probeentnahme_beginn', 'sample_end_date', 'probeentnahme_ende', 'mid_sample_date', 'mittelungsdauer', 'last_mod', 'letzte_aenderung', 'dataset_creator_id', 'erzeuger_id', 'sampler_id', 'probe_nehmer_id', 'state_mpg_id', 'mpl_id', 'mpg_id', 'mpr_id', 'sched_start_date', 'solldatum_beginn', 'sched_end_date', 'solldatum_ende', 'tree_mod', 'tree_modified', 'rei_ag_gr_id', 'rei_progpunkt_grp_id', 'nucl_facil_gr_id', 'kta_gruppe_id', 'orig_date', 'ursprungszeit', 'mid_coll_pd', 'mitte_sammelzeitraum'])
         WHEN table_name = 'geolocat' THEN public.jsonb_rename_keys(row_data, ARRAY['sample_id', 'probe_id', 'site_id', 'ort_id', 'type_regulation', 'ortszuordnung_typ', 'add_site_text', 'ortszusatztext', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified', 'poi_id', 'oz_id'])
-        WHEN table_name = 'meas_val' THEN public.jsonb_rename_keys(row_data, ARRAY['measm_id', 'messungs_id', 'measd_id', 'messgroesse_id', 'less_than_LOD', 'messwert_nwg', 'meas_val', 'messwert', 'error', 'messfehler', 'detect_lim', 'nwg_zu_messwert', 'unit_id', 'meh_id', 'is_threshold', 'grenzwertueberschreitung', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified'])
+        WHEN table_name = 'meas_val' THEN public.jsonb_rename_keys(row_data, ARRAY['measm_id', 'messungs_id', 'measd_id', 'messgroesse_id', 'less_than_lod', 'messwert_nwg', 'meas_val', 'messwert', 'error', 'messfehler', 'detect_lim', 'nwg_zu_messwert', 'unit_id', 'meh_id', 'is_threshold', 'grenzwertueberschreitung', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified'])
         WHEN table_name = 'measm' THEN public.jsonb_rename_keys(row_data, ARRAY['sample_id', 'probe_id', 'min_sample_id', 'nebenproben_nr', 'meas_pd', 'messdauer', 'measm_start_date', 'messzeitpunkt', 'is_completed', 'fertig', 'last_mod', 'letzte_aenderung', 'is_scheduled', 'geplant', 'tree_mod', 'tree_modified'])
 		WHEN table_name = 'site' THEN public.jsonb_rename_keys(row_data, ARRAY['network_id', 'netzbetreiber_id', 'ext_id', 'ort_id', 'long_text', 'langtext', 'state_id', 'staat_id', 'munic_id', 'gem_id', 'is_fuzzy', 'unscharf', 'nuts_id', 'nuts_code', 'spat_ref_sys_id', 'kda_id', 'x_coord_ext', 'koord_x_extern', 'y_coord_ext', 'koord_y_extern', 'alt', 'hoehe_land', 'last_mod', 'letzte_aenderung', 'site_class_id', 'ort_typ', 'short_text', 'kurztext', 'rei_report_text', 'berichtstext', 'rei_zone', 'zone', 'rei_sector', 'sektor', 'rei_competence', 'zustaendigkeit', 'rei_opr_mode', 'mp_art', 'is_rei_active', 'aktiv', 'rei_nucl_facil_gr_id', 'kta_gruppe_id', 'poi_id', 'oz_id', 'height_asl', 'hoehe_ueber_nn', 'rei_ag_gr_id', 'rei_progpunkt_grp_id', 'munic_div_id', 'gem_unt_id'])
         ELSE row_data
@@ -133,7 +133,7 @@ CREATE VIEW land.audit_trail_probe AS SELECT
         WHEN table_name = 'comm_sample' THEN public.jsonb_rename_keys(changed_fields, ARRAY['meas_facil_id', 'mst_id', 'date', 'datum', 'sample_id', 'probe_id'])
         WHEN table_name = 'sample' THEN public.jsonb_rename_keys(changed_fields, ARRAY['is_test', 'test', 'meas_facil_id', 'mst_id', 'appr_lab_id', 'labor_mst_id', 'main_sample_id', 'hauptproben_nr', 'regulation_id', 'datenbasis_id', 'opr_mode_id', 'ba_id', 'sample_meth_id', 'probenart_id', 'env_descrip_display', 'media_desk', 'env_descrip_name', 'media', 'env_medium_id', 'umw_id', 'sample_start_date', 'probeentnahme_beginn', 'sample_end_date', 'probeentnahme_ende', 'mid_sample_date', 'mittelungsdauer', 'last_mod', 'letzte_aenderung', 'dataset_creator_id', 'erzeuger_id', 'sampler_id', 'probe_nehmer_id', 'state_mpg_id', 'mpl_id', 'mpg_id', 'mpr_id', 'sched_start_date', 'solldatum_beginn', 'sched_end_date', 'solldatum_ende', 'tree_mod', 'tree_modified', 'rei_ag_gr_id', 'rei_progpunkt_grp_id', 'nucl_facil_gr_id', 'kta_gruppe_id', 'orig_date', 'ursprungszeit', 'mid_coll_pd', 'mitte_sammelzeitraum'])
         WHEN table_name = 'geolocat' THEN public.jsonb_rename_keys(changed_fields, ARRAY['sample_id', 'probe_id', 'site_id', 'ort_id', 'type_regulation', 'ortszuordnung_typ', 'add_site_text', 'ortszusatztext', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified', 'poi_id', 'oz_id'])
-        WHEN table_name = 'meas_val' THEN public.jsonb_rename_keys(changed_fields, ARRAY['measm_id', 'messungs_id', 'measd_id', 'messgroesse_id', 'less_than_LOD', 'messwert_nwg', 'meas_val', 'messwert', 'error', 'messfehler', 'detect_lim', 'nwg_zu_messwert', 'unit_id', 'meh_id', 'is_threshold', 'grenzwertueberschreitung', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified'])
+        WHEN table_name = 'meas_val' THEN public.jsonb_rename_keys(changed_fields, ARRAY['measm_id', 'messungs_id', 'measd_id', 'messgroesse_id', 'less_than_lod', 'messwert_nwg', 'meas_val', 'messwert', 'error', 'messfehler', 'detect_lim', 'nwg_zu_messwert', 'unit_id', 'meh_id', 'is_threshold', 'grenzwertueberschreitung', 'last_mod', 'letzte_aenderung', 'tree_mod', 'tree_modified'])
         WHEN table_name = 'measm' THEN public.jsonb_rename_keys(changed_fields, ARRAY['sample_id', 'probe_id', 'min_sample_id', 'nebenproben_nr', 'meas_pd', 'messdauer', 'measm_start_date', 'messzeitpunkt', 'is_completed', 'fertig', 'last_mod', 'letzte_aenderung', 'is_scheduled', 'geplant', 'tree_mod', 'tree_modified'])
 		WHEN table_name = 'site' THEN public.jsonb_rename_keys(changed_fields, ARRAY['network_id', 'netzbetreiber_id', 'ext_id', 'ort_id', 'long_text', 'langtext', 'state_id', 'staat_id', 'munic_id', 'gem_id', 'is_fuzzy', 'unscharf', 'nuts_id', 'nuts_code', 'spat_ref_sys_id', 'kda_id', 'x_coord_ext', 'koord_x_extern', 'y_coord_ext', 'koord_y_extern', 'alt', 'hoehe_land', 'last_mod', 'letzte_aenderung', 'site_class_id', 'ort_typ', 'short_text', 'kurztext', 'rei_report_text', 'berichtstext', 'rei_zone', 'zone', 'rei_sector', 'sektor', 'rei_competence', 'zustaendigkeit', 'rei_opr_mode', 'mp_art', 'is_rei_active', 'aktiv', 'rei_nucl_facil_gr_id', 'kta_gruppe_id', 'poi_id', 'oz_id', 'height_asl', 'hoehe_ueber_nn', 'rei_ag_gr_id', 'rei_progpunkt_grp_id', 'munic_div_id', 'gem_unt_id'])
         ELSE changed_fields
@@ -224,7 +224,7 @@ CREATE VIEW land.messwert AS SELECT
 	id,
 	measm_id AS messungs_id,
 	measd_id AS messgroesse_id,
-	less_than_LOD AS messwert_nwg,
+	less_than_lod AS messwert_nwg,
 	meas_val AS messwert,
 	error AS messfehler,
 	detect_lim AS nwg_zu_messwert,
@@ -238,7 +238,7 @@ CREATE VIEW land.messwert_view AS SELECT
 	id,
 	measm_id AS messungs_id,
 	measd_id AS messgroesse_id,
-	less_than_LOD AS messwert_nwg,
+	less_than_lod AS messwert_nwg,
 	meas_val AS messwert,
 	error AS messfehler,
 	detect_lim AS nwg_zu_messwert,
@@ -965,7 +965,7 @@ CREATE VIEW public.lada_messwert AS
  SELECT meas_val.id,
     meas_val.measm_id AS messungs_id,
     meas_val.measd_id AS messgroesse_id,
-    meas_val.less_than_LOD AS messwert_nwg,
+    meas_val.less_than_lod AS messwert_nwg,
     meas_val.meas_val AS messwert,
     meas_val.error AS messfehler,
     meas_val.detect_lim AS nwg_zu_messwert,
