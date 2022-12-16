@@ -761,30 +761,55 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
-     * Test asynchronous import of a Probe object.
+     * Test successful asynchronous import of a Probe object.
      */
     @Test
     @InSequence(18)
     @RunAsClient
-    public final void testAsyncImportProbe(
+    public final void testAsyncImportProbeSuccess(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
         Protocol prot = new Protocol();
-        prot.setName("asyncimport service");
+        prot.setName("asyncimport service successful");
+        testAsyncImportProbe(baseUrl, laf, true, prot);
+    }
+
+    /**
+     * Test unsuccessful asynchronous import of a Probe object.
+     */
+    @Test
+    @InSequence(18)
+    @RunAsClient
+    public final void testAsyncImportProbeNoSuccess(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        Protocol prot = new Protocol();
+        prot.setName("asyncimport service unsuccessful");
+        testAsyncImportProbe(baseUrl, "no valid LAF", false, prot);
+    }
+
+    private void testAsyncImportProbe(
+        URL baseUrl,
+        String lafData,
+        boolean expectSuccess,
+        Protocol prot
+    ) throws InterruptedException, CharacterCodingException {
         prot.setType("laf");
         prot.setPassed(false);
         testProtocol.add(prot);
+
+        final String asyncImportUrl = baseUrl + "data/import/async/";
+        final String fileName = "test.laf";
 
         /* Request asynchronous import */
         JsonObject requestJson = Json.createObjectBuilder()
             .add("encoding", "utf-8")
             .add("files", Json.createObjectBuilder()
-                .add("test.laf", Base64.getEncoder().encodeToString(
-                        laf.getBytes(StandardCharsets.UTF_8))))
+                .add(fileName, Base64.getEncoder().encodeToString(
+                        lafData.getBytes(StandardCharsets.UTF_8))))
             .build();
 
-        Response importCreated = client.target(
-            baseUrl + "data/import/async/laf")
+        Response importCreated = client.target(asyncImportUrl + "laf")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
@@ -800,7 +825,7 @@ public class ImporterTest extends BaseTest {
 
         /* Request status of asynchronous import */
         SyncInvoker statusRequest = client.target(
-            baseUrl + "data/import/async/status/" + refId)
+            asyncImportUrl + "status/" + refId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles);
@@ -826,6 +851,27 @@ public class ImporterTest extends BaseTest {
         Assert.assertEquals(
             Job.Status.FINISHED.name().toLowerCase(),
             importStatusObject.getString(statusKey));
+
+        /* Fetch import result report */
+        Response reportResponse = client.target(
+            asyncImportUrl + "result/" + refId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        JsonObject report = parseSimpleResponse(reportResponse, prot);
+
+        assertContains(report, fileName);
+        JsonObject fileReport = report.getJsonObject(fileName);
+
+        final String successKey = "success";
+        assertContains(fileReport, successKey);
+        boolean success = fileReport.getBoolean(successKey);
+        if (expectSuccess) {
+            Assert.assertTrue(success);
+        } else {
+            Assert.assertFalse(success);
+        }
 
         // TODO: Test if data correctly entered database
 
