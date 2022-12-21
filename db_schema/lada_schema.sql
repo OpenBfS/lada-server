@@ -269,7 +269,7 @@ CREATE TABLE sample (
     regulation_id smallint REFERENCES master.regulation,
     opr_mode_id integer REFERENCES master.opr_mode,
     sample_meth_id smallint REFERENCES master.sample_meth,
-    env_descrip_display character varying(100) CHECK(env_descrip_display ~ '^D:( [0-9][0-9]){12}$');,
+    env_descrip_display character varying(100) CHECK(env_descrip_display ~ '^D:( [0-9][0-9]){12}$'),
     env_descrip_name character varying(100),
     env_medium_id character varying(3) REFERENCES master.env_medium,
     sample_start_date timestamp without time zone,
