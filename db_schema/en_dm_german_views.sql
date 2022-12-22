@@ -333,13 +333,13 @@ CREATE VIEW land.zusatz_wert AS SELECT
 	smaller_than AS kleiner_als
 FROM lada.sample_specif_meas_val;
 
-CREATE OR REPLACE FUNCTION stamm.get_desk_beschreibung(media_desk character varying, tufe integer)
+CREATE OR REPLACE FUNCTION stamm.get_desk_beschreibung(media_desk character varying, stufe integer)
     RETURNS character varying
     LANGUAGE 'plpgsql'
 AS $BODY$
 DECLARE
   BEGIN
-    return master.get_desc_description(media_desk, stufe);
+    return master.get_desk_description(media_desk, stufe);
   END;
 $BODY$;
 
