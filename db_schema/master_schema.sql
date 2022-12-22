@@ -479,7 +479,7 @@ CREATE TABLE lada_user (
 
 CREATE TABLE base_query (
     id serial PRIMARY KEY,
-    sql text NOT NULL CHECK(check_sql(sql))
+    sql text NOT NULL CHECK(check_sql(sql) AND sql ~ '^SELECT' AND sql !~* '.*DELETE.*|.*DROP.*|.*TRUNCATE.*|.*INSERT.*|.*UPDATE.*|.*GRANT.*|.*REVOKE.*')
 );
 
 CREATE TABLE query_user (
