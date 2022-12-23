@@ -178,7 +178,7 @@ FROM lada.measm;
 ALTER TABLE IF EXISTS lada.messwert RENAME TO meas_val;
 ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN messungs_id TO measm_id;
 ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN messgroesse_id TO measd_id;
-ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN messwert_nwg TO less_than_LOD;
+ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN messwert_nwg TO less_than_lod;
 ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN messwert TO meas_val;
 ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN messfehler TO error;
 ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN nwg_zu_messwert TO detect_lim;
@@ -190,7 +190,7 @@ CREATE VIEW land.messwert AS SELECT
 	id,
 	measm_id AS messungs_id,
 	measd_id AS messgroesse_id,
-	less_than_LOD AS messwert_nwg,
+	less_than_lod AS messwert_nwg,
 	meas_val AS messwert,
 	error AS messfehler,
 	detect_lim AS nwg_zu_messwert,
@@ -203,7 +203,7 @@ FROM lada.meas_val;
 ALTER TABLE IF EXISTS lada.messwert_view RENAME TO meas_val_view;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messungs_id TO measm_id;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messgroesse_id TO measd_id;
-ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messwert_nwg TO less_than_LOD;
+ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messwert_nwg TO less_than_lod;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messwert TO meas_val;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messfehler TO error;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN nwg_zu_messwert TO detect_lim;
@@ -215,7 +215,7 @@ CREATE VIEW land.messwert_view AS SELECT
 	id,
 	measm_id AS messungs_id,
 	measd_id AS messgroesse_id,
-	less_than_LOD AS messwert_nwg,
+	less_than_lod AS messwert_nwg,
 	meas_val AS messwert,
 	error AS messfehler,
 	detect_lim AS nwg_zu_messwert,
@@ -390,21 +390,6 @@ CREATE VIEW stamm.audit_trail AS SELECT
 	row_data,
 	changed_fields
 FROM master.audit_trail;
-
-ALTER TABLE IF EXISTS master.audit_trail_ort RENAME TO audit_trail_site_view;
-ALTER TABLE IF EXISTS master.audit_trail_site_view RENAME COLUMN tstamp TO last_mod;
-ALTER TABLE IF EXISTS master.audit_trail_site_view RENAME COLUMN ort_id TO site_id;
-CREATE VIEW stamm.audit_trail_ort AS SELECT
-	id,
-	table_name,
-	last_mod AS tstamp,
-	action,
-	object_id,
-	row_data,
-	changed_fields,
-	site_id AS ort_id
-FROM master.audit_trail_site_view;
-
 
 ALTER TABLE IF EXISTS master.auth RENAME COLUMN ldap_group TO ldap_gr;
 ALTER TABLE IF EXISTS master.auth RENAME COLUMN netzbetreiber_id TO network_id;
@@ -1313,47 +1298,3 @@ CREATE VIEW stamm.zeitbasis AS SELECT
 	name AS bezeichnung,
 	last_mod AS letzte_aenderung
 FROM master.tz;
-
---NEW: add lada.audit_trail_sample_view & lada.audit_trail_measm_view
--- View for sample audit trail
-
-CREATE OR REPLACE VIEW lada.audit_trail_sample_view AS
-SELECT
-    lada_audit.id,
-    lada_audit.table_name,
-    lada_audit.action,
-    lada_audit.object_id,
-    lada_audit.tstamp,
-    cast(row_data ->> 'measm_id' AS integer) AS measm_id,
-    coalesce(cast(row_data ->> 'sample_id' AS integer),
-        (SELECT sample_id FROM lada.measm WHERE id = cast(
-            row_data ->> 'measm_id' AS integer))) AS sample_id,
-    lada_audit.row_data,
-    lada_audit.changed_fields,
-    null as site_id
-FROM lada.audit_trail as lada_audit
-UNION
-SELECT master_audit.id,
-    master_audit.table_name,
-    master_audit.action,
-    master_audit.object_id,
-    master_audit.tstamp,
-    null as messungs_id,
-    null as probe_id,
-    master_audit.row_data,
-    master_audit.changed_fields,
-    cast(row_data ->> 'id' AS integer) AS site_id
-FROM master.audit_trail as master_audit;
-
-
--- View for measm audit trail
-CREATE OR REPLACE VIEW audit_trail_measm_view AS
-SELECT audit_trail.id,
-    audit_trail.table_name,
-    audit_trail.tstamp,
-    audit_trail.action,
-    audit_trail.object_id,
-    audit_trail.row_data,
-    audit_trail.changed_fields,
-    cast(row_data ->> 'measm_id' AS int) AS measm_id
-FROM audit_trail;

@@ -11,8 +11,12 @@ CREATE TABLE audit_trail(
       action varchar(1) NOT NULL CHECK (action IN ('I','D','U', 'T')),
       object_id integer not null,
       row_data JSONB,
-      changed_fields JSONB
+      changed_fields JSONB,
+      site_id INTEGER GENERATED always AS 
+        (cast(row_data ->> 'id' AS integer)) STORED
 );
+CREATE INDEX audit_trail_site_id_idx
+    ON master.audit_trail USING btree (site_id ASC NULLS LAST);
 
 CREATE OR REPLACE FUNCTION jsonb_delete_left(a jsonb, b jsonb)
   RETURNS jsonb AS
@@ -76,7 +80,15 @@ BEGIN
         RAISE EXCEPTION '[if_modified_func] - Trigger func added as trigger for unhandled case: %, %',TG_OP, TG_LEVEL;
         RETURN NULL;
     END IF;
-    INSERT INTO audit_trail VALUES (audit_row.*);
+    INSERT INTO audit_trail(id, table_name, tstamp, action, object_id, row_data, changed_fields)
+    VALUES (
+        audit_row.id, 
+        audit_row.table_name,
+        audit_row.tstamp,
+        audit_row.action,
+        audit_row.object_id,
+        audit_row.row_data,
+        audit_row.changed_fields);
     RETURN NULL;
 END;
 $body$
@@ -107,7 +119,6 @@ BEGIN
                  quote_ident(target_table::TEXT) ||
                  ' FOR EACH ROW EXECUTE PROCEDURE if_modified_func(' ||
                  quote_literal(audit_query_text) || _ignored_cols_snip || ');';
-        RAISE NOTICE '%',_q_txt;
         EXECUTE _q_txt;
         stm_targets = 'TRUNCATE';
     ELSE
@@ -117,7 +128,6 @@ BEGIN
              target_table ||
              ' FOR EACH STATEMENT EXECUTE PROCEDURE if_modified_func('||
              quote_literal(audit_query_text) || ');';
-    RAISE NOTICE '%',_q_txt;
     EXECUTE _q_txt;
 
 END;
@@ -161,7 +171,7 @@ SELECT audit_trail.id,
     audit_trail.object_id,
     audit_trail.row_data,
     audit_trail.changed_fields,
-    cast(row_data ->> 'id' AS varchar) AS site_id
+    site_id
 FROM audit_trail;
 
 SELECT audit_table('site', true, false, '{id, ext_id, tree_mod, last_mod}'::text[]);

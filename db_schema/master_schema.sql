@@ -479,7 +479,7 @@ CREATE TABLE lada_user (
 
 CREATE TABLE base_query (
     id serial PRIMARY KEY,
-    sql text NOT NULL CHECK(check_sql(sql))
+    sql text NOT NULL CHECK(check_sql(sql) AND sql ~ '^SELECT' AND sql !~* '.*DELETE.*|.*DROP.*|.*TRUNCATE.*|.*INSERT.*|.*UPDATE.*|.*GRANT.*|.*REVOKE.*')
 );
 
 CREATE TABLE query_user (
@@ -954,7 +954,8 @@ CREATE TABLE tag (
     UNIQUE(name, network_id, meas_facil_id)
 );
 CREATE UNIQUE INDEX is_auto_tag_unique_idx ON master.tag (name) WHERE is_auto_tag = true;
-
+CREATE UNIQUE INDEX global_tag_unique_idx ON master.tag (name) WHERE network_id IS NULL;
+CREATE UNIQUE INDEX network_tag_unique_idx ON master.tag (name, network_id) WHERE meas_facil_id IS NULL;
 CREATE TABLE master.convers_dm_fm(
   id serial NOT NULL PRIMARY KEY,	
   unit_id smallint NOT NULL REFERENCES meas_unit(id),

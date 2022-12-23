@@ -257,8 +257,6 @@ public class LafImportService extends LadaService {
                 responseData.put("tag", newTag.getName());
             });
         }
-        System.out.println(importResponseData.get("errors"));
-        System.out.println(importResponseData.get("warnings"));
         return new Response(success, StatusCodes.OK, importResponseData);
     }
 

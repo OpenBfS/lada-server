@@ -235,3 +235,6 @@ DECLARE
     return imis2_id;
   END;
 $BODY$;
+
+--NEW 121221
+DROP FUNCTION IF EXISTS master.get_desk_beschreibung(character varying, integer);

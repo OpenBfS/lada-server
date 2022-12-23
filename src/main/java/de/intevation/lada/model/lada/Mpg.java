@@ -69,7 +69,7 @@ public class Mpg implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    @Pattern(regexp = ".* .*")
+    @Pattern(regexp = "D:( [0-9][0-9]){12}")
     private String envDescripDisplay;
 
     private String measFacilId;
@@ -103,7 +103,7 @@ public class Mpg implements Serializable {
     private String sampleQuant;
 
     @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "mpg_id")
+    @JoinColumn(name = "mpg_id", updatable = false, insertable = false)
     private Set<Sample> samples;
 
     @ManyToMany (fetch = FetchType.EAGER)

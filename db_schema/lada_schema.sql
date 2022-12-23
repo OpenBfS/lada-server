@@ -81,7 +81,6 @@ CREATE FUNCTION update_tree_mod_measm() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN
-        RAISE NOTICE 'measm is %',NEW.id;
         NEW.tree_mod = now() AT TIME ZONE 'utc';
         UPDATE lada.meas_val SET tree_mod = now() AT TIME ZONE 'utc' WHERE measm_id = NEW.id;
         UPDATE lada.status_prot SET tree_mod = now() AT TIME ZONE 'utc' WHERE measm_id = NEW.id;
@@ -98,9 +97,7 @@ CREATE FUNCTION update_tree_mod_sample() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN
-        RAISE NOTICE 'sample is %',NEW.id;
         NEW.tree_mod = now() AT TIME ZONE 'utc';
-        RAISE NOTICE 'updating other rows';
         UPDATE lada.measm SET tree_mod = now() AT TIME ZONE 'utc' WHERE sample_id = NEW.id;
         UPDATE lada.geolocat SET tree_mod = now() AT TIME ZONE 'utc' WHERE sample_id = NEW.id;
         UPDATE lada.sample_specif_meas_val SET tree_mod = now() AT TIME ZONE 'utc' WHERE sample_id = NEW.id;
@@ -176,7 +173,8 @@ CREATE TABLE mpg (
     regulation_id integer NOT NULL REFERENCES master.regulation,
     opr_mode_id integer DEFAULT 1 REFERENCES master.opr_mode,
     munic_id character varying(8) REFERENCES master.admin_unit,
-    env_descrip_display character varying(100) CHECK(env_descrip_display LIKE '% %'),
+    env_descrip_display character varying(100) CHECK
+        (env_descrip_display ~ '^D:( [0-9][0-9]){12}$'),
     env_medium_id character varying(3) REFERENCES master.env_medium,
     sample_meth_id integer NOT NULL REFERENCES master.sample_meth,
     sample_pd character varying(2) NOT NULL,
@@ -271,7 +269,7 @@ CREATE TABLE sample (
     regulation_id smallint REFERENCES master.regulation,
     opr_mode_id integer REFERENCES master.opr_mode,
     sample_meth_id smallint REFERENCES master.sample_meth,
-    env_descrip_display character varying(100) CHECK(env_descrip_display LIKE '% %'),
+    env_descrip_display character varying(100) CHECK(env_descrip_display ~ '^D:( [0-9][0-9]){12}$'),
     env_descrip_name character varying(100),
     env_medium_id character varying(3) REFERENCES master.env_medium,
     sample_start_date timestamp without time zone,
@@ -414,7 +412,7 @@ CREATE TABLE meas_val (
     id serial PRIMARY KEY,
     measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE,
     measd_id integer NOT NULL REFERENCES master.measd,
-    less_than_LOD character varying(1),
+    less_than_lod character varying(1),
     meas_val double precision,
     error real,
     detect_lim double precision,
@@ -506,6 +504,28 @@ CREATE INDEX status_prot_measm_id_idx ON status_prot USING btree (measm_id);
 
 CREATE INDEX comm_measm_id_idx ON comm_measm USING btree (measm_id);
 
+--NEW 221220
+
+--Indices that are in production environment
+CREATE INDEX geolocat_mpg_mpg_id_idx ON lada.geolocat_mpg USING btree (mpg_id ASC NULLS LAST);
+CREATE INDEX sample_env_medium_id_idx ON lada.sample USING btree (env_medium_id);
+CREATE INDEX sample_meas_facil_id_idx ON lada.sample USING btree (meas_facil_id);
+CREATE INDEX sample_mid_collect_period_idx ON lada.sample USING btree (COALESCE(sample_start_date + (sample_end_date - sample_start_date) / 2::double precision, sample_start_date));
+CREATE INDEX sample_nucl_facil_gr_id_idx ON lada.sample USING btree (nucl_facil_gr_id);
+CREATE INDEX sample_opr_mode_id_idx ON lada.sample USING btree (opr_mode_id);
+CREATE INDEX sample_regulation_id_idx ON lada.sample USING btree (regulation_id);
+CREATE INDEX sample_rei_ag_gr_id_idx ON lada.sample USING btree (rei_ag_gr_id);
+CREATE INDEX sample_sample_start_date_idx ON lada.sample USING btree (sample_start_date);
+CREATE INDEX state_sample_mid_collect_period_id_ndx ON lada.sample USING btree (mid_coll_pd);
+CREATE INDEX tag_link_measm_id_idx ON lada.tag_link USING btree (measm_id ASC NULLS LAST) TABLESPACE pg_default;
+CREATE INDEX tag_link_sample_id_idx ON lada.tag_link USING btree (sample_id ASC NULLS LAST) TABLESPACE pg_default;
+CREATE INDEX measm_status_idx ON lada.measm USING btree (status ASC NULLS LAST) TABLESPACE pg_default;
+--CREATE INDEX audit_trail_object_id_idx ON lada.audit_trail USING btree (object_id ASC NULLS LAST) TABLESPACE pg_default;
+--CREATE INDEX audit_trail_table_name_idx ON lada.audit_trail USING btree (table_name COLLATE pg_catalog."default" ASC NULLS LAST) TABLESPACE pg_default;
+CREATE INDEX mpg_meas_facil_id_idx ON lada.mpg USING btree (meas_facil_id COLLATE pg_catalog."default" ASC NULLS LAST) TABLESPACE pg_default;
+CREATE INDEX mpg_mmt_mp_mpg_id_idx ON lada.mpg_mmt_mp USING btree (mpg_id ASC NULLS LAST) TABLESPACE pg_default;
+CREATE INDEX status_prot_status_comb_idx ON lada.status_prot USING btree (status_comb ASC NULLS LAST) TABLESPACE pg_default;
+CREATE INDEX meas_val_measd_id_idx ON lada.meas_val USING btree (measd_id ASC NULLS LAST) TABLESPACE pg_default;
 
 --
 -- Name: COLUMN geolocat.type_regulation; Type: COMMENT; Schema: lada; Owner: -

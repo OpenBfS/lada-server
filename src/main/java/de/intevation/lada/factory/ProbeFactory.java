@@ -396,40 +396,48 @@ public class ProbeFactory {
         Date endDate,
         boolean dryrun
     ) {
-        QueryBuilder<Sample> builderProbe =
-            repository.queryBuilder(Sample.class);
-        builderProbe.and("mpgId", messprogramm.getId());
-        builderProbe.and("schedStartDate", startDate);
-        builderProbe.and("schedEndDate", endDate);
-
-        QueryBuilder<MpgMmtMp> builder =
-            repository.queryBuilder(MpgMmtMp.class);
-        builder.and("mpgId", messprogramm.getId());
+        QueryBuilder<MpgMmtMp> builder = repository
+            .queryBuilder(MpgMmtMp.class)
+            .and("mpgId", messprogramm.getId());
         List<MpgMmtMp> mmts = repository.filterPlain(builder.getQuery());
-        List<String> messungProtocol = new ArrayList<>();
-        List<Sample> proben =
-            repository.filterPlain(builderProbe.getQuery());
 
-        QueryBuilder<GeolocatMpg> builderOrt =
-            repository.queryBuilder(GeolocatMpg.class);
-        builderOrt.and("mpgId", messprogramm.getId());
+        QueryBuilder<GeolocatMpg> builderOrt = repository
+            .queryBuilder(GeolocatMpg.class)
+            .and("mpgId", messprogramm.getId());
         List<GeolocatMpg> orte =
             repository.filterPlain(builderOrt.getQuery());
 
+        // Prepare data for informative transient attributes
+        List<String> messungProtocol = new ArrayList<>();
+        for (MpgMmtMp mmt: mmts) {
+            messungProtocol.add(mmt.getMmtId());
+        }
+
+        String gemId = "";
+        for (GeolocatMpg ort : orte) {
+            if ("E".equals(ort.getTypeRegulation())) {
+                gemId = repository.getByIdPlain(
+                    Site.class, ort.getSiteId()).getMunicId();
+            }
+        }
+
+        // Check for existing matching entity
+        QueryBuilder<Sample> builderProbe = repository
+            .queryBuilder(Sample.class)
+            .and("mpgId", messprogramm.getId())
+            .and("schedStartDate", startDate)
+            .and("schedEndDate", endDate);
+        List<Sample> proben = repository.filterPlain(builderProbe.getQuery());
+
+        // Add informative transient attributes to existing entity
         if (!proben.isEmpty()) {
             proben.get(0).setFound(true);
-            for (int i = 0; i < mmts.size(); i++) {
-                MpgMmtMp mmt = mmts.get(i);
-                messungProtocol.add(mmt.getMmtId());
-            }
             proben.get(0).setMmt(messungProtocol);
-            for (GeolocatMpg ort : orte) {
-                Site o = repository.getByIdPlain(
-                    Site.class, ort.getSiteId());
-                proben.get(0).setGemId(o.getMunicId());
-            }
+            proben.get(0).setGemId(gemId);
             return proben.get(0);
         }
+
+        // Create new entity
         Sample probe = new Sample();
         probe.setOprModeId(messprogramm.getOprModeId());
         probe.setRegulationId(messprogramm.getRegulationId());
@@ -448,6 +456,8 @@ public class ProbeFactory {
         probe.setReiAgGrId(messprogramm.getReiAgGrId());
         probe.setNuclFacilGrId(messprogramm.getNuclFacilGrId());
         probe.setFound(false);
+        probe.setMmt(messungProtocol);
+        probe.setGemId(gemId);
 
         createObject(probe, dryrun);
 
@@ -476,15 +486,13 @@ public class ProbeFactory {
             createObject(kommentar, dryrun);
         }
 
-        for (int i = 0; i < mmts.size(); i++) {
-            MpgMmtMp mmt = mmts.get(i);
+        for (MpgMmtMp mmt: mmts) {
             Measm messung = new Measm();
             messung.setIsCompleted(false);
             messung.setIsScheduled(true);
             messung.setMmtId(mmt.getMmtId());
             messung.setSampleId(probe.getId());
             createObject(messung, dryrun);
-            messungProtocol.add(mmt.getMmtId());
             for (int mw : mmt.getMeasds()) {
                 MeasVal wert = new MeasVal();
                 wert.setMeasdId(mw);

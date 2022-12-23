@@ -60,7 +60,7 @@ public class Sample implements Serializable {
 
     private String envDescripName;
 
-    @Pattern(regexp = ".* .*")
+    @Pattern(regexp = "D:( [0-9][0-9]){12}")
     private String envDescripDisplay;
 
     private Long midSampleDate;
@@ -107,10 +107,6 @@ public class Sample implements Serializable {
     private boolean owner;
 
     @Transient
-    @JsonbTransient
-    private boolean found;
-
-    @Transient
     private MultivaluedMap<String, Integer> errors;
 
     @Transient
@@ -120,6 +116,10 @@ public class Sample implements Serializable {
     private MultivaluedMap<String, Integer> notifications;
 
     //Transient fields used for Site object generation
+    @Transient
+    @JsonbTransient
+    private boolean found;
+
     @Transient
     private List<String> mmt;
 

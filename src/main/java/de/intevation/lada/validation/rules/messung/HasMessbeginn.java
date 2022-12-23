@@ -34,10 +34,8 @@ public class HasMessbeginn implements Rule {
         Sample probe =
             repository.getByIdPlain(Sample.class, messung.getSampleId());
         if (messung.getMeasmStartDate() == null
-            && (
-                probe.getRegulationId() != null
-                && probe.getRegulationId() != 1
-            )) {
+            && (probe.getRegulationId() != null && probe.getRegulationId() != 1)
+        ) {
             Violation violation = new Violation();
             violation.addWarning("messzeitpunkt", StatusCodes.VALUE_MISSING);
             return violation;
