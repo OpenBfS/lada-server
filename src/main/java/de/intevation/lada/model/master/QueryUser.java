@@ -23,7 +23,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "query_user", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 public class QueryUser implements Serializable {
     private static final long serialVersionUID = 1L;
 

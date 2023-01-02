@@ -15,7 +15,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "mmt_measd_view", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 public class MmtMeasdView implements Serializable {
     private static final long serialVersionUID = 1L;
 

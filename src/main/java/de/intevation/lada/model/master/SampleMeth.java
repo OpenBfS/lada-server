@@ -16,7 +16,7 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "sample_meth", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 public class SampleMeth implements Serializable {
     private static final long serialVersionUID = 1L;
 

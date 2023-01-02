@@ -16,7 +16,7 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "rei_ag_gr", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 public class ReiAgGr implements Serializable {
     private static final long serialVersionUID = 1L;
 

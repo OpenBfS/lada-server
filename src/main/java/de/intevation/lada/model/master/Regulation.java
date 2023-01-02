@@ -20,7 +20,7 @@ import javax.persistence.Column;
  *
  */
 @Entity
-@Table(name = "regulation", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 public class Regulation implements Serializable {
     private static final long serialVersionUID = 1L;
 

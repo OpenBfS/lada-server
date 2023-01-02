@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 
 @Entity
-@Table(name = "targ_act_mmt_gr", schema = SchemaName.NAME)
+@Table(schema = SchemaName.NAME)
 public class TargActMmtGr implements Serializable {
     private static final long serialVersionUID = 1L;
 
