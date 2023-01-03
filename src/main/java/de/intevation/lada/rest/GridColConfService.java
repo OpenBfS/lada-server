@@ -82,7 +82,7 @@ public class GridColConfService extends LadaService {
         ) {
             userFilter = builder.or(
                 userFilter,
-                mess.get("messStelle").in(userInfo.getMessstellen()));
+                mess.get("measFacilId").in(userInfo.getMessstellen()));
         }
         filter = builder.and(filter, userFilter);
         criteriaQuery.where(filter).distinct(true);
