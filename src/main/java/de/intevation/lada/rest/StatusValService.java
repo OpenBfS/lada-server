@@ -93,16 +93,16 @@ public class StatusValService extends LadaService {
 
         QueryBuilder<StatusAccessMpView> errFilter = repository
             .queryBuilder(StatusAccessMpView.class)
-            .andIn("levId", authorization.getInfo().getFunktionen())
-            .and("curLev", kombi.getStatusLev().getId())
-            .and("curVal", kombi.getStatusVal().getId());
+            .andIn("statusLevId", authorization.getInfo().getFunktionen())
+            .and("curLevId", kombi.getStatusLev().getId())
+            .and("curValId", kombi.getStatusVal().getId());
         List<StatusAccessMpView> erreichbare = repository.filterPlain(
             errFilter.getQuery());
 
         QueryBuilder<StatusVal> werteFilter =
             repository.queryBuilder(StatusVal.class);
         for (StatusAccessMpView erreichbar: erreichbare) {
-            werteFilter.or("id", erreichbar.getValId());
+            werteFilter.or("id", erreichbar.getStatusValId());
         }
         return repository.filter(werteFilter.getQuery());
     }

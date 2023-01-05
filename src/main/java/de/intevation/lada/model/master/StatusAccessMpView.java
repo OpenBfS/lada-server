@@ -25,9 +25,9 @@ public class StatusAccessMpView implements Serializable {
 
     private Integer curValId;
 
-    private Integer levId;
+    private Integer statusLevId;
 
-    private Integer valId;
+    private Integer statusValId;
 
     public StatusAccessMpView() {
     }
@@ -62,20 +62,20 @@ public class StatusAccessMpView implements Serializable {
         this.curValId = curVal;
     }
 
-    public Integer getLevId() {
-        return this.levId;
+    public Integer getStatusLevId() {
+        return this.statusLevId;
     }
 
-    public void setLevId(Integer levId) {
-        this.levId = levId;
+    public void setStatusLevId(Integer levId) {
+        this.statusLevId = levId;
     }
 
-    public Integer getValId() {
-        return this.valId;
+    public Integer getStatusValId() {
+        return this.statusValId;
     }
 
-    public void setValId(Integer valId) {
-        this.valId = valId;
+    public void setStatusValId(Integer valId) {
+        this.statusValId = valId;
     }
 
 }

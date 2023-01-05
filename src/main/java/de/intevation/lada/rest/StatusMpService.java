@@ -136,8 +136,8 @@ public class StatusMpService extends LadaService {
             : erreichbare.entrySet()
         ) {
                 QueryBuilder<StatusMp> tmp = kombiFilter.getEmptyBuilder();
-                tmp.and("statusVal", erreichbar.getValue().getValId())
-                    .and("statusLev", erreichbar.getValue().getLevId());
+                tmp.and("statusVal", erreichbar.getValue().getStatusValId())
+                    .and("statusLev", erreichbar.getValue().getStatusLevId());
                 kombiFilter.or(tmp);
         }
 
