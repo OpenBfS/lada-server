@@ -217,8 +217,10 @@ public class OrtFactory {
                             ort.getKdaId(),
                             String.valueOf(v.getMittelpunkt().getX()),
                             String.valueOf(v.getMittelpunkt().getY()));
-                        ort.setKoordYExtern(coords.getY());
-                        ort.setKoordXExtern(coords.getX());
+                        if (coords != null) {
+                            ort.setKoordYExtern(coords.getY());
+                            ort.setKoordXExtern(coords.getX());
+                        }
                     }
                     ort.setOrtTyp(ORTTYP4);
                     //set ortId
