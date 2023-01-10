@@ -116,7 +116,7 @@ public class StatusMpService extends LadaService {
 
             QueryBuilder<StatusAccessMpView> errFilter =
                 repository.queryBuilder(StatusAccessMpView.class);
-            errFilter.andIn("levId", user.getFunktionen());
+            errFilter.andIn("statusLevId", user.getFunktionen());
             errFilter.and("curLevId", kombi.getStatusLev().getId());
             errFilter.and("curValId", kombi.getStatusVal().getId());
             List<StatusAccessMpView> err = repository.filterPlain(
