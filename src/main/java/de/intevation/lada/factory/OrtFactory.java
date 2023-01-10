@@ -137,8 +137,10 @@ public class OrtFactory {
                     if (v != null) {
                         for (Site oElem : orte) {
                             //Todo: Check for different kda-types
-                            if (oElem.getCoordXExt().equals(String.valueOf(v.getGeomCenter().getX()))
-                            && oElem.getCoordYExt().equals(String.valueOf(v.getGeomCenter().getY()))
+                            if (oElem.getCoordXExt().equals(
+                                    String.valueOf(v.getGeomCenter().getX()))
+                            && oElem.getCoordYExt().equals(
+                                    String.valueOf(v.getGeomCenter().getY()))
                              ){
                                 return oElem;
                             }
@@ -191,7 +193,8 @@ public class OrtFactory {
             QueryBuilder<Site> builderExists = repository.queryBuilder(Site.class);
             builderExists.and("networkId", ort.getNetworkId());
             builderExists.andLike("municId", "%"+ort.getMunicId());
-            List<Site> ortExists =  repository.filterPlain(builderExists.getQuery());
+            List<Site> ortExists = repository.filterPlain(
+                builderExists.getQuery());
             if (v == null) {
                 ReportItem err = new ReportItem();
                 err.setCode(StatusCodes.IMP_INVALID_VALUE);
@@ -213,25 +216,34 @@ public class OrtFactory {
                             ort.getSpatRefSysId(),
                             String.valueOf(v.getGeomCenter().getX()),
                             String.valueOf(v.getGeomCenter().getY()));
-                        ort.setCoordYExt(coords.getY());
-                        ort.setCoordXExt(coords.getX());
+                        if (coords != null) {
+                            ort.setCoordYExt(coords.getY());
+                            ort.setCoordXExt(coords.getX());
+                        }
                     }
                     ort.setSiteClassId(ORTTYP4);
                     //set ortId
-                    if ( v.getIsMunic() ) {
-                        ort.setExtId("GEM_"+ort.getMunicId());
-                    } else if ( !v.getIsMunic() && v.getIsRuralDist() ){
-                       ort.setExtId("LK_"+ort.getMunicId());
-                    } else if ( !v.getIsMunic() && !v.getIsRuralDist() && v.getIsGovDist() ) {
-                        ort.setExtId("RB_"+ort.getMunicId());
-                    } else if ( !v.getIsMunic() && !v.getIsRuralDist() && !v.getIsGovDist() && v.getIsState() ) {
-                        ort.setExtId("BL_"+ort.getMunicId());
+                    if (v.getIsMunic()) {
+                        ort.setExtId("GEM_" + ort.getMunicId());
+                    } else if (!v.getIsMunic() && v.getIsRuralDist()) {
+                       ort.setExtId("LK_" + ort.getMunicId());
+                    } else if (!v.getIsMunic()
+                            && !v.getIsRuralDist()
+                            && v.getIsGovDist()) {
+                        ort.setExtId("RB_" + ort.getMunicId());
+                    } else if (!v.getIsMunic()
+                            && !v.getIsRuralDist()
+                            && !v.getIsGovDist()
+                            && v.getIsState()) {
+                        ort.setExtId("BL_" + ort.getMunicId());
                     }
                 }
-                if (ort.getShortText() == null || ort.getShortText().equals("")) {
+                if (ort.getShortText() == null
+                    || ort.getShortText().equals("")) {
                     ort.setShortText(ort.getExtId());
                 }
-                if (ort.getLongText() == null || ort.getLongText().equals("")) {
+                if (ort.getLongText() == null
+                    || ort.getLongText().equals("")) {
                     ort.setLongText(v.getName());
                 }
                 if (ort.getReiReportText() == null

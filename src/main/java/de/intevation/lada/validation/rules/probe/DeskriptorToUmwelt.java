@@ -124,8 +124,11 @@ public class DeskriptorToUmwelt implements Rule {
                 tmp.or(field, null);
                 builder.and(tmp);
             } else {
-                if (datenbasisId != 4 && datenbasisId != 1) {
-                builder.and(field, null);
+                if (datenbasisId != null
+                    && datenbasisId != 4
+                    && datenbasisId != 1
+                ) {
+                    builder.and(field, null);
                 }
             }
         }
