@@ -336,7 +336,7 @@ public abstract class QueryExportJob extends ExportJob {
         exportParameters.getJsonArray("columns").forEach(jsonValue -> {
             JsonObject columnObj = (JsonObject) jsonValue;
             GridColConf columnValue = new GridColConf();
-            columnValue.setGridColMpId(columnObj.getInt("gridColumnId"));
+            columnValue.setGridColMpId(columnObj.getInt("gridColMpId"));
             String sort = columnObj.get("sort") != null
                 && columnObj.get("sort").getValueType() == ValueType.STRING
                 ? columnObj.getString("sort") : null;
@@ -345,11 +345,11 @@ public abstract class QueryExportJob extends ExportJob {
                 && columnObj.get("sortIndex").getValueType() == ValueType.NUMBER
                 ? columnObj.getInt("sortIndex") : null;
             columnValue.setSortIndex(sortIndex);
-            columnValue.setFilterVal(columnObj.getString("filterValue"));
-            columnValue.setIsFilterActive(columnObj.getBoolean("filterActive"));
-            columnValue.setIsFilterNull(columnObj.getBoolean("filterIsNull"));
-            columnValue.setIsFilterNegate(columnObj.getBoolean("filterNegate"));
-            columnValue.setIsFilterRegex(columnObj.getBoolean("filterRegex"));
+            columnValue.setFilterVal(columnObj.getString("filterVal"));
+            columnValue.setIsFilterActive(columnObj.getBoolean("isFilterActive"));
+            columnValue.setIsFilterNull(columnObj.getBoolean("isFilterNull"));
+            columnValue.setIsFilterNegate(columnObj.getBoolean("isFilterNegate"));
+            columnValue.setIsFilterRegex(columnObj.getBoolean("isFilterRegex"));
             GridColMp gridColumn = repository.getByIdPlain(
                 GridColMp.class, columnValue.getGridColMpId());
 
