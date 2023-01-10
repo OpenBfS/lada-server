@@ -114,8 +114,8 @@ public class OrtFactory {
             && ort.getCoordYExt() != null
         ) {
             builder.and("spatRefSysId", ort.getSpatRefSysId());
-            builder.and("xCoordExt", ort.getCoordXExt());
-            builder.and("yCoordExt", ort.getCoordYExt());
+            builder.and("coordXExt", ort.getCoordXExt());
+            builder.and("coordYExt", ort.getCoordYExt());
             builder.and("networkId", ort.getNetworkId());
             List<Site> orte =
                 repository.filterPlain(builder.getQuery());
