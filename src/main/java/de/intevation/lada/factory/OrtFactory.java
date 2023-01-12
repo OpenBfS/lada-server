@@ -137,9 +137,11 @@ public class OrtFactory {
                     if (v != null) {
                         for (Ort oElem : orte) {
                             //Todo: Check for different kda-types
-                            if (oElem.getKoordXExtern().equals(String.valueOf(v.getMittelpunkt().getX()))
-                            && oElem.getKoordYExtern().equals(String.valueOf(v.getMittelpunkt().getY()))
-                             ){
+                            if (oElem.getKoordXExtern().equals(
+                                    String.valueOf(v.getMittelpunkt().getX()))
+                                && oElem.getKoordYExtern().equals(
+                                    String.valueOf(v.getMittelpunkt().getY()))
+                            ) {
                                 return oElem;
                             }
                         }
@@ -188,10 +190,12 @@ public class OrtFactory {
             Verwaltungseinheit v = repository.getByIdPlain(
                 Verwaltungseinheit.class, ort.getGemId());
             //Ort exists - check for OrtId
-            QueryBuilder<Ort> builderExists = repository.queryBuilder(Ort.class);
+            QueryBuilder<Ort> builderExists =
+                repository.queryBuilder(Ort.class);
             builderExists.and("netzbetreiberId", ort.getNetzbetreiberId());
-            builderExists.andLike("ortId", "%"+ort.getGemId());
-            List<Ort> ortExists =  repository.filterPlain(builderExists.getQuery());
+            builderExists.andLike("ortId", "%" + ort.getGemId());
+            List<Ort> ortExists = repository.filterPlain(
+                builderExists.getQuery());
             if (v == null) {
                 ReportItem err = new ReportItem();
                 err.setCode(StatusCodes.IMP_INVALID_VALUE);
@@ -213,19 +217,30 @@ public class OrtFactory {
                             ort.getKdaId(),
                             String.valueOf(v.getMittelpunkt().getX()),
                             String.valueOf(v.getMittelpunkt().getY()));
-                        ort.setKoordYExtern(coords.getY());
-                        ort.setKoordXExtern(coords.getX());
+                        if (coords != null) {
+                            ort.setKoordYExtern(coords.getY());
+                            ort.setKoordXExtern(coords.getX());
+                        }
                     }
                     ort.setOrtTyp(ORTTYP4);
                     //set ortId
-                    if ( v.getIsGemeinde() ) {
-                        ort.setOrtId("GEM_"+ort.getGemId());
-                    } else if ( !v.getIsGemeinde() && v.getIsLandkreis() ){
-                       ort.setOrtId("LK_"+ort.getGemId());
-                    } else if ( !v.getIsGemeinde() && !v.getIsLandkreis() && v.getIsRegbezirk() ) {
-                        ort.setOrtId("RB_"+ort.getGemId());
-                    } else if ( !v.getIsGemeinde() && !v.getIsLandkreis() && !v.getIsRegbezirk() && v.getIsBundesland() ) {
-                        ort.setOrtId("BL_"+ort.getGemId());
+                    if (v.getIsGemeinde()) {
+                        ort.setOrtId("GEM_" + ort.getGemId());
+                    } else if (!v.getIsGemeinde() && v.getIsLandkreis()) {
+                       ort.setOrtId("LK_" + ort.getGemId());
+                    } else if (
+                        !v.getIsGemeinde()
+                        && !v.getIsLandkreis()
+                        && v.getIsRegbezirk()
+                    ) {
+                        ort.setOrtId("RB_" + ort.getGemId());
+                    } else if (
+                        !v.getIsGemeinde()
+                        && !v.getIsLandkreis()
+                        && !v.getIsRegbezirk()
+                        && v.getIsBundesland()
+                    ) {
+                        ort.setOrtId("BL_" + ort.getGemId());
                     }
                 }
                 if (ort.getKurztext() == null || ort.getKurztext().equals("")) {

@@ -20,6 +20,10 @@ CREATE INDEX audit_trail_sample_id_idx
     ON lada.audit_trail USING btree (sample_id ASC NULLS LAST);
 CREATE INDEX audit_trail_measm_id_idx
     ON lada.audit_trail USING btree (measm_id ASC NULLS LAST);
+CREATE INDEX audit_trail_object_id_idx
+    ON lada.audit_trail USING btree (object_id ASC NULLS LAST);
+CREATE INDEX audit_trail_table_name_idx
+    ON lada.audit_trail USING btree (table_name ASC NULLS LAST);
 
 CREATE OR REPLACE FUNCTION update_audit_sample_id()
     RETURNS trigger
