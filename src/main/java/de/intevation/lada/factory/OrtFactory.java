@@ -304,9 +304,9 @@ public class OrtFactory {
             return;
         }
         Query q = repository.entityManager()
-            .createQuery("SELECT vg.gemId "
-                + "FROM Verwaltungsgrenze vg "
-                + "WHERE is_gemeinde = TRUE "
+            .createQuery("SELECT vg.municId "
+                + "FROM AdminBorderView vg "
+                + "WHERE is_munic = TRUE "
                 + "AND contains(vg.shape, :geom) = TRUE");
         q.setParameter("geom", ort.getGeom());
         List<?> ret = q.getResultList();
