@@ -47,7 +47,7 @@ public class HasEntnahmeOrt implements Rule {
                 ) {
                     Violation violation = new Violation();
                     violation.addError(
-                        "ortszuordnungTyp", StatusCodes.VALUE_AMBIGOUS);
+                        "typeRegulation", StatusCodes.VALUE_AMBIGOUS);
                     return violation;
                 }
             }
@@ -69,7 +69,7 @@ public class HasEntnahmeOrt implements Rule {
                 ) {
                     Violation violation = new Violation();
                     violation.addError(
-                        "ortszuordnungTyp", StatusCodes.VALUE_AMBIGOUS);
+                        "typeRegulation", StatusCodes.VALUE_AMBIGOUS);
                     return violation;
                 }
             }

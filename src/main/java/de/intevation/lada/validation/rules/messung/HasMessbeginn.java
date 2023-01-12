@@ -37,12 +37,12 @@ public class HasMessbeginn implements Rule {
             && (probe.getRegulationId() != null && probe.getRegulationId() != 1)
         ) {
             Violation violation = new Violation();
-            violation.addWarning("messzeitpunkt", StatusCodes.VALUE_MISSING);
+            violation.addWarning("measmStartDate", StatusCodes.VALUE_MISSING);
             return violation;
         } else if (messung.getMeasmStartDate() == null) {
             Violation violation = new Violation();
             violation.addNotification(
-                "messzeitpunkt", StatusCodes.VALUE_MISSING);
+                "measmStartDate", StatusCodes.VALUE_MISSING);
             return violation;
         } else {
             return null;

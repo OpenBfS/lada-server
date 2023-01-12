@@ -34,14 +34,14 @@ public class ValidFromTo implements Rule {
             && (messprogramm.getValidStartDate() < DOY_MIN
                 || messprogramm.getValidStartDate() > DOY_MAX)) {
                 violation.addError(
-                    "gueltigVon", StatusCodes.VALUE_OUTSIDE_RANGE);
+                    "validStartDate", StatusCodes.VALUE_OUTSIDE_RANGE);
             }
 
         if (messprogramm.getValidEndDate() != null
             && (messprogramm.getValidEndDate() < DOY_MIN
                 || messprogramm.getValidEndDate() > DOY_MAX)) {
                 violation.addError(
-                    "gueltigBis", StatusCodes.VALUE_OUTSIDE_RANGE);
+                    "validEndDate", StatusCodes.VALUE_OUTSIDE_RANGE);
             }
 
         return violation.hasErrors()

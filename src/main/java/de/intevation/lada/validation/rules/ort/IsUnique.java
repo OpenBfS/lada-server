@@ -28,7 +28,7 @@ public class IsUnique implements Rule {
         Site ort = (Site) object;
         if (ort.getExtId() == null || ort.getExtId().equals("")) {
             Violation violation = new Violation();
-            violation.addError("ortId", StatusCodes.VALUE_MISSING);
+            violation.addError("extId", StatusCodes.VALUE_MISSING);
             return violation;
         }
 

@@ -54,7 +54,7 @@ public class CoordinatesInVE implements Rule {
                 vg.getQuery());
             if (vgs == null || vgs.isEmpty()) {
                 Violation violation = new Violation();
-                violation.addWarning("gemId", StatusCodes.GEO_COORD_UNCHECKED);
+                violation.addWarning("municId", StatusCodes.GEO_COORD_UNCHECKED);
                 return violation;
             }
 
@@ -83,16 +83,16 @@ public class CoordinatesInVE implements Rule {
                     } else {
                         ort.setIsFuzzy(false);
                         violation.addWarning(
-                            "koordXExtern", StatusCodes.GEO_POINT_OUTSIDE);
+                            "coordXExt", StatusCodes.GEO_POINT_OUTSIDE);
                         violation.addWarning(
-                            "koordYExtern", StatusCodes.GEO_POINT_OUTSIDE);
+                            "coordYExt", StatusCodes.GEO_POINT_OUTSIDE);
                         return violation;
                     }
                 }
            }
 
-           violation.addWarning("koordXExtern", StatusCodes.GEO_NOT_MATCHING);
-           violation.addWarning("koordYExtern", StatusCodes.GEO_NOT_MATCHING);
+           violation.addWarning("coordXExt", StatusCodes.GEO_NOT_MATCHING);
+           violation.addWarning("coordYExt", StatusCodes.GEO_NOT_MATCHING);
            return violation;
         }
         return null;

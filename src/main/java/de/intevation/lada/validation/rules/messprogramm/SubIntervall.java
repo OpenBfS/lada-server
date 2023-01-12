@@ -59,58 +59,58 @@ public class SubIntervall implements Rule {
                 if (gueltigVon != null && gueltigBis != null) {
                     if (teilVon < gueltigVon || teilVon > gueltigBis) {
                         violation.addError(
-                            "teilintervallVon",
+                            "samplePdStartDate",
                             StatusCodes.VALUE_OUTSIDE_RANGE);
                     }
                     if (teilBis < gueltigVon || teilBis > gueltigBis) {
                         violation.addError(
-                            "teilintervallBis",
+                            "samplePdEndDate",
                             StatusCodes.VALUE_OUTSIDE_RANGE);
                     }
                     if (offset != null
                         && offset > intervallMax.get("J") - 1) {
                         violation.addError(
-                            "intervallOffset", StatusCodes.VALUE_OUTSIDE_RANGE);
+                            "samplePdOffset", StatusCodes.VALUE_OUTSIDE_RANGE);
                     }
                 }
             } else {
                 // lower limits are independent of intervall type
                 if (teilVon < 1) {
                     violation.addError(
-                        "teilintervallVon", StatusCodes.VALUE_OUTSIDE_RANGE);
+                        "samplePdStartDate", StatusCodes.VALUE_OUTSIDE_RANGE);
                 }
                 if (teilBis < 1) {
                     violation.addError(
-                        "teilintervallBis", StatusCodes.VALUE_OUTSIDE_RANGE);
+                        "samplePdEndDate", StatusCodes.VALUE_OUTSIDE_RANGE);
                 }
                 if (offset != null && offset < 0) {
                     violation.addError(
-                        "intervallOffset", StatusCodes.VALUE_OUTSIDE_RANGE);
+                        "samplePdOffset", StatusCodes.VALUE_OUTSIDE_RANGE);
                 }
 
                 // upper limits depend on (valid) intervall type
                 Set<String> probenintervallSet = intervallMax.keySet();
                 if (!probenintervallSet.contains(probenintervall)) {
                     violation.addError(
-                        "probenintervall", StatusCodes.VALUE_OUTSIDE_RANGE);
+                        "samplePD", StatusCodes.VALUE_OUTSIDE_RANGE);
                 } else {
                     for (String intervallKey : probenintervallSet) {
                         if (intervallKey.equals(probenintervall)) {
                             if (teilVon > intervallMax.get(intervallKey)) {
                                 violation.addError(
-                                    "teilintervallVon",
+                                    "samplePdStartDate",
                                     StatusCodes.VALUE_OUTSIDE_RANGE);
                             }
                             if (teilBis > intervallMax.get(intervallKey)) {
                                 violation.addError(
-                                    "teilintervallBis",
+                                    "samplePdEndDate",
                                     StatusCodes.VALUE_OUTSIDE_RANGE);
                             }
                             if (offset != null
                                 && offset
                                 > intervallMax.get(intervallKey) - 1) {
                                 violation.addError(
-                                    "intervallOffset",
+                                    "samplePdOffset",
                                     StatusCodes.VALUE_OUTSIDE_RANGE);
                             }
                         }
@@ -121,9 +121,9 @@ public class SubIntervall implements Rule {
             // lower limit has to be less than or equal to upper limit
             if (teilVon > teilBis) {
                 violation.addError(
-                    "teilintervallVon", StatusCodes.DATE_BEGIN_AFTER_END);
+                    "samplePdStartDate", StatusCodes.DATE_BEGIN_AFTER_END);
                 violation.addError(
-                    "teilintervallBis", StatusCodes.DATE_BEGIN_AFTER_END);
+                    "samplePdEndDate", StatusCodes.DATE_BEGIN_AFTER_END);
             }
         }
 

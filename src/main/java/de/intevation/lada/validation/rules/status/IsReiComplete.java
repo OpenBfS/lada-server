@@ -48,10 +48,10 @@ public class IsReiComplete implements Rule {
         }
         Violation violation = new Violation();
         if (probe.getReiAgGrId() == null) {
-            violation.addError("reiProgpunktGrpId", StatusCodes.VALUE_MISSING);
+            violation.addError("reiAgGrId", StatusCodes.VALUE_MISSING);
         }
         if (probe.getNuclFacilGrId() == null) {
-            violation.addError("ktaGruppeId", StatusCodes.VALUE_MISSING);
+            violation.addError("nuclFacilGrId", StatusCodes.VALUE_MISSING);
         }
         if (violation.hasErrors()) {
             return violation;

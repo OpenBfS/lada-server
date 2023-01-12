@@ -29,7 +29,7 @@ public class HasNebenprobenNr implements Rule {
             || messung.getMinSampleId().equals("")) {
             Violation violation = new Violation();
             violation.addNotification(
-                "nebenprobenNr", StatusCodes.VALUE_MISSING);
+                "minSampleId", StatusCodes.VALUE_MISSING);
             return violation;
         }
         return null;

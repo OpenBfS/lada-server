@@ -27,7 +27,7 @@ public class HasProbeart implements Rule {
         Sample probe = (Sample) object;
         if (probe.getSampleMethId() == null) {
             Violation violation = new Violation();
-            violation.addError("probenartId", StatusCodes.VALUE_MISSING);
+            violation.addError("sampleMethId", StatusCodes.VALUE_MISSING);
             return violation;
         }
         return null;

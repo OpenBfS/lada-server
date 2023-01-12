@@ -43,7 +43,7 @@ public class OrtTypExists implements Rule {
                 builder.getQuery());
             if (ots == null || ots.isEmpty()) {
                 Violation violation = new Violation();
-                violation.addError("ortTyp", StatusCodes.VALUE_OUTSIDE_RANGE);
+                violation.addError("siteClassId", StatusCodes.VALUE_OUTSIDE_RANGE);
                 return violation;
             }
         }

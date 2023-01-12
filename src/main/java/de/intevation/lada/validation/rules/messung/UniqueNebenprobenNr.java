@@ -50,7 +50,7 @@ public class UniqueNebenprobenNr implements Rule {
                     return null;
                 }
                 Violation violation = new Violation();
-                violation.addError("nebenprobenNr", StatusCodes.VALUE_AMBIGOUS);
+                violation.addError("minSampleId", StatusCodes.VALUE_AMBIGOUS);
                 return violation;
             }
         }

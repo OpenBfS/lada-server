@@ -40,7 +40,7 @@ public class OrtszuordnungValidator implements Validator {
         if (!(object instanceof Geolocat)
             && !(object instanceof GeolocatMpg)
         ) {
-            violations.addError("ortszuordnung", StatusCodes.NOT_A_PROBE);
+            violations.addError("geolocat", StatusCodes.NOT_A_PROBE);
             return violations;
         }
         for (Rule rule : rules) {

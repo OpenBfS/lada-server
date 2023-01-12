@@ -37,7 +37,7 @@ public class ProbeValidator implements Validator {
     public Violation validate(Object object) {
         Violation violations = new Violation();
         if (!(object instanceof Sample)) {
-            violations.addError("probe", StatusCodes.NOT_A_PROBE);
+            violations.addError("sample", StatusCodes.NOT_A_PROBE);
             return violations;
         }
         for (Rule rule : rules) {

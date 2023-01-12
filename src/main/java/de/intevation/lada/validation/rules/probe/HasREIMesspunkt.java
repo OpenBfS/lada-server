@@ -39,7 +39,7 @@ public class HasREIMesspunkt implements Rule {
         Integer id = probe.getId();
         if (id == null) {
             Violation violation = new Violation();
-            violation.addWarning("extPID", StatusCodes.VALUE_MISSING);
+            violation.addWarning("extId", StatusCodes.VALUE_MISSING);
             return violation;
         }
         if (probe.getReiAgGrId() != null

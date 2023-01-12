@@ -25,7 +25,7 @@ public class HasTestdatensatz implements Rule {
         Sample probe = (Sample) object;
         if (probe.getIsTest() == null) {
             Violation violation = new Violation();
-            violation.addError("test", StatusCodes.VALUE_MISSING);
+            violation.addError("isTest", StatusCodes.VALUE_MISSING);
             return violation;
         }
         return null;

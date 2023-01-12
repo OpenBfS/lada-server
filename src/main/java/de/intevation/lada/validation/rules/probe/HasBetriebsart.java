@@ -27,7 +27,7 @@ public class HasBetriebsart implements Rule {
         Sample probe = (Sample) object;
         if (probe.getOprModeId() == null) {
             Violation violation = new Violation();
-            violation.addError("baId", StatusCodes.VALUE_MISSING);
+            violation.addError("oprModeId", StatusCodes.VALUE_MISSING);
             return violation;
         }
         return null;

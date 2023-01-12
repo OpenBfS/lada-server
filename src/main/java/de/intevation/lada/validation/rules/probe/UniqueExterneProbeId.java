@@ -44,7 +44,7 @@ public class UniqueExterneProbeId implements Rule {
                 return null;
             }
             Violation violation = new Violation();
-            violation.addError("sampleExtId", StatusCodes.VALUE_AMBIGOUS);
+            violation.addError("extId", StatusCodes.VALUE_AMBIGOUS);
             return violation;
         }
         return null;

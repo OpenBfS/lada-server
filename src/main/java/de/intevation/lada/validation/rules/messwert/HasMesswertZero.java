@@ -28,7 +28,7 @@ public class HasMesswertZero implements Rule {
         Double wert = messwert.getMeasVal();
         Violation violation = new Violation();
         if (wert != null && wert == 0) {
-            violation.addNotification("messwert", StatusCodes.VAL_ZERO);
+            violation.addNotification("measVal", StatusCodes.VAL_ZERO);
             return violation;
         }
         return null;    }

@@ -85,7 +85,7 @@ public class DeskriptorToUmwelt implements Rule {
                 String deskript = "";
                 deskript = "s" + Integer.toString(i - 1);
                 Violation violation = new Violation();
-                violation.addWarning("mediaDesk", StatusCodes.VAL_DESK);
+                violation.addWarning("envDescripDisplay", StatusCodes.VAL_DESK);
                 violation.addWarning(deskript, StatusCodes.VALUE_NOT_MATCHING);
                 return violation;
             }
@@ -109,7 +109,7 @@ public class DeskriptorToUmwelt implements Rule {
         if (media.size() == 0) {
             Violation violation = new Violation();
             violation.addWarning(
-                "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                "envMediumId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
 
@@ -140,7 +140,7 @@ public class DeskriptorToUmwelt implements Rule {
         if (data.isEmpty()) {
             Violation violation = new Violation();
             violation.addWarning(
-                "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                "envMediumId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
 
@@ -153,7 +153,7 @@ public class DeskriptorToUmwelt implements Rule {
         ) {
             Violation violation = new Violation();
             violation.addWarning(
-                "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                "envMediumId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         } else if (!unique && (datenbasisId == 4 || datenbasisId == 1)) {
             if (data.size() != data.stream().filter(
@@ -161,7 +161,7 @@ public class DeskriptorToUmwelt implements Rule {
             ) {
                 Violation violation = new Violation();
                 violation.addNotification(
-                    "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                    "envMediumId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
                 return violation;
             } else {
                 return null;
@@ -342,7 +342,7 @@ public class DeskriptorToUmwelt implements Rule {
             }
             Violation violation = new Violation();
             violation.addWarning(
-                "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                "envMediumId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
     }

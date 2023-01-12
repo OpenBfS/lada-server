@@ -39,7 +39,7 @@ public class MessgroesseExist implements Rule {
                     repository.getByIdPlain(Measd.class, mId) == null
                 ) {
                     violation.addError(
-                        "messgroessen", StatusCodes.NOT_EXISTING);
+                        "measds", StatusCodes.NOT_EXISTING);
                 }
             }
         }

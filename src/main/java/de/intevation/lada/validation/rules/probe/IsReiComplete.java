@@ -34,11 +34,11 @@ public class IsReiComplete implements Rule {
         ) {
             if (probe.getReiAgGrId() != null) {
                 violation.addError(
-                    "reiProgpunktGrpId", StatusCodes.VALUE_NOT_MATCHING);
+                    "reiAgGrId", StatusCodes.VALUE_NOT_MATCHING);
             }
             if (probe.getNuclFacilGrId() != null) {
                 violation.addError(
-                    "ktaGruppeId", StatusCodes.VALUE_NOT_MATCHING);
+                    "nuclFacilGrId", StatusCodes.VALUE_NOT_MATCHING);
             }
             if (violation.hasErrors()) {
                 return violation;
@@ -47,11 +47,11 @@ public class IsReiComplete implements Rule {
         }
         if (probe.getReiAgGrId() == null) {
             violation.addWarning(
-                "reiProgpunktGrpId", StatusCodes.VALUE_MISSING);
+                "reiAgGrId", StatusCodes.VALUE_MISSING);
         }
         if (probe.getNuclFacilGrId() == null) {
             violation.addWarning(
-                "ktaGruppeId", StatusCodes.VALUE_MISSING);
+                "nuclFacilGrId", StatusCodes.VALUE_MISSING);
         }
         if (violation.hasWarnings()) {
             return violation;

@@ -48,7 +48,7 @@ public class DuplicateKommentar implements Rule {
                     .toUpperCase()))
         ) {
             Violation violation = new Violation();
-            violation.addError("Kommentar", StatusCodes.VAL_EXISTS);
+            violation.addError("Comment", StatusCodes.VAL_EXISTS);
             return violation;
         }
         return null;

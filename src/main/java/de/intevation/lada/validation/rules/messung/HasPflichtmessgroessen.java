@@ -112,7 +112,7 @@ public class HasPflichtmessgroessen implements Rule {
                     repository.getByIdPlain(
                         Measd.class, p.getMeasdId());
                 violation.addNotification(
-                    "messgroesse#" + mg.getName(),
+                    "measdId#" + mg.getName(),
                     StatusCodes.VAL_OBL_MEASURE);
             }
         }

@@ -37,7 +37,7 @@ public class StatusValidator implements Validator {
     public Violation validate(Object object) {
         Violation violations = new Violation();
         if (!(object instanceof StatusProt)) {
-            violations.addError("status", StatusCodes.NOT_A_PROBE);
+            violations.addError("statusprot", StatusCodes.NOT_A_PROBE);
             return violations;
         }
         for (Rule rule : rules) {

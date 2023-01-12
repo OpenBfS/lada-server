@@ -42,13 +42,13 @@ public class HasMessdauer implements Rule {
                 && probe.getRegulationId() == 1) {
                 Violation violation = new Violation();
                 violation.addNotification(
-                    "messdauer", StatusCodes.VALUE_MISSING);
+                    "measPd", StatusCodes.VALUE_MISSING);
                 return violation;
 
             } else {
                 Violation violation = new Violation();
                 violation.addWarning(
-                    "messdauer#" + messung.getMinSampleId(),
+                    "measPd#" + messung.getMinSampleId(),
                     StatusCodes.VALUE_MISSING);
                 return violation;
             }

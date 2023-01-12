@@ -37,7 +37,7 @@ public class MessungValidator implements Validator {
     public Violation validate(Object object) {
         Violation violations = new Violation();
         if (!(object instanceof Measm)) {
-            violations.addError("messung", StatusCodes.NOT_A_PROBE);
+            violations.addError("measm", StatusCodes.NOT_A_PROBE);
             return violations;
         }
         for (Rule rule : rules) {

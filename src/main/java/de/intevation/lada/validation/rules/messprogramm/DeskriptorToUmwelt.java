@@ -83,7 +83,7 @@ public class DeskriptorToUmwelt implements Rule {
             List<EnvDescrip> data = (List<EnvDescrip>) response.getData();
             if (data.isEmpty()) {
                 Violation violation = new Violation();
-                violation.addWarning("mediaDesk", StatusCodes.VAL_DESK);
+                violation.addWarning("envDescripDisplay", StatusCodes.VAL_DESK);
                 return violation;
             }
             hdParent = data.get(0).getId();
@@ -109,7 +109,7 @@ public class DeskriptorToUmwelt implements Rule {
         if (media.size() == 0) {
             Violation violation = new Violation();
             violation.addWarning(
-                "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                "envMediumId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
 
@@ -133,7 +133,7 @@ public class DeskriptorToUmwelt implements Rule {
         if (data.isEmpty()) {
             Violation violation = new Violation();
             violation.addWarning(
-                "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                "envMediumId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
 
@@ -143,12 +143,12 @@ public class DeskriptorToUmwelt implements Rule {
         } else if (unique && !umwId.equals(data.get(0).getEnvMediumId())) {
             Violation violation = new Violation();
             violation.addWarning(
-                "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                "envMediumId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         } else {
             Violation violation = new Violation();
             violation.addWarning(
-                "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                "envMediumId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
 
             int found = -1;
             int lastMatch = -12;

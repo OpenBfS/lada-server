@@ -41,7 +41,7 @@ public class HasProbeentnahmeEnde implements Rule {
         ) {
             Violation violation = new Violation();
             violation.addWarning(
-                "probeentnahmeEnde", StatusCodes.VALUE_MISSING);
+                "sampleEndDate", StatusCodes.VALUE_MISSING);
             return violation;
         }
         return null;

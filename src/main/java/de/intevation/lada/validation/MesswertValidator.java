@@ -37,7 +37,7 @@ public class MesswertValidator implements Validator {
     public Violation validate(Object object) {
         Violation violations = new Violation();
         if (!(object instanceof MeasVal)) {
-            violations.addError("messwert", StatusCodes.NOT_A_PROBE);
+            violations.addError("measval", StatusCodes.NOT_A_PROBE);
             return violations;
         }
         for (Rule rule : rules) {

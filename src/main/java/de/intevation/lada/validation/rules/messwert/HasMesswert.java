@@ -29,10 +29,10 @@ public class HasMesswert implements Rule {
         Double wert = messwert.getMeasVal();
         Violation violation = new Violation();
         if (messwertNwg == null && wert == null) {
-            violation.addWarning("messwert", StatusCodes.VALUE_MISSING);
+            violation.addWarning("measVal", StatusCodes.VALUE_MISSING);
             return violation;
         } else if (messwertNwg != null && wert != null) {
-            violation.addError("messwert", StatusCodes.VAL_MEASURE);
+            violation.addError("measVal", StatusCodes.VAL_MEASURE);
             return violation;
         }
         return null;    }

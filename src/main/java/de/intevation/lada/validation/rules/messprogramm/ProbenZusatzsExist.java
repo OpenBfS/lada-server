@@ -38,7 +38,7 @@ public class ProbenZusatzsExist implements Rule {
                         SampleSpecif.class, pz.getId()) == null
                 ) {
                     violation.addError(
-                        "probenZusatzs", StatusCodes.NOT_EXISTING);
+                        "sampleSpecifs", StatusCodes.NOT_EXISTING);
                 }
             }
         }

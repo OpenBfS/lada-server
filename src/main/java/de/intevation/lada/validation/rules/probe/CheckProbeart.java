@@ -37,7 +37,7 @@ public class CheckProbeart implements Rule {
               && !begin.equals(end)
               && PROBENART_INDIVIDUAL.equals(probe.getSampleMethId())) {
             Violation violation = new Violation();
-            violation.addWarning("probenartId", StatusCodes.VAL_SINGLE_DATE);
+            violation.addWarning("sampleMethId", StatusCodes.VAL_SINGLE_DATE);
             return violation;
           }
         } else {

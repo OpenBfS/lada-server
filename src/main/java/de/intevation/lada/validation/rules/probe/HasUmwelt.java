@@ -29,7 +29,7 @@ public class HasUmwelt implements Rule {
             || probe.getEnvMediumId().equals("")
         ) {
             Violation violation = new Violation();
-            violation.addWarning("umwId", StatusCodes.VALUE_MISSING);
+            violation.addWarning("envMediumId", StatusCodes.VALUE_MISSING);
             return violation;
         }
         return null;

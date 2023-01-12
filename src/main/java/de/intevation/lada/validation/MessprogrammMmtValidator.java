@@ -36,7 +36,7 @@ public class MessprogrammMmtValidator implements Validator {
     public Violation validate(Object object) {
         Violation violations = new Violation();
         if (!(object instanceof MpgMmtMp)) {
-            violations.addError("messprogrammMmt", StatusCodes.NOT_A_PROBE);
+            violations.addError("mpgmmtmp", StatusCodes.NOT_A_PROBE);
             return violations;
         }
         for (Rule rule : rules) {

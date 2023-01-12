@@ -29,7 +29,7 @@ public class HasNwgZuMesswert implements Rule {
         Double nachweisgrenze = messwert.getDetectLim();
         Violation violation = new Violation();
         if (messwertNwg != null && nachweisgrenze == null) {
-            violation.addError("nwgZuMesswert", StatusCodes.VALUE_MISSING);
+            violation.addError("detectLim", StatusCodes.VALUE_MISSING);
             return violation;
         }
         return null;

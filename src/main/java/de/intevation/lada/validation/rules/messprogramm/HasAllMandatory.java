@@ -27,33 +27,33 @@ public class HasAllMandatory implements Rule {
 
         if (messprogramm.getMeasFacilId() == null
             || "".equals(messprogramm.getMeasFacilId())) {
-            violation.addError("mstlabor", StatusCodes.VALUE_MISSING);
+            violation.addError("measFacilId", StatusCodes.VALUE_MISSING);
         }
         if (messprogramm.getApprLabId() == null
             || "".equals(messprogramm.getApprLabId())) {
-            violation.addError("mstlabor", StatusCodes.VALUE_MISSING);
+            violation.addError("measFacilId", StatusCodes.VALUE_MISSING);
         }
         if (messprogramm.getRegulationId() == null) {
-            violation.addError("datenbasisId", StatusCodes.VALUE_MISSING);
+            violation.addError("regulationId", StatusCodes.VALUE_MISSING);
         }
         if (messprogramm.getSampleMethId() == null) {
-            violation.addError("probenartId", StatusCodes.VALUE_MISSING);
+            violation.addError("sampleMethId", StatusCodes.VALUE_MISSING);
         }
         if (messprogramm.getSamplePd() == null
             || "".equals(messprogramm.getSamplePd())) {
-            violation.addError("probenintervall", StatusCodes.VALUE_MISSING);
+            violation.addError("sampleId", StatusCodes.VALUE_MISSING);
         }
         if (messprogramm.getSamplePdStartDate() == null) {
-            violation.addError("teilintervallVon", StatusCodes.VALUE_MISSING);
+            violation.addError("samplePdStartDate", StatusCodes.VALUE_MISSING);
         }
         if (messprogramm.getSamplePdEndDate() == null) {
-            violation.addError("teilintervallBis", StatusCodes.VALUE_MISSING);
+            violation.addError("samplePdEndDate", StatusCodes.VALUE_MISSING);
         }
         if (messprogramm.getValidStartDate() == null) {
-            violation.addError("gueltigVon", StatusCodes.VALUE_MISSING);
+            violation.addError("validStartDate", StatusCodes.VALUE_MISSING);
         }
         if (messprogramm.getValidEndDate() == null) {
-            violation.addError("gueltigBis", StatusCodes.VALUE_MISSING);
+            violation.addError("validEndDate", StatusCodes.VALUE_MISSING);
         }
 
         return violation.hasErrors()

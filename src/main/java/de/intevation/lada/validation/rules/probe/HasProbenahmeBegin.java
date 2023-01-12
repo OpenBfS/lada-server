@@ -31,7 +31,7 @@ public class HasProbenahmeBegin implements Rule {
         if (begin == null) {
             Violation violation = new Violation();
             violation.addWarning(
-                "probeentnahmeBeginn", StatusCodes.VALUE_MISSING);
+                "sampleStartDate", StatusCodes.VALUE_MISSING);
             return violation;
         }
         return null;

@@ -37,7 +37,7 @@ public class OrtValidator implements Validator {
     public Violation validate(Object object) {
         Violation violations = new Violation();
         if (!(object instanceof Site)) {
-            violations.addError("ort", StatusCodes.NOT_A_PROBE);
+            violations.addError("site", StatusCodes.NOT_A_PROBE);
             return violations;
         }
         for (Rule rule : rules) {

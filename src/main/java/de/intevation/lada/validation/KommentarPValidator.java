@@ -36,7 +36,7 @@ public class KommentarPValidator implements Validator {
     public Violation validate(Object object) {
         Violation violations = new Violation();
         if (!(object instanceof CommSample)) {
-            violations.addError("Kommentar", StatusCodes.NOT_A_PROBE);
+            violations.addError("commsample", StatusCodes.NOT_A_PROBE);
             return violations;
         }
 

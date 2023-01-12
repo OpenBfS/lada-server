@@ -43,7 +43,7 @@ public class DateMesszeitpunkt implements Rule {
 
         if (probe == null) {
             Violation violation = new Violation();
-            violation.addError("lprobe", StatusCodes.ERROR_VALIDATION);
+            violation.addError("sample", StatusCodes.ERROR_VALIDATION);
             return violation;
         }
 
@@ -53,7 +53,7 @@ public class DateMesszeitpunkt implements Rule {
 
         if (messung.getMeasmStartDate().after(new Date())) {
             Violation violation = new Violation();
-            violation.addWarning("messzeitpunkt", StatusCodes.DATE_IN_FUTURE);
+            violation.addWarning("measmStartDate", StatusCodes.DATE_IN_FUTURE);
             return violation;
         }
 
@@ -71,7 +71,7 @@ public class DateMesszeitpunkt implements Rule {
         ) {
             Violation violation = new Violation();
             violation.addWarning(
-                "messzeitpunkt#" + messung.getMinSampleId(),
+                "measmStartDate#" + messung.getMinSampleId(),
                 StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }

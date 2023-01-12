@@ -45,7 +45,7 @@ public class StatusKombination implements Rule {
             repository.filterPlain(kombi.getQuery());
         if (result.isEmpty()) {
             Violation violation = new Violation();
-            violation.addError("kombi", StatusCodes.VALUE_NOT_MATCHING);
+            violation.addError("statusMp", StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
         return null;
