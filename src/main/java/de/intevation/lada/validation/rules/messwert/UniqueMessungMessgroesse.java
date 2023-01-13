@@ -42,7 +42,7 @@ public class UniqueMessungMessgroesse implements Rule {
             && !result.get(0).getId().equals(messwert.getId())
         ) {
             Violation violation = new Violation();
-            violation.addError("measd", StatusCodes.VALUE_AMBIGOUS);
+            violation.addError("measdId", StatusCodes.VALUE_AMBIGOUS);
             return violation;
         }
         return null;
