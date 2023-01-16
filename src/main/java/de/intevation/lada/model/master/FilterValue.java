@@ -12,10 +12,12 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 
 @Entity
 @NamedQuery(name = "FilterValue.findAll", query = "SELECT f FROM FilterValue f")
+@Table(schema = SchemaName.NAME)
 public class FilterValue implements Serializable {
     private static final long serialVersionUID = 1L;
 
