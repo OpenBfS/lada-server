@@ -258,7 +258,7 @@ public class AuditTrailService extends LadaService {
                 "ort_id",
                 audit.getRowData().get("ort_id").toString(),
                 "id",
-                de.intevation.lada.model.master.SchemaName.LEGACY_NAME);
+                de.intevation.lada.model.master.SchemaName.NAME);
             node.put("identifier", value);
         }
         if ("messung".equals(audit.getTableName())) {
@@ -289,7 +289,7 @@ public class AuditTrailService extends LadaService {
                     "messgroesse",
                     audit.getRowData().get("messgroesse_id").toString(),
                     "id",
-                    de.intevation.lada.model.master.SchemaName.LEGACY_NAME);
+                    de.intevation.lada.model.master.SchemaName.NAME);
                 identifier.put("identifier", value);
             }
         }
@@ -379,7 +379,7 @@ public class AuditTrailService extends LadaService {
                 "messgroesse",
                 audit.getRowData().get("messgroesse_id").toString(),
                 "id",
-                de.intevation.lada.model.master.SchemaName.LEGACY_NAME);
+                de.intevation.lada.model.master.SchemaName.NAME);
             node.put("identifier", value);
         }
         return node;
@@ -447,7 +447,7 @@ public class AuditTrailService extends LadaService {
                         m.getValueField(),
                         !node.get(key).isNull() ? node.get(key).asText() : null,
                         "id",
-                        de.intevation.lada.model.master.SchemaName.LEGACY_NAME);
+                        de.intevation.lada.model.master.SchemaName.NAME);
                     node.put(key, value);
                 }
             }

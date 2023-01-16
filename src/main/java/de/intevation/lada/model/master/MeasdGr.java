@@ -12,11 +12,9 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(schema = SchemaName.LEGACY_NAME)
 public class MeasdGr implements Serializable {
     private static final long serialVersionUID = 1L;
 

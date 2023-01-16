@@ -14,7 +14,6 @@ package de.intevation.lada.model.lada;
  */
 public class SchemaName {
     public static final String NAME = "lada";
-    public static final String LEGACY_NAME = "land";
 
     private SchemaName() { };
 }

@@ -14,7 +14,6 @@ package de.intevation.lada.model.master;
  */
 public class SchemaName {
     public static final String NAME = "master";
-    public static final String LEGACY_NAME = "stamm";
 
     private SchemaName() { };
 }
