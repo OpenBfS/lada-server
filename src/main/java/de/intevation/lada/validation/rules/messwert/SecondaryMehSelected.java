@@ -42,7 +42,7 @@ public class SecondaryMehSelected implements Rule {
 
         if (messwert.getMeasm() != null
                 && messwert.getMeasm().getSample() != null) {
-            umwelt = messwert.getMeasm().getSample().getUmwelt();
+            umwelt = messwert.getMeasm().getSample().getEnvMedium();
         }
 
         // If umwelt record is present

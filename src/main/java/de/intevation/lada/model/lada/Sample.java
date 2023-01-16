@@ -91,8 +91,8 @@ public class Sample implements Serializable {
     private Timestamp treeMod;
 
     @OneToOne
-    @JoinColumn(name = "env_medium_id", insertable = false, updatable = false)
-    private EnvMedium umwelt;
+    @JoinColumn(insertable = false, updatable = false)
+    private EnvMedium envMedium;
 
     private String envMediumId;
 
@@ -315,8 +315,8 @@ public class Sample implements Serializable {
     }
 
     @JsonbTransient
-    public EnvMedium getUmwelt() {
-        return this.umwelt;
+    public EnvMedium getEnvMedium() {
+        return this.envMedium;
     }
 
     public String getEnvMediumId() {
