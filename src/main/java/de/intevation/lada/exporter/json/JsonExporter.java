@@ -269,7 +269,7 @@ public class JsonExporter implements Exporter {
                 addStatusProtokoll(jsMessung);
                 ArrayNode mArry = mapper.createArrayNode();
                 mArry.add(jsMessung);
-                ((ObjectNode) jsProbe).set("messungen", mArry);
+                ((ObjectNode) jsProbe).set("measms", mArry);
                 addKommentare(jsProbe);
                 addZusatzwerte(jsProbe);
                 addDeskriptoren(jsProbe);
@@ -323,56 +323,56 @@ public class JsonExporter implements Exporter {
         ObjectNode probe = (ObjectNode) node;
         SampleMeth art = repository.getByIdPlain(
             SampleMeth.class,
-            probe.get("probenartId").asInt()
+            probe.get("sampleMethId").asInt()
         );
         Regulation datenbasis = repository.getByIdPlain(
             Regulation.class,
-            probe.get("datenbasisId").asInt()
+            probe.get("regulationId").asInt()
         );
         EnvMedium umw = repository.getByIdPlain(
             EnvMedium.class,
-            probe.get("umwId").asText()
+            probe.get("envMediumId").asText()
         );
-        probe.put("probenart",
+        probe.put("sampleMethExtId",
             art == null ? "" : art.getExtId());
-        probe.put("datenbasis",
+        probe.put("regulation",
             datenbasis == null ? "" : datenbasis.getRegulation());
-        probe.put("umw", umw == null ? "" : umw.getName());
-        if (probe.get("baId").asInt() != 0) {
+        probe.put("envMediumName", umw == null ? "" : umw.getName());
+        if (probe.get("oprModeId").asInt() != 0) {
             OprMode ba = repository.getByIdPlain(
                 OprMode.class,
-                probe.get("baId").asInt()
+                probe.get("oprModeId").asInt()
             );
-            probe.put("messRegime", ba.getName());
+            probe.put("oprModeName", ba.getName());
         }
-        if (probe.get("mplId").asInt() != 0) {
+        if (probe.get("stateMpgId").asInt() != 0) {
             MpgCateg mpl = repository.getByIdPlain(
                 MpgCateg.class,
-                probe.get("mplId").asInt()
+                probe.get("stateMpgId").asInt()
             );
-            probe.put("mplCode", mpl.getExtId());
-            probe.put("mpl", mpl.getName());
+            probe.put("stateMpgExtId", mpl.getExtId());
+            probe.put("stateMpgName", mpl.getName());
         }
-        if (probe.get("probeNehmerId").asInt() != 0) {
+        if (probe.get("samplerId").asInt() != 0) {
             Sampler probenehmer = repository.getByIdPlain(
                 Sampler.class,
-                probe.get("probeNehmerId").asInt()
+                probe.get("samplerId").asInt()
             );
-            probe.put("prnId", probenehmer.getExtId());
-            probe.put("prnBezeichnung", probenehmer.getDescr());
+            probe.put("samplerExtId", probenehmer.getExtId());
+            probe.put("samplerDescr", probenehmer.getDescr());
             probe.put(
-                "prnKurzBezeichnung", probenehmer.getShortText());
+                "samplerShortText", probenehmer.getShortText());
         }
     }
 
     private void addMessstelle(JsonNode node) {
         MeasFacil messstelle = repository.getByIdPlain(
             MeasFacil.class,
-            node.get("mstId").asText()
+            node.get("measFacilId").asText()
         );
         MeasFacil laborMessstelle = repository.getByIdPlain(
             MeasFacil.class,
-            node.get("laborMstId").asText()
+            node.get("apprLabId").asText()
         );
         final ObjectMapper mapper = new ObjectMapper();
         try {
@@ -380,8 +380,8 @@ public class JsonExporter implements Exporter {
             String tmp2 = mapper.writeValueAsString(laborMessstelle);
             JsonNode nodes = mapper.readTree(tmp);
             JsonNode nodes2 = mapper.readTree(tmp2);
-            ((ObjectNode) node).set("messstelle", nodes);
-            ((ObjectNode) node).set("labormessstelle", nodes2);
+            ((ObjectNode) node).set("measFacil", nodes);
+            ((ObjectNode) node).set("apprLab", nodes2);
         } catch (IOException e) {
             logger.debug("Could not export Messstelle for Sample "
                 + node.get("externeProbeId").asText());
@@ -408,7 +408,7 @@ public class JsonExporter implements Exporter {
                 addMessungsKommentare(nodes.get(i));
                 addStatusProtokoll(nodes.get(i));
             }
-            ((ObjectNode) probe).set("messungen", nodes);
+            ((ObjectNode) probe).set("measms", nodes);
         } catch (IOException e) {
             logger.debug("Could not export Messungen for Sample "
                 + probe.get("externeProbeId").asText());
@@ -428,13 +428,13 @@ public class JsonExporter implements Exporter {
             for (int i = 0; i < nodes.size(); i++) {
                 MeasFacil mst = repository.getByIdPlain(
                     MeasFacil.class,
-                    nodes.get(i).get("mstId").asText()
+                    nodes.get(i).get("measFacilId").asText()
                 );
                 ((ObjectNode) nodes.get(i)).put(
                     "mst",
                     mst.getName());
             }
-            ((ObjectNode) probe).set("kommentare", nodes);
+            ((ObjectNode) probe).set("commSampless", nodes);
         } catch (IOException e) {
             logger.debug("Could not export Kommentare for Sample "
                 + probe.get("externeProbeId").asText());
@@ -454,21 +454,21 @@ public class JsonExporter implements Exporter {
             for (int i = 0; i < nodes.size(); i++) {
                 SampleSpecif pz = repository.getByIdPlain(
                     SampleSpecif.class,
-                    nodes.get(i).get("pzsId").asText()
+                    nodes.get(i).get("sampleSpecifId").asText()
                 );
                 ((ObjectNode) nodes.get(i)).put(
-                    "pzwGroesse", pz.getName());
+                    "name", pz.getName());
                 Integer mehId = pz.getUnitId();
                 if (mehId != null) {
                 MeasUnit meh = repository.getByIdPlain(
                     MeasUnit.class, mehId);
                 ((ObjectNode) nodes.get(i)).put(
-                    "meh", meh.getUnitSymbol());
+                    "unitSymbol", meh.getUnitSymbol());
                 } else {
                     continue;
                 }
             }
-            ((ObjectNode) probe).set("zusatzwerte", nodes);
+            ((ObjectNode) probe).set("SampleSpecifMeasVals", nodes);
         } catch (IOException e) {
             logger.debug("Could not export Zusatzwerte for Sample "
                 + probe.get("externeProbeId").asText());
@@ -476,7 +476,7 @@ public class JsonExporter implements Exporter {
     }
 
     private void addDeskriptoren(JsonNode probe) {
-        String desk = probe.get("mediaDesk").asText();
+        String desk = probe.get("envDescripDisplay").asText();
         String[] parts = desk.split(" ");
         if (parts.length <= 1) {
             return;
@@ -538,18 +538,18 @@ public class JsonExporter implements Exporter {
             for (int i = 0; i < nodes.size(); i++) {
                 MeasUnit meh = repository.getByIdPlain(
                     MeasUnit.class,
-                    nodes.get(i).get("mehId").asInt()
+                    nodes.get(i).get("unitId").asInt()
                 );
-                ((ObjectNode) nodes.get(i)).put("meh",
+                ((ObjectNode) nodes.get(i)).put("unit",
                     meh == null ? "" : meh.getUnitSymbol());
                 Measd mg = repository.getByIdPlain(
                     Measd.class,
-                    nodes.get(i).get("messgroesseId").asInt()
+                    nodes.get(i).get("measdId").asInt()
                 );
-                ((ObjectNode) nodes.get(i)).put("messgroesse",
+                ((ObjectNode) nodes.get(i)).put("measd",
                     mg == null ? "" : mg.getName());
             }
-            ((ObjectNode) node).set("messwerte", nodes);
+            ((ObjectNode) node).set("measVals", nodes);
         } catch (IOException e) {
             logger.debug("Could not export Messwerte for Messung "
                 + node.get("nebenprobenNr").asText());
@@ -569,13 +569,13 @@ public class JsonExporter implements Exporter {
             for (int i = 0; i < nodes.size(); i++) {
                 MeasFacil mst = repository.getByIdPlain(
                     MeasFacil.class,
-                    nodes.get(i).get("mstId").asText()
+                    nodes.get(i).get("measFacilId").asText()
                 );
                 ((ObjectNode) nodes.get(i)).put(
-                    "mst",
+                    "measFacil",
                     mst.getName());
             }
-            ((ObjectNode) node).set("kommentare", nodes);
+            ((ObjectNode) node).set("commMeasms", nodes);
         } catch (IOException e) {
             logger.debug("Could not export Kommentare for Messung "
                 + node.get("nebenprobenNr").asText());
@@ -595,20 +595,20 @@ public class JsonExporter implements Exporter {
             for (int i = 0; i < nodes.size(); i++) {
                 StatusMp kombi = repository.getByIdPlain(
                     StatusMp.class,
-                    nodes.get(i).get("statusKombi").asInt()
+                    nodes.get(i).get("statusComb").asInt()
                 );
                 ((ObjectNode) nodes.get(i)).put(
-                    "statusStufe",
+                    "statusLev",
                     kombi.getStatusLev().getLev());
                 ((ObjectNode) nodes.get(i)).put(
-                    "statusWert",
+                    "statusVal",
                     kombi.getStatusVal().getVal());
                 MeasFacil mst = repository.getByIdPlain(
                     MeasFacil.class,
-                    nodes.get(i).get("mstId").asText()
+                    nodes.get(i).get("measFacilId").asText()
                 );
                 ((ObjectNode) nodes.get(i)).put(
-                    "mst",
+                    "measFacil",
                     mst.getName());
             }
             ((ObjectNode) node).set("statusprotokoll", nodes);
@@ -640,34 +640,34 @@ public class JsonExporter implements Exporter {
 
     private void addOrt(JsonNode node) {
         Site ort = repository.getByIdPlain(
-                Site.class, node.get("ortId").asInt());
+                Site.class, node.get("siteId").asInt());
         Jsonb ortJsonb = JsonbBuilder.create();
         String tmp = ortJsonb.toJson(ort);
         final ObjectMapper mapper = new ObjectMapper();
         try {
             JsonNode oNode = mapper.readTree(tmp);
 
-            final String gemIdKey = "gemId";
+            final String gemIdKey = "municId";
             if (oNode.hasNonNull(gemIdKey)) {
                 AdminUnit ve = repository.getByIdPlain(
                     AdminUnit.class,
                     oNode.get(gemIdKey).asText()
                 );
-                ((ObjectNode) oNode).put("gem",
+                ((ObjectNode) oNode).put("munic",
                     ve == null ? "" : ve.getName());
             }
 
-            final String staatIdKey = "staatId";
+            final String staatIdKey = "stateId";
             if (oNode.hasNonNull(staatIdKey)) {
                 State staat = repository.getByIdPlain(
                     State.class,
                     oNode.get(staatIdKey).asInt()
                 );
-                ((ObjectNode) oNode).put("staat",
+                ((ObjectNode) oNode).put("state",
                     staat == null ? "" : staat.getCtry());
             }
 
-            ((ObjectNode) node).set("ort", oNode);
+            ((ObjectNode) node).set("site", oNode);
         } catch (IOException e) {
             logger.debug("Could not export Ort for Ortszuordnung "
                 + node.get("id").asText());
