@@ -64,21 +64,21 @@ public class ExporterTest extends BaseTest {
             .add(Json.createObjectBuilder()
                 .add("columnIndex", 0)
                 .add("export", true)
-                .add("filterValue", "")
-                .add("filterActive", false)
-                .add("filterIsNull", false)
-                .add("filterNegate", false)
-                .add("filterRegex", false)
-                .add("gridColumnId", 1))
+                .add("filterVal", "")
+                .add("isFilterActive", false)
+                .add("isFilterNull", false)
+                .add("isFilterNegate", false)
+                .add("isFilterRegex", false)
+                .add("gridColMpId", 1))
             .add(Json.createObjectBuilder()
                 .add("columnIndex", 1)
                 .add("export", true)
-                .add("filterValue", "")
-                .add("filterActive", false)
-                .add("filterIsNull", false)
-                .add("filterNegate", false)
-                .add("filterRegex", false)
-                .add("gridColumnId", 2)));
+                .add("filterVal", "")
+                .add("isFilterActive", false)
+                .add("isFilterNull", false)
+                .add("isFilterNegate", false)
+                .add("isFilterRegex", false)
+                .add("gridColMpId", 2)));
 
     /**
      * Prepare data for export of a Sample object.
