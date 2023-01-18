@@ -243,7 +243,7 @@ COPY master.disp (id, name, format) FROM stdin;
 -- Data for Name: grid_column; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.grid_col_mp (id, base_query, grid_col, data_index, "position", filter, data_type) FROM stdin;
+COPY master.grid_col_mp (id, base_query_id, grid_col, data_index, "position", filter_id, disp_id) FROM stdin;
 101	1	interne PID	probeId	1	\N	4
 102	1	HP-Nr	hpNr	2	2	1
 103	1	Datenbasis	dBasis	3	8	17
@@ -1784,7 +1784,7 @@ COPY master.grid_col_conf (id, user_id, grid_col_mp_id, query_user_id, sort, sor
 -- Data for Name: query_messstelle; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.query_meas_facil_mp (id, query, meas_facil_id) FROM stdin;
+COPY master.query_meas_facil_mp (id, query_id, meas_facil_id) FROM stdin;
 6	18	30021
 7	18	30022
 18	35	30021
