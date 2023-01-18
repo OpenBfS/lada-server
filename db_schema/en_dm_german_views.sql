@@ -493,12 +493,12 @@ FROM master.munic_div;
 
 CREATE VIEW stamm.grid_column AS SELECT
 	id,
-	base_query,
+	base_query_id AS base_query,
 	grid_col AS name,
 	data_index,
 	position,
-	filter,
-	data_type
+	filter_id AS filter,
+	disp_id AS data_type
 FROM master.grid_col_mp;
 
 CREATE VIEW stamm.grid_column_values AS SELECT
@@ -753,7 +753,7 @@ FROM master.sampler;
 
 CREATE VIEW stamm.query_messstelle AS SELECT
 	id,
-	query,
+	query_id AS query,
 	meas_facil_id AS mess_stelle
 FROM master.query_meas_facil_mp;
 

@@ -492,7 +492,7 @@ CREATE TABLE query_user (
 
 CREATE TABLE query_meas_facil_mp (
     id serial PRIMARY KEY,
-    query integer NOT NULL REFERENCES query_user ON DELETE CASCADE,
+    query_id integer NOT NULL REFERENCES query_user ON DELETE CASCADE,
     meas_facil_id character varying(5) NOT NULL REFERENCES meas_facil
 );
 
@@ -913,15 +913,15 @@ CREATE TRIGGER last_mod_import_conf BEFORE UPDATE ON master.import_conf FOR EACH
 
 CREATE TABLE grid_col_mp (
     id serial PRIMARY KEY,
-    base_query integer NOT NULL REFERENCES base_query ON DELETE CASCADE,
+    base_query_id integer NOT NULL REFERENCES base_query ON DELETE CASCADE,
     grid_col character varying(80) NOT NULL,
     data_index character varying(80) NOT NULL,
     position integer NOT NULL CHECK(position > 0),
-    filter integer REFERENCES filter,
-    data_type integer NOT NULL REFERENCES disp,
-    UNIQUE(base_query, grid_col),
-    UNIQUE(base_query, data_index),
-    UNIQUE(base_query, position)
+    filter_id integer REFERENCES filter,
+    disp_id integer NOT NULL REFERENCES disp,
+    UNIQUE(base_query_id, grid_col),
+    UNIQUE(base_query_id, data_index),
+    UNIQUE(base_query_id, position)
 );
 
 CREATE TABLE grid_col_conf (
