@@ -1037,7 +1037,7 @@ COPY master.query_user (id, name, lada_user_id, base_query_id, descr) FROM stdin
 -- Data for Name: grid_column_values; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.grid_col_conf (id, user_id, grid_col_mp_id, query_user_id, sort, sort_index, filter_val, is_filter_active, is_visible, col_index, width, is_filter_negate, is_filter_regex, is_filter_null) FROM stdin;
+COPY master.grid_col_conf (id, lada_user_id, grid_col_mp_id, query_user_id, sort, sort_index, filter_val, is_filter_active, is_visible, col_index, width, is_filter_negate, is_filter_regex, is_filter_null) FROM stdin;
 8	0	103	1	\N	\N	\N	f	t	1	77	f	f	f
 11	0	102	1	\N	\N	\N	t	t	0	92	f	f	f
 19	0	118	1	\N	\N	\N	f	f	-1	150	f	f	f

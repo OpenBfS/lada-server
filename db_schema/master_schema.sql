@@ -926,7 +926,7 @@ CREATE TABLE grid_col_mp (
 
 CREATE TABLE grid_col_conf (
     id serial PRIMARY KEY,
-    user_id integer NOT NULL REFERENCES lada_user,
+    lada_user_id integer NOT NULL REFERENCES lada_user,
     grid_col_mp_id integer NOT NULL REFERENCES grid_col_mp,
     query_user_id integer NOT NULL REFERENCES query_user ON DELETE CASCADE,
     sort character varying(4),

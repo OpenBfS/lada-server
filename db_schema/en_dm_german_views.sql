@@ -503,7 +503,7 @@ FROM master.grid_col_mp;
 
 CREATE VIEW stamm.grid_column_values AS SELECT
 	id,
-	user_id,
+	lada_user_id AS user_id,
 	grid_col_mp_id AS grid_column,
 	query_user_id AS query_user,
 	sort,
