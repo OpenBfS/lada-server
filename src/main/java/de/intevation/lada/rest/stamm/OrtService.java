@@ -8,10 +8,7 @@
 package de.intevation.lada.rest.stamm;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -21,7 +18,9 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.Query;
 import javax.validation.constraints.Pattern;
+
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -36,10 +35,8 @@ import org.jboss.logging.Logger;
 
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.importer.ReportItem;
-import de.intevation.lada.model.land.Messung;
 import de.intevation.lada.model.land.Ortszuordnung;
 import de.intevation.lada.model.land.OrtszuordnungMp;
-import de.intevation.lada.model.land.StatusProtokoll;
 import de.intevation.lada.model.stammdaten.Ort;
 import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -202,7 +199,7 @@ public class OrtService extends LadaService {
         for (Ort o : orte) {
             List<Ortszuordnung> zuordnungs = getOrtsZuordnungs(o);
             o.setReferenceCount(zuordnungs.size());
-            o.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
+            o.setPlausibleReferenceCount(getPlausibleRefs(o.getId()));
             List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(o);
             o.setReferenceCountMp(zuordnungsMp.size());
             o.setReadonly(
@@ -237,7 +234,7 @@ public class OrtService extends LadaService {
         }
         List<Ortszuordnung> zuordnungs = getOrtsZuordnungs(ort);
         ort.setReferenceCount(zuordnungs.size());
-        ort.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
+        ort.setPlausibleReferenceCount(getPlausibleRefs(ort.getId()));
         List<OrtszuordnungMp> zuordnungsMp = getOrtsZuordnungsMp(ort);
         ort.setReferenceCountMp(zuordnungsMp.size());
         ort.setReadonly(
@@ -376,7 +373,7 @@ public class OrtService extends LadaService {
         String dbCoordX = dbOrt.getKoordXExtern();
         String dbCoordY = dbOrt.getKoordYExtern();
 
-        if (getPlausibleRefCount(getOrtsZuordnungs(dbOrt)) > 0
+        if (getPlausibleRefs(dbOrt.getId()) > 0
                 && (!dbCoordX.equals(ort.getKoordXExtern())
                 || !dbCoordY.equals(ort.getKoordYExtern()))) {
             MultivaluedMap<String, Integer> error =
@@ -467,36 +464,13 @@ public class OrtService extends LadaService {
         return repository.filterPlain(refBuilder.getQuery());
     }
 
-    /**
-     * Get the number of plausible Messung objects referencing an ort.
-     * @param zuordnungs List of Ortszuordnung objects referencing
-     *                   the ort to check
-     * @return Number of references as int
-     */
-    private int getPlausibleRefCount(List<Ortszuordnung> zuordnungs) {
-        Map<Integer, Integer> plausibleMap = new HashMap<Integer, Integer>();
-        for (Ortszuordnung zuordnung: zuordnungs) {
-            EntityManager em = repository.entityManager();
-
-            CriteriaBuilder mesBuilder = em.getCriteriaBuilder();
-            CriteriaQuery<Messung> criteriaQuery =
-                mesBuilder.createQuery(Messung.class);
-            Root<Messung> root = criteriaQuery.from(Messung.class);
-            Join<Messung, StatusProtokoll> join =
-                root.join("statusProtokoll", JoinType.LEFT);
-            Predicate filter =
-                mesBuilder.equal(root.get("probeId"), zuordnung.getProbeId());
-            filter = mesBuilder
-                .and(filter, join.get("statusKombi")
-                .in(Arrays.asList("2", "6", "10")));
-            criteriaQuery.where(filter);
-            List<Messung> messungs =
-                repository.filterPlain(criteriaQuery);
-            if (messungs.size() > 0) {
-                plausibleMap.put(zuordnung.getProbeId(), 1);
-            }
-        }
-        return plausibleMap.size();
+    private int getPlausibleRefs(int sampleId){
+        Query query =
+        repository.queryFromString(
+            "SELECT * FROM get_measms_per_site(:sampleId);").setParameter("sampleId", sampleId);
+        @SuppressWarnings("unchecked")
+        List resultList = query.getResultList();
+        return ((int)resultList.get(0));
     }
 
     /**
