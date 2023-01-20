@@ -443,6 +443,29 @@ public class ServiceTest {
         return content;
     }
 
+    protected JsonObject getAuditTrail(String name, String parameter) {
+        Protocol prot = new Protocol();
+        prot.setName(name + " audit trail");
+        prot.setType("get");
+        prot.setPassed(false);
+        protocol.add(prot);
+
+        WebTarget target =
+            client.target(baseUrl + parameter);
+        prot.addInfo("parameter", parameter);
+        Response response = target.request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        String responseBody = response.readEntity(String.class);
+        JsonObject content = Json.createReader(
+                    new StringReader(responseBody)).readObject();
+        Assert.assertNotNull(
+            content.getJsonObject("data").getJsonArray("audit"));
+        prot.setPassed(true);
+        return content;
+    }
+
     /**
      * Get the difference in days between the given timestamps.
      * @param to Date as unix timestamp

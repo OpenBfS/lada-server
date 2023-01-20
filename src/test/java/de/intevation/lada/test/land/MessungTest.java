@@ -75,6 +75,7 @@ public class MessungTest extends ServiceTest {
         getById("measm", "rest/measm/1200", expectedById);
         JsonObject created = create("measm", "rest/measm", create);
         update("measm", "rest/measm/1200", "minSampleId", "T100", "U200");
+        getAuditTrail("measm", "rest/audit/messung/1200");
         delete(
             "measm",
             "rest/measm/" + created.getJsonObject("data").get("id"));

@@ -77,6 +77,7 @@ public class ProbeTest extends ServiceTest {
             "mainSampleId",
             "120510002",
             "130510002");
+        getAuditTrail("probe", "rest/audit/probe/1000");
         delete(
             "probe",
             "rest/sample/" + created.getJsonObject("data").get("id"));
