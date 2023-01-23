@@ -493,7 +493,8 @@ CREATE TABLE query_user (
 CREATE TABLE query_meas_facil_mp (
     id serial PRIMARY KEY,
     query_id integer NOT NULL REFERENCES query_user ON DELETE CASCADE,
-    meas_facil_id character varying(5) NOT NULL REFERENCES meas_facil
+    meas_facil_id character varying(5) NOT NULL REFERENCES meas_facil,
+    UNIQUE (query_id, meas_facil_id)
 );
 
 
@@ -615,18 +616,20 @@ CREATE TRIGGER last_mod_rei_ag_gr BEFORE UPDATE ON master.rei_ag_gr FOR EACH ROW
 CREATE TABLE rei_ag_gr_mp
 (
     id serial PRIMARY KEY,
-    rei_ag_gr_id integer REFERENCES rei_ag_gr,
-    rei_ag_id integer REFERENCES rei_ag,
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    rei_ag_gr_id integer NOT NULL REFERENCES rei_ag_gr,
+    rei_ag_id integer NOT NULL REFERENCES rei_ag,
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE(rei_ag_gr_id, rei_ag_id)
 );
 CREATE TRIGGER last_mod_rei_ag_gr_mp BEFORE UPDATE ON master.rei_ag_gr_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE rei_ag_gr_env_medium_mp
 (
     id serial PRIMARY KEY,
-    rei_ag_gr_id integer REFERENCES rei_ag_gr,
-    env_medium_id character varying(3) REFERENCES env_medium,
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    rei_ag_gr_id integer NOT NULL REFERENCES rei_ag_gr,
+    env_medium_id character varying(3) NOT NULL REFERENCES env_medium,
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE(rei_ag_gr_id, env_medium_id)
 );
 CREATE TRIGGER last_mod_rei_ag_gr_env_medium_mp BEFORE UPDATE ON master.rei_ag_gr_env_medium_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
@@ -653,9 +656,10 @@ CREATE TRIGGER last_mod_nucl_facil_gr BEFORE UPDATE ON master.nucl_facil_gr FOR 
 CREATE TABLE nucl_facil_gr_mp
 (
     id serial PRIMARY KEY,
-    nucl_facil_gr_id integer REFERENCES nucl_facil_gr,
-    nucl_facil_id integer REFERENCES nucl_facil,
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    nucl_facil_gr_id integer NOT NULL REFERENCES nucl_facil_gr,
+    nucl_facil_id integer NOT NULL REFERENCES nucl_facil,
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE(nucl_facil_gr_id, nucl_facil_id)
 );
 CREATE TRIGGER last_mod_nucl_facil_gr_mp BEFORE UPDATE ON master.nucl_facil_gr_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
