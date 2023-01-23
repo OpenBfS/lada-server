@@ -998,9 +998,9 @@ CREATE TRIGGER last_mod_targ_act_mmt_gr BEFORE UPDATE ON master.targ_act_mmt_gr 
 
 CREATE TABLE IF NOT EXISTS master.targ_act_mmt_gr_mp
 (
-    id serial PRIMARY KEY,
-    mmt_id character varying(2) NOT NULL REFERENCES mmt,
-    targ_act_mmt_gr_id integer NOT NULL REFERENCES targ_act_mmt_gr,
+    mmt_id character varying(2) REFERENCES mmt,
+    targ_act_mmt_gr_id integer REFERENCES targ_act_mmt_gr,
+    PRIMARY KEY(mmt_id, targ_act_mmt_gr_id),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_targ_act_mmt_gr_mp BEFORE UPDATE ON master.targ_act_mmt_gr_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
@@ -1016,9 +1016,9 @@ CREATE TRIGGER last_mod_targ_env_gr BEFORE UPDATE ON master.targ_env_gr FOR EACH
 
 CREATE TABLE IF NOT EXISTS master.targ_env_gr_mp
 (
-    id serial PRIMARY KEY,
-    targ_env_gr_id integer NOT NULL REFERENCES targ_env_gr,
-    env_medium_id character varying(3) NOT NULL REFERENCES env_medium,
+    targ_env_gr_id integer REFERENCES targ_env_gr,
+    env_medium_id character varying(3) REFERENCES env_medium,
+    PRIMARY KEY(targ_env_gr_id, env_medium_id),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_targ_env_gr_mp BEFORE UPDATE ON master.targ_env_gr_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();

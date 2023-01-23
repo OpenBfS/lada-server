@@ -33,15 +33,15 @@ COPY master.targ_act_mmt_gr (id, name, descr) FROM stdin;
 -- Data for Name: targ_act_mmt_gr_mp; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.targ_act_mmt_gr_mp (id, mmt_id, targ_act_mmt_gr_id) FROM stdin;
-1	G1	1
-2	A1	2
-3	BS	3
-4	BH	4
-5	I3	5
-10	BX	3
-8	AP	2
-9	AU	2
+COPY master.targ_act_mmt_gr_mp (mmt_id, targ_act_mmt_gr_id) FROM stdin;
+G1	1
+A1	2
+BS	3
+BH	4
+I3	5
+BX	3
+AP	2
+AU	2
 \.
 
 
@@ -1489,167 +1489,167 @@ COPY master.targ_act_targ (id, network_id, targ_act_mmt_gr_id, targ_env_medium_g
 -- Data for Name: targ_env_gr_mp; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.targ_env_gr_mp (id, targ_env_gr_id, env_medium_id) FROM stdin;
-17	3	N46
-76	12	N56
-77	12	N5Z
-78	13	N51
-79	13	N53
-80	13	N52
-81	13	N54
-82	13	N55
-83	13	N56
-84	13	N5Z
-92	19	I12
-93	20	F11
-106	25	F41
-119	29	B21
-158	48	N9P
-159	48	N9Q
-160	48	N9R
-1	1	N21
-2	1	N22
-3	1	N23
-4	1	N24
-5	1	N26
-6	1	N27
-7	1	N28
-8	1	N29
-9	1	N2Y
-10	2	N31
-11	2	N3Z
-12	3	N41
-13	3	N42
-14	3	N43
-15	3	N44
-16	3	N45
-18	3	N4Z
-19	4	N25
-20	5	N2A
-21	5	N2B
-22	5	N2C
-23	5	N9A
-24	5	NZ2
-25	6	N21
-26	6	N22
-27	6	N23
-28	6	N24
-29	6	N26
-30	6	N27
-31	6	N28
-32	6	N29
-33	6	N2Y
-34	6	N31
-35	6	N3Z
-36	6	N41
-37	6	N42
-38	6	N43
-39	6	N44
-40	6	N45
-41	6	N46
-42	6	N4Z
-43	6	N25
-44	6	N2A
-45	6	N2B
-46	6	N2C
-47	6	N9A
-48	6	NZ2
-49	7	N2A
-50	7	N2B
-51	7	N2C
-52	7	N21
-53	7	N22
-54	7	N23
-55	7	N24
-56	7	N26
-57	7	N27
-58	7	N28
-59	7	N29
-60	7	N2Y
-61	7	N31
-62	7	N3Z
-63	7	N41
-64	7	N42
-65	7	N43
-66	7	N44
-67	7	N45
-68	7	N46
-69	7	N4Z
-70	7	N25
-71	8	N51
-72	9	N53
-73	10	N52
-74	11	N54
-75	12	N55
-85	14	N81
-86	15	N82
-87	16	N11
-88	16	N12
-89	16	N14
-90	17	I13
-91	18	I11
-94	21	F21
-95	22	F31
-96	23	F41
-97	24	F51
-98	24	F52
-99	24	F5Z
-100	24	F61
-101	24	F62
-102	24	F63
-103	25	F11
-104	25	F21
-105	25	F31
-107	25	F51
-108	25	F52
-109	25	F5Z
-110	25	F61
-111	25	F62
-112	25	F63
-113	26	B31
-114	26	B32
-115	27	B33
-116	28	B31
-117	28	B32
-118	28	B33
-120	30	G11
-121	30	G21
-122	30	GZ1
-123	31	G12
-124	31	G22
-125	32	G13
-126	32	G23
-127	33	N71
-128	33	N72
-129	33	N73
-130	34	G51
-131	34	G52
-132	35	G41
-133	36	N61
-134	37	N63
-135	38	A11
-136	38	A12
-137	39	A13
-138	40	A31
-139	41	A24
-140	42	A21
-141	43	A22
-142	44	A23
-143	45	A41
-144	46	N91
-145	46	N92
-146	47	F21
-147	47	F31
-148	47	F51
-149	47	F52
-150	47	F5Z
-151	47	F61
-152	47	F62
-153	47	F63
-154	48	N61
-155	48	N62
-156	48	N63
-157	48	N9O
+COPY master.targ_env_gr_mp (targ_env_gr_id, env_medium_id) FROM stdin;
+3	N46
+12	N56
+12	N5Z
+13	N51
+13	N53
+13	N52
+13	N54
+13	N55
+13	N56
+13	N5Z
+19	I12
+20	F11
+25	F41
+29	B21
+48	N9P
+48	N9Q
+48	N9R
+1	N21
+1	N22
+1	N23
+1	N24
+1	N26
+1	N27
+1	N28
+1	N29
+1	N2Y
+2	N31
+2	N3Z
+3	N41
+3	N42
+3	N43
+3	N44
+3	N45
+3	N4Z
+4	N25
+5	N2A
+5	N2B
+5	N2C
+5	N9A
+5	NZ2
+6	N21
+6	N22
+6	N23
+6	N24
+6	N26
+6	N27
+6	N28
+6	N29
+6	N2Y
+6	N31
+6	N3Z
+6	N41
+6	N42
+6	N43
+6	N44
+6	N45
+6	N46
+6	N4Z
+6	N25
+6	N2A
+6	N2B
+6	N2C
+6	N9A
+6	NZ2
+7	N2A
+7	N2B
+7	N2C
+7	N21
+7	N22
+7	N23
+7	N24
+7	N26
+7	N27
+7	N28
+7	N29
+7	N2Y
+7	N31
+7	N3Z
+7	N41
+7	N42
+7	N43
+7	N44
+7	N45
+7	N46
+7	N4Z
+7	N25
+8	N51
+9	N53
+10	N52
+11	N54
+12	N55
+14	N81
+15	N82
+16	N11
+16	N12
+16	N14
+17	I13
+18	I11
+21	F21
+22	F31
+23	F41
+24	F51
+24	F52
+24	F5Z
+24	F61
+24	F62
+24	F63
+25	F11
+25	F21
+25	F31
+25	F51
+25	F52
+25	F5Z
+25	F61
+25	F62
+25	F63
+26	B31
+26	B32
+27	B33
+28	B31
+28	B32
+28	B33
+30	G11
+30	G21
+30	GZ1
+31	G12
+31	G22
+32	G13
+32	G23
+33	N71
+33	N72
+33	N73
+34	G51
+34	G52
+35	G41
+36	N61
+37	N63
+38	A11
+38	A12
+39	A13
+40	A31
+41	A24
+42	A21
+43	A22
+44	A23
+45	A41
+46	N91
+46	N92
+47	F21
+47	F31
+47	F51
+47	F52
+47	F5Z
+47	F61
+47	F62
+47	F63
+48	N61
+48	N62
+48	N63
+48	N9O
 \.
 
 
@@ -1658,13 +1658,6 @@ COPY master.targ_env_gr_mp (id, targ_env_gr_id, env_medium_id) FROM stdin;
 --
 
 SELECT pg_catalog.setval('master.targ_act_mmt_gr_id_seq', 6, false);
-
-
---
--- Name: targ_act_mmt_gr_mp_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('master.targ_act_mmt_gr_mp_id_seq', 11, false);
 
 
 --
@@ -1679,16 +1672,3 @@ SELECT pg_catalog.setval('master.targ_act_targ_id_seq', 1377, false);
 --
 
 SELECT pg_catalog.setval('master.targ_env_gr_id_seq', 49, false);
-
-
---
--- Name: targ_env_gr_mp_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
---
-
-SELECT pg_catalog.setval('master.targ_env_gr_mp_id_seq', 161, false);
-
-
---
--- PostgreSQL database dump complete
---
-
