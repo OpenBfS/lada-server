@@ -1784,12 +1784,12 @@ COPY master.grid_col_conf (id, lada_user_id, grid_col_mp_id, query_user_id, sort
 -- Data for Name: query_messstelle; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.query_meas_facil_mp (query_id, meas_facil_id) FROM stdin;
-18	30021
-18	30022
-35	30021
-35	30022
-35	20060
+COPY master.query_meas_facil_mp (id, query_id, meas_facil_id) FROM stdin;
+6	18	30021
+7	18	30022
+18	35	30021
+19	35	30022
+20	35	20060
 \.
 
 
@@ -1826,6 +1826,14 @@ SELECT pg_catalog.setval('master.grid_col_conf_id_seq', 10000, true);
 --
 
 SELECT pg_catalog.setval('master.lada_user_id_seq', 100, true);
+
+
+--
+-- Name: query_meas_facil_mp_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
+--
+
+SELECT pg_catalog.setval('master.query_meas_facil_mp_id_seq', 100, true);
+
 
 --
 -- Name: query_user_id_seq; Type: SEQUENCE SET; Schema: master; Owner: postgres
