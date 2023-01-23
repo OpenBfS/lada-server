@@ -268,6 +268,7 @@ CREATE TABLE mpg_mmt_mp (
     id serial PRIMARY KEY,
     mpg_id integer NOT NULL REFERENCES mpg ON DELETE CASCADE,
     mmt_id character varying(2) NOT NULL REFERENCES master.mmt,
+    UNIQUE(mpg_id, mmt_id),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_mpg_mmt_mp BEFORE UPDATE ON mpg_mmt_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
