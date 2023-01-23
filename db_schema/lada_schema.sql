@@ -144,8 +144,8 @@ AS
 $$
 DECLARE measms_per_site int;
 BEGIN
- 
-    EXECUTE 
+
+    EXECUTE
     '
     SELECT COUNT(DISTINCT sa.id)
     FROM master.site s
@@ -155,9 +155,9 @@ BEGIN
     INNER JOIN lada.status_prot sp ON m.status=sp.id
     WHERE s.id=' || site_id || ' and sp.status_comb IN (2,6,10)
     ' INTO measms_per_site;
-    
+
     RETURN measms_per_site;
-    
+
 END;
 $$;
 
