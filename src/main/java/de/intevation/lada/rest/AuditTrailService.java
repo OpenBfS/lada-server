@@ -139,6 +139,8 @@ public class AuditTrailService extends LadaService {
                 new TableMapper("date", "dd.MM.yy HH:mm"));
         mappings.put("solldatum_ende",
                 new TableMapper("date", "dd.MM.yy HH:mm"));
+        mappings.put("mitte_sammelzeitraum",
+                new TableMapper("date", "dd.MM.yy HH:mm"));
         mappings.put("messzeitpunkt",
                 new TableMapper("date", "dd.MM.yy HH:mm"));
         mappings.put("kta_gruppe_id",
