@@ -109,7 +109,7 @@ public class QueryService extends LadaService {
             && !userInfo.getMessstellen().isEmpty()
         ) {
             filter = builder.or(
-                filter, mess.get("messStelle").in(userInfo.getMessstellen()));
+                filter, mess.get("id").get("messStelle").in(userInfo.getMessstellen()));
         }
         criteriaQuery.where(filter);
 

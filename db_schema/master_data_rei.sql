@@ -17,74 +17,74 @@ SET client_min_messages = warning;
 SET search_path = master, pg_catalog;
 
 COPY rei_ag (id, name, descr) FROM stdin;
-1	A1:1.1	Luft/äußere Strahlung: KKW, best.gem. Betrieb, Gen.inhaber                                                              
-2	A1:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; KKW, best.gem. Betrieb, Gen.inhaber                                     
-3	A1:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; KKW, best.gem. Betrieb, Gen.inhaber                                             
+1	A1:1.1	Luft/äußere Strahlung: KKW, best.gem. Betrieb, Gen.inhaber
+2	A1:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; KKW, best.gem. Betrieb, Gen.inhaber
+3	A1:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; KKW, best.gem. Betrieb, Gen.inhaber
 4	A1:1.1c	Luft/äußere Strahlung: Gamma-Ortsdosis in der Umgebung; KKW, best.gem. Betrieb, Gen.inhaber
 5	A1:1.1d	Luft/äußere Strahlung: Neutronen-Ortsdosis; KKW, best.gem. Betrieb, Gen.inhaber
-6	A1:1.2	Luft/Aerosole: KKW, best.gem. Betrieb, Gen.inhaber                                                                      
-7	A1:1.3	Luft/gasförmiges Iod: KKW, best.gem. Betrieb, Gen.inhaber                                                               
-8	A1:2.0	Niederschlag: KKW, best.gem. Betrieb, Gen.inhaber                                                                       
-9	A1:3.0	Boden: KKW, best.gem. Betrieb, Gen.inhaber                                                                              
-10	A1:4.0	Pflanzen/Bewuchs: KKW, best.gem. Betrieb, Gen.inhaber                                                                   
-11	A1:5.0	Oberflächenwasser: KKW, best.gem. Betrieb, Gen.inhaber                                                                  
-12	A1:5.0a	Oberflächenwasser: Gammaspektrometrie, Aktivitätskonzentr. einzelner Nuklide; KKW, best.gem. Betrieb, Gen.inhaber       
-13	A1:5.0b	Oberflächenwasser: Tritium-Aktivitätskonzentration; KKW, best.gem. Betrieb, Gen.inhaber                                 
-14	A1:6.0	Grundwasser: KKW, best.gem. Betrieb, Gen.inhaber                                                                        
-15	A1:6.0a	Grundwasser: Gammaspektrometrie, Aktivitätskonzentr. einzelner Nuklide; KKW, best.gem. Betrieb, Gen.inhaber             
-16	A1:6.0b	Grundwasser: Tritium-Aktivitätskonzentration; KKW, best.gem. Betr., Gen.inhaber                                         
+6	A1:1.2	Luft/Aerosole: KKW, best.gem. Betrieb, Gen.inhaber
+7	A1:1.3	Luft/gasförmiges Iod: KKW, best.gem. Betrieb, Gen.inhaber
+8	A1:2.0	Niederschlag: KKW, best.gem. Betrieb, Gen.inhaber
+9	A1:3.0	Boden: KKW, best.gem. Betrieb, Gen.inhaber
+10	A1:4.0	Pflanzen/Bewuchs: KKW, best.gem. Betrieb, Gen.inhaber
+11	A1:5.0	Oberflächenwasser: KKW, best.gem. Betrieb, Gen.inhaber
+12	A1:5.0a	Oberflächenwasser: Gammaspektrometrie, Aktivitätskonzentr. einzelner Nuklide; KKW, best.gem. Betrieb, Gen.inhaber
+13	A1:5.0b	Oberflächenwasser: Tritium-Aktivitätskonzentration; KKW, best.gem. Betrieb, Gen.inhaber
+14	A1:6.0	Grundwasser: KKW, best.gem. Betrieb, Gen.inhaber
+15	A1:6.0a	Grundwasser: Gammaspektrometrie, Aktivitätskonzentr. einzelner Nuklide; KKW, best.gem. Betrieb, Gen.inhaber
+16	A1:6.0b	Grundwasser: Tritium-Aktivitätskonzentration; KKW, best.gem. Betr., Gen.inhaber
 17	A1:7.2	Sediment: KKW, best.gem. Betrieb, Gen.inhaber
 18	A1:8.0	Nahrungsmittel pflanzl. Herkunft: KKW, best.gem. Betrieb, Gen.inhaber
-19	A2:1.1	Luft/äußere Strahlung: Gamma-Ortsdosis; KKW, best.gem. Betrieb, unabh. Messstelle                                       
+19	A2:1.1	Luft/äußere Strahlung: Gamma-Ortsdosis; KKW, best.gem. Betrieb, unabh. Messstelle
 20	A2:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis am Anlagenzaun; KKW, best.gem. Betrieb, unabh. Messstelle
 21	A2:1.1c	Luft/äußere Strahlung: Gamma-Ortsdosis in der Umgebung; KKW, best.gem. Betrieb, unabh. Messstelle
 22	A2:1.1d	Luft/äußere Strahlung: Neutronen-Ortsdosis; KKW, best.gem. Betrieb, unabh. Messstelle
-23	A2:1.2	Luft/Aerosole: KKW, best.gem. Betrieb, unabh. Messstelle                                                                
-24	A2:2.0	Niederschlag: KKW, best.gem. Betrieb, unabh. Messstelle                                                                 
-25	A2:3.0	Boden: KKW, best.gem. Betrieb, unabh. Messstelle                                                                        
-26	A2:4.0	Weide-/Wiesenbewuchs: KKW, best.gem. Betrieb, unabh. Messstelle                                                         
-27	A2:5.0	Nahrungsmittel pflanzl. Herkunft: KKW, best.gem. Betrieb, unabh. Messstelle                                             
-28	A2:5.0a	Nahrungsmittel pflanzl. Herkunft: Gammaspektro., spezif. Einzelradionuklidaktivität; KKW, best.gem. Betr., unabh. MST  
-29	A2:5.0b	Nahrungsmittel pflanzl. Herkunft: spezifische Sr-90-Aktivität; KKW, best.gem. Betrieb, unabh. Messstelle                
-30	A2:6.0	Kuhmilch: KKW, best.gem. Betrieb, unabh. Messstelle                                                                     
-31	A2:6.0a	Kuhmilch: Gammaspektrometrie, Aktivitätskonzentr. einzelner Nuklide; KKW, best.gem. Betrieb, unabh. Messstelle          
-32	A2:6.0b	Kuhmilch: Sr-90-Aktivitätskonzentration; KKW, best.gem. Betrieb, unabh. Messstelle                                      
-33	A2:6.0c	Kuhmilch: I-131-Aktivitätskonzentration; KKW, best.gem. Betrieb, unabh. Messstelle                                      
-34	A2:7.1	Oberflächenwasser: KKW, best.gem. Betrieb, unabh. Messstelle                                                            
-35	A2:7.1a	Oberflächenwasser: Gammaspektrometrie, Aktivitätskonzentr. einzelner Nuklide; KKW, best.gem. Betrieb, unabh. Messstelle 
-36	A2:7.1b	Oberflächenwasser: Tritium-Aktivitätskonzentration; KKW, best.gem. Betrieb, unabh. Messstelle                           
+23	A2:1.2	Luft/Aerosole: KKW, best.gem. Betrieb, unabh. Messstelle
+24	A2:2.0	Niederschlag: KKW, best.gem. Betrieb, unabh. Messstelle
+25	A2:3.0	Boden: KKW, best.gem. Betrieb, unabh. Messstelle
+26	A2:4.0	Weide-/Wiesenbewuchs: KKW, best.gem. Betrieb, unabh. Messstelle
+27	A2:5.0	Nahrungsmittel pflanzl. Herkunft: KKW, best.gem. Betrieb, unabh. Messstelle
+28	A2:5.0a	Nahrungsmittel pflanzl. Herkunft: Gammaspektro., spezif. Einzelradionuklidaktivität; KKW, best.gem. Betr., unabh. MST
+29	A2:5.0b	Nahrungsmittel pflanzl. Herkunft: spezifische Sr-90-Aktivität; KKW, best.gem. Betrieb, unabh. Messstelle
+30	A2:6.0	Kuhmilch: KKW, best.gem. Betrieb, unabh. Messstelle
+31	A2:6.0a	Kuhmilch: Gammaspektrometrie, Aktivitätskonzentr. einzelner Nuklide; KKW, best.gem. Betrieb, unabh. Messstelle
+32	A2:6.0b	Kuhmilch: Sr-90-Aktivitätskonzentration; KKW, best.gem. Betrieb, unabh. Messstelle
+33	A2:6.0c	Kuhmilch: I-131-Aktivitätskonzentration; KKW, best.gem. Betrieb, unabh. Messstelle
+34	A2:7.1	Oberflächenwasser: KKW, best.gem. Betrieb, unabh. Messstelle
+35	A2:7.1a	Oberflächenwasser: Gammaspektrometrie, Aktivitätskonzentr. einzelner Nuklide; KKW, best.gem. Betrieb, unabh. Messstelle
+36	A2:7.1b	Oberflächenwasser: Tritium-Aktivitätskonzentration; KKW, best.gem. Betrieb, unabh. Messstelle
 37	A2:7.1c	Oberflächenwasser: I131-Aktivitätskonzentration; KKW, best.gem. Betrieb, unabh. Messstelle
-38	A2:7.2	Sediment: KKW, best.gem. Betrieb, unabh. Messstelle                                                                     
-39	A2:8.0	Fisch: KKW, best.gem. Betrieb, unabh. Messstelle                                                                        
+38	A2:7.2	Sediment: KKW, best.gem. Betrieb, unabh. Messstelle
+39	A2:8.0	Fisch: KKW, best.gem. Betrieb, unabh. Messstelle
 40	A2:8.1	Wasserpflanzen: KKW, best.gem. Betrieb, unabh. Messstelle
-41	A2:9.0	Trinkwasser: KKW, best.gem. Betrieb, unabh. Messstelle                                                                  
-42	A2:9.0a	Trinkwasser (Brunnen): KKW, best.gem. Betrieb, unabh. Messstelle                                                        
-43	A2:9.0b	Trinkwasser: Sr-90-Aktivitätskonzentration; KKW, best.gem. Betrieb, unabh. Messstelle                                   
-44	A2:9.0c	Trinkwasser (Wasserwerk): KKW, best.gem. Betrieb, unabh. Messstelle                                                     
-45	A2:9.0d	Trinkwasser: Tritium-Aktivitätskonzentration; KKW, best.gem. Betrieb, unabh. Messstelle                                 
-46	A3:1.1	Luft/äußere Strahlung: KKW, Störfall/Unfall, Gen.inhaber     
-47	A3:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; KKW, Störfall/Unfall, Gen.inhaber                                       
-48	A3:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; KKW, Störfall/Unfall, Gen.inhaber                                               
-49	A3:1.2	Luft/Aerosole: KKW, Störfall/Unfall, Gen.inhaber                                                                        
-50	A3:1.3	Luft/gasförmiges Iod: KKW, Störfall/Unfall, Gen.inhaber                                                                 
-51	A3:2.1	Bodenoberfläche: KKW, Störfall/Unfall, Gen.inhaber                                                                      
-52	A3:2.2	Boden: KKW, Störfall/Unfall, Gen.inhaber                                                                                
-53	A3:3.0	Weide-/Wiesenbewuchs: KKW, Störfall/Unfall, Gen.inhaber                                                                 
-54	A3:4.0	Oberflächenwasser::KKW, Störfall/Unfall, Gen.inhaber                                                                    
+41	A2:9.0	Trinkwasser: KKW, best.gem. Betrieb, unabh. Messstelle
+42	A2:9.0a	Trinkwasser (Brunnen): KKW, best.gem. Betrieb, unabh. Messstelle
+43	A2:9.0b	Trinkwasser: Sr-90-Aktivitätskonzentration; KKW, best.gem. Betrieb, unabh. Messstelle
+44	A2:9.0c	Trinkwasser (Wasserwerk): KKW, best.gem. Betrieb, unabh. Messstelle
+45	A2:9.0d	Trinkwasser: Tritium-Aktivitätskonzentration; KKW, best.gem. Betrieb, unabh. Messstelle
+46	A3:1.1	Luft/äußere Strahlung: KKW, Störfall/Unfall, Gen.inhaber
+47	A3:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; KKW, Störfall/Unfall, Gen.inhaber
+48	A3:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; KKW, Störfall/Unfall, Gen.inhaber
+49	A3:1.2	Luft/Aerosole: KKW, Störfall/Unfall, Gen.inhaber
+50	A3:1.3	Luft/gasförmiges Iod: KKW, Störfall/Unfall, Gen.inhaber
+51	A3:2.1	Bodenoberfläche: KKW, Störfall/Unfall, Gen.inhaber
+52	A3:2.2	Boden: KKW, Störfall/Unfall, Gen.inhaber
+53	A3:3.0	Weide-/Wiesenbewuchs: KKW, Störfall/Unfall, Gen.inhaber
+54	A3:4.0	Oberflächenwasser::KKW, Störfall/Unfall, Gen.inhaber
 55	A4:1.1	Luft/äußere Strahlung: KKW, Störfall/Unfall, unabh. Messstelle
-56	A4:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; KKW, Störfall/Unfall, unabh. Messstelle                                 
-57	A4:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; KKW, Störfall/Unfall, unabh. Messstelle                                         
-58	A4:1.2	Luft/Aerosole: KKW, Störfall/Unfall, unabh. Messstelle                                                                  
-59	A4:1.3	Luft/gasförmiges Iod: KKW, Störfall/Unfall, unabh. Messstelle                                                           
-60	A4:2.1	Bodenoberfläche: KKW, Störfall/Unfall, unabh. Messstelle                                                                
-61	A4:2.2	Boden: KKW, Störfall/Unfall, unabh. Messstelle                                                                          
-62	A4:3.0	Weide-/Wiesenbewuchs: KKW, Störfall/Unfall, unabh. Messstelle                                                           
-63	A4:4.0	Kuhmilch: KKW, Störfall/Unfall, unabh. Messstelle                                                                       
+56	A4:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; KKW, Störfall/Unfall, unabh. Messstelle
+57	A4:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; KKW, Störfall/Unfall, unabh. Messstelle
+58	A4:1.2	Luft/Aerosole: KKW, Störfall/Unfall, unabh. Messstelle
+59	A4:1.3	Luft/gasförmiges Iod: KKW, Störfall/Unfall, unabh. Messstelle
+60	A4:2.1	Bodenoberfläche: KKW, Störfall/Unfall, unabh. Messstelle
+61	A4:2.2	Boden: KKW, Störfall/Unfall, unabh. Messstelle
+62	A4:3.0	Weide-/Wiesenbewuchs: KKW, Störfall/Unfall, unabh. Messstelle
+63	A4:4.0	Kuhmilch: KKW, Störfall/Unfall, unabh. Messstelle
 64	A4:5.1	Nahrungsmittel pflanzlicher Herkunft: KKW, Störfall/Unfall, unabh. Messstelle
-65	A4:5.2	Nahrungsmittel tierischer Herkunft: KKW, Störfall/Unfall, unabh. Messstelle                                             
-66	A4:6.0	Oberflächenwasser: KKW, Störfall/Unfall, unabh. Messstelle                                                              
-67	A4:7.0	Fisch: KKW, Störfall/Unfall, unabh. Messstelle                                                                          
-68	A4:8.0	Trinkwasser: KKW, Störfall/Unfall, unabh. Messstelle                                                                    
+65	A4:5.2	Nahrungsmittel tierischer Herkunft: KKW, Störfall/Unfall, unabh. Messstelle
+66	A4:6.0	Oberflächenwasser: KKW, Störfall/Unfall, unabh. Messstelle
+67	A4:7.0	Fisch: KKW, Störfall/Unfall, unabh. Messstelle
+68	A4:8.0	Trinkwasser: KKW, Störfall/Unfall, unabh. Messstelle
 69	A5:1.4	Niederschlag: KKW, best.gem. Betrieb, Behördenmessprogramm
 70	A5:3.0	Boden: KKW, best.gem. Betrieb, Behördenmessprogramm
 71	A5:4.0	Weide-/Wiesenbewuchs: KKW, best.gem. Betrieb, Behördenmessprogramm
@@ -94,65 +94,65 @@ COPY rei_ag (id, name, descr) FROM stdin;
 75	A5:7.2	Sediment: KKW, best.gem. Betrieb, Behördenmessprogramm
 76	A5:7.3	Schwebstoffe: KKW, best.gem. Betrieb, Behördenmessprogramm
 77	A5:9.0	Trinkwasser: KKW, best.gem. Betrieb, Behördenmessprogramm
-78	B1:1.1	Luft/äußere Strahlung: Gamma-Ortsdosis; Brennelementfabrik, best.gem, Betrieb, Gen.inhaber                              
-79	B1:1.2	Neutronenstrahlung: Neutronen-Ortsdosis; Brennelementfabrik, best.gem. Betrieb, Gen.inhaber                             
-80	B1:1.3	Luft/Aerosole: Brennelementfabrik, best.gem. Betrieb, Gen.inhaber                                                       
-81	B1:2.0	Niederschlag: Brennelementfabrik, best.gem. Betrieb, Gen.inhaber                                                        
-82	B1:3.0	Grundwasser: Brennelementfabrik, best.gem. Betrieb, Gen.inhaber                                                         
-83	B2:1.1	Luft/äußere Strahlung: Gamma-Ortsdosis; Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle                        
-84	B2:1.2	Neutronenstrahlung: Neutronen-Ortsdosis; Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle                       
-85	B2:1.3	Luft/Aerosole: Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle  
-86	B2:1.3a	Luft/Aerosole: Gesamt-Alpha-Aktivitätskonzentration; Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle           
-87	B2:1.3b	Luft/Aerosole: alphanuklidspez. Messung, Aktivitätskonz. einz. Nuklide; Brennelementfabrik, best.gem. Betr.,unabh. MST  
-88	B2:2.0	Niederschlag: Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle                                                  
-89	B2:3.0	Weide-/Wiesenbewuchs: Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle                                          
-90	B2:4.1	Oberflächenwasser: Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle                                             
-91	B2:4.2	Klärschlamm: Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle                                                   
-92	B2:5.0	Grundwasser: Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle                                                   
+78	B1:1.1	Luft/äußere Strahlung: Gamma-Ortsdosis; Brennelementfabrik, best.gem, Betrieb, Gen.inhaber
+79	B1:1.2	Neutronenstrahlung: Neutronen-Ortsdosis; Brennelementfabrik, best.gem. Betrieb, Gen.inhaber
+80	B1:1.3	Luft/Aerosole: Brennelementfabrik, best.gem. Betrieb, Gen.inhaber
+81	B1:2.0	Niederschlag: Brennelementfabrik, best.gem. Betrieb, Gen.inhaber
+82	B1:3.0	Grundwasser: Brennelementfabrik, best.gem. Betrieb, Gen.inhaber
+83	B2:1.1	Luft/äußere Strahlung: Gamma-Ortsdosis; Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle
+84	B2:1.2	Neutronenstrahlung: Neutronen-Ortsdosis; Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle
+85	B2:1.3	Luft/Aerosole: Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle
+86	B2:1.3a	Luft/Aerosole: Gesamt-Alpha-Aktivitätskonzentration; Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle
+87	B2:1.3b	Luft/Aerosole: alphanuklidspez. Messung, Aktivitätskonz. einz. Nuklide; Brennelementfabrik, best.gem. Betr.,unabh. MST
+88	B2:2.0	Niederschlag: Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle
+89	B2:3.0	Weide-/Wiesenbewuchs: Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle
+90	B2:4.1	Oberflächenwasser: Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle
+91	B2:4.2	Klärschlamm: Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle
+92	B2:5.0	Grundwasser: Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle
 93	B2:6.0	unbearbeiteter Boden: Brennelementfabrik, best.gem. Betrieb, unabh. Messstelle
-94	B3:1.1	Luft/äußere Strahlung: Brennelementfabrik, Störfall/Unfall, Gen.inhaber 
-95	B3:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Brennelementfabrik, Störfall/Unfall, Gen.inhaber                        
-96	B3:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Brennelementfabrik, Störfall/Unfall, Gen.inhaber                                
-97	B3:1.2	Luft/Aerosole: Brennelementfabrik, Störfall/Unfall, Gen.inhaber  
-98	B3:1.2a	Luft/Aerosole: Gammaspektrometrie, Aktivitätskonz. einzelner Nuklide; Brennelementfabrik, Störfall/Unfall, Gen.inhaber  
+94	B3:1.1	Luft/äußere Strahlung: Brennelementfabrik, Störfall/Unfall, Gen.inhaber
+95	B3:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Brennelementfabrik, Störfall/Unfall, Gen.inhaber
+96	B3:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Brennelementfabrik, Störfall/Unfall, Gen.inhaber
+97	B3:1.2	Luft/Aerosole: Brennelementfabrik, Störfall/Unfall, Gen.inhaber
+98	B3:1.2a	Luft/Aerosole: Gammaspektrometrie, Aktivitätskonz. einzelner Nuklide; Brennelementfabrik, Störfall/Unfall, Gen.inhaber
 99	B3:1.2b	Luft/Aerosole: alphanuklidspez. Messung,Aktivitätskonz. einz. Nuklide;  Brennelementfabrik, Störfall/Unfall, Gen.inhaber
-100	B3:1.3	Luft/gasförmiges Iod: Brennelementfabrik, Störfall/Unfall, Gen.inhaber                                                  
+100	B3:1.3	Luft/gasförmiges Iod: Brennelementfabrik, Störfall/Unfall, Gen.inhaber
 101	B3:2.0	Bodenoberfläche: Brennelementfabrik, Störfall/Unfall, Gen.inhab.
 102	B3:2.0a	Bodenoberfläche: Gesamt-Alpha-Kontaminationsmessung auf vorber. Flächen; Brennelementfabrik, Störfall/Unfall, Gen.inhab.
 103	B3:2.0b	Bodenoberfläche: alphanuklidspez. Messung,Aktivitätskonz. einz. Nuklide; Brennelementfabrik, Störfall/Unfall, Gen.inhab.
-104	B3:3.0	Weide-/Wiesenbewuchs: Brennelementfabrik, Störfall/Unfall, Gen.inhaber 
-105	B3:3.0a	Weide-/Wiesenbewuchs: Gammaspektrometrie, spezifische I-131-Aktivität; Brennelementfabrik, Störfall/Unfall, Gen.inhaber 
+104	B3:3.0	Weide-/Wiesenbewuchs: Brennelementfabrik, Störfall/Unfall, Gen.inhaber
+105	B3:3.0a	Weide-/Wiesenbewuchs: Gammaspektrometrie, spezifische I-131-Aktivität; Brennelementfabrik, Störfall/Unfall, Gen.inhaber
 106	B3:3.0b	Weide-/Wiesenbewuchs: alphanuklidspez. Messung, spezif. Aktivität einz. Nuklide; Brennelementfabrik, Störfall/Unf., Gen.
 107	B3:4.0	Oberflächenwasser: Brennelementfabrik, Störfall/Unfall, Gen.inhaber
-267	D3:1.1	Luft/äußere Strahlung: Sonderfälle, Störfall/Unfall, Gen.inhaber  
-108	B3:4.0a	Oberflächenwasser: Gammaspektrometrie, Aktivitätskonz. einz. Nuklide; Brennelementfabrik, Störfall/Unfall, Gen.inhaber  
-109	B3:4.0b	Oberflächenwasser: Gesamt-Alpha-Aktivitätskonzentration, Brennelementfabrik, Störfall/Unfall, Gen.inhaber               
-110	B4:1.1	Luft/äußere Strahlung: Brennelementfabrik, Störfall/Unfall, unabh. Messstelle 
-111	B4:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Brennelementfabrik, Störfall/Unfall, unabh. Messstelle                  
-112	B4:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Brennelementfabrik, Störfall/Unfall, unabh. Messstelle                          
+267	D3:1.1	Luft/äußere Strahlung: Sonderfälle, Störfall/Unfall, Gen.inhaber
+108	B3:4.0a	Oberflächenwasser: Gammaspektrometrie, Aktivitätskonz. einz. Nuklide; Brennelementfabrik, Störfall/Unfall, Gen.inhaber
+109	B3:4.0b	Oberflächenwasser: Gesamt-Alpha-Aktivitätskonzentration, Brennelementfabrik, Störfall/Unfall, Gen.inhaber
+110	B4:1.1	Luft/äußere Strahlung: Brennelementfabrik, Störfall/Unfall, unabh. Messstelle
+111	B4:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Brennelementfabrik, Störfall/Unfall, unabh. Messstelle
+112	B4:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Brennelementfabrik, Störfall/Unfall, unabh. Messstelle
 113	B4:1.2	Luft/Aerosole: Brennelementfabrik, Störfall/Unfall, unabh. Messstelle
 114	B4:1.2a	Luft/Aerosole: Gammaspektrometrie, Aktivitätskonz. einz. Nuklide; Brennelementfabrik, Störfall/Unfall, unabh. Messstelle
-115	B4:1.2b	Luft/Aerosole: alphanuklidspez. Messung, Aktivitätskonz. einz. Nuklide; Brennelementfabrik, Störfall/Unfall, unabh. MST 
-116	B4:1.3	Luft/gasförmiges Iod: Brennelementfabrik, Störfall/Unfall, unabh. Messstelle                                            
+115	B4:1.2b	Luft/Aerosole: alphanuklidspez. Messung, Aktivitätskonz. einz. Nuklide; Brennelementfabrik, Störfall/Unfall, unabh. MST
+116	B4:1.3	Luft/gasförmiges Iod: Brennelementfabrik, Störfall/Unfall, unabh. Messstelle
 117	B4:2.0	Bodenoberfläche: Brennelementfabrik, Störfall/Unfall, unabh. Messstelle
 118	B4:2.0a	Bodenoberfläche: Gesamt-Alpha-Kontaminationsmessung auf vorber. Flächen; Brennelementfabrik, Störfall/Unfall, unabh. MST
 119	B4:2.0b	Bodenoberfläche: alphanuklidspez. Messung,spezif. Aktivität einz. Nuklide; Brennelementfabrik, Störfall/Unf., unabh. MST
-120	B4:3.0	Weide-/Wiesenbewuchs: Brennelementfabrik, Störfall/Unfall, unabh. Messstelle  
-121	B4:3.0a	Weide-/Wiesenbewuchs: Gammaspektrometrie, spezif. I-131-Aktivität; Brennelementfabrik, Störfall/Unfall, unabh. MST      
+120	B4:3.0	Weide-/Wiesenbewuchs: Brennelementfabrik, Störfall/Unfall, unabh. Messstelle
+121	B4:3.0a	Weide-/Wiesenbewuchs: Gammaspektrometrie, spezif. I-131-Aktivität; Brennelementfabrik, Störfall/Unfall, unabh. MST
 122	B4:3.0b	Weide-/Wiesenbewuchs: alphanuklidspez. Messung, Aktivität einz. Nuklide; Brennelementfabrik, Störfall/Unfall, unabh. MST
-123	B4:4.0	Oberflächenwasser: Brennelementfabrik, Störfall/Unfall, unabh. Messstelle  
-124	B4:4.0a	Oberflächenwasser: Gammaspektrometrie, Aktivitätskonz. einz. Nuklide; Brennelementfabrik, Störfall/Unfall, unabh. MST   
-125	B4:4.0b	Oberflächenwasser: Gesamt-Alpha-Aktivitätskonzentration, Brennelementfabrik, Störfall/Unfall, unabh. Messstelle         
+123	B4:4.0	Oberflächenwasser: Brennelementfabrik, Störfall/Unfall, unabh. Messstelle
+124	B4:4.0a	Oberflächenwasser: Gammaspektrometrie, Aktivitätskonz. einz. Nuklide; Brennelementfabrik, Störfall/Unfall, unabh. MST
+125	B4:4.0b	Oberflächenwasser: Gesamt-Alpha-Aktivitätskonzentration, Brennelementfabrik, Störfall/Unfall, unabh. Messstelle
 126	B4:5.0	Boden: Brennelementfabrik, Störfall/Unfall, unabh. Messstelle
-127	C1.1:1.1	Luft/Gamma-Strahlung: Gamma-Ortsdosisleistung; Brennelementzwischenlager, best.gem. Betrieb, Gen.inhaber                
-128	C1.1:1.2	Luft/Gamma-Strahlung: Gamma-Ortsdosis; Brennelementzwischenlager, best.gem. Betrieb, Gen.inhaber                        
-129	C1.1:1.3	Luft/Neutronenstrahlung: Neutronen-Ortsdosisleistung; Brennelementzwischenlager, best.gem. Betrieb, Gen.inhaber         
-130	C1.1:1.4	Luft/Neutronenstrahlung: Neutronen-Ortsdosis; Brennelementzwischenlager, best.gem. Betrieb, Gen.inhaber                 
+127	C1.1:1.1	Luft/Gamma-Strahlung: Gamma-Ortsdosisleistung; Brennelementzwischenlager, best.gem. Betrieb, Gen.inhaber
+128	C1.1:1.2	Luft/Gamma-Strahlung: Gamma-Ortsdosis; Brennelementzwischenlager, best.gem. Betrieb, Gen.inhaber
+129	C1.1:1.3	Luft/Neutronenstrahlung: Neutronen-Ortsdosisleistung; Brennelementzwischenlager, best.gem. Betrieb, Gen.inhaber
+130	C1.1:1.4	Luft/Neutronenstrahlung: Neutronen-Ortsdosis; Brennelementzwischenlager, best.gem. Betrieb, Gen.inhaber
 131	C1.1:1.5	Luft/Aerosole: Brennelementzwischenlager, best.gem. Betrieb, Gen.inhaber
 132	C1.1:2.1	Abwasser: Brennelementzwischenlager, best.gem. Betrieb, Gen.inhaber
 133	C1.1:2.2	Klärschlamm: Brennelementzwischenlager, best.gem. Betrieb, Gen.inhaber
-134	C1.2:1.1	Luft/Gamma-Strahlung: Gamma-Ortsdosis; Brennelementzwischenlager, best.gem. Betrieb, unabh. Messstelle                  
-135	C1.2:1.2	Luft/Neutronenstrahlung: Neutronen-Ortsdosis; Brennelementzwischenlager, best.gem. Betrieb, unabh. Messstelle           
+134	C1.2:1.1	Luft/Gamma-Strahlung: Gamma-Ortsdosis; Brennelementzwischenlager, best.gem. Betrieb, unabh. Messstelle
+135	C1.2:1.2	Luft/Neutronenstrahlung: Neutronen-Ortsdosis; Brennelementzwischenlager, best.gem. Betrieb, unabh. Messstelle
 136	C1.2:1.3	Luft/Aerosole: Brennelementzwischenlager, best.gem. Betrieb, unabh. Messstelle
 137	C1.2:2.0	Boden: Brennelementzwischenlager, best.gem. Betrieb, unabh. Messstelle
 138	C1.2:3.0	Weide-/Wiesenbewuchs: Brennelementzwischenlager, best.gem. Betrieb, unabh. Messstelle
@@ -161,152 +161,152 @@ COPY rei_ag (id, name, descr) FROM stdin;
 141	C1.2:4.0b	Oberflächenwasser: Tritium-Aktivitätskonzentration, Brennelementzwischenlager, best.gem. Betrieb, unabh. Messstelle
 142	C1.2:4.0c	Oberflächenwasser: I131-Aktivitätskonzentration, Brennelementzwischenlager, best.gem. Betrieb, unabh. Messstelle
 143	C1.2:5.0	Sediment: Brennelementzwischenlager, best.gem. Betrieb, unabh. Messstelle
-144	C1.3:1.1	Luft/äußere Strahlung: Brennelementzwischenlager, Störfall/Unfall, Gen.inhaber                                          
-145	C1.3:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Brennelementzwischenlager, Störfall/Unfall, Gen.inhaber                 
-146	C1.3:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Brennelementzwischenlager, Störfall/Unfall, Gen.inhaber                         
-147	C1.3:1.2	Luft/Aerosole: Brennelementzwischenlager, Störfall/Unfall, Gen.inhaber                                                  
-148	C1.3:2.1	Bewuchs: Brennelementzwischenlager, Störfall/Unfall, Gen.inhaber                                                        
+144	C1.3:1.1	Luft/äußere Strahlung: Brennelementzwischenlager, Störfall/Unfall, Gen.inhaber
+145	C1.3:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Brennelementzwischenlager, Störfall/Unfall, Gen.inhaber
+146	C1.3:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Brennelementzwischenlager, Störfall/Unfall, Gen.inhaber
+147	C1.3:1.2	Luft/Aerosole: Brennelementzwischenlager, Störfall/Unfall, Gen.inhaber
+148	C1.3:2.1	Bewuchs: Brennelementzwischenlager, Störfall/Unfall, Gen.inhaber
 149	C1.3:2.2	Boden: Brennelementzwischenlager, Störfall/Unfall, Gen.inhaber
-150	C1.4:1.1	Luft/äußere Strahlung: Brennelementzwischenlager, Störfall/Unfall, unabh. Messstelle 
-151	C1.4:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Brennelementzwischenlager, Störfall/Unfall, unabh. Messstelle           
-152	C1.4:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Brennelementzwischenlager, Störfall/Unfall, unabh. Messstelle                   
+150	C1.4:1.1	Luft/äußere Strahlung: Brennelementzwischenlager, Störfall/Unfall, unabh. Messstelle
+151	C1.4:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Brennelementzwischenlager, Störfall/Unfall, unabh. Messstelle
+152	C1.4:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Brennelementzwischenlager, Störfall/Unfall, unabh. Messstelle
 153	C1.4:1.1c	Luft/äußere Strahlung: Neutronen-Ortsdosisleistung; Brennelementzwischenlager; Störfall/Unfall, unabh. Messstelle
-154	C1.4:1.2	Luft/Aerosole: Brennelementzwischenlager, Störfall/Unfall, unabh. Messstelle                                            
-155	C1.4:2.1	Bodenoberfläche: Brennelementzwischenlager, Störfall/Unfall,  unabh. Messstelle                                         
-156	C1.4:3.1	Bewuchs: Brennelementzwischenlager, Störfall/Unfall, unabh. Messstelle                                                  
-157	C1.4:4.1	Sediment: Brennelementzwischenlager, Störfall/Unfall, unabh. Messstelle                                                 
-158	C2.1:1.1	Luft/Gamma-Strahlung: Gamma-Ortsdosis; Endlager, best.gem. Betrieb, Gen.inhaber                                         
-159	C2.1:1.2	Luft/Neutronenstrahlung: Neutronen-Ortsdosis; Endlager, best.gem. Betrieb, Gen.inhaber                                  
-160	C2.1:1.3	Luft/Aerosole: Endlager, best.gem. Betrieb, Gen.inhaber                                                                 
-161	C2.1:1.3a	Luft/Aerosole: Gammaspektrometrie, Aktivitätskonzentration einzelner Nuklide; Endlager, best.gem. Betrieb, Gen.inhaber  
-162	C2.1:1.3b	Luft/Aerosole: Gesamt-Alpha-Aktivitätskonzentration; Endlager, best.gem. Betrieb, Gen.inhaber                           
-163	C2.1:2.0	Niederschlag: Endlager, best.gem. Betrieb, Gen.inhaber                                                                  
-164	C2.1:3.0	Boden: Endlager, best.gem. Betrieb, Gen.inhaber                                                                         
-165	C2.1:3.1	Bodenoberfläche: Endlager, Sondermessungen, Gen.inhaber 
-166	C2.1:4.0	Gras: Endlager, best.gem. Betrieb, Gen.inhaber                                                                          
-167	C2.1:5.0	Oberflächenwasser: Endlager, best.gem. Betrieb, Gen.inhaber                                                             
-168	C2.1:5.0a	Oberflächenwasser: Tritium-Aktivitätskonzentration; Endlager, best.gem. Betrieb, Gen.inhaber                            
-169	C2.1:5.0b	Oberflächenwasser: Gammaspektrometrie, Aktivitätskonzentr. einzelner Nuklide; Endlager, best.gem. Betrieb, Gen.inhaber  
-170	C2.2:1.1	Luft/Gamma-Strahlung: Gamma-Ortsdosis; Endlager, best.gem. Betrieb, unabh. Messstelle                                   
-171	C2.2:1.2	Luft/Neutronenstrahlung: Neutronen-Ortsdosis; Endlager, best.gem. Betrieb,  unabh. Messstelle                           
-172	C2.2:1.3	Luft/Aerosole: Endlager, best.gem. Betrieb, unabh. Messstelle                                                           
+154	C1.4:1.2	Luft/Aerosole: Brennelementzwischenlager, Störfall/Unfall, unabh. Messstelle
+155	C1.4:2.1	Bodenoberfläche: Brennelementzwischenlager, Störfall/Unfall,  unabh. Messstelle
+156	C1.4:3.1	Bewuchs: Brennelementzwischenlager, Störfall/Unfall, unabh. Messstelle
+157	C1.4:4.1	Sediment: Brennelementzwischenlager, Störfall/Unfall, unabh. Messstelle
+158	C2.1:1.1	Luft/Gamma-Strahlung: Gamma-Ortsdosis; Endlager, best.gem. Betrieb, Gen.inhaber
+159	C2.1:1.2	Luft/Neutronenstrahlung: Neutronen-Ortsdosis; Endlager, best.gem. Betrieb, Gen.inhaber
+160	C2.1:1.3	Luft/Aerosole: Endlager, best.gem. Betrieb, Gen.inhaber
+161	C2.1:1.3a	Luft/Aerosole: Gammaspektrometrie, Aktivitätskonzentration einzelner Nuklide; Endlager, best.gem. Betrieb, Gen.inhaber
+162	C2.1:1.3b	Luft/Aerosole: Gesamt-Alpha-Aktivitätskonzentration; Endlager, best.gem. Betrieb, Gen.inhaber
+163	C2.1:2.0	Niederschlag: Endlager, best.gem. Betrieb, Gen.inhaber
+164	C2.1:3.0	Boden: Endlager, best.gem. Betrieb, Gen.inhaber
+165	C2.1:3.1	Bodenoberfläche: Endlager, Sondermessungen, Gen.inhaber
+166	C2.1:4.0	Gras: Endlager, best.gem. Betrieb, Gen.inhaber
+167	C2.1:5.0	Oberflächenwasser: Endlager, best.gem. Betrieb, Gen.inhaber
+168	C2.1:5.0a	Oberflächenwasser: Tritium-Aktivitätskonzentration; Endlager, best.gem. Betrieb, Gen.inhaber
+169	C2.1:5.0b	Oberflächenwasser: Gammaspektrometrie, Aktivitätskonzentr. einzelner Nuklide; Endlager, best.gem. Betrieb, Gen.inhaber
+170	C2.2:1.1	Luft/Gamma-Strahlung: Gamma-Ortsdosis; Endlager, best.gem. Betrieb, unabh. Messstelle
+171	C2.2:1.2	Luft/Neutronenstrahlung: Neutronen-Ortsdosis; Endlager, best.gem. Betrieb,  unabh. Messstelle
+172	C2.2:1.3	Luft/Aerosole: Endlager, best.gem. Betrieb, unabh. Messstelle
 173	C2.2:1.3a	Luft/Aerosole: Gammaspektrometrie, Aktivitätskonzentr. einzelner Nuklide; Endlager, best.gem. Betrieb, unabh. Messstelle
 174	C2.2:1.3b	Luft/Aerosole: alphanuklidspezif. Messung, Aktivitätskonz. einz. Nuklide; Endlager, best.gem. Betrieb, unabh. Messstelle
-175	C2.2:2.0	Boden: Endlager, best.gem. Betrieb, unabh. Messstelle                                                                   
-176	C2.2:3.0	Weide-/Wiesenbewuchs: Endlager, best.gem. Betrieb, unabh. Messstelle                                                    
-177	C2.2:3.0a	Weide-/Wiesenbewuchs: spezifische Tritium-Aktivität; Endlager, best.gem. Betrieb, unabh. Messstelle                     
-178	C2.2:3.0b	Weide-/Wiesenbewuchs: spezifische C-14-Aktivität; Endlager, best.gem. Betrieb, unabh. Messstelle                        
-179	C2.2:3.0c	Weide-/Wiesenbewuchs: Gammaspektrometrie, spez. Aktivität einz. Nuklide; Endlager, best.gem. Betrieb, unabh. Messstelle 
-180	C2.2:4.0	Nahrungsmittel pflanzl. Herkunft: Endlager, best.gem. Betrieb, unabh. Messstelle                                        
-181	C2.2:4.0a	Nahrungsmittel pflanzl. Herkunft: Gammaspektr., spez. Aktivität einz. Nuklide; Endlager, best.gem. Betrieb, unabh. MST  
-182	C2.2:4.0b	Nahrungsmittel pflanzlicher Herkunft: spezif. Sr-90-Aktivität; Endlager, best.gem. Betrieb, unabh. Messstelle           
-183	C2.2:5.0	Kuhmilch: Endlager, best.gem. Betrieb, unabh. Messstelle                                                                
-184	C2.2:6.1	Sediment: Endlager, best.gem. Betrieb, unabh. Messstelle                                                                
-185	C2.2:6.2	Grundwasser: Endlager, best.gem. Betrieb, unabh. Messstelle                                                             
-186	C2.3:1.1	Luft/äußere Strahlung: Endlager, Störfall/Unfall, Gen.inhaber 
-187	C2.3:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Endlager, Störfall/Unfall, Gen.inhaber                                  
-188	C2.3:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Endlager, Störfall/Unfall, Gen.inhaber                                          
-189	C2.3:1.2	Luft/Aerosole: Endlager, Störfall/Unfall, Gen.inhaber 
-190	C2.3:1.2a	Luft/Aerosole: Gammaspektrometrie, Aktivitätskonzentration einzelner Nuklide; Endlager, Störfall/Unfall, Gen.inhaber    
-191	C2.3:1.2b	Luft/Aerosole: Gesamt-Alpha-Aktivitätskonzentration; Endlager, Störfall/Unfall, Gen.inhaber                             
-192	C2.3:1.2c	Luft/Aerosole: Gesamt-Beta-Aktivitätskonzentration; Endlager, Störfall/Unfall, Gen.inhaber                              
-193	C2.3:1.3	Luft/I-129: Endlager, Störfall/Unfall, Gen.inhaber                                                                      
-194	C2.3:2.0	Bodenoberfläche: Endlager, Störfall/Unfall, Gen.inhaber 
-195	C2.3:2.0a	Bodenoberfläche: Kontaminationsmessung durch In-situ-Gammaspektrometrie; Endlager, Störfall/Unfall, Gen.inhaber         
-196	C2.3:2.0b	Bodenoberfläche: Gamma-Alpha-Kontaminationsmessung auf vorbereiteten Flächen; Endlager, Störfall/Unfall, Gen.inhaber    
-197	C2.3:2.0c	Bodenoberfläche: Gesamt-Beta-Kontaminationsmessung auf vorbereiteten Flächen; Endlager, Störfall/Unfall, Gen.inhaber    
-198	C2.3:3.0	Weide-/Wiesenbewuchs: Endlager, Störfall/Unfall, Gen.inhaber 
-199	C2.3:3.0a	Weide-/Wiesenbewuchs: Gammaspektrometrie, spez. Aktivität einz. Nuklide; Endlager, Störfall/Unfall, Gen.inhaber         
-200	C2.3:3.0b	Weide-/Wiesenbewuchs: spezifische Gesamt-Alpha-Aktivität; Endlager, Störfall/Unfall, Gen.inhaber                        
-201	C2.4:1.1	Luft/äußere Strahlung: Endlager, Störfall/Unfall, unabh. Messstelle  
-202	C2.4:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Endlager, Störfall/Unfall, unabh. Messstelle                            
-203	C2.4:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Endlager, Störfall/Unfall, unabh. Messstelle                                    
+175	C2.2:2.0	Boden: Endlager, best.gem. Betrieb, unabh. Messstelle
+176	C2.2:3.0	Weide-/Wiesenbewuchs: Endlager, best.gem. Betrieb, unabh. Messstelle
+177	C2.2:3.0a	Weide-/Wiesenbewuchs: spezifische Tritium-Aktivität; Endlager, best.gem. Betrieb, unabh. Messstelle
+178	C2.2:3.0b	Weide-/Wiesenbewuchs: spezifische C-14-Aktivität; Endlager, best.gem. Betrieb, unabh. Messstelle
+179	C2.2:3.0c	Weide-/Wiesenbewuchs: Gammaspektrometrie, spez. Aktivität einz. Nuklide; Endlager, best.gem. Betrieb, unabh. Messstelle
+180	C2.2:4.0	Nahrungsmittel pflanzl. Herkunft: Endlager, best.gem. Betrieb, unabh. Messstelle
+181	C2.2:4.0a	Nahrungsmittel pflanzl. Herkunft: Gammaspektr., spez. Aktivität einz. Nuklide; Endlager, best.gem. Betrieb, unabh. MST
+182	C2.2:4.0b	Nahrungsmittel pflanzlicher Herkunft: spezif. Sr-90-Aktivität; Endlager, best.gem. Betrieb, unabh. Messstelle
+183	C2.2:5.0	Kuhmilch: Endlager, best.gem. Betrieb, unabh. Messstelle
+184	C2.2:6.1	Sediment: Endlager, best.gem. Betrieb, unabh. Messstelle
+185	C2.2:6.2	Grundwasser: Endlager, best.gem. Betrieb, unabh. Messstelle
+186	C2.3:1.1	Luft/äußere Strahlung: Endlager, Störfall/Unfall, Gen.inhaber
+187	C2.3:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Endlager, Störfall/Unfall, Gen.inhaber
+188	C2.3:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Endlager, Störfall/Unfall, Gen.inhaber
+189	C2.3:1.2	Luft/Aerosole: Endlager, Störfall/Unfall, Gen.inhaber
+190	C2.3:1.2a	Luft/Aerosole: Gammaspektrometrie, Aktivitätskonzentration einzelner Nuklide; Endlager, Störfall/Unfall, Gen.inhaber
+191	C2.3:1.2b	Luft/Aerosole: Gesamt-Alpha-Aktivitätskonzentration; Endlager, Störfall/Unfall, Gen.inhaber
+192	C2.3:1.2c	Luft/Aerosole: Gesamt-Beta-Aktivitätskonzentration; Endlager, Störfall/Unfall, Gen.inhaber
+193	C2.3:1.3	Luft/I-129: Endlager, Störfall/Unfall, Gen.inhaber
+194	C2.3:2.0	Bodenoberfläche: Endlager, Störfall/Unfall, Gen.inhaber
+195	C2.3:2.0a	Bodenoberfläche: Kontaminationsmessung durch In-situ-Gammaspektrometrie; Endlager, Störfall/Unfall, Gen.inhaber
+196	C2.3:2.0b	Bodenoberfläche: Gamma-Alpha-Kontaminationsmessung auf vorbereiteten Flächen; Endlager, Störfall/Unfall, Gen.inhaber
+197	C2.3:2.0c	Bodenoberfläche: Gesamt-Beta-Kontaminationsmessung auf vorbereiteten Flächen; Endlager, Störfall/Unfall, Gen.inhaber
+198	C2.3:3.0	Weide-/Wiesenbewuchs: Endlager, Störfall/Unfall, Gen.inhaber
+199	C2.3:3.0a	Weide-/Wiesenbewuchs: Gammaspektrometrie, spez. Aktivität einz. Nuklide; Endlager, Störfall/Unfall, Gen.inhaber
+200	C2.3:3.0b	Weide-/Wiesenbewuchs: spezifische Gesamt-Alpha-Aktivität; Endlager, Störfall/Unfall, Gen.inhaber
+201	C2.4:1.1	Luft/äußere Strahlung: Endlager, Störfall/Unfall, unabh. Messstelle
+202	C2.4:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Endlager, Störfall/Unfall, unabh. Messstelle
+203	C2.4:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Endlager, Störfall/Unfall, unabh. Messstelle
 204	C2.4:1.2	Luft/Aerosole: Endlager, Störfall/Unfall, unabh. Messstelle
-205	C2.4:1.2a	Luft/Aerosole: Gammaspektrometrie, Aktivitätskonzentration einz. Nuklide; Endlager, Störfall/Unfall, unabh. Messstelle  
-206	C2.4:1.2b	Luft/Aerosole: Gesamt-Alpha-Aktivitätskonzentration; Endlager, Störfall/Unfall, unabh. Messstelle                       
-207	C2.4:1.2c	Luft/Aerosole: Gesamt-Beta-Aktivitätskonzentration; Endlager, Störfall/Unfall, unabh. Messstelle                        
-208	C2.4:1.3	Luft/I-129: Endlager, Störfall/Unfall, unabh. Messstelle                                                                
-209	C2.4:2.0	Bodenoberfläche: Endlager, Störfall/Unfall, unabh. Messstelle                                                           
+205	C2.4:1.2a	Luft/Aerosole: Gammaspektrometrie, Aktivitätskonzentration einz. Nuklide; Endlager, Störfall/Unfall, unabh. Messstelle
+206	C2.4:1.2b	Luft/Aerosole: Gesamt-Alpha-Aktivitätskonzentration; Endlager, Störfall/Unfall, unabh. Messstelle
+207	C2.4:1.2c	Luft/Aerosole: Gesamt-Beta-Aktivitätskonzentration; Endlager, Störfall/Unfall, unabh. Messstelle
+208	C2.4:1.3	Luft/I-129: Endlager, Störfall/Unfall, unabh. Messstelle
+209	C2.4:2.0	Bodenoberfläche: Endlager, Störfall/Unfall, unabh. Messstelle
 210	C2.4:3.0	Weide-/Wiesenbewuchs: Endlager, Störfall/Unfall, unabh. Messstelle
 211	C2.4:3.0a	Weide-/Wiesenbewuchs: Gammaspektrometrie, spez. Aktivität einzeln. Nuklide; Endlager, Störfall/Unfall, unabh. Messstelle
-212	C2.4:3.0b	Weide-/Wiesenbewuchs: spezifische Gesamt-Alpha-Aktivität; Endlager, Störfall/Unfall, unabh. Messstelle                  
-213	C2.4:3.0c	Weide-/Wiesenbewuchs: Tritium-Aktivitätskonzentration; Endlager, Störfall/Unfall, unabh. Messstelle                     
-214	C2.4:4.0	Kuhmilch: Endlager, Störfall/Unfall, unabh. Messstelle  
-215	C2.4:4.0a	Kuhmilch: Gammaspektrometrie, Aktivitätskonzentration einzelner Nuklide; Endlager, Störfall/Unfall, unabh. Messstelle   
-216	C2.4:4.0b	Kuhmilch: Sr-90-Aktivitätskonzentration; Endlager, Störfall/Unfall, unabh. Messstelle                                   
-217	C2.4:4.0c	Kuhmilch: I-129-Aktivitätskonzentration; Endlager, Störfall/Unfall, unabh. Messstelle                                   
-218	C2.4:5.0	Oberflächenwasser: Endlager, Störfall/Unfall, unabh. Messstelle                                                         
-219	C2.4:6.0	Trinkwasser: Endlager, Störfall/Unfall, unabh. Messstelle                                                               
+212	C2.4:3.0b	Weide-/Wiesenbewuchs: spezifische Gesamt-Alpha-Aktivität; Endlager, Störfall/Unfall, unabh. Messstelle
+213	C2.4:3.0c	Weide-/Wiesenbewuchs: Tritium-Aktivitätskonzentration; Endlager, Störfall/Unfall, unabh. Messstelle
+214	C2.4:4.0	Kuhmilch: Endlager, Störfall/Unfall, unabh. Messstelle
+215	C2.4:4.0a	Kuhmilch: Gammaspektrometrie, Aktivitätskonzentration einzelner Nuklide; Endlager, Störfall/Unfall, unabh. Messstelle
+216	C2.4:4.0b	Kuhmilch: Sr-90-Aktivitätskonzentration; Endlager, Störfall/Unfall, unabh. Messstelle
+217	C2.4:4.0c	Kuhmilch: I-129-Aktivitätskonzentration; Endlager, Störfall/Unfall, unabh. Messstelle
+218	C2.4:5.0	Oberflächenwasser: Endlager, Störfall/Unfall, unabh. Messstelle
+219	C2.4:6.0	Trinkwasser: Endlager, Störfall/Unfall, unabh. Messstelle
 220	C2.5:2.0	Boden: Genehmigungsinhaber, Sondermessprogramm
 221	C2.5:3.0	Bewuchs:; Genehmigungsinhaber, Sondermessprogramm
 222	C2.5:4.0	Nahrungsmittel pflanzl. Herkunft: Genehmigungsinhaber, Sondermessprogramm
 223	C2.5:5.0	Milch: Genehmigungsinhaber, Sondermessprogramm
 224	C2.5:6.0	Wasser: Genehmigungsinhaber, Sondermessprogramm
-225	D1:1.1	Luft/äußere Strahlung: Sonderfälle, best.gem. Betrieb, Gen.inhaber 
-226	D1:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Sonderfälle, best.gem. Betrieb, Gen.inhaber                             
-227	D1:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Sonderfälle, best.gem. Betrieb, Gen.inhaber                                     
-228	D1:1.1c	Luft/äußere Strahlung: Gamma-Ortsdosis in der Umgebung; Sonderfälle, best.gem. Betrieb, Gen.inhaber   
-229	D1:1.2	Luft/Aerosole: Sonderfälle, best.gem. Betrieb, Gen.inhaber                                                              
-230	D1:1.3	Luft/gasförmiges Iod: Sonderfälle, best.gem. Betrieb, Gen.inhaber                                                       
-231	D1:2.0	Niederschlag: Sonderfälle, best.gem. Betrieb, Gen.inhaber                                                               
-232	D1:3.0	Boden: Sonderfälle, best.gem. Betrieb, Gen.inhaber                                                                      
+225	D1:1.1	Luft/äußere Strahlung: Sonderfälle, best.gem. Betrieb, Gen.inhaber
+226	D1:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Sonderfälle, best.gem. Betrieb, Gen.inhaber
+227	D1:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Sonderfälle, best.gem. Betrieb, Gen.inhaber
+228	D1:1.1c	Luft/äußere Strahlung: Gamma-Ortsdosis in der Umgebung; Sonderfälle, best.gem. Betrieb, Gen.inhaber
+229	D1:1.2	Luft/Aerosole: Sonderfälle, best.gem. Betrieb, Gen.inhaber
+230	D1:1.3	Luft/gasförmiges Iod: Sonderfälle, best.gem. Betrieb, Gen.inhaber
+231	D1:2.0	Niederschlag: Sonderfälle, best.gem. Betrieb, Gen.inhaber
+232	D1:3.0	Boden: Sonderfälle, best.gem. Betrieb, Gen.inhaber
 233	D1:3.1	Bodenoberfläche: Sonderfälle, best.gem. Betrieb, Gen.inhaber
-234	D1:4.0	Pflanzen/Bewuchs: Sonderfälle, best.gem. Betrieb, Gen.inhaber                                                           
-235	D1:5.0	Oberflächenwasser: Sonderfälle, best.gem. Betr., Gen.inhaber 
-236	D1:5.0a	Oberflächenwasser: Gammaspektrometrie, Aktivitätskonzentr. einzelner Nuklide; Sonderfälle, best.gem. Betr., Gen.inhaber 
-237	D1:5.0b	Oberflächenwasser: Tritium-Aktivitätskonzentration; Sonderfälle, best.gem. Betrieb, Gen.inhaber                         
-238	D1:6.0	Grundwasser: Sonderfälle, best.gem. Betrieb, Gen.inhaber 
-239	D1:6.0a	Grundwasser: Gammaspektrometrie, Aktivitätskonzentration einzelner Nuklide; Sonderfälle, best.gem. Betrieb, Gen.inhaber 
-240	D1:6.0b	Grundwasser: Tritium-Aktivitätskonzentration; Sonderfälle, best.gem. Betrieb, Gen.inhaber                               
-241	D1:7.2	Sediment: Sonderfälle, best.gem. Betrieb, Gen.inhaber 
-242	D1:8.0	Nahrungsmittel pflanzl. Herkunft:Sonderfälle, best.gem. Betrieb, Gen.inhaber 
-243	D2:1.1	Luft/äußere Strahlung: Gamma-Ortsdosis; Sonderfälle, best.gem. Betrieb, unabh. Messstelle                               
+234	D1:4.0	Pflanzen/Bewuchs: Sonderfälle, best.gem. Betrieb, Gen.inhaber
+235	D1:5.0	Oberflächenwasser: Sonderfälle, best.gem. Betr., Gen.inhaber
+236	D1:5.0a	Oberflächenwasser: Gammaspektrometrie, Aktivitätskonzentr. einzelner Nuklide; Sonderfälle, best.gem. Betr., Gen.inhaber
+237	D1:5.0b	Oberflächenwasser: Tritium-Aktivitätskonzentration; Sonderfälle, best.gem. Betrieb, Gen.inhaber
+238	D1:6.0	Grundwasser: Sonderfälle, best.gem. Betrieb, Gen.inhaber
+239	D1:6.0a	Grundwasser: Gammaspektrometrie, Aktivitätskonzentration einzelner Nuklide; Sonderfälle, best.gem. Betrieb, Gen.inhaber
+240	D1:6.0b	Grundwasser: Tritium-Aktivitätskonzentration; Sonderfälle, best.gem. Betrieb, Gen.inhaber
+241	D1:7.2	Sediment: Sonderfälle, best.gem. Betrieb, Gen.inhaber
+242	D1:8.0	Nahrungsmittel pflanzl. Herkunft:Sonderfälle, best.gem. Betrieb, Gen.inhaber
+243	D2:1.1	Luft/äußere Strahlung: Gamma-Ortsdosis; Sonderfälle, best.gem. Betrieb, unabh. Messstelle
 244	D2:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis am Anlagenzaun; Sonderfälle, best.gem. Betrieb, unabh. Messstelle
 245	D2:1.1c	Luft/äußere Strahlung: Gamma-Ortsdosis in der Umgebung; Sonderfälle, best.gem. Betrieb, unabh. Messstelle
-246	D2:1.2	Luft/Aerosole: Sonderfälle, best.gem. Betrieb, unabh. Messstelle                                                        
-247	D2:2.0	Niederschlag: Sonderfälle, best.gem. Betrieb, unabh. Messstelle                                                         
-248	D2:3.0	Boden: Sonderfälle, best.gem. Betrieb, unabh. Messstelle                                                                
-249	D2:4.0	Weide-/Wiesenbewuchs: Sonderfälle, best.gem. Betrieb, unabh. Messstelle                                                 
+246	D2:1.2	Luft/Aerosole: Sonderfälle, best.gem. Betrieb, unabh. Messstelle
+247	D2:2.0	Niederschlag: Sonderfälle, best.gem. Betrieb, unabh. Messstelle
+248	D2:3.0	Boden: Sonderfälle, best.gem. Betrieb, unabh. Messstelle
+249	D2:4.0	Weide-/Wiesenbewuchs: Sonderfälle, best.gem. Betrieb, unabh. Messstelle
 250	D2:5.0	Nahrungsmittel pflanzlicher Herkunft: Sonderfälle, best.gem. Betrieb, unabh. Messstelle
-251	D2:5.0a	Nahrungsmittel pflanzl. Herkunft: Gammaspektr., Aktivitätskonz. einz. Nuklide; Sonderfälle, best.gem. Betr., unabh. MST 
-252	D2:5.0b	Nahrungsmittel pflanzlicher Herkunft: spezifische Sr-90-Aktivität; Sonderfälle, best.gem. Betrieb, unabh. Messstelle    
-253	D2:6.0	Kuhmilch: Sonderfälle, best.gem. Betrieb, unabh. Messstelle 
-254	D2:6.0a	Kuhmilch: Gammaspektrometrie, Aktivitätskonzentration einz. Nuklide; Sonderfälle, best.gem. Betrieb, unabh. Messstelle  
-255	D2:6.0b	Kuhmilch: Sr-90-Aktivitätskonzentration; Sonderfälle, best.gem. Betrieb, unabh. Messstelle                              
-256	D2:6.0c	Kuhmilch: I-131-Aktivitätskonzentration; Sonderfälle, best.gem. Betrieb, unabh. Messstelle                              
+251	D2:5.0a	Nahrungsmittel pflanzl. Herkunft: Gammaspektr., Aktivitätskonz. einz. Nuklide; Sonderfälle, best.gem. Betr., unabh. MST
+252	D2:5.0b	Nahrungsmittel pflanzlicher Herkunft: spezifische Sr-90-Aktivität; Sonderfälle, best.gem. Betrieb, unabh. Messstelle
+253	D2:6.0	Kuhmilch: Sonderfälle, best.gem. Betrieb, unabh. Messstelle
+254	D2:6.0a	Kuhmilch: Gammaspektrometrie, Aktivitätskonzentration einz. Nuklide; Sonderfälle, best.gem. Betrieb, unabh. Messstelle
+255	D2:6.0b	Kuhmilch: Sr-90-Aktivitätskonzentration; Sonderfälle, best.gem. Betrieb, unabh. Messstelle
+256	D2:6.0c	Kuhmilch: I-131-Aktivitätskonzentration; Sonderfälle, best.gem. Betrieb, unabh. Messstelle
 257	D2:7.1	Oberflächenwasser: Sonderfälle, best.gem. Betrieb, unabh. Messstelle
 258	D2:7.1a	Oberflächenwasser: Gammaspektrometrie, Aktivitätskonzentration einz. Nuklide; Sonderfälle, best.gem. Betrieb, unabh. MST
-259	D2:7.1b	Oberflächenwasser: Tritium-Aktivitätskonzentration; Sonderfälle, best.gem. Betrieb, unabh. Messstelle                   
-260	D2:7.2	Sediment: Sonderfälle, best.gem. Betrieb, unabh. Messstelle                                                             
-261	D2:8.0	Fisch: Sonderfälle, best.gem. Betrieb, unabh. Messstelle                                                                
-262	D2:9.0	Trinkwasser: Sonderfälle, best.gem. Betrieb, unabh. Messstelle   
-263	D2:9.0a	Trinkwasser (Brunnen): Sonderfälle, best.gem. Betrieb, unabh. Messstelle                                                
-264	D2:9.0b	Trinkwasser: Sr-90-Aktivitätskonzentration; Sonderfälle, best.gem. Betrieb, unabh. Messstelle                           
-265	D2:9.0c	Trinkwasser (Wasserwerk): Sonderfälle, best.gem. Betrieb, unabh. Messstelle                                             
-266	D2:9.0d	Trinkwasser: Tritium-Aktivitätskonzentration; Sonderfälle, best.gem. Betrieb, unabh. Messstelle                         
-268	D3:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Sonderfälle, Störfall/Unfall, Gen.inhaber                               
-269	D3:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Sonderfälle, Störfall/Unfall, Gen.inhaber                                       
-270	D3:1.2	Luft/Aerosole: Sonderfälle, Störfall/Unfall, Gen.inhaber                                                                
-271	D3:1.3	Luft/gasförmiges Iod: Sonderfälle, Störfall/Unfall, Gen.inhaber                                                         
-272	D3:2.1	Bodenoberfläche: Sonderfälle, Störfall/Unfall, Gen.inhaber                                                              
+259	D2:7.1b	Oberflächenwasser: Tritium-Aktivitätskonzentration; Sonderfälle, best.gem. Betrieb, unabh. Messstelle
+260	D2:7.2	Sediment: Sonderfälle, best.gem. Betrieb, unabh. Messstelle
+261	D2:8.0	Fisch: Sonderfälle, best.gem. Betrieb, unabh. Messstelle
+262	D2:9.0	Trinkwasser: Sonderfälle, best.gem. Betrieb, unabh. Messstelle
+263	D2:9.0a	Trinkwasser (Brunnen): Sonderfälle, best.gem. Betrieb, unabh. Messstelle
+264	D2:9.0b	Trinkwasser: Sr-90-Aktivitätskonzentration; Sonderfälle, best.gem. Betrieb, unabh. Messstelle
+265	D2:9.0c	Trinkwasser (Wasserwerk): Sonderfälle, best.gem. Betrieb, unabh. Messstelle
+266	D2:9.0d	Trinkwasser: Tritium-Aktivitätskonzentration; Sonderfälle, best.gem. Betrieb, unabh. Messstelle
+268	D3:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Sonderfälle, Störfall/Unfall, Gen.inhaber
+269	D3:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Sonderfälle, Störfall/Unfall, Gen.inhaber
+270	D3:1.2	Luft/Aerosole: Sonderfälle, Störfall/Unfall, Gen.inhaber
+271	D3:1.3	Luft/gasförmiges Iod: Sonderfälle, Störfall/Unfall, Gen.inhaber
+272	D3:2.1	Bodenoberfläche: Sonderfälle, Störfall/Unfall, Gen.inhaber
 273	D3:2.1b	Bodenoberfläche: Beta-Handmessungen; Sonderfälle, Störfall/Unfall, Gen.inhaber
-274	D3:2.2	Boden: Sonderfälle, Störfall/Unfall, Gen.inhaber                                                                        
-275	D3:3.0	Weide-/Wiesenbewuchs: Sonderfälle, Störfall/Unfall, Gen.inhaber                                                         
-276	D3:4.0	Oberflächenwasser: Sonderfälle, Störfall/Unfall, Gen.inhaber                                                            
-277	D4:1.1	Luft/äußere Strahlung: Sonderfälle, Störfall/Unfall, unabh. Messstelle 
-278	D4:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Sonderfälle, Störfall/Unfall, unabh. Messstelle                         
-279	D4:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Sonderfälle, Störfall/Unfall, unabh. Messstelle                                 
-280	D4:1.2	Luft/Aerosole: Sonderfälle, Störfall/Unfall, unabh. Messstelle                                                          
-281	D4:1.3	Luft/gasförmiges Iod: Sonderfälle, Störfall/Unfall, unabh. Messstelle                                                   
-282	D4:2.1	Bodenoberfläche: Sonderfälle, Störfall/Unfall, unabh. Messstelle                                                        
-283	D4:2.2	Boden: Sonderfälle, Störfall/Unfall, unabh. Messstelle                                                                  
-284	D4:3.0	Weide-/Wiesenbewuchs: Sonderfälle, Störfall/Unfall, unabh. Messstelle                                                   
-285	D4:4.0	Kuhmilch: Sonderfälle, Störfall/Unfall, unabh. Messstelle                                                               
-286	D4:5.1	Nahrungsmittel pflanzlicher Herkunft: Sonderfälle, Störfall/Unfall, unabh. Messstelle                                   
-287	D4:5.2	Nahrungsmittel tierischer Herkunft: Sonderfälle, Störfall/Unfall, unabh. Messstelle                                     
-288	D4:6.0	Oberflächenwasser: Sonderfälle, Störfall/Unfall, unabh. Messstelle                                                      
-289	D4:7.0	Fisch: Sonderfälle, Störfall/Unfall, unabh. Messstelle                                                                  
-290	D4:8.0	Trinkwasser: Sonderfälle, Störfall/Unfall, unabh. Messstelle                                                            
+274	D3:2.2	Boden: Sonderfälle, Störfall/Unfall, Gen.inhaber
+275	D3:3.0	Weide-/Wiesenbewuchs: Sonderfälle, Störfall/Unfall, Gen.inhaber
+276	D3:4.0	Oberflächenwasser: Sonderfälle, Störfall/Unfall, Gen.inhaber
+277	D4:1.1	Luft/äußere Strahlung: Sonderfälle, Störfall/Unfall, unabh. Messstelle
+278	D4:1.1a	Luft/äußere Strahlung: Gamma-Ortsdosisleistung; Sonderfälle, Störfall/Unfall, unabh. Messstelle
+279	D4:1.1b	Luft/äußere Strahlung: Gamma-Ortsdosis; Sonderfälle, Störfall/Unfall, unabh. Messstelle
+280	D4:1.2	Luft/Aerosole: Sonderfälle, Störfall/Unfall, unabh. Messstelle
+281	D4:1.3	Luft/gasförmiges Iod: Sonderfälle, Störfall/Unfall, unabh. Messstelle
+282	D4:2.1	Bodenoberfläche: Sonderfälle, Störfall/Unfall, unabh. Messstelle
+283	D4:2.2	Boden: Sonderfälle, Störfall/Unfall, unabh. Messstelle
+284	D4:3.0	Weide-/Wiesenbewuchs: Sonderfälle, Störfall/Unfall, unabh. Messstelle
+285	D4:4.0	Kuhmilch: Sonderfälle, Störfall/Unfall, unabh. Messstelle
+286	D4:5.1	Nahrungsmittel pflanzlicher Herkunft: Sonderfälle, Störfall/Unfall, unabh. Messstelle
+287	D4:5.2	Nahrungsmittel tierischer Herkunft: Sonderfälle, Störfall/Unfall, unabh. Messstelle
+288	D4:6.0	Oberflächenwasser: Sonderfälle, Störfall/Unfall, unabh. Messstelle
+289	D4:7.0	Fisch: Sonderfälle, Störfall/Unfall, unabh. Messstelle
+290	D4:8.0	Trinkwasser: Sonderfälle, Störfall/Unfall, unabh. Messstelle
 \.
 
 SELECT pg_catalog.setval('rei_ag_id_seq', (SELECT max(id) FROM rei_ag), false);
@@ -605,312 +605,310 @@ COPY rei_ag_gr (id, name, descr) FROM stdin;
 424	C2.5:5.0	Milch: Genehmigungsinhaber, Sondermessprogramm
 425	C2.5:6.0	Wasser: Genehmigungsinhaber, Sondermessprogramm
 441	A5:1.4	Niederschlag: KKW, best.gem. Betrieb, Behördenmessprogramm
-443	C2.1:3.1	Bodenoberfläche: Endlager, Sondermessungen, Gen.inhaber 
+443	C2.1:3.1	Bodenoberfläche: Endlager, Sondermessungen, Gen.inhaber
 \.
 
 SELECT pg_catalog.setval('rei_ag_gr_id_seq', (SELECT max(id) FROM rei_ag_gr), false);
 
 
-COPY rei_ag_gr_mp (id, rei_ag_gr_id, rei_ag_id) FROM stdin;
-1	1	230
-2	2	231
-3	3	232
-4	4	234
-5	5	239
-6	6	240
-7	7	243
-8	8	246
-9	9	247
-10	10	248
-11	11	249
-12	12	251
-13	13	252
-14	14	254
-15	15	255
-16	16	256
-17	17	258
-18	18	259
-19	19	260
-20	20	261
-21	21	263
-22	22	264
-23	23	265
-24	24	266
-25	25	268
-26	26	269
-27	27	270
-28	28	271
-29	29	272
-30	30	274
-31	31	275
-32	32	276
-33	33	1
-34	34	11
-35	35	14
-36	36	27
-37	37	30
-38	38	34
-39	39	41
-40	40	144
-41	41	172
-42	42	160
-43	43	167
-44	44	278
-45	45	279
-46	46	280
-47	47	281
-48	48	282
-49	49	283
-50	50	284
-51	51	285
-52	52	286
-53	53	287
-54	54	288
-55	55	289
-56	56	290
-57	57	78
-58	58	80
-59	59	81
-60	60	82
-61	61	83
-62	62	86
-63	63	87
-64	64	88
-65	65	89
-66	66	90
-67	67	91
-68	68	92
-69	69	95
-70	70	96
-71	71	100
-72	72	105
-73	73	106
-74	74	108
-75	75	109
-76	76	111
-77	77	112
-78	78	116
-79	79	118
-80	80	119
-81	81	121
-82	82	122
-83	83	124
-84	84	125
-85	85	127
-86	86	128
-87	87	152
-88	88	168
-89	89	157
-90	90	158
-91	91	164
-92	92	166
-93	93	174
-94	94	170
-95	95	163
-96	96	202
-97	97	177
-98	98	175
-99	99	181
-100	100	183
-101	101	184
-102	102	185
-103	103	191
-104	104	196
-105	105	12
-106	106	13
-107	107	98
-108	108	99
-109	109	102
-110	110	103
-111	111	114
-112	112	115
-113	113	145
-114	114	146
-115	115	151
-116	116	169
-117	117	173
-118	118	178
-119	119	179
-120	120	182
-121	121	187
-122	122	188
-123	123	190
-124	124	192
-125	125	195
-126	126	197
-127	127	199
-128	128	200
-129	129	203
-130	130	205
-131	131	206
-132	132	207
-133	133	209
-134	134	211
-135	135	212
-136	136	213
-137	137	215
-138	138	216
-139	139	217
-140	140	218
-141	141	219
-142	142	161
-143	143	162
-144	144	236
-145	145	237
-146	146	7
-147	147	8
-148	148	9
-149	149	15
-150	150	26
-151	151	47
-152	152	48
-153	153	49
-154	154	53
-155	155	54
-156	156	56
-157	157	57
-158	158	58
-159	159	62
-160	160	233
-161	161	66
-162	162	79
-163	163	84
-164	164	129
-165	165	130
-166	166	134
-167	167	135
-168	168	147
-169	169	148
-170	170	154
-171	171	155
-172	172	156
-173	173	159
-174	174	171
-175	175	193
-176	176	208
-177	177	36
-178	178	38
-179	179	39
-180	180	42
-181	181	43
-182	182	44
-183	183	45
-184	184	50
-185	185	51
-186	186	52
-187	187	40
-188	188	76
-189	189	37
-190	190	273
-191	191	16
-192	192	24
-193	193	25
-194	194	29
-195	195	28
-196	196	31
-197	197	32
-198	198	33
-199	199	35
-200	200	2
-201	201	3
-202	202	6
-203	203	10
-204	204	19
-205	205	23
-206	206	4
-207	207	17
-208	208	176
-209	209	180
-210	210	18
-211	211	20
-212	212	21
-213	213	70
-214	214	71
-215	215	72
-216	216	73
-217	217	74
-218	218	75
-219	219	77
-220	220	64
-221	221	94
-222	222	97
-223	223	101
-224	224	104
-225	225	107
-226	226	110
-227	227	113
-228	228	117
-229	229	120
-230	230	123
-231	231	150
-232	232	186
-233	233	189
-234	234	194
-235	235	198
-236	236	201
-237	237	204
-238	238	210
-239	239	214
-240	240	225
-241	241	228
-242	242	235
-243	243	238
-244	244	250
-245	245	253
-246	246	257
-247	247	262
-248	248	244
-249	249	245
-250	250	241
-251	251	242
-252	252	46
-253	253	55
-254	254	85
-255	255	267
-256	256	277
-257	257	153
-258	258	136
-259	259	137
-260	260	138
-261	261	139
-262	262	140
-263	263	141
-264	264	142
-265	265	143
-266	266	131
-267	267	132
-268	268	133
-269	269	149
-270	270	59
-271	271	60
-272	272	61
-273	273	63
-274	274	65
-275	275	67
-276	276	68
-277	277	226
-278	278	227
-279	279	229
-280	302	2
-281	302	127
-282	321	3
-283	321	128
-284	341	19
-285	341	134
-286	361	5
-287	362	22
-288	381	126
-289	401	93
-290	421	220
-291	422	221
-292	423	222
-293	424	223
-294	425	224
-295	441	69
-296	443	165
+COPY rei_ag_gr_mp (rei_ag_gr_id, rei_ag_id) FROM stdin;
+1	230
+2	231
+3	232
+4	234
+5	239
+6	240
+7	243
+8	246
+9	247
+10	248
+11	249
+12	251
+13	252
+14	254
+15	255
+16	256
+17	258
+18	259
+19	260
+20	261
+21	263
+22	264
+23	265
+24	266
+25	268
+26	269
+27	270
+28	271
+29	272
+30	274
+31	275
+32	276
+33	1
+34	11
+35	14
+36	27
+37	30
+38	34
+39	41
+40	144
+41	172
+42	160
+43	167
+44	278
+45	279
+46	280
+47	281
+48	282
+49	283
+50	284
+51	285
+52	286
+53	287
+54	288
+55	289
+56	290
+57	78
+58	80
+59	81
+60	82
+61	83
+62	86
+63	87
+64	88
+65	89
+66	90
+67	91
+68	92
+69	95
+70	96
+71	100
+72	105
+73	106
+74	108
+75	109
+76	111
+77	112
+78	116
+79	118
+80	119
+81	121
+82	122
+83	124
+84	125
+85	127
+86	128
+87	152
+88	168
+89	157
+90	158
+91	164
+92	166
+93	174
+94	170
+95	163
+96	202
+97	177
+98	175
+99	181
+100	183
+101	184
+102	185
+103	191
+104	196
+105	12
+106	13
+107	98
+108	99
+109	102
+110	103
+111	114
+112	115
+113	145
+114	146
+115	151
+116	169
+117	173
+118	178
+119	179
+120	182
+121	187
+122	188
+123	190
+124	192
+125	195
+126	197
+127	199
+128	200
+129	203
+130	205
+131	206
+132	207
+133	209
+134	211
+135	212
+136	213
+137	215
+138	216
+139	217
+140	218
+141	219
+142	161
+143	162
+144	236
+145	237
+146	7
+147	8
+148	9
+149	15
+150	26
+151	47
+152	48
+153	49
+154	53
+155	54
+156	56
+157	57
+158	58
+159	62
+160	233
+161	66
+162	79
+163	84
+164	129
+165	130
+166	134
+167	135
+168	147
+169	148
+170	154
+171	155
+172	156
+173	159
+174	171
+175	193
+176	208
+177	36
+178	38
+179	39
+180	42
+181	43
+182	44
+183	45
+184	50
+185	51
+186	52
+187	40
+188	76
+189	37
+190	273
+191	16
+192	24
+193	25
+194	29
+195	28
+196	31
+197	32
+198	33
+199	35
+200	2
+201	3
+202	6
+203	10
+204	19
+205	23
+206	4
+207	17
+208	176
+209	180
+210	18
+211	20
+212	21
+213	70
+214	71
+215	72
+216	73
+217	74
+218	75
+219	77
+220	64
+221	94
+222	97
+223	101
+224	104
+225	107
+226	110
+227	113
+228	117
+229	120
+230	123
+231	150
+232	186
+233	189
+234	194
+235	198
+236	201
+237	204
+238	210
+239	214
+240	225
+241	228
+242	235
+243	238
+244	250
+245	253
+246	257
+247	262
+248	244
+249	245
+250	241
+251	242
+252	46
+253	55
+254	85
+255	267
+256	277
+257	153
+258	136
+259	137
+260	138
+261	139
+262	140
+263	141
+264	142
+265	143
+266	131
+267	132
+268	133
+269	149
+270	59
+271	60
+272	61
+273	63
+274	65
+275	67
+276	68
+277	226
+278	227
+279	229
+302	2
+302	127
+321	3
+321	128
+341	19
+341	134
+361	5
+362	22
+381	126
+401	93
+421	220
+422	221
+423	222
+424	223
+425	224
+441	69
+443	165
 \.
-
-SELECT pg_catalog.setval('rei_ag_gr_mp_id_seq', (SELECT max(id) FROM rei_ag_gr_mp), false);
 
 
 COPY rei_ag_gr_env_medium_mp (id, rei_ag_gr_id, env_medium_id) FROM stdin;

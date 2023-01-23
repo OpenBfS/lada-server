@@ -115,8 +115,8 @@ AS $BODY$
 DECLARE
     d_xx character varying;
   BEGIN
-    IF substr(media_desk, 4+stufe*3, 2) = '00' THEN 
-      RETURN NULL; 
+    IF substr(media_desk, 4+stufe*3, 2) = '00' THEN
+      RETURN NULL;
     END IF;
 
     IF stufe = 0 THEN
@@ -197,8 +197,8 @@ AS $BODY$
 DECLARE
     imis2_id INTEGER;
   BEGIN
-    IF substr(media_desk, 4+stufe*3, 2) = '00' THEN 
-      RETURN NULL; 
+    IF substr(media_desk, 4+stufe*3, 2) = '00' THEN
+      RETURN NULL;
     END IF;
     IF stufe = 0 THEN
       SELECT d00.imis2_id
@@ -491,9 +491,9 @@ CREATE TABLE query_user (
 );
 
 CREATE TABLE query_meas_facil_mp (
-    id serial PRIMARY KEY,
     query_id integer NOT NULL REFERENCES query_user ON DELETE CASCADE,
-    meas_facil_id character varying(5) NOT NULL REFERENCES meas_facil
+    meas_facil_id character varying(5) NOT NULL REFERENCES meas_facil,
+    PRIMARY KEY(query_id, meas_facil_id)
 );
 
 
@@ -614,10 +614,10 @@ CREATE TRIGGER last_mod_rei_ag_gr BEFORE UPDATE ON master.rei_ag_gr FOR EACH ROW
 
 CREATE TABLE rei_ag_gr_mp
 (
-    id serial PRIMARY KEY,
     rei_ag_gr_id integer REFERENCES rei_ag_gr,
     rei_ag_id integer REFERENCES rei_ag,
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    PRIMARY KEY(rei_ag_gr_id, rei_ag_id)
 );
 CREATE TRIGGER last_mod_rei_ag_gr_mp BEFORE UPDATE ON master.rei_ag_gr_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
@@ -957,11 +957,11 @@ CREATE UNIQUE INDEX is_auto_tag_unique_idx ON master.tag (name) WHERE is_auto_ta
 CREATE UNIQUE INDEX global_tag_unique_idx ON master.tag (name) WHERE network_id IS NULL;
 CREATE UNIQUE INDEX network_tag_unique_idx ON master.tag (name, network_id) WHERE meas_facil_id IS NULL;
 CREATE TABLE master.convers_dm_fm(
-  id serial NOT NULL PRIMARY KEY,	
+  id serial NOT NULL PRIMARY KEY,
   unit_id smallint NOT NULL REFERENCES meas_unit(id),
   to_unit_id  smallint NOT NULL REFERENCES meas_unit(id),
   env_medium_id character varying(3) NOT NULL REFERENCES env_medium(id),
-  env_descrip_pattern character varying(100),	
+  env_descrip_pattern character varying(100),
   conv_factor numeric(25,12) NOT NULL,
   last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );

@@ -752,7 +752,6 @@ CREATE VIEW stamm.probenehmer AS SELECT
 FROM master.sampler;
 
 CREATE VIEW stamm.query_messstelle AS SELECT
-	id,
 	query_id AS query,
 	meas_facil_id AS mess_stelle
 FROM master.query_meas_facil_mp;
@@ -780,7 +779,6 @@ CREATE VIEW stamm.rei_progpunkt_grp_umw_zuord AS SELECT
 FROM master.rei_ag_gr_env_medium_mp;
 
 CREATE VIEW stamm.rei_progpunkt_grp_zuord AS SELECT
-	id,
 	rei_ag_gr_id AS rei_progpunkt_grp_id,
 	rei_ag_id AS rei_progpunkt_id,
 	last_mod AS letzte_aenderung

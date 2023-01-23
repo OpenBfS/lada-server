@@ -10,8 +10,8 @@ package de.intevation.lada.model.stammdaten;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
 
@@ -24,14 +24,8 @@ import java.sql.Timestamp;
 public class ReiProgpunktGrpZuord implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Id
-    private Integer id;
-
-    @Column(name = "rei_progpunkt_grp_id")
-    private Integer reiProgpunktGrpId;
-
-    @Column(name = "rei_progpunkt_id")
-    private Integer reiProgpunktId;
+    @EmbeddedId
+    private ReiProgpunktGrpZuordPK id;
 
     @Column(name = "letzte_aenderung", insertable = false)
     private Timestamp letzteAenderung;
@@ -39,28 +33,28 @@ public class ReiProgpunktGrpZuord implements Serializable {
     public ReiProgpunktGrpZuord() {
     }
 
-    public Integer getId() {
+    public ReiProgpunktGrpZuordPK getId() {
         return this.id;
     }
 
-    public void setId(Integer id) {
+    public void setId(ReiProgpunktGrpZuordPK id) {
         this.id = id;
     }
 
     public Integer getReiProgpunktGrpId() {
-        return this.reiProgpunktGrpId;
+        return this.id.getReiProgpunktGrpId();
     }
 
     public void setReiProgpunktGrpId(Integer reiProgpunktGrpId) {
-        this.reiProgpunktGrpId = reiProgpunktGrpId;
+        this.id.setReiProgpunktGrpId(reiProgpunktGrpId);
     }
 
     public Integer getReiProgpunktId() {
-        return this.reiProgpunktId;
+        return this.id.getReiProgpunktId();
     }
 
     public void setReiProgpunktId(Integer reiProgpunktId) {
-        this.reiProgpunktId = reiProgpunktId;
+        this.setReiProgpunktId(reiProgpunktId);
     }
 
     public Timestamp getLetzteAenderung() {
