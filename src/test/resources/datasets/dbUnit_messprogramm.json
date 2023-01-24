@@ -5,7 +5,7 @@
         "meas_facil_id": "06010",
         "appr_lab_id": "06010",
         "regulation_id": 2,
-        "munic_id": "11000000",
+        "admin_unit_id": "11000000",
         "env_descrip_display": "D: 50 90 01 06 02 05 00 00 00 00 00 00",
         "env_medium_id": "A6",
         "sample_meth_id": 1,
@@ -23,7 +23,7 @@
         "last_mod": "2015-03-01 12:00:00"
     }],
     "lada.mpg_mmt_measd_mp": [{
-        "mpg_mmt_id": 1000,
+        "mpg_mmt_mp_id": 1000,
         "measd_id": 56
     }]
 }

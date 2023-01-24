@@ -38,7 +38,7 @@ CREATE FUNCTION set_measm_status() RETURNS trigger
     DECLARE status_id integer;
     BEGIN
         INSERT INTO lada.status_prot
-            (meas_facil_id, date, text, measm_id, status_comb)
+            (meas_facil_id, date, text, measm_id, status_mp_id)
         VALUES ((SELECT meas_facil_id
                      FROM lada.sample
                      WHERE id = NEW.sample_id),
@@ -114,11 +114,11 @@ CREATE OR REPLACE FUNCTION update_status_measm() RETURNS trigger
     AS $$
     BEGIN
         CASE
-            WHEN new.status_comb in (2, 3, 4, 5, 6, 7, 8, 10, 11, 12)
+            WHEN new.status_mp_id in (2, 3, 4, 5, 6, 7, 8, 10, 11, 12)
             THEN
                 UPDATE lada.measm SET is_completed = true, status = NEW.id
                     WHERE id = NEW.measm_id;
-            WHEN new.status_comb in (1, 9, 13)
+            WHEN new.status_mp_id in (1, 9, 13)
             THEN
                 UPDATE lada.measm SET is_completed = false, status = NEW.id
                     WHERE id = NEW.measm_id;
@@ -153,7 +153,7 @@ BEGIN
     INNER JOIN lada.sample sa ON g.sample_id=sa.id
     INNER JOIN lada.measm m ON m.sample_id=sa.id
     INNER JOIN lada.status_prot sp ON m.status=sp.id
-    WHERE s.id=' || site_id || ' and sp.status_comb IN (2,6,10)
+    WHERE s.id=' || site_id || ' and sp.status_mp_id IN (2,6,10)
     ' INTO measms_per_site;
 
     RETURN measms_per_site;
@@ -198,7 +198,7 @@ CREATE TABLE mpg (
     appr_lab_id character varying(5) NOT NULL REFERENCES master.meas_facil,
     regulation_id integer NOT NULL REFERENCES master.regulation,
     opr_mode_id integer DEFAULT 1 REFERENCES master.opr_mode,
-    munic_id character varying(8) REFERENCES master.admin_unit,
+    admin_unit_id character varying(8) REFERENCES master.admin_unit,
     env_descrip_display character varying(100) CHECK
         (env_descrip_display ~ '^D:( [0-9][0-9]){12}$'),
     env_medium_id character varying(3) REFERENCES master.env_medium,
@@ -210,11 +210,11 @@ CREATE TABLE mpg (
     valid_start_date integer NOT NULL CHECK(valid_start_date BETWEEN 1 AND 365),
     valid_end_date integer NOT NULL CHECK(valid_end_date BETWEEN 1 AND 365),
     sampler_id integer REFERENCES master.sampler,
-    state_mpg_id integer REFERENCES master.mpg_categ,
+    mpg_categ_id integer REFERENCES master.mpg_categ,
     comm_sample character varying(80),
     rei_ag_gr_id integer REFERENCES master.rei_ag_gr,
     nucl_facil_gr_id integer REFERENCES master.nucl_facil_gr,
-    unit_id smallint REFERENCES master.meas_unit,
+    meas_unit_id smallint REFERENCES master.meas_unit,
     sample_quant character varying(90),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc') NOT NULL,
     CHECK (sample_pd = 'J'
@@ -274,9 +274,9 @@ CREATE TABLE mpg_mmt_mp (
 CREATE TRIGGER last_mod_mpg_mmt_mp BEFORE UPDATE ON mpg_mmt_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE mpg_mmt_measd_mp (
-    mpg_mmt_id integer REFERENCES mpg_mmt_mp ON DELETE CASCADE,
+    mpg_mmt_mp_id integer REFERENCES mpg_mmt_mp ON DELETE CASCADE,
     measd_id integer REFERENCES master.measd,
-    PRIMARY KEY (mpg_mmt_id, measd_id)
+    PRIMARY KEY (mpg_mmt_mp_id, measd_id)
 );
 
 --
@@ -305,7 +305,7 @@ CREATE TABLE sample (
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     dataset_creator_id integer REFERENCES master.dataset_creator,
     sampler_id integer REFERENCES master.sampler,
-    state_mpg_id integer REFERENCES master.mpg_categ,
+    mpg_categ_id integer REFERENCES master.mpg_categ,
     mpg_id integer REFERENCES mpg,
     sched_start_date timestamp without time zone,
     sched_end_date timestamp without time zone,
@@ -443,7 +443,7 @@ CREATE TABLE meas_val (
     meas_val double precision,
     error real,
     detect_lim double precision,
-    unit_id smallint NOT NULL REFERENCES master.meas_unit,
+    meas_unit_id smallint NOT NULL REFERENCES master.meas_unit,
     is_threshold boolean DEFAULT false,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
@@ -462,7 +462,7 @@ CREATE TABLE status_prot (
     date timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     text character varying(1024),
     measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE,
-    status_comb integer NOT NULL REFERENCES master.status_mp,
+    status_mp_id integer NOT NULL REFERENCES master.status_mp,
     tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER tree_mod_status_prot BEFORE UPDATE ON status_prot FOR EACH ROW EXECUTE PROCEDURE update_tree_mod();
@@ -551,7 +551,7 @@ CREATE INDEX measm_status_idx ON lada.measm USING btree (status ASC NULLS LAST) 
 --CREATE INDEX audit_trail_table_name_idx ON lada.audit_trail USING btree (table_name COLLATE pg_catalog."default" ASC NULLS LAST) TABLESPACE pg_default;
 CREATE INDEX mpg_meas_facil_id_idx ON lada.mpg USING btree (meas_facil_id COLLATE pg_catalog."default" ASC NULLS LAST) TABLESPACE pg_default;
 CREATE INDEX mpg_mmt_mp_mpg_id_idx ON lada.mpg_mmt_mp USING btree (mpg_id ASC NULLS LAST) TABLESPACE pg_default;
-CREATE INDEX status_prot_status_comb_idx ON lada.status_prot USING btree (status_comb ASC NULLS LAST) TABLESPACE pg_default;
+CREATE INDEX status_prot_status_mp_id_idx ON lada.status_prot USING btree (status_mp_id ASC NULLS LAST) TABLESPACE pg_default;
 CREATE INDEX meas_val_measd_id_idx ON lada.meas_val USING btree (measd_id ASC NULLS LAST) TABLESPACE pg_default;
 
 --

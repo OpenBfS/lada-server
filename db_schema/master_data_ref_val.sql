@@ -39,7 +39,7 @@ COPY master.ref_val_measure (id, measure, descr) FROM stdin;
 -- Data for Name: ref_val; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.ref_val (id, env_medium_id, ref_val_meas_id, measd_gr_id, specif, ref_val) FROM stdin;
+COPY master.ref_val (id, env_medium_id, ref_val_measure_id, measd_gr_id, specif, ref_val) FROM stdin;
 235	N11	9	30	\N	125
 236	N12	9	30	\N	125
 237	N13	9	30	\N	125

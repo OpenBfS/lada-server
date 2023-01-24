@@ -60,7 +60,7 @@ COPY master.base_query (id, sql) FROM stdin;
 -- Data for Name: filter; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.filter (id, sql, param, type, name) FROM stdin;
+COPY master.filter (id, sql, param, filter_type_id, name) FROM stdin;
 1	probe.ext_id ~ :externeProbeId	externeProbeId	0	probe_ext_id
 2	probe.hauptproben_nr ~ :hauptprobenNr	hauptprobenNr	0	probe_hauptproben_nr
 3	(probe.mst_id IN ( :mstId ) OR probe.labor_mst_id IN ( :mstId ))	mstId	4	probe_mst_id
@@ -1784,7 +1784,7 @@ COPY master.grid_col_conf (id, lada_user_id, grid_col_mp_id, query_user_id, sort
 -- Data for Name: query_messstelle; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.query_meas_facil_mp (id, query_id, meas_facil_id) FROM stdin;
+COPY master.query_meas_facil_mp (id, query_user_id, meas_facil_id) FROM stdin;
 6	18	30021
 7	18	30022
 18	35	30021

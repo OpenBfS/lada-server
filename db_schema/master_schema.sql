@@ -379,7 +379,7 @@ CREATE TABLE env_medium (
     name character varying(80) NOT NULL,
     unit_1 integer REFERENCES meas_unit,
     unit_2 integer REFERENCES meas_unit,
-    coord_ofc character varying(5) REFERENCES meas_facil,
+    meas_facil_id character varying(5) REFERENCES meas_facil,
     UNIQUE (name),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
@@ -491,9 +491,9 @@ CREATE TABLE query_user (
 
 CREATE TABLE query_meas_facil_mp (
     id serial PRIMARY KEY,
-    query_id integer NOT NULL REFERENCES query_user ON DELETE CASCADE,
+    query_user_id integer NOT NULL REFERENCES query_user ON DELETE CASCADE,
     meas_facil_id character varying(5) NOT NULL REFERENCES meas_facil,
-    UNIQUE (query_id, meas_facil_id)
+    UNIQUE (query_user_id, meas_facil_id)
 );
 
 
@@ -520,11 +520,9 @@ CREATE TABLE filter (
     id serial PRIMARY KEY,
     sql text NOT NULL,
     param text NOT NULL,
-    type integer NOT NULL REFERENCES filter_type,
+    filter_type_id integer NOT NULL REFERENCES filter_type,
     name text
 );
-
-
 
 CREATE TABLE mmt (
     id character varying(2) PRIMARY KEY,
@@ -679,7 +677,7 @@ CREATE TRIGGER last_mod_poi BEFORE UPDATE ON poi FOR EACH ROW EXECUTE PROCEDURE 
 CREATE TABLE munic_div (
     id serial PRIMARY KEY,
     network_id character varying(2) NOT NULL REFERENCES network,
-    munic_id character varying(8) NOT NULL REFERENCES admin_unit,
+    admin_unit_id character varying(8) NOT NULL REFERENCES admin_unit,
     site_id integer NOT NULL,
     name character varying(180),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
@@ -692,7 +690,7 @@ CREATE TABLE site (
     ext_id character varying(20) NOT NULL,
     long_text character varying(100) NOT NULL,
     state_id smallint REFERENCES state,
-    munic_id character varying(8) REFERENCES admin_unit,
+    admin_unit_id character varying(8) REFERENCES admin_unit,
     is_fuzzy boolean NOT NULL DEFAULT false,
     spat_ref_sys_id integer NOT NULL REFERENCES spat_ref_sys,
     coord_x_ext character varying(22) NOT NULL,
@@ -709,7 +707,7 @@ CREATE TABLE site (
     rei_competence character varying(10),
     rei_opr_mode character varying(10),
     is_rei_active boolean,
-    rei_nucl_facil_gr_id integer REFERENCES nucl_facil_gr,
+    nucl_facil_gr_id integer REFERENCES nucl_facil_gr,
     poi_id character varying(7) REFERENCES poi(id),
     height_asl real,
     rei_ag_gr_id integer REFERENCES rei_ag_gr,
@@ -742,7 +740,7 @@ CREATE TRIGGER last_mod_oblig_measd_mp BEFORE UPDATE ON master.oblig_measd_mp FO
 
 CREATE TABLE sample_specif (
     id character varying(3) PRIMARY KEY,
-    unit_id integer REFERENCES meas_unit,
+    meas_unit_id integer REFERENCES meas_unit,
     name character varying(50) NOT NULL,
     ext_id character varying(7) NOT NULL,
     eudf_keyword character varying(40),
@@ -979,7 +977,7 @@ CREATE TABLE IF NOT EXISTS master.ref_val
 (
     id serial PRIMARY KEY,
     env_medium_id character varying(3) NOT NULL REFERENCES env_medium,
-    ref_val_meas_id integer NOT NULL REFERENCES ref_val_measure,
+    ref_val_measure_id integer NOT NULL REFERENCES ref_val_measure,
     measd_gr_id integer NOT NULL REFERENCES measd_gr,
     specif character varying(80),
     ref_val double precision NOT NULL,
@@ -1028,7 +1026,7 @@ CREATE TABLE IF NOT EXISTS master.targ_act_targ
     id serial PRIMARY KEY,
     network_id character varying(2) NOT NULL REFERENCES network,
     targ_act_mmt_gr_id integer NOT NULL REFERENCES targ_act_mmt_gr,
-    targ_env_medium_gr_id integer NOT NULL REFERENCES targ_env_gr,
+    targ_env_gr_id integer NOT NULL REFERENCES targ_env_gr,
     is_imp boolean NOT NULL,
     targ integer NOT NULL,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')

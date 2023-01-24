@@ -21,7 +21,7 @@
         "id": 1,
         "sql": "hauptproben_nr ~ :hauptprobenNr",
         "param": "hauptprobenNr",
-        "type": 0
+        "filter_type_id": 0
     }],
     "master.disp": [{
         "id": 1,

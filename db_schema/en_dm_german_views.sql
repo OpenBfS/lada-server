@@ -168,7 +168,7 @@ CREATE VIEW land.messprogramm AS SELECT
 	appr_lab_id AS labor_mst_id,
 	regulation_id AS datenbasis_id,
 	opr_mode_id AS ba_id,
-	munic_id AS gem_id,
+	admin_unit_id AS gem_id,
 	env_descrip_display AS media_desk,
 	env_medium_id AS umw_id,
 	sample_meth_id AS probenart_id,
@@ -179,11 +179,11 @@ CREATE VIEW land.messprogramm AS SELECT
 	valid_start_date AS gueltig_von,
 	valid_end_date AS gueltig_bis,
 	sampler_id AS probe_nehmer_id,
-	state_mpg_id AS mpl_id,
+	mpg_categ_id AS mpl_id,
 	comm_sample AS probe_kommentar,
 	rei_ag_gr_id AS rei_progpunkt_grp_id,
 	nucl_facil_gr_id AS kta_gruppe_id,
-	unit_id AS meh_id,
+	meas_unit_id AS meh_id,
 	last_mod AS letzte_aenderung,
 	sample_quant AS probenahmemenge
 FROM lada.mpg;
@@ -196,7 +196,7 @@ CREATE VIEW land.messprogramm_mmt AS SELECT
 FROM lada.mpg_mmt_mp;
 
 CREATE VIEW land.messprogramm_mmt_messgroesse AS SELECT
-	mpg_mmt_id AS messprogramm_mmt_id,
+	mpg_mmt_mp_id AS messprogramm_mmt_id,
 	measd_id AS messgroesse_id
 FROM lada.mpg_mmt_measd_mp;
 
@@ -228,7 +228,7 @@ CREATE VIEW land.messwert AS SELECT
 	meas_val AS messwert,
 	error AS messfehler,
 	detect_lim AS nwg_zu_messwert,
-	unit_id AS meh_id,
+	meas_unit_id AS meh_id,
 	is_threshold AS grenzwertueberschreitung,
 	last_mod AS letzte_aenderung,
 	tree_mod AS tree_modified
@@ -242,9 +242,9 @@ CREATE VIEW land.messwert_view AS SELECT
 	meas_val AS messwert,
 	error AS messfehler,
 	detect_lim AS nwg_zu_messwert,
-	unit_id AS meh_id,
+	meas_unit_id AS meh_id,
 	is_threshold AS grenzwertueberschreitung,
-	status_comb AS status_kombi,
+	status_mp_id AS status_kombi,
 	last_mod AS letzte_aenderung
 FROM lada.meas_val_view;
 
@@ -289,7 +289,7 @@ CREATE VIEW land.probe AS SELECT
 	last_mod AS letzte_aenderung,
 	dataset_creator_id AS erzeuger_id,
 	sampler_id AS probe_nehmer_id,
-	state_mpg_id AS mpl_id,
+	mpg_categ_id AS mpl_id,
 	mpg_id AS mpr_id,
 	sched_start_date AS solldatum_beginn,
 	sched_end_date AS solldatum_ende,
@@ -310,7 +310,7 @@ CREATE VIEW land.status_protokoll AS SELECT
 	date AS datum,
 	text,
 	measm_id AS messungs_id,
-	status_comb AS status_kombi,
+	status_mp_id AS status_kombi,
 	tree_mod AS tree_modified
 FROM lada.status_prot;
 
@@ -472,7 +472,7 @@ CREATE VIEW stamm.filter AS SELECT
 	id,
 	sql,
 	param AS parameter,
-	type,
+	filter_type_id as type,
 	name
 FROM master.filter;
 
@@ -485,7 +485,7 @@ FROM master.filter_type;
 CREATE VIEW stamm.gemeindeuntergliederung AS SELECT
 	id,
 	network_id AS netzbetreiber_id,
-	munic_id AS gem_id,
+	admin_unit_id AS gem_id,
 	site_id AS ozk_id,
 	name AS gemeindeuntergliederung,
 	last_mod AS letzte_aenderung
@@ -664,7 +664,7 @@ CREATE VIEW stamm.ort AS SELECT
 	ext_id AS ort_id,
 	long_text AS langtext,
 	state_id AS staat_id,
-	munic_id AS gem_id,
+	admin_unit_id AS gem_id,
 	is_fuzzy AS unscharf,
 	spat_ref_sys_id AS kda_id,
 	coord_x_ext AS koord_x_extern,
@@ -681,7 +681,7 @@ CREATE VIEW stamm.ort AS SELECT
 	rei_competence AS zustaendigkeit,
 	rei_opr_mode AS mp_art,
 	is_rei_active AS aktiv,
-	rei_nucl_facil_gr_id AS kta_gruppe_id,
+	nucl_facil_gr_id AS kta_gruppe_id,
 	poi_id AS oz_id,
 	height_asl AS hoehe_ueber_nn,
 	rei_ag_gr_id AS rei_progpunkt_grp_id,
@@ -718,7 +718,7 @@ FROM master.oblig_measd_mp;
 
 CREATE VIEW stamm.proben_zusatz AS SELECT
 	id,
-	unit_id AS meh_id,
+	meas_unit_id AS meh_id,
 	name AS beschreibung,
 	ext_id AS zusatzwert,
 	eudf_keyword,
@@ -753,7 +753,7 @@ FROM master.sampler;
 
 CREATE VIEW stamm.query_messstelle AS SELECT
 	id,
-	query_id AS query,
+	query_user_id AS query,
 	meas_facil_id AS mess_stelle
 FROM master.query_meas_facil_mp;
 
@@ -802,7 +802,7 @@ FROM master.disp;
 CREATE VIEW stamm.richtwert AS SELECT
 	id,
 	env_medium_id AS umw_id,
-	ref_val_meas_id AS massnahme_id,
+	ref_val_measure_id AS massnahme_id,
 	measd_gr_id AS messgroessengruppe_id,
 	specif AS zusatztext,
 	ref_val AS richtwert
@@ -829,7 +829,7 @@ CREATE VIEW stamm.sollist_soll AS SELECT
 	id,
 	network_id AS netzbetreiber_id,
 	targ_act_mmt_gr_id AS sollist_mmtgrp_id,
-	targ_env_medium_gr_id AS sollist_umwgrp_id,
+	targ_env_gr_id AS sollist_umwgrp_id,
 	is_imp AS imp,
 	targ AS soll
 FROM master.targ_act_targ;
@@ -921,7 +921,7 @@ CREATE VIEW stamm.umwelt AS SELECT
 	name AS umwelt_bereich,
 	unit_1 AS meh_id,
 	unit_2 AS meh_id_2,
-	coord_ofc AS leitstelle,
+	meas_facil_id AS leitstelle,
 	last_mod AS letzte_aenderung
 FROM master.env_medium;
 
@@ -967,10 +967,10 @@ CREATE VIEW public.lada_messwert AS
     meas_val.meas_val AS messwert,
     meas_val.error AS messfehler,
     meas_val.detect_lim AS nwg_zu_messwert,
-    meas_val.unit_id AS meh_id,
+    meas_val.meas_unit_id AS meh_id,
     meas_val.is_threshold AS grenzwertueberschreitung,
-    status_prot.status_comb AS status_kombi,
+    status_prot.status_mp_id AS status_kombi,
     meas_val.last_mod AS letzte_aenderung
    FROM ((lada.meas_val
      JOIN lada.measm ON ((meas_val.measm_id = measm.id)))
-     JOIN lada.status_prot ON (((measm.status = status_prot.id) AND (status_prot.status_comb <> 1))));
+     JOIN lada.status_prot ON (((measm.status = status_prot.id) AND (status_prot.status_mp_id <> 1))));

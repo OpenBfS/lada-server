@@ -105,7 +105,7 @@ COPY master.targ_env_gr (id, name, targ_env_gr_displ) FROM stdin;
 -- Data for Name: targ_act_targ; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.targ_act_targ (id, network_id, targ_act_mmt_gr_id, targ_env_medium_gr_id, is_imp, targ) FROM stdin;
+COPY master.targ_act_targ (id, network_id, targ_act_mmt_gr_id, targ_env_gr_id, is_imp, targ) FROM stdin;
 696	09	1	4	t	2
 697	09	1	5	f	28
 698	09	1	5	t	3
