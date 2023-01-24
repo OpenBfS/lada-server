@@ -115,8 +115,8 @@ AS $BODY$
 DECLARE
     d_xx character varying;
   BEGIN
-    IF substr(media_desk, 4+stufe*3, 2) = '00' THEN 
-      RETURN NULL; 
+    IF substr(media_desk, 4+stufe*3, 2) = '00' THEN
+      RETURN NULL;
     END IF;
 
     IF stufe = 0 THEN
@@ -197,8 +197,8 @@ AS $BODY$
 DECLARE
     imis2_id INTEGER;
   BEGIN
-    IF substr(media_desk, 4+stufe*3, 2) = '00' THEN 
-      RETURN NULL; 
+    IF substr(media_desk, 4+stufe*3, 2) = '00' THEN
+      RETURN NULL;
     END IF;
     IF stufe = 0 THEN
       SELECT d00.imis2_id
@@ -338,7 +338,7 @@ CREATE TABLE state (
 CREATE TRIGGER last_mod_state BEFORE UPDATE ON master.state FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE admin_unit (
-    id character varying(8) NOT NULL PRIMARY KEY,
+    id character varying(8) PRIMARY KEY,
     name character varying(80) NOT NULL,
     gov_dist_id character varying(8),
     rural_dist_id character varying(8),
@@ -379,7 +379,7 @@ CREATE TABLE env_medium (
     name character varying(80) NOT NULL,
     unit_1 integer REFERENCES meas_unit,
     unit_2 integer REFERENCES meas_unit,
-    coord_ofc character varying(5) REFERENCES meas_facil,
+    meas_facil_id character varying(5) REFERENCES meas_facil,
     UNIQUE (name),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
@@ -404,10 +404,9 @@ CREATE TABLE auth (
     meas_facil_id character varying(5) REFERENCES meas_facil,
     appr_lab_id character varying(5) REFERENCES meas_facil,
     auth_funct_id smallint REFERENCES auth_funct,
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE (ldap_gr, network_id, meas_facil_id, appr_lab_id, auth_funct_id)
 );
-ALTER TABLE auth
-    ADD CONSTRAINT auth_unique UNIQUE (ldap_gr, network_id, meas_facil_id, appr_lab_id, auth_funct_id);
 CREATE TRIGGER last_mod_auth BEFORE UPDATE ON auth FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE auth_coord_ofc_env_medium_mp (
@@ -492,8 +491,9 @@ CREATE TABLE query_user (
 
 CREATE TABLE query_meas_facil_mp (
     id serial PRIMARY KEY,
-    query integer NOT NULL REFERENCES query_user ON DELETE CASCADE,
-    meas_facil_id character varying(5) NOT NULL REFERENCES meas_facil
+    query_user_id integer NOT NULL REFERENCES query_user ON DELETE CASCADE,
+    meas_facil_id character varying(5) NOT NULL REFERENCES meas_facil,
+    UNIQUE (query_user_id, meas_facil_id)
 );
 
 
@@ -520,11 +520,9 @@ CREATE TABLE filter (
     id serial PRIMARY KEY,
     sql text NOT NULL,
     param text NOT NULL,
-    type integer NOT NULL REFERENCES filter_type,
+    filter_type_id integer NOT NULL REFERENCES filter_type,
     name text
 );
-
-
 
 CREATE TABLE mmt (
     id character varying(2) PRIMARY KEY,
@@ -567,21 +565,19 @@ CREATE TRIGGER last_mod_mpg_categ BEFORE UPDATE ON mpg_categ FOR EACH ROW EXECUT
 
 
 CREATE TABLE measd_gr_mp (
-    measd_gr_id integer NOT NULL REFERENCES measd_gr,
-    measd_id integer NOT NULL REFERENCES measd,
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    measd_gr_id integer REFERENCES measd_gr,
+    measd_id integer REFERENCES measd,
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    PRIMARY KEY (measd_gr_id, measd_id)
 );
-ALTER TABLE ONLY measd_gr_mp
-    ADD CONSTRAINT mg_grp_pkey PRIMARY KEY (measd_gr_id, measd_id);
 CREATE TRIGGER last_mod_measd_gr_mp BEFORE UPDATE ON master.measd_gr_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE mmt_measd_gr_mp (
-    measd_gr_id integer NOT NULL REFERENCES measd_gr,
-    mmt_id character varying(2) NOT NULL REFERENCES mmt,
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    measd_gr_id integer REFERENCES measd_gr,
+    mmt_id character varying(2) REFERENCES mmt,
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    PRIMARY KEY (measd_gr_id, mmt_id)
 );
-ALTER TABLE ONLY mmt_measd_gr_mp
-    ADD CONSTRAINT mmt_messgroesse_grp_pkey PRIMARY KEY (measd_gr_id, mmt_id);
 CREATE TRIGGER last_mod_mmt_measd_gr_mp BEFORE UPDATE ON master.mmt_measd_gr_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE VIEW mmt_measd_view AS
@@ -615,26 +611,27 @@ CREATE TRIGGER last_mod_rei_ag_gr BEFORE UPDATE ON master.rei_ag_gr FOR EACH ROW
 CREATE TABLE rei_ag_gr_mp
 (
     id serial PRIMARY KEY,
-    rei_ag_gr_id integer REFERENCES rei_ag_gr,
-    rei_ag_id integer REFERENCES rei_ag,
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    rei_ag_gr_id integer NOT NULL REFERENCES rei_ag_gr,
+    rei_ag_id integer NOT NULL REFERENCES rei_ag,
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE(rei_ag_gr_id, rei_ag_id)
 );
 CREATE TRIGGER last_mod_rei_ag_gr_mp BEFORE UPDATE ON master.rei_ag_gr_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE rei_ag_gr_env_medium_mp
 (
     id serial PRIMARY KEY,
-    rei_ag_gr_id integer REFERENCES rei_ag_gr,
-    env_medium_id character varying(3) REFERENCES env_medium,
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    rei_ag_gr_id integer NOT NULL REFERENCES rei_ag_gr,
+    env_medium_id character varying(3) NOT NULL REFERENCES env_medium,
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE(rei_ag_gr_id, env_medium_id)
 );
 CREATE TRIGGER last_mod_rei_ag_gr_env_medium_mp BEFORE UPDATE ON master.rei_ag_gr_env_medium_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE nucl_facil (
-  id serial NOT NULL,
+  id serial PRIMARY KEY,
   ext_id character varying(7),
   name character varying(80),
-  CONSTRAINT kta_pkey PRIMARY KEY (id),
   last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 COMMENT ON TABLE nucl_facil
@@ -653,9 +650,10 @@ CREATE TRIGGER last_mod_nucl_facil_gr BEFORE UPDATE ON master.nucl_facil_gr FOR 
 CREATE TABLE nucl_facil_gr_mp
 (
     id serial PRIMARY KEY,
-    nucl_facil_gr_id integer REFERENCES nucl_facil_gr,
-    nucl_facil_id integer REFERENCES nucl_facil,
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    nucl_facil_gr_id integer NOT NULL REFERENCES nucl_facil_gr,
+    nucl_facil_id integer NOT NULL REFERENCES nucl_facil,
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE(nucl_facil_gr_id, nucl_facil_id)
 );
 CREATE TRIGGER last_mod_nucl_facil_gr_mp BEFORE UPDATE ON master.nucl_facil_gr_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
@@ -679,7 +677,7 @@ CREATE TRIGGER last_mod_poi BEFORE UPDATE ON poi FOR EACH ROW EXECUTE PROCEDURE 
 CREATE TABLE munic_div (
     id serial PRIMARY KEY,
     network_id character varying(2) NOT NULL REFERENCES network,
-    munic_id character varying(8) NOT NULL REFERENCES admin_unit,
+    admin_unit_id character varying(8) NOT NULL REFERENCES admin_unit,
     site_id integer NOT NULL,
     name character varying(180),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
@@ -692,7 +690,7 @@ CREATE TABLE site (
     ext_id character varying(20) NOT NULL,
     long_text character varying(100) NOT NULL,
     state_id smallint REFERENCES state,
-    munic_id character varying(8) REFERENCES admin_unit,
+    admin_unit_id character varying(8) REFERENCES admin_unit,
     is_fuzzy boolean NOT NULL DEFAULT false,
     spat_ref_sys_id integer NOT NULL REFERENCES spat_ref_sys,
     coord_x_ext character varying(22) NOT NULL,
@@ -709,7 +707,7 @@ CREATE TABLE site (
     rei_competence character varying(10),
     rei_opr_mode character varying(10),
     is_rei_active boolean,
-    rei_nucl_facil_gr_id integer REFERENCES nucl_facil_gr,
+    nucl_facil_gr_id integer REFERENCES nucl_facil_gr,
     poi_id character varying(7) REFERENCES poi(id),
     height_asl real,
     rei_ag_gr_id integer REFERENCES rei_ag_gr,
@@ -735,15 +733,14 @@ CREATE TABLE oblig_measd_mp (
     mmt_id character varying(2) NOT NULL REFERENCES mmt,
     env_medium_id character varying(3) NOT NULL REFERENCES env_medium,
     regulation_id smallint NOT NULL REFERENCES regulation,
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE (measd_id, mmt_id, env_medium_id, regulation_id)
 );
-ALTER TABLE IF EXISTS oblig_measd_mp
-    ADD CONSTRAINT pflicht_messgroesse_unique UNIQUE (measd_id, mmt_id, env_medium_id, regulation_id);
 CREATE TRIGGER last_mod_oblig_measd_mp BEFORE UPDATE ON master.oblig_measd_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE sample_specif (
     id character varying(3) PRIMARY KEY,
-    unit_id integer REFERENCES meas_unit,
+    meas_unit_id integer REFERENCES meas_unit,
     name character varying(50) NOT NULL,
     ext_id character varying(7) NOT NULL,
     eudf_keyword character varying(40),
@@ -913,20 +910,20 @@ CREATE TRIGGER last_mod_import_conf BEFORE UPDATE ON master.import_conf FOR EACH
 
 CREATE TABLE grid_col_mp (
     id serial PRIMARY KEY,
-    base_query integer NOT NULL REFERENCES base_query ON DELETE CASCADE,
+    base_query_id integer NOT NULL REFERENCES base_query ON DELETE CASCADE,
     grid_col character varying(80) NOT NULL,
     data_index character varying(80) NOT NULL,
     position integer NOT NULL CHECK(position > 0),
-    filter integer REFERENCES filter,
-    data_type integer NOT NULL REFERENCES disp,
-    UNIQUE(base_query, grid_col),
-    UNIQUE(base_query, data_index),
-    UNIQUE(base_query, position)
+    filter_id integer REFERENCES filter,
+    disp_id integer NOT NULL REFERENCES disp,
+    UNIQUE(base_query_id, grid_col),
+    UNIQUE(base_query_id, data_index),
+    UNIQUE(base_query_id, position)
 );
 
 CREATE TABLE grid_col_conf (
     id serial PRIMARY KEY,
-    user_id integer NOT NULL REFERENCES lada_user,
+    lada_user_id integer NOT NULL REFERENCES lada_user,
     grid_col_mp_id integer NOT NULL REFERENCES grid_col_mp,
     query_user_id integer NOT NULL REFERENCES query_user ON DELETE CASCADE,
     sort character varying(4),
@@ -957,11 +954,11 @@ CREATE UNIQUE INDEX is_auto_tag_unique_idx ON master.tag (name) WHERE is_auto_ta
 CREATE UNIQUE INDEX global_tag_unique_idx ON master.tag (name) WHERE network_id IS NULL;
 CREATE UNIQUE INDEX network_tag_unique_idx ON master.tag (name, network_id) WHERE meas_facil_id IS NULL;
 CREATE TABLE master.convers_dm_fm(
-  id serial NOT NULL PRIMARY KEY,	
+  id serial PRIMARY KEY,
   unit_id smallint NOT NULL REFERENCES meas_unit(id),
   to_unit_id  smallint NOT NULL REFERENCES meas_unit(id),
   env_medium_id character varying(3) NOT NULL REFERENCES env_medium(id),
-  env_descrip_pattern character varying(100),	
+  env_descrip_pattern character varying(100),
   conv_factor numeric(25,12) NOT NULL,
   last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
@@ -969,111 +966,69 @@ CREATE TRIGGER last_mod_convers_dm_fm BEFORE UPDATE ON master.convers_dm_fm FOR 
 
 CREATE TABLE IF NOT EXISTS master.ref_val_measure
 (
-    id serial NOT NULL PRIMARY KEY,
-    measure character varying(80) COLLATE pg_catalog."default" NOT NULL,
-    descr character varying(512) COLLATE pg_catalog."default",
-    --CONSTRAINT richtwert_massnahme_pkey PRIMARY KEY (id),
+    id serial PRIMARY KEY,
+    measure character varying(80) NOT NULL,
+    descr character varying(512),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_ref_val_measure BEFORE UPDATE ON master.ref_val_measure FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE IF NOT EXISTS master.ref_val
 (
-    id serial NOT NULL PRIMARY KEY,
-    env_medium_id character varying(3) COLLATE pg_catalog."default" NOT NULL,
-    ref_val_meas_id integer NOT NULL,
-    measd_gr_id integer NOT NULL,
-    specif character varying(80) COLLATE pg_catalog."default",
+    id serial PRIMARY KEY,
+    env_medium_id character varying(3) NOT NULL REFERENCES env_medium,
+    ref_val_measure_id integer NOT NULL REFERENCES ref_val_measure,
+    measd_gr_id integer NOT NULL REFERENCES measd_gr,
+    specif character varying(80),
     ref_val double precision NOT NULL,
-    --CONSTRAINT name_pkey PRIMARY KEY (id),
-    CONSTRAINT name_massnahme_id_fkey FOREIGN KEY (ref_val_meas_id)
-        REFERENCES ref_val_measure (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT name_messgroessengruppe_id_fkey FOREIGN KEY (measd_gr_id)
-        REFERENCES measd_gr (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT name_umw_id_fkey FOREIGN KEY (env_medium_id)
-        REFERENCES env_medium (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_ref_val BEFORE UPDATE ON master.ref_val FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE IF NOT EXISTS master.targ_act_mmt_gr
 (
-    id serial NOT NULL PRIMARY KEY,
-    name character varying(20) COLLATE pg_catalog."default",
-    descr character varying(120) COLLATE pg_catalog."default",
+    id serial PRIMARY KEY,
+    name character varying(20),
+    descr character varying(120),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_targ_act_mmt_gr BEFORE UPDATE ON master.targ_act_mmt_gr FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE IF NOT EXISTS master.targ_act_mmt_gr_mp
 (
-    id serial NOT NULL PRIMARY KEY,
-    mmt_id character varying(2) COLLATE pg_catalog."default" NOT NULL,
-    targ_act_mmt_gr_id integer NOT NULL,
-    CONSTRAINT sollist_mmtgrp_zuord_mmt_id_fkey FOREIGN KEY (mmt_id)
-        REFERENCES mmt (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT sollist_mmtgrp_zuord_sollist_mmtgrp_id_fkey FOREIGN KEY (targ_act_mmt_gr_id)
-        REFERENCES targ_act_mmt_gr (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
+    mmt_id character varying(2) REFERENCES mmt,
+    targ_act_mmt_gr_id integer REFERENCES targ_act_mmt_gr,
+    PRIMARY KEY(mmt_id, targ_act_mmt_gr_id),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_targ_act_mmt_gr_mp BEFORE UPDATE ON master.targ_act_mmt_gr_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE IF NOT EXISTS master.targ_env_gr
 (
-    id serial NOT NULL PRIMARY KEY,
-    name character varying(20) COLLATE pg_catalog."default",
-    targ_env_gr_displ character varying(120) COLLATE pg_catalog."default",
+    id serial PRIMARY KEY,
+    name character varying(20),
+    targ_env_gr_displ character varying(120),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_targ_env_gr BEFORE UPDATE ON master.targ_env_gr FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE IF NOT EXISTS master.targ_env_gr_mp
 (
-    id serial NOT NULL PRIMARY KEY,
-    targ_env_gr_id integer NOT NULL,
-    env_medium_id character varying(3) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT sollist_umwgrp_zuord_sollist_umwgrp_id_fkey FOREIGN KEY (targ_env_gr_id)
-        REFERENCES targ_env_gr (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT sollist_umwgrp_zuord_umw_id_fkey FOREIGN KEY (env_medium_id)
-        REFERENCES env_medium (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
+    targ_env_gr_id integer REFERENCES targ_env_gr,
+    env_medium_id character varying(3) REFERENCES env_medium,
+    PRIMARY KEY(targ_env_gr_id, env_medium_id),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_targ_env_gr_mp BEFORE UPDATE ON master.targ_env_gr_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE IF NOT EXISTS master.targ_act_targ
 (
-    id serial NOT NULL PRIMARY KEY,
-    network_id character varying(2) COLLATE pg_catalog."default" NOT NULL,
-    targ_act_mmt_gr_id integer NOT NULL,
-    targ_env_medium_gr_id integer NOT NULL,
+    id serial PRIMARY KEY,
+    network_id character varying(2) NOT NULL REFERENCES network,
+    targ_act_mmt_gr_id integer NOT NULL REFERENCES targ_act_mmt_gr,
+    targ_env_gr_id integer NOT NULL REFERENCES targ_env_gr,
     is_imp boolean NOT NULL,
     targ integer NOT NULL,
-    CONSTRAINT sollist_soll_netzbetreiber_id_fkey FOREIGN KEY (network_id)
-        REFERENCES network (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT sollist_soll_sollist_mmtgrp_id_fkey FOREIGN KEY (targ_act_mmt_gr_id)
-        REFERENCES targ_act_mmt_gr (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
-    CONSTRAINT sollist_soll_sollist_umwgrp_id_fkey FOREIGN KEY (targ_env_medium_gr_id)
-        REFERENCES targ_env_gr (id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_targ_act_targ BEFORE UPDATE ON master.targ_act_targ FOR EACH ROW EXECUTE PROCEDURE update_last_mod();

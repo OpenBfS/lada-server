@@ -8,10 +8,7 @@
 package de.intevation.lada.rest;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -21,7 +18,9 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.Query;
 import javax.validation.constraints.Pattern;
+
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -38,8 +37,6 @@ import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
-import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -152,7 +149,7 @@ public class SiteService extends LadaService {
         for (Site o : orte) {
             List<Geolocat> zuordnungs = getOrtsZuordnungs(o);
             o.setReferenceCount(zuordnungs.size());
-            o.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
+            o.setPlausibleReferenceCount(getPlausibleRefs(o.getId()));
             List<GeolocatMpg> zuordnungsMp = getOrtsZuordnungsMp(o);
             o.setReferenceCountMp(zuordnungsMp.size());
             o.setReadonly(
@@ -187,7 +184,7 @@ public class SiteService extends LadaService {
         }
         List<Geolocat> zuordnungs = getOrtsZuordnungs(ort);
         ort.setReferenceCount(zuordnungs.size());
-        ort.setPlausibleReferenceCount(getPlausibleRefCount(zuordnungs));
+        ort.setPlausibleReferenceCount(getPlausibleRefs(ort.getId()));
         List<GeolocatMpg> zuordnungsMp = getOrtsZuordnungsMp(ort);
         ort.setReferenceCountMp(zuordnungsMp.size());
         ort.setReadonly(
@@ -284,7 +281,7 @@ public class SiteService extends LadaService {
         String dbCoordX = dbOrt.getCoordXExt();
         String dbCoordY = dbOrt.getCoordYExt();
 
-        if (getPlausibleRefCount(getOrtsZuordnungs(dbOrt)) > 0
+        if (getPlausibleRefs(dbOrt.getId()) > 0
                 && (!dbCoordX.equals(ort.getCoordXExt())
                 || !dbCoordY.equals(ort.getCoordYExt()))) {
             MultivaluedMap<String, Integer> error =
@@ -375,36 +372,13 @@ public class SiteService extends LadaService {
         return repository.filterPlain(refBuilder.getQuery());
     }
 
-    /**
-     * Get the number of plausible Messung objects referencing an ort.
-     * @param zuordnungs List of Ortszuordnung objects referencing
-     *                   the ort to check
-     * @return Number of references as int
-     */
-    private int getPlausibleRefCount(List<Geolocat> zuordnungs) {
-        Map<Integer, Integer> plausibleMap = new HashMap<Integer, Integer>();
-        for (Geolocat zuordnung: zuordnungs) {
-            EntityManager em = repository.entityManager();
-
-            CriteriaBuilder mesBuilder = em.getCriteriaBuilder();
-            CriteriaQuery<Measm> criteriaQuery =
-                mesBuilder.createQuery(Measm.class);
-            Root<Measm> root = criteriaQuery.from(Measm.class);
-            Join<Measm, StatusProt> join =
-                root.join("statusProtocol", JoinType.LEFT);
-            Predicate filter =
-                mesBuilder.equal(root.get("sampleId"), zuordnung.getSampleId());
-            filter = mesBuilder
-                .and(filter, join.get("statusComb")
-                .in(Arrays.asList("2", "6", "10")));
-            criteriaQuery.where(filter);
-            List<Measm> messungs =
-                repository.filterPlain(criteriaQuery);
-            if (messungs.size() > 0) {
-                plausibleMap.put(zuordnung.getSampleId(), 1);
-            }
-        }
-        return plausibleMap.size();
+    private int getPlausibleRefs(int sampleId){
+        Query query =
+        repository.queryFromString(
+            "SELECT * FROM get_measms_per_site(:sampleId);").setParameter("sampleId", sampleId);
+        @SuppressWarnings("unchecked")
+        List resultList = query.getResultList();
+        return ((int)resultList.get(0));
     }
 
     /**

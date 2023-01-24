@@ -60,7 +60,7 @@ COPY master.base_query (id, sql) FROM stdin;
 -- Data for Name: filter; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.filter (id, sql, param, type, name) FROM stdin;
+COPY master.filter (id, sql, param, filter_type_id, name) FROM stdin;
 1	probe.ext_id ~ :externeProbeId	externeProbeId	0	probe_ext_id
 2	probe.hauptproben_nr ~ :hauptprobenNr	hauptprobenNr	0	probe_hauptproben_nr
 3	(probe.mst_id IN ( :mstId ) OR probe.labor_mst_id IN ( :mstId ))	mstId	4	probe_mst_id
@@ -243,7 +243,7 @@ COPY master.disp (id, name, format) FROM stdin;
 -- Data for Name: grid_column; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.grid_col_mp (id, base_query, grid_col, data_index, "position", filter, data_type) FROM stdin;
+COPY master.grid_col_mp (id, base_query_id, grid_col, data_index, "position", filter_id, disp_id) FROM stdin;
 101	1	interne PID	probeId	1	\N	4
 102	1	HP-Nr	hpNr	2	2	1
 103	1	Datenbasis	dBasis	3	8	17
@@ -1037,7 +1037,7 @@ COPY master.query_user (id, name, lada_user_id, base_query_id, descr) FROM stdin
 -- Data for Name: grid_column_values; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.grid_col_conf (id, user_id, grid_col_mp_id, query_user_id, sort, sort_index, filter_val, is_filter_active, is_visible, col_index, width, is_filter_negate, is_filter_regex, is_filter_null) FROM stdin;
+COPY master.grid_col_conf (id, lada_user_id, grid_col_mp_id, query_user_id, sort, sort_index, filter_val, is_filter_active, is_visible, col_index, width, is_filter_negate, is_filter_regex, is_filter_null) FROM stdin;
 8	0	103	1	\N	\N	\N	f	t	1	77	f	f	f
 11	0	102	1	\N	\N	\N	t	t	0	92	f	f	f
 19	0	118	1	\N	\N	\N	f	f	-1	150	f	f	f
@@ -1784,7 +1784,7 @@ COPY master.grid_col_conf (id, user_id, grid_col_mp_id, query_user_id, sort, sor
 -- Data for Name: query_messstelle; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY master.query_meas_facil_mp (id, query, meas_facil_id) FROM stdin;
+COPY master.query_meas_facil_mp (id, query_user_id, meas_facil_id) FROM stdin;
 6	18	30021
 7	18	30022
 18	35	30021

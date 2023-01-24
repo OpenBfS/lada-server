@@ -21,7 +21,7 @@
         "id": 1,
         "sql": "hauptproben_nr ~ :hauptprobenNr",
         "param": "hauptprobenNr",
-        "type": 0
+        "filter_type_id": 0
     }],
     "master.disp": [{
         "id": 1,
@@ -29,36 +29,36 @@
     }],
     "master.grid_col_mp": [{
         "id": 1,
-        "base_query": 1,
+        "base_query_id": 1,
         "grid_col": "hauptprobenNr",
         "data_index": "hauptproben_nr",
         "position": 1,
-        "filter": 1,
-        "data_type": 1
+        "filter_id": 1,
+        "disp_id": 1
     }, {
         "id": 2,
-        "base_query": 1,
+        "base_query_id": 1,
         "grid_col": "umwId",
         "data_index": "umw_id",
         "position": 2,
-        "data_type": 1
+        "disp_id": 1
     }, {
         "id": 3,
-        "base_query": 2,
+        "base_query_id": 2,
         "grid_col": "hauptprobenNr",
         "data_index": "hauptproben_nr",
         "position": 1,
-        "filter": 1,
-        "data_type": 1
+        "filter_id": 1,
+        "disp_id": 1
     }],
     "master.grid_col_conf": [{
         "id": 1,
-        "user_id": 1,
+        "lada_user_id": 1,
         "query_user_id": 1,
         "grid_col_mp_id": 1
     }, {
         "id": 2,
-        "user_id": 1,
+        "lada_user_id": 1,
         "query_user_id": 1,
         "grid_col_mp_id": 2
     }],

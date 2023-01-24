@@ -24,7 +24,7 @@ SET search_path = master, pg_catalog;
 -- Data for Name: sample_specif; Type: TABLE DATA; Schema: stammdaten; Owner: lada
 --
 
-COPY sample_specif (id, unit_id, name, ext_id, eudf_keyword) FROM stdin;
+COPY sample_specif (id, meas_unit_id, name, ext_id, eudf_keyword) FROM stdin;
 A74	32	Volumenstrom	VOLSTR	\N
 A75	2	A00-Horizont (lose Blätter oder Nadelteppich)	A00-HZT	\N
 A76	2	A0-Horizont (Humusauflage)	A0-HZT	\N

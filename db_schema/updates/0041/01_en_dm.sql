@@ -541,18 +541,22 @@ CREATE VIEW stamm.gemeindeuntergliederung AS SELECT
 FROM master.munic_div;
 
 ALTER TABLE IF EXISTS master.grid_column RENAME TO grid_col_mp;
+ALTER TABLE IF EXISTS master.grid_col_mp RENAME COLUMN base_query TO base_query_id;
 ALTER TABLE IF EXISTS master.grid_col_mp RENAME COLUMN name TO grid_col;
+ALTER TABLE IF EXISTS master.grid_col_mp RENAME COLUMN data_type TO disp_id;
+ALTER TABLE IF EXISTS master.grid_col_mp RENAME COLUMN filter TO filter_id;
 CREATE VIEW stamm.grid_column AS SELECT
 	id,
-	base_query,
+	base_query_id AS base_query,
 	grid_col AS name,
 	data_index,
 	position,
-	filter,
-	data_type
+	filter_id,
+	disp_id AS data_type
 FROM master.grid_col_mp;
 
 ALTER TABLE IF EXISTS master.grid_column_values RENAME TO grid_col_conf;
+ALTER TABLE IF EXISTS master.grid_col_conf RENAME COLUMN user_id TO lada_user_id;
 ALTER TABLE IF EXISTS master.grid_col_conf RENAME COLUMN grid_column TO grid_col_mp_id;
 ALTER TABLE IF EXISTS master.grid_col_conf RENAME COLUMN query_user TO query_user_id;
 ALTER TABLE IF EXISTS master.grid_col_conf RENAME COLUMN filter_value TO filter_val;
@@ -564,7 +568,7 @@ ALTER TABLE IF EXISTS master.grid_col_conf RENAME COLUMN filter_regex TO is_filt
 ALTER TABLE IF EXISTS master.grid_col_conf RENAME COLUMN filter_is_null TO is_filter_null;
 CREATE VIEW stamm.grid_column_values AS SELECT
 	id,
-	user_id,
+	lada_user_id AS user_id,
 	grid_col_mp_id AS grid_column,
 	query_user_id AS query_user,
 	sort,
@@ -964,10 +968,11 @@ CREATE VIEW stamm.probenehmer AS SELECT
 FROM master.sampler;
 
 ALTER TABLE IF EXISTS master.query_messstelle RENAME TO query_meas_facil_mp;
+ALTER TABLE IF EXISTS master.query_meas_facil_mp RENAME COLUMN query TO query_id;
 ALTER TABLE IF EXISTS master.query_meas_facil_mp RENAME COLUMN mess_stelle TO meas_facil_id;
 CREATE VIEW stamm.query_messstelle AS SELECT
 	id,
-	query,
+	query_id AS query,
 	meas_facil_id AS mess_stelle
 FROM master.query_meas_facil_mp;
 

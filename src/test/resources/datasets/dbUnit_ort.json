@@ -5,7 +5,7 @@
         "ext_id": "D_ 00191",
         "long_text": "Langer Text",
         "state_id": 0,
-        "munic_id": "11000000",
+        "admin_unit_id": "11000000",
         "is_fuzzy": true,
         "spat_ref_sys_id": 5,
         "coord_x_ext": "32487017",

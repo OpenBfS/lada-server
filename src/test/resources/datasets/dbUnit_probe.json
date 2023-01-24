@@ -44,7 +44,7 @@
         "date": "2012-05-08 11:00:00",
         "text": "Initialer Status",
         "measm_id": 1200,
-        "status_comb": 1,
+        "status_mp_id": 1,
         "tree_mod": "2012-05-09 12:00:00"
     }],
     "lada.meas_val":[{
@@ -54,7 +54,7 @@
         "less_than_LOD": "<",
         "error": 3.3,
         "detect_lim": 2.4,
-        "unit_id": 207,
+        "meas_unit_id": 207,
         "is_threshold": false,
         "last_mod": "2012-05-09 09:00:00"
     }],

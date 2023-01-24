@@ -26,12 +26,13 @@ public class IsUnique implements Rule {
     @Override
     public Violation execute(Object object) {
         Site ort = (Site) object;
-        if (ort.getExtId() == null || ort.getExtId().equals("")) {
-            Violation violation = new Violation();
-            violation.addError("extId", StatusCodes.VALUE_MISSING);
-            return violation;
+        if (ort.getExtId() != null) {
+            if (ort.getExtId().equals("")) {
+                Violation violation = new Violation();
+                violation.addError("ortId", StatusCodes.VALUE_MISSING);
+                return violation;
+            }
         }
-
         QueryBuilder<Site> builder = repository.queryBuilder(Site.class);
         if (ort.getId() != null) {
             // Consider UPDATE

@@ -27,13 +27,13 @@ CREATE VIEW public.lada_meas_val AS
     meas_val.meas_val,
     meas_val.error,
     meas_val.detect_lim,
-    meas_val.unit_id,
+    meas_val.meas_unit_id,
     meas_val.is_threshold,
-    status_prot.status_comb,
+    status_prot.status_mp_id,
     meas_val.last_mod
    FROM ((lada.meas_val
      JOIN lada.measm ON ((meas_val.measm_id = measm.id)))
-     JOIN lada.status_prot ON (((measm.status = status_prot.id) AND (status_prot.status_comb <> 1))));
+     JOIN lada.status_prot ON (((measm.status = status_prot.id) AND (status_prot.status_mp_id <> 1))));
 
 CREATE OR REPLACE VIEW lada.meas_val_view
  AS
@@ -44,13 +44,13 @@ CREATE OR REPLACE VIEW lada.meas_val_view
     meas_val.meas_val,
     meas_val.error,
     meas_val.detect_lim,
-    meas_val.unit_id,
+    meas_val.meas_unit_id,
     meas_val.is_threshold,
-    status_prot.status_comb,
+    status_prot.status_mp_id,
     meas_val.last_mod
    FROM lada.meas_val
      JOIN lada.measm ON meas_val.measm_id = measm.id
-     JOIN lada.status_prot ON measm.status = status_prot.id AND status_prot.status_comb <> 1;
+     JOIN lada.status_prot ON measm.status = status_prot.id AND status_prot.status_mp_id <> 1;
 
 --
 -- Name: query_measm_view; Type: VIEW; Schema: lada; Owner: postgres
@@ -60,4 +60,4 @@ CREATE OR REPLACE VIEW lada.query_measm_view
  AS
  SELECT DISTINCT status_prot.measm_id
    FROM lada.status_prot
-  WHERE (status_prot.status_comb = ANY (ARRAY[9, 13]));
+  WHERE (status_prot.status_mp_id = ANY (ARRAY[9, 13]));
