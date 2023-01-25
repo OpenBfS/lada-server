@@ -63,18 +63,18 @@ public class MesswertNormalizer {
 
         for (MeasVal messwert: messwerte) {
             if (mehIdToConvertTo != null
-                && mehIdToConvertTo.equals(messwert.getUnitId())
+                && mehIdToConvertTo.equals(messwert.getMeasUnitId())
                 || secMehIdToConvertTo != null
-                && secMehIdToConvertTo.equals(messwert.getUnitId())
+                && secMehIdToConvertTo.equals(messwert.getMeasUnitId())
             ) {
                 // no conversion needed
                 continue;
             }
             //Get the conversion factors
             List<UnitConvers> primaryMeu = getConversions(
-                    mehIdToConvertTo, messwert.getUnitId());
+                    mehIdToConvertTo, messwert.getMeasUnitId());
             List<UnitConvers> secondaryMeu = getConversions(
-                    secMehIdToConvertTo, messwert.getUnitId());
+                    secMehIdToConvertTo, messwert.getMeasUnitId());
             if (primaryMeu.size() == 0 && secondaryMeu.size() == 0) {
                 //No suitable conversion found: continue
                 continue;
@@ -84,7 +84,7 @@ public class MesswertNormalizer {
             Double factor = meu.getFactor();
 
             //Update einheit
-            messwert.setUnitId(
+            messwert.setMeasUnitId(
                 primaryMeu.size() > 0 ? mehIdToConvertTo : secMehIdToConvertTo);
             //Update messwert
             if (messwert.getMeasVal() != null) {

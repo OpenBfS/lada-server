@@ -12,7 +12,6 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -27,18 +26,16 @@ public class GridColMp implements Serializable {
     private String dataIndex;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "data_type")
-    private Disp dataType;
+    private Disp disp;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "filter")
     private Filter filter;
 
     private String gridCol;
 
     private Integer position;
 
-    private Integer baseQuery;
+    private Integer baseQueryId;
 
     public GridColMp() {
     }
@@ -59,12 +56,12 @@ public class GridColMp implements Serializable {
         this.dataIndex = dataIndex;
     }
 
-    public Disp getDataType() {
-        return this.dataType;
+    public Disp getDisp() {
+        return this.disp;
     }
 
-    public void setDataType(Disp dataType) {
-        this.dataType = dataType;
+    public void setDisp(Disp dataType) {
+        this.disp = dataType;
     }
 
     public Filter getFilter() {
@@ -91,11 +88,11 @@ public class GridColMp implements Serializable {
         this.position = position;
     }
 
-    public Integer getBaseQuery() {
-        return this.baseQuery;
+    public Integer getBaseQueryId() {
+        return this.baseQueryId;
     }
 
-    public void setBaseQuery(Integer query) {
-        this.baseQuery = query;
+    public void setBaseQueryId(Integer query) {
+        this.baseQueryId = query;
     }
 }

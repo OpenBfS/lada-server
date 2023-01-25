@@ -1358,7 +1358,7 @@ public class LafObjectMapper {
                         StatusCodes.IMP_INVALID_VALUE));
                 return null;
             }
-            messwert.setUnitId(
+            messwert.setMeasUnitId(
                 Integer.valueOf(attributes.get("MESSEINHEIT_ID")));
         } else if (attributes.containsKey("MESSEINHEIT")) {
             List<ImportConf> cfgs =
@@ -1392,7 +1392,7 @@ public class LafObjectMapper {
                         StatusCodes.IMP_INVALID_VALUE));
                 return null;
             }
-            messwert.setUnitId(einheit.get(0).getId());
+            messwert.setMeasUnitId(einheit.get(0).getId());
         }
 
         String wert = attributes.get("MESSWERT");
@@ -1570,7 +1570,7 @@ public class LafObjectMapper {
         StatusProt currentStatus = repository.getByIdPlain(
             StatusProt.class, messung.getStatus());
         StatusMp currentKombi = repository.getByIdPlain(
-            StatusMp.class, currentStatus.getStatusComb());
+            StatusMp.class, currentStatus.getStatusMpId());
         // check if erreichbar
         QueryBuilder<StatusAccessMpView> errFilter =
             repository.queryBuilder(StatusAccessMpView.class);
@@ -1631,7 +1631,7 @@ public class LafObjectMapper {
         newStatus.setDate(new Timestamp(new Date().getTime()));
         newStatus.setMeasmId(messung.getId());
         newStatus.setMeasFacilId(mstId);
-        newStatus.setStatusComb(newKombi);
+        newStatus.setStatusMpId(newKombi);
         Violation statusViolation = statusValidator.validate(newStatus);
 
         if (statusViolation.hasWarnings()) {
@@ -1729,7 +1729,7 @@ public class LafObjectMapper {
                     ort.setAddSiteText(uo.get("U_ORTS_ZUSATZTEXT"));
                 }
                 repository.create(ort);
-                probe.setNuclFacilGrId(messpunkte.get(0).getReiNuclFacilGrId());
+                probe.setNuclFacilGrId(messpunkte.get(0).getNuclFacilGrId());
                 repository.update(probe);
             } else if (uo.get("U_ORTS_ZUSATZCODE").length() == 4) {
                 QueryBuilder<NuclFacilGr> builderKta =
@@ -1765,7 +1765,7 @@ public class LafObjectMapper {
                         }
                     } else {
                         o.setSiteClassId(1);
-                        o.setReiNuclFacilGrId(ktaGrp.get(0).getId());
+                        o.setNuclFacilGrId(ktaGrp.get(0).getId());
                         repository.update(o);
 
                         Geolocat ort = new Geolocat();
@@ -1932,19 +1932,19 @@ public class LafObjectMapper {
                         attributes.get(type + "GEMEINDENAME"),
                         StatusCodes.IMP_INVALID_VALUE));
             } else {
-                o.setMunicId(ves.get(0).getId());
+                o.setAdminUnitId(ves.get(0).getId());
             }
         } else if (attributes.get(type + "GEMEINDESCHLUESSEL") != null) {
-            o.setMunicId(attributes.get(type + "GEMEINDESCHLUESSEL"));
+            o.setAdminUnitId(attributes.get(type + "GEMEINDESCHLUESSEL"));
             AdminUnit v =
                 repository.getByIdPlain(
-                    AdminUnit.class, o.getMunicId());
+                    AdminUnit.class, o.getAdminUnitId());
             if (v == null) {
                 currentWarnings.add(
                     new ReportItem(
-                        type + "GEMEINDESCHLUESSEL", o.getMunicId(),
+                        type + "GEMEINDESCHLUESSEL", o.getAdminUnitId(),
                         StatusCodes.IMP_INVALID_VALUE));
-                o.setMunicId(null);
+                o.setAdminUnitId(null);
             }
         }
         String key = "";
@@ -1983,7 +1983,7 @@ public class LafObjectMapper {
 
         // checkk if all attributes are empty
         if (o.getSpatRefSysId() == null
-            && o.getMunicId() == null
+            && o.getAdminUnitId() == null
             && o.getStateId() == null) {
             return null;
         }
@@ -2111,7 +2111,7 @@ public class LafObjectMapper {
         logger.debug("deskriptoren: " + probe.getEnvDescripDisplay());
         logger.debug("media: " + probe.getEnvDescripName());
         logger.debug("mittelung: " + probe.getMidSampleDate());
-        logger.debug("mpl: " + probe.getStateMpgId());
+        logger.debug("mpl: " + probe.getMpgCategId());
         logger.debug("mpr: " + probe.getMpgId());
         logger.debug("mst: " + probe.getMeasFacilId());
         logger.debug("pnbeginn: " + probe.getSampleStartDate());
@@ -2293,7 +2293,7 @@ public class LafObjectMapper {
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setStateMpgId(kategorie.get(0).getId());
+            probe.setMpgCategId(kategorie.get(0).getId());
         }
 
         if ("PROBENAHMEINSTITUTION".equals(key)) {

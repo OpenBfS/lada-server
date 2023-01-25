@@ -251,9 +251,9 @@ implements Creator {
                 DatasetCreator.class, probe.getDatasetCreatorId());
             laf += lafLine("ERZEUGER", erz.getExtId(), CN);
         }
-        if (probe.getStateMpgId() != null) {
+        if (probe.getMpgCategId() != null) {
             MpgCateg mpkat = repository.getByIdPlain(
-                MpgCateg.class, probe.getStateMpgId());
+                MpgCateg.class, probe.getMpgCategId());
             laf += lafLine("MESSPROGRAMM_LAND", mpkat.getExtId(), CN);
         }
         if (probe.getSamplerId() != null) {
@@ -301,8 +301,8 @@ implements Creator {
             ? " "
             : " " + zw.getSmallerThan());
         value += zw.getMeasVal();
-        value += " " + ((zusatz.get(0).getUnitId() == null)
-            ? "\"\"" : zusatz.get(0).getUnitId());
+        value += " " + ((zusatz.get(0).getMeasUnitId() == null)
+            ? "\"\"" : zusatz.get(0).getMeasUnitId());
         value += " " + ((zw.getError() == null) ? "" : zw.getError());
         return lafLine("PZB_S", value);
     }
@@ -366,11 +366,11 @@ implements Creator {
                 String.format("%08d", sOrte.get(0).getStateId()));
         }
 
-        if (sOrte.get(0).getMunicId() != null
-            && sOrte.get(0).getMunicId().length() > 0
+        if (sOrte.get(0).getAdminUnitId() != null
+            && sOrte.get(0).getAdminUnitId().length() > 0
         ) {
             laf += lafLine(typePrefix + "GEMEINDESCHLUESSEL",
-                sOrte.get(0).getMunicId());
+                sOrte.get(0).getAdminUnitId());
         }
 
         if (sOrte.get(0).getMunicDivId() != null) {
@@ -518,7 +518,7 @@ implements Creator {
         for (StatusProt statusEntry : statusHistory) {
             StatusMp stKombi = repository.getByIdPlain(
                 StatusMp.class,
-                statusEntry.getStatusComb()
+                statusEntry.getStatusMpId()
             );
             st = stKombi.getStatusLev().getId();
             w = stKombi.getStatusVal().getId();
@@ -563,7 +563,7 @@ implements Creator {
 
         QueryBuilder<MeasUnit> eBuilder =
             repository.queryBuilder(MeasUnit.class);
-        eBuilder.and("id", mw.getUnitId());
+        eBuilder.and("id", mw.getMeasUnitId());
         List<MeasUnit> einheiten =
             (List<MeasUnit>) repository.filter(
                 eBuilder.getQuery()).getData();

@@ -37,15 +37,15 @@ public class Site implements Serializable {
 
     private Boolean isReiActive;
 
-    private Integer reiNuclFacilGrId;
+    private Integer nuclFacilGrId;
 
     private String reiReportText;
 
     @ManyToOne
     @JoinColumn(updatable = false, insertable = false)
-    private AdminUnit munic;
+    private AdminUnit adminUnit;
 
-    private String municId;
+    private String adminUnitId;
 
     private Integer municDivId;
 
@@ -138,12 +138,12 @@ public class Site implements Serializable {
         this.isReiActive = isReiActive;
     }
 
-    public Integer getReiNuclFacilGrId() {
-        return this.reiNuclFacilGrId;
+    public Integer getNuclFacilGrId() {
+        return this.nuclFacilGrId;
     }
 
-    public void setReiNuclFacilGrId(Integer reiNuclFacilGrId) {
-        this.reiNuclFacilGrId = reiNuclFacilGrId;
+    public void setNuclFacilGrId(Integer reiNuclFacilGrId) {
+        this.nuclFacilGrId = reiNuclFacilGrId;
     }
 
     public String getReiReportText() {
@@ -155,20 +155,20 @@ public class Site implements Serializable {
     }
 
     @JsonbTransient
-    public AdminUnit getMunic() {
-        return this.munic;
+    public AdminUnit getAdminUnit() {
+        return this.adminUnit;
     }
 
-    public void setMunic(AdminUnit munic) {
-        this.munic = munic;
+    public void setAdminUnit(AdminUnit munic) {
+        this.adminUnit = munic;
     }
 
-    public String getMunicId() {
-        return this.municId;
+    public String getAdminUnitId() {
+        return this.adminUnitId;
     }
 
-    public void setMunicId(String municId) {
-        this.municId = municId;
+    public void setAdminUnitId(String municId) {
+        this.adminUnitId = municId;
     }
 
     public Integer getMunicDivId() {

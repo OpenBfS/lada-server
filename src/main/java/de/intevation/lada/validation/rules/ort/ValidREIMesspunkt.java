@@ -38,10 +38,10 @@ public class ValidREIMesspunkt implements Rule {
             return null;
         }
 
-        if (ort.getReiNuclFacilGrId()!=null) {
+        if (ort.getNuclFacilGrId()!=null) {
             QueryBuilder<NuclFacilGrMp> builder =
                 repository.queryBuilder(NuclFacilGrMp.class);
-            builder.and("nuclFacilGrId", ort.getReiNuclFacilGrId());
+            builder.and("nuclFacilGrId", ort.getNuclFacilGrId());
             List<NuclFacilGrMp> ktas = (List<NuclFacilGrMp>) repository.filterPlain(builder.getQuery());
 
             //Compare first 4 characters of Ort ID to stored KTAs

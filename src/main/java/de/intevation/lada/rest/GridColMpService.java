@@ -41,12 +41,12 @@ public class GridColMpService extends LadaService {
      */
     @GET
     public Response getQueries(
-        @QueryParam("baseQuery") @NotNull Integer baseQuery
+        @QueryParam("baseQueryId") @NotNull Integer baseQuery
     ) {
 
         QueryBuilder<GridColMp> builder =
             repository.queryBuilder(GridColMp.class);
-        builder.and("baseQuery", baseQuery);
+        builder.and("baseQueryId", baseQuery);
 
         return repository.filter(builder.getQuery());
     }

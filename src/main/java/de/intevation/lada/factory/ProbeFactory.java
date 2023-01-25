@@ -417,7 +417,7 @@ public class ProbeFactory {
         for (GeolocatMpg ort : orte) {
             if ("E".equals(ort.getTypeRegulation())) {
                 gemId = repository.getByIdPlain(
-                    Site.class, ort.getSiteId()).getMunicId();
+                    Site.class, ort.getSiteId()).getAdminUnitId();
             }
         }
 
@@ -452,7 +452,7 @@ public class ProbeFactory {
         probe.setIsTest(messprogramm.getIsTest());
         probe.setEnvMediumId(messprogramm.getEnvMediumId());
         probe.setMpgId(messprogramm.getId());
-        probe.setStateMpgId(messprogramm.getStateMpgId());
+        probe.setMpgCategId(messprogramm.getMpgCategId());
         probe.setReiAgGrId(messprogramm.getReiAgGrId());
         probe.setNuclFacilGrId(messprogramm.getNuclFacilGrId());
         probe.setFound(false);
@@ -497,10 +497,10 @@ public class ProbeFactory {
                 MeasVal wert = new MeasVal();
                 wert.setMeasdId(mw);
                 wert.setMeasmId(messung.getId());
-                if (messprogramm.getUnitId() != null) {
-                    wert.setUnitId(messprogramm.getUnitId());
+                if (messprogramm.getMeasUnitId() != null) {
+                    wert.setMeasUnitId(messprogramm.getMeasUnitId());
                 } else {
-                    wert.setUnitId(0);
+                    wert.setMeasUnitId(0);
                 }
                 createObject(wert, dryrun);
             }

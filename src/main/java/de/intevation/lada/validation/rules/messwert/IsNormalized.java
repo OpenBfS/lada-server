@@ -61,18 +61,18 @@ public class IsNormalized implements Rule {
             //Check if the messwert mehId can be converted to primary or secondary meh
             Boolean convert = false;
 
-            if (mehId != null && !mehId.equals(messwert.getUnitId())) {
+            if (mehId != null && !mehId.equals(messwert.getMeasUnitId())) {
                 QueryBuilder<UnitConvers> builder =
                 repository.queryBuilder(UnitConvers.class);
                 builder.and("toUnitId", mehId);
-                builder.and("fromUnit", messwert.getUnitId());
+                builder.and("fromUnit", messwert.getMeasUnitId());
                 List<UnitConvers> result = repository.filterPlain(builder.getQuery());
                 convert = result.size() > 0;
-            } else if (secMehId != null && !secMehId.equals(messwert.getUnitId())) {
+            } else if (secMehId != null && !secMehId.equals(messwert.getMeasUnitId())) {
                 QueryBuilder<UnitConvers> builder =
                 repository.queryBuilder(UnitConvers.class);
                 builder.and("toUnitId", secMehId);
-                builder.and("fromUnit", messwert.getUnitId());
+                builder.and("fromUnit", messwert.getMeasUnitId());
                 List<UnitConvers> result = repository.filterPlain(builder.getQuery());
                 convert = result.size() > 0;
             }
@@ -82,7 +82,7 @@ public class IsNormalized implements Rule {
                 builder_messgr.and("id", messwert.getMeasdId());
                 List<Measd> messgroesse = repository.filterPlain(builder_messgr.getQuery());
                 violation.addWarning("unitId#"+messgroesse.get(0).getName(), StatusCodes.VAL_UNIT_NORMALIZE);
-            } else if ( (mehId != null && mehId.equals(messwert.getUnitId())) || (secMehId != null && secMehId.equals(messwert.getUnitId())) ) {
+            } else if ( (mehId != null && mehId.equals(messwert.getMeasUnitId())) || (secMehId != null && secMehId.equals(messwert.getMeasUnitId())) ) {
                 return null;
             } else {
                 QueryBuilder<Measd> builder_messgr = repository.queryBuilder(Measd.class);

@@ -77,7 +77,7 @@ public class QueryTools {
             customColumns,
             repository.getByIdPlain(
                 BaseQuery.class,
-                customColumns.get(0).getGridColMp().getBaseQuery()
+                customColumns.get(0).getGridColMp().getBaseQueryId()
             ).getSql());
 
         this.sortSql = prepareSortSql(customColumns);

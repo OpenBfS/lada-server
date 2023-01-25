@@ -65,7 +65,7 @@ public class Sample implements Serializable {
 
     private Long midSampleDate;
 
-    private Integer stateMpgId;
+    private Integer mpgCategId;
 
     private Integer mpgId;
 
@@ -218,12 +218,12 @@ public class Sample implements Serializable {
         this.midSampleDate = midSampleDate;
     }
 
-    public Integer getStateMpgId() {
-        return this.stateMpgId;
+    public Integer getMpgCategId() {
+        return this.mpgCategId;
     }
 
-    public void setStateMpgId(Integer stateMpgId) {
-        this.stateMpgId = stateMpgId;
+    public void setMpgCategId(Integer stateMpgId) {
+        this.mpgCategId = stateMpgId;
     }
 
     public Integer getMpgId() {

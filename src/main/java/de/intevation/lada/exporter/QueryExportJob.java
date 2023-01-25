@@ -236,7 +236,7 @@ public abstract class QueryExportJob extends ExportJob {
                 StatusProt.class, messung.getStatus());
         StatusMp kombi =
             repository.getByIdPlain(
-                StatusMp.class, protokoll.getStatusComb());
+                StatusMp.class, protokoll.getStatusMpId());
         StatusLev stufe = kombi.getStatusLev();
         StatusVal wert = kombi.getStatusVal();
         return String.format("%s - %s", stufe.getLev(), wert.getVal());
@@ -263,7 +263,7 @@ public abstract class QueryExportJob extends ExportJob {
     protected String getMesseinheit(MeasVal messwert) {
         QueryBuilder<MeasUnit> builder = repository.queryBuilder(
             MeasUnit.class);
-        builder.and("id", messwert.getUnitId());
+        builder.and("id", messwert.getMeasUnitId());
         List<MeasUnit> messeinheit = repository.filterPlain(builder.getQuery());
         return messeinheit.get(0).getUnitSymbol();
     }
@@ -358,7 +358,7 @@ public abstract class QueryExportJob extends ExportJob {
             //Check if the column contains the id
             if (columnValue.getGridColMp().getDataIndex().equals(idColumn)) {
                 // Get the column type
-                idType = gridColumn.getDataType().getName();
+                idType = gridColumn.getDisp().getName();
 
                 // Get IDs to filter result
                 JsonArray idsToExport = exportParameters
@@ -424,6 +424,6 @@ public abstract class QueryExportJob extends ExportJob {
             GridColMp.class,
             Integer.valueOf(columns.get(0).getGridColMpId())
         );
-        qId = gridColumn.getBaseQuery();
+        qId = gridColumn.getBaseQueryId();
     }
 }

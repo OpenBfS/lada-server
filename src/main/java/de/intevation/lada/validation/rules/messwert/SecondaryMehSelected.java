@@ -54,7 +54,7 @@ public class SecondaryMehSelected implements Rule {
                 return null;
             }
             //Check if the messwert is the secondary mehId
-            if (secMehId.equals(messwert.getUnitId())) {
+            if (secMehId.equals(messwert.getMeasUnitId())) {
                 violation.addNotification("unitId", StatusCodes.VAL_SEC_UNIT);
                 return violation;
             }
@@ -69,7 +69,7 @@ public class SecondaryMehSelected implements Rule {
             AtomicBoolean primary = new AtomicBoolean(false);
             meh.getUnitConversTo().forEach(umrechnung -> {
                 if (umrechnung.getFromUnit().getId()
-                    .equals(messwert.getUnitId())
+                    .equals(messwert.getMeasUnitId())
                 ) {
                     primary.set(true);
                 }
@@ -79,7 +79,7 @@ public class SecondaryMehSelected implements Rule {
             }
             secMeh.getUnitConversTo().forEach(secUmrechnung -> {
                 if (secUmrechnung.getFromUnit().getId()
-                    .equals(messwert.getUnitId())
+                    .equals(messwert.getMeasUnitId())
                 ) {
                     violation.addNotification(
                         "unitId", StatusCodes.VAL_SEC_UNIT);

@@ -126,7 +126,7 @@ public class UniversalService extends LadaService {
             Disp resultType =
                 repository.getByIdPlain(
                     Disp.class,
-                    gridColumn.getDataType().getId()
+                    gridColumn.getDisp().getId()
                 );
             if (resultType != null) {
                 int ndx = -1, i = 0;

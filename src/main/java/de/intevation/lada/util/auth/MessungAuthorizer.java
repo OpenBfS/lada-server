@@ -52,7 +52,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
         );
         StatusMp kombi = repository.getByIdPlain(
             StatusMp.class,
-            status.getStatusComb()
+            status.getStatusMpId()
         );
         return kombi.getStatusVal().getId() > 0
             || getAuthorization(userInfo, probe);
@@ -134,7 +134,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
             messung.getStatus()
         );
         StatusMp kombi = repository.getByIdPlain(
-            StatusMp.class, status.getStatusComb());
+            StatusMp.class, status.getStatusMpId());
         int stufe = kombi.getStatusLev().getId();
         int wert  = kombi.getStatusVal().getId();
 

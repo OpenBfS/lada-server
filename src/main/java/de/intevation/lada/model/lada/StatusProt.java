@@ -36,7 +36,7 @@ public class StatusProt implements Serializable {
 
     private String measFacilId;
 
-    private Integer statusComb;
+    private Integer statusMpId;
 
     private String text;
 
@@ -102,12 +102,12 @@ public class StatusProt implements Serializable {
         this.measFacilId = measFacilId;
     }
 
-    public Integer getStatusComb() {
-        return this.statusComb;
+    public Integer getStatusMpId() {
+        return this.statusMpId;
     }
 
-    public void setStatusComb(Integer statusComb) {
-        this.statusComb = statusComb;
+    public void setStatusMpId(Integer statusComb) {
+        this.statusMpId = statusComb;
     }
 
     public String getText() {

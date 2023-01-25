@@ -29,7 +29,7 @@ public class MunicDiv implements Serializable {
 
     private String networkId;
 
-    private String municId;
+    private String adminUnitId;
 
     private Integer siteId;
 
@@ -60,12 +60,12 @@ public class MunicDiv implements Serializable {
         this.networkId = networkId;
     }
 
-    public String getMunicId() {
-        return this.municId;
+    public String getAdminUnitId() {
+        return this.adminUnitId;
     }
 
-    public void setMunicId(String municId) {
-        this.municId = municId;
+    public void setAdminUnitId(String municId) {
+        this.adminUnitId = municId;
     }
 
     public Integer getSiteId() {

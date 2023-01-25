@@ -113,7 +113,7 @@ public class CsvExporter implements Exporter {
             QueryBuilder<GridColMp> builder =
                 repository.queryBuilder(GridColMp.class);
             builder.and("dataIndex", key);
-            builder.and("baseQuery", qId);
+            builder.and("baseQueryId", qId);
             List<GridColMp> result =
                 repository.filterPlain(builder.getQuery());
             String name = key;

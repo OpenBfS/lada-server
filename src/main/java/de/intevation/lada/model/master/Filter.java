@@ -11,7 +11,6 @@ import java.io.Serializable;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -34,7 +33,6 @@ public class Filter implements Serializable {
 
     //bi-directional many-to-one association to FilterType
     @ManyToOne
-    @JoinColumn(name = "type")
     private FilterType filterType;
 
     public Filter() {

@@ -38,7 +38,7 @@ public class MeasVal implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
-    private Integer unitId;
+    private Integer measUnitId;
 
     private Float error;
 
@@ -104,12 +104,12 @@ public class MeasVal implements Serializable {
         this.lastMod = lastMod;
     }
 
-    public Integer getUnitId() {
-        return this.unitId;
+    public Integer getMeasUnitId() {
+        return this.measUnitId;
     }
 
-    public void setUnitId(Integer unitId) {
-        this.unitId = unitId;
+    public void setMeasUnitId(Integer unitId) {
+        this.measUnitId = unitId;
     }
 
     public Float getError() {

@@ -69,8 +69,8 @@ public class ObjectMerger {
         if (src.getMidSampleDate() != null) {
             target.setMidSampleDate(src.getMidSampleDate());
         }
-        if (src.getStateMpgId() != null) {
-            target.setStateMpgId(src.getStateMpgId());
+        if (src.getMpgCategId() != null) {
+            target.setMpgCategId(src.getMpgCategId());
         }
         if (src.getSampleStartDate() != null) {
             target.setSampleStartDate(src.getSampleStartDate());

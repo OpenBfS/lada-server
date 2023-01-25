@@ -29,7 +29,7 @@ public class SampleSpecif implements Serializable {
 
     private String extId;
 
-    private Integer unitId;
+    private Integer measUnitId;
 
     @Column(insertable = false)
     private Timestamp lastMod;
@@ -69,12 +69,12 @@ public class SampleSpecif implements Serializable {
         this.extId = extId;
     }
 
-    public Integer getUnitId() {
-        return this.unitId;
+    public Integer getMeasUnitId() {
+        return this.measUnitId;
     }
 
-    public void setUnitId(Integer unitId) {
-        this.unitId = unitId;
+    public void setMeasUnitId(Integer unitId) {
+        this.measUnitId = unitId;
     }
 
     public Timestamp getLastMod() {

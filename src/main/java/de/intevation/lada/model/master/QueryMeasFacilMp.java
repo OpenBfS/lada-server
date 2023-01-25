@@ -15,7 +15,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -32,7 +31,6 @@ public class QueryMeasFacilMp implements Serializable {
 
     //bi-directional many-to-one association to QueryUser
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "query")
     private QueryUser queryUser;
 
     public QueryMeasFacilMp() {

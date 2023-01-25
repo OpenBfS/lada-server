@@ -375,7 +375,8 @@ public class SiteService extends LadaService {
     private int getPlausibleRefs(int sampleId){
         Query query =
         repository.queryFromString(
-            "SELECT * FROM get_measms_per_site(:sampleId);").setParameter("sampleId", sampleId);
+            "SELECT * FROM lada.get_measms_per_site(:sampleId);")
+                .setParameter("sampleId", sampleId);
         @SuppressWarnings("unchecked")
         List resultList = query.getResultList();
         return ((int)resultList.get(0));

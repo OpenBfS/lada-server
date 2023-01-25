@@ -41,9 +41,9 @@ public class CoordinatesInVE implements Rule {
     @Override
     public Violation execute(Object object) {
         Site ort = (Site) object;
-        String gemId = "".equals(ort.getMunicId())
+        String gemId = "".equals(ort.getAdminUnitId())
             ? null
-            : ort.getMunicId();
+            : ort.getAdminUnitId();
 
         if (gemId != null && ort.getGeom() != null) {
 

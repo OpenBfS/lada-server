@@ -112,7 +112,7 @@ public class StatusMpService extends LadaService {
             StatusProt status = repository.getByIdPlain(
                 StatusProt.class, messung.getStatus());
             StatusMp kombi = repository.getByIdPlain(
-                StatusMp.class, status.getStatusComb());
+                StatusMp.class, status.getStatusMpId());
 
             QueryBuilder<StatusAccessMpView> errFilter =
                 repository.queryBuilder(StatusAccessMpView.class);

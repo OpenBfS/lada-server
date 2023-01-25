@@ -173,14 +173,14 @@ public class StatusProtService extends LadaService {
 
         if (messung.getStatus() == null) {
             // set the first status as default
-            status.setStatusComb(1);
+            status.setStatusMpId(1);
             return new Response(false, StatusCodes.OP_NOT_POSSIBLE, status);
         } else {
             StatusProt oldStatus = repository.getByIdPlain(
                 StatusProt.class, messung.getStatus());
             StatusMp newKombi =
                 repository.getByIdPlain(
-                    StatusMp.class, status.getStatusComb());
+                    StatusMp.class, status.getStatusMpId());
 
             // Check if the user is allowed to change to the requested
             // status_kombi
@@ -377,7 +377,7 @@ public class StatusProtService extends LadaService {
             repository.queryBuilder(StatusMp.class);
         StatusMp oldKombi =
             repository.getByIdPlain(
-                StatusMp.class, oldStatus.getStatusComb());
+                StatusMp.class, oldStatus.getStatusMpId());
 
         kombiFilter.and("statusLev", oldKombi.getStatusLev().getId());
         kombiFilter.and("statusVal", 8);
@@ -387,7 +387,7 @@ public class StatusProtService extends LadaService {
         statusNew.setDate(new Timestamp(new Date().getTime()));
         statusNew.setMeasFacilId(newStatus.getMeasFacilId());
         statusNew.setMeasmId(newStatus.getMeasmId());
-        statusNew.setStatusComb(newKombi.get(0).getId());
+        statusNew.setStatusMpId(newKombi.get(0).getId());
         statusNew.setText(newStatus.getText());
 
         repository.create(statusNew);
@@ -395,14 +395,14 @@ public class StatusProtService extends LadaService {
         Response retValue;
         StatusMp kombi = repository.getByIdPlain(
             StatusMp.class,
-            oldStatus.getStatusComb()
+            oldStatus.getStatusMpId()
         );
         if (kombi.getStatusLev().getId() == 1) {
             StatusProt nV = new StatusProt();
             nV.setDate(new Timestamp(new Date().getTime()));
             nV.setMeasFacilId(newStatus.getMeasFacilId());
             nV.setMeasmId(newStatus.getMeasmId());
-            nV.setStatusComb(1);
+            nV.setStatusMpId(1);
             nV.setText("");
             retValue = repository.create(nV);
         } else {
@@ -415,7 +415,7 @@ public class StatusProtService extends LadaService {
             // Find a status that has "status_stufe" = "old status_stufe - 1"
             int ndx = -1;
             for (int i = proto.size() - 1; i >= 0; i--) {
-                int curKom = proto.get(i).getStatusComb();
+                int curKom = proto.get(i).getStatusMpId();
                 StatusMp sk =
                     repository.getByIdPlain(
                         StatusMp.class, curKom);
@@ -431,7 +431,7 @@ public class StatusProtService extends LadaService {
             copy.setDate(new Timestamp(new Date().getTime()));
             copy.setMeasFacilId(orig.getMeasFacilId());
             copy.setMeasmId(orig.getMeasmId());
-            copy.setStatusComb(orig.getStatusComb());
+            copy.setStatusMpId(orig.getStatusMpId());
             copy.setText("");
             retValue = repository.create(copy);
         }

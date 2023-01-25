@@ -458,7 +458,7 @@ public class JsonExporter implements Exporter {
                 );
                 ((ObjectNode) nodes.get(i)).put(
                     "name", pz.getName());
-                Integer mehId = pz.getUnitId();
+                Integer mehId = pz.getMeasUnitId();
                 if (mehId != null) {
                 MeasUnit meh = repository.getByIdPlain(
                     MeasUnit.class, mehId);
@@ -647,7 +647,7 @@ public class JsonExporter implements Exporter {
         try {
             JsonNode oNode = mapper.readTree(tmp);
 
-            final String gemIdKey = "municId";
+            final String gemIdKey = "adminUnitId";
             if (oNode.hasNonNull(gemIdKey)) {
                 AdminUnit ve = repository.getByIdPlain(
                     AdminUnit.class,

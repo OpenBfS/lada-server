@@ -54,7 +54,7 @@ public class Mpg implements Serializable {
 
     private Integer regulationId;
 
-    private String municId;
+    private String adminUnitId;
 
     private Integer validEndDate;
 
@@ -74,7 +74,7 @@ public class Mpg implements Serializable {
 
     private String measFacilId;
 
-    private Integer stateMpgId;
+    private Integer mpgCategId;
 
     private String commSample;
 
@@ -98,7 +98,7 @@ public class Mpg implements Serializable {
 
     private Boolean isActive;
 
-    private Integer unitId;
+    private Integer measUnitId;
 
     private String sampleQuant;
 
@@ -154,12 +154,12 @@ public class Mpg implements Serializable {
         this.regulationId = regulationId;
     }
 
-    public String getMunicId() {
-        return this.municId;
+    public String getAdminUnitId() {
+        return this.adminUnitId;
     }
 
-    public void setMunicId(String municId) {
-        this.municId = municId;
+    public void setAdminUnitId(String municId) {
+        this.adminUnitId = municId;
     }
 
     public Integer getValidEndDate() {
@@ -226,12 +226,12 @@ public class Mpg implements Serializable {
         this.measFacilId = measFacilId;
     }
 
-    public Integer getStateMpgId() {
-        return this.stateMpgId;
+    public Integer getMpgCategId() {
+        return this.mpgCategId;
     }
 
-    public void setStateMpgId(Integer stateMpgId) {
-        this.stateMpgId = stateMpgId;
+    public void setMpgCategId(Integer stateMpgId) {
+        this.mpgCategId = stateMpgId;
     }
 
     public String getCommSample() {
@@ -322,12 +322,12 @@ public class Mpg implements Serializable {
         this.isActive = isActive;
     }
 
-    public Integer getUnitId() {
-        return this.unitId;
+    public Integer getMeasUnitId() {
+        return this.measUnitId;
     }
 
-    public void setUnitId(Integer unitId) {
-        this.unitId = unitId;
+    public void setMeasUnitId(Integer unitId) {
+        this.measUnitId = unitId;
     }
 
     public String getSampleQuant() {

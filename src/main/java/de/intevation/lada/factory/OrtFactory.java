@@ -122,8 +122,8 @@ public class OrtFactory {
             if (orte != null && !orte.isEmpty()) {
                 return orte.get(0);
             }
-        } else if (ort.getMunicId() != null) {
-            builder.and("municId", ort.getMunicId());
+        } else if (ort.getAdminUnitId() != null) {
+            builder.and("adminUnitId", ort.getAdminUnitId());
             builder.and("networkId", ort.getNetworkId());
             List<Site> orte =
                 repository.filterPlain(builder.getQuery());
@@ -133,7 +133,7 @@ public class OrtFactory {
                 } else {
                     //get verwaltungseinheiten
                     AdminUnit v = repository.getByIdPlain(
-                        AdminUnit.class, ort.getMunicId());
+                        AdminUnit.class, ort.getAdminUnitId());
                     if (v != null) {
                         for (Site oElem : orte) {
                             //Todo: Check for different kda-types
@@ -180,26 +180,26 @@ public class OrtFactory {
             transformCoordinates(ort);
             hasKoord = true;
         }
-        if (ort.getMunicId() == null && hasKoord) {
+        if (ort.getAdminUnitId() == null && hasKoord) {
             findVerwaltungseinheit(ort);
         }
-        if (ort.getMunicId() != null) {
+        if (ort.getAdminUnitId() != null) {
             if (ort.getStateId() == null) {
                 ort.setStateId(0);
             }
             AdminUnit v = repository.getByIdPlain(
-                AdminUnit.class, ort.getMunicId());
+                AdminUnit.class, ort.getAdminUnitId());
             //Ort exists - check for OrtId
             QueryBuilder<Site> builderExists = repository.queryBuilder(Site.class);
             builderExists.and("networkId", ort.getNetworkId());
-            builderExists.andLike("municId", "%"+ort.getMunicId());
+            builderExists.andLike("adminUnitId", "%"+ort.getAdminUnitId());
             List<Site> ortExists = repository.filterPlain(
                 builderExists.getQuery());
             if (v == null) {
                 ReportItem err = new ReportItem();
                 err.setCode(StatusCodes.IMP_INVALID_VALUE);
                 err.setKey("gem_id");
-                err.setValue(ort.getMunicId());
+                err.setValue(ort.getAdminUnitId());
                 errors.add(err);
                 return null;
             } else if (ortExists.isEmpty()) {
@@ -224,18 +224,18 @@ public class OrtFactory {
                     ort.setSiteClassId(ORTTYP4);
                     //set ortId
                     if (v.getIsMunic()) {
-                        ort.setExtId("GEM_" + ort.getMunicId());
+                        ort.setExtId("GEM_" + ort.getAdminUnitId());
                     } else if (!v.getIsMunic() && v.getIsRuralDist()) {
-                       ort.setExtId("LK_" + ort.getMunicId());
+                       ort.setExtId("LK_" + ort.getAdminUnitId());
                     } else if (!v.getIsMunic()
                             && !v.getIsRuralDist()
                             && v.getIsGovDist()) {
-                        ort.setExtId("RB_" + ort.getMunicId());
+                        ort.setExtId("RB_" + ort.getAdminUnitId());
                     } else if (!v.getIsMunic()
                             && !v.getIsRuralDist()
                             && !v.getIsGovDist()
                             && v.getIsState()) {
-                        ort.setExtId("BL_" + ort.getMunicId());
+                        ort.setExtId("BL_" + ort.getAdminUnitId());
                     }
                 }
                 if (ort.getShortText() == null
@@ -304,14 +304,14 @@ public class OrtFactory {
             return;
         }
         Query q = repository.entityManager()
-            .createQuery("SELECT vg.municId "
+            .createQuery("SELECT vg.adminUnitId "
                 + "FROM AdminBorderView vg "
                 + "WHERE is_munic = TRUE "
                 + "AND contains(vg.shape, :geom) = TRUE");
         q.setParameter("geom", ort.getGeom());
         List<?> ret = q.getResultList();
         if (!ret.isEmpty()) {
-            ort.setMunicId(ret.get(0).toString());
+            ort.setAdminUnitId(ret.get(0).toString());
             ort.setStateId(0);
         }
         return;
