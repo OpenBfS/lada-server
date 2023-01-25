@@ -110,7 +110,6 @@ public class Mpg implements Serializable {
     @JoinTable(
         name = "mpg_sample_specif",
         schema = SchemaName.NAME,
-        joinColumns = @JoinColumn(name = "mpg_id"),
         inverseJoinColumns = @JoinColumn(name = "sample_specif_id")
     )
     private Set<SampleSpecif> sampleSpecifs;

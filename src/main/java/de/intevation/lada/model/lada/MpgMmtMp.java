@@ -42,7 +42,6 @@ public class MpgMmtMp implements Serializable {
     @JoinTable(
         name = "mpg_mmt_measd_mp",
         schema = SchemaName.NAME,
-        joinColumns = @JoinColumn(name = "mpg_mmt_mp_id"),
         inverseJoinColumns = @JoinColumn(name = "measd_id")
     )
     private Set<Measd> measdObjects;
