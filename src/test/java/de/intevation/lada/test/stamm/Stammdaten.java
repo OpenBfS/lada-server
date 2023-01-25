@@ -131,7 +131,7 @@ public class Stammdaten extends ServiceTest {
                 "name",
                 "eudfKeyword",
                 "extId",
-                "unitId"
+                "measUnitId"
             )
         );
         matchers.put("location",

@@ -3,7 +3,7 @@
     "extId": "D_ 00192",
     "longText": "Langer Text",
     "stateId": 0,
-    "municId": "11000000",
+    "adminUnitId": "11000000",
     "isFuzzy": true,
     "spatRefSysId": 5,
     "xCoordExt": "32487030",

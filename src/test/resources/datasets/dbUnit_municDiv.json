@@ -2,7 +2,7 @@
     "master.munic_div": [{
         "id": 1000,
         "network_id": "06",
-        "munic_id": "11000000",
+        "admin_unit_id": "11000000",
         "site_id": 1001,
         "name": "Testname"
     }],
@@ -12,7 +12,7 @@
         "ext_id": "D_ 00192",
         "long_text": "Langer Text",
         "state_id": 0,
-        "munic_id": "11000000",
+        "admin_unit_id": "11000000",
         "is_fuzzy": true,
         "spat_ref_sys_id": 5,
         "coord_x_ext": "32487017",

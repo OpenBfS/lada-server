@@ -99,7 +99,7 @@ public class MesswertTest extends ServiceTest {
             normalizedObject.getJsonArray("data").getJsonObject(0);
 
         /* Verify normalized unit */
-        final String unitK = "unitId";
+        final String unitK = "measUnitId";
         final int unitV = 208; // converted from 207
         Assert.assertEquals(
             unitV,

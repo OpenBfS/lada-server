@@ -705,7 +705,7 @@ public class ImporterTest extends BaseTest {
         List<MeasVal> messwerte = new ArrayList<MeasVal>();
         MeasVal wert1 = new MeasVal();
         wert1.setMeasmId(MID1200);
-        wert1.setUnitId(MEHID207);
+        wert1.setMeasUnitId(MEHID207);
         wert1.setMeasdId(MGID56);
         wert1.setMeasVal(MESS15D);
         messwerte.add(wert1);

@@ -53,7 +53,7 @@ public class ProbeTest extends ServiceTest {
         builder.addNull("midSampleDate");
         builder.addNull("sampleEndDate");
         builder.addNull("datasetCreatorId");
-        builder.addNull("stateMpgId");
+        builder.addNull("mpgCategId");
         builder.add("readonly", false);
         builder.add("owner", true);
         expectedById = builder.build();
