@@ -22,7 +22,7 @@
         "mmt_id": "A3",
         "last_mod": "2015-03-01 12:00:00"
     }],
-    "lada.mpg_mmt_measd_mp": [{
+    "lada.mpg_mmt_mp_measd": [{
         "mpg_mmt_mp_id": 1000,
         "measd_id": 56
     }],

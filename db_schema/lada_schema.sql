@@ -273,7 +273,7 @@ CREATE TABLE mpg_mmt_mp (
 );
 CREATE TRIGGER last_mod_mpg_mmt_mp BEFORE UPDATE ON mpg_mmt_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
-CREATE TABLE mpg_mmt_measd_mp (
+CREATE TABLE mpg_mmt_mp_measd (
     mpg_mmt_mp_id integer REFERENCES mpg_mmt_mp ON DELETE CASCADE,
     measd_id integer REFERENCES master.measd,
     PRIMARY KEY (mpg_mmt_mp_id, measd_id)
