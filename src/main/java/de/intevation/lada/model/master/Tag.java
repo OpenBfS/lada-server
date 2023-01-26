@@ -11,12 +11,12 @@ import java.sql.Timestamp;
 import java.util.Set;
 
 import javax.json.bind.annotation.JsonbTransient;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -57,8 +57,7 @@ public class Tag {
     @Column(insertable = false, updatable = false)
     private Timestamp createdAt;
 
-    @OneToMany
-    @JoinColumn(name = "tag_id", updatable = false)
+    @OneToMany(mappedBy = "tagId", cascade = CascadeType.REMOVE)
     @JsonbTransient
     private Set<TagLink> tagZuordnungs;
 

@@ -102,8 +102,7 @@ public class Mpg implements Serializable {
 
     private String sampleQuant;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "mpg_id", updatable = false, insertable = false)
+    @OneToMany(mappedBy = "mpgId", fetch = FetchType.EAGER)
     private Set<Sample> samples;
 
     @ManyToMany (fetch = FetchType.EAGER)
