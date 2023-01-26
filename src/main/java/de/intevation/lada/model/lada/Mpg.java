@@ -107,7 +107,6 @@ public class Mpg implements Serializable {
 
     @ManyToMany (fetch = FetchType.EAGER)
     @JoinTable(
-        name = "mpg_sample_specif",
         schema = SchemaName.NAME,
         inverseJoinColumns = @JoinColumn(name = "sample_specif_id")
     )

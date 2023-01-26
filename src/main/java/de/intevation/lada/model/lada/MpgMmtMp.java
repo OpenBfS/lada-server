@@ -40,7 +40,6 @@ public class MpgMmtMp implements Serializable {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "mpg_mmt_measd_mp",
         schema = SchemaName.NAME,
         inverseJoinColumns = @JoinColumn(name = "measd_id")
     )
