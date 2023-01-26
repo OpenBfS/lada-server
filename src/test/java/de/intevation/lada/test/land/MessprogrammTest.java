@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.client.Client;
@@ -27,6 +28,7 @@ import de.intevation.lada.test.ServiceTest;
  */
 public class MessprogrammTest extends ServiceTest {
     private JsonObject expectedById;
+    private JsonObject expectedSample;
     private JsonObject create;
 
     @Override
@@ -55,6 +57,11 @@ public class MessprogrammTest extends ServiceTest {
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);
 
+        //Prepare expected sample object
+        builder = Json.createObjectBuilder();
+        builder.add("mpgId", 1000);
+        expectedSample = builder.build();
+
         // Load object to test POST request
         create = readJsonResource("/datasets/messprogramm.json");
         Assert.assertNotNull(create);
@@ -72,6 +79,9 @@ public class MessprogrammTest extends ServiceTest {
             "envDescripDisplay",
             "D: 50 90 01 06 02 05 00 00 00 00 00 00",
             "D: 50 90 01 06 02 05 00 00 00 00 00 01");
+
+        //Check if referencing probe still has an mpgId
+        getById("mpg->sample", "rest/sample/1000", expectedSample);
         JsonObject created =
             create("mpg", "rest/mpg", create);
         delete(
