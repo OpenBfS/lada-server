@@ -44,7 +44,7 @@ public class GridColConf implements Serializable {
 
     private Integer sortIndex;
 
-    private Integer userId;
+    private Integer ladaUserId;
 
     private boolean isVisible;
 
@@ -115,12 +115,12 @@ public class GridColConf implements Serializable {
         this.sortIndex = sortIndex;
     }
 
-    public Integer getUserId() {
-        return this.userId;
+    public Integer getLadaUserId() {
+        return this.ladaUserId;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setLadaUserId(Integer userId) {
+        this.ladaUserId = userId;
     }
 
     public boolean getIsVisible() {

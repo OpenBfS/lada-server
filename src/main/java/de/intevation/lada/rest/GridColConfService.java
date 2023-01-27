@@ -74,8 +74,8 @@ public class GridColConfService extends LadaService {
         Join<MeasFacil, QueryUser> mess =
             value.join("messStelles", javax.persistence.criteria.JoinType.LEFT);
         Predicate filter = builder.equal(root.get("queryUser"), queryUser);
-        Predicate uId = builder.equal(root.get("userId"), userInfo.getUserId());
-        Predicate zeroIdFilter = builder.equal(root.get("userId"), "0");
+        Predicate uId = builder.equal(root.get("ladaUserId"), userInfo.getUserId());
+        Predicate zeroIdFilter = builder.equal(root.get("ladaUserId"), "0");
         Predicate userFilter = builder.or(uId, zeroIdFilter);
         if (userInfo.getMessstellen() != null
             && !userInfo.getMessstellen().isEmpty()
@@ -106,12 +106,12 @@ public class GridColConfService extends LadaService {
         GridColConf gridColumnValue
     ) {
         UserInfo userInfo = authorization.getInfo();
-        if (gridColumnValue.getUserId() != null
-            && !gridColumnValue.getUserId().equals(userInfo.getUserId())
+        if (gridColumnValue.getLadaUserId() != null
+            && !gridColumnValue.getLadaUserId().equals(userInfo.getUserId())
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         } else {
-            gridColumnValue.setUserId(userInfo.getUserId());
+            gridColumnValue.setLadaUserId(userInfo.getUserId());
             GridColMp gridColumn = new GridColMp();
             gridColumn.setId(gridColumnValue.getGridColMpId());
             gridColumnValue.setGridColMp(gridColumn);
@@ -139,7 +139,7 @@ public class GridColConfService extends LadaService {
         // Currently any object can be hijacked by passing it with
         // userId set to the users ID.
         UserInfo userInfo = authorization.getInfo();
-        if (!userInfo.getUserId().equals(gridColumnValue.getUserId())) {
+        if (!userInfo.getUserId().equals(gridColumnValue.getLadaUserId())) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         } else {
             GridColMp gridColumn = repository.getByIdPlain(
@@ -170,7 +170,7 @@ public class GridColConfService extends LadaService {
         UserInfo userInfo = authorization.getInfo();
         GridColConf gridColumnValue = repository.getByIdPlain(
             GridColConf.class, id);
-        if (gridColumnValue.getUserId().equals(userInfo.getUserId())) {
+        if (gridColumnValue.getLadaUserId().equals(userInfo.getUserId())) {
             return repository.delete(gridColumnValue);
         }
         return new Response(false, StatusCodes.NOT_ALLOWED, null);
