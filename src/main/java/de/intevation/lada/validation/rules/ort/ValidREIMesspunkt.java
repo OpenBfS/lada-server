@@ -51,7 +51,7 @@ public class ValidREIMesspunkt implements Rule {
                 String KTAOrtId = ort.getExtId().substring(0,4);
                 QueryBuilder<NuclFacil> builderKtaList =
                     repository.queryBuilder(NuclFacil.class);
-                    builderKtaList.and("code", KTAOrtId);
+                    builderKtaList.and("extId", KTAOrtId);
                 List<NuclFacil> KtaList = repository.filterPlain(builderKtaList.getQuery());
 
                 if (KtaList.size() < 1 || KtaList == null) {
