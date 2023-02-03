@@ -345,7 +345,7 @@ public class ServiceTest {
     }
 
     /**
-     * Test an update service.
+     * Test an update service expecting success.
      * @param name the name of the entity to request.
      * @param parameter the parameters used in the request.
      * @param updateAttribute the name of the attribute to update.
@@ -359,6 +359,34 @@ public class ServiceTest {
         String updateAttribute,
         String oldValue,
         String newValue
+    ) {
+        return update(
+            name,
+            parameter,
+            updateAttribute,
+            oldValue,
+            newValue,
+            Response.Status.OK
+        );
+    }
+
+    /**
+     * Test an update service.
+     * @param name the name of the entity to request.
+     * @param parameter the parameters used in the request.
+     * @param updateAttribute the name of the attribute to update.
+     * @param oldValue the value to replace.
+     * @param newValue the new value to set.
+     * @param expectedStatus Expected HTTP status code
+     * @return The resulting json object.
+     */
+    public JsonObject update(
+        String name,
+        String parameter,
+        String updateAttribute,
+        String oldValue,
+        String newValue,
+        Response.Status expectedStatus
     ) {
         Protocol prot = new Protocol();
         prot.setName(name + " service");
@@ -398,7 +426,13 @@ public class ServiceTest {
             .put(Entity.entity(updatedEntity, MediaType.APPLICATION_JSON));
 
         /* Verify the response*/
-        JsonObject updatedObject = BaseTest.parseResponse(updated, prot);
+        JsonObject updatedObject = BaseTest.parseResponse(
+            updated, prot, expectedStatus);
+        if (!Response.Status.OK.equals(expectedStatus)) {
+            prot.setPassed(true);
+            return updatedObject;
+        }
+
         Assert.assertEquals(newValue,
             updatedObject.getJsonObject("data").getString(updateAttribute));
 
