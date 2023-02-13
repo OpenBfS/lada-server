@@ -92,6 +92,10 @@ public class Site implements Serializable {
     @Column(columnDefinition = "geometry(Point, 4326)")
     private Point geom;
 
+    private Integer img;
+
+    private Integer map;
+
     @Transient
     private boolean readonly;
 
@@ -423,4 +427,21 @@ public class Site implements Serializable {
     ) {
         this.notifications = notifications;
     }
+
+    public Integer getImg() {
+        return img;
+    }
+
+    public void setImg(Integer img) {
+        this.img = img;
+    }
+
+    public Integer getMap() {
+        return map;
+    }
+
+    public void setMap(Integer map) {
+        this.map = map;
+    }
+
 }

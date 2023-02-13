@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.rest;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.servlet.http.HttpServletRequest;
 import javax.persistence.Query;
 import javax.validation.constraints.Pattern;
 
@@ -27,6 +30,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.QueryParam;
@@ -39,6 +43,7 @@ import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.SiteImage;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -358,6 +363,140 @@ public class SiteService extends LadaService {
         }
 
         return repository.delete(ort);
+    }
+
+    @GET
+    @Path("{id}/map")
+    public byte[] getMap(
+        @PathParam("id") Integer id
+    ) {
+        Site site = repository.getByIdPlain(Site.class, id);
+        Integer mapId = site.getMap();
+        if (mapId == null) {
+            return null;
+        }
+        SiteImage img = repository.getByIdPlain(SiteImage.class, mapId);
+        return img.getImg();
+    }
+
+    @POST
+    @Path("{id}/map")
+    public Response uploadMap(
+            @PathParam("id") Integer id,
+            @Context HttpServletRequest request) {
+        Site site = repository.getByIdPlain(Site.class, id);
+        if (!authorization.isAuthorized(
+            site,
+            RequestMethod.PUT,
+            Site.class)
+        ) {
+            return new Response(false, StatusCodes.NOT_ALLOWED, site);
+        }
+        byte[] img = new byte[request.getContentLength()];
+        try {
+            InputStream stream = request.getInputStream();
+            stream.read(img);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Response(false, 500, null);
+        }
+        SiteImage siteImage = new SiteImage();
+        if (site.getMap() != null) {
+            deleteMap(id);
+        }
+        siteImage.setImg(img);
+        Response response = repository.create(siteImage);
+        site.setMap(siteImage.getId());
+        return response;
+    }
+
+    @DELETE
+    @Path("{id}/map")
+    public Response deleteMap(
+        @PathParam("id") Integer id
+    ) {
+        Site site = repository.getByIdPlain(Site.class, id);
+        if (!authorization.isAuthorized(
+            site,
+            RequestMethod.PUT,
+            Site.class)
+        ) {
+            return new Response(false, StatusCodes.NOT_ALLOWED, site);
+        }
+        if (site.getMap() == null) {
+            return new Response(true, StatusCodes.OK, null);
+        }
+        SiteImage siteImage = repository.getByIdPlain(
+                SiteImage.class, site.getMap());
+        site.setMap(null);
+        return repository.delete(siteImage);
+    }
+
+    @GET
+    @Path("{id}/photo")
+    public byte[] getPhoto(
+        @PathParam("id") Integer id
+    ) {
+        Site site = repository.getByIdPlain(Site.class, id);
+        Integer photoId = site.getImg();
+        if (photoId == null) {
+            return null;
+        }
+        SiteImage img = repository.getByIdPlain(SiteImage.class, photoId);
+        return img.getImg();
+    }
+
+    @POST
+    @Path("{id}/photo")
+    public Response uploadPhoto(
+            @PathParam("id") Integer id,
+            @Context HttpServletRequest request) {
+        Site site = repository.getByIdPlain(Site.class, id);
+        if (!authorization.isAuthorized(
+            site,
+            RequestMethod.PUT,
+            Site.class)
+        ) {
+            return new Response(false, StatusCodes.NOT_ALLOWED, site);
+        }
+        byte[] img = new byte[request.getContentLength()];
+        try {
+            InputStream stream = request.getInputStream();
+            stream.read(img);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Response(false, 500, null);
+        }
+        SiteImage siteImage = new SiteImage();
+        if (site.getImg() != null) {
+            deletePhoto(id);
+        }
+        siteImage.setImg(img);
+        Response response = repository.create(siteImage);
+        site.setImg(siteImage.getId());
+        return response;
+    }
+
+    @DELETE
+    @Path("{id}/photo")
+    public Response deletePhoto(
+        @PathParam("id") Integer id
+    ) {
+        Site site = repository.getByIdPlain(Site.class, id);
+        if (!authorization.isAuthorized(
+            site,
+            RequestMethod.PUT,
+            Site.class)
+        ) {
+            return new Response(false, StatusCodes.NOT_ALLOWED, site);
+        }
+        if (site.getImg() == null) {
+            return new Response(true, StatusCodes.OK, null);
+        }
+        SiteImage siteImage = repository.getByIdPlain(
+                SiteImage.class, site.getImg());
+        site.setImg(null);
+        return repository.delete(siteImage);
     }
 
     /**
