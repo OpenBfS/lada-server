@@ -96,6 +96,8 @@ public class Site implements Serializable {
 
     private Integer map;
 
+    private String route;
+
     @Transient
     private boolean readonly;
 
@@ -442,6 +444,14 @@ public class Site implements Serializable {
 
     public void setMap(Integer map) {
         this.map = map;
+    }
+
+    public String getRoute() {
+        return route;
+    }
+
+    public void setRoute(String route) {
+        this.route = route;
     }
 
 }

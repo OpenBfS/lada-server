@@ -719,6 +719,7 @@ CREATE TABLE site (
     munic_div_id integer REFERENCES munic_div,
     img INTEGER REFERENCES site_image(id),
     map INTEGER REFERENCES site_image(id),
+    route character varying(100),
     UNIQUE(ext_id, network_id)
 );
 
