@@ -33,6 +33,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.QueryParam;
 
 import org.jboss.logging.Logger;
@@ -364,95 +366,103 @@ public class SiteService extends LadaService {
         return repository.delete(ort);
     }
 
+
     @GET
     @Path("{id}/map")
-    public byte[] getMap(
-        @PathParam("id") Integer id
-    ) {
+    public javax.ws.rs.core.Response getMap(
+            @PathParam("id") Integer id) {
         Site site = repository.getByIdPlain(Site.class, id);
-        return site.getMap();
+        if (site == null) {
+            return buildResponse(Status.NOT_FOUND);
+        }
+        if (site.getMap() == null) {
+            return buildResponse(Status.NO_CONTENT);
+        }
+        return buildResponse(Status.OK, site.getMap());
     }
 
     @POST
     @Path("{id}/map")
-    public Response uploadMap(
+    public javax.ws.rs.core.Response uploadMap(
             @PathParam("id") Integer id,
             @Context HttpServletRequest request) throws IOException {
         Site site = repository.getByIdPlain(Site.class, id);
         if (!authorization.isAuthorized(
-            site,
-            RequestMethod.PUT,
-            Site.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, site);
+                site,
+                RequestMethod.PUT,
+                Site.class)) {
+            return buildResponse(Status.UNAUTHORIZED);
         }
         byte[] img = extractImageBytes(request);
         site.setMap(img);
-        return repository.update(site);
+        repository.update(site);
+        return buildResponse(Status.OK);
     }
 
     @DELETE
     @Path("{id}/map")
-    public Response deleteMap(
-        @PathParam("id") Integer id
-    ) {
+    public javax.ws.rs.core.Response deleteMap(
+            @PathParam("id") Integer id) {
         Site site = repository.getByIdPlain(Site.class, id);
         if (!authorization.isAuthorized(
-            site,
-            RequestMethod.PUT,
-            Site.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, site);
+                site,
+                RequestMethod.PUT,
+                Site.class)) {
+            return buildResponse(Status.NOT_FOUND);
         }
         site.setMap(null);
-        return repository.update(site);
+        repository.update(site);
+        return buildResponse(Status.OK);
     }
 
     @GET
     @Path("{id}/img")
-    public byte[] getImg(
-        @PathParam("id") Integer id
-    ) {
+    public javax.ws.rs.core.Response getImg(
+            @PathParam("id") Integer id) {
         Site site = repository.getByIdPlain(Site.class, id);
-        return site.getImg();
+        if (site == null) {
+            return buildResponse(Status.NOT_FOUND);
+        }
+        if (site.getImg() == null) {
+            return buildResponse(Status.NO_CONTENT);
+        }
+        return buildResponse(Status.OK, site.getImg());
     }
 
     @POST
     @Path("{id}/img")
-    public Response uploadImg(
+    public javax.ws.rs.core.Response uploadImg(
             @PathParam("id") Integer id,
-            @Context HttpServletRequest request) throws IOException{
+            @Context HttpServletRequest request) throws IOException {
         Site site = repository.getByIdPlain(Site.class, id);
         if (!authorization.isAuthorized(
-            site,
-            RequestMethod.PUT,
-            Site.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, site);
+                site,
+                RequestMethod.PUT,
+                Site.class)) {
+            return buildResponse(Status.UNAUTHORIZED);
         }
         byte[] img = extractImageBytes(request);
         site.setImg(img);
-        return repository.update(site);
+        repository.update(site);
+        return buildResponse(Status.OK);
     }
 
     @DELETE
     @Path("{id}/img")
-    public Response deleteImg(
-        @PathParam("id") Integer id
-    ) {
+    public javax.ws.rs.core.Response deleteImg(
+            @PathParam("id") Integer id) {
         Site site = repository.getByIdPlain(Site.class, id);
         if (!authorization.isAuthorized(
-            site,
-            RequestMethod.PUT,
-            Site.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, site);
+                site,
+                RequestMethod.PUT,
+                Site.class)) {
+            return buildResponse(Status.UNAUTHORIZED);
         }
-        site.setImg(null);
-        return repository.update(site);
+        repository.update(site);
+        return buildResponse(Status.OK);
     }
 
-    private byte[] extractImageBytes (HttpServletRequest request) throws IOException{
+    private byte[] extractImageBytes(HttpServletRequest request) throws IOException {
         int contentLength = request.getContentLength();
         if (contentLength == -1) {
             throw new IOException();
@@ -461,6 +471,18 @@ public class SiteService extends LadaService {
         InputStream stream = request.getInputStream();
         stream.read(img);
         return img;
+    }
+
+    private javax.ws.rs.core.Response buildResponse(Status status) {
+        return buildResponse(status, null);
+    }
+
+    private javax.ws.rs.core.Response buildResponse(Status status, Object entity) {
+        ResponseBuilder builder = javax.ws.rs.core.Response.status(status);
+        if (entity != null) {
+            builder.entity(entity);
+        }
+        return builder.build();
     }
 
     /**
