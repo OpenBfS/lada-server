@@ -17,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -92,9 +93,15 @@ public class Site implements Serializable {
     @Column(columnDefinition = "geometry(Point, 4326)")
     private Point geom;
 
-    private Integer img;
+    @Lob
+    @Type(type="org.hibernate.type.BinaryType")
+    @JsonbTransient
+    private byte[] img;
 
-    private Integer map;
+    @Lob
+    @Type(type="org.hibernate.type.BinaryType")
+    @JsonbTransient
+    private byte[] map;
 
     private String route;
 
@@ -430,19 +437,19 @@ public class Site implements Serializable {
         this.notifications = notifications;
     }
 
-    public Integer getImg() {
+    public byte[] getImg() {
         return img;
     }
 
-    public void setImg(Integer img) {
+    public void setImg(byte[] img) {
         this.img = img;
     }
 
-    public Integer getMap() {
+    public byte[] getMap() {
         return map;
     }
 
-    public void setMap(Integer map) {
+    public void setMap(byte[] map) {
         this.map = map;
     }
 

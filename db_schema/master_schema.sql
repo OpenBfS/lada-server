@@ -684,11 +684,6 @@ CREATE TABLE munic_div (
 );
 CREATE TRIGGER last_mod_munic_div BEFORE UPDATE ON munic_div FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
-CREATE TABLE master.site_image(
-    id SERIAL PRIMARY KEY,
-    img BYTEA NOT NULL
-);
-
 CREATE TABLE site (
     id serial PRIMARY KEY,
     network_id character varying(2) NOT NULL REFERENCES network,
@@ -717,8 +712,8 @@ CREATE TABLE site (
     height_asl real,
     rei_ag_gr_id integer REFERENCES rei_ag_gr,
     munic_div_id integer REFERENCES munic_div,
-    img INTEGER REFERENCES site_image(id),
-    map INTEGER REFERENCES site_image(id),
+    img BYTEA,
+    map BYTEA,
     route character varying(100),
     UNIQUE(ext_id, network_id)
 );

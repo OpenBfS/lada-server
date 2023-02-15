@@ -43,7 +43,6 @@ import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.Site;
-import de.intevation.lada.model.master.SiteImage;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -371,19 +370,14 @@ public class SiteService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Site site = repository.getByIdPlain(Site.class, id);
-        Integer mapId = site.getMap();
-        if (mapId == null) {
-            return null;
-        }
-        SiteImage img = repository.getByIdPlain(SiteImage.class, mapId);
-        return img.getImg();
+        return site.getMap();
     }
 
     @POST
     @Path("{id}/map")
     public Response uploadMap(
             @PathParam("id") Integer id,
-            @Context HttpServletRequest request) {
+            @Context HttpServletRequest request) throws IOException {
         Site site = repository.getByIdPlain(Site.class, id);
         if (!authorization.isAuthorized(
             site,
@@ -392,22 +386,9 @@ public class SiteService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, site);
         }
-        byte[] img = new byte[request.getContentLength()];
-        try {
-            InputStream stream = request.getInputStream();
-            stream.read(img);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new Response(false, 500, null);
-        }
-        SiteImage siteImage = new SiteImage();
-        if (site.getMap() != null) {
-            deleteMap(id);
-        }
-        siteImage.setImg(img);
-        Response response = repository.create(siteImage);
-        site.setMap(siteImage.getId());
-        return response;
+        byte[] img = extractImageBytes(request);
+        site.setMap(img);
+        return repository.update(site);
     }
 
     @DELETE
@@ -423,34 +404,24 @@ public class SiteService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, site);
         }
-        if (site.getMap() == null) {
-            return new Response(true, StatusCodes.OK, null);
-        }
-        SiteImage siteImage = repository.getByIdPlain(
-                SiteImage.class, site.getMap());
         site.setMap(null);
-        return repository.delete(siteImage);
+        return repository.update(site);
     }
 
     @GET
-    @Path("{id}/photo")
-    public byte[] getPhoto(
+    @Path("{id}/img")
+    public byte[] getImg(
         @PathParam("id") Integer id
     ) {
         Site site = repository.getByIdPlain(Site.class, id);
-        Integer photoId = site.getImg();
-        if (photoId == null) {
-            return null;
-        }
-        SiteImage img = repository.getByIdPlain(SiteImage.class, photoId);
-        return img.getImg();
+        return site.getImg();
     }
 
     @POST
-    @Path("{id}/photo")
-    public Response uploadPhoto(
+    @Path("{id}/img")
+    public Response uploadImg(
             @PathParam("id") Integer id,
-            @Context HttpServletRequest request) {
+            @Context HttpServletRequest request) throws IOException{
         Site site = repository.getByIdPlain(Site.class, id);
         if (!authorization.isAuthorized(
             site,
@@ -459,27 +430,14 @@ public class SiteService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, site);
         }
-        byte[] img = new byte[request.getContentLength()];
-        try {
-            InputStream stream = request.getInputStream();
-            stream.read(img);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new Response(false, 500, null);
-        }
-        SiteImage siteImage = new SiteImage();
-        if (site.getImg() != null) {
-            deletePhoto(id);
-        }
-        siteImage.setImg(img);
-        Response response = repository.create(siteImage);
-        site.setImg(siteImage.getId());
-        return response;
+        byte[] img = extractImageBytes(request);
+        site.setImg(img);
+        return repository.update(site);
     }
 
     @DELETE
-    @Path("{id}/photo")
-    public Response deletePhoto(
+    @Path("{id}/img")
+    public Response deleteImg(
         @PathParam("id") Integer id
     ) {
         Site site = repository.getByIdPlain(Site.class, id);
@@ -490,13 +448,19 @@ public class SiteService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, site);
         }
-        if (site.getImg() == null) {
-            return new Response(true, StatusCodes.OK, null);
-        }
-        SiteImage siteImage = repository.getByIdPlain(
-                SiteImage.class, site.getImg());
         site.setImg(null);
-        return repository.delete(siteImage);
+        return repository.update(site);
+    }
+
+    private byte[] extractImageBytes (HttpServletRequest request) throws IOException{
+        int contentLength = request.getContentLength();
+        if (contentLength == -1) {
+            throw new IOException();
+        }
+        byte[] img = new byte[contentLength];
+        InputStream stream = request.getInputStream();
+        stream.read(img);
+        return img;
     }
 
     /**
