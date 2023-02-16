@@ -14,9 +14,14 @@ import java.util.List;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.Protocol;
 import de.intevation.lada.test.ServiceTest;
 
@@ -28,6 +33,8 @@ public class OrtTest extends ServiceTest {
 
     private JsonObject expectedById;
     private JsonObject create;
+    private byte[] imgBytes;
+    private byte[] mapBytes;
 
     @Override
     public void init(
@@ -56,6 +63,51 @@ public class OrtTest extends ServiceTest {
         // Load object to test POST request
         create = readJsonResource("/datasets/ort.json");
         Assert.assertNotNull(create);
+
+        //Create dummy image bytes
+        imgBytes = "siteImage".getBytes();
+        mapBytes = "siteMap".getBytes();
+    }
+
+    /**
+     * Test the site image upload function.
+     *
+     * Passes if:
+     *   - An image can be uploaded using bytes
+     *   - The bytes received via the get interface equal the uploaded bytes
+     * @param bytes Bytes to use for tests
+     * @param parameter Url parameter
+     */
+    private void testUploadImage(byte[] bytes, String parameter) {
+        //Upload image
+        Protocol prot = new Protocol();
+        prot.setName("site image service");
+        prot.setType("create");
+        prot.setPassed(false);
+        protocol.add(prot);
+
+        WebTarget postTarget = client.target(baseUrl + parameter);
+        Response postResponse = postTarget.request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .post(Entity.entity(bytes, MediaType.APPLICATION_JSON));
+        Assert.assertEquals(200, postResponse.getStatus());
+
+        //Get image
+        WebTarget target = client.target(baseUrl + parameter);
+        Response response = target.request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        byte[] responseBytes = response.readEntity(byte[].class);
+        Assert.assertArrayEquals(responseBytes, bytes);
+
+        WebTarget deleteTarget = client.target(baseUrl + parameter);
+        Response deleteResponse = deleteTarget.request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .delete();
+        prot.setPassed(deleteResponse.getStatus() == 200);
     }
 
     /**
@@ -68,6 +120,9 @@ public class OrtTest extends ServiceTest {
             .getJsonObject("data").getInt("id");
         update("site", "rest/site/" + createdId,
             "longText", "Langer Text", "Längerer Text");
+        //Test site images
+        testUploadImage(imgBytes, "rest/site/" + createdId + "/img");
+        testUploadImage(mapBytes, "rest/site/" + createdId + "/map");
         delete("site", "rest/site/" + createdId);
     }
 }
