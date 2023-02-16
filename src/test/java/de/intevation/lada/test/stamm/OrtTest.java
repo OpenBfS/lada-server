@@ -90,7 +90,7 @@ public class OrtTest extends ServiceTest {
         Response postResponse = postTarget.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .post(Entity.entity(bytes, MediaType.APPLICATION_JSON));
+            .post(Entity.entity(bytes, MediaType.APPLICATION_OCTET_STREAM_TYPE));
         Assert.assertEquals(200, postResponse.getStatus());
 
         //Get image

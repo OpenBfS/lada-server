@@ -23,14 +23,16 @@ import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import javax.persistence.Query;
 import javax.validation.constraints.Pattern;
-
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -368,6 +370,7 @@ public class SiteService extends LadaService {
 
     @GET
     @Path("{id}/{type}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public javax.ws.rs.core.Response getSiteImage(
             @PathParam("id") Integer id,
             @PathParam("type") @Pattern(regexp = "img|map") String type) {
@@ -384,6 +387,7 @@ public class SiteService extends LadaService {
 
     @POST
     @Path("{id}/{type}")
+    @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     public javax.ws.rs.core.Response uploadSiteImage(
             @PathParam("id") Integer id,
             @PathParam("type") @Pattern(regexp = "img|map") String type,
