@@ -366,25 +366,27 @@ public class SiteService extends LadaService {
         return repository.delete(ort);
     }
 
-
     @GET
-    @Path("{id}/map")
-    public javax.ws.rs.core.Response getMap(
-            @PathParam("id") Integer id) {
+    @Path("{id}/{type}")
+    public javax.ws.rs.core.Response getSiteImage(
+            @PathParam("id") Integer id,
+            @PathParam("type") @Pattern(regexp = "img|map") String type) {
         Site site = repository.getByIdPlain(Site.class, id);
         if (site == null) {
             return buildResponse(Status.NOT_FOUND);
         }
-        if (site.getMap() == null) {
+        byte[] bytes = type.equals("map") ? site.getMap() : site.getImg();
+        if (bytes == null) {
             return buildResponse(Status.NO_CONTENT);
         }
-        return buildResponse(Status.OK, site.getMap());
+        return buildResponse(Status.OK, bytes);
     }
 
     @POST
-    @Path("{id}/map")
-    public javax.ws.rs.core.Response uploadMap(
+    @Path("{id}/{type}")
+    public javax.ws.rs.core.Response uploadSiteImage(
             @PathParam("id") Integer id,
+            @PathParam("type") @Pattern(regexp = "img|map") String type,
             @Context HttpServletRequest request) throws IOException {
         Site site = repository.getByIdPlain(Site.class, id);
         if (!authorization.isAuthorized(
@@ -394,69 +396,31 @@ public class SiteService extends LadaService {
             return buildResponse(Status.UNAUTHORIZED);
         }
         byte[] img = extractImageBytes(request);
-        site.setMap(img);
+        if (type.equals("map")) {
+            site.setMap(img);
+        } else {
+            site.setImg(img);
+        }
         repository.update(site);
         return buildResponse(Status.OK);
     }
 
     @DELETE
-    @Path("{id}/map")
-    public javax.ws.rs.core.Response deleteMap(
-            @PathParam("id") Integer id) {
-        Site site = repository.getByIdPlain(Site.class, id);
-        if (!authorization.isAuthorized(
-                site,
-                RequestMethod.PUT,
-                Site.class)) {
-            return buildResponse(Status.NOT_FOUND);
-        }
-        site.setMap(null);
-        repository.update(site);
-        return buildResponse(Status.OK);
-    }
-
-    @GET
-    @Path("{id}/img")
-    public javax.ws.rs.core.Response getImg(
-            @PathParam("id") Integer id) {
-        Site site = repository.getByIdPlain(Site.class, id);
-        if (site == null) {
-            return buildResponse(Status.NOT_FOUND);
-        }
-        if (site.getImg() == null) {
-            return buildResponse(Status.NO_CONTENT);
-        }
-        return buildResponse(Status.OK, site.getImg());
-    }
-
-    @POST
-    @Path("{id}/img")
-    public javax.ws.rs.core.Response uploadImg(
+    @Path("{id}/{type}")
+    public javax.ws.rs.core.Response deleteSiteImage(
             @PathParam("id") Integer id,
-            @Context HttpServletRequest request) throws IOException {
+            @PathParam("type") @Pattern(regexp = "img|map") String type) {
         Site site = repository.getByIdPlain(Site.class, id);
         if (!authorization.isAuthorized(
                 site,
                 RequestMethod.PUT,
                 Site.class)) {
-            return buildResponse(Status.UNAUTHORIZED);
+            return buildResponse(Status.NOT_FOUND);
         }
-        byte[] img = extractImageBytes(request);
-        site.setImg(img);
-        repository.update(site);
-        return buildResponse(Status.OK);
-    }
-
-    @DELETE
-    @Path("{id}/img")
-    public javax.ws.rs.core.Response deleteImg(
-            @PathParam("id") Integer id) {
-        Site site = repository.getByIdPlain(Site.class, id);
-        if (!authorization.isAuthorized(
-                site,
-                RequestMethod.PUT,
-                Site.class)) {
-            return buildResponse(Status.UNAUTHORIZED);
+        if (type.equals("map")) {
+            site.setMap(null);
+        } else {
+            site.setImg(null);
         }
         repository.update(site);
         return buildResponse(Status.OK);
