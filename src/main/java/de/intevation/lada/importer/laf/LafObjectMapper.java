@@ -538,6 +538,20 @@ public class LafObjectMapper {
                             merger.mergeEntnahmeOrt(newProbe.getId(), eOrt);
                         }
                         if(uOrte.size()>0){
+                            //remove present U-Orte
+                            QueryBuilder<Ortszuordnung> builderUOrt =
+                                repository.queryBuilder(Ortszuordnung.class);
+                                builderUOrt.and("probeId", newProbe.getId());
+                                builderUOrt.and("ortszuordnungTyp", "U");
+                            Response uOrtQuery =
+                                repository.filter(builderUOrt.getQuery());
+                            @SuppressWarnings("unchecked")
+                            List<Ortszuordnung> uOrteProbe = (List<Ortszuordnung>) uOrtQuery.getData();
+                            if (!uOrteProbe.isEmpty()){
+                                for (Ortszuordnung elemOrt : uOrteProbe){
+                                    repository.delete(elemOrt);
+                                }
+                            }
                             merger.mergeUrsprungsOrte(newProbe.getId(), uOrte);
                         }
                     } else {
