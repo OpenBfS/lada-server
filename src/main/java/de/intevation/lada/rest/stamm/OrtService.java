@@ -228,6 +228,7 @@ public class OrtService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
+        Response response = repository.getById(Ort.class, id);
         Ort ort = repository.getByIdPlain(Ort.class, id);
         if (ort == null) {
             return new Response(false, StatusCodes.NOT_EXISTING, null);
@@ -246,11 +247,11 @@ public class OrtService extends LadaService {
         );
         Violation violation = validator.validate(ort);
             if (violation.hasErrors() || violation.hasWarnings()) {
-                ort.setErrors(violation.getErrors());
-                ort.setWarnings(violation.getWarnings());
-                ort.setNotifications(violation.getNotifications());
+                response.setErrors(violation.getErrors());
+                response.setWarnings(violation.getWarnings());
+                response.setNotifications(violation.getNotifications());
             }
-        return new Response(true, StatusCodes.OK, ort);
+               return authorization.filter(response,Ort.class);
     }
 
     /**
