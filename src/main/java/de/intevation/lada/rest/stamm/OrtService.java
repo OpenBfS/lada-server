@@ -229,7 +229,7 @@ public class OrtService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Response response = repository.getById(Ort.class, id);
-        Ort ort = repository.getByIdPlain(Ort.class, id);
+        Ort ort = (Ort) response.getData();
         if (ort == null) {
             return new Response(false, StatusCodes.NOT_EXISTING, null);
         }
