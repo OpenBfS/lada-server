@@ -67,6 +67,10 @@ public class LafImportService extends LadaService {
     private Importer importer;
 
     @Inject
+    private Logger logger;
+
+
+    @Inject
     private Repository repository;
 
     /**
@@ -130,7 +134,8 @@ public class LafImportService extends LadaService {
         @Context HttpServletRequest request
     ) {
         UserInfo userInfo = authorization.getInfo();
-
+        logger.debug("Importing!");
+        logger.debug(jsonInput);
         Charset charset;
         try {
             charset = Charset.forName(jsonInput.getEncoding());
@@ -140,6 +145,7 @@ public class LafImportService extends LadaService {
                 StatusCodes.IMP_INVALID_VALUE,
                 "No valid encoding name given");
         }
+        logger.debug("I arrived here ... somehow");
 
         //Contains: fileName: fileContent as String
         Map<String, String> files = new HashMap<String, String>();
