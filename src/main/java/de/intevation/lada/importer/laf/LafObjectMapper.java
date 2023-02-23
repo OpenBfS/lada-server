@@ -119,6 +119,14 @@ public class LafObjectMapper {
     private Validator statusValidator;
 
     @Inject
+    @ValidationConfig(type = "KommentarP")
+    private Validator commentPValidator;
+
+    @Inject
+    @ValidationConfig(type = "KommentarM")
+    private Validator commentMValidator;
+
+    @Inject
     private ObjectMerger merger;
 
     @Inject
@@ -1179,26 +1187,6 @@ public class LafObjectMapper {
             return null;
         }
 
-        // TODO: Why does the following duplicate a validation rule?
-        QueryBuilder<KommentarP> kommentarBuilder = repository
-            .queryBuilder(KommentarP.class)
-            .and("probeId", probe.getId());
-        List<KommentarP> kommentarExist = repository.filterPlain(
-            kommentarBuilder.getQuery());
-
-        // TODO: Should be the job of EXISTS and a WHERE-clause in database
-        if (kommentarExist.stream().anyMatch(
-                elem -> elem.getText().trim().replace(" ", "").toUpperCase()
-                .equals(attributes.get("TEXT").trim().replace(" ", "")
-                    .toUpperCase()))
-        ) {
-            currentNotifications.add(
-                new ReportItem(
-                    "PROBENKOMMENTAR",
-                    attributes.get("TEXT"),
-                    StatusCodes.IMP_DUPLICATE));
-            return null;
-        }
         KommentarP kommentar = new KommentarP();
         kommentar.setProbeId(probe.getId());
         kommentar.setText(attributes.get("TEXT"));
@@ -1226,6 +1214,26 @@ public class LafObjectMapper {
                     StatusCodes.NOT_ALLOWED));
             return null;
         }
+
+        Violation commentViolation = commentPValidator.validate(kommentar);
+
+        if (commentViolation.hasErrors()||commentViolation.hasWarnings()){
+            if (commentViolation.hasErrors()){
+                commentViolation.getErrors().forEach((k, v) -> {
+                    v.forEach((value) -> {
+                        currentErrors.add(new ReportItem("Status ", k, value));
+                    });
+                });
+            } else if (commentViolation.hasWarnings()){
+                commentViolation.getWarnings().forEach((k, v) -> {
+                    v.forEach((value) -> {
+                        currentWarnings.add(new ReportItem("Status ", k, value));
+                    });
+                });
+            }
+            return null;
+        }
+
         return kommentar;
     }
 
@@ -1480,26 +1488,6 @@ public class LafObjectMapper {
                     Instant.now().atZone(ZoneOffset.UTC).toInstant()));
         }
 
-        // TODO: Why does the following duplicate a validation rule?
-        QueryBuilder<KommentarM> kommentarBuilder = repository
-            .queryBuilder(KommentarM.class)
-            .and("messungsId", messungsId);
-        List<KommentarM> kommentarExist = repository.filterPlain(
-            kommentarBuilder.getQuery());
-
-        // TODO: Should be the job of EXISTS and a WHERE-clause in database
-        if (kommentarExist.stream().anyMatch(
-                elem -> elem.getText().trim().replace(" ", "").toUpperCase()
-                .equals(attributes.get("TEXT").trim().replace(" ", "")
-                    .toUpperCase()))
-        ) {
-            currentNotifications.add(
-                new ReportItem(
-                    "MESSUNGKOMMENTAR",
-                    attributes.get("TEXT"),
-                    StatusCodes.IMP_DUPLICATE));
-            return null;
-        }
         kommentar.setText(attributes.get("TEXT"));
         doDefaults(kommentar);
         doConverts(kommentar);
@@ -1512,6 +1500,26 @@ public class LafObjectMapper {
                     StatusCodes.NOT_ALLOWED));
             return null;
         }
+
+        Violation commentViolation = commentMValidator.validate(kommentar);
+
+        if (commentViolation.hasErrors()||commentViolation.hasWarnings()){
+            if (commentViolation.hasErrors()){
+                commentViolation.getErrors().forEach((k, v) -> {
+                    v.forEach((value) -> {
+                        currentWarnings.add(new ReportItem("Status ", k, value));
+                    });
+                });
+            } else if (commentViolation.hasWarnings()){
+                commentViolation.getWarnings().forEach((k, v) -> {
+                    v.forEach((value) -> {
+                        currentWarnings.add(new ReportItem("Status ", k, value));
+                    });
+                });
+            }
+            return null;
+        }
+
         return kommentar;
     }
 
