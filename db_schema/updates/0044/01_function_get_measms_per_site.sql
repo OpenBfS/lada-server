@@ -1,6 +1,7 @@
 --
 -- Name: get_measms_per_site(site_id int); Type: FUNCTION; Schema: lada; Owner: -
 --
+SET role lada;
 
 CREATE OR REPLACE FUNCTION lada.get_measms_per_site (site_id int)
 RETURNS int
