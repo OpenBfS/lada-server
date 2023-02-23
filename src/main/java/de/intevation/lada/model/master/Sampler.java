@@ -54,6 +54,10 @@ public class Sampler implements Serializable {
 
     private String phone;
 
+    private String phoneMobile;
+
+    private String email;
+
     private String routePlanning;
 
     private String type;
@@ -194,6 +198,23 @@ public class Sampler implements Serializable {
     public void setReferenceCount(Integer referenceCount) {
         this.referenceCount = referenceCount;
     }
+
+    public String getPhoneMobile() {
+        return phoneMobile;
+    }
+
+    public void setPhoneMobile(String phoneMobile) {
+        this.phoneMobile = phoneMobile;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     /**
      * @return the readonly
      */
