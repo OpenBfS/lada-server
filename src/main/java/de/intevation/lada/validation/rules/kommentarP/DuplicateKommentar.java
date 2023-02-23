@@ -47,7 +47,7 @@ public class DuplicateKommentar implements Rule {
         }
 
         if (isExisting(kommentar)) {
-            violation.addError("Kommentar", StatusCodes.VAL_EXISTS);
+            violation.addWarning("Kommentar", StatusCodes.VAL_EXISTS);
             return violation;
         }
         return null;

@@ -169,7 +169,7 @@ public class KommentarMService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         Violation violation = validator.validate(kommentar);
-        if (violation.hasErrors()) {
+        if (violation.hasErrors()||violation.hasWarnings()) {
             Response response =
                 new Response(false, StatusCodes.VAL_EXISTS, kommentar);
             return response;
@@ -214,7 +214,7 @@ public class KommentarMService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         Violation violation = validator.validate(kommentar);
-        if (violation.hasErrors()) {
+        if (violation.hasErrors()||violation.hasWarnings()) {
             Response response =
                 new Response(false, StatusCodes.VAL_EXISTS, kommentar);
             return response;
