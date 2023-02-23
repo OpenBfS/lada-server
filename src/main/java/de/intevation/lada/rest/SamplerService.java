@@ -10,6 +10,7 @@ package de.intevation.lada.rest;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -92,7 +93,7 @@ public class SamplerService extends LadaService {
 
     @POST
     public Response create(
-        Sampler probenehmer
+        @Valid Sampler probenehmer
     ) {
         if (!authorization.isAuthorized(
             probenehmer,
@@ -117,7 +118,7 @@ public class SamplerService extends LadaService {
     @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
-        Sampler probenehmer
+        @Valid Sampler probenehmer
     ) {
         if (!authorization.isAuthorized(
             probenehmer,

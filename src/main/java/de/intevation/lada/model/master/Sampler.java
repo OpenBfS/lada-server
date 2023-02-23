@@ -17,6 +17,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Email;
 
 
 
@@ -56,6 +57,7 @@ public class Sampler implements Serializable {
 
     private String phoneMobile;
 
+    @Email
     private String email;
 
     private String routePlanning;
