@@ -785,7 +785,7 @@ CREATE TABLE sampler (
     street character varying(30),
     phone character varying(20),
     phone_mobile character varying(20),
-    email character varying(20),
+    email character varying(254),
     route_planning character varying(3),
     type character(1),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
