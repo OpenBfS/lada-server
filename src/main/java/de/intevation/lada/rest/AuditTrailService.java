@@ -90,7 +90,6 @@ public class AuditTrailService extends LadaService {
         }
     }
 
-//    @Inject Logger logger;
     /**
      * The data repository granting read/write access.
      */
@@ -212,15 +211,18 @@ public class AuditTrailService extends LadaService {
                 Messung messung =
                     repository.getByIdPlain(
                         Messung.class, a.getMessungsId());
-                StatusProtokoll status =
+                if (messung != null) {
+                    StatusProtokoll status =
                     repository.getByIdPlain(
                         StatusProtokoll.class, messung.getStatus());
-                if (status.getStatusKombi() == 1
-                    && !userInfo.getMessstellen().contains(probe.getMstId())
-                ) {
+                    if (status.getStatusKombi() == 1
+                        && !userInfo.getMessstellen().contains(probe.getMstId())
+                    ) {
+                        continue;
+                    }
+                } else {
                     continue;
                 }
-
             }
             entries.add(createEntry(a, mapper));
         }
