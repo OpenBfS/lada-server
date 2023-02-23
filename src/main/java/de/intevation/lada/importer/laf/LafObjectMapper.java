@@ -1659,7 +1659,7 @@ public class LafObjectMapper {
         if (statusViolation.hasWarnings()) {
             statusViolation.getWarnings().forEach((k, v) -> {
                 v.forEach((value) -> {
-                    currentErrors.add(new ReportItem("Status ", k, value));
+                    currentWarnings.add(new ReportItem("Status ", k, value));
                 });
             });
         }
