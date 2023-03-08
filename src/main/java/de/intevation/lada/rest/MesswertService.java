@@ -153,9 +153,8 @@ public class MesswertService extends LadaService {
                 }
             }
             return new Response(true, StatusCodes.OK, messwerts);
-        } else {
-            return r;
         }
+        return r;
     }
 
     /**
@@ -305,9 +304,6 @@ public class MesswertService extends LadaService {
         }
 
         Response response = repository.update(messwert);
-        if (!response.getSuccess()) {
-            return response;
-        }
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
         }
