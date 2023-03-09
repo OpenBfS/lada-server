@@ -119,6 +119,14 @@ public class LafObjectMapper {
     private Validator statusValidator;
 
     @Inject
+    @ValidationConfig(type = "KommentarP")
+    private Validator commentPValidator;
+
+    @Inject
+    @ValidationConfig(type = "KommentarM")
+    private Validator commentMValidator;
+
+    @Inject
     private ObjectMerger merger;
 
     @Inject
@@ -538,6 +546,20 @@ public class LafObjectMapper {
                             merger.mergeEntnahmeOrt(newProbe.getId(), eOrt);
                         }
                         if(uOrte.size()>0){
+                            //remove present U-Orte
+                            QueryBuilder<Geolocat> builderUOrt =
+                                repository.queryBuilder(Geolocat.class);
+                                builderUOrt.and("probeId", newProbe.getId());
+                                builderUOrt.and("ortszuordnungTyp", "U");
+                            Response uOrtQuery =
+                                repository.filter(builderUOrt.getQuery());
+                            @SuppressWarnings("unchecked")
+                            List<Geolocat> uOrteProbe = (List<Geolocat>) uOrtQuery.getData();
+                            if (!uOrteProbe.isEmpty()){
+                                for (Geolocat elemOrt : uOrteProbe){
+                                    repository.delete(elemOrt);
+                                }
+                            }
                             merger.mergeUrsprungsOrte(newProbe.getId(), uOrte);
                         }
                     } else {
@@ -1212,6 +1234,26 @@ public class LafObjectMapper {
                     StatusCodes.NOT_ALLOWED));
             return null;
         }
+
+        Violation commentViolation = commentPValidator.validate(kommentar);
+
+        if (commentViolation.hasErrors()||commentViolation.hasWarnings()){
+            if (commentViolation.hasErrors()){
+                commentViolation.getErrors().forEach((k, v) -> {
+                    v.forEach((value) -> {
+                        currentErrors.add(new ReportItem("Status ", k, value));
+                    });
+                });
+            } else if (commentViolation.hasWarnings()){
+                commentViolation.getWarnings().forEach((k, v) -> {
+                    v.forEach((value) -> {
+                        currentWarnings.add(new ReportItem("Status ", k, value));
+                    });
+                });
+            }
+            return null;
+        }
+
         return kommentar;
     }
 
@@ -1498,6 +1540,26 @@ public class LafObjectMapper {
                     StatusCodes.NOT_ALLOWED));
             return null;
         }
+
+        Violation commentViolation = commentMValidator.validate(kommentar);
+
+        if (commentViolation.hasErrors()||commentViolation.hasWarnings()){
+            if (commentViolation.hasErrors()){
+                commentViolation.getErrors().forEach((k, v) -> {
+                    v.forEach((value) -> {
+                        currentWarnings.add(new ReportItem("Status ", k, value));
+                    });
+                });
+            } else if (commentViolation.hasWarnings()){
+                commentViolation.getWarnings().forEach((k, v) -> {
+                    v.forEach((value) -> {
+                        currentWarnings.add(new ReportItem("Status ", k, value));
+                    });
+                });
+            }
+            return null;
+        }
+
         return kommentar;
     }
 
@@ -1637,7 +1699,7 @@ public class LafObjectMapper {
         if (statusViolation.hasWarnings()) {
             statusViolation.getWarnings().forEach((k, v) -> {
                 v.forEach((value) -> {
-                    currentErrors.add(new ReportItem("Status ", k, value));
+                    currentWarnings.add(new ReportItem("Status ", k, value));
                 });
             });
         }
@@ -1742,11 +1804,11 @@ public class LafObjectMapper {
                     //check for Koordinates U_Ort (primary): If none are present, assume Koordinates
                     //in P_Ort. If P_Ort is not valid - this import must fail.
                     if (uort.get(0).get("U_KOORDINATEN_ART_S") != null
-                    && uort.get(0).get("U_KOORDINATEN_ART_S").equals("")
+                    && !uort.get(0).get("U_KOORDINATEN_ART_S").equals("")
                     && uort.get(0).get("U_KOORDINATEN_X") != null
-                    && uort.get(0).get("U_KOORDINATEN_X").equals("")
+                    && !uort.get(0).get("U_KOORDINATEN_X").equals("")
                     && uort.get(0).get("U_KOORDINATEN_Y") != null
-                    && uort.get(0).get("U_KOORDINATEN_Y").equals("")
+                    && !uort.get(0).get("U_KOORDINATEN_Y").equals("")
                     ) {
                         o = findOrCreateOrt(uort.get(0), "U_", probe);
                     }

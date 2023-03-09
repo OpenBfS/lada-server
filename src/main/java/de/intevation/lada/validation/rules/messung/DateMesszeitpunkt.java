@@ -64,10 +64,9 @@ public class DateMesszeitpunkt implements Rule {
 
         if ((probe.getSampleStartDate() != null
             && probe.getSampleStartDate().after(messung.getMeasmStartDate())
-            || probe.getSampleEndDate() != null
+            || (probe.getSampleEndDate() != null
             && probe.getSampleEndDate().after(messung.getMeasmStartDate()))
-            && (probe.getSampleMethId() != null
-                && (probe.getSampleMethId() == 3 || probe.getSampleMethId() == 9))
+            )
         ) {
             Violation violation = new Violation();
             violation.addWarning(

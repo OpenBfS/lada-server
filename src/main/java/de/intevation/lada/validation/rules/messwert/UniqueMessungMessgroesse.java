@@ -32,17 +32,19 @@ public class UniqueMessungMessgroesse implements Rule {
     @Override
     public Violation execute(Object object) {
         MeasVal messwert = (MeasVal) object;
+
+        final String measdIdKey = "measdId";
         QueryBuilder<MeasVal> messwertQuery =
             repository.queryBuilder(MeasVal.class);
         messwertQuery.and("measmId", messwert.getMeasmId());
-        messwertQuery.and("measdId", messwert.getMeasdId());
+        messwertQuery.and(measdIdKey, messwert.getMeasdId());
         List<MeasVal> result =
             repository.filterPlain(messwertQuery.getQuery());
         if (!result.isEmpty()
             && !result.get(0).getId().equals(messwert.getId())
         ) {
             Violation violation = new Violation();
-            violation.addError("measdId", StatusCodes.VALUE_AMBIGOUS);
+            violation.addError(measdIdKey, StatusCodes.VALUE_AMBIGOUS);
             return violation;
         }
         return null;
