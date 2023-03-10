@@ -304,7 +304,7 @@ public class OrtFactory {
             return;
         }
         Query q = repository.entityManager()
-            .createQuery("SELECT vg.adminUnitId "
+            .createQuery("SELECT vg.municId "
                 + "FROM AdminBorderView vg "
                 + "WHERE is_munic = TRUE "
                 + "AND contains(vg.shape, :geom) = TRUE");
