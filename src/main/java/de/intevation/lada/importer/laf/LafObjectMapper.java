@@ -549,8 +549,8 @@ public class LafObjectMapper {
                             //remove present U-Orte
                             QueryBuilder<Geolocat> builderUOrt =
                                 repository.queryBuilder(Geolocat.class);
-                                builderUOrt.and("probeId", newProbe.getId());
-                                builderUOrt.and("ortszuordnungTyp", "U");
+                                builderUOrt.and("sampleId", newProbe.getId());
+                                builderUOrt.and("typeRegulation", "U");
                             Response uOrtQuery =
                                 repository.filter(builderUOrt.getQuery());
                             @SuppressWarnings("unchecked")
