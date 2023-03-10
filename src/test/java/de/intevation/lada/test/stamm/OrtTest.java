@@ -63,6 +63,11 @@ public class OrtTest extends ServiceTest {
      */
     public final void execute() {
         get("ort", "rest/site");
+
+        //Test search interface
+        JsonObject result = get("site-search", "rest/site?search=Text");
+        Assert.assertNotEquals(0, result.getJsonArray("data").size());
+
         getById("ort", "rest/site/1000", expectedById);
         int createdId = create("site", "rest/site", create)
             .getJsonObject("data").getInt("id");
