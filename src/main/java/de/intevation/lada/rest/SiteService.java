@@ -117,7 +117,7 @@ public class SiteService extends LadaService {
         }
         if (search != null) {
             Join<Site, AdminUnit> join =
-                root.join("munic", JoinType.LEFT);
+                root.join("adminUnit", JoinType.LEFT);
             String pattern = "%" + search + "%";
             Predicate idFilter = builder.like(root.get("extId"), pattern);
             Predicate kurzTextFilter =
@@ -125,7 +125,7 @@ public class SiteService extends LadaService {
             Predicate langtextFilter =
                 builder.like(root.get("longText"), pattern);
             Predicate bezFilter =
-                builder.like(join.get("bezeichnung"), pattern);
+                builder.like(join.get("name"), pattern);
             Predicate searchFilter =
                 builder.or(idFilter, kurzTextFilter, langtextFilter, bezFilter);
             filter =
