@@ -17,7 +17,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -33,14 +34,17 @@ public class MessprogrammKategorie implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull
     private String bezeichnung;
 
+    @NotBlank
     private String code;
 
     @Column(name = "letzte_aenderung", insertable = false)
     private Timestamp letzteAenderung;
 
     @Column(name = "netzbetreiber_id")
+    @NotBlank
     private String netzbetreiberId;
 
     @Transient

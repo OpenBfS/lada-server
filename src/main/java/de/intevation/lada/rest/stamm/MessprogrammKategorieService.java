@@ -10,6 +10,7 @@ package de.intevation.lada.rest.stamm;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -116,7 +117,7 @@ public class MessprogrammKategorieService extends LadaService {
     @POST
     @Path("/")
     public Response create(
-        MessprogrammKategorie kategorie
+        @Valid MessprogrammKategorie kategorie
     ) {
         if (!authorization.isAuthorized(
             kategorie,
@@ -141,7 +142,7 @@ public class MessprogrammKategorieService extends LadaService {
     @Path("/{id}")
     public Response update(
         @PathParam("id") Integer id,
-        MessprogrammKategorie kategorie
+        @Valid MessprogrammKategorie kategorie
     ) {
         if (!authorization.isAuthorized(
             kategorie,
