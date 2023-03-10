@@ -40,14 +40,13 @@ public class DuplicateKommentar implements Rule {
         CommSample kommentar = (CommSample) object;
         Violation violation = new Violation();
 
-        if (kommentar.getSampleId() == null
-           || kommentar.getSampleId().equals("")){
-            violation.addError("probe_id", StatusCodes.VALUE_MISSING);
+        if (kommentar.getSampleId() == null) {
+            violation.addError("sample_id", StatusCodes.VALUE_MISSING);
             return violation;
         }
 
         if (isExisting(kommentar)) {
-            violation.addWarning("Kommentar", StatusCodes.VAL_EXISTS);
+            violation.addWarning("Comment", StatusCodes.VAL_EXISTS);
             return violation;
         }
         return null;
