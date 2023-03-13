@@ -17,7 +17,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -33,13 +34,16 @@ public class MpgCateg implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull
     private String name;
 
+    @NotBlank
     private String extId;
 
     @Column(insertable = false)
     private Timestamp lastMod;
 
+    @NotBlank
     private String networkId;
 
     @Transient

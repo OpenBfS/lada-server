@@ -10,6 +10,7 @@ package de.intevation.lada.rest;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -90,7 +91,7 @@ public class MpgCategService extends LadaService {
 
     @POST
     public Response create(
-        MpgCateg kategorie
+        @Valid MpgCateg kategorie
     ) {
         if (!authorization.isAuthorized(
             kategorie,
@@ -115,7 +116,7 @@ public class MpgCategService extends LadaService {
     @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
-        MpgCateg kategorie
+        @Valid MpgCateg kategorie
     ) {
         if (!authorization.isAuthorized(
             kategorie,
