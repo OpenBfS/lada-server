@@ -246,25 +246,25 @@ public class AuditTrailService extends LadaService {
         ObjectNode data =
             translateValues((ObjectNode) audit.getChangedFields());
         node.putPOJO("changedFields", data);
-        if ("ort".equals(audit.getTableName())) {
-            node.put("identifier", audit.getRowData().get("ort_id").toString());
+        if ("site".equals(audit.getTableName())) {
+            node.put("identifier", audit.getRowData().get("ext_id").toString());
         }
-        if ("kommentar_p".equals(audit.getTableName())) {
-            node.put("identifier", audit.getRowData().get("datum").toString());
+        if ("comm_sample".equals(audit.getTableName())) {
+            node.put("identifier", audit.getRowData().get("date").toString());
         }
-        if ("zusatz_wert".equals(audit.getTableName())) {
-            node.put("identifier", audit.getRowData().get("pzs_id").toString());
+        if ("sample_specif_meas_val".equals(audit.getTableName())) {
+            node.put("identifier", audit.getRowData().get("sample_specif_id").toString());
         }
-        if ("ortszuordnung".equals(audit.getTableName())) {
+        if ("geolocat".equals(audit.getTableName())) {
             String value = translateId(
-                "ort",
-                "ort_id",
-                audit.getRowData().get("ort_id").toString(),
+                "site",
+                "ext_id",
+                audit.getRowData().get("site_id").toString(),
                 "id",
                 de.intevation.lada.model.master.SchemaName.NAME);
             node.put("identifier", value);
         }
-        if ("messung".equals(audit.getTableName())) {
+        if ("measm".equals(audit.getTableName())) {
             Measm m = repository.getByIdPlain(
                 Measm.class, audit.getObjectId());
             node.put("identifier",
@@ -279,18 +279,18 @@ public class AuditTrailService extends LadaService {
             Measm m = repository.getByIdPlain(
                 Measm.class, audit.getMeasmId());
             ObjectNode identifier = node.putObject("identifier");
-            identifier.put("messung",
+            identifier.put("measm",
                 (m.getMinSampleId() == null)
                 ? m.getExtId().toString() : m.getMinSampleId());
-            if ("kommentar_m".equals(audit.getTableName())) {
+            if ("comm_measm".equals(audit.getTableName())) {
                 identifier.put("identifier",
-                    audit.getRowData().get("datum").toString());
+                    audit.getRowData().get("date").toString());
             }
-            if ("messwert".equals(audit.getTableName())) {
+            if ("meas_val".equals(audit.getTableName())) {
                 String value = translateId(
-                    "messgroesse",
-                    "messgroesse",
-                    audit.getRowData().get("messgroesse_id").toString(),
+                    "measd",
+                    "name",
+                    audit.getRowData().get("measd_id").toString(),
                     "id",
                     de.intevation.lada.model.master.SchemaName.NAME);
                 identifier.put("identifier", value);
@@ -373,14 +373,14 @@ public class AuditTrailService extends LadaService {
         node.put("action", audit.getAction());
         ObjectNode data = (ObjectNode) audit.getChangedFields();
         node.putPOJO("changedFields", data);
-        if ("kommentar_m".equals(audit.getTableName())) {
-            node.put("identifier", audit.getRowData().get("datum").toString());
+        if ("comm_measm".equals(audit.getTableName())) {
+            node.put("identifier", audit.getRowData().get("date").toString());
         }
-        if ("messwert".equals(audit.getTableName())) {
+        if ("meas_val".equals(audit.getTableName())) {
             String value = translateId(
-                "messgroesse",
-                "messgroesse",
-                audit.getRowData().get("messgroesse_id").toString(),
+                "measd",
+                "name",
+                audit.getRowData().get("measd_id").toString(),
                 "id",
                 de.intevation.lada.model.master.SchemaName.NAME);
             node.put("identifier", value);
