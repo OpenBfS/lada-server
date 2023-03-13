@@ -25,6 +25,14 @@ services:
       - 9990:9990 # Wildfly management console
       - 8787:8787 # Remote debugging of server code
       - 5005:5005 # Remote debugging of test code
+  printer:
+    container_name: "lada-printer"
+    image: "koala/gis_print_templates"
+    networks:
+      - lada_network
+    volumes:
+      # Assumes checkout in ../gis_print_templates/:
+      - ../gis_print_templates/:/usr/local/tomcat/webapps/bfs-printservice/print-apps
   client:
     container_name: "lada-client"
     image: "koala/lada_client"
@@ -32,6 +40,7 @@ services:
       - lada_network
     depends_on:
       - server
+      - printer
     volumes:
       - ../client:/usr/local/lada # Assumes client checkout in ../client
     ports:
