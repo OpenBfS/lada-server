@@ -28,6 +28,7 @@ public class OrtTest extends ServiceTest {
 
     private JsonObject expectedById;
     private JsonObject create;
+    private JsonObject createIncomplete;
 
     @Override
     public void init(
@@ -55,6 +56,7 @@ public class OrtTest extends ServiceTest {
 
         // Load object to test POST request
         create = readJsonResource("/datasets/ort.json");
+        createIncomplete = readJsonResource("/datasets/ort_incomplete.json");
         Assert.assertNotNull(create);
     }
 
@@ -71,6 +73,9 @@ public class OrtTest extends ServiceTest {
         getById("ort", "rest/site/1000", expectedById);
         int createdId = create("site", "rest/site", create)
             .getJsonObject("data").getInt("id");
+
+        create("site-incomplete", "rest/site", createIncomplete);
+
         update("site", "rest/site/" + createdId,
             "longText", "Langer Text", "Längerer Text");
         delete("site", "rest/site/" + createdId);
