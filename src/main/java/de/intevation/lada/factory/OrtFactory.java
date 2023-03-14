@@ -304,10 +304,10 @@ public class OrtFactory {
             return;
         }
         Query q = repository.entityManager()
-            .createQuery("SELECT vg.municId "
-                + "FROM AdminBorderView vg "
+            .createNativeQuery("SELECT vg.munic_id "
+                + "FROM master.admin_border_view vg "
                 + "WHERE is_munic = TRUE "
-                + "AND contains(vg.shape, :geom) = TRUE");
+                + "AND public.st_contains(vg.shape, :geom) = TRUE");
         q.setParameter("geom", ort.getGeom());
         List<?> ret = q.getResultList();
         if (!ret.isEmpty()) {
