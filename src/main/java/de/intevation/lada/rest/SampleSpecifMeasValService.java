@@ -138,12 +138,9 @@ public class SampleSpecifMeasValService extends LadaService {
         if (lock.isLocked(zusatzwert)) {
             return new Response(false, StatusCodes.CHANGED_VALUE, null);
         }
-        Response response = repository.update(zusatzwert);
-        if (!response.getSuccess()) {
-            return response;
-        }
+
         return authorization.filter(
-            response,
+            repository.update(zusatzwert),
             SampleSpecifMeasVal.class);
     }
 

@@ -350,9 +350,6 @@ public class SampleService extends LadaService {
             return response;
         }
         Response response = repository.update(probe);
-        if (!response.getSuccess()) {
-            return response;
-        }
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
         }

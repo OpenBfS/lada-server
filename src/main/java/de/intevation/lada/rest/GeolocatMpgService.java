@@ -187,9 +187,6 @@ public class GeolocatMpgService extends LadaService {
         }
 
         Response response = repository.update(ort);
-        if (!response.getSuccess()) {
-            return response;
-        }
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
         }
