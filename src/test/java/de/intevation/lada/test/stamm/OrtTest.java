@@ -74,6 +74,8 @@ public class OrtTest extends ServiceTest {
         int createdId = create("site", "rest/site", create)
             .getJsonObject("data").getInt("id");
 
+        /*Test creation of site objects without an admin unit
+          which should be completed by the server*/
         create("site-incomplete", "rest/site", createIncomplete);
 
         update("site", "rest/site/" + createdId,
