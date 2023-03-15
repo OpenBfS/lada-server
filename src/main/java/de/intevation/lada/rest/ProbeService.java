@@ -13,9 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.EJBTransactionRolledbackException;
 import javax.inject.Inject;
-import javax.persistence.TransactionRequiredException;
 import javax.validation.Valid;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -481,15 +479,6 @@ public class ProbeService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        /* Delete the probe object*/
-        try {
-            Response response = repository.delete(probeObj);
-            return response;
-        } catch (IllegalArgumentException
-            | EJBTransactionRolledbackException
-            | TransactionRequiredException e
-        ) {
-            return new Response(false, StatusCodes.NOT_EXISTING, "");
-        }
+        return repository.delete(probeObj);
     }
 }
