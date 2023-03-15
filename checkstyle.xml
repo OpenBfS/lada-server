@@ -201,6 +201,9 @@ Maven Checkstyle plugin. Some design related checks where removed.
       <property name="ignoreSetter" value="true"/>
       <property name="ignoreConstructorParameter" value="true"/>
     </module>
+    <module name="ParameterAssignment">
+      <property name="severity" value="warning"/>
+    </module>
     <module name="IllegalInstantiation"/>
     <module name="InnerAssignment">
       <property name="severity" value="warning"/>
