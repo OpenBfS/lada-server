@@ -18,7 +18,7 @@ CREATE TRIGGER last_mod_geolocat BEFORE UPDATE ON geolocat
     FOR EACH ROW EXECUTE PROCEDURE lada.update_last_mod();
 CREATE TRIGGER last_mod_geolocat_mpg BEFORE UPDATE ON geolocat_mpg
     FOR EACH ROW EXECUTE PROCEDURE lada.update_last_mod();
-CREATE TRIGGER last_mod_zusatzwert BEFORE UPDATE ON sample_specif_meas_val
+CREATE TRIGGER last_mod_sample_specif BEFORE UPDATE ON sample_specif_meas_val
     FOR EACH ROW EXECUTE PROCEDURE lada.update_last_mod();
 CREATE TRIGGER last_mod_measm BEFORE UPDATE ON measm
     FOR EACH ROW EXECUTE PROCEDURE lada.update_last_mod();
@@ -51,7 +51,7 @@ CREATE FUNCTION lada.update_tree_mod() RETURNS trigger
 $$;
 CREATE TRIGGER tree_mod_geolocat BEFORE UPDATE ON geolocat
     FOR EACH ROW EXECUTE PROCEDURE lada.update_tree_mod();
-CREATE TRIGGER tree_mod_zusatzwert BEFORE UPDATE ON sample_specif_meas_val
+CREATE TRIGGER tree_mod_sample_specif BEFORE UPDATE ON sample_specif_meas_val
     FOR EACH ROW EXECUTE PROCEDURE lada.update_tree_mod();
 CREATE TRIGGER tree_mod_meas_val BEFORE UPDATE ON meas_val
     FOR EACH ROW EXECUTE PROCEDURE lada.update_tree_mod();
