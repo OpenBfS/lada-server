@@ -599,6 +599,11 @@
             <id>OSGEO Release Repo</id>
             <url>https://repo.osgeo.org/repository/release</url>
         </repository>
+        <!-- See https://github.com/wildfly/wildfly/pull/16453 -->
+        <repository>
+            <id>JBoss forks</id>
+            <url>https://repository.jboss.org/nexus/content/repositories/public/</url>
+        </repository>
     </repositories>
     <version>4.7.0-SNAPSHOT</version>
 </project>
