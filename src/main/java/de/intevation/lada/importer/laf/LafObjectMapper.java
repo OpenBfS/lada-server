@@ -2362,7 +2362,7 @@ public class LafObjectMapper {
             QueryBuilder<Sampler> builder =
                 repository.queryBuilder(Sampler.class);
             builder.and("networkId", netzbetreiberId);
-            builder.and("exitId", value);
+            builder.and("extId", value);
             List<Sampler> prn =
                     (List<Sampler>) repository.filterPlain(
                         builder.getQuery());
