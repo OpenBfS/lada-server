@@ -162,9 +162,9 @@ public class LafObjectMapper {
         errors = new HashMap<>();
         warnings = new HashMap<>();
         notifications = new HashMap<>();
-        importProbeIds = new ArrayList<Integer>();
-        for (int i = 0; i < data.getProben().size(); i++) {
-            create(data.getProben().get(i));
+        importProbeIds = new ArrayList<>();
+        for (LafRawData.Sample sample: data.getProben()) {
+            create(sample);
         }
     }
 
@@ -282,9 +282,6 @@ public class LafObjectMapper {
                 new ArrayList<ReportItem>(currentErrors));
             return;
         }
-        // logProbe(probe);
-
-        // Check for errors and warnings
 
         // Compare the probe with objects in the db
         Sample newProbe = null;
@@ -2160,31 +2157,6 @@ public class LafObjectMapper {
                 }
             }
         }
-    }
-
-    private void logProbe(Sample probe) {
-        logger.debug("%PROBE%");
-        logger.debug("datenbasis: " + probe.getRegulationId());
-        logger.debug("betriebsart: " + probe.getOprModeId());
-        logger.debug("erzeuger: " + probe.getDatasetCreatorId());
-        logger.debug("hauptprobennummer: " + probe.getMainSampleId());
-        logger.debug("externeprobeid: " + probe.getExtId());
-        logger.debug("labor: " + probe.getApprLabId());
-        logger.debug("deskriptoren: " + probe.getEnvDescripDisplay());
-        logger.debug("media: " + probe.getEnvDescripName());
-        logger.debug("mittelung: " + probe.getMidSampleDate());
-        logger.debug("mpl: " + probe.getMpgCategId());
-        logger.debug("mpr: " + probe.getMpgId());
-        logger.debug("mst: " + probe.getMeasFacilId());
-        logger.debug("pnbeginn: " + probe.getSampleStartDate());
-        logger.debug("pnende: " + probe.getSampleEndDate());
-        logger.debug("probenart: " + probe.getSampleMethId());
-        logger.debug("probenehmer: " + probe.getSamplerId());
-        logger.debug("sbeginn: " + probe.getSchedStartDate());
-        logger.debug("sende: " + probe.getSchedEndDate());
-        logger.debug("ursprungszeit: " + probe.getOrigDate());
-        logger.debug("test: " + probe.getIsTest());
-        logger.debug("umw: " + probe.getEnvMediumId());
     }
 
     private void addProbeAttribute(
