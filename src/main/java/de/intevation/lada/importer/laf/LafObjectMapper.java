@@ -2577,25 +2577,11 @@ public class LafObjectMapper {
     }
 
     /**
-     * @return the userInfo
-     */
-    public UserInfo getUserInfo() {
-        return userInfo;
-    }
-
-    /**
      * @param userInfo the userInfo to set
      */
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
         this.authorizer = new HeaderAuthorization(userInfo, this.repository);
-    }
-
-    /**
-     * @return the config
-     */
-    public List<ImportConf> getConfig() {
-        return config;
     }
 
     /**
