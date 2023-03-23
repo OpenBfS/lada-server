@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.importer.laf;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -153,6 +151,7 @@ public class LafObjectMapper {
     private UserInfo userInfo;
 
     private List<ImportConf> config;
+    private ImportConfigMapper configMapper;
 
     /**
      * Map the raw data to database objects.
@@ -255,9 +254,9 @@ public class LafObjectMapper {
         ) {
             addProbeAttribute(attribute, probe, netzbetreiberId);
         }
-        doDefaults(probe);
-        doConverts(probe);
-        doTransforms(probe);
+        configMapper.doDefaults(probe);
+        configMapper.doConverts(probe);
+        configMapper.doTransforms(probe);
         if (probe.getApprLabId() == null) {
             probe.setApprLabId(probe.getMeasFacilId());
         }
@@ -706,153 +705,6 @@ public class LafObjectMapper {
         }
     }
 
-    private void doDefaults(Sample probe) {
-        doDefaults(probe, Sample.class, "probe");
-    }
-
-    private void doConverts(Sample probe) {
-        doConverts(probe, Sample.class, "probe");
-    }
-
-    private void doTransforms(Sample probe) {
-        doTransformations(probe, Sample.class, "probe");
-    }
-
-    private void doDefaults(Measm messung) {
-        doDefaults(messung, Measm.class, "messung");
-    }
-
-    private void doConverts(Measm messung) {
-        doConverts(messung, Measm.class, "messung");
-    }
-
-    private void doTransforms(Measm messung) {
-        doTransformations(messung, Measm.class, "messung");
-    }
-
-    private void doDefaults(MeasVal messwert) {
-        doDefaults(messwert, MeasVal.class, "messwert");
-    }
-
-    private void doConverts(MeasVal messwert) {
-        doConverts(messwert, MeasVal.class, "messwert");
-    }
-
-    private void doTransforms(MeasVal messwert) {
-        doTransformations(messwert, MeasVal.class, "messwert");
-    }
-
-    private void doDefaults(SampleSpecifMeasVal zusatzwert) {
-        doDefaults(zusatzwert, SampleSpecifMeasVal.class, "zusatwert");
-    }
-
-    private void doConverts(SampleSpecifMeasVal zusatzwert) {
-        doConverts(zusatzwert, SampleSpecifMeasVal.class, "zusatzwert");
-    }
-
-    private void doTransforms(SampleSpecifMeasVal zusatzwert) {
-        doTransformations(zusatzwert, SampleSpecifMeasVal.class, "zusatwert");
-    }
-
-    private void doDefaults(CommMeasm kommentar) {
-        doDefaults(kommentar, CommMeasm.class, "kommentarm");
-    }
-
-    private void doConverts(CommMeasm kommentar) {
-        doConverts(kommentar, CommMeasm.class, "kommentarm");
-    }
-
-    private void doTransforms(CommMeasm kommentar) {
-        doTransformations(kommentar, CommMeasm.class, "kommentarm");
-    }
-
-    private void doDefaults(CommSample kommentar) {
-        doDefaults(kommentar, CommSample.class, "kommentarp");
-    }
-
-    private void doConverts(CommSample kommentar) {
-        doConverts(kommentar, CommSample.class, "kommentarp");
-    }
-
-    private void doTransforms(CommSample kommentar) {
-        doTransformations(kommentar, CommSample.class, "kommentarp");
-    }
-
-    private void doDefaults(Geolocat ort) {
-        doDefaults(ort, Geolocat.class, "ortszuordnung");
-    }
-
-    private void doConverts(Geolocat ort) {
-        doConverts(ort, Geolocat.class, "ortszuordnung");
-    }
-
-    private void doTransforms(Geolocat ort) {
-        doTransformations(ort, Geolocat.class, "ortszuordnung");
-    }
-
-    private void doDefaults(Site o) {
-        doDefaults(o, Site.class, "ort");
-    }
-
-    private <T> void doDefaults(Object object, Class<T> clazz, String table) {
-        Iterator<ImportConf> i = config.iterator();
-        while (i.hasNext()) {
-            ImportConf current = i.next();
-            if (table.equals(current.getName())
-                && "default".equals(current.getAction())
-            ) {
-                String attribute = current.getAttribute();
-                Method getter;
-                Method setter = null;
-                try {
-                    getter = clazz.getMethod("get"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1));
-                    String methodName = "set"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1);
-                    for (Method method : clazz.getMethods()) {
-                        String name = method.getName();
-                        if (!methodName.equals(name)) {
-                            continue;
-                        }
-                        setter = method;
-                        break;
-                    }
-                } catch (NoSuchMethodException | SecurityException e) {
-                    logger.debug("attribute " + attribute + " does not exist");
-                    return;
-                }
-                try {
-                    Object value = getter.invoke(object);
-                    if (value == null && setter != null) {
-                        Class<?>[] types = setter.getParameterTypes();
-                        if (types.length == 1) {
-                            // we have exactly one parameter, thats fine.
-                            if (types[0].isAssignableFrom(Integer.class)) {
-                                // the parameter is of type Integer!
-                                // Cast to integer
-                                setter.invoke(
-                                    object,
-                                    Integer.valueOf(current.getToVal()));
-                            } else {
-                                // we handle the default as string.
-                                // Other parameter types are not implemented!
-                                setter.invoke(object, current.getToVal());
-                            }
-                        }
-                    }
-                } catch (IllegalAccessException
-                    | IllegalArgumentException
-                    | InvocationTargetException e
-                ) {
-                    logger.debug("Could not set attribute " + attribute);
-                    return;
-                }
-            }
-        }
-    }
-
     private List<ImportConf> getImporterConfigByAttributeUpper(
         String attribute
     ) {
@@ -865,114 +717,6 @@ public class LafObjectMapper {
             }
         }
         return result;
-    }
-
-    private <T> void doConverts(Object object, Class<T> clazz, String table) {
-        Iterator<ImportConf> i = config.iterator();
-        while (i.hasNext()) {
-            ImportConf current = i.next();
-            if (table.equals(current.getName())
-                && "convert".equals(current.getAction())
-            ) {
-                String attribute = current.getAttribute();
-                Method getter;
-                Method setter = null;
-                try {
-                    getter = clazz.getMethod("get"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1));
-                    String methodName = "set"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1);
-                    for (Method method : clazz.getMethods()) {
-                        String name = method.getName();
-                        if (!methodName.equals(name)) {
-                            continue;
-                        }
-                        setter = method;
-                        break;
-                    }
-                } catch (NoSuchMethodException | SecurityException e) {
-                    logger.warn("attribute " + attribute + " does not exist");
-                    return;
-                }
-                try {
-                    Object value = getter.invoke(object);
-                    if (value.equals(current.getFromVal())
-                        && setter != null
-                    ) {
-                        setter.invoke(object, current.getToVal());
-                    }
-                } catch (IllegalAccessException
-                    | IllegalArgumentException
-                    | InvocationTargetException e
-                ) {
-                    logger.warn("Could not convert attribute " + attribute);
-                    return;
-                }
-            }
-        }
-    }
-
-    private <T> void doTransformations(
-        Object object,
-        Class<T> clazz,
-        String table
-    ) {
-        Iterator<ImportConf> i = config.iterator();
-        while (i.hasNext()) {
-            ImportConf current = i.next();
-            if (table.equals(current.getName())
-                && "transform".equals(current.getAction())
-            ) {
-                String attribute = current.getAttribute();
-                Method getter;
-                Method setter = null;
-                try {
-                    getter = clazz.getMethod("get"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1));
-                    String methodName = "set"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1);
-                    for (Method method : clazz.getMethods()) {
-                        String name = method.getName();
-                        if (methodName.equals(name)) {
-                            setter = method;
-                            break;
-                        }
-                    }
-                    if (setter == null) {
-                        logger.warn(
-                            "Could not transform attribute " + attribute);
-                        return;
-                    }
-                } catch (NoSuchMethodException | SecurityException e) {
-                    logger.warn("attribute " + attribute + " does not exist");
-                    return;
-                }
-                try {
-                    Object value = getter.invoke(object);
-                    if (value == null) {
-                        logger.warn("Attribute " + attribute + " is not set");
-                        return;
-                    }
-                    char from = (char) Integer.parseInt(
-                        current.getFromVal(), 16);
-                    char to = (char) Integer.parseInt(
-                        current.getToVal(), 16);
-                    value = value.toString().replaceAll(
-                        "[" + String.valueOf(from) + "]", String.valueOf(to));
-                    setter.invoke(object, value);
-                } catch (IllegalAccessException
-                    | IllegalArgumentException
-                    | InvocationTargetException e
-                ) {
-                    logger.warn("Could not transform attribute " + attribute);
-                    return;
-                }
-            }
-        }
     }
 
     private void create(
@@ -988,9 +732,9 @@ public class LafObjectMapper {
         ) {
             addMessungAttribute(attribute, messung);
         }
-        doDefaults(messung);
-        doConverts(messung);
-        doTransforms(messung);
+        configMapper.doDefaults(messung);
+        configMapper.doConverts(messung);
+        configMapper.doTransforms(messung);
         // Check if the user is authorized to create the object
         if (
             !authorizer.isAuthorized(messung, RequestMethod.POST, Measm.class)
@@ -1220,9 +964,9 @@ public class LafObjectMapper {
                 Timestamp.from(
                     Instant.now().atZone(ZoneOffset.UTC).toInstant()));
         }
-        doDefaults(kommentar);
-        doConverts(kommentar);
-        doTransforms(kommentar);
+        configMapper.doDefaults(kommentar);
+        configMapper.doConverts(kommentar);
+        configMapper.doTransforms(kommentar);
         if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
             currentWarnings.add(
                 new ReportItem(
@@ -1303,9 +1047,9 @@ public class LafObjectMapper {
         List<SampleSpecif> zusatz =
             (List<SampleSpecif>) repository.filterPlain(builder.getQuery());
 
-        doDefaults(zusatzwert);
-        doConverts(zusatzwert);
-        doTransforms(zusatzwert);
+        configMapper.doDefaults(zusatzwert);
+        configMapper.doConverts(zusatzwert);
+        configMapper.doTransforms(zusatzwert);
         if (zusatz == null || zusatz.isEmpty()) {
             currentWarnings.add(new ReportItem(
                 (isId) ? "PROBENZUSATZBESCHREIBUNG" : "PZB_S",
@@ -1454,9 +1198,9 @@ public class LafObjectMapper {
             messwert.setIsThreshold(
                 attributes.get("GRENZWERT").equalsIgnoreCase("J"));
         }
-        doDefaults(messwert);
-        doConverts(messwert);
-        doTransforms(messwert);
+        configMapper.doDefaults(messwert);
+        configMapper.doConverts(messwert);
+        configMapper.doTransforms(messwert);
         if (messwert.getLessThanLOD() != null
             && messwert.getDetectLim() == null
         ) {
@@ -1526,9 +1270,9 @@ public class LafObjectMapper {
             return null;
         }
         kommentar.setText(attributes.get("TEXT"));
-        doDefaults(kommentar);
-        doConverts(kommentar);
-        doTransforms(kommentar);
+        configMapper.doDefaults(kommentar);
+        configMapper.doConverts(kommentar);
+        configMapper.doTransforms(kommentar);
         if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
             currentWarnings.add(
                 new ReportItem(
@@ -1919,9 +1663,9 @@ public class LafObjectMapper {
         if (rawOrt.containsKey(type+"_ORTS_ZUSATZTEXT")) {
             ort.setAddSiteText(rawOrt.get(type+"_ORTS_ZUSATZTEXT"));
         }
-        doDefaults(ort);
-        doConverts(ort);
-        doTransforms(ort);
+        configMapper.doDefaults(ort);
+        configMapper.doConverts(ort);
+        configMapper.doTransforms(ort);
         return ort;
     }
 
@@ -1931,7 +1675,7 @@ public class LafObjectMapper {
         Sample probe
     ) {
         Site o = new Site();
-        doDefaults(o);
+        configMapper.doDefaults(o);
         // If laf contains coordinates, find a ort with matching coordinates or
         // create one.
         if ((attributes.get(type + "KOORDINATEN_ART") != null
@@ -2589,5 +2333,6 @@ public class LafObjectMapper {
      */
     public void setConfig(List<ImportConf> config) {
         this.config = config;
+        this.configMapper = new ImportConfigMapper(config);
     }
 }
