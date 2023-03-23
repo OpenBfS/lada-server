@@ -37,91 +37,56 @@ public class ImportConfigMapper {
         this.config = config;
     }
 
-    void doDefaults(Sample probe) {
-        doDefaults(probe, Sample.class, "probe");
+    void applyConfigs(Sample probe) {
+        final String table = "probe";
+        doDefaults(probe, Sample.class, table);
+        doConverts(probe, Sample.class, table);
+        doTransformations(probe, Sample.class, table);
     }
 
-    void doConverts(Sample probe) {
-        doConverts(probe, Sample.class, "probe");
+    void applyConfigs(Measm messung) {
+        final String table = "messung";
+        doDefaults(messung, Measm.class, table);
+        doConverts(messung, Measm.class, table);
+        doTransformations(messung, Measm.class, table);
     }
 
-    void doTransforms(Sample probe) {
-        doTransformations(probe, Sample.class, "probe");
+    void applyConfigs(MeasVal messwert) {
+        final String table = "messwert";
+        doDefaults(messwert, MeasVal.class, table);
+        doConverts(messwert, MeasVal.class, table);
+        doTransformations(messwert, MeasVal.class, table);
     }
 
-    void doDefaults(Measm messung) {
-        doDefaults(messung, Measm.class, "messung");
+    void applyConfigs(SampleSpecifMeasVal zusatzwert) {
+        final String table = "zusatzwert";
+        doDefaults(zusatzwert, SampleSpecifMeasVal.class, table);
+        doConverts(zusatzwert, SampleSpecifMeasVal.class, table);
+        doTransformations(zusatzwert, SampleSpecifMeasVal.class, table);
     }
 
-    void doConverts(Measm messung) {
-        doConverts(messung, Measm.class, "messung");
+    void applyConfigs(CommMeasm kommentar) {
+        final String table = "kommentarm";
+        doDefaults(kommentar, CommMeasm.class, table);
+        doConverts(kommentar, CommMeasm.class, table);
+        doTransformations(kommentar, CommMeasm.class, table);
     }
 
-    void doTransforms(Measm messung) {
-        doTransformations(messung, Measm.class, "messung");
+    void applyConfigs(CommSample kommentar) {
+        final String table = "kommentarp";
+        doDefaults(kommentar, CommSample.class, table);
+        doConverts(kommentar, CommSample.class, table);
+        doTransformations(kommentar, CommSample.class, table);
     }
 
-    void doDefaults(MeasVal messwert) {
-        doDefaults(messwert, MeasVal.class, "messwert");
+    void applyConfigs(Geolocat ort) {
+        final String table = "ortszuordnung";
+        doDefaults(ort, Geolocat.class, table);
+        doConverts(ort, Geolocat.class, table);
+        doTransformations(ort, Geolocat.class, table);
     }
 
-    void doConverts(MeasVal messwert) {
-        doConverts(messwert, MeasVal.class, "messwert");
-    }
-
-    void doTransforms(MeasVal messwert) {
-        doTransformations(messwert, MeasVal.class, "messwert");
-    }
-
-    void doDefaults(SampleSpecifMeasVal zusatzwert) {
-        doDefaults(zusatzwert, SampleSpecifMeasVal.class, "zusatwert");
-    }
-
-    void doConverts(SampleSpecifMeasVal zusatzwert) {
-        doConverts(zusatzwert, SampleSpecifMeasVal.class, "zusatzwert");
-    }
-
-    void doTransforms(SampleSpecifMeasVal zusatzwert) {
-        doTransformations(zusatzwert, SampleSpecifMeasVal.class, "zusatwert");
-    }
-
-    void doDefaults(CommMeasm kommentar) {
-        doDefaults(kommentar, CommMeasm.class, "kommentarm");
-    }
-
-    void doConverts(CommMeasm kommentar) {
-        doConverts(kommentar, CommMeasm.class, "kommentarm");
-    }
-
-    void doTransforms(CommMeasm kommentar) {
-        doTransformations(kommentar, CommMeasm.class, "kommentarm");
-    }
-
-    void doDefaults(CommSample kommentar) {
-        doDefaults(kommentar, CommSample.class, "kommentarp");
-    }
-
-    void doConverts(CommSample kommentar) {
-        doConverts(kommentar, CommSample.class, "kommentarp");
-    }
-
-    void doTransforms(CommSample kommentar) {
-        doTransformations(kommentar, CommSample.class, "kommentarp");
-    }
-
-    void doDefaults(Geolocat ort) {
-        doDefaults(ort, Geolocat.class, "ortszuordnung");
-    }
-
-    void doConverts(Geolocat ort) {
-        doConverts(ort, Geolocat.class, "ortszuordnung");
-    }
-
-    void doTransforms(Geolocat ort) {
-        doTransformations(ort, Geolocat.class, "ortszuordnung");
-    }
-
-    void doDefaults(Site o) {
+    void applyConfigs(Site o) {
         doDefaults(o, Site.class, "ort");
     }
 

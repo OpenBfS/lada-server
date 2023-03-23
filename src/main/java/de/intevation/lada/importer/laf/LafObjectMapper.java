@@ -254,9 +254,7 @@ public class LafObjectMapper {
         ) {
             addProbeAttribute(attribute, probe, netzbetreiberId);
         }
-        configMapper.doDefaults(probe);
-        configMapper.doConverts(probe);
-        configMapper.doTransforms(probe);
+        configMapper.applyConfigs(probe);
         if (probe.getApprLabId() == null) {
             probe.setApprLabId(probe.getMeasFacilId());
         }
@@ -732,9 +730,7 @@ public class LafObjectMapper {
         ) {
             addMessungAttribute(attribute, messung);
         }
-        configMapper.doDefaults(messung);
-        configMapper.doConverts(messung);
-        configMapper.doTransforms(messung);
+        configMapper.applyConfigs(messung);
         // Check if the user is authorized to create the object
         if (
             !authorizer.isAuthorized(messung, RequestMethod.POST, Measm.class)
@@ -964,9 +960,7 @@ public class LafObjectMapper {
                 Timestamp.from(
                     Instant.now().atZone(ZoneOffset.UTC).toInstant()));
         }
-        configMapper.doDefaults(kommentar);
-        configMapper.doConverts(kommentar);
-        configMapper.doTransforms(kommentar);
+        configMapper.applyConfigs(kommentar);
         if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
             currentWarnings.add(
                 new ReportItem(
@@ -1047,9 +1041,7 @@ public class LafObjectMapper {
         List<SampleSpecif> zusatz =
             (List<SampleSpecif>) repository.filterPlain(builder.getQuery());
 
-        configMapper.doDefaults(zusatzwert);
-        configMapper.doConverts(zusatzwert);
-        configMapper.doTransforms(zusatzwert);
+        configMapper.applyConfigs(zusatzwert);
         if (zusatz == null || zusatz.isEmpty()) {
             currentWarnings.add(new ReportItem(
                 (isId) ? "PROBENZUSATZBESCHREIBUNG" : "PZB_S",
@@ -1198,9 +1190,7 @@ public class LafObjectMapper {
             messwert.setIsThreshold(
                 attributes.get("GRENZWERT").equalsIgnoreCase("J"));
         }
-        configMapper.doDefaults(messwert);
-        configMapper.doConverts(messwert);
-        configMapper.doTransforms(messwert);
+        configMapper.applyConfigs(messwert);
         if (messwert.getLessThanLOD() != null
             && messwert.getDetectLim() == null
         ) {
@@ -1270,9 +1260,7 @@ public class LafObjectMapper {
             return null;
         }
         kommentar.setText(attributes.get("TEXT"));
-        configMapper.doDefaults(kommentar);
-        configMapper.doConverts(kommentar);
-        configMapper.doTransforms(kommentar);
+        configMapper.applyConfigs(kommentar);
         if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
             currentWarnings.add(
                 new ReportItem(
@@ -1663,9 +1651,7 @@ public class LafObjectMapper {
         if (rawOrt.containsKey(type+"_ORTS_ZUSATZTEXT")) {
             ort.setAddSiteText(rawOrt.get(type+"_ORTS_ZUSATZTEXT"));
         }
-        configMapper.doDefaults(ort);
-        configMapper.doConverts(ort);
-        configMapper.doTransforms(ort);
+        configMapper.applyConfigs(ort);
         return ort;
     }
 
@@ -1675,7 +1661,7 @@ public class LafObjectMapper {
         Sample probe
     ) {
         Site o = new Site();
-        configMapper.doDefaults(o);
+        configMapper.applyConfigs(o);
         // If laf contains coordinates, find a ort with matching coordinates or
         // create one.
         if ((attributes.get(type + "KOORDINATEN_ART") != null
