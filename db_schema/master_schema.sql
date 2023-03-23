@@ -700,7 +700,7 @@ CREATE TABLE site (
     geom public.geometry(Point,4326) NOT NULL,
     shape public.geometry(MultiPolygon,4326),
     site_class_id smallint REFERENCES site_class,
-    short_text character varying(15) NOT NULL,
+    short_text character varying(20) NOT NULL,
     rei_report_text character varying(70),
     rei_zone character varying(1),
     rei_sector character varying(2),
