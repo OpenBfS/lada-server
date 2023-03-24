@@ -21,7 +21,7 @@ CREATE OR REPLACE VIEW stamm.ort
     site.geom,
     site.shape,
     site.site_class_id AS ort_typ,
-    SUBSTR(site.short_text, 1, 15) AS kurztext,
+    site.short_text AS kurztext,
     site.rei_report_text AS berichtstext,
     site.rei_zone AS zone,
     site.rei_sector AS sektor,
