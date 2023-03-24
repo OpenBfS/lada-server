@@ -133,7 +133,8 @@ public class ImportConfigMapper {
                             }
                             break;
                         case CONVERT:
-                            if (value.equals(current.getFromVal())
+                            if (value != null
+                                && value.equals(current.getFromVal())
                                 && setter != null
                             ) {
                                 setter.invoke(object, current.getToVal());
