@@ -80,27 +80,27 @@ public class PepGenerationTest extends ServiceTest {
     private static final int C61 = 61;
     private static final int C368 = 368;
 
-    private static final String TS1 = "1617235200000";
-    private static final String TS2 = "1580256000000";
-    private static final String TS3 = "1580515200000";
-    private static final String TS4 = "1581465600000";
-    private static final String TS5 = "1590969600000";
-    private static final String TS6 = "1735689600000";
-    private static final String TS7 = "1893456000000";
-    private static final String TS8 = "1577836800000";
-    private static final String TS9 = "1581638400000";
-    private static final String TS10 = "1898553600000";
-    private static final String TS11 = "1612224000000";
-    private static final String TS12 = "1582934400000";
-    private static final String TS13 = "1614556800000";
-    private static final String TS14 = "1456704000000";
-    private static final String TS15 = "1472428800000";
-    private static final String TS16 = "1464566400000";
-    private static final String TS17 = "1585440000000";
-    private static final String TS18 = "1582502400000";
-    private static final String TS19 = "1614384000000";
-    private static final String TS20 = "1614988800000";
-    private static final String TS21 = "1582848000000";
+    private static final String TS1 = "2021-04-01T00:00:00.000Z";
+    private static final String TS2 = "2020-01-29T00:00:00.000Z";
+    private static final String TS3 = "2020-02-01T00:00:00.000Z";
+    private static final String TS4 = "2020-02-12T00:00:00.000Z";
+    private static final String TS5 = "2020-06-01T00:00:00.000Z";
+    private static final String TS6 = "2025-01-01T00:00:00.000Z";
+    private static final String TS7 = "2030-01-01T00:00:00.000Z";
+    private static final String TS8 = "2020-01-01T00:00:00.000Z";
+    private static final String TS9 = "2020-02-14T00:00:00.000Z";
+    private static final String TS10 = "2030-03-01T00:00:00.000Z";
+    private static final String TS11 = "2021-02-02T00:00:00.000Z";
+    private static final String TS12 = "2020-02-29T00:00:00.000Z";
+    private static final String TS13 = "2021-03-01T00:00:00.000Z";
+    private static final String TS14 = "2016-02-29T00:00:00.000Z";
+    private static final String TS15 = "2016-08-29T00:00:00.000Z";
+    private static final String TS16 = "2016-05-30T00:00:00.000Z";
+    private static final String TS17 = "2020-03-29T00:00:00.000Z";
+    private static final String TS18 = "2020-02-24T00:00:00.000Z";
+    private static final String TS19 = "2021-02-27T00:00:00.000Z";
+    private static final String TS20 = "2021-03-06T00:00:00.000Z";
+    private static final String TS21 = "2020-02-28T00:00:00.000Z";
 
     /**
      * Current expected tag serial number.
@@ -136,7 +136,6 @@ public class PepGenerationTest extends ServiceTest {
         testGenerationFromIdList();
         testGenerationRejectUnauthorized();
         testGenerationRejectInvalidParams();
-        testGenerationRejectNegativeParams();
         testZusatzwertgeneration();
     }
 
@@ -678,34 +677,6 @@ public class PepGenerationTest extends ServiceTest {
         idParam.add(mpId);
 
         JsonObject entity = generateFromMpIds(idParam, TS1, TS2);
-
-        //Request should have failed with message 699
-        JsonObject data = entity.getJsonObject("data");
-        JsonObject mpData =
-            data.getJsonObject("proben").getJsonObject(Integer.toString(mpId));
-
-        Assert.assertTrue(mpData.get("data") == JsonValue.NULL);
-        Assert.assertFalse(mpData.getBoolean("success"));
-        Assert.assertEquals(A699, mpData.getInt("message"));
-
-        prot.setPassed(true);
-    }
-
-    /**
-     * Test if generation request is rejected if time parameters are invalid.
-     */
-    private void testGenerationRejectNegativeParams() {
-        Protocol prot = new Protocol();
-        prot.setName("PEP-Gen");
-        prot.setType("reject negative params");
-        prot.setPassed(false);
-        protocol.add(prot);
-
-        int mpId = ID1010;
-        List<Integer> idParam = new ArrayList<Integer>();
-        idParam.add(mpId);
-
-        JsonObject entity = generateFromMpIds(idParam, "-5", "-1");
 
         //Request should have failed with message 699
         JsonObject data = entity.getJsonObject("data");

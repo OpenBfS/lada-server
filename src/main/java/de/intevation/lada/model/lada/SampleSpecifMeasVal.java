@@ -8,7 +8,7 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -19,6 +19,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
 
 import de.intevation.lada.util.data.EmptyStringConverter;
@@ -33,7 +35,8 @@ public class SampleSpecifMeasVal implements Serializable {
     private Integer id;
 
     @Column(insertable = false)
-    private Timestamp lastMod;
+    @Temporal(TIMESTAMP)
+    private Date lastMod;
 
     private Float error;
 
@@ -47,7 +50,8 @@ public class SampleSpecifMeasVal implements Serializable {
     private String sampleSpecifId;
 
     @Column(insertable = false, updatable = false)
-    private Timestamp treeMod;
+    @Temporal(TIMESTAMP)
+    private Date treeMod;
 
     @OneToOne
     @JoinColumn(insertable = false, updatable = false)
@@ -60,7 +64,7 @@ public class SampleSpecifMeasVal implements Serializable {
     private boolean readonly;
 
     @Transient
-    private Timestamp parentModified;
+    private Date parentModified;
 
     public SampleSpecifMeasVal() {
     }
@@ -73,11 +77,11 @@ public class SampleSpecifMeasVal implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getLastMod() {
+    public Date getLastMod() {
         return this.lastMod;
     }
 
-    public void setLastMod(Timestamp lastMod) {
+    public void setLastMod(Date lastMod) {
         this.lastMod = lastMod;
     }
 
@@ -121,11 +125,11 @@ public class SampleSpecifMeasVal implements Serializable {
         this.smallerThan = smallerThan;
     }
 
-    public Timestamp getTreeMod() {
+    public Date getTreeMod() {
         return this.treeMod;
     }
 
-    public void setTreeMod(Timestamp treeMod) {
+    public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
     }
 
@@ -161,14 +165,14 @@ public class SampleSpecifMeasVal implements Serializable {
      * Check if a parent object was modified.
      * @return timestamp when the parent was modified
      */
-    public Timestamp getParentModified() {
+    public Date getParentModified() {
         if (this.parentModified == null && this.sample != null) {
             return this.sample.getTreeMod();
         }
         return this.parentModified;
     }
 
-    public void setParentModified(Timestamp parentModified) {
+    public void setParentModified(Date parentModified) {
         this.parentModified = parentModified;
     }
 }

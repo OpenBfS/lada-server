@@ -8,7 +8,7 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
@@ -20,6 +20,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -48,11 +50,13 @@ public class Measm implements Serializable {
     private Integer extId;
 
     @Column(insertable = false)
-    private Timestamp lastMod;
+    @Temporal(TIMESTAMP)
+    private Date lastMod;
 
     private Integer measPd;
 
-    private Timestamp measmStartDate;
+    @Temporal(TIMESTAMP)
+    private Date measmStartDate;
 
     private String mmtId;
 
@@ -72,7 +76,8 @@ public class Measm implements Serializable {
     private StatusProt statusProtocol;
 
     @Column(insertable = false, updatable = false)
-    private Timestamp treeMod;
+    @Temporal(TIMESTAMP)
+    private Date treeMod;
 
     @Transient
     private Boolean statusEdit;
@@ -87,7 +92,7 @@ public class Measm implements Serializable {
     private Boolean statusEditLst;
 
     @Transient
-    private Timestamp parentModified;
+    private Date parentModified;
 
     @Transient
     @JsonbTransient
@@ -140,11 +145,11 @@ public class Measm implements Serializable {
         this.extId = extId;
     }
 
-    public Timestamp getLastMod() {
+    public Date getLastMod() {
         return this.lastMod;
     }
 
-    public void setLastMod(Timestamp lastMod) {
+    public void setLastMod(Date lastMod) {
         this.lastMod = lastMod;
     }
 
@@ -156,11 +161,11 @@ public class Measm implements Serializable {
         this.measPd = measPd;
     }
 
-    public Timestamp getMeasmStartDate() {
+    public Date getMeasmStartDate() {
         return this.measmStartDate;
     }
 
-    public void setMeasmStartDate(Timestamp measmStartDate) {
+    public void setMeasmStartDate(Date measmStartDate) {
         this.measmStartDate = measmStartDate;
     }
 
@@ -201,11 +206,11 @@ public class Measm implements Serializable {
         this.status = status;
     }
 
-    public Timestamp getTreeMod() {
+    public Date getTreeMod() {
         return this.treeMod;
     }
 
-    public void setTreeMod(Timestamp treeMod) {
+    public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
     }
 
@@ -244,7 +249,7 @@ public class Measm implements Serializable {
     /**
      * @return the parentModified
      */
-    public Timestamp getParentModified() {
+    public Date getParentModified() {
         if (this.parentModified == null && this.sample != null) {
             return this.sample.getTreeMod();
         }
@@ -254,7 +259,7 @@ public class Measm implements Serializable {
     /**
      * @param parentModified the parentModified to set
      */
-    public void setParentModified(Timestamp parentModified) {
+    public void setParentModified(Date parentModified) {
         this.parentModified = parentModified;
     }
 

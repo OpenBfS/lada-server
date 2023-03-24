@@ -8,7 +8,7 @@
 package de.intevation.lada.model.master;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
@@ -19,6 +19,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -62,7 +64,8 @@ public class Site implements Serializable {
     private String longText;
 
     @Column(insertable = false)
-    private Timestamp lastMod;
+    @Temporal(TIMESTAMP)
+    private Date lastMod;
 
     private String reiOprMode;
 
@@ -246,11 +249,11 @@ public class Site implements Serializable {
             : null;
     }
 
-    public Timestamp getLastMod() {
+    public Date getLastMod() {
         return this.lastMod;
     }
 
-    public void setLastMod(Timestamp lastMod) {
+    public void setLastMod(Date lastMod) {
         this.lastMod = lastMod;
     }
 

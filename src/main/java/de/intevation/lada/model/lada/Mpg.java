@@ -8,7 +8,7 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Set;
 
 import javax.json.bind.annotation.JsonbTransient;
@@ -24,6 +24,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.core.MultivaluedMap;
@@ -67,7 +69,8 @@ public class Mpg implements Serializable {
     private String apprLabId;
 
     @Column(insertable = false)
-    private Timestamp lastMod;
+    @Temporal(TIMESTAMP)
+    private Date lastMod;
 
     @Pattern(regexp = "D:( [0-9][0-9]){12}")
     private String envDescripDisplay;
@@ -199,11 +202,11 @@ public class Mpg implements Serializable {
         this.apprLabId = apprLabId;
     }
 
-    public Timestamp getLastMod() {
+    public Date getLastMod() {
         return this.lastMod;
     }
 
-    public void setLastMod(Timestamp lastMod) {
+    public void setLastMod(Date lastMod) {
         this.lastMod = lastMod;
     }
 

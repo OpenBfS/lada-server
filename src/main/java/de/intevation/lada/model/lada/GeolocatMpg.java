@@ -8,7 +8,7 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
@@ -17,6 +17,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -32,7 +34,8 @@ public class GeolocatMpg implements Serializable {
     private Integer id;
 
     @Column(insertable = false)
-    private Timestamp lastMod;
+    @Temporal(TIMESTAMP)
+    private Date lastMod;
 
     private Integer mpgId;
 
@@ -45,7 +48,8 @@ public class GeolocatMpg implements Serializable {
     private String poiId;
 
     @Column(insertable = false, updatable = false)
-    private Timestamp treeMod;
+    @Temporal(TIMESTAMP)
+    private Date treeMod;
 
     @Transient
     private MultivaluedMap<String, Integer> errors;
@@ -70,11 +74,11 @@ public class GeolocatMpg implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getLastMod() {
+    public Date getLastMod() {
         return this.lastMod;
     }
 
-    public void setLastMod(Timestamp lastMod) {
+    public void setLastMod(Date lastMod) {
         this.lastMod = lastMod;
     }
 
@@ -118,11 +122,11 @@ public class GeolocatMpg implements Serializable {
         this.poiId = poiId;
     }
 
-    public Timestamp getTreeMod() {
+    public Date getTreeMod() {
         return this.treeMod;
     }
 
-    public void setTreeMod(Timestamp treeModified) {
+    public void setTreeMod(Date treeModified) {
         this.treeMod = treeModified;
     }
 

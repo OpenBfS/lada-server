@@ -8,13 +8,15 @@
 package de.intevation.lada.model.master;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+import javax.persistence.Temporal;
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 @Table(schema = SchemaName.NAME)
@@ -39,7 +41,8 @@ public class Network implements Serializable {
     private String name;
 
     @Column(insertable = false)
-    private Timestamp lastMod;
+    @Temporal(TIMESTAMP)
+    private Date lastMod;
 
     public Network() {
     }
@@ -92,11 +95,11 @@ public class Network implements Serializable {
         this.name = name;
     }
 
-    public Timestamp getLastMod() {
+    public Date getLastMod() {
         return this.lastMod;
     }
 
-    public void setLastMod(Timestamp lastMod) {
+    public void setLastMod(Date lastMod) {
         this.lastMod = lastMod;
     }
 

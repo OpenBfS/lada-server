@@ -8,11 +8,13 @@
 package de.intevation.lada.model.master;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+import javax.persistence.Temporal;
+import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Column;
 
 @Entity
@@ -26,7 +28,8 @@ public class AuthFunct implements Serializable {
     private String funct;
 
     @Column(insertable = false)
-    private Timestamp lastMod;
+    @Temporal(TIMESTAMP)
+    private Date lastMod;
 
     public AuthFunct() {
     }
@@ -47,11 +50,11 @@ public class AuthFunct implements Serializable {
         this.funct = funct;
     }
 
-    public Timestamp getLastMod() {
+    public Date getLastMod() {
         return this.lastMod;
     }
 
-    public void setLastMod(Timestamp letzteAenderung) {
+    public void setLastMod(Date letzteAenderung) {
         this.lastMod = letzteAenderung;
     }
 
