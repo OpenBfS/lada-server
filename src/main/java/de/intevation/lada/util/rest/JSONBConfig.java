@@ -33,6 +33,7 @@ public class JSONBConfig implements ContextResolver<Jsonb> {
             // DateTimeFormatter", but at least with Yasson the special
             // JsonbDateFormat.TIME_IN_MILLIS can be used here, too.
             .withDateFormat(DATE_FORMAT, null)
+            .withAdapters(new TimestampAdapter())
         );
     }
 }
