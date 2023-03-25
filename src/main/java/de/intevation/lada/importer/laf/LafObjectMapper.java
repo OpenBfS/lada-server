@@ -172,15 +172,46 @@ public class LafObjectMapper {
         currentErrors = new ArrayList<>();
         currentNotifications = new ArrayList<>();
         Sample probe = new Sample();
+        String netzbetreiberId = null;
 
-        // Handle ZEITBASIS
         Iterator<ImportConf> importerConfig = config.iterator();
         while (importerConfig.hasNext()) {
             ImportConf current = importerConfig.next();
             if ("ZEITBASIS".equals(current.getName().toUpperCase())) {
                 currentZeitbasis = Integer.valueOf(current.getToVal());
             }
+            if ("PROBE".equals(current.getName().toUpperCase())
+                && "MSTID".equals(current.getAttribute().toUpperCase())
+                && "DEFAULT".equals(current.getAction().toUpperCase())) {
+                probe.setMeasFacilId(current.getToVal());
+            }
         }
+        if (object.getAttributes().containsKey("MESSSTELLE")) {
+            probe.setMeasFacilId(object.getAttributes().get("MESSSTELLE"));
+        }
+        if (probe.getMeasFacilId() == null) {
+            currentErrors.add(
+                new ReportItem(
+                    "MESSSTELLE", "", StatusCodes.IMP_MISSING_VALUE));
+            errors.put(object.getIdentifier(),
+                new ArrayList<ReportItem>(currentErrors));
+            return;
+        } else {
+            MeasFacil mst = repository.getByIdPlain(
+                MeasFacil.class, probe.getMeasFacilId());
+            if (mst == null) {
+                currentErrors.add(
+                    new ReportItem(
+                        "MESSSTELLE",
+                        probe.getMeasFacilId(), StatusCodes.IMP_INVALID_VALUE));
+                errors.put(
+                    object.getIdentifier(),
+                    new ArrayList<ReportItem>(currentErrors));
+                return;
+            }
+            netzbetreiberId = mst.getNetworkId();
+        }
+
         if (object.getAttributes().containsKey("ZEITBASIS")) {
             List<ImportConf> cfg =
             getImporterConfigByAttributeUpper("ZEITBASIS");
@@ -215,37 +246,6 @@ public class LafObjectMapper {
                         object.getAttributes().get(
                             "ZEITBASIS_S"), StatusCodes.IMP_INVALID_VALUE));
             }
-        }
-
-        // Handle measFacilId before other attributes in order to
-        // determine networkId
-        final String measFacilLAFKey = "MESSSTELLE";
-        if (object.getAttributes().containsKey(measFacilLAFKey)) {
-            probe.setMeasFacilId(object.getAttributes().get(measFacilLAFKey));
-        }
-        configMapper.applyConfigs(probe, "measFacilId");
-        String netzbetreiberId = null;
-        if (probe.getMeasFacilId() == null) {
-            currentErrors.add(
-                new ReportItem(
-                    measFacilLAFKey, "", StatusCodes.IMP_MISSING_VALUE));
-            errors.put(object.getIdentifier(),
-                new ArrayList<ReportItem>(currentErrors));
-            return;
-        } else {
-            MeasFacil mst = repository.getByIdPlain(
-                MeasFacil.class, probe.getMeasFacilId());
-            if (mst == null) {
-                currentErrors.add(
-                    new ReportItem(
-                        measFacilLAFKey,
-                        probe.getMeasFacilId(), StatusCodes.IMP_INVALID_VALUE));
-                errors.put(
-                    object.getIdentifier(),
-                    new ArrayList<ReportItem>(currentErrors));
-                return;
-            }
-            netzbetreiberId = mst.getNetworkId();
         }
 
         // Fill the object with data

@@ -38,10 +38,6 @@ public class ImportConfigMapper {
         this.config = config;
     }
 
-    void applyConfigs(Sample probe, String attribute) {
-        applyConfigs(probe, Sample.class, "probe", attribute);
-    }
-
     void applyConfigs(Sample probe) {
         final String table = "probe";
         applyConfigs(probe, Sample.class, table);
@@ -82,20 +78,12 @@ public class ImportConfigMapper {
     }
 
     <T> void applyConfigs(Object object, Class<T> clazz, String table) {
-        applyConfigs(object, clazz, table, null);
-    }
-
-    <T> void applyConfigs(
-        Object object, Class<T> clazz, String table, String requestedAttribute
-    ) {
         for (Action action: Action.values()) {
             for (ImportConf current: config) {
-                String attribute = current.getAttribute();
                 if (table.equals(current.getName())
                     && action.name().equals(current.getAction().toUpperCase())
-                    && (requestedAttribute == null
-                        || attribute.equals(requestedAttribute))
                 ) {
+                    String attribute = current.getAttribute();
                     Method getter;
                     Method setter = null;
                     try {
