@@ -22,7 +22,9 @@ import javax.ws.rs.ext.Provider;
 @Provider
 @Produces(MediaType.APPLICATION_JSON)
 public class JSONBConfig implements ContextResolver<Jsonb> {
+
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+
     @Override
     public Jsonb getContext(Class<?> type) {
         // Return regardless of type in order to use the same config for
@@ -33,7 +35,6 @@ public class JSONBConfig implements ContextResolver<Jsonb> {
             // DateTimeFormatter", but at least with Yasson the special
             // JsonbDateFormat.TIME_IN_MILLIS can be used here, too.
             .withDateFormat(DATE_FORMAT, null)
-            .withAdapters(new TimestampAdapter())
         );
     }
 }
