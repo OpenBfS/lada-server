@@ -29,8 +29,7 @@ public class DuplicateKommentar implements Rule {
     "SELECT EXISTS("
     + "SELECT 1 FROM lada.comm_measm "
     + "WHERE lower(replace(text,' ',''))=lower(replace(:%s,' ',''))"
-    + " AND %s=:%s)";
-    /*TEXT, Probe_id = id */
+    + " AND measm_id = :%s)";
 
     @Inject
     private Repository repository;
@@ -41,27 +40,24 @@ public class DuplicateKommentar implements Rule {
         Violation violation = new Violation();
 
         if (kommentar.getMeasmId() == null) {
-            violation.addError("measm_id", StatusCodes.VALUE_MISSING);
+            violation.addError("measmId", StatusCodes.VALUE_MISSING);
             return violation;
         }
 
         if (isExisting(kommentar)) {
-            violation.addWarning("Comment", StatusCodes.VAL_EXISTS);
+            violation.addError("text", StatusCodes.VAL_EXISTS);
             return violation;
         }
         return null;
     }
 
     private Boolean isExisting(CommMeasm kommentar) {
-        // Check if tag is already assigned
         final String textParam = "TEXT",
-            probeIdParam = "measm_id";
-        String idField = "measm_id";
+            idParam = "measm_id";
         Query isAssigned = repository.queryFromString(
-            String.format(EXISTS_QUERY_TEMPLATE,
-                textParam, idField, probeIdParam));
+            String.format(EXISTS_QUERY_TEMPLATE, textParam, idParam));
         isAssigned.setParameter(textParam, kommentar.getText());
-        isAssigned.setParameter(probeIdParam, kommentar.getMeasmId());
+        isAssigned.setParameter(idParam, kommentar.getMeasmId());
         return (Boolean) isAssigned.getSingleResult();
     }
 }

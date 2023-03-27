@@ -29,8 +29,7 @@ public class DuplicateKommentar implements Rule {
     "SELECT EXISTS("
     + "SELECT 1 FROM lada.comm_sample "
     + "WHERE lower(replace(text,' ',''))=lower(replace(:%s,' ',''))"
-    + " AND %s=:%s)";
-    /*TEXT, Probe_id = id */
+    + " AND sample_id = :%s)";
 
     @Inject
     private Repository repository;
@@ -41,25 +40,22 @@ public class DuplicateKommentar implements Rule {
         Violation violation = new Violation();
 
         if (kommentar.getSampleId() == null) {
-            violation.addError("sample_id", StatusCodes.VALUE_MISSING);
+            violation.addError("sampleId", StatusCodes.VALUE_MISSING);
             return violation;
         }
 
         if (isExisting(kommentar)) {
-            violation.addWarning("Comment", StatusCodes.VAL_EXISTS);
+            violation.addError("text", StatusCodes.VAL_EXISTS);
             return violation;
         }
         return null;
     }
 
     private Boolean isExisting(CommSample kommentar) {
-        // Check if tag is already assigned
         final String textParam = "TEXT",
             probeIdParam = "sample_id";
-        String idField = "sample_id";
         Query isAssigned = repository.queryFromString(
-            String.format(EXISTS_QUERY_TEMPLATE,
-                textParam, idField, probeIdParam));
+            String.format(EXISTS_QUERY_TEMPLATE, textParam, probeIdParam));
         isAssigned.setParameter(textParam, kommentar.getText());
         isAssigned.setParameter(probeIdParam, kommentar.getSampleId());
         return (Boolean) isAssigned.getSingleResult();
