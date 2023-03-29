@@ -10,6 +10,7 @@ package de.intevation.lada.rest;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -162,7 +163,7 @@ public class MeasValService extends LadaService {
      */
     @POST
     public Response create(
-        MeasVal messwert
+        @Valid MeasVal messwert
     ) {
         if (!authorization.isAuthorized(
                 messwert,
@@ -203,7 +204,7 @@ public class MeasValService extends LadaService {
     @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
-        MeasVal messwert
+        @Valid MeasVal messwert
     ) {
         if (!authorization.isAuthorized(
                 messwert,

@@ -6,8 +6,8 @@
     "adminUnitId": "11000000",
     "isFuzzy": true,
     "spatRefSysId": 5,
-    "xCoordExt": "32487030",
-    "yCoordExt": "5519780",
+    "coordXExt": "32487030",
+    "coordYExt": "5519780",
     "siteClassId": 1,
     "shortText": "kurz",
     "reiReportText": "bericht"

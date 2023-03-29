@@ -17,6 +17,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 
 
@@ -29,15 +32,21 @@ public class DatasetCreator implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull
+    @Size(max = 120)
     private String descr;
 
+    @NotNull
+    @Size(max = 2)
     private String extId;
 
     @Column(insertable = false)
     private Timestamp lastMod;
 
+    @NotBlank
     private String measFacilId;
 
+    @NotBlank
     private String networkId;
 
     @Transient

@@ -20,6 +20,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.ws.rs.core.MultivaluedMap;
 
 
@@ -38,16 +40,20 @@ public class MeasVal implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
+    @NotNull
     private Integer measUnitId;
 
     private Float error;
 
+    @NotNull
     private Integer measdId;
 
+    @NotNull
     private Integer measmId;
 
     private Double measVal;
 
+    @Size(max = 1)
     private String lessThanLOD;
 
     private Double detectLim;

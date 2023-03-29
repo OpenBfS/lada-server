@@ -21,6 +21,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.hibernate.annotations.DynamicInsert;
@@ -54,11 +56,14 @@ public class Measm implements Serializable {
 
     private Timestamp measmStartDate;
 
+    @Size(max = 2)
     private String mmtId;
 
     @Convert(converter = EmptyStringConverter.class)
+    @Size(max = 4)
     private String minSampleId;
 
+    @NotNull
     private Integer sampleId;
 
     @OneToOne

@@ -16,6 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -103,7 +104,7 @@ public class GridColConfService extends LadaService {
      */
     @POST
     public Response create(
-        GridColConf gridColumnValue
+        @Valid GridColConf gridColumnValue
     ) {
         UserInfo userInfo = authorization.getInfo();
         if (gridColumnValue.getLadaUserId() != null
@@ -133,7 +134,7 @@ public class GridColConfService extends LadaService {
     @PUT
     @Path("{id}")
     public Response update(
-        GridColConf gridColumnValue
+        @Valid GridColConf gridColumnValue
     ) {
         // TODO: Really authorize with an Authorizer implementation.
         // Currently any object can be hijacked by passing it with

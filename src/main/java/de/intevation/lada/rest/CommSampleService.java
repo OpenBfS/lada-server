@@ -8,6 +8,7 @@
 package de.intevation.lada.rest;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -99,7 +100,7 @@ public class CommSampleService extends LadaService {
      */
     @POST
     public Response create(
-        CommSample kommentar
+        @Valid CommSample kommentar
     ) {
         if (!authorization.isAuthorized(
                 kommentar,
@@ -138,7 +139,7 @@ public class CommSampleService extends LadaService {
     @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
-        CommSample kommentar
+        @Valid CommSample kommentar
     ) {
         if (!authorization.isAuthorized(
                 kommentar,

@@ -18,6 +18,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.ws.rs.core.MultivaluedMap;
 
 @Entity
@@ -32,12 +35,16 @@ public class StatusProt implements Serializable {
     @Column(insertable = false, updatable = false)
     private Timestamp date;
 
+    @NotNull
     private Integer measmId;
 
+    @NotBlank
     private String measFacilId;
 
+    @NotNull
     private Integer statusMpId;
 
+    @Size(max = 1024)
     private String text;
 
     @Column(insertable = false, updatable = false)

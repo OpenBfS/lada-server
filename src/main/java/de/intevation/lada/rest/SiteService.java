@@ -19,6 +19,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.Query;
+import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
 import javax.ws.rs.DELETE;
@@ -211,7 +212,7 @@ public class SiteService extends LadaService {
      */
     @POST
     public Response create(
-        Site ort
+        @Valid Site ort
     ) {
         if (!authorization.isAuthorized(
             ort,
@@ -264,7 +265,7 @@ public class SiteService extends LadaService {
     @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
-        Site ort
+        @Valid Site ort
     ) {
         if (!authorization.isAuthorized(
             ort,

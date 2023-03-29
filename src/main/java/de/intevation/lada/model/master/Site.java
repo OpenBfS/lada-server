@@ -20,6 +20,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.locationtech.jts.geom.Point;
@@ -39,6 +42,7 @@ public class Site implements Serializable {
 
     private Integer nuclFacilGrId;
 
+    @Size(max = 70)
     private String reiReportText;
 
     @ManyToOne
@@ -53,35 +57,49 @@ public class Site implements Serializable {
 
     private Float alt;
 
+    @Size(max = 22)
+    @NotNull
     private String coordXExt;
 
+    @Size(max = 22)
+    @NotNull
     private String coordYExt;
 
+    @Size(max = 22)
+    @NotNull
     private String shortText;
 
+    @Size(max = 100)
+    @NotNull
     private String longText;
 
     @Column(insertable = false)
     private Timestamp lastMod;
 
+    @Size(max = 10)
     private String reiOprMode;
 
+    @NotBlank
     private String networkId;
 
+    @Size(max = 20)
     private String extId;
 
     private Integer siteClassId;
 
     private String poiId;
 
+    @Size(max = 2)
     private String reiSector;
 
     private Integer stateId;
 
     private Boolean isFuzzy;
 
+    @Size(max = 1)
     private String reiZone;
 
+    @Size(max = 10)
     private String reiCompetence;
 
     private Integer spatRefSysId;

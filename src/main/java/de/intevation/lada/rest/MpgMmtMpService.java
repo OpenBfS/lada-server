@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -102,7 +103,7 @@ public class MpgMmtMpService extends LadaService {
      */
     @POST
     public Response create(
-        MpgMmtMp messprogrammmmt
+        @Valid MpgMmtMp messprogrammmmt
     ) {
         if (!authorization.isAuthorized(
                 messprogrammmmt,
@@ -138,7 +139,7 @@ public class MpgMmtMpService extends LadaService {
     @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
-        MpgMmtMp messprogrammmmt
+        @Valid MpgMmtMp messprogrammmmt
     ) {
         if (!authorization.isAuthorized(
                 messprogrammmmt,

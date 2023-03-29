@@ -20,6 +20,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.ws.rs.core.MultivaluedMap;
 
 
@@ -36,14 +38,19 @@ public class Geolocat implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
+    @NotNull
     private Integer siteId;
 
+    @Size(max = 1)
     private String typeRegulation;
 
+    @Size(max = 100)
     private String addSiteText;
 
+    @NotNull
     private Integer sampleId;
 
+    @Size(max = 7)
     private String poiId;
 
     @Column(insertable = false, updatable = false)

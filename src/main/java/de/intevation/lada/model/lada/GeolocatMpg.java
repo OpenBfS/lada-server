@@ -18,6 +18,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.ws.rs.core.MultivaluedMap;
 
 
@@ -34,14 +36,19 @@ public class GeolocatMpg implements Serializable {
     @Column(insertable = false)
     private Timestamp lastMod;
 
+    @NotNull
     private Integer mpgId;
 
+    @NotNull
     private Integer siteId;
 
+    @Size(max = 1)
     private String typeRegulation;
 
+    @Size(max = 100)
     private String addSiteText;
 
+    @Size(max = 7)
     private String poiId;
 
     @Column(insertable = false, updatable = false)

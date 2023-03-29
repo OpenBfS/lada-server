@@ -17,6 +17,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 
 
@@ -29,33 +32,49 @@ public class Sampler implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Size(max = 25)
     private String editor;
 
+    @Size(max = 60)
     private String comm;
 
+    @Size(max = 80)
     private String inst;
 
+    @Size(max = 80)
+    @NotNull
     private String descr;
 
+    @Size(max = 10)
+    @NotNull
     private String shortText;
 
     @Column(insertable = false)
     private Timestamp lastMod;
 
+    @NotBlank
     private String networkId;
 
+    @Size(max = 20)
     private String city;
 
+    @Size(max = 5)
     private String zip;
 
+    @Size(max = 9)
+    @NotNull
     private String extId;
 
+    @Size(max = 30)
     private String street;
 
+    @Size(max = 20)
     private String phone;
 
+    @Size(max = 3)
     private String routePlanning;
 
+    @Size(max = 1)
     private String type;
 
     @Transient

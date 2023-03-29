@@ -18,6 +18,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.Valid;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -122,7 +123,7 @@ public class TagService extends LadaService {
     @Path("{id}")
     public Response update(
         @PathParam("id") String id,
-        Tag tag
+        @Valid Tag tag
     ) {
         Tag origTag = repository.getByIdPlain(Tag.class, tag.getId());
         if (!authorization.isAuthorized(
@@ -186,7 +187,7 @@ public class TagService extends LadaService {
      */
     @POST
     public Response create(
-        Tag tag
+        @Valid Tag tag
     ) {
         if (!authorization.isAuthorized(
                 tag, RequestMethod.POST, Tag.class)

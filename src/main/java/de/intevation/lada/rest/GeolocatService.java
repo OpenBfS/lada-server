@@ -10,6 +10,7 @@ package de.intevation.lada.rest;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -132,7 +133,7 @@ public class GeolocatService extends LadaService {
      */
     @POST
     public Response create(
-        Geolocat ort
+        @Valid Geolocat ort
     ) {
         if (!authorization.isAuthorized(
                 ort,
@@ -169,7 +170,7 @@ public class GeolocatService extends LadaService {
     @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
-        Geolocat ort
+        @Valid Geolocat ort
     ) {
         if (!authorization.isAuthorized(
                 ort,

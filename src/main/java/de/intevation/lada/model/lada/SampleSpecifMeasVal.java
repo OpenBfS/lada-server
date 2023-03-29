@@ -20,6 +20,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import de.intevation.lada.util.data.EmptyStringConverter;
 
@@ -40,10 +43,13 @@ public class SampleSpecifMeasVal implements Serializable {
     private Double measVal;
 
     @Convert(converter = EmptyStringConverter.class)
+    @Size(max = 1)
     private String smallerThan;
 
+    @NotNull
     private Integer sampleId;
 
+    @NotBlank
     private String sampleSpecifId;
 
     @Column(insertable = false, updatable = false)

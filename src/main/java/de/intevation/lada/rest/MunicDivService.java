@@ -10,6 +10,7 @@ package de.intevation.lada.rest;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -89,7 +90,7 @@ public class MunicDivService extends LadaService {
 
     @POST
     public Response create(
-        MunicDiv gemUntergliederung
+        @Valid MunicDiv gemUntergliederung
     ) {
         if (!authorization.isAuthorized(
             gemUntergliederung,
@@ -116,7 +117,7 @@ public class MunicDivService extends LadaService {
     @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
-        MunicDiv gemUntergliederung
+        @Valid MunicDiv gemUntergliederung
     ) {
         if (!authorization.isAuthorized(
             gemUntergliederung,

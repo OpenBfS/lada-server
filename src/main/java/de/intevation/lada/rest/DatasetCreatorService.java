@@ -10,6 +10,7 @@ package de.intevation.lada.rest;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -95,7 +96,7 @@ public class DatasetCreatorService extends LadaService {
 
     @POST
     public Response create(
-        DatasetCreator datensatzerzeuger
+        @Valid DatasetCreator datensatzerzeuger
     ) {
         if (!authorization.isAuthorized(
             datensatzerzeuger,
@@ -123,7 +124,7 @@ public class DatasetCreatorService extends LadaService {
     @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
-        DatasetCreator datensatzerzeuger
+        @Valid DatasetCreator datensatzerzeuger
     ) {
         if (!authorization.isAuthorized(
             datensatzerzeuger,

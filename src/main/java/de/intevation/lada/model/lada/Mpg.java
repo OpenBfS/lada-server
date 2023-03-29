@@ -25,7 +25,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import javax.ws.rs.core.MultivaluedMap;
 
 import de.intevation.lada.model.master.SampleSpecif;
@@ -52,18 +57,27 @@ public class Mpg implements Serializable {
 
     private Integer oprModeId;
 
+    @NotNull
     private Integer regulationId;
 
     private String adminUnitId;
 
+    @NotNull
+    @Min(1)
+    @Max(365)
     private Integer validEndDate;
 
+    @NotNull
+    @Min(1)
+    @Max(365)
     private Integer validStartDate;
 
     private Integer samplePdOffset;
 
+    @Size(max = 1000)
     private String commMpg;
 
+    @NotBlank
     private String apprLabId;
 
     @Column(insertable = false)
@@ -72,24 +86,33 @@ public class Mpg implements Serializable {
     @Pattern(regexp = "D:( [0-9][0-9]){12}")
     private String envDescripDisplay;
 
+    @NotBlank
     private String measFacilId;
 
     private Integer mpgCategId;
 
+    @Size(max = 80)
     private String commSample;
 
     private Integer samplerId;
 
+    @NotNull
     private Integer sampleMethId;
 
+    @NotNull
+    @Size(max = 2)
+    @Pattern(regexp = "[JHQMWT]$|W4|W2")
     private String samplePd;
 
+    @NotNull
     private Integer samplePdEndDate;
 
+    @NotNull
     private Integer samplePdStartDate;
 
     private Boolean isTest;
 
+    @NotBlank
     private String envMediumId;
 
     private Integer reiAgGrId;

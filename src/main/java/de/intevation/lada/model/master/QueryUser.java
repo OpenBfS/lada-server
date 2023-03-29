@@ -21,6 +21,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(schema = SchemaName.NAME)
@@ -31,13 +33,17 @@ public class QueryUser implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull
     private String descr;
 
+    @Size(max = 80)
     private String name;
 
+    @NotNull
     private Integer ladaUserId;
 
     //uni-directional many-to-one association to Query
+    @NotNull
     private Integer baseQueryId;
 
     //bi-directional many-to-one association to QueryMessstelle

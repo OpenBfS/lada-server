@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.Query;
+import javax.validation.Valid;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
@@ -56,7 +57,7 @@ public class TagLinkService extends LadaService {
      */
     @POST
     public Response createTagReference(
-        List<TagLink> tagLinks
+        @Valid List<TagLink> tagLinks
     ) {
         //Create Response
         List<Response> responseList = new ArrayList<>();
@@ -115,7 +116,7 @@ public class TagLinkService extends LadaService {
     @POST
     @Path("delete")
     public Response deleteTagReference(
-        List<TagLink> tagLinks
+        @Valid List<TagLink> tagLinks
     ) {
         List<Response> responseList = new ArrayList<>();
 

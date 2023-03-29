@@ -23,6 +23,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import de.intevation.lada.model.master.Measd;
 
@@ -45,8 +47,10 @@ public class MpgMmtMp implements Serializable {
     )
     private Set<Measd> measdObjects;
 
+    @NotNull
     private Integer mpgId;
 
+    @NotBlank
     private String mmtId;
 
     @Transient

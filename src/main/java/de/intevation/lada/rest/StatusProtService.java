@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -147,7 +148,7 @@ public class StatusProtService extends LadaService {
      */
     @POST
     public Response create(
-        StatusProt status
+        @Valid StatusProt status
     ) {
         if (status.getMeasmId() == null
             || status.getMeasFacilId() == null

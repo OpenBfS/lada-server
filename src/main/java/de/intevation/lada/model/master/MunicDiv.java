@@ -17,6 +17,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(schema = SchemaName.NAME)
@@ -27,12 +30,16 @@ public class MunicDiv implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank
     private String networkId;
 
+    @NotBlank
     private String adminUnitId;
 
+    @NotNull
     private Integer siteId;
 
+    @Size(max = 180)
     private String name;
 
     @Column(insertable = false)

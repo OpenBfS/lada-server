@@ -20,6 +20,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import de.intevation.lada.model.lada.TagLink;
 
@@ -42,6 +44,7 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull
     private String name;
 
     private String measFacilId;
@@ -50,6 +53,7 @@ public class Tag {
 
     private Integer ladaUserId;
 
+    @NotBlank
     private String tagType;
 
     private Timestamp valUntil;

@@ -16,6 +16,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "comm_measm", schema = SchemaName.NAME)
@@ -28,10 +31,13 @@ public class CommMeasm implements Serializable {
 
     private Timestamp date;
 
+    @NotNull
     private Integer measmId;
 
+    @NotBlank
     private String measFacilId;
 
+    @Size(max = 1024)
     private String text;
 
     @Transient

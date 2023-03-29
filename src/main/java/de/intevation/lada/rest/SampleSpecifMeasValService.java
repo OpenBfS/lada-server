@@ -8,6 +8,7 @@
 package de.intevation.lada.rest;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -101,7 +102,7 @@ public class SampleSpecifMeasValService extends LadaService {
      */
     @POST
     public Response create(
-        SampleSpecifMeasVal zusatzwert
+        @Valid SampleSpecifMeasVal zusatzwert
     ) {
         if (!authorization.isAuthorized(
                 zusatzwert,
@@ -126,7 +127,7 @@ public class SampleSpecifMeasValService extends LadaService {
     @Path("{id}")
     public Response update(
         @PathParam("id") Integer id,
-        SampleSpecifMeasVal zusatzwert
+        @Valid SampleSpecifMeasVal zusatzwert
     ) {
         if (!authorization.isAuthorized(
                 zusatzwert,

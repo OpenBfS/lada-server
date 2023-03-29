@@ -16,6 +16,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 
 
@@ -30,10 +33,13 @@ public class CommSample implements Serializable {
 
     private Timestamp date;
 
+    @NotBlank
     private String measFacilId;
 
+    @NotNull
     private Integer sampleId;
 
+    @Size(max = 1024)
     private String text;
 
     @Transient

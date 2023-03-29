@@ -22,7 +22,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.hibernate.annotations.DynamicInsert;
@@ -51,13 +53,16 @@ public class Sample implements Serializable {
     private String mainSampleId;
 
     @Convert(converter = EmptyStringConverter.class)
+    @Size(max = 16)
     private String extId;
 
+    @NotBlank
     private String apprLabId;
 
     @Column(insertable = false)
     private Timestamp lastMod;
 
+    @Size(max = 100)
     private String envDescripName;
 
     @Pattern(regexp = "D:( [0-9][0-9]){12}")
@@ -69,6 +74,7 @@ public class Sample implements Serializable {
 
     private Integer mpgId;
 
+    @NotBlank
     private String measFacilId;
 
     private Integer samplerId;
@@ -94,6 +100,7 @@ public class Sample implements Serializable {
     @JoinColumn(insertable = false, updatable = false)
     private EnvMedium envMedium;
 
+    @Size(max = 3)
     private String envMediumId;
 
     private Integer reiAgGrId;

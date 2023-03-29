@@ -18,6 +18,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(schema = SchemaName.NAME)
@@ -40,10 +42,12 @@ public class GridColConf implements Serializable {
 
     private boolean isFilterNull;
 
+    @Size(max = 4)
     private String sort;
 
     private Integer sortIndex;
 
+    @NotNull
     private Integer ladaUserId;
 
     private boolean isVisible;
@@ -59,9 +63,11 @@ public class GridColConf implements Serializable {
 
     //Connected grid column's id, used for creating/updating grid_column_values
     @Transient
+    @NotNull
     private Integer gridColMpId;
 
     @Transient
+    @NotNull
     private Integer queryUserId;
 
     public GridColConf() {
