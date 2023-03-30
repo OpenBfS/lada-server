@@ -388,8 +388,8 @@ CREATE TABLE sample_specif_meas_val (
     tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE (sample_id, sample_specif_id)
 );
-CREATE TRIGGER last_mod_zusatzwert BEFORE UPDATE ON sample_specif_meas_val FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
-CREATE TRIGGER tree_mod_zusatzwert BEFORE UPDATE ON sample_specif_meas_val FOR EACH ROW EXECUTE PROCEDURE update_tree_mod();
+CREATE TRIGGER last_mod_sample_specif BEFORE UPDATE ON sample_specif_meas_val FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
+CREATE TRIGGER tree_mod_sample_specif BEFORE UPDATE ON sample_specif_meas_val FOR EACH ROW EXECUTE PROCEDURE update_tree_mod();
 
 
 --
