@@ -25,6 +25,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import de.intevation.lada.model.master.Measd;
 
@@ -51,6 +52,7 @@ public class MpgMmtMp implements Serializable {
     private Integer mpgId;
 
     @NotBlank
+    @Size(max = 2)
     private String mmtId;
 
     @Transient

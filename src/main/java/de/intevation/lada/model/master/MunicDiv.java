@@ -31,9 +31,11 @@ public class MunicDiv implements Serializable {
     private Integer id;
 
     @NotBlank
+    @Size(max = 2)
     private String networkId;
 
     @NotBlank
+    @Size(max = 8)
     private String adminUnitId;
 
     @NotNull

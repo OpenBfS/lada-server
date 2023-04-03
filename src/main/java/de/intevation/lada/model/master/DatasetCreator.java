@@ -44,9 +44,11 @@ public class DatasetCreator implements Serializable {
     private Timestamp lastMod;
 
     @NotBlank
+    @Size(max = 5)
     private String measFacilId;
 
     @NotBlank
+    @Size(max = 2)
     private String networkId;
 
     @Transient

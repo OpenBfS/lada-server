@@ -78,6 +78,7 @@ public class Mpg implements Serializable {
     private String commMpg;
 
     @NotBlank
+    @Size(max = 5)
     private String apprLabId;
 
     @Column(insertable = false)
@@ -87,6 +88,7 @@ public class Mpg implements Serializable {
     private String envDescripDisplay;
 
     @NotBlank
+    @Size(max = 5)
     private String measFacilId;
 
     private Integer mpgCategId;
@@ -113,6 +115,7 @@ public class Mpg implements Serializable {
     private Boolean isTest;
 
     @NotBlank
+    @Size(max = 3)
     private String envMediumId;
 
     private Integer reiAgGrId;

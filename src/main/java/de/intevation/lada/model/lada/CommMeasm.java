@@ -35,6 +35,7 @@ public class CommMeasm implements Serializable {
     private Integer measmId;
 
     @NotBlank
+    @Size(max = 5)
     private String measFacilId;
 
     @Size(max = 1024)

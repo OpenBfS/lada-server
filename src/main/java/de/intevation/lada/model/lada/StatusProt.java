@@ -39,6 +39,7 @@ public class StatusProt implements Serializable {
     private Integer measmId;
 
     @NotBlank
+    @Size(max = 5)
     private String measFacilId;
 
     @NotNull

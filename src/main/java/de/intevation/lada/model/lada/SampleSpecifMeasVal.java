@@ -50,6 +50,7 @@ public class SampleSpecifMeasVal implements Serializable {
     private Integer sampleId;
 
     @NotBlank
+    @Size(max = 3)
     private String sampleSpecifId;
 
     @Column(insertable = false, updatable = false)

@@ -21,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.core.MultivaluedMap;
@@ -56,6 +57,7 @@ public class Measm implements Serializable {
 
     private Timestamp measmStartDate;
 
+    @NotBlank
     @Size(max = 2)
     private String mmtId;
 

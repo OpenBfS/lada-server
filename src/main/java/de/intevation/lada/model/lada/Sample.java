@@ -57,6 +57,7 @@ public class Sample implements Serializable {
     private String extId;
 
     @NotBlank
+    @Size(max = 5)
     private String apprLabId;
 
     @Column(insertable = false)
@@ -75,6 +76,7 @@ public class Sample implements Serializable {
     private Integer mpgId;
 
     @NotBlank
+    @Size(max = 5)
     private String measFacilId;
 
     private Integer samplerId;

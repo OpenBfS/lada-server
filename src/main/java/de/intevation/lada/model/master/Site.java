@@ -80,6 +80,7 @@ public class Site implements Serializable {
     private String reiOprMode;
 
     @NotBlank
+    @Size(max = 2)
     private String networkId;
 
     @Size(max = 20)

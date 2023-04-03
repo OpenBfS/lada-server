@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 
 /**
@@ -38,12 +39,14 @@ public class MpgCateg implements Serializable {
     private String name;
 
     @NotBlank
+    @Size(max = 3)
     private String extId;
 
     @Column(insertable = false)
     private Timestamp lastMod;
 
     @NotBlank
+    @Size(max = 2)
     private String networkId;
 
     @Transient

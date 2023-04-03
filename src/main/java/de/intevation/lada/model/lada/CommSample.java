@@ -34,6 +34,7 @@ public class CommSample implements Serializable {
     private Timestamp date;
 
     @NotBlank
+    @Size(max = 5)
     private String measFacilId;
 
     @NotNull
