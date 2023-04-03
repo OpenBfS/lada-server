@@ -13,6 +13,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import java.sql.Timestamp;
 
 @Entity
@@ -23,10 +26,15 @@ public class SampleSpecif implements Serializable {
     @Id
     private String id;
 
+    @NotNull
+    @Size(max = 50)
     private String name;
 
+    @Size(max = 40)
     private String eudfKeyword;
 
+    @NotNull
+    @Size(max = 7)
     private String extId;
 
     private Integer measUnitId;

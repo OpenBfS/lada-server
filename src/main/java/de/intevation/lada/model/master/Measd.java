@@ -13,6 +13,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import java.sql.Timestamp;
 
 @Entity
@@ -23,18 +26,25 @@ public class Measd implements Serializable {
     @Id
     private Integer id;
 
+    @Size(max = 300)
     private String descr;
 
+    @Size(max = 9)
     private String defColor;
 
     private Long eudfNuclId;
 
+    @Size(max = 6)
     private String idfExtId;
 
+    @NotNull
     private Boolean isRefNucl;
 
+    @Size(max = 7)
     private String bvlFormatId;
 
+    @NotNull
+    @Size(max = 50)
     private String name;
 
     @Column(insertable = false)
