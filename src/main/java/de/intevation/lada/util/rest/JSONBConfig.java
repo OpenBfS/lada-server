@@ -23,7 +23,8 @@ import javax.ws.rs.ext.Provider;
 @Produces(MediaType.APPLICATION_JSON)
 public class JSONBConfig implements ContextResolver<Jsonb> {
 
-    public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+    public static final String DATE_FORMAT =
+        "yyyy'-'MM'-'dd'T'HH':'mm[':'ss['.'SSS]]XXX";
 
     @Override
     public Jsonb getContext(Class<?> type) {
