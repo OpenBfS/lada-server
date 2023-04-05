@@ -213,12 +213,7 @@ public class LafObjectMapper {
         }
 
         if (object.getAttributes().containsKey("ZEITBASIS")) {
-            List<ImportConf> cfg =
-            getImporterConfigByAttributeUpper("ZEITBASIS");
             String attribute = object.getAttributes().get("ZEITBASIS");
-            if (!cfg.isEmpty() && attribute.equals(cfg.get(0).getFromVal())) {
-                attribute = cfg.get(0).getToVal();
-            }
             QueryBuilder<Tz> builder =
                 repository.queryBuilder(Tz.class);
             builder.and("name", attribute);
