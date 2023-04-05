@@ -25,10 +25,10 @@ import javax.persistence.Temporal;
 import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
-import javax.ws.rs.core.MultivaluedMap;
 
 import org.hibernate.annotations.DynamicInsert;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.util.data.EmptyStringConverter;
 
@@ -36,7 +36,7 @@ import de.intevation.lada.util.data.EmptyStringConverter;
 @Entity
 @DynamicInsert(true)
 @Table(schema = SchemaName.NAME)
-public class Sample implements Serializable {
+public class Sample extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -114,15 +114,6 @@ public class Sample implements Serializable {
 
     @Transient
     private boolean owner;
-
-    @Transient
-    private MultivaluedMap<String, Integer> errors;
-
-    @Transient
-    private MultivaluedMap<String, Integer> warnings;
-
-    @Transient
-    private MultivaluedMap<String, Integer> notifications;
 
     //Transient fields used for Site object generation
     @Transient
@@ -366,35 +357,6 @@ public class Sample implements Serializable {
 
     public void setOwner(boolean owner) {
         this.owner = owner;
-    }
-
-    public MultivaluedMap<String, Integer> getErrors() {
-        return this.errors;
-    }
-
-    @JsonbTransient
-    public void setErrors(MultivaluedMap<String, Integer> errors) {
-        this.errors = errors;
-    }
-
-    public MultivaluedMap<String, Integer> getWarnings() {
-        return this.warnings;
-    }
-
-    @JsonbTransient
-    public void setNotifications(
-        MultivaluedMap<String, Integer> notifications
-    ) {
-      this.notifications = notifications;
-    }
-
-    public MultivaluedMap<String, Integer> getNotifications() {
-       return this.notifications;
-    }
-
-    @JsonbTransient
-    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
-        this.warnings = warnings;
     }
 
     public boolean isFound() {

@@ -10,7 +10,6 @@ package de.intevation.lada.model.lada;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,13 +21,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
-import javax.ws.rs.core.MultivaluedMap;
 
+import de.intevation.lada.model.BaseModel;
 
 
 @Entity
 @Table(schema = SchemaName.NAME)
-public class Geolocat implements Serializable {
+public class Geolocat extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -56,12 +55,6 @@ public class Geolocat implements Serializable {
     @OneToOne
     @JoinColumn(insertable = false, updatable = false)
     private Sample sample;
-
-    @Transient
-    private MultivaluedMap<String, Integer> errors;
-
-    @Transient
-    private MultivaluedMap<String, Integer> warnings;
 
     @Transient
     private boolean owner;
@@ -137,24 +130,6 @@ public class Geolocat implements Serializable {
 
     public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
-    }
-
-    public MultivaluedMap<String, Integer> getErrors() {
-        return this.errors;
-    }
-
-    @JsonbTransient
-    public void setErrors(MultivaluedMap<String, Integer> errors) {
-        this.errors = errors;
-    }
-
-    public MultivaluedMap<String, Integer> getWarnings() {
-        return this.warnings;
-    }
-
-    @JsonbTransient
-    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
-        this.warnings = warnings;
     }
 
     /**
