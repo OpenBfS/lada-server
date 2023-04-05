@@ -890,6 +890,11 @@ CREATE TABLE tz (
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_tz BEFORE UPDATE ON master.tz FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
+INSERT INTO tz (id, name) VALUES
+    (1, 'MESZ'),
+    (2, 'Weltzeit (UTC)'),
+    (3, 'MEZ'),
+    (4, 'ges. Zeit');
 
 CREATE TABLE import_conf (
     id serial PRIMARY KEY,
