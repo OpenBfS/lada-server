@@ -12,7 +12,7 @@
 # http://yourdockerhost:8181/lada-server
 #
 
-FROM debian:buster
+FROM debian:bullseye
 MAINTAINER raimund.renkert@intevation.de
 
 #

@@ -16,5 +16,6 @@ ALTER TABLE master.nucl_facil_gr_mp
     ALTER COLUMN nucl_facil_gr_id SET NOT NULL,
     ALTER COLUMN nucl_facil_id SET NOT NULL;
 
-ALTER TABLE lada.mpg_mmt_mp
-    ADD UNIQUE(mpg_id, mmt_id);
+--This needs further thematic clarification and cannot be implemented so far (constraint violations)
+--ALTER TABLE lada.mpg_mmt_mp
+--    ADD UNIQUE(mpg_id, mmt_id);
