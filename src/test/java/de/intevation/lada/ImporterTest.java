@@ -918,9 +918,11 @@ public class ImporterTest extends BaseTest {
         assertContains(fileReport, successKey);
         boolean success = fileReport.getBoolean(successKey);
         if (expectSuccess) {
-            Assert.assertTrue(success);
+            Assert.assertTrue(
+                "Unsuccessful import: " + fileReport, success);
         } else {
-            Assert.assertFalse(success);
+            Assert.assertFalse(
+                "Unexpectedly successful import: " + fileReport, success);
         }
 
         // TODO: Test if data correctly entered database
