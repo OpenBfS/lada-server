@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
+import javax.persistence.NoResultException;
 
 import org.jboss.logging.Logger;
 
@@ -217,15 +218,15 @@ public class LafObjectMapper {
             QueryBuilder<Tz> builder =
                 repository.queryBuilder(Tz.class);
             builder.and("name", attribute);
-            List<Tz> zb = repository.filterPlain(builder.getQuery());
-            if (zb == null || zb.isEmpty()) {
+            try {
+                currentZeitbasis = repository.getSinglePlain(builder.getQuery())
+                    .getId();
+            } catch (NoResultException e) {
                 currentWarnings.add(
                     new ReportItem(
                         "ZEITBASIS",
                         object.getAttributes().get(
                             "ZEITBASIS"), StatusCodes.IMP_INVALID_VALUE));
-            } else {
-                currentZeitbasis = zb.get(0).getId();
             }
         } else if (object.getAttributes().containsKey("ZEITBASIS_S")) {
             currentZeitbasis =
