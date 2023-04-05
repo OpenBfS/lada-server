@@ -14,11 +14,13 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -38,6 +40,7 @@ import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.TestExecutionPhase;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.logging.Logger;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -56,6 +59,7 @@ import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
+import de.intevation.lada.util.data.StatusCodes;
 
 
 /**
@@ -66,6 +70,8 @@ import de.intevation.lada.util.data.Repository;
 @RunWith(Arquillian.class)
 @ApplyScriptBefore("datasets/clean_and_seed.sql")
 public class ImporterTest extends BaseTest {
+
+    private static final Logger LOG = Logger.getLogger(ImporterTest.class);
 
     private static final double MESS15D = 1.5d;
     private static final int MGID56 = 56;
@@ -97,10 +103,11 @@ public class ImporterTest extends BaseTest {
     private static final int T17 = 17;
     private static final Integer DID9 = 9;
 
+    private final String lafSampleId = "XXX";
     private final String laf = "%PROBE%\n"
         + "UEBERTRAGUNGSFORMAT \"7\"\n"
         + "VERSION \"0084\"\n"
-        + "PROBE_ID \"XXX\"\n"
+        + "PROBE_ID \"" + lafSampleId + "\"\n"
         + "MESSSTELLE \"06010\"\n"
         + "PROBENART \"E\"\n"
         + "MESSPROGRAMM_S 1\n"
@@ -788,7 +795,50 @@ public class ImporterTest extends BaseTest {
         testAsyncImportProbe(baseUrl, "no valid LAF", false, prot);
     }
 
-    private void testAsyncImportProbe(
+    /**
+     * Test "Zeitbasis" handling in LAF8 import.
+     */
+    @Test
+    @RunAsClient
+    public final void testZeitbasis(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        Protocol prot = new Protocol();
+        prot.setName("asyncimport zeitbasis");
+
+        testZeitbasis(baseUrl, "ZEITBASIS", "\"MESZ\"", false, prot);
+        testZeitbasis(baseUrl, "ZEITBASIS", "\"INVALID\"", true, prot);
+        testZeitbasis(baseUrl, "ZEITBASIS_S", "1", false, prot);
+        testZeitbasis(baseUrl, "ZEITBASIS_S", "0", true, prot);
+    }
+
+    private void testZeitbasis(
+        URL baseUrl,
+        String lafKey,
+        String value,
+        boolean expectWarning,
+        Protocol prot
+    ) throws InterruptedException, CharacterCodingException {
+        // Add "ZEITBASIS" attribute to LAF string
+        final String nl = "\n";
+        String[] lafLines = laf.split(nl);
+        String lafZb = lafLines[0] + nl
+            + lafKey + " " + value + nl
+            + String.join(nl, Arrays.copyOfRange(lafLines, 1, lafLines.length));
+        LOG.trace(lafZb);
+
+        JsonArray warnings = testAsyncImportProbe(baseUrl, lafZb, true, prot)
+            .getJsonObject("warnings").getJsonArray(lafSampleId);
+        LOG.trace(warnings);
+        JsonObject warning = Json.createObjectBuilder()
+            .add("key", lafKey)
+            .add("value", value.replace("\"", ""))
+            .add("code", StatusCodes.IMP_INVALID_VALUE).build();
+        Assert.assertFalse(
+            expectWarning && !warnings.contains(warning));
+    }
+
+    private JsonObject testAsyncImportProbe(
         URL baseUrl,
         String lafData,
         boolean expectSuccess,
@@ -876,5 +926,6 @@ public class ImporterTest extends BaseTest {
         // TODO: Test if data correctly entered database
 
         prot.setPassed(true);
+        return fileReport;
     }
 }
