@@ -226,16 +226,11 @@ public class OrtFactory {
                     //set ortId
                     if (v.getIsMunic()) {
                         ort.setExtId("GEM_" + ort.getAdminUnitId());
-                    } else if (!v.getIsMunic() && v.getIsRuralDist()) {
+                    } else if (v.getIsRuralDist()) {
                        ort.setExtId("LK_" + ort.getAdminUnitId());
-                    } else if (!v.getIsMunic()
-                            && !v.getIsRuralDist()
-                            && v.getIsGovDist()) {
+                    } else if (v.getIsGovDist()) {
                         ort.setExtId("RB_" + ort.getAdminUnitId());
-                    } else if (!v.getIsMunic()
-                            && !v.getIsRuralDist()
-                            && !v.getIsGovDist()
-                            && v.getIsState()) {
+                    } else if (v.getIsState()) {
                         ort.setExtId("BL_" + ort.getAdminUnitId());
                     }
                 }
