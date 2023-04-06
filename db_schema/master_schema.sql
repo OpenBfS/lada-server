@@ -886,10 +886,15 @@ CREATE INDEX fts_status_kooin10001 ON state USING btree (spat_ref_sys_id);
 
 CREATE TABLE tz (
     id  integer PRIMARY KEY,
-    name character varying(20) NOT NULL,
+    name character varying(20) NOT NULL UNIQUE,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_tz BEFORE UPDATE ON master.tz FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
+INSERT INTO tz (id, name) VALUES
+    (1, 'MESZ'),
+    (2, 'Weltzeit (UTC)'),
+    (3, 'MEZ'),
+    (4, 'ges. Zeit');
 
 CREATE TABLE import_conf (
     id serial PRIMARY KEY,

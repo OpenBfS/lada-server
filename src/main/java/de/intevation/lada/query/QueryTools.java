@@ -8,7 +8,9 @@
 package de.intevation.lada.query;
 
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,6 +127,22 @@ public class QueryTools {
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
         for (Object row: query.getResultList()) {
             Map<String, Object> set = new HashMap<String, Object>();
+            /* If row contains or is a java.sql.Timestamp:
+             * Convert to date to allow serialization
+             */
+            if (row instanceof Object[]) {
+                Object[] rowArr = (Object[]) row;
+                for (int i = 0; i < rowArr.length; i++) {
+                    Object col = rowArr[i];
+                    if (col instanceof Timestamp) {
+                        Timestamp ts = (Timestamp) col;
+                        rowArr[i] = new Date(ts.getTime());
+                    }
+                }
+            } else if (row instanceof Timestamp) {
+                Timestamp ts = (Timestamp) row;
+                row = new Date(ts.getTime());
+            }
             for (GridColConf column: this.customColumns) {
                 set.put(
                     column.getGridColMp().getDataIndex(),

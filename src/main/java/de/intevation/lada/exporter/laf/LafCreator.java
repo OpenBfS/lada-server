@@ -7,11 +7,11 @@
  */
 package de.intevation.lada.exporter.laf;
 
-import java.sql.Timestamp;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 //import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -619,7 +619,7 @@ implements Creator {
             + "\n";
     }
 
-    private String toUTCString(Timestamp timestamp) {
+    private String toUTCString(Date timestamp) {
         DateTimeFormatter formatter =
             DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
         return formatter.format(timestamp.toInstant().atZone(ZoneOffset.UTC));

@@ -8,11 +8,13 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -37,7 +39,8 @@ public class AuditTrailSampleView implements Serializable {
     @Type(type = "JsonObject")
     private JsonNode rowData;
 
-    private Timestamp tstamp;
+    @Temporal(TIMESTAMP)
+    private Date tstamp;
 
     private String action;
 
@@ -70,11 +73,11 @@ public class AuditTrailSampleView implements Serializable {
         this.rowData = rowData;
     }
 
-    public Timestamp getTstamp() {
+    public Date getTstamp() {
         return tstamp;
     }
 
-    public void setTstamp(Timestamp tstamp) {
+    public void setTstamp(Date tstamp) {
         this.tstamp = tstamp;
     }
 

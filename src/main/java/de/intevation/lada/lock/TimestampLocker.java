@@ -9,7 +9,7 @@ package de.intevation.lada.lock;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -86,11 +86,11 @@ public class TimestampLocker implements ObjectLocker {
      * @param t     The timestamp.
      * @return True if the object is newer.
      */
-    private boolean isNewer(Object o, Timestamp t) {
+    private boolean isNewer(Object o, Date t) {
         Method m;
         try {
             m = o.getClass().getMethod("getParentModified");
-            Timestamp ot = (Timestamp) m.invoke(o);
+            Date ot = (Date) m.invoke(o);
             if (ot == null) {
                 return true;
             }

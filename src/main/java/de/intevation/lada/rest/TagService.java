@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.rest;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -134,7 +134,7 @@ public class TagService extends LadaService {
 
         String tagTyp = tag.getTagType();
         String origTagTyp = origTag.getTagType();
-        Timestamp gueltigBis = tag.getValUntil();
+        Date gueltigBis = tag.getValUntil();
 
         if (tag.getMeasFacilId() != null) {
             MeasFacil mst = repository.getByIdPlain(

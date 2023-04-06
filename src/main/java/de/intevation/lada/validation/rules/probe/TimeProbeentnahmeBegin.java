@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.validation.rules.probe;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 import de.intevation.lada.model.lada.Sample;
@@ -29,8 +28,8 @@ public class TimeProbeentnahmeBegin implements Rule {
     @Override
     public Violation execute(Object object) {
         Sample probe = (Sample) object;
-        Timestamp begin = probe.getSampleStartDate();
-        Timestamp end = probe.getSampleEndDate();
+        Date begin = probe.getSampleStartDate();
+        Date end = probe.getSampleEndDate();
         if (begin == null) {
             if (end == null) {
                 return null;

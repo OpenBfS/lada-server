@@ -8,13 +8,15 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -31,7 +33,8 @@ public class CommSample implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Timestamp date;
+    @Temporal(TIMESTAMP)
+    private Date date;
 
     @NotBlank
     @Size(max = 5)
@@ -60,11 +63,11 @@ public class CommSample implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getDate() {
+    public Date getDate() {
         return this.date;
     }
 
-    public void setDate(Timestamp date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

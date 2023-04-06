@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.probe;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.StatusCodes;
@@ -27,8 +27,8 @@ public class HasProbeentnahmeEnde implements Rule {
     @Override
     public Violation execute(Object object) {
         Sample probe = (Sample) object;
-        Timestamp ende = probe.getSampleEndDate();
-        Timestamp begin = probe.getSampleStartDate();
+        Date ende = probe.getSampleEndDate();
+        Date begin = probe.getSampleStartDate();
         if (probe.getRegulationId() != null
             && probe.getSampleMethId() != null
             && ((probe.getRegulationId() == 4

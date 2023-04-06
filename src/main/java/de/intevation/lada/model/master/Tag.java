@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.model.master;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Set;
 
 import javax.json.bind.annotation.JsonbTransient;
@@ -19,6 +19,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -56,10 +58,12 @@ public class Tag {
     @NotBlank
     private String tagType;
 
-    private Timestamp valUntil;
+    @Temporal(TIMESTAMP)
+    private Date valUntil;
 
     @Column(insertable = false, updatable = false)
-    private Timestamp createdAt;
+    @Temporal(TIMESTAMP)
+    private Date createdAt;
 
     @OneToMany(mappedBy = "tagId", cascade = CascadeType.REMOVE)
     @JsonbTransient
@@ -113,15 +117,15 @@ public class Tag {
     }
 
 
-    public Timestamp getValUntil() {
+    public Date getValUntil() {
         return valUntil;
     }
 
-    public void setValUntil(Timestamp valUntil) {
+    public void setValUntil(Date valUntil) {
         this.valUntil = valUntil;
     }
 
-    public Timestamp getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
