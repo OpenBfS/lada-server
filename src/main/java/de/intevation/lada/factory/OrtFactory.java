@@ -108,7 +108,10 @@ public class OrtFactory {
         } else {
             errors.clear();
         }
-        QueryBuilder<Site> builder = repository.queryBuilder(Site.class);
+
+        QueryBuilder<Site> builder = repository.queryBuilder(Site.class)
+            .and("networkId", ort.getNetworkId());
+
         if (ort.getSpatRefSysId() != null
             && ort.getCoordXExt() != null
             && ort.getCoordYExt() != null
@@ -116,7 +119,6 @@ public class OrtFactory {
             builder.and("spatRefSysId", ort.getSpatRefSysId());
             builder.and("coordXExt", ort.getCoordXExt());
             builder.and("coordYExt", ort.getCoordYExt());
-            builder.and("networkId", ort.getNetworkId());
             List<Site> orte =
                 repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
@@ -124,7 +126,6 @@ public class OrtFactory {
             }
         } else if (ort.getAdminUnitId() != null) {
             builder.and("adminUnitId", ort.getAdminUnitId());
-            builder.and("networkId", ort.getNetworkId());
             List<Site> orte =
                 repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
@@ -141,7 +142,7 @@ public class OrtFactory {
                                     String.valueOf(v.getGeomCenter().getX()))
                             && oElem.getCoordYExt().equals(
                                     String.valueOf(v.getGeomCenter().getY()))
-                             ){
+                            ) {
                                 return oElem;
                             }
                         }
@@ -153,7 +154,6 @@ public class OrtFactory {
         } else  if (ort.getStateId() != null) {
             builder.and("stateId", ort.getStateId());
             builder.and("siteClassId", ORTTYP5);
-            builder.and("networkId", ort.getNetworkId());
             List<Site> orte =
                 repository.filterPlain(builder.getQuery());
             if (orte != null && !orte.isEmpty()) {
@@ -190,9 +190,10 @@ public class OrtFactory {
             AdminUnit v = repository.getByIdPlain(
                 AdminUnit.class, ort.getAdminUnitId());
             //Ort exists - check for OrtId
-            QueryBuilder<Site> builderExists = repository.queryBuilder(Site.class);
-            builderExists.and("networkId", ort.getNetworkId());
-            builderExists.andLike("adminUnitId", "%"+ort.getAdminUnitId());
+            QueryBuilder<Site> builderExists =
+                repository.queryBuilder(Site.class)
+                .and("networkId", ort.getNetworkId())
+                .andLike("adminUnitId", "%" + ort.getAdminUnitId());
             List<Site> ortExists = repository.filterPlain(
                 builderExists.getQuery());
             if (v == null) {
