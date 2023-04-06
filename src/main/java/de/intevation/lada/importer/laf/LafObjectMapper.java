@@ -360,10 +360,10 @@ public class LafObjectMapper {
                     Response created = repository.create(probe);
                     newProbe = ((Sample) created.getData());
                 } else {
-                    for (Entry<String, List<Integer>> err
+                    for (Entry<String, List<String>> err
                         : violation.getErrors().entrySet()
                     ) {
-                        for (Integer code : err.getValue()) {
+                        for (String code : err.getValue()) {
                             currentErrors.add(
                                 new ReportItem(
                                     "validation#probe", err.getKey(), code));
@@ -627,10 +627,10 @@ public class LafObjectMapper {
 
             // Validate probe object
             Violation violation = probeValidator.validate(newProbe);
-            for (Entry<String, List<Integer>> err
+            for (Entry<String, List<String>> err
                 : violation.getErrors().entrySet()
             ) {
-                for (Integer code : err.getValue()) {
+                for (String code : err.getValue()) {
                     currentErrors.add(
                         new ReportItem("validation#probe", err.getKey(), code));
                 }
@@ -841,10 +841,10 @@ public class LafObjectMapper {
         merger.mergeMesswerte(newMessung, messwerte);
         // Check for warnings and errors for messung ...
         Violation violation = messungValidator.validate(newMessung);
-        for (Entry<String, List<Integer>> err
+        for (Entry<String, List<String>> err
             : violation.getErrors().entrySet()
         ) {
-            for (Integer code : err.getValue()) {
+            for (String code : err.getValue()) {
                 currentErrors.add(
                     new ReportItem("validation#messung", err.getKey(), code));
             }
@@ -1791,9 +1791,9 @@ public class LafObjectMapper {
             }
         }
         if (violation.hasErrors()) {
-            for (Entry<String, List<Integer>> err
+            for (Entry<String, List<String>> err
                 : violation.getErrors().entrySet()) {
-                for (Integer code : err.getValue()) {
+                for (String code : err.getValue()) {
                     // Add to warnings because Sample object might be imported
                     currentWarnings.add(
                         new ReportItem("validation", err.getKey(), code));

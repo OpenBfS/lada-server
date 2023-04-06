@@ -80,7 +80,8 @@ public class SqlService extends LadaService {
         }
 
         try {
-            QueryTools queryTools = new QueryTools(repository, gridColumnValues);
+            QueryTools queryTools =
+                new QueryTools(repository, gridColumnValues);
             String sql = queryTools.getSql();
             if (sql == null) {
                 return new Response(true, StatusCodes.OK, null);
@@ -89,10 +90,12 @@ public class SqlService extends LadaService {
                 prepareStatement(sql, queryTools.getFilterValues());
             return new Response(true, StatusCodes.OK, statement);
         } catch (IllegalArgumentException iae) {
-            Response r = new Response(false, StatusCodes.SQL_INVALID_FILTER, null);
-            MultivaluedMap<String, Integer> error =
-                new MultivaluedHashMap<String, Integer>();
-            error.add(iae.getMessage(), StatusCodes.SQL_INVALID_FILTER);
+            Response r =
+                new Response(false, StatusCodes.SQL_INVALID_FILTER, null);
+            MultivaluedMap<String, String> error = new MultivaluedHashMap<>();
+            error.add(
+                iae.getMessage(),
+                Integer.toString(StatusCodes.SQL_INVALID_FILTER));
             r.setErrors(error);
             return r;
         }

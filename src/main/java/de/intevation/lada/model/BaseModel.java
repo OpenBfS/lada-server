@@ -14,16 +14,16 @@ import javax.ws.rs.core.MultivaluedMap;
  * Provides shared attributes for model entities.
  */
 public abstract class BaseModel {
-    private MultivaluedMap<String, Integer> errors;
+    private MultivaluedMap<String, String> errors;
     private MultivaluedMap<String, Integer> warnings;
     private MultivaluedMap<String, Integer> notifications;
 
-    public MultivaluedMap<String, Integer> getErrors() {
+    public MultivaluedMap<String, String> getErrors() {
         return this.errors;
     }
 
     @JsonbTransient
-    public void setErrors(MultivaluedMap<String, Integer> errors) {
+    public void setErrors(MultivaluedMap<String, String> errors) {
         this.errors = errors;
     }
 

@@ -833,7 +833,8 @@ public class ImporterTest extends BaseTest {
         JsonObject warning = Json.createObjectBuilder()
             .add("key", lafKey)
             .add("value", value.replace("\"", ""))
-            .add("code", StatusCodes.IMP_INVALID_VALUE).build();
+            .add("code", Integer.toString(StatusCodes.IMP_INVALID_VALUE))
+            .build();
         Assert.assertFalse((expectWarning
                 ? "Missing warning: " : "Unexpected warning: ")
             + warning.toString(),

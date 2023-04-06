@@ -19,13 +19,13 @@ public class Violation {
 
     private MultivaluedMap<String, Integer> warnings;
 
-    private MultivaluedMap<String, Integer> errors;
+    private MultivaluedMap<String, String> errors;
 
     private MultivaluedMap<String, Integer> notifications;
 
     public Violation() {
         this.warnings = new MultivaluedHashMap<String, Integer>();
-        this.errors = new MultivaluedHashMap<String, Integer>();
+        this.errors = new MultivaluedHashMap<>();
         this.notifications = new MultivaluedHashMap<String, Integer>();
     }
 
@@ -33,7 +33,7 @@ public class Violation {
         return this.warnings;
     }
 
-    public MultivaluedMap<String, Integer> getErrors() {
+    public MultivaluedMap<String, String> getErrors() {
         return this.errors;
     }
 
@@ -45,8 +45,12 @@ public class Violation {
         this.warnings.add(key, value);
     }
 
-    public void addError(String key, Integer value) {
+    public void addError(String key, String value) {
         this.errors.add(key, value);
+    }
+
+    public void addError(String key, Integer value) {
+        this.errors.add(key, value.toString());
     }
 
     public void addNotification(String key, Integer value) {
@@ -59,7 +63,7 @@ public class Violation {
         }
     }
 
-    public void addErrors(MultivaluedMap<String, Integer> e) {
+    public void addErrors(MultivaluedMap<String, String> e) {
         for (String key: e.keySet()) {
             this.errors.addAll(key, e.get(key));
         }

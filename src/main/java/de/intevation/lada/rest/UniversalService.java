@@ -212,9 +212,10 @@ public class UniversalService extends LadaService {
             return new Response(true, StatusCodes.OK, result, size);
         } catch (IllegalArgumentException iae) {
             Response r = new Response(false, StatusCodes.SQL_INVALID_FILTER, null);
-            MultivaluedMap<String, Integer> error =
-                new MultivaluedHashMap<String, Integer>();
-            error.add(iae.getMessage(), StatusCodes.SQL_INVALID_FILTER);
+            MultivaluedMap<String, String> error = new MultivaluedHashMap<>();
+            error.add(
+                iae.getMessage(),
+                Integer.toString(StatusCodes.SQL_INVALID_FILTER));
             r.setErrors(error);
             return r;
         }
