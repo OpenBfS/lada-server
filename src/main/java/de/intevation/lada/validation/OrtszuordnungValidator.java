@@ -43,21 +43,7 @@ public class OrtszuordnungValidator implements Validator {
             violations.addError("geolocat", StatusCodes.NOT_A_PROBE);
             return violations;
         }
-        for (Rule rule : rules) {
-            Violation result = rule.execute(object);
-            if (result != null) {
-                if (result.hasWarnings()) {
-                    violations.addWarnings(result.getWarnings());
-                }
-                if (result.hasErrors()) {
-                    violations.addErrors(result.getErrors());
-                }
-                if (result.hasNotifications()) {
-                    violations.addNotifications(result.getNotifications());
-                }
-            }
-        }
-        return violations;
+        return Validator.validate(object, rules);
     }
 
 }
