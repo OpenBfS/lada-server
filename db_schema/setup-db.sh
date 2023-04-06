@@ -187,7 +187,6 @@ if [ "$NO_DATA" != "true" ]; then
         master_data_rei.sql \
         master_data_site.sql \
         master_data_sampler.sql \
-        master_data_tz.sql \
         master_data_query.sql \
         master_data_user_context.sql \
         master_data_import_config.sql \
