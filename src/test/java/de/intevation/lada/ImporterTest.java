@@ -834,7 +834,9 @@ public class ImporterTest extends BaseTest {
             .add("key", lafKey)
             .add("value", value.replace("\"", ""))
             .add("code", StatusCodes.IMP_INVALID_VALUE).build();
-        Assert.assertFalse(
+        Assert.assertFalse((expectWarning
+                ? "Missing warning: " : "Unexpected warning: ")
+            + warning.toString(),
             expectWarning && !warnings.contains(warning));
     }
 
