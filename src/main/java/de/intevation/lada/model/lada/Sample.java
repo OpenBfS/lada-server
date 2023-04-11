@@ -8,7 +8,7 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import javax.json.bind.annotation.JsonbTransient;
@@ -21,12 +21,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
-import javax.ws.rs.core.MultivaluedMap;
 
 import org.hibernate.annotations.DynamicInsert;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.util.data.EmptyStringConverter;
 
@@ -34,7 +36,7 @@ import de.intevation.lada.util.data.EmptyStringConverter;
 @Entity
 @DynamicInsert(true)
 @Table(schema = SchemaName.NAME)
-public class Sample implements Serializable {
+public class Sample extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -56,7 +58,8 @@ public class Sample implements Serializable {
     private String apprLabId;
 
     @Column(insertable = false)
-    private Timestamp lastMod;
+    @Temporal(TIMESTAMP)
+    private Date lastMod;
 
     private String envDescripName;
 
@@ -73,22 +76,28 @@ public class Sample implements Serializable {
 
     private Integer samplerId;
 
-    private Timestamp sampleStartDate;
+    @Temporal(TIMESTAMP)
+    private Date sampleStartDate;
 
-    private Timestamp sampleEndDate;
+    @Temporal(TIMESTAMP)
+    private Date sampleEndDate;
 
     private Integer sampleMethId;
 
-    private Timestamp schedStartDate;
+    @Temporal(TIMESTAMP)
+    private Date schedStartDate;
 
-    private Timestamp schedEndDate;
+    @Temporal(TIMESTAMP)
+    private Date schedEndDate;
 
-    private Timestamp origDate;
+    @Temporal(TIMESTAMP)
+    private Date origDate;
 
     private Boolean isTest;
 
     @Column(insertable = false, updatable = false)
-    private Timestamp treeMod;
+    @Temporal(TIMESTAMP)
+    private Date treeMod;
 
     @OneToOne
     @JoinColumn(insertable = false, updatable = false)
@@ -105,15 +114,6 @@ public class Sample implements Serializable {
 
     @Transient
     private boolean owner;
-
-    @Transient
-    private MultivaluedMap<String, Integer> errors;
-
-    @Transient
-    private MultivaluedMap<String, Integer> warnings;
-
-    @Transient
-    private MultivaluedMap<String, Integer> notifications;
 
     //Transient fields used for Site object generation
     @Transient
@@ -186,11 +186,11 @@ public class Sample implements Serializable {
         this.apprLabId = apprLabId;
     }
 
-    public Timestamp getLastMod() {
+    public Date getLastMod() {
         return this.lastMod;
     }
 
-    public void setLastMod(Timestamp lastMod) {
+    public void setLastMod(Date lastMod) {
         this.lastMod = lastMod;
     }
 
@@ -250,19 +250,19 @@ public class Sample implements Serializable {
         this.samplerId = samplerId;
     }
 
-    public Timestamp getSampleStartDate() {
+    public Date getSampleStartDate() {
         return this.sampleStartDate;
     }
 
-    public void setSampleStartDate(Timestamp sampleStartDate) {
+    public void setSampleStartDate(Date sampleStartDate) {
         this.sampleStartDate = sampleStartDate;
     }
 
-    public Timestamp getSampleEndDate() {
+    public Date getSampleEndDate() {
         return this.sampleEndDate;
     }
 
-    public void setSampleEndDate(Timestamp sampleEndDate) {
+    public void setSampleEndDate(Date sampleEndDate) {
         this.sampleEndDate = sampleEndDate;
     }
 
@@ -274,27 +274,27 @@ public class Sample implements Serializable {
         this.sampleMethId = sampleMethId;
     }
 
-    public Timestamp getSchedStartDate() {
+    public Date getSchedStartDate() {
         return this.schedStartDate;
     }
 
-    public void setSchedStartDate(Timestamp schedStartDate) {
+    public void setSchedStartDate(Date schedStartDate) {
         this.schedStartDate = schedStartDate;
     }
 
-    public Timestamp getSchedEndDate() {
+    public Date getSchedEndDate() {
         return this.schedEndDate;
     }
 
-    public void setSchedEndDate(Timestamp schedEndDate) {
+    public void setSchedEndDate(Date schedEndDate) {
         this.schedEndDate = schedEndDate;
     }
 
-    public Timestamp getOrigDate() {
+    public Date getOrigDate() {
         return this.origDate;
     }
 
-    public void setOrigDate(Timestamp origDate) {
+    public void setOrigDate(Date origDate) {
         this.origDate = origDate;
     }
 
@@ -306,11 +306,11 @@ public class Sample implements Serializable {
         this.isTest = isTest;
     }
 
-    public Timestamp getTreeMod() {
+    public Date getTreeMod() {
         return this.treeMod;
     }
 
-    public void setTreeMod(Timestamp treeMod) {
+    public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
     }
 
@@ -357,35 +357,6 @@ public class Sample implements Serializable {
 
     public void setOwner(boolean owner) {
         this.owner = owner;
-    }
-
-    public MultivaluedMap<String, Integer> getErrors() {
-        return this.errors;
-    }
-
-    @JsonbTransient
-    public void setErrors(MultivaluedMap<String, Integer> errors) {
-        this.errors = errors;
-    }
-
-    public MultivaluedMap<String, Integer> getWarnings() {
-        return this.warnings;
-    }
-
-    @JsonbTransient
-    public void setNotifications(
-        MultivaluedMap<String, Integer> notifications
-    ) {
-      this.notifications = notifications;
-    }
-
-    public MultivaluedMap<String, Integer> getNotifications() {
-       return this.notifications;
-    }
-
-    @JsonbTransient
-    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
-        this.warnings = warnings;
     }
 
     public boolean isFound() {

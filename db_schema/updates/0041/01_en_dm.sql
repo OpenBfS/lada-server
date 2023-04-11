@@ -551,7 +551,7 @@ CREATE VIEW stamm.grid_column AS SELECT
 	grid_col AS name,
 	data_index,
 	position,
-	filter_id,
+	filter_id AS filter,
 	disp_id AS data_type
 FROM master.grid_col_mp;
 

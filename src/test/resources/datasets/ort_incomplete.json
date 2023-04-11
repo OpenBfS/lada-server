@@ -1,0 +1,11 @@
+{
+    "networkId": "06",
+    "longText": "Langer Text2",
+    "stateId": 0,
+    "isFuzzy": false,
+    "coordXExt": "10.81597",
+    "coordYExt": "51.60069",
+    "siteClassId": 1,
+    "shortText": "kurz",
+    "spatRefSysId": 4
+}

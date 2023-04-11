@@ -8,10 +8,9 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Set;
 
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,15 +23,17 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
-import javax.ws.rs.core.MultivaluedMap;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.SampleSpecif;
 
 @Entity
 @Table(schema = SchemaName.NAME)
-public class Mpg implements Serializable {
+public class Mpg extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     // Has to be kept in sync with database schema
@@ -67,7 +68,8 @@ public class Mpg implements Serializable {
     private String apprLabId;
 
     @Column(insertable = false)
-    private Timestamp lastMod;
+    @Temporal(TIMESTAMP)
+    private Date lastMod;
 
     @Pattern(regexp = "D:( [0-9][0-9]){12}")
     private String envDescripDisplay;
@@ -114,12 +116,6 @@ public class Mpg implements Serializable {
 
     @Transient
     private int referenceCount;
-
-    @Transient
-    private MultivaluedMap<String, Integer> errors;
-
-    @Transient
-    private MultivaluedMap<String, Integer> warnings;
 
     @Transient
     private boolean readonly;
@@ -199,11 +195,11 @@ public class Mpg implements Serializable {
         this.apprLabId = apprLabId;
     }
 
-    public Timestamp getLastMod() {
+    public Date getLastMod() {
         return this.lastMod;
     }
 
-    public void setLastMod(Timestamp lastMod) {
+    public void setLastMod(Date lastMod) {
         this.lastMod = lastMod;
     }
 
@@ -351,24 +347,6 @@ public class Mpg implements Serializable {
             return this.samples.size();
         }
         return 0;
-    }
-
-    public MultivaluedMap<String, Integer> getErrors() {
-        return this.errors;
-    }
-
-    @JsonbTransient
-    public void setErrors(MultivaluedMap<String, Integer> errors) {
-        this.errors = errors;
-    }
-
-    public MultivaluedMap<String, Integer> getWarnings() {
-        return this.warnings;
-    }
-
-    @JsonbTransient
-    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
-        this.warnings = warnings;
     }
 
     public boolean isReadonly() {

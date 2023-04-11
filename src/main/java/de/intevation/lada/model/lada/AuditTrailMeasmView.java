@@ -8,11 +8,13 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -34,7 +36,8 @@ public class AuditTrailMeasmView implements Serializable {
 
     private String action;
 
-    private Timestamp tstamp;
+    @Temporal(TIMESTAMP)
+    private Date tstamp;
 
     @Type(type = "JsonObject")
     private JsonNode changedFields;
@@ -59,11 +62,11 @@ public class AuditTrailMeasmView implements Serializable {
         this.action = action;
     }
 
-    public Timestamp getTstamp() {
+    public Date getTstamp() {
         return this.tstamp;
     }
 
-    public void setTstamp(Timestamp tstamp) {
+    public void setTstamp(Date tstamp) {
         this.tstamp = tstamp;
     }
 

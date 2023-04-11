@@ -410,8 +410,8 @@ CREATE TABLE measm (
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     is_scheduled boolean DEFAULT false NOT NULL,
     tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    UNIQUE (id, ext_id),
-    UNIQUE (id, min_sample_id)
+    UNIQUE (sample_id, ext_id),
+    UNIQUE (sample_id, min_sample_id)
 );
 CREATE TRIGGER last_mod_measm BEFORE UPDATE ON measm FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 CREATE TRIGGER tree_mod_measm BEFORE UPDATE ON measm FOR EACH ROW EXECUTE PROCEDURE update_tree_mod_measm();

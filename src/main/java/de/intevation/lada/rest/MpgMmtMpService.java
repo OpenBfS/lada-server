@@ -159,12 +159,8 @@ public class MpgMmtMpService extends LadaService {
 
         setMessgroesseObjects(messprogrammmmt);
 
-        Response response = repository.update(messprogrammmmt);
-        if (!response.getSuccess()) {
-            return response;
-        }
         return authorization.filter(
-            response,
+            repository.update(messprogrammmmt),
             MpgMmtMp.class);
     }
 

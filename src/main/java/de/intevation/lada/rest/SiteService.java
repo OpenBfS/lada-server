@@ -125,7 +125,7 @@ public class SiteService extends LadaService {
         }
         if (search != null) {
             Join<Site, AdminUnit> join =
-                root.join("munic", JoinType.LEFT);
+                root.join("adminUnit", JoinType.LEFT);
             String pattern = "%" + search + "%";
             Predicate idFilter = builder.like(root.get("extId"), pattern);
             Predicate kurzTextFilter =
@@ -133,7 +133,7 @@ public class SiteService extends LadaService {
             Predicate langtextFilter =
                 builder.like(root.get("longText"), pattern);
             Predicate bezFilter =
-                builder.like(join.get("bezeichnung"), pattern);
+                builder.like(join.get("name"), pattern);
             Predicate searchFilter =
                 builder.or(idFilter, kurzTextFilter, langtextFilter, bezFilter);
             filter =
@@ -186,7 +186,8 @@ public class SiteService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        Site ort = repository.getByIdPlain(Site.class, id);
+        Response response = repository.getById(Site.class, id);
+        Site ort = (Site) response.getData();
         if (ort == null) {
             return new Response(false, StatusCodes.NOT_EXISTING, null);
         }
@@ -204,11 +205,11 @@ public class SiteService extends LadaService {
         );
         Violation violation = validator.validate(ort);
             if (violation.hasErrors() || violation.hasWarnings()) {
-                ort.setErrors(violation.getErrors());
-                ort.setWarnings(violation.getWarnings());
-                ort.setNotifications(violation.getNotifications());
+                response.setErrors(violation.getErrors());
+                response.setWarnings(violation.getWarnings());
+                response.setNotifications(violation.getNotifications());
             }
-        return new Response(true, StatusCodes.OK, ort);
+               return authorization.filter(response,Site.class);
     }
 
     /**

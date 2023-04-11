@@ -35,6 +35,7 @@ public class OrtTest extends ServiceTest {
     private JsonObject create;
     private byte[] imgBytes;
     private byte[] mapBytes;
+    private JsonObject createIncomplete;
 
     @Override
     public void init(
@@ -62,6 +63,7 @@ public class OrtTest extends ServiceTest {
 
         // Load object to test POST request
         create = readJsonResource("/datasets/ort.json");
+        createIncomplete = readJsonResource("/datasets/ort_incomplete.json");
         Assert.assertNotNull(create);
 
         //Create dummy image bytes
@@ -115,9 +117,19 @@ public class OrtTest extends ServiceTest {
      */
     public final void execute() {
         get("ort", "rest/site");
+
+        //Test search interface
+        JsonObject result = get("site-search", "rest/site?search=Text");
+        Assert.assertNotEquals(0, result.getJsonArray("data").size());
+
         getById("ort", "rest/site/1000", expectedById);
         int createdId = create("site", "rest/site", create)
             .getJsonObject("data").getInt("id");
+
+        /*Test creation of site objects without an admin unit
+          which should be completed by the server*/
+        create("site-incomplete", "rest/site", createIncomplete);
+
         update("site", "rest/site/" + createdId,
             "longText", "Langer Text", "Längerer Text");
         //Test site images

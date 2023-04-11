@@ -77,6 +77,16 @@ public class ProbeTest extends ServiceTest {
             "mainSampleId",
             "120510002",
             "130510002");
+
+        // Ensure invalid envDescripDisplay is rejected
+        update(
+            "probe",
+            "rest/sample/1000",
+            "envDescripDisplay",
+            "D: 59 04 01 00 05 05 01 02 00 00 00 00",
+            "",
+            Status.BAD_REQUEST);
+
         getAuditTrail("probe", "rest/audit/probe/1000");
         delete(
             "probe",

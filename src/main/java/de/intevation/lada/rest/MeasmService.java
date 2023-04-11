@@ -203,9 +203,6 @@ public class MeasmService extends LadaService {
             return response;
         }
         Response response = repository.update(messung);
-        if (!response.getSuccess()) {
-            return response;
-        }
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
         }

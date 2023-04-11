@@ -106,9 +106,6 @@
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
                 <version>${antlr.version}</version>
-                <configuration>
-                    <outputDirectory>${basedir}/src/main/java</outputDirectory>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -182,14 +179,14 @@
                 </executions>
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
+                    <sourceDirectories>
+                        ${project.build.sourceDirectory}
+                    </sourceDirectories>
                     <includeTestSourceDirectory>
                         true
                     </includeTestSourceDirectory>
                     <includeResources>false</includeResources>
                     <includeTestResources>false</includeTestResources>
-                    <excludes>
-                        **/LafBaseListener.java,**/LafListener.java,**/LafParser.java,**/LafLexer.java
-                    </excludes>
                     <logViolationsToConsole>
                         true
                     </logViolationsToConsole>
@@ -563,14 +560,14 @@
                 <configuration>
                     <enableRSS>false</enableRSS>
                     <configLocation>checkstyle.xml</configLocation>
+                    <sourceDirectories>
+                        ${project.build.sourceDirectory}
+                    </sourceDirectories>
                     <includeTestSourceDirectory>
                         true
                     </includeTestSourceDirectory>
                     <includeResources>false</includeResources>
                     <includeTestResources>false</includeTestResources>
-                    <excludes>
-                        **/LafBaseListener.java,**/LafListener.java,**/LafParser.java,**/LafLexer.java
-                    </excludes>
                 </configuration>
                 <reportSets>
                     <reportSet>
@@ -599,6 +596,11 @@
             <id>OSGEO Release Repo</id>
             <url>https://repo.osgeo.org/repository/release</url>
         </repository>
+        <!-- See https://github.com/wildfly/wildfly/pull/16453 -->
+        <repository>
+            <id>JBoss forks</id>
+            <url>https://repository.jboss.org/nexus/content/repositories/public/</url>
+        </repository>
     </repositories>
-    <version>4.6.0-SNAPSHOT</version>
+    <version>4.7.0-SNAPSHOT</version>
 </project>

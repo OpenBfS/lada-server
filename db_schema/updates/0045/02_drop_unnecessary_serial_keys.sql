@@ -1,3 +1,5 @@
+SET role lada;
+
 DROP VIEW stamm.sollist_mmtgrp_zuord;
 ALTER TABLE master.targ_act_mmt_gr_mp
     DROP COLUMN id,

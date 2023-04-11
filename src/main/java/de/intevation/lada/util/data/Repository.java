@@ -75,12 +75,12 @@ public class Repository {
      * @return Response object containing the upadted object.
      */
     public Response update(Object object) {
-        object = em.merge(object);
+        Object managedObject = em.merge(object);
         /* Flushing and refreshing is necessary because e.g. triggers can modify
            the object in the database during UPDATE. */
         em.flush();
-        em.refresh(object);
-        return new Response(true, StatusCodes.OK, object);
+        em.refresh(managedObject);
+        return new Response(true, StatusCodes.OK, managedObject);
     }
 
     /**

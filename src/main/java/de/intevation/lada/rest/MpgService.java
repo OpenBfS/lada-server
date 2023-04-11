@@ -172,12 +172,9 @@ public class MpgService extends LadaService {
             ) {
             messprogramm = factory.getInitialMediaDesk(messprogramm);
         }
-        Response response = repository.update(messprogramm);
-        if (!response.getSuccess()) {
-            return response;
-        }
+
         return authorization.filter(
-            response,
+            repository.update(messprogramm),
             Mpg.class);
     }
 

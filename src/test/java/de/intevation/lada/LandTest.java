@@ -48,6 +48,7 @@ import de.intevation.lada.test.land.PepGenerationTest;
 import de.intevation.lada.test.land.ProbeTest;
 import de.intevation.lada.test.land.QueryTest;
 import de.intevation.lada.test.land.StatusTest;
+import de.intevation.lada.test.land.TimestampTest;
 import de.intevation.lada.test.land.ZusatzwertTest;
 
 
@@ -105,6 +106,7 @@ public class LandTest extends BaseTest {
     private QueryTest queryTest;
     private PepGenerationTest pepGenerationTest;
     private GeolocatMpgTest geolocatMpgTest;
+    private TimestampTest timestampTest;
 
     public LandTest() {
         probeTest = new ProbeTest();
@@ -120,6 +122,7 @@ public class LandTest extends BaseTest {
         queryTest = new QueryTest();
         pepGenerationTest = new PepGenerationTest();
         geolocatMpgTest = new GeolocatMpgTest();
+        timestampTest = new TimestampTest();
         verboseLogging = false;
     }
 
@@ -517,5 +520,18 @@ public class LandTest extends BaseTest {
             throws Exception {
         geolocatMpgTest.init(this.client, baseUrl, testProtocol);
         geolocatMpgTest.execute();
+    }
+
+    /**
+     * Test timestamp formats.
+     * @param baseUrl The server url used for the request.
+     * @throws Exception that can occur during the test.
+     */
+    @Test
+    @RunAsClient
+    public final void testTimestamps(@ArquillianResource URL baseUrl)
+            throws Exception {
+        timestampTest.init(this.client, baseUrl, testProtocol);
+        timestampTest.execute();
     }
 }

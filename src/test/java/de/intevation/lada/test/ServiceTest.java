@@ -13,7 +13,9 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +46,7 @@ import org.locationtech.jts.geom.Point;
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.Protocol;
 import de.intevation.lada.test.land.ProbeTest;
+import de.intevation.lada.util.rest.JSONBConfig;
 
 /**
  * Class for Lada service tests.
@@ -156,7 +159,12 @@ public class ServiceTest {
             if (timestampAttributes.contains(key)) {
                 Timestamp timestamp = Timestamp.valueOf(
                     entry.getValue().toString().replaceAll("\"", ""));
-                builder.add(key, String.valueOf(timestamp.getTime()));
+                DateTimeFormatter formatter = DateTimeFormatter
+                    .ofPattern(JSONBConfig.DATE_FORMAT)
+                    .withZone(ZoneId.of("UTC"));
+
+                String dateString = formatter.format(timestamp.toInstant());
+                builder.add(key, dateString);
             } else if (geomPointAttributes.contains(key)) {
                 // Convert EWKT to latitude and longitude
                 String wkt = entry.getValue().toString().split(";")[1];
@@ -345,7 +353,7 @@ public class ServiceTest {
     }
 
     /**
-     * Test an update service.
+     * Test an update service expecting success.
      * @param name the name of the entity to request.
      * @param parameter the parameters used in the request.
      * @param updateAttribute the name of the attribute to update.
@@ -359,6 +367,34 @@ public class ServiceTest {
         String updateAttribute,
         String oldValue,
         String newValue
+    ) {
+        return update(
+            name,
+            parameter,
+            updateAttribute,
+            oldValue,
+            newValue,
+            Response.Status.OK
+        );
+    }
+
+    /**
+     * Test an update service.
+     * @param name the name of the entity to request.
+     * @param parameter the parameters used in the request.
+     * @param updateAttribute the name of the attribute to update.
+     * @param oldValue the value to replace.
+     * @param newValue the new value to set.
+     * @param expectedStatus Expected HTTP status code
+     * @return The resulting json object.
+     */
+    public JsonObject update(
+        String name,
+        String parameter,
+        String updateAttribute,
+        String oldValue,
+        String newValue,
+        Response.Status expectedStatus
     ) {
         Protocol prot = new Protocol();
         prot.setName(name + " service");
@@ -398,7 +434,13 @@ public class ServiceTest {
             .put(Entity.entity(updatedEntity, MediaType.APPLICATION_JSON));
 
         /* Verify the response*/
-        JsonObject updatedObject = BaseTest.parseResponse(updated, prot);
+        JsonObject updatedObject = BaseTest.parseResponse(
+            updated, prot, expectedStatus);
+        if (!Response.Status.OK.equals(expectedStatus)) {
+            prot.setPassed(true);
+            return updatedObject;
+        }
+
         Assert.assertEquals(newValue,
             updatedObject.getJsonObject("data").getString(updateAttribute));
 
@@ -476,10 +518,8 @@ public class ServiceTest {
             Instant.ofEpochMilli(System.currentTimeMillis()),
             ZoneOffset.UTC)
             .truncatedTo(ChronoUnit.DAYS);
-        LocalDateTime toDate = LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(Long.valueOf(to)),
-            ZoneOffset.UTC)
-            .truncatedTo(ChronoUnit.DAYS);
+        LocalDateTime toDate = LocalDateTime.parse(
+            to, DateTimeFormatter.ofPattern(JSONBConfig.DATE_FORMAT));
         return ChronoUnit.DAYS.between(fromDate, toDate);
     }
 }

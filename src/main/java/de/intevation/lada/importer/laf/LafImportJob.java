@@ -160,14 +160,11 @@ public class LafImportJob extends Job {
                 QueryBuilder<ImportConf> builder =
                     repository.queryBuilder(ImportConf.class);
                 builder.and("measFacilId", mstId);
-                config =
-                    (List<ImportConf>) repository.filterPlain(
-                        builder.getQuery());
+                config = repository.filterPlain(builder.getQuery());
             }
             importer.doImport(content, userInfo, config);
 
-            Map<String, Object> fileResponseData =
-                new HashMap<String, Object>();
+            Map<String, Object> fileResponseData = new HashMap<>();
             if (!importer.getErrors().isEmpty()) {
                 fileResponseData.put("errors", importer.getErrors());
                 this.currentStatus.setErrors(true);

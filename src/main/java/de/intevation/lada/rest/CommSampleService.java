@@ -111,13 +111,21 @@ public class CommSampleService extends LadaService {
         Violation violation = validator.validate(kommentar);
         if (violation.hasErrors()) {
             Response response =
-                new Response(false, StatusCodes.VAL_EXISTS, kommentar);
+                new Response(false, StatusCodes.ERROR_VALIDATION, kommentar);
+            response.setErrors(violation.getErrors());
+            response.setWarnings(violation.getWarnings());
+            response.setNotifications(violation.getNotifications());
             return response;
         } else {
-        /* Persist the new object*/
-        return authorization.filter(
-            repository.create(kommentar),
-            CommSample.class);
+            /* Persist the new object*/
+            Response response = repository.create(kommentar);
+            if (violation.hasWarnings()) {
+                response.setWarnings(violation.getWarnings());
+            }
+            if (violation.hasNotifications()) {
+                response.setNotifications(violation.getNotifications());
+            }
+            return authorization.filter(response, CommSample.class);
         }
     }
 
@@ -140,7 +148,7 @@ public class CommSampleService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
         Violation violation = validator.validate(kommentar);
-        if (violation.hasErrors()) {
+        if (violation.hasErrors()||violation.hasWarnings()) {
             Response response =
                 new Response(false, StatusCodes.VAL_EXISTS, kommentar);
             return response;

@@ -7,12 +7,10 @@
  */
 package de.intevation.lada.validation.rules.kommentarP;
 
-import java.util.List;
-
 import javax.inject.Inject;
+import javax.persistence.Query;
 
 import de.intevation.lada.model.lada.CommSample;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
@@ -27,31 +25,40 @@ import de.intevation.lada.validation.rules.Rule;
 @ValidationRule("KommentarP")
 public class DuplicateKommentar implements Rule {
 
+    private static final String EXISTS_QUERY_TEMPLATE =
+    "SELECT EXISTS("
+    + "SELECT 1 FROM lada.comm_sample "
+    + "WHERE lower(replace(text,' ',''))=lower(replace(:%s,' ',''))"
+    + " AND sample_id = :%s)";
+
     @Inject
     private Repository repository;
 
     @Override
     public Violation execute(Object object) {
         CommSample kommentar = (CommSample) object;
-        Integer probeID  = kommentar.getSampleId();
+        Violation violation = new Violation();
 
-        QueryBuilder<CommSample> kommentarBuilder = repository
-            .queryBuilder(CommSample.class)
-            .and("sampleId", probeID);
-        List<CommSample> kommentarExist = repository.filterPlain(
-            kommentarBuilder.getQuery());
+        if (kommentar.getSampleId() == null) {
+            violation.addError("sampleId", StatusCodes.VALUE_MISSING);
+            return violation;
+        }
 
-        // TODO: Should be the job of EXISTS and a WHERE-clause in database
-        if (kommentarExist.stream().anyMatch(
-                elem -> elem.getText().trim().replace(" ", "").toUpperCase()
-                .equals(kommentar.getText().trim().replace(" ", "")
-                    .toUpperCase()))
-        ) {
-            Violation violation = new Violation();
-            violation.addError("Comment", StatusCodes.VAL_EXISTS);
+        if (isExisting(kommentar)) {
+            violation.addError("text", StatusCodes.VAL_EXISTS);
             return violation;
         }
         return null;
+    }
+
+    private Boolean isExisting(CommSample kommentar) {
+        final String textParam = "TEXT",
+            probeIdParam = "sample_id";
+        Query isAssigned = repository.queryFromString(
+            String.format(EXISTS_QUERY_TEMPLATE, textParam, probeIdParam));
+        isAssigned.setParameter(textParam, kommentar.getText());
+        isAssigned.setParameter(probeIdParam, kommentar.getSampleId());
+        return (Boolean) isAssigned.getSingleResult();
     }
 }
 

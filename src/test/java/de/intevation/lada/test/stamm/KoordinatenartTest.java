@@ -61,7 +61,7 @@ public class KoordinatenartTest extends ServiceTest {
      */
     public final void execute() {
         get(name, url);
-        getById(name, url + KDA_ID, expectedById);
+        getById(name, url + expectedById.getInt("id"), expectedById);
         recalculate();
     }
 

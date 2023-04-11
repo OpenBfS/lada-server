@@ -130,7 +130,6 @@ public class LafImportService extends LadaService {
         @Context HttpServletRequest request
     ) {
         UserInfo userInfo = authorization.getInfo();
-
         Charset charset;
         try {
             charset = Charset.forName(jsonInput.getEncoding());

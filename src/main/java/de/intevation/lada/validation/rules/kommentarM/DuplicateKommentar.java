@@ -7,12 +7,10 @@
  */
 package de.intevation.lada.validation.rules.kommentarM;
 
-import java.util.List;
-
 import javax.inject.Inject;
+import javax.persistence.Query;
 
 import de.intevation.lada.model.lada.CommMeasm;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
@@ -27,31 +25,40 @@ import de.intevation.lada.validation.rules.Rule;
 @ValidationRule("KommentarM")
 public class DuplicateKommentar implements Rule {
 
+    private static final String EXISTS_QUERY_TEMPLATE =
+    "SELECT EXISTS("
+    + "SELECT 1 FROM lada.comm_measm "
+    + "WHERE lower(replace(text,' ',''))=lower(replace(:%s,' ',''))"
+    + " AND measm_id = :%s)";
+
     @Inject
     private Repository repository;
 
     @Override
     public Violation execute(Object object) {
         CommMeasm kommentar = (CommMeasm) object;
-        Integer messungID  = kommentar.getMeasmId();
+        Violation violation = new Violation();
 
-        QueryBuilder<CommMeasm> kommentarBuilder = repository
-            .queryBuilder(CommMeasm.class)
-            .and("measmId", messungID);
-        List<CommMeasm> kommentarExist = repository.filterPlain(
-            kommentarBuilder.getQuery());
+        if (kommentar.getMeasmId() == null) {
+            violation.addError("measmId", StatusCodes.VALUE_MISSING);
+            return violation;
+        }
 
-        // TODO: Should be the job of EXISTS and a WHERE-clause in database
-        if (kommentarExist.stream().anyMatch(
-                elem -> elem.getText().trim().replace(" ", "").toUpperCase()
-                .equals(kommentar.getText().trim().replace(" ", "")
-                    .toUpperCase()))
-        ) {
-            Violation violation = new Violation();
-            violation.addError("Comment", StatusCodes.VAL_EXISTS);
+        if (isExisting(kommentar)) {
+            violation.addError("text", StatusCodes.VAL_EXISTS);
             return violation;
         }
         return null;
+    }
+
+    private Boolean isExisting(CommMeasm kommentar) {
+        final String textParam = "TEXT",
+            idParam = "measm_id";
+        Query isAssigned = repository.queryFromString(
+            String.format(EXISTS_QUERY_TEMPLATE, textParam, idParam));
+        isAssigned.setParameter(textParam, kommentar.getText());
+        isAssigned.setParameter(idParam, kommentar.getMeasmId());
+        return (Boolean) isAssigned.getSingleResult();
     }
 }
 

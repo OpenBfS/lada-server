@@ -80,6 +80,15 @@ public class MessprogrammTest extends ServiceTest {
             "D: 50 90 01 06 02 05 00 00 00 00 00 00",
             "D: 50 90 01 06 02 05 00 00 00 00 00 01");
 
+        // Ensure invalid envDescripDisplay is rejected
+        update(
+            "mpg",
+            "rest/mpg/1000",
+            "envDescripDisplay",
+            "D: 59 04 01 00 05 05 01 02 00 00 00 00",
+            "D: ",
+            Status.BAD_REQUEST);
+
         //Check if referencing probe still has an mpgId
         getById("mpg->sample", "rest/sample/1000", expectedSample);
         JsonObject created =

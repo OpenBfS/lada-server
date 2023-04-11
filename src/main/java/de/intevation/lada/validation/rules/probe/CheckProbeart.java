@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.probe;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.StatusCodes;
@@ -29,8 +29,8 @@ public class CheckProbeart implements Rule {
     @Override
     public Violation execute(Object object) {
         Sample probe = (Sample) object;
-        Timestamp end = probe.getSampleEndDate();
-        Timestamp begin = probe.getSampleStartDate();
+        Date end = probe.getSampleEndDate();
+        Date begin = probe.getSampleStartDate();
         if (probe.getSampleMethId() != null
             && !DATENBASIS_161.equals(probe.getRegulationId())) {
           if (begin != null && end != null

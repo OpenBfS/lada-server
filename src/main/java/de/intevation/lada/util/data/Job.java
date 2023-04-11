@@ -140,7 +140,7 @@ public abstract class Job implements Runnable {
                 | HeuristicMixedException
                 | HeuristicRollbackException e
             ) {
-                throw new RuntimeException(e.getMessage());
+                throw new RuntimeException(e);
             }
         }
     }

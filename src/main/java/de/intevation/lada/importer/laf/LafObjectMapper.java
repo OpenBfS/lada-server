@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.importer.laf;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -25,6 +23,7 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
+import javax.persistence.NoResultException;
 
 import org.jboss.logging.Logger;
 
@@ -119,6 +118,14 @@ public class LafObjectMapper {
     private Validator statusValidator;
 
     @Inject
+    @ValidationConfig(type = "KommentarP")
+    private Validator commentPValidator;
+
+    @Inject
+    @ValidationConfig(type = "KommentarM")
+    private Validator commentMValidator;
+
+    @Inject
     private ObjectMerger merger;
 
     @Inject
@@ -145,6 +152,7 @@ public class LafObjectMapper {
     private UserInfo userInfo;
 
     private List<ImportConf> config;
+    private ImportConfigMapper configMapper;
 
     /**
      * Map the raw data to database objects.
@@ -154,9 +162,9 @@ public class LafObjectMapper {
         errors = new HashMap<>();
         warnings = new HashMap<>();
         notifications = new HashMap<>();
-        importProbeIds = new ArrayList<Integer>();
-        for (int i = 0; i < data.getProben().size(); i++) {
-            create(data.getProben().get(i));
+        importProbeIds = new ArrayList<>();
+        for (LafRawData.Sample sample: data.getProben()) {
+            create(sample);
         }
     }
 
@@ -206,24 +214,19 @@ public class LafObjectMapper {
         }
 
         if (object.getAttributes().containsKey("ZEITBASIS")) {
-            List<ImportConf> cfg =
-            getImporterConfigByAttributeUpper("ZEITBASIS");
             String attribute = object.getAttributes().get("ZEITBASIS");
-            if (!cfg.isEmpty() && attribute.equals(cfg.get(0).getFromVal())) {
-                attribute = cfg.get(0).getToVal();
-            }
             QueryBuilder<Tz> builder =
                 repository.queryBuilder(Tz.class);
             builder.and("name", attribute);
-            List<Tz> zb = repository.filterPlain(builder.getQuery());
-            if (zb == null || zb.isEmpty()) {
+            try {
+                currentZeitbasis = repository.getSinglePlain(builder.getQuery())
+                    .getId();
+            } catch (NoResultException e) {
                 currentWarnings.add(
                     new ReportItem(
                         "ZEITBASIS",
                         object.getAttributes().get(
                             "ZEITBASIS"), StatusCodes.IMP_INVALID_VALUE));
-            } else {
-                currentZeitbasis = zb.get(0).getId();
             }
         } else if (object.getAttributes().containsKey("ZEITBASIS_S")) {
             currentZeitbasis =
@@ -247,9 +250,7 @@ public class LafObjectMapper {
         ) {
             addProbeAttribute(attribute, probe, netzbetreiberId);
         }
-        doDefaults(probe);
-        doConverts(probe);
-        doTransforms(probe);
+        configMapper.applyConfigs(probe);
         if (probe.getApprLabId() == null) {
             probe.setApprLabId(probe.getMeasFacilId());
         }
@@ -274,9 +275,6 @@ public class LafObjectMapper {
                 new ArrayList<ReportItem>(currentErrors));
             return;
         }
-        // logProbe(probe);
-
-        // Check for errors and warnings
 
         // Compare the probe with objects in the db
         Sample newProbe = null;
@@ -538,6 +536,20 @@ public class LafObjectMapper {
                             merger.mergeEntnahmeOrt(newProbe.getId(), eOrt);
                         }
                         if(uOrte.size()>0){
+                            //remove present U-Orte
+                            QueryBuilder<Geolocat> builderUOrt =
+                                repository.queryBuilder(Geolocat.class);
+                                builderUOrt.and("sampleId", newProbe.getId());
+                                builderUOrt.and("typeRegulation", "U");
+                            Response uOrtQuery =
+                                repository.filter(builderUOrt.getQuery());
+                            @SuppressWarnings("unchecked")
+                            List<Geolocat> uOrteProbe = (List<Geolocat>) uOrtQuery.getData();
+                            if (!uOrteProbe.isEmpty()){
+                                for (Geolocat elemOrt : uOrteProbe){
+                                    repository.delete(elemOrt);
+                                }
+                            }
                             merger.mergeUrsprungsOrte(newProbe.getId(), uOrte);
                         }
                     } else {
@@ -687,153 +699,6 @@ public class LafObjectMapper {
         }
     }
 
-    private void doDefaults(Sample probe) {
-        doDefaults(probe, Sample.class, "probe");
-    }
-
-    private void doConverts(Sample probe) {
-        doConverts(probe, Sample.class, "probe");
-    }
-
-    private void doTransforms(Sample probe) {
-        doTransformations(probe, Sample.class, "probe");
-    }
-
-    private void doDefaults(Measm messung) {
-        doDefaults(messung, Measm.class, "messung");
-    }
-
-    private void doConverts(Measm messung) {
-        doConverts(messung, Measm.class, "messung");
-    }
-
-    private void doTransforms(Measm messung) {
-        doTransformations(messung, Measm.class, "messung");
-    }
-
-    private void doDefaults(MeasVal messwert) {
-        doDefaults(messwert, MeasVal.class, "messwert");
-    }
-
-    private void doConverts(MeasVal messwert) {
-        doConverts(messwert, MeasVal.class, "messwert");
-    }
-
-    private void doTransforms(MeasVal messwert) {
-        doTransformations(messwert, MeasVal.class, "messwert");
-    }
-
-    private void doDefaults(SampleSpecifMeasVal zusatzwert) {
-        doDefaults(zusatzwert, SampleSpecifMeasVal.class, "zusatwert");
-    }
-
-    private void doConverts(SampleSpecifMeasVal zusatzwert) {
-        doConverts(zusatzwert, SampleSpecifMeasVal.class, "zusatzwert");
-    }
-
-    private void doTransforms(SampleSpecifMeasVal zusatzwert) {
-        doTransformations(zusatzwert, SampleSpecifMeasVal.class, "zusatwert");
-    }
-
-    private void doDefaults(CommMeasm kommentar) {
-        doDefaults(kommentar, CommMeasm.class, "kommentarm");
-    }
-
-    private void doConverts(CommMeasm kommentar) {
-        doConverts(kommentar, CommMeasm.class, "kommentarm");
-    }
-
-    private void doTransforms(CommMeasm kommentar) {
-        doTransformations(kommentar, CommMeasm.class, "kommentarm");
-    }
-
-    private void doDefaults(CommSample kommentar) {
-        doDefaults(kommentar, CommSample.class, "kommentarp");
-    }
-
-    private void doConverts(CommSample kommentar) {
-        doConverts(kommentar, CommSample.class, "kommentarp");
-    }
-
-    private void doTransforms(CommSample kommentar) {
-        doTransformations(kommentar, CommSample.class, "kommentarp");
-    }
-
-    private void doDefaults(Geolocat ort) {
-        doDefaults(ort, Geolocat.class, "ortszuordnung");
-    }
-
-    private void doConverts(Geolocat ort) {
-        doConverts(ort, Geolocat.class, "ortszuordnung");
-    }
-
-    private void doTransforms(Geolocat ort) {
-        doTransformations(ort, Geolocat.class, "ortszuordnung");
-    }
-
-    private void doDefaults(Site o) {
-        doDefaults(o, Site.class, "ort");
-    }
-
-    private <T> void doDefaults(Object object, Class<T> clazz, String table) {
-        Iterator<ImportConf> i = config.iterator();
-        while (i.hasNext()) {
-            ImportConf current = i.next();
-            if (table.equals(current.getName())
-                && "default".equals(current.getAction())
-            ) {
-                String attribute = current.getAttribute();
-                Method getter;
-                Method setter = null;
-                try {
-                    getter = clazz.getMethod("get"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1));
-                    String methodName = "set"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1);
-                    for (Method method : clazz.getMethods()) {
-                        String name = method.getName();
-                        if (!methodName.equals(name)) {
-                            continue;
-                        }
-                        setter = method;
-                        break;
-                    }
-                } catch (NoSuchMethodException | SecurityException e) {
-                    logger.debug("attribute " + attribute + " does not exist");
-                    return;
-                }
-                try {
-                    Object value = getter.invoke(object);
-                    if (value == null && setter != null) {
-                        Class<?>[] types = setter.getParameterTypes();
-                        if (types.length == 1) {
-                            // we have exactly one parameter, thats fine.
-                            if (types[0].isAssignableFrom(Integer.class)) {
-                                // the parameter is of type Integer!
-                                // Cast to integer
-                                setter.invoke(
-                                    object,
-                                    Integer.valueOf(current.getToVal()));
-                            } else {
-                                // we handle the default as string.
-                                // Other parameter types are not implemented!
-                                setter.invoke(object, current.getToVal());
-                            }
-                        }
-                    }
-                } catch (IllegalAccessException
-                    | IllegalArgumentException
-                    | InvocationTargetException e
-                ) {
-                    logger.debug("Could not set attribute " + attribute);
-                    return;
-                }
-            }
-        }
-    }
-
     private List<ImportConf> getImporterConfigByAttributeUpper(
         String attribute
     ) {
@@ -846,114 +711,6 @@ public class LafObjectMapper {
             }
         }
         return result;
-    }
-
-    private <T> void doConverts(Object object, Class<T> clazz, String table) {
-        Iterator<ImportConf> i = config.iterator();
-        while (i.hasNext()) {
-            ImportConf current = i.next();
-            if (table.equals(current.getName())
-                && "convert".equals(current.getAction())
-            ) {
-                String attribute = current.getAttribute();
-                Method getter;
-                Method setter = null;
-                try {
-                    getter = clazz.getMethod("get"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1));
-                    String methodName = "set"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1);
-                    for (Method method : clazz.getMethods()) {
-                        String name = method.getName();
-                        if (!methodName.equals(name)) {
-                            continue;
-                        }
-                        setter = method;
-                        break;
-                    }
-                } catch (NoSuchMethodException | SecurityException e) {
-                    logger.warn("attribute " + attribute + " does not exist");
-                    return;
-                }
-                try {
-                    Object value = getter.invoke(object);
-                    if (value.equals(current.getFromVal())
-                        && setter != null
-                    ) {
-                        setter.invoke(object, current.getToVal());
-                    }
-                } catch (IllegalAccessException
-                    | IllegalArgumentException
-                    | InvocationTargetException e
-                ) {
-                    logger.warn("Could not convert attribute " + attribute);
-                    return;
-                }
-            }
-        }
-    }
-
-    private <T> void doTransformations(
-        Object object,
-        Class<T> clazz,
-        String table
-    ) {
-        Iterator<ImportConf> i = config.iterator();
-        while (i.hasNext()) {
-            ImportConf current = i.next();
-            if (table.equals(current.getName())
-                && "transform".equals(current.getAction())
-            ) {
-                String attribute = current.getAttribute();
-                Method getter;
-                Method setter = null;
-                try {
-                    getter = clazz.getMethod("get"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1));
-                    String methodName = "set"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1);
-                    for (Method method : clazz.getMethods()) {
-                        String name = method.getName();
-                        if (methodName.equals(name)) {
-                            setter = method;
-                            break;
-                        }
-                    }
-                    if (setter == null) {
-                        logger.warn(
-                            "Could not transform attribute " + attribute);
-                        return;
-                    }
-                } catch (NoSuchMethodException | SecurityException e) {
-                    logger.warn("attribute " + attribute + " does not exist");
-                    return;
-                }
-                try {
-                    Object value = getter.invoke(object);
-                    if (value == null) {
-                        logger.warn("Attribute " + attribute + " is not set");
-                        return;
-                    }
-                    char from = (char) Integer.parseInt(
-                        current.getFromVal(), 16);
-                    char to = (char) Integer.parseInt(
-                        current.getToVal(), 16);
-                    value = value.toString().replaceAll(
-                        "[" + String.valueOf(from) + "]", String.valueOf(to));
-                    setter.invoke(object, value);
-                } catch (IllegalAccessException
-                    | IllegalArgumentException
-                    | InvocationTargetException e
-                ) {
-                    logger.warn("Could not transform attribute " + attribute);
-                    return;
-                }
-            }
-        }
     }
 
     private void create(
@@ -969,9 +726,7 @@ public class LafObjectMapper {
         ) {
             addMessungAttribute(attribute, messung);
         }
-        doDefaults(messung);
-        doConverts(messung);
-        doTransforms(messung);
+        configMapper.applyConfigs(messung);
         // Check if the user is authorized to create the object
         if (
             !authorizer.isAuthorized(messung, RequestMethod.POST, Measm.class)
@@ -1201,9 +956,7 @@ public class LafObjectMapper {
                 Timestamp.from(
                     Instant.now().atZone(ZoneOffset.UTC).toInstant()));
         }
-        doDefaults(kommentar);
-        doConverts(kommentar);
-        doTransforms(kommentar);
+        configMapper.applyConfigs(kommentar);
         if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
             currentWarnings.add(
                 new ReportItem(
@@ -1212,6 +965,26 @@ public class LafObjectMapper {
                     StatusCodes.NOT_ALLOWED));
             return null;
         }
+
+        Violation commentViolation = commentPValidator.validate(kommentar);
+
+        if (commentViolation.hasErrors()||commentViolation.hasWarnings()){
+            if (commentViolation.hasErrors()){
+                commentViolation.getErrors().forEach((k, v) -> {
+                    v.forEach((value) -> {
+                        currentErrors.add(new ReportItem("Status ", k, value));
+                    });
+                });
+            } else if (commentViolation.hasWarnings()){
+                commentViolation.getWarnings().forEach((k, v) -> {
+                    v.forEach((value) -> {
+                        currentWarnings.add(new ReportItem("Status ", k, value));
+                    });
+                });
+            }
+            return null;
+        }
+
         return kommentar;
     }
 
@@ -1264,9 +1037,7 @@ public class LafObjectMapper {
         List<SampleSpecif> zusatz =
             (List<SampleSpecif>) repository.filterPlain(builder.getQuery());
 
-        doDefaults(zusatzwert);
-        doConverts(zusatzwert);
-        doTransforms(zusatzwert);
+        configMapper.applyConfigs(zusatzwert);
         if (zusatz == null || zusatz.isEmpty()) {
             currentWarnings.add(new ReportItem(
                 (isId) ? "PROBENZUSATZBESCHREIBUNG" : "PZB_S",
@@ -1415,9 +1186,7 @@ public class LafObjectMapper {
             messwert.setIsThreshold(
                 attributes.get("GRENZWERT").equalsIgnoreCase("J"));
         }
-        doDefaults(messwert);
-        doConverts(messwert);
-        doTransforms(messwert);
+        configMapper.applyConfigs(messwert);
         if (messwert.getLessThanLOD() != null
             && messwert.getDetectLim() == null
         ) {
@@ -1487,9 +1256,7 @@ public class LafObjectMapper {
             return null;
         }
         kommentar.setText(attributes.get("TEXT"));
-        doDefaults(kommentar);
-        doConverts(kommentar);
-        doTransforms(kommentar);
+        configMapper.applyConfigs(kommentar);
         if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
             currentWarnings.add(
                 new ReportItem(
@@ -1498,6 +1265,26 @@ public class LafObjectMapper {
                     StatusCodes.NOT_ALLOWED));
             return null;
         }
+
+        Violation commentViolation = commentMValidator.validate(kommentar);
+
+        if (commentViolation.hasErrors()||commentViolation.hasWarnings()){
+            if (commentViolation.hasErrors()){
+                commentViolation.getErrors().forEach((k, v) -> {
+                    v.forEach((value) -> {
+                        currentWarnings.add(new ReportItem("Status ", k, value));
+                    });
+                });
+            } else if (commentViolation.hasWarnings()){
+                commentViolation.getWarnings().forEach((k, v) -> {
+                    v.forEach((value) -> {
+                        currentWarnings.add(new ReportItem("Status ", k, value));
+                    });
+                });
+            }
+            return null;
+        }
+
         return kommentar;
     }
 
@@ -1637,7 +1424,7 @@ public class LafObjectMapper {
         if (statusViolation.hasWarnings()) {
             statusViolation.getWarnings().forEach((k, v) -> {
                 v.forEach((value) -> {
-                    currentErrors.add(new ReportItem("Status ", k, value));
+                    currentWarnings.add(new ReportItem("Status ", k, value));
                 });
             });
         }
@@ -1742,11 +1529,11 @@ public class LafObjectMapper {
                     //check for Koordinates U_Ort (primary): If none are present, assume Koordinates
                     //in P_Ort. If P_Ort is not valid - this import must fail.
                     if (uort.get(0).get("U_KOORDINATEN_ART_S") != null
-                    && uort.get(0).get("U_KOORDINATEN_ART_S").equals("")
+                    && !uort.get(0).get("U_KOORDINATEN_ART_S").equals("")
                     && uort.get(0).get("U_KOORDINATEN_X") != null
-                    && uort.get(0).get("U_KOORDINATEN_X").equals("")
+                    && !uort.get(0).get("U_KOORDINATEN_X").equals("")
                     && uort.get(0).get("U_KOORDINATEN_Y") != null
-                    && uort.get(0).get("U_KOORDINATEN_Y").equals("")
+                    && !uort.get(0).get("U_KOORDINATEN_Y").equals("")
                     ) {
                         o = findOrCreateOrt(uort.get(0), "U_", probe);
                     }
@@ -1860,9 +1647,7 @@ public class LafObjectMapper {
         if (rawOrt.containsKey(type+"_ORTS_ZUSATZTEXT")) {
             ort.setAddSiteText(rawOrt.get(type+"_ORTS_ZUSATZTEXT"));
         }
-        doDefaults(ort);
-        doConverts(ort);
-        doTransforms(ort);
+        configMapper.applyConfigs(ort);
         return ort;
     }
 
@@ -1872,7 +1657,7 @@ public class LafObjectMapper {
         Sample probe
     ) {
         Site o = new Site();
-        doDefaults(o);
+        configMapper.applyConfigs(o);
         // If laf contains coordinates, find a ort with matching coordinates or
         // create one.
         if ((attributes.get(type + "KOORDINATEN_ART") != null
@@ -2100,31 +1885,6 @@ public class LafObjectMapper {
         }
     }
 
-    private void logProbe(Sample probe) {
-        logger.debug("%PROBE%");
-        logger.debug("datenbasis: " + probe.getRegulationId());
-        logger.debug("betriebsart: " + probe.getOprModeId());
-        logger.debug("erzeuger: " + probe.getDatasetCreatorId());
-        logger.debug("hauptprobennummer: " + probe.getMainSampleId());
-        logger.debug("externeprobeid: " + probe.getExtId());
-        logger.debug("labor: " + probe.getApprLabId());
-        logger.debug("deskriptoren: " + probe.getEnvDescripDisplay());
-        logger.debug("media: " + probe.getEnvDescripName());
-        logger.debug("mittelung: " + probe.getMidSampleDate());
-        logger.debug("mpl: " + probe.getMpgCategId());
-        logger.debug("mpr: " + probe.getMpgId());
-        logger.debug("mst: " + probe.getMeasFacilId());
-        logger.debug("pnbeginn: " + probe.getSampleStartDate());
-        logger.debug("pnende: " + probe.getSampleEndDate());
-        logger.debug("probenart: " + probe.getSampleMethId());
-        logger.debug("probenehmer: " + probe.getSamplerId());
-        logger.debug("sbeginn: " + probe.getSchedStartDate());
-        logger.debug("sende: " + probe.getSchedEndDate());
-        logger.debug("ursprungszeit: " + probe.getOrigDate());
-        logger.debug("test: " + probe.getIsTest());
-        logger.debug("umw: " + probe.getEnvMediumId());
-    }
-
     private void addProbeAttribute(
         Entry<String, String> attribute,
         Sample probe,
@@ -2300,7 +2060,7 @@ public class LafObjectMapper {
             QueryBuilder<Sampler> builder =
                 repository.queryBuilder(Sampler.class);
             builder.and("networkId", netzbetreiberId);
-            builder.and("exitId", value);
+            builder.and("extId", value);
             List<Sampler> prn =
                     (List<Sampler>) repository.filterPlain(
                         builder.getQuery());
@@ -2543,13 +2303,6 @@ public class LafObjectMapper {
     }
 
     /**
-     * @return the userInfo
-     */
-    public UserInfo getUserInfo() {
-        return userInfo;
-    }
-
-    /**
      * @param userInfo the userInfo to set
      */
     public void setUserInfo(UserInfo userInfo) {
@@ -2558,16 +2311,10 @@ public class LafObjectMapper {
     }
 
     /**
-     * @return the config
-     */
-    public List<ImportConf> getConfig() {
-        return config;
-    }
-
-    /**
      * @param config the config to set
      */
     public void setConfig(List<ImportConf> config) {
         this.config = config;
+        this.configMapper = new ImportConfigMapper(config);
     }
 }

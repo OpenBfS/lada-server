@@ -8,21 +8,24 @@
 package de.intevation.lada.model.lada;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.Date;
 
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
-import javax.ws.rs.core.MultivaluedMap;
+
+import de.intevation.lada.model.BaseModel;
+
 
 @Entity
 @Table(schema = SchemaName.NAME)
-public class StatusProt implements Serializable {
+public class StatusProt extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -30,7 +33,8 @@ public class StatusProt implements Serializable {
     private Integer id;
 
     @Column(insertable = false, updatable = false)
-    private Timestamp date;
+    @Temporal(TIMESTAMP)
+    private Date date;
 
     private Integer measmId;
 
@@ -41,7 +45,8 @@ public class StatusProt implements Serializable {
     private String text;
 
     @Column(insertable = false, updatable = false)
-    private Timestamp treeMod;
+    @Temporal(TIMESTAMP)
+    private Date treeMod;
 
     @Transient
     private boolean owner;
@@ -50,22 +55,13 @@ public class StatusProt implements Serializable {
     private boolean readonly;
 
     @Transient
-    private Timestamp parentModified;
+    private Date parentModified;
 
     @Transient
     private Integer statusLev;
 
     @Transient
     private Integer statusVal;
-
-    @Transient
-    private MultivaluedMap<String, Integer> errors;
-
-    @Transient
-    private MultivaluedMap<String, Integer> warnings;
-
-    @Transient
-    private MultivaluedMap<String, Integer> notifications;
 
     public StatusProt() {
     }
@@ -78,11 +74,11 @@ public class StatusProt implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getDate() {
+    public Date getDate() {
         return this.date;
     }
 
-    public void setDate(Timestamp date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -118,11 +114,11 @@ public class StatusProt implements Serializable {
         this.text = text;
     }
 
-    public Timestamp getTreeMod() {
+    public Date getTreeMod() {
         return this.treeMod;
     }
 
-    public void setTreeMod(Timestamp treeMod) {
+    public void setTreeMod(Date treeMod) {
         this.treeMod = treeMod;
     }
 
@@ -157,14 +153,14 @@ public class StatusProt implements Serializable {
     /**
      * @return the parentModified
      */
-    public Timestamp getParentModified() {
+    public Date getParentModified() {
         return parentModified;
     }
 
     /**
      * @param parentModified the parentModified to set
      */
-    public void setParentModified(Timestamp parentModified) {
+    public void setParentModified(Date parentModified) {
         this.parentModified = parentModified;
     }
 
@@ -196,30 +192,4 @@ public class StatusProt implements Serializable {
         this.statusVal = statusVal;
     }
 
-    public MultivaluedMap<String, Integer> getErrors() {
-        return this.errors;
-    }
-
-    @JsonbTransient
-    public void setErrors(MultivaluedMap<String, Integer> errors) {
-        this.errors = errors;
-    }
-
-    public MultivaluedMap<String, Integer> getWarnings() {
-        return this.warnings;
-    }
-
-    @JsonbTransient
-    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
-        this.warnings = warnings;
-    }
-
-   public MultivaluedMap<String, Integer> getNotifications() {
-     return this.notifications;
-   }
-
-   @JsonbTransient
-   public void setNotifications(MultivaluedMap<String, Integer> notifications) {
-     this.notifications = notifications;
-   }
 }

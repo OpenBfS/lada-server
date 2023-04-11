@@ -10,7 +10,6 @@ package de.intevation.lada.util.rest;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
-import javax.json.bind.annotation.JsonbDateFormat;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
@@ -24,6 +23,9 @@ import javax.ws.rs.ext.Provider;
 @Produces(MediaType.APPLICATION_JSON)
 public class JSONBConfig implements ContextResolver<Jsonb> {
 
+    public static final String DATE_FORMAT =
+        "yyyy'-'MM'-'dd'T'HH':'mm[':'ss['.'SSS]]XXX";
+
     @Override
     public Jsonb getContext(Class<?> type) {
         // Return regardless of type in order to use the same config for
@@ -33,7 +35,7 @@ public class JSONBConfig implements ContextResolver<Jsonb> {
             // The API-doc says "Custom date format as specified in
             // DateTimeFormatter", but at least with Yasson the special
             // JsonbDateFormat.TIME_IN_MILLIS can be used here, too.
-            .withDateFormat(JsonbDateFormat.TIME_IN_MILLIS, null)
+            .withDateFormat(DATE_FORMAT, null)
         );
     }
 }

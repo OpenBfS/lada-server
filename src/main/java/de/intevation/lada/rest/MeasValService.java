@@ -118,9 +118,8 @@ public class MeasValService extends LadaService {
                 }
             }
             return new Response(true, StatusCodes.OK, messwerts);
-        } else {
-            return r;
         }
+        return r;
     }
 
     /**
@@ -227,9 +226,6 @@ public class MeasValService extends LadaService {
         }
 
         Response response = repository.update(messwert);
-        if (!response.getSuccess()) {
-            return response;
-        }
         if (violation.hasWarnings()) {
             response.setWarnings(violation.getWarnings());
         }
@@ -306,20 +302,14 @@ public class MeasValService extends LadaService {
                 return response;
             }
             Response response = repository.update(messwert);
-            if (!response.getSuccess()) {
-                return response;
-            }
-            Response updated = repository.getById(
-                MeasVal.class,
-                ((MeasVal) response.getData()).getId());
             if (violation.hasWarnings()) {
-                updated.setWarnings(violation.getWarnings());
+                response.setWarnings(violation.getWarnings());
             }
             if (violation.hasNotifications()) {
-                updated.setNotifications(violation.getNotifications());
+                response.setNotifications(violation.getNotifications());
             }
             authorization.filter(
-                    updated,
+                    response,
                     MeasVal.class);
         }
         return new Response(true, StatusCodes.OK, messwerte);
