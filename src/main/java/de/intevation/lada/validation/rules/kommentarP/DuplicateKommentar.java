@@ -39,11 +39,6 @@ public class DuplicateKommentar implements Rule {
         CommSample kommentar = (CommSample) object;
         Violation violation = new Violation();
 
-        if (kommentar.getSampleId() == null) {
-            violation.addError("sampleId", StatusCodes.VALUE_MISSING);
-            return violation;
-        }
-
         if (isExisting(kommentar)) {
             violation.addError("text", StatusCodes.VAL_EXISTS);
             return violation;

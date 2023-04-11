@@ -30,16 +30,14 @@ public class ValidFromTo implements Rule {
         Mpg messprogramm = (Mpg) object;
         Violation violation = new Violation();
 
-        if (messprogramm.getValidStartDate() != null
-            && (messprogramm.getValidStartDate() < DOY_MIN
-                || messprogramm.getValidStartDate() > DOY_MAX)) {
+        if (messprogramm.getValidStartDate() < DOY_MIN
+                || messprogramm.getValidStartDate() > DOY_MAX) {
                 violation.addError(
                     "validStartDate", StatusCodes.VALUE_OUTSIDE_RANGE);
             }
 
-        if (messprogramm.getValidEndDate() != null
-            && (messprogramm.getValidEndDate() < DOY_MIN
-                || messprogramm.getValidEndDate() > DOY_MAX)) {
+        if (messprogramm.getValidEndDate() < DOY_MIN
+                || messprogramm.getValidEndDate() > DOY_MAX) {
                 violation.addError(
                     "validEndDate", StatusCodes.VALUE_OUTSIDE_RANGE);
             }

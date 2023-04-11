@@ -41,12 +41,6 @@ public class DateMesszeitpunkt implements Rule {
             repository.getById(Sample.class, probeId);
         Sample probe = (Sample) response.getData();
 
-        if (probe == null) {
-            Violation violation = new Violation();
-            violation.addError("sample", StatusCodes.ERROR_VALIDATION);
-            return violation;
-        }
-
         if (messung.getMeasmStartDate() == null) {
             return null;
         }

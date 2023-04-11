@@ -39,11 +39,6 @@ public class DuplicateKommentar implements Rule {
         CommMeasm kommentar = (CommMeasm) object;
         Violation violation = new Violation();
 
-        if (kommentar.getMeasmId() == null) {
-            violation.addError("measmId", StatusCodes.VALUE_MISSING);
-            return violation;
-        }
-
         if (isExisting(kommentar)) {
             violation.addError("text", StatusCodes.VAL_EXISTS);
             return violation;

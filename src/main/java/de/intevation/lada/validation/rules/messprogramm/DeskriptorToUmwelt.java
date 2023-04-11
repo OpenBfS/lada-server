@@ -43,9 +43,6 @@ public class DeskriptorToUmwelt implements Rule {
         ) {
             return null;
         }
-        if (messprogramm.getEnvMediumId() == null) {
-            return null;
-        }
         String[] mediaDesk = messprogramm.getEnvDescripDisplay().split(" ");
         if (mediaDesk.length <= 1) {
             return null;

@@ -50,81 +50,75 @@ public class SubIntervall implements Rule {
         Integer gueltigVon = messprogramm.getValidStartDate();
         Integer gueltigBis = messprogramm.getValidEndDate();
 
-        // skip this validation if relevant mandatory fields not given
-        if (probenintervall != null
-            && teilVon != null
-            && teilBis != null
-        ) {
-            if ("J".equals(probenintervall)) {
-                if (gueltigVon != null && gueltigBis != null) {
-                    if (teilVon < gueltigVon || teilVon > gueltigBis) {
-                        violation.addError(
-                            "samplePdStartDate",
-                            StatusCodes.VALUE_OUTSIDE_RANGE);
-                    }
-                    if (teilBis < gueltigVon || teilBis > gueltigBis) {
-                        violation.addError(
-                            "samplePdEndDate",
-                            StatusCodes.VALUE_OUTSIDE_RANGE);
-                    }
-                    if (offset != null
-                        && offset > intervallMax.get("J") - 1) {
-                        violation.addError(
-                            "samplePdOffset", StatusCodes.VALUE_OUTSIDE_RANGE);
-                    }
-                }
-            } else {
-                // lower limits are independent of intervall type
-                if (teilVon < 1) {
+        if ("J".equals(probenintervall)) {
+            if (gueltigVon != null && gueltigBis != null) {
+                if (teilVon < gueltigVon || teilVon > gueltigBis) {
                     violation.addError(
-                        "samplePdStartDate", StatusCodes.VALUE_OUTSIDE_RANGE);
+                        "samplePdStartDate",
+                        StatusCodes.VALUE_OUTSIDE_RANGE);
                 }
-                if (teilBis < 1) {
+                if (teilBis < gueltigVon || teilBis > gueltigBis) {
                     violation.addError(
-                        "samplePdEndDate", StatusCodes.VALUE_OUTSIDE_RANGE);
+                        "samplePdEndDate",
+                        StatusCodes.VALUE_OUTSIDE_RANGE);
                 }
-                if (offset != null && offset < 0) {
+                if (offset != null
+                    && offset > intervallMax.get("J") - 1) {
                     violation.addError(
                         "samplePdOffset", StatusCodes.VALUE_OUTSIDE_RANGE);
                 }
+            }
+        } else {
+            // lower limits are independent of intervall type
+            if (teilVon < 1) {
+                violation.addError(
+                    "samplePdStartDate", StatusCodes.VALUE_OUTSIDE_RANGE);
+            }
+            if (teilBis < 1) {
+                violation.addError(
+                    "samplePdEndDate", StatusCodes.VALUE_OUTSIDE_RANGE);
+            }
+            if (offset != null && offset < 0) {
+                violation.addError(
+                    "samplePdOffset", StatusCodes.VALUE_OUTSIDE_RANGE);
+            }
 
-                // upper limits depend on (valid) intervall type
-                Set<String> probenintervallSet = intervallMax.keySet();
-                if (!probenintervallSet.contains(probenintervall)) {
-                    violation.addError(
-                        "samplePD", StatusCodes.VALUE_OUTSIDE_RANGE);
-                } else {
-                    for (String intervallKey : probenintervallSet) {
-                        if (intervallKey.equals(probenintervall)) {
-                            if (teilVon > intervallMax.get(intervallKey)) {
-                                violation.addError(
-                                    "samplePdStartDate",
-                                    StatusCodes.VALUE_OUTSIDE_RANGE);
-                            }
-                            if (teilBis > intervallMax.get(intervallKey)) {
-                                violation.addError(
-                                    "samplePdEndDate",
-                                    StatusCodes.VALUE_OUTSIDE_RANGE);
-                            }
-                            if (offset != null
-                                && offset
-                                > intervallMax.get(intervallKey) - 1) {
-                                violation.addError(
-                                    "samplePdOffset",
-                                    StatusCodes.VALUE_OUTSIDE_RANGE);
-                            }
+            // upper limits depend on (valid) intervall type
+            Set<String> probenintervallSet = intervallMax.keySet();
+            if (!probenintervallSet.contains(probenintervall)) {
+                violation.addError(
+                    "samplePD", StatusCodes.VALUE_OUTSIDE_RANGE);
+            } else {
+                for (String intervallKey : probenintervallSet) {
+                    if (intervallKey.equals(probenintervall)) {
+                        if (teilVon > intervallMax.get(intervallKey)) {
+                            violation.addError(
+                                "samplePdStartDate",
+                                StatusCodes.VALUE_OUTSIDE_RANGE);
+                        }
+                        if (teilBis > intervallMax.get(intervallKey)) {
+                            violation.addError(
+                                "samplePdEndDate",
+                                StatusCodes.VALUE_OUTSIDE_RANGE);
+                        }
+                        if (offset != null
+                            && offset
+                            > intervallMax.get(intervallKey) - 1) {
+                            violation.addError(
+                                "samplePdOffset",
+                                StatusCodes.VALUE_OUTSIDE_RANGE);
                         }
                     }
                 }
             }
+        }
 
-            // lower limit has to be less than or equal to upper limit
-            if (teilVon > teilBis) {
-                violation.addError(
-                    "samplePdStartDate", StatusCodes.DATE_BEGIN_AFTER_END);
-                violation.addError(
-                    "samplePdEndDate", StatusCodes.DATE_BEGIN_AFTER_END);
-            }
+        // lower limit has to be less than or equal to upper limit
+        if (teilVon > teilBis) {
+            violation.addError(
+                "samplePdStartDate", StatusCodes.DATE_BEGIN_AFTER_END);
+            violation.addError(
+                "samplePdEndDate", StatusCodes.DATE_BEGIN_AFTER_END);
         }
 
         return violation.hasErrors()
