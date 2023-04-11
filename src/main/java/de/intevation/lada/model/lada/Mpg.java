@@ -26,6 +26,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -138,6 +139,7 @@ public class Mpg extends BaseModel implements Serializable {
         schema = SchemaName.NAME,
         inverseJoinColumns = @JoinColumn(name = "sample_specif_id")
     )
+    @Valid
     private Set<SampleSpecif> sampleSpecifs;
 
     @Transient

@@ -25,6 +25,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -49,6 +50,7 @@ public class MpgMmtMp implements Serializable {
         schema = SchemaName.NAME,
         inverseJoinColumns = @JoinColumn(name = "measd_id")
     )
+    @Valid
     private Set<Measd> measdObjects;
 
     @NotNull
