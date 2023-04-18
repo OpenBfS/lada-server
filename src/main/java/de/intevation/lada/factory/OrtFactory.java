@@ -268,10 +268,11 @@ public class OrtFactory {
             ort.setCoordYExt(staat.getCoordYExt());
             ort.setLongText(staat.getCtry());
             ort.setSiteClassId(ORTTYP5);
-            ort.setExtId("STAAT_" + staat.getId());
             if (staat.getIso3166() != null) {
+                ort.setExtId("STAAT_" + staat.getIso3166());
                 ort.setShortText("STAAT_" + staat.getIso3166());
             } else {
+                ort.setExtId("STAAT_" + staat.getId());
                 ort.setShortText("STAAT_" + staat.getId());
             }
             ort.setReiReportText(staat.getCtry());
