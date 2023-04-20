@@ -38,8 +38,8 @@ public class SampleSpecifService extends LadaService {
     /**
      * Get SampleSpecif objects.
      *
-     * @param envMediumId URL parameter to filter using envMediumId. Might be null
-     * (i.e. not given at all) but not an empty string.
+     * @param envMediumId URL parameter to filter using envMediumId.
+     * Might be null (i.e. not given at all) but not an empty string.
      * @return Response containing requested objects.
      */
     @GET
@@ -58,10 +58,10 @@ public class SampleSpecifService extends LadaService {
             List<String> ids = query.getResultList();
 
             if (!ids.isEmpty()) {
-            QueryBuilder<SampleSpecif> builder2 =
-                repository.queryBuilder(SampleSpecif.class);
-            builder2.orIn("id", ids);
-            return repository.filter(builder2.getQuery());
+                QueryBuilder<SampleSpecif> builder =
+                    repository.queryBuilder(SampleSpecif.class)
+                    .orIn("id", ids);
+                return repository.filter(builder.getQuery());
             }
         }
 
