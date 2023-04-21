@@ -9,7 +9,6 @@ package de.intevation.lada.exporter;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -82,7 +81,7 @@ public interface Exporter {
         List<Map<String, Object>> result,
         Charset encoding,
         JsonObject options,
-        ArrayList<String> columnsToInclude,
+        List<String> columnsToInclude,
         Integer qId
     ) {
         return null;
@@ -108,7 +107,7 @@ public interface Exporter {
         List<Map<String, Object>> result,
         Charset encoding,
         JsonObject options,
-        ArrayList<String> columnsToInclude,
+        List<String> columnsToInclude,
         Integer qId,
         Locale locale
     ) {

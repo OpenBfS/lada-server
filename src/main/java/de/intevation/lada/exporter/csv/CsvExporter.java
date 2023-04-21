@@ -19,17 +19,17 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.Collection;
 import java.util.TimeZone;
 
 import javax.inject.Inject;
 import javax.json.JsonObject;
+import javax.persistence.NoResultException;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -97,37 +97,37 @@ public class CsvExporter implements Exporter {
      *
      * The names are either fetched from the database or used from the given
      * sub data column name object
-     * @param keys Keys to get name for
+     * @param keys Array of GridColMp.dataIndex keys to get names for
      * @param subDataColumnNames Object containing sub data column names
+     * @param qId GridColMp.baseQueryId for filtering GridColMp objects
      * @return Name array
      */
     private String[] getReadableColumnNames(
-        String[] keys,
+        Collection<String> keys,
         JsonObject subDataColumnNames,
         Integer qId
     ) {
-        String[] names = new String[keys.length];
-        ArrayList<String> keysList = new ArrayList<String>(Arrays.asList(keys));
+        String[] names = new String[keys.size()];
         int index = 0;
-        for (String key : keysList) {
-            QueryBuilder<GridColMp> builder =
-                repository.queryBuilder(GridColMp.class);
-            builder.and("dataIndex", key);
-            builder.and("baseQueryId", qId);
-            List<GridColMp> result =
-                repository.filterPlain(builder.getQuery());
+        for (String key : keys) {
             String name = key;
-            if (result.size() > 0) {
-                GridColMp column = result.get(0);
+
+            QueryBuilder<GridColMp> builder =
+                repository.queryBuilder(GridColMp.class)
+                .and("dataIndex", key)
+                .and("baseQueryId", qId);
+            try {
+                GridColMp column =
+                    repository.getSinglePlain(builder.getQuery());
                 name = column.getGridCol();
-            } else {
+            } catch (NoResultException e) {
                 name = subDataColumnNames.containsKey(key)
                     ? subDataColumnNames.getString(key)
                     : key;
             }
             names[index] = name;
             index++;
-        };
+        }
         return names;
     }
 
@@ -164,7 +164,7 @@ public class CsvExporter implements Exporter {
         List<Map<String, Object>> queryResult,
         Charset encoding,
         JsonObject options,
-        ArrayList<String> columnsToInclude,
+        List<String> columnsToInclude,
         Integer qId,
         Locale locale
     ) {
@@ -213,15 +213,9 @@ public class CsvExporter implements Exporter {
         decimalFormat.setGroupingUsed(false);
 
         //Get header fields
-        String[] keys;
-        if (columnsToInclude == null) {
-            Set<String> keySet = queryResult.get(0).keySet();
-            keys = new String[keySet.size()];
-            keySet.toArray(keys);
-        } else {
-            keys = new String[columnsToInclude.size()];
-            columnsToInclude.toArray(keys);
-        }
+        Collection<String> keys = columnsToInclude == null
+            ? queryResult.get(0).keySet()
+            : columnsToInclude;
 
         String[] header = getReadableColumnNames(keys, subDataColumnNames, qId);
         //Create CSV format
@@ -239,13 +233,14 @@ public class CsvExporter implements Exporter {
             //For every queryResult row
             queryResult.forEach(row -> {
                 ArrayList<String> rowItems = new ArrayList<String>();
-                for (int i = 0; i < keys.length; i++) {
-                    Object value = row.get(keys[i]);
+                for (String key: keys) {
+                    Object value = row.get(key);
 
                     //Value is a status kombi
-                    if (keys[i].equals("statusK")) {
+                    if (key.equals("statusK")) {
                         rowItems.add(getStatusStringByid((Integer) value));
-                    } else if (keys[i].equals("latitude") | keys[i].equals("longitude")) {
+                    } else if (key.equals("latitude")
+                        | key.equals("longitude")) {
                         rowItems.add(value.toString());
                     } else if (value instanceof Double) {
                         decimalFormat.applyPattern("0.###E00");
