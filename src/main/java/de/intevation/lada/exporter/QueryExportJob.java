@@ -174,30 +174,6 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-     * Load messung data filtered by the given ids.
-     * @param primaryDataIds Ids to filter for
-     * @return Messwert records as list
-     */
-    private List<Measm> getMessungSubData(List<Integer> primaryDataIds) {
-        QueryBuilder<Measm> messungBuilder = repository.queryBuilder(
-            Measm.class);
-        messungBuilder.andIn("sampleId", primaryDataIds);
-        return repository.filterPlain(messungBuilder.getQuery());
-    }
-
-    /**
-     * Load messwert data filtered by the given ids.
-     * @param primaryDataIds Ids to filter for
-     * @return Messwert records as list
-     */
-    private List<MeasVal> getMesswertSubData(List<Integer> primaryDataIds) {
-        QueryBuilder<MeasVal> messwertBuilder = repository.queryBuilder(
-            MeasVal.class);
-        messwertBuilder.andIn("measmId", primaryDataIds);
-        return repository.filterPlain(messwertBuilder.getQuery());
-    }
-
-    /**
      * Get the status of the given messung as String.
      * Format: [statusStufe - statusWert]
      * @param messung Messung to get status for
@@ -264,6 +240,7 @@ public abstract class QueryExportJob extends ExportJob {
         if (primaryData == null) {
             return null;
         }
+
         //Get ids of primary records
         List<Integer> primaryDataIds = new ArrayList<Integer>();
         primaryData.forEach(item -> {
@@ -274,9 +251,17 @@ public abstract class QueryExportJob extends ExportJob {
         String subDataType = mapPrimaryToSubDataTypes.get(idType);
         switch (subDataType) {
             case "messung":
-                return mergeMessungData(getMessungSubData(primaryDataIds));
+                QueryBuilder<Measm> messungBuilder = repository
+                    .queryBuilder(Measm.class)
+                    .andIn("sampleId", primaryDataIds);
+                return mergeMessungData(
+                    repository.filterPlain(messungBuilder.getQuery()));
             case "messwert":
-                return mergeMesswertData(getMesswertSubData(primaryDataIds));
+                QueryBuilder<MeasVal> messwertBuilder = repository
+                    .queryBuilder(MeasVal.class)
+                    .andIn("measmId", primaryDataIds);
+                return mergeMesswertData(
+                    repository.filterPlain(messwertBuilder.getQuery()));
             default:
                 throw new IllegalArgumentException(
                     String.format("Unknown subDataType: %s", subDataType));
