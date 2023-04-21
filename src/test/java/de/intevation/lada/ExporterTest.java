@@ -78,7 +78,16 @@ public class ExporterTest extends BaseTest {
                 .add("isFilterNull", false)
                 .add("isFilterNegate", false)
                 .add("isFilterRegex", false)
-                .add("gridColMpId", 2)));
+                .add("gridColMpId", 2))
+            .add(Json.createObjectBuilder()
+                .add("columnIndex", 2)
+                .add("export", true)
+                .add("filterVal", "")
+                .add("isFilterActive", false)
+                .add("isFilterNull", false)
+                .add("isFilterNegate", false)
+                .add("isFilterRegex", false)
+                .add("gridColMpId", 4)));
 
     /**
      * Prepare data for export of a Sample object.
@@ -124,7 +133,9 @@ public class ExporterTest extends BaseTest {
         String result = runExportTest(baseUrl, formatCsv, prot, requestJson);
         Assert.assertEquals(
             "Unexpected CSV content",
-            "hauptprobenNr,umwId\r\n120510002,L6\r\n120510001,L6\r\n",
+            "hauptprobenNr,umwId,probeId\r\n"
+            + "120510002,L6,1000\r\n"
+            + "120510001,L6,1001\r\n",
             result);
 
         prot.setPassed(true);
@@ -154,7 +165,40 @@ public class ExporterTest extends BaseTest {
         String result = runExportTest(baseUrl, formatCsv, prot, requestJson);
         Assert.assertEquals(
             "Unexpected CSV content",
-            "hauptprobenNr,umwId\r\n120510002,L6\r\n",
+            "hauptprobenNr,umwId,probeId\r\n120510002,L6,1000\r\n",
+            result);
+
+        prot.setPassed(true);
+    }
+
+    /**
+     * Test asynchronous CSV export of Sample objects including measms.
+     */
+    @Test
+    @InSequence(3)
+    @RunAsClient
+    public final void testCsvExportProbeSubData(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        Protocol prot = new Protocol();
+        prot.setName("asyncexport service");
+        prot.setType(formatCsv);
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        /* Request asynchronous export */
+        JsonObject requestJson = requestJsonBuilder
+            .add("idField", "probeId")
+            .add("exportSubData", true)
+            .add("subDataColumns", Json.createArrayBuilder().add("extId"))
+            .build();
+
+        String result = runExportTest(baseUrl, formatCsv, prot, requestJson);
+        Assert.assertEquals(
+            "Unexpected CSV content",
+            "hauptprobenNr,umwId,probeId,extId\r\n"
+            + "120510002,L6,1000,453\r\n"
+            + "120510001,L6,1001,\r\n",
             result);
 
         prot.setPassed(true);
@@ -185,7 +229,9 @@ public class ExporterTest extends BaseTest {
         Assert.assertEquals(
             "Unexpected JSON content",
             "{\"120510002\":"
-            + "{\"hauptproben_nr\":\"120510002\",\"umw_id\":\"L6\"}}",
+            + "{\"hauptproben_nr\":\"120510002\","
+            + "\"umw_id\":\"L6\","
+            + "\"probeId\":1000}}",
             result);
 
         prot.setPassed(true);
@@ -245,7 +291,7 @@ public class ExporterTest extends BaseTest {
             baseUrl, formatCsv, prot, requestJson);
         Assert.assertEquals(
             "Unexpected CSV content",
-            "hauptprobenNr,umwId\r\n",
+            "hauptprobenNr,umwId,probeId\r\n",
             csvResult);
 
         String jsonResult = runExportTest(
