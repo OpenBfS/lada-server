@@ -223,7 +223,7 @@ public class CsvExportJob extends QueryExportJob {
 
         //If needed, fetch and merge sub data
         if (exportSubdata) {
-            exportData = mergeSubData(getSubData());
+            exportData = mergeSubData();
             exportColumns.addAll(subDataColumns);
         }
 

@@ -173,7 +173,7 @@ public class JsonExportJob extends QueryExportJob {
 
         // If needed, fetch and merge sub data
         if (exportSubdata) {
-            exportData = mergeSubData(getSubData());
+            exportData = mergeSubData();
         }
 
         //Export data to json

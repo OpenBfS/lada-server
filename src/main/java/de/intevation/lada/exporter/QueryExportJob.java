@@ -174,33 +174,6 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-     * Get the sub data for the query.
-     * @return Query result as list
-     */
-    protected List<?> getSubData() {
-        if (primaryData == null) {
-            return null;
-        }
-        //Get ids of primary records
-        List<Integer> primaryDataIds = new ArrayList<Integer>();
-        primaryData.forEach(item -> {
-            primaryDataIds.add((Integer) item.get(idColumn));
-        });
-
-        //Get subdata
-        String subDataType = mapPrimaryToSubDataTypes.get(idType);
-        if (subDataType == null) {
-            throw new IllegalArgumentException(
-                String.format("Unknown id type: %s", idType));
-        }
-        switch (subDataType) {
-            case "messung": return getMessungSubData(primaryDataIds);
-            case "messwert": return getMesswertSubData(primaryDataIds);
-            default: return null;
-        }
-    }
-
-    /**
      * Load messung data filtered by the given ids.
      * @param primaryDataIds Ids to filter for
      * @return Messwert records as list
@@ -282,36 +255,32 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-     * Get the sub data type to the given primary data type.
-     * @param primaryDataType Primary data type
-     * @return Sub data type as String
-     */
-    protected String getSubDataType(String primaryDataType) {
-        return mapPrimaryToSubDataTypes.get(primaryDataType);
-    }
-
-    /**
      * Merge sub data into the primary query result.
-     * @param subData Data to merge into result
+     *
      * @return Merged data as list
      * @throws IllegalArgumentException in case of unknown sub-data type
      */
-    @SuppressWarnings("unchecked")
-    protected List<Map<String, Object>> mergeSubData(
-        List<?> subData
-    ) {
-        List<Map<String, Object>> mergedData;
-        switch (getSubDataType(idType)) {
-            case "messung":
-                mergedData = mergeMessungData((List<Measm>) subData);
-                break;
-            case "messwert":
-                mergedData = mergeMesswertData((List<MeasVal>) subData);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid type");
+    protected List<Map<String, Object>> mergeSubData() {
+        if (primaryData == null) {
+            return null;
         }
-        return mergedData;
+        //Get ids of primary records
+        List<Integer> primaryDataIds = new ArrayList<Integer>();
+        primaryData.forEach(item -> {
+            primaryDataIds.add((Integer) item.get(idColumn));
+        });
+
+        //Get subdata
+        String subDataType = mapPrimaryToSubDataTypes.get(idType);
+        switch (subDataType) {
+            case "messung":
+                return mergeMessungData(getMessungSubData(primaryDataIds));
+            case "messwert":
+                return mergeMesswertData(getMesswertSubData(primaryDataIds));
+            default:
+                throw new IllegalArgumentException(
+                    String.format("Unknown subDataType: %s", subDataType));
+        }
     }
 
     /**
