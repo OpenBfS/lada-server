@@ -301,6 +301,9 @@ public abstract class QueryExportJob extends ExportJob {
 
     /**
      * Parse export parameters.
+     *
+     * @throws IllegalArgumentException if exportSubData is true but no
+     * subDataColumns arge given.
      */
     protected void parseExportParameters() {
         if (exportParameters == null) {
@@ -317,7 +320,7 @@ public abstract class QueryExportJob extends ExportJob {
         //Check if sub data columns are present if subdata is exported
         if (exportSubdata
             && !exportParameters.containsKey("subDataColumns")
-            && exportParameters.get("subDataColumns") != null) {
+        ) {
             throw new IllegalArgumentException(
                 "Subdata is exported but no subdata columns are present");
         }
