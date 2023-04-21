@@ -121,7 +121,8 @@ public class CsvExporter implements Exporter {
                     repository.getSinglePlain(builder.getQuery());
                 name = column.getGridCol();
             } catch (NoResultException e) {
-                name = subDataColumnNames.containsKey(key)
+                name = subDataColumnNames != null
+                    && subDataColumnNames.containsKey(key)
                     ? subDataColumnNames.getString(key)
                     : key;
             }
