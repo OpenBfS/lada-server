@@ -294,9 +294,44 @@ public abstract class QueryExportJob extends ExportJob {
      * Merge sub data into the primary query result.
      * @param subData Data to merge into result
      * @return Merged data as list
+     * @throws IllegalArgumentException in case of unknown sub-data type
      */
-    protected abstract List<Map<String, Object>> mergeSubData(
+    @SuppressWarnings("unchecked")
+    protected List<Map<String, Object>> mergeSubData(
         List<?> subData
+    ) {
+        List<Map<String, Object>> mergedData;
+        switch (getSubDataType(idType)) {
+            case "messung":
+                mergedData = mergeMessungData((List<Measm>) subData);
+                break;
+            case "messwert":
+                mergedData = mergeMesswertData((List<MeasVal>) subData);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid type");
+        }
+        return mergedData;
+    }
+
+    /**
+     * Merge primary result and measm data.
+     *
+     * @param messungData Data to merge
+     * @return Merged data as list
+     */
+    protected abstract List<Map<String, Object>> mergeMessungData(
+        List<Measm> messungData
+    );
+
+    /**
+     * Merge primary result and measVal data.
+     *
+     * @param messwertData Data to merge
+     * @return Merged data as list
+     */
+    protected abstract List<Map<String, Object>> mergeMesswertData(
+        List<MeasVal> messwertData
     );
 
     /**

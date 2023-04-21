@@ -52,45 +52,8 @@ public class JsonExportJob extends QueryExportJob {
         this.downloadFileName = "export.json";
     }
 
-    /**
-     * Merge sub data into the primary query result
-     *
-     * For JSON export, the sub data records will be inserted as an array into
-     * the corresponding primary record.
-     * @param subData Data to merge into result
-     * @return Merged data as list
-     */
     @Override
-    @SuppressWarnings("unchecked")
-    protected List<Map<String, Object>> mergeSubData(
-        List<?> subData
-    ) {
-        List<Map<String, Object>> mergedData;
-        logger.debug(
-            String.format(
-                "Merging %d sub data records into %d primary record(s)",
-                subData.size(),
-                primaryData.size()));
-        switch (getSubDataType(idType)) {
-            case "messung":
-                mergedData = mergeMessungData((List<Measm>) subData);
-                break;
-            case "messwert":
-                mergedData = mergeMesswertData((List<MeasVal>) subData);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid type");
-        }
-        return mergedData;
-    }
-
-    /**
-     * Merge primary result and messung data.
-     * @param messungData Data to merge
-     * @return Merged data as list
-     */
-    @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> mergeMessungData(
+    protected List<Map<String, Object>> mergeMessungData(
         List<Measm> messungData
     ) {
         // Create a map of id->record
@@ -144,13 +107,8 @@ public class JsonExportJob extends QueryExportJob {
         return merged;
     }
 
-    /**
-     * Merge primary result and messung data.
-     * @param messwertData Data to merge
-     * @return Merged data as list
-     */
-    @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> mergeMesswertData(
+    @Override
+    protected List<Map<String, Object>> mergeMesswertData(
         List<MeasVal> messwertData
     ) {
         // Create a map of id->record
