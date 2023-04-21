@@ -256,7 +256,7 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-    * Get the messeinheit for messwert values using given messwert
+    * Get the messeinheit for messwert values using given messwert.
     * @param messwert messwertId sungId to get messeinheit for
     * @return messeinheit
      */
@@ -269,7 +269,7 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-    * Get the messgroesse for messwert values using given messwert
+    * Get the messgroesse for messwert values using given messwert.
     * @param messwert messwertId sungId to get messgroesse for
     * @return messgroesse
      */
@@ -345,11 +345,16 @@ public abstract class QueryExportJob extends ExportJob {
                 && columnObj.get("sortIndex").getValueType() == ValueType.NUMBER
                 ? columnObj.getInt("sortIndex") : null;
             columnValue.setSortIndex(sortIndex);
-            columnValue.setFilterVal(columnObj.getString("filterVal"));
-            columnValue.setIsFilterActive(columnObj.getBoolean("isFilterActive"));
-            columnValue.setIsFilterNull(columnObj.getBoolean("isFilterNull"));
-            columnValue.setIsFilterNegate(columnObj.getBoolean("isFilterNegate"));
-            columnValue.setIsFilterRegex(columnObj.getBoolean("isFilterRegex"));
+            columnValue.setFilterVal(
+                columnObj.getString("filterVal"));
+            columnValue.setIsFilterActive(
+                columnObj.getBoolean("isFilterActive"));
+            columnValue.setIsFilterNull(
+                columnObj.getBoolean("isFilterNull"));
+            columnValue.setIsFilterNegate(
+                columnObj.getBoolean("isFilterNegate"));
+            columnValue.setIsFilterRegex(
+                columnObj.getBoolean("isFilterRegex"));
             GridColMp gridColumn = repository.getByIdPlain(
                 GridColMp.class, columnValue.getGridColMpId());
 
