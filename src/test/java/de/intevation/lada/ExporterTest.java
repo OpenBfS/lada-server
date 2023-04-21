@@ -238,6 +238,42 @@ public class ExporterTest extends BaseTest {
     }
 
     /**
+     * Test asynchronous JSON export of a Sample object with measms.
+     */
+    @Test
+    @InSequence(4)
+    @RunAsClient
+    public final void testJsonExportProbeSubData(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        Protocol prot = new Protocol();
+        prot.setName("asyncexport service");
+        prot.setType(formatJson);
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        /* Request asynchronous export */
+        JsonObject requestJson = requestJsonBuilder
+            .add("idField", "probeId")
+            .add("idFilter", Json.createArrayBuilder().add("1000"))
+            .add("exportSubData", true)
+            .add("subDataColumns", Json.createArrayBuilder().add("extId"))
+            .build();
+
+        String result = runExportTest(baseUrl, formatJson, prot, requestJson);
+        Assert.assertEquals(
+            "Unexpected JSON content",
+            "{\"1000\":"
+            + "{\"hauptproben_nr\":\"120510002\","
+            + "\"umw_id\":\"L6\","
+            + "\"probeId\":1000,"
+            + "\"Messungen\":[{\"extId\":453}]}}",
+            result);
+
+        prot.setPassed(true);
+    }
+
+    /**
      * Test asynchronous LAF export of a Sample identified by ID.
      */
     @Test
