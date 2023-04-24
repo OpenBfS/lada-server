@@ -72,10 +72,11 @@ RUN ln -s /usr/share/java/postgis-jdbc.jar \
 RUN ln -s /usr/share/java/jts-core.jar \
        $HIBERNATE_MODULE/jts-core.jar
 
-#
-# Add volume with datum shift grid
-#
 ENV SRC /usr/src/lada-server
+
+# Download dependencies before adding sources to leverage build cache
+ADD pom.xml $SRC/
+RUN mvn -q -f $SRC/pom.xml dependency:go-offline
 
 #
 # Add LADA-server repo
