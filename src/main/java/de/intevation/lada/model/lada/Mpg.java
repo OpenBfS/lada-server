@@ -117,7 +117,6 @@ public class Mpg extends BaseModel implements Serializable {
 
     private Boolean isTest;
 
-    @NotBlank
     @Size(max = 3)
     private String envMediumId;
 
