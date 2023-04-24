@@ -25,7 +25,9 @@ import javax.persistence.Query;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -35,8 +37,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.QueryParam;
 
 import org.jboss.logging.Logger;
@@ -209,7 +209,7 @@ public class SiteService extends LadaService {
                 response.setWarnings(violation.getWarnings());
                 response.setNotifications(violation.getNotifications());
             }
-               return authorization.filter(response,Site.class);
+               return authorization.filter(response, Site.class);
     }
 
     /**
@@ -369,58 +369,89 @@ public class SiteService extends LadaService {
         return repository.delete(ort);
     }
 
+    /**
+     * Retrieve image associated with site.
+     *
+     * @param id ID of site
+     * @param type Type of image (img or map)
+     * @return Image for given site of given type
+     * @throws NotFoundException if no site exists with given ID
+     */
     @GET
     @Path("{id}/{type}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public javax.ws.rs.core.Response getSiteImage(
+    public byte[] getSiteImage(
             @PathParam("id") Integer id,
-            @PathParam("type") @Pattern(regexp = "img|map") String type) {
+            @PathParam("type") @Pattern(regexp = "img|map") String type
+    ) {
         Site site = repository.getByIdPlain(Site.class, id);
         if (site == null) {
-            return buildResponse(Status.NOT_FOUND);
+            throw new NotFoundException();
         }
-        byte[] bytes = type.equals("map") ? site.getMap() : site.getImg();
-        if (bytes == null) {
-            return buildResponse(Status.NO_CONTENT);
-        }
-        return buildResponse(Status.OK, bytes);
+        return type.equals("map") ? site.getMap() : site.getImg();
     }
 
+    /**
+     * Associate image with site.
+     *
+     * @param id ID of site
+     * @param type Type of image (img or map)
+     * @param request The upload request
+     * @throws ForbiddenException if updating the site is not allowed
+     * @throws IOException if length of request body cannot be retrieved
+     * or other I/O errors occur.
+     */
     @POST
     @Path("{id}/{type}")
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
-    public javax.ws.rs.core.Response uploadSiteImage(
+    public void uploadSiteImage(
             @PathParam("id") Integer id,
             @PathParam("type") @Pattern(regexp = "img|map") String type,
-            @Context HttpServletRequest request) throws IOException {
+            @Context HttpServletRequest request
+    ) throws IOException {
         Site site = repository.getByIdPlain(Site.class, id);
         if (!authorization.isAuthorized(
                 site,
                 RequestMethod.PUT,
                 Site.class)) {
-            return buildResponse(Status.UNAUTHORIZED);
+            throw new ForbiddenException();
         }
-        byte[] img = extractImageBytes(request);
+
+        int contentLength = request.getContentLength();
+        if (contentLength == -1) {
+            throw new IOException();
+        }
+        InputStream stream = request.getInputStream();
+        byte[] img = new byte[contentLength];
+        stream.read(img);
+
         if (type.equals("map")) {
             site.setMap(img);
         } else {
             site.setImg(img);
         }
         repository.update(site);
-        return buildResponse(Status.OK);
     }
 
+    /**
+     * Delete image associated with site.
+     *
+     * @param id ID of site
+     * @param type Type of image (img or map)
+     * @throws ForbiddenException if updating the site is not allowed
+     */
     @DELETE
     @Path("{id}/{type}")
-    public javax.ws.rs.core.Response deleteSiteImage(
+    public void deleteSiteImage(
             @PathParam("id") Integer id,
-            @PathParam("type") @Pattern(regexp = "img|map") String type) {
+            @PathParam("type") @Pattern(regexp = "img|map") String type
+    ) {
         Site site = repository.getByIdPlain(Site.class, id);
         if (!authorization.isAuthorized(
                 site,
                 RequestMethod.PUT,
                 Site.class)) {
-            return buildResponse(Status.NOT_FOUND);
+            throw new ForbiddenException();
         }
         if (type.equals("map")) {
             site.setMap(null);
@@ -428,30 +459,6 @@ public class SiteService extends LadaService {
             site.setImg(null);
         }
         repository.update(site);
-        return buildResponse(Status.OK);
-    }
-
-    private byte[] extractImageBytes(HttpServletRequest request) throws IOException {
-        int contentLength = request.getContentLength();
-        if (contentLength == -1) {
-            throw new IOException();
-        }
-        byte[] img = new byte[contentLength];
-        InputStream stream = request.getInputStream();
-        stream.read(img);
-        return img;
-    }
-
-    private javax.ws.rs.core.Response buildResponse(Status status) {
-        return buildResponse(status, null);
-    }
-
-    private javax.ws.rs.core.Response buildResponse(Status status, Object entity) {
-        ResponseBuilder builder = javax.ws.rs.core.Response.status(status);
-        if (entity != null) {
-            builder.entity(entity);
-        }
-        return builder.build();
     }
 
     /**
@@ -466,14 +473,14 @@ public class SiteService extends LadaService {
         return repository.filterPlain(refBuilder.getQuery());
     }
 
-    private int getPlausibleRefs(int sampleId){
+    private int getPlausibleRefs(int sampleId) {
         Query query =
         repository.queryFromString(
             "SELECT * FROM lada.get_measms_per_site(:sampleId);")
                 .setParameter("sampleId", sampleId);
         @SuppressWarnings("unchecked")
         List resultList = query.getResultList();
-        return ((int)resultList.get(0));
+        return ((int) resultList.get(0));
     }
 
     /**

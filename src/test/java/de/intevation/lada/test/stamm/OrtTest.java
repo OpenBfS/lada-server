@@ -16,8 +16,10 @@ import javax.json.JsonObjectBuilder;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.Assert;
 
@@ -81,35 +83,43 @@ public class OrtTest extends ServiceTest {
      * @param parameter Url parameter
      */
     private void testUploadImage(byte[] bytes, String parameter) {
-        //Upload image
         Protocol prot = new Protocol();
         prot.setName("site image service");
         prot.setType("create");
         prot.setPassed(false);
         protocol.add(prot);
 
-        WebTarget postTarget = client.target(baseUrl + parameter);
-        Response postResponse = postTarget.request()
+        WebTarget reqTarget = client.target(baseUrl + parameter);
+        Builder reqBuilder = reqTarget.request()
             .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .post(Entity.entity(bytes, MediaType.APPLICATION_OCTET_STREAM_TYPE));
-        Assert.assertEquals(200, postResponse.getStatus());
+            .header("X-SHIB-roles", BaseTest.testRoles);
 
-        //Get image
-        WebTarget target = client.target(baseUrl + parameter);
-        Response response = target.request()
+        // Get empty image
+        Response emptyResponse = reqBuilder.get();
+        Assert.assertEquals(
+            Status.NO_CONTENT.getStatusCode(), emptyResponse.getStatus());
+
+        // Upload image
+        Response postResponse = reqBuilder.post(Entity.entity(
+                bytes, MediaType.APPLICATION_OCTET_STREAM_TYPE));
+        Assert.assertEquals(
+            Status.NO_CONTENT.getStatusCode(), postResponse.getStatus());
+
+        // Get image
+        reqBuilder = reqTarget.request()
             .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .get();
+            .header("X-SHIB-roles", BaseTest.testRoles);
+        Response response = reqBuilder.get();
+        Assert.assertEquals(
+            Status.OK.getStatusCode(), response.getStatus());
         byte[] responseBytes = response.readEntity(byte[].class);
-        Assert.assertArrayEquals(responseBytes, bytes);
+        Assert.assertArrayEquals(bytes, responseBytes);
 
-        WebTarget deleteTarget = client.target(baseUrl + parameter);
-        Response deleteResponse = deleteTarget.request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .delete();
-        prot.setPassed(deleteResponse.getStatus() == 200);
+        // Delete image
+        Response deleteResponse = reqBuilder.delete();
+        Assert.assertEquals(
+            Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
+        prot.setPassed(true);
     }
 
     /**
