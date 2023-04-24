@@ -23,7 +23,6 @@ import javax.persistence.Temporal;
 import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.locationtech.jts.geom.Point;
@@ -61,19 +60,15 @@ public class Site extends BaseModel implements Serializable {
     private Float alt;
 
     @Size(max = 22)
-    @NotNull
     private String coordXExt;
 
     @Size(max = 22)
-    @NotNull
     private String coordYExt;
 
     @Size(max = 22)
-    @NotNull
     private String shortText;
 
     @Size(max = 100)
-    @NotNull
     private String longText;
 
     @Column(insertable = false)
