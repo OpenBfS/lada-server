@@ -5,7 +5,7 @@
     }],
     "master.base_query": [{
         "id": 1,
-        "sql": "SELECT hauptproben_nr, umw_id FROM land.probe"
+        "sql": "SELECT hauptproben_nr, umw_id, id AS probeId FROM land.probe"
     }, {
         "id": 2,
         "sql": "SELECT hauptproben_nr FROM land.probe"
@@ -26,6 +26,9 @@
     "master.disp": [{
         "id": 1,
         "name": "test"
+    }, {
+        "id": 2,
+        "name": "probeId"
     }],
     "master.grid_col_mp": [{
         "id": 1,
@@ -42,6 +45,13 @@
         "data_index": "umw_id",
         "position": 2,
         "disp_id": 1
+    }, {
+        "id": 4,
+        "base_query_id": 1,
+        "grid_col": "probeId",
+        "data_index": "probeId",
+        "position": 3,
+        "disp_id": 2
     }, {
         "id": 3,
         "base_query_id": 2,
@@ -98,5 +108,18 @@
         "sched_start_date": "2012-05-01 16:00:00",
         "sched_end_date": "2012-05-05 16:00:00",
         "tree_mod": "2012-05-08 10:00:00"
+    }],
+    "lada.measm": [{
+        "id": 1200,
+        "sample_id": 1000,
+        "min_sample_id": "T100",
+        "ext_id": 453,
+        "mmt_id": "A3",
+        "meas_pd": 3600,
+        "measm_start_date": "2012-05-06 14:00:00",
+        "is_completed": false,
+        "last_mod": "2012-05-08 12:00:00",
+        "is_scheduled": true,
+        "tree_mod": "2012-05-09 12:00:00"
     }]
 }

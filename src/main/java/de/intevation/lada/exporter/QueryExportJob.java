@@ -174,57 +174,6 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-     * Get the sub data for the query.
-     * @return Query result as list
-     */
-    protected List<?> getSubData() {
-        if (primaryData == null) {
-            return null;
-        }
-        //Get ids of primary records
-        List<Integer> primaryDataIds = new ArrayList<Integer>();
-        primaryData.forEach(item -> {
-            primaryDataIds.add((Integer) item.get(idColumn));
-        });
-
-        //Get subdata
-        String subDataType = mapPrimaryToSubDataTypes.get(idType);
-        if (subDataType == null) {
-            throw new IllegalArgumentException(
-                String.format("Unknown id type: %s", idType));
-        }
-        switch (subDataType) {
-            case "messung": return getMessungSubData(primaryDataIds);
-            case "messwert": return getMesswertSubData(primaryDataIds);
-            default: return null;
-        }
-    }
-
-    /**
-     * Load messung data filtered by the given ids.
-     * @param primaryDataIds Ids to filter for
-     * @return Messwert records as list
-     */
-    private List<Measm> getMessungSubData(List<Integer> primaryDataIds) {
-        QueryBuilder<Measm> messungBuilder = repository.queryBuilder(
-            Measm.class);
-        messungBuilder.andIn("sampleId", primaryDataIds);
-        return repository.filterPlain(messungBuilder.getQuery());
-    }
-
-    /**
-     * Load messwert data filtered by the given ids.
-     * @param primaryDataIds Ids to filter for
-     * @return Messwert records as list
-     */
-    private List<MeasVal> getMesswertSubData(List<Integer> primaryDataIds) {
-        QueryBuilder<MeasVal> messwertBuilder = repository.queryBuilder(
-            MeasVal.class);
-        messwertBuilder.andIn("measmId", primaryDataIds);
-        return repository.filterPlain(messwertBuilder.getQuery());
-    }
-
-    /**
      * Get the status of the given messung as String.
      * Format: [statusStufe - statusWert]
      * @param messung Messung to get status for
@@ -256,7 +205,7 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-    * Get the messeinheit for messwert values using given messwert
+    * Get the messeinheit for messwert values using given messwert.
     * @param messwert messwertId sungId to get messeinheit for
     * @return messeinheit
      */
@@ -269,7 +218,7 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-    * Get the messgroesse for messwert values using given messwert
+    * Get the messgroesse for messwert values using given messwert.
     * @param messwert messwertId sungId to get messgroesse for
     * @return messgroesse
      */
@@ -282,25 +231,68 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-     * Get the sub data type to the given primary data type.
-     * @param primaryDataType Primary data type
-     * @return Sub data type as String
+     * Merge sub data into the primary query result.
+     *
+     * @return Merged data as list
+     * @throws IllegalArgumentException in case of unknown sub-data type
      */
-    protected String getSubDataType(String primaryDataType) {
-        return mapPrimaryToSubDataTypes.get(primaryDataType);
+    protected List<Map<String, Object>> mergeSubData() {
+        if (primaryData == null) {
+            return null;
+        }
+
+        //Get ids of primary records
+        List<Integer> primaryDataIds = new ArrayList<Integer>();
+        primaryData.forEach(item -> {
+            primaryDataIds.add((Integer) item.get(idColumn));
+        });
+
+        //Get subdata
+        String subDataType = mapPrimaryToSubDataTypes.get(idType);
+        switch (subDataType) {
+            case "messung":
+                QueryBuilder<Measm> messungBuilder = repository
+                    .queryBuilder(Measm.class)
+                    .andIn("sampleId", primaryDataIds);
+                return mergeMessungData(
+                    repository.filterPlain(messungBuilder.getQuery()));
+            case "messwert":
+                QueryBuilder<MeasVal> messwertBuilder = repository
+                    .queryBuilder(MeasVal.class)
+                    .andIn("measmId", primaryDataIds);
+                return mergeMesswertData(
+                    repository.filterPlain(messwertBuilder.getQuery()));
+            default:
+                throw new IllegalArgumentException(
+                    String.format("Unknown subDataType: %s", subDataType));
+        }
     }
 
     /**
-     * Merge sub data into the primary query result.
-     * @param subData Data to merge into result
+     * Merge primary result and measm data.
+     *
+     * @param messungData Data to merge
      * @return Merged data as list
      */
-    protected abstract List<Map<String, Object>> mergeSubData(
-        List<?> subData
+    protected abstract List<Map<String, Object>> mergeMessungData(
+        List<Measm> messungData
+    );
+
+    /**
+     * Merge primary result and measVal data.
+     *
+     * @param messwertData Data to merge
+     * @return Merged data as list
+     */
+    protected abstract List<Map<String, Object>> mergeMesswertData(
+        List<MeasVal> messwertData
     );
 
     /**
      * Parse export parameters.
+     *
+     * @throws IllegalArgumentException if exportSubData is true but no
+     * subDataColumns arge given.
      */
     protected void parseExportParameters() {
         if (exportParameters == null) {
@@ -317,7 +309,7 @@ public abstract class QueryExportJob extends ExportJob {
         //Check if sub data columns are present if subdata is exported
         if (exportSubdata
             && !exportParameters.containsKey("subDataColumns")
-            && exportParameters.get("subDataColumns") != null) {
+        ) {
             throw new IllegalArgumentException(
                 "Subdata is exported but no subdata columns are present");
         }
@@ -345,11 +337,16 @@ public abstract class QueryExportJob extends ExportJob {
                 && columnObj.get("sortIndex").getValueType() == ValueType.NUMBER
                 ? columnObj.getInt("sortIndex") : null;
             columnValue.setSortIndex(sortIndex);
-            columnValue.setFilterVal(columnObj.getString("filterVal"));
-            columnValue.setIsFilterActive(columnObj.getBoolean("isFilterActive"));
-            columnValue.setIsFilterNull(columnObj.getBoolean("isFilterNull"));
-            columnValue.setIsFilterNegate(columnObj.getBoolean("isFilterNegate"));
-            columnValue.setIsFilterRegex(columnObj.getBoolean("isFilterRegex"));
+            columnValue.setFilterVal(
+                columnObj.getString("filterVal"));
+            columnValue.setIsFilterActive(
+                columnObj.getBoolean("isFilterActive"));
+            columnValue.setIsFilterNull(
+                columnObj.getBoolean("isFilterNull"));
+            columnValue.setIsFilterNegate(
+                columnObj.getBoolean("isFilterNegate"));
+            columnValue.setIsFilterRegex(
+                columnObj.getBoolean("isFilterRegex"));
             GridColMp gridColumn = repository.getByIdPlain(
                 GridColMp.class, columnValue.getGridColMpId());
 

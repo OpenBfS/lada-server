@@ -37,7 +37,7 @@ ALTER TABLE lada.meas_val_view RENAME COLUMN status_comb TO status_mp_id;
 
 -- Update functions
 
-CREATE OR REPLACE FUNCTION set_measm_status() RETURNS trigger
+CREATE OR REPLACE FUNCTION lada.set_measm_status() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     DECLARE status_id integer;
@@ -54,7 +54,7 @@ CREATE OR REPLACE FUNCTION set_measm_status() RETURNS trigger
     END;
 $$;
 
-CREATE OR REPLACE FUNCTION update_status_measm() RETURNS trigger
+CREATE OR REPLACE FUNCTION lada.update_status_measm() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN

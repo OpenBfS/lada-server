@@ -76,7 +76,7 @@ public class UniversalServiceTest extends BaseTest {
     // Expected statement according to stamm.base_query.sql
     // in dbUnit_probe_query.json
     private final String sqlTemplate = "PREPARE request AS \n"
-        + "SELECT hauptproben_nr, umw_id FROM land.probe%s;\n"
+        + "SELECT hauptproben_nr, umw_id, id AS probeId FROM land.probe%s;\n"
         + "EXECUTE request%s;\nDEALLOCATE request;";
 
     // A 'hauptproben_nr' from land.probe in dbUnit_probe_query.json

@@ -14,7 +14,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -109,7 +108,7 @@ public class JsonExporter implements Exporter {
         List<Map<String, Object>> queryResult,
         Charset encoding,
         JsonObject options,
-        ArrayList<String> columnsToInclude,
+        List<String> columnsToInclude,
         Integer qId
     ) {
         String subDataKey = options.getString("subData", "");
