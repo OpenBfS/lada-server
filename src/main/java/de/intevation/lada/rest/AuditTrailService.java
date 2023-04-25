@@ -17,14 +17,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.model.lada.AuditTrailMeasmView;
 import de.intevation.lada.model.lada.AuditTrailSampleView;
@@ -407,7 +407,7 @@ public class AuditTrailService extends LadaService {
             + " WHERE "
             + idField
             + " = :id ;";
-        javax.persistence.Query query = repository.queryFromString(sql);
+        jakarta.persistence.Query query = repository.queryFromString(sql);
         if (id == null) {
             return "";
         }

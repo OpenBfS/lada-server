@@ -7,42 +7,44 @@
  */
 package de.intevation.lada.model;
 
-import javax.json.bind.annotation.JsonbTransient;
-import javax.ws.rs.core.MultivaluedMap;
+import java.util.List;
+import java.util.Map;
+
+import jakarta.json.bind.annotation.JsonbTransient;
 
 /**
  * Provides shared attributes for model entities.
  */
 public abstract class BaseModel {
-    private MultivaluedMap<String, Integer> errors;
-    private MultivaluedMap<String, Integer> warnings;
-    private MultivaluedMap<String, Integer> notifications;
+    private Map<String, List<Integer>> errors;
+    private Map<String, List<Integer>> warnings;
+    private Map<String, List<Integer>> notifications;
 
-    public MultivaluedMap<String, Integer> getErrors() {
+    public Map<String, List<Integer>>getErrors() {
         return this.errors;
     }
 
     @JsonbTransient
-    public void setErrors(MultivaluedMap<String, Integer> errors) {
+    public void setErrors(Map<String, List<Integer>> errors) {
         this.errors = errors;
     }
 
-    public MultivaluedMap<String, Integer> getWarnings() {
+    public Map<String, List<Integer>> getWarnings() {
         return this.warnings;
     }
 
     @JsonbTransient
-    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
+    public void setWarnings(Map<String, List<Integer>> warnings) {
         this.warnings = warnings;
     }
 
-    public MultivaluedMap<String, Integer> getNotifications() {
+    public Map<String, List<Integer>> getNotifications() {
         return this.notifications;
     }
 
     @JsonbTransient
     public void setNotifications(
-        MultivaluedMap<String, Integer> notifications
+        Map<String, List<Integer>> notifications
     ) {
         this.notifications = notifications;
     }

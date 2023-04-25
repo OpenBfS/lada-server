@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.ort;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import java.util.List;
 

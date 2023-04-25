@@ -8,10 +8,9 @@
 package de.intevation.lada.util.rest;
 
 import java.io.Serializable;
-
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
-
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
 * Response object storing information about success, warnings, errors and
@@ -26,9 +25,9 @@ public class Response implements Serializable {
     private Boolean success;
     private String message;
     private Object data;
-    private MultivaluedMap<String, Integer> errors;
-    private MultivaluedMap<String, Integer> warnings;
-    private MultivaluedMap<String, Integer> notifications;
+    private Map<String, List<Integer>> errors;
+    private Map<String, List<Integer>>warnings;
+    private Map<String, List<Integer>> notifications;
     private int totalCount;
 
     /**
@@ -42,9 +41,9 @@ public class Response implements Serializable {
         this.success = s;
         this.message = Integer.toString(code);
         this.data = d;
-        this.errors = new MultivaluedHashMap<String, Integer>();
-        this.warnings = new MultivaluedHashMap<String, Integer>();
-        this.notifications = new MultivaluedHashMap<String, Integer>();
+        this.errors = new HashMap<String, List<Integer>>();
+        this.warnings = new HashMap<String, List<Integer>>();
+        this.notifications = new HashMap<String, List<Integer>>();
         this.totalCount = 0;
     }
 
@@ -59,9 +58,9 @@ public class Response implements Serializable {
         this.success = s;
         this.message = Integer.toString(code);
         this.data = d;
-        this.errors = new MultivaluedHashMap<String, Integer>();
-        this.warnings = new MultivaluedHashMap<String, Integer>();
-        this.notifications = new MultivaluedHashMap<String, Integer>();
+        this.errors = new HashMap<String, List<Integer>>();
+        this.warnings = new HashMap<String, List<Integer>>();
+        this.notifications = new HashMap<String, List<Integer>>();
         this.totalCount = count;
     }
 
@@ -89,30 +88,28 @@ public class Response implements Serializable {
         this.data = data;
     }
 
-    public MultivaluedMap<String, Integer> getErrors() {
+    public Map<String, List<Integer>> getErrors() {
         return errors;
     }
 
-    public void setErrors(MultivaluedMap<String, Integer> errors) {
+    public void setErrors(Map<String, List<Integer>>  errors) {
         this.errors.putAll(errors);
-//        this.errors = this.convertCodes(errors);
     }
 
-    public MultivaluedMap<String, Integer> getWarnings() {
+    public Map<String, List<Integer>> getWarnings() {
         return warnings;
     }
 
-    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
+    public void setWarnings(Map<String, List<Integer>>  warnings) {
         this.warnings.putAll(warnings);
-        //this.warnings = this.convertCodes(warnings);
     }
 
-    public MultivaluedMap<String, Integer> getNotifications() {
+    public Map<String, List<Integer>> getNotifications() {
       return notifications;
     }
 
     public void setNotifications(
-        MultivaluedMap<String, Integer> notifications
+        Map<String, List<Integer>>  notifications
     ) {
       this.notifications.putAll(notifications);
     }

@@ -9,8 +9,8 @@ package de.intevation.lada.model;
 
 import java.util.List;
 
-import javax.persistence.Basic;
-import javax.persistence.FetchType;
+import jakarta.persistence.Basic;
+import jakarta.persistence.FetchType;
 
 import de.intevation.lada.model.master.GridColConf;
 

@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation;
 
-import javax.enterprise.inject.Instance;
+import jakarta.enterprise.inject.Instance;
 
 import de.intevation.lada.validation.rules.Rule;
 

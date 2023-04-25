@@ -11,10 +11,10 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
-import javax.ws.rs.client.Client;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonValue;
+import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
 

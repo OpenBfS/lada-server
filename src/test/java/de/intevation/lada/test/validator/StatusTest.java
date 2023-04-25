@@ -9,7 +9,7 @@ package de.intevation.lada.test.validator;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.junit.Assert;
 

@@ -9,8 +9,8 @@ package de.intevation.lada.importer;
 
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.persistence.PersistenceException;
+import jakarta.inject.Inject;
+import jakarta.persistence.PersistenceException;
 
 import org.jboss.logging.Logger;
 

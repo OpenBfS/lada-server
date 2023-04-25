@@ -10,24 +10,19 @@ package de.intevation.lada.model.lada;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import static javax.persistence.TemporalType.TIMESTAMP;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import de.intevation.lada.util.data.JsonObjectType;
-
-
 @Entity
 @Table(schema = SchemaName.NAME)
-@TypeDefs({ @TypeDef(name = "JsonObject", typeClass = JsonObjectType.class) })
 public class AuditTrailMeasmView implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -39,14 +34,14 @@ public class AuditTrailMeasmView implements Serializable {
     @Temporal(TIMESTAMP)
     private Date tstamp;
 
-    @Type(type = "JsonObject")
+    @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode changedFields;
 
     private String measmId;
 
     private Integer objectId;
 
-    @Type(type = "JsonObject")
+    @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode rowData;
 
     private String tableName;

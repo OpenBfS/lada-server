@@ -11,10 +11,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.persistence.Query;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import jakarta.inject.Inject;
+import jakarta.persistence.Query;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
 
 import de.intevation.lada.model.lada.TagLink;
 import de.intevation.lada.model.master.Tag;

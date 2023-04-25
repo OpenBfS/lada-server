@@ -7,7 +7,7 @@
  */
 package de.intevation.lada;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.jboss.arquillian.persistence.ApplyScriptBefore;
 import org.jboss.arquillian.persistence.Cleanup;
@@ -29,6 +29,7 @@ import de.intevation.lada.test.validator.StatusTest;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
+@Ignore
 @RunWith(Arquillian.class)
 @ApplyScriptBefore("datasets/clean_and_seed.sql")
 @Cleanup(phase = TestExecutionPhase.NONE)

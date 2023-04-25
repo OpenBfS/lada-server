@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.ort;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.QueryBuilder;

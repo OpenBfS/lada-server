@@ -10,7 +10,7 @@ package de.intevation.lada.rest;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.ws.rs.ApplicationPath;
+import jakarta.ws.rs.ApplicationPath;
 
 import de.intevation.lada.util.rest.LadaApplication;
 

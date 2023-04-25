@@ -9,7 +9,7 @@ package de.intevation.lada.validation.rules.ort;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.jboss.logging.Logger;
 import org.locationtech.jts.geom.Point;

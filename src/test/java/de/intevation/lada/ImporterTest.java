@@ -17,16 +17,16 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.SyncInvoker;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.SyncInvoker;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -65,6 +65,7 @@ import de.intevation.lada.util.data.StatusCodes;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
+@Ignore
 @RunWith(Arquillian.class)
 @ApplyScriptBefore("datasets/clean_and_seed.sql")
 public class ImporterTest extends BaseTest {

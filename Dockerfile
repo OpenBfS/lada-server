@@ -26,9 +26,10 @@ RUN apt-get update -y && \
 
 #
 # Set ENV for pacakge versions
-ENV WILDFLY_VERSION 26.1.3.Final
-ENV HIBERNATE_VERSION 5.4.27.Final
-ENV GEOLATTE_GEOM_VERSION 1.4.0
+ENV WILDFLY_VERSION 28.0.0.Final
+# see wildfly pom.xml for hibernate_spatial_version
+ENV HIBERNATE_VERSION 6.2.1.Final
+ENV GEOLATTE_GEOM_VERSION 1.9.0
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
 
 RUN echo "Building Image using WILDFLY_VERSION=${WILDFLY_VERSION}, HIBERNATE_VERSION=${HIBERNATE_VERSION}, GEOLATTE_GEOM_VERSION=${GEOLATTE_GEOM_VERSION}."
@@ -56,10 +57,8 @@ RUN mkdir -p $JBOSS_HOME/modules/org/postgres/main
 ENV MVN_REPO https://repo1.maven.org/maven2
 ENV WFLY_MODULES $JBOSS_HOME/modules/system/layers/base
 ENV HIBERNATE_MODULE $WFLY_MODULES/org/hibernate/main
-RUN for mod in core envers spatial;\
-    do curl -s $MVN_REPO/org/hibernate/hibernate-${mod}/${HIBERNATE_VERSION}/hibernate-${mod}-${HIBERNATE_VERSION}.jar >\
-        $HIBERNATE_MODULE/hibernate-${mod}.jar;\
-    done
+RUN curl -s $MVN_REPO/org/hibernate/orm/hibernate-spatial/${HIBERNATE_VERSION}/hibernate-spatial-${HIBERNATE_VERSION}.jar >\
+        $HIBERNATE_MODULE/hibernate-spatial.jar;
 
 RUN curl -s $MVN_REPO/org/geolatte/geolatte-geom/${GEOLATTE_GEOM_VERSION}/geolatte-geom-${GEOLATTE_GEOM_VERSION}.jar >\
         $HIBERNATE_MODULE/geolatte-geom.jar

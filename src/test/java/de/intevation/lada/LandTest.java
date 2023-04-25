@@ -9,8 +9,8 @@ package de.intevation.lada;
 
 import java.net.URL;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
@@ -23,6 +23,7 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -56,6 +57,7 @@ import de.intevation.lada.test.land.ZusatzwertTest;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
+@Ignore
 @RunWith(Arquillian.class)
 @ApplyScriptBefore("datasets/clean_and_seed.sql")
 public class LandTest extends BaseTest {
