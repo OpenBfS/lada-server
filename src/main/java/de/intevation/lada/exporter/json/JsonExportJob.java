@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 import javax.json.Json;
@@ -64,15 +63,8 @@ public class JsonExportJob extends QueryExportJob {
             idMap.put((Integer) record.get(idColumn), record);
         });
 
-        AtomicBoolean success = new AtomicBoolean(true);
         List<Map<String, Object>> merged = primaryData;
         messungData.forEach(messung -> {
-            Integer primaryId = messung.getSampleId();
-            if (primaryId == null) {
-                logger.error("No primary id set");
-                success.set(false);
-                return;
-            }
             Map<String, Object> mergedMessung = new HashMap<String, Object>();
             // Add sub data
             subDataColumns.forEach(subDataColumn -> {
@@ -92,7 +84,8 @@ public class JsonExportJob extends QueryExportJob {
                 mergedMessung.put(subDataColumn, fieldValue);
             });
             //Append messung to probe
-            Map<String, Object> primaryRecord = idMap.get(primaryId);
+            Map<String, Object> primaryRecord = idMap.get(
+                messung.getSampleId());
             if (primaryRecord.get(sDataJsonKey) == null) {
                 primaryRecord.put(sDataJsonKey, new ArrayList<Object>());
             }
@@ -100,9 +93,6 @@ public class JsonExportJob extends QueryExportJob {
                 (ArrayList<Map<String, Object>>) primaryRecord.get("Messungen");
             messungenList.add(mergedMessung);
         });
-        if (!success.get()) {
-            return null;
-        }
         this.subDataJsonKey = sDataJsonKey;
         return merged;
     }
@@ -119,15 +109,8 @@ public class JsonExportJob extends QueryExportJob {
             idMap.put((Integer) record.get(idColumn), record);
         });
 
-        AtomicBoolean success = new AtomicBoolean(true);
         List<Map<String, Object>> merged = primaryData;
         messwertData.forEach(messwert -> {
-            Integer primaryId = messwert.getMeasmId();
-            if (primaryId == null) {
-                logger.error("No primary id set");
-                success.set(false);
-                return;
-            }
             Map<String, Object> mergedMesswert = new HashMap<String, Object>();
             // Add sub data
             subDataColumns.forEach(subDataColumn -> {
@@ -144,7 +127,8 @@ public class JsonExportJob extends QueryExportJob {
                 mergedMesswert.put(subDataColumn, fieldValue);
             });
             //Append messung to probe
-            Map<String, Object> primaryRecord = idMap.get(primaryId);
+            Map<String, Object> primaryRecord = idMap.get(
+                messwert.getMeasmId());
             if (primaryRecord.get(sDataJsonKey) == null) {
                 primaryRecord.put(sDataJsonKey, new ArrayList<Object>());
             }
@@ -152,9 +136,6 @@ public class JsonExportJob extends QueryExportJob {
                 (ArrayList<Map<String, Object>>) primaryRecord.get("messwerte");
             messwertList.add(mergedMesswert);
         });
-        if (!success.get()) {
-            return null;
-        }
         this.subDataJsonKey = sDataJsonKey;
         return merged;
     }
