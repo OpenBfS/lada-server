@@ -62,9 +62,9 @@ public class CsvExportJob extends QueryExportJob {
         Map<Integer, Map<String, Object>> objects, List<Integer> ids,
         List<String> subDataColumns, List<String> primaryColumns) {
 
-        List<Map<String, Object>> merged = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> merged = new ArrayList<>();
         ids.forEach(id -> {
-            Map<String, Object> mergedRow = new HashMap<String, Object>();
+            Map<String, Object> mergedRow = new HashMap<>();
             subDataColumns.forEach(column -> {
                 mergedRow.put(column, null);
             });
@@ -82,18 +82,17 @@ public class CsvExportJob extends QueryExportJob {
         List<Measm> messungData
     ) {
         // Create a map of id->record
-        Map<Integer, Map<String, Object>> idMap =
-            new HashMap<Integer, Map<String, Object>>();
+        Map<Integer, Map<String, Object>> idMap = new HashMap<>();
         // Ids left for merging
-        List<Integer> idsLeft = new ArrayList<Integer>();
+        List<Integer> idsLeft = new ArrayList<>();
         primaryData.forEach(record -> {
             idMap.put((Integer) record.get(idColumn), record);
             idsLeft.add((Integer) record.get(idColumn));
         });
 
-        List<Map<String, Object>> merged = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> merged = new ArrayList<>();
         messungData.forEach(messung -> {
-            Map<String, Object> mergedRow = new HashMap<String, Object>();
+            Map<String, Object> mergedRow = new HashMap<>();
             // Add sub data
             subDataColumns.forEach(subDataColumn -> {
                 Object fieldValue = null;
@@ -133,18 +132,18 @@ public class CsvExportJob extends QueryExportJob {
         List<MeasVal> messwertData
     ) {
         // Create a map of id->record
-        Map<Integer, Map<String, Object>> idMap =
-            new HashMap<Integer, Map<String, Object>>();
+        Map<Integer, Map<String, Object>> idMap = new HashMap<>();
         // Ids left for merging
-        List<Integer> idsLeft = new ArrayList<Integer>();
+        List<Integer> idsLeft = new ArrayList<>();
         primaryData.forEach(record -> {
             idMap.put((Integer) record.get(idColumn), record);
             idsLeft.add((Integer) record.get(idColumn));
         });
+
         AtomicBoolean success = new AtomicBoolean(true);
-        List<Map<String, Object>> merged = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> merged = new ArrayList<>();
         messwertData.forEach(messwert -> {
-            Map<String, Object> mergedRow = new HashMap<String, Object>();
+            Map<String, Object> mergedRow = new HashMap<>();
             // Add sub data
             subDataColumns.forEach(subDataColumn -> {
                 Object fieldValue = null;

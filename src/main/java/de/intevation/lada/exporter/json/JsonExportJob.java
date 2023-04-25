@@ -56,8 +56,7 @@ public class JsonExportJob extends QueryExportJob {
         List<Measm> messungData
     ) {
         // Create a map of id->record
-        Map<Integer, Map<String, Object>> idMap =
-            new HashMap<Integer, Map<String, Object>>();
+        Map<Integer, Map<String, Object>> idMap = new HashMap<>();
         String sDataJsonKey = "Messungen";
         primaryData.forEach(record -> {
             idMap.put((Integer) record.get(idColumn), record);
@@ -65,7 +64,7 @@ public class JsonExportJob extends QueryExportJob {
 
         List<Map<String, Object>> merged = primaryData;
         messungData.forEach(messung -> {
-            Map<String, Object> mergedMessung = new HashMap<String, Object>();
+            Map<String, Object> mergedMessung = new HashMap<>();
             // Add sub data
             subDataColumns.forEach(subDataColumn -> {
                 Object fieldValue = null;
@@ -102,8 +101,7 @@ public class JsonExportJob extends QueryExportJob {
         List<MeasVal> messwertData
     ) {
         // Create a map of id->record
-        Map<Integer, Map<String, Object>> idMap =
-            new HashMap<Integer, Map<String, Object>>();
+        Map<Integer, Map<String, Object>> idMap = new HashMap<>();
         String sDataJsonKey = "messwerte";
         primaryData.forEach(record -> {
             idMap.put((Integer) record.get(idColumn), record);
@@ -111,7 +109,7 @@ public class JsonExportJob extends QueryExportJob {
 
         List<Map<String, Object>> merged = primaryData;
         messwertData.forEach(messwert -> {
-            Map<String, Object> mergedMesswert = new HashMap<String, Object>();
+            Map<String, Object> mergedMesswert = new HashMap<>();
             // Add sub data
             subDataColumns.forEach(subDataColumn -> {
                 Object fieldValue = null;
