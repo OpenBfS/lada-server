@@ -25,6 +25,7 @@ import javax.persistence.Temporal;
 import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -45,6 +46,7 @@ public class Sample extends BaseModel implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull
     private Integer oprModeId;
 
     private Integer regulationId;
