@@ -62,9 +62,9 @@ public class CsvExportJob extends QueryExportJob {
         Map<Integer, Map<String, Object>> objects, List<Integer> ids,
         List<String> subDataColumns, List<String> primaryColumns) {
 
-        List<Map<String, Object>> merged = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> merged = new ArrayList<>();
         ids.forEach(id -> {
-            Map<String, Object> mergedRow = new HashMap<String, Object>();
+            Map<String, Object> mergedRow = new HashMap<>();
             subDataColumns.forEach(column -> {
                 mergedRow.put(column, null);
             });
@@ -82,25 +82,17 @@ public class CsvExportJob extends QueryExportJob {
         List<Measm> messungData
     ) {
         // Create a map of id->record
-        Map<Integer, Map<String, Object>> idMap =
-            new HashMap<Integer, Map<String, Object>>();
+        Map<Integer, Map<String, Object>> idMap = new HashMap<>();
         // Ids left for merging
-        List<Integer> idsLeft = new ArrayList<Integer>();
+        List<Integer> idsLeft = new ArrayList<>();
         primaryData.forEach(record -> {
             idMap.put((Integer) record.get(idColumn), record);
             idsLeft.add((Integer) record.get(idColumn));
         });
 
-        AtomicBoolean success = new AtomicBoolean(true);
-        List<Map<String, Object>> merged = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> merged = new ArrayList<>();
         messungData.forEach(messung -> {
-            Integer primaryId = messung.getSampleId();
-            if (primaryId == null) {
-                logger.error("No primary id set");
-                success.set(false);
-                return;
-            }
-            Map<String, Object> mergedRow = new HashMap<String, Object>();
+            Map<String, Object> mergedRow = new HashMap<>();
             // Add sub data
             subDataColumns.forEach(subDataColumn -> {
                 Object fieldValue = null;
@@ -119,6 +111,7 @@ public class CsvExportJob extends QueryExportJob {
                 mergedRow.put(subDataColumn, fieldValue);
             });
             // Add primary record
+            Integer primaryId = messung.getSampleId();
             Map<String, Object> primaryRecord = idMap.get(primaryId);
             primaryRecord.forEach((key, value) -> {
                 mergedRow.put(key, value);
@@ -131,9 +124,6 @@ public class CsvExportJob extends QueryExportJob {
         //Merge any skipped records without sub data
         merged.addAll(mergeDataWithEmptySubdata(
             idMap, idsLeft, subDataColumns, columnsToExport));
-        if (!success.get()) {
-            return null;
-        }
         return merged;
     }
 
@@ -142,24 +132,18 @@ public class CsvExportJob extends QueryExportJob {
         List<MeasVal> messwertData
     ) {
         // Create a map of id->record
-        Map<Integer, Map<String, Object>> idMap =
-            new HashMap<Integer, Map<String, Object>>();
+        Map<Integer, Map<String, Object>> idMap = new HashMap<>();
         // Ids left for merging
-        List<Integer> idsLeft = new ArrayList<Integer>();
+        List<Integer> idsLeft = new ArrayList<>();
         primaryData.forEach(record -> {
             idMap.put((Integer) record.get(idColumn), record);
             idsLeft.add((Integer) record.get(idColumn));
         });
+
         AtomicBoolean success = new AtomicBoolean(true);
-        List<Map<String, Object>> merged = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> merged = new ArrayList<>();
         messwertData.forEach(messwert -> {
-            Integer primaryId = messwert.getMeasmId();
-            if (primaryId == null) {
-                logger.error("No primary id set");
-                success.set(false);
-                return;
-            }
-            Map<String, Object> mergedRow = new HashMap<String, Object>();
+            Map<String, Object> mergedRow = new HashMap<>();
             // Add sub data
             subDataColumns.forEach(subDataColumn -> {
                 Object fieldValue = null;
@@ -181,6 +165,7 @@ public class CsvExportJob extends QueryExportJob {
                 mergedRow.put(subDataColumn, fieldValue);
             });
             // Add primary record
+            Integer primaryId = messwert.getMeasmId();
             Map<String, Object> primaryRecord = idMap.get(primaryId);
             if (primaryRecord == null) {
                 logger.error("Can not get primary record for merging");

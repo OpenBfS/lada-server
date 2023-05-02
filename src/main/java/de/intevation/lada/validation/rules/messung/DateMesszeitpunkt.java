@@ -15,7 +15,6 @@ import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -36,11 +35,9 @@ public class DateMesszeitpunkt implements Rule {
     @Override
     public Violation execute(Object object) {
         Measm messung = (Measm) object;
-        Integer probeId = messung.getSampleId();
-        Response response =
-            repository.getById(Sample.class, probeId);
-        Sample probe = (Sample) response.getData();
 
+        Sample probe = repository.getByIdPlain(
+            Sample.class, messung.getSampleId());
         if (probe == null) {
             Violation violation = new Violation();
             violation.addError("sample", StatusCodes.ERROR_VALIDATION);
