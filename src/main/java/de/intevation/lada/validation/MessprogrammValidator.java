@@ -23,7 +23,7 @@ import de.intevation.lada.validation.rules.Rule;
  *
  */
 @ApplicationScoped
-public class MessprogrammValidator implements Validator<Mpg> {
+public class MessprogrammValidator extends Validator<Mpg> {
 
     @Inject
     @ValidationRule("Messprogramm")

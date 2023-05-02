@@ -24,7 +24,7 @@ import de.intevation.lada.validation.rules.Rule;
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
 @ApplicationScoped
-public class OrtszuordnungValidator implements Validator<Geolocat> {
+public class OrtszuordnungValidator extends Validator<Geolocat> {
 
     @Inject
     @ValidationRule("Ortszuordnung")

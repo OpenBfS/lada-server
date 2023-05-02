@@ -24,7 +24,7 @@ import de.intevation.lada.validation.rules.Rule;
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
 @ApplicationScoped
-public class OrtValidator implements Validator<Site> {
+public class OrtValidator extends Validator<Site> {
 
     @Inject
     @ValidationRule("Ort")

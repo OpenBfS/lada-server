@@ -24,7 +24,7 @@ import de.intevation.lada.validation.rules.Rule;
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
 @ApplicationScoped
-public class MesswertValidator implements Validator<MeasVal> {
+public class MesswertValidator extends Validator<MeasVal> {
 
     @Inject
     @ValidationRule("Messwert")

@@ -23,7 +23,7 @@ import de.intevation.lada.validation.rules.Rule;
  *
  */
 @ApplicationScoped
-public class KommentarPValidator implements Validator<CommSample> {
+public class KommentarPValidator extends Validator<CommSample> {
 
     @Inject
     @ValidationRule("KommentarP")

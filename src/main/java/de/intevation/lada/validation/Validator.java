@@ -7,7 +7,11 @@
  */
 package de.intevation.lada.validation;
 
+import java.util.Set;
+
 import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
 
 import de.intevation.lada.validation.rules.Rule;
 
@@ -19,7 +23,10 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
-public interface Validator<T> {
+public abstract class Validator<T> {
+
+    @Inject
+    private javax.validation.Validator beanValidator;
 
     /**
      * Validates given object.
@@ -30,17 +37,31 @@ public interface Validator<T> {
      * @param object The object to be validated
      * @return A Violation object
      */
-    Violation validate(Object object);
+    public abstract Violation validate(Object object);
 
     /**
-     * Default method for validating objects of type T with given set of rules.
+     * Validate objects of type T with given set of rules.
      *
      * @param object The object to be validated
      * @param rules The rules to apply
      * @return A Violation object
      */
-    default Violation validate(T object, Instance<Rule> rules) {
+    protected Violation validate(T object, Instance<Rule> rules) {
         Violation violations = new Violation();
+
+        // Bean Validation
+        Set<ConstraintViolation<T>> beanViolations =
+            beanValidator.validate(object);
+        if (!beanViolations.isEmpty()) {
+            // Do not expect other rules to work with invalid Beans
+            for (ConstraintViolation<T> violation: beanViolations) {
+                violations.addError(
+                    violation.getPropertyPath().toString(),
+                    violation.getMessage());
+            }
+            return violations;
+        }
+
         for (Rule rule : rules) {
             Violation result = rule.execute(object);
             if (result != null) {

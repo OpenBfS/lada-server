@@ -22,7 +22,7 @@ import de.intevation.lada.validation.rules.Rule;
  * rules to validate the object.
  */
 @ApplicationScoped
-public class OrtszuordnungMpgValidator implements Validator<GeolocatMpg> {
+public class OrtszuordnungMpgValidator extends Validator<GeolocatMpg> {
 
     @Inject
     @ValidationRule("Ortszuordnung")

@@ -24,7 +24,7 @@ import de.intevation.lada.validation.rules.Rule;
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
 @ApplicationScoped
-public class ProbeValidator implements Validator<Sample> {
+public class ProbeValidator extends Validator<Sample> {
 
     @Inject
     @ValidationRule("Sample")

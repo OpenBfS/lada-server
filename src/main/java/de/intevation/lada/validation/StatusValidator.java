@@ -24,7 +24,7 @@ import de.intevation.lada.validation.rules.Rule;
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
 @ApplicationScoped
-public class StatusValidator implements Validator<StatusProt> {
+public class StatusValidator extends Validator<StatusProt> {
 
     @Inject
     @ValidationRule("Status")
