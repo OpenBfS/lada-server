@@ -56,6 +56,7 @@ public class Sampler implements Serializable {
     private Date lastMod;
 
     @NotBlank
+    @Size(max = 2)
     private String networkId;
 
     @Size(max = 20)
