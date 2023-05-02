@@ -34,7 +34,6 @@ import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
  * REST service for Measm objects.
@@ -65,8 +64,7 @@ public class MeasmService extends LadaService {
     private Authorization authorization;
 
     @Inject
-    @ValidationConfig(type = "Messung")
-    private Validator validator;
+    private Validator<Measm> validator;
 
     /**
      * Get Measm objects.

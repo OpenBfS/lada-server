@@ -77,7 +77,6 @@ import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
  * Create database objects and map the attributes from laf raw data.
@@ -90,16 +89,13 @@ public class LafObjectMapper {
     private HeaderAuthorization authorizer;
 
     @Inject
-    @ValidationConfig(type = "Sample")
-    private Validator probeValidator;
+    private Validator<Sample> probeValidator;
 
     @Inject
-    @ValidationConfig(type = "Messung")
-    private Validator messungValidator;
+    private Validator<Measm> messungValidator;
 
     @Inject
-    @ValidationConfig(type = "Ort")
-    private Validator ortValidator;
+    private Validator<Site> ortValidator;
 
     @Inject
     @IdentifierConfig(type = "Sample")
@@ -110,20 +106,16 @@ public class LafObjectMapper {
     private Identifier messungIdentifier;
 
     @Inject
-    @ValidationConfig(type = "Messwert")
-    private Validator messwertValidator;
+    private Validator<MeasVal> messwertValidator;
 
     @Inject
-    @ValidationConfig(type = "Status")
-    private Validator statusValidator;
+    private Validator<StatusProt> statusValidator;
 
     @Inject
-    @ValidationConfig(type = "KommentarP")
-    private Validator commentPValidator;
+    private Validator<CommSample> commentPValidator;
 
     @Inject
-    @ValidationConfig(type = "KommentarM")
-    private Validator commentMValidator;
+    private Validator<CommMeasm> commentMValidator;
 
     @Inject
     private ObjectMerger merger;

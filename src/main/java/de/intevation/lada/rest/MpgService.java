@@ -36,7 +36,6 @@ import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
  * REST service for Mpg objects.
@@ -63,8 +62,7 @@ public class MpgService extends LadaService {
      * The validator used for Mpg objects.
      */
     @Inject
-    @ValidationConfig(type = "Messprogramm")
-    private Validator validator;
+    private Validator<Mpg> validator;
 
     @Inject
     private ProbeFactory factory;

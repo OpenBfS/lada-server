@@ -12,9 +12,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.lada.Geolocat;
-import de.intevation.lada.model.lada.GeolocatMpg;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.validation.annotation.ValidationConfig;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
 
@@ -26,9 +23,8 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationConfig(type = "Ortszuordnung")
 @ApplicationScoped
-public class OrtszuordnungValidator implements Validator {
+public class OrtszuordnungValidator implements Validator<Geolocat> {
 
     @Inject
     @ValidationRule("Ortszuordnung")
@@ -36,14 +32,7 @@ public class OrtszuordnungValidator implements Validator {
 
     @Override
     public Violation validate(Object object) {
-        Violation violations = new Violation();
-        if (!(object instanceof Geolocat)
-            && !(object instanceof GeolocatMpg)
-        ) {
-            violations.addError("geolocat", StatusCodes.NOT_A_PROBE);
-            return violations;
-        }
-        return Validator.validate(object, rules);
+        return validate((Geolocat) object, rules);
     }
 
 }

@@ -12,8 +12,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.lada.MeasVal;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.validation.annotation.ValidationConfig;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
 
@@ -25,9 +23,8 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationConfig(type = "Messwert")
 @ApplicationScoped
-public class MesswertValidator implements Validator {
+public class MesswertValidator implements Validator<MeasVal> {
 
     @Inject
     @ValidationRule("Messwert")
@@ -35,11 +32,6 @@ public class MesswertValidator implements Validator {
 
     @Override
     public Violation validate(Object object) {
-        Violation violations = new Violation();
-        if (!(object instanceof MeasVal)) {
-            violations.addError("measval", StatusCodes.NOT_A_PROBE);
-            return violations;
-        }
-        return Validator.validate(object, rules);
+        return validate((MeasVal) object, rules);
     }
 }

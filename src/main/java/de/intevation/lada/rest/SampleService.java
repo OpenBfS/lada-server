@@ -39,7 +39,6 @@ import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
  * REST service for Sample objects.
@@ -78,8 +77,7 @@ public class SampleService extends LadaService {
      * The validator used for Sample objects.
      */
     @Inject
-    @ValidationConfig(type = "Sample")
-    private Validator validator;
+    private Validator<Sample> validator;
 
     /**
      * The factory to create Sample objects.
