@@ -8,11 +8,12 @@
 package de.intevation.lada.rest;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.json.JsonObject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -403,11 +404,12 @@ public class SiteService extends LadaService {
      */
     @POST
     @Path("{id}/{type}")
-    @Consumes(MediaType.APPLICATION_OCTET_STREAM)
+    @Consumes(MediaType.APPLICATION_JSON)
     public void uploadSiteImage(
             @PathParam("id") Integer id,
             @PathParam("type") @Pattern(regexp = "img|map") String type,
-            @Context HttpServletRequest request
+            @Context HttpServletRequest request,
+            JsonObject requestBody
     ) throws IOException {
         Site site = repository.getByIdPlain(Site.class, id);
         if (!authorization.isAuthorized(
@@ -416,15 +418,17 @@ public class SiteService extends LadaService {
                 Site.class)) {
             throw new ForbiddenException();
         }
-
         int contentLength = request.getContentLength();
         if (contentLength == -1) {
             throw new IOException();
         }
-        InputStream stream = request.getInputStream();
-        byte[] img = new byte[contentLength];
-        stream.read(img);
+        String dataUrl = requestBody.getString("file");
+        String encodingPrefix = "base64,";
+        int contentStartIndex = dataUrl.indexOf(encodingPrefix)
+                + encodingPrefix.length();
 
+        byte[] img = Base64.getDecoder().decode(
+                dataUrl.substring(contentStartIndex));
         if (type.equals("map")) {
             site.setMap(img);
         } else {
