@@ -13,7 +13,6 @@ import java.util.Base64;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.json.JsonObject;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -23,6 +22,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import javax.persistence.Query;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -404,12 +404,12 @@ public class SiteService extends LadaService {
      */
     @POST
     @Path("{id}/{type}")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.TEXT_PLAIN)
     public void uploadSiteImage(
             @PathParam("id") Integer id,
             @PathParam("type") @Pattern(regexp = "img|map") String type,
             @Context HttpServletRequest request,
-            JsonObject requestBody
+            @NotBlank String dataUrl
     ) throws IOException {
         Site site = repository.getByIdPlain(Site.class, id);
         if (!authorization.isAuthorized(
@@ -422,7 +422,6 @@ public class SiteService extends LadaService {
         if (contentLength == -1) {
             throw new IOException();
         }
-        String dataUrl = requestBody.getString("file");
         String encodingPrefix = "base64,";
         int contentStartIndex = dataUrl.indexOf(encodingPrefix)
                 + encodingPrefix.length();
