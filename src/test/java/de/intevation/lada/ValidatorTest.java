@@ -27,11 +27,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.test.validator.MessungTest;
 import de.intevation.lada.test.validator.ProbeTest;
 import de.intevation.lada.test.validator.StatusTest;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
  * Test validators.
@@ -56,18 +58,15 @@ public class ValidatorTest {
     protected static boolean verboseLogging = false;
 
     @Inject
-    @ValidationConfig(type = "Sample")
-    private Validator probeValidator;
+    private Validator<Sample> probeValidator;
     private ProbeTest probeTest;
 
     @Inject
-    @ValidationConfig(type = "Messung")
-    private Validator messungValidator;
+    private Validator<Measm> messungValidator;
     private MessungTest messungTest;
 
     @Inject
-    @ValidationConfig(type = "Status")
-    private Validator statusValidator;
+    private Validator<StatusProt> statusValidator;
     private StatusTest statusTest;
 
 

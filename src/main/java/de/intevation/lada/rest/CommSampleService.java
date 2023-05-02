@@ -28,7 +28,6 @@ import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
  * REST service to operate on CommSample objects.
@@ -52,8 +51,7 @@ public class CommSampleService extends LadaService {
     private Authorization authorization;
 
     @Inject
-    @ValidationConfig(type = "KommentarP")
-    private Validator validator;
+    private Validator<CommSample> validator;
 
 
     /**

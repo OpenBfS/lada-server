@@ -12,8 +12,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.validation.annotation.ValidationConfig;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
 
@@ -25,9 +23,8 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationConfig(type = "Messung")
 @ApplicationScoped
-public class MessungValidator implements Validator {
+public class MessungValidator implements Validator<Measm> {
 
     @Inject
     @ValidationRule("Messung")
@@ -35,11 +32,6 @@ public class MessungValidator implements Validator {
 
     @Override
     public Violation validate(Object object) {
-        Violation violations = new Violation();
-        if (!(object instanceof Measm)) {
-            violations.addError("measm", StatusCodes.NOT_A_PROBE);
-            return violations;
-        }
-        return Validator.validate(object, rules);
+        return validate((Measm) object, rules);
     }
 }

@@ -12,8 +12,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.lada.CommMeasm;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.validation.annotation.ValidationConfig;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
 
@@ -24,9 +22,8 @@ import de.intevation.lada.validation.rules.Rule;
  * validate the object.
  *
  */
-@ValidationConfig(type = "KommentarM")
 @ApplicationScoped
-public class KommentarMValidator implements Validator {
+public class KommentarMValidator implements Validator<CommMeasm> {
 
     @Inject
     @ValidationRule("KommentarM")
@@ -34,11 +31,6 @@ public class KommentarMValidator implements Validator {
 
     @Override
     public Violation validate(Object object) {
-        Violation violations = new Violation();
-        if (!(object instanceof CommMeasm)) {
-            violations.addError("commmeasm", StatusCodes.NOT_A_PROBE);
-            return violations;
-        }
-        return Validator.validate(object, rules);
+        return validate((CommMeasm) object, rules);
     }
 }

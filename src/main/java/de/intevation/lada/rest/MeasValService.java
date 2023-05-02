@@ -37,7 +37,6 @@ import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
  * REST service for MeasVal objects.
@@ -68,8 +67,7 @@ public class MeasValService extends LadaService {
     private Authorization authorization;
 
     @Inject
-    @ValidationConfig(type = "Messwert")
-    private Validator validator;
+    private Validator<MeasVal> validator;
 
     @Inject
     private MesswertNormalizer messwertNormalizer;

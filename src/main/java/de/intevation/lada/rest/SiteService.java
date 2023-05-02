@@ -50,7 +50,6 @@ import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
  * REST service for Site objects.
@@ -77,8 +76,7 @@ public class SiteService extends LadaService {
     private OrtFactory ortFactory;
 
     @Inject
-    @ValidationConfig(type = "Ort")
-    private Validator validator;
+    private Validator<Site> validator;
 
     /**
      * Get Site objects.

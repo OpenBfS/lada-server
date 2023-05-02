@@ -29,7 +29,7 @@ import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationConfig;
+
 /**
  * REST service for CommMeasm objects.
  *
@@ -52,8 +52,7 @@ public class CommMeasmService extends LadaService {
     private Authorization authorization;
 
     @Inject
-    @ValidationConfig(type = "KommentarM")
-    private Validator validator;
+    private Validator<CommMeasm> validator;
 
     /**
      * Get CommMeasm objects.
