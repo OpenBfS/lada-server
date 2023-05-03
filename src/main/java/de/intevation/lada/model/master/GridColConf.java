@@ -47,7 +47,6 @@ public class GridColConf implements Serializable {
 
     private Integer sortIndex;
 
-    @NotNull
     private Integer ladaUserId;
 
     private boolean isVisible;
