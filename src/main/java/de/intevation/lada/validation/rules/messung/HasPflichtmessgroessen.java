@@ -42,45 +42,42 @@ public class HasPflichtmessgroessen implements Rule {
         Sample probe = repository.getByIdPlain(
             Sample.class, messung.getSampleId());
 
-        QueryBuilder<ObligMeasdMp> builder =
-            repository.queryBuilder(ObligMeasdMp.class);
-        builder.and("mmtId", messung.getMmtId());
-        builder.and("envMediumId", probe.getEnvMediumId());
-        builder.and("regulationId", probe.getRegulationId());
+        QueryBuilder<ObligMeasdMp> builder = repository
+            .queryBuilder(ObligMeasdMp.class)
+            .and("mmtId", messung.getMmtId())
+            .and("envMediumId", probe.getEnvMediumId())
+            .and("regulationId", probe.getRegulationId());
         List<ObligMeasdMp> pflicht = repository.filterPlain(builder.getQuery());
 
         if (pflicht.isEmpty()) {
-            QueryBuilder<ObligMeasdMp> builderGrp =
-                repository.queryBuilder(ObligMeasdMp.class);
-            builderGrp.and("mmtId", messung.getMmtId());
-            builderGrp.and(
-                "envMediumId",
-                probe.getEnvMediumId() == null
-                    ? null : probe.getEnvMediumId().substring(0, 1));
-            builderGrp.and("regulationId", probe.getRegulationId());
+            QueryBuilder<ObligMeasdMp> builderGrp = repository
+                .queryBuilder(ObligMeasdMp.class)
+                .and("mmtId", messung.getMmtId())
+                .and("envMediumId",
+                    probe.getEnvMediumId() == null
+                    ? null
+                    : probe.getEnvMediumId().substring(0, 1))
+                .and("regulationId", probe.getRegulationId());
             List<ObligMeasdMp> pflichtGrp =
                 repository.filterPlain(builderGrp.getQuery());
             pflicht.addAll(pflichtGrp);
-        }
 
-        if (pflicht.isEmpty()) {
-            QueryBuilder<ObligMeasdMp> builderGrpS2 =
-                repository.queryBuilder(ObligMeasdMp.class);
-            builderGrpS2.and("mmtId", messung.getMmtId());
-            builderGrpS2.and(
-                "envMediumId",
-                probe.getEnvMediumId() == null
+            QueryBuilder<ObligMeasdMp> builderGrpS2 = repository
+                .queryBuilder(ObligMeasdMp.class)
+                .and("mmtId", messung.getMmtId())
+                .and("envMediumId",
+                    probe.getEnvMediumId() == null
                     ? null : probe.getEnvMediumId().length() >= 1
-                        ? null : probe.getEnvMediumId().substring(0, 2));
-            builderGrpS2.and("regulationId", probe.getRegulationId());
+                        ? null : probe.getEnvMediumId().substring(0, 2))
+                .and("regulationId", probe.getRegulationId());
             List<ObligMeasdMp> pflichtGrpS2 =
                 repository.filterPlain(builderGrpS2.getQuery());
             pflicht.addAll(pflichtGrpS2);
         }
 
-        QueryBuilder<MeasVal> wertBuilder =
-            repository.queryBuilder(MeasVal.class);
-        wertBuilder.and("measmId", messung.getId());
+        QueryBuilder<MeasVal> wertBuilder = repository
+            .queryBuilder(MeasVal.class)
+            .and("measmId", messung.getId());
         List<MeasVal> messwerte =
             repository.filterPlain(wertBuilder.getQuery());
         Violation violation = new Violation();
@@ -93,6 +90,7 @@ public class HasPflichtmessgroessen implements Rule {
             }
         }
         pflicht.removeAll(tmp);
+
         if (!pflicht.isEmpty()) {
             for (ObligMeasdMp p : pflicht) {
                 Measd mg =
