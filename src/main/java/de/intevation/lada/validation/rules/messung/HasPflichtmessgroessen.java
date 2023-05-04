@@ -20,7 +20,6 @@ import de.intevation.lada.model.master.ObligMeasdMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -48,11 +47,7 @@ public class HasPflichtmessgroessen implements Rule {
         builder.and("mmtId", messung.getMmtId());
         builder.and("envMediumId", probe.getEnvMediumId());
         builder.and("regulationId", probe.getRegulationId());
-        Response response =
-            repository.filter(builder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<ObligMeasdMp> pflicht =
-            (List<ObligMeasdMp>) response.getData();
+        List<ObligMeasdMp> pflicht = repository.filterPlain(builder.getQuery());
 
         if (pflicht.isEmpty()) {
             QueryBuilder<ObligMeasdMp> builderGrp =
@@ -63,11 +58,8 @@ public class HasPflichtmessgroessen implements Rule {
                 probe.getEnvMediumId() == null
                     ? null : probe.getEnvMediumId().substring(0, 1));
             builderGrp.and("regulationId", probe.getRegulationId());
-            Response responseGrp =
-                repository.filter(builderGrp.getQuery());
-            @SuppressWarnings("unchecked")
             List<ObligMeasdMp> pflichtGrp =
-                (List<ObligMeasdMp>) responseGrp.getData();
+                repository.filterPlain(builderGrp.getQuery());
             pflicht.addAll(pflichtGrp);
         }
 
@@ -81,21 +73,16 @@ public class HasPflichtmessgroessen implements Rule {
                     ? null : probe.getEnvMediumId().length() >= 1
                         ? null : probe.getEnvMediumId().substring(0, 2));
             builderGrpS2.and("regulationId", probe.getRegulationId());
-            Response responseGrpS2 =
-                repository.filter(builderGrpS2.getQuery());
-            @SuppressWarnings("unchecked")
             List<ObligMeasdMp> pflichtGrpS2 =
-                (List<ObligMeasdMp>) responseGrpS2.getData();
+                repository.filterPlain(builderGrpS2.getQuery());
             pflicht.addAll(pflichtGrpS2);
         }
 
         QueryBuilder<MeasVal> wertBuilder =
             repository.queryBuilder(MeasVal.class);
         wertBuilder.and("measmId", messung.getId());
-        Response wertResponse =
-            repository.filter(wertBuilder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<MeasVal> messwerte = (List<MeasVal>) wertResponse.getData();
+        List<MeasVal> messwerte =
+            repository.filterPlain(wertBuilder.getQuery());
         Violation violation = new Violation();
         List<ObligMeasdMp> tmp = new ArrayList<ObligMeasdMp>();
         for (MeasVal wert : messwerte) {
