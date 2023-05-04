@@ -59,7 +59,6 @@ import de.intevation.lada.test.land.ZusatzwertTest;
  */
 @RunWith(Arquillian.class)
 @ApplyScriptBefore("datasets/clean_and_seed.sql")
-// TODO make tests independent of test data which do not exist anymore
 public class LandTest extends BaseTest {
 
     private static final int ID10000 = 10000;
