@@ -49,6 +49,7 @@ public class Sample extends BaseModel implements Serializable {
     @NotNull
     private Integer oprModeId;
 
+    @NotNull
     private Integer regulationId;
 
     private Integer datasetCreatorId;
@@ -92,6 +93,7 @@ public class Sample extends BaseModel implements Serializable {
     @Temporal(TIMESTAMP)
     private Date sampleEndDate;
 
+    @NotNull
     private Integer sampleMethId;
 
     @Temporal(TIMESTAMP)
@@ -103,6 +105,7 @@ public class Sample extends BaseModel implements Serializable {
     @Temporal(TIMESTAMP)
     private Date origDate;
 
+    @NotNull
     private Boolean isTest;
 
     @Column(insertable = false, updatable = false)
