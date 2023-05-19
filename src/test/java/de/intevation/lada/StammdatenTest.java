@@ -18,7 +18,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.ApplyScriptBefore;
 import org.jboss.arquillian.persistence.Cleanup;
-import org.jboss.arquillian.persistence.DataSource;
 import org.jboss.arquillian.persistence.TestExecutionPhase;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -177,7 +176,6 @@ public class StammdatenTest extends BaseTest {
     @Test
     @InSequence(T1)
     @UsingDataSet("datasets/dbUnit_datensatzerzeuger.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseDatensatzerzeuger() throws Exception {
         Protocol protocol = new Protocol();
@@ -210,7 +208,6 @@ public class StammdatenTest extends BaseTest {
     @Test
     @InSequence(T3)
     @UsingDataSet("datasets/dbUnit_probenehmer.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseProbenehmer() throws Exception {
         Protocol protocol = new Protocol();
@@ -244,7 +241,6 @@ public class StammdatenTest extends BaseTest {
     @Test
     @InSequence(T5)
     @UsingDataSet("datasets/dbUnit_messprogrammkategorie.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseMessprogrammKategorie() throws Exception {
         Protocol protocol = new Protocol();
@@ -282,7 +278,6 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T7)
     // Data added using clean_and_seed.sql because geometry field
     // does not work with @UsingDataSet
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseOrt() throws Exception {
         Protocol protocol = new Protocol();
@@ -608,7 +603,6 @@ public class StammdatenTest extends BaseTest {
     @Test
     @InSequence(T35)
     @UsingDataSet("datasets/dbUnit_deskriptor.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseDeskriptoren() throws Exception {
         Protocol protocol = new Protocol();
@@ -629,7 +623,6 @@ public class StammdatenTest extends BaseTest {
     @Test
     @InSequence(T36)
     @UsingDataSet("datasets/dbUnit_pep_gen.json")
-    @DataSource("java:jboss/lada-test")
     @RunAsClient
     public final void testDeskriptoren(@ArquillianResource URL baseUrl)
     throws Exception {
@@ -644,7 +637,6 @@ public class StammdatenTest extends BaseTest {
     @Test
     @InSequence(T37)
     @UsingDataSet("datasets/dbUnit_koordinatenart.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseKoordinatenart() throws Exception {
         Protocol protocol = new Protocol();
@@ -680,7 +672,6 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T39)
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @UsingDataSet("datasets/dbUnit_tagzuordnung.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareTag() throws Exception {
         Protocol protocol = new Protocol();
@@ -718,7 +709,6 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T40)
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @UsingDataSet("datasets/dbUnit_tagzuordnung.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareTagZuordnung() throws Exception {
         Protocol protocol = new Protocol();
@@ -760,7 +750,6 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T42)
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @UsingDataSet("datasets/dbUnit_site_class.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareSiteClass() throws Exception {
         Protocol protocol = new Protocol();
@@ -808,7 +797,6 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T45)
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @UsingDataSet("datasets/dbUnit_type_regulation.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareTypeRegulation() throws Exception {
         Protocol protocol = new Protocol();
@@ -856,7 +844,6 @@ public class StammdatenTest extends BaseTest {
     @InSequence(T48)
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @UsingDataSet("datasets/dbUnit_poi.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void preparePoi() throws Exception {
         Protocol protocol = new Protocol();
@@ -951,7 +938,6 @@ public class StammdatenTest extends BaseTest {
     @Test
     @InSequence(T55)
     @UsingDataSet("datasets/dbUnit_municDiv.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareTestMunicDiv() throws Exception {
         Protocol protocol = new Protocol();

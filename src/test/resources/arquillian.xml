@@ -41,7 +41,7 @@
 
     </container>
     <extension qualifier="persistence">
-      <property name="defaultDataSource">land</property>
+      <property name="defaultDataSource">java:jboss/lada-test</property>
     </extension>
     <extension qualifier="persistence-dbunit">
       <property name="qualifiedTableNames">true</property>
