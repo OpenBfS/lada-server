@@ -36,10 +36,12 @@ public class HasMessdauer implements Rule {
 
         if (messung.getMeasPd() == null) {
             //Exception for continous samples or Datenbasis = §161
-            if (probe.getSampleMethId() != null
-                && probe.getSampleMethId() == 9
-                || probe.getRegulationId() != null
-                && probe.getRegulationId() == 1) {
+            if (probe != null
+                && (probe.getSampleMethId() != null
+                    && probe.getSampleMethId() == 9
+                    || probe.getRegulationId() != null
+                    && probe.getRegulationId() == 1)
+            ) {
                 Violation violation = new Violation();
                 violation.addNotification(
                     "measPd", StatusCodes.VALUE_MISSING);
