@@ -7,33 +7,22 @@
  */
 package de.intevation.lada;
 
-import static de.intevation.lada.BaseTest.archiveName;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
+import org.jboss.arquillian.persistence.ApplyScriptBefore;
+import org.jboss.arquillian.persistence.Cleanup;
+import org.jboss.arquillian.persistence.TestExecutionPhase;
+import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.logging.Logger;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.test.validator.MessungTest;
 import de.intevation.lada.test.validator.ProbeTest;
 import de.intevation.lada.test.validator.StatusTest;
-import de.intevation.lada.validation.Validator;
+
 
 /**
  * Test validators.
@@ -41,280 +30,216 @@ import de.intevation.lada.validation.Validator;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
-@Ignore
+@ApplyScriptBefore("datasets/clean_and_seed.sql")
+@Cleanup(phase = TestExecutionPhase.NONE)
 // TODO make tests independent of test data which do not exist anymore
-public class ValidatorTest {
+public class ValidatorTest extends BaseTest {
 
     private static Logger logger = Logger.getLogger(StammdatenTest.class);
 
-    /**
-     * Test protocol for output of results.
-     */
-    protected static List<Protocol> testProtocol;
-
-    /**
-     * Enables verbose logging.
-     */
-    protected static boolean verboseLogging = false;
-
     @Inject
-    private Validator<Sample> probeValidator;
     private ProbeTest probeTest;
 
     @Inject
-    private Validator<Measm> messungValidator;
     private MessungTest messungTest;
 
     @Inject
-    private Validator<StatusProt> statusValidator;
     private StatusTest statusTest;
-
-
-    public ValidatorTest() {
-        probeTest = new ProbeTest();
-        messungTest = new MessungTest();
-        statusTest = new StatusTest();
-        testProtocol = new ArrayList<Protocol>();
-    }
-
-    /**
-     * Create a deployable WAR archive.
-     * @throws Exception that can occur during the test.
-     * @return WebArchive to deploy in wildfly application server.
-     */
-    @Deployment(testable = true)
-    public static WebArchive createDeployment() throws Exception {
-        WebArchive archive = ShrinkWrap.create(WebArchive.class, archiveName)
-            .addPackages(true, ClassLoader.getSystemClassLoader()
-                .getDefinedPackage("de.intevation.lada"))
-            .addAsResource("shibboleth.properties", "shibboleth.properties")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-            .addAsResource("META-INF/test-persistence.xml",
-                "META-INF/persistence.xml");
-        return archive;
-    }
-
-
-    /**
-     * Output  for current test run.
-     */
-    @BeforeClass
-    public static void beforeTests() {
-        logger.info("---------- Testing Lada Validator ----------");
-    }
-
-    /**
-     * Output of the current test results from protocol.
-     */
-    @After
-    public final void printLogs() {
-        for (Protocol p : testProtocol) {
-            logger.info(p.toString(verboseLogging));
-        }
-    }
-
-    /**
-     * Output for formatting.
-     */
-    @AfterClass
-    public static final void afterTests() {
-    }
 
     /**
      * Test hauptprobennr.
      */
     @Test
-    public final void probeHasHauptprobenNr() {
-        probeTest.setValidator(probeValidator);
+    public void probeHasHauptprobenNr() {
         probeTest.hasHauptprobenNr(testProtocol);
     }
 
     /**
      * Test hauptprobennr missing.
      */
+    @Ignore
     @Test
-    public final void probeHasNoHauptprobenNr() {
-        probeTest.setValidator(probeValidator);
+    public void probeHasNoHauptprobenNr() {
         probeTest.hasNoHauptprobenNr(testProtocol);
     }
 
     /**
      * Test existing hauptprobennr new.
      */
+    @Ignore
     @Test
-    public final void probeExistingHauptprobenNrNew() {
-        probeTest.setValidator(probeValidator);
+    public void probeExistingHauptprobenNrNew() {
         probeTest.existingHauptprobenNrNew(testProtocol);
     }
 
     /**
      * Test unique hauptprobennr new.
      */
+    @Ignore
     @Test
-    public final void probeUniqueHauptprobenNrNew() {
-        probeTest.setValidator(probeValidator);
+    public void probeUniqueHauptprobenNrNew() {
         probeTest.uniqueHauptprobenNrNew(testProtocol);
     }
 
     /**
      * Test existing hauptprobennr update.
      */
+    @Ignore
     @Test
-    public final void probeExistingHauptprobenNrUpdate() {
-        probeTest.setValidator(probeValidator);
+    public void probeExistingHauptprobenNrUpdate() {
         probeTest.existingHauptprobenNrUpdate(testProtocol);
     }
 
     /**
      * Test unique hauptprobennr update.
      */
+    @Ignore
     @Test
-    public final void probeUniqueHauptprobenNrUpdate() {
-        probeTest.setValidator(probeValidator);
+    public void probeUniqueHauptprobenNrUpdate() {
         probeTest.uniqueHauptprobenNrUpdate(testProtocol);
     }
 
     /**
      * Test probe has entnahmeort.
      */
+    @Ignore
     @Test
-    public final void probeHasEntnahmeOrt() {
-        probeTest.setValidator(probeValidator);
+    public void probeHasEntnahmeOrt() {
         probeTest.hasEntnahmeOrt(testProtocol);
     }
 
     /**
      * Test probe has no entnahmeort.
      */
+    @Ignore
     @Test
-    public final void probeHasNoEntnahmeOrt() {
-        probeTest.setValidator(probeValidator);
+    public void probeHasNoEntnahmeOrt() {
         probeTest.hasNoEntnahmeOrt(testProtocol);
     }
 
     /**
      * Test probe has probenahmebegin.
      */
+    @Ignore
     @Test
-    public final void probeHasProbenahmeBegin() {
-        probeTest.setValidator(probeValidator);
+    public void probeHasProbenahmeBegin() {
         probeTest.hasProbeentnahmeBegin(testProtocol);
     }
 
     /**
      * Test probe has no probenahmebegin.
      */
+    @Ignore
     @Test
-    public final void probeHasNoProbenahmeBegin() {
-        probeTest.setValidator(probeValidator);
+    public void probeHasNoProbenahmeBegin() {
         probeTest.hasNoProbeentnahmeBegin(testProtocol);
     }
 
     /**
      * Test probe has no time end probenahmebegin.
      */
+    @Ignore
     @Test
-    public final void probeTimeNoEndProbenahmeBegin() {
-        probeTest.setValidator(probeValidator);
+    public void probeTimeNoEndProbenahmeBegin() {
         probeTest.timeNoEndProbeentnahmeBegin(testProtocol);
     }
 
     /**
      * Test probe has no time begin probenahmebegin.
      */
+    @Ignore
     @Test
-    public final void probeTimeNoBeginProbenahmeBegin() {
-        probeTest.setValidator(probeValidator);
+    public void probeTimeNoBeginProbenahmeBegin() {
         probeTest.timeNoBeginProbeentnahmeBegin(testProtocol);
     }
 
     /**
      * Test probe time begin after end probenahmebegin.
      */
+    @Ignore
     @Test
-    public final void probeTimeBeginAfterEndProbenahmeBegin() {
-        probeTest.setValidator(probeValidator);
+    public void probeTimeBeginAfterEndProbenahmeBegin() {
         probeTest.timeBeginAfterEndProbeentnahmeBegin(testProtocol);
     }
 
     /**
      * Test probe begin in future probenahmebegin.
      */
+    @Ignore
     @Test
-    public final void probeTimeBeginFutureProbenahmeBegin() {
-        probeTest.setValidator(probeValidator);
+    public void probeTimeBeginFutureProbenahmeBegin() {
         probeTest.timeBeginFutureProbeentnahmeBegin(testProtocol);
     }
 
     /**
      * Test probe has umwelt.
      */
+    @Ignore
     @Test
-    public final void probeHasUmwelt() {
-        probeTest.setValidator(probeValidator);
+    public void probeHasUmwelt() {
         probeTest.hasUmwelt(testProtocol);
     }
 
     /**
      * Test probe has no umwelt.
      */
+    @Ignore
     @Test
-    public final void probeHasNoUmwelt() {
-        probeTest.setValidator(probeValidator);
+    public void probeHasNoUmwelt() {
         probeTest.hasNoUmwelt(testProtocol);
     }
 
     /**
      * Test probe has empty umwelt.
      */
+    @Ignore
     @Test
-    public final void probeHasEmptyUmwelt() {
-        probeTest.setValidator(probeValidator);
+    public void probeHasEmptyUmwelt() {
         probeTest.hasEmptyUmwelt(testProtocol);
     }
 
     /**
      * Test messung has nebenprobennr.
      */
+    @Ignore
     @Test
-    public final void messungHasNebenprobenNr() {
-        messungTest.setValidator(messungValidator);
+    public void messungHasNebenprobenNr() {
         messungTest.hasNebenprobenNr(testProtocol);
     }
 
     /**
      * Test messung has no nebenprobennr.
      */
+    @Ignore
     @Test
-    public final void messungHasNoNebenprobenNr() {
-        messungTest.setValidator(messungValidator);
+    public void messungHasNoNebenprobenNr() {
         messungTest.hasNoNebenprobenNr(testProtocol);
     }
 
     /**
      * Test messung has empty nebenprobennr.
      */
+    @Ignore
     @Test
-    public final void messungHasEmptyNebenprobenNr() {
-        messungTest.setValidator(messungValidator);
+    public void messungHasEmptyNebenprobenNr() {
         messungTest.hasEmptyNebenprobenNr(testProtocol);
     }
 
     /**
      * Test messung has unique nebenprobennr.
      */
+    @Ignore
     @Test
-    public final void messungUniqueNebenprobenNrNew() {
-        messungTest.setValidator(messungValidator);
+    public void messungUniqueNebenprobenNrNew() {
         messungTest.uniqueNebenprobenNrNew(testProtocol);
     }
 
     /**
      * Test messung unique nebenprobennr update.
      */
+    @Ignore
     @Test
-    public final void messungUniqueNebenprobenNrUpdate() {
-        messungTest.setValidator(messungValidator);
+    public void messungUniqueNebenprobenNrUpdate() {
         messungTest.uniqueNebenprobenNrUpdate(testProtocol);
     }
 
@@ -322,35 +247,35 @@ public class ValidatorTest {
      * Test messung existing nebenprobennr new.
      */
     @Test
-    public final void messungExistingNebenprobenNrNew() {
-        messungTest.setValidator(messungValidator);
+    @UsingDataSet("datasets/dbUnit_probe.json")
+    public void messungExistingNebenprobenNrNew() {
         messungTest.existingNebenprobenNrNew(testProtocol);
     }
 
     /**
      * Test messung existing nebenprobennr update.
      */
+    @Ignore
     @Test
-    public final void messungExistingNebenprobenNrUpdate() {
-        messungTest.setValidator(messungValidator);
+    public void messungExistingNebenprobenNrUpdate() {
         messungTest.existingNebenprobenNrUpdate(testProtocol);
     }
 
     /**
      * Test messung has messwert.
      */
+    @Ignore
     @Test
-    public final void messungHasMesswert() {
-        messungTest.setValidator(messungValidator);
+    public void messungHasMesswert() {
         messungTest.hasMesswert(testProtocol);
     }
 
     /**
      * Test messung has no messwert.
      */
+    @Ignore
     @Test
-    public final void messungHasNoMesswert() {
-        messungTest.setValidator(messungValidator);
+    public void messungHasNoMesswert() {
         messungTest.hasNoMesswert(testProtocol);
     }
 
@@ -358,8 +283,8 @@ public class ValidatorTest {
      * Test negative status kombi.
      */
     @Test
+    @UsingDataSet("datasets/dbUnit_probe.json")
     public final void statusKombiNegative() {
-        statusTest.setValidator(statusValidator);
         statusTest.checkKombiNegative(testProtocol);
     }
 }
