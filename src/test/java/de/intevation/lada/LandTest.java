@@ -18,7 +18,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.ApplyScriptBefore;
 import org.jboss.arquillian.persistence.Cleanup;
-import org.jboss.arquillian.persistence.DataSource;
 import org.jboss.arquillian.persistence.TestExecutionPhase;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -59,7 +58,6 @@ import de.intevation.lada.test.land.ZusatzwertTest;
  */
 @RunWith(Arquillian.class)
 @ApplyScriptBefore("datasets/clean_and_seed.sql")
-// TODO make tests independent of test data which do not exist anymore
 public class LandTest extends BaseTest {
 
     private static final int ID10000 = 10000;
@@ -298,7 +296,6 @@ public class LandTest extends BaseTest {
     @Test
     @InSequence(T1)
     @UsingDataSet("datasets/dbUnit_probe.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseProbe() throws Exception {
         Protocol protocol = new Protocol();
@@ -318,7 +315,6 @@ public class LandTest extends BaseTest {
     @Test
     @InSequence(T3)
     @UsingDataSet("datasets/dbUnit_probe.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseKommentarP() throws Exception {
         Protocol protocol = new Protocol();
@@ -338,7 +334,6 @@ public class LandTest extends BaseTest {
     @Test
     @InSequence(T5)
     @UsingDataSet("datasets/dbUnit_probe.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseOrtszuordnung() throws Exception {
         Protocol protocol = new Protocol();
@@ -358,7 +353,6 @@ public class LandTest extends BaseTest {
     @Test
     @InSequence(T7)
     @UsingDataSet("datasets/dbUnit_probe.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseZusatzwert() throws Exception {
         Protocol protocol = new Protocol();
@@ -378,7 +372,6 @@ public class LandTest extends BaseTest {
     @Test
     @InSequence(T9)
     @UsingDataSet("datasets/dbUnit_probe.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseMessung() throws Exception {
         Protocol protocol = new Protocol();
@@ -400,7 +393,6 @@ public class LandTest extends BaseTest {
     @Test
     @InSequence(T11)
     @UsingDataSet("datasets/dbUnit_probe.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseKommentarM() throws Exception {
         Protocol protocol = new Protocol();
@@ -420,7 +412,6 @@ public class LandTest extends BaseTest {
     @Test
     @InSequence(T13)
     @UsingDataSet("datasets/dbUnit_probe.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseMesswert() throws Exception {
         Protocol protocol = new Protocol();
@@ -441,7 +432,6 @@ public class LandTest extends BaseTest {
     @InSequence(T17)
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @UsingDataSet("datasets/dbUnit_messprogramm.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareDatabaseMessprogramm() throws Exception {
         Protocol protocol = new Protocol();
@@ -459,7 +449,6 @@ public class LandTest extends BaseTest {
      */
     @Test
     @UsingDataSet("datasets/dbUnit_pep_gen.json")
-    @DataSource("java:jboss/lada-test")
     @InSequence(T21)
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareTestPepGeneration() {
@@ -479,7 +468,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @DataSource("java:jboss/lada-test")
     @InSequence(T22)
     @RunAsClient
     public final void testPepGeneration(@ArquillianResource URL baseUrl)
@@ -493,7 +481,6 @@ public class LandTest extends BaseTest {
      */
     @Test
     @UsingDataSet("datasets/dbUnit_messprogramm.json")
-    @DataSource("java:jboss/lada-test")
     @InSequence(T23)
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareGeolocatMpgTest() {
@@ -513,7 +500,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @DataSource("java:jboss/lada-test")
     @InSequence(T24)
     @RunAsClient
     public final void testGeolocatMpg(@ArquillianResource URL baseUrl)

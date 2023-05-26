@@ -15,12 +15,31 @@ import de.intevation.lada.validation.rules.Rule;
 /**
  * Interface for object validators.
  *
+ * @param <T> Type of objects to be validated by implementing validator
+ *
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
-public interface Validator {
+public interface Validator<T> {
+
+    /**
+     * Validates given object.
+     *
+     * Implementations should cast object to T and delegate to
+     * validate(T, Instance<Rule>)
+     *
+     * @param object The object to be validated
+     * @return A Violation object
+     */
     Violation validate(Object object);
 
-    static Violation validate(Object object, Instance<Rule> rules) {
+    /**
+     * Default method for validating objects of type T with given set of rules.
+     *
+     * @param object The object to be validated
+     * @param rules The rules to apply
+     * @return A Violation object
+     */
+    default Violation validate(T object, Instance<Rule> rules) {
         Violation violations = new Violation();
         for (Rule rule : rules) {
             Violation result = rule.execute(object);

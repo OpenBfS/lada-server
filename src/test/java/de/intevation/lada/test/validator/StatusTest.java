@@ -9,10 +9,13 @@ package de.intevation.lada.test.validator;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.junit.Assert;
 
 import de.intevation.lada.Protocol;
 import de.intevation.lada.model.lada.StatusProt;
+import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
 
@@ -22,15 +25,17 @@ import de.intevation.lada.validation.Violation;
  */
 public class StatusTest {
 
-    private static final int KOMBI632 = 632;
     private static final int ID1 = 1;
     private static final int ID2 = 2;
     private static final int ID7 = 7;
-    private Validator validator;
 
-    public void setValidator(Validator validator) {
-        this.validator = validator;
-    }
+    private final String statusMpKey = "statusMp";
+
+    // Value corresponds with dataset dbUnit_probe.json
+    private final int existingMeasmId = 1200;
+
+    @Inject
+    private Validator<StatusProt> validator;
 
     /**
      * Test if status kombi is not existing.
@@ -43,13 +48,15 @@ public class StatusTest {
         prot.setPassed(false);
         protocol.add(prot);
         StatusProt status = new StatusProt();
+        status.setMeasmId(existingMeasmId);
         status.setStatusLev(ID2);
         status.setStatusVal(ID7);
         Violation violation = validator.validate(status);
         Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey("kombi"));
+        Assert.assertTrue(violation.getErrors().containsKey(statusMpKey));
         Assert.assertTrue(
-            violation.getErrors().get("kombi").contains(KOMBI632));
+            violation.getErrors().get(statusMpKey).contains(
+                StatusCodes.VALUE_NOT_MATCHING));
         prot.setPassed(true);
     }
 
@@ -68,7 +75,7 @@ public class StatusTest {
         status.setStatusVal(ID1);
         Violation violation = validator.validate(status);
         if (violation.hasErrors()) {
-            Assert.assertFalse(violation.getErrors().containsKey("kombi"));
+            Assert.assertFalse(violation.getErrors().containsKey(statusMpKey));
         }
         prot.setPassed(true);
     }

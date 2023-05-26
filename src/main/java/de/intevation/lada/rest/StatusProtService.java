@@ -41,7 +41,6 @@ import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
  * REST service for StatusProt objects.
@@ -72,24 +71,19 @@ public class StatusProtService extends LadaService {
     private Authorization authorization;
 
     @Inject
-    @ValidationConfig(type = "Status")
-    private Validator validator;
+    private Validator<StatusProt> validator;
 
     @Inject
-    @ValidationConfig(type = "Messwert")
-    private Validator messwertValidator;
+    private Validator<MeasVal> messwertValidator;
 
     @Inject
-    @ValidationConfig(type = "Messung")
-    private Validator messungValidator;
+    private Validator<Measm> messungValidator;
 
     @Inject
-    @ValidationConfig(type = "Sample")
-    private Validator probeValidator;
+    private Validator<Sample> probeValidator;
 
     @Inject
-    @ValidationConfig(type = "Ort")
-    private Validator ortValidator;
+    private Validator<Site> ortValidator;
 
     /**
      * Get StatusProt objects.

@@ -33,8 +33,11 @@ public class HasMessbeginn implements Rule {
         Measm messung = (Measm) object;
         Sample probe =
             repository.getByIdPlain(Sample.class, messung.getSampleId());
+
         if (messung.getMeasmStartDate() == null
-            && (probe.getRegulationId() != null && probe.getRegulationId() != 1)
+            && probe != null
+            && probe.getRegulationId() != null
+            && probe.getRegulationId() != 1
         ) {
             Violation violation = new Violation();
             violation.addWarning("measmStartDate", StatusCodes.VALUE_MISSING);

@@ -21,6 +21,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(schema = SchemaName.NAME)
@@ -33,6 +34,7 @@ public class QueryUser implements Serializable {
 
     private String descr;
 
+    @NotBlank
     private String name;
 
     private Integer ladaUserId;

@@ -29,7 +29,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.ApplyScriptBefore;
 import org.jboss.arquillian.persistence.Cleanup;
-import org.jboss.arquillian.persistence.DataSource;
 import org.jboss.arquillian.persistence.TestExecutionPhase;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -89,6 +88,24 @@ public class ExporterTest extends BaseTest {
                 .add("isFilterRegex", false)
                 .add("gridColMpId", 4)));
 
+    private final JsonObject measmRequestJson = Json.createObjectBuilder()
+        .add("timezone", "UTC")
+        .add("columns", Json.createArrayBuilder()
+            .add(Json.createObjectBuilder()
+                .add("columnIndex", 0)
+                .add("export", true)
+                .add("filterVal", "")
+                .add("isFilterActive", false)
+                .add("isFilterNull", false)
+                .add("isFilterNegate", false)
+                .add("isFilterRegex", false)
+                .add("gridColMpId", 5)))
+        .add("idField", "messungId")
+        .add("idFilter", Json.createArrayBuilder().add("1200"))
+        .add("exportSubData", true)
+        .add("subDataColumns", Json.createArrayBuilder().add("id"))
+        .build();
+
     /**
      * Prepare data for export of a Sample object.
      */
@@ -96,7 +113,6 @@ public class ExporterTest extends BaseTest {
     @InSequence(1)
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
     @UsingDataSet("datasets/dbUnit_probe_query.json")
-    @DataSource("java:jboss/lada-test")
     @Cleanup(phase = TestExecutionPhase.NONE)
     public final void prepareExportProbe() {
         Protocol protocol = new Protocol();
@@ -205,6 +221,32 @@ public class ExporterTest extends BaseTest {
     }
 
     /**
+     * Test asynchronous CSV export of Measm objects including measVals.
+     */
+    @Test
+    @InSequence(3)
+    @RunAsClient
+    public final void testCsvExportMeasmSubData(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        Protocol prot = new Protocol();
+        prot.setName("asyncexport service");
+        prot.setType(formatCsv);
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        String result = runExportTest(
+            baseUrl, formatCsv, prot, measmRequestJson);
+        Assert.assertEquals(
+            "Unexpected CSV content",
+            "messungId,id\r\n"
+            + "1200,1000\r\n",
+            result);
+
+        prot.setPassed(true);
+    }
+
+    /**
      * Test asynchronous JSON export of a Sample identified by ID.
      */
     @Test
@@ -268,6 +310,33 @@ public class ExporterTest extends BaseTest {
             + "\"umw_id\":\"L6\","
             + "\"probeId\":1000,"
             + "\"Messungen\":[{\"extId\":453}]}}",
+            result);
+
+        prot.setPassed(true);
+    }
+
+    /**
+     * Test asynchronous JSON export of a Measm object with measVals.
+     */
+    @Test
+    @InSequence(4)
+    @RunAsClient
+    public final void testJsonExportMeasmSubData(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        Protocol prot = new Protocol();
+        prot.setName("asyncexport service");
+        prot.setType(formatJson);
+        prot.setPassed(false);
+        testProtocol.add(prot);
+
+        String result = runExportTest(
+            baseUrl, formatJson, prot, measmRequestJson);
+        Assert.assertEquals(
+            "Unexpected JSON content",
+            "{\"1200\":"
+            + "{\"messungId\":1200,"
+            + "\"messwerte\":[{\"id\":1000}]}}",
             result);
 
         prot.setPassed(true);

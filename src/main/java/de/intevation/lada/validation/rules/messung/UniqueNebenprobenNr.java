@@ -7,15 +7,13 @@
  */
 package de.intevation.lada.validation.rules.messung;
 
-import java.util.List;
-
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -37,13 +35,11 @@ public class UniqueNebenprobenNr implements Rule {
     public Violation execute(Object object) {
         Measm messung = (Measm) object;
         if (messung.getMinSampleId() != null) {
-            QueryBuilder<Measm> builder =
-                repository.queryBuilder(Measm.class);
-            builder.and("minSampleId", messung.getMinSampleId());
-            builder.and("sampleId", messung.getSampleId());
-            Response response = repository.filter(builder.getQuery());
-            if (!((List<Measm>) response.getData()).isEmpty()) {
-                Measm found = ((List<Measm>) response.getData()).get(0);
+            QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class)
+                .and("minSampleId", messung.getMinSampleId())
+                .and("sampleId", messung.getSampleId());
+            try {
+                Measm found = repository.getSinglePlain(builder.getQuery());
                 // The messung found in the db equals the new messung. (Update)
                 if (messung.getId() != null
                     && messung.getId().equals(found.getId())) {
@@ -52,9 +48,10 @@ public class UniqueNebenprobenNr implements Rule {
                 Violation violation = new Violation();
                 violation.addError("minSampleId", StatusCodes.VALUE_AMBIGOUS);
                 return violation;
+            } catch (NoResultException nre) {
+                return null;
             }
         }
         return null;
     }
-
 }

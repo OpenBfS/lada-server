@@ -18,6 +18,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.Valid;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -108,7 +109,7 @@ public class QueryUserService extends LadaService {
      */
     @POST
     public Response create(
-        QueryUser query
+        @Valid QueryUser query
     ) {
         UserInfo userInfo = authorization.getInfo();
         if (query.getLadaUserId() != null
@@ -133,7 +134,7 @@ public class QueryUserService extends LadaService {
     @PUT
     @Path("{id}")
     public Response update(
-        QueryUser query
+        @Valid QueryUser query
     ) {
         UserInfo userInfo = authorization.getInfo();
         if (query.getLadaUserId() != null

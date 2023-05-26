@@ -9,10 +9,14 @@ package de.intevation.lada.test.validator;
 
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
 import org.junit.Assert;
 
 import de.intevation.lada.Protocol;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
 
@@ -20,25 +24,27 @@ import de.intevation.lada.validation.Violation;
  * Test messung entities.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
+@Transactional
 public class MessungTest {
 
     private static final int ID990 = 990;
     private static final int ID776 = 776;
-    private static final int ID45 = 45;
-    private static final int ID611 = 611;
-    private static final int ID631 = 631;
-    private static final int ID4 = 4;
-    private Validator validator;
 
-    public void setValidator(Validator validator) {
-        this.validator = validator;
-    }
+    private final String minSampleIdKey = "minSampleId";
+
+    // Values correspond with dataset dbUnit_probe.json
+    private final int existingSampleId = 1000;
+    private final int existingMeasmId = 1200;
+    private final String existingMinSampleId = "T100";
+
+    @Inject
+    private Validator<Measm> validator;
 
     /**
      * Test nebenproben nr.
      * @param protocol the test protocol.
      */
-    public final void hasNebenprobenNr(List<Protocol> protocol) {
+    public void hasNebenprobenNr(List<Protocol> protocol) {
         Protocol prot = new Protocol();
         prot.setName("MessungValidator");
         prot.setType("has nebenprobenNr");
@@ -46,11 +52,11 @@ public class MessungTest {
         protocol.add(prot);
         Measm messung = new Measm();
         messung.setMinSampleId("10R1");
-        messung.setSampleId(ID4);
+        messung.setSampleId(existingSampleId);
         Violation violation = validator.validate(messung);
         if (violation.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey("nebenprobenNr"));
+                violation.getWarnings().containsKey(minSampleIdKey));
         }
         prot.setPassed(true);
     }
@@ -59,19 +65,20 @@ public class MessungTest {
      * Test without nebenproben nr.
      * @param protocol the test protocol.
      */
-    public final void hasNoNebenprobenNr(List<Protocol> protocol) {
+    public void hasNoNebenprobenNr(List<Protocol> protocol) {
         Protocol prot = new Protocol();
         prot.setName("MessungValidator");
         prot.setType("has no nebenprobenNr");
         prot.setPassed(false);
         protocol.add(prot);
         Measm messung = new Measm();
-        messung.setSampleId(ID4);
+        messung.setSampleId(existingSampleId);
         Violation violation = validator.validate(messung);
         Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey("nebenprobenNr"));
+        Assert.assertTrue(violation.getWarnings().containsKey(minSampleIdKey));
         Assert.assertTrue(
-            violation.getWarnings().get("nebenprobenNr").contains(ID631));
+            violation.getWarnings().get(minSampleIdKey).contains(
+                StatusCodes.VALUE_MISSING));
         prot.setPassed(true);
     }
 
@@ -79,7 +86,7 @@ public class MessungTest {
      * Test empty nebenproben nr.
      * @param protocol the test protocol.
      */
-    public final void hasEmptyNebenprobenNr(List<Protocol> protocol) {
+    public void hasEmptyNebenprobenNr(List<Protocol> protocol) {
         Protocol prot = new Protocol();
         prot.setName("MessungValidator");
         prot.setType("has empty nebenprobenNr");
@@ -87,12 +94,13 @@ public class MessungTest {
         protocol.add(prot);
         Measm messung = new Measm();
         messung.setMinSampleId("");
-        messung.setSampleId(ID4);
+        messung.setSampleId(existingSampleId);
         Violation violation = validator.validate(messung);
         Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey("nebenprobenNr"));
+        Assert.assertTrue(violation.getWarnings().containsKey(minSampleIdKey));
         Assert.assertTrue(
-            violation.getWarnings().get("nebenprobenNr").contains(ID631));
+            violation.getWarnings().get(minSampleIdKey).contains(
+                StatusCodes.VALUE_MISSING));
         prot.setPassed(true);
     }
 
@@ -100,20 +108,21 @@ public class MessungTest {
      * Test new existing nebenproben nr.
      * @param protocol the test protocol.
      */
-    public final void existingNebenprobenNrNew(List<Protocol> protocol) {
+    public void existingNebenprobenNrNew(List<Protocol> protocol) {
         Protocol prot = new Protocol();
         prot.setName("MessungValidator");
         prot.setType("existing nebenprobenNr (new)");
         prot.setPassed(false);
         protocol.add(prot);
         Measm messung = new Measm();
-        messung.setMinSampleId("00G1");
-        messung.setSampleId(ID4);
+        messung.setMinSampleId(existingMinSampleId);
+        messung.setSampleId(existingSampleId);
         Violation violation = validator.validate(messung);
         Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey("nebenprobenNr"));
+        Assert.assertTrue(violation.getErrors().containsKey(minSampleIdKey));
         Assert.assertTrue(
-            violation.getErrors().get("nebenprobenNr").contains(ID611));
+            violation.getErrors().get(minSampleIdKey).contains(
+            StatusCodes.VALUE_AMBIGOUS));
         prot.setPassed(true);
     }
 
@@ -121,7 +130,7 @@ public class MessungTest {
      * Test new unique nebenproben nr.
      * @param protocol the test protocol.
      */
-    public final void uniqueNebenprobenNrNew(List<Protocol> protocol) {
+    public void uniqueNebenprobenNrNew(List<Protocol> protocol) {
         Protocol prot = new Protocol();
         prot.setName("MessungValidator");
         prot.setType("unique nebenprobenNr (new)");
@@ -129,11 +138,11 @@ public class MessungTest {
         protocol.add(prot);
         Measm messung = new Measm();
         messung.setMinSampleId("00G2");
-        messung.setSampleId(ID4);
+        messung.setSampleId(existingSampleId);
         Violation violation = validator.validate(messung);
         if (violation.hasErrors()) {
             Assert.assertFalse(
-                violation.getErrors().containsKey("nebenprobenNr"));
+                violation.getErrors().containsKey(minSampleIdKey));
         }
         prot.setPassed(true);
     }
@@ -142,20 +151,20 @@ public class MessungTest {
      * Test update unique nebenproben nr.
      * @param protocol the test protocol.
      */
-    public final void uniqueNebenprobenNrUpdate(List<Protocol> protocol) {
+    public void uniqueNebenprobenNrUpdate(List<Protocol> protocol) {
         Protocol prot = new Protocol();
         prot.setName("MessungValidator");
         prot.setType("unique nebenprobenNr (update)");
         prot.setPassed(false);
         protocol.add(prot);
         Measm messung = new Measm();
-        messung.setId(ID45);
-        messung.setSampleId(ID4);
+        messung.setId(existingMeasmId);
+        messung.setSampleId(existingSampleId);
         messung.setMinSampleId("00G2");
         Violation violation = validator.validate(messung);
         if (violation.hasErrors()) {
             Assert.assertFalse(
-                violation.getErrors().containsKey("mainSampleId"));
+                violation.getErrors().containsKey(minSampleIdKey));
             return;
         }
         prot.setPassed(true);
@@ -165,7 +174,7 @@ public class MessungTest {
      * Test update existing nebenproben nr.
      * @param protocol the test protocol.
      */
-    public final void existingNebenprobenNrUpdate(List<Protocol> protocol) {
+    public void existingNebenprobenNrUpdate(List<Protocol> protocol) {
         Protocol prot = new Protocol();
         prot.setName("MessungValidator");
         prot.setType("existing nebenprobenNr (update)");
@@ -177,9 +186,10 @@ public class MessungTest {
         messung.setMinSampleId("0003");
         Violation violation = validator.validate(messung);
         Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey("nebenprobenNr"));
+        Assert.assertTrue(violation.getErrors().containsKey(minSampleIdKey));
         Assert.assertTrue(
-            violation.getErrors().get("nebenprobenNr").contains(ID611));
+            violation.getErrors().get(minSampleIdKey).contains(
+                StatusCodes.VALUE_AMBIGOUS));
         prot.setPassed(true);
     }
 
@@ -187,7 +197,7 @@ public class MessungTest {
      * Test messwert.
      * @param protocol the test protocol.
      */
-    public final void hasMesswert(List<Protocol> protocol) {
+    public void hasMesswert(List<Protocol> protocol) {
         Protocol prot = new Protocol();
         prot.setName("MessungValidator");
         prot.setType("has messwert");
@@ -195,7 +205,7 @@ public class MessungTest {
         protocol.add(prot);
         Measm messung = new Measm();
         messung.setId(1);
-        messung.setSampleId(ID4);
+        messung.setSampleId(existingSampleId);
         Violation violation = validator.validate(messung);
         if (violation.hasWarnings()) {
             Assert.assertFalse(violation.getWarnings().containsKey("messwert"));
@@ -207,7 +217,7 @@ public class MessungTest {
      * Test no messwert.
      * @param protocol the test protocol.
      */
-    public final void hasNoMesswert(List<Protocol> protocol) {
+    public void hasNoMesswert(List<Protocol> protocol) {
         Protocol prot = new Protocol();
         prot.setName("MessungValidator");
         prot.setType("has no messwert");
@@ -215,12 +225,13 @@ public class MessungTest {
         protocol.add(prot);
         Measm messung = new Measm();
         messung.setId(ID990);
-        messung.setSampleId(ID4);
+        messung.setSampleId(existingSampleId);
         Violation violation = validator.validate(messung);
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey("messwert"));
         Assert.assertTrue(
-            violation.getWarnings().get("messwert").contains(ID631));
+            violation.getWarnings().get("messwert").contains(
+                StatusCodes.VALUE_MISSING));
         prot.setPassed(true);
     }
 }

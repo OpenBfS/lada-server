@@ -12,8 +12,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.validation.annotation.ValidationConfig;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
 
@@ -25,9 +23,8 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationConfig(type = "Sample")
 @ApplicationScoped
-public class ProbeValidator implements Validator {
+public class ProbeValidator implements Validator<Sample> {
 
     @Inject
     @ValidationRule("Sample")
@@ -35,11 +32,6 @@ public class ProbeValidator implements Validator {
 
     @Override
     public Violation validate(Object object) {
-        Violation violations = new Violation();
-        if (!(object instanceof Sample)) {
-            violations.addError("sample", StatusCodes.NOT_A_PROBE);
-            return violations;
-        }
-        return Validator.validate(object, rules);
+        return validate((Sample) object, rules);
     }
 }

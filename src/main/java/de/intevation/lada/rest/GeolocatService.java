@@ -33,7 +33,6 @@ import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
  * REST service for Geolocat objects.
@@ -64,8 +63,7 @@ public class GeolocatService extends LadaService {
     private Authorization authorization;
 
     @Inject
-    @ValidationConfig(type = "Ortszuordnung")
-    private Validator validator;
+    private Validator<Geolocat> validator;
 
     /**
      * Get Geolocat objects.

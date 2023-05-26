@@ -9,12 +9,21 @@
     }, {
         "id": 2,
         "sql": "SELECT hauptproben_nr FROM land.probe"
+    }, {
+        "id": 3,
+        "sql": "SELECT id AS messungId FROM lada.measm"
     }],
     "master.query_user": [{
         "id": 1,
         "name": "Proben",
         "lada_user_id": 1,
         "base_query_id": 1,
+        "descr": "test"
+    }, {
+        "id": 2,
+        "name": "Measms",
+        "lada_user_id": 1,
+        "base_query_id": 3,
         "descr": "test"
     }],
     "master.filter": [{
@@ -29,6 +38,9 @@
     }, {
         "id": 2,
         "name": "probeId"
+    }, {
+        "id": 3,
+        "name": "messungId"
     }],
     "master.grid_col_mp": [{
         "id": 1,
@@ -60,6 +72,13 @@
         "position": 1,
         "filter_id": 1,
         "disp_id": 1
+    }, {
+        "id": 5,
+        "base_query_id": 3,
+        "grid_col": "messungId",
+        "data_index": "messungId",
+        "position": 1,
+        "disp_id": 3
     }],
     "master.grid_col_conf": [{
         "id": 1,
@@ -121,5 +140,18 @@
         "last_mod": "2012-05-08 12:00:00",
         "is_scheduled": true,
         "tree_mod": "2012-05-09 12:00:00"
+    }],
+    "master.measd": [{
+        "id": 1,
+        "name": "test"
+    }],
+    "master.meas_unit": [{
+        "id": 1
+    }],
+    "lada.meas_val": [{
+        "id": 1000,
+        "measm_id": 1200,
+        "measd_id": 1,
+        "meas_unit_id": 1
     }]
 }
