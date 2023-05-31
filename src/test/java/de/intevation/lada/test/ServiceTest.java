@@ -499,9 +499,7 @@ public class ServiceTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        String responseBody = response.readEntity(String.class);
-        JsonObject content = Json.createReader(
-                    new StringReader(responseBody)).readObject();
+        JsonObject content = BaseTest.parseResponse(response, prot);
         Assert.assertNotNull(
             content.getJsonObject("data").getJsonArray("audit"));
         prot.setPassed(true);

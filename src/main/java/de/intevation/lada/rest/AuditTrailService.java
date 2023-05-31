@@ -161,7 +161,7 @@ public class AuditTrailService extends LadaService {
         // Get the plain probe object to have the hauptproben_nr.
         Sample probe = repository.getByIdPlain(Sample.class, pId);
         if (probe == null) {
-            return "{\"success\": false,\"message\":600,\"data\":null}";
+            return "{\"success\": false,\"message\":\"600\",\"data\":null}";
         }
 
         UserInfo userInfo = authorization.getInfo();
@@ -194,7 +194,7 @@ public class AuditTrailService extends LadaService {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode responseNode = mapper.createObjectNode();
         responseNode.put("success", true);
-        responseNode.put("message", StatusCodes.OK);
+        responseNode.put("message", Integer.toString(StatusCodes.OK));
         ObjectNode auditJson = responseNode.putObject("data");
         ArrayNode entries = auditJson.putArray("audit");
         auditJson.put("id", probe.getId());
@@ -311,7 +311,7 @@ public class AuditTrailService extends LadaService {
     ) {
         Measm messung = repository.getByIdPlain(Measm.class, mId);
         if (messung == null) {
-            return "{\"success\": false,\"message\":600,\"data\":null}";
+            return "{\"success\": false,\"message\":\"600\",\"data\":null}";
         }
         StatusProt status =
             repository.getByIdPlain(StatusProt.class, messung.getStatus());
@@ -331,7 +331,7 @@ public class AuditTrailService extends LadaService {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode responseNode = mapper.createObjectNode();
         responseNode.put("success", true);
-        responseNode.put("message", StatusCodes.OK);
+        responseNode.put("message", Integer.toString(StatusCodes.OK));
         ObjectNode auditJson = responseNode.putObject("data");
         ArrayNode entries = auditJson.putArray("audit");
         auditJson.put("id", messung.getId());
