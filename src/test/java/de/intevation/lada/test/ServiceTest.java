@@ -102,6 +102,21 @@ public class ServiceTest {
     }
 
     /**
+     * Read txt resource and return as string.
+     * @param resource Resource to read
+     * @return Resource as string
+     */
+    protected String readTxtResource(String resource) {
+        InputStream stream =
+            ProbeTest.class.getResourceAsStream(resource);
+        Scanner scanner = new Scanner(stream, "UTF-8");
+        scanner.useDelimiter("\\A");
+        String raw = scanner.next();
+        scanner.close();
+        return raw;
+    }
+
+    /**
      * Load JSON resource file.
      * @param resource the resource location
      * @return Object containing the resource.

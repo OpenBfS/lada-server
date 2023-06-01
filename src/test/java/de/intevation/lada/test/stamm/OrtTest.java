@@ -9,6 +9,7 @@ package de.intevation.lada.test.stamm;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 import javax.json.JsonObject;
@@ -35,8 +36,7 @@ public class OrtTest extends ServiceTest {
 
     private JsonObject expectedById;
     private JsonObject create;
-    private byte[] imgBytes;
-    private byte[] mapBytes;
+    private String testImage;
     private JsonObject createIncomplete;
 
     @Override
@@ -68,9 +68,7 @@ public class OrtTest extends ServiceTest {
         createIncomplete = readJsonResource("/datasets/ort_incomplete.json");
         Assert.assertNotNull(create);
 
-        //Create dummy image bytes
-        imgBytes = "siteImage".getBytes();
-        mapBytes = "siteMap".getBytes();
+        testImage = readTxtResource("/datasets/testImage.txt");
     }
 
     /**
@@ -79,10 +77,10 @@ public class OrtTest extends ServiceTest {
      * Passes if:
      *   - An image can be uploaded using bytes
      *   - The bytes received via the get interface equal the uploaded bytes
-     * @param bytes Bytes to use for tests
+     * @param imageDataUrl Image as dataurl to use for tests
      * @param parameter Url parameter
      */
-    private void testUploadImage(byte[] bytes, String parameter) {
+    private void testUploadImage(String imageDataUrl, String parameter) {
         Protocol prot = new Protocol();
         prot.setName("site image service");
         prot.setType("create");
@@ -101,7 +99,7 @@ public class OrtTest extends ServiceTest {
 
         // Upload image
         Response postResponse = reqBuilder.post(Entity.entity(
-                bytes, MediaType.APPLICATION_OCTET_STREAM_TYPE));
+                imageDataUrl, MediaType.TEXT_PLAIN));
         Assert.assertEquals(
             Status.NO_CONTENT.getStatusCode(), postResponse.getStatus());
 
@@ -113,6 +111,14 @@ public class OrtTest extends ServiceTest {
         Assert.assertEquals(
             Status.OK.getStatusCode(), response.getStatus());
         byte[] responseBytes = response.readEntity(byte[].class);
+
+        //Convert dataurl to bytes and use as expected results
+        String encodingPrefix = "base64,";
+        int contentStartIndex = imageDataUrl.indexOf(encodingPrefix)
+                + encodingPrefix.length();
+        byte[] bytes = Base64.getDecoder().decode(
+            imageDataUrl.substring(contentStartIndex));
+
         Assert.assertArrayEquals(bytes, responseBytes);
 
         // Delete image
@@ -143,8 +149,8 @@ public class OrtTest extends ServiceTest {
         update("site", "rest/site/" + createdId,
             "longText", "Langer Text", "Längerer Text");
         //Test site images
-        testUploadImage(imgBytes, "rest/site/" + createdId + "/img");
-        testUploadImage(mapBytes, "rest/site/" + createdId + "/map");
+        testUploadImage(testImage, "rest/site/" + createdId + "/img");
+        testUploadImage(testImage, "rest/site/" + createdId + "/map");
         delete("site", "rest/site/" + createdId);
     }
 }
