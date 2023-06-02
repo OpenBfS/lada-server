@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.rest;
 
+import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.json.Json;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -39,6 +41,7 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
+import de.intevation.lada.util.rest.Response;
 
 /**
  * REST service for AuditTrail.
@@ -149,19 +152,20 @@ public class AuditTrailService extends LadaService {
     }
 
     /**
-     * Service to generate audit trail for probe objects.
+     * Service to generate audit trail for sample objects.
      *
-     * @param pId ID of probe given in URL path.
+     * @param pId ID of sample given in URL path.
+     * @return Response with audit trail data for requested sample.
      */
     @GET
     @Path("probe/{id}")
-    public String getProbe(
+    public Response getProbe(
         @PathParam("id") Integer pId
     ) {
         // Get the plain probe object to have the hauptproben_nr.
         Sample probe = repository.getByIdPlain(Sample.class, pId);
         if (probe == null) {
-            return "{\"success\": false,\"message\":\"600\",\"data\":null}";
+            return new Response(false, StatusCodes.NOT_EXISTING, null);
         }
 
         UserInfo userInfo = authorization.getInfo();
@@ -190,12 +194,8 @@ public class AuditTrailService extends LadaService {
         List<AuditTrailSampleView> audit =
             repository.filterPlain(builder.getQuery());
 
-        // Create an empty JsonObject
         ObjectMapper mapper = new ObjectMapper();
-        ObjectNode responseNode = mapper.createObjectNode();
-        responseNode.put("success", true);
-        responseNode.put("message", Integer.toString(StatusCodes.OK));
-        ObjectNode auditJson = responseNode.putObject("data");
+        ObjectNode auditJson = mapper.createObjectNode();
         ArrayNode entries = auditJson.putArray("audit");
         auditJson.put("id", probe.getId());
         auditJson.put(
@@ -228,7 +228,10 @@ public class AuditTrailService extends LadaService {
             }
             entries.add(createEntry(a, mapper));
         }
-        return responseNode.toString();
+        return new Response(
+            true,
+            StatusCodes.OK,
+            Json.createReader(new StringReader(auditJson.toString())).read());
     }
 
     /**
@@ -303,18 +306,19 @@ public class AuditTrailService extends LadaService {
     }
 
     /**
-     * Service to generate audit trail for messung objects.
+     * Service to generate audit trail for measm objects.
      *
-     * @param mId ID of Messung given in URL path.
+     * @param mId ID of measm given in URL path.
+     * @return Response with audit trail data for requested measm.
      */
     @GET
     @Path("messung/{id}")
-    public String getMessung(
+    public Response getMessung(
         @PathParam("id") Integer mId
     ) {
         Measm messung = repository.getByIdPlain(Measm.class, mId);
         if (messung == null) {
-            return "{\"success\": false,\"message\":\"600\",\"data\":null}";
+            return new Response(false, StatusCodes.NOT_EXISTING, null);
         }
         StatusProt status =
             repository.getByIdPlain(StatusProt.class, messung.getStatus());
@@ -332,10 +336,7 @@ public class AuditTrailService extends LadaService {
 
         // Create an empty JsonObject
         ObjectMapper mapper = new ObjectMapper();
-        ObjectNode responseNode = mapper.createObjectNode();
-        responseNode.put("success", true);
-        responseNode.put("message", Integer.toString(StatusCodes.OK));
-        ObjectNode auditJson = responseNode.putObject("data");
+        ObjectNode auditJson = mapper.createObjectNode();
         ArrayNode entries = auditJson.putArray("audit");
         auditJson.put("id", messung.getId());
         auditJson.put(
@@ -357,7 +358,10 @@ public class AuditTrailService extends LadaService {
             entries.add(createEntry(a, mapper));
 
         }
-        return responseNode.toString();
+        return new Response(
+            true,
+            StatusCodes.OK,
+            Json.createReader(new StringReader(auditJson.toString())).read());
     }
 
     /**
