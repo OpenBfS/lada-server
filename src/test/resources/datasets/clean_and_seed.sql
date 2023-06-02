@@ -48,6 +48,8 @@ DELETE FROM lada_user;
 DELETE FROM targ_act_mmt_gr;
 DELETE FROM targ_env_gr;
 DELETE FROM rei_ag_gr;
+DELETE FROM audit_trail;
+DELETE FROM lada.audit_trail;
 
 -- seed
 -- minimal master data to make interface tests runnable

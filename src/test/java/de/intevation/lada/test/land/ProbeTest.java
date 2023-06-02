@@ -71,12 +71,15 @@ public class ProbeTest extends ServiceTest {
         get("probe", "rest/sample", Status.METHOD_NOT_ALLOWED);
         getById("probe", "rest/sample/1000", expectedById);
         JsonObject created = create("probe", "rest/sample", create);
+
+        final String updateFieldKey = "mainSampleId";
+        final String newValue = "130510002";
         update(
             "probe",
             "rest/sample/1000",
-            "mainSampleId",
+            updateFieldKey,
             "120510002",
-            "130510002");
+            newValue);
 
         // Ensure invalid envDescripDisplay is rejected
         update(
@@ -87,7 +90,11 @@ public class ProbeTest extends ServiceTest {
             "",
             Status.BAD_REQUEST);
 
-        getAuditTrail("probe", "rest/audit/probe/1000");
+        getAuditTrail(
+            "probe",
+            "rest/audit/probe/1000",
+            updateFieldKey,
+            newValue);
         delete(
             "probe",
             "rest/sample/" + created.getJsonObject("data").get("id"));

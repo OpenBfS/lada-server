@@ -45,6 +45,7 @@ import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.Protocol;
+import de.intevation.lada.model.NamingStrategy;
 import de.intevation.lada.test.land.ProbeTest;
 import de.intevation.lada.util.rest.JSONBConfig;
 
@@ -491,7 +492,20 @@ public class ServiceTest {
         return content;
     }
 
-    protected JsonObject getAuditTrail(String name, String parameter) {
+    /**
+     * Test AuditTrailService.
+     *
+     * @param name the name of the entity.
+     * @param parameter the parameters used in the request.
+     * @param updateFieldKey Key of field expected to be changed.
+     * @param newValue Value of field expected to be changed.
+     */
+    protected void getAuditTrail(
+        String name,
+        String parameter,
+        String updateFieldKey,
+        String newValue
+    ) {
         Protocol prot = new Protocol();
         prot.setName(name + " audit trail");
         prot.setType("get");
@@ -505,11 +519,42 @@ public class ServiceTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject content = BaseTest.parseResponse(response, prot);
-        Assert.assertNotNull(
-            content.getJsonObject("data").getJsonArray("audit"));
+        JsonObject data = BaseTest.parseResponse(response, prot)
+            .getJsonObject("data");
+
+        final String auditKey = "audit";
+        BaseTest.assertContains(data, auditKey);
+        JsonArray audit = data.getJsonArray(auditKey);
+        Assert.assertTrue(
+            "Missing audit entry for field '" + updateFieldKey
+            + "' changed to value '" + newValue + "'",
+            hasAuditedUpdate(audit, updateFieldKey, newValue));
+
         prot.setPassed(true);
-        return content;
+    }
+
+    private boolean hasAuditedUpdate(
+        JsonArray audit,
+        String updateFieldKey,
+        String newValue
+    ) {
+        final String changedFieldsKey = "changedFields",
+            actionKey = "action",
+            snakeFieldKey = NamingStrategy.camelToSnake(updateFieldKey);
+        for (JsonValue v : audit) {
+            JsonObject o = (JsonObject) v;
+            BaseTest.assertContains(o, actionKey);
+            BaseTest.assertContains(o, changedFieldsKey);
+            JsonObject changedFields = o.getJsonObject(changedFieldsKey);
+            if ("U".equals(o.getString(actionKey))
+                && changedFields.containsKey(snakeFieldKey)
+                && newValue.equals(
+                    changedFields.getString(snakeFieldKey))
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
