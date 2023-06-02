@@ -217,7 +217,8 @@ public class AuditTrailService extends LadaService {
                     repository.getByIdPlain(
                         StatusProt.class, messung.getStatus());
                     if (status.getStatusMpId() == 1
-                        && !userInfo.getMessstellen().contains(probe.getMeasFacilId())
+                        && !userInfo.getMessstellen().contains(
+                            probe.getMeasFacilId())
                     ) {
                         continue;
                     }
@@ -253,7 +254,9 @@ public class AuditTrailService extends LadaService {
             node.put("identifier", audit.getRowData().get("date").toString());
         }
         if ("sample_specif_meas_val".equals(audit.getTableName())) {
-            node.put("identifier", audit.getRowData().get("sample_specif_id").toString());
+            node.put(
+                "identifier",
+                audit.getRowData().get("sample_specif_id").toString());
         }
         if ("geolocat".equals(audit.getTableName())) {
             String value = translateId(
@@ -416,7 +419,7 @@ public class AuditTrailService extends LadaService {
             query.setParameter("id", id);
         }
         List<?> result = query.getResultList();
-        if (!result.isEmpty() ){
+        if (!result.isEmpty()) {
             return result.get(0).toString();
         } else {
             return "(Object wurde gelöscht)";
@@ -433,7 +436,7 @@ public class AuditTrailService extends LadaService {
     }
 
     /**
-     * Translate all known foreign keys
+     * Translate all known foreign keys.
      */
     private ObjectNode translateValues(ObjectNode node) {
         for (Iterator<String> i = node.fieldNames(); i.hasNext();) {
