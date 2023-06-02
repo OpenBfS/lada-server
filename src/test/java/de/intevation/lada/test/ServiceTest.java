@@ -412,6 +412,12 @@ public class ServiceTest {
         JsonObject oldObject = BaseTest.parseResponse(
             response, prot).getJsonObject(objKey);
 
+        BaseTest.assertContains(oldObject, updateAttribute);
+        Assert.assertEquals(
+            "Value in to be updated field '" + updateAttribute + "':",
+            oldValue,
+            oldObject.getString(updateAttribute));
+
         /* Value replacement */
         JsonObjectBuilder updateBuilder = Json.createObjectBuilder();
         oldObject.forEach((key, value) -> {
