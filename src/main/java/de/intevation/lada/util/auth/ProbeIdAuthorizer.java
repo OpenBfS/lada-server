@@ -93,6 +93,9 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         Object data,
         Class<T> clazz
     ) {
+        if (data == null) {
+            return null;
+        }
         try {
             Method getProbeId = clazz.getMethod("getSampleId");
             Integer id = (Integer) getProbeId.invoke(data);
