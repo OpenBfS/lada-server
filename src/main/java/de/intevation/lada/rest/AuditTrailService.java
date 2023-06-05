@@ -26,7 +26,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.intevation.lada.model.lada.AuditTrailMeasmView;
@@ -195,7 +194,6 @@ public class AuditTrailService extends LadaService {
         List<AuditTrailSampleView> audit =
             repository.filterPlain(builder.getQuery());
 
-        ObjectMapper mapper = new ObjectMapper();
         AuditResponseData auditResponseData = new AuditResponseData();
         List<AuditEntry> entries = new ArrayList<AuditEntry>();
         auditResponseData.setId(probe.getId());
@@ -226,7 +224,7 @@ public class AuditTrailService extends LadaService {
                     continue;
                 }
             }
-            entries.add(createEntry(a, mapper));
+            entries.add(createEntry(a));
         }
         auditResponseData.setAudit(entries);
         return new Response(
@@ -239,10 +237,9 @@ public class AuditTrailService extends LadaService {
      * Create a JSON object for an AuditTrailProbe entry.
      *
      * @param audit The table entry
-     * @param mapper JSON object mapper
      */
     private AuditEntry createEntry(
-        AuditTrailSampleView audit, ObjectMapper mapper
+        AuditTrailSampleView audit
     ) {
         AuditEntry node = new AuditEntry();
         node.setTimestamp(audit.getTstamp().getTime());
@@ -337,7 +334,6 @@ public class AuditTrailService extends LadaService {
             repository.filterPlain(builder.getQuery());
 
         // Create an empty JsonObject
-        ObjectMapper mapper = new ObjectMapper();
         AuditResponseData auditData = new AuditResponseData();
         List<AuditEntry> entries = new ArrayList<AuditEntry>();
         auditData.setId(messung.getId());
@@ -356,7 +352,7 @@ public class AuditTrailService extends LadaService {
                         probe.getMeasFacilId())) {
                 continue;
             }
-            entries.add(createEntry(a, mapper));
+            entries.add(createEntry(a));
 
         }
         auditData.setAudit(entries);
@@ -370,11 +366,9 @@ public class AuditTrailService extends LadaService {
      * Create a JSON object for an AuditTrailMessung entry.
      *
      * @param audit The table entry
-     * @param mapper JSON object mapper
      */
     private AuditEntry createEntry(
-        AuditTrailMeasmView audit,
-        ObjectMapper mapper
+        AuditTrailMeasmView audit
     ) {
         AuditEntry node = new AuditEntry();
         node.setTimestamp(audit.getTstamp().getTime());
