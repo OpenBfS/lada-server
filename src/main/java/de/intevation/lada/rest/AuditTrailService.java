@@ -11,6 +11,7 @@ import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -20,12 +21,12 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.json.Json;
+import javax.json.JsonStructure;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.intevation.lada.model.lada.AuditTrailMeasmView;
@@ -195,11 +196,10 @@ public class AuditTrailService extends LadaService {
             repository.filterPlain(builder.getQuery());
 
         ObjectMapper mapper = new ObjectMapper();
-        ObjectNode auditJson = mapper.createObjectNode();
-        ArrayNode entries = auditJson.putArray("audit");
-        auditJson.put("id", probe.getId());
-        auditJson.put(
-            "identifier",
+        AuditResponseData auditResponseData = new AuditResponseData();
+        List<AuditEntry> entries = new ArrayList<AuditEntry>();
+        auditResponseData.setId(probe.getId());
+        auditResponseData.setIdentifier(
             (probe.getMainSampleId() == null)
             ? probe.getExtId()
             : probe.getMainSampleId()
@@ -228,10 +228,11 @@ public class AuditTrailService extends LadaService {
             }
             entries.add(createEntry(a, mapper));
         }
+        auditResponseData.setAudit(entries);
         return new Response(
             true,
             StatusCodes.OK,
-            Json.createReader(new StringReader(auditJson.toString())).read());
+            auditResponseData);
     }
 
     /**
@@ -240,25 +241,25 @@ public class AuditTrailService extends LadaService {
      * @param audit The table entry
      * @param mapper JSON object mapper
      */
-    private ObjectNode createEntry(
+    private AuditEntry createEntry(
         AuditTrailSampleView audit, ObjectMapper mapper
     ) {
-        ObjectNode node = mapper.createObjectNode();
-        node.put("timestamp", audit.getTstamp().getTime());
-        node.put("type", audit.getTableName());
-        node.put("action", audit.getAction());
+        AuditEntry node = new AuditEntry();
+        node.setTimestamp(audit.getTstamp().getTime());
+        node.setType(audit.getTableName());
+        node.setAction(audit.getAction());
         ObjectNode data =
             translateValues((ObjectNode) audit.getChangedFields());
-        node.putPOJO("changedFields", data);
+        node.setChangedFields(
+            Json.createReader(new StringReader(data.toString())).read());
         if ("site".equals(audit.getTableName())) {
-            node.put("identifier", audit.getRowData().get("ext_id").toString());
+            node.setIdentifier(audit.getRowData().get("ext_id").toString());
         }
         if ("comm_sample".equals(audit.getTableName())) {
-            node.put("identifier", audit.getRowData().get("date").toString());
+            node.setIdentifier(audit.getRowData().get("date").toString());
         }
         if ("sample_specif_meas_val".equals(audit.getTableName())) {
-            node.put(
-                "identifier",
+            node.setIdentifier(
                 audit.getRowData().get("sample_specif_id").toString());
         }
         if ("geolocat".equals(audit.getTableName())) {
@@ -268,12 +269,12 @@ public class AuditTrailService extends LadaService {
                 audit.getRowData().get("site_id").toString(),
                 "id",
                 de.intevation.lada.model.master.SchemaName.NAME);
-            node.put("identifier", value);
+            node.setIdentifier(value);
         }
         if ("measm".equals(audit.getTableName())) {
             Measm m = repository.getByIdPlain(
                 Measm.class, audit.getObjectId());
-            node.put("identifier",
+            node.setIdentifier(
                 (m == null)
                 ? "(deleted)"
                 : (m.getMinSampleId() == null)
@@ -284,12 +285,12 @@ public class AuditTrailService extends LadaService {
         if (audit.getMeasmId() != null) {
             Measm m = repository.getByIdPlain(
                 Measm.class, audit.getMeasmId());
-            ObjectNode identifier = node.putObject("identifier");
-            identifier.put("measm",
+            AuditEntryIdentifier identifier = new AuditEntryIdentifier();
+            identifier.setMeasm(
                 (m.getMinSampleId() == null)
                 ? m.getExtId().toString() : m.getMinSampleId());
             if ("comm_measm".equals(audit.getTableName())) {
-                identifier.put("identifier",
+                identifier.setIdentifier(
                     audit.getRowData().get("date").toString());
             }
             if ("meas_val".equals(audit.getTableName())) {
@@ -299,8 +300,9 @@ public class AuditTrailService extends LadaService {
                     audit.getRowData().get("measd_id").toString(),
                     "id",
                     de.intevation.lada.model.master.SchemaName.NAME);
-                identifier.put("identifier", value);
+                identifier.setIdentifier(value);
             }
+            node.setIdentifier(identifier);
         }
         return node;
     }
@@ -336,11 +338,10 @@ public class AuditTrailService extends LadaService {
 
         // Create an empty JsonObject
         ObjectMapper mapper = new ObjectMapper();
-        ObjectNode auditJson = mapper.createObjectNode();
-        ArrayNode entries = auditJson.putArray("audit");
-        auditJson.put("id", messung.getId());
-        auditJson.put(
-            "identifier",
+        AuditResponseData auditData = new AuditResponseData();
+        List<AuditEntry> entries = new ArrayList<AuditEntry>();
+        auditData.setId(messung.getId());
+        auditData.setIdentifier(
             (messung.getMinSampleId() == null)
             ? messung.getExtId().toString()
             : messung.getMinSampleId()
@@ -358,10 +359,11 @@ public class AuditTrailService extends LadaService {
             entries.add(createEntry(a, mapper));
 
         }
+        auditData.setAudit(entries);
         return new Response(
             true,
             StatusCodes.OK,
-            Json.createReader(new StringReader(auditJson.toString())).read());
+            auditData);
     }
 
     /**
@@ -370,18 +372,19 @@ public class AuditTrailService extends LadaService {
      * @param audit The table entry
      * @param mapper JSON object mapper
      */
-    private ObjectNode createEntry(
+    private AuditEntry createEntry(
         AuditTrailMeasmView audit,
         ObjectMapper mapper
     ) {
-        ObjectNode node = mapper.createObjectNode();
-        node.put("timestamp", audit.getTstamp().getTime());
-        node.put("type", audit.getTableName());
-        node.put("action", audit.getAction());
+        AuditEntry node = new AuditEntry();
+        node.setTimestamp(audit.getTstamp().getTime());
+        node.setType(audit.getTableName());
+        node.setAction(audit.getAction());
         ObjectNode data = (ObjectNode) audit.getChangedFields();
-        node.putPOJO("changedFields", data);
+        node.setChangedFields(
+            Json.createReader(new StringReader(data.toString())).read());
         if ("comm_measm".equals(audit.getTableName())) {
-            node.put("identifier", audit.getRowData().get("date").toString());
+            node.setIdentifier(audit.getRowData().get("date").toString());
         }
         if ("meas_val".equals(audit.getTableName())) {
             String value = translateId(
@@ -390,7 +393,7 @@ public class AuditTrailService extends LadaService {
                 audit.getRowData().get("measd_id").toString(),
                 "id",
                 de.intevation.lada.model.master.SchemaName.NAME);
-            node.put("identifier", value);
+            node.setIdentifier(value);
         }
         return node;
     }
@@ -463,5 +466,93 @@ public class AuditTrailService extends LadaService {
             }
         }
         return node;
+    }
+
+    /**
+     * Class modeling audit service response data.
+     */
+    public class AuditResponseData {
+        Integer id;
+        String identifier;
+        List<AuditEntry> audit;
+        public Integer getId() {
+            return id;
+        }
+        public void setId(Integer id) {
+            this.id = id;
+        }
+        public String getIdentifier() {
+            return identifier;
+        }
+        public void setIdentifier(String identifier) {
+            this.identifier = identifier;
+        }
+        public List<AuditEntry> getAudit() {
+            return audit;
+        }
+        public void setAudit(List<AuditEntry> audit) {
+            this.audit = audit;
+        }
+    }
+
+    /**
+     * Class modeling an audit trail entry.
+     */
+    public class AuditEntry {
+        Long timestamp;
+        String type;
+        String action;
+        JsonStructure changedFields;
+        Object identifier;
+        public Long getTimestamp() {
+            return timestamp;
+        }
+        public void setTimestamp(Long timestamp) {
+            this.timestamp = timestamp;
+        }
+        public String getType() {
+            return type;
+        }
+        public void setType(String type) {
+            this.type = type;
+        }
+        public String getAction() {
+            return action;
+        }
+        public void setAction(String action) {
+            this.action = action;
+        }
+        public JsonStructure getChangedFields() {
+            return changedFields;
+        }
+        public void setChangedFields(JsonStructure changedFields) {
+            this.changedFields = changedFields;
+        }
+        public Object getIdentifier() {
+            return identifier;
+        }
+        public void setIdentifier(Object identifier) {
+            this.identifier = identifier;
+        }
+    }
+
+    /**
+     * Class modeling an audit identifier object.
+     */
+    public class AuditEntryIdentifier {
+        String measm;
+        String identifier;
+        public String getMeasm() {
+            return measm;
+        }
+        public void setMeasm(String measm) {
+            this.measm = measm;
+        }
+        public String getIdentifier() {
+            return identifier;
+        }
+        public void setIdentifier(String identifier) {
+            this.identifier = identifier;
+        }
     }
 }
