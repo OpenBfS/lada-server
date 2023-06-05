@@ -27,7 +27,6 @@ RUN apt-get update -y && \
 #
 # Set ENV for pacakge versions
 ENV WILDFLY_VERSION 26.1.3.Final
-# see wildfly pom.xml for hibernate_spatial_version
 ENV HIBERNATE_VERSION 5.4.27.Final
 ENV GEOLATTE_GEOM_VERSION 1.4.0
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/

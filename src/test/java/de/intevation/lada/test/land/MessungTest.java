@@ -74,8 +74,20 @@ public class MessungTest extends ServiceTest {
         get("measm", "rest/measm?sampleId=1000");
         getById("measm", "rest/measm/1200", expectedById);
         JsonObject created = create("measm", "rest/measm", create);
-        update("measm", "rest/measm/1200", "minSampleId", "T100", "U200");
-        getAuditTrail("measm", "rest/audit/messung/1200");
+
+        final String updateFieldKey = "minSampleId";
+        final String updateFieldValue = "U200";
+        update(
+            "measm",
+            "rest/measm/1200",
+            updateFieldKey,
+            "T100",
+            updateFieldValue);
+        getAuditTrail(
+            "measm",
+            "rest/audit/messung/1200",
+            updateFieldKey,
+            updateFieldValue);
         delete(
             "measm",
             "rest/measm/" + created.getJsonObject("data").get("id"));

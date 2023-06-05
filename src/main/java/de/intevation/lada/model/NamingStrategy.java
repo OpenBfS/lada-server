@@ -22,16 +22,26 @@ public class NamingStrategy extends ImplicitNamingStrategyJpaCompliantImpl {
     protected Identifier toIdentifier(
         String stringForm, MetadataBuildingContext buildingContext
     ) {
-        //Split input by "_" in case input is already in snake case
-        String[] parts = stringForm.split("_");
+        return super.toIdentifier(camelToSnake(stringForm), buildingContext);
+    }
+
+    /**
+     * Convert camelCase to snake_case.
+     *
+     * @param camel Input string
+     * @return Converted input string
+     */
+    public static String camelToSnake(String camel) {
+        // Split input by "_" in case input is already (partly) in snake case
+        final String snakeDelim = "_";
+        String[] parts = camel.split(snakeDelim);
         //Convert each part into snake case
         for (int i = 0; i < parts.length; i++) {
             String part = parts[i];
             String[] words = StringUtils.splitByCharacterTypeCamelCase(part);
             // Names are not case sensitive, so leave the words capitalized
-            parts[i] = String.join("_", words);
+            parts[i] = String.join(snakeDelim, words);
         }
-        String snake = String.join("_", parts);
-        return super.toIdentifier(snake, buildingContext);
+        return String.join(snakeDelim, parts).toLowerCase();
     }
 }
