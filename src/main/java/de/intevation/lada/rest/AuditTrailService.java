@@ -195,7 +195,7 @@ public class AuditTrailService extends LadaService {
             repository.filterPlain(builder.getQuery());
 
         AuditResponseData auditResponseData = new AuditResponseData();
-        List<AuditEntry> entries = new ArrayList<AuditEntry>();
+        List<AuditEntry> entries = new ArrayList<>();
         auditResponseData.setId(probe.getId());
         auditResponseData.setIdentifier(
             (probe.getMainSampleId() == null)
@@ -234,9 +234,10 @@ public class AuditTrailService extends LadaService {
     }
 
     /**
-     * Create a JSON object for an AuditTrailProbe entry.
+     * Convert AuditTrailSampleView to representation for response.
      *
      * @param audit The table entry
+     * @return AuditEntry for response
      */
     private AuditEntry createEntry(
         AuditTrailSampleView audit
@@ -335,7 +336,7 @@ public class AuditTrailService extends LadaService {
 
         // Create an empty JsonObject
         AuditResponseData auditData = new AuditResponseData();
-        List<AuditEntry> entries = new ArrayList<AuditEntry>();
+        List<AuditEntry> entries = new ArrayList<>();
         auditData.setId(messung.getId());
         auditData.setIdentifier(
             (messung.getMinSampleId() == null)
@@ -363,9 +364,10 @@ public class AuditTrailService extends LadaService {
     }
 
     /**
-     * Create a JSON object for an AuditTrailMessung entry.
+     * Convert AuditTrailMeasmView to representation for response.
      *
      * @param audit The table entry
+     * @return AuditEntry for response
      */
     private AuditEntry createEntry(
         AuditTrailMeasmView audit
@@ -374,9 +376,8 @@ public class AuditTrailService extends LadaService {
         node.setTimestamp(audit.getTstamp().getTime());
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
-        ObjectNode data = (ObjectNode) audit.getChangedFields();
-        node.setChangedFields(
-            Json.createReader(new StringReader(data.toString())).read());
+        node.setChangedFields(Json.createReader(new StringReader(
+                    audit.getChangedFields().toString())).read());
         if ("comm_measm".equals(audit.getTableName())) {
             node.setIdentifier(audit.getRowData().get("date").toString());
         }
