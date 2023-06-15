@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.rest;
 
-import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -244,9 +243,7 @@ public class AuditTrailService extends LadaService {
         node.setTimestamp(audit.getTstamp().getTime());
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
-        JsonObject changedFields = Json.createReader(
-            new StringReader(audit.getChangedFields().toString())).readObject();
-        node.setChangedFields(translateValues(changedFields));
+        node.setChangedFields(translateValues(audit.getChangedFields()));
         if ("site".equals(audit.getTableName())) {
             node.setIdentifier(audit.getRowData().get("ext_id").toString());
         }
@@ -373,8 +370,7 @@ public class AuditTrailService extends LadaService {
         node.setTimestamp(audit.getTstamp().getTime());
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
-        node.setChangedFields(Json.createReader(new StringReader(
-                    audit.getChangedFields().toString())).readObject());
+        node.setChangedFields(audit.getChangedFields());
         if ("comm_measm".equals(audit.getTableName())) {
             node.setIdentifier(audit.getRowData().get("date").toString());
         }

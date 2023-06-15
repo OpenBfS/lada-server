@@ -13,12 +13,12 @@ import java.util.Date;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import jakarta.json.JsonObject;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
-import com.fasterxml.jackson.databind.JsonNode;
 
 @Entity
 @Table(schema = SchemaName.NAME)
@@ -34,14 +34,14 @@ public class AuditTrailSiteView implements Serializable {
     private Date lastMod;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    private JsonNode changedFields;
+    private JsonObject changedFields;
 
     private String siteId;
 
     private Integer objectId;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    private JsonNode rowData;
+    private JsonObject rowData;
 
     private String tableName;
 
@@ -64,11 +64,11 @@ public class AuditTrailSiteView implements Serializable {
         this.lastMod = lastMod;
     }
 
-    public JsonNode getChangedFields() {
+    public JsonObject getChangedFields() {
         return this.changedFields;
     }
 
-    public void setChangedFields(JsonNode changedFields) {
+    public void setChangedFields(JsonObject changedFields) {
         this.changedFields = changedFields;
     }
 
@@ -96,11 +96,11 @@ public class AuditTrailSiteView implements Serializable {
         this.objectId = objectId;
     }
 
-    public JsonNode getRowData() {
+    public JsonObject getRowData() {
         return this.rowData;
     }
 
-    public void setRowData(JsonNode rowData) {
+    public void setRowData(JsonObject rowData) {
         this.rowData = rowData;
     }
 
