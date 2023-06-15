@@ -714,7 +714,7 @@ CREATE TABLE site (
     munic_div_id integer REFERENCES munic_div,
     img BYTEA,
     map BYTEA,
-    route character varying(100),
+    route character varying(1024),
     UNIQUE(ext_id, network_id)
 );
 
