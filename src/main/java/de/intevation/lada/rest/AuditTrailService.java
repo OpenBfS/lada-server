@@ -13,7 +13,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,12 +20,12 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonStructure;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.intevation.lada.model.lada.AuditTrailMeasmView;
 import de.intevation.lada.model.lada.AuditTrailSampleView;
@@ -246,10 +245,9 @@ public class AuditTrailService extends LadaService {
         node.setTimestamp(audit.getTstamp().getTime());
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
-        ObjectNode data =
-            translateValues((ObjectNode) audit.getChangedFields());
-        node.setChangedFields(
-            Json.createReader(new StringReader(data.toString())).read());
+        JsonStructure changedFields = Json.createReader(new StringReader(audit.getChangedFields().toString())).read();
+        JsonStructure data = translateValues((JsonObject) changedFields);
+        node.setChangedFields(data);
         if ("site".equals(audit.getTableName())) {
             node.setIdentifier(audit.getRowData().get("ext_id").toString());
         }
@@ -440,27 +438,29 @@ public class AuditTrailService extends LadaService {
     /**
      * Translate all known foreign keys.
      */
-    private ObjectNode translateValues(ObjectNode node) {
-        for (Iterator<String> i = node.fieldNames(); i.hasNext();) {
-            String key = i.next();
+    private JsonStructure translateValues(JsonObject node) {
+        JsonObjectBuilder builder = Json.createObjectBuilder();
+        node.forEach((key, val) -> {
             if (mappings.containsKey(key)) {
                 TableMapper m = mappings.get(key);
                 if (m.getMappingTable().equals("date")) {
                     Long value =
-                        formatDate(m.getValueField(), node.get(key).asText());
-                    node.put(key, value);
+                        formatDate(m.getValueField(), node.getString(key));
+                    builder.add(key, value);
                 } else {
                     String value = translateId(
                         m.getMappingTable(),
                         m.getValueField(),
-                        !node.get(key).isNull() ? node.get(key).asText() : null,
+                        node.get(key) != null? node.getString(key) : null,
                         "id",
                         de.intevation.lada.model.master.SchemaName.NAME);
-                    node.put(key, value);
+                    builder.add(key, value);
                 }
+            } else {
+                builder.add(key, val);
             }
-        }
-        return node;
+        });
+        return builder.build();
     }
 
     /**

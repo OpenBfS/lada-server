@@ -60,6 +60,7 @@ import de.intevation.lada.model.master.Mmt;
 import de.intevation.lada.model.master.MpgCateg;
 import de.intevation.lada.model.master.OprMode;
 import de.intevation.lada.model.master.Regulation;
+import de.intevation.lada.model.master.ReiAgGr;
 import de.intevation.lada.model.master.SampleMeth;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.model.master.Sampler;
@@ -361,6 +362,14 @@ public class JsonExporter implements Exporter {
             probe.put("samplerDescr", probenehmer.getDescr());
             probe.put(
                 "samplerShortText", probenehmer.getShortText());
+        }
+        if (probe.get("reiAgGrId").asInt() != 0) {
+            ReiAgGr reiAgGr = repository.getByIdPlain(
+                ReiAgGr.class,
+                probe.get("reiAgGrId").asInt()
+            );
+            probe.put("reiAgGrDescr", reiAgGr.getDescr());
+            probe.put("reiAgGrName", reiAgGr.getName());
         }
     }
 

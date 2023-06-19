@@ -1,2 +1,2 @@
 ALTER TABLE master.site
-    ADD COLUMN route character varying(100);
+    ADD COLUMN route character varying(1024);
