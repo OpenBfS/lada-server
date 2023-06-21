@@ -245,7 +245,8 @@ public class AuditTrailService extends LadaService {
         node.setTimestamp(audit.getTstamp().getTime());
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
-        JsonStructure changedFields = Json.createReader(new StringReader(audit.getChangedFields().toString())).read();
+        JsonStructure changedFields = Json.createReader(
+            new StringReader(audit.getChangedFields().toString())).read();
         JsonStructure data = translateValues((JsonObject) changedFields);
         node.setChangedFields(data);
         if ("site".equals(audit.getTableName())) {
@@ -451,7 +452,7 @@ public class AuditTrailService extends LadaService {
                     String value = translateId(
                         m.getMappingTable(),
                         m.getValueField(),
-                        node.get(key) != null? node.getString(key) : null,
+                        node.get(key) != null ? node.getString(key) : null,
                         "id",
                         de.intevation.lada.model.master.SchemaName.NAME);
                     builder.add(key, value);
