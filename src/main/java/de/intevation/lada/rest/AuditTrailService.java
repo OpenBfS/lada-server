@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonStructure;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -245,9 +244,9 @@ public class AuditTrailService extends LadaService {
         node.setTimestamp(audit.getTstamp().getTime());
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
-        JsonStructure changedFields = Json.createReader(new StringReader(audit.getChangedFields().toString())).read();
-        JsonStructure data = translateValues((JsonObject) changedFields);
-        node.setChangedFields(data);
+        JsonObject changedFields = Json.createReader(
+            new StringReader(audit.getChangedFields().toString())).readObject();
+        node.setChangedFields(translateValues(changedFields));
         if ("site".equals(audit.getTableName())) {
             node.setIdentifier(audit.getRowData().get("ext_id").toString());
         }
@@ -375,7 +374,7 @@ public class AuditTrailService extends LadaService {
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
         node.setChangedFields(Json.createReader(new StringReader(
-                    audit.getChangedFields().toString())).read());
+                    audit.getChangedFields().toString())).readObject());
         if ("comm_measm".equals(audit.getTableName())) {
             node.setIdentifier(audit.getRowData().get("date").toString());
         }
@@ -438,7 +437,7 @@ public class AuditTrailService extends LadaService {
     /**
      * Translate all known foreign keys.
      */
-    private JsonStructure translateValues(JsonObject node) {
+    private JsonObject translateValues(JsonObject node) {
         JsonObjectBuilder builder = Json.createObjectBuilder();
         node.forEach((key, val) -> {
             if (mappings.containsKey(key)) {
@@ -451,7 +450,7 @@ public class AuditTrailService extends LadaService {
                     String value = translateId(
                         m.getMappingTable(),
                         m.getValueField(),
-                        node.get(key) != null? node.getString(key) : null,
+                        node.get(key) != null ? node.getString(key) : null,
                         "id",
                         de.intevation.lada.model.master.SchemaName.NAME);
                     builder.add(key, value);
@@ -497,7 +496,7 @@ public class AuditTrailService extends LadaService {
         Long timestamp;
         String type;
         String action;
-        JsonStructure changedFields;
+        JsonObject changedFields;
         Object identifier;
         public Long getTimestamp() {
             return timestamp;
@@ -517,10 +516,10 @@ public class AuditTrailService extends LadaService {
         public void setAction(String action) {
             this.action = action;
         }
-        public JsonStructure getChangedFields() {
+        public JsonObject getChangedFields() {
             return changedFields;
         }
-        public void setChangedFields(JsonStructure changedFields) {
+        public void setChangedFields(JsonObject changedFields) {
             this.changedFields = changedFields;
         }
         public Object getIdentifier() {
