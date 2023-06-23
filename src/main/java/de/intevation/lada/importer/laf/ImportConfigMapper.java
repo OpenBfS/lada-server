@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.importer.laf;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -84,28 +86,16 @@ public class ImportConfigMapper {
                     && action.name().equals(current.getAction().toUpperCase())
                 ) {
                     String attribute = current.getAttribute();
-                    Method getter;
-                    Method setter = null;
+                    PropertyDescriptor beanDesc;
                     try {
-                        getter = clazz.getMethod("get"
-                            + attribute.substring(0, 1).toUpperCase()
-                            + attribute.substring(1));
-                        String methodName = "set"
-                            + attribute.substring(0, 1).toUpperCase()
-                            + attribute.substring(1);
-                        for (Method method : clazz.getMethods()) {
-                            String name = method.getName();
-                            if (!methodName.equals(name)) {
-                                continue;
-                            }
-                            setter = method;
-                            break;
-                        }
-                    } catch (NoSuchMethodException | SecurityException e) {
+                        beanDesc = new PropertyDescriptor(attribute, clazz);
+                    } catch (IntrospectionException e) {
                         logger.warn(
                             "attribute " + attribute + " does not exist");
                         continue;
                     }
+                    Method getter = beanDesc.getReadMethod();
+                    Method setter = beanDesc.getWriteMethod();
                     try {
                         Object value = getter.invoke(object);
                         switch (action) {
