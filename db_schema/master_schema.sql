@@ -952,7 +952,7 @@ CREATE TABLE grid_col_conf (
 CREATE TABLE tag (
     id serial PRIMARY KEY,
     name text NOT NULL,
-    meas_facil_id character varying REFERENCES meas_facil(id),
+    meas_facil_id character varying(5) REFERENCES meas_facil,
     is_auto_tag boolean NOT NULL DEFAULT false,
     network_id varchar(2) REFERENCES network,
     lada_user_id INTEGER REFERENCES lada_user,
