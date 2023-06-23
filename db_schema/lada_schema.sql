@@ -352,6 +352,7 @@ CREATE TABLE geolocat (
     poi_id character varying(7) REFERENCES master.poi,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE(sample_id, site_id, type_regulation),
     EXCLUDE (sample_id WITH =) WHERE (type_regulation = 'E')
 );
 CREATE TRIGGER last_mod_geolocat BEFORE UPDATE ON geolocat FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
