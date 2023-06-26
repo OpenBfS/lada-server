@@ -691,20 +691,6 @@ public class LafObjectMapper {
         }
     }
 
-    private List<ImportConf> getImporterConfigByAttributeUpper(
-        String attribute
-    ) {
-        Iterator<ImportConf> i = config.iterator();
-        List<ImportConf> result = new ArrayList<ImportConf>();
-        while (i.hasNext()) {
-            ImportConf current = i.next();
-            if (current.getAttribute().toUpperCase().equals(attribute)) {
-                result.add(current);
-            }
-        }
-        return result;
-    }
-
     private void create(
         LafRawData.Messung object,
         Sample probe, String mstId
@@ -997,28 +983,15 @@ public class LafObjectMapper {
             zusatzwert.setSmallerThan("<");
         }
         zusatzwert.setMeasVal(Double.valueOf(wert.replaceAll(",", ".")));
-        List<ImportConf> cfgs =
-            getImporterConfigByAttributeUpper("ZUSATZWERT");
+
         String attribute = attributes.get("PZS");
         boolean isId = false;
         if (attribute == null) {
             attribute = attributes.get("PZS_ID");
             isId = true;
         }
-        for (int i = 0; i < cfgs.size(); i++) {
-            ImportConf cfg = cfgs.get(i);
-            if (cfg.getAction().equals("convert")
-                && cfg.getFromVal().equals(attribute)
-            ) {
-                attribute = cfg.getToVal();
-            }
-            if (cfg.getAction().equals("transform")) {
-                char from = (char) Integer.parseInt(cfg.getFromVal(), 16);
-                char to = (char) Integer.parseInt(cfg.getToVal(), 16);
-                attribute = attribute.replaceAll(
-                    "[" + String.valueOf(from) + "]", String.valueOf(to));
-            }
-        }
+        attribute = this.configMapper.applyConfigByAttribute(
+            "ZUSATZWERT", attribute);
         QueryBuilder<SampleSpecif> builder =
             repository.queryBuilder(SampleSpecif.class);
         if (isId) {
@@ -1063,24 +1036,8 @@ public class LafObjectMapper {
             messwert.setMeasdId(
                 Integer.valueOf(attributes.get("MESSGROESSE_ID")));
         } else if (attributes.containsKey("MESSGROESSE")) {
-            List<ImportConf> cfgs =
-                getImporterConfigByAttributeUpper("MESSGROESSE");
-            String attribute = attributes.get("MESSGROESSE");
-            for (int i = 0; i < cfgs.size(); i++) {
-                ImportConf cfg = cfgs.get(i);
-                if (cfg != null
-                    && cfg.getAction().equals("convert")
-                    && cfg.getFromVal().equals(attribute)
-                ) {
-                    attribute = cfg.getToVal();
-                }
-                if (cfg != null && cfg.getAction().equals("transform")) {
-                    char from = (char) Integer.parseInt(cfg.getFromVal(), 16);
-                    char to = (char) Integer.parseInt(cfg.getToVal(), 16);
-                    attribute = attribute.replaceAll(
-                        "[" + String.valueOf(from) + "]", String.valueOf(to));
-                }
-            }
+            String attribute = this.configMapper.applyConfigByAttribute(
+                "MESSGROESSE", attributes.get("MESSGROESSE"));
             QueryBuilder<Measd> builder =
                 repository.queryBuilder(Measd.class);
             // accept various nuclide notations (e.g.
@@ -1124,24 +1081,8 @@ public class LafObjectMapper {
             messwert.setMeasUnitId(
                 Integer.valueOf(attributes.get("MESSEINHEIT_ID")));
         } else if (attributes.containsKey("MESSEINHEIT")) {
-            List<ImportConf> cfgs =
-                getImporterConfigByAttributeUpper("MESSEINHEIT");
-            String attribute = attributes.get("MESSEINHEIT");
-            for (int i = 0; i < cfgs.size(); i++) {
-                ImportConf cfg = cfgs.get(i);
-                if (cfg != null
-                    && cfg.getAction().equals("convert")
-                    && cfg.getFromVal().equals(attribute)
-                ) {
-                    attribute = cfg.getToVal();
-                }
-                if (cfg != null && cfg.getAction().equals("transform")) {
-                    char from = (char) Integer.parseInt(cfg.getFromVal(), 16);
-                    char to = (char) Integer.parseInt(cfg.getToVal(), 16);
-                    attribute = attribute.replaceAll(
-                        "[" + String.valueOf(from) + "]", String.valueOf(to));
-                }
-            }
+            String attribute = this.configMapper.applyConfigByAttribute(
+                "MESSEINHEIT", attributes.get("MESSEINHEIT"));
             QueryBuilder<MeasUnit> builder =
                 repository.queryBuilder(MeasUnit.class);
             builder.and("unitSymbol", attribute);
@@ -1911,24 +1852,8 @@ public class LafObjectMapper {
         if ("DATENBASIS".equals(key)
             && probe.getRegulationId() == null
         ) {
-            List<ImportConf> cfgs =
-                getImporterConfigByAttributeUpper("DATENBASIS");
-            String attr = value.toString();
-            for (int i = 0; i < cfgs.size(); i++) {
-                ImportConf cfg = cfgs.get(i);
-                if (cfg != null
-                    && cfg.getAction().equals("convert")
-                    && cfg.getFromVal().equals(attr)
-                ) {
-                    attr = cfg.getToVal();
-                }
-                if (cfg != null && cfg.getAction().equals("transform")) {
-                    char from = (char) Integer.parseInt(cfg.getFromVal(), 16);
-                    char to = (char) Integer.parseInt(cfg.getToVal(), 16);
-                    attr = attr.replaceAll(
-                        "[" + String.valueOf(from) + "]", String.valueOf(to));
-                }
-            }
+            String attr = this.configMapper.applyConfigByAttribute(
+                "DATENBASIS", value.toString());
             QueryBuilder<Regulation> builder =
                 repository.queryBuilder(Regulation.class);
             builder.and("regulation", attr);
@@ -2176,24 +2101,8 @@ public class LafObjectMapper {
         }
 
         if ("PROBENART".equals(key) && value != null) {
-            List<ImportConf> cfgs =
-                getImporterConfigByAttributeUpper("PROBENART");
-            String attr = value.toString();
-            for (int i = 0; i < cfgs.size(); i++) {
-                ImportConf cfg = cfgs.get(i);
-                if (cfg != null
-                    && cfg.getAction().equals("convert")
-                    && cfg.getFromVal().equals(attr)
-                ) {
-                    attr = cfg.getToVal();
-                }
-                if (cfg != null && cfg.getAction().equals("transform")) {
-                    char from = (char) Integer.parseInt(cfg.getFromVal(), 16);
-                    char to = (char) Integer.parseInt(cfg.getToVal(), 16);
-                    attr = attr.replaceAll(
-                        "[" + String.valueOf(from) + "]", String.valueOf(to));
-                }
-            }
+            String attr = this.configMapper.applyConfigByAttribute(
+                "PROBENART", value.toString());
             QueryBuilder<SampleMeth> builder =
                 repository.queryBuilder(SampleMeth.class);
             builder.and("extId", attr);

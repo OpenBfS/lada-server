@@ -38,4 +38,41 @@ public class ImportConfigMapperTest {
         mapper.applyConfigs(sample);
         Assert.assertEquals(expected, sample.getMeasFacilId());
     }
+
+    /**
+     * Test string conversion.
+     */
+    @Test
+    public void convertStringTest() {
+        final String key = "convertme";
+        final String input = "BQ/kgFM";
+        final String expected = "Bq/kg(FM)";
+
+        ImportConf config = new ImportConf();
+        config.setAttribute(key);
+        config.setFromVal(input);
+        config.setToVal(expected);
+        config.setAction("convert");
+        ImportConfigMapper mapper = new ImportConfigMapper(List.of(config));
+
+        Assert.assertEquals(
+            expected, mapper.applyConfigByAttribute(key, input));
+    }
+
+    /**
+     * Test string transformation.
+     */
+    @Test
+    public void transformStringTest() {
+        final String key = "TRANSFORMME";
+
+        ImportConf config = new ImportConf();
+        config.setAttribute(key);
+        config.setFromVal("20");
+        config.setToVal("30");
+        config.setAction("transform");
+        ImportConfigMapper mapper = new ImportConfigMapper(List.of(config));
+
+        Assert.assertEquals("x0x", mapper.applyConfigByAttribute(key, "x x"));
+    }
 }

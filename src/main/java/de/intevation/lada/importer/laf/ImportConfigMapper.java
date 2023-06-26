@@ -40,6 +40,38 @@ public class ImportConfigMapper {
         this.config = config;
     }
 
+    /**
+     * Apply configuration with given attribute name to value.
+     *
+     * @param key The configuration attribute name
+     * @param value The value that should be converted or transformed
+     * @return value according to configuration
+     */
+    String applyConfigByAttribute(String key, String value) {
+        String result = value;
+        configs: for (ImportConf cfg: this.config) {
+            if (cfg.getAttribute().equalsIgnoreCase(key)) {
+                for (Action action: Action.values()) {
+                    if (action.name().equals(cfg.getAction().toUpperCase())) {
+                        switch (action) {
+                        case CONVERT:
+                            if (cfg.getFromVal().equals(value)) {
+                                result = cfg.getToVal();
+                            }
+                            continue configs;
+                        case TRANSFORM:
+                            result = transform(value, cfg);
+                            continue configs;
+                        default:
+                            continue configs;
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
     void applyConfigs(Sample probe) {
         final String table = "probe";
         applyConfigs(probe, Sample.class, table);
@@ -136,15 +168,9 @@ public class ImportConfigMapper {
                                     "Attribute " + attribute + " is not set");
                                 return;
                             }
-                            final int radix = 16;
-                            char from = (char) Integer.parseInt(
-                                current.getFromVal(), radix);
-                            char to = (char) Integer.parseInt(
-                                current.getToVal(), radix);
-                            value = value.toString().replaceAll(
-                                "[" + String.valueOf(from) + "]",
-                                String.valueOf(to));
-                            setter.invoke(object, value);
+                            setter.invoke(
+                                object,
+                                transform(value.toString(), current));
                             break;
                         default:
                             throw new IllegalArgumentException(
@@ -159,5 +185,14 @@ public class ImportConfigMapper {
                 }
             }
         }
+    }
+
+    private String transform(String value, ImportConf cfg) {
+        final int radix = 16;
+        char from = (char) Integer.parseInt(cfg.getFromVal(), radix);
+        char to = (char) Integer.parseInt(cfg.getToVal(), radix);
+        return value.replaceAll(
+            "[" + String.valueOf(from) + "]",
+            String.valueOf(to));
     }
 }
