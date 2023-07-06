@@ -775,6 +775,7 @@ public class LafObjectMapper {
                 "Identified with unexpected enum constant");
         }
 
+        // Add commMeasms
         List<CommMeasm> kommentare = new ArrayList<CommMeasm>();
         for (int i = 0; i < object.getKommentare().size(); i++) {
             CommMeasm tmp =
@@ -785,29 +786,25 @@ public class LafObjectMapper {
             }
         }
         merger.mergeMessungKommentare(newMessung, kommentare);
+
+        // Add measVals
         List<MeasVal> messwerte = new ArrayList<MeasVal>();
         List<Integer> messgroessenListe = new ArrayList<Integer>();
-        for (int i = 0; i < object.getMesswerte().size(); i++) {
+        for (Map<String, String> measValRaw: object.getMesswerte()) {
             MeasVal tmp =
-                createMesswert(
-                    object.getMesswerte().get(i), newMessung.getId());
+                createMesswert(measValRaw, newMessung.getId());
             if (tmp != null) {
                 //find duplicates
                 if (messgroessenListe.contains(tmp.getMeasdId())) {
                     currentWarnings.add(new ReportItem(
-                        (object.getMesswerte().get(i).get("MESSGROESSE_ID")
-                            == null)
-                        ? "MESSWERT - MESSGROESSE"
-                        : "MESSWERT - MESSGROESSE_ID",
-                        (object.getMesswerte().get(i).get("MESSGROESSE_ID")
-                            == null)
-                        ? object.getMesswerte().get(i).get(
-                            "MESSGROESSE").toString()
-                        : object.getMesswerte().get(i).get(
-                            "MESSGROESSE_ID").toString(),
+                            measValRaw.get("MESSGROESSE_ID") == null
+                            ? "MESSWERT - MESSGROESSE"
+                            : "MESSWERT - MESSGROESSE_ID",
+                            measValRaw.get("MESSGROESSE_ID") == null
+                            ? measValRaw.get("MESSGROESSE")
+                            : measValRaw.get("MESSGROESSE_ID"),
                             StatusCodes.IMP_DUPLICATE));
                 } else {
-                   //temporary messwertobjects
                     messwerte.add(tmp);
                     messgroessenListe.add(tmp.getMeasdId());
                 }
@@ -817,6 +814,7 @@ public class LafObjectMapper {
             messwerte, probe.getEnvMediumId());
         //persist messwerte
         merger.mergeMesswerte(newMessung, messwerte);
+
         // Check for warnings and errors for messung ...
         Violation violation = messungValidator.validate(newMessung);
         for (Entry<String, List<Integer>> err
