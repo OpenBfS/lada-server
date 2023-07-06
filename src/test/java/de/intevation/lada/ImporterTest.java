@@ -103,6 +103,7 @@ public class ImporterTest extends BaseTest {
 
     private final String lafSampleId = "XXX";
     private final String mstId = "06010";
+    private final String regulation = "test";
     private final String lafTemplate = "%%PROBE%%\n"
         + "UEBERTRAGUNGSFORMAT \"7\"\n"
         + "VERSION \"0084\"\n"
@@ -110,7 +111,7 @@ public class ImporterTest extends BaseTest {
         + "MESSSTELLE \"%s\"\n"
         + "PROBENART \"E\"\n"
         + "MESSPROGRAMM_S 1\n"
-        + "DATENBASIS_S 02\n"
+        + "DATENBASIS \"%s\"\n"
         + "%s"
         + "%%ENDE%%\n";
 
@@ -734,7 +735,8 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .header("X-LADA-MST", mstId)
             .post(Entity.entity(
-                    String.format(lafTemplate, lafSampleId, mstId, ""),
+                    String.format(
+                        lafTemplate, lafSampleId, mstId, regulation, ""),
                     MediaType.TEXT_PLAIN));
         JsonObject importResponseObject = parseResponse(importResponse, prot);
 
@@ -764,7 +766,7 @@ public class ImporterTest extends BaseTest {
         prot.setName("asyncimport service successful");
         testAsyncImportProbe(
             baseUrl,
-            String.format(lafTemplate, lafSampleId, mstId, ""),
+            String.format(lafTemplate, lafSampleId, mstId, regulation, ""),
             true,
             prot);
     }
@@ -781,6 +783,23 @@ public class ImporterTest extends BaseTest {
         Protocol prot = new Protocol();
         prot.setName("asyncimport service unsuccessful");
         testAsyncImportProbe(baseUrl, "no valid LAF", false, prot);
+    }
+
+    /**
+     * Test asynchronous import of a Sample object with attribute conversion.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncImportProbeImportConfConvert(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        Protocol prot = new Protocol();
+        prot.setName("asyncimport service import config");
+        testAsyncImportProbe(
+            baseUrl,
+            String.format(lafTemplate, lafSampleId, mstId, "conv", ""),
+            true,
+            prot);
     }
 
     /**
@@ -812,6 +831,7 @@ public class ImporterTest extends BaseTest {
             lafTemplate,
             lafSampleId,
             mstId,
+            regulation,
             lafKey + " " + value + "\n");
         LOG.trace(lafZb);
 
@@ -930,6 +950,7 @@ public class ImporterTest extends BaseTest {
             importedSampleResponse, prot).getJsonObject("data");
         Assert.assertEquals(lafSampleId, importedSample.getString("extId"));
         Assert.assertEquals(mstId, importedSample.getString("measFacilId"));
+        Assert.assertEquals(2, importedSample.getInt("regulationId"));
 
         prot.setPassed(true);
         return fileReport;
