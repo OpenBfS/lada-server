@@ -643,13 +643,12 @@ public class LafObjectMapper {
                     new ReportItem("validation#probe", notes.getKey(), code));
               }
             }
-            // Create messung objects
-            for (int i = 0; i < object.getMessungen().size(); i++) {
-                create(
-                    object.getMessungen().get(i),
-                    newProbe,
-                    newProbe.getMeasFacilId());
+
+            // Create measms
+            for (LafRawData.Messung measmRaw: object.getMessungen()) {
+                create(measmRaw, newProbe);
             }
+
             //if key SZENARIO is present in imported file, assign global tag to probe and its messung objects
             if (object.getAttributes().containsKey("SZENARIO")) {
                 //assign to probe object
@@ -691,10 +690,7 @@ public class LafObjectMapper {
         }
     }
 
-    private void create(
-        LafRawData.Messung object,
-        Sample probe, String mstId
-    ) {
+    private void create(LafRawData.Messung object, Sample probe) {
         Measm messung = new Measm();
         messung.setSampleId(probe.getId());
 
@@ -879,8 +875,9 @@ public class LafObjectMapper {
         if (!object.hasErrors()) {
             if (object.getAttributes().containsKey("BEARBEITUNGSSTATUS")) {
                 createStatusProtokoll(
-                    object.getAttributes().get(
-                        "BEARBEITUNGSSTATUS"), newMessung, mstId);
+                    object.getAttributes().get("BEARBEITUNGSSTATUS"),
+                    newMessung,
+                    probe.getMeasFacilId());
             }
         }
     }
