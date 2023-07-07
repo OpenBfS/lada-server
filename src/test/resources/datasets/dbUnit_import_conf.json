@@ -1,4 +1,8 @@
 {
+    "master.measd": [{
+        "id": 1,
+        "name": "H-3"
+    }],
     "master.meas_unit": [{
         "id": 1,
         "unit_symbol": "Bq/kgFM"
@@ -8,12 +12,18 @@
         "regulation": "test"
     }],
     "master.import_conf": [{
-        "id": 1,
         "name": "x",
         "attribute": "datenbasis",
         "meas_facil_id": "06010",
         "from_val": "conv",
         "to_val": "test",
         "action": "convert"
+    }, {
+        "name": "x",
+        "attribute": "messgroesse",
+        "meas_facil_id": "06010",
+        "from_val": "20",
+        "to_val": "2d",
+        "action": "transform"
     }]
 }

@@ -104,6 +104,7 @@ public class ImporterTest extends BaseTest {
     private final String lafSampleId = "XXX";
     private final String mstId = "06010";
     private final String regulation = "test";
+    private final String measd = "H-3";
     private final String measUnit = "Bq/kgFM";
     private final String lafTemplate = "%%PROBE%%\n"
         + "UEBERTRAGUNGSFORMAT \"7\"\n"
@@ -116,10 +117,10 @@ public class ImporterTest extends BaseTest {
         + "%s"
         + "%%MESSUNG%%\n"
         + "MESSMETHODE_S \"A3\"\n"
-        + "MESSWERT \"Mangan\" 72.177002 \"%s\" 4.4\n"
+        + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
         + "%%ENDE%%\n";
     private final String laf = String.format(
-        lafTemplate, lafSampleId, mstId, regulation, "", measUnit);
+        lafTemplate, lafSampleId, mstId, regulation, "", measd, measUnit);
 
     final String dataKey = "data";
 
@@ -810,7 +811,28 @@ public class ImporterTest extends BaseTest {
         prot.setName("asyncimport service import config");
         testAsyncImportProbe(
             baseUrl,
-            String.format(lafTemplate, lafSampleId, mstId, "conv", "", measUnit),
+            String.format(
+                lafTemplate, lafSampleId, mstId, "conv", "", measd, measUnit),
+            true,
+            prot);
+    }
+
+    /**
+     * Test asynchronous import of a Sample object
+     * with attribute transformation.
+     */
+    @Test
+    @InSequence(19)
+    @RunAsClient
+    public final void testAsyncImportProbeImportConfTransform(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        Protocol prot = new Protocol();
+        prot.setName("asyncimport service import config");
+        testAsyncImportProbe(
+            baseUrl,
+            String.format(
+                lafTemplate, lafSampleId, mstId, "conv", "", "H 3", measUnit),
             true,
             prot);
     }
@@ -847,6 +869,7 @@ public class ImporterTest extends BaseTest {
             mstId,
             regulation,
             lafKey + " " + value + "\n",
+            measd,
             measUnit);
         LOG.trace(lafZb);
 
@@ -990,8 +1013,8 @@ public class ImporterTest extends BaseTest {
             parseResponse(importedMeasValResponse, prot)
             .getJsonArray(dataKey)
             .getJsonObject(0);
-        final int measUnitId = 1;
-        Assert.assertEquals(measUnitId, importedMeasVal.getInt("measUnitId"));
+        Assert.assertEquals(1, importedMeasVal.getInt("measdId"));
+        Assert.assertEquals(1, importedMeasVal.getInt("measUnitId"));
 
         prot.setPassed(true);
         return fileReport;
