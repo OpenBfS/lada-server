@@ -104,6 +104,7 @@ public class ImporterTest extends BaseTest {
     private final String lafSampleId = "XXX";
     private final String mstId = "06010";
     private final String regulation = "test";
+    private final String measUnit = "Bq/kgFM";
     private final String lafTemplate = "%%PROBE%%\n"
         + "UEBERTRAGUNGSFORMAT \"7\"\n"
         + "VERSION \"0084\"\n"
@@ -113,7 +114,14 @@ public class ImporterTest extends BaseTest {
         + "MESSPROGRAMM_S 1\n"
         + "DATENBASIS \"%s\"\n"
         + "%s"
+        + "%%MESSUNG%%\n"
+        + "MESSMETHODE_S \"A3\"\n"
+        + "MESSWERT \"Mangan\" 72.177002 \"%s\" 4.4\n"
         + "%%ENDE%%\n";
+    private final String laf = String.format(
+        lafTemplate, lafSampleId, mstId, regulation, "", measUnit);
+
+    final String dataKey = "data";
 
     @PersistenceContext
     EntityManager em;
@@ -713,10 +721,22 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
-     * Test synchronous import of a Sample object.
+     * Preliminary data for testing LAF 8 import.
+     * @throws Exception that can occur during the test.
      */
     @Test
     @InSequence(18)
+    @UsingDataSet("datasets/dbUnit_import_conf.json")
+    @Cleanup(phase = TestExecutionPhase.NONE)
+    public final void prepareDatabaseImport() throws Exception {
+        // Nothing to do.
+    }
+
+    /**
+     * Test synchronous import of a Sample object.
+     */
+    @Test
+    @InSequence(19)
     @RunAsClient
     public final void testImportProbe(
         @ArquillianResource URL baseUrl
@@ -734,14 +754,10 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .header("X-LADA-MST", mstId)
-            .post(Entity.entity(
-                    String.format(
-                        lafTemplate, lafSampleId, mstId, regulation, ""),
-                    MediaType.TEXT_PLAIN));
+            .post(Entity.entity(laf, MediaType.TEXT_PLAIN));
         JsonObject importResponseObject = parseResponse(importResponse, prot);
 
         /* Check if a Sample object has been imported */
-        final String dataKey = "data";
         assertContains(importResponseObject, dataKey);
         JsonObject data = importResponseObject.getJsonObject(dataKey);
 
@@ -757,25 +773,21 @@ public class ImporterTest extends BaseTest {
      * Test successful asynchronous import of a Sample object.
      */
     @Test
-    @InSequence(18)
+    @InSequence(19)
     @RunAsClient
     public final void testAsyncImportProbeSuccess(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
         Protocol prot = new Protocol();
         prot.setName("asyncimport service successful");
-        testAsyncImportProbe(
-            baseUrl,
-            String.format(lafTemplate, lafSampleId, mstId, regulation, ""),
-            true,
-            prot);
+        testAsyncImportProbe(baseUrl, laf, true, prot);
     }
 
     /**
      * Test unsuccessful asynchronous import of a Probe object.
      */
     @Test
-    @InSequence(18)
+    @InSequence(19)
     @RunAsClient
     public final void testAsyncImportProbeNoSuccess(
         @ArquillianResource URL baseUrl
@@ -789,6 +801,7 @@ public class ImporterTest extends BaseTest {
      * Test asynchronous import of a Sample object with attribute conversion.
      */
     @Test
+    @InSequence(19)
     @RunAsClient
     public final void testAsyncImportProbeImportConfConvert(
         @ArquillianResource URL baseUrl
@@ -797,7 +810,7 @@ public class ImporterTest extends BaseTest {
         prot.setName("asyncimport service import config");
         testAsyncImportProbe(
             baseUrl,
-            String.format(lafTemplate, lafSampleId, mstId, "conv", ""),
+            String.format(lafTemplate, lafSampleId, mstId, "conv", "", measUnit),
             true,
             prot);
     }
@@ -806,6 +819,7 @@ public class ImporterTest extends BaseTest {
      * Test "Zeitbasis" handling in LAF8 import.
      */
     @Test
+    @InSequence(19)
     @RunAsClient
     public final void testZeitbasis(
         @ArquillianResource URL baseUrl
@@ -832,7 +846,8 @@ public class ImporterTest extends BaseTest {
             lafSampleId,
             mstId,
             regulation,
-            lafKey + " " + value + "\n");
+            lafKey + " " + value + "\n",
+            measUnit);
         LOG.trace(lafZb);
 
         JsonArray warnings = testAsyncImportProbe(baseUrl, lafZb, true, prot)
@@ -923,6 +938,7 @@ public class ImporterTest extends BaseTest {
 
         assertContains(report, fileName);
         JsonObject fileReport = report.getJsonObject(fileName);
+        LOG.debug(fileReport);
 
         final String successKey = "success";
         assertContains(fileReport, successKey);
@@ -939,18 +955,43 @@ public class ImporterTest extends BaseTest {
             "Unsuccessful import: " + fileReport, success);
 
         // Test if data correctly entered database
+        final int sampleId = fileReport.getJsonArray(sampleIdsKey)
+            .getJsonNumber(0).intValue();
         Response importedSampleResponse = client.target(
-            baseUrl + "rest/sample/"
-            + fileReport.getJsonArray(sampleIdsKey).getJsonNumber(0))
+            baseUrl + "rest/sample/" + sampleId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
         JsonObject importedSample = parseResponse(
-            importedSampleResponse, prot).getJsonObject("data");
+            importedSampleResponse, prot).getJsonObject(dataKey);
         Assert.assertEquals(lafSampleId, importedSample.getString("extId"));
         Assert.assertEquals(mstId, importedSample.getString("measFacilId"));
-        Assert.assertEquals(2, importedSample.getInt("regulationId"));
+        Assert.assertEquals(1, importedSample.getInt("regulationId"));
+
+        Response importedMeasmResponse = client.target(
+            baseUrl + "rest/measm?sampleId=" + sampleId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        final int measmId = parseResponse(importedMeasmResponse, prot)
+            .getJsonArray(dataKey)
+            .getJsonObject(0)
+            .getInt("id");
+
+        Response importedMeasValResponse = client.target(
+            baseUrl + "rest/measval?measmId=" + measmId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        JsonObject importedMeasVal =
+            parseResponse(importedMeasValResponse, prot)
+            .getJsonArray(dataKey)
+            .getJsonObject(0);
+        final int measUnitId = 1;
+        Assert.assertEquals(measUnitId, importedMeasVal.getInt("measUnitId"));
 
         prot.setPassed(true);
         return fileReport;
