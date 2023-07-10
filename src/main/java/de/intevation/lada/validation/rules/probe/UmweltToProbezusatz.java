@@ -60,7 +60,8 @@ public class UmweltToProbezusatz implements Rule {
                     return null;
                 } else {
                     Violation violation = new Violation();
-                    violation.addWarning("zusatzwert", StatusCodes.VAL_PZW);
+                    violation.addWarning(
+                        "sample_specif_meas_val", StatusCodes.VAL_PZW);
                     return violation;
                 }
             }
