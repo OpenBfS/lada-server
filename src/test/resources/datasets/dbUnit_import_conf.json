@@ -11,6 +11,11 @@
         "id": 1,
         "regulation": "test"
     }],
+    "master.sample_specif": [{
+        "id": "A1",
+        "name": "test",
+        "ext_id": "A1"
+    }],
     "master.import_conf": [{
         "name": "x",
         "attribute": "datenbasis",
@@ -25,5 +30,12 @@
         "from_val": "20",
         "to_val": "2d",
         "action": "transform"
+    }, {
+        "name": "x",
+        "attribute": "zusatzwert",
+        "meas_facil_id": "06010",
+        "from_val": "XX",
+        "to_val": "A1",
+        "action": "convert"
     }]
 }

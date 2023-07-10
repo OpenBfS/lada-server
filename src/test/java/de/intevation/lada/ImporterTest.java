@@ -104,6 +104,7 @@ public class ImporterTest extends BaseTest {
     private final String lafSampleId = "XXX";
     private final String mstId = "06010";
     private final String regulation = "test";
+    private final String sampleSpecifId = "A1";
     private final String measd = "H-3";
     private final String measUnit = "Bq/kgFM";
     private final String lafTemplate = "%%PROBE%%\n"
@@ -114,13 +115,15 @@ public class ImporterTest extends BaseTest {
         + "PROBENART \"E\"\n"
         + "MESSPROGRAMM_S 1\n"
         + "DATENBASIS \"%s\"\n"
+        + "PZB_S \"%s\" 42 \"\" 5.0\n"
         + "%s"
         + "%%MESSUNG%%\n"
         + "MESSMETHODE_S \"A3\"\n"
         + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
         + "%%ENDE%%\n";
     private final String laf = String.format(
-        lafTemplate, lafSampleId, mstId, regulation, "", measd, measUnit);
+        lafTemplate, lafSampleId, mstId, regulation, sampleSpecifId,
+        "", measd, measUnit);
 
     final String dataKey = "data";
 
@@ -812,19 +815,19 @@ public class ImporterTest extends BaseTest {
         testAsyncImportProbe(
             baseUrl,
             String.format(
-                lafTemplate, lafSampleId, mstId, "conv", "", measd, measUnit),
+                lafTemplate, lafSampleId, mstId, "conv", sampleSpecifId,
+                "", measd, measUnit),
             true,
             prot);
     }
 
     /**
-     * Test asynchronous import of a Sample object
-     * with attribute transformation.
+     * Test asynchronous import with attribute transformation in MeasVal.
      */
     @Test
     @InSequence(19)
     @RunAsClient
-    public final void testAsyncImportProbeImportConfTransform(
+    public final void testAsyncImportMeasValImportConfTransform(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
         Protocol prot = new Protocol();
@@ -832,7 +835,29 @@ public class ImporterTest extends BaseTest {
         testAsyncImportProbe(
             baseUrl,
             String.format(
-                lafTemplate, lafSampleId, mstId, "conv", "", "H 3", measUnit),
+                lafTemplate, lafSampleId, mstId, "conv", sampleSpecifId,
+                "", "H 3", measUnit),
+            true,
+            prot);
+    }
+
+    /**
+     * Test asynchronous import with attribute conversion
+     * in SampleSpecifMeasVal.
+     */
+    @Test
+    @InSequence(19)
+    @RunAsClient
+    public final void testAsyncImportSampleSpecifMeasValImportConfTransform(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        Protocol prot = new Protocol();
+        prot.setName("asyncimport service import config");
+        testAsyncImportProbe(
+            baseUrl,
+            String.format(
+                lafTemplate, lafSampleId, mstId, "conv", "XX",
+                "", measd, measUnit),
             true,
             prot);
     }
@@ -868,6 +893,7 @@ public class ImporterTest extends BaseTest {
             lafSampleId,
             mstId,
             regulation,
+            sampleSpecifId,
             lafKey + " " + value + "\n",
             measd,
             measUnit);
@@ -991,6 +1017,20 @@ public class ImporterTest extends BaseTest {
         Assert.assertEquals(lafSampleId, importedSample.getString("extId"));
         Assert.assertEquals(mstId, importedSample.getString("measFacilId"));
         Assert.assertEquals(1, importedSample.getInt("regulationId"));
+
+        Response importedSampleSpecifMeasValResponse = client.target(
+            baseUrl + "rest/samplespecifmeasval?sampleId=" + sampleId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        JsonObject importedSampleSpecifMeasVal =
+            parseResponse(importedSampleSpecifMeasValResponse, prot)
+            .getJsonArray(dataKey)
+            .getJsonObject(0);
+        Assert.assertEquals(
+            sampleSpecifId,
+            importedSampleSpecifMeasVal.getString("sampleSpecifId"));
 
         Response importedMeasmResponse = client.target(
             baseUrl + "rest/measm?sampleId=" + sampleId)
