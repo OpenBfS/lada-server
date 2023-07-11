@@ -8,9 +8,17 @@
 package de.intevation.lada;
 
 import java.io.StringReader;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.json.Json;
 import javax.json.JsonException;
@@ -20,6 +28,14 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 
 import org.jboss.logging.Logger;
+import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.DatabaseConfig;
+import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
+import org.dbunit.operation.DatabaseOperation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
@@ -28,6 +44,8 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.postgresql.ds.PGSimpleDataSource;
 
 /**
  * Base class for Lada server tests.
@@ -68,13 +86,32 @@ public class BaseTest {
      */
     protected static boolean verboseLogging = false;
 
+    protected String testDatasetName;
+
+    protected static PGSimpleDataSource ds = new PGSimpleDataSource();
+
+    /**
+     * Setup JDBC data source.
+     */
+    @BeforeClass
+    public static void setupDataSource() {
+        ds.setServerNames(new String[]{"lada_db"});
+        ds.setDatabaseName("lada_test");
+        ds.setUser("lada_test");
+        ds.setPassword("lada_test");
+    }
+
     /**
      * Set up shared infrastructure for test methods.
      */
     @Before
-    public void setup() {
+    public void setup() throws DatabaseUnitException, SQLException, IOException {
+        this.cleanup();
         this.testProtocol = new ArrayList<Protocol>();
         this.client = ClientBuilder.newClient();
+
+        // Insert test data
+        doDbOperation(DatabaseOperation.CLEAN_INSERT);
     }
 
     /**
@@ -120,8 +157,12 @@ public class BaseTest {
      * Tear down shared infrastructure for test methods.
      */
     @After
-    public void tearDown() {
+    public void tearDown()
+            throws DatabaseUnitException, SQLException, IOException {
         this.client.close();
+
+        // Ensure clean database after test
+        cleanup();
     }
 
     /**
@@ -271,5 +312,48 @@ public class BaseTest {
             "Response does not contain expected key '" + key + "': "
             + json.toString(),
             json.containsKey(key));
+    }
+
+    private void doDbOperation(
+        DatabaseOperation op
+    ) throws DatabaseUnitException, SQLException {
+        IDataSet dataset = new FlatXmlDataSetBuilder()
+            .setColumnSensing(true)
+            .build(getClass().getClassLoader()
+                .getResourceAsStream(testDatasetName));
+
+        IDatabaseConnection con = new DatabaseConnection(ds.getConnection());
+        try {
+            DatabaseConfig config = con.getConfig();
+            config.setProperty(
+                "http://www.dbunit.org/features/qualifiedTableNames", true);
+            config.setProperty(
+                DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
+                new PostgresqlDataTypeFactory());
+            op.execute(con, dataset);
+        } finally {
+            con.close();
+        }
+    }
+
+    private void cleanup() throws SQLException, IOException {
+        String cleanupScript = "datasets/cleanup.sql";
+        String sql;
+        //Read cleanup script
+        try (InputStream is = getClass().getClassLoader()
+                .getResourceAsStream(cleanupScript)) {
+            if (is == null) {
+                throw new IOException(
+                    "Could not find cleanup script: " + cleanupScript);
+            }
+            try (InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader reader = new BufferedReader(isr)) {
+                sql = reader.lines().collect(
+                    Collectors.joining(System.lineSeparator()));
+            }
+        }
+        Connection con = ds.getConnection();
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.execute();
     }
 }

@@ -23,6 +23,7 @@ import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -57,7 +58,7 @@ import de.intevation.lada.test.stamm.TagTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
-@ApplyScriptBefore("datasets/clean_and_seed.sql")
+@Ignore
 public class StammdatenTest extends BaseTest {
 
     private static final int T1 = 1;

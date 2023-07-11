@@ -59,7 +59,7 @@ public class MessprogrammTest extends ServiceTest {
 
         //Prepare expected sample object
         builder = Json.createObjectBuilder();
-        builder.add("mpgId", 1000);
+        builder.add("mpgId", 999);
         expectedSample = builder.build();
 
         // Load object to test POST request
@@ -72,10 +72,10 @@ public class MessprogrammTest extends ServiceTest {
      */
     public final void execute() {
         get("mpg", "rest/mpg", Status.METHOD_NOT_ALLOWED);
-        getById("mpg", "rest/mpg/1000", expectedById);
+        getById("mpg", "rest/mpg/999", expectedById);
         update(
             "mpg",
-            "rest/mpg/1000",
+            "rest/mpg/999",
             "envDescripDisplay",
             "D: 50 90 01 06 02 05 00 00 00 00 00 00",
             "D: 50 90 01 06 02 05 00 00 00 00 00 01");
@@ -83,14 +83,14 @@ public class MessprogrammTest extends ServiceTest {
         // Ensure invalid envDescripDisplay is rejected
         update(
             "mpg",
-            "rest/mpg/1000",
+            "rest/mpg/999",
             "envDescripDisplay",
             "D: 50 90 01 06 02 05 00 00 00 00 00 01",
             "D: ",
             Status.BAD_REQUEST);
 
         //Check if referencing probe still has an mpgId
-        getById("mpg->sample", "rest/sample/1000", expectedSample);
+        getById("mpg->sample", "rest/sample/999", expectedSample);
         JsonObject created =
             create("mpg", "rest/mpg", create);
         delete(

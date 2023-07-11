@@ -229,6 +229,9 @@
                         <ignoredUnusedDeclaredDependency>
                             org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven
                         </ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>
+                            net.postgis:postgis-jdbc
+                        </ignoredUnusedDeclaredDependency>
                     </ignoredUnusedDeclaredDependencies>
                 </configuration>
             </plugin>
@@ -444,6 +447,19 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.dbunit</groupId>
+            <artifactId>dbunit</artifactId>
+            <version>2.7.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <!-- Keep version in sync with package in base image -->
+            <version>42.2.15</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
             <artifactId>arquillian-persistence-api</artifactId>
             <version>${arquillian.persistence.version}</version>
@@ -482,8 +498,13 @@
             <version>1.9</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>net.postgis</groupId>
+            <artifactId>postgis-jdbc</artifactId>
+            <version>2021.1.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-
     <profiles>
         <profile>
             <id>remote-test</id>

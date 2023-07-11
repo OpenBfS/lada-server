@@ -16,25 +16,11 @@ import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
-import org.jboss.arquillian.persistence.ApplyScriptBefore;
-import org.jboss.arquillian.persistence.Cleanup;
-import org.jboss.arquillian.persistence.TestExecutionPhase;
-import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.intevation.lada.model.lada.CommMeasm;
-import de.intevation.lada.model.lada.CommSample;
-import de.intevation.lada.model.lada.Geolocat;
-import de.intevation.lada.model.lada.GeolocatMpg;
-import de.intevation.lada.model.lada.MeasVal;
-import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.lada.Mpg;
-import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.test.land.GeolocatMpgTest;
 import de.intevation.lada.test.land.KommentarMTest;
 import de.intevation.lada.test.land.KommentarPTest;
@@ -57,7 +43,6 @@ import de.intevation.lada.test.land.ZusatzwertTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
-@ApplyScriptBefore("datasets/clean_and_seed.sql")
 public class LandTest extends BaseTest {
 
     private static final int ID10000 = 10000;
@@ -122,6 +107,8 @@ public class LandTest extends BaseTest {
         geolocatMpgTest = new GeolocatMpgTest();
         timestampTest = new TimestampTest();
         verboseLogging = false;
+
+        testDatasetName = "datasets/dbUnit_lada.xml";
     }
 
     /**
@@ -140,10 +127,8 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T2)
     @RunAsClient
-    public final void testProbe(@ArquillianResource URL baseUrl)
-    throws Exception {
+    public final void testProbe(@ArquillianResource URL baseUrl) {
         probeTest.init(this.client, baseUrl, testProtocol);
         probeTest.execute();
     }
@@ -154,10 +139,8 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T4)
     @RunAsClient
-    public final void testKommentarP(@ArquillianResource URL baseUrl)
-    throws Exception {
+    public final void testKommentarP(@ArquillianResource URL baseUrl) {
         pkommentarTest.init(this.client, baseUrl, testProtocol);
         pkommentarTest.execute();
     }
@@ -287,181 +270,6 @@ public class LandTest extends BaseTest {
         queryTest.execute();
     }
 
-    /*------ Database operations ------*/
-
-    /**
-     * Insert a probe object into the database.
-     * @throws Exception that can occur during the test.
-     */
-    @Test
-    @InSequence(T1)
-    @UsingDataSet("datasets/dbUnit_probe.json")
-    @Cleanup(phase = TestExecutionPhase.NONE)
-    public final void prepareDatabaseProbe() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("database");
-        protocol.setType("insert probe");
-        protocol.addInfo("database", "Insert Sample into database");
-        testProtocol.add(protocol);
-        Sample probe = em.find(Sample.class, ID1000);
-        Assert.assertNotNull(probe);
-        protocol.setPassed(true);
-    }
-
-    /**
-     * Insert a probe kommentar into the database.
-     * @throws Exception that can occur during the test.
-     */
-    @Test
-    @InSequence(T3)
-    @UsingDataSet("datasets/dbUnit_probe.json")
-    @Cleanup(phase = TestExecutionPhase.NONE)
-    public final void prepareDatabaseKommentarP() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("database");
-        protocol.setType("insert kommentar_p");
-        protocol.addInfo("database", "Insert KommentarP into database");
-        testProtocol.add(protocol);
-        CommSample kommentar = em.find(CommSample.class, ID1000);
-        Assert.assertNotNull(kommentar);
-        protocol.setPassed(true);
-    }
-
-    /**
-     * Insert a ortszuordnung into the database.
-     * @throws Exception that can occur during the test.
-     */
-    @Test
-    @InSequence(T5)
-    @UsingDataSet("datasets/dbUnit_probe.json")
-    @Cleanup(phase = TestExecutionPhase.NONE)
-    public final void prepareDatabaseOrtszuordnung() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("database");
-        protocol.setType("insert ortszuordnung");
-        protocol.addInfo("database", "Insert Ortszuordnung into database");
-        testProtocol.add(protocol);
-        Geolocat ortszuordnung = em.find(Geolocat.class, ID1000);
-        Assert.assertNotNull(ortszuordnung);
-        protocol.setPassed(true);
-    }
-
-    /**
-     * Insert a zusatzwert into the database.
-     * @throws Exception that can occur during the test.
-     */
-    @Test
-    @InSequence(T7)
-    @UsingDataSet("datasets/dbUnit_probe.json")
-    @Cleanup(phase = TestExecutionPhase.NONE)
-    public final void prepareDatabaseZusatzwert() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("database");
-        protocol.setType("insert zusatzwert");
-        protocol.addInfo("database", "Insert Zusatzwert into database");
-        testProtocol.add(protocol);
-        SampleSpecifMeasVal zusatzwert = em.find(SampleSpecifMeasVal.class, ID1000);
-        Assert.assertNotNull(zusatzwert);
-        protocol.setPassed(true);
-    }
-
-    /**
-     * Insert a messung object into the database.
-     * @throws Exception that can occur during the test.
-     */
-    @Test
-    @InSequence(T9)
-    @UsingDataSet("datasets/dbUnit_probe.json")
-    @Cleanup(phase = TestExecutionPhase.NONE)
-    public final void prepareDatabaseMessung() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("database");
-        protocol.setType("insert messung");
-        protocol.addInfo("database", "Insert Messung into database");
-        testProtocol.add(protocol);
-        Measm messung = em.find(Measm.class, ID1200);
-        messung.setStatus(ID1000);
-        em.merge(messung);
-        Assert.assertNotNull(messung);
-        protocol.setPassed(true);
-    }
-
-    /**
-     * Insert a messungs kommentar into the database.
-     * @throws Exception that can occur during the test.
-     */
-    @Test
-    @InSequence(T11)
-    @UsingDataSet("datasets/dbUnit_probe.json")
-    @Cleanup(phase = TestExecutionPhase.NONE)
-    public final void prepareDatabaseKommentarM() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("database");
-        protocol.setType("insert kommentar_m");
-        protocol.addInfo("database", "Insert KommentarM into database");
-        testProtocol.add(protocol);
-        CommMeasm kommentar = em.find(CommMeasm.class, ID1000);
-        Assert.assertNotNull(kommentar);
-        protocol.setPassed(true);
-    }
-
-    /**
-     * Insert a messwert into the database.
-     * @throws Exception that can occur during the test.
-     */
-    @Test
-    @InSequence(T13)
-    @UsingDataSet("datasets/dbUnit_probe.json")
-    @Cleanup(phase = TestExecutionPhase.NONE)
-    public final void prepareDatabaseMesswert() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("database");
-        protocol.setType("insert messwert");
-        protocol.addInfo("database", "Insert Messwert into database");
-        testProtocol.add(protocol);
-        MeasVal messwert = em.find(MeasVal.class, ID10000);
-        Assert.assertNotNull(messwert);
-        protocol.setPassed(true);
-    }
-
-    /**
-     * Insert a messprogramm into the database.
-     * @throws Exception that can occur during the test.
-     */
-    @Test
-    @InSequence(T17)
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
-    @UsingDataSet("datasets/dbUnit_messprogramm.json")
-    @Cleanup(phase = TestExecutionPhase.NONE)
-    public final void prepareDatabaseMessprogramm() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("database");
-        protocol.setType("insert messprogramm");
-        protocol.addInfo("database", "Insert Messprogramm into database");
-        testProtocol.add(protocol);
-        Mpg messprogramm = em.find(Mpg.class, ID1000);
-        Assert.assertNotNull(messprogramm);
-        protocol.setPassed(true);
-    }
-
-    /**
-     * Test probe generation from a messprogramm record.
-     */
-    @Test
-    @UsingDataSet("datasets/dbUnit_pep_gen.json")
-    @InSequence(T21)
-    @Cleanup(phase = TestExecutionPhase.NONE)
-    public final void prepareTestPepGeneration() {
-        Protocol protocol = new Protocol();
-        protocol.setName("database");
-        protocol.setType("insert messprogramm");
-        protocol.addInfo("database", "Insert Messprogramm into database");
-        testProtocol.add(protocol);
-        Mpg messprogramm = em.find(Mpg.class, ID1000);
-        Assert.assertNotNull(messprogramm);
-        protocol.setPassed(true);
-    }
-
     /**
      * Test probe generation from a messprogramm record via url.
      * @param baseUrl The server url used for the request.
@@ -474,24 +282,6 @@ public class LandTest extends BaseTest {
             throws Exception {
         pepGenerationTest.init(this.client, baseUrl, testProtocol);
         pepGenerationTest.execute();
-    }
-
-    /**
-     * Prepare geolocat mpg tests.
-     */
-    @Test
-    @UsingDataSet("datasets/dbUnit_messprogramm.json")
-    @InSequence(T23)
-    @Cleanup(phase = TestExecutionPhase.NONE)
-    public final void prepareGeolocatMpgTest() {
-        Protocol protocol = new Protocol();
-        protocol.setName("database");
-        protocol.setType("insert geolocat mpg");
-        protocol.addInfo("database", "Insert geolocat mpg into database");
-        testProtocol.add(protocol);
-        GeolocatMpg geolocat = em.find(GeolocatMpg.class, ID1000);
-        Assert.assertNotNull(geolocat);
-        protocol.setPassed(true);
     }
 
     /**

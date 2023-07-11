@@ -1,6 +1,6 @@
 {
     "lada.mpg": [{
-        "id": 1000,
+        "id": 999,
         "is_test": false,
         "meas_facil_id": "06010",
         "appr_lab_id": "06010",
@@ -18,7 +18,7 @@
     }],
     "lada.mpg_mmt_mp": [{
         "id": 1000,
-        "mpg_id": 1000,
+        "mpg_id": 999,
         "mmt_id": "A3",
         "last_mod": "2015-03-01 12:00:00"
     }],
@@ -28,7 +28,7 @@
     }],
     "lada.geolocat_mpg": [{
         "id": 1000,
-        "mpg_id": 1000,
+        "mpg_id": 999,
         "site_id": 1000,
         "add_site_text": "Test",
         "last_mod": "2012-05-07 09:00:00"
@@ -41,7 +41,7 @@
         "env_descrip_name": "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet",
         "env_descrip_display": "D: 59 04 01 00 05 05 01 02 00 00 00 00",
         "meas_facil_id": "06010",
-        "mpg_id": 1000,
+        "mpg_id": 999,
         "appr_lab_id": "06010",
         "sample_start_date": "2012-05-03 13:07:00",
         "sample_meth_id": 1,

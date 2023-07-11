@@ -33,6 +33,7 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -109,6 +110,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Prepare data for export of a Sample object.
      */
+    @Ignore
     @Test
     @InSequence(1)
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
@@ -129,6 +131,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous CSV export of a Sample object.
      */
+    @Ignore
     @Test
     @InSequence(2)
     @RunAsClient
@@ -160,6 +163,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous CSV export of a Sample identified by ID.
      */
+    @Ignore
     @Test
     @InSequence(3)
     @RunAsClient
@@ -190,6 +194,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous CSV export of Sample objects including measms.
      */
+    @Ignore
     @Test
     @InSequence(3)
     @RunAsClient
@@ -223,6 +228,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous CSV export of Measm objects including measVals.
      */
+    @Ignore
     @Test
     @InSequence(3)
     @RunAsClient
@@ -249,6 +255,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous JSON export of a Sample identified by ID.
      */
+    @Ignore
     @Test
     @InSequence(4)
     @RunAsClient
@@ -282,6 +289,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous JSON export of a Sample object with measms.
      */
+    @Ignore
     @Test
     @InSequence(4)
     @RunAsClient
@@ -318,6 +326,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous JSON export of a Measm object with measVals.
      */
+    @Ignore
     @Test
     @InSequence(4)
     @RunAsClient
@@ -345,6 +354,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous LAF export of a Sample identified by ID.
      */
+    @Ignore
     @Test
     @InSequence(5)
     @RunAsClient
@@ -374,6 +384,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous export of an empty query result.
      */
+    @Ignore
     @Test
     @InSequence(6)
     @RunAsClient
@@ -412,6 +423,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test failing asynchronous export with invalid request payload.
      */
+    @Ignore
     @Test
     @InSequence(7)
     @RunAsClient

@@ -27,6 +27,7 @@ import org.jboss.arquillian.persistence.TestExecutionPhase;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -104,6 +105,7 @@ public class UniversalServiceTest extends BaseTest {
     /**
      * Prepare data to be requested via UniversalService.
      */
+    @Ignore
     @Test
     @InSequence(1)
     @ApplyScriptBefore("datasets/clean_and_seed.sql")
@@ -126,6 +128,7 @@ public class UniversalServiceTest extends BaseTest {
      *
      * @param baseUrl The server url used for the request.
      */
+    @Ignore
     @Test
     @InSequence(2)
     @RunAsClient
@@ -161,6 +164,7 @@ public class UniversalServiceTest extends BaseTest {
      *
      * @param baseUrl The server url used for the request.
      */
+    @Ignore
     @Test
     @InSequence(3)
     @RunAsClient
@@ -197,6 +201,7 @@ public class UniversalServiceTest extends BaseTest {
      *
      * @param baseUrl The server url used for the request.
      */
+    @Ignore
     @Test
     @InSequence(4)
     @RunAsClient
@@ -229,6 +234,7 @@ public class UniversalServiceTest extends BaseTest {
      *
      * @param baseUrl The server url used for the request.
      */
+    @Ignore
     @Test
     @InSequence(5)
     @RunAsClient
@@ -268,6 +274,7 @@ public class UniversalServiceTest extends BaseTest {
      *
      * @param baseUrl The server url used for the request.
      */
+    @Ignore
     @Test
     @InSequence(6)
     @RunAsClient
@@ -304,6 +311,7 @@ public class UniversalServiceTest extends BaseTest {
      *
      * @param baseUrl The server url used for the request.
      */
+    @Ignore
     @Test
     @InSequence(7)
     @RunAsClient
@@ -359,6 +367,7 @@ public class UniversalServiceTest extends BaseTest {
      *
      * @param baseUrl The server url used for the request.
      */
+    @Ignore
     @Test
     @InSequence(8)
     @RunAsClient

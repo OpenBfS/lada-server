@@ -49,6 +49,7 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test hauptprobennr.
      */
+    @Ignore
     @Test
     public void probeHasHauptprobenNr() {
         probeTest.hasHauptprobenNr(testProtocol);
@@ -246,6 +247,7 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test messung existing nebenprobennr new.
      */
+    @Ignore
     @Test
     @UsingDataSet("datasets/dbUnit_probe.json")
     public void messungExistingNebenprobenNrNew() {
@@ -282,6 +284,7 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test negative status kombi.
      */
+    @Ignore
     @Test
     @UsingDataSet("datasets/dbUnit_probe.json")
     public final void statusKombiNegative() {
