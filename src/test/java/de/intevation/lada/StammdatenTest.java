@@ -199,7 +199,6 @@ public class StammdatenTest extends BaseTest {
      * @param baseUrl The server url used for the request.
      */
     @Test
-    @Ignore
     @RunAsClient
     public final void testMessgroesseById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
@@ -564,7 +563,6 @@ public class StammdatenTest extends BaseTest {
      * @param baseUrl The server url used for the request
      */
     @Test
-    @Ignore
     @RunAsClient
     public final void testEnvSpecifMpGetById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);
@@ -598,7 +596,6 @@ public class StammdatenTest extends BaseTest {
      * @param baseUrl The server url used for the request
      */
     @Test
-    @Ignore
     @RunAsClient
     public final void testReiAgGrById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl, testProtocol);

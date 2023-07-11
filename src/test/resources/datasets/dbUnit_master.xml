@@ -65,6 +65,18 @@
         name = "Volumenstrom"
         ext_id = "VOLSTR"
     />
+    <master.measd id = "56" name = "Mangan" />
+    <master.rei_ag_gr
+        id = "101"
+        name = "name"
+        descr = "descr"
+    />
+    <master.env_medium id = "A6" name = "Umweltbereich für test" />
+    <master.env_specif_mp
+        id = "101"
+        sample_specif_id = "A74"
+        env_medium_id = "A6"
+    />
     <!-- Master data-->
     <!-- Dataset creator data-->
     <master.dataset_creator
