@@ -44,10 +44,6 @@ import de.intevation.lada.test.land.ZusatzwertTest;
 @RunWith(Arquillian.class)
 public class LandTest extends BaseTest {
 
-    private static final int ID10000 = 10000;
-    private static final int ID1200 = 1200;
-    private static final int ID1000 = 1000;
-
     private static Logger logger = Logger.getLogger(StammdatenTest.class);
 
     @PersistenceContext
