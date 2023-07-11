@@ -17,7 +17,6 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -131,7 +130,6 @@ public class StammdatenTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @Ignore
     @RunAsClient
     public final void testOrt(@ArquillianResource URL baseUrl)
     throws Exception {

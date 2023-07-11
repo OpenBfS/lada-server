@@ -51,7 +51,9 @@
         is_munic = "true"
         is_rural_dist = "true"
         is_gov_dist = "false"
+        geom_center = "POINT(32487017 5519769)"
     />
+    <master.spat_ref_sys id = "4" />
     <master.spat_ref_sys id = "5" />
     <master.site_class id = "1" />
     <master.regulation id = "2" />
