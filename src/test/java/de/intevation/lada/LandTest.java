@@ -15,7 +15,6 @@ import javax.persistence.PersistenceContext;
 import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -48,28 +47,6 @@ public class LandTest extends BaseTest {
     private static final int ID10000 = 10000;
     private static final int ID1200 = 1200;
     private static final int ID1000 = 1000;
-    private static final int T1 = 1;
-    private static final int T2 = 2;
-    private static final int T3 = 3;
-    private static final int T4 = 4;
-    private static final int T5 = 5;
-    private static final int T6 = 6;
-    private static final int T7 = 7;
-    private static final int T8 = 8;
-    private static final int T9 = 9;
-    private static final int T10 = 10;
-    private static final int T11 = 11;
-    private static final int T12 = 12;
-    private static final int T13 = 13;
-    private static final int T14 = 14;
-    private static final int T16 = 16;
-    private static final int T17 = 17;
-    private static final int T18 = 18;
-    private static final int T20 = 20;
-    private static final int T21 = 21;
-    private static final int T22 = 22;
-    private static final int T23 = 23;
-    private static final int T24 = 24;
 
     private static Logger logger = Logger.getLogger(StammdatenTest.class);
 
@@ -151,7 +128,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T6)
     @RunAsClient
     public final void testOrtszuordnung(@ArquillianResource URL baseUrl)
     throws Exception {
@@ -165,7 +141,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T8)
     @RunAsClient
     public final void testZusatzwert(@ArquillianResource URL baseUrl)
     throws Exception {
@@ -178,7 +153,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T10)
     @RunAsClient
     public final void testMessung(@ArquillianResource URL baseUrl)
     throws Exception {
@@ -192,7 +166,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T12)
     @RunAsClient
     public final void testKommentarM(@ArquillianResource URL baseUrl)
     throws Exception {
@@ -206,7 +179,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T14)
     @RunAsClient
     public final void testMesswert(@ArquillianResource URL baseUrl)
     throws Exception {
@@ -220,7 +192,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T16)
     @RunAsClient
     public final void testStatus(@ArquillianResource URL baseUrl)
     throws Exception {
@@ -234,7 +205,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T18)
     @RunAsClient
     public final void testMessprogramm(@ArquillianResource URL baseUrl)
     throws Exception {
@@ -248,7 +218,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T18)
     @RunAsClient
     public final void testMessprogrammMmt(@ArquillianResource URL baseUrl)
     throws Exception {
@@ -262,7 +231,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T20)
     @RunAsClient
     public final void testQuery(@ArquillianResource URL baseUrl)
     throws Exception {
@@ -276,7 +244,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T22)
     @RunAsClient
     public final void testPepGeneration(@ArquillianResource URL baseUrl)
             throws Exception {
@@ -290,7 +257,6 @@ public class LandTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T24)
     @RunAsClient
     public final void testGeolocatMpg(@ArquillianResource URL baseUrl)
             throws Exception {
