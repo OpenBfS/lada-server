@@ -382,7 +382,7 @@ public class LafObjectMapper {
             }
             if (newProbe != null) {
                 importProbeIds.add(newProbe.getId());
-            }  else if (probe != null) {
+            } else if (probe != null) {
                 importProbeIds.add(probe.getId());
             }
         } catch (InvalidTargetObjectTypeException e) {
@@ -998,18 +998,13 @@ public class LafObjectMapper {
             attribute = attributes.get("PZS_ID");
             isId = true;
         }
+
         attribute = this.configMapper.applyConfigByAttribute(
             "ZUSATZWERT", attribute);
-        QueryBuilder<SampleSpecif> builder =
-            repository.queryBuilder(SampleSpecif.class);
-        if (isId) {
-            builder.and("id", attribute);
-        } else {
-            builder.and("extId", attribute);
-        }
+        QueryBuilder<SampleSpecif> builder = repository
+            .queryBuilder(SampleSpecif.class)
+            .and(isId ? "id" : "extId", attribute);
         List<SampleSpecif> zusatz = repository.filterPlain(builder.getQuery());
-
-        configMapper.applyConfigs(zusatzwert);
         if (zusatz == null || zusatz.isEmpty()) {
             currentWarnings.add(new ReportItem(
                     isId ? "PROBENZUSATZBESCHREIBUNG" : "PZB_S",
@@ -1018,6 +1013,8 @@ public class LafObjectMapper {
             return null;
         }
         zusatzwert.setSampleSpecifId(zusatz.get(0).getId());
+
+        configMapper.applyConfigs(zusatzwert);
         return zusatzwert;
     }
 
@@ -1046,7 +1043,6 @@ public class LafObjectMapper {
         } else if (attributes.containsKey("MESSGROESSE")) {
             String attribute = this.configMapper.applyConfigByAttribute(
                 "MESSGROESSE", attributes.get("MESSGROESSE"));
-            QueryBuilder<Measd> builder = repository.queryBuilder(Measd.class);
             // accept various nuclide notations (e.g.
             // "Cs-134", "CS 134", "Cs134", "CS134", ...)
             String messgroesseString = attribute;
@@ -1059,7 +1055,8 @@ public class LafObjectMapper {
                         .toLowerCase();
             }
 
-            builder.and("name", messgroesseString);
+            QueryBuilder<Measd> builder = repository.queryBuilder(Measd.class)
+                .and("name", messgroesseString);
             List<Measd> groesse = repository.filterPlain(builder.getQuery());
             if (groesse == null || groesse.isEmpty()) {
                 currentWarnings.add(
