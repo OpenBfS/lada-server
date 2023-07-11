@@ -1,0 +1,684 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <!-- authentication data -->
+    <master.network id = "06" />
+    <master.network id = "01" />
+    <master.meas_facil id = "06010" network_id = "06" />
+    <master.meas_facil id = "01010" network_id = "01" />
+    <master.auth
+        ldap_gr = "mst_06_status"
+        network_id = "06"
+        meas_facil_id = "06010"
+        auth_funct_id = "1" />
+    <master.auth
+        ldap_gr = "land_06_stamm"
+        network_id = "06"
+        meas_facil_id = "06010"
+        auth_funct_id = "4"
+    />
+    <master.lada_user
+        id = "2"
+        name = "testeins"
+    />
+    <!-- Initial data-->
+    <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
+    <master.regulation id = "9" />
+    <master.sampler
+        id = "726"
+        network_id = "06"
+        ext_id = "prn"
+        descr = "test"
+        short_text = "test"
+    />
+    <master.meas_unit id = "207" />
+    <master.meas_unit id = "208" />
+    <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "208" />
+    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
+    <master.mmt id = "A3" />
+    <master.state
+        id = "0"
+        ctry = "Deutschland"
+        ctry_orig_id = "0"
+        iso_3166 = "DE"
+        coord_x_ext = "123123"
+        coord_y_ext = "321321"
+    />
+    <master.admin_unit
+        id = "11000000"
+        state_id = "11000000"
+        name = "Berlin"
+        is_state = "true"
+        is_munic = "true"
+        is_rural_dist = "true"
+        is_gov_dist = "false"
+    />
+    <master.spat_ref_sys id = "5" />
+    <master.site_class id = "1" />
+    <master.regulation id = "2" />
+    <master.sample_specif
+        id = "A74"
+        name = "Volumenstrom"
+        ext_id = "VOLSTR"
+    />
+    <master.sample_specif
+        id = "A75"
+        name = "Volumenstrom"
+        ext_id = "VOLSTR"
+    />
+    <!-- Master data-->
+    <!-- Dataset creator data-->
+    <master.dataset_creator
+        id = "1000"
+        descr = "Testbezeichnung"
+        network_id = "06"
+        meas_facil_id = "06010"
+        ext_id = "06"
+    />
+    <!-- Sampler data-->
+    <master.sampler
+        id = "1000"
+        network_id = "06"
+        ext_id = "AV6"
+        editor = "Testbearbeiter"
+        comm = "Testbemerkung"
+        inst = "Testbetrieb"
+        descr = "Testbezeichnung"
+        short_text = "Testkurz"
+        city = "Testhausen"
+        zip = "12345"
+        street = "Teststrasse"
+        phone = "01100011"
+        route_planning = "kpt"
+        type = "a"
+        last_mod = "2015-03-01 12:00:00"
+    />
+    <!-- Mpg categ-->
+    <master.mpg_categ
+        id = "1000"
+        network_id = "06"
+        ext_id = "mp2"
+        name = "Testbezeichnung"
+        last_mod = "2015-03-01 12:00:00"
+    />
+    <!-- Site data-->
+    <master.site
+        id = "1000"
+        network_id = "06"
+        ext_id = "D_00191"
+        long_text = "Langer Text"
+        state_id = "0"
+        admin_unit_id = "11000000"
+        is_fuzzy = "true"
+        spat_ref_sys_id = "5"
+        coord_x_ext = "32487017"
+        coord_y_ext = "5519769"
+        last_mod = "2015-03-01 12:00:00"
+        geom = "SRID=4326;POINT(49.83021 8.81948)"
+        site_class_id = "1"
+        short_text = "kurz"
+        rei_report_text = "bericht"
+    />
+    <!-- Env descrip data-->
+    <master.env_descrip
+        id = "1000"
+    />
+    <!--Pep gen data-->
+    <lada.mpg
+        id = "1000"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "J"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "210"
+        sample_pd_offset = "0"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1100"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "J"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "365"
+        sample_pd_offset = "59"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1001"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "H"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "150"
+        sample_pd_offset = "0"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "150"
+    />
+    <lada.mpg
+        id = "1002"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "Q"
+        sample_pd_start_date = "36"
+        sample_pd_end_date = "92"
+        sample_pd_offset = "0"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1003"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "2"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "M"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "31"
+        sample_pd_offset = "0"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1103"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "2"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "M"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "31"
+        sample_pd_offset = "28"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1004"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "2"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "W4"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "28"
+        sample_pd_offset = "0"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1005"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "2"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "W2"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "14"
+        sample_pd_offset = "0"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1006"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "W"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "7"
+        sample_pd_offset = "0"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1007"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "T"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "1"
+        sample_pd_offset = "0"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1008"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "M"
+        sample_pd_start_date = "10"
+        sample_pd_end_date = "20"
+        sample_pd_offset = "5"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1009"
+        is_test = "false"
+        meas_facil_id = "01010"
+        appr_lab_id = "01010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "M"
+        sample_pd_start_date = "10"
+        sample_pd_end_date = "20"
+        sample_pd_offset = "5"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1010"
+        is_test = "false"
+        meas_facil_id = "01010"
+        appr_lab_id = "01010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "M"
+        sample_pd_start_date = "10"
+        sample_pd_end_date = "20"
+        sample_pd_offset = "5"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1011"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "M"
+        sample_pd_start_date = "10"
+        sample_pd_end_date = "20"
+        sample_pd_offset = "5"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1012"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "T"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "1"
+        sample_pd_offset = "0"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1013"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "M"
+        sample_pd_start_date = "10"
+        sample_pd_end_date = "20"
+        sample_pd_offset = "5"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1014"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "T"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "1"
+        sample_pd_offset = "0"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1015"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "H"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "184"
+        sample_pd_offset = "59"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1016"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "Q"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "92"
+        sample_pd_offset = "59"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1017"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "2"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "W4"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "28"
+        sample_pd_offset = "5"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1018"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "2"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "W2"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "14"
+        sample_pd_offset = "5"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1019"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "W"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "7"
+        sample_pd_offset = "5"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg
+        id = "1020"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "9"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "J"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "210"
+        sample_pd_offset = "0"
+        last_mod = "2015-03-01 12:00:00"
+        valid_start_date = "1"
+        valid_end_date = "365"
+    />
+    <lada.mpg_sample_specif
+        sample_specif_id = "A74"
+        mpg_id = "1020"
+    />
+    <lada.mpg_sample_specif
+        sample_specif_id = "A75"
+        mpg_id = "1020"
+    />
+    <!--Spat ref sys-->
+    <master.spat_ref_sys
+        id = "6"
+        name = "test"
+        idf_geo_key = "t"
+    />
+    <!--Tag link data-->
+    <lada.sample
+        id = "1901"
+        ext_id = "T001"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        last_mod = "2012-05-05 11:12:00"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "1"
+        is_test = "false"
+        env_medium_id = "L6"
+        main_sample_id = "120510002"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+        tree_mod = "2012-05-08 10:00:00"
+    />
+    <lada.measm
+        id = "1801"
+        sample_id = "1901"
+        min_sample_id = "T100"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        measm_start_date = "2012-05-06 14:00:00"
+        is_completed = "false"
+        last_mod = "2012-05-08 12:00:00"
+        is_scheduled = "true"
+        tree_mod = "2012-05-09 12:00:00"
+    />
+    <lada.measm
+        id = "1802"
+        sample_id = "1901"
+        min_sample_id = "T101"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        measm_start_date = "2012-05-06 14:00:00"
+        is_completed = "false"
+        last_mod = "2012-05-08 12:00:00"
+        is_scheduled = "true"
+        tree_mod = "2012-05-09 12:00:00"
+    />
+    <master.tag
+        id = "101"
+        name = "probeTag"
+        tag_type = "mst"
+        meas_facil_id = "06010"
+        network_id = "06"
+        val_until = "2000-01-01 00:00:00.0"
+        lada_user_id = "2"
+    />
+    <master.tag
+        id = "102"
+        name = "messungTag"
+        tag_type = "mst"
+        meas_facil_id = "06010"
+        network_id = "06"
+        val_until = "2000-01-01 00:00:00.0"
+        lada_user_id = "2"
+    />
+    <master.tag
+        id = "103"
+        name = "assignedTag"
+        tag_type = "mst"
+        meas_facil_id = "06010"
+        network_id = "06"
+        val_until = "2000-01-01 00:00:00.0"
+        lada_user_id = "2"
+    />
+    <lada.tag_link
+        sample_id = "1901"
+        tag_id = "103"
+    />
+    <!--Site class data-->
+    <master.site_class
+        id = "101"
+        ext_id = "123"
+        name = "name-101"
+    />
+    <master.site_class
+        id = "102"
+        ext_id = "123"
+        name = "name-102"
+    />
+    <!--Type regulation data-->
+    <master.type_regulation
+        id = "A"
+        name = "type_regulation-A"
+    />
+    <master.type_regulation
+        id = "B"
+        name = "type_regulation-B"
+    />
+    <!--POI data-->
+    <master.poi
+        id = "A"
+        name = "poi-A"
+    />
+    <master.poi
+        id = "B"
+        name = "poi-B"
+    />
+    <!-- Munic div data-->
+    <master.site
+        id = "1001"
+        network_id = "06"
+        ext_id = "D_00192"
+        long_text = "Langer Text"
+        state_id = "0"
+        admin_unit_id = "11000000"
+        is_fuzzy = "true"
+        spat_ref_sys_id = "5"
+        coord_x_ext = "32487017"
+        coord_y_ext = "5519769"
+        last_mod = "2015-03-01 12:00:00"
+        geom = "SRID=4326;POINT(49.83021 8.81948)"
+        site_class_id = "1"
+        short_text = "kurz"
+        rei_report_text = "bericht"
+    />
+    <master.munic_div
+        id = "1000"
+        network_id = "06"
+        admin_unit_id = "11000000"
+        site_id = "1001"
+        name = "Testname"
+    />
+</dataset>

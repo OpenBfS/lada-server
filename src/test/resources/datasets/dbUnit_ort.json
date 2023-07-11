@@ -2,7 +2,7 @@
     "master.site": [{
         "id": 1000,
         "network_id": "06",
-        "ext_id": "D_ 00191",
+        "ext_id": "D_00191",
         "long_text": "Langer Text",
         "state_id": 0,
         "admin_unit_id": "11000000",
