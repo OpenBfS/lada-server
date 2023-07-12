@@ -32,14 +32,13 @@ import de.intevation.lada.importer.Importer;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.util.auth.UserInfo;
+import de.intevation.lada.util.data.StatusCodes;
 
 /**
  * Importer for the LAF file format.
  */
 @ImportConfig(format = ImportFormat.LAF)
 public class LafImporter implements Importer {
-
-    private static final int ERR673 = 673;
 
     @Inject
     private Logger logger;
@@ -95,14 +94,14 @@ public class LafImporter implements Importer {
                 ReportItem warn = new ReportItem();
                 warn.setKey("UEBERTRAGUNGSFORMAT");
                 warn.setValue("");
-                warn.setCode(ERR673);
+                warn.setCode(StatusCodes.IMP_MISSING_VALUE);
                 parserWarnings.add(warn);
             }
             if (!listener.hasVersion()) {
                 ReportItem warn = new ReportItem();
                 warn.setKey("VERSION");
                 warn.setValue("");
-                warn.setCode(ERR673);
+                warn.setCode(StatusCodes.IMP_MISSING_VALUE);
                 parserWarnings.add(warn);
             }
             if (!errorListener.getErrors().isEmpty()) {

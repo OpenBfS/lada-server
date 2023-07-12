@@ -27,6 +27,7 @@ DELETE FROM measd;
 DELETE FROM mmt;
 DELETE FROM munic_div;
 DELETE FROM dataset_creator;
+DELETE FROM import_conf;
 DELETE FROM meas_facil;
 DELETE FROM sampler;
 DELETE FROM mpg_categ;
@@ -55,8 +56,7 @@ DELETE FROM lada.audit_trail;
 -- minimal master data to make interface tests runnable
 INSERT INTO opr_mode (id, name) VALUES (1, 'Normal-/Routinebetrieb');
 INSERT INTO site_class (id) VALUES (1);
-INSERT INTO regulation (id) VALUES (9);
-INSERT INTO regulation (id) VALUES (2);
+INSERT INTO regulation (id) VALUES (9), (2);
 INSERT INTO meas_unit (id) VALUES (207);
 INSERT INTO meas_unit (id) VALUES (208);
 INSERT INTO unit_convers (from_unit_id, to_unit_id, factor)

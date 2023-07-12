@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.importer.laf;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -36,6 +38,38 @@ public class ImportConfigMapper {
 
     ImportConfigMapper(List<ImportConf> config) {
         this.config = config;
+    }
+
+    /**
+     * Apply configuration with given attribute name to value.
+     *
+     * @param key The configuration attribute name
+     * @param value The value that should be converted or transformed
+     * @return value according to configuration
+     */
+    String applyConfigByAttribute(String key, String value) {
+        String result = value;
+        configs: for (ImportConf cfg: this.config) {
+            if (cfg.getAttribute().equalsIgnoreCase(key)) {
+                for (Action action: Action.values()) {
+                    if (action.name().equals(cfg.getAction().toUpperCase())) {
+                        switch (action) {
+                        case CONVERT:
+                            if (cfg.getFromVal().equals(value)) {
+                                result = cfg.getToVal();
+                            }
+                            continue configs;
+                        case TRANSFORM:
+                            result = transform(value, cfg);
+                            continue configs;
+                        default:
+                            continue configs;
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     void applyConfigs(Sample probe) {
@@ -84,28 +118,16 @@ public class ImportConfigMapper {
                     && action.name().equals(current.getAction().toUpperCase())
                 ) {
                     String attribute = current.getAttribute();
-                    Method getter;
-                    Method setter = null;
+                    PropertyDescriptor beanDesc;
                     try {
-                        getter = clazz.getMethod("get"
-                            + attribute.substring(0, 1).toUpperCase()
-                            + attribute.substring(1));
-                        String methodName = "set"
-                            + attribute.substring(0, 1).toUpperCase()
-                            + attribute.substring(1);
-                        for (Method method : clazz.getMethods()) {
-                            String name = method.getName();
-                            if (!methodName.equals(name)) {
-                                continue;
-                            }
-                            setter = method;
-                            break;
-                        }
-                    } catch (NoSuchMethodException | SecurityException e) {
+                        beanDesc = new PropertyDescriptor(attribute, clazz);
+                    } catch (IntrospectionException e) {
                         logger.warn(
                             "attribute " + attribute + " does not exist");
                         continue;
                     }
+                    Method getter = beanDesc.getReadMethod();
+                    Method setter = beanDesc.getWriteMethod();
                     try {
                         Object value = getter.invoke(object);
                         switch (action) {
@@ -146,15 +168,9 @@ public class ImportConfigMapper {
                                     "Attribute " + attribute + " is not set");
                                 return;
                             }
-                            final int radix = 16;
-                            char from = (char) Integer.parseInt(
-                                current.getFromVal(), radix);
-                            char to = (char) Integer.parseInt(
-                                current.getToVal(), radix);
-                            value = value.toString().replaceAll(
-                                "[" + String.valueOf(from) + "]",
-                                String.valueOf(to));
-                            setter.invoke(object, value);
+                            setter.invoke(
+                                object,
+                                transform(value.toString(), current));
                             break;
                         default:
                             throw new IllegalArgumentException(
@@ -169,5 +185,14 @@ public class ImportConfigMapper {
                 }
             }
         }
+    }
+
+    private String transform(String value, ImportConf cfg) {
+        final int radix = 16;
+        char from = (char) Integer.parseInt(cfg.getFromVal(), radix);
+        char to = (char) Integer.parseInt(cfg.getToVal(), radix);
+        return value.replaceAll(
+            "[" + String.valueOf(from) + "]",
+            String.valueOf(to));
     }
 }
