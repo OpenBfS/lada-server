@@ -360,6 +360,7 @@ public class JsonExporter implements Exporter {
             );
             probe.put("samplerExtId", probenehmer.getExtId());
             probe.put("samplerDescr", probenehmer.getDescr());
+            probe.put("samplerNetworkId", probenehmer.getNetworkId());
             probe.put(
                 "samplerShortText", probenehmer.getShortText());
         }
