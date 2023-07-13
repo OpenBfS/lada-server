@@ -9,12 +9,9 @@ package de.intevation.lada;
 
 import javax.inject.Inject;
 
-import org.jboss.arquillian.persistence.ApplyScriptBefore;
-import org.jboss.arquillian.persistence.Cleanup;
-import org.jboss.arquillian.persistence.TestExecutionPhase;
-import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.logging.Logger;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,8 +27,6 @@ import de.intevation.lada.test.validator.StatusTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
-@ApplyScriptBefore("datasets/clean_and_seed.sql")
-@Cleanup(phase = TestExecutionPhase.NONE)
 // TODO make tests independent of test data which do not exist anymore
 public class ValidatorTest extends BaseTest {
 
@@ -46,11 +41,15 @@ public class ValidatorTest extends BaseTest {
     @Inject
     private StatusTest statusTest;
 
+    public ValidatorTest() {
+        this.testDatasetName = "datasets/dbUnit_validator.xml";
+    }
+
     /**
      * Test hauptprobennr.
      */
-    @Ignore
     @Test
+    @Transactional
     public void probeHasHauptprobenNr() {
         probeTest.hasHauptprobenNr(testProtocol);
     }
@@ -60,6 +59,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void probeHasNoHauptprobenNr() {
         probeTest.hasNoHauptprobenNr(testProtocol);
     }
@@ -69,6 +69,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void probeExistingHauptprobenNrNew() {
         probeTest.existingHauptprobenNrNew(testProtocol);
     }
@@ -78,6 +79,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void probeUniqueHauptprobenNrNew() {
         probeTest.uniqueHauptprobenNrNew(testProtocol);
     }
@@ -87,6 +89,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void probeExistingHauptprobenNrUpdate() {
         probeTest.existingHauptprobenNrUpdate(testProtocol);
     }
@@ -96,6 +99,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void probeUniqueHauptprobenNrUpdate() {
         probeTest.uniqueHauptprobenNrUpdate(testProtocol);
     }
@@ -105,6 +109,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void probeHasEntnahmeOrt() {
         probeTest.hasEntnahmeOrt(testProtocol);
     }
@@ -114,6 +119,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void probeHasNoEntnahmeOrt() {
         probeTest.hasNoEntnahmeOrt(testProtocol);
     }
@@ -123,6 +129,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void probeHasProbenahmeBegin() {
         probeTest.hasProbeentnahmeBegin(testProtocol);
     }
@@ -132,6 +139,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void probeHasNoProbenahmeBegin() {
         probeTest.hasNoProbeentnahmeBegin(testProtocol);
     }
@@ -141,6 +149,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void probeTimeNoEndProbenahmeBegin() {
         probeTest.timeNoEndProbeentnahmeBegin(testProtocol);
     }
@@ -150,6 +159,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void probeTimeNoBeginProbenahmeBegin() {
         probeTest.timeNoBeginProbeentnahmeBegin(testProtocol);
     }
@@ -159,6 +169,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void probeTimeBeginAfterEndProbenahmeBegin() {
         probeTest.timeBeginAfterEndProbeentnahmeBegin(testProtocol);
     }
@@ -168,6 +179,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void probeTimeBeginFutureProbenahmeBegin() {
         probeTest.timeBeginFutureProbeentnahmeBegin(testProtocol);
     }
@@ -177,6 +189,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void probeHasUmwelt() {
         probeTest.hasUmwelt(testProtocol);
     }
@@ -186,6 +199,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void probeHasNoUmwelt() {
         probeTest.hasNoUmwelt(testProtocol);
     }
@@ -195,6 +209,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void probeHasEmptyUmwelt() {
         probeTest.hasEmptyUmwelt(testProtocol);
     }
@@ -204,6 +219,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void messungHasNebenprobenNr() {
         messungTest.hasNebenprobenNr(testProtocol);
     }
@@ -213,6 +229,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void messungHasNoNebenprobenNr() {
         messungTest.hasNoNebenprobenNr(testProtocol);
     }
@@ -222,6 +239,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void messungHasEmptyNebenprobenNr() {
         messungTest.hasEmptyNebenprobenNr(testProtocol);
     }
@@ -231,6 +249,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void messungUniqueNebenprobenNrNew() {
         messungTest.uniqueNebenprobenNrNew(testProtocol);
     }
@@ -240,6 +259,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void messungUniqueNebenprobenNrUpdate() {
         messungTest.uniqueNebenprobenNrUpdate(testProtocol);
     }
@@ -247,9 +267,8 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test messung existing nebenprobennr new.
      */
-    @Ignore
     @Test
-    @UsingDataSet("datasets/dbUnit_probe.json")
+    @Transactional
     public void messungExistingNebenprobenNrNew() {
         messungTest.existingNebenprobenNrNew(testProtocol);
     }
@@ -259,6 +278,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void messungExistingNebenprobenNrUpdate() {
         messungTest.existingNebenprobenNrUpdate(testProtocol);
     }
@@ -268,6 +288,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void messungHasMesswert() {
         messungTest.hasMesswert(testProtocol);
     }
@@ -277,6 +298,7 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
+    @Transactional
     public void messungHasNoMesswert() {
         messungTest.hasNoMesswert(testProtocol);
     }
@@ -284,9 +306,8 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test negative status kombi.
      */
-    @Ignore
     @Test
-    @UsingDataSet("datasets/dbUnit_probe.json")
+    @Transactional
     public final void statusKombiNegative() {
         statusTest.checkKombiNegative(testProtocol);
     }

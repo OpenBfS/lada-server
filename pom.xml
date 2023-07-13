@@ -464,12 +464,6 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-persistence-api</artifactId>
-            <version>${arquillian.persistence.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
             <artifactId>arquillian-persistence-dbunit</artifactId>
             <version>${arquillian.persistence.version}</version>
             <scope>test</scope>

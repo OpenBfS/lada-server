@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <!--Auth data-->
+    <master.network id = "06" />
+    <master.meas_facil id = "06010" network_id = "06" />
+    <!--Master data-->
+    <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
+    <master.regulation id = "9" />
+    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
+    <master.meas_unit id = "207" />
+    <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "207" />
+    <master.sampler
+        id = "726"
+        network_id = "06"
+        ext_id = "prn"
+        descr = "test"
+        short_text = "test"
+    />
+    <master.mmt id = "A3" />
+    <master.measd id = "56" name = "Mangan" />
+    <master.sample_specif
+        id = "A74"
+        name = "Volumenstrom"
+        ext_id = "VOLSTR"
+    />
+    <master.admin_unit
+        id = "11000000"
+        state_id = "11000000"
+        name = "Berlin"
+        is_state = "true"
+        is_munic = "true"
+        is_rural_dist = "true"
+        is_gov_dist = "false"
+    />
+    <master.spat_ref_sys id = "5" />
+    <master.site_class id = "1" />
+    <master.state
+        id = "0"
+        ctry = "Deutschland"
+        ctry_orig_id = "0"
+        iso_3166 = "DE"
+        coord_x_ext = "123123"
+        coord_y_ext = "312321"
+    />
+    <master.site
+        id = "1000"
+        network_id = "06"
+        ext_id = "D_00191"
+        long_text = "Langer Text"
+        state_id = "0"
+        admin_unit_id = "11000000"
+        is_fuzzy = "true"
+        spat_ref_sys_id = "5"
+        coord_x_ext = "32487017"
+        coord_y_ext = "5519769"
+        last_mod = "2015-03-01 12:00:00"
+        geom = "SRID=4326;POINT(49.83021 8.81948)"
+        site_class_id = "1"
+        short_text = "kurz"
+        rei_report_text = "bericht"
+    />    <!--Sample data-->
+    <lada.sample
+        id = "1000"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        last_mod = "2012-05-05 11:12:00"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "1"
+        is_test = "false"
+        env_medium_id = "L6"
+        main_sample_id = "120510002"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+        tree_mod = "2012-05-08 10:00:00"
+    />
+    <lada.comm_sample
+        id = "1000"
+        sample_id = "1000"
+        date = "2012-05-11 12:01:00"
+        meas_facil_id = "06010"
+        text = "Testkommentar"
+    />
+    <lada.measm
+        id = "1200"
+        sample_id = "1000"
+        min_sample_id = "T100"
+        ext_id = "453"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        measm_start_date = "2012-05-06 14:00:00"
+        is_completed = "false"
+        last_mod = "2012-05-08 12:00:00"
+        is_scheduled = "true"
+        tree_mod = "2012-05-09 12:00:00"
+    />
+    <lada.status_prot
+        id = "1000"
+        meas_facil_id = "06010"
+        date = "2012-05-08 11:00:00"
+        text = "Initialer Status"
+        measm_id = "1200"
+        status_mp_id = "1"
+        tree_mod = "2012-05-09 12:00:00"
+    />
+    <lada.meas_val
+        id = "10000"
+        measm_id = "1200"
+        measd_id = "56"
+        less_than_LOD = "&lt;"
+        error = "3.3"
+        detect_lim = "2.4"
+        meas_unit_id = "207"
+        is_threshold = "false"
+        last_mod = "2012-05-09 09:00:00"
+    />
+    <lada.geolocat
+        id = "1000"
+        sample_id = "1000"
+        site_id = "1000"
+        add_site_text = "Test"
+        last_mod = "2012-05-07 09:00:00"
+    />
+    <lada.sample_specif_meas_val
+        id = "1000"
+        sample_id = "1000"
+        sample_specif_id = "A74"
+        meas_val = "1.8"
+        error = "0.2"
+        last_mod = "2012-05-08 12:00:00"
+        tree_mod = "2012-05-09 12:00:00"
+    />
+    <lada.comm_measm
+        id = "1000"
+        measm_id = "1200"
+        date = "2012-05-08 11:00:00"
+        meas_facil_id = "06010"
+        text = "Testkommentar"
+    />
+</dataset>
