@@ -26,18 +26,11 @@ import javax.ws.rs.core.Response;
 import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.junit.InSequence;
-import org.jboss.arquillian.persistence.ApplyScriptBefore;
-import org.jboss.arquillian.persistence.Cleanup;
-import org.jboss.arquillian.persistence.TestExecutionPhase;
-import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.intevation.lada.model.master.BaseQuery;
 import de.intevation.lada.util.data.Job;
 
 
@@ -56,6 +49,10 @@ public class ExporterTest extends BaseTest {
 
     @PersistenceContext
     EntityManager em;
+
+    public ExporterTest() {
+        this.testDatasetName = "datasets/dbUnit_export.xml";
+    }
 
     private JsonObjectBuilder requestJsonBuilder = Json.createObjectBuilder()
         .add("exportSubData", false)
@@ -108,32 +105,9 @@ public class ExporterTest extends BaseTest {
         .build();
 
     /**
-     * Prepare data for export of a Sample object.
-     */
-    @Ignore
-    @Test
-    @InSequence(1)
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
-    @UsingDataSet("datasets/dbUnit_probe_query.json")
-    @Cleanup(phase = TestExecutionPhase.NONE)
-    public final void prepareExportProbe() {
-        Protocol protocol = new Protocol();
-        protocol.setName("database");
-        protocol.setType("insert query data");
-        protocol.addInfo("database", "Insert query data into database");
-        testProtocol.add(protocol);
-        // Just check one of the inserted objects:
-        BaseQuery query = em.find(BaseQuery.class, 1);
-        Assert.assertNotNull(query);
-        protocol.setPassed(true);
-    }
-
-    /**
      * Test asynchronous CSV export of a Sample object.
      */
-    @Ignore
     @Test
-    @InSequence(2)
     @RunAsClient
     public final void testCsvExportProbe(
         @ArquillianResource URL baseUrl
@@ -163,9 +137,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous CSV export of a Sample identified by ID.
      */
-    @Ignore
     @Test
-    @InSequence(3)
     @RunAsClient
     public final void testCsvExportProbeById(
         @ArquillianResource URL baseUrl
@@ -194,9 +166,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous CSV export of Sample objects including measms.
      */
-    @Ignore
     @Test
-    @InSequence(3)
     @RunAsClient
     public final void testCsvExportProbeSubData(
         @ArquillianResource URL baseUrl
@@ -228,9 +198,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous CSV export of Measm objects including measVals.
      */
-    @Ignore
     @Test
-    @InSequence(3)
     @RunAsClient
     public final void testCsvExportMeasmSubData(
         @ArquillianResource URL baseUrl
@@ -255,9 +223,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous JSON export of a Sample identified by ID.
      */
-    @Ignore
     @Test
-    @InSequence(4)
     @RunAsClient
     public final void testJsonExportProbeById(
         @ArquillianResource URL baseUrl
@@ -289,9 +255,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous JSON export of a Sample object with measms.
      */
-    @Ignore
     @Test
-    @InSequence(4)
     @RunAsClient
     public final void testJsonExportProbeSubData(
         @ArquillianResource URL baseUrl
@@ -326,9 +290,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous JSON export of a Measm object with measVals.
      */
-    @Ignore
     @Test
-    @InSequence(4)
     @RunAsClient
     public final void testJsonExportMeasmSubData(
         @ArquillianResource URL baseUrl
@@ -354,9 +316,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous LAF export of a Sample identified by ID.
      */
-    @Ignore
     @Test
-    @InSequence(5)
     @RunAsClient
     public final void testLafExportProbeById(
         @ArquillianResource URL baseUrl
@@ -384,9 +344,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test asynchronous export of an empty query result.
      */
-    @Ignore
     @Test
-    @InSequence(6)
     @RunAsClient
     public final void testQueryExportEmpty(
         @ArquillianResource URL baseUrl
@@ -423,9 +381,7 @@ public class ExporterTest extends BaseTest {
     /**
      * Test failing asynchronous export with invalid request payload.
      */
-    @Ignore
     @Test
-    @InSequence(7)
     @RunAsClient
     public final void testAsyncExportFailure(
         @ArquillianResource URL baseUrl
