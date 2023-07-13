@@ -28,11 +28,13 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 
 import org.jboss.logging.Logger;
+import org.dbunit.Assertion;
 import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ReplacementDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
@@ -90,6 +92,10 @@ public class BaseTest {
 
     protected static PGSimpleDataSource ds = new PGSimpleDataSource();
 
+    private static final String DATASETS_DIR = "datasets";
+    private static final String CLEANUP_SCRIPT = DATASETS_DIR + "/cleanup.sql";
+    private static final String NULL_PLACEHOLDER = "[null]";
+
     /**
      * Setup JDBC data source.
      */
@@ -134,12 +140,16 @@ public class BaseTest {
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsLibrary(antlr)
             .addAsResource("META-INF/test-persistence.xml",
-                "META-INF/persistence.xml");
+                "META-INF/persistence.xml")
+            //Add cleanup script and datasets for container mode tests
+            .addAsResource(DATASETS_DIR, DATASETS_DIR);
         addWithDependencies("org.geotools:gt-api", archive);
         addWithDependencies("org.geotools:gt-referencing", archive);
         addWithDependencies("org.geotools:gt-epsg-hsql", archive);
         addWithDependencies("org.geotools:gt-opengis", archive);
         addWithDependencies("io.github.classgraph:classgraph", archive);
+        addWithDependencies("org.postgresql:postgresql", archive);
+        addWithDependencies("net.postgis:postgis-jdbc", archive);
         return archive;
     }
 
@@ -317,19 +327,14 @@ public class BaseTest {
     private void doDbOperation(
         DatabaseOperation op
     ) throws DatabaseUnitException, SQLException {
+        setupDataSource();
         IDataSet dataset = new FlatXmlDataSetBuilder()
             .setColumnSensing(true)
             .build(getClass().getClassLoader()
                 .getResourceAsStream(testDatasetName));
 
-        IDatabaseConnection con = new DatabaseConnection(ds.getConnection());
+        IDatabaseConnection con = getNewDbConnection();
         try {
-            DatabaseConfig config = con.getConfig();
-            config.setProperty(
-                "http://www.dbunit.org/features/qualifiedTableNames", true);
-            config.setProperty(
-                DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
-                new PostgresqlDataTypeFactory());
             op.execute(con, dataset);
         } finally {
             con.close();
@@ -337,14 +342,14 @@ public class BaseTest {
     }
 
     private void cleanup() throws SQLException, IOException {
-        String cleanupScript = "datasets/cleanup.sql";
+        setupDataSource();
         String sql;
         //Read cleanup script
         try (InputStream is = getClass().getClassLoader()
-                .getResourceAsStream(cleanupScript)) {
+                .getResourceAsStream(CLEANUP_SCRIPT)) {
             if (is == null) {
                 throw new IOException(
-                    "Could not find cleanup script: " + cleanupScript);
+                    "Could not find cleanup script: " + CLEANUP_SCRIPT);
             }
             try (InputStreamReader isr = new InputStreamReader(is);
             BufferedReader reader = new BufferedReader(isr)) {
@@ -355,5 +360,54 @@ public class BaseTest {
         Connection con = ds.getConnection();
         PreparedStatement stmt = con.prepareStatement(sql);
         stmt.execute();
+    }
+
+    /**
+     * Check if given table matches the expected dataset.
+     *
+     * The expected datasets must contain all of the tables columns to ensure
+     * the correct column count.
+     * Null values can be set using the "[null]" placeholder.
+     * @param expectedDataset Path to expected xml dataset.
+     * @param tableName Table to check.
+     * @param ignoredCols Columns to ignore.
+     * @throws DatabaseUnitException
+     * @throws SQLException
+     */
+    public void shouldMatchDataSet(
+            String expectedDataset,
+            String tableName, String[] ignoredCols)
+            throws DatabaseUnitException, SQLException {
+        setupDataSource();
+        IDatabaseConnection con = getNewDbConnection();
+        IDataSet xmlDataset = new FlatXmlDataSetBuilder()
+            .setColumnSensing(true)
+            .build(getClass().getClassLoader()
+                .getResourceAsStream(expectedDataset));
+        //Replace null placeholders with null references
+        ReplacementDataSet iExpectedDataset = new ReplacementDataSet(
+                xmlDataset);
+        iExpectedDataset.addReplacementObject(NULL_PLACEHOLDER, null);
+
+        try {
+            IDataSet iActualDataset = con.createDataSet();
+            Assertion.assertEqualsIgnoreCols(
+                iExpectedDataset, iActualDataset, tableName, ignoredCols);
+        } finally {
+            con.close();
+        }
+
+    }
+
+    private IDatabaseConnection getNewDbConnection()
+            throws DatabaseUnitException, SQLException {
+        IDatabaseConnection con = new DatabaseConnection(ds.getConnection());
+        DatabaseConfig config = con.getConfig();
+            config.setProperty(
+                "http://www.dbunit.org/features/qualifiedTableNames", true);
+            config.setProperty(
+                DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
+                new PostgresqlDataTypeFactory());
+        return con;
     }
 }

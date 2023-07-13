@@ -224,6 +224,9 @@
                             org.jboss.arquillian.extension:arquillian-persistence-dbunit
                         </ignoredUnusedDeclaredDependency>
                         <ignoredUnusedDeclaredDependency>
+                            org.jboss.arquillian.extension:arquillian-transaction-jta
+                        </ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>
                             org.jboss.resteasy:resteasy-client
                         </ignoredUnusedDeclaredDependency>
                         <ignoredUnusedDeclaredDependency>
@@ -502,6 +505,13 @@
             <groupId>net.postgis</groupId>
             <artifactId>postgis-jdbc</artifactId>
             <version>2021.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!--Additional arquillian extensions-->
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-transaction-api</artifactId>
+            <version>2.0.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
