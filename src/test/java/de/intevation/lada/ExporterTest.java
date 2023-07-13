@@ -51,7 +51,7 @@ public class ExporterTest extends BaseTest {
     EntityManager em;
 
     public ExporterTest() {
-        this.testDatasetName = "datasets/dbUnit_export.xml";
+        this.testDatasetName = "datasets/dbUnit_query.xml";
     }
 
     private JsonObjectBuilder requestJsonBuilder = Json.createObjectBuilder()

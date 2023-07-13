@@ -20,18 +20,10 @@ import javax.ws.rs.core.Response;
 import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.junit.InSequence;
-import org.jboss.arquillian.persistence.ApplyScriptBefore;
-import org.jboss.arquillian.persistence.Cleanup;
-import org.jboss.arquillian.persistence.TestExecutionPhase;
-import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import de.intevation.lada.model.master.BaseQuery;
 
 /**
  * Class to test the Lada server 'universal' service and related SqlService.
@@ -52,6 +44,10 @@ public class UniversalServiceTest extends BaseTest {
     private final String totalCountKey = "totalCount";
     private final String dataKey = "data";
     private final String hpNrKey = "hauptproben_nr";
+
+    public UniversalServiceTest() {
+        this.testDatasetName = "datasets/dbUnit_query.xml";
+    }
 
     private JsonObject requestJson = Json.createObjectBuilder()
         .add("columns", Json.createArrayBuilder()
@@ -103,34 +99,11 @@ public class UniversalServiceTest extends BaseTest {
         ).build();
 
     /**
-     * Prepare data to be requested via UniversalService.
-     */
-    @Ignore
-    @Test
-    @InSequence(1)
-    @ApplyScriptBefore("datasets/clean_and_seed.sql")
-    @UsingDataSet("datasets/dbUnit_probe_query.json")
-    @Cleanup(phase = TestExecutionPhase.NONE)
-    public final void prepareUniversalServiceProbe() {
-        Protocol protocol = new Protocol();
-        protocol.setName("database");
-        protocol.setType("insert query data");
-        protocol.addInfo("database", "Insert query data into database");
-        testProtocol.add(protocol);
-        // Just check one of the inserted objects:
-        BaseQuery query = em.find(BaseQuery.class, 1);
-        Assert.assertNotNull(query);
-        protocol.setPassed(true);
-    }
-
-    /**
      * Test fetching all data returned by a query.
      *
      * @param baseUrl The server url used for the request.
      */
-    @Ignore
     @Test
-    @InSequence(2)
     @RunAsClient
     public final void testGetAll(@ArquillianResource URL baseUrl) {
         Protocol prot = new Protocol();
@@ -164,9 +137,7 @@ public class UniversalServiceTest extends BaseTest {
      *
      * @param baseUrl The server url used for the request.
      */
-    @Ignore
     @Test
-    @InSequence(3)
     @RunAsClient
     public final void testGetPaged(@ArquillianResource URL baseUrl) {
         Protocol prot = new Protocol();
@@ -201,9 +172,7 @@ public class UniversalServiceTest extends BaseTest {
      *
      * @param baseUrl The server url used for the request.
      */
-    @Ignore
     @Test
-    @InSequence(4)
     @RunAsClient
     public final void testGetSql(@ArquillianResource URL baseUrl) {
         Protocol prot = new Protocol();
@@ -234,9 +203,7 @@ public class UniversalServiceTest extends BaseTest {
      *
      * @param baseUrl The server url used for the request.
      */
-    @Ignore
     @Test
-    @InSequence(5)
     @RunAsClient
     public final void testGetFiltered(@ArquillianResource URL baseUrl) {
         Protocol prot = new Protocol();
@@ -274,9 +241,7 @@ public class UniversalServiceTest extends BaseTest {
      *
      * @param baseUrl The server url used for the request.
      */
-    @Ignore
     @Test
-    @InSequence(6)
     @RunAsClient
     public final void testGetSqlWithParameter(@ArquillianResource URL baseUrl) {
         Protocol prot = new Protocol();
@@ -311,9 +276,7 @@ public class UniversalServiceTest extends BaseTest {
      *
      * @param baseUrl The server url used for the request.
      */
-    @Ignore
     @Test
-    @InSequence(7)
     @RunAsClient
     public final void testGetEmpty(@ArquillianResource URL baseUrl) {
         Protocol prot = new Protocol();
@@ -367,9 +330,7 @@ public class UniversalServiceTest extends BaseTest {
      *
      * @param baseUrl The server url used for the request.
      */
-    @Ignore
     @Test
-    @InSequence(8)
     @RunAsClient
     public final void testGetSingleColumn(@ArquillianResource URL baseUrl) {
         Protocol prot = new Protocol();
