@@ -10,7 +10,6 @@ package de.intevation.lada.test.stamm;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.List;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -25,7 +24,6 @@ import javax.ws.rs.core.Response.Status;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
-import de.intevation.lada.Protocol;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -42,10 +40,9 @@ public class OrtTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
@@ -81,12 +78,6 @@ public class OrtTest extends ServiceTest {
      * @param parameter Url parameter
      */
     private void testUploadImage(String imageDataUrl, String parameter) {
-        Protocol prot = new Protocol();
-        prot.setName("site image service");
-        prot.setType("create");
-        prot.setPassed(false);
-        protocol.add(prot);
-
         WebTarget reqTarget = client.target(baseUrl + parameter);
         Builder reqBuilder = reqTarget.request()
             .header("X-SHIB-user", BaseTest.testUser)
@@ -125,7 +116,6 @@ public class OrtTest extends ServiceTest {
         Response deleteResponse = reqBuilder.delete();
         Assert.assertEquals(
             Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
-        prot.setPassed(true);
     }
 
     /**

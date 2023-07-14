@@ -16,8 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.json.Json;
@@ -74,11 +72,6 @@ public class BaseTest {
     private static Logger logger = Logger.getLogger(BaseTest.class);
 
     /**
-     * Results to print out when tests are done.
-     */
-    protected static List<Protocol> testProtocol;
-
-    /**
      * The client to be used for interface tests.
      */
     protected Client client;
@@ -113,7 +106,6 @@ public class BaseTest {
     @Before
     public void setup() throws DatabaseUnitException, SQLException, IOException {
         this.cleanup();
-        this.testProtocol = new ArrayList<Protocol>();
         this.client = ClientBuilder.newClient();
 
         // Insert test data
@@ -154,16 +146,6 @@ public class BaseTest {
     }
 
     /**
-     * Prints out the test results.
-     */
-    @After
-    public final void printLogs() {
-        for (Protocol p : testProtocol) {
-            logger.info(p.toString(verboseLogging));
-        }
-    }
-
-    /**
      * Tear down shared infrastructure for test methods.
      */
     @After
@@ -200,25 +182,10 @@ public class BaseTest {
      * @param response The response to be parsed.
      * @return Parsed JsonObject or null in case of failure
      */
-    public static JsonObject parseResponse(Response response) {
-        return parseResponse(response, null);
-    }
-
-    /**
-     * Utility method to parse JSON in a Response object.
-     *
-     * Asserts that the response has HTTP status code 200 and a parseable
-     * JSON body corresponding to a de.intevation.lada.util.rest.Response.
-     *
-     * @param response The response to be parsed.
-     * @param protocol Protocol to add exception info in case of failure
-     * @return Parsed JsonObject or null in case of failure
-     */
     public static JsonObject parseResponse(
-        Response response,
-        Protocol protocol
+        Response response
     ) {
-        return parseResponse(response, protocol, Response.Status.OK);
+        return parseResponse(response, Response.Status.OK);
     }
 
     /**
@@ -226,17 +193,15 @@ public class BaseTest {
      * corresponding to a de.intevation.lada.util.rest.Response.
      *
      * @param response The response to be parsed.
-     * @param protocol Protocol to add exception info in case of failure
      * @param expectedStatus Expected HTTP status code
      * @return Parsed JsonObject or null in case of (expected) failure
      */
     public static JsonObject parseResponse(
         Response response,
-        Protocol protocol,
         Response.Status expectedStatus
     ) {
         JsonObject content = parseSimpleResponse(
-            response, protocol, expectedStatus);
+            response, expectedStatus);
 
         /* Verify the response*/
         if (Response.Status.OK.equals(expectedStatus)) {
@@ -244,16 +209,8 @@ public class BaseTest {
             assertContains(content, successKey);
             Assert.assertTrue("Unsuccessful response object:\n" + content,
                 content.getBoolean(successKey));
-            if (protocol != null) {
-                protocol.addInfo(
-                    successKey, content.getBoolean(successKey));
-            }
             assertContains(content, messageKey);
             Assert.assertEquals("200", content.getString(messageKey));
-            if (protocol != null) {
-                protocol.addInfo(
-                    messageKey, content.getString(messageKey));
-            }
         }
 
         return content;
@@ -266,27 +223,23 @@ public class BaseTest {
      * JSON body.
      *
      * @param response The response to be parsed.
-     * @param protocol Protocol to add exception info in case of failure
      * @return Parsed JsonObject or null in case of (expected) failure
      */
     public static JsonObject parseSimpleResponse(
-        Response response,
-        Protocol protocol
+        Response response
     ) {
-        return parseSimpleResponse(response, protocol, Response.Status.OK);
+        return parseSimpleResponse(response, Response.Status.OK);
     }
 
     /**
      * Utility method to check status and parse JSON in a Response object.
      *
      * @param response The response to be parsed.
-     * @param protocol Protocol to add exception info in case of failure
      * @param expectedStatus Expected HTTP status code
      * @return Parsed JsonObject or null in case of (expected) failure
      */
     public static JsonObject parseSimpleResponse(
         Response response,
-        Protocol protocol,
         Response.Status expectedStatus
     ) {
         String responseBody = response.readEntity(String.class);
@@ -302,9 +255,6 @@ public class BaseTest {
                     new StringReader(responseBody)).readObject();
                 return content;
             } catch (JsonException je) {
-                if (protocol != null) {
-                    protocol.addInfo("exception", je.getMessage());
-                }
                 Assert.fail(je.getMessage());
             }
         }

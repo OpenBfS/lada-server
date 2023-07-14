@@ -8,7 +8,6 @@
 package de.intevation.lada.test.land;
 
 import java.net.URL;
-import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -16,7 +15,6 @@ import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -27,10 +25,9 @@ public class TimestampTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
     }
 
     /**

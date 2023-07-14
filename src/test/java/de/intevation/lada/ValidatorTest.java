@@ -51,7 +51,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeHasHauptprobenNr() {
-        probeTest.hasHauptprobenNr(testProtocol);
+        probeTest.hasHauptprobenNr();
     }
 
     /**
@@ -61,7 +61,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeHasNoHauptprobenNr() {
-        probeTest.hasNoHauptprobenNr(testProtocol);
+        probeTest.hasNoHauptprobenNr();
     }
 
     /**
@@ -71,7 +71,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeExistingHauptprobenNrNew() {
-        probeTest.existingHauptprobenNrNew(testProtocol);
+        probeTest.existingHauptprobenNrNew();
     }
 
     /**
@@ -81,7 +81,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeUniqueHauptprobenNrNew() {
-        probeTest.uniqueHauptprobenNrNew(testProtocol);
+        probeTest.uniqueHauptprobenNrNew();
     }
 
     /**
@@ -91,7 +91,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeExistingHauptprobenNrUpdate() {
-        probeTest.existingHauptprobenNrUpdate(testProtocol);
+        probeTest.existingHauptprobenNrUpdate();
     }
 
     /**
@@ -101,7 +101,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeUniqueHauptprobenNrUpdate() {
-        probeTest.uniqueHauptprobenNrUpdate(testProtocol);
+        probeTest.uniqueHauptprobenNrUpdate();
     }
 
     /**
@@ -111,7 +111,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeHasEntnahmeOrt() {
-        probeTest.hasEntnahmeOrt(testProtocol);
+        probeTest.hasEntnahmeOrt();
     }
 
     /**
@@ -121,7 +121,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeHasNoEntnahmeOrt() {
-        probeTest.hasNoEntnahmeOrt(testProtocol);
+        probeTest.hasNoEntnahmeOrt();
     }
 
     /**
@@ -131,7 +131,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeHasProbenahmeBegin() {
-        probeTest.hasProbeentnahmeBegin(testProtocol);
+        probeTest.hasProbeentnahmeBegin();
     }
 
     /**
@@ -141,7 +141,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeHasNoProbenahmeBegin() {
-        probeTest.hasNoProbeentnahmeBegin(testProtocol);
+        probeTest.hasNoProbeentnahmeBegin();
     }
 
     /**
@@ -151,7 +151,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeTimeNoEndProbenahmeBegin() {
-        probeTest.timeNoEndProbeentnahmeBegin(testProtocol);
+        probeTest.timeNoEndProbeentnahmeBegin();
     }
 
     /**
@@ -161,7 +161,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeTimeNoBeginProbenahmeBegin() {
-        probeTest.timeNoBeginProbeentnahmeBegin(testProtocol);
+        probeTest.timeNoBeginProbeentnahmeBegin();
     }
 
     /**
@@ -171,7 +171,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeTimeBeginAfterEndProbenahmeBegin() {
-        probeTest.timeBeginAfterEndProbeentnahmeBegin(testProtocol);
+        probeTest.timeBeginAfterEndProbeentnahmeBegin();
     }
 
     /**
@@ -181,7 +181,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeTimeBeginFutureProbenahmeBegin() {
-        probeTest.timeBeginFutureProbeentnahmeBegin(testProtocol);
+        probeTest.timeBeginFutureProbeentnahmeBegin();
     }
 
     /**
@@ -191,7 +191,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeHasUmwelt() {
-        probeTest.hasUmwelt(testProtocol);
+        probeTest.hasUmwelt();
     }
 
     /**
@@ -201,7 +201,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeHasNoUmwelt() {
-        probeTest.hasNoUmwelt(testProtocol);
+        probeTest.hasNoUmwelt();
     }
 
     /**
@@ -211,7 +211,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void probeHasEmptyUmwelt() {
-        probeTest.hasEmptyUmwelt(testProtocol);
+        probeTest.hasEmptyUmwelt();
     }
 
     /**
@@ -221,7 +221,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void messungHasNebenprobenNr() {
-        messungTest.hasNebenprobenNr(testProtocol);
+        messungTest.hasNebenprobenNr();
     }
 
     /**
@@ -231,7 +231,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void messungHasNoNebenprobenNr() {
-        messungTest.hasNoNebenprobenNr(testProtocol);
+        messungTest.hasNoNebenprobenNr();
     }
 
     /**
@@ -241,7 +241,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void messungHasEmptyNebenprobenNr() {
-        messungTest.hasEmptyNebenprobenNr(testProtocol);
+        messungTest.hasEmptyNebenprobenNr();
     }
 
     /**
@@ -251,7 +251,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void messungUniqueNebenprobenNrNew() {
-        messungTest.uniqueNebenprobenNrNew(testProtocol);
+        messungTest.uniqueNebenprobenNrNew();
     }
 
     /**
@@ -261,7 +261,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void messungUniqueNebenprobenNrUpdate() {
-        messungTest.uniqueNebenprobenNrUpdate(testProtocol);
+        messungTest.uniqueNebenprobenNrUpdate();
     }
 
     /**
@@ -270,7 +270,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void messungExistingNebenprobenNrNew() {
-        messungTest.existingNebenprobenNrNew(testProtocol);
+        messungTest.existingNebenprobenNrNew();
     }
 
     /**
@@ -280,7 +280,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void messungExistingNebenprobenNrUpdate() {
-        messungTest.existingNebenprobenNrUpdate(testProtocol);
+        messungTest.existingNebenprobenNrUpdate();
     }
 
     /**
@@ -290,7 +290,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void messungHasMesswert() {
-        messungTest.hasMesswert(testProtocol);
+        messungTest.hasMesswert();
     }
 
     /**
@@ -300,7 +300,7 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public void messungHasNoMesswert() {
-        messungTest.hasNoMesswert(testProtocol);
+        messungTest.hasNoMesswert();
     }
 
     /**
@@ -309,6 +309,6 @@ public class ValidatorTest extends BaseTest {
     @Test
     @Transactional
     public final void statusKombiNegative() {
-        statusTest.checkKombiNegative(testProtocol);
+        statusTest.checkKombiNegative();
     }
 }

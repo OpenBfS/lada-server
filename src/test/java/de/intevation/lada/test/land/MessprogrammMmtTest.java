@@ -9,7 +9,6 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -18,7 +17,6 @@ import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -28,20 +26,12 @@ public class MessprogrammMmtTest extends ServiceTest {
     private JsonObject expectedById;
     private JsonObject create;
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
-
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
