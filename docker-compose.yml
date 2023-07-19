@@ -1,14 +1,12 @@
 version: "3.5"
 services:
   db:
-    container_name: "lada_db"
     build:
       context: ./db_schema
     image: "koala/lada_db"
     volumes:
       - ./db_schema:/opt/lada_sql/
   server:
-    container_name: "lada-server"
     build:
       context: ./
     image: "koala/lada_wildfly"
@@ -22,7 +20,6 @@ services:
       - 8787:8787 # Remote debugging of server code
       - 5005:5005 # Remote debugging of test code
   client:
-    container_name: "lada-client"
     image: "koala/lada_client"
     depends_on:
       - server
