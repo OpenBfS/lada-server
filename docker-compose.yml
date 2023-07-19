@@ -15,10 +15,10 @@ services:
     volumes:
       - ./:/usr/src/lada-server
     ports:
-      - 8080:8080 # direct access to interfaces
-      - 9990:9990 # Wildfly management console
-      - 8787:8787 # Remote debugging of server code
-      - 5005:5005 # Remote debugging of test code
+      - 8080 # direct access to interfaces
+      - 9990 # Wildfly management console
+      - 8787 # Remote debugging of server code
+      - 5005 # Remote debugging of test code
   client:
     image: "koala/lada_client"
     depends_on:
@@ -26,4 +26,4 @@ services:
     volumes:
       - ../client:/usr/local/lada # Assumes client checkout in ../client
     ports:
-      - 8180-8186:80-86
+      - 80-86
