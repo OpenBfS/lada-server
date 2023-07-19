@@ -5,8 +5,6 @@ services:
     build:
       context: ./db_schema
     image: "koala/lada_db"
-    networks:
-      - lada_network
     volumes:
       - ./db_schema:/opt/lada_sql/
   server:
@@ -14,8 +12,6 @@ services:
     build:
       context: ./
     image: "koala/lada_wildfly"
-    networks:
-      - lada_network
     depends_on:
       - db
     volumes:
@@ -28,14 +24,9 @@ services:
   client:
     container_name: "lada-client"
     image: "koala/lada_client"
-    networks:
-      - lada_network
     depends_on:
       - server
     volumes:
       - ../client:/usr/local/lada # Assumes client checkout in ../client
     ports:
       - 8180-8186:80-86
-networks:
-  lada_network:
-    name: lada_network
