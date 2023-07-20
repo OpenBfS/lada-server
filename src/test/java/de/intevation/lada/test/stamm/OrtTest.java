@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
@@ -40,9 +41,10 @@ public class OrtTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl
+        URL baseUrl,
+        IDataSet dbDataset
     ) {
-        super.init(c, baseUrl);
+        super.init(c, baseUrl, dbDataset);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
@@ -53,9 +55,10 @@ public class OrtTest extends ServiceTest {
         });
 
         // Prepare expected object
-        JsonObject content = readJsonResource("/datasets/dbUnit_ort.json");
         JsonObject erzeuger =
-            content.getJsonArray("master.site").getJsonObject(0);
+            readXmlResource(
+                "datasets/dbUnit_master.xml", "master.site")
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);

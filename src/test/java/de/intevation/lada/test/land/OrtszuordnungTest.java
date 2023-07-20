@@ -15,6 +15,7 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
 
+import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 
 import de.intevation.lada.test.ServiceTest;
@@ -32,19 +33,18 @@ public class OrtszuordnungTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl
+        URL baseUrl,
+        IDataSet dbDataset
     ) {
-        super.init(c, baseUrl);
+        super.init(c, baseUrl, dbDataset);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod"
         });
 
-        // Prepare expected probe object
-        JsonObject content =
-            readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject messung =
-            content.getJsonArray("lada.geolocat").getJsonObject(0);
+            readXmlResource("datasets/dbUnit_lada.xml", "lada.geolocat")
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messung);
         builder.add("parentModified", TS1);
         builder.add("readonly", JsonValue.FALSE);

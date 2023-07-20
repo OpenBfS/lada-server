@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URL;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -25,6 +26,7 @@ import java.util.Scanner;
 
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
@@ -36,6 +38,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.text.WordUtils;
+import org.dbunit.dataset.Column;
+import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.ITableMetaData;
+import org.dbunit.dataset.NoSuchColumnException;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.junit.Assert;
 
 import org.locationtech.jts.io.ParseException;
@@ -79,13 +88,33 @@ public class ServiceTest {
     protected URL baseUrl;
 
     /**
+     * Dataset storing db table information.
+     */
+    protected IDataSet dbDataset;
+
+    /**
      * Initialize the tests.
      * @param bUrl The server url used for the request.
      * @param p The resulting test protocol
      */
-    public void init(Client c, URL bUrl) {
+    public void init(Client c, URL bUrl, IDataSet dbDataSet) {
         this.client = c;
         this.baseUrl = bUrl;
+        this.dbDataset = dbDataSet;
+    }
+
+    /**
+     * Filter the given JsonArray for an object with the given id.
+     * @param array Array to filter
+     * @param id Id to search for
+     * @return JsonObject with the given id
+     */
+    protected JsonObject filterJsonArrayById(JsonArray array, int id) {
+        return array
+            .stream()
+            .filter(val -> id == val.asJsonObject().getInt("id"))
+            .findFirst().get()
+            .asJsonObject();
     }
 
     /**
@@ -101,6 +130,71 @@ public class ServiceTest {
         String raw = scanner.next();
         scanner.close();
         return raw;
+    }
+
+    /**
+     * Read the given xml resource and return as JSON.
+     * @param resource Resource to read
+     * @param tablename Table to read
+     * @return The given resource as json
+     */
+    protected JsonArray readXmlResource(String resource, String tablename) {
+        IDataSet xml;
+        try {
+            xml = new FlatXmlDataSetBuilder()
+                .setColumnSensing(true)
+                .build(getClass().getClassLoader()
+                    .getResourceAsStream(resource));
+            ITable table = xml.getTable(tablename);
+            ITableMetaData dbMetadata = dbDataset.getTableMetaData(tablename);
+            ITableMetaData datasetMetadata = xml.getTableMetaData(tablename);
+            JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+            for (int row = 0; row < table.getRowCount(); row++) {
+                JsonObjectBuilder builder = Json.createObjectBuilder();
+                for (Column column: dbMetadata.getColumns()) {
+                    //Check if column is present in dataset
+                    String columnName = column.getColumnName();
+                    try {
+                        datasetMetadata.getColumnIndex(columnName);
+                    } catch (NoSuchColumnException nsce) {
+                        continue;
+                    }
+                    Object value = table.getValue(row, column.getColumnName());
+                    if (value == null) {
+                        continue;
+                    }
+                    switch (column.getDataType().getSqlType()) {
+                        case Types.NUMERIC:
+                        case Types.BIGINT:
+                        case Types.INTEGER:
+                        case Types.SMALLINT:
+                            builder.add(columnName, Integer.parseInt(
+                                (String) value));
+                            break;
+                        case Types.FLOAT:
+                        case Types.DOUBLE:
+                        case Types.DECIMAL:
+                        case Types.REAL:
+                            builder.add(columnName, Double.parseDouble(
+                                (String) value));
+                            break;
+                        case Types.BOOLEAN:
+                        case Types.BIT:
+                            builder.add(columnName, Boolean.parseBoolean(
+                                (String) value));
+                            break;
+                        default:
+                            builder.add(columnName, (String) value);
+                    }
+                }
+                arrayBuilder.add(builder);
+            }
+            return arrayBuilder.build();
+        } catch (DataSetException e) {
+            Assert.fail("Datasetexception: "
+                + e.getMessage() + e.getStackTrace());
+        }
+        return null;
     }
 
     /**

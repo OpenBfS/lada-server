@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
 
+import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 
 import de.intevation.lada.model.master.Tag;
@@ -36,9 +37,10 @@ public class TagZuordnungTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl
+        URL baseUrl,
+        IDataSet dbDataset
     ) {
-        super.init(c, baseUrl);
+        super.init(c, baseUrl, dbDataset);
         create = readJsonArrayResource("/datasets/tagzuordnung_create.json");
         Assert.assertNotNull(create);
         create2 = readJsonArrayResource("/datasets/tagzuordnung_create2.json");

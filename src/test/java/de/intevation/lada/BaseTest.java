@@ -85,6 +85,8 @@ public class BaseTest {
 
     protected static PGSimpleDataSource ds = new PGSimpleDataSource();
 
+    protected IDataSet dbDataset;
+
     private static final String DATASETS_DIR = "datasets";
     private static final String CLEANUP_SCRIPT = DATASETS_DIR + "/cleanup.sql";
     private static final String NULL_PLACEHOLDER = "[null]";
@@ -107,6 +109,7 @@ public class BaseTest {
     public void setup() throws DatabaseUnitException, SQLException, IOException {
         this.cleanup();
         this.client = ClientBuilder.newClient();
+        this.dbDataset = getNewDbConnection().createDataSet();
 
         // Insert test data
         doDbOperation(DatabaseOperation.CLEAN_INSERT);

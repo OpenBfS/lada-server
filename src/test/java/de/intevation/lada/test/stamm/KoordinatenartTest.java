@@ -18,6 +18,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
@@ -39,15 +40,16 @@ public class KoordinatenartTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl
+        URL baseUrl,
+        IDataSet dbDataset
     ) {
-        super.init(c, baseUrl);
+        super.init(c, baseUrl, dbDataset);
 
         // Prepare expected object
-        JsonObject content = readJsonResource(
-            "/datasets/dbUnit_koordinatenart.json");
         JsonObject erzeuger =
-            content.getJsonArray("master.spat_ref_sys").getJsonObject(0);
+            readXmlResource(
+                "datasets/dbUnit_master.xml", "master.spat_ref_sys")
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);

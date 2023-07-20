@@ -13,6 +13,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
 
+import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 
 import de.intevation.lada.test.ServiceTest;
@@ -25,9 +26,10 @@ public class TimestampTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl
+        URL baseUrl,
+        IDataSet dbDataset
     ) {
-        super.init(c, baseUrl);
+        super.init(c, baseUrl, dbDataset);
     }
 
     /**

@@ -14,6 +14,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.client.Client;
 
+import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 
 import de.intevation.lada.test.ServiceTest;
@@ -30,25 +31,28 @@ public class ProbenehmerTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl
+        URL baseUrl,
+        IDataSet dbDataset
     ) {
-        super.init(c, baseUrl);
+        super.init(c, baseUrl, dbDataset);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
         });
 
+        // Load object to test POST request
+        create = readJsonResource("/datasets/probenehmer.json");
+
         // Prepare expected object
-        JsonObject content =
-            readJsonResource("/datasets/dbUnit_probenehmer.json");
-        JsonObject probenehmer =
-            content.getJsonArray("master.sampler").getJsonObject(0);
+        JsonObject probenehmer = filterJsonArrayById(
+            readXmlResource(
+                "datasets/dbUnit_master.xml", "master.sampler"),
+            1000);
+
         JsonObjectBuilder builder = convertObject(probenehmer);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);
 
-        // Load object to test POST request
-        create = readJsonResource("/datasets/probenehmer.json");
         Assert.assertNotNull(create);
     }
 
