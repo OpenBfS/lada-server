@@ -80,6 +80,8 @@ import de.intevation.lada.util.data.Repository;
 public class JsonExporter implements Exporter {
 
     private static final int ZEBS_COUNTER = 3;
+    private static final String JSON_DATE_FORMAT
+        = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSSXXX";
 
     @Inject private Logger logger;
 
@@ -245,7 +247,7 @@ public class JsonExporter implements Exporter {
         if (messungen.isEmpty()) {
             return null;
         }
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         ArrayNode json = mapper.createArrayNode();
         for (Measm m : messungen) {
             Sample p = repository.getByIdPlain(
@@ -299,7 +301,7 @@ public class JsonExporter implements Exporter {
         }
         List<Sample> proben =
             repository.filterPlain(builder.getQuery());
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(proben);
             JsonNode nodes = mapper.readTree(tmp);
@@ -383,7 +385,7 @@ public class JsonExporter implements Exporter {
             MeasFacil.class,
             node.get("apprLabId").asText()
         );
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(messstelle);
             String tmp2 = mapper.writeValueAsString(laborMessstelle);
@@ -402,7 +404,7 @@ public class JsonExporter implements Exporter {
         builder.and("sampleId", probe.get("id").asInt());
         List<Measm> messungen =
             repository.filterPlain(builder.getQuery());
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(messungen);
             JsonNode nodes = mapper.readTree(tmp);
@@ -430,7 +432,7 @@ public class JsonExporter implements Exporter {
         builder.and("sampleId", probe.get("id").asInt());
         List<CommSample> kommentare =
             repository.filterPlain(builder.getQuery());
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(kommentare);
             JsonNode nodes = mapper.readTree(tmp);
@@ -456,7 +458,7 @@ public class JsonExporter implements Exporter {
         builder.and("sampleId", probe.get("id").asInt());
         List<SampleSpecifMeasVal> zusatzwerte =
             repository.filterPlain(builder.getQuery());
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(zusatzwerte);
             JsonNode nodes = mapper.readTree(tmp);
@@ -540,7 +542,7 @@ public class JsonExporter implements Exporter {
         builder.and("measmId", node.get("id").asInt());
         List<MeasVal> messwerte =
             repository.filterPlain(builder.getQuery());
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(messwerte);
             JsonNode nodes = mapper.readTree(tmp);
@@ -571,7 +573,7 @@ public class JsonExporter implements Exporter {
         builder.and("measmId", node.get("id").asInt());
         List<CommMeasm> kommentare =
             repository.filterPlain(builder.getQuery());
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(kommentare);
             JsonNode nodes = mapper.readTree(tmp);
@@ -597,7 +599,7 @@ public class JsonExporter implements Exporter {
         builder.and("measmId", node.get("id").asInt());
         List<StatusProt> status =
             repository.filterPlain(builder.getQuery());
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(status);
             JsonNode nodes = mapper.readTree(tmp);
@@ -633,7 +635,7 @@ public class JsonExporter implements Exporter {
         builder.and("sampleId", node.get("id").asInt());
         List<Geolocat> ortszuordnung =
             repository.filterPlain(builder.getQuery());
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(ortszuordnung);
             JsonNode nodes = mapper.readTree(tmp);
@@ -652,7 +654,7 @@ public class JsonExporter implements Exporter {
                 Site.class, node.get("siteId").asInt());
         Jsonb ortJsonb = JsonbBuilder.create();
         String tmp = ortJsonb.toJson(ort);
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             JsonNode oNode = mapper.readTree(tmp);
 
@@ -682,5 +684,11 @@ public class JsonExporter implements Exporter {
                 + node.get("id").asText());
             logger.debug(e);
         }
+    }
+
+    private ObjectMapper createObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setDateFormat(new SimpleDateFormat(JSON_DATE_FORMAT));
+        return mapper;
     }
 }
