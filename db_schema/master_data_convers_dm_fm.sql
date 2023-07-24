@@ -24,7 +24,7 @@ SET SESSION AUTHORIZATION DEFAULT;
 
 ALTER TABLE master.convers_dm_fm DISABLE TRIGGER ALL;
 
-COPY master.convers_dm_fm (id, unit_id, to_unit_id , env_medium_id, env_descrip_pattern, conv_factor) FROM stdin;
+COPY master.convers_dm_fm (id, meas_unit_id, to_meas_unit_id , env_medium_id, env_descrip_pattern, conv_factor) FROM stdin;
 1	67	65	A13	D: 08 02 02 %	3.000000000000
 \.
 

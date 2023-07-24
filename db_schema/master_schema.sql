@@ -966,8 +966,8 @@ CREATE UNIQUE INDEX global_tag_unique_idx ON master.tag (name) WHERE network_id 
 CREATE UNIQUE INDEX network_tag_unique_idx ON master.tag (name, network_id) WHERE meas_facil_id IS NULL;
 CREATE TABLE master.convers_dm_fm(
   id serial PRIMARY KEY,
-  unit_id smallint NOT NULL REFERENCES meas_unit(id),
-  to_unit_id  smallint NOT NULL REFERENCES meas_unit(id),
+  meas_unit_id smallint NOT NULL REFERENCES meas_unit(id),
+  to_meas_unit_id  smallint NOT NULL REFERENCES meas_unit(id),
   env_medium_id character varying(3) NOT NULL REFERENCES env_medium(id),
   env_descrip_pattern character varying(100),
   conv_factor numeric(25,12) NOT NULL,
