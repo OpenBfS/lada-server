@@ -167,6 +167,8 @@ public class LafObjectMapper {
         Sample probe = new Sample();
         String netzbetreiberId = null;
 
+        this.configMapper.applyConfigs(object.getAttributes());
+        // TODO: Integrate to ImportConfigMapper
         Iterator<ImportConf> importerConfig = config.iterator();
         while (importerConfig.hasNext()) {
             ImportConf current = importerConfig.next();
@@ -431,6 +433,11 @@ public class LafObjectMapper {
                 // Persist zusatzwert objects
                 merger.mergeZusatzwerte(newProbe, zusatzwerte);
 
+                // Create site objects
+                this.configMapper.applyConfigs(object.getEntnahmeOrt());
+                for (Map<String, String> uOrt: object.getUrsprungsOrte()) {
+                    this.configMapper.applyConfigs(uOrt);
+                }
                 // Special things for REI-Messpunkt
                 if (probe.getReiAgGrId() != null
                     || Integer.valueOf(3).equals(probe.getRegulationId())
@@ -711,6 +718,7 @@ public class LafObjectMapper {
         messung.setSampleId(probe.getId());
 
         // Fill the new messung with data
+        this.configMapper.applyConfigs(object.getAttributes());
         for (Entry<String, String> attribute
                  : object.getAttributes().entrySet()
         ) {
@@ -898,6 +906,8 @@ public class LafObjectMapper {
         Map<String, String> attributes,
         Sample probe
     ) {
+        this.configMapper.applyConfigs(attributes);
+
         if (attributes.get("TEXT").equals("")) {
             currentWarnings.add(
                 new ReportItem(
@@ -978,13 +988,17 @@ public class LafObjectMapper {
         Map<String, String> attributes,
         int probeId
     ) {
+        this.configMapper.applyConfigs(attributes);
+
         SampleSpecifMeasVal zusatzwert = new SampleSpecifMeasVal();
         zusatzwert.setSampleId(probeId);
+
         if (attributes.containsKey("MESSFEHLER")) {
             zusatzwert.setError(
                 Float.valueOf(
                     attributes.get("MESSFEHLER").replaceAll(",", ".")));
         }
+
         String wert = attributes.get("MESSWERT_PZS");
         if (wert.startsWith("<")) {
             wert = wert.substring(1);
@@ -999,8 +1013,6 @@ public class LafObjectMapper {
             isId = true;
         }
 
-        attribute = this.configMapper.applyConfigByAttribute(
-            "ZUSATZWERT", attribute);
         QueryBuilder<SampleSpecif> builder = repository
             .queryBuilder(SampleSpecif.class)
             .and(isId ? "id" : "extId", attribute);
@@ -1022,6 +1034,8 @@ public class LafObjectMapper {
         Map<String, String> attributes,
         int messungsId
     ) {
+        this.configMapper.applyConfigs(attributes);
+
         MeasVal messwert = new MeasVal();
         messwert.setMeasmId(messungsId);
 
@@ -1041,8 +1055,7 @@ public class LafObjectMapper {
             messwert.setMeasdId(
                 Integer.valueOf(attributes.get("MESSGROESSE_ID")));
         } else if (attributes.containsKey("MESSGROESSE")) {
-            String attribute = this.configMapper.applyConfigByAttribute(
-                "MESSGROESSE", attributes.get("MESSGROESSE"));
+            String attribute = attributes.get("MESSGROESSE");
             // accept various nuclide notations (e.g.
             // "Cs-134", "CS 134", "Cs134", "CS134", ...)
             String messgroesseString = attribute;
@@ -1084,8 +1097,7 @@ public class LafObjectMapper {
             messwert.setMeasUnitId(
                 Integer.valueOf(attributes.get("MESSEINHEIT_ID")));
         } else if (attributes.containsKey("MESSEINHEIT")) {
-            String attribute = this.configMapper.applyConfigByAttribute(
-                "MESSEINHEIT", attributes.get("MESSEINHEIT"));
+            String attribute = attributes.get("MESSEINHEIT");
             QueryBuilder<MeasUnit> builder = repository
                 .queryBuilder(MeasUnit.class)
                 .and("unitSymbol", attribute);
@@ -1149,6 +1161,8 @@ public class LafObjectMapper {
         int messungsId,
         Sample probe
     ) {
+        this.configMapper.applyConfigs(attributes);
+
         if (attributes.get("TEXT").equals("")) {
             currentWarnings.add(
                 new ReportItem("KOMMENTAR", "Text", StatusCodes.VALUE_MISSING));
@@ -1855,16 +1869,14 @@ public class LafObjectMapper {
         if ("DATENBASIS".equals(key)
             && probe.getRegulationId() == null
         ) {
-            String attr = this.configMapper.applyConfigByAttribute(
-                "DATENBASIS", value.toString());
             QueryBuilder<Regulation> builder = repository
                 .queryBuilder(Regulation.class)
-                .and("regulation", attr);
+                .and("regulation", value);
             List<Regulation> datenbasis =
                 repository.filterPlain(builder.getQuery());
             if (datenbasis == null || datenbasis.isEmpty()) {
                 currentErrors.add(
-                    new ReportItem(key, attr, StatusCodes.IMP_INVALID_VALUE));
+                    new ReportItem(key, value, StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
             Integer v = datenbasis.get(0).getId();
@@ -2097,11 +2109,9 @@ public class LafObjectMapper {
         }
 
         if ("PROBENART".equals(key) && value != null) {
-            String attr = this.configMapper.applyConfigByAttribute(
-                "PROBENART", value.toString());
             QueryBuilder<SampleMeth> builder = repository
                 .queryBuilder(SampleMeth.class)
-                .and("extId", attr);
+                .and("extId", value);
             List<SampleMeth> probenart =
                 repository.filterPlain(builder.getQuery());
             if (probenart == null || probenart.isEmpty()) {
@@ -2126,6 +2136,7 @@ public class LafObjectMapper {
     ) {
         String key = attribute.getKey();
         String value = attribute.getValue();
+
         if ("MESSUNGS_ID".equals(key)) {
             messung.setExtId(Integer.valueOf(value));
         }

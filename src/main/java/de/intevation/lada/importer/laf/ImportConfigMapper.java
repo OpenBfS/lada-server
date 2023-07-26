@@ -11,6 +11,7 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.List;
 
 import org.jboss.logging.Logger;
@@ -38,6 +39,14 @@ public class ImportConfigMapper {
 
     ImportConfigMapper(List<ImportConf> config) {
         this.config = config;
+    }
+
+    void applyConfigs(Map<String, String> attributes) {
+        // TODO: default action
+        for (Map.Entry<String, String> attribute: attributes.entrySet()) {
+            attribute.setValue(applyConfigByAttribute(
+                    attribute.getKey(), attribute.getValue()));
+        }
     }
 
     /**

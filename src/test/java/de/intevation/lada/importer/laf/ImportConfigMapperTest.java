@@ -7,7 +7,9 @@
  */
 package de.intevation.lada.importer.laf;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -45,18 +47,20 @@ public class ImportConfigMapperTest {
     @Test
     public void convertStringTest() {
         final String key = "convertme";
-        final String input = "BQ/kgFM";
+        final String value = "BQ/kgFM";
+        Map<String, String> input = new HashMap<>();
+        input.put(key, value);
         final String expected = "Bq/kg(FM)";
 
         ImportConf config = new ImportConf();
         config.setAttribute(key);
-        config.setFromVal(input);
+        config.setFromVal(value);
         config.setToVal(expected);
         config.setAction("convert");
         ImportConfigMapper mapper = new ImportConfigMapper(List.of(config));
 
-        Assert.assertEquals(
-            expected, mapper.applyConfigByAttribute(key, input));
+        mapper.applyConfigs(input);
+        Assert.assertEquals(expected, input.get(key));
     }
 
     /**
@@ -65,6 +69,8 @@ public class ImportConfigMapperTest {
     @Test
     public void transformStringTest() {
         final String key = "TRANSFORMME";
+        Map<String, String> input = new HashMap<>();
+        input.put(key, "x x");
 
         ImportConf config = new ImportConf();
         config.setAttribute(key);
@@ -73,6 +79,7 @@ public class ImportConfigMapperTest {
         config.setAction("transform");
         ImportConfigMapper mapper = new ImportConfigMapper(List.of(config));
 
-        Assert.assertEquals("x0x", mapper.applyConfigByAttribute(key, "x x"));
+        mapper.applyConfigs(input);
+        Assert.assertEquals("x0x", input.get(key));
     }
 }
