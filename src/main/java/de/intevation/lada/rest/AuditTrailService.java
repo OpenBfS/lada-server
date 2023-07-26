@@ -119,7 +119,7 @@ public class AuditTrailService extends LadaService {
         mappings.put("measd_id",
             new TableMapper("measd", "name"));
         mappings.put("meas_unit_id",
-            new TableMapper("meas_unit", "unitSymbol"));
+            new TableMapper("meas_unit", "unit_symbol"));
         mappings.put("site_id",
             new TableMapper("site", "ext_id"));
         mappings.put("regulation_id",
