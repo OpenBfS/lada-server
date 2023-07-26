@@ -197,16 +197,17 @@ public class LafImportService extends LadaService {
         //Import each file
         files.forEach((fileName, content) -> {
             logLAFFile(mstId, content, charset);
+
             List<ImportConf> config = new ArrayList<ImportConf>();
             if (!"".equals(mstId)) {
-                QueryBuilder<ImportConf> builder =
-                    repository.queryBuilder(ImportConf.class);
-                builder.and("measFacilId", mstId);
-                config =
-                    (List<ImportConf>) repository.filterPlain(
-                        builder.getQuery());
+                QueryBuilder<ImportConf> builder = repository
+                    .queryBuilder(ImportConf.class)
+                    .and("measFacilId", mstId);
+                config = repository.filterPlain(builder.getQuery());
             }
+
             importer.doImport(content, userInfo, config);
+
             Map<String, Object> fileResponseData =
                 new HashMap<String, Object>();
             if (!importer.getErrors().isEmpty()) {
