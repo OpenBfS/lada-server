@@ -56,9 +56,9 @@ DELETE FROM lada.audit_trail;
 -- minimal master data to make interface tests runnable
 INSERT INTO opr_mode (id, name) VALUES (1, 'Normal-/Routinebetrieb');
 INSERT INTO site_class (id) VALUES (1);
-INSERT INTO regulation (id) VALUES (9), (2);
-INSERT INTO meas_unit (id) VALUES (207);
-INSERT INTO meas_unit (id) VALUES (208);
+INSERT INTO regulation (id, regulation) VALUES (9, 'reg-9'), (2, 'reg-2');
+INSERT INTO meas_unit (id, unit_symbol) VALUES (207, 'u207');
+INSERT INTO meas_unit (id, unit_symbol) VALUES (208, 'u208');
 INSERT INTO unit_convers (from_unit_id, to_unit_id, factor)
        VALUES (207, 208, 2);
 INSERT INTO measd (id, name) VALUES (56, 'Mangan');
