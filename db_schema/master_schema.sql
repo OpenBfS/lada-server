@@ -909,10 +909,8 @@ CREATE TABLE import_conf (
     meas_facil_id character varying(5) NOT NULL REFERENCES meas_facil,
     from_val character varying(100),
     to_val character varying(100),
-    action character varying(10),
-    CHECK (action = 'default' OR
-        action = 'convert' OR
-        action = 'transform'),
+    action character varying(10)
+        CHECK (action IN('DEFAULT', 'CONVERT', 'TRANSFORM')),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_import_conf BEFORE UPDATE ON master.import_conf FOR EACH ROW EXECUTE PROCEDURE update_last_mod();

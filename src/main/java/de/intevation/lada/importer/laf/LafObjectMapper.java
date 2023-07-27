@@ -43,6 +43,7 @@ import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.TagLink;
+import de.intevation.lada.model.master.Action;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.EnvMedium;
@@ -177,7 +178,7 @@ public class LafObjectMapper {
             }
             if ("PROBE".equals(current.getName().toUpperCase())
                 && "MSTID".equals(current.getAttribute().toUpperCase())
-                && "DEFAULT".equals(current.getAction().toUpperCase())) {
+                && Action.DEFAULT.equals(current.getAction())) {
                 probe.setMeasFacilId(current.getToVal());
             }
         }

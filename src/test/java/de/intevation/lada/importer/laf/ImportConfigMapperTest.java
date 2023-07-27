@@ -15,6 +15,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.master.Action;
 import de.intevation.lada.model.master.ImportConf;
 
 /**
@@ -33,7 +34,7 @@ public class ImportConfigMapperTest {
         config.setName("probe");
         config.setAttribute("measFacilId");
         config.setToVal(expected);
-        config.setAction("default");
+        config.setAction(Action.DEFAULT);
         ImportConfigMapper mapper = new ImportConfigMapper(List.of(config));
 
         Sample sample = new Sample();
@@ -56,7 +57,7 @@ public class ImportConfigMapperTest {
         config.setAttribute(key);
         config.setFromVal(value);
         config.setToVal(expected);
-        config.setAction("convert");
+        config.setAction(Action.CONVERT);
         ImportConfigMapper mapper = new ImportConfigMapper(List.of(config));
 
         mapper.applyConfigs(input);
@@ -76,7 +77,7 @@ public class ImportConfigMapperTest {
         config.setAttribute(key);
         config.setFromVal("20");
         config.setToVal("30");
-        config.setAction("transform");
+        config.setAction(Action.TRANSFORM);
         ImportConfigMapper mapper = new ImportConfigMapper(List.of(config));
 
         mapper.applyConfigs(input);
