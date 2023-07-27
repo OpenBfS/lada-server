@@ -1,3 +1,5 @@
+SET ROLE lada;
+
 DROP VIEW stamm.tag;
 
 ALTER TABLE master.tag ALTER COLUMN meas_facil_id TYPE character varying(5);
