@@ -39,40 +39,32 @@ public class ImportConfigMapper {
         this.config = config;
     }
 
+    /**
+     * Apply configuration to given attributes.
+     *
+     * @param attributes Attributes representing raw import data.
+     */
     void applyConfigs(Map<String, String> attributes) {
         // TODO: default action
         for (Map.Entry<String, String> attribute: attributes.entrySet()) {
-            attribute.setValue(applyConfigByAttribute(
-                    attribute.getKey(), attribute.getValue()));
-        }
-    }
-
-    /**
-     * Apply configuration with given attribute name to value.
-     *
-     * @param key The configuration attribute name
-     * @param value The value that should be converted or transformed
-     * @return value according to configuration
-     */
-    String applyConfigByAttribute(String key, String value) {
-        String result = value;
-        for (ImportConf cfg: this.config) {
-            if (cfg.getAttribute().equalsIgnoreCase(key)) {
-                switch (cfg.getAction()) {
-                case CONVERT:
-                    if (cfg.getFromVal().equals(value)) {
-                        result = cfg.getToVal();
+            for (ImportConf cfg: this.config) {
+                if (cfg.getAttribute().equalsIgnoreCase(attribute.getKey())) {
+                    switch (cfg.getAction()) {
+                    case CONVERT:
+                        if (cfg.getFromVal().equals(attribute.getValue())) {
+                            attribute.setValue(cfg.getToVal());
                         }
-                    continue;
-                case TRANSFORM:
-                    result = transform(value, cfg);
-                    continue;
-                default:
-                    continue;
+                        continue;
+                    case TRANSFORM:
+                        attribute.setValue(
+                            transform(attribute.getValue(), cfg));
+                        continue;
+                    default:
+                        continue;
+                    }
                 }
             }
         }
-        return result;
     }
 
     void applyConfigs(Sample probe) {
