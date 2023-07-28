@@ -47,7 +47,7 @@ public class ImportConfigMapperTest {
      */
     @Test
     public void convertStringTest() {
-        final String key = "convertme";
+        final String key = "CONVERTME";
         final String value = "BQ/kgFM";
         Map<String, String> input = new HashMap<>();
         input.put(key, value);
