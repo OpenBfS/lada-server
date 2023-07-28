@@ -35,7 +35,7 @@ COPY import_conf (id, name, attribute, meas_facil_id, from_val, to_val, action) 
 8	messwert	messEinheit	06010	Bq/kgTM	Bq/kg(TM)	CONVERT
 9	messwert	messEinheit	06010	BQ/KGTM	Bq/kg(TM)	CONVERT
 10	messwert	messEinheit	06010	Bq/m2	Bq/m²	CONVERT
-11	messwert	messEinheit	06010	Bq/m2	Bq/m³	CONVERT
+11	messwert	messEinheit	06010	Bq/m3	Bq/m³	CONVERT
 12	messwert	messEinheit	06010	KBQ/Kg	kBq/kg	CONVERT
 13	messwert	messEinheit	06010	KBQ/KG	kBq/kg	CONVERT
 14	messwert	messEinheit	06010	KBQ/Kgtm	kBq/kg(TM)	CONVERT
