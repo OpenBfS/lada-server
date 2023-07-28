@@ -46,23 +46,22 @@ public class ImportConfigMapper {
      */
     void applyConfigs(Map<String, String> attributes) {
         // TODO: default action
-        for (Map.Entry<String, String> attribute: attributes.entrySet()) {
-            for (ImportConf cfg: this.config) {
-                if (cfg.getAttribute().equalsIgnoreCase(attribute.getKey())) {
-                    switch (cfg.getAction()) {
-                    case CONVERT:
-                        if (cfg.getFromVal().equals(attribute.getValue())) {
-                            attribute.setValue(cfg.getToVal());
-                        }
-                        continue;
-                    case TRANSFORM:
-                        attribute.setValue(
-                            transform(attribute.getValue(), cfg));
-                        continue;
-                    default:
-                        continue;
-                    }
+        for (ImportConf cfg: this.config) {
+            String key = cfg.getAttribute().toUpperCase();
+            boolean hasKey = attributes.containsKey(key);
+            switch (cfg.getAction()) {
+            case CONVERT:
+                if (hasKey && cfg.getFromVal().equals(attributes.get(key))) {
+                    attributes.put(key, cfg.getToVal());
                 }
+                continue;
+            case TRANSFORM:
+                if (hasKey) {
+                    attributes.put(key, transform(attributes.get(key), cfg));
+                }
+                continue;
+            default:
+                continue;
             }
         }
     }
