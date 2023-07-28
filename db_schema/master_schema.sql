@@ -908,10 +908,15 @@ CREATE TABLE import_conf (
     attribute character varying(30) NOT NULL,
     meas_facil_id character varying(5) NOT NULL REFERENCES meas_facil,
     from_val character varying(100),
-    to_val character varying(100),
+    to_val character varying(100) NOT NULL,
     action character varying(10)
         CHECK (action IN('DEFAULT', 'CONVERT', 'TRANSFORM')),
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    CHECK(action = 'DEFAULT' OR from_val IS NOT NULL),
+    CHECK(action <> 'TRANSFORM'
+        -- hexadecimal unicode code points expected
+        OR from_val SIMILAR TO '[0-9a-f]+' AND to_val SIMILAR TO '[0-9a-f]+'),
+    UNIQUE(meas_facil_id, name, attribute, action, from_val)
 );
 CREATE TRIGGER last_mod_import_conf BEFORE UPDATE ON master.import_conf FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
