@@ -32,10 +32,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.importer.ImportConfig;
-import de.intevation.lada.importer.ImportFormat;
 import de.intevation.lada.importer.ImportJobManager;
-import de.intevation.lada.importer.Importer;
 import de.intevation.lada.importer.laf.LafImporter;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.MeasFacil;
@@ -63,8 +60,7 @@ public class LafImportService extends LadaService {
      * The importer implementation.
      */
     @Inject
-    @ImportConfig(format = ImportFormat.LAF)
-    private Importer importer;
+    private LafImporter importer;
 
     @Inject
     private Repository repository;

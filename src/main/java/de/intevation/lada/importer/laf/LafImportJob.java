@@ -26,9 +26,6 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 
-import de.intevation.lada.importer.ImportConfig;
-import de.intevation.lada.importer.ImportFormat;
-import de.intevation.lada.importer.Importer;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.Tag;
@@ -46,8 +43,7 @@ import de.intevation.lada.util.rest.Response;
 public class LafImportJob extends Job {
 
     @Inject
-    @ImportConfig(format = ImportFormat.LAF)
-    private Importer importer;
+    private LafImporter importer;
 
     private Map<String, Map<String, Object>> importData;
 
