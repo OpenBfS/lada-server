@@ -40,7 +40,8 @@ COPY import_conf (id, name, attribute, meas_facil_id, from_val, to_val, action) 
 13	messwert	messEinheit	06010	KBQ/KG	kBq/kg	CONVERT
 14	messwert	messEinheit	06010	KBQ/Kgtm	kBq/kg(TM)	CONVERT
 16	messwert	messgroesse	06010	20	2d	TRANSFORM
-17	probe	mediaDesk	06010	2d	30	TRANSFORM
+17	probe	envDescripDisplay	06010	2d	30	TRANSFORM
+18	probe	deskriptoren	06010	2d	30	TRANSFORM
 19	messwert	messgroesse	06060	20	2d	TRANSFORM
 20	messwert	messEinheit	11010	Bq/d*P	Bq/(d*p)	CONVERT
 21	messwert	messEinheit	11010	Bq/ d*P	Bq/(d*p)	CONVERT
