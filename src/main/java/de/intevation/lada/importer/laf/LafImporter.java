@@ -59,6 +59,7 @@ public class LafImporter {
     public void doImport(
         String lafString,
         UserInfo userInfo,
+        String measFacilId,
         List<ImportConf> config
     ) {
         // Append newline to avoid parser errors.
@@ -111,6 +112,7 @@ public class LafImporter {
             }
             mapper.setUserInfo(userInfo);
             mapper.setConfig(config);
+            mapper.setMeasFacilId(measFacilId);
             mapper.mapObjects(listener.getData());
             importProbeIds = mapper.getImportedProbeIds();
             for (Entry<String, List<ReportItem>> entry

@@ -158,7 +158,7 @@ public class LafImportJob extends Job {
                 builder.and("measFacilId", mstId);
                 config = repository.filterPlain(builder.getQuery());
             }
-            importer.doImport(content, userInfo, config);
+            importer.doImport(content, userInfo, mstId, config);
 
             Map<String, Object> fileResponseData = new HashMap<>();
             if (!importer.getErrors().isEmpty()) {

@@ -144,6 +144,8 @@ public class LafObjectMapper {
 
     private UserInfo userInfo;
 
+    private String measFacilId;
+
     private List<ImportConf> config;
     private ImportConfigMapper configMapper;
 
@@ -186,12 +188,15 @@ public class LafObjectMapper {
             probe.setMeasFacilId(object.getAttributes().get("MESSSTELLE"));
         }
         if (probe.getMeasFacilId() == null) {
-            currentErrors.add(
-                new ReportItem(
-                    "MESSSTELLE", "", StatusCodes.IMP_MISSING_VALUE));
-            errors.put(object.getIdentifier(),
-                new ArrayList<ReportItem>(currentErrors));
-            return;
+            if (measFacilId == null) {
+                currentErrors.add(
+                    new ReportItem(
+                        "MESSSTELLE", "", StatusCodes.IMP_MISSING_VALUE));
+                errors.put(object.getIdentifier(),
+                    new ArrayList<ReportItem>(currentErrors));
+                return;
+            }
+            probe.setMeasFacilId(measFacilId);
         } else {
             MeasFacil mst = repository.getByIdPlain(
                 MeasFacil.class, probe.getMeasFacilId());
@@ -2223,5 +2228,12 @@ public class LafObjectMapper {
     public void setConfig(List<ImportConf> config) {
         this.config = config;
         this.configMapper = new ImportConfigMapper(config);
+    }
+
+    /**
+     * @param measFacilId ID of the default measurement facility
+     */
+    public void setMeasFacilId(String measFacilId) {
+        this.measFacilId = measFacilId;
     }
 }

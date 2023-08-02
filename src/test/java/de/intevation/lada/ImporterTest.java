@@ -111,7 +111,6 @@ public class ImporterTest extends BaseTest {
         + "UEBERTRAGUNGSFORMAT \"7\"\n"
         + "VERSION \"0084\"\n"
         + "PROBE_ID \"%s\"\n"
-        + "MESSSTELLE \"%s\"\n"
         + "PROBENART \"E\"\n"
         + "MESSPROGRAMM_S 1\n"
         + "DATENBASIS \"%s\"\n"
@@ -122,7 +121,7 @@ public class ImporterTest extends BaseTest {
         + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
         + "%%ENDE%%\n";
     private final String laf = String.format(
-        lafTemplate, lafSampleId, mstId, regulation, sampleSpecifId,
+        lafTemplate, lafSampleId, regulation, sampleSpecifId,
         "", measd, measUnit);
 
     final String dataKey = "data";
@@ -815,7 +814,7 @@ public class ImporterTest extends BaseTest {
         testAsyncImportProbe(
             baseUrl,
             String.format(
-                lafTemplate, lafSampleId, mstId, "conv", sampleSpecifId,
+                lafTemplate, lafSampleId, "conv", sampleSpecifId,
                 "", measd, measUnit),
             true,
             prot);
@@ -835,7 +834,7 @@ public class ImporterTest extends BaseTest {
         testAsyncImportProbe(
             baseUrl,
             String.format(
-                lafTemplate, lafSampleId, mstId, "conv", sampleSpecifId,
+                lafTemplate, lafSampleId, "conv", sampleSpecifId,
                 "", "H 3", measUnit),
             true,
             prot);
@@ -856,7 +855,7 @@ public class ImporterTest extends BaseTest {
         testAsyncImportProbe(
             baseUrl,
             String.format(
-                lafTemplate, lafSampleId, mstId, "conv", "XX",
+                lafTemplate, lafSampleId, "conv", "XX",
                 "", measd, measUnit),
             true,
             prot);
@@ -891,7 +890,6 @@ public class ImporterTest extends BaseTest {
         String lafZb = String.format(
             lafTemplate,
             lafSampleId,
-            mstId,
             regulation,
             sampleSpecifId,
             lafKey + " " + value + "\n",
