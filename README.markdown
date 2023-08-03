@@ -326,7 +326,7 @@ Eine Konfiguration wird in der Datenbanktabelle "import_config" im Schema
   für "convert" und "transform" enthält diese Spalte den Ursprungswert.
 * to_value (character varying(100)): Enthält den Zielwert der Konfiguration
 * action (character varying(20)): Enthält eine der drei Aktionen als Text:
-  "default", "convert" oder "transform".
+  "DEFAULT", "CONVERT" oder "TRANSFORM".
   Wenn attribute auf einen in LafObjectListener und LafObjectMapper verwendeten
   Attribut-Schlüssel verweist wird "default" ignoriert.
 
