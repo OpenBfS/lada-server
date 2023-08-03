@@ -24,7 +24,7 @@ SET search_path = master, pg_catalog;
 -- Data for Name: regulation; Type: TABLE DATA; Schema: master; Owner: postgres
 --
 
-COPY regulation (id, descr, regulation) FROM stdin;
+COPY regulation (id, descr, name) FROM stdin;
 9	Europa	Europa
 13	SPARSE NETWORK	SPARSE
 14	DENSE NETWORK	DENSE

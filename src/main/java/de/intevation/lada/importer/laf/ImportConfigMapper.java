@@ -45,11 +45,15 @@ public class ImportConfigMapper {
      * @param attributes Attributes representing raw import data.
      */
     void applyConfigs(Map<String, String> attributes) {
-        // TODO: default action
         for (ImportConf cfg: this.config) {
             String key = cfg.getAttribute().toUpperCase();
             boolean hasKey = attributes.containsKey(key);
             switch (cfg.getAction()) {
+            case DEFAULT:
+                if (!hasKey) {
+                    attributes.put(key, cfg.getToVal());
+                }
+                continue;
             case CONVERT:
                 if (hasKey && cfg.getFromVal().equals(attributes.get(key))) {
                     attributes.put(key, cfg.getToVal());
@@ -61,7 +65,7 @@ public class ImportConfigMapper {
                 }
                 continue;
             default:
-                continue;
+                logger.error("Unimplemented action");
             }
         }
     }

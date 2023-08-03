@@ -32,10 +32,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.importer.ImportConfig;
-import de.intevation.lada.importer.ImportFormat;
 import de.intevation.lada.importer.ImportJobManager;
-import de.intevation.lada.importer.Importer;
 import de.intevation.lada.importer.laf.LafImporter;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.MeasFacil;
@@ -63,8 +60,7 @@ public class LafImportService extends LadaService {
      * The importer implementation.
      */
     @Inject
-    @ImportConfig(format = ImportFormat.LAF)
-    private Importer importer;
+    private LafImporter importer;
 
     @Inject
     private Repository repository;
@@ -206,7 +202,7 @@ public class LafImportService extends LadaService {
                 config = repository.filterPlain(builder.getQuery());
             }
 
-            importer.doImport(content, userInfo, config);
+            importer.doImport(content, userInfo, mstId, config);
 
             Map<String, Object> fileResponseData =
                 new HashMap<String, Object>();
@@ -306,7 +302,7 @@ public class LafImportService extends LadaService {
             config = (List<ImportConf>) repository.filterPlain(
                 builder.getQuery());
         }
-        importer.doImport(content, userInfo, config);
+        importer.doImport(content, userInfo, mstId, config);
         Map<String, Object> respData = new HashMap<String, Object>();
         Boolean success = true;
         if (!importer.getErrors().isEmpty()) {

@@ -25,7 +25,7 @@
     <master.measd id = "1" name = "H-3" />
     <master.mmt id = "A3" />
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
-    <master.regulation id = "1" regulation = "test" />
+    <master.regulation id = "1" name = "test" />
     <master.regulation id = "2" />
     <master.regulation id = "9" />
     <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
@@ -97,6 +97,13 @@
         from_val = "XX"
         to_val = "A1"
         action = "CONVERT"
+    />
+    <master.import_conf
+        name = "x"
+        attribute = "zeitbasis_s"
+        meas_facil_id = "06010"
+        to_val = "2"
+        action = "DEFAULT"
     />
     <!-- Sample/Measm import data-->
     <lada.mpg

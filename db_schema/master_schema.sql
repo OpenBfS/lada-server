@@ -421,7 +421,7 @@ CREATE TRIGGER last_mod_auth_coord_ofc_env_medium_mp BEFORE UPDATE ON master.aut
 CREATE TABLE regulation (
     id serial PRIMARY KEY,
     descr character varying(30),
-    regulation character varying(12),
+    name character varying(12),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_regulation BEFORE UPDATE ON master.regulation FOR EACH ROW EXECUTE PROCEDURE update_last_mod();

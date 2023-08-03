@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
@@ -92,7 +93,6 @@ public class ImporterTest extends BaseTest {
         + "UEBERTRAGUNGSFORMAT \"7\"\n"
         + "VERSION \"0084\"\n"
         + "PROBE_ID \"%s\"\n"
-        + "MESSSTELLE \"%s\"\n"
         + "PROBENART \"E\"\n"
         + "MESSPROGRAMM_S 1\n"
         + "DATENBASIS \"%s\"\n"
@@ -103,7 +103,7 @@ public class ImporterTest extends BaseTest {
         + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
         + "%%ENDE%%\n";
     private final String laf = String.format(
-        lafTemplate, lafSampleId, mstId, regulation, sampleSpecifId,
+        lafTemplate, lafSampleId, regulation, sampleSpecifId,
         "", measd, measUnit);
 
     final String dataKey = "data";
@@ -608,7 +608,7 @@ public class ImporterTest extends BaseTest {
         testAsyncImportProbe(
             baseUrl,
             String.format(
-                lafTemplate, lafSampleId, mstId, "conv", sampleSpecifId,
+                lafTemplate, lafSampleId, "conv", sampleSpecifId,
                 "", measd, measUnit),
             true);
     }
@@ -624,7 +624,7 @@ public class ImporterTest extends BaseTest {
         testAsyncImportProbe(
             baseUrl,
             String.format(
-                lafTemplate, lafSampleId, mstId, "conv", sampleSpecifId,
+                lafTemplate, lafSampleId, "conv", sampleSpecifId,
                 "", "H 3", measUnit),
             true);
     }
@@ -642,7 +642,7 @@ public class ImporterTest extends BaseTest {
         testAsyncImportProbe(
             baseUrl,
             String.format(
-                lafTemplate, lafSampleId, mstId, "conv", "XX",
+                lafTemplate, lafSampleId, "conv", "XX",
                 "", measd, measUnit),
             true);
     }
@@ -659,6 +659,9 @@ public class ImporterTest extends BaseTest {
         testZeitbasis(baseUrl, "ZEITBASIS", "\"INVALID\"", true);
         testZeitbasis(baseUrl, "ZEITBASIS_S", "1", false);
         testZeitbasis(baseUrl, "ZEITBASIS_S", "0", true);
+
+        // Use default from import_conf
+        testZeitbasis(baseUrl, "", "", false);
     }
 
     private void testZeitbasis(
@@ -671,7 +674,6 @@ public class ImporterTest extends BaseTest {
         String lafZb = String.format(
             lafTemplate,
             lafSampleId,
-            mstId,
             regulation,
             sampleSpecifId,
             lafKey + " " + value + "\n",
@@ -682,14 +684,23 @@ public class ImporterTest extends BaseTest {
         JsonArray warnings = testAsyncImportProbe(baseUrl, lafZb, true)
             .getJsonObject("warnings").getJsonArray(lafSampleId);
         LOG.trace(warnings);
-        JsonObject warning = Json.createObjectBuilder()
-            .add("key", lafKey)
-            .add("value", value.replace("\"", ""))
-            .add("code", StatusCodes.IMP_INVALID_VALUE).build();
-        Assert.assertFalse((expectWarning
-                ? "Missing warning: " : "Unexpected warning: ")
-            + warning.toString(),
-            expectWarning && !warnings.contains(warning));
+        final String keyKey = "key";
+        if (expectWarning) {
+            JsonObject expectedWarning = Json.createObjectBuilder()
+                .add(keyKey, lafKey)
+                .add("value", value.replace("\"", ""))
+                .add("code", StatusCodes.IMP_INVALID_VALUE).build();
+            Assert.assertFalse(
+                "Missing warning: " + expectedWarning.toString(),
+                !warnings.contains(expectedWarning));
+        } else {
+            for (JsonValue warningVal: warnings) {
+                JsonObject warning = (JsonObject) warningVal;
+                Assert.assertFalse(
+                    "Unexpected warning: " + warning.toString(),
+                    warning.getString(keyKey).startsWith("ZEITBASIS"));
+            }
+        }
     }
 
     private JsonObject testAsyncImportProbe(

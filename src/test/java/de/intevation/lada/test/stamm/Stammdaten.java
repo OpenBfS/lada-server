@@ -47,7 +47,7 @@ public class Stammdaten extends ServiceTest {
                 "id",
                 "lastMod",
                 "descr",
-                "regulation"
+                "name"
             )
         );
         matchers.put("measunit",

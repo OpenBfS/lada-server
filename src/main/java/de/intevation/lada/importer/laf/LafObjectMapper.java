@@ -16,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -43,7 +42,6 @@ import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.TagLink;
-import de.intevation.lada.model.master.Action;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.EnvMedium;
@@ -144,6 +142,8 @@ public class LafObjectMapper {
 
     private UserInfo userInfo;
 
+    private String measFacilId;
+
     private List<ImportConf> config;
     private ImportConfigMapper configMapper;
 
@@ -169,29 +169,20 @@ public class LafObjectMapper {
         String netzbetreiberId = null;
 
         this.configMapper.applyConfigs(object.getAttributes());
-        // TODO: Integrate to ImportConfigMapper
-        Iterator<ImportConf> importerConfig = config.iterator();
-        while (importerConfig.hasNext()) {
-            ImportConf current = importerConfig.next();
-            if ("ZEITBASIS".equals(current.getName().toUpperCase())) {
-                currentZeitbasis = Integer.valueOf(current.getToVal());
-            }
-            if ("PROBE".equals(current.getName().toUpperCase())
-                && "MSTID".equals(current.getAttribute().toUpperCase())
-                && Action.DEFAULT.equals(current.getAction())) {
-                probe.setMeasFacilId(current.getToVal());
-            }
-        }
+
         if (object.getAttributes().containsKey("MESSSTELLE")) {
             probe.setMeasFacilId(object.getAttributes().get("MESSSTELLE"));
         }
         if (probe.getMeasFacilId() == null) {
-            currentErrors.add(
-                new ReportItem(
-                    "MESSSTELLE", "", StatusCodes.IMP_MISSING_VALUE));
-            errors.put(object.getIdentifier(),
-                new ArrayList<ReportItem>(currentErrors));
-            return;
+            if (measFacilId == null) {
+                currentErrors.add(
+                    new ReportItem(
+                        "MESSSTELLE", "", StatusCodes.IMP_MISSING_VALUE));
+                errors.put(object.getIdentifier(),
+                    new ArrayList<ReportItem>(currentErrors));
+                return;
+            }
+            probe.setMeasFacilId(measFacilId);
         } else {
             MeasFacil mst = repository.getByIdPlain(
                 MeasFacil.class, probe.getMeasFacilId());
@@ -1872,7 +1863,7 @@ public class LafObjectMapper {
         ) {
             QueryBuilder<Regulation> builder = repository
                 .queryBuilder(Regulation.class)
-                .and("regulation", value);
+                .and("name", value);
             List<Regulation> datenbasis =
                 repository.filterPlain(builder.getQuery());
             if (datenbasis == null || datenbasis.isEmpty()) {
@@ -2223,5 +2214,12 @@ public class LafObjectMapper {
     public void setConfig(List<ImportConf> config) {
         this.config = config;
         this.configMapper = new ImportConfigMapper(config);
+    }
+
+    /**
+     * @param measFacilId ID of the default measurement facility
+     */
+    public void setMeasFacilId(String measFacilId) {
+        this.measFacilId = measFacilId;
     }
 }

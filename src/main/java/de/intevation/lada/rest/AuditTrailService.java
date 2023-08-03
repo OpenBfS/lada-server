@@ -123,7 +123,7 @@ public class AuditTrailService extends LadaService {
         mappings.put("site_id",
             new TableMapper("site", "ext_id"));
         mappings.put("regulation_id",
-            new TableMapper("regulation", "regulation"));
+            new TableMapper("regulation", "name"));
         mappings.put("opr_mode_id",
             new TableMapper("opr_mode", "name"));
         mappings.put("mpg_categ_id",

@@ -39,21 +39,19 @@ COPY import_conf (id, name, attribute, meas_facil_id, from_val, to_val, action) 
 12	messwert	messEinheit	06010	KBQ/Kg	kBq/kg	CONVERT
 13	messwert	messEinheit	06010	KBQ/KG	kBq/kg	CONVERT
 14	messwert	messEinheit	06010	KBQ/Kgtm	kBq/kg(TM)	CONVERT
-15	probe	mstId	06010	\N	06010	DEFAULT
 16	messwert	messgroesse	06010	20	2d	TRANSFORM
-17	probe	mediaDesk	06010	2d	30	TRANSFORM
-18	probe	mstId	06060	\N	06060	DEFAULT
+17	probe	envDescripDisplay	06010	2d	30	TRANSFORM
+18	probe	deskriptoren	06010	2d	30	TRANSFORM
 19	messwert	messgroesse	06060	20	2d	TRANSFORM
 20	messwert	messEinheit	11010	Bq/d*P	Bq/(d*p)	CONVERT
 21	messwert	messEinheit	11010	Bq/ d*P	Bq/(d*p)	CONVERT
 22	messwert	messEinheit	11010	Bq/ (d*P)	Bq/(d*p)	CONVERT
 23	messwert	messEinheit	11010	Bq/(d*P)	Bq/(d*p)	CONVERT
-24	probe	mstId	11010	\N	11010	DEFAULT
 25	messwert	messgroesse	11010	20	2d	TRANSFORM
-26	probe	mstId	12010	\N	12010	DEFAULT
+26	probe	messstelle	12010	\N	12020	DEFAULT
 27	messwert	messgroesse	12010	20	2d	TRANSFORM
-28	probe	mstId	12020	\N	12020	DEFAULT
 29	messwert	messgroesse	12020	20	2d	TRANSFORM
+30	dummy	zeitbasis	06010	\N	ges. Zeit	DEFAULT
 \.
 
 

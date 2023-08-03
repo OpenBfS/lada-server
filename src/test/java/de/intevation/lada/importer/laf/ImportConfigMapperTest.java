@@ -43,6 +43,25 @@ public class ImportConfigMapperTest {
     }
 
     /**
+     * Test mapper attribute default.
+     */
+    @Test
+    public void defaultStringTest() {
+        final String key = "ZEITBASIS";
+        final String toVal = "MEZ";
+
+        ImportConf config = new ImportConf();
+        config.setAttribute(key);
+        config.setToVal(toVal);
+        config.setAction(Action.DEFAULT);
+        ImportConfigMapper mapper = new ImportConfigMapper(List.of(config));
+
+        Map<String, String> input = new HashMap<>();
+        mapper.applyConfigs(input);
+        Assert.assertEquals(toVal, input.get(key));
+    }
+
+    /**
      * Test string conversion.
      */
     @Test
