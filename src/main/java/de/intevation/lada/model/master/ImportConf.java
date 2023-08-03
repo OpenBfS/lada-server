@@ -12,6 +12,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -25,7 +27,8 @@ public class ImportConf implements Serializable {
     @Id
     private Integer id;
 
-    private String action;
+    @Enumerated(EnumType.STRING)
+    private Action action;
 
     private String attribute;
 
@@ -52,11 +55,11 @@ public class ImportConf implements Serializable {
         this.id = id;
     }
 
-    public String getAction() {
+    public Action getAction() {
         return this.action;
     }
 
-    public void setAction(String action) {
+    public void setAction(Action action) {
         this.action = action;
     }
 

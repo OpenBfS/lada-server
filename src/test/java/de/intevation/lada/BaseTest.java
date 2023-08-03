@@ -96,7 +96,7 @@ public class BaseTest {
      */
     @BeforeClass
     public static void setupDataSource() {
-        ds.setServerNames(new String[]{"lada_db"});
+        ds.setServerNames(new String[]{"db"});
         ds.setDatabaseName("lada_test");
         ds.setUser("lada_test");
         ds.setPassword("lada_test");

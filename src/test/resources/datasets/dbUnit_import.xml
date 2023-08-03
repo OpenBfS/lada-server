@@ -19,16 +19,24 @@
     <!--master data-->
     <master.meas_unit id = "207" />
     <master.meas_unit id = "208" />
+    <master.meas_unit id = "1" unit_symbol = "Bq/kgFM"/>
     <master.measd id = "56" name = "Mangan" />
     <master.measd id = "57" name = "Mangan" />
+    <master.measd id = "1" name = "H-3" />
     <master.mmt id = "A3" />
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
+    <master.regulation id = "1" regulation = "test" />
     <master.regulation id = "2" />
     <master.regulation id = "9" />
     <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
     <master.sample_meth id = "2" ext_id = "S" eudf_sample_meth_id = "B" />
     <master.env_medium id = "A6" name = "Umweltbereich für test" />
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "208" />
+    <master.sample_specif
+        id = "A1"
+        name = "test"
+        ext_id = "A1"
+    />
     <master.sample_specif
         id = "A74"
         name = "Volumenstrom"
@@ -66,7 +74,30 @@
         descr = "test"
         short_text = "test"
     />
-
+    <master.import_conf
+        name = "x"
+        attribute = "datenbasis"
+        meas_facil_id = "06010"
+        from_val = "conv"
+        to_val = "test"
+        action = "CONVERT"
+    />
+    <master.import_conf
+        name = "x"
+        attribute = "messgroesse"
+        meas_facil_id = "06010"
+        from_val = "20"
+        to_val = "2d"
+        action = "TRANSFORM"
+    />
+    <master.import_conf
+        name = "x"
+        attribute = "zusatzwert"
+        meas_facil_id = "06010"
+        from_val = "XX"
+        to_val = "A1"
+        action = "CONVERT"
+    />
     <!-- Sample/Measm import data-->
     <lada.mpg
         id = "1000"

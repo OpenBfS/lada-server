@@ -19,11 +19,11 @@
 
     <!--master data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
-    <master.regulation id = "2" />
-    <master.regulation id = "9" />
+    <master.regulation id = "2" regulation = "reg-2"/>
+    <master.regulation id = "9" regulation = "reg-9"/>
     <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
-    <master.meas_unit id = "207" />
-    <master.meas_unit id = "208" />
+    <master.meas_unit id = "207" unit_symbol = "u207"/>
+    <master.meas_unit id = "208" unit_symbol = "u208"/>
     <master.unit_convers
         from_unit_id = "207"
         to_unit_id = "208"

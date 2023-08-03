@@ -304,25 +304,32 @@ geschrieben werden:
    darstellen
 3. "transform": Zeichenumwandlung, die einzelne Zeichen eines Wertes ändern
 
-Eine Konfiguration wird in der Datenbanktabelle 'importer_config' im Schema
-"stammdaten" angelegt und hat die folgenden Felder:
+Eine Konfiguration wird in der Datenbanktabelle "import_config" im Schema
+"master" angelegt und hat die folgenden Felder:
 
 * id (serial): Primary Key
 * name (character varying(30)): Name der Datenbank-Tabelle,
   z.B. bei einer Probe "probe". Die Zeitbasis hat den Namen "zeitbasis".
-* attribute (character varying(30)): Name des Attributes das bearbeitet werden
-  soll in CamelCase-Schreibweise. (Zeitbasis hat hier einen "dummy"-Eintrag)
-  Tabellenspalten, die als Foreign-Key auf andere Tabellen verweisen, werden
-  mit dem Tabellennamen referenziert und können so im Falle der Aktion
-  'convert' mit den sprechenden Bezeichnung genutzt werden.
+  Wenn attribute auf einen in LafObjectListener und LafObjectMapper verwendeten
+  Attribut-Schlüssel verweist, ist der Inhalt bedeutungslos.
+* attribute (character varying(30)): Name des Datenbank-Attributes, das bearbeitet
+  werden soll, in CamelCase-Schreibweise (z.B. "mainSampleId"; Zeitbasis hat hier
+  einen "dummy"-Eintrag), oder ein in LafObjectListener und LafObjectMapper
+  verwendeter Attribut-Schlüssel (z.B. "HAUPTPROBENNUMMER", Groß-/Kleinschreibung
+  wird ignoriert). Attribut-Schlüssel, die in LafObjectListener und
+  LafObjectMapper mehrfach verwendet werden (z.B. "MST_ID" sowohl für Proben-
+  als auch für Messungs-Kommentare), werden entsprechend auch mehrfach auf die
+  Eingangs-Daten angewendet.
 * mst_id (Foreign-Key auf mess_stelle): Enthält die Messstelle, für die diese
   Konfiguration gültig ist.
 * from_value (character varying(100)): Für "default" bleibt diese Spalte leer,
   für "convert" und "transform" enthält diese Spalte den Ursprungswert.
 * to_value (character varying(100)): Enthält den Zielwert der Konfiguration
 * action (character varying(20)): Enthält eine der drei Aktionen als Text:
-  "default", "convert" oder "transform"
+  "default", "convert" oder "transform".
+  Wenn attribute auf einen in LafObjectListener und LafObjectMapper verwendeten
+  Attribut-Schlüssel verweist wird "default" ignoriert.
 
 Die Transformation im speziellen enthält in "from_value" und "to_value" die
-hexadezimale Darstellung eines Zeichen in Unicode. Also z.B. für "+" den
+hexadezimale Darstellung eines Zeichens in Unicode. Also z.B. für "+" den
 Wert "2b", für "#" den Wert "23".

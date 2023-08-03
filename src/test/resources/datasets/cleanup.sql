@@ -27,6 +27,7 @@ DELETE FROM measd;
 DELETE FROM mmt;
 DELETE FROM munic_div;
 DELETE FROM dataset_creator;
+DELETE FROM import_conf;
 DELETE FROM meas_facil;
 DELETE FROM sampler;
 DELETE FROM mpg_categ;

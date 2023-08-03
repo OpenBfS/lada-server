@@ -25,35 +25,35 @@ SET search_path = master, pg_catalog;
 --
 
 COPY import_conf (id, name, attribute, meas_facil_id, from_val, to_val, action) FROM stdin;
-1	messwert	messEinheit	06010	BQ	Bq	convert
-2	messwert	messEinheit	06010	BQ/KG	Bq/kg	convert
-3	messwert	messEinheit	06010	Bq/kgFM	Bq/kg(FM)	convert
-4	messwert	messEinheit	06010	BQ/kgFM	Bq/kg(FM)	convert
-5	messwert	messEinheit	06010	Bq/KGFM	Bq/kg(FM)	convert
-6	messwert	messEinheit	06010	Bq/kgGR	Bq/kg(GR)	convert
-7	messwert	messEinheit	06010	BQ/KGGR	Bq/kg(GR)	convert
-8	messwert	messEinheit	06010	Bq/kgTM	Bq/kg(TM)	convert
-9	messwert	messEinheit	06010	BQ/KGTM	Bq/kg(TM)	convert
-10	messwert	messEinheit	06010	Bq/m2	Bq/m²	convert
-11	messwert	messEinheit	06010	Bq/m2	Bq/m³	convert
-12	messwert	messEinheit	06010	KBQ/Kg	kBq/kg	convert
-13	messwert	messEinheit	06010	KBQ/KG	kBq/kg	convert
-14	messwert	messEinheit	06010	KBQ/Kgtm	kBq/kg(TM)	convert
-15	probe	mstId	06010	\N	06010	default
-16	messwert	messgroesse	06010	20	2d	transform
-17	probe	mediaDesk	06010	2d	30	transform
-18	probe	mstId	06060	\N	06060	default
-19	messwert	messgroesse	06060	20	2d	transform
-20	messwert	messEinheit	11010	Bq/d*P	Bq/(d*p)	convert
-21	messwert	messEinheit	11010	Bq/ d*P	Bq/(d*p)	convert
-22	messwert	messEinheit	11010	Bq/ (d*P)	Bq/(d*p)	convert
-23	messwert	messEinheit	11010	Bq/(d*P)	Bq/(d*p)	convert
-24	probe	mstId	11010	\N	11010	default
-25	messwert	messgroesse	11010	20	2d	transform
-26	probe	mstId	12010	\N	12010	default
-27	messwert	messgroesse	12010	20	2d	transform
-28	probe	mstId	12020	\N	12020	default
-29	messwert	messgroesse	12020	20	2d	transform
+1	messwert	messEinheit	06010	BQ	Bq	CONVERT
+2	messwert	messEinheit	06010	BQ/KG	Bq/kg	CONVERT
+3	messwert	messEinheit	06010	Bq/kgFM	Bq/kg(FM)	CONVERT
+4	messwert	messEinheit	06010	BQ/kgFM	Bq/kg(FM)	CONVERT
+5	messwert	messEinheit	06010	Bq/KGFM	Bq/kg(FM)	CONVERT
+6	messwert	messEinheit	06010	Bq/kgGR	Bq/kg(GR)	CONVERT
+7	messwert	messEinheit	06010	BQ/KGGR	Bq/kg(GR)	CONVERT
+8	messwert	messEinheit	06010	Bq/kgTM	Bq/kg(TM)	CONVERT
+9	messwert	messEinheit	06010	BQ/KGTM	Bq/kg(TM)	CONVERT
+10	messwert	messEinheit	06010	Bq/m2	Bq/m²	CONVERT
+11	messwert	messEinheit	06010	Bq/m3	Bq/m³	CONVERT
+12	messwert	messEinheit	06010	KBQ/Kg	kBq/kg	CONVERT
+13	messwert	messEinheit	06010	KBQ/KG	kBq/kg	CONVERT
+14	messwert	messEinheit	06010	KBQ/Kgtm	kBq/kg(TM)	CONVERT
+15	probe	mstId	06010	\N	06010	DEFAULT
+16	messwert	messgroesse	06010	20	2d	TRANSFORM
+17	probe	mediaDesk	06010	2d	30	TRANSFORM
+18	probe	mstId	06060	\N	06060	DEFAULT
+19	messwert	messgroesse	06060	20	2d	TRANSFORM
+20	messwert	messEinheit	11010	Bq/d*P	Bq/(d*p)	CONVERT
+21	messwert	messEinheit	11010	Bq/ d*P	Bq/(d*p)	CONVERT
+22	messwert	messEinheit	11010	Bq/ (d*P)	Bq/(d*p)	CONVERT
+23	messwert	messEinheit	11010	Bq/(d*P)	Bq/(d*p)	CONVERT
+24	probe	mstId	11010	\N	11010	DEFAULT
+25	messwert	messgroesse	11010	20	2d	TRANSFORM
+26	probe	mstId	12010	\N	12010	DEFAULT
+27	messwert	messgroesse	12010	20	2d	TRANSFORM
+28	probe	mstId	12020	\N	12020	DEFAULT
+29	messwert	messgroesse	12020	20	2d	TRANSFORM
 \.
 
 

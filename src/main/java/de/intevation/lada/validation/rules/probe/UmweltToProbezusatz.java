@@ -41,22 +41,27 @@ public class UmweltToProbezusatz implements Rule {
             return null;
         } else {
             String umwId = probe.getEnvMediumId();
-            QueryBuilder<EnvSpecifMp> builderUmwZus =
-                repository.queryBuilder(EnvSpecifMp.class);
-                builderUmwZus.and("envMediumId", umwId);
-            List <EnvSpecifMp> UmwZus = repository.filterPlain(builderUmwZus.getQuery());
+            QueryBuilder<EnvSpecifMp> builderUmwZus = repository
+                .queryBuilder(EnvSpecifMp.class)
+                .and("envMediumId", umwId);
+            List <EnvSpecifMp> umwZus = repository.filterPlain(
+                builderUmwZus.getQuery());
 
-            QueryBuilder<SampleSpecifMeasVal> builderZusatz =
-                repository.queryBuilder(SampleSpecifMeasVal.class);
-                builderZusatz.and("sampleId", probe.getId());
-            List <SampleSpecifMeasVal> ZusWert = repository.filterPlain(builderZusatz.getQuery());
-            for (SampleSpecifMeasVal zusW: ZusWert) {
-                Boolean ZusWertFound = UmwZus.stream().anyMatch(u -> u.getSampleSpecifId().equals(zusW.getSampleSpecifId()));
-                if (ZusWertFound) {
+            QueryBuilder<SampleSpecifMeasVal> builderZusatz = repository
+                .queryBuilder(SampleSpecifMeasVal.class)
+                .and("sampleId", probe.getId());
+            List <SampleSpecifMeasVal> zusWert = repository.filterPlain(
+                builderZusatz.getQuery());
+            for (SampleSpecifMeasVal zusW: zusWert) {
+                Boolean zusWertFound = umwZus.stream().anyMatch(
+                    u -> u.getSampleSpecifId().equals(
+                        zusW.getSampleSpecifId()));
+                if (zusWertFound) {
                     return null;
                 } else {
                     Violation violation = new Violation();
-                    violation.addWarning("zusatzwert", StatusCodes.VAL_PZW);
+                    violation.addWarning(
+                        "sample_specif_meas_val", StatusCodes.VAL_PZW);
                     return violation;
                 }
             }

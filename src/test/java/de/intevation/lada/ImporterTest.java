@@ -14,7 +14,6 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
@@ -84,15 +83,30 @@ public class ImporterTest extends BaseTest {
     @Resource UserTransaction transaction;
 
     private final String lafSampleId = "XXX";
-    private final String laf = "%PROBE%\n"
+    private final String mstId = "06010";
+    private final String regulation = "test";
+    private final String sampleSpecifId = "A1";
+    private final String measd = "H-3";
+    private final String measUnit = "Bq/kgFM";
+    private final String lafTemplate = "%%PROBE%%\n"
         + "UEBERTRAGUNGSFORMAT \"7\"\n"
         + "VERSION \"0084\"\n"
-        + "PROBE_ID \"" + lafSampleId + "\"\n"
-        + "MESSSTELLE \"06010\"\n"
+        + "PROBE_ID \"%s\"\n"
+        + "MESSSTELLE \"%s\"\n"
         + "PROBENART \"E\"\n"
         + "MESSPROGRAMM_S 1\n"
-        + "DATENBASIS_S 02\n"
-        + "%ENDE%\n";
+        + "DATENBASIS \"%s\"\n"
+        + "PZB_S \"%s\" 42 \"\" 5.0\n"
+        + "%s"
+        + "%%MESSUNG%%\n"
+        + "MESSMETHODE_S \"A3\"\n"
+        + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
+        + "%%ENDE%%\n";
+    private final String laf = String.format(
+        lafTemplate, lafSampleId, mstId, regulation, sampleSpecifId,
+        "", measd, measUnit);
+
+    final String dataKey = "data";
 
     @PersistenceContext
     EntityManager em;
@@ -125,7 +139,7 @@ public class ImporterTest extends BaseTest {
     public final void identifyProbeByHPNrMST() throws Exception {
         Sample probe = new Sample();
         probe.setMainSampleId("120510002");
-        probe.setMeasFacilId("06010");
+        probe.setMeasFacilId(mstId);
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.UPDATE, found);
@@ -140,7 +154,7 @@ public class ImporterTest extends BaseTest {
     public final void identifyProbeByHPNrMSTNew() throws Exception {
         Sample probe = new Sample();
         probe.setMainSampleId("120510003");
-        probe.setMeasFacilId("06010");
+        probe.setMeasFacilId(mstId);
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.NEW, found);
@@ -187,7 +201,7 @@ public class ImporterTest extends BaseTest {
         Sample probe = new Sample();
         probe.setExtId("T001");
         probe.setMainSampleId("120510003");
-        probe.setMeasFacilId("06010");
+        probe.setMeasFacilId(mstId);
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.REJECT, found);
@@ -203,7 +217,7 @@ public class ImporterTest extends BaseTest {
         Sample probe = new Sample();
         probe.setExtId("T001");
         probe.setMainSampleId("");
-        probe.setMeasFacilId("06010");
+        probe.setMeasFacilId(mstId);
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.UPDATE, found);
@@ -316,7 +330,7 @@ public class ImporterTest extends BaseTest {
             Sample probe = new Sample();
             probe.setExtId("T001");
             probe.setMainSampleId("120510002");
-            probe.setMeasFacilId("06010");
+            probe.setMeasFacilId(mstId);
             probe.setOprModeId(1);
             probe.setRegulationId(DID9);
             probe.setEnvDescripName(
@@ -325,7 +339,7 @@ public class ImporterTest extends BaseTest {
             probe.setMpgId(MPRID1000);
             probe.setSamplerId(PNID);
             probe.setIsTest(false);
-            probe.setApprLabId("06010");
+            probe.setApprLabId(mstId);
             probe.setSampleMethId(2);
             probe.setEnvMediumId("A6");
             probe.setSchedStartDate(Timestamp.valueOf("2013-05-01 16:00:00"));
@@ -432,13 +446,13 @@ public class ImporterTest extends BaseTest {
             CommSample komm1 = new CommSample();
             komm1.setSampleId(PID1000);
             komm1.setDate(Timestamp.valueOf("2012-05-08 12:00:00"));
-            komm1.setMeasFacilId("06010");
+            komm1.setMeasFacilId(mstId);
             komm1.setText("Testtext2");
 
             CommSample komm2 = new CommSample();
             komm2.setSampleId(PID1000);
             komm2.setDate(Timestamp.valueOf("2012-04-08 12:00:00"));
-            komm2.setMeasFacilId("06010");
+            komm2.setMeasFacilId(mstId);
             komm2.setText("Testtext3");
 
             kommentare.add(komm1);
@@ -471,13 +485,13 @@ public class ImporterTest extends BaseTest {
             CommMeasm komm1 = new CommMeasm();
             komm1.setMeasmId(MID1200);
             komm1.setDate(Timestamp.valueOf("2012-05-08 12:00:00"));
-            komm1.setMeasFacilId("06010");
+            komm1.setMeasFacilId(mstId);
             komm1.setText("Testtext2");
 
             CommMeasm komm2 = new CommMeasm();
             komm2.setMeasmId(MID1200);
             komm2.setDate(Timestamp.valueOf("2012-03-08 12:00:00"));
-            komm2.setMeasFacilId("06010");
+            komm2.setMeasFacilId(mstId);
             komm2.setText("Testtext3");
 
             kommentare.add(komm1);
@@ -533,7 +547,8 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
-     * Test synchronous import of a Sample object.
+     * Preliminary data for testing LAF 8 import.
+     * @throws Exception that can occur during the test.
      */
     @Test
     @RunAsClient
@@ -546,12 +561,11 @@ public class ImporterTest extends BaseTest {
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .header("X-LADA-MST", "06010")
+            .header("X-LADA-MST", mstId)
             .post(Entity.entity(laf, MediaType.TEXT_PLAIN));
         JsonObject importResponseObject = parseResponse(importResponse);
 
         /* Check if a Sample object has been imported */
-        final String dataKey = "data";
         assertContains(importResponseObject, dataKey);
         JsonObject data = importResponseObject.getJsonObject(dataKey);
 
@@ -584,6 +598,56 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
+     * Test asynchronous import of a Sample object with attribute conversion.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncImportProbeImportConfConvert(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        testAsyncImportProbe(
+            baseUrl,
+            String.format(
+                lafTemplate, lafSampleId, mstId, "conv", sampleSpecifId,
+                "", measd, measUnit),
+            true);
+    }
+
+    /**
+     * Test asynchronous import with attribute transformation in MeasVal.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncImportMeasValImportConfTransform(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        testAsyncImportProbe(
+            baseUrl,
+            String.format(
+                lafTemplate, lafSampleId, mstId, "conv", sampleSpecifId,
+                "", "H 3", measUnit),
+            true);
+    }
+
+    /**
+     * Test asynchronous import with attribute conversion
+     * in SampleSpecifMeasVal.
+     */
+    @Test
+    @RunAsClient
+    @Ignore
+    public final void testAsyncImportSampleSpecifMeasValImportConfTransform(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        testAsyncImportProbe(
+            baseUrl,
+            String.format(
+                lafTemplate, lafSampleId, mstId, "conv", "XX",
+                "", measd, measUnit),
+            true);
+    }
+
+    /**
      * Test "Zeitbasis" handling in LAF8 import.
      */
     @Test
@@ -604,11 +668,15 @@ public class ImporterTest extends BaseTest {
         boolean expectWarning
     ) throws InterruptedException, CharacterCodingException {
         // Add "ZEITBASIS" attribute to LAF string
-        final String nl = "\n";
-        String[] lafLines = laf.split(nl);
-        String lafZb = lafLines[0] + nl
-            + lafKey + " " + value + nl
-            + String.join(nl, Arrays.copyOfRange(lafLines, 1, lafLines.length));
+        String lafZb = String.format(
+            lafTemplate,
+            lafSampleId,
+            mstId,
+            regulation,
+            sampleSpecifId,
+            lafKey + " " + value + "\n",
+            measd,
+            measUnit);
         LOG.trace(lafZb);
 
         JsonArray warnings = testAsyncImportProbe(baseUrl, lafZb, true)
@@ -644,7 +712,7 @@ public class ImporterTest extends BaseTest {
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .header("X-LADA-MST", "06010")
+            .header("X-LADA-MST", mstId)
             .post(Entity.entity(requestJson.toString(),
                     MediaType.APPLICATION_JSON));
         JsonObject importCreatedObject = parseSimpleResponse(importCreated);
@@ -693,19 +761,74 @@ public class ImporterTest extends BaseTest {
 
         assertContains(report, fileName);
         JsonObject fileReport = report.getJsonObject(fileName);
+        LOG.debug(fileReport);
 
         final String successKey = "success";
         assertContains(fileReport, successKey);
         boolean success = fileReport.getBoolean(successKey);
-        if (expectSuccess) {
-            Assert.assertTrue(
-                "Unsuccessful import: " + fileReport, success);
-        } else {
+        final String sampleIdsKey = "probeIds";
+        assertContains(fileReport, sampleIdsKey);
+        if (!expectSuccess) {
             Assert.assertFalse(
                 "Unexpectedly successful import: " + fileReport, success);
+            return fileReport;
         }
+        Assert.assertTrue(
+            "Unsuccessful import: " + fileReport, success);
 
-        // TODO: Test if data correctly entered database
+        // Test if data correctly entered database
+        final int sampleId = fileReport.getJsonArray(sampleIdsKey)
+            .getJsonNumber(0).intValue();
+        Response importedSampleResponse = client.target(
+            baseUrl + "rest/sample/" + sampleId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        JsonObject importedSample = parseResponse(
+            importedSampleResponse).getJsonObject(dataKey);
+        Assert.assertEquals(lafSampleId, importedSample.getString("extId"));
+        Assert.assertEquals(mstId, importedSample.getString("measFacilId"));
+        Assert.assertEquals(1, importedSample.getInt("regulationId"));
+
+        Response importedSampleSpecifMeasValResponse = client.target(
+            baseUrl + "rest/samplespecifmeasval?sampleId=" + sampleId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        JsonObject importedSampleSpecifMeasVal =
+            parseResponse(importedSampleSpecifMeasValResponse)
+            .getJsonArray(dataKey)
+            .getJsonObject(0);
+        Assert.assertEquals(
+            sampleSpecifId,
+            importedSampleSpecifMeasVal.getString("sampleSpecifId"));
+
+        Response importedMeasmResponse = client.target(
+            baseUrl + "rest/measm?sampleId=" + sampleId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        final int measmId = parseResponse(importedMeasmResponse)
+            .getJsonArray(dataKey)
+            .getJsonObject(0)
+            .getInt("id");
+
+        Response importedMeasValResponse = client.target(
+            baseUrl + "rest/measval?measmId=" + measmId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        JsonObject importedMeasVal =
+            parseResponse(importedMeasValResponse)
+            .getJsonArray(dataKey)
+            .getJsonObject(0);
+        Assert.assertEquals(1, importedMeasVal.getInt("measdId"));
+        Assert.assertEquals(1, importedMeasVal.getInt("measUnitId"));
+
         return fileReport;
     }
 }
