@@ -426,7 +426,7 @@ FROM master.opr_mode;
 CREATE VIEW stamm.datenbasis AS SELECT
 	id,
 	descr AS beschreibung,
-	regulation AS datenbasis,
+	name AS datenbasis,
 	last_mod AS letzte_aenderung
 FROM master.regulation;
 

@@ -1877,7 +1877,7 @@ public class LafObjectMapper {
         ) {
             QueryBuilder<Regulation> builder = repository
                 .queryBuilder(Regulation.class)
-                .and("regulation", value);
+                .and("name", value);
             List<Regulation> datenbasis =
                 repository.filterPlain(builder.getQuery());
             if (datenbasis == null || datenbasis.isEmpty()) {

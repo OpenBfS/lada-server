@@ -9,7 +9,7 @@
     }],
     "master.regulation": [{
         "id": 1,
-        "regulation": "test"
+        "name": "test"
     }],
     "master.sample_specif": [{
         "id": "A1",

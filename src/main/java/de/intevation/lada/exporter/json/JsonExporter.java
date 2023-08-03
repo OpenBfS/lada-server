@@ -338,7 +338,7 @@ public class JsonExporter implements Exporter {
         probe.put("sampleMethExtId",
             art == null ? "" : art.getExtId());
         probe.put("regulation",
-            datenbasis == null ? "" : datenbasis.getRegulation());
+            datenbasis == null ? "" : datenbasis.getName());
         probe.put("envMediumName", umw == null ? "" : umw.getName());
         if (probe.get("oprModeId").asInt() != 0) {
             OprMode ba = repository.getByIdPlain(
