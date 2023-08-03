@@ -16,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -43,7 +42,6 @@ import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.TagLink;
-import de.intevation.lada.model.master.Action;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.EnvMedium;
@@ -171,19 +169,7 @@ public class LafObjectMapper {
         String netzbetreiberId = null;
 
         this.configMapper.applyConfigs(object.getAttributes());
-        // TODO: Integrate to ImportConfigMapper
-        Iterator<ImportConf> importerConfig = config.iterator();
-        while (importerConfig.hasNext()) {
-            ImportConf current = importerConfig.next();
-            if ("ZEITBASIS".equals(current.getName().toUpperCase())) {
-                currentZeitbasis = Integer.valueOf(current.getToVal());
-            }
-            if ("PROBE".equals(current.getName().toUpperCase())
-                && "MSTID".equals(current.getAttribute().toUpperCase())
-                && Action.DEFAULT.equals(current.getAction())) {
-                probe.setMeasFacilId(current.getToVal());
-            }
-        }
+
         if (object.getAttributes().containsKey("MESSSTELLE")) {
             probe.setMeasFacilId(object.getAttributes().get("MESSSTELLE"));
         }

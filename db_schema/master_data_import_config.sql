@@ -48,9 +48,10 @@ COPY import_conf (id, name, attribute, meas_facil_id, from_val, to_val, action) 
 22	messwert	messEinheit	11010	Bq/ (d*P)	Bq/(d*p)	CONVERT
 23	messwert	messEinheit	11010	Bq/(d*P)	Bq/(d*p)	CONVERT
 25	messwert	messgroesse	11010	20	2d	TRANSFORM
-26	probe	mstId	12010	\N	12020	DEFAULT
+26	probe	messstelle	12010	\N	12020	DEFAULT
 27	messwert	messgroesse	12010	20	2d	TRANSFORM
 29	messwert	messgroesse	12020	20	2d	TRANSFORM
+30	dummy	zeitbasis	06010	\N	ges. Zeit	DEFAULT
 \.
 
 

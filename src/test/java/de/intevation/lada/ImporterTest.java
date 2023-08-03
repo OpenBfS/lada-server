@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.client.Entity;
@@ -877,6 +878,9 @@ public class ImporterTest extends BaseTest {
         testZeitbasis(baseUrl, "ZEITBASIS", "\"INVALID\"", true, prot);
         testZeitbasis(baseUrl, "ZEITBASIS_S", "1", false, prot);
         testZeitbasis(baseUrl, "ZEITBASIS_S", "0", true, prot);
+
+        // Use default from import_conf
+        testZeitbasis(baseUrl, "", "", false, prot);
     }
 
     private void testZeitbasis(
@@ -900,14 +904,23 @@ public class ImporterTest extends BaseTest {
         JsonArray warnings = testAsyncImportProbe(baseUrl, lafZb, true, prot)
             .getJsonObject("warnings").getJsonArray(lafSampleId);
         LOG.trace(warnings);
-        JsonObject warning = Json.createObjectBuilder()
-            .add("key", lafKey)
-            .add("value", value.replace("\"", ""))
-            .add("code", StatusCodes.IMP_INVALID_VALUE).build();
-        Assert.assertFalse((expectWarning
-                ? "Missing warning: " : "Unexpected warning: ")
-            + warning.toString(),
-            expectWarning && !warnings.contains(warning));
+        final String keyKey = "key";
+        if (expectWarning) {
+            JsonObject expectedWarning = Json.createObjectBuilder()
+                .add(keyKey, lafKey)
+                .add("value", value.replace("\"", ""))
+                .add("code", StatusCodes.IMP_INVALID_VALUE).build();
+            Assert.assertFalse(
+                "Missing warning: " + expectedWarning.toString(),
+                !warnings.contains(expectedWarning));
+        } else {
+            for (JsonValue warningVal: warnings) {
+                JsonObject warning = (JsonObject) warningVal;
+                Assert.assertFalse(
+                    "Unexpected warning: " + warning.toString(),
+                    warning.getString(keyKey).startsWith("ZEITBASIS"));
+            }
+        }
     }
 
     private JsonObject testAsyncImportProbe(

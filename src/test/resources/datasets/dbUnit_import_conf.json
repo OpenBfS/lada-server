@@ -37,5 +37,11 @@
         "from_val": "XX",
         "to_val": "A1",
         "action": "CONVERT"
+    }, {
+        "name": "x",
+        "attribute": "zeitbasis_s",
+        "meas_facil_id": "06010",
+        "to_val": "2",
+        "action": "DEFAULT"
     }]
 }
