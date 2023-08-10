@@ -380,8 +380,6 @@ public class ServiceTest {
     public JsonObject bulkOperation(
         String name, String parameter, JsonArray payload
     ) {
-        System.out.print(".");
-
         WebTarget target = client.target(baseUrl + parameter);
         /* Send a post request containing a new object*/
         Response response = target.request()

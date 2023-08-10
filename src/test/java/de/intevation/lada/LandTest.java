@@ -12,11 +12,9 @@ import java.net.URL;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -43,8 +41,6 @@ import de.intevation.lada.test.land.ZusatzwertTest;
  */
 @RunWith(Arquillian.class)
 public class LandTest extends BaseTest {
-
-    private static Logger logger = Logger.getLogger(StammdatenTest.class);
 
     @PersistenceContext
     EntityManager em;
@@ -82,14 +78,6 @@ public class LandTest extends BaseTest {
         verboseLogging = false;
 
         testDatasetName = "datasets/dbUnit_lada.xml";
-    }
-
-    /**
-     * Output  for current test run.
-     */
-    @BeforeClass
-    public static void beforeTests() {
-        logger.info("---------- Testing Lada Land Services ----------");
     }
 
     /*------ REST service tests ------*/
