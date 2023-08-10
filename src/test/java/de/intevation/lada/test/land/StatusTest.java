@@ -15,9 +15,9 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
 
-import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 
+import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -33,10 +33,9 @@ public class StatusTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        IDataSet dbDataset
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, dbDataset);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "date",
@@ -45,7 +44,7 @@ public class StatusTest extends ServiceTest {
 
         // Prepare expected object
         JsonObject status =
-            readXmlResource("datasets/dbUnit_lada.xml", "lada.status_prot")
+            readXmlResource("datasets/dbUnit_lada.xml", StatusProt.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(status);
         builder.add("parentModified", TS1);

@@ -16,9 +16,9 @@ import javax.json.JsonObjectBuilder;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response.Status;
 
-import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 
+import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -33,10 +33,9 @@ public class MessprogrammTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        IDataSet dbDataset
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, dbDataset);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod",
@@ -45,8 +44,8 @@ public class MessprogrammTest extends ServiceTest {
 
         // Prepare expected object
         JsonObject messprogramm =
-        readXmlResource("datasets/dbUnit_lada.xml", "lada.mpg")
-        .getJsonObject(0);
+            readXmlResource("datasets/dbUnit_lada.xml", Mpg.class)
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messprogramm);
         builder.add("oprModeId", 1);
         builder.add("samplePdOffset", 0);

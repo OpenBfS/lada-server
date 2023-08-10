@@ -18,10 +18,10 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.model.master.SpatRefSys;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -40,15 +40,13 @@ public class KoordinatenartTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        IDataSet dbDataset
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, dbDataset);
+        super.init(c, baseUrl);
 
         // Prepare expected object
         JsonObject erzeuger =
-            readXmlResource(
-                "datasets/dbUnit_master.xml", "master.spat_ref_sys")
+            readXmlResource("datasets/dbUnit_master.xml", SpatRefSys.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();

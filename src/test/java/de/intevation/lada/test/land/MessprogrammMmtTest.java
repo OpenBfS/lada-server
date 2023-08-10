@@ -15,9 +15,9 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.client.Client;
 
-import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 
+import de.intevation.lada.model.lada.MpgMmtMp;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -30,10 +30,9 @@ public class MessprogrammMmtTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        IDataSet dbDataset
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, dbDataset);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
@@ -41,7 +40,7 @@ public class MessprogrammMmtTest extends ServiceTest {
 
         // Prepare expected object
         JsonObject messprogrammMmt =
-            readXmlResource("datasets/dbUnit_lada.xml", "lada.mpg_mmt_mp")
+            readXmlResource("datasets/dbUnit_lada.xml", MpgMmtMp.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messprogrammMmt);
         builder.add("measds", Json.createArrayBuilder().add(56));

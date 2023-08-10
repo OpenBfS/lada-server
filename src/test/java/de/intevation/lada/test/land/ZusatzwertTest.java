@@ -15,9 +15,9 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
 
-import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 
+import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -33,10 +33,9 @@ public class ZusatzwertTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        IDataSet dbDataset
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, dbDataset);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod",
@@ -45,8 +44,7 @@ public class ZusatzwertTest extends ServiceTest {
 
         // Prepare expected probe object
         JsonObject content = readXmlResource(
-                "datasets/dbUnit_lada.xml",
-                "lada.sample_specif_meas_val")
+            "datasets/dbUnit_lada.xml", SampleSpecifMeasVal.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(content);
         builder.add("parentModified", TS1);

@@ -7,11 +7,14 @@
  */
 package de.intevation.lada.test;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URL;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -31,14 +34,13 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
+import javax.persistence.Table;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.text.WordUtils;
-import org.dbunit.dataset.Column;
 import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
@@ -88,19 +90,13 @@ public class ServiceTest {
     protected URL baseUrl;
 
     /**
-     * Dataset storing db table information.
-     */
-    protected IDataSet dbDataset;
-
-    /**
      * Initialize the tests.
+     * @param c Client instance used for issueing requests.
      * @param bUrl The server url used for the request.
-     * @param p The resulting test protocol
      */
-    public void init(Client c, URL bUrl, IDataSet dbDataSet) {
+    public void init(Client c, URL bUrl) {
         this.client = c;
         this.baseUrl = bUrl;
-        this.dbDataset = dbDataSet;
     }
 
     /**
@@ -134,67 +130,65 @@ public class ServiceTest {
 
     /**
      * Read the given xml resource and return as JSON.
-     * @param resource Resource to read
-     * @param tablename Table to read
-     * @return The given resource as json
+     * @param resource Name of resource with DbUnit XML dataset
+     * @param clazz Model class for which data are extracted from resource
+     * @return Array of objcets from the given resource corresponding to
+     * clazz as JSON
+     * @throws RuntimeException if resource cannot be read as DbUnit dataset
+     * or bean introspection of clazz fails
      */
-    protected JsonArray readXmlResource(String resource, String tablename) {
-        IDataSet xml;
+    protected JsonArray readXmlResource(String resource, Class<?> clazz) {
         try {
-            xml = new FlatXmlDataSetBuilder()
+            IDataSet xml = new FlatXmlDataSetBuilder()
                 .setColumnSensing(true)
                 .build(getClass().getClassLoader()
                     .getResourceAsStream(resource));
+
+            BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
+            String tablename = clazz.getAnnotation(Table.class).schema() + "."
+                + NamingStrategy.camelToSnake(
+                    beanInfo.getBeanDescriptor().getName());
             ITable table = xml.getTable(tablename);
-            ITableMetaData dbMetadata = dbDataset.getTableMetaData(tablename);
             ITableMetaData datasetMetadata = xml.getTableMetaData(tablename);
+
             JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
             for (int row = 0; row < table.getRowCount(); row++) {
                 JsonObjectBuilder builder = Json.createObjectBuilder();
-                for (Column column: dbMetadata.getColumns()) {
+                for (
+                    PropertyDescriptor column: beanInfo.getPropertyDescriptors()
+                ) {
                     //Check if column is present in dataset
-                    String columnName = column.getColumnName();
+                    String key = column.getName();
+                    String columnName = NamingStrategy.camelToSnake(key);
                     try {
                         datasetMetadata.getColumnIndex(columnName);
                     } catch (NoSuchColumnException nsce) {
                         continue;
                     }
-                    Object value = table.getValue(row, column.getColumnName());
+                    Object value = table.getValue(row, columnName);
                     if (value == null) {
                         continue;
                     }
-                    switch (column.getDataType().getSqlType()) {
-                        case Types.NUMERIC:
-                        case Types.BIGINT:
-                        case Types.INTEGER:
-                        case Types.SMALLINT:
-                            builder.add(columnName, Integer.parseInt(
-                                (String) value));
-                            break;
-                        case Types.FLOAT:
-                        case Types.DOUBLE:
-                        case Types.DECIMAL:
-                        case Types.REAL:
-                            builder.add(columnName, Double.parseDouble(
-                                (String) value));
-                            break;
-                        case Types.BOOLEAN:
-                        case Types.BIT:
-                            builder.add(columnName, Boolean.parseBoolean(
-                                (String) value));
-                            break;
-                        default:
-                            builder.add(columnName, (String) value);
+                    Class<?> type =
+                        column.getWriteMethod().getParameterTypes()[0];
+                    if (type.isAssignableFrom(Integer.class)) {
+                        builder.add(key, Integer.parseInt((String) value));
+                    } else if (type.isAssignableFrom(Double.class)
+                        || type.isAssignableFrom(Float.class)
+                    ) {
+                        builder.add(key, Double.parseDouble((String) value));
+                    } else if (type.isAssignableFrom(Boolean.class)) {
+                        builder.add(key, Boolean.parseBoolean((String) value));
+                    } else {
+                        builder.add(key, (String) value);
                     }
                 }
                 arrayBuilder.add(builder);
             }
             return arrayBuilder.build();
-        } catch (DataSetException e) {
-            Assert.fail("Datasetexception: "
-                + e.getMessage() + e.getStackTrace());
+        } catch (DataSetException | IntrospectionException e) {
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     /**
@@ -248,10 +242,8 @@ public class ServiceTest {
             if (Arrays.asList(exclusions).contains(entry.getKey())) {
                 continue;
             }
-            String key = WordUtils.capitalize(
-                entry.getKey(), new char[]{'_'}).replaceAll("_", "");
-            key = key.replaceFirst(
-                key.substring(0, 1), key.substring(0, 1).toLowerCase());
+
+            String key = entry.getKey();
             if (timestampAttributes.contains(key)) {
                 Timestamp timestamp = Timestamp.valueOf(
                     entry.getValue().toString().replaceAll("\"", ""));

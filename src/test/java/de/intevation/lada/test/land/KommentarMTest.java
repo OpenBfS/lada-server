@@ -15,9 +15,9 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
 
-import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 
+import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -33,10 +33,9 @@ public class KommentarMTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        IDataSet dbDataset
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, dbDataset);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "date",
@@ -45,7 +44,7 @@ public class KommentarMTest extends ServiceTest {
 
         // Prepare expected probe object
         JsonObject messung =
-            readXmlResource("datasets/dbUnit_lada.xml", "lada.comm_measm")
+            readXmlResource("datasets/dbUnit_lada.xml", CommMeasm.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messung);
         builder.add("parentModified", TS1);

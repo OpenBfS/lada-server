@@ -15,9 +15,9 @@ import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 
-import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 
+import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -32,12 +32,11 @@ public class MessungTest extends ServiceTest {
     private JsonObject create;
 
     @Override
-    public void init(
+    public void init (
         Client c,
-        URL baseUrl,
-        IDataSet dbDataset
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, dbDataset);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod",
@@ -47,12 +46,9 @@ public class MessungTest extends ServiceTest {
 
         // Prepare expected probe object
         JsonObject messung =
-            readXmlResource("datasets/dbUnit_lada.xml", "lada.measm")
+            readXmlResource("datasets/dbUnit_lada.xml", Measm.class)
             .getJsonObject(0);
-        // Automatic conversion of key for external ID does not work
-        final String extIdKey = "ext_id";
-        expectedById = convertObject(messung, extIdKey)
-            .add("extId", messung.get(extIdKey))
+        expectedById = convertObject(messung)
             .add("parentModified", TS1)
             .add("readonly", JsonValue.FALSE)
             .add("owner", JsonValue.TRUE)

@@ -21,10 +21,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.model.master.Site;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -41,10 +41,9 @@ public class OrtTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        IDataSet dbDataset
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, dbDataset);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
@@ -56,8 +55,7 @@ public class OrtTest extends ServiceTest {
 
         // Prepare expected object
         JsonObject erzeuger =
-            readXmlResource(
-                "datasets/dbUnit_master.xml", "master.site")
+            readXmlResource("datasets/dbUnit_master.xml", Site.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();

@@ -15,9 +15,9 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
 
-import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 
+import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.test.ServiceTest;
 
 public class GeolocatMpgTest extends ServiceTest {
@@ -29,10 +29,9 @@ public class GeolocatMpgTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        IDataSet dbDataset
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, dbDataset);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod"
@@ -40,7 +39,7 @@ public class GeolocatMpgTest extends ServiceTest {
 
         // Prepare expected probe object
         JsonObject geolocat =
-            readXmlResource("datasets/dbUnit_lada.xml", "lada.geolocat_mpg")
+            readXmlResource("datasets/dbUnit_lada.xml", GeolocatMpg.class)
             .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(geolocat);
         builder.add("parentModified", TS1);

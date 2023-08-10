@@ -102,7 +102,7 @@ public class LandTest extends BaseTest {
     @Test
     @RunAsClient
     public final void testProbe(@ArquillianResource URL baseUrl) {
-        probeTest.init(this.client, baseUrl, this.dbDataset);
+        probeTest.init(this.client, baseUrl);
         probeTest.execute();
     }
 
@@ -114,7 +114,7 @@ public class LandTest extends BaseTest {
     @Test
     @RunAsClient
     public final void testKommentarP(@ArquillianResource URL baseUrl) {
-        pkommentarTest.init(this.client, baseUrl, this.dbDataset);
+        pkommentarTest.init(this.client, baseUrl);
         pkommentarTest.execute();
     }
 
@@ -127,7 +127,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testOrtszuordnung(@ArquillianResource URL baseUrl)
     throws Exception {
-        ortszuordnungTest.init(this.client, baseUrl, this.dbDataset);
+        ortszuordnungTest.init(this.client, baseUrl);
         ortszuordnungTest.execute();
     }
 
@@ -140,7 +140,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testZusatzwert(@ArquillianResource URL baseUrl)
     throws Exception {
-        zusatzwertTest.init(this.client, baseUrl, this.dbDataset);
+        zusatzwertTest.init(this.client, baseUrl);
         zusatzwertTest.execute();
     }
     /**
@@ -152,7 +152,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMessung(@ArquillianResource URL baseUrl)
     throws Exception {
-        messungTest.init(this.client, baseUrl, this.dbDataset);
+        messungTest.init(this.client, baseUrl);
         messungTest.execute();
     }
 
@@ -165,7 +165,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testKommentarM(@ArquillianResource URL baseUrl)
     throws Exception {
-        mkommentarTest.init(this.client, baseUrl, this.dbDataset);
+        mkommentarTest.init(this.client, baseUrl);
         mkommentarTest.execute();
     }
 
@@ -178,7 +178,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMesswert(@ArquillianResource URL baseUrl)
     throws Exception {
-        messwertTest.init(this.client, baseUrl, this.dbDataset);
+        messwertTest.init(this.client, baseUrl);
         messwertTest.execute();
     }
 
@@ -191,7 +191,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testStatus(@ArquillianResource URL baseUrl)
     throws Exception {
-        statusTest.init(this.client, baseUrl, this.dbDataset);
+        statusTest.init(this.client, baseUrl);
         statusTest.execute();
     }
 
@@ -204,7 +204,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMessprogramm(@ArquillianResource URL baseUrl)
     throws Exception {
-        messprogrammTest.init(this.client, baseUrl, this.dbDataset);
+        messprogrammTest.init(this.client, baseUrl);
         messprogrammTest.execute();
     }
 
@@ -217,7 +217,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testMessprogrammMmt(@ArquillianResource URL baseUrl)
     throws Exception {
-        messprogrammMmtTest.init(this.client, baseUrl, this.dbDataset);
+        messprogrammMmtTest.init(this.client, baseUrl);
         messprogrammMmtTest.execute();
     }
 
@@ -230,7 +230,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testQuery(@ArquillianResource URL baseUrl)
     throws Exception {
-        queryTest.init(this.client, baseUrl, this.dbDataset);
+        queryTest.init(this.client, baseUrl);
         queryTest.execute();
     }
 
@@ -243,7 +243,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testPepGeneration(@ArquillianResource URL baseUrl)
             throws Exception {
-        pepGenerationTest.init(this.client, baseUrl, this.dbDataset);
+        pepGenerationTest.init(this.client, baseUrl);
         pepGenerationTest.execute();
     }
 
@@ -256,7 +256,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testGeolocatMpg(@ArquillianResource URL baseUrl)
             throws Exception {
-        geolocatMpgTest.init(this.client, baseUrl, this.dbDataset);
+        geolocatMpgTest.init(this.client, baseUrl);
         geolocatMpgTest.execute();
     }
 
@@ -269,7 +269,7 @@ public class LandTest extends BaseTest {
     @RunAsClient
     public final void testTimestamps(@ArquillianResource URL baseUrl)
             throws Exception {
-        timestampTest.init(this.client, baseUrl, this.dbDataset);
+        timestampTest.init(this.client, baseUrl);
         timestampTest.execute();
     }
 }
