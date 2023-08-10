@@ -772,7 +772,6 @@ public class ImporterTest extends BaseTest {
 
         assertContains(report, fileName);
         JsonObject fileReport = report.getJsonObject(fileName);
-        LOG.debug(fileReport);
 
         final String successKey = "success";
         assertContains(fileReport, successKey);
