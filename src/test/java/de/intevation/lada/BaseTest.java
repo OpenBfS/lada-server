@@ -8,7 +8,6 @@
 package de.intevation.lada;
 
 import java.io.StringReader;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.io.BufferedReader;
 import java.io.File;
@@ -75,6 +74,11 @@ public class BaseTest {
     protected Client client;
 
     /**
+     * Database connection.
+     */
+    private IDatabaseConnection con;
+
+    /**
      * Enable verbose output for tests.
      */
     protected static boolean verboseLogging = false;
@@ -92,6 +96,22 @@ public class BaseTest {
     public void setup()
         throws DatabaseUnitException, SQLException, IOException {
         this.client = ClientBuilder.newClient();
+
+        // Set up database connection
+        PGSimpleDataSource ds = new PGSimpleDataSource();
+        final String testDbUserPw = "lada_test";
+        ds.setServerNames(new String[]{"db"});
+        ds.setDatabaseName(testDbUserPw);
+        ds.setUser(testDbUserPw);
+        ds.setPassword(testDbUserPw);
+        this.con = new DatabaseConnection(ds.getConnection());
+        DatabaseConfig config = con.getConfig();
+        config.setProperty(
+            DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES,
+            true);
+        config.setProperty(
+            DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
+            new PostgresqlDataTypeFactory());
 
         // Insert test data
         doDbOperation(DatabaseOperation.CLEAN_INSERT);
@@ -140,6 +160,7 @@ public class BaseTest {
 
         // Ensure clean database after test
         cleanup();
+        con.close();
     }
 
     /**
@@ -267,12 +288,7 @@ public class BaseTest {
             .build(getClass().getClassLoader()
                 .getResourceAsStream(testDatasetName));
 
-        IDatabaseConnection con = getNewDbConnection();
-        try {
-            op.execute(con, dataset);
-        } finally {
-            con.close();
-        }
+        op.execute(con, dataset);
     }
 
     private void cleanup()
@@ -291,9 +307,7 @@ public class BaseTest {
                     Collectors.joining(System.lineSeparator()));
             }
         }
-        PreparedStatement stmt = getNewDbConnection().getConnection()
-            .prepareStatement(sql);
-        stmt.execute();
+        con.getConnection().prepareStatement(sql).execute();
     }
 
     /**
@@ -312,7 +326,6 @@ public class BaseTest {
             String expectedDataset,
             String tableName, String[] ignoredCols)
             throws DatabaseUnitException, SQLException {
-        IDatabaseConnection con = getNewDbConnection();
         IDataSet xmlDataset = new FlatXmlDataSetBuilder()
             .setColumnSensing(true)
             .build(getClass().getClassLoader()
@@ -322,31 +335,8 @@ public class BaseTest {
                 xmlDataset);
         iExpectedDataset.addReplacementObject(NULL_PLACEHOLDER, null);
 
-        try {
-            IDataSet iActualDataset = con.createDataSet();
-            Assertion.assertEqualsIgnoreCols(
-                iExpectedDataset, iActualDataset, tableName, ignoredCols);
-        } finally {
-            con.close();
-        }
-
-    }
-
-    private IDatabaseConnection getNewDbConnection()
-            throws DatabaseUnitException, SQLException {
-        PGSimpleDataSource ds = new PGSimpleDataSource();
-        final String testDbUserPw = "lada_test";
-        ds.setServerNames(new String[]{"db"});
-        ds.setDatabaseName(testDbUserPw);
-        ds.setUser(testDbUserPw);
-        ds.setPassword(testDbUserPw);
-        IDatabaseConnection con = new DatabaseConnection(ds.getConnection());
-        DatabaseConfig config = con.getConfig();
-            config.setProperty(
-                "http://www.dbunit.org/features/qualifiedTableNames", true);
-            config.setProperty(
-                DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
-                new PostgresqlDataTypeFactory());
-        return con;
+        IDataSet iActualDataset = con.createDataSet();
+        Assertion.assertEqualsIgnoreCols(
+            iExpectedDataset, iActualDataset, tableName, ignoredCols);
     }
 }
