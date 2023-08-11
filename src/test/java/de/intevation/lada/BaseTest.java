@@ -8,7 +8,6 @@
 package de.intevation.lada;
 
 import java.io.StringReader;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.io.BufferedReader;
@@ -44,7 +43,6 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.postgresql.ds.PGSimpleDataSource;
 
 /**
@@ -83,22 +81,9 @@ public class BaseTest {
 
     protected String testDatasetName;
 
-    protected static PGSimpleDataSource ds = new PGSimpleDataSource();
-
     private static final String DATASETS_DIR = "datasets";
     private static final String CLEANUP_SCRIPT = DATASETS_DIR + "/cleanup.sql";
     private static final String NULL_PLACEHOLDER = "[null]";
-
-    /**
-     * Setup JDBC data source.
-     */
-    @BeforeClass
-    public static void setupDataSource() {
-        ds.setServerNames(new String[]{"db"});
-        ds.setDatabaseName("lada_test");
-        ds.setUser("lada_test");
-        ds.setPassword("lada_test");
-    }
 
     /**
      * Set up shared infrastructure for test methods.
@@ -277,7 +262,6 @@ public class BaseTest {
     private void doDbOperation(
         DatabaseOperation op
     ) throws DatabaseUnitException, SQLException {
-        setupDataSource();
         IDataSet dataset = new FlatXmlDataSetBuilder()
             .setColumnSensing(true)
             .build(getClass().getClassLoader()
@@ -291,8 +275,8 @@ public class BaseTest {
         }
     }
 
-    private void cleanup() throws SQLException, IOException {
-        setupDataSource();
+    private void cleanup()
+        throws DatabaseUnitException, SQLException, IOException {
         String sql;
         //Read cleanup script
         try (InputStream is = getClass().getClassLoader()
@@ -307,8 +291,8 @@ public class BaseTest {
                     Collectors.joining(System.lineSeparator()));
             }
         }
-        Connection con = ds.getConnection();
-        PreparedStatement stmt = con.prepareStatement(sql);
+        PreparedStatement stmt = getNewDbConnection().getConnection()
+            .prepareStatement(sql);
         stmt.execute();
     }
 
@@ -328,7 +312,6 @@ public class BaseTest {
             String expectedDataset,
             String tableName, String[] ignoredCols)
             throws DatabaseUnitException, SQLException {
-        setupDataSource();
         IDatabaseConnection con = getNewDbConnection();
         IDataSet xmlDataset = new FlatXmlDataSetBuilder()
             .setColumnSensing(true)
@@ -351,6 +334,12 @@ public class BaseTest {
 
     private IDatabaseConnection getNewDbConnection()
             throws DatabaseUnitException, SQLException {
+        PGSimpleDataSource ds = new PGSimpleDataSource();
+        final String testDbUserPw = "lada_test";
+        ds.setServerNames(new String[]{"db"});
+        ds.setDatabaseName(testDbUserPw);
+        ds.setUser(testDbUserPw);
+        ds.setPassword(testDbUserPw);
         IDatabaseConnection con = new DatabaseConnection(ds.getConnection());
         DatabaseConfig config = con.getConfig();
             config.setProperty(
