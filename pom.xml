@@ -224,9 +224,6 @@
                             org.jboss.arquillian.extension:arquillian-persistence-dbunit
                         </ignoredUnusedDeclaredDependency>
                         <ignoredUnusedDeclaredDependency>
-                            org.jboss.arquillian.extension:arquillian-transaction-jta
-                        </ignoredUnusedDeclaredDependency>
-                        <ignoredUnusedDeclaredDependency>
                             org.jboss.resteasy:resteasy-client
                         </ignoredUnusedDeclaredDependency>
                         <ignoredUnusedDeclaredDependency>
