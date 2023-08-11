@@ -89,8 +89,8 @@ public class BaseTest {
      * Set up shared infrastructure for test methods.
      */
     @Before
-    public void setup() throws DatabaseUnitException, SQLException, IOException {
-        this.cleanup();
+    public void setup()
+        throws DatabaseUnitException, SQLException, IOException {
         this.client = ClientBuilder.newClient();
 
         // Insert test data
