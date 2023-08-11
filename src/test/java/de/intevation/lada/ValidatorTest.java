@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,7 +48,6 @@ public class ValidatorTest extends BaseTest {
      * Test hauptprobennr.
      */
     @Test
-    @Transactional
     public void probeHasHauptprobenNr() {
         probeTest.hasHauptprobenNr();
     }
@@ -59,7 +57,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void probeHasNoHauptprobenNr() {
         probeTest.hasNoHauptprobenNr();
     }
@@ -69,7 +66,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void probeExistingHauptprobenNrNew() {
         probeTest.existingHauptprobenNrNew();
     }
@@ -79,7 +75,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void probeUniqueHauptprobenNrNew() {
         probeTest.uniqueHauptprobenNrNew();
     }
@@ -89,7 +84,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void probeExistingHauptprobenNrUpdate() {
         probeTest.existingHauptprobenNrUpdate();
     }
@@ -99,7 +93,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void probeUniqueHauptprobenNrUpdate() {
         probeTest.uniqueHauptprobenNrUpdate();
     }
@@ -109,7 +102,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void probeHasEntnahmeOrt() {
         probeTest.hasEntnahmeOrt();
     }
@@ -119,7 +111,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void probeHasNoEntnahmeOrt() {
         probeTest.hasNoEntnahmeOrt();
     }
@@ -129,7 +120,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void probeHasProbenahmeBegin() {
         probeTest.hasProbeentnahmeBegin();
     }
@@ -139,7 +129,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void probeHasNoProbenahmeBegin() {
         probeTest.hasNoProbeentnahmeBegin();
     }
@@ -149,7 +138,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void probeTimeNoEndProbenahmeBegin() {
         probeTest.timeNoEndProbeentnahmeBegin();
     }
@@ -159,7 +147,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void probeTimeNoBeginProbenahmeBegin() {
         probeTest.timeNoBeginProbeentnahmeBegin();
     }
@@ -169,7 +156,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void probeTimeBeginAfterEndProbenahmeBegin() {
         probeTest.timeBeginAfterEndProbeentnahmeBegin();
     }
@@ -179,7 +165,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void probeTimeBeginFutureProbenahmeBegin() {
         probeTest.timeBeginFutureProbeentnahmeBegin();
     }
@@ -189,7 +174,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void probeHasUmwelt() {
         probeTest.hasUmwelt();
     }
@@ -199,7 +183,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void probeHasNoUmwelt() {
         probeTest.hasNoUmwelt();
     }
@@ -209,7 +192,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void probeHasEmptyUmwelt() {
         probeTest.hasEmptyUmwelt();
     }
@@ -219,7 +201,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void messungHasNebenprobenNr() {
         messungTest.hasNebenprobenNr();
     }
@@ -229,7 +210,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void messungHasNoNebenprobenNr() {
         messungTest.hasNoNebenprobenNr();
     }
@@ -239,7 +219,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void messungHasEmptyNebenprobenNr() {
         messungTest.hasEmptyNebenprobenNr();
     }
@@ -249,7 +228,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void messungUniqueNebenprobenNrNew() {
         messungTest.uniqueNebenprobenNrNew();
     }
@@ -259,7 +237,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void messungUniqueNebenprobenNrUpdate() {
         messungTest.uniqueNebenprobenNrUpdate();
     }
@@ -268,7 +245,6 @@ public class ValidatorTest extends BaseTest {
      * Test messung existing nebenprobennr new.
      */
     @Test
-    @Transactional
     public void messungExistingNebenprobenNrNew() {
         messungTest.existingNebenprobenNrNew();
     }
@@ -278,7 +254,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void messungExistingNebenprobenNrUpdate() {
         messungTest.existingNebenprobenNrUpdate();
     }
@@ -288,7 +263,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void messungHasMesswert() {
         messungTest.hasMesswert();
     }
@@ -298,7 +272,6 @@ public class ValidatorTest extends BaseTest {
      */
     @Ignore
     @Test
-    @Transactional
     public void messungHasNoMesswert() {
         messungTest.hasNoMesswert();
     }
@@ -307,7 +280,6 @@ public class ValidatorTest extends BaseTest {
      * Test negative status kombi.
      */
     @Test
-    @Transactional
     public final void statusKombiNegative() {
         statusTest.checkKombiNegative();
     }

@@ -8,6 +8,7 @@
 package de.intevation.lada.test.validator;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import org.junit.Assert;
 
@@ -20,6 +21,7 @@ import de.intevation.lada.validation.Violation;
  * Test Status entities.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
+@Transactional
 public class StatusTest {
 
     private static final int ID1 = 1;
@@ -37,7 +39,7 @@ public class StatusTest {
     /**
      * Test if status kombi is not existing.
      */
-    public final void checkKombiNegative() {
+    public void checkKombiNegative() {
         StatusProt status = new StatusProt();
         status.setMeasmId(existingMeasmId);
         status.setStatusLev(ID2);
@@ -53,7 +55,7 @@ public class StatusTest {
     /**
      * Test if status kombi is existing.
      */
-    public final void checkKombiPositive() {
+    public void checkKombiPositive() {
         StatusProt status = new StatusProt();
         status.setStatusLev(ID1);
         status.setStatusVal(ID1);

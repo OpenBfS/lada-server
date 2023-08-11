@@ -10,6 +10,7 @@ package de.intevation.lada.test.validator;
 import java.sql.Timestamp;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import org.junit.Assert;
 
@@ -23,6 +24,7 @@ import de.intevation.lada.validation.Violation;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
+@Transactional
 public class ProbeTest {
 
     private static final long TS1 = 1376287046510L;
@@ -36,7 +38,7 @@ public class ProbeTest {
     /**
      * Test hauptprobennr.
      */
-    public final void hasHauptprobenNr() {
+    public void hasHauptprobenNr() {
         Sample probe = new Sample();
         probe.setMainSampleId("4554567890");
         Violation violation = validator.validate(probe);
@@ -49,7 +51,7 @@ public class ProbeTest {
     /**
      * Test no hauptprobennr.
      */
-    public final void hasNoHauptprobenNr() {
+    public void hasNoHauptprobenNr() {
         Sample probe = new Sample();
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasErrors());
@@ -62,7 +64,7 @@ public class ProbeTest {
     /**
      * Test new existing hpnr.
      */
-    public final void existingHauptprobenNrNew() {
+    public void existingHauptprobenNrNew() {
         Sample probe = new Sample();
         probe.setMainSampleId("120510002");
         Violation violation = validator.validate(probe);
@@ -76,7 +78,7 @@ public class ProbeTest {
     /**
      * Test new unique hpnr.
      */
-    public final void uniqueHauptprobenNrNew() {
+    public void uniqueHauptprobenNrNew() {
         Sample probe = new Sample();
         probe.setMainSampleId("4564567890");
         Violation violation = validator.validate(probe);
@@ -89,7 +91,7 @@ public class ProbeTest {
     /**
      * Test update unique hpnr.
      */
-    public final void uniqueHauptprobenNrUpdate() {
+    public void uniqueHauptprobenNrUpdate() {
         Sample probe = new Sample();
         probe.setId(1);
         probe.setMainSampleId("4564567890");
@@ -103,7 +105,7 @@ public class ProbeTest {
     /**
      * Test update of existing hpnr..
      */
-    public final void existingHauptprobenNrUpdate() {
+    public void existingHauptprobenNrUpdate() {
         Sample probe = new Sample();
         probe.setId(1);
         probe.setMainSampleId("120224003");
@@ -118,7 +120,7 @@ public class ProbeTest {
     /**
      * Test entnahmeort.
      */
-    public final void hasEntnahmeOrt() {
+    public void hasEntnahmeOrt() {
         Sample probe = new Sample();
         probe.setId(1);
         Violation violation = validator.validate(probe);
@@ -131,7 +133,7 @@ public class ProbeTest {
     /**
      * Test no entnahmeort.
      */
-    public final void hasNoEntnahmeOrt() {
+    public void hasNoEntnahmeOrt() {
         Sample probe = new Sample();
         probe.setId(ID710);
         Violation violation = validator.validate(probe);
@@ -145,7 +147,7 @@ public class ProbeTest {
     /**
      * Test probenahmebegin.
      */
-    public final void hasProbeentnahmeBegin() {
+    public void hasProbeentnahmeBegin() {
         Sample probe = new Sample();
         probe.setSampleStartDate(new Timestamp(TS1));
         probe.setSampleEndDate(new Timestamp(TS2));
@@ -159,7 +161,7 @@ public class ProbeTest {
     /**
      * Test no probenahme begin.
      */
-    public final void hasNoProbeentnahmeBegin() {
+    public void hasNoProbeentnahmeBegin() {
         Sample probe = new Sample();
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasWarnings());
@@ -173,7 +175,7 @@ public class ProbeTest {
     /**
      * Test probenahme begin without end.
      */
-    public final void timeNoEndProbeentnahmeBegin() {
+    public void timeNoEndProbeentnahmeBegin() {
         Sample probe = new Sample();
         probe.setSampleStartDate(new Timestamp(TS1));
         Violation violation = validator.validate(probe);
@@ -186,7 +188,7 @@ public class ProbeTest {
     /**
      * Test probenahme begin without begin.
      */
-    public final void timeNoBeginProbeentnahmeBegin() {
+    public void timeNoBeginProbeentnahmeBegin() {
         Sample probe = new Sample();
         probe.setSampleEndDate(new Timestamp(TS1));
         Violation violation = validator.validate(probe);
@@ -201,7 +203,7 @@ public class ProbeTest {
     /**
      * Test probenahme begin after end.
      */
-    public final void timeBeginAfterEndProbeentnahmeBegin(
+    public void timeBeginAfterEndProbeentnahmeBegin(
     ) {
         Sample probe = new Sample();
         probe.setSampleStartDate(new Timestamp(TS2));
@@ -215,7 +217,7 @@ public class ProbeTest {
     /**
      * Test probenahmebegin in future.
      */
-    public final void timeBeginFutureProbeentnahmeBegin() {
+    public void timeBeginFutureProbeentnahmeBegin() {
         Sample probe = new Sample();
         probe.setSampleStartDate(new Timestamp(TS3));
         Violation violation = validator.validate(probe);
@@ -228,7 +230,7 @@ public class ProbeTest {
      * Test umwelt.
      * @param protocol the test protocol.
      */
-    public final void hasUmwelt() {
+    public void hasUmwelt() {
         Sample probe = new Sample();
         probe.setEnvMediumId("A4");
         Violation violation = validator.validate(probe);
@@ -241,7 +243,7 @@ public class ProbeTest {
      * Test no umwelt.
      * @param protocol the test protocol.
      */
-    public final void hasNoUmwelt() {
+    public void hasNoUmwelt() {
         Sample probe = new Sample();
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasWarnings());
@@ -254,7 +256,7 @@ public class ProbeTest {
      * Test empty umwelt.
      * @param protocol the test protocol.
      */
-    public final void hasEmptyUmwelt() {
+    public void hasEmptyUmwelt() {
         Sample probe = new Sample();
         probe.setEnvMediumId("");
         Violation violation = validator.validate(probe);
