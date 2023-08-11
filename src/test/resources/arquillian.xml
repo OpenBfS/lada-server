@@ -38,18 +38,7 @@
           <property name="managementAddress">localhost</property>
           <property name="managementPort">9990</property>
         </configuration>
-
     </container>
-    <extension qualifier="persistence">
-      <property name="defaultDataSource">java:jboss/lada-test</property>
-    </extension>
-    <extension qualifier="persistence-dbunit">
-      <property name="qualifiedTableNames">true</property>
-      <property name="datatypeFactory">org.dbunit.ext.postgresql.PostgresqlDataTypeFactory</property>
-    </extension>
-    <extension qualifier="transaction">
-      <property name="manager">java:jboss/UserTransaction</property>
-    </extension>
 
     <!-- Uncomment to show executed SQL in log -->
     <!-- <extension qualifier="persistence-script"> -->
