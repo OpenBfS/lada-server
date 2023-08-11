@@ -15,7 +15,6 @@ import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -37,12 +36,13 @@ public class UniqueHauptprobenNr implements Rule {
     public Violation execute(Object object) {
         Sample probe = (Sample) object;
         if (probe.getMainSampleId() != null) {
-            QueryBuilder<Sample> builder = repository.queryBuilder(Sample.class);
-            builder.and("mainSampleId", probe.getMainSampleId());
-            builder.and("measFacilId", probe.getMeasFacilId());
-            Response response = repository.filter(builder.getQuery());
-            if (!((List<Sample>) response.getData()).isEmpty()) {
-                Sample found = ((List<Sample>) response.getData()).get(0);
+            QueryBuilder<Sample> builder = repository
+                .queryBuilder(Sample.class)
+                .and("mainSampleId", probe.getMainSampleId())
+                .and("measFacilId", probe.getMeasFacilId());
+            List<Sample> response = repository.filterPlain(builder.getQuery());
+            if (!response.isEmpty()) {
+                Sample found = response.get(0);
                 // The probe found in the db equals the new probe. (Update)
                 if (probe.getId() != null
                     && probe.getId().equals(found.getId())
