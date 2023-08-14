@@ -521,7 +521,7 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
-     * Preliminary data for testing LAF 8 import.
+     * Test synchronous import of a Sample object.
      */
     @Test
     @RunAsClient
