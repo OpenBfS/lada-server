@@ -145,7 +145,7 @@ public class AuditTrailService extends LadaService {
         mappings.put("measm_start_date",
                 new TableMapper("date", "dd.MM.yy HH:mm"));
         mappings.put("nucl_facil_gr_id",
-            new TableMapper("nuc_facil_gr", "ext_id"));
+            new TableMapper("nucl_facil_gr", "ext_id"));
         mappings.put("rei_ag_gr_id",
             new TableMapper("rei_ag_gr", "name"));
     }
