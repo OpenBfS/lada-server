@@ -193,10 +193,8 @@ public class ImporterTest extends BaseTest {
      * Identify probe object by external id as reject.
      * @throws Exception that can occur during the test.
      */
-    @Ignore
     @Test
     @Transactional
-    //TODO: This unexpectedly returns an update instead of an reject
     public final void identifyProbeByExterneProbeIdReject() throws Exception {
         Sample probe = new Sample();
         probe.setExtId("T001");
