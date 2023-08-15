@@ -26,9 +26,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.importer.ImportConfig;
-import de.intevation.lada.importer.ImportFormat;
-import de.intevation.lada.importer.Importer;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.util.auth.UserInfo;
@@ -37,8 +34,7 @@ import de.intevation.lada.util.data.StatusCodes;
 /**
  * Importer for the LAF file format.
  */
-@ImportConfig(format = ImportFormat.LAF)
-public class LafImporter implements Importer {
+public class LafImporter {
 
     @Inject
     private Logger logger;
@@ -63,6 +59,7 @@ public class LafImporter implements Importer {
     public void doImport(
         String lafString,
         UserInfo userInfo,
+        String measFacilId,
         List<ImportConf> config
     ) {
         // Append newline to avoid parser errors.
@@ -115,6 +112,7 @@ public class LafImporter implements Importer {
             }
             mapper.setUserInfo(userInfo);
             mapper.setConfig(config);
+            mapper.setMeasFacilId(measFacilId);
             mapper.mapObjects(listener.getData());
             importProbeIds = mapper.getImportedProbeIds();
             for (Entry<String, List<ReportItem>> entry
@@ -151,22 +149,14 @@ public class LafImporter implements Importer {
         }
     }
 
-    @Override
-    public void reset() {
-
-    }
-
-    @Override
     public Map<String, List<ReportItem>> getErrors() {
         return this.errors;
     }
 
-    @Override
     public Map<String, List<ReportItem>> getWarnings() {
         return this.warnings;
     }
 
-    @Override
     public Map<String, List<ReportItem>> getNotifications() {
         return this.notifications;
     }

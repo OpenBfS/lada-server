@@ -9,7 +9,6 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
@@ -18,7 +17,7 @@ import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.test.ServiceTest;
 
 public class GeolocatMpgTest extends ServiceTest {
@@ -30,20 +29,18 @@ public class GeolocatMpgTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod"
         });
 
         // Prepare expected probe object
-        JsonObject content =
-            readJsonResource("/datasets/dbUnit_messprogramm.json");
         JsonObject geolocat =
-            content.getJsonArray("lada.geolocat_mpg").getJsonObject(0);
+            readXmlResource("datasets/dbUnit_lada.xml", GeolocatMpg.class)
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(geolocat);
         builder.add("parentModified", TS1);
         builder.add("readonly", JsonValue.FALSE);

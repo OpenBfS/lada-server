@@ -18,7 +18,6 @@ import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.test.ServiceTest;
 
@@ -37,10 +36,9 @@ public class TagZuordnungTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         create = readJsonArrayResource("/datasets/tagzuordnung_create.json");
         Assert.assertNotNull(create);
         create2 = readJsonArrayResource("/datasets/tagzuordnung_create2.json");

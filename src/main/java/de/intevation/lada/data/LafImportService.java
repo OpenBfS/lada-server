@@ -32,10 +32,7 @@ import jakarta.ws.rs.core.MediaType;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.importer.ImportConfig;
-import de.intevation.lada.importer.ImportFormat;
 import de.intevation.lada.importer.ImportJobManager;
-import de.intevation.lada.importer.Importer;
 import de.intevation.lada.importer.laf.LafImporter;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.MeasFacil;
@@ -63,8 +60,7 @@ public class LafImportService extends LadaService {
      * The importer implementation.
      */
     @Inject
-    @ImportConfig(format = ImportFormat.LAF)
-    private Importer importer;
+    private LafImporter importer;
 
     @Inject
     private Repository repository;
@@ -197,16 +193,17 @@ public class LafImportService extends LadaService {
         //Import each file
         files.forEach((fileName, content) -> {
             logLAFFile(mstId, content, charset);
+
             List<ImportConf> config = new ArrayList<ImportConf>();
             if (!"".equals(mstId)) {
-                QueryBuilder<ImportConf> builder =
-                    repository.queryBuilder(ImportConf.class);
-                builder.and("measFacilId", mstId);
-                config =
-                    (List<ImportConf>) repository.filterPlain(
-                        builder.getQuery());
+                QueryBuilder<ImportConf> builder = repository
+                    .queryBuilder(ImportConf.class)
+                    .and("measFacilId", mstId);
+                config = repository.filterPlain(builder.getQuery());
             }
-            importer.doImport(content, userInfo, config);
+
+            importer.doImport(content, userInfo, mstId, config);
+
             Map<String, Object> fileResponseData =
                 new HashMap<String, Object>();
             if (!importer.getErrors().isEmpty()) {
@@ -305,7 +302,7 @@ public class LafImportService extends LadaService {
             config = (List<ImportConf>) repository.filterPlain(
                 builder.getQuery());
         }
-        importer.doImport(content, userInfo, config);
+        importer.doImport(content, userInfo, mstId, config);
         Map<String, Object> respData = new HashMap<String, Object>();
         Boolean success = true;
         if (!importer.getErrors().isEmpty()) {

@@ -7,13 +7,11 @@
  */
 package de.intevation.lada.test.validator;
 
-import java.util.List;
-
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
@@ -23,6 +21,7 @@ import de.intevation.lada.validation.Violation;
  * Test Status entities.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
+@Transactional
 public class StatusTest {
 
     private static final int ID1 = 1;
@@ -39,14 +38,8 @@ public class StatusTest {
 
     /**
      * Test if status kombi is not existing.
-     * @param protocol The test protocol.
      */
-    public final void checkKombiNegative(List<Protocol> protocol) {
-        Protocol prot = new Protocol();
-        prot.setName("StatusValidator");
-        prot.setType("check status kombi");
-        prot.setPassed(false);
-        protocol.add(prot);
+    public void checkKombiNegative() {
         StatusProt status = new StatusProt();
         status.setMeasmId(existingMeasmId);
         status.setStatusLev(ID2);
@@ -57,19 +50,12 @@ public class StatusTest {
         Assert.assertTrue(
             violation.getErrors().get(statusMpKey).contains(
                 StatusCodes.VALUE_NOT_MATCHING));
-        prot.setPassed(true);
     }
 
     /**
      * Test if status kombi is existing.
-     * @param protocol The test protocol.
      */
-    public final void checkKombiPositive(List<Protocol> protocol) {
-        Protocol prot = new Protocol();
-        prot.setName("StatusValidator");
-        prot.setType("check status kombi");
-        prot.setPassed(false);
-        protocol.add(prot);
+    public void checkKombiPositive() {
         StatusProt status = new StatusProt();
         status.setStatusLev(ID1);
         status.setStatusVal(ID1);
@@ -77,6 +63,5 @@ public class StatusTest {
         if (violation.hasErrors()) {
             Assert.assertFalse(violation.getErrors().containsKey(statusMpKey));
         }
-        prot.setPassed(true);
     }
 }

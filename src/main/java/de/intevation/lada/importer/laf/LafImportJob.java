@@ -26,9 +26,6 @@ import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 
-import de.intevation.lada.importer.ImportConfig;
-import de.intevation.lada.importer.ImportFormat;
-import de.intevation.lada.importer.Importer;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.Tag;
@@ -46,8 +43,7 @@ import de.intevation.lada.util.rest.Response;
 public class LafImportJob extends Job {
 
     @Inject
-    @ImportConfig(format = ImportFormat.LAF)
-    private Importer importer;
+    private LafImporter importer;
 
     private Map<String, Map<String, Object>> importData;
 
@@ -162,7 +158,7 @@ public class LafImportJob extends Job {
                 builder.and("measFacilId", mstId);
                 config = repository.filterPlain(builder.getQuery());
             }
-            importer.doImport(content, userInfo, config);
+            importer.doImport(content, userInfo, mstId, config);
 
             Map<String, Object> fileResponseData = new HashMap<>();
             if (!importer.getErrors().isEmpty()) {

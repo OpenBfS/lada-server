@@ -31,7 +31,7 @@ public class Regulation implements Serializable {
 
     private String descr;
 
-    private String regulation;
+    private String name;
 
     @Column(insertable = false)
     @Temporal(TIMESTAMP)
@@ -56,12 +56,12 @@ public class Regulation implements Serializable {
         this.descr = descr;
     }
 
-    public String getRegulation() {
-        return this.regulation;
+    public String getName() {
+        return this.name;
     }
 
-    public void setRegulation(String regulation) {
-        this.regulation = regulation;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Date getLastMod() {

@@ -9,7 +9,6 @@ package de.intevation.lada.test.stamm;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
@@ -17,7 +16,7 @@ import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.master.MunicDiv;
 import de.intevation.lada.test.ServiceTest;
 
 public class MunicDivTest extends ServiceTest {
@@ -28,20 +27,18 @@ public class MunicDivTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod"
         });
 
         // Prepare expected object
-        JsonObject content =
-            readJsonResource("/datasets/dbUnit_municDiv.json");
         JsonObject municDiv =
-            content.getJsonArray("master.munic_div").getJsonObject(0);
+            readXmlResource("datasets/dbUnit_master.xml", MunicDiv.class)
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(municDiv);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);

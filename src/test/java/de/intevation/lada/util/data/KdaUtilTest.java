@@ -139,7 +139,7 @@ public class KdaUtilTest {
             COORDS.get(fromKda).get("y")
         );
         Assert.assertNotNull(messageAssertNotNull, result);
-        logger.debug("Transformation result: x=" + result.getX()
+        logger.trace("Transformation result: x=" + result.getX()
             + " y=" + result.getY());
 
         // Expected coordinates

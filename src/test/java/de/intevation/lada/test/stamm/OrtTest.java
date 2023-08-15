@@ -10,7 +10,6 @@ package de.intevation.lada.test.stamm;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.List;
 
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
@@ -25,7 +24,7 @@ import jakarta.ws.rs.core.Response.Status;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.master.Site;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -42,10 +41,9 @@ public class OrtTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
@@ -56,9 +54,9 @@ public class OrtTest extends ServiceTest {
         });
 
         // Prepare expected object
-        JsonObject content = readJsonResource("/datasets/dbUnit_ort.json");
         JsonObject erzeuger =
-            content.getJsonArray("master.site").getJsonObject(0);
+            readXmlResource("datasets/dbUnit_master.xml", Site.class)
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);
@@ -81,12 +79,6 @@ public class OrtTest extends ServiceTest {
      * @param parameter Url parameter
      */
     private void testUploadImage(String imageDataUrl, String parameter) {
-        Protocol prot = new Protocol();
-        prot.setName("site image service");
-        prot.setType("create");
-        prot.setPassed(false);
-        protocol.add(prot);
-
         WebTarget reqTarget = client.target(baseUrl + parameter);
         Builder reqBuilder = reqTarget.request()
             .header("X-SHIB-user", BaseTest.testUser)
@@ -125,7 +117,6 @@ public class OrtTest extends ServiceTest {
         Response deleteResponse = reqBuilder.delete();
         Assert.assertEquals(
             Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
-        prot.setPassed(true);
     }
 
     /**

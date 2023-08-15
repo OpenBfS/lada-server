@@ -9,10 +9,6 @@ package de.intevation.lada;
 
 import jakarta.inject.Inject;
 
-import org.jboss.arquillian.persistence.ApplyScriptBefore;
-import org.jboss.arquillian.persistence.Cleanup;
-import org.jboss.arquillian.persistence.TestExecutionPhase;
-import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.logging.Logger;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Ignore;
@@ -31,8 +27,6 @@ import de.intevation.lada.test.validator.StatusTest;
  */
 @Ignore
 @RunWith(Arquillian.class)
-@ApplyScriptBefore("datasets/clean_and_seed.sql")
-@Cleanup(phase = TestExecutionPhase.NONE)
 // TODO make tests independent of test data which do not exist anymore
 public class ValidatorTest extends BaseTest {
 
@@ -47,12 +41,16 @@ public class ValidatorTest extends BaseTest {
     @Inject
     private StatusTest statusTest;
 
+    public ValidatorTest() {
+        this.testDatasetName = "datasets/dbUnit_validator.xml";
+    }
+
     /**
      * Test hauptprobennr.
      */
     @Test
     public void probeHasHauptprobenNr() {
-        probeTest.hasHauptprobenNr(testProtocol);
+        probeTest.hasHauptprobenNr();
     }
 
     /**
@@ -61,7 +59,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void probeHasNoHauptprobenNr() {
-        probeTest.hasNoHauptprobenNr(testProtocol);
+        probeTest.hasNoHauptprobenNr();
     }
 
     /**
@@ -70,7 +68,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void probeExistingHauptprobenNrNew() {
-        probeTest.existingHauptprobenNrNew(testProtocol);
+        probeTest.existingHauptprobenNrNew();
     }
 
     /**
@@ -79,7 +77,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void probeUniqueHauptprobenNrNew() {
-        probeTest.uniqueHauptprobenNrNew(testProtocol);
+        probeTest.uniqueHauptprobenNrNew();
     }
 
     /**
@@ -88,7 +86,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void probeExistingHauptprobenNrUpdate() {
-        probeTest.existingHauptprobenNrUpdate(testProtocol);
+        probeTest.existingHauptprobenNrUpdate();
     }
 
     /**
@@ -97,7 +95,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void probeUniqueHauptprobenNrUpdate() {
-        probeTest.uniqueHauptprobenNrUpdate(testProtocol);
+        probeTest.uniqueHauptprobenNrUpdate();
     }
 
     /**
@@ -106,7 +104,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void probeHasEntnahmeOrt() {
-        probeTest.hasEntnahmeOrt(testProtocol);
+        probeTest.hasEntnahmeOrt();
     }
 
     /**
@@ -115,7 +113,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void probeHasNoEntnahmeOrt() {
-        probeTest.hasNoEntnahmeOrt(testProtocol);
+        probeTest.hasNoEntnahmeOrt();
     }
 
     /**
@@ -124,7 +122,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void probeHasProbenahmeBegin() {
-        probeTest.hasProbeentnahmeBegin(testProtocol);
+        probeTest.hasProbeentnahmeBegin();
     }
 
     /**
@@ -133,7 +131,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void probeHasNoProbenahmeBegin() {
-        probeTest.hasNoProbeentnahmeBegin(testProtocol);
+        probeTest.hasNoProbeentnahmeBegin();
     }
 
     /**
@@ -142,7 +140,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void probeTimeNoEndProbenahmeBegin() {
-        probeTest.timeNoEndProbeentnahmeBegin(testProtocol);
+        probeTest.timeNoEndProbeentnahmeBegin();
     }
 
     /**
@@ -151,7 +149,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void probeTimeNoBeginProbenahmeBegin() {
-        probeTest.timeNoBeginProbeentnahmeBegin(testProtocol);
+        probeTest.timeNoBeginProbeentnahmeBegin();
     }
 
     /**
@@ -160,7 +158,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void probeTimeBeginAfterEndProbenahmeBegin() {
-        probeTest.timeBeginAfterEndProbeentnahmeBegin(testProtocol);
+        probeTest.timeBeginAfterEndProbeentnahmeBegin();
     }
 
     /**
@@ -169,7 +167,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void probeTimeBeginFutureProbenahmeBegin() {
-        probeTest.timeBeginFutureProbeentnahmeBegin(testProtocol);
+        probeTest.timeBeginFutureProbeentnahmeBegin();
     }
 
     /**
@@ -178,7 +176,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void probeHasUmwelt() {
-        probeTest.hasUmwelt(testProtocol);
+        probeTest.hasUmwelt();
     }
 
     /**
@@ -187,7 +185,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void probeHasNoUmwelt() {
-        probeTest.hasNoUmwelt(testProtocol);
+        probeTest.hasNoUmwelt();
     }
 
     /**
@@ -196,7 +194,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void probeHasEmptyUmwelt() {
-        probeTest.hasEmptyUmwelt(testProtocol);
+        probeTest.hasEmptyUmwelt();
     }
 
     /**
@@ -205,7 +203,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void messungHasNebenprobenNr() {
-        messungTest.hasNebenprobenNr(testProtocol);
+        messungTest.hasNebenprobenNr();
     }
 
     /**
@@ -214,7 +212,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void messungHasNoNebenprobenNr() {
-        messungTest.hasNoNebenprobenNr(testProtocol);
+        messungTest.hasNoNebenprobenNr();
     }
 
     /**
@@ -223,7 +221,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void messungHasEmptyNebenprobenNr() {
-        messungTest.hasEmptyNebenprobenNr(testProtocol);
+        messungTest.hasEmptyNebenprobenNr();
     }
 
     /**
@@ -232,7 +230,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void messungUniqueNebenprobenNrNew() {
-        messungTest.uniqueNebenprobenNrNew(testProtocol);
+        messungTest.uniqueNebenprobenNrNew();
     }
 
     /**
@@ -241,16 +239,15 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void messungUniqueNebenprobenNrUpdate() {
-        messungTest.uniqueNebenprobenNrUpdate(testProtocol);
+        messungTest.uniqueNebenprobenNrUpdate();
     }
 
     /**
      * Test messung existing nebenprobennr new.
      */
     @Test
-    @UsingDataSet("datasets/dbUnit_probe.json")
     public void messungExistingNebenprobenNrNew() {
-        messungTest.existingNebenprobenNrNew(testProtocol);
+        messungTest.existingNebenprobenNrNew();
     }
 
     /**
@@ -259,7 +256,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void messungExistingNebenprobenNrUpdate() {
-        messungTest.existingNebenprobenNrUpdate(testProtocol);
+        messungTest.existingNebenprobenNrUpdate();
     }
 
     /**
@@ -268,7 +265,7 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void messungHasMesswert() {
-        messungTest.hasMesswert(testProtocol);
+        messungTest.hasMesswert();
     }
 
     /**
@@ -277,15 +274,14 @@ public class ValidatorTest extends BaseTest {
     @Ignore
     @Test
     public void messungHasNoMesswert() {
-        messungTest.hasNoMesswert(testProtocol);
+        messungTest.hasNoMesswert();
     }
 
     /**
      * Test negative status kombi.
      */
     @Test
-    @UsingDataSet("datasets/dbUnit_probe.json")
     public final void statusKombiNegative() {
-        statusTest.checkKombiNegative(testProtocol);
+        statusTest.checkKombiNegative();
     }
 }

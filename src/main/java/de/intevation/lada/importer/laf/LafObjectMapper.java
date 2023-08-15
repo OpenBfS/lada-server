@@ -16,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -144,6 +143,8 @@ public class LafObjectMapper {
 
     private UserInfo userInfo;
 
+    private String measFacilId;
+
     private List<ImportConf> config;
     private ImportConfigMapper configMapper;
 
@@ -168,28 +169,21 @@ public class LafObjectMapper {
         Sample probe = new Sample();
         String netzbetreiberId = null;
 
-        Iterator<ImportConf> importerConfig = config.iterator();
-        while (importerConfig.hasNext()) {
-            ImportConf current = importerConfig.next();
-            if ("ZEITBASIS".equals(current.getName().toUpperCase())) {
-                currentZeitbasis = Integer.valueOf(current.getToVal());
-            }
-            if ("PROBE".equals(current.getName().toUpperCase())
-                && "MSTID".equals(current.getAttribute().toUpperCase())
-                && "DEFAULT".equals(current.getAction().toUpperCase())) {
-                probe.setMeasFacilId(current.getToVal());
-            }
-        }
+        this.configMapper.applyConfigs(object.getAttributes());
+
         if (object.getAttributes().containsKey("MESSSTELLE")) {
             probe.setMeasFacilId(object.getAttributes().get("MESSSTELLE"));
         }
         if (probe.getMeasFacilId() == null) {
-            currentErrors.add(
-                new ReportItem(
-                    "MESSSTELLE", "", StatusCodes.IMP_MISSING_VALUE));
-            errors.put(object.getIdentifier(),
-                new ArrayList<ReportItem>(currentErrors));
-            return;
+            if (measFacilId == null) {
+                currentErrors.add(
+                    new ReportItem(
+                        "MESSSTELLE", "", StatusCodes.IMP_MISSING_VALUE));
+                errors.put(object.getIdentifier(),
+                    new ArrayList<ReportItem>(currentErrors));
+                return;
+            }
+            probe.setMeasFacilId(measFacilId);
         } else {
             MeasFacil mst = repository.getByIdPlain(
                 MeasFacil.class, probe.getMeasFacilId());
@@ -432,6 +426,11 @@ public class LafObjectMapper {
                 // Persist zusatzwert objects
                 merger.mergeZusatzwerte(newProbe, zusatzwerte);
 
+                // Create site objects
+                this.configMapper.applyConfigs(object.getEntnahmeOrt());
+                for (Map<String, String> uOrt: object.getUrsprungsOrte()) {
+                    this.configMapper.applyConfigs(uOrt);
+                }
                 // Special things for REI-Messpunkt
                 if (probe.getReiAgGrId() != null
                     || Integer.valueOf(3).equals(probe.getRegulationId())
@@ -712,6 +711,7 @@ public class LafObjectMapper {
         messung.setSampleId(probe.getId());
 
         // Fill the new messung with data
+        this.configMapper.applyConfigs(object.getAttributes());
         for (Entry<String, String> attribute
                  : object.getAttributes().entrySet()
         ) {
@@ -899,6 +899,8 @@ public class LafObjectMapper {
         Map<String, String> attributes,
         Sample probe
     ) {
+        this.configMapper.applyConfigs(attributes);
+
         if (attributes.get("TEXT").equals("")) {
             currentWarnings.add(
                 new ReportItem(
@@ -979,13 +981,17 @@ public class LafObjectMapper {
         Map<String, String> attributes,
         int probeId
     ) {
+        this.configMapper.applyConfigs(attributes);
+
         SampleSpecifMeasVal zusatzwert = new SampleSpecifMeasVal();
         zusatzwert.setSampleId(probeId);
+
         if (attributes.containsKey("MESSFEHLER")) {
             zusatzwert.setError(
                 Float.valueOf(
                     attributes.get("MESSFEHLER").replaceAll(",", ".")));
         }
+
         String wert = attributes.get("MESSWERT_PZS");
         if (wert.startsWith("<")) {
             wert = wert.substring(1);
@@ -1000,8 +1006,6 @@ public class LafObjectMapper {
             isId = true;
         }
 
-        attribute = this.configMapper.applyConfigByAttribute(
-            "ZUSATZWERT", attribute);
         QueryBuilder<SampleSpecif> builder = repository
             .queryBuilder(SampleSpecif.class)
             .and(isId ? "id" : "extId", attribute);
@@ -1023,6 +1027,8 @@ public class LafObjectMapper {
         Map<String, String> attributes,
         int messungsId
     ) {
+        this.configMapper.applyConfigs(attributes);
+
         MeasVal messwert = new MeasVal();
         messwert.setMeasmId(messungsId);
 
@@ -1042,8 +1048,7 @@ public class LafObjectMapper {
             messwert.setMeasdId(
                 Integer.valueOf(attributes.get("MESSGROESSE_ID")));
         } else if (attributes.containsKey("MESSGROESSE")) {
-            String attribute = this.configMapper.applyConfigByAttribute(
-                "MESSGROESSE", attributes.get("MESSGROESSE"));
+            String attribute = attributes.get("MESSGROESSE");
             // accept various nuclide notations (e.g.
             // "Cs-134", "CS 134", "Cs134", "CS134", ...)
             String messgroesseString = attribute;
@@ -1085,8 +1090,7 @@ public class LafObjectMapper {
             messwert.setMeasUnitId(
                 Integer.valueOf(attributes.get("MESSEINHEIT_ID")));
         } else if (attributes.containsKey("MESSEINHEIT")) {
-            String attribute = this.configMapper.applyConfigByAttribute(
-                "MESSEINHEIT", attributes.get("MESSEINHEIT"));
+            String attribute = attributes.get("MESSEINHEIT");
             QueryBuilder<MeasUnit> builder = repository
                 .queryBuilder(MeasUnit.class)
                 .and("unitSymbol", attribute);
@@ -1150,6 +1154,8 @@ public class LafObjectMapper {
         int messungsId,
         Sample probe
     ) {
+        this.configMapper.applyConfigs(attributes);
+
         if (attributes.get("TEXT").equals("")) {
             currentWarnings.add(
                 new ReportItem("KOMMENTAR", "Text", StatusCodes.VALUE_MISSING));
@@ -1856,16 +1862,14 @@ public class LafObjectMapper {
         if ("DATENBASIS".equals(key)
             && probe.getRegulationId() == null
         ) {
-            String attr = this.configMapper.applyConfigByAttribute(
-                "DATENBASIS", value.toString());
             QueryBuilder<Regulation> builder = repository
                 .queryBuilder(Regulation.class)
-                .and("regulation", attr);
+                .and("name", value);
             List<Regulation> datenbasis =
                 repository.filterPlain(builder.getQuery());
             if (datenbasis == null || datenbasis.isEmpty()) {
                 currentErrors.add(
-                    new ReportItem(key, attr, StatusCodes.IMP_INVALID_VALUE));
+                    new ReportItem(key, value, StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
             Integer v = datenbasis.get(0).getId();
@@ -2098,11 +2102,9 @@ public class LafObjectMapper {
         }
 
         if ("PROBENART".equals(key) && value != null) {
-            String attr = this.configMapper.applyConfigByAttribute(
-                "PROBENART", value.toString());
             QueryBuilder<SampleMeth> builder = repository
                 .queryBuilder(SampleMeth.class)
-                .and("extId", attr);
+                .and("extId", value);
             List<SampleMeth> probenart =
                 repository.filterPlain(builder.getQuery());
             if (probenart == null || probenart.isEmpty()) {
@@ -2127,6 +2129,7 @@ public class LafObjectMapper {
     ) {
         String key = attribute.getKey();
         String value = attribute.getValue();
+
         if ("MESSUNGS_ID".equals(key)) {
             messung.setExtId(Integer.valueOf(value));
         }
@@ -2212,5 +2215,12 @@ public class LafObjectMapper {
     public void setConfig(List<ImportConf> config) {
         this.config = config;
         this.configMapper = new ImportConfigMapper(config);
+    }
+
+    /**
+     * @param measFacilId ID of the default measurement facility
+     */
+    public void setMeasFacilId(String measFacilId) {
+        this.measFacilId = measFacilId;
     }
 }

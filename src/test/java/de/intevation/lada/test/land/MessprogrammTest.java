@@ -9,7 +9,6 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
@@ -19,7 +18,7 @@ import jakarta.ws.rs.core.Response.Status;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -34,10 +33,9 @@ public class MessprogrammTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod",
@@ -45,10 +43,9 @@ public class MessprogrammTest extends ServiceTest {
         });
 
         // Prepare expected object
-        JsonObject content =
-            readJsonResource("/datasets/dbUnit_messprogramm.json");
         JsonObject messprogramm =
-            content.getJsonArray("lada.mpg").getJsonObject(0);
+            readXmlResource("datasets/dbUnit_lada.xml", Mpg.class)
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messprogramm);
         builder.add("oprModeId", 1);
         builder.add("samplePdOffset", 0);
@@ -59,7 +56,7 @@ public class MessprogrammTest extends ServiceTest {
 
         //Prepare expected sample object
         builder = Json.createObjectBuilder();
-        builder.add("mpgId", 1000);
+        builder.add("mpgId", 999);
         expectedSample = builder.build();
 
         // Load object to test POST request
@@ -72,10 +69,10 @@ public class MessprogrammTest extends ServiceTest {
      */
     public final void execute() {
         get("mpg", "rest/mpg", Status.METHOD_NOT_ALLOWED);
-        getById("mpg", "rest/mpg/1000", expectedById);
+        getById("mpg", "rest/mpg/999", expectedById);
         update(
             "mpg",
-            "rest/mpg/1000",
+            "rest/mpg/999",
             "envDescripDisplay",
             "D: 50 90 01 06 02 05 00 00 00 00 00 00",
             "D: 50 90 01 06 02 05 00 00 00 00 00 01");
@@ -83,14 +80,14 @@ public class MessprogrammTest extends ServiceTest {
         // Ensure invalid envDescripDisplay is rejected
         update(
             "mpg",
-            "rest/mpg/1000",
+            "rest/mpg/999",
             "envDescripDisplay",
             "D: 50 90 01 06 02 05 00 00 00 00 00 01",
             "D: ",
             Status.BAD_REQUEST);
 
         //Check if referencing probe still has an mpgId
-        getById("mpg->sample", "rest/sample/1000", expectedSample);
+        getById("mpg->sample", "rest/sample/999", expectedSample);
         JsonObject created =
             create("mpg", "rest/mpg", create);
         delete(

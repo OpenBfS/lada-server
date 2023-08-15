@@ -86,7 +86,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12.4</version>
+                <version>3.1.2</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
@@ -228,6 +228,9 @@
                         </ignoredUnusedDeclaredDependency>
                         <ignoredUnusedDeclaredDependency>
                             org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven
+                        </ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>
+                            net.postgis:postgis-jdbc
                         </ignoredUnusedDeclaredDependency>
                     </ignoredUnusedDeclaredDependencies>
                 </configuration>
@@ -437,10 +440,17 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-persistence-api</artifactId>
-            <version>${arquillian.persistence.version}</version>
+            <groupId>org.dbunit</groupId>
+            <artifactId>dbunit</artifactId>
+            <version>2.7.3</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <!-- Keep version in sync with package in base image -->
+            <version>42.2.15</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
@@ -470,13 +480,19 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-            <version>1.9</version>
+            <groupId>net.postgis</groupId>
+            <artifactId>postgis-jdbc</artifactId>
+            <version>2021.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!--Additional arquillian extensions-->
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-transaction-api</artifactId>
+            <version>2.0.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
     <profiles>
         <profile>
             <id>remote-test</id>
@@ -495,18 +511,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-
-        <profile>
-            <id>managed-test</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.wildfly</groupId>
-                    <artifactId>wildfly-arquillian-container-managed</artifactId>
-                    <version>8.2.1.Final</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
         </profile>
 
         <profile>
