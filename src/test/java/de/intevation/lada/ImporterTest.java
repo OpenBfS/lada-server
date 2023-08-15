@@ -109,7 +109,7 @@ public class ImporterTest extends BaseTest {
     private final String measd = "H-3";
     private final String measUnit = "Bq/kgFM";
     private final String lafTemplate = "%%PROBE%%\n"
-        + "UEBERTRAGUNGSFORMAT \"7\"\n"
+        + "UEBERTRAGUNGSFORMAT 7\n"
         + "VERSION \"0084\"\n"
         + "PROBE_ID \"%s\"\n"
         + "PROBENART \"E\"\n"
