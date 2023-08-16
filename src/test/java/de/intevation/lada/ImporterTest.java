@@ -16,6 +16,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.json.Json;
@@ -785,6 +786,28 @@ public class ImporterTest extends BaseTest {
         Protocol prot = new Protocol();
         prot.setName("asyncimport service successful");
         testAsyncImportProbe(baseUrl, laf, true, prot);
+    }
+
+    /**
+     * Test import with lowercase LAF keywords.
+     */
+    @Test
+    @InSequence(19)
+    @RunAsClient
+    public final void testImportLowercaseKeywords(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        Protocol prot = new Protocol();
+        prot.setName("asyncimport service successful");
+        final String lowerCaseLAF = laf.lines().map(line -> {
+                if (line.matches("^\\w+ .*")) {
+                    String[] words = line.split(" ");
+                    words[0] = words[0].toLowerCase();
+                    return String.join(" ", words);
+                }
+                return line;
+            }).collect(Collectors.joining("\n"));
+        testAsyncImportProbe(baseUrl, lowerCaseLAF, true, prot);
     }
 
     /**
