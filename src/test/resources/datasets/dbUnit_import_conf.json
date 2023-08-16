@@ -32,7 +32,7 @@
         "action": "TRANSFORM"
     }, {
         "name": "x",
-        "attribute": "zusatzwert",
+        "attribute": "pzs_id",
         "meas_facil_id": "06010",
         "from_val": "XX",
         "to_val": "A1",

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.json.Json;
@@ -103,7 +104,6 @@ public class ImporterTest extends BaseTest {
     private static final int T17 = 17;
     private static final Integer DID9 = 9;
 
-    private final String lafSampleId = "XXX";
     private final String mstId = "06010";
     private final String regulation = "test";
     private final String sampleSpecifId = "A1";
@@ -122,9 +122,6 @@ public class ImporterTest extends BaseTest {
         + "MESSMETHODE_S \"A3\"\n"
         + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
         + "%%ENDE%%\n";
-    private final String laf = String.format(
-        lafTemplate, lafSampleId, regulation, sampleSpecifId,
-        "", measd, measUnit);
 
     final String dataKey = "data";
 
@@ -752,6 +749,9 @@ public class ImporterTest extends BaseTest {
         prot.setPassed(false);
         testProtocol.add(prot);
 
+        final String laf = String.format(
+            lafTemplate, randomProbeId(),
+            regulation, sampleSpecifId, "", measd, measUnit);
         /* Request synchronous import */
         Response importResponse = client.target(
             baseUrl + "data/import/laf")
@@ -785,7 +785,11 @@ public class ImporterTest extends BaseTest {
     ) throws InterruptedException, CharacterCodingException {
         Protocol prot = new Protocol();
         prot.setName("asyncimport service successful");
-        testAsyncImportProbe(baseUrl, laf, true, prot);
+        final String lafSampleId = randomProbeId();
+        final String laf = String.format(
+            lafTemplate, lafSampleId,
+            regulation, sampleSpecifId, "", measd, measUnit);
+        testAsyncImportProbe(baseUrl, laf, lafSampleId, true, prot);
     }
 
     /**
@@ -799,15 +803,18 @@ public class ImporterTest extends BaseTest {
     ) throws InterruptedException, CharacterCodingException {
         Protocol prot = new Protocol();
         prot.setName("asyncimport service successful");
-        final String lowerCaseLAF = laf.lines().map(line -> {
-                if (line.matches("^\\w+ .*")) {
-                    String[] words = line.split(" ");
-                    words[0] = words[0].toLowerCase();
-                    return String.join(" ", words);
-                }
-                return line;
-            }).collect(Collectors.joining("\n"));
-        testAsyncImportProbe(baseUrl, lowerCaseLAF, true, prot);
+        final String lafSampleId = randomProbeId();
+        final String lowerCaseLAF = String.format(
+            lafTemplate, lafSampleId, regulation, sampleSpecifId,
+            "", measd, measUnit).lines().map(line -> {
+                    if (line.matches("^\\w+ .*")) {
+                        String[] words = line.split(" ");
+                        words[0] = words[0].toLowerCase();
+                        return String.join(" ", words);
+                    }
+                    return line;
+                }).collect(Collectors.joining("\n"));
+        testAsyncImportProbe(baseUrl, lowerCaseLAF, lafSampleId, true, prot);
     }
 
     /**
@@ -821,7 +828,7 @@ public class ImporterTest extends BaseTest {
     ) throws InterruptedException, CharacterCodingException {
         Protocol prot = new Protocol();
         prot.setName("asyncimport service unsuccessful");
-        testAsyncImportProbe(baseUrl, "no valid LAF", false, prot);
+        testAsyncImportProbe(baseUrl, "no valid LAF", "", false, prot);
     }
 
     /**
@@ -835,11 +842,13 @@ public class ImporterTest extends BaseTest {
     ) throws InterruptedException, CharacterCodingException {
         Protocol prot = new Protocol();
         prot.setName("asyncimport service import config");
+        final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
             baseUrl,
             String.format(
                 lafTemplate, lafSampleId, "conv", sampleSpecifId,
                 "", measd, measUnit),
+            lafSampleId,
             true,
             prot);
     }
@@ -855,11 +864,13 @@ public class ImporterTest extends BaseTest {
     ) throws InterruptedException, CharacterCodingException {
         Protocol prot = new Protocol();
         prot.setName("asyncimport service import config");
+        final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
             baseUrl,
             String.format(
                 lafTemplate, lafSampleId, "conv", sampleSpecifId,
                 "", "H 3", measUnit),
+            lafSampleId,
             true,
             prot);
     }
@@ -876,11 +887,13 @@ public class ImporterTest extends BaseTest {
     ) throws InterruptedException, CharacterCodingException {
         Protocol prot = new Protocol();
         prot.setName("asyncimport service import config");
+        final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
             baseUrl,
             String.format(
                 lafTemplate, lafSampleId, "conv", "XX",
                 "", measd, measUnit),
+            lafSampleId,
             true,
             prot);
     }
@@ -913,6 +926,7 @@ public class ImporterTest extends BaseTest {
         boolean expectWarning,
         Protocol prot
     ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
         // Add "ZEITBASIS" attribute to LAF string
         String lafZb = String.format(
             lafTemplate,
@@ -924,7 +938,8 @@ public class ImporterTest extends BaseTest {
             measUnit);
         LOG.trace(lafZb);
 
-        JsonArray warnings = testAsyncImportProbe(baseUrl, lafZb, true, prot)
+        JsonArray warnings = testAsyncImportProbe(
+            baseUrl, lafZb, lafSampleId, true, prot)
             .getJsonObject("warnings").getJsonArray(lafSampleId);
         LOG.trace(warnings);
         final String keyKey = "key";
@@ -949,6 +964,7 @@ public class ImporterTest extends BaseTest {
     private JsonObject testAsyncImportProbe(
         URL baseUrl,
         String lafData,
+        String lafSampleId,
         boolean expectSuccess,
         Protocol prot
     ) throws InterruptedException, CharacterCodingException {
@@ -1058,10 +1074,12 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject importedSampleSpecifMeasVal =
+        JsonArray importedSampleSpecifMeasVals =
             parseResponse(importedSampleSpecifMeasValResponse, prot)
-            .getJsonArray(dataKey)
-            .getJsonObject(0);
+            .getJsonArray(dataKey);
+        Assert.assertEquals(1, importedSampleSpecifMeasVals.size());
+        JsonObject importedSampleSpecifMeasVal =
+            importedSampleSpecifMeasVals.getJsonObject(0);
         Assert.assertEquals(
             sampleSpecifId,
             importedSampleSpecifMeasVal.getString("sampleSpecifId"));
@@ -1093,4 +1111,9 @@ public class ImporterTest extends BaseTest {
         prot.setPassed(true);
         return fileReport;
     }
+
+    private String randomProbeId() {
+        final int probeIdLength = 16;
+        return UUID.randomUUID().toString().substring(0, probeIdLength);
+   }
 }
