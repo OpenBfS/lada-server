@@ -16,6 +16,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -80,17 +82,15 @@ public class ImporterTest extends BaseTest {
     private static final int PID1000 = 1000;
     private static final Integer DID9 = 9;
 
-
     @Resource UserTransaction transaction;
 
-    private final String lafSampleId = "XXX";
     private final String mstId = "06010";
     private final String regulation = "test";
     private final String sampleSpecifId = "A1";
     private final String measd = "H-3";
     private final String measUnit = "Bq/kgFM";
     private final String lafTemplate = "%%PROBE%%\n"
-        + "UEBERTRAGUNGSFORMAT \"7\"\n"
+        + "UEBERTRAGUNGSFORMAT 7\n"
         + "VERSION \"0084\"\n"
         + "PROBE_ID \"%s\"\n"
         + "PROBENART \"E\"\n"
@@ -102,9 +102,6 @@ public class ImporterTest extends BaseTest {
         + "MESSMETHODE_S \"A3\"\n"
         + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
         + "%%ENDE%%\n";
-    private final String laf = String.format(
-        lafTemplate, lafSampleId, regulation, sampleSpecifId,
-        "", measd, measUnit);
 
     final String dataKey = "data";
 
@@ -528,6 +525,10 @@ public class ImporterTest extends BaseTest {
     public final void testImportProbe(
         @ArquillianResource URL baseUrl
     ) {
+        final String laf = String.format(
+            lafTemplate, randomProbeId(),
+            regulation, sampleSpecifId, "", measd, measUnit);
+
         /* Request synchronous import */
         Response importResponse = client.target(
             baseUrl + "data/import/laf")
@@ -556,7 +557,33 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncImportProbeSuccess(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        testAsyncImportProbe(baseUrl, laf, true);
+        final String lafSampleId = randomProbeId();
+        final String laf = String.format(
+            lafTemplate, lafSampleId,
+            regulation, sampleSpecifId, "", measd, measUnit);
+        testAsyncImportProbe(baseUrl, laf, lafSampleId, true);
+    }
+
+    /**
+     * Test import with lowercase LAF keywords.
+     */
+    @Test
+    @RunAsClient
+    public final void testImportLowercaseKeywords(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        final String lowerCaseLAF = String.format(
+            lafTemplate, lafSampleId, regulation, sampleSpecifId,
+            "", measd, measUnit).lines().map(line -> {
+                    if (line.matches("^\\w+ .*")) {
+                        String[] words = line.split(" ");
+                        words[0] = words[0].toLowerCase();
+                        return String.join(" ", words);
+                    }
+                    return line;
+                }).collect(Collectors.joining("\n"));
+        testAsyncImportProbe(baseUrl, lowerCaseLAF, lafSampleId, true);
     }
 
     /**
@@ -567,7 +594,7 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncImportProbeNoSuccess(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        testAsyncImportProbe(baseUrl, "no valid LAF", false);
+        testAsyncImportProbe(baseUrl, "no valid LAF", "", false);
     }
 
     /**
@@ -578,11 +605,13 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncImportProbeImportConfConvert(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
             baseUrl,
             String.format(
                 lafTemplate, lafSampleId, "conv", sampleSpecifId,
                 "", measd, measUnit),
+            lafSampleId,
             true);
     }
 
@@ -594,11 +623,13 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncImportMeasValImportConfTransform(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
             baseUrl,
             String.format(
                 lafTemplate, lafSampleId, "conv", sampleSpecifId,
                 "", "H 3", measUnit),
+            lafSampleId,
             true);
     }
 
@@ -612,11 +643,13 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncImportSampleSpecifMeasValImportConfTransform(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
             baseUrl,
             String.format(
                 lafTemplate, lafSampleId, "conv", "XX",
                 "", measd, measUnit),
+            lafSampleId,
             true);
     }
 
@@ -643,6 +676,7 @@ public class ImporterTest extends BaseTest {
         String value,
         boolean expectWarning
     ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
         // Add "ZEITBASIS" attribute to LAF string
         String lafZb = String.format(
             lafTemplate,
@@ -654,7 +688,8 @@ public class ImporterTest extends BaseTest {
             measUnit);
         LOG.trace(lafZb);
 
-        JsonArray warnings = testAsyncImportProbe(baseUrl, lafZb, true)
+        JsonArray warnings = testAsyncImportProbe(
+            baseUrl, lafZb, lafSampleId, true)
             .getJsonObject("warnings").getJsonArray(lafSampleId);
         LOG.trace(warnings);
         final String keyKey = "key";
@@ -679,6 +714,7 @@ public class ImporterTest extends BaseTest {
     private JsonObject testAsyncImportProbe(
         URL baseUrl,
         String lafData,
+        String lafSampleId,
         boolean expectSuccess
     ) throws InterruptedException, CharacterCodingException {
         final String asyncImportUrl = baseUrl + "data/import/async/";
@@ -780,10 +816,12 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject importedSampleSpecifMeasVal =
+        JsonArray importedSampleSpecifMeasVals =
             parseResponse(importedSampleSpecifMeasValResponse)
-            .getJsonArray(dataKey)
-            .getJsonObject(0);
+            .getJsonArray(dataKey);
+        Assert.assertEquals(1, importedSampleSpecifMeasVals.size());
+        JsonObject importedSampleSpecifMeasVal =
+            importedSampleSpecifMeasVals.getJsonObject(0);
         Assert.assertEquals(
             sampleSpecifId,
             importedSampleSpecifMeasVal.getString("sampleSpecifId"));
@@ -814,4 +852,9 @@ public class ImporterTest extends BaseTest {
 
         return fileReport;
     }
+
+    private String randomProbeId() {
+        final int probeIdLength = 16;
+        return UUID.randomUUID().toString().substring(0, probeIdLength);
+   }
 }
