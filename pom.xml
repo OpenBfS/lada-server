@@ -22,7 +22,6 @@
              Note: GeoTools >= 20 is no longer compatible with JTS < 1.15 -->
         <geotools.version>20.0</geotools.version>
         <checkstyle.plugin.version>3.1.2</checkstyle.plugin.version>
-        <arquillian.persistence.version>1.0.0.Alpha7</arquillian.persistence.version>
     </properties>
 
     <build>
@@ -460,9 +459,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <!-- TODO: Unused, but currently the Shrinkwrap deployment
+                 fails without. -->
             <groupId>org.jboss.arquillian.extension</groupId>
             <artifactId>arquillian-persistence-dbunit</artifactId>
-            <version>${arquillian.persistence.version}</version>
+            <version>1.0.0.Alpha7</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
