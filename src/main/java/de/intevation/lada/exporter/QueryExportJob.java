@@ -174,6 +174,30 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
+     * Transform Measm object into map with keys according to subDataColumns.
+     * @param measm Measm for which field values should be transformed
+     * @return Map with field names and transformed values of original measm
+     */
+    protected Map<String, Object> transformFieldValues(Measm measm) {
+        Map<String, Object> transformed = new HashMap<>();
+        subDataColumns.forEach(subDataColumn -> {
+                Object fieldValue = null;
+                switch (subDataColumn) {
+                case "statusKombi":
+                    fieldValue = getStatusString(measm);
+                    break;
+                case "messwerteCount":
+                    fieldValue = getMesswertCount(measm);
+                    break;
+                default:
+                    fieldValue = getFieldByName(subDataColumn, measm);
+                }
+                transformed.put(subDataColumn, fieldValue);
+            });
+        return transformed;
+    }
+
+    /**
      * Get the status of the given messung as String.
      * Format: [statusStufe - statusWert]
      * @param messung Messung to get status for
@@ -202,6 +226,30 @@ public abstract class QueryExportJob extends ExportJob {
         builder.and("measmId", messung.getId());
         // TODO: This is a nice example of ORM-induced database misuse:
         return repository.filterPlain(builder.getQuery()).size();
+    }
+
+    /**
+     * Transform MeasVal object into map with keys according to subDataColumns.
+     * @param measVal MeasVal for which field values should be transformed
+     * @return Map with field names and transformed values of original measVal
+     */
+    protected Map<String, Object> transformFieldValues(MeasVal measVal) {
+        Map<String, Object> transformed = new HashMap<>();
+        subDataColumns.forEach(subDataColumn -> {
+                Object fieldValue = null;
+                switch (subDataColumn) {
+                case "measUnitId":
+                    fieldValue = getMesseinheit(measVal);
+                    break;
+                case "measdId":
+                    fieldValue = getMessgroesse(measVal);
+                    break;
+                default:
+                    fieldValue = getFieldByName(subDataColumn, measVal);
+                }
+                transformed.put(subDataColumn, fieldValue);
+            });
+        return transformed;
     }
 
     /**

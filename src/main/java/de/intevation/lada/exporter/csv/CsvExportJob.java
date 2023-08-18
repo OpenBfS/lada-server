@@ -92,24 +92,7 @@ public class CsvExportJob extends QueryExportJob {
 
         List<Map<String, Object>> merged = new ArrayList<>();
         messungData.forEach(messung -> {
-            Map<String, Object> mergedRow = new HashMap<>();
-            // Add sub data
-            subDataColumns.forEach(subDataColumn -> {
-                Object fieldValue = null;
-                // Check if column needs seperate handling or is a valid
-                // messung field
-                switch (subDataColumn) {
-                    case "statusKombi":
-                        fieldValue = getStatusString(messung);
-                        break;
-                    case "messwerteCount":
-                        fieldValue = getMesswertCount(messung);
-                        break;
-                    default:
-                        fieldValue = getFieldByName(subDataColumn, messung);
-                }
-                mergedRow.put(subDataColumn, fieldValue);
-            });
+            Map<String, Object> mergedRow = transformFieldValues(messung);
             // Add primary record
             Integer primaryId = messung.getSampleId();
             Map<String, Object> primaryRecord = idMap.get(primaryId);
@@ -143,24 +126,7 @@ public class CsvExportJob extends QueryExportJob {
         AtomicBoolean success = new AtomicBoolean(true);
         List<Map<String, Object>> merged = new ArrayList<>();
         messwertData.forEach(messwert -> {
-            Map<String, Object> mergedRow = new HashMap<>();
-            // Add sub data
-            subDataColumns.forEach(subDataColumn -> {
-                Object fieldValue = null;
-                // Check if column needs seperate handling or is a valid
-                // messwert field
-                switch (subDataColumn) {
-                    case "measUnitId":
-                        fieldValue = getMesseinheit(messwert);
-                        break;
-                    case "measdId":
-                        fieldValue = getMessgroesse(messwert);
-                        break;
-                    default:
-                        fieldValue = getFieldByName(subDataColumn, messwert);
-                }
-                mergedRow.put(subDataColumn, fieldValue);
-            });
+            Map<String, Object> mergedRow = transformFieldValues(messwert);
             // Add primary record
             Integer primaryId = messwert.getMeasmId();
             Map<String, Object> primaryRecord = idMap.get(primaryId);

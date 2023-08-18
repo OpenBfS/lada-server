@@ -57,31 +57,14 @@ public class JsonExportJob extends QueryExportJob {
     ) {
         // Create a map of id->record
         Map<Integer, Map<String, Object>> idMap = new HashMap<>();
-        String sDataJsonKey = "Messungen";
+        final String sDataJsonKey = "Messungen";
         primaryData.forEach(record -> {
             idMap.put((Integer) record.get(idColumn), record);
         });
 
         List<Map<String, Object>> merged = primaryData;
         messungData.forEach(messung -> {
-            Map<String, Object> mergedMessung = new HashMap<>();
-            // Add sub data
-            subDataColumns.forEach(subDataColumn -> {
-                Object fieldValue = null;
-                // Check if column needs seperate handling or is a valid
-                // messung field
-                switch (subDataColumn) {
-                    case "statusKombi":
-                        fieldValue = getStatusString(messung);
-                        break;
-                    case "messwerteCount":
-                        fieldValue = getMesswertCount(messung);
-                        break;
-                    default:
-                        fieldValue = getFieldByName(subDataColumn, messung);
-                }
-                mergedMessung.put(subDataColumn, fieldValue);
-            });
+            Map<String, Object> mergedMessung = transformFieldValues(messung);
             //Append messung to probe
             Map<String, Object> primaryRecord = idMap.get(
                 messung.getSampleId());
@@ -89,7 +72,8 @@ public class JsonExportJob extends QueryExportJob {
                 primaryRecord.put(sDataJsonKey, new ArrayList<Object>());
             }
             ArrayList<Map<String, Object>> messungenList =
-                (ArrayList<Map<String, Object>>) primaryRecord.get("Messungen");
+                (ArrayList<Map<String, Object>>) primaryRecord.get(
+                    sDataJsonKey);
             messungenList.add(mergedMessung);
         });
         this.subDataJsonKey = sDataJsonKey;
@@ -102,31 +86,14 @@ public class JsonExportJob extends QueryExportJob {
     ) {
         // Create a map of id->record
         Map<Integer, Map<String, Object>> idMap = new HashMap<>();
-        String sDataJsonKey = "messwerte";
+        final String sDataJsonKey = "messwerte";
         primaryData.forEach(record -> {
             idMap.put((Integer) record.get(idColumn), record);
         });
 
         List<Map<String, Object>> merged = primaryData;
         messwertData.forEach(messwert -> {
-            Map<String, Object> mergedMesswert = new HashMap<>();
-            // Add sub data
-            subDataColumns.forEach(subDataColumn -> {
-                Object fieldValue = null;
-                // Check if column needs seperate handling or is a valid
-                // messung field
-                switch (subDataColumn) {
-                    case "measUnitId":
-                        fieldValue = getMesseinheit(messwert);
-                        break;
-                    case "measdId":
-                        fieldValue = getMessgroesse(messwert);
-                        break;
-                    default:
-                        fieldValue = getFieldByName(subDataColumn, messwert);
-                }
-                mergedMesswert.put(subDataColumn, fieldValue);
-            });
+            Map<String, Object> mergedMesswert = transformFieldValues(messwert);
             //Append messung to probe
             Map<String, Object> primaryRecord = idMap.get(
                 messwert.getMeasmId());
@@ -134,7 +101,8 @@ public class JsonExportJob extends QueryExportJob {
                 primaryRecord.put(sDataJsonKey, new ArrayList<Object>());
             }
             ArrayList<Map<String, Object>> messwertList =
-                (ArrayList<Map<String, Object>>) primaryRecord.get("messwerte");
+                (ArrayList<Map<String, Object>>) primaryRecord.get(
+                    sDataJsonKey);
             messwertList.add(mergedMesswert);
         });
         this.subDataJsonKey = sDataJsonKey;
