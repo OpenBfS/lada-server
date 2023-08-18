@@ -125,9 +125,13 @@ public class BaseTest {
      */
     @Deployment(testable = true)
     public static WebArchive createDeployment() throws Exception {
-        File antlr = Maven.resolver().loadPomFromFile("pom.xml")
-            .resolve("org.antlr:antlr4-runtime")
-            .withoutTransitivity().asSingleFile();
+        //Get compile and runtime dependencies from pom.xml
+        // Note: Test dependencies can not be added this way as they seem to
+        //       break the deployment
+        File[] compileAndRuntimeDeps = Maven.resolver()
+            .loadPomFromFile("pom.xml")
+            .importCompileAndRuntimeDependencies().resolve()
+            .withTransitivity().asFile();
 
         WebArchive archive = ShrinkWrap.create(WebArchive.class, archiveName)
             .addPackages(true, ClassLoader.getSystemClassLoader()
@@ -135,18 +139,21 @@ public class BaseTest {
             .addAsResource("lada_server_en.properties", "lada_server_en.properties")
             .addAsResource("lada_server_de.properties", "lada_server_de.properties")
             .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-            .addAsLibrary(antlr)
+            .addAsLibraries(compileAndRuntimeDeps)
             .addAsResource("META-INF/test-persistence.xml",
                 "META-INF/persistence.xml")
             //Add cleanup script and datasets for container mode tests
             .addAsResource(DATASETS_DIR, DATASETS_DIR);
-        addWithDependencies("org.geotools:gt-api", archive);
-        addWithDependencies("org.geotools:gt-referencing", archive);
-        addWithDependencies("org.geotools:gt-epsg-hsql", archive);
-        addWithDependencies("org.geotools:gt-opengis", archive);
-        addWithDependencies("io.github.classgraph:classgraph", archive);
+        //Add additional test dependencies
         addWithDependencies("org.postgresql:postgresql", archive);
         addWithDependencies("net.postgis:postgis-jdbc", archive);
+        addWithDependencies("org.dbunit:dbunit", archive);
+        addWithDependencies(
+            "org.jboss.arquillian.extension:arquillian-transaction-api",
+            archive);
+        addWithDependencies(
+            "org.jboss.arquillian.extension:arquillian-transaction-jta",
+            archive);
         return archive;
     }
 

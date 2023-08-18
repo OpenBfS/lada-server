@@ -220,9 +220,6 @@
                             org.wildfly.arquillian:wildfly-arquillian-container-remote
                         </ignoredUnusedDeclaredDependency>
                         <ignoredUnusedDeclaredDependency>
-                            org.jboss.arquillian.extension:arquillian-persistence-dbunit
-                        </ignoredUnusedDeclaredDependency>
-                        <ignoredUnusedDeclaredDependency>
                             org.jboss.resteasy:resteasy-client
                         </ignoredUnusedDeclaredDependency>
                         <ignoredUnusedDeclaredDependency>
@@ -230,6 +227,9 @@
                         </ignoredUnusedDeclaredDependency>
                         <ignoredUnusedDeclaredDependency>
                             net.postgis:postgis-jdbc
+                        </ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>
+                            org.jboss.arquillian.extension:arquillian-transaction-jta
                         </ignoredUnusedDeclaredDependency>
                     </ignoredUnusedDeclaredDependencies>
                 </configuration>
@@ -459,20 +459,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <!-- TODO: Unused, but currently the Shrinkwrap deployment
-                 fails without. -->
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-persistence-dbunit</artifactId>
-            <version>1.0.0.Alpha7</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-api</artifactId>
             <scope>test</scope>
@@ -497,7 +483,13 @@
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
             <artifactId>arquillian-transaction-api</artifactId>
-            <version>2.0.0</version>
+            <version>1.0.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-transaction-jta</artifactId>
+            <version>1.0.6</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
