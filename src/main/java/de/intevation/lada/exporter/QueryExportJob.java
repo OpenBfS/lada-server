@@ -184,10 +184,24 @@ public abstract class QueryExportJob extends ExportJob {
                 Object fieldValue = null;
                 switch (subDataColumn) {
                 case "statusKombi":
-                    fieldValue = getStatusString(measm);
+                    StatusProt prot =
+                        repository.getByIdPlain(
+                            StatusProt.class, measm.getStatus());
+                    StatusMp mp =
+                        repository.getByIdPlain(
+                            StatusMp.class, prot.getStatusMpId());
+                    StatusLev lev = mp.getStatusLev();
+                    StatusVal val = mp.getStatusVal();
+                    fieldValue = String.format(
+                        "%s - %s", lev.getLev(), val.getVal());
                     break;
                 case "messwerteCount":
-                    fieldValue = getMesswertCount(measm);
+                    QueryBuilder<MeasVal> builder = repository
+                        .queryBuilder(MeasVal.class)
+                        .and("measmId", measm.getId());
+                    // TODO: A nice example of ORM-induced database misuse:
+                    fieldValue = repository.filterPlain(builder.getQuery())
+                        .size();
                     break;
                 default:
                     fieldValue = getFieldByName(subDataColumn, measm);
@@ -195,37 +209,6 @@ public abstract class QueryExportJob extends ExportJob {
                 transformed.put(subDataColumn, fieldValue);
             });
         return transformed;
-    }
-
-    /**
-     * Get the status of the given messung as String.
-     * Format: [statusStufe - statusWert]
-     * @param messung Messung to get status for
-     * @return Status as string
-     */
-    protected String getStatusString(Measm messung) {
-        StatusProt protokoll =
-            repository.getByIdPlain(
-                StatusProt.class, messung.getStatus());
-        StatusMp kombi =
-            repository.getByIdPlain(
-                StatusMp.class, protokoll.getStatusMpId());
-        StatusLev stufe = kombi.getStatusLev();
-        StatusVal wert = kombi.getStatusVal();
-        return String.format("%s - %s", stufe.getLev(), wert.getVal());
-    }
-
-    /**
-     * Get the number of messwerte records referencing the given messung.
-     * @param messung Messung to get messwert count for
-     * @return Number of messwert records
-     */
-    protected int getMesswertCount(Measm messung) {
-        QueryBuilder<MeasVal> builder = repository.queryBuilder(
-            MeasVal.class);
-        builder.and("measmId", messung.getId());
-        // TODO: This is a nice example of ORM-induced database misuse:
-        return repository.filterPlain(builder.getQuery()).size();
     }
 
     /**
@@ -239,10 +222,13 @@ public abstract class QueryExportJob extends ExportJob {
                 Object fieldValue = null;
                 switch (subDataColumn) {
                 case "measUnitId":
-                    fieldValue = getMesseinheit(measVal);
+                    fieldValue = repository.getByIdPlain(
+                        MeasUnit.class, measVal.getMeasUnitId())
+                        .getUnitSymbol();
                     break;
                 case "measdId":
-                    fieldValue = getMessgroesse(measVal);
+                    fieldValue = repository.getByIdPlain(
+                        Measd.class, measVal.getMeasdId()).getName();
                     break;
                 default:
                     fieldValue = getFieldByName(subDataColumn, measVal);
@@ -250,32 +236,6 @@ public abstract class QueryExportJob extends ExportJob {
                 transformed.put(subDataColumn, fieldValue);
             });
         return transformed;
-    }
-
-    /**
-    * Get the messeinheit for messwert values using given messwert.
-    * @param messwert messwertId sungId to get messeinheit for
-    * @return messeinheit
-     */
-    protected String getMesseinheit(MeasVal messwert) {
-        QueryBuilder<MeasUnit> builder = repository.queryBuilder(
-            MeasUnit.class);
-        builder.and("id", messwert.getMeasUnitId());
-        List<MeasUnit> messeinheit = repository.filterPlain(builder.getQuery());
-        return messeinheit.get(0).getUnitSymbol();
-    }
-
-    /**
-    * Get the messgroesse for messwert values using given messwert.
-    * @param messwert messwertId sungId to get messgroesse for
-    * @return messgroesse
-     */
-    protected String getMessgroesse(MeasVal messwert) {
-        QueryBuilder<Measd> builder = repository.queryBuilder(
-            Measd.class);
-        builder.and("id", messwert.getMeasdId());
-        List<Measd> messgroesse = repository.filterPlain(builder.getQuery());
-        return messgroesse.get(0).getName();
     }
 
     /**
