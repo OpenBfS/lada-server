@@ -116,8 +116,11 @@ public class JsonExportJob extends QueryExportJob {
                 // Check if column needs seperate handling or is a valid
                 // messung field
                 switch (subDataColumn) {
-                    case "messungId":
-                        fieldValue = getFieldByName("messungsId", messwert);
+                    case "measUnitId":
+                        fieldValue = getMesseinheit(messwert);
+                        break;
+                    case "measdId":
+                        fieldValue = getMessgroesse(messwert);
                         break;
                     default:
                         fieldValue = getFieldByName(subDataColumn, messwert);

@@ -150,13 +150,10 @@ public class CsvExportJob extends QueryExportJob {
                 // Check if column needs seperate handling or is a valid
                 // messwert field
                 switch (subDataColumn) {
-                    case "messungId":
-                        fieldValue = getFieldByName("messungsId", messwert);
-                        break;
-                    case "mehId":
+                    case "measUnitId":
                         fieldValue = getMesseinheit(messwert);
                         break;
-                    case "messgroesseId":
+                    case "measdId":
                         fieldValue = getMessgroesse(messwert);
                         break;
                     default:
