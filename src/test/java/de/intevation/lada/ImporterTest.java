@@ -16,6 +16,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.UUID;
 
 import jakarta.annotation.Resource;
 import jakarta.inject.Inject;
@@ -81,17 +83,15 @@ public class ImporterTest extends BaseTest {
     private static final int PID1000 = 1000;
     private static final Integer DID9 = 9;
 
-
     @Resource UserTransaction transaction;
 
-    private final String lafSampleId = "XXX";
     private final String mstId = "06010";
     private final String regulation = "test";
     private final String sampleSpecifId = "A1";
     private final String measd = "H-3";
     private final String measUnit = "Bq/kgFM";
     private final String lafTemplate = "%%PROBE%%\n"
-        + "UEBERTRAGUNGSFORMAT \"7\"\n"
+        + "UEBERTRAGUNGSFORMAT 7\n"
         + "VERSION \"0084\"\n"
         + "PROBE_ID \"%s\"\n"
         + "PROBENART \"E\"\n"
@@ -103,9 +103,6 @@ public class ImporterTest extends BaseTest {
         + "MESSMETHODE_S \"A3\"\n"
         + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
         + "%%ENDE%%\n";
-    private final String laf = String.format(
-        lafTemplate, lafSampleId, regulation, sampleSpecifId,
-        "", measd, measUnit);
 
     final String dataKey = "data";
 
@@ -194,10 +191,8 @@ public class ImporterTest extends BaseTest {
      * Identify probe object by external id as reject.
      * @throws Exception that can occur during the test.
      */
-    @Ignore
     @Test
     @Transactional
-    //TODO: This unexpectedly returns an update instead of an reject
     public final void identifyProbeByExterneProbeIdReject() throws Exception {
         Sample probe = new Sample();
         probe.setExtId("T001");
@@ -326,32 +321,28 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     public final void mergeProbe() throws Exception {
-        try {
-            transaction.begin();
-            Sample probe = new Sample();
-            probe.setExtId("T001");
-            probe.setMainSampleId("120510002");
-            probe.setMeasFacilId(mstId);
-            probe.setOprModeId(1);
-            probe.setRegulationId(DID9);
-            probe.setEnvDescripName(
-                "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet");
-            probe.setEnvDescripDisplay("D: 59 04 01 00 05 05 01 02 00 00 00 00");
-            probe.setMpgId(MPRID1000);
-            probe.setSamplerId(PNID);
-            probe.setIsTest(false);
-            probe.setApprLabId(mstId);
-            probe.setSampleMethId(2);
-            probe.setEnvMediumId("A6");
-            probe.setSchedStartDate(Timestamp.valueOf("2013-05-01 16:00:00"));
-            probe.setSchedEndDate(Timestamp.valueOf("2013-05-05 16:00:00"));
-            probe.setSampleStartDate(Timestamp.valueOf("2012-05-03 13:07:00"));
-            Sample dbProbe = repository.getByIdPlain(Sample.class, PID1000);
-            merger.merge(dbProbe, probe);
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-        }
+        transaction.begin();
+        Sample probe = new Sample();
+        probe.setExtId("T001");
+        probe.setMainSampleId("120510002");
+        probe.setMeasFacilId(mstId);
+        probe.setOprModeId(1);
+        probe.setRegulationId(DID9);
+        probe.setEnvDescripName(
+            "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet");
+        probe.setEnvDescripDisplay("D: 59 04 01 00 05 05 01 02 00 00 00 00");
+        probe.setMpgId(MPRID1000);
+        probe.setSamplerId(PNID);
+        probe.setIsTest(false);
+        probe.setApprLabId(mstId);
+        probe.setSampleMethId(2);
+        probe.setEnvMediumId("A6");
+        probe.setSchedStartDate(Timestamp.valueOf("2013-05-01 16:00:00"));
+        probe.setSchedEndDate(Timestamp.valueOf("2013-05-05 16:00:00"));
+        probe.setSampleStartDate(Timestamp.valueOf("2012-05-03 13:07:00"));
+        Sample dbProbe = repository.getByIdPlain(Sample.class, PID1000);
+        merger.merge(dbProbe, probe);
+        transaction.commit();
 
         shouldMatchDataSet("datasets/dbUnit_import_merge_match.xml",
             "lada.sample", new String[]{"last_mod", "tree_mod", "mid_coll_pd"});
@@ -363,22 +354,18 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     public final void mergeMessung() throws Exception {
-        try {
-            transaction.begin();
-            Measm messung = new Measm();
-            messung.setMinSampleId("06A0");
-            messung.setIsScheduled(true);
-            messung.setIsCompleted(false);
-            messung.setMeasPd(MDAUER1000);
-            messung.setMmtId("A3");
-            messung.setMeasmStartDate(Timestamp.valueOf("2012-05-06 14:00:00"));
-            Measm dbMessung =
-                repository.getByIdPlain(Measm.class, MID1200);
-            merger.mergeMessung(dbMessung, messung);
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-        }
+        transaction.begin();
+        Measm messung = new Measm();
+        messung.setMinSampleId("06A0");
+        messung.setIsScheduled(true);
+        messung.setIsCompleted(false);
+        messung.setMeasPd(MDAUER1000);
+        messung.setMmtId("A3");
+        messung.setMeasmStartDate(Timestamp.valueOf("2012-05-06 14:00:00"));
+        Measm dbMessung =
+            repository.getByIdPlain(Measm.class, MID1200);
+        merger.mergeMessung(dbMessung, messung);
+        transaction.commit();
 
         shouldMatchDataSet(
             "datasets/dbUnit_import_merge_match_messung.xml",
@@ -395,38 +382,34 @@ public class ImporterTest extends BaseTest {
     @Test
     @Ignore
     public final void mergeZusatzwert() throws Exception {
-        try {
-            transaction.begin();
-            Sample probe = repository.getByIdPlain(Sample.class, PID1000);
-            List<SampleSpecifMeasVal> zusatzwerte = new ArrayList<SampleSpecifMeasVal>();
-            SampleSpecifMeasVal wert1 = new SampleSpecifMeasVal();
-            wert1.setSampleId(PID1000);
-            wert1.setError(MESSFEHLER12F);
-            wert1.setSmallerThan("<");
-            wert1.setSampleSpecifId("A74");
+        transaction.begin();
+        Sample probe = repository.getByIdPlain(Sample.class, PID1000);
+        List<SampleSpecifMeasVal> zusatzwerte = new ArrayList<SampleSpecifMeasVal>();
+        SampleSpecifMeasVal wert1 = new SampleSpecifMeasVal();
+        wert1.setSampleId(PID1000);
+        wert1.setError(MESSFEHLER12F);
+        wert1.setSmallerThan("<");
+        wert1.setSampleSpecifId("A74");
 
-            SampleSpecifMeasVal wert2 = new SampleSpecifMeasVal();
-            wert2.setSampleId(PID1000);
-            wert2.setError(MESSFEHLER02F);
-            wert2.setMeasVal(MESS18D);
-            wert1.setSmallerThan(null);
-            wert2.setSampleSpecifId("A75");
+        SampleSpecifMeasVal wert2 = new SampleSpecifMeasVal();
+        wert2.setSampleId(PID1000);
+        wert2.setError(MESSFEHLER02F);
+        wert2.setMeasVal(MESS18D);
+        wert1.setSmallerThan(null);
+        wert2.setSampleSpecifId("A75");
 
-            SampleSpecifMeasVal wert3 = new SampleSpecifMeasVal();
-            wert3.setSampleId(PID1000);
-            wert3.setError(MESSFEHLER02F);
-            wert3.setMeasVal(MESS18D);
-            wert1.setSmallerThan(null);
-            wert3.setSampleSpecifId("A76");
+        SampleSpecifMeasVal wert3 = new SampleSpecifMeasVal();
+        wert3.setSampleId(PID1000);
+        wert3.setError(MESSFEHLER02F);
+        wert3.setMeasVal(MESS18D);
+        wert1.setSmallerThan(null);
+        wert3.setSampleSpecifId("A76");
 
-            zusatzwerte.add(wert1);
-            zusatzwerte.add(wert2);
-            zusatzwerte.add(wert3);
-            merger.mergeZusatzwerte(probe, zusatzwerte);
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-        }
+        zusatzwerte.add(wert1);
+        zusatzwerte.add(wert2);
+        zusatzwerte.add(wert3);
+        merger.mergeZusatzwerte(probe, zusatzwerte);
+        transaction.commit();
 
         shouldMatchDataSet(
             "datasets/dbUnit_import_merge_match_zusatzwert.xml",
@@ -440,31 +423,27 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     public final void mergeProbeKommentar() throws Exception {
-        try {
-            transaction.begin();
-            Sample probe = repository.getByIdPlain(Sample.class, PID1000);
-            List<CommSample> kommentare = new ArrayList<CommSample>();
-            CommSample komm1 = new CommSample();
-            komm1.setSampleId(PID1000);
-            komm1.setDate(Timestamp.valueOf("2012-05-08 12:00:00"));
-            komm1.setMeasFacilId(mstId);
-            komm1.setText("Testtext2");
+        transaction.begin();
+        Sample probe = repository.getByIdPlain(Sample.class, PID1000);
+        List<CommSample> kommentare = new ArrayList<CommSample>();
+        CommSample komm1 = new CommSample();
+        komm1.setSampleId(PID1000);
+        komm1.setDate(Timestamp.valueOf("2012-05-08 12:00:00"));
+        komm1.setMeasFacilId(mstId);
+        komm1.setText("Testtext2");
 
-            CommSample komm2 = new CommSample();
-            komm2.setSampleId(PID1000);
-            komm2.setDate(Timestamp.valueOf("2012-04-08 12:00:00"));
-            komm2.setMeasFacilId(mstId);
-            komm2.setText("Testtext3");
+        CommSample komm2 = new CommSample();
+        komm2.setSampleId(PID1000);
+        komm2.setDate(Timestamp.valueOf("2012-04-08 12:00:00"));
+        komm2.setMeasFacilId(mstId);
+        komm2.setText("Testtext3");
 
-            kommentare.add(komm1);
-            kommentare.add(komm2);
+        kommentare.add(komm1);
+        kommentare.add(komm2);
 
-            merger.mergeKommentare(probe, kommentare);
-            Assert.assertEquals(2, kommentare.size());
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-        }
+        merger.mergeKommentare(probe, kommentare);
+        Assert.assertEquals(2, kommentare.size());
+        transaction.commit();
 
         shouldMatchDataSet(
             "datasets/dbUnit_import_merge_match_kommentar.xml",
@@ -478,32 +457,28 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     public final void mergeMessungKommentar() throws Exception {
-        try {
-            transaction.begin();
-            Measm messung =
-                repository.getByIdPlain(Measm.class, MID1200);
-            List<CommMeasm> kommentare = new ArrayList<CommMeasm>();
-            CommMeasm komm1 = new CommMeasm();
-            komm1.setMeasmId(MID1200);
-            komm1.setDate(Timestamp.valueOf("2012-05-08 12:00:00"));
-            komm1.setMeasFacilId(mstId);
-            komm1.setText("Testtext2");
+        transaction.begin();
+        Measm messung =
+            repository.getByIdPlain(Measm.class, MID1200);
+        List<CommMeasm> kommentare = new ArrayList<CommMeasm>();
+        CommMeasm komm1 = new CommMeasm();
+        komm1.setMeasmId(MID1200);
+        komm1.setDate(Timestamp.valueOf("2012-05-08 12:00:00"));
+        komm1.setMeasFacilId(mstId);
+        komm1.setText("Testtext2");
 
-            CommMeasm komm2 = new CommMeasm();
-            komm2.setMeasmId(MID1200);
-            komm2.setDate(Timestamp.valueOf("2012-03-08 12:00:00"));
-            komm2.setMeasFacilId(mstId);
-            komm2.setText("Testtext3");
+        CommMeasm komm2 = new CommMeasm();
+        komm2.setMeasmId(MID1200);
+        komm2.setDate(Timestamp.valueOf("2012-03-08 12:00:00"));
+        komm2.setMeasFacilId(mstId);
+        komm2.setText("Testtext3");
 
-            kommentare.add(komm1);
-            kommentare.add(komm2);
+        kommentare.add(komm1);
+        kommentare.add(komm2);
 
-            merger.mergeMessungKommentare(messung, kommentare);
-            Assert.assertEquals(2, kommentare.size());
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-        }
+        merger.mergeMessungKommentare(messung, kommentare);
+        Assert.assertEquals(2, kommentare.size());
+        transaction.commit();
 
         shouldMatchDataSet(
             "datasets/dbUnit_import_merge_match_kommentarm.xml",
@@ -517,29 +492,25 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     public final void mergeMesswerte() throws Exception {
-        try {
-            transaction.begin();
-            Measm messung =
-                repository.getByIdPlain(Measm.class, MID1200);
-            List<MeasVal> messwerte = new ArrayList<MeasVal>();
-            MeasVal wert1 = new MeasVal();
-            wert1.setMeasmId(MID1200);
-            wert1.setMeasUnitId(MEHID207);
-            wert1.setMeasdId(MGID56);
-            wert1.setMeasVal(MESS15D);
-            messwerte.add(wert1);
+        transaction.begin();
+        Measm messung =
+            repository.getByIdPlain(Measm.class, MID1200);
+        List<MeasVal> messwerte = new ArrayList<MeasVal>();
+        MeasVal wert1 = new MeasVal();
+        wert1.setMeasmId(MID1200);
+        wert1.setMeasUnitId(MEHID207);
+        wert1.setMeasdId(MGID56);
+        wert1.setMeasVal(MESS15D);
+        messwerte.add(wert1);
 
-            merger.mergeMesswerte(messung, messwerte);
-            QueryBuilder<MeasVal> builder =
-                repository.queryBuilder(MeasVal.class);
-            builder.and("measmId", messung.getId());
-            List<MeasVal> dbWerte =
-                repository.filterPlain(builder.getQuery());
-            Assert.assertEquals(1, dbWerte.size());
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-        }
+        merger.mergeMesswerte(messung, messwerte);
+        QueryBuilder<MeasVal> builder =
+            repository.queryBuilder(MeasVal.class);
+        builder.and("measmId", messung.getId());
+        List<MeasVal> dbWerte =
+            repository.filterPlain(builder.getQuery());
+        Assert.assertEquals(1, dbWerte.size());
+        transaction.commit();
 
         shouldMatchDataSet(
             "datasets/dbUnit_import_merge_match_messwert.xml",
@@ -548,14 +519,17 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
-     * Preliminary data for testing LAF 8 import.
-     * @throws Exception that can occur during the test.
+     * Test synchronous import of a Sample object.
      */
     @Test
     @RunAsClient
     public final void testImportProbe(
         @ArquillianResource URL baseUrl
     ) {
+        final String laf = String.format(
+            lafTemplate, randomProbeId(),
+            regulation, sampleSpecifId, "", measd, measUnit);
+
         /* Request synchronous import */
         Response importResponse = client.target(
             baseUrl + "data/import/laf")
@@ -584,7 +558,33 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncImportProbeSuccess(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        testAsyncImportProbe(baseUrl, laf, true);
+        final String lafSampleId = randomProbeId();
+        final String laf = String.format(
+            lafTemplate, lafSampleId,
+            regulation, sampleSpecifId, "", measd, measUnit);
+        testAsyncImportProbe(baseUrl, laf, lafSampleId, true);
+    }
+
+    /**
+     * Test import with lowercase LAF keywords.
+     */
+    @Test
+    @RunAsClient
+    public final void testImportLowercaseKeywords(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        final String lowerCaseLAF = String.format(
+            lafTemplate, lafSampleId, regulation, sampleSpecifId,
+            "", measd, measUnit).lines().map(line -> {
+                    if (line.matches("^\\w+ .*")) {
+                        String[] words = line.split(" ");
+                        words[0] = words[0].toLowerCase();
+                        return String.join(" ", words);
+                    }
+                    return line;
+                }).collect(Collectors.joining("\n"));
+        testAsyncImportProbe(baseUrl, lowerCaseLAF, lafSampleId, true);
     }
 
     /**
@@ -595,7 +595,7 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncImportProbeNoSuccess(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        testAsyncImportProbe(baseUrl, "no valid LAF", false);
+        testAsyncImportProbe(baseUrl, "no valid LAF", "", false);
     }
 
     /**
@@ -606,11 +606,13 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncImportProbeImportConfConvert(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
             baseUrl,
             String.format(
                 lafTemplate, lafSampleId, "conv", sampleSpecifId,
                 "", measd, measUnit),
+            lafSampleId,
             true);
     }
 
@@ -622,11 +624,13 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncImportMeasValImportConfTransform(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
             baseUrl,
             String.format(
                 lafTemplate, lafSampleId, "conv", sampleSpecifId,
                 "", "H 3", measUnit),
+            lafSampleId,
             true);
     }
 
@@ -640,11 +644,13 @@ public class ImporterTest extends BaseTest {
     public final void testAsyncImportSampleSpecifMeasValImportConfTransform(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
             baseUrl,
             String.format(
                 lafTemplate, lafSampleId, "conv", "XX",
                 "", measd, measUnit),
+            lafSampleId,
             true);
     }
 
@@ -671,6 +677,7 @@ public class ImporterTest extends BaseTest {
         String value,
         boolean expectWarning
     ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
         // Add "ZEITBASIS" attribute to LAF string
         String lafZb = String.format(
             lafTemplate,
@@ -682,7 +689,8 @@ public class ImporterTest extends BaseTest {
             measUnit);
         LOG.trace(lafZb);
 
-        JsonArray warnings = testAsyncImportProbe(baseUrl, lafZb, true)
+        JsonArray warnings = testAsyncImportProbe(
+            baseUrl, lafZb, lafSampleId, true)
             .getJsonObject("warnings").getJsonArray(lafSampleId);
         LOG.trace(warnings);
         final String keyKey = "key";
@@ -707,6 +715,7 @@ public class ImporterTest extends BaseTest {
     private JsonObject testAsyncImportProbe(
         URL baseUrl,
         String lafData,
+        String lafSampleId,
         boolean expectSuccess
     ) throws InterruptedException, CharacterCodingException {
         final String asyncImportUrl = baseUrl + "data/import/async/";
@@ -808,10 +817,12 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject importedSampleSpecifMeasVal =
+        JsonArray importedSampleSpecifMeasVals =
             parseResponse(importedSampleSpecifMeasValResponse)
-            .getJsonArray(dataKey)
-            .getJsonObject(0);
+            .getJsonArray(dataKey);
+        Assert.assertEquals(1, importedSampleSpecifMeasVals.size());
+        JsonObject importedSampleSpecifMeasVal =
+            importedSampleSpecifMeasVals.getJsonObject(0);
         Assert.assertEquals(
             sampleSpecifId,
             importedSampleSpecifMeasVal.getString("sampleSpecifId"));
@@ -842,4 +853,9 @@ public class ImporterTest extends BaseTest {
 
         return fileReport;
     }
+
+    private String randomProbeId() {
+        final int probeIdLength = 16;
+        return UUID.randomUUID().toString().substring(0, probeIdLength);
+   }
 }
