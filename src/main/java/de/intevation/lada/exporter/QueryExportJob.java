@@ -347,12 +347,16 @@ public abstract class QueryExportJob extends ExportJob {
             return;
         }
         //Check if subdata shall be exported
-        exportSubdata = exportParameters.getBoolean("exportSubData");
+        this.exportSubdata = exportParameters.getBoolean(
+            "exportSubData", false);
         //Get identifier type
         idColumn = exportParameters.isNull("idField")
             ? null : exportParameters.getString("idField");
         //Get target timezone
-        timezone = exportParameters.getString("timezone");
+        final String timezoneKey = "timezone";
+        if (exportParameters.containsKey(timezoneKey)) {
+            this.timezone = exportParameters.getString(timezoneKey);
+        }
 
         //Check if sub data columns are present if subdata is exported
         if (exportSubdata
