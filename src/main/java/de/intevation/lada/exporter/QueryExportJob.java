@@ -9,11 +9,14 @@ package de.intevation.lada.exporter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
@@ -79,9 +82,10 @@ public abstract class QueryExportJob extends ExportJob {
     private Map<String, String> mapPrimaryToSubDataTypes;
 
     /**
-     * Timezone to convert timestamps to.
+     * Date format to convert timestamps to (time zone defaults to UTC).
      */
-    protected String timezone;
+    protected DateFormat dateFormat =
+        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
      * Query id.
@@ -104,7 +108,7 @@ public abstract class QueryExportJob extends ExportJob {
         mapPrimaryToSubDataTypes.put("probeId", "messung");
         mapPrimaryToSubDataTypes.put("messungId", "messwert");
 
-        this.timezone = "UTC";
+        this.dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     /**
@@ -315,7 +319,8 @@ public abstract class QueryExportJob extends ExportJob {
         //Get target timezone
         final String timezoneKey = "timezone";
         if (exportParameters.containsKey(timezoneKey)) {
-            this.timezone = exportParameters.getString(timezoneKey);
+            this.dateFormat.setTimeZone(TimeZone.getTimeZone(
+                    exportParameters.getString(timezoneKey)));
         }
 
         //Check if sub data columns are present if subdata is exported

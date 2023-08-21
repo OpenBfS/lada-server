@@ -179,8 +179,6 @@ public class CsvExportJob extends QueryExportJob {
 
         //Export data to csv
         JsonObjectBuilder exportOptions = Json.createObjectBuilder();
-        exportOptions.add("timezone", exportParameters.get("timezone"));
-
         if (exportParameters.containsKey("csvOptions")) {
             exportParameters.getJsonObject("csvOptions")
                 .forEach((key, value) -> {
@@ -196,13 +194,13 @@ public class CsvExportJob extends QueryExportJob {
                 exportParameters.getJsonObject("subDataColumnNames"));
         }
 
-        InputStream exported;
-        exported = exporter.export(
+        InputStream exported = exporter.export(
             exportData,
             encoding,
             exportOptions.build(),
             this.columnsToExport,
             qId,
+            this.dateFormat,
             locale);
 
         ByteArrayOutputStream result = new ByteArrayOutputStream();

@@ -118,27 +118,25 @@ public class JsonExportJob extends QueryExportJob {
         primaryData = getQueryResult();
 
         List<Map<String, Object>> exportData = primaryData;
-
         // If needed, fetch and merge sub data
         if (exportSubdata) {
             exportData = mergeSubData();
         }
 
         //Export data to json
-        InputStream exported;
         JsonObjectBuilder optionBuilder = Json.createObjectBuilder()
-            .add("subData", exportSubdata ? subDataJsonKey : "")
-            .add("timezone", timezone);
+            .add("subData", exportSubdata ? subDataJsonKey : "");
         if (idColumn != null) {
             optionBuilder.add("id", idColumn);
         }
         JsonObject exportOptions = optionBuilder.build();
-        exported = exporter.export(
+        InputStream exported = exporter.export(
             exportData,
             encoding,
             exportOptions,
             this.columnsToExport,
             qId,
+            this.dateFormat,
             null);
 
         ByteArrayOutputStream result = new ByteArrayOutputStream();

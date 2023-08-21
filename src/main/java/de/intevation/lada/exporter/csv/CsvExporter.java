@@ -15,9 +15,9 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -25,7 +25,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Collection;
-import java.util.TimeZone;
 
 import javax.inject.Inject;
 import javax.json.JsonObject;
@@ -147,7 +146,6 @@ public class CsvExporter implements Exporter {
      *     <li> rowDelimiter: "windows" | "linux", defaults to "windows" </li>
      *     <li> quoteType: "singlequote" |
      *          "doublequote", defaults to "doublequote" </li>
-     *     <li> timezone: Target timezone for timestamp conversion </li>
      *     <li> subDataColumnNames: JsonObject containing dataIndex:
      *          ColumnName key-value-pairs used to get readable column
      *          names </li>
@@ -167,6 +165,7 @@ public class CsvExporter implements Exporter {
         JsonObject options,
         List<String> columnsToInclude,
         Integer qId,
+        DateFormat dateFormat,
         Locale locale
     ) {
         ResourceBundle i18n = ResourceBundle.getBundle(BUNDLE_FILE, locale);
@@ -175,7 +174,6 @@ public class CsvExporter implements Exporter {
         char fieldSeparator = CsvOptions.valueOf("comma").getChar();
         String rowDelimiter = CsvOptions.valueOf("windows").getValue();
         char quoteType = CsvOptions.valueOf("doublequote").getChar();
-        String timezoneOption = "UTC";
         JsonObject subDataColumnNames = null;
         //Parse options
         if (options != null) {
@@ -193,9 +191,6 @@ public class CsvExporter implements Exporter {
                 quoteType = CsvOptions.valueOf(
                     options.containsKey("quoteType")
                     ? options.getString("quoteType") : "doublequote").getChar();
-                timezoneOption =
-                    options.containsKey("timezone")
-                    ? options.getString("timezone") : "UTC";
                 subDataColumnNames =
                     options.containsKey("subDataColumnNames")
                     ? options.getJsonObject("subDataColumnNames") : null;
@@ -230,7 +225,6 @@ public class CsvExporter implements Exporter {
 
         try {
             final CSVPrinter printer = new CSVPrinter(result, format);
-            final String timezone = timezoneOption;
             //For every queryResult row
             queryResult.forEach(row -> {
                 ArrayList<String> rowItems = new ArrayList<String>();
@@ -254,10 +248,7 @@ public class CsvExporter implements Exporter {
                         Timestamp time = (Timestamp) value;
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(new Date(time.getTime()));
-                        SimpleDateFormat sdf =
-                            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        sdf.setTimeZone(TimeZone.getTimeZone(timezone));
-                        rowItems.add(sdf.format(calendar.getTime()));
+                        rowItems.add(dateFormat.format(calendar.getTime()));
                     } else if (value instanceof Boolean) {
                         rowItems.add(value != null
                             ? i18n.getString(value.toString()) : null);

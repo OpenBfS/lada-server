@@ -9,6 +9,7 @@ package de.intevation.lada.exporter;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -85,6 +86,7 @@ public interface Exporter {
         JsonObject options,
         List<String> columnsToInclude,
         Integer qId,
+        DateFormat dateFormat,
         Locale locale
     ) {
         return null;

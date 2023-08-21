@@ -13,13 +13,13 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.inject.Inject;
 import javax.json.Json;
@@ -99,7 +99,6 @@ public class JsonExporter implements Exporter {
      *        <ul>
      *          <li> id: Name of the id column, mandatory </li>
      *          <li> subData: key of the subData json object, optional </li>
-     *          <li> timezone: Target timezone for timestamp conversion </li>
      *        </ul>
      *
      * @param columnsToInclude List of column names to include in the export.
@@ -114,14 +113,12 @@ public class JsonExporter implements Exporter {
         JsonObject options,
         List<String> columnsToInclude,
         Integer qId,
+        DateFormat dateFormat,
         Locale locale
     ) {
         String subDataKey = options.getString("subData", "");
 
         final JsonObjectBuilder builder = Json.createObjectBuilder();
-        final String timezone =
-            options.containsKey("timezone")
-            ? options.getString("timezone") : "UTC";
         String idColumn = options.getString("id");
 
         //For each result
@@ -143,10 +140,8 @@ public class JsonExporter implements Exporter {
                     Timestamp time = (Timestamp) value;
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date(time.getTime()));
-                    SimpleDateFormat sdf =
-                        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    sdf.setTimeZone(TimeZone.getTimeZone(timezone));
-                    rowBuilder.add(key, sdf.format(calendar.getTime()));
+                    rowBuilder.add(
+                        key, dateFormat.format(calendar.getTime()));
                 } else {
                     rowBuilder.add(key, value.toString());
                 }
