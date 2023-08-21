@@ -76,7 +76,9 @@ public interface Exporter {
      * @param options Export options. Depend on the actual output format
      * @param columnsToInclude List of column names to include in the export.
      *                         If not set, all columns will be exported
+     * @param subDataKey Key for subData in JSON format
      * @param qId Query id
+     * @param dateFormat DateFormat for timestamp formatting
      * @param locale Locale to use
      * @return Export result as input stream or null if not implemented
      */
@@ -85,6 +87,7 @@ public interface Exporter {
         Charset encoding,
         JsonObject options,
         List<String> columnsToInclude,
+        String subDataKey,
         Integer qId,
         DateFormat dateFormat,
         Locale locale

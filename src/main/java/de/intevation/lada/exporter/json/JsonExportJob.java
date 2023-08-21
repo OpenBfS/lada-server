@@ -36,7 +36,13 @@ import de.intevation.lada.exporter.ExportFormat;
 public class JsonExportJob extends QueryExportJob {
 
     private static final int LENGTH = 1024;
-    private String subDataJsonKey;
+
+    /**
+     * Map of data types and the according sub data key.
+     */
+    private static final Map<String, String> ID_TYPE_TO_SUBDATA_KEY = Map.of(
+        "probeId", "Messungen",
+        "messungId", "messwerte");
 
     /**
      * The JSON exporter.
@@ -57,7 +63,7 @@ public class JsonExportJob extends QueryExportJob {
     ) {
         // Create a map of id->record
         Map<Integer, Map<String, Object>> idMap = new HashMap<>();
-        final String sDataJsonKey = "Messungen";
+        final String sDataJsonKey = ID_TYPE_TO_SUBDATA_KEY.get(this.idType);
         primaryData.forEach(record -> {
             idMap.put((Integer) record.get(idColumn), record);
         });
@@ -76,7 +82,6 @@ public class JsonExportJob extends QueryExportJob {
                     sDataJsonKey);
             messungenList.add(mergedMessung);
         });
-        this.subDataJsonKey = sDataJsonKey;
         return merged;
     }
 
@@ -86,7 +91,7 @@ public class JsonExportJob extends QueryExportJob {
     ) {
         // Create a map of id->record
         Map<Integer, Map<String, Object>> idMap = new HashMap<>();
-        final String sDataJsonKey = "messwerte";
+        final String sDataJsonKey = ID_TYPE_TO_SUBDATA_KEY.get(this.idType);
         primaryData.forEach(record -> {
             idMap.put((Integer) record.get(idColumn), record);
         });
@@ -105,7 +110,6 @@ public class JsonExportJob extends QueryExportJob {
                     sDataJsonKey);
             messwertList.add(mergedMesswert);
         });
-        this.subDataJsonKey = sDataJsonKey;
         return merged;
     }
 
@@ -124,8 +128,7 @@ public class JsonExportJob extends QueryExportJob {
         }
 
         //Export data to json
-        JsonObjectBuilder optionBuilder = Json.createObjectBuilder()
-            .add("subData", exportSubdata ? subDataJsonKey : "");
+        JsonObjectBuilder optionBuilder = Json.createObjectBuilder();
         if (idColumn != null) {
             optionBuilder.add("id", idColumn);
         }
@@ -135,6 +138,7 @@ public class JsonExportJob extends QueryExportJob {
             encoding,
             exportOptions,
             this.columnsToExport,
+            ID_TYPE_TO_SUBDATA_KEY.get(this.idType),
             qId,
             this.dateFormat,
             null);

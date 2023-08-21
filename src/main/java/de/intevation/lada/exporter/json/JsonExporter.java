@@ -112,12 +112,11 @@ public class JsonExporter implements Exporter {
         Charset encoding,
         JsonObject options,
         List<String> columnsToInclude,
+        String subDataKey,
         Integer qId,
         DateFormat dateFormat,
         Locale locale
     ) {
-        String subDataKey = options.getString("subData", "");
-
         final JsonObjectBuilder builder = Json.createObjectBuilder();
         String idColumn = options.getString("id");
 
@@ -145,7 +144,7 @@ public class JsonExporter implements Exporter {
                 }
             });
             //Append id
-            if (!subDataKey.isEmpty()
+            if (subDataKey != null
                 && item.containsKey(subDataKey)
                 && item.get(subDataKey) instanceof List<?>
             ) {

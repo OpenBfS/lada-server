@@ -181,6 +181,7 @@ public class CsvExportJob extends QueryExportJob {
             encoding,
             this.exportParameters,
             this.columnsToExport,
+            "",
             qId,
             this.dateFormat,
             locale);
