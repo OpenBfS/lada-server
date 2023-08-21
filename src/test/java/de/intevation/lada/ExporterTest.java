@@ -130,6 +130,30 @@ public class ExporterTest extends BaseTest {
     }
 
     /**
+     * Test asynchronous CSV export using CSV options.
+     */
+    @Test
+    @RunAsClient
+    public final void testCsvExportOptions(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        /* Request asynchronous export */
+        JsonObject requestJson = requestJsonBuilder
+            .add("idField", JsonValue.NULL)
+            .add("csvOptions", Json.createObjectBuilder()
+                .add("fieldSeparator", "semicolon"))
+            .build();
+
+        String result = runExportTest(baseUrl, formatCsv, requestJson);
+        Assert.assertEquals(
+            "Unexpected CSV content",
+            "hauptprobenNr;umwId;probeId\r\n"
+            + "120510002;L6;1000\r\n"
+            + "120510001;L6;1001\r\n",
+            result);
+    }
+
+    /**
      * Test asynchronous CSV export of a Sample identified by ID.
      */
     @Test

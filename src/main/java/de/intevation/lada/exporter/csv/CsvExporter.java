@@ -138,7 +138,7 @@ public class CsvExporter implements Exporter {
      *                    while every map key represents a column
      * @param encoding Encoding to use
      * @param options Optional export options as JSON Object.
-     *                Valid options are: <p>
+     *                Valid options are "csvOptions" with: <p>
      *   <ul>
      *     <li> decimalSeparator: "comma" | "period", defaults to "period" </li>
      *     <li> fieldSeparator: "comma" | "semicolon" | "period" |
@@ -146,11 +146,10 @@ public class CsvExporter implements Exporter {
      *     <li> rowDelimiter: "windows" | "linux", defaults to "windows" </li>
      *     <li> quoteType: "singlequote" |
      *          "doublequote", defaults to "doublequote" </li>
-     *     <li> subDataColumnNames: JsonObject containing dataIndex:
-     *          ColumnName key-value-pairs used to get readable column
-     *          names </li>
      *   </ul>
-     *                Invalid options will cause the export to fail.
+     * and "subDataColumnNames": JsonObject containing dataIndex:
+     * ColumnName key-value-pairs used to get readable column names
+     * Invalid options will cause the export to fail.
      *
      * @param columnsToInclude List of column names to include in the export.
      *                         If not set, all columns will be exported
@@ -178,19 +177,25 @@ public class CsvExporter implements Exporter {
         //Parse options
         if (options != null) {
             try {
-                decimalSeparator = CsvOptions.valueOf(
-                    options.containsKey("decimalSeparator")
-                    ? options.getString("decimalSeparator")
-                    : "period").getChar();
-                fieldSeparator = CsvOptions.valueOf(
-                    options.containsKey("fieldSeparator")
-                    ? options.getString("fieldSeparator") : "comma").getChar();
-                rowDelimiter = CsvOptions.valueOf(
-                    options.containsKey("rowDelimiter")
-                    ? options.getString("rowDelimiter") : "windows").getValue();
-                quoteType = CsvOptions.valueOf(
-                    options.containsKey("quoteType")
-                    ? options.getString("quoteType") : "doublequote").getChar();
+                if (options.containsKey("csvOptions")) {
+                    JsonObject csvOptions = options.getJsonObject("csvOptions");
+                    decimalSeparator = CsvOptions.valueOf(
+                        csvOptions.containsKey("decimalSeparator")
+                        ? csvOptions.getString("decimalSeparator")
+                        : "period").getChar();
+                    fieldSeparator = CsvOptions.valueOf(
+                        csvOptions.containsKey("fieldSeparator")
+                        ? csvOptions.getString(
+                            "fieldSeparator") : "comma").getChar();
+                    rowDelimiter = CsvOptions.valueOf(
+                        csvOptions.containsKey("rowDelimiter")
+                        ? csvOptions.getString(
+                            "rowDelimiter") : "windows").getValue();
+                    quoteType = CsvOptions.valueOf(
+                        csvOptions.containsKey("quoteType")
+                        ? csvOptions.getString(
+                            "quoteType") : "doublequote").getChar();
+                }
                 subDataColumnNames =
                     options.containsKey("subDataColumnNames")
                     ? options.getJsonObject("subDataColumnNames") : null;

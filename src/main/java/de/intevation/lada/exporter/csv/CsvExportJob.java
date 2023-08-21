@@ -17,8 +17,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
 
 import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.model.lada.MeasVal;
@@ -178,26 +176,10 @@ public class CsvExportJob extends QueryExportJob {
         }
 
         //Export data to csv
-        JsonObjectBuilder exportOptions = Json.createObjectBuilder();
-        if (exportParameters.containsKey("csvOptions")) {
-            exportParameters.getJsonObject("csvOptions")
-                .forEach((key, value) -> {
-                    exportOptions.add(key, value);
-                });
-        }
-
-        if (exportSubdata
-            && exportParameters.containsKey("subDataColumnNames")
-        ) {
-            exportOptions.add(
-                "subDataColumnNames",
-                exportParameters.getJsonObject("subDataColumnNames"));
-        }
-
         InputStream exported = exporter.export(
             exportData,
             encoding,
-            exportOptions.build(),
+            this.exportParameters,
             this.columnsToExport,
             qId,
             this.dateFormat,
