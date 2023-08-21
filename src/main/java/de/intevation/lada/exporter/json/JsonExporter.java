@@ -126,12 +126,10 @@ public class JsonExporter implements Exporter {
             JsonObjectBuilder rowBuilder = Json.createObjectBuilder();
             //Add value for each column
             columnsToInclude.forEach(key -> {
-                Object value = item.getOrDefault(key, null);
+                Object value = item.get(key);
                 if (value == null) {
-                    rowBuilder.add(key, JsonValue.NULL);
-                    return;
-                }
-                if (value instanceof Integer) {
+                    rowBuilder.addNull(key);
+                } else if (value instanceof Integer) {
                     rowBuilder.add(key, (Integer) value);
                 } else if (value instanceof Double) {
                     rowBuilder.add(key, (Double) value);
