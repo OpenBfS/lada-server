@@ -118,8 +118,6 @@ public class JsonExportJob extends QueryExportJob {
         primaryData = getQueryResult();
 
         List<Map<String, Object>> exportData = primaryData;
-        ArrayList<String> exportColumns = new ArrayList<String>();
-        exportColumns.addAll(this.columnsToExport);
 
         // If needed, fetch and merge sub data
         if (exportSubdata) {
@@ -139,7 +137,7 @@ public class JsonExportJob extends QueryExportJob {
             exportData,
             encoding,
             exportOptions,
-            exportColumns,
+            this.columnsToExport,
             qId,
             null);
 

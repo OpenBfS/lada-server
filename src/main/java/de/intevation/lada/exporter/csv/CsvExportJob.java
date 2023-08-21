@@ -152,27 +152,29 @@ public class CsvExportJob extends QueryExportJob {
         return merged;
     }
 
+    @Override
+    protected void parseExportParameters() {
+        super.parseExportParameters();
+        if (this.exportSubdata) {
+            // "subData" are appended as further columns in CSV output
+            this.columnsToExport.addAll(this.subDataColumns);
+        }
+    }
+
     /**
      * Start the CSV export.
      */
     @Override
     public void runWithTx() {
-        logger.debug(
-            String.format("Starting CSV export; encoding: %s, locale: %s",
-                encoding.name(), getLocale()));
         parseExportParameters();
 
         //Fetch primary records
         primaryData = getQueryResult();
 
         List<Map<String, Object>> exportData = primaryData;
-        ArrayList<String> exportColumns = new ArrayList<String>();
-        exportColumns.addAll(this.columnsToExport);
-
         //If needed, fetch and merge sub data
         if (exportSubdata) {
             exportData = mergeSubData();
-            exportColumns.addAll(subDataColumns);
         }
 
         //Export data to csv
@@ -199,7 +201,7 @@ public class CsvExportJob extends QueryExportJob {
             exportData,
             encoding,
             exportOptions.build(),
-            exportColumns,
+            this.columnsToExport,
             qId,
             locale);
 
