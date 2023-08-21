@@ -136,7 +136,12 @@ public class JsonExportJob extends QueryExportJob {
         }
         JsonObject exportOptions = optionBuilder.build();
         exported = exporter.export(
-            exportData, encoding, exportOptions, exportColumns, qId);
+            exportData,
+            encoding,
+            exportOptions,
+            exportColumns,
+            qId,
+            null);
 
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         byte[] buffer = new byte[LENGTH];

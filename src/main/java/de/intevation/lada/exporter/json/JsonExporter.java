@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -112,7 +113,8 @@ public class JsonExporter implements Exporter {
         Charset encoding,
         JsonObject options,
         List<String> columnsToInclude,
-        Integer qId
+        Integer qId,
+        Locale locale
     ) {
         String subDataKey = options.getString("subData", "");
 
@@ -193,8 +195,8 @@ public class JsonExporter implements Exporter {
 
     /**
      * Export Sample objects as JSON.
-     * @param proben List of Sample IDs to export.
-     * @param messungen Ignored. All associated Messung objects are exported.
+     * @param probeIds List of Sample IDs to export.
+     * @param messungsIds Ignored. All associated Messung objects are exported.
      * @param encoding Ignored. Result is always UTF_8.
      * @param userInfo UserInfo
      * @return Export result as InputStream or null if the export failed
