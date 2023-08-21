@@ -77,11 +77,6 @@ public abstract class QueryExportJob extends ExportJob {
     protected List<String> columnsToExport;
 
     /**
-     * Map of data types and the according sub data types.
-     */
-    private Map<String, String> mapPrimaryToSubDataTypes;
-
-    /**
      * Date format to convert timestamps to (time zone defaults to UTC).
      */
     protected DateFormat dateFormat =
@@ -103,10 +98,6 @@ public abstract class QueryExportJob extends ExportJob {
     public QueryExportJob() {
         columns = new ArrayList <GridColConf>();
         columnsToExport = new ArrayList<String>();
-
-        mapPrimaryToSubDataTypes = new HashMap<String, String>();
-        mapPrimaryToSubDataTypes.put("probeId", "messung");
-        mapPrimaryToSubDataTypes.put("messungId", "messwert");
 
         this.dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
@@ -260,15 +251,14 @@ public abstract class QueryExportJob extends ExportJob {
         });
 
         //Get subdata
-        String subDataType = mapPrimaryToSubDataTypes.get(idType);
-        switch (subDataType) {
-            case "messung":
+        switch (this.idType) {
+            case "probeId":
                 QueryBuilder<Measm> messungBuilder = repository
                     .queryBuilder(Measm.class)
                     .andIn("sampleId", primaryDataIds);
                 return mergeMessungData(
                     repository.filterPlain(messungBuilder.getQuery()));
-            case "messwert":
+            case "messungId":
                 QueryBuilder<MeasVal> messwertBuilder = repository
                     .queryBuilder(MeasVal.class)
                     .andIn("measmId", primaryDataIds);
@@ -276,7 +266,7 @@ public abstract class QueryExportJob extends ExportJob {
                     repository.filterPlain(messwertBuilder.getQuery()));
             default:
                 throw new IllegalArgumentException(
-                    String.format("Unknown subDataType: %s", subDataType));
+                    String.format("Unknown idType: %s", this.idType));
         }
     }
 
@@ -314,7 +304,7 @@ public abstract class QueryExportJob extends ExportJob {
         this.exportSubdata = exportParameters.getBoolean(
             "exportSubData", false);
         //Get identifier type
-        idColumn = exportParameters.isNull("idField")
+        this.idColumn = exportParameters.isNull("idField")
             ? null : exportParameters.getString("idField");
         //Get target timezone
         final String timezoneKey = "timezone";
@@ -372,7 +362,7 @@ public abstract class QueryExportJob extends ExportJob {
             //Check if the column contains the id
             if (columnValue.getGridColMp().getDataIndex().equals(idColumn)) {
                 // Get the column type
-                idType = gridColumn.getDisp().getName();
+                this.idType = gridColumn.getDisp().getName();
 
                 // Get IDs to filter result
                 JsonArray idsToExport = exportParameters
