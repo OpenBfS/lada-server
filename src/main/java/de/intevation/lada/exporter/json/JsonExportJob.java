@@ -16,9 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 
 import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.model.lada.MeasVal;
@@ -128,15 +125,10 @@ public class JsonExportJob extends QueryExportJob {
         }
 
         //Export data to json
-        JsonObjectBuilder optionBuilder = Json.createObjectBuilder();
-        if (idColumn != null) {
-            optionBuilder.add("id", idColumn);
-        }
-        JsonObject exportOptions = optionBuilder.build();
         InputStream exported = exporter.export(
             exportData,
             encoding,
-            exportOptions,
+            this.exportParameters,
             this.columnsToExport,
             ID_TYPE_TO_SUBDATA_KEY.get(this.idType),
             qId,
