@@ -7,9 +7,6 @@
  */
 package de.intevation.lada.exporter.json;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +28,6 @@ import de.intevation.lada.exporter.ExportFormat;
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
 public class JsonExportJob extends QueryExportJob {
-
-    private static final int LENGTH = 1024;
 
     /**
      * Map of data types and the according sub data key.
@@ -125,7 +120,7 @@ public class JsonExportJob extends QueryExportJob {
         }
 
         //Export data to json
-        InputStream exported = exporter.export(
+        writeResultToFile(exporter.export(
             exportData,
             encoding,
             this.exportParameters,
@@ -133,19 +128,7 @@ public class JsonExportJob extends QueryExportJob {
             ID_TYPE_TO_SUBDATA_KEY.get(this.idType),
             qId,
             this.dateFormat,
-            null);
-
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[LENGTH];
-        int length;
-        try {
-            while ((length = exported.read(buffer)) != -1) {
-                result.write(buffer, 0, length);
-            }
-            writeResultToFile(result.toString(encoding));
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
-        }
+            null));
 
         logger.debug(String.format("Finished JSON export"));
     }

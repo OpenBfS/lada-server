@@ -9,7 +9,9 @@
 package de.intevation.lada.exporter;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -26,6 +28,8 @@ import de.intevation.lada.util.data.Job;
  * Abstract class for an export job.
  */
 public abstract class ExportJob extends Job {
+
+    private static final int LENGTH = 1024;
 
     /**
      * Result encoding.
@@ -158,20 +162,33 @@ public abstract class ExportJob extends Job {
 
     /**
      * Write the export result to a file.
-     * @param result Result string to export
-     * @throws IOException if temp file cannot be created or writing it fails.
-     */
-    protected void writeResultToFile(String result) throws IOException {
-        //Create file
-        this.outputFilePath =
-            File.createTempFile("export-", "." + this.format).toPath();
-        logger.debug(String.format(
-                "Writing result to file %s", outputFilePath));
+     * @param exported Result InputStream to export
+     * @throws RuntimeException if temp file cannot be created
+     * or writing it fails.
+    */
+    protected void writeResultToFile(InputStream exported) {
+        try {
+            //Create file
+            this.outputFilePath =
+                File.createTempFile("export-", "." + this.format).toPath();
+            logger.debug(String.format(
+                    "Writing result to file %s", outputFilePath));
 
-        //Write to file
-        try (BufferedWriter writer =
-            Files.newBufferedWriter(outputFilePath, encoding)) {
-            writer.write(result);
+            //Write to file
+            ByteArrayOutputStream result = new ByteArrayOutputStream();
+            byte[] buffer = new byte[LENGTH];
+            int length;
+
+            while ((length = exported.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+
+            try (BufferedWriter writer =
+                Files.newBufferedWriter(outputFilePath, encoding)) {
+                writer.write(new String(result.toByteArray(), encoding));
+            }
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
         }
     }
 }

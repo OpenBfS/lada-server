@@ -8,9 +8,6 @@
 
 package de.intevation.lada.exporter.laf;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,8 +29,6 @@ import de.intevation.lada.util.data.QueryBuilder;
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
 public class LafExportJob extends ExportJob {
-
-    private static final int LENGTH = 1024;
 
     /**
      * The laf exporter.
@@ -101,21 +96,8 @@ public class LafExportJob extends ExportJob {
         }
 
         //Export and write to file
-        InputStream exported =
-            exporter.exportProben(pIds, mIds, encoding, userInfo);
-        logger.debug("Finished export to memory, writing to file.");
-
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[LENGTH];
-        int length;
-        try {
-            while ((length = exported.read(buffer)) != -1) {
-                result.write(buffer, 0, length);
-            }
-            writeResultToFile(new String(result.toByteArray(), encoding));
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
-        }
+        writeResultToFile(
+            exporter.exportProben(pIds, mIds, encoding, userInfo));
 
         logger.debug(String.format("Finished LAF export"));
     }

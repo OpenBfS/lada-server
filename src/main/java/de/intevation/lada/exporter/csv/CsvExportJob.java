@@ -7,9 +7,6 @@
  */
 package de.intevation.lada.exporter.csv;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,8 +29,6 @@ import de.intevation.lada.exporter.ExportFormat;
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
 public class CsvExportJob extends QueryExportJob {
-
-    private static final int SIZE = 1024;
 
     /**
      * The csv exporter.
@@ -176,7 +171,7 @@ public class CsvExportJob extends QueryExportJob {
         }
 
         //Export data to csv
-        InputStream exported = exporter.export(
+        writeResultToFile(exporter.export(
             exportData,
             encoding,
             this.exportParameters,
@@ -184,19 +179,7 @@ public class CsvExportJob extends QueryExportJob {
             "",
             qId,
             this.dateFormat,
-            locale);
-
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[SIZE];
-        int length;
-        try {
-            while ((length = exported.read(buffer)) != -1) {
-                result.write(buffer, 0, length);
-            }
-            writeResultToFile(new String(result.toByteArray(), encoding));
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
-        }
+            locale));
 
         logger.debug(String.format("Finished CSV export"));
     }
