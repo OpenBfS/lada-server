@@ -28,7 +28,6 @@ import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -39,7 +38,6 @@ import de.intevation.lada.util.data.Job;
  * Test export services.
  *
  */
-@Ignore
 @RunWith(Arquillian.class)
 public class ExporterTest extends BaseTest {
 

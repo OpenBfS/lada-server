@@ -231,6 +231,12 @@
                         <ignoredUnusedDeclaredDependency>
                             org.jboss.arquillian.extension:arquillian-transaction-jta
                         </ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>
+                            org.eclipse.parsson:parsson
+                        </ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>
+                            org.jboss.logmanager:jboss-logmanager
+                        </ignoredUnusedDeclaredDependency>
                     </ignoredUnusedDeclaredDependencies>
                 </configuration>
             </plugin>
@@ -472,17 +478,29 @@
             <version>2021.1.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.parsson</groupId>
+            <artifactId>parsson</artifactId>
+            <version>1.1.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logmanager</groupId>
+            <artifactId>jboss-logmanager</artifactId>
+            <version>3.0.2.Final</version>
+            <scope>test</scope>
+        </dependency>
         <!--Additional arquillian extensions-->
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
             <artifactId>arquillian-transaction-api</artifactId>
-            <version>1.0.6</version>
+            <version>2.0.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
             <artifactId>arquillian-transaction-jta</artifactId>
-            <version>1.0.6</version>
+            <version>2.0.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

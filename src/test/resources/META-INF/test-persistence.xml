@@ -9,7 +9,7 @@
         <properties>
             <property name="jboss.entity.manager.jndi.name" value="java:app/entitymanager/lada"/>
             <property name="hibernate.show_sql" value="false" />
-            <property name="hibernate.dialect" value="org.hibernate.spatial.dialect.postgis.PostgisDialect"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
             <property name="hibernate.hbm2ddl.auto" value="none"/>
             <property
                 name="hibernate.implicit_naming_strategy"

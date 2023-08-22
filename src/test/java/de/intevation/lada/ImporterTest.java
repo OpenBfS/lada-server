@@ -64,7 +64,6 @@ import de.intevation.lada.util.data.StatusCodes;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Ignore
 @RunWith(Arquillian.class)
 public class ImporterTest extends BaseTest {
 

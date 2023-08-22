@@ -53,7 +53,10 @@ public class MessungIdentifier implements Identifier {
                 return Identified.REJECT;
             }
             if (messungen.isEmpty()) {
-                builder = builder.getEmptyBuilder();
+                //TODO: QueryBuilder instance can not be reused here
+                //This may be a hibernate 6 bug, see:
+                //https://hibernate.atlassian.net/browse/HHH-15951
+                builder = repository.queryBuilder(Measm.class);
                 builder.and("sampleId", messung.getSampleId());
                 builder.and("mmtId", messung.getMmtId());
                 messungen =

@@ -25,8 +25,8 @@
 
     <resources>
         <!--Resources shipped with wildfly-->
-        <resource-root path="hibernate-core-6.2.1.Final.jar"/>
-        <resource-root path="hibernate-envers-6.2.1.Final.jar"/>
+        <resource-root path="hibernate-core-6.2.6.Final.jar"/>
+        <resource-root path="hibernate-envers-6.2.6.Final.jar"/>
         <!--Custom entries-->
         <resource-root path="hibernate-spatial.jar"/>
         <resource-root path="jts-core.jar"/>

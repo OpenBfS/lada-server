@@ -25,7 +25,6 @@ import de.intevation.lada.test.validator.StatusTest;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Ignore
 @RunWith(Arquillian.class)
 // TODO make tests independent of test data which do not exist anymore
 public class ValidatorTest extends BaseTest {

@@ -195,9 +195,12 @@ public class ObjectMerger {
         Sample target,
         List<CommSample> kommentare
     ) {
-        QueryBuilder<CommSample> builder =
-            repository.queryBuilder(CommSample.class);
         for (int i = 0; i < kommentare.size(); i++) {
+            //TODO: QueryBuilder instance can not be reused here
+            //This may be a hibernate 6 bug, see:
+            //https://hibernate.atlassian.net/browse/HHH-15951
+            QueryBuilder<CommSample> builder =
+                repository.queryBuilder(CommSample.class);
             builder.and("sampleId", target.getId());
             builder.and("measFacilId", kommentare.get(i).getMeasFacilId());
             builder.and("date", kommentare.get(i).getDate());
@@ -227,9 +230,12 @@ public class ObjectMerger {
         Measm target,
         List<CommMeasm> kommentare
     ) {
-        QueryBuilder<CommMeasm> builder =
-            repository.queryBuilder(CommMeasm.class);
         for (int i = 0; i < kommentare.size(); i++) {
+            //TODO: QueryBuilder instance can not be reused here
+            //This may be a hibernate 6 bug, see:
+            //https://hibernate.atlassian.net/browse/HHH-15951
+            QueryBuilder<CommMeasm> builder =
+                repository.queryBuilder(CommMeasm.class);
             builder.and("measmId", target.getId());
             builder.and("measFacilId", kommentare.get(i).getMeasFacilId());
             builder.and("date", kommentare.get(i).getDate());

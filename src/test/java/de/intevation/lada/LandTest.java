@@ -15,7 +15,6 @@ import jakarta.persistence.PersistenceContext;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,7 +39,6 @@ import de.intevation.lada.test.land.ZusatzwertTest;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Ignore
 @RunWith(Arquillian.class)
 public class LandTest extends BaseTest {
 

@@ -36,7 +36,6 @@ import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.After;
@@ -138,10 +137,11 @@ public class BaseTest {
                 .getDefinedPackage("de.intevation.lada"))
             .addAsResource("lada_server_en.properties", "lada_server_en.properties")
             .addAsResource("lada_server_de.properties", "lada_server_de.properties")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsLibraries(compileAndRuntimeDeps)
             .addAsResource("META-INF/test-persistence.xml",
                 "META-INF/persistence.xml")
+            .addAsResource("META-INF/test-beans.xml",
+                "META-INF/beans.xml")
             //Add cleanup script and datasets for container mode tests
             .addAsResource(DATASETS_DIR, DATASETS_DIR);
         //Add additional test dependencies
@@ -153,6 +153,9 @@ public class BaseTest {
             archive);
         addWithDependencies(
             "org.jboss.arquillian.extension:arquillian-transaction-jta",
+            archive);
+        addWithDependencies(
+            "org.eclipse.parsson:parsson",
             archive);
         return archive;
     }
