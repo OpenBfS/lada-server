@@ -101,7 +101,10 @@ public class ExporterTest extends BaseTest {
         .add("idField", "messungId")
         .add("idFilter", Json.createArrayBuilder().add("1200"))
         .add("exportSubData", true)
-        .add("subDataColumns", Json.createArrayBuilder().add("id"))
+        .add("subDataColumns", Json.createArrayBuilder()
+            .add("id")
+            .add("measUnitId")
+            .add("measdId"))
         .build();
 
     /**
@@ -123,6 +126,30 @@ public class ExporterTest extends BaseTest {
             "hauptprobenNr,umwId,probeId\r\n"
             + "120510002,L6,1000\r\n"
             + "120510001,L6,1001\r\n",
+            result);
+    }
+
+    /**
+     * Test asynchronous CSV export using CSV options.
+     */
+    @Test
+    @RunAsClient
+    public final void testCsvExportOptions(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        /* Request asynchronous export */
+        JsonObject requestJson = requestJsonBuilder
+            .add("idField", JsonValue.NULL)
+            .add("csvOptions", Json.createObjectBuilder()
+                .add("fieldSeparator", "semicolon"))
+            .build();
+
+        String result = runExportTest(baseUrl, formatCsv, requestJson);
+        Assert.assertEquals(
+            "Unexpected CSV content",
+            "hauptprobenNr;umwId;probeId\r\n"
+            + "120510002;L6;1000\r\n"
+            + "120510001;L6;1001\r\n",
             result);
     }
 
@@ -155,19 +182,20 @@ public class ExporterTest extends BaseTest {
     public final void testCsvExportProbeSubData(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        /* Request asynchronous export */
         JsonObject requestJson = requestJsonBuilder
             .add("idField", "probeId")
             .add("exportSubData", true)
-            .add("subDataColumns", Json.createArrayBuilder().add("extId"))
+            .add("subDataColumns", Json.createArrayBuilder()
+                .add("extId")
+                .add("messwerteCount"))
             .build();
 
         String result = runExportTest(baseUrl, formatCsv, requestJson);
         Assert.assertEquals(
             "Unexpected CSV content",
-            "hauptprobenNr,umwId,probeId,extId\r\n"
-            + "120510002,L6,1000,453\r\n"
-            + "120510001,L6,1001,\r\n",
+            "hauptprobenNr,umwId,probeId,extId,messwerteCount\r\n"
+            + "120510002,L6,1000,453,1\r\n"
+            + "120510001,L6,1001,,\r\n",
             result);
     }
 
@@ -183,8 +211,8 @@ public class ExporterTest extends BaseTest {
             baseUrl, formatCsv, measmRequestJson);
         Assert.assertEquals(
             "Unexpected CSV content",
-            "messungId,id\r\n"
-            + "1200,1000\r\n",
+            "messungId,id,measUnitId,measdId\r\n"
+            + "1200,1000,Sv,test\r\n",
             result);
     }
 
@@ -225,7 +253,9 @@ public class ExporterTest extends BaseTest {
             .add("idField", "probeId")
             .add("idFilter", Json.createArrayBuilder().add("1000"))
             .add("exportSubData", true)
-            .add("subDataColumns", Json.createArrayBuilder().add("extId"))
+            .add("subDataColumns", Json.createArrayBuilder()
+                .add("extId")
+                .add("messwerteCount"))
             .build();
 
         String result = runExportTest(baseUrl, formatJson, requestJson);
@@ -235,7 +265,7 @@ public class ExporterTest extends BaseTest {
             + "{\"hauptproben_nr\":\"120510002\","
             + "\"umw_id\":\"L6\","
             + "\"probeId\":1000,"
-            + "\"Messungen\":[{\"extId\":453}]}}",
+            + "\"Messungen\":[{\"messwerteCount\":1,\"extId\":453}]}}",
             result);
     }
 
@@ -253,7 +283,8 @@ public class ExporterTest extends BaseTest {
             "Unexpected JSON content",
             "{\"1200\":"
             + "{\"messungId\":1200,"
-            + "\"messwerte\":[{\"id\":1000}]}}",
+            + "\"messwerte\":["
+            + "{\"measUnitId\":\"Sv\",\"measdId\":\"test\",\"id\":1000}]}}",
             result);
     }
 

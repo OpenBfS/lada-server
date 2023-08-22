@@ -13,6 +13,7 @@
     />
     <master.meas_unit
         id = "1"
+        unit_symbol = "Sv"
     />
     <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "1" />

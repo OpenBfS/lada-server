@@ -17,8 +17,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import jakarta.inject.Inject;
-import jakarta.json.Json;
-import jakarta.json.JsonObjectBuilder;
 
 import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.model.lada.MeasVal;
@@ -92,24 +90,7 @@ public class CsvExportJob extends QueryExportJob {
 
         List<Map<String, Object>> merged = new ArrayList<>();
         messungData.forEach(messung -> {
-            Map<String, Object> mergedRow = new HashMap<>();
-            // Add sub data
-            subDataColumns.forEach(subDataColumn -> {
-                Object fieldValue = null;
-                // Check if column needs seperate handling or is a valid
-                // messung field
-                switch (subDataColumn) {
-                    case "statusKombi":
-                        fieldValue = getStatusString(messung);
-                        break;
-                    case "messwerteCount":
-                        fieldValue = getMesswertCount(messung);
-                        break;
-                    default:
-                        fieldValue = getFieldByName(subDataColumn, messung);
-                }
-                mergedRow.put(subDataColumn, fieldValue);
-            });
+            Map<String, Object> mergedRow = transformFieldValues(messung);
             // Add primary record
             Integer primaryId = messung.getSampleId();
             Map<String, Object> primaryRecord = idMap.get(primaryId);
@@ -143,27 +124,7 @@ public class CsvExportJob extends QueryExportJob {
         AtomicBoolean success = new AtomicBoolean(true);
         List<Map<String, Object>> merged = new ArrayList<>();
         messwertData.forEach(messwert -> {
-            Map<String, Object> mergedRow = new HashMap<>();
-            // Add sub data
-            subDataColumns.forEach(subDataColumn -> {
-                Object fieldValue = null;
-                // Check if column needs seperate handling or is a valid
-                // messwert field
-                switch (subDataColumn) {
-                    case "messungId":
-                        fieldValue = getFieldByName("messungsId", messwert);
-                        break;
-                    case "mehId":
-                        fieldValue = getMesseinheit(messwert);
-                        break;
-                    case "messgroesseId":
-                        fieldValue = getMessgroesse(messwert);
-                        break;
-                    default:
-                        fieldValue = getFieldByName(subDataColumn, messwert);
-                }
-                mergedRow.put(subDataColumn, fieldValue);
-            });
+            Map<String, Object> mergedRow = transformFieldValues(messwert);
             // Add primary record
             Integer primaryId = messwert.getMeasmId();
             Map<String, Object> primaryRecord = idMap.get(primaryId);
@@ -189,55 +150,40 @@ public class CsvExportJob extends QueryExportJob {
         return merged;
     }
 
+    @Override
+    protected void parseExportParameters() {
+        super.parseExportParameters();
+        if (this.exportSubdata) {
+            // "subData" are appended as further columns in CSV output
+            this.columnsToExport.addAll(this.subDataColumns);
+        }
+    }
+
     /**
      * Start the CSV export.
      */
     @Override
     public void runWithTx() {
-        logger.debug(
-            String.format("Starting CSV export; encoding: %s, locale: %s",
-                encoding.name(), getLocale()));
         parseExportParameters();
 
         //Fetch primary records
         primaryData = getQueryResult();
 
         List<Map<String, Object>> exportData = primaryData;
-        ArrayList<String> exportColumns = new ArrayList<String>();
-        exportColumns.addAll(this.columnsToExport);
-
         //If needed, fetch and merge sub data
         if (exportSubdata) {
             exportData = mergeSubData();
-            exportColumns.addAll(subDataColumns);
         }
 
         //Export data to csv
-        JsonObjectBuilder exportOptions = Json.createObjectBuilder();
-        exportOptions.add("timezone", exportParameters.get("timezone"));
-
-        if (exportParameters.containsKey("csvOptions")) {
-            exportParameters.getJsonObject("csvOptions")
-                .forEach((key, value) -> {
-                    exportOptions.add(key, value);
-                });
-        }
-
-        if (exportSubdata
-            && exportParameters.containsKey("subDataColumnNames")
-        ) {
-            exportOptions.add(
-                "subDataColumnNames",
-                exportParameters.getJsonObject("subDataColumnNames"));
-        }
-
-        InputStream exported;
-        exported = exporter.export(
+        InputStream exported = exporter.export(
             exportData,
             encoding,
-            exportOptions.build(),
-            exportColumns,
+            this.exportParameters,
+            this.columnsToExport,
+            "",
             qId,
+            this.dateFormat,
             locale);
 
         ByteArrayOutputStream result = new ByteArrayOutputStream();

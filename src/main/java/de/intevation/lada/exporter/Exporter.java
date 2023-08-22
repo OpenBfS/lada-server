@@ -9,6 +9,7 @@ package de.intevation.lada.exporter;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -75,31 +76,9 @@ public interface Exporter {
      * @param options Export options. Depend on the actual output format
      * @param columnsToInclude List of column names to include in the export.
      *                         If not set, all columns will be exported
-     * @return Export result as input stream or null if not implemented
-     */
-    default InputStream export(
-        List<Map<String, Object>> result,
-        Charset encoding,
-        JsonObject options,
-        List<String> columnsToInclude,
-        Integer qId
-    ) {
-        return null;
-    }
-
-    /**
-     * Export a query result.
-     *
-     * Note: This method may not be implemented by the implementing class.
-     * The default implementation returns null.
-     * @param result Result to export as list of maps. Every list item
-     *               represents a row,
-     *               while every map key represents a column
-     * @param encoding Encoding to use
-     * @param options Export options. Depend on the actual output format
-     * @param columnsToInclude List of column names to include in the export.
-     *                         If not set, all columns will be exported
+     * @param subDataKey Key for subData in JSON format
      * @param qId Query id
+     * @param dateFormat DateFormat for timestamp formatting
      * @param locale Locale to use
      * @return Export result as input stream or null if not implemented
      */
@@ -108,7 +87,9 @@ public interface Exporter {
         Charset encoding,
         JsonObject options,
         List<String> columnsToInclude,
+        String subDataKey,
         Integer qId,
+        DateFormat dateFormat,
         Locale locale
     ) {
         return null;

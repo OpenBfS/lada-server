@@ -9,11 +9,14 @@ package de.intevation.lada.exporter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonNumber;
@@ -74,14 +77,10 @@ public abstract class QueryExportJob extends ExportJob {
     protected List<String> columnsToExport;
 
     /**
-     * Map of data types and the according sub data types.
+     * Date format to convert timestamps to (time zone defaults to UTC).
      */
-    private Map<String, String> mapPrimaryToSubDataTypes;
-
-    /**
-     * Timezone to convert timestamps to.
-     */
-    protected String timezone;
+    protected DateFormat dateFormat =
+        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
      * Query id.
@@ -100,11 +99,7 @@ public abstract class QueryExportJob extends ExportJob {
         columns = new ArrayList <GridColConf>();
         columnsToExport = new ArrayList<String>();
 
-        mapPrimaryToSubDataTypes = new HashMap<String, String>();
-        mapPrimaryToSubDataTypes.put("probeId", "messung");
-        mapPrimaryToSubDataTypes.put("messungId", "messwert");
-
-        this.timezone = "UTC";
+        this.dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     /**
@@ -174,60 +169,68 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-     * Get the status of the given messung as String.
-     * Format: [statusStufe - statusWert]
-     * @param messung Messung to get status for
-     * @return Status as string
+     * Transform Measm object into map with keys according to subDataColumns.
+     * @param measm Measm for which field values should be transformed
+     * @return Map with field names and transformed values of original measm
      */
-    protected String getStatusString(Measm messung) {
-        StatusProt protokoll =
-            repository.getByIdPlain(
-                StatusProt.class, messung.getStatus());
-        StatusMp kombi =
-            repository.getByIdPlain(
-                StatusMp.class, protokoll.getStatusMpId());
-        StatusLev stufe = kombi.getStatusLev();
-        StatusVal wert = kombi.getStatusVal();
-        return String.format("%s - %s", stufe.getLev(), wert.getVal());
+    protected Map<String, Object> transformFieldValues(Measm measm) {
+        Map<String, Object> transformed = new HashMap<>();
+        subDataColumns.forEach(subDataColumn -> {
+                Object fieldValue = null;
+                switch (subDataColumn) {
+                case "statusKombi":
+                    StatusProt prot =
+                        repository.getByIdPlain(
+                            StatusProt.class, measm.getStatus());
+                    StatusMp mp =
+                        repository.getByIdPlain(
+                            StatusMp.class, prot.getStatusMpId());
+                    StatusLev lev = mp.getStatusLev();
+                    StatusVal val = mp.getStatusVal();
+                    fieldValue = String.format(
+                        "%s - %s", lev.getLev(), val.getVal());
+                    break;
+                case "messwerteCount":
+                    QueryBuilder<MeasVal> builder = repository
+                        .queryBuilder(MeasVal.class)
+                        .and("measmId", measm.getId());
+                    // TODO: A nice example of ORM-induced database misuse:
+                    fieldValue = repository.filterPlain(builder.getQuery())
+                        .size();
+                    break;
+                default:
+                    fieldValue = getFieldByName(subDataColumn, measm);
+                }
+                transformed.put(subDataColumn, fieldValue);
+            });
+        return transformed;
     }
 
     /**
-     * Get the number of messwerte records referencing the given messung.
-     * @param messung Messung to get messwert count for
-     * @return Number of messwert records
+     * Transform MeasVal object into map with keys according to subDataColumns.
+     * @param measVal MeasVal for which field values should be transformed
+     * @return Map with field names and transformed values of original measVal
      */
-    protected int getMesswertCount(Measm messung) {
-        QueryBuilder<MeasVal> builder = repository.queryBuilder(
-            MeasVal.class);
-        builder.and("measmId", messung.getId());
-        // TODO: This is a nice example of ORM-induced database misuse:
-        return repository.filterPlain(builder.getQuery()).size();
-    }
-
-    /**
-    * Get the messeinheit for messwert values using given messwert.
-    * @param messwert messwertId sungId to get messeinheit for
-    * @return messeinheit
-     */
-    protected String getMesseinheit(MeasVal messwert) {
-        QueryBuilder<MeasUnit> builder = repository.queryBuilder(
-            MeasUnit.class);
-        builder.and("id", messwert.getMeasUnitId());
-        List<MeasUnit> messeinheit = repository.filterPlain(builder.getQuery());
-        return messeinheit.get(0).getUnitSymbol();
-    }
-
-    /**
-    * Get the messgroesse for messwert values using given messwert.
-    * @param messwert messwertId sungId to get messgroesse for
-    * @return messgroesse
-     */
-    protected String getMessgroesse(MeasVal messwert) {
-        QueryBuilder<Measd> builder = repository.queryBuilder(
-            Measd.class);
-        builder.and("id", messwert.getMeasdId());
-        List<Measd> messgroesse = repository.filterPlain(builder.getQuery());
-        return messgroesse.get(0).getName();
+    protected Map<String, Object> transformFieldValues(MeasVal measVal) {
+        Map<String, Object> transformed = new HashMap<>();
+        subDataColumns.forEach(subDataColumn -> {
+                Object fieldValue = null;
+                switch (subDataColumn) {
+                case "measUnitId":
+                    fieldValue = repository.getByIdPlain(
+                        MeasUnit.class, measVal.getMeasUnitId())
+                        .getUnitSymbol();
+                    break;
+                case "measdId":
+                    fieldValue = repository.getByIdPlain(
+                        Measd.class, measVal.getMeasdId()).getName();
+                    break;
+                default:
+                    fieldValue = getFieldByName(subDataColumn, measVal);
+                }
+                transformed.put(subDataColumn, fieldValue);
+            });
+        return transformed;
     }
 
     /**
@@ -248,15 +251,14 @@ public abstract class QueryExportJob extends ExportJob {
         });
 
         //Get subdata
-        String subDataType = mapPrimaryToSubDataTypes.get(idType);
-        switch (subDataType) {
-            case "messung":
+        switch (this.idType) {
+            case "probeId":
                 QueryBuilder<Measm> messungBuilder = repository
                     .queryBuilder(Measm.class)
                     .andIn("sampleId", primaryDataIds);
                 return mergeMessungData(
                     repository.filterPlain(messungBuilder.getQuery()));
-            case "messwert":
+            case "messungId":
                 QueryBuilder<MeasVal> messwertBuilder = repository
                     .queryBuilder(MeasVal.class)
                     .andIn("measmId", primaryDataIds);
@@ -264,7 +266,7 @@ public abstract class QueryExportJob extends ExportJob {
                     repository.filterPlain(messwertBuilder.getQuery()));
             default:
                 throw new IllegalArgumentException(
-                    String.format("Unknown subDataType: %s", subDataType));
+                    String.format("Unknown idType: %s", this.idType));
         }
     }
 
@@ -299,12 +301,17 @@ public abstract class QueryExportJob extends ExportJob {
             return;
         }
         //Check if subdata shall be exported
-        exportSubdata = exportParameters.getBoolean("exportSubData");
+        this.exportSubdata = exportParameters.getBoolean(
+            "exportSubData", false);
         //Get identifier type
-        idColumn = exportParameters.isNull("idField")
+        this.idColumn = exportParameters.isNull("idField")
             ? null : exportParameters.getString("idField");
         //Get target timezone
-        timezone = exportParameters.getString("timezone");
+        final String timezoneKey = "timezone";
+        if (exportParameters.containsKey(timezoneKey)) {
+            this.dateFormat.setTimeZone(TimeZone.getTimeZone(
+                    exportParameters.getString(timezoneKey)));
+        }
 
         //Check if sub data columns are present if subdata is exported
         if (exportSubdata
@@ -355,7 +362,7 @@ public abstract class QueryExportJob extends ExportJob {
             //Check if the column contains the id
             if (columnValue.getGridColMp().getDataIndex().equals(idColumn)) {
                 // Get the column type
-                idType = gridColumn.getDisp().getName();
+                this.idType = gridColumn.getDisp().getName();
 
                 // Get IDs to filter result
                 JsonArray idsToExport = exportParameters

@@ -13,12 +13,13 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 import jakarta.inject.Inject;
 import jakarta.json.Json;
@@ -98,7 +99,6 @@ public class JsonExporter implements Exporter {
      *        <ul>
      *          <li> id: Name of the id column, mandatory </li>
      *          <li> subData: key of the subData json object, optional </li>
-     *          <li> timezone: Target timezone for timestamp conversion </li>
      *        </ul>
      *
      * @param columnsToInclude List of column names to include in the export.
@@ -112,14 +112,12 @@ public class JsonExporter implements Exporter {
         Charset encoding,
         JsonObject options,
         List<String> columnsToInclude,
-        Integer qId
+        String subDataKey,
+        Integer qId,
+        DateFormat dateFormat,
+        Locale locale
     ) {
-        String subDataKey = options.getString("subData", "");
-
         final JsonObjectBuilder builder = Json.createObjectBuilder();
-        final String timezone =
-            options.containsKey("timezone")
-            ? options.getString("timezone") : "UTC";
         String idColumn = options.getString("id");
 
         //For each result
@@ -127,12 +125,10 @@ public class JsonExporter implements Exporter {
             JsonObjectBuilder rowBuilder = Json.createObjectBuilder();
             //Add value for each column
             columnsToInclude.forEach(key -> {
-                Object value = item.getOrDefault(key, null);
+                Object value = item.get(key);
                 if (value == null) {
-                    rowBuilder.add(key, JsonValue.NULL);
-                    return;
-                }
-                if (value instanceof Integer) {
+                    rowBuilder.addNull(key);
+                } else if (value instanceof Integer) {
                     rowBuilder.add(key, (Integer) value);
                 } else if (value instanceof Double) {
                     rowBuilder.add(key, (Double) value);
@@ -141,16 +137,14 @@ public class JsonExporter implements Exporter {
                     Timestamp time = (Timestamp) value;
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date(time.getTime()));
-                    SimpleDateFormat sdf =
-                        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    sdf.setTimeZone(TimeZone.getTimeZone(timezone));
-                    rowBuilder.add(key, sdf.format(calendar.getTime()));
+                    rowBuilder.add(
+                        key, dateFormat.format(calendar.getTime()));
                 } else {
                     rowBuilder.add(key, value.toString());
                 }
             });
             //Append id
-            if (!subDataKey.isEmpty()
+            if (subDataKey != null
                 && item.containsKey(subDataKey)
                 && item.get(subDataKey) instanceof List<?>
             ) {
@@ -193,8 +187,8 @@ public class JsonExporter implements Exporter {
 
     /**
      * Export Sample objects as JSON.
-     * @param proben List of Sample IDs to export.
-     * @param messungen Ignored. All associated Messung objects are exported.
+     * @param probeIds List of Sample IDs to export.
+     * @param messungsIds Ignored. All associated Messung objects are exported.
      * @param encoding Ignored. Result is always UTF_8.
      * @param userInfo UserInfo
      * @return Export result as InputStream or null if the export failed

@@ -36,7 +36,13 @@ import de.intevation.lada.exporter.ExportFormat;
 public class JsonExportJob extends QueryExportJob {
 
     private static final int LENGTH = 1024;
-    private String subDataJsonKey;
+
+    /**
+     * Map of data types and the according sub data key.
+     */
+    private static final Map<String, String> ID_TYPE_TO_SUBDATA_KEY = Map.of(
+        "probeId", "Messungen",
+        "messungId", "messwerte");
 
     /**
      * The JSON exporter.
@@ -57,31 +63,14 @@ public class JsonExportJob extends QueryExportJob {
     ) {
         // Create a map of id->record
         Map<Integer, Map<String, Object>> idMap = new HashMap<>();
-        String sDataJsonKey = "Messungen";
+        final String sDataJsonKey = ID_TYPE_TO_SUBDATA_KEY.get(this.idType);
         primaryData.forEach(record -> {
             idMap.put((Integer) record.get(idColumn), record);
         });
 
         List<Map<String, Object>> merged = primaryData;
         messungData.forEach(messung -> {
-            Map<String, Object> mergedMessung = new HashMap<>();
-            // Add sub data
-            subDataColumns.forEach(subDataColumn -> {
-                Object fieldValue = null;
-                // Check if column needs seperate handling or is a valid
-                // messung field
-                switch (subDataColumn) {
-                    case "statusKombi":
-                        fieldValue = getStatusString(messung);
-                        break;
-                    case "messwerteCount":
-                        fieldValue = getMesswertCount(messung);
-                        break;
-                    default:
-                        fieldValue = getFieldByName(subDataColumn, messung);
-                }
-                mergedMessung.put(subDataColumn, fieldValue);
-            });
+            Map<String, Object> mergedMessung = transformFieldValues(messung);
             //Append messung to probe
             Map<String, Object> primaryRecord = idMap.get(
                 messung.getSampleId());
@@ -89,10 +78,10 @@ public class JsonExportJob extends QueryExportJob {
                 primaryRecord.put(sDataJsonKey, new ArrayList<Object>());
             }
             ArrayList<Map<String, Object>> messungenList =
-                (ArrayList<Map<String, Object>>) primaryRecord.get("Messungen");
+                (ArrayList<Map<String, Object>>) primaryRecord.get(
+                    sDataJsonKey);
             messungenList.add(mergedMessung);
         });
-        this.subDataJsonKey = sDataJsonKey;
         return merged;
     }
 
@@ -102,28 +91,14 @@ public class JsonExportJob extends QueryExportJob {
     ) {
         // Create a map of id->record
         Map<Integer, Map<String, Object>> idMap = new HashMap<>();
-        String sDataJsonKey = "messwerte";
+        final String sDataJsonKey = ID_TYPE_TO_SUBDATA_KEY.get(this.idType);
         primaryData.forEach(record -> {
             idMap.put((Integer) record.get(idColumn), record);
         });
 
         List<Map<String, Object>> merged = primaryData;
         messwertData.forEach(messwert -> {
-            Map<String, Object> mergedMesswert = new HashMap<>();
-            // Add sub data
-            subDataColumns.forEach(subDataColumn -> {
-                Object fieldValue = null;
-                // Check if column needs seperate handling or is a valid
-                // messung field
-                switch (subDataColumn) {
-                    case "messungId":
-                        fieldValue = getFieldByName("messungsId", messwert);
-                        break;
-                    default:
-                        fieldValue = getFieldByName(subDataColumn, messwert);
-                }
-                mergedMesswert.put(subDataColumn, fieldValue);
-            });
+            Map<String, Object> mergedMesswert = transformFieldValues(messwert);
             //Append messung to probe
             Map<String, Object> primaryRecord = idMap.get(
                 messwert.getMeasmId());
@@ -131,10 +106,10 @@ public class JsonExportJob extends QueryExportJob {
                 primaryRecord.put(sDataJsonKey, new ArrayList<Object>());
             }
             ArrayList<Map<String, Object>> messwertList =
-                (ArrayList<Map<String, Object>>) primaryRecord.get("messwerte");
+                (ArrayList<Map<String, Object>>) primaryRecord.get(
+                    sDataJsonKey);
             messwertList.add(mergedMesswert);
         });
-        this.subDataJsonKey = sDataJsonKey;
         return merged;
     }
 
@@ -147,25 +122,26 @@ public class JsonExportJob extends QueryExportJob {
         primaryData = getQueryResult();
 
         List<Map<String, Object>> exportData = primaryData;
-        ArrayList<String> exportColumns = new ArrayList<String>();
-        exportColumns.addAll(this.columnsToExport);
-
         // If needed, fetch and merge sub data
         if (exportSubdata) {
             exportData = mergeSubData();
         }
 
         //Export data to json
-        InputStream exported;
-        JsonObjectBuilder optionBuilder = Json.createObjectBuilder()
-            .add("subData", exportSubdata ? subDataJsonKey : "")
-            .add("timezone", timezone);
+        JsonObjectBuilder optionBuilder = Json.createObjectBuilder();
         if (idColumn != null) {
             optionBuilder.add("id", idColumn);
         }
         JsonObject exportOptions = optionBuilder.build();
-        exported = exporter.export(
-            exportData, encoding, exportOptions, exportColumns, qId);
+        InputStream exported = exporter.export(
+            exportData,
+            encoding,
+            exportOptions,
+            this.columnsToExport,
+            ID_TYPE_TO_SUBDATA_KEY.get(this.idType),
+            qId,
+            this.dateFormat,
+            null);
 
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         byte[] buffer = new byte[LENGTH];
