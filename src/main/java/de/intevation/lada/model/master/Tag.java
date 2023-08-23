@@ -63,7 +63,7 @@ public class Tag {
     private Date createdAt;
 
     @OneToMany(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "tag_id")
+    @JoinColumn(name = "tag_id", updatable = false)
     @JsonbTransient
     private Set<TagLink> tagZuordnungs;
 
