@@ -13,6 +13,7 @@ import java.util.List;
 
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.master.EnvMedium;
+import de.intevation.lada.model.master.MeasUnit;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.UnitConvers;
 import de.intevation.lada.util.data.Repository;
@@ -60,19 +61,21 @@ public class IsNormalized implements Rule {
 
             //Check if the messwert mehId can be converted to primary or secondary meh
             Boolean convert = false;
-
+            MeasUnit fromUnit = repository.getByIdPlain(
+                    MeasUnit.class, messwert.getMeasUnitId());
             if (mehId != null && !mehId.equals(messwert.getMeasUnitId())) {
+
                 QueryBuilder<UnitConvers> builder =
                 repository.queryBuilder(UnitConvers.class);
                 builder.and("toUnitId", mehId);
-                builder.and("fromUnit", messwert.getMeasUnitId());
+                builder.and("fromUnit", fromUnit);
                 List<UnitConvers> result = repository.filterPlain(builder.getQuery());
                 convert = result.size() > 0;
             } else if (secMehId != null && !secMehId.equals(messwert.getMeasUnitId())) {
                 QueryBuilder<UnitConvers> builder =
                 repository.queryBuilder(UnitConvers.class);
                 builder.and("toUnitId", secMehId);
-                builder.and("fromUnit", messwert.getMeasUnitId());
+                builder.and("fromUnit", fromUnit);
                 List<UnitConvers> result = repository.filterPlain(builder.getQuery());
                 convert = result.size() > 0;
             }
