@@ -63,7 +63,7 @@ public class TagUtil {
         CriteriaQuery<Tag> criteriaQuery = builder.createQuery(Tag.class);
         Root<Tag> tagRoot = criteriaQuery.from(Tag.class);
         Predicate nameFilter =
-            builder.like(tagRoot.get("name"), prefix + "\\_" + today + "\\_%");
+            builder.like(tagRoot.get("name"), prefix + "!_" + today + "!_%", '!');
         Order nameOrder = builder.asc(tagRoot.get("name"));
         criteriaQuery.where(nameFilter);
         criteriaQuery.orderBy(nameOrder);
