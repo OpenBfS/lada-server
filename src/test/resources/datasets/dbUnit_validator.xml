@@ -5,6 +5,7 @@
     <master.meas_facil id = "06010" network_id = "06" />
     <!--Master data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
+    <master.regulation id = "1" />
     <master.regulation id = "9" />
     <master.type_regulation id = "E" />
     <master.type_regulation id = "U" />
@@ -27,6 +28,13 @@
     />
     <master.mmt id = "A3" />
     <master.measd id = "56" name = "Mangan" />
+    <master.oblig_measd_mp
+        id = "1"
+        mmt_id = "A3"
+        measd_id = "56"
+        regulation_id = "9"
+        env_medium_id = "L6"
+    />
     <master.sample_specif
         id = "A74"
         name = "Volumenstrom"
@@ -174,7 +182,7 @@
         meas_facil_id = "06010"
         appr_lab_id = "06010"
         sample_start_date = "2012-05-03 13:07:00"
-        sample_meth_id = "3"
+        sample_meth_id = "9"
         is_test = "false"
         env_medium_id = "L6"
         main_sample_id = "9911554466"
@@ -187,7 +195,7 @@
     <lada.sample
         id = "3000"
         opr_mode_id = "1"
-        regulation_id = "9"
+        regulation_id = "1"
         last_mod = "2012-05-05 11:12:00"
         env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
         env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"

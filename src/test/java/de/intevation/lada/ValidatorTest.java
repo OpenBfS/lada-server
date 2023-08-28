@@ -7,6 +7,8 @@
  */
 package de.intevation.lada;
 
+import java.text.ParseException;
+
 import javax.inject.Inject;
 
 import org.jboss.arquillian.junit.Arquillian;
@@ -451,5 +453,95 @@ public class ValidatorTest extends BaseTest {
     @Test
     public final void statusKombiNegative() {
         statusTest.checkKombiNegative();
+    }
+
+    /**
+     * Test measm with start date in future.
+     */
+    @Test
+    public void measmStartDateInFuture() {
+        messungTest.measmStartDateInFuture();
+    }
+
+    /**
+     * Test measm with start date before sampleStartDate.
+     * @throws ParseException Thrown if date parsing fails
+     */
+    @Test
+    public void measStartDateBeforeSampleStartDate() throws ParseException {
+        messungTest.measmStartDateBeforeSampleStartDate();
+    }
+
+    /**
+     * Test measm with start date before sampleStartDate.
+     * @throws ParseException Thrown if date parsing fails
+     */
+    @Test
+    public void measmStartDateAfterSampleStartDate() throws ParseException {
+        messungTest.measmStartDateAfterSampleStartDate();
+    }
+
+    /**
+     * Test measm without start date.
+     */
+    @Test
+    public void measmWithoutStartDate() {
+        messungTest.measmWithoutStartDate();
+    }
+
+    /**
+     * Test measm without start date connected to a sample with regulation id 1.
+     */
+    @Test
+    public void measmWithoutStartDateRegulation161Sample() {
+        messungTest.measmWithoutStartDateRegulation161Sample();
+    }
+
+    /**
+     * Test measm without a measPd.
+     */
+    @Test
+    public void measmWithoutMeasPD() {
+        messungTest.measmWithoutMeasPD();
+    }
+
+    /**
+     * Test measm without a measPd connected to a sample with regulation id 1.
+     */
+    @Test
+    public void measmWithoutMeasPDRegulation161Sample() {
+        messungTest.measmWithoutMeasPDRegulation161Sample();
+    }
+
+    /**
+     * Test measm without a measPd connected to a continuous sample.
+     */
+    @Test
+    public void measmWithoutMeasPDRContSample() {
+        messungTest.measmWithoutMeasPDRContSample();
+    }
+
+    /**
+     * Test measm with measPd.
+     */
+    @Test
+    public void measmWithMeasPd() {
+        messungTest.measmWithMeasPd();
+    }
+
+    /**
+     * Test measm missing obligatory measds.
+     */
+    @Test
+    public void measmWithoutObligMeasd() {
+        messungTest.measmWithoutObligMeasd();
+    }
+
+    /**
+     * Test measm with all obligatory measds.
+     */
+    @Test
+    public void measmWithObligMeasd() {
+        messungTest.measmWithObligMeasd();
     }
 }
