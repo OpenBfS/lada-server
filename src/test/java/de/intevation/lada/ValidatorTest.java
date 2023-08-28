@@ -9,7 +9,6 @@ package de.intevation.lada;
 
 import javax.inject.Inject;
 
-import org.jboss.logging.Logger;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,10 +24,7 @@ import de.intevation.lada.test.validator.StatusTest;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
-// TODO make tests independent of test data which do not exist anymore
 public class ValidatorTest extends BaseTest {
-
-    private static Logger logger = Logger.getLogger(StammdatenTest.class);
 
     @Inject
     private ProbeTest probeTest;
@@ -39,6 +35,10 @@ public class ValidatorTest extends BaseTest {
     @Inject
     private StatusTest statusTest;
 
+    /**
+     * Constructor.
+     * Sets test dataset.
+     */
     public ValidatorTest() {
         this.testDatasetName = "datasets/dbUnit_validator.xml";
     }
@@ -216,7 +216,6 @@ public class ValidatorTest extends BaseTest {
      * Test sample with valid envDescripDisplay.
      */
     @Test
-    //TODO: Fails
     public void sampleEnvDescripDisplay() {
         probeTest.envDescripDisplay();
     }
@@ -265,7 +264,6 @@ public class ValidatorTest extends BaseTest {
      * Test sample without matching envMediumId.
      */
     @Test
-    //TODO: fails
     public void sampleEnvDescripWithoutMatchingEnvMediumId() {
         probeTest.envDescripWithoutMatchingEnvMediumId();
     }

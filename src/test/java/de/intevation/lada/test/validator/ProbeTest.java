@@ -30,15 +30,19 @@ import de.intevation.lada.validation.Violation;
 @Transactional
 public class ProbeTest {
 
+
     //Validation keys
+    private static final String ENTNAHME_ORT = "entnahmeOrt";
     private static final String ENV_DESCRIP_DISPLAY = "envDescripDisplay";
     private static final String ENV_MEDIUM_ID = "envMediumId";
     private static final String EXT_ID = "extId";
     private static final String GEOLOCAT_R = "REIMesspunkt";
     private static final String GEOLOCAT_U = "ursprungsOrt";
+    private static final String MAIN_SAMPLE_ID = "mainSampleId";
     private static final String NUCL_FACIL_GR_ID = "nuclFacilGrId";
     private static final String ORIG_DATE = "origDate";
     private static final String REI_AG_GR_ID = "reiAgGrId";
+    private static final String SAMPLE_START_DATE = "sampleStartDate";
     private static final String SAMPLE_END_DATE = "sampleEndDate";
     private static final String SAMPLE_SPECIF_MEAS_VAL
         = "sample_specif_meas_val";
@@ -49,6 +53,7 @@ public class ProbeTest {
     private static final String ENV_MEDIUM_L42 = "L42";
     private static final Integer EXAMPLE_REI_AG_GR_ID = 1;
     private static final Integer EXAMPLE_NUCL_FACIL_ID = 1;
+    private static final String MST_06010 = "06010";
     private static final Integer REGULATION_ID_161 = 1;
     private static final Integer REGULATION_ID_REI = 4;
     private static final Integer SAMPLE_METH_ID_INDIVIDUAL = 1;
@@ -64,7 +69,9 @@ public class ProbeTest {
     private static final int ID2000 = 2000;
     private static final int ID3000 = 3000;
 
-    private static final String EXAMPLE_ENV_DESCRIP_FROM_SAMPLE_DATE
+    private static final String EXISTING_MAIN_SAMPLE_ID = "120510002";
+    private static final String NEW_MAIN_SAMPLE_ID = "4564567890";
+    private static final String EXAMPLE_ENV_DESCRIP_FROM_SAMPLE_DATA
         = "D: 10 11 12";
     private static final String EXAMPLE_ENV_DESCRIP_DISPLAY
         = "D: 01 59 03 01 01 02 05 01 02 00 00 00";
@@ -82,7 +89,7 @@ public class ProbeTest {
         Violation violation = validator.validate(probe);
         if (violation.hasErrors()) {
             Assert.assertFalse(
-                violation.getErrors().containsKey("mainSampleId"));
+                violation.getErrors().containsKey(MAIN_SAMPLE_ID));
         }
     }
 
@@ -94,9 +101,9 @@ public class ProbeTest {
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasNotifications());
         Assert.assertTrue(violation.getNotifications()
-            .containsKey("mainSampleId"));
+            .containsKey(MAIN_SAMPLE_ID));
         Assert.assertTrue(
-            violation.getNotifications().get("mainSampleId").contains(
+            violation.getNotifications().get(MAIN_SAMPLE_ID).contains(
                 StatusCodes.VALUE_MISSING));
     }
 
@@ -105,13 +112,13 @@ public class ProbeTest {
      */
     public void existingHauptprobenNrNew() {
         Sample probe = new Sample();
-        probe.setMainSampleId("120510002");
-        probe.setMeasFacilId("06010");
+        probe.setMainSampleId(EXISTING_MAIN_SAMPLE_ID);
+        probe.setMeasFacilId(MST_06010);
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey("mainSampleId"));
+        Assert.assertTrue(violation.getErrors().containsKey(MAIN_SAMPLE_ID));
         Assert.assertTrue(
-            violation.getErrors().get("mainSampleId").contains(
+            violation.getErrors().get(MAIN_SAMPLE_ID).contains(
                 StatusCodes.VALUE_AMBIGOUS));
     }
 
@@ -120,11 +127,11 @@ public class ProbeTest {
      */
     public void uniqueHauptprobenNrNew() {
         Sample probe = new Sample();
-        probe.setMainSampleId("4564567890");
+        probe.setMainSampleId(NEW_MAIN_SAMPLE_ID);
         Violation violation = validator.validate(probe);
         if (violation.hasErrors()) {
             Assert.assertFalse(
-                violation.getErrors().containsKey("mainSampleId"));
+                violation.getErrors().containsKey(MAIN_SAMPLE_ID));
         }
     }
 
@@ -134,11 +141,11 @@ public class ProbeTest {
     public void uniqueHauptprobenNrUpdate() {
         Sample probe = new Sample();
         probe.setId(1);
-        probe.setMainSampleId("4564567890");
+        probe.setMainSampleId(NEW_MAIN_SAMPLE_ID);
         Violation violation = validator.validate(probe);
         if (violation.hasErrors()) {
             Assert.assertFalse(
-                violation.getErrors().containsKey("mainSampleId"));
+                violation.getErrors().containsKey(MAIN_SAMPLE_ID));
         }
     }
 
@@ -148,13 +155,13 @@ public class ProbeTest {
     public void existingHauptprobenNrUpdate() {
         Sample probe = new Sample();
         probe.setId(1);
-        probe.setMainSampleId("120510002");
-        probe.setMeasFacilId("06010");
+        probe.setMainSampleId(EXISTING_MAIN_SAMPLE_ID);
+        probe.setMeasFacilId(MST_06010);
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey("mainSampleId"));
+        Assert.assertTrue(violation.getErrors().containsKey(MAIN_SAMPLE_ID));
         Assert.assertTrue(
-            violation.getErrors().get("mainSampleId").contains(
+            violation.getErrors().get(MAIN_SAMPLE_ID).contains(
                 StatusCodes.VALUE_AMBIGOUS));
     }
 
@@ -163,11 +170,11 @@ public class ProbeTest {
      */
     public void hasEntnahmeOrt() {
         Sample probe = new Sample();
-        probe.setId(1000);
+        probe.setId(ID1000);
         Violation violation = validator.validate(probe);
         if (violation.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey("entnahmeOrt"));
+                violation.getWarnings().containsKey(ENTNAHME_ORT));
         }
     }
 
@@ -179,9 +186,9 @@ public class ProbeTest {
         probe.setId(ID710);
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey("entnahmeOrt"));
+        Assert.assertTrue(violation.getWarnings().containsKey(ENTNAHME_ORT));
         Assert.assertTrue(
-            violation.getWarnings().get("entnahmeOrt").contains(
+            violation.getWarnings().get(ENTNAHME_ORT).contains(
                 StatusCodes.VALUE_MISSING));
     }
 
@@ -195,7 +202,7 @@ public class ProbeTest {
         Violation violation = validator.validate(probe);
         if (violation.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey("sampleStartDate"));
+                violation.getWarnings().containsKey(SAMPLE_START_DATE));
         }
     }
 
@@ -207,9 +214,9 @@ public class ProbeTest {
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(
-            violation.getWarnings().containsKey("sampleStartDate"));
+            violation.getWarnings().containsKey(SAMPLE_START_DATE));
         Assert.assertTrue(
-            violation.getWarnings().get("sampleStartDate").contains(
+            violation.getWarnings().get(SAMPLE_START_DATE).contains(
                 StatusCodes.VALUE_MISSING));
     }
 
@@ -222,7 +229,7 @@ public class ProbeTest {
         Violation violation = validator.validate(probe);
         if (violation.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey("sampleStartDate"));
+                violation.getWarnings().containsKey(SAMPLE_START_DATE));
         }
     }
 
@@ -234,10 +241,10 @@ public class ProbeTest {
         probe.setSampleEndDate(new Timestamp(TS1));
         Violation violation = validator.validate(probe);
         Assert.assertTrue(
-            violation.getWarnings().get("sampleStartDate").contains(
+            violation.getWarnings().get(SAMPLE_START_DATE).contains(
                 StatusCodes.VALUE_MISSING));
         Assert.assertTrue(
-            violation.getWarnings().get("sampleStartDate").contains(
+            violation.getWarnings().get(SAMPLE_START_DATE).contains(
                 StatusCodes.DATE_BEGIN_AFTER_END));
     }
 
@@ -251,7 +258,7 @@ public class ProbeTest {
         probe.setSampleEndDate(new Timestamp(TS1));
         Violation violation = validator.validate(probe);
         Assert.assertTrue(
-            violation.getWarnings().get("sampleStartDate").contains(
+            violation.getWarnings().get(SAMPLE_START_DATE).contains(
                 StatusCodes.DATE_BEGIN_AFTER_END));
     }
 
@@ -263,26 +270,25 @@ public class ProbeTest {
         probe.setSampleStartDate(new Timestamp(TS3));
         Violation violation = validator.validate(probe);
         Assert.assertTrue(
-            violation.getWarnings().get("sampleStartDate").contains(
+            violation.getWarnings().get(SAMPLE_START_DATE).contains(
             StatusCodes.DATE_IN_FUTURE));
     }
 
     /**
      * Test umwelt.
-     * @param protocol the test protocol.
      */
     public void hasUmwelt() {
         Sample probe = new Sample();
         probe.setEnvMediumId("A4");
         Violation violation = validator.validate(probe);
         if (violation.hasWarnings()) {
-            Assert.assertFalse(violation.getWarnings().containsKey(ENV_MEDIUM_ID));
+            Assert.assertFalse(violation.getWarnings()
+                .containsKey(ENV_MEDIUM_ID));
         }
     }
 
     /**
      * Test no umwelt.
-     * @param protocol the test protocol.
      */
     public void hasNoUmwelt() {
         Sample probe = new Sample();
@@ -295,7 +301,6 @@ public class ProbeTest {
 
     /**
      * Test empty umwelt.
-     * @param protocol the test protocol.
      */
     public void hasEmptyUmwelt() {
         Sample probe = new Sample();
@@ -384,7 +389,7 @@ public class ProbeTest {
      */
     public void envDescripDisplay() {
         Sample sample = new Sample();
-        sample.setEnvDescripDisplay(EXAMPLE_ENV_DESCRIP_FROM_SAMPLE_DATE);
+        sample.setEnvDescripDisplay(EXAMPLE_ENV_DESCRIP_FROM_SAMPLE_DATA);
         sample.setRegulationId(1);
 
         Violation violation = validator.validate(sample);
@@ -478,7 +483,7 @@ public class ProbeTest {
      */
     public void envDescripWithoutMatchingEnvMediumId() {
         Sample sample = new Sample();
-        sample.setEnvDescripDisplay(EXAMPLE_ENV_DESCRIP_FROM_SAMPLE_DATE);
+        sample.setEnvDescripDisplay(EXAMPLE_ENV_DESCRIP_FROM_SAMPLE_DATA);
         sample.setEnvMediumId("L54");
         String warningKey = "envMediumId#L54";
         Violation violation = validator.validate(sample);
