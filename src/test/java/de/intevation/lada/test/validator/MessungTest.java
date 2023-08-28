@@ -48,14 +48,13 @@ public class MessungTest {
         = "2012-05-03 13:07:00";
 
     //Other constants
-    private static final int ID990 = 990;
     private static final int ID776 = 776;
 
     private static final SimpleDateFormat DB_UNIT_DATE_FORMAT
         = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-
     private static final String NEW_MIN_SAMPLE_ID = "42AB";
+    private static final String MIN_SAMPLE_ID_00G2 = "00G2";
 
     private static final String VALIDATION_KEY_SEPARATOR = "#";
 
@@ -64,7 +63,6 @@ public class MessungTest {
 
     /**
      * Test nebenproben nr.
-     * @param protocol the test protocol.
      */
     public void hasNebenprobenNr() {
         Measm messung = new Measm();
@@ -79,7 +77,6 @@ public class MessungTest {
 
     /**
      * Test without nebenproben nr.
-     * @param protocol the test protocol.
      */
     public void hasNoNebenprobenNr() {
         Measm messung = new Measm();
@@ -95,7 +92,6 @@ public class MessungTest {
 
     /**
      * Test empty nebenproben nr.
-     * @param protocol the test protocol.
      */
     public void hasEmptyNebenprobenNr() {
         Measm messung = new Measm();
@@ -112,7 +108,6 @@ public class MessungTest {
 
     /**
      * Test new existing nebenproben nr.
-     * @param protocol the test protocol.
      */
     public void existingNebenprobenNrNew() {
         Measm messung = new Measm();
@@ -128,11 +123,10 @@ public class MessungTest {
 
     /**
      * Test new unique nebenproben nr.
-     * @param protocol the test protocol.
      */
     public void uniqueNebenprobenNrNew() {
         Measm messung = new Measm();
-        messung.setMinSampleId("00G2");
+        messung.setMinSampleId(MIN_SAMPLE_ID_00G2);
         messung.setSampleId(EXISTING_SAMPLE_ID);
         Violation violation = validator.validate(messung);
         if (violation.hasErrors()) {
@@ -143,13 +137,12 @@ public class MessungTest {
 
     /**
      * Test update unique nebenproben nr.
-     * @param protocol the test protocol.
      */
     public void uniqueNebenprobenNrUpdate() {
         Measm messung = new Measm();
         messung.setId(EXISTING_MEASM_ID);
         messung.setSampleId(EXISTING_SAMPLE_ID);
-        messung.setMinSampleId("00G2");
+        messung.setMinSampleId(MIN_SAMPLE_ID_00G2);
         Violation violation = validator.validate(messung);
         if (violation.hasErrors()) {
             Assert.assertFalse(
@@ -160,7 +153,6 @@ public class MessungTest {
 
     /**
      * Test update existing nebenproben nr.
-     * @param protocol the test protocol.
      */
     public void existingNebenprobenNrUpdate() {
         Measm messung = new Measm();
