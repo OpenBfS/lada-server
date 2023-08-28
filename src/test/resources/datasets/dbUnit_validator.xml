@@ -6,6 +6,7 @@
     <!--Master data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
     <master.regulation id = "9" />
+    <master.type_regulation id = "E" />
     <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
     <master.meas_unit id = "207" />
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "207" />
@@ -120,6 +121,7 @@
     />
     <lada.geolocat
         id = "1000"
+        type_regulation = "E"
         sample_id = "1000"
         site_id = "1000"
         add_site_text = "Test"

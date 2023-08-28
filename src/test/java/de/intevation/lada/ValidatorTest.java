@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -55,7 +54,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test hauptprobennr missing.
      */
-    @Ignore
     @Test
     public void probeHasNoHauptprobenNr() {
         probeTest.hasNoHauptprobenNr();
@@ -64,7 +62,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test existing hauptprobennr new.
      */
-    @Ignore
     @Test
     public void probeExistingHauptprobenNrNew() {
         probeTest.existingHauptprobenNrNew();
@@ -73,7 +70,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test unique hauptprobennr new.
      */
-    @Ignore
     @Test
     public void probeUniqueHauptprobenNrNew() {
         probeTest.uniqueHauptprobenNrNew();
@@ -82,7 +78,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test existing hauptprobennr update.
      */
-    @Ignore
     @Test
     public void probeExistingHauptprobenNrUpdate() {
         probeTest.existingHauptprobenNrUpdate();
@@ -91,7 +86,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test unique hauptprobennr update.
      */
-    @Ignore
     @Test
     public void probeUniqueHauptprobenNrUpdate() {
         probeTest.uniqueHauptprobenNrUpdate();
@@ -100,7 +94,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test probe has entnahmeort.
      */
-    @Ignore
     @Test
     public void probeHasEntnahmeOrt() {
         probeTest.hasEntnahmeOrt();
@@ -109,7 +102,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test probe has no entnahmeort.
      */
-    @Ignore
     @Test
     public void probeHasNoEntnahmeOrt() {
         probeTest.hasNoEntnahmeOrt();
@@ -118,7 +110,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test probe has probenahmebegin.
      */
-    @Ignore
     @Test
     public void probeHasProbenahmeBegin() {
         probeTest.hasProbeentnahmeBegin();
@@ -127,7 +118,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test probe has no probenahmebegin.
      */
-    @Ignore
     @Test
     public void probeHasNoProbenahmeBegin() {
         probeTest.hasNoProbeentnahmeBegin();
@@ -136,7 +126,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test probe has no time end probenahmebegin.
      */
-    @Ignore
     @Test
     public void probeTimeNoEndProbenahmeBegin() {
         probeTest.timeNoEndProbeentnahmeBegin();
@@ -145,7 +134,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test probe has no time begin probenahmebegin.
      */
-    @Ignore
     @Test
     public void probeTimeNoBeginProbenahmeBegin() {
         probeTest.timeNoBeginProbeentnahmeBegin();
@@ -154,7 +142,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test probe time begin after end probenahmebegin.
      */
-    @Ignore
     @Test
     public void probeTimeBeginAfterEndProbenahmeBegin() {
         probeTest.timeBeginAfterEndProbeentnahmeBegin();
@@ -163,7 +150,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test probe begin in future probenahmebegin.
      */
-    @Ignore
     @Test
     public void probeTimeBeginFutureProbenahmeBegin() {
         probeTest.timeBeginFutureProbeentnahmeBegin();
@@ -172,7 +158,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test probe has umwelt.
      */
-    @Ignore
     @Test
     public void probeHasUmwelt() {
         probeTest.hasUmwelt();
@@ -181,7 +166,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test probe has no umwelt.
      */
-    @Ignore
     @Test
     public void probeHasNoUmwelt() {
         probeTest.hasNoUmwelt();
@@ -190,7 +174,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test probe has empty umwelt.
      */
-    @Ignore
     @Test
     public void probeHasEmptyUmwelt() {
         probeTest.hasEmptyUmwelt();
@@ -199,7 +182,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test messung has nebenprobennr.
      */
-    @Ignore
     @Test
     public void messungHasNebenprobenNr() {
         messungTest.hasNebenprobenNr();
@@ -208,7 +190,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test messung has no nebenprobennr.
      */
-    @Ignore
     @Test
     public void messungHasNoNebenprobenNr() {
         messungTest.hasNoNebenprobenNr();
@@ -217,7 +198,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test messung has empty nebenprobennr.
      */
-    @Ignore
     @Test
     public void messungHasEmptyNebenprobenNr() {
         messungTest.hasEmptyNebenprobenNr();
@@ -226,7 +206,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test messung has unique nebenprobennr.
      */
-    @Ignore
     @Test
     public void messungUniqueNebenprobenNrNew() {
         messungTest.uniqueNebenprobenNrNew();
@@ -235,7 +214,6 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test messung unique nebenprobennr update.
      */
-    @Ignore
     @Test
     public void messungUniqueNebenprobenNrUpdate() {
         messungTest.uniqueNebenprobenNrUpdate();
@@ -252,28 +230,9 @@ public class ValidatorTest extends BaseTest {
     /**
      * Test messung existing nebenprobennr update.
      */
-    @Ignore
     @Test
     public void messungExistingNebenprobenNrUpdate() {
         messungTest.existingNebenprobenNrUpdate();
-    }
-
-    /**
-     * Test messung has messwert.
-     */
-    @Ignore
-    @Test
-    public void messungHasMesswert() {
-        messungTest.hasMesswert();
-    }
-
-    /**
-     * Test messung has no messwert.
-     */
-    @Ignore
-    @Test
-    public void messungHasNoMesswert() {
-        messungTest.hasNoMesswert();
     }
 
     /**

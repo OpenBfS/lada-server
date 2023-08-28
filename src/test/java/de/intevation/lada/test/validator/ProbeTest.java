@@ -54,10 +54,11 @@ public class ProbeTest {
     public void hasNoHauptprobenNr() {
         Sample probe = new Sample();
         Violation violation = validator.validate(probe);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey("mainSampleId"));
+        Assert.assertTrue(violation.hasNotifications());
+        Assert.assertTrue(violation.getNotifications()
+            .containsKey("mainSampleId"));
         Assert.assertTrue(
-            violation.getErrors().get("mainSampleId").contains(
+            violation.getNotifications().get("mainSampleId").contains(
                 StatusCodes.VALUE_MISSING));
     }
 
@@ -67,6 +68,7 @@ public class ProbeTest {
     public void existingHauptprobenNrNew() {
         Sample probe = new Sample();
         probe.setMainSampleId("120510002");
+        probe.setMeasFacilId("06010");
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasErrors());
         Assert.assertTrue(violation.getErrors().containsKey("mainSampleId"));
@@ -108,7 +110,8 @@ public class ProbeTest {
     public void existingHauptprobenNrUpdate() {
         Sample probe = new Sample();
         probe.setId(1);
-        probe.setMainSampleId("120224003");
+        probe.setMainSampleId("120510002");
+        probe.setMeasFacilId("06010");
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasErrors());
         Assert.assertTrue(violation.getErrors().containsKey("mainSampleId"));
@@ -122,7 +125,7 @@ public class ProbeTest {
      */
     public void hasEntnahmeOrt() {
         Sample probe = new Sample();
-        probe.setId(1);
+        probe.setId(1000);
         Violation violation = validator.validate(probe);
         if (violation.hasWarnings()) {
             Assert.assertFalse(
@@ -154,7 +157,7 @@ public class ProbeTest {
         Violation violation = validator.validate(probe);
         if (violation.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey("probeentnahmeBeginn"));
+                violation.getWarnings().containsKey("sampleStartDate"));
         }
     }
 
@@ -166,9 +169,9 @@ public class ProbeTest {
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(
-            violation.getWarnings().containsKey("probeentnahmeBeginn"));
+            violation.getWarnings().containsKey("sampleStartDate"));
         Assert.assertTrue(
-            violation.getWarnings().get("probeentnahmeBeginn").contains(
+            violation.getWarnings().get("sampleStartDate").contains(
                 StatusCodes.VALUE_MISSING));
     }
 
@@ -181,7 +184,7 @@ public class ProbeTest {
         Violation violation = validator.validate(probe);
         if (violation.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey("probeentnahmeBeginn"));
+                violation.getWarnings().containsKey("sampleStartDate"));
         }
     }
 
@@ -193,10 +196,10 @@ public class ProbeTest {
         probe.setSampleEndDate(new Timestamp(TS1));
         Violation violation = validator.validate(probe);
         Assert.assertTrue(
-            violation.getWarnings().get("probeentnahmeBeginn").contains(
+            violation.getWarnings().get("sampleStartDate").contains(
                 StatusCodes.VALUE_MISSING));
         Assert.assertTrue(
-            violation.getWarnings().get("probeentnahmeBeginn").contains(
+            violation.getWarnings().get("sampleStartDate").contains(
                 StatusCodes.DATE_BEGIN_AFTER_END));
     }
 
@@ -210,7 +213,7 @@ public class ProbeTest {
         probe.setSampleEndDate(new Timestamp(TS1));
         Violation violation = validator.validate(probe);
         Assert.assertTrue(
-            violation.getWarnings().get("probeentnahmeBeginn").contains(
+            violation.getWarnings().get("sampleStartDate").contains(
                 StatusCodes.DATE_BEGIN_AFTER_END));
     }
 
@@ -222,7 +225,7 @@ public class ProbeTest {
         probe.setSampleStartDate(new Timestamp(TS3));
         Violation violation = validator.validate(probe);
         Assert.assertTrue(
-            violation.getWarnings().get("probeentnahmeBeginn").contains(
+            violation.getWarnings().get("sampleStartDate").contains(
             StatusCodes.DATE_IN_FUTURE));
     }
 
@@ -235,7 +238,7 @@ public class ProbeTest {
         probe.setEnvMediumId("A4");
         Violation violation = validator.validate(probe);
         if (violation.hasWarnings()) {
-            Assert.assertFalse(violation.getWarnings().containsKey("umwId"));
+            Assert.assertFalse(violation.getWarnings().containsKey("envMediumId"));
         }
     }
 
@@ -247,8 +250,8 @@ public class ProbeTest {
         Sample probe = new Sample();
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey("umwId"));
-        Assert.assertTrue(violation.getWarnings().get("umwId").contains(
+        Assert.assertTrue(violation.getWarnings().containsKey("envMediumId"));
+        Assert.assertTrue(violation.getWarnings().get("envMediumId").contains(
                 StatusCodes.VALUE_MISSING));
     }
 
@@ -261,8 +264,8 @@ public class ProbeTest {
         probe.setEnvMediumId("");
         Violation violation = validator.validate(probe);
         Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey("umwId"));
-        Assert.assertTrue(violation.getWarnings().get("umwId").contains(
+        Assert.assertTrue(violation.getWarnings().containsKey("envMediumId"));
+        Assert.assertTrue(violation.getWarnings().get("envMediumId").contains(
                 StatusCodes.VALUE_MISSING));
     }
 }

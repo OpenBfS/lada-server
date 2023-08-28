@@ -60,11 +60,12 @@ public class MessungTest {
         Measm messung = new Measm();
         messung.setSampleId(existingSampleId);
         Violation violation = validator.validate(messung);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(minSampleIdKey));
+        Assert.assertTrue(violation.hasNotifications());
+        Assert.assertTrue(violation.getNotifications()
+            .containsKey(minSampleIdKey));
         Assert.assertTrue(
-            violation.getWarnings().get(minSampleIdKey).contains(
-                StatusCodes.VALUE_MISSING));
+            violation.getNotifications().get(minSampleIdKey)
+                .contains(StatusCodes.VALUE_MISSING));
     }
 
     /**
@@ -76,11 +77,12 @@ public class MessungTest {
         messung.setMinSampleId("");
         messung.setSampleId(existingSampleId);
         Violation violation = validator.validate(messung);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(minSampleIdKey));
+        Assert.assertTrue(violation.hasNotifications());
+        Assert.assertTrue(violation.getNotifications()
+            .containsKey(minSampleIdKey));
         Assert.assertTrue(
-            violation.getWarnings().get(minSampleIdKey).contains(
-                StatusCodes.VALUE_MISSING));
+            violation.getNotifications().get(minSampleIdKey)
+                .contains(StatusCodes.VALUE_MISSING));
     }
 
     /**
@@ -138,43 +140,13 @@ public class MessungTest {
     public void existingNebenprobenNrUpdate() {
         Measm messung = new Measm();
         messung.setId(ID776);
-        messung.setSampleId(1);
-        messung.setMinSampleId("0003");
+        messung.setSampleId(1000);
+        messung.setMinSampleId("T100");
         Violation violation = validator.validate(messung);
         Assert.assertTrue(violation.hasErrors());
         Assert.assertTrue(violation.getErrors().containsKey(minSampleIdKey));
         Assert.assertTrue(
             violation.getErrors().get(minSampleIdKey).contains(
                 StatusCodes.VALUE_AMBIGOUS));
-    }
-
-    /**
-     * Test messwert.
-     * @param protocol the test protocol.
-     */
-    public void hasMesswert() {
-        Measm messung = new Measm();
-        messung.setId(1);
-        messung.setSampleId(existingSampleId);
-        Violation violation = validator.validate(messung);
-        if (violation.hasWarnings()) {
-            Assert.assertFalse(violation.getWarnings().containsKey("messwert"));
-        }
-    }
-
-    /**
-     * Test no messwert.
-     * @param protocol the test protocol.
-     */
-    public void hasNoMesswert() {
-        Measm messung = new Measm();
-        messung.setId(ID990);
-        messung.setSampleId(existingSampleId);
-        Violation violation = validator.validate(messung);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey("messwert"));
-        Assert.assertTrue(
-            violation.getWarnings().get("messwert").contains(
-                StatusCodes.VALUE_MISSING));
     }
 }
