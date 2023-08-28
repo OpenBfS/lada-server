@@ -6,6 +6,7 @@
     <!--Master data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
     <master.regulation id = "1" />
+    <master.regulation id = "4" />
     <master.regulation id = "9" />
     <master.type_regulation id = "E" />
     <master.type_regulation id = "U" />
@@ -18,6 +19,7 @@
     <master.env_medium id = "L42" name = "Example env Medium" unit_1 = "207" />
     <master.rei_ag_gr id = "1" name = "rei_name" descr = "rei_descr" />
     <master.nucl_facil id = "1" ext_id = "A1" name = "nucl_facil_name" />
+    <master.nucl_facil_gr id = "1" ext_id = "GRA1" name = "nucl_facil_gr_name" />
     <master.rei_ag_gr_env_medium_mp id = "1" rei_ag_gr_id = "1" env_medium_id = "L6" />
     <master.sampler
         id = "726"
@@ -86,6 +88,7 @@
         short_text = "kurz"
         rei_report_text = "bericht"
     />
+    <master.status_ord_mp id = "1" from_id = "1" to_id = "2" />
     <!--Sample data-->
     <lada.sample
         id = "1000"
@@ -228,5 +231,75 @@
         add_site_text = "Test"
         last_mod = "2012-05-07 09:00:00"
     />
-
+    <!--Samples/Measm for status validation testing-->
+    <!--Valid REI sample-->
+    <lada.sample
+        id = "4000"
+        opr_mode_id = "1"
+        regulation_id = "4"
+        last_mod = "2012-05-05 11:12:00"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        rei_ag_gr_id = "1"
+        nucl_facil_gr_id = "1"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "1"
+        is_test = "false"
+        env_medium_id = "L6"
+        main_sample_id = "1B4000"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+        tree_mod = "2012-05-08 10:00:00"
+        ext_id = "ext_id_4000"
+    />
+    <lada.measm
+        id = "4200"
+        sample_id = "4000"
+        min_sample_id = "T100"
+        ext_id = "453"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        measm_start_date = "2012-05-06 14:00:00"
+        is_completed = "false"
+        last_mod = "2012-05-08 12:00:00"
+        is_scheduled = "true"
+        tree_mod = "2012-05-09 12:00:00"
+    />
+    <!--Invalid REI sample-->
+    <lada.sample
+        id = "5000"
+        opr_mode_id = "1"
+        regulation_id = "4"
+        last_mod = "2012-05-05 11:12:00"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "1"
+        is_test = "false"
+        env_medium_id = "L6"
+        main_sample_id = "1A5000"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+        tree_mod = "2012-05-08 10:00:00"
+        ext_id = "ext_id_5000"
+    />
+    <lada.measm
+        id = "5200"
+        sample_id = "5000"
+        min_sample_id = "T100"
+        ext_id = "453"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        measm_start_date = "2012-05-06 14:00:00"
+        is_completed = "false"
+        last_mod = "2012-05-08 12:00:00"
+        is_scheduled = "true"
+        tree_mod = "2012-05-09 12:00:00"
+    />
 </dataset>

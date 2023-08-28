@@ -456,6 +456,38 @@ public class ValidatorTest extends BaseTest {
     }
 
     /**
+     * Test status with invalid order.
+     */
+    @Test
+    public void statusInvalidStatusOrder() {
+        statusTest.invalidStatusOrder();
+    }
+
+    /**
+     * Test status with valid order.
+     */
+    @Test
+    public void statusValidStatusOrder() {
+        statusTest.validStatusOrder();
+    }
+
+    /**
+     * Test setting status of measm connected to invalid REI sample.
+     */
+    @Test
+    public void statusInvalidReiSample() {
+        statusTest.statusInvalidReiSample();
+    }
+
+    /**
+     * Test setting status of measm connected to valid REI sample.
+     */
+    @Test
+    public void statusReiCompleteSample() {
+        statusTest.statusReiCompleteSample();
+    }
+
+    /**
      * Test measm with start date in future.
      */
     @Test
