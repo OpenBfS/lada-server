@@ -108,20 +108,9 @@ public class JsonExportJob extends QueryExportJob {
 
     @Override
     public void runWithTx() {
-        parseExportParameters();
-
-        // Fetch primary records
-        primaryData = getQueryResult();
-
-        List<Map<String, Object>> exportData = primaryData;
-        // If needed, fetch and merge sub data
-        if (exportSubdata) {
-            exportData = mergeSubData();
-        }
-
         //Export data to json
         writeResultToFile(exporter.export(
-            exportData,
+            getExportData(),
             encoding,
             this.exportParameters,
             this.columnsToExport,

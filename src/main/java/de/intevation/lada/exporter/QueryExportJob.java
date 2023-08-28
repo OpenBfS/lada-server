@@ -156,16 +156,22 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-     * Execute the query.
-     * @return Query result as list
+     * Execute query to fetch export data and merge sub-data, if requested.
+     * @return Query result as list, including sub-data, if requested.
      */
-    protected List<Map<String, Object>> getQueryResult() {
+    protected List<Map<String, Object>> getExportData() {
+        parseExportParameters();
+
         QueryTools queryTools = new QueryTools(repository, columns);
-        List<Map<String, Object>> result = queryTools.getResultForQuery();
+        this.primaryData = queryTools.getResultForQuery();
         logger.debug(String.format(
                 "Fetched %d primary records",
-                result == null ? 0 : result.size()));
-        return result;
+                this.primaryData == null ? 0 : this.primaryData.size()));
+
+        if (exportSubdata) {
+            return mergeSubData();
+        }
+        return this.primaryData;
     }
 
     /**
