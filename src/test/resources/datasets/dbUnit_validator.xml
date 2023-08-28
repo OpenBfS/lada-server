@@ -7,9 +7,17 @@
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
     <master.regulation id = "9" />
     <master.type_regulation id = "E" />
+    <master.type_regulation id = "U" />
+    <master.type_regulation id = "R" />
     <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
+    <master.sample_meth id = "3" ext_id = "S" eudf_sample_meth_id = "A" />
+    <master.sample_meth id = "9" ext_id = "X" eudf_sample_meth_id = "A" />
     <master.meas_unit id = "207" />
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "207" />
+    <master.env_medium id = "L42" name = "Example env Medium" unit_1 = "207" />
+    <master.rei_ag_gr id = "1" name = "rei_name" descr = "rei_descr" />
+    <master.nucl_facil id = "1" ext_id = "A1" name = "nucl_facil_name" />
+    <master.rei_ag_gr_env_medium_mp id = "1" rei_ag_gr_id = "1" env_medium_id = "L6" />
     <master.sampler
         id = "726"
         network_id = "06"
@@ -24,6 +32,16 @@
         name = "Volumenstrom"
         ext_id = "VOLSTR"
     />
+    <master.sample_specif
+        id = "A42"
+        name = "Other"
+        ext_id = "OTH"
+    />
+    <master.env_specif_mp id = "1" sample_specif_id = "A74" env_medium_id = "L6" />
+    <master.env_specif_mp id = "2" sample_specif_id = "A42" env_medium_id = "L42" />
+    <master.env_descrip id = "1" lev = "0" lev_val = "10" />
+    <master.env_descrip id = "2" lev = "1" lev_val = "11" pred_id = "1"/>
+    <master.env_descrip id = "3" lev = "2" lev_val = "12" pred_id = "2"/>
     <master.admin_unit
         id = "11000000"
         state_id = "11000000"
@@ -59,7 +77,8 @@
         site_class_id = "1"
         short_text = "kurz"
         rei_report_text = "bericht"
-    />    <!--Sample data-->
+    />
+    <!--Sample data-->
     <lada.sample
         id = "1000"
         opr_mode_id = "1"
@@ -78,6 +97,7 @@
         sched_start_date = "2012-05-01 16:00:00"
         sched_end_date = "2012-05-05 16:00:00"
         tree_mod = "2012-05-08 10:00:00"
+        ext_id = "sample_ext_id"
     />
     <lada.comm_sample
         id = "1000"
@@ -143,4 +163,62 @@
         meas_facil_id = "06010"
         text = "Testkommentar"
     />
+    <!--Additional sample/geolocat data-->
+        <lada.sample
+        id = "2000"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        last_mod = "2012-05-05 11:12:00"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "3"
+        is_test = "false"
+        env_medium_id = "L6"
+        main_sample_id = "9911554466"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+        tree_mod = "2012-05-08 10:00:00"
+        ext_id = "ext_id_2000"
+    />
+    <lada.sample
+        id = "3000"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        last_mod = "2012-05-05 11:12:00"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "3"
+        is_test = "false"
+        env_medium_id = "L6"
+        main_sample_id = "112233445566"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+        tree_mod = "2012-05-08 10:00:00"
+        ext_id = "ext_id_3000"
+    />
+    <lada.geolocat
+        id = "1002"
+        type_regulation = "R"
+        sample_id = "3000"
+        site_id = "1000"
+        add_site_text = "Test"
+        last_mod = "2012-05-07 09:00:00"
+    />
+    <lada.geolocat
+        id = "1001"
+        type_regulation = "U"
+        sample_id = "1000"
+        site_id = "1000"
+        add_site_text = "Test"
+        last_mod = "2012-05-07 09:00:00"
+    />
+
 </dataset>
