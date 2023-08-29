@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -152,9 +153,9 @@ public abstract class QueryExportJob extends ExportJob {
 
     /**
      * Execute query to fetch export data and merge sub-data, if requested.
-     * @return Query result as list, including sub-data, if requested.
+     * @return Query result, including sub-data, if requested.
      */
-    protected List<Map<String, Object>> getExportData() {
+    protected Collection<Map<String, Object>> getExportData() {
         parseExportParameters();
 
         QueryTools queryTools = new QueryTools(repository, columns);
@@ -238,20 +239,20 @@ public abstract class QueryExportJob extends ExportJob {
      * Merge sub data into the primary query result.
      *
      * @param primaryData The primary query result as list
-     * @return Merged data as list
+     * @return Merged data
      * @throws IllegalArgumentException in case of unknown sub-data type
      */
-    protected List<Map<String, Object>> mergeSubData(
+    protected Collection<Map<String, Object>> mergeSubData(
         List<Map<String, Object>> primaryData
     ) {
         if (primaryData == null) {
             return null;
         }
 
-        //Get ids of primary records
-        List<Integer> primaryDataIds = new ArrayList<Integer>();
-        primaryData.forEach(item -> {
-            primaryDataIds.add((Integer) item.get(idColumn));
+        // Create a map of id->record
+        Map<Integer, Map<String, Object>> idMap = new HashMap<>();
+        primaryData.forEach(record -> {
+            idMap.put((Integer) record.get(idColumn), record);
         });
 
         //Get subdata
@@ -259,16 +260,16 @@ public abstract class QueryExportJob extends ExportJob {
             case "probeId":
                 QueryBuilder<Measm> messungBuilder = repository
                     .queryBuilder(Measm.class)
-                    .andIn("sampleId", primaryDataIds);
+                    .andIn("sampleId", idMap.keySet());
                 return mergeMessungData(
-                    primaryData,
+                    idMap,
                     repository.filterPlain(messungBuilder.getQuery()));
             case "messungId":
                 QueryBuilder<MeasVal> messwertBuilder = repository
                     .queryBuilder(MeasVal.class)
-                    .andIn("measmId", primaryDataIds);
+                    .andIn("measmId", idMap.keySet());
                 return mergeMesswertData(
-                    primaryData,
+                    idMap,
                     repository.filterPlain(messwertBuilder.getQuery()));
             default:
                 throw new IllegalArgumentException(
@@ -279,24 +280,24 @@ public abstract class QueryExportJob extends ExportJob {
     /**
      * Merge primary result and measm data.
      *
-     * @param primaryData The primary query result as list
+     * @param primaryData The primary query result as map of IDs with records
      * @param messungData Data to merge
-     * @return Merged data as list
+     * @return Merged data
      */
-    protected abstract List<Map<String, Object>> mergeMessungData(
-        List<Map<String, Object>> primaryData,
+    protected abstract Collection<Map<String, Object>> mergeMessungData(
+        Map<Integer, Map<String, Object>> primaryData,
         List<Measm> messungData
     );
 
     /**
      * Merge primary result and measVal data.
      *
-     * @param primaryData The primary query result as list
+     * @param primaryData The primary query result as map of IDs with records
      * @param messwertData Data to merge
-     * @return Merged data as list
+     * @return Merged data
      */
-    protected abstract List<Map<String, Object>> mergeMesswertData(
-        List<Map<String, Object>> primaryData,
+    protected abstract Collection<Map<String, Object>> mergeMesswertData(
+        Map<Integer, Map<String, Object>> primaryData,
         List<MeasVal> messwertData
     );
 

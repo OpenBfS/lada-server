@@ -108,7 +108,7 @@ public class JsonExporter implements Exporter {
     @Override
     @SuppressWarnings("unchecked")
     public InputStream export(
-        List<Map<String, Object>> queryResult,
+        Iterable<Map<String, Object>> queryResult,
         Charset encoding,
         JsonObject options,
         List<String> columnsToInclude,
