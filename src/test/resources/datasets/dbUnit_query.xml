@@ -11,6 +11,10 @@
         id = "1"
         name = "test"
     />
+    <master.measd
+        id = "2"
+        name = "test"
+    />
     <master.meas_unit
         id = "1"
         unit_symbol = "Sv"
@@ -180,10 +184,24 @@
         is_scheduled = "true"
         tree_mod = "2012-05-09 12:00:00"
     />
+    <lada.measm
+        id = "1201"
+        sample_id = "1000"
+        ext_id = "454"
+        mmt_id = "A3"
+        is_completed = "false"
+        is_scheduled = "true"
+    />
     <lada.meas_val
         id = "1000"
         measm_id = "1200"
         measd_id = "1"
+        meas_unit_id = "1"
+    />
+    <lada.meas_val
+        id = "1001"
+        measm_id = "1200"
+        measd_id = "2"
         meas_unit_id = "1"
     />
 </dataset>
