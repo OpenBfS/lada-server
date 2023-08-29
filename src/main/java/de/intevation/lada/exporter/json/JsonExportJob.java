@@ -51,6 +51,7 @@ public class JsonExportJob extends QueryExportJob {
 
     @Override
     protected List<Map<String, Object>> mergeMessungData(
+        List<Map<String, Object>> primaryData,
         List<Measm> messungData
     ) {
         // Create a map of id->record
@@ -79,6 +80,7 @@ public class JsonExportJob extends QueryExportJob {
 
     @Override
     protected List<Map<String, Object>> mergeMesswertData(
+        List<Map<String, Object>> primaryData,
         List<MeasVal> messwertData
     ) {
         // Create a map of id->record
@@ -111,11 +113,11 @@ public class JsonExportJob extends QueryExportJob {
         //Export data to json
         writeResultToFile(exporter.export(
             getExportData(),
-            encoding,
+            this.encoding,
             this.exportParameters,
             this.columnsToExport,
             ID_TYPE_TO_SUBDATA_KEY.get(this.idType),
-            qId,
+            this.qId,
             this.dateFormat,
             null));
 

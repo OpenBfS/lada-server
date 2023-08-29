@@ -72,6 +72,7 @@ public class CsvExportJob extends QueryExportJob {
 
     @Override
     protected List<Map<String, Object>> mergeMessungData(
+        List<Map<String, Object>> primaryData,
         List<Measm> messungData
     ) {
         // Create a map of id->record
@@ -105,6 +106,7 @@ public class CsvExportJob extends QueryExportJob {
 
     @Override
     protected List<Map<String, Object>> mergeMesswertData(
+        List<Map<String, Object>> primaryData,
         List<MeasVal> messwertData
     ) {
         // Create a map of id->record
@@ -162,13 +164,13 @@ public class CsvExportJob extends QueryExportJob {
         //Export data to csv
         writeResultToFile(exporter.export(
             getExportData(),
-            encoding,
+            this.encoding,
             this.exportParameters,
             this.columnsToExport,
             "",
-            qId,
+            this.qId,
             this.dateFormat,
-            locale));
+            this.locale));
 
         logger.debug(String.format("Finished CSV export"));
     }

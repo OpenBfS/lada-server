@@ -88,11 +88,6 @@ public abstract class QueryExportJob extends ExportJob {
     protected Integer qId;
 
     /**
-     * Primary data query result.
-     */
-    protected List<Map<String, Object>> primaryData;
-
-    /**
      * Constructor.
      */
     public QueryExportJob() {
@@ -163,15 +158,15 @@ public abstract class QueryExportJob extends ExportJob {
         parseExportParameters();
 
         QueryTools queryTools = new QueryTools(repository, columns);
-        this.primaryData = queryTools.getResultForQuery();
+        List<Map<String, Object>> primaryData = queryTools.getResultForQuery();
         logger.debug(String.format(
                 "Fetched %d primary records",
-                this.primaryData == null ? 0 : this.primaryData.size()));
+                primaryData == null ? 0 : primaryData.size()));
 
         if (exportSubdata) {
-            return mergeSubData();
+            return mergeSubData(primaryData);
         }
-        return this.primaryData;
+        return primaryData;
     }
 
     /**
@@ -242,10 +237,13 @@ public abstract class QueryExportJob extends ExportJob {
     /**
      * Merge sub data into the primary query result.
      *
+     * @param primaryData The primary query result as list
      * @return Merged data as list
      * @throws IllegalArgumentException in case of unknown sub-data type
      */
-    protected List<Map<String, Object>> mergeSubData() {
+    protected List<Map<String, Object>> mergeSubData(
+        List<Map<String, Object>> primaryData
+    ) {
         if (primaryData == null) {
             return null;
         }
@@ -263,12 +261,14 @@ public abstract class QueryExportJob extends ExportJob {
                     .queryBuilder(Measm.class)
                     .andIn("sampleId", primaryDataIds);
                 return mergeMessungData(
+                    primaryData,
                     repository.filterPlain(messungBuilder.getQuery()));
             case "messungId":
                 QueryBuilder<MeasVal> messwertBuilder = repository
                     .queryBuilder(MeasVal.class)
                     .andIn("measmId", primaryDataIds);
                 return mergeMesswertData(
+                    primaryData,
                     repository.filterPlain(messwertBuilder.getQuery()));
             default:
                 throw new IllegalArgumentException(
@@ -279,20 +279,24 @@ public abstract class QueryExportJob extends ExportJob {
     /**
      * Merge primary result and measm data.
      *
+     * @param primaryData The primary query result as list
      * @param messungData Data to merge
      * @return Merged data as list
      */
     protected abstract List<Map<String, Object>> mergeMessungData(
+        List<Map<String, Object>> primaryData,
         List<Measm> messungData
     );
 
     /**
      * Merge primary result and measVal data.
      *
+     * @param primaryData The primary query result as list
      * @param messwertData Data to merge
      * @return Merged data as list
      */
     protected abstract List<Map<String, Object>> mergeMesswertData(
+        List<Map<String, Object>> primaryData,
         List<MeasVal> messwertData
     );
 
