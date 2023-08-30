@@ -15,6 +15,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import de.intevation.lada.test.validator.CommMeasmTest;
 import de.intevation.lada.test.validator.CommSampleTest;
 import de.intevation.lada.test.validator.MessungTest;
 import de.intevation.lada.test.validator.MpgTest;
@@ -44,6 +45,9 @@ public class ValidatorTest extends BaseTest {
 
     @Inject
     private CommSampleTest commSampleTest;
+
+    @Inject
+    private CommMeasmTest commMeasmTest;
 
     /**
      * Constructor.
@@ -775,5 +779,21 @@ public class ValidatorTest extends BaseTest {
     @Test
     public void commSampleUniqueText() {
         commSampleTest.commentUniqueText();
+    }
+
+    /**
+     * Test commMeasm with existing text.
+     */
+    @Test
+    public void commMeasmDuplicateText() {
+        commMeasmTest.commentDuplicateText();
+    }
+
+    /**
+     * Test commMeasm with new text.
+     */
+    @Test
+    public void commMeasmUniqueText() {
+        commMeasmTest.commentUniqueText();
     }
 }
