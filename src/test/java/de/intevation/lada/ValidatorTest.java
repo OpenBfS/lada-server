@@ -15,6 +15,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import de.intevation.lada.test.validator.CommSampleTest;
 import de.intevation.lada.test.validator.MessungTest;
 import de.intevation.lada.test.validator.MpgTest;
 import de.intevation.lada.test.validator.ProbeTest;
@@ -40,6 +41,9 @@ public class ValidatorTest extends BaseTest {
 
     @Inject
     private MpgTest mpgTest;
+
+    @Inject
+    private CommSampleTest commSampleTest;
 
     /**
      * Constructor.
@@ -755,5 +759,21 @@ public class ValidatorTest extends BaseTest {
     @Test
     public void mpgEnvDescripWithoutMatchingEnvMediumId() {
         mpgTest.envDescripWithoutMatchingEnvMediumId();
+    }
+
+    /**
+     * Test commSample with existing text.
+     */
+    @Test
+    public void commSampleDuplicateText() {
+        commSampleTest.commentDuplicateText();
+    }
+
+    /**
+     * Test commSample with new text.
+     */
+    @Test
+    public void commSampleUniqueText() {
+        commSampleTest.commentUniqueText();
     }
 }
