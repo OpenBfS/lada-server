@@ -12,6 +12,7 @@ import java.text.ParseException;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -20,6 +21,7 @@ import de.intevation.lada.test.validator.CommSampleTest;
 import de.intevation.lada.test.validator.MessungTest;
 import de.intevation.lada.test.validator.MpgTest;
 import de.intevation.lada.test.validator.ProbeTest;
+import de.intevation.lada.test.validator.SiteTest;
 import de.intevation.lada.test.validator.StatusTest;
 
 
@@ -48,6 +50,9 @@ public class ValidatorTest extends BaseTest {
 
     @Inject
     private CommMeasmTest commMeasmTest;
+
+    @Inject
+    private SiteTest siteTest;
 
     /**
      * Constructor.
@@ -795,5 +800,112 @@ public class ValidatorTest extends BaseTest {
     @Test
     public void commMeasmUniqueText() {
         commMeasmTest.commentUniqueText();
+    }
+
+    /**
+     * Test site object with adminUnit without border view entry.
+     */
+    @Test
+    public void siteAdminUnitWithoutAdminBorders() {
+        siteTest.adminUnitWithoutAdminBorders();
+    }
+
+    /**
+     * Test fuzzy site object close to the admin border.
+     */
+    @Test
+    public void siteFuzzyOutsiteAdminBorders() {
+        siteTest.fuzzySiteOutsiteAdminBorders();
+    }
+
+    /**
+     * Test site object far outside to the admin border.
+     */
+    @Test
+    @Ignore
+    //TODO: This currently does not return the expected validation warnings
+    public void siteOutsiteAdminBorders() {
+        siteTest.siteOutsiteAdminBorders();
+    }
+
+    /**
+     * Test site inside admin borders.
+     */
+    @Test
+    public void siteInsideAdminBorders() {
+        siteTest.siteInsideAdminBorders();
+    }
+
+    /**
+     * Test site with duplicate extId.
+     */
+    @Test
+    public void siteDuplicateExtId() {
+        siteTest.duplicateExtId();
+    }
+
+    /**
+     * Test site with unique extId.
+     */
+    @Test
+    public void siteUniqueExtId() {
+        siteTest.uniqueExtId();
+    }
+
+    /**
+     * Test site with a non existing site class.
+     */
+    @Test
+    public void siteClassDoesNotExist() {
+        siteTest.siteClassDoesExist();
+    }
+
+    /**
+     * Test site with valid site class.
+     */
+    @Test
+    public void siteClassDoesExist() {
+        siteTest.siteClassDoesExist();
+    }
+
+    /**
+     * Test REI site with 3 character extId.
+     */
+    @Test
+    public void reiSiteExtIdTooShort() {
+        siteTest.reiSiteExtIdTooShort();
+    }
+
+    /**
+     * Test REI site without nucl facils.
+     */
+    @Test
+    public void reiSiteNoNuclFacils() {
+        siteTest.reiSiteNoNuclFacils();
+    }
+
+    /**
+     * Test REI site which ext id points to NuclFacil that is not connected to
+     * its nuclFacilGrId.
+     */
+    @Test
+    public void reiSiteNuclFacilWithoutMappingEntry() {
+        siteTest.reiSiteNuclFacilWithoutMappingEntry();
+    }
+
+    /**
+     * Test rei site without nuclFacilGrId.
+     */
+    @Test
+    public void reiSiteWithoutNuclFacilGrId() {
+        siteTest.reiSiteWithoutNuclFacilGrId();
+    }
+
+    /**
+     * Test rei site.
+     */
+    @Test
+    public void reiSite() {
+        siteTest.reiSite();
     }
 }

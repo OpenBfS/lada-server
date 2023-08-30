@@ -18,8 +18,11 @@
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "207" />
     <master.env_medium id = "L42" name = "Example env Medium" unit_1 = "207" />
     <master.rei_ag_gr id = "1" name = "rei_name" descr = "rei_descr" />
-    <master.nucl_facil id = "1" ext_id = "A1" name = "nucl_facil_name" />
+    <master.nucl_facil id = "1" ext_id = "A123" name = "nucl_facil_name" />
+    <master.nucl_facil id = "2" ext_id = "Othr" name = "nucl_facil_name" />
+    <master.nucl_facil id = "3" ext_id = "123" name = "nucl_facil_name" />
     <master.nucl_facil_gr id = "1" ext_id = "GRA1" name = "nucl_facil_gr_name" />
+    <master.nucl_facil_gr_mp id = "1" nucl_facil_id = "1" nucl_facil_gr_id = "1" />
     <master.rei_ag_gr_env_medium_mp id = "1" rei_ag_gr_id = "1" env_medium_id = "L6" />
     <master.sampler
         id = "726"
@@ -61,8 +64,18 @@
         is_rural_dist = "true"
         is_gov_dist = "false"
     />
+    <master.admin_unit
+        id = "420042"
+        state_id = "11000000"
+        name = "Berlin"
+        is_state = "true"
+        is_munic = "true"
+        is_rural_dist = "true"
+        is_gov_dist = "false"
+    />
     <master.spat_ref_sys id = "5" />
     <master.site_class id = "1" />
+    <master.site_class id = "3" />
     <master.state
         id = "0"
         ctry = "Deutschland"
