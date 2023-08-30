@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import de.intevation.lada.test.validator.MessungTest;
+import de.intevation.lada.test.validator.MpgTest;
 import de.intevation.lada.test.validator.ProbeTest;
 import de.intevation.lada.test.validator.StatusTest;
 
@@ -36,6 +37,9 @@ public class ValidatorTest extends BaseTest {
 
     @Inject
     private StatusTest statusTest;
+
+    @Inject
+    private MpgTest mpgTest;
 
     /**
      * Constructor.
@@ -575,5 +579,181 @@ public class ValidatorTest extends BaseTest {
     @Test
     public void measmWithObligMeasd() {
         messungTest.measmWithObligMeasd();
+    }
+
+    /**
+     * Test mpg objects with valid start and end date below minimum value.
+     */
+    @Test
+    public void mpgValidStartEndDateBelowMin() {
+        mpgTest.validStartEndDateBelowMin();
+    }
+
+    /**
+     * Test mpg objects with valid start and end date above maximum value.
+     */
+    @Test
+    public void mpgValidStartEndDateAboveMax() {
+        mpgTest.validStartEndDateAboveMax();
+    }
+
+    /**
+     * Test mpg objects with proper valid start and end date.
+     */
+    @Test
+    public void mpgValidStartEndDate() {
+        mpgTest.validStartEndDate();
+    }
+
+    /**
+     * Test mpg with pdStartDate smaller than valid.
+     */
+    @Test
+    public void mpgYearIntervalStartDateSmallerThanValid() {
+        mpgTest.yearIntervalStartDateSmallerThanValid();
+    }
+
+    /**
+     * Test mpg with pdEndDate greater than valid end date.
+     */
+    @Test
+    public void mpgYearIntervalStartDateGreaterThanValid() {
+        mpgTest.yearIntervalStartDateGreaterThanValid();
+    }
+
+    /**
+     * Test mpg with pdEndDate smaller than valid start date.
+     */
+    @Test
+    public void mpgYearIntervalEndDateSmallerThanValid() {
+        mpgTest.yearIntervalEndDateSmallerThanValid();
+    }
+
+    /**
+     * Test mpg with pdEndDate greater than valid end date.
+     */
+    @Test
+    public void mpgYearIntervalEndDateGreaterThanValid() {
+        mpgTest.yearIntervalEndDateGreaterThanValid();
+    }
+
+    /**
+     * Test mpg with invalid sample pd offset.
+     */
+    @Test
+    public void mpgYearIntervalInvalidSamplePdOffset() {
+        mpgTest.yearIntervalInvalidSamplePdOffset();
+    }
+
+    /**
+     * Test mpg with year interval and valid dates.
+     */
+    @Test
+    public void mpgYearValidInterval() {
+        mpgTest.yearValidInterval();
+    }
+
+    /**
+     * Test mpg with samplePdStartDate below lower limit.
+     */
+    @Test
+    public void mpgSamplePdStartDateBelowLimit() {
+        mpgTest.samplePdStartDateBelowLimit();
+    }
+
+    /**
+     * Test mpg with samplePdEndDate below lower limit.
+     */
+    @Test
+    public void mpgSamplePdEndDateBelowLimit() {
+        mpgTest.samplePdEndDateBelowLimit();
+    }
+
+    /**
+     * Test mpg with samplePdOffset below lower limit.
+     */
+    @Test
+    public void mpgSamplePdOffsetBelowLimit() {
+        mpgTest.samplePdOffsetBelowLimit();
+    }
+
+    /**
+     * Test mpg with invalid samplePd.
+     */
+    @Test
+    public void mpgInvalidSamplePd() {
+        mpgTest.invalidSamplePd();
+    }
+
+    /**
+     * Test mpg with samplePdStartDate greater than interval max.
+     */
+    @Test
+    public void mpgSamplePdStartDateGreaterThanIntervalMax() {
+        mpgTest.samplePdStartDateGreaterThanIntervalMax();
+    }
+
+    /**
+     * Test mpg with samplePdEndDate greater than interval max.
+     */
+    @Test
+    public void mpgSamplePdEndDateGreaterThanIntervalMax() {
+        mpgTest.samplePdEndDateGreaterThanIntervalMax();
+    }
+
+    /**
+     * Test mpg with samplePdOffset greater than interval max.
+     */
+    @Test
+    public void mpgSamplePdOffsetGreaterThanIntervalMax() {
+        mpgTest.samplePdOffsetGreaterThanIntervalMax();
+    }
+
+    /**
+     * Test mpg with samplePdStart date greater than samplePdEnd.
+     */
+    @Test
+    public void mpgSamplePdStartGreaterThanEnd() {
+        mpgTest.samplePdStartGreaterThanEnd();
+    }
+
+    /**
+     * Test mpg with invalid sampleSpecif.
+     */
+    @Test
+    public void mpgSampleSpecifDoesNotExist() {
+        mpgTest.sampleSpecifDoesNotExist();
+    }
+
+    /**
+     * Test mpg with sampleSpecif.
+     */
+    @Test
+    public void mpgSampleSpecifDoesExist() {
+        mpgTest.sampleSpecifDoesExist();
+    }
+
+    /**
+     * Test mpg with invalid envDescripDisplay.
+     */
+    @Test
+    public void mpgEnvDescripDisplayInvalidDisplayString() {
+        mpgTest.envDescripDisplayInvalidDisplayString();
+    }
+
+    /**
+     * Test mpg with matching envMediumId.
+     */
+    @Test
+    public void mpgEnvDescripWithMatchingEnvMediumId() {
+        mpgTest.envDescripWithMatchingEnvMediumId();
+    }
+
+    /**
+     * Test mpg without matching envMediumId.
+     */
+    @Test
+    public void mpgEnvDescripWithoutMatchingEnvMediumId() {
+        mpgTest.envDescripWithoutMatchingEnvMediumId();
     }
 }
