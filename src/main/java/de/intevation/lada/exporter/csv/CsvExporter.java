@@ -197,9 +197,11 @@ public class CsvExporter implements Exporter {
                         ? csvOptions.getString(
                             "quoteType") : "doublequote").getChar();
                 }
+                final String subDataColumnNamesKey = "subDataColumnNames";
                 subDataColumnNames =
-                    options.containsKey("subDataColumnNames")
-                    ? options.getJsonObject("subDataColumnNames") : null;
+                    options.containsKey(subDataColumnNamesKey)
+                    && !options.isNull(subDataColumnNamesKey)
+                    ? options.getJsonObject(subDataColumnNamesKey) : null;
             } catch (IllegalArgumentException iae) {
                 logger.error(
                     String.format(
