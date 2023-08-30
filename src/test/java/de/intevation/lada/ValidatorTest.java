@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
 
 import de.intevation.lada.test.validator.CommMeasmTest;
 import de.intevation.lada.test.validator.CommSampleTest;
+import de.intevation.lada.test.validator.GeolocatTest;
 import de.intevation.lada.test.validator.MessungTest;
 import de.intevation.lada.test.validator.MpgTest;
 import de.intevation.lada.test.validator.ProbeTest;
@@ -53,6 +54,9 @@ public class ValidatorTest extends BaseTest {
 
     @Inject
     private SiteTest siteTest;
+
+    @Inject
+    private GeolocatTest geolocatTest;
 
     /**
      * Constructor.
@@ -907,5 +911,38 @@ public class ValidatorTest extends BaseTest {
     @Test
     public void reiSite() {
         siteTest.reiSite();
+    }
+
+
+    /**
+     * Test geolocat with sample which already has a E-Type geolocat.
+     */
+    @Test
+    public void geolocatDuplicateETypeRegulation() {
+        geolocatTest.geolocatDuplicateETypeRegulation();
+    }
+
+    /**
+     * Test valid geolocat.
+     */
+    @Test
+    public void validGeolocat() {
+        geolocatTest.validGeolocat();
+    }
+
+    /**
+     * Test geolocat with mpg which already has a E-Type geolocat.
+     */
+    @Test
+    public void geolocatMpgDuplicateETypeRegulation() {
+        geolocatTest.geolocatMpgDuplicateETypeRegulation();
+    }
+
+    /**
+     * Test valid geolocatMpg.
+     */
+    @Test
+    public void validGeolocatMpg() {
+        geolocatTest.validGeolocatMpg();
     }
 }
