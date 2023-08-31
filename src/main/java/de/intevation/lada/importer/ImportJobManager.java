@@ -10,7 +10,6 @@ package de.intevation.lada.importer;
 
 import java.util.Map;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.json.JsonObject;
@@ -27,7 +26,6 @@ import de.intevation.lada.util.data.JobManager;
 /**
  * Class managing import jobs.
  */
-@ApplicationScoped
 public class ImportJobManager extends JobManager {
 
     @Inject
@@ -45,18 +43,15 @@ public class ImportJobManager extends JobManager {
      * @return New job refId
      */
     public String createImportJob(
-        UserInfo userInfo, JsonObject params, MeasFacil mst) {
-        String id = getNextIdentifier();
-        logger.debug(String.format("Creating new job: %s", id));
-
+        UserInfo userInfo, JsonObject params, MeasFacil mst
+    ) {
         LafImportJob newJob = lafImportJobProvider.get();
         newJob.setJsonInput(params);
         newJob.setUserInfo(userInfo);
         newJob.setMst(mst);
 
         newJob.setFuture(executor.submit(newJob));
-        activeJobs.put(id, newJob);
-        return id;
+        return addJob(newJob);
     }
 
     /**
