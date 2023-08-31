@@ -4,8 +4,8 @@ batch
 data-source remove --name=ExampleDS
 /subsystem=datasources/jdbc-driver=h2:remove()
 /subsystem=datasources/jdbc-driver=postgres:add(driver-name="postgres",driver-module-name="org.postgres",driver-class-name=org.postgis.DriverWrapper)
-data-source add --jndi-name=java:/jboss/lada --name=lada --connection-url=jdbc:postgresql_postGIS://db:5432/lada --driver-name=postgres --user-name=lada --password=lada
-data-source add --jndi-name=java:/jboss/lada-test --name=lada-test --connection-url=jdbc:postgresql_postGIS://db:5432/lada_test --driver-name=postgres --user-name=lada_test --password=lada_test
+data-source add --jndi-name=java:/jboss/lada --name=lada --connection-url=jdbc:postgresql_postGIS://db:5432/lada --driver-name=postgres --user-name=lada --password=lada --check-valid-connection-sql="SELECT 1"
+data-source add --jndi-name=java:/jboss/lada-test --name=lada-test --connection-url=jdbc:postgresql_postGIS://db:5432/lada_test --driver-name=postgres --user-name=lada_test --password=lada_test --check-valid-connection-sql="SELECT 1"
 /subsystem=undertow/server=default-server/http-listener=default/:write-attribute(name=max-post-size,value=1398149)
 /subsystem=undertow/server=default-server/https-listener=https/:write-attribute(name=max-post-size,value=1398149)
 /subsystem=logging/console-handler=CONSOLE:write-attribute(name=level, value=DEBUG)
