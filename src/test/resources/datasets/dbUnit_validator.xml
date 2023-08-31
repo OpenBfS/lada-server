@@ -15,8 +15,14 @@
     <master.sample_meth id = "3" ext_id = "S" eudf_sample_meth_id = "A" />
     <master.sample_meth id = "9" ext_id = "X" eudf_sample_meth_id = "A" />
     <master.meas_unit id = "207" />
-    <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "207" />
-    <master.env_medium id = "L42" name = "Example env Medium" unit_1 = "207" />
+    <master.meas_unit id = "208" />
+    <master.meas_unit id = "209" />
+    <master.meas_unit id = "210" />
+    <master.meas_unit id = "211" />
+    <master.unit_convers id = "209" from_unit_id = "209" to_unit_id = "207" factor = "1.0"/>
+    <master.unit_convers id = "210" from_unit_id = "210" to_unit_id = "208" factor = "1.0"/>
+    <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "207" unit_2 = "208"/>
+    <master.env_medium id = "L42" name = "Example env Medium" unit_1 = "207"/>
     <master.rei_ag_gr id = "1" name = "rei_name" descr = "rei_descr" />
     <master.nucl_facil id = "1" ext_id = "A123" name = "nucl_facil_name" />
     <master.nucl_facil id = "2" ext_id = "Othr" name = "nucl_facil_name" />
@@ -33,6 +39,10 @@
     />
     <master.mmt id = "A3" />
     <master.measd id = "56" name = "Mangan" />
+    <master.measd id = "57" name = "Other" />
+    <master.measd_gr id = "1" />
+    <master.measd_gr_mp measd_id = "56" measd_gr_id = "1" />
+    <master.mmt_measd_gr_mp mmt_id = "A3" measd_gr_id = "1" />
     <master.oblig_measd_mp
         id = "1"
         mmt_id = "A3"

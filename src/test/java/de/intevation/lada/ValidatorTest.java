@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 import de.intevation.lada.test.validator.CommMeasmTest;
 import de.intevation.lada.test.validator.CommSampleTest;
 import de.intevation.lada.test.validator.GeolocatTest;
+import de.intevation.lada.test.validator.MeasValTest;
 import de.intevation.lada.test.validator.MessungTest;
 import de.intevation.lada.test.validator.MpgTest;
 import de.intevation.lada.test.validator.ProbeTest;
@@ -57,6 +58,9 @@ public class ValidatorTest extends BaseTest {
 
     @Inject
     private GeolocatTest geolocatTest;
+
+    @Inject
+    private MeasValTest measValTest;
 
     /**
      * Constructor.
@@ -944,5 +948,198 @@ public class ValidatorTest extends BaseTest {
     @Test
     public void validGeolocatMpg() {
         geolocatTest.validGeolocatMpg();
+    }
+
+    /**
+     * Test measVal withour errror and lessThanLOD set.
+     */
+    @Test
+    public void measValWithoutErrorAndLessThanLOD() {
+        measValTest.measValWithoutErrorAndLessThanLOD();
+    }
+
+    /**
+     * Test measVal withour errror but lessThanLOD set.
+     */
+    @Test
+    public void measValWithoutError() {
+        measValTest.measValWithError();
+    }
+
+    /**
+     * Test measVal with error set.
+     */
+    @Test
+    public void measValWithError() {
+        measValTest.measValWithError();
+    }
+
+    /**
+     * Test measVal without error set but lessThanLOD.
+     */
+    @Test
+    public void measValWithOutErrorAndLessThanLOD() {
+        measValTest.measValWithoutErrorAndLessThanLOD();
+    }
+
+    /**
+     * Test measVal without measVal and lessThanLOD.
+     */
+    @Test
+    public void measValNotLessThanLODAndNoMeasVal() {
+        measValTest.notLessThanLODAndNoMeasVal();
+    }
+
+    /**
+     * Test measVal with lessThanLOD and measVal set.
+     */
+    @Test
+    public void measValLessThanLODAndMeasVal() {
+        measValTest.lessThanLODAndMeasVal();
+    }
+
+    /**
+     * Test measVal with lessThanLOD but not val set.
+     */
+    @Test
+    public void measValLessThanLODAndNoMeasVal() {
+        measValTest.lessThanLODAndNoMeasVal();
+    }
+
+    /**
+     * Test measVal with measVal set but not lessThanLOD.
+     */
+    @Test
+    public void measValWithoutLessThanLOD() {
+        measValTest.measValWithoutLessThanLOD();
+    }
+
+    /**
+     * Test measVal with measVal set to zero.
+     */
+    @Test
+    public void measValIsZero() {
+        measValTest.measValIsZero();
+    }
+
+    /**
+     * Test measVal with lessThanLOD set but not detectLim.
+     */
+    @Test
+    public void measValHasNoDetectLim() {
+        measValTest.hasNoDetectLim();
+    }
+
+    /**
+     * Test measVal with lessThanLOD set but not detectLim.
+     */
+    @Test
+    public void measValHasDetectLim() {
+        measValTest.hasDetectLim();
+    }
+
+    /**
+     * Test measVal with envMediums primary unit as measUnit.
+     */
+    @Test
+    public void measUnitIsPrimary() {
+        measValTest.measUnitIsPrimary();
+    }
+
+    /**
+     * Test measVal with envMediums secondary unit as measUnit.
+     */
+    @Test
+    public void measUnitIsSecondary() {
+        measValTest.measUnitIsSecondary();
+    }
+
+    /**
+     * Test measVal with measUnit convertable to envMediums primary unit.
+     */
+    @Test
+    @Ignore
+    //TODO: Current not functional as the validation rules relies on nested
+    //      data that can not be provided here.
+    public void measUnitIsConvertableToPrimary() {
+        measValTest.measUnitIsConvertableToPrimary();
+    }
+
+    /**
+     * Test measVal with measUnit convertable to envMediums secondary unit.
+     */
+    @Test
+    @Ignore
+    //TODO: Current not functional as the validation rules relies on nested
+    //      data that can not be provided here.
+    public void measUnitIsConvertableToSecondary() {
+        measValTest.measUnitIsConvertableToSecondary();
+    }
+
+    /**
+     * Test measVal with measUnit that can not be converted and is not related
+     * to the given envMedium.
+     */
+    @Test
+    @Ignore
+    //TODO: Current not functional as the validation rules relies on nested
+    //      data that can not be provided here.
+    public void measUnitIsNotConvertable() {
+        measValTest.measUnitIsNotConvertable();
+    }
+
+    /**
+     * Test measVal which measd does not match the connected measm mmt.
+     */
+    @Test
+    public void measValMmtDoesNotMatchMeasd() {
+        measValTest.mmtDoesNotMatchMeasd();
+    }
+
+    /**
+     * Test measVal which measd does match the connected measm mmt.
+     */
+    @Test
+    public void measValMmtDoesMatchMeasd() {
+        measValTest.mmtDoesMatchMeasd();
+    }
+
+    /**
+     * Test measVal with envMediums secondary unit as measUnit.
+     */
+    @Test
+    @Ignore
+    //TODO: Current not functional as the validation rules relies on nested
+    //      data that can not be provided here.
+    public void secondaryMeasUnitSelected() {
+        measValTest.secondaryMeasUnitSelected();
+    }
+
+    /**
+     * Test measVal with measUnit convertable to envMediums secondary unit but
+     * not its primary unit.
+     */
+    @Test
+    @Ignore
+    //TODO: Current not functional as the validation rules relies on nested
+    //      data that can not be provided here.
+    public void measUnitIsConvertableToSecondaryButNotPrimary() {
+        measValTest.measUnitIsConvertableToSecondaryButNotPrimary();
+    }
+
+    /**
+     * Test measVal with measd that already exists in the measm.
+     */
+    @Test
+    public void measValMeasdIsNotUniqueInMeasm() {
+        measValTest.measdIsNotUniqueInMeasm();
+    }
+
+    /**
+     * Test measVal with measd that doest not already exists in the measm.
+     */
+    @Test
+    public void measValMeasdIsUniqueInMeasm() {
+        measValTest.measdIsUniqueInMeasm();
     }
 }
