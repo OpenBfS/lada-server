@@ -68,9 +68,6 @@ public class ImportJobManager extends JobManager {
     public String getImportResult(String id) throws JobNotFoundException {
         LafImportJob job = (LafImportJob) getJobById(id);
         String jsonString = "";
-        if (job == null) {
-            throw new JobNotFoundException();
-        }
         logger.debug(String.format("Returning result for job %s", id));
         try {
             Map<String, Map<String, Object>> importData = job.getImportData();

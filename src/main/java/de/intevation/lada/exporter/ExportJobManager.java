@@ -157,9 +157,6 @@ public class ExportJobManager extends JobManager {
         String id
     ) throws JobNotFoundException, FileNotFoundException {
         ExportJob job = getJobById(id);
-        if (job == null) {
-            throw new JobNotFoundException();
-        }
         Path filePath = job.getOutputFilePath();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {
