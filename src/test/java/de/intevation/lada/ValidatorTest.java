@@ -1058,9 +1058,6 @@ public class ValidatorTest extends BaseTest {
      * Test measVal with measUnit convertable to envMediums primary unit.
      */
     @Test
-    @Ignore
-    //TODO: Current not functional as the validation rules relies on nested
-    //      data that can not be provided here.
     public void measUnitIsConvertableToPrimary() {
         measValTest.measUnitIsConvertableToPrimary();
     }
@@ -1069,9 +1066,6 @@ public class ValidatorTest extends BaseTest {
      * Test measVal with measUnit convertable to envMediums secondary unit.
      */
     @Test
-    @Ignore
-    //TODO: Current not functional as the validation rules relies on nested
-    //      data that can not be provided here.
     public void measUnitIsConvertableToSecondary() {
         measValTest.measUnitIsConvertableToSecondary();
     }
@@ -1081,9 +1075,6 @@ public class ValidatorTest extends BaseTest {
      * to the given envMedium.
      */
     @Test
-    @Ignore
-    //TODO: Current not functional as the validation rules relies on nested
-    //      data that can not be provided here.
     public void measUnitIsNotConvertable() {
         measValTest.measUnitIsNotConvertable();
     }
@@ -1108,9 +1099,6 @@ public class ValidatorTest extends BaseTest {
      * Test measVal with envMediums secondary unit as measUnit.
      */
     @Test
-    @Ignore
-    //TODO: Current not functional as the validation rules relies on nested
-    //      data that can not be provided here.
     public void secondaryMeasUnitSelected() {
         measValTest.secondaryMeasUnitSelected();
     }
@@ -1120,9 +1108,6 @@ public class ValidatorTest extends BaseTest {
      * not its primary unit.
      */
     @Test
-    @Ignore
-    //TODO: Current not functional as the validation rules relies on nested
-    //      data that can not be provided here.
     public void measUnitIsConvertableToSecondaryButNotPrimary() {
         measValTest.measUnitIsConvertableToSecondaryButNotPrimary();
     }

@@ -29,7 +29,6 @@ public class MeasValTest {
     private static final String VALIDATION_KEY_SEPARATOR = "#";
 
     //Other constants
-    private static final String EXISTING_ENV_MEDIUM_ID = "L6";
     private static final int EXISTING_MEASM_ID = 1200;
     private static final int EXISTING_MEASD_ID = 56;
     private static final int OTHER_MEASD_ID = 57;
@@ -330,7 +329,7 @@ public class MeasValTest {
         Assert.assertTrue(violation.getWarnings()
             .containsKey(warningKey));
         Assert.assertTrue(violation.getWarnings()
-            .get(warningKey).contains(StatusCodes.VAL_UNIT_NORMALIZE));
+            .get(warningKey).contains(StatusCodes.VAL_UNIT_UMW));
     }
 
     /**

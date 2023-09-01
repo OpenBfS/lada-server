@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import java.util.List;
 
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.UnitConvers;
@@ -42,9 +43,11 @@ public class IsNormalized implements Rule {
         EnvMedium umwelt = null;
         Violation violation = new Violation();
 
-        if (messwert.getMeasm() != null
-                && messwert.getMeasm().getSample() != null) {
-            umwelt = messwert.getMeasm().getSample().getEnvMedium();
+        if (messwert.getMeasmId() != null) {
+            Measm measm = messwert.getMeasm() != null
+                ? messwert.getMeasm()
+                : repository.getByIdPlain(Measm.class, messwert.getMeasmId());
+            umwelt = measm.getSample().getEnvMedium();
         }
 
         // If umwelt record is present
