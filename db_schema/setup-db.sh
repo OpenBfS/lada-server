@@ -1,8 +1,11 @@
 #!/bin/sh -e
 # SYNOPSIS
-# ./setup-db.sh [-cn] [ROLE_NAME] [ROLE_PW] [DB_NAME]
+# ./setup-db.sh [-cn] [-g N] [ROLE_NAME] [ROLE_PW] [DB_NAME]
 #   -c         clean - drop an existing database
 #   -n         no data - do not import example data
+#   -g         generate N samples, each with N measms, each with either
+#              N meas_vals or the maximum possible number of meas_vals, which
+#              is contrained by the number of available measds.
 #   ROLE_NAME  name of db user (default = lada)
 #   ROLE_PW    login password  (default = ROLE_NAME)
 #   DB_NAME    name of the databaes (default = ROLE_NAME)
@@ -12,13 +15,18 @@
 
 DIR=$(readlink -f $(dirname $0))
 
-while getopts "cn" opt; do
+while getopts "cng:" opt; do
     case "$opt" in
         c)
             DROP_DB="true"
             ;;
         n)
             NO_DATA="true"
+            ;;
+        g)
+            NO_DATA="true"
+            N_SAMPLES="$OPTARG"
+            GENERATE="true"
             ;;
     esac
 done
@@ -161,4 +169,26 @@ if [ "$NO_DATA" != "true" ]; then
         echo "  ${file%.sql}"
         psql -q $DB_CONNECT_STRING -d $DB_NAME -f $file
     done
+fi
+
+if [ "$GENERATE" = "true" ]; then
+    echo "load master data:"
+    for file in "$DIR"/data/master/[0-9]*.sql;
+    do
+        psql -q $DB_CONNECT_STRING -d $DB_NAME -f $file
+    done
+
+    echo "generating data ..."
+    echo "\set n $N_SAMPLES
+          WITH samples AS (INSERT INTO lada.sample (meas_facil_id, appr_lab_id)
+              SELECT '06010', '06010' FROM generate_series(1, :n)
+              RETURNING id),
+          measms AS (INSERT INTO lada.measm (sample_id, mmt_id)
+              SELECT id, 'AB' FROM samples, generate_series(1, :n)
+              RETURNING id)
+          INSERT INTO lada.meas_val (measm_id, measd_id, meas_unit_id)
+              SELECT measms.id, measd.id, 0
+              FROM measms,
+                  (SELECT id FROM master.measd FETCH NEXT :n ROWS ONLY) AS measd" | \
+        psql $DB_CONNECT_STRING -d $DB_NAME
 fi
