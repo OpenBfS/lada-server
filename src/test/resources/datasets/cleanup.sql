@@ -52,3 +52,4 @@ DELETE FROM targ_env_gr;
 DELETE FROM rei_ag_gr;
 DELETE FROM audit_trail;
 DELETE FROM lada.audit_trail;
+DELETE FROM lada.status_prot;
