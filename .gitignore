@@ -13,6 +13,7 @@ TAGS
 .metadata
 target/
 .settings
-db_schema/private*
+db_schema/data/master/private*
+db_schema/data/lada/private*
 .dir-locals.el
 .vscode

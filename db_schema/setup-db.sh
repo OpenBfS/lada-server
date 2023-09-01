@@ -153,57 +153,12 @@ if [ "$NO_DATA" != "true" ]; then
          "REFRESH MATERIALIZED VIEW master.admin_border_view"
 
     echo "load data:"
-    for file in \
-        master_data_status_order_mp.sql \
-        master_data_admin_unit.sql \
-        master_data_network.sql \
-        master_data_meas_facil.sql \
-        master_data_auth.sql \
-        master_data_opr_mod.sql \
-        master_data_meas_unit.sql \
-        master_data_unit_convers.sql \
-        master_data_env_medium.sql \
-        master_data_auth_coord_ofc_env_medium_mp.sql \
-        master_data_regulation.sql \
-        master_data_dataset_creator.sql \
-        master_data_env_descrip_env_medium_mp.sql \
-        master_data_env_descrip.sql \
-        master_data_spat_ref_sys.sql \
-        master_data_mmt.sql \
-        master_data_measd.sql \
-        master_data_measd_gr.sql \
-        master_data_site_class.sql \
-        master_data_state.sql \
-        master_data_nucl_facil.sql \
-        master_data_type_regulation.sql \
-        master_data_oblig_measd_mp.sql \
-        master_data_sample_specif.sql \
-        master_data_env_specif_mp.sql \
-        master_data_sample_meth.sql \
-        master_data_mpg_transfer.sql \
-        master_data_poi.sql \
-        master_data_mpg_categ.sql \
-        master_data_munic_div.sql \
-        master_data_rei.sql \
-        master_data_site.sql \
-        master_data_sampler.sql \
-        master_data_query.sql \
-        master_data_user_context.sql \
-        master_data_import_config.sql \
-        master_data_convers_dm_fm.sql\
-        master_data_ref_val.sql\
-        master_data_targ_act.sql\
-        master_data_tag.sql\
-        lada_data.sql \
-        lada_mpg.sql
-	
+    for file in "$DIR"/data/master/[0-9]*.sql "$DIR"/data/lada/[0-9]*.sql;
     do
-        [ -f private_${file} ] && file=private_${file}
+        # If file with the same name prefixed "private_" exists, take that
+        private=$(dirname $file)/private_$(basename $file)
+        [ -f ${private} ] && file=${private}
         echo "  ${file%.sql}"
-        psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/$file
+        psql -q $DB_CONNECT_STRING -d $DB_NAME -f $file
     done
-
-    echo init sequences
-    psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/master_init_sequences.sql
-
 fi
