@@ -107,7 +107,7 @@ SRC_URI=https://daten.gdz.bkg.bund.de/produkte/vg/vg250_ebenen_0101/aktuell/vg25
 BASE_NAME=vg250_01-01.utm32s.shape.ebenen
 SHAPE_DIR=${BASE_NAME}/vg250_ebenen_0101
 if [ ! -f ${BASE_NAME}.zip ]; then
-    curl -fO ${SRC_URI}
+    curl -sfO ${SRC_URI}
 fi
 unzip -u ${BASE_NAME}.zip "*VG250_*"
 
