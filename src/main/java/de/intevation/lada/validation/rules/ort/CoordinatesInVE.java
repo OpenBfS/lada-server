@@ -46,15 +46,14 @@ public class CoordinatesInVE implements Rule {
             : ort.getAdminUnitId();
 
         if (gemId != null && ort.getGeom() != null) {
-
             QueryBuilder<AdminBorderView> vg =
                 repository.queryBuilder(AdminBorderView.class);
             vg.and("municId", gemId);
-            List<AdminBorderView> vgs = repository.filterPlain(
-                vg.getQuery());
+            List<AdminBorderView> vgs = repository.filterPlain(vg.getQuery());
             if (vgs == null || vgs.isEmpty()) {
                 Violation violation = new Violation();
-                violation.addWarning("municId", StatusCodes.GEO_COORD_UNCHECKED);
+                violation.addWarning(
+                    "municId", StatusCodes.GEO_COORD_UNCHECKED);
                 return violation;
             }
 
@@ -89,13 +88,12 @@ public class CoordinatesInVE implements Rule {
                         return violation;
                     }
                 }
-           }
+            }
 
-           violation.addWarning("coordXExt", StatusCodes.GEO_NOT_MATCHING);
-           violation.addWarning("coordYExt", StatusCodes.GEO_NOT_MATCHING);
-           return violation;
+            violation.addWarning("coordXExt", StatusCodes.GEO_NOT_MATCHING);
+            violation.addWarning("coordYExt", StatusCodes.GEO_NOT_MATCHING);
+            return violation;
         }
         return null;
     }
-
 }
