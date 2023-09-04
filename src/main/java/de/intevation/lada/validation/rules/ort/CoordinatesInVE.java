@@ -46,9 +46,9 @@ public class CoordinatesInVE implements Rule {
             : ort.getAdminUnitId();
 
         if (gemId != null && ort.getGeom() != null) {
-            QueryBuilder<AdminBorderView> vg =
-                repository.queryBuilder(AdminBorderView.class);
-            vg.and("municId", gemId);
+            QueryBuilder<AdminBorderView> vg = repository
+                .queryBuilder(AdminBorderView.class)
+                .and("municId", gemId);
             List<AdminBorderView> vgs = repository.filterPlain(vg.getQuery());
             if (vgs == null || vgs.isEmpty()) {
                 Violation violation = new Violation();
