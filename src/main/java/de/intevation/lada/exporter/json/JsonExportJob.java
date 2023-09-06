@@ -8,7 +8,7 @@
 package de.intevation.lada.exporter.json;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -50,17 +50,12 @@ public class JsonExportJob extends QueryExportJob {
     }
 
     @Override
-    protected List<Map<String, Object>> mergeMessungData(
+    protected Collection<Map<String, Object>> mergeMessungData(
+        Map<Integer, Map<String, Object>> idMap,
         List<Measm> messungData
     ) {
-        // Create a map of id->record
-        Map<Integer, Map<String, Object>> idMap = new HashMap<>();
         final String sDataJsonKey = ID_TYPE_TO_SUBDATA_KEY.get(this.idType);
-        primaryData.forEach(record -> {
-            idMap.put((Integer) record.get(idColumn), record);
-        });
 
-        List<Map<String, Object>> merged = primaryData;
         messungData.forEach(messung -> {
             Map<String, Object> mergedMessung = transformFieldValues(messung);
             //Append messung to probe
@@ -74,21 +69,17 @@ public class JsonExportJob extends QueryExportJob {
                     sDataJsonKey);
             messungenList.add(mergedMessung);
         });
-        return merged;
+        return idMap.values();
     }
 
     @Override
-    protected List<Map<String, Object>> mergeMesswertData(
+    protected Collection<Map<String, Object>> mergeMesswertData(
+        Map<Integer, Map<String, Object>> idMap,
         List<MeasVal> messwertData
     ) {
         // Create a map of id->record
-        Map<Integer, Map<String, Object>> idMap = new HashMap<>();
         final String sDataJsonKey = ID_TYPE_TO_SUBDATA_KEY.get(this.idType);
-        primaryData.forEach(record -> {
-            idMap.put((Integer) record.get(idColumn), record);
-        });
 
-        List<Map<String, Object>> merged = primaryData;
         messwertData.forEach(messwert -> {
             Map<String, Object> mergedMesswert = transformFieldValues(messwert);
             //Append messung to probe
@@ -102,31 +93,20 @@ public class JsonExportJob extends QueryExportJob {
                     sDataJsonKey);
             messwertList.add(mergedMesswert);
         });
-        return merged;
+        return idMap.values();
     }
 
 
     @Override
     public void runWithTx() {
-        parseExportParameters();
-
-        // Fetch primary records
-        primaryData = getQueryResult();
-
-        List<Map<String, Object>> exportData = primaryData;
-        // If needed, fetch and merge sub data
-        if (exportSubdata) {
-            exportData = mergeSubData();
-        }
-
         //Export data to json
         writeResultToFile(exporter.export(
-            exportData,
-            encoding,
+            getExportData(),
+            this.encoding,
             this.exportParameters,
             this.columnsToExport,
             ID_TYPE_TO_SUBDATA_KEY.get(this.idType),
-            qId,
+            this.qId,
             this.dateFormat,
             null));
 

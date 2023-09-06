@@ -49,7 +49,7 @@ public class CsvExportJob extends QueryExportJob {
      * @param ids list of ids to merge
      * @param subDataColumns Subdata columns
      * @param primaryColumns primary data columns
-     * @return
+     * @return All records with and without sub-data
      */
     private List<Map<String, Object>> mergeDataWithEmptySubdata(
         Map<Integer, Map<String, Object>> objects, List<Integer> ids,
@@ -72,16 +72,12 @@ public class CsvExportJob extends QueryExportJob {
 
     @Override
     protected List<Map<String, Object>> mergeMessungData(
+        Map<Integer, Map<String, Object>> idMap,
         List<Measm> messungData
     ) {
-        // Create a map of id->record
-        Map<Integer, Map<String, Object>> idMap = new HashMap<>();
         // Ids left for merging
         List<Integer> idsLeft = new ArrayList<>();
-        primaryData.forEach(record -> {
-            idMap.put((Integer) record.get(idColumn), record);
-            idsLeft.add((Integer) record.get(idColumn));
-        });
+        idMap.keySet().forEach(key -> idsLeft.add(key));
 
         List<Map<String, Object>> merged = new ArrayList<>();
         messungData.forEach(messung -> {
@@ -105,16 +101,12 @@ public class CsvExportJob extends QueryExportJob {
 
     @Override
     protected List<Map<String, Object>> mergeMesswertData(
+        Map<Integer, Map<String, Object>> idMap,
         List<MeasVal> messwertData
     ) {
-        // Create a map of id->record
-        Map<Integer, Map<String, Object>> idMap = new HashMap<>();
         // Ids left for merging
         List<Integer> idsLeft = new ArrayList<>();
-        primaryData.forEach(record -> {
-            idMap.put((Integer) record.get(idColumn), record);
-            idsLeft.add((Integer) record.get(idColumn));
-        });
+        idMap.keySet().forEach(key -> idsLeft.add(key));
 
         AtomicBoolean success = new AtomicBoolean(true);
         List<Map<String, Object>> merged = new ArrayList<>();
@@ -159,27 +151,16 @@ public class CsvExportJob extends QueryExportJob {
      */
     @Override
     public void runWithTx() {
-        parseExportParameters();
-
-        //Fetch primary records
-        primaryData = getQueryResult();
-
-        List<Map<String, Object>> exportData = primaryData;
-        //If needed, fetch and merge sub data
-        if (exportSubdata) {
-            exportData = mergeSubData();
-        }
-
         //Export data to csv
         writeResultToFile(exporter.export(
-            exportData,
-            encoding,
+            getExportData(),
+            this.encoding,
             this.exportParameters,
             this.columnsToExport,
             "",
-            qId,
+            this.qId,
             this.dateFormat,
-            locale));
+            this.locale));
 
         logger.debug(String.format("Finished CSV export"));
     }

@@ -69,7 +69,7 @@ public interface Exporter {
      *
      * Note: This method may not be implemented by the implementing class.
      * The default implementation returns null.
-     * @param result Result to export as list of maps. Every list item
+     * @param result Result to export as iterable of maps. Every item
      *               represents a row,
      *               while every map key represents a column
      * @param encoding Encoding to use
@@ -83,7 +83,7 @@ public interface Exporter {
      * @return Export result as input stream or null if not implemented
      */
     default InputStream export(
-        List<Map<String, Object>> result,
+        Iterable<Map<String, Object>> result,
         Charset encoding,
         JsonObject options,
         List<String> columnsToInclude,
