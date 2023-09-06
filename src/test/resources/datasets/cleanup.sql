@@ -53,3 +53,8 @@ DELETE FROM rei_ag_gr;
 DELETE FROM audit_trail;
 DELETE FROM lada.audit_trail;
 DELETE FROM lada.status_prot;
+
+-- Reset id sequences to prevent unique constraint violations while creating
+-- new objects during the tests
+ALTER SEQUENCE lada.sample_id_seq RESTART WITH 1;
+ALTER SEQUENCE lada.status_prot_id_seq RESTART WITH 1;
