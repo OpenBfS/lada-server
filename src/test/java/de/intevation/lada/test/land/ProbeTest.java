@@ -9,7 +9,6 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -18,7 +17,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -33,10 +32,9 @@ public class ProbeTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod",
@@ -47,8 +45,9 @@ public class ProbeTest extends ServiceTest {
         });
 
         // Prepare expected probe object
-        JsonObject content = readJsonResource("/datasets/dbUnit_probe.json");
-        JsonObject probe = content.getJsonArray("lada.sample").getJsonObject(0);
+        JsonObject probe = filterJsonArrayById(
+            readXmlResource("datasets/dbUnit_lada.xml", Sample.class),
+            1000);
         JsonObjectBuilder builder = convertObject(probe);
         builder.addNull("midSampleDate");
         builder.addNull("sampleEndDate");

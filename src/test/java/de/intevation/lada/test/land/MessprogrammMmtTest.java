@@ -9,7 +9,6 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -18,7 +17,7 @@ import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.lada.MpgMmtMp;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -28,30 +27,21 @@ public class MessprogrammMmtTest extends ServiceTest {
     private JsonObject expectedById;
     private JsonObject create;
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
-
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
         });
 
         // Prepare expected object
-        JsonObject content =
-            readJsonResource("/datasets/dbUnit_messprogramm.json");
         JsonObject messprogrammMmt =
-            content.getJsonArray("lada.mpg_mmt_mp").getJsonObject(0);
+            readXmlResource("datasets/dbUnit_lada.xml", MpgMmtMp.class)
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messprogrammMmt);
         builder.add("measds", Json.createArrayBuilder().add(56));
         expectedById = builder.build();

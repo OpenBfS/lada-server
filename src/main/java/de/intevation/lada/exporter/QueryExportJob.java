@@ -9,11 +9,15 @@ package de.intevation.lada.exporter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
@@ -74,24 +78,15 @@ public abstract class QueryExportJob extends ExportJob {
     protected List<String> columnsToExport;
 
     /**
-     * Map of data types and the according sub data types.
+     * Date format to convert timestamps to (time zone defaults to UTC).
      */
-    private Map<String, String> mapPrimaryToSubDataTypes;
-
-    /**
-     * Timezone to convert timestamps to.
-     */
-    protected String timezone;
+    protected DateFormat dateFormat =
+        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
      * Query id.
      */
     protected Integer qId;
-
-    /**
-     * Primary data query result.
-     */
-    protected List<Map<String, Object>> primaryData;
 
     /**
      * Constructor.
@@ -100,11 +95,7 @@ public abstract class QueryExportJob extends ExportJob {
         columns = new ArrayList <GridColConf>();
         columnsToExport = new ArrayList<String>();
 
-        mapPrimaryToSubDataTypes = new HashMap<String, String>();
-        mapPrimaryToSubDataTypes.put("probeId", "messung");
-        mapPrimaryToSubDataTypes.put("messungId", "messwert");
-
-        this.timezone = "UTC";
+        this.dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     /**
@@ -161,130 +152,152 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-     * Execute the query.
-     * @return Query result as list
+     * Execute query to fetch export data and merge sub-data, if requested.
+     * @return Query result, including sub-data, if requested.
      */
-    protected List<Map<String, Object>> getQueryResult() {
+    protected Collection<Map<String, Object>> getExportData() {
+        parseExportParameters();
+
         QueryTools queryTools = new QueryTools(repository, columns);
-        List<Map<String, Object>> result = queryTools.getResultForQuery();
+        List<Map<String, Object>> primaryData = queryTools.getResultForQuery();
         logger.debug(String.format(
                 "Fetched %d primary records",
-                result == null ? 0 : result.size()));
-        return result;
+                primaryData == null ? 0 : primaryData.size()));
+
+        if (exportSubdata) {
+            return mergeSubData(primaryData);
+        }
+        return primaryData;
     }
 
     /**
-     * Get the status of the given messung as String.
-     * Format: [statusStufe - statusWert]
-     * @param messung Messung to get status for
-     * @return Status as string
+     * Transform Measm object into map with keys according to subDataColumns.
+     * @param measm Measm for which field values should be transformed
+     * @return Map with field names and transformed values of original measm
      */
-    protected String getStatusString(Measm messung) {
-        StatusProt protokoll =
-            repository.getByIdPlain(
-                StatusProt.class, messung.getStatus());
-        StatusMp kombi =
-            repository.getByIdPlain(
-                StatusMp.class, protokoll.getStatusMpId());
-        StatusLev stufe = kombi.getStatusLev();
-        StatusVal wert = kombi.getStatusVal();
-        return String.format("%s - %s", stufe.getLev(), wert.getVal());
+    protected Map<String, Object> transformFieldValues(Measm measm) {
+        Map<String, Object> transformed = new HashMap<>();
+        subDataColumns.forEach(subDataColumn -> {
+                Object fieldValue = null;
+                switch (subDataColumn) {
+                case "statusKombi":
+                    StatusProt prot =
+                        repository.getByIdPlain(
+                            StatusProt.class, measm.getStatus());
+                    StatusMp mp =
+                        repository.getByIdPlain(
+                            StatusMp.class, prot.getStatusMpId());
+                    StatusLev lev = mp.getStatusLev();
+                    StatusVal val = mp.getStatusVal();
+                    fieldValue = String.format(
+                        "%s - %s", lev.getLev(), val.getVal());
+                    break;
+                case "messwerteCount":
+                    QueryBuilder<MeasVal> builder = repository
+                        .queryBuilder(MeasVal.class)
+                        .and("measmId", measm.getId());
+                    // TODO: A nice example of ORM-induced database misuse:
+                    fieldValue = repository.filterPlain(builder.getQuery())
+                        .size();
+                    break;
+                default:
+                    fieldValue = getFieldByName(subDataColumn, measm);
+                }
+                transformed.put(subDataColumn, fieldValue);
+            });
+        return transformed;
     }
 
     /**
-     * Get the number of messwerte records referencing the given messung.
-     * @param messung Messung to get messwert count for
-     * @return Number of messwert records
+     * Transform MeasVal object into map with keys according to subDataColumns.
+     * @param measVal MeasVal for which field values should be transformed
+     * @return Map with field names and transformed values of original measVal
      */
-    protected int getMesswertCount(Measm messung) {
-        QueryBuilder<MeasVal> builder = repository.queryBuilder(
-            MeasVal.class);
-        builder.and("measmId", messung.getId());
-        // TODO: This is a nice example of ORM-induced database misuse:
-        return repository.filterPlain(builder.getQuery()).size();
-    }
-
-    /**
-    * Get the messeinheit for messwert values using given messwert.
-    * @param messwert messwertId sungId to get messeinheit for
-    * @return messeinheit
-     */
-    protected String getMesseinheit(MeasVal messwert) {
-        QueryBuilder<MeasUnit> builder = repository.queryBuilder(
-            MeasUnit.class);
-        builder.and("id", messwert.getMeasUnitId());
-        List<MeasUnit> messeinheit = repository.filterPlain(builder.getQuery());
-        return messeinheit.get(0).getUnitSymbol();
-    }
-
-    /**
-    * Get the messgroesse for messwert values using given messwert.
-    * @param messwert messwertId sungId to get messgroesse for
-    * @return messgroesse
-     */
-    protected String getMessgroesse(MeasVal messwert) {
-        QueryBuilder<Measd> builder = repository.queryBuilder(
-            Measd.class);
-        builder.and("id", messwert.getMeasdId());
-        List<Measd> messgroesse = repository.filterPlain(builder.getQuery());
-        return messgroesse.get(0).getName();
+    protected Map<String, Object> transformFieldValues(MeasVal measVal) {
+        Map<String, Object> transformed = new HashMap<>();
+        subDataColumns.forEach(subDataColumn -> {
+                Object fieldValue = null;
+                switch (subDataColumn) {
+                case "measUnitId":
+                    fieldValue = repository.getByIdPlain(
+                        MeasUnit.class, measVal.getMeasUnitId())
+                        .getUnitSymbol();
+                    break;
+                case "measdId":
+                    fieldValue = repository.getByIdPlain(
+                        Measd.class, measVal.getMeasdId()).getName();
+                    break;
+                default:
+                    fieldValue = getFieldByName(subDataColumn, measVal);
+                }
+                transformed.put(subDataColumn, fieldValue);
+            });
+        return transformed;
     }
 
     /**
      * Merge sub data into the primary query result.
      *
-     * @return Merged data as list
+     * @param primaryData The primary query result as list
+     * @return Merged data
      * @throws IllegalArgumentException in case of unknown sub-data type
      */
-    protected List<Map<String, Object>> mergeSubData() {
+    protected Collection<Map<String, Object>> mergeSubData(
+        List<Map<String, Object>> primaryData
+    ) {
         if (primaryData == null) {
             return null;
         }
 
-        //Get ids of primary records
-        List<Integer> primaryDataIds = new ArrayList<Integer>();
-        primaryData.forEach(item -> {
-            primaryDataIds.add((Integer) item.get(idColumn));
+        // Create a map of id->record
+        Map<Integer, Map<String, Object>> idMap = new HashMap<>();
+        primaryData.forEach(record -> {
+            idMap.put((Integer) record.get(idColumn), record);
         });
 
         //Get subdata
-        String subDataType = mapPrimaryToSubDataTypes.get(idType);
-        switch (subDataType) {
-            case "messung":
+        switch (this.idType) {
+            case "probeId":
                 QueryBuilder<Measm> messungBuilder = repository
                     .queryBuilder(Measm.class)
-                    .andIn("sampleId", primaryDataIds);
+                    .andIn("sampleId", idMap.keySet());
                 return mergeMessungData(
+                    idMap,
                     repository.filterPlain(messungBuilder.getQuery()));
-            case "messwert":
+            case "messungId":
                 QueryBuilder<MeasVal> messwertBuilder = repository
                     .queryBuilder(MeasVal.class)
-                    .andIn("measmId", primaryDataIds);
+                    .andIn("measmId", idMap.keySet());
                 return mergeMesswertData(
+                    idMap,
                     repository.filterPlain(messwertBuilder.getQuery()));
             default:
                 throw new IllegalArgumentException(
-                    String.format("Unknown subDataType: %s", subDataType));
+                    String.format("Unknown idType: %s", this.idType));
         }
     }
 
     /**
      * Merge primary result and measm data.
      *
+     * @param primaryData The primary query result as map of IDs with records
      * @param messungData Data to merge
-     * @return Merged data as list
+     * @return Merged data
      */
-    protected abstract List<Map<String, Object>> mergeMessungData(
+    protected abstract Collection<Map<String, Object>> mergeMessungData(
+        Map<Integer, Map<String, Object>> primaryData,
         List<Measm> messungData
     );
 
     /**
      * Merge primary result and measVal data.
      *
+     * @param primaryData The primary query result as map of IDs with records
      * @param messwertData Data to merge
-     * @return Merged data as list
+     * @return Merged data
      */
-    protected abstract List<Map<String, Object>> mergeMesswertData(
+    protected abstract Collection<Map<String, Object>> mergeMesswertData(
+        Map<Integer, Map<String, Object>> primaryData,
         List<MeasVal> messwertData
     );
 
@@ -299,12 +312,17 @@ public abstract class QueryExportJob extends ExportJob {
             return;
         }
         //Check if subdata shall be exported
-        exportSubdata = exportParameters.getBoolean("exportSubData");
+        this.exportSubdata = exportParameters.getBoolean(
+            "exportSubData", false);
         //Get identifier type
-        idColumn = exportParameters.isNull("idField")
+        this.idColumn = exportParameters.isNull("idField")
             ? null : exportParameters.getString("idField");
         //Get target timezone
-        timezone = exportParameters.getString("timezone");
+        final String timezoneKey = "timezone";
+        if (exportParameters.containsKey(timezoneKey)) {
+            this.dateFormat.setTimeZone(TimeZone.getTimeZone(
+                    exportParameters.getString(timezoneKey)));
+        }
 
         //Check if sub data columns are present if subdata is exported
         if (exportSubdata
@@ -355,7 +373,7 @@ public abstract class QueryExportJob extends ExportJob {
             //Check if the column contains the id
             if (columnValue.getGridColMp().getDataIndex().equals(idColumn)) {
                 // Get the column type
-                idType = gridColumn.getDisp().getName();
+                this.idType = gridColumn.getDisp().getName();
 
                 // Get IDs to filter result
                 JsonArray idsToExport = exportParameters

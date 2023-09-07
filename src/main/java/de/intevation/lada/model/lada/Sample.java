@@ -117,7 +117,6 @@ public class Sample extends BaseModel implements Serializable {
 
     //Transient fields used for Site object generation
     @Transient
-    @JsonbTransient
     private boolean found;
 
     @Transient

@@ -11,6 +11,7 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.List;
 
 import org.jboss.logging.Logger;
@@ -34,42 +35,39 @@ public class ImportConfigMapper {
 
     private final Logger logger = Logger.getLogger(ImportConfigMapper.class);
 
-    private enum Action { DEFAULT, CONVERT, TRANSFORM };
-
     ImportConfigMapper(List<ImportConf> config) {
         this.config = config;
     }
 
     /**
-     * Apply configuration with given attribute name to value.
+     * Apply configuration to given attributes.
      *
-     * @param key The configuration attribute name
-     * @param value The value that should be converted or transformed
-     * @return value according to configuration
+     * @param attributes Attributes representing raw import data.
      */
-    String applyConfigByAttribute(String key, String value) {
-        String result = value;
-        configs: for (ImportConf cfg: this.config) {
-            if (cfg.getAttribute().equalsIgnoreCase(key)) {
-                for (Action action: Action.values()) {
-                    if (action.name().equals(cfg.getAction().toUpperCase())) {
-                        switch (action) {
-                        case CONVERT:
-                            if (cfg.getFromVal().equals(value)) {
-                                result = cfg.getToVal();
-                            }
-                            continue configs;
-                        case TRANSFORM:
-                            result = transform(value, cfg);
-                            continue configs;
-                        default:
-                            continue configs;
-                        }
-                    }
+    void applyConfigs(Map<String, String> attributes) {
+        for (ImportConf cfg: this.config) {
+            String key = cfg.getAttribute().toUpperCase();
+            boolean hasKey = attributes.containsKey(key);
+            switch (cfg.getAction()) {
+            case DEFAULT:
+                if (!hasKey) {
+                    attributes.put(key, cfg.getToVal());
                 }
+                continue;
+            case CONVERT:
+                if (hasKey && cfg.getFromVal().equals(attributes.get(key))) {
+                    attributes.put(key, cfg.getToVal());
+                }
+                continue;
+            case TRANSFORM:
+                if (hasKey) {
+                    attributes.put(key, transform(attributes.get(key), cfg));
+                }
+                continue;
+            default:
+                logger.error("Unimplemented action");
             }
         }
-        return result;
     }
 
     void applyConfigs(Sample probe) {
@@ -112,76 +110,72 @@ public class ImportConfigMapper {
     }
 
     <T> void applyConfigs(Object object, Class<T> clazz, String table) {
-        for (Action action: Action.values()) {
-            for (ImportConf current: config) {
-                if (table.equals(current.getName())
-                    && action.name().equals(current.getAction().toUpperCase())
-                ) {
-                    String attribute = current.getAttribute();
-                    PropertyDescriptor beanDesc;
-                    try {
-                        beanDesc = new PropertyDescriptor(attribute, clazz);
-                    } catch (IntrospectionException e) {
-                        logger.warn(
-                            "attribute " + attribute + " does not exist");
-                        continue;
-                    }
-                    Method getter = beanDesc.getReadMethod();
-                    Method setter = beanDesc.getWriteMethod();
-                    try {
-                        Object value = getter.invoke(object);
-                        switch (action) {
-                        case DEFAULT:
-                            if (value == null && setter != null) {
-                                Class<?>[] types = setter.getParameterTypes();
-                                if (types.length == 1) {
-                                    // Exactly one parameter, thats fine.
-                                    if (types[0].isAssignableFrom(
-                                            Integer.class)
-                                    ) {
-                                        // the parameter is of type Integer!
-                                        // Cast to integer
-                                        setter.invoke(
-                                            object,
-                                            Integer.valueOf(
-                                                current.getToVal()));
-                                    } else {
-                                        // we handle the default as string.
-                                        // Other types are not implemented!
-                                        setter.invoke(
-                                            object, current.getToVal());
-                                    }
+        for (ImportConf current: config) {
+            if (table.equals(current.getName())) {
+                String attribute = current.getAttribute();
+                PropertyDescriptor beanDesc;
+                try {
+                    beanDesc = new PropertyDescriptor(attribute, clazz);
+                } catch (IntrospectionException e) {
+                    logger.warn(
+                        "attribute " + attribute + " does not exist");
+                    continue;
+                }
+                Method getter = beanDesc.getReadMethod();
+                Method setter = beanDesc.getWriteMethod();
+                try {
+                    Object value = getter.invoke(object);
+                    switch (current.getAction()) {
+                    case DEFAULT:
+                        if (value == null && setter != null) {
+                            Class<?>[] types = setter.getParameterTypes();
+                            if (types.length == 1) {
+                                // Exactly one parameter, thats fine.
+                                if (types[0].isAssignableFrom(
+                                        Integer.class)
+                                ) {
+                                    // the parameter is of type Integer!
+                                    // Cast to integer
+                                    setter.invoke(
+                                        object,
+                                        Integer.valueOf(
+                                            current.getToVal()));
+                                } else {
+                                    // we handle the default as string.
+                                    // Other types are not implemented!
+                                    setter.invoke(
+                                        object, current.getToVal());
                                 }
                             }
-                            break;
-                        case CONVERT:
-                            if (value != null
-                                && value.equals(current.getFromVal())
-                                && setter != null
-                            ) {
-                                setter.invoke(object, current.getToVal());
-                            }
-                            break;
-                        case TRANSFORM:
-                            if (value == null) {
-                                logger.warn(
-                                    "Attribute " + attribute + " is not set");
-                                return;
-                            }
-                            setter.invoke(
-                                object,
-                                transform(value.toString(), current));
-                            break;
-                        default:
-                            throw new IllegalArgumentException(
-                                "Unknown action");
                         }
-                    } catch (IllegalAccessException
-                        | IllegalArgumentException
-                        | InvocationTargetException e
-                    ) {
-                        logger.debug("Could not set attribute " + attribute);
+                        break;
+                    case CONVERT:
+                        if (value != null
+                            && value.equals(current.getFromVal())
+                            && setter != null
+                        ) {
+                            setter.invoke(object, current.getToVal());
+                        }
+                        break;
+                    case TRANSFORM:
+                        if (value == null) {
+                            logger.warn(
+                                "Attribute " + attribute + " is not set");
+                            return;
+                        }
+                        setter.invoke(
+                            object,
+                            transform(value.toString(), current));
+                        break;
+                    default:
+                        throw new IllegalArgumentException(
+                            "Unknown action");
                     }
+                } catch (IllegalAccessException
+                    | IllegalArgumentException
+                    | InvocationTargetException e
+                ) {
+                    logger.debug("Could not set attribute " + attribute);
                 }
             }
         }

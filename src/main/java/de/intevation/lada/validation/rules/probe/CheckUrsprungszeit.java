@@ -34,7 +34,7 @@ public class CheckUrsprungszeit implements Rule {
         ) {
             Violation violation = new Violation();
             violation.addWarning(
-                "origDate", StatusCodes.URSPR_Date_BEFORE_BEGIN);
+                "origDate", StatusCodes.URSPR_DATE_BEFORE_BEGIN);
             return violation;
         }
         return null;

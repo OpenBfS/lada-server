@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <!-- authentication data -->
+    <master.network id = "06" />
+    <master.meas_facil id = "06010" network_id = "06" />
+
+    <!--master data-->
+    <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
+    <master.regulation id = "9" />
+    <master.measd
+        id = "1"
+        name = "test"
+    />
+    <master.measd
+        id = "2"
+        name = "test"
+    />
+    <master.meas_unit
+        id = "1"
+        unit_symbol = "Sv"
+    />
+    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
+    <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "1" />
+    <master.sampler
+        id = "726"
+        network_id = "06"
+        ext_id = "prn"
+        descr = "test"
+        short_text = "test"
+    />
+    <master.mmt id = "A3" />
+
+    <!--Query data-->
+    <master.lada_user
+        id = "1"
+        name = "test"
+    />
+    <master.base_query
+        id = "1"
+        sql = "SELECT hauptproben_nr, umw_id, id AS probeId FROM land.probe"
+    />
+    <master.base_query
+        id = "2"
+        sql = "SELECT hauptproben_nr FROM land.probe"
+    />
+    <master.base_query
+        id = "3"
+        sql = "SELECT id AS messungId FROM lada.measm"
+    />
+    <master.query_user
+        id = "1"
+        name = "Proben"
+        lada_user_id = "1"
+        base_query_id = "1"
+        descr = "test"
+    />
+    <master.query_user
+        id = "2"
+        name = "Measms"
+        lada_user_id = "1"
+        base_query_id = "3"
+        descr = "test"
+    />
+    <master.filter
+        id = "1"
+        sql = "hauptproben_nr ~ :hauptprobenNr"
+        param = "hauptprobenNr"
+        filter_type_id = "0"
+    />
+    <master.disp
+        id = "1"
+        name = "test"
+    />
+    <master.disp
+        id = "2"
+        name = "probeId"
+    />
+    <master.disp
+        id = "3"
+        name = "messungId"
+    />
+    <master.grid_col_mp
+        id = "1"
+        base_query_id = "1"
+        grid_col = "hauptprobenNr"
+        data_index = "hauptproben_nr"
+        position = "1"
+        filter_id = "1"
+        disp_id = "1"
+    />
+    <master.grid_col_mp
+        id = "2"
+        base_query_id = "1"
+        grid_col = "umwId"
+        data_index = "umw_id"
+        position = "2"
+        disp_id = "1"
+    />
+    <master.grid_col_mp
+        id = "4"
+        base_query_id = "1"
+        grid_col = "probeId"
+        data_index = "probeId"
+        position = "3"
+        disp_id = "2"
+    />
+    <master.grid_col_mp
+        id = "3"
+        base_query_id = "2"
+        grid_col = "hauptprobenNr"
+        data_index = "hauptproben_nr"
+        position = "1"
+        filter_id = "1"
+        disp_id = "1"
+    />
+    <master.grid_col_mp
+        id = "5"
+        base_query_id = "3"
+        grid_col = "messungId"
+        data_index = "messungId"
+        position = "1"
+        disp_id = "3"
+    />
+    <master.grid_col_conf
+        id = "1"
+        lada_user_id = "1"
+        query_user_id = "1"
+        grid_col_mp_id = "1"
+    />
+    <master.grid_col_conf
+        id = "2"
+        lada_user_id = "1"
+        query_user_id = "1"
+        grid_col_mp_id = "2"
+    />
+    <lada.sample
+        id = "1000"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        last_mod = "2012-05-05 11:12:00"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "1"
+        is_test = "false"
+        env_medium_id = "L6"
+        main_sample_id = "120510002"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+        tree_mod = "2012-05-08 10:00:00"
+    />
+    <lada.sample
+        id = "1001"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        last_mod = "2012-05-05 11:12:00"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "1"
+        is_test = "false"
+        env_medium_id = "L6"
+        main_sample_id = "120510001"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+        tree_mod = "2012-05-08 10:00:00"
+    />
+    <lada.measm
+        id = "1200"
+        sample_id = "1000"
+        min_sample_id = "T100"
+        ext_id = "453"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        measm_start_date = "2012-05-06 14:00:00"
+        is_completed = "false"
+        last_mod = "2012-05-08 12:00:00"
+        is_scheduled = "true"
+        tree_mod = "2012-05-09 12:00:00"
+    />
+    <lada.measm
+        id = "1201"
+        sample_id = "1000"
+        ext_id = "454"
+        mmt_id = "A3"
+        is_completed = "false"
+        is_scheduled = "true"
+    />
+    <lada.meas_val
+        id = "1000"
+        measm_id = "1200"
+        measd_id = "1"
+        meas_unit_id = "1"
+    />
+    <lada.meas_val
+        id = "1001"
+        measm_id = "1200"
+        measd_id = "2"
+        meas_unit_id = "1"
+    />
+</dataset>

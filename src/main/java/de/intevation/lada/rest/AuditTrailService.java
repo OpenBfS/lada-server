@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue.ValueType;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -115,38 +116,38 @@ public class AuditTrailService extends LadaService {
     @PostConstruct
     public void initialize() {
         mappings = new HashMap<String, TableMapper>();
-        mappings.put("messgroesse_id",
-            new TableMapper("messgroesse", "messgroesse"));
-        mappings.put("meh_id",
-            new TableMapper("mess_einheit", "einheit"));
-        mappings.put("ort_id",
-            new TableMapper("ort", "ort_id"));
-        mappings.put("datenbasis_id",
-            new TableMapper("datenbasis", "datenbasis"));
-        mappings.put("ba_id",
-            new TableMapper("betriebsart", "name"));
-        mappings.put("mpl_id",
-            new TableMapper("messprogramm_kategorie", "code"));
-        mappings.put("probenart_id",
-            new TableMapper("probenart", "probenart"));
-        mappings.put("probe_nehmer_id",
-            new TableMapper("probenehmer", "prn_id"));
-        mappings.put("probeentnahme_beginn",
+        mappings.put("measd_id",
+            new TableMapper("measd", "name"));
+        mappings.put("meas_unit_id",
+            new TableMapper("meas_unit", "unit_symbol"));
+        mappings.put("site_id",
+            new TableMapper("site", "ext_id"));
+        mappings.put("regulation_id",
+            new TableMapper("regulation", "name"));
+        mappings.put("opr_mode_id",
+            new TableMapper("opr_mode", "name"));
+        mappings.put("mpg_categ_id",
+            new TableMapper("mpg_categ", "ext_id"));
+        mappings.put("sample_meth_id",
+            new TableMapper("sample_meth", "ext_id"));
+        mappings.put("sampler_id",
+            new TableMapper("sampler", "ext_id"));
+        mappings.put("sample_start_date",
             new TableMapper("date", "dd.MM.yy HH:mm"));
-        mappings.put("probeentnahme_ende",
+        mappings.put("sample_end_date",
             new TableMapper("date", "dd.MM.yy HH:mm"));
-        mappings.put("solldatum_beginn",
+        mappings.put("sched_start_date",
                 new TableMapper("date", "dd.MM.yy HH:mm"));
-        mappings.put("solldatum_ende",
+        mappings.put("sched_end_date",
                 new TableMapper("date", "dd.MM.yy HH:mm"));
-        mappings.put("mitte_sammelzeitraum",
+        mappings.put("mid_coll_pd",
                 new TableMapper("date", "dd.MM.yy HH:mm"));
-        mappings.put("messzeitpunkt",
+        mappings.put("measm_start_date",
                 new TableMapper("date", "dd.MM.yy HH:mm"));
-        mappings.put("kta_gruppe_id",
-            new TableMapper("kta_gruppe", "kta_gruppe"));
-        mappings.put("rei_progpunkt_grp_id",
-            new TableMapper("rei_progpunkt_gruppe", "rei_prog_punkt_gruppe"));
+        mappings.put("nucl_facil_gr_id",
+            new TableMapper("nucl_facil_gr", "ext_id"));
+        mappings.put("rei_ag_gr_id",
+            new TableMapper("rei_ag_gr", "name"));
     }
 
     /**
@@ -344,7 +345,7 @@ public class AuditTrailService extends LadaService {
             //If audit entry shows a messwert, do not show if:
             // - StatusKombi is 1 (MST - nicht vergeben)
             // - User is not owner of the messung
-            if (a.getTableName().equals("messwert")
+            if (a.getTableName().equals("meas_val")
                     && status.getStatusMpId() == 1
                     && !userInfo.getMessstellen().contains(
                         probe.getMeasFacilId())) {
@@ -447,10 +448,17 @@ public class AuditTrailService extends LadaService {
                         formatDate(m.getValueField(), node.getString(key));
                     builder.add(key, value);
                 } else {
+                    String id;
+                    if (node.containsKey(key) && node.get(key)
+                            .getValueType() == ValueType.NUMBER) {
+                        id = "" + node.getInt(key);
+                    } else {
+                        id = node.getString(key, null);
+                    }
                     String value = translateId(
                         m.getMappingTable(),
                         m.getValueField(),
-                        node.get(key) != null ? node.getString(key) : null,
+                        id,
                         "id",
                         de.intevation.lada.model.master.SchemaName.NAME);
                     builder.add(key, value);

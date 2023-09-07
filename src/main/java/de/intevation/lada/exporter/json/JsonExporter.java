@@ -13,12 +13,13 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.inject.Inject;
 import javax.json.Json;
@@ -80,6 +81,8 @@ import de.intevation.lada.util.data.Repository;
 public class JsonExporter implements Exporter {
 
     private static final int ZEBS_COUNTER = 3;
+    private static final String JSON_DATE_FORMAT
+        = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSSXXX";
 
     @Inject private Logger logger;
 
@@ -94,9 +97,8 @@ public class JsonExporter implements Exporter {
      * @param encoding Ignored. Result is always UTF_8.
      * @param options Export options as JSON Object. Options are: <p>
      *        <ul>
-     *          <li> id: Name of the id column, mandatory </li>
+     *          <li> idField: Name of the id column, mandatory </li>
      *          <li> subData: key of the subData json object, optional </li>
-     *          <li> timezone: Target timezone for timestamp conversion </li>
      *        </ul>
      *
      * @param columnsToInclude List of column names to include in the export.
@@ -106,31 +108,27 @@ public class JsonExporter implements Exporter {
     @Override
     @SuppressWarnings("unchecked")
     public InputStream export(
-        List<Map<String, Object>> queryResult,
+        Iterable<Map<String, Object>> queryResult,
         Charset encoding,
         JsonObject options,
         List<String> columnsToInclude,
-        Integer qId
+        String subDataKey,
+        Integer qId,
+        DateFormat dateFormat,
+        Locale locale
     ) {
-        String subDataKey = options.getString("subData", "");
-
         final JsonObjectBuilder builder = Json.createObjectBuilder();
-        final String timezone =
-            options.containsKey("timezone")
-            ? options.getString("timezone") : "UTC";
-        String idColumn = options.getString("id");
+        String idColumn = options.getString("idField");
 
         //For each result
         queryResult.forEach(item -> {
             JsonObjectBuilder rowBuilder = Json.createObjectBuilder();
             //Add value for each column
             columnsToInclude.forEach(key -> {
-                Object value = item.getOrDefault(key, null);
+                Object value = item.get(key);
                 if (value == null) {
-                    rowBuilder.add(key, JsonValue.NULL);
-                    return;
-                }
-                if (value instanceof Integer) {
+                    rowBuilder.addNull(key);
+                } else if (value instanceof Integer) {
                     rowBuilder.add(key, (Integer) value);
                 } else if (value instanceof Double) {
                     rowBuilder.add(key, (Double) value);
@@ -139,16 +137,14 @@ public class JsonExporter implements Exporter {
                     Timestamp time = (Timestamp) value;
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date(time.getTime()));
-                    SimpleDateFormat sdf =
-                        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    sdf.setTimeZone(TimeZone.getTimeZone(timezone));
-                    rowBuilder.add(key, sdf.format(calendar.getTime()));
+                    rowBuilder.add(
+                        key, dateFormat.format(calendar.getTime()));
                 } else {
                     rowBuilder.add(key, value.toString());
                 }
             });
             //Append id
-            if (!subDataKey.isEmpty()
+            if (subDataKey != null
                 && item.containsKey(subDataKey)
                 && item.get(subDataKey) instanceof List<?>
             ) {
@@ -191,8 +187,8 @@ public class JsonExporter implements Exporter {
 
     /**
      * Export Sample objects as JSON.
-     * @param proben List of Sample IDs to export.
-     * @param messungen Ignored. All associated Messung objects are exported.
+     * @param probeIds List of Sample IDs to export.
+     * @param messungsIds Ignored. All associated Messung objects are exported.
      * @param encoding Ignored. Result is always UTF_8.
      * @param userInfo UserInfo
      * @return Export result as InputStream or null if the export failed
@@ -245,7 +241,7 @@ public class JsonExporter implements Exporter {
         if (messungen.isEmpty()) {
             return null;
         }
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         ArrayNode json = mapper.createArrayNode();
         for (Measm m : messungen) {
             Sample p = repository.getByIdPlain(
@@ -299,7 +295,7 @@ public class JsonExporter implements Exporter {
         }
         List<Sample> proben =
             repository.filterPlain(builder.getQuery());
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(proben);
             JsonNode nodes = mapper.readTree(tmp);
@@ -336,7 +332,7 @@ public class JsonExporter implements Exporter {
         probe.put("sampleMethExtId",
             art == null ? "" : art.getExtId());
         probe.put("regulation",
-            datenbasis == null ? "" : datenbasis.getRegulation());
+            datenbasis == null ? "" : datenbasis.getName());
         probe.put("envMediumName", umw == null ? "" : umw.getName());
         if (probe.get("oprModeId").asInt() != 0) {
             OprMode ba = repository.getByIdPlain(
@@ -360,6 +356,7 @@ public class JsonExporter implements Exporter {
             );
             probe.put("samplerExtId", probenehmer.getExtId());
             probe.put("samplerDescr", probenehmer.getDescr());
+            probe.put("samplerNetworkId", probenehmer.getNetworkId());
             probe.put(
                 "samplerShortText", probenehmer.getShortText());
         }
@@ -382,7 +379,7 @@ public class JsonExporter implements Exporter {
             MeasFacil.class,
             node.get("apprLabId").asText()
         );
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(messstelle);
             String tmp2 = mapper.writeValueAsString(laborMessstelle);
@@ -401,7 +398,7 @@ public class JsonExporter implements Exporter {
         builder.and("sampleId", probe.get("id").asInt());
         List<Measm> messungen =
             repository.filterPlain(builder.getQuery());
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(messungen);
             JsonNode nodes = mapper.readTree(tmp);
@@ -429,7 +426,7 @@ public class JsonExporter implements Exporter {
         builder.and("sampleId", probe.get("id").asInt());
         List<CommSample> kommentare =
             repository.filterPlain(builder.getQuery());
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(kommentare);
             JsonNode nodes = mapper.readTree(tmp);
@@ -455,7 +452,7 @@ public class JsonExporter implements Exporter {
         builder.and("sampleId", probe.get("id").asInt());
         List<SampleSpecifMeasVal> zusatzwerte =
             repository.filterPlain(builder.getQuery());
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(zusatzwerte);
             JsonNode nodes = mapper.readTree(tmp);
@@ -539,7 +536,7 @@ public class JsonExporter implements Exporter {
         builder.and("measmId", node.get("id").asInt());
         List<MeasVal> messwerte =
             repository.filterPlain(builder.getQuery());
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(messwerte);
             JsonNode nodes = mapper.readTree(tmp);
@@ -570,7 +567,7 @@ public class JsonExporter implements Exporter {
         builder.and("measmId", node.get("id").asInt());
         List<CommMeasm> kommentare =
             repository.filterPlain(builder.getQuery());
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(kommentare);
             JsonNode nodes = mapper.readTree(tmp);
@@ -596,7 +593,7 @@ public class JsonExporter implements Exporter {
         builder.and("measmId", node.get("id").asInt());
         List<StatusProt> status =
             repository.filterPlain(builder.getQuery());
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(status);
             JsonNode nodes = mapper.readTree(tmp);
@@ -632,7 +629,7 @@ public class JsonExporter implements Exporter {
         builder.and("sampleId", node.get("id").asInt());
         List<Geolocat> ortszuordnung =
             repository.filterPlain(builder.getQuery());
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(ortszuordnung);
             JsonNode nodes = mapper.readTree(tmp);
@@ -651,7 +648,7 @@ public class JsonExporter implements Exporter {
                 Site.class, node.get("siteId").asInt());
         Jsonb ortJsonb = JsonbBuilder.create();
         String tmp = ortJsonb.toJson(ort);
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = createObjectMapper();
         try {
             JsonNode oNode = mapper.readTree(tmp);
 
@@ -681,5 +678,11 @@ public class JsonExporter implements Exporter {
                 + node.get("id").asText());
             logger.debug(e);
         }
+    }
+
+    private ObjectMapper createObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setDateFormat(new SimpleDateFormat(JSON_DATE_FORMAT));
+        return mapper;
     }
 }

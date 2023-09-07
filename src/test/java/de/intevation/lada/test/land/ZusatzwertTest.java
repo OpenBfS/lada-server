@@ -9,7 +9,6 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -18,7 +17,7 @@ import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -34,10 +33,9 @@ public class ZusatzwertTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod",
@@ -45,11 +43,10 @@ public class ZusatzwertTest extends ServiceTest {
         });
 
         // Prepare expected probe object
-        JsonObject content =
-            readJsonResource("/datasets/dbUnit_probe.json");
-        JsonObject messung = content.getJsonArray("lada.sample_specif_meas_val")
+        JsonObject content = readXmlResource(
+            "datasets/dbUnit_lada.xml", SampleSpecifMeasVal.class)
             .getJsonObject(0);
-        JsonObjectBuilder builder = convertObject(messung);
+        JsonObjectBuilder builder = convertObject(content);
         builder.add("parentModified", TS1);
         builder.add("readonly", JsonValue.FALSE);
         builder.add("owner", JsonValue.TRUE);

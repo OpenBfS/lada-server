@@ -1,9 +1,0 @@
-{
-    "master.mpg_categ": [{
-        "id": 1000,
-        "network_id": "06",
-        "ext_id": "mp2",
-        "name": "Testbezeichnung",
-        "last_mod": "2015-03-01 12:00:00"
-    }]
-}

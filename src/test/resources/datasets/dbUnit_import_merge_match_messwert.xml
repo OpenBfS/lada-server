@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Dataset used to match against the db table
+    Note: Null values needs to be included to ensure the dataset has the correct column count-->
+<dataset>
+    <lada.meas_val
+        id = "1003"
+        measm_id = "1200"
+        measd_id = "56"
+        meas_val = "1.5"
+        meas_unit_id = "207"
+        less_than_lod = "[null]"
+        error = "[null]"
+        detect_lim = "[null]"
+        is_threshold = "[null]"
+        last_mod = "[null]"
+        tree_mod = "[null]"
+    />
+</dataset>

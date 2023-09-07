@@ -8,7 +8,6 @@
 package de.intevation.lada.test.stamm;
 
 import java.net.URL;
-import java.util.List;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -16,7 +15,6 @@ import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.test.ServiceTest;
 
@@ -37,10 +35,9 @@ public class TagTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         create = readJsonResource("/datasets/tag_create.json");
         Assert.assertNotNull(create);
     }

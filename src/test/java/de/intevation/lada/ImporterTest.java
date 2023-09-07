@@ -16,13 +16,18 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.UUID;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.UserTransaction;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.SyncInvoker;
 import javax.ws.rs.core.MediaType;
@@ -30,14 +35,8 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.junit.InSequence;
-import org.jboss.arquillian.persistence.ApplyScriptBefore;
-import org.jboss.arquillian.persistence.Cleanup;
-import org.jboss.arquillian.persistence.CleanupStrategy;
-import org.jboss.arquillian.persistence.ShouldMatchDataSet;
-import org.jboss.arquillian.persistence.TestExecutionPhase;
-import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.logging.Logger;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -66,7 +65,6 @@ import de.intevation.lada.util.data.StatusCodes;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
-@ApplyScriptBefore("datasets/clean_and_seed.sql")
 public class ImporterTest extends BaseTest {
 
     private static final Logger LOG = Logger.getLogger(ImporterTest.class);
@@ -82,36 +80,19 @@ public class ImporterTest extends BaseTest {
     private static final int PNID = 726;
     private static final int MPRID1000 = 1000;
     private static final int PID1000 = 1000;
-    private static final int T1 = 1;
-    private static final int T2 = 2;
-    private static final int T3 = 3;
-    private static final int T4 = 4;
-    private static final int T5 = 5;
-    private static final int T6 = 6;
-    private static final int T7 = 7;
-    private static final int T8 = 8;
-    private static final int T9 = 9;
-    private static final int T10 = 10;
-    private static final int T11 = 11;
-    private static final int T12 = 12;
-    private static final int T13 = 13;
-    private static final int T14 = 14;
-    private static final int T15 = 15;
-    private static final int T16 = 16;
-    private static final int T17 = 17;
     private static final Integer DID9 = 9;
 
-    private final String lafSampleId = "XXX";
+    @Resource UserTransaction transaction;
+
     private final String mstId = "06010";
     private final String regulation = "test";
     private final String sampleSpecifId = "A1";
     private final String measd = "H-3";
     private final String measUnit = "Bq/kgFM";
     private final String lafTemplate = "%%PROBE%%\n"
-        + "UEBERTRAGUNGSFORMAT \"7\"\n"
+        + "UEBERTRAGUNGSFORMAT 7\n"
         + "VERSION \"0084\"\n"
         + "PROBE_ID \"%s\"\n"
-        + "MESSSTELLE \"%s\"\n"
         + "PROBENART \"E\"\n"
         + "MESSPROGRAMM_S 1\n"
         + "DATENBASIS \"%s\"\n"
@@ -121,9 +102,6 @@ public class ImporterTest extends BaseTest {
         + "MESSMETHODE_S \"A3\"\n"
         + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
         + "%%ENDE%%\n";
-    private final String laf = String.format(
-        lafTemplate, lafSampleId, mstId, regulation, sampleSpecifId,
-        "", measd, measUnit);
 
     final String dataKey = "data";
 
@@ -144,32 +122,24 @@ public class ImporterTest extends BaseTest {
     @Inject
     ObjectMerger merger;
 
+    public ImporterTest() {
+        testDatasetName = "datasets/dbUnit_import.xml";
+    }
+
     /**
      * Identify probe objects.
      *
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(0)
-    @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyProbeByHPNrMST() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify probe");
-        protocol.addInfo(
-            "import",
-            "Compare and find Sample by HP-Nr. and MST, Update");
-
         Sample probe = new Sample();
         probe.setMainSampleId("120510002");
         probe.setMeasFacilId(mstId);
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.UPDATE, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -177,26 +147,14 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T1)
-    @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyProbeByHPNrMSTNew() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify probe");
-        protocol.addInfo(
-            "import",
-            "Compare and find Sample by HP-Nr. and MST, New");
-
         Sample probe = new Sample();
         probe.setMainSampleId("120510003");
         probe.setMeasFacilId(mstId);
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.NEW, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -205,25 +163,13 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T2)
-    @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyProbeByExterneProbeId() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify probe");
-        protocol.addInfo(
-            "import",
-            "Compare and find Sample by extId, Update");
-
         Sample probe = new Sample();
         probe.setExtId("T001");
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.UPDATE, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -231,25 +177,13 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during test.
      */
     @Test
-    @InSequence(T3)
-    @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyProbeByExterneProbeIdNew() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify probe");
-        protocol.addInfo(
-            "import",
-            "Compare and find Sample by extId, New");
-
         Sample probe = new Sample();
         probe.setExtId("T002");
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.NEW, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -257,18 +191,8 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T4)
-    @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyProbeByExterneProbeIdReject() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify probe");
-        protocol.addInfo(
-            "import",
-            "Compare and find Sample by extId, Reject");
-
         Sample probe = new Sample();
         probe.setExtId("T001");
         probe.setMainSampleId("120510003");
@@ -276,8 +200,6 @@ public class ImporterTest extends BaseTest {
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.REJECT, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -285,18 +207,8 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that ca occur during the test.
      */
     @Test
-    @InSequence(T5)
-    @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyProbeByExterneProbeIdUpdate() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify probe");
-        protocol.addInfo(
-            "import",
-            "Compare and find Sample by extId, Update");
-
         Sample probe = new Sample();
         probe.setExtId("T001");
         probe.setMainSampleId("");
@@ -304,8 +216,6 @@ public class ImporterTest extends BaseTest {
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.UPDATE, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -313,26 +223,14 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T6)
-    @UsingDataSet("datasets/dbUnit_messung_import.json")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyMessungByNpNr() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify messung");
-        protocol.addInfo(
-            "import",
-            "Compare and find Messung by NP-Nr., Update");
-
         Measm messung = new Measm();
         messung.setSampleId(PID1000);
         messung.setMinSampleId("06A0");
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.UPDATE, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -340,24 +238,14 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T7)
-    @UsingDataSet("datasets/dbUnit_messung_import.json")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyMessungByNpNrNew() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify messung");
-        protocol.addInfo("import", "Compare and find Messung by NP-Nr., New");
-
         Measm messung = new Measm();
         messung.setSampleId(PID1000);
         messung.setMinSampleId("06A1");
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.NEW, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -365,26 +253,14 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T8)
-    @UsingDataSet("datasets/dbUnit_messung_import.json")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyMessungByExterneMessungsId() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify messung");
-        protocol.addInfo(
-            "import",
-            "Compare and find Messung by externeMessungsId, Update");
-
         Measm messung = new Measm();
         messung.setSampleId(PID1000);
         messung.setExtId(1);
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.UPDATE, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -392,46 +268,26 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T9)
-    @UsingDataSet("datasets/dbUnit_messung_import.json")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyMessungByExterneMessungsIdNew() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify messung");
-        protocol.addInfo(
-            "import",
-            "Compare and find Messung by externeMessungsId, New");
-
         Measm messung = new Measm();
         messung.setSampleId(PID1000);
         messung.setExtId(2);
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.NEW, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
      * Identify messung object by external id for reject.
      * @throws Exception that can occur during the test.
      */
-    @Test
     @Ignore
-    @InSequence(T10)
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Test
+    @Transactional
+    //TODO: This unexpectedly returns an update instead of an reject
     public final void identifyMessungByExterneMessungsIdReject()
     throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify messung");
-        protocol.addInfo(
-            "import",
-            "Compare and find Messung by externeMessungsId, Reject");
-
         Measm messung = new Measm();
         messung.setSampleId(PID1000);
         messung.setExtId(1);
@@ -439,8 +295,6 @@ public class ImporterTest extends BaseTest {
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.REJECT, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -448,19 +302,9 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T11)
-    @UsingDataSet("datasets/dbUnit_messung_import.json")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyMessungByExterneMessungsIdUpdate()
     throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify messung");
-        protocol.addInfo(
-            "import",
-            "Compare and find Messung by externeMessungsId, Update");
-
         Measm messung = new Measm();
         messung.setSampleId(PID1000);
         messung.setExtId(1);
@@ -468,8 +312,6 @@ public class ImporterTest extends BaseTest {
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.UPDATE, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -477,18 +319,8 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T12)
-    @UsingDataSet("datasets/dbUnit_import_merge.json")
-    @ShouldMatchDataSet(value = "datasets/dbUnit_import_merge_match.json",
-        excludeColumns = {"last_mod", "tree_mod"})
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeProbe() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("merge probe");
-        protocol.addInfo("import", "Merge objects");
-
+        transaction.begin();
         Sample probe = new Sample();
         probe.setExtId("T001");
         probe.setMainSampleId("120510002");
@@ -509,9 +341,10 @@ public class ImporterTest extends BaseTest {
         probe.setSampleStartDate(Timestamp.valueOf("2012-05-03 13:07:00"));
         Sample dbProbe = repository.getByIdPlain(Sample.class, PID1000);
         merger.merge(dbProbe, probe);
+        transaction.commit();
 
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
+        shouldMatchDataSet("datasets/dbUnit_import_merge_match.xml",
+            "lada.sample", new String[]{"last_mod", "tree_mod", "mid_coll_pd"});
     }
 
     /**
@@ -519,19 +352,8 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test
      */
     @Test
-    @InSequence(T13)
-    @UsingDataSet("datasets/dbUnit_import_merge.json")
-    @ShouldMatchDataSet(
-        value = "datasets/dbUnit_import_merge_match_messung.json",
-        excludeColumns = {"last_mod", "tree_mod"})
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeMessung() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("merge messung");
-        protocol.addInfo("import", "Merge objects");
-
+        transaction.begin();
         Measm messung = new Measm();
         messung.setMinSampleId("06A0");
         messung.setIsScheduled(true);
@@ -542,9 +364,12 @@ public class ImporterTest extends BaseTest {
         Measm dbMessung =
             repository.getByIdPlain(Measm.class, MID1200);
         merger.mergeMessung(dbMessung, messung);
+        transaction.commit();
 
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
+        shouldMatchDataSet(
+            "datasets/dbUnit_import_merge_match_messung.xml",
+            "lada.measm",
+            new String[]{"status", "last_mod", "tree_mod"});
     }
 
     // TODO Record order can get mixed up here which cause the test to fail as
@@ -555,19 +380,8 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     @Ignore
-    @InSequence(T14)
-    @UsingDataSet("datasets/dbUnit_import_merge.json")
-    @ShouldMatchDataSet(
-        value = "datasets/dbUnit_import_merge_match_zusatzwert.json",
-        excludeColumns = {"id", "letzte_aenderung", "tree_modified"})
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeZusatzwert() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("merge zusatzwert");
-        protocol.addInfo("import", "Merge objects");
-
+        transaction.begin();
         Sample probe = repository.getByIdPlain(Sample.class, PID1000);
         List<SampleSpecifMeasVal> zusatzwerte = new ArrayList<SampleSpecifMeasVal>();
         SampleSpecifMeasVal wert1 = new SampleSpecifMeasVal();
@@ -594,9 +408,12 @@ public class ImporterTest extends BaseTest {
         zusatzwerte.add(wert2);
         zusatzwerte.add(wert3);
         merger.mergeZusatzwerte(probe, zusatzwerte);
+        transaction.commit();
 
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
+        shouldMatchDataSet(
+            "datasets/dbUnit_import_merge_match_zusatzwert.xml",
+            "lada.sample_specif_meas_val",
+            new String[]{"id", "last_mod", "tree_mod"});
     }
 
     /**
@@ -604,19 +421,8 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test
      */
     @Test
-    @InSequence(T15)
-    @UsingDataSet("datasets/dbUnit_import_merge.json")
-    @ShouldMatchDataSet(
-        value = "datasets/dbUnit_import_merge_match_kommentar.json",
-        excludeColumns = {"id"})
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeProbeKommentar() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("merge probe kommentar");
-        protocol.addInfo("import", "Merge objects");
-
+        transaction.begin();
         Sample probe = repository.getByIdPlain(Sample.class, PID1000);
         List<CommSample> kommentare = new ArrayList<CommSample>();
         CommSample komm1 = new CommSample();
@@ -636,9 +442,12 @@ public class ImporterTest extends BaseTest {
 
         merger.mergeKommentare(probe, kommentare);
         Assert.assertEquals(2, kommentare.size());
+        transaction.commit();
 
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
+        shouldMatchDataSet(
+            "datasets/dbUnit_import_merge_match_kommentar.xml",
+            "lada.comm_sample",
+            new String[]{"id"});
     }
 
     /**
@@ -646,19 +455,8 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T16)
-    @UsingDataSet("datasets/dbUnit_import_merge.json")
-    @ShouldMatchDataSet(
-        value = "datasets/dbUnit_import_merge_match_kommentarm.json",
-        excludeColumns = {"id"})
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeMessungKommentar() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("merge messung kommentar");
-        protocol.addInfo("import", "Merge objects");
-
+        transaction.begin();
         Measm messung =
             repository.getByIdPlain(Measm.class, MID1200);
         List<CommMeasm> kommentare = new ArrayList<CommMeasm>();
@@ -679,9 +477,12 @@ public class ImporterTest extends BaseTest {
 
         merger.mergeMessungKommentare(messung, kommentare);
         Assert.assertEquals(2, kommentare.size());
+        transaction.commit();
 
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
+        shouldMatchDataSet(
+            "datasets/dbUnit_import_merge_match_kommentarm.xml",
+            "lada.comm_measm",
+            new String[]{"id"});
     }
 
     /**
@@ -689,19 +490,8 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T17)
-    @UsingDataSet("datasets/dbUnit_import_merge.json")
-    @ShouldMatchDataSet(
-        value = "datasets/dbUnit_import_merge_match_messwert.json",
-        excludeColumns = {"id"})
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeMesswerte() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("merge messwerte");
-        protocol.addInfo("import", "Merge objects");
-
+        transaction.begin();
         Measm messung =
             repository.getByIdPlain(Measm.class, MID1200);
         List<MeasVal> messwerte = new ArrayList<MeasVal>();
@@ -719,37 +509,25 @@ public class ImporterTest extends BaseTest {
         List<MeasVal> dbWerte =
             repository.filterPlain(builder.getQuery());
         Assert.assertEquals(1, dbWerte.size());
+        transaction.commit();
 
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
-    }
-
-    /**
-     * Preliminary data for testing LAF 8 import.
-     * @throws Exception that can occur during the test.
-     */
-    @Test
-    @InSequence(18)
-    @UsingDataSet("datasets/dbUnit_import_conf.json")
-    @Cleanup(phase = TestExecutionPhase.NONE)
-    public final void prepareDatabaseImport() throws Exception {
-        // Nothing to do.
+        shouldMatchDataSet(
+            "datasets/dbUnit_import_merge_match_messwert.xml",
+            "lada.meas_val",
+            new String[]{"id", "last_mod", "tree_mod"});
     }
 
     /**
      * Test synchronous import of a Sample object.
      */
     @Test
-    @InSequence(19)
     @RunAsClient
     public final void testImportProbe(
         @ArquillianResource URL baseUrl
     ) {
-        Protocol prot = new Protocol();
-        prot.setName("syncimport service");
-        prot.setType("laf");
-        prot.setPassed(false);
-        testProtocol.add(prot);
+        final String laf = String.format(
+            lafTemplate, randomProbeId(),
+            regulation, sampleSpecifId, "", measd, measUnit);
 
         /* Request synchronous import */
         Response importResponse = client.target(
@@ -759,7 +537,7 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .header("X-LADA-MST", mstId)
             .post(Entity.entity(laf, MediaType.TEXT_PLAIN));
-        JsonObject importResponseObject = parseResponse(importResponse, prot);
+        JsonObject importResponseObject = parseResponse(importResponse);
 
         /* Check if a Sample object has been imported */
         assertContains(importResponseObject, dataKey);
@@ -769,76 +547,90 @@ public class ImporterTest extends BaseTest {
         assertContains(data, probeIdsKey);
         Assert.assertEquals(1,
             data.getJsonArray(probeIdsKey).size());
-
-        prot.setPassed(true);
     }
 
     /**
      * Test successful asynchronous import of a Sample object.
      */
     @Test
-    @InSequence(19)
     @RunAsClient
     public final void testAsyncImportProbeSuccess(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        Protocol prot = new Protocol();
-        prot.setName("asyncimport service successful");
-        testAsyncImportProbe(baseUrl, laf, true, prot);
+        final String lafSampleId = randomProbeId();
+        final String laf = String.format(
+            lafTemplate, lafSampleId,
+            regulation, sampleSpecifId, "", measd, measUnit);
+        testAsyncImportProbe(baseUrl, laf, lafSampleId, true);
+    }
+
+    /**
+     * Test import with lowercase LAF keywords.
+     */
+    @Test
+    @RunAsClient
+    public final void testImportLowercaseKeywords(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        final String lowerCaseLAF = String.format(
+            lafTemplate, lafSampleId, regulation, sampleSpecifId,
+            "", measd, measUnit).lines().map(line -> {
+                    if (line.matches("^\\w+ .*")) {
+                        String[] words = line.split(" ");
+                        words[0] = words[0].toLowerCase();
+                        return String.join(" ", words);
+                    }
+                    return line;
+                }).collect(Collectors.joining("\n"));
+        testAsyncImportProbe(baseUrl, lowerCaseLAF, lafSampleId, true);
     }
 
     /**
      * Test unsuccessful asynchronous import of a Probe object.
      */
     @Test
-    @InSequence(19)
     @RunAsClient
     public final void testAsyncImportProbeNoSuccess(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        Protocol prot = new Protocol();
-        prot.setName("asyncimport service unsuccessful");
-        testAsyncImportProbe(baseUrl, "no valid LAF", false, prot);
+        testAsyncImportProbe(baseUrl, "no valid LAF", "", false);
     }
 
     /**
      * Test asynchronous import of a Sample object with attribute conversion.
      */
     @Test
-    @InSequence(19)
     @RunAsClient
     public final void testAsyncImportProbeImportConfConvert(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        Protocol prot = new Protocol();
-        prot.setName("asyncimport service import config");
+        final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
             baseUrl,
             String.format(
-                lafTemplate, lafSampleId, mstId, "conv", sampleSpecifId,
+                lafTemplate, lafSampleId, "conv", sampleSpecifId,
                 "", measd, measUnit),
-            true,
-            prot);
+            lafSampleId,
+            true);
     }
 
     /**
      * Test asynchronous import with attribute transformation in MeasVal.
      */
     @Test
-    @InSequence(19)
     @RunAsClient
     public final void testAsyncImportMeasValImportConfTransform(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        Protocol prot = new Protocol();
-        prot.setName("asyncimport service import config");
+        final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
             baseUrl,
             String.format(
-                lafTemplate, lafSampleId, mstId, "conv", sampleSpecifId,
+                lafTemplate, lafSampleId, "conv", sampleSpecifId,
                 "", "H 3", measUnit),
-            true,
-            prot);
+            lafSampleId,
+            true);
     }
 
     /**
@@ -846,52 +638,49 @@ public class ImporterTest extends BaseTest {
      * in SampleSpecifMeasVal.
      */
     @Test
-    @InSequence(19)
     @RunAsClient
+    @Ignore
     public final void testAsyncImportSampleSpecifMeasValImportConfTransform(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        Protocol prot = new Protocol();
-        prot.setName("asyncimport service import config");
+        final String lafSampleId = randomProbeId();
         testAsyncImportProbe(
             baseUrl,
             String.format(
-                lafTemplate, lafSampleId, mstId, "conv", "XX",
+                lafTemplate, lafSampleId, "conv", "XX",
                 "", measd, measUnit),
-            true,
-            prot);
+            lafSampleId,
+            true);
     }
 
     /**
      * Test "Zeitbasis" handling in LAF8 import.
      */
     @Test
-    @InSequence(19)
     @RunAsClient
     public final void testZeitbasis(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        Protocol prot = new Protocol();
-        prot.setName("asyncimport zeitbasis");
+        testZeitbasis(baseUrl, "ZEITBASIS", "\"MESZ\"", false);
+        testZeitbasis(baseUrl, "ZEITBASIS", "\"INVALID\"", true);
+        testZeitbasis(baseUrl, "ZEITBASIS_S", "1", false);
+        testZeitbasis(baseUrl, "ZEITBASIS_S", "0", true);
 
-        testZeitbasis(baseUrl, "ZEITBASIS", "\"MESZ\"", false, prot);
-        testZeitbasis(baseUrl, "ZEITBASIS", "\"INVALID\"", true, prot);
-        testZeitbasis(baseUrl, "ZEITBASIS_S", "1", false, prot);
-        testZeitbasis(baseUrl, "ZEITBASIS_S", "0", true, prot);
+        // Use default from import_conf
+        testZeitbasis(baseUrl, "", "", false);
     }
 
     private void testZeitbasis(
         URL baseUrl,
         String lafKey,
         String value,
-        boolean expectWarning,
-        Protocol prot
+        boolean expectWarning
     ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
         // Add "ZEITBASIS" attribute to LAF string
         String lafZb = String.format(
             lafTemplate,
             lafSampleId,
-            mstId,
             regulation,
             sampleSpecifId,
             lafKey + " " + value + "\n",
@@ -899,29 +688,35 @@ public class ImporterTest extends BaseTest {
             measUnit);
         LOG.trace(lafZb);
 
-        JsonArray warnings = testAsyncImportProbe(baseUrl, lafZb, true, prot)
+        JsonArray warnings = testAsyncImportProbe(
+            baseUrl, lafZb, lafSampleId, true)
             .getJsonObject("warnings").getJsonArray(lafSampleId);
         LOG.trace(warnings);
-        JsonObject warning = Json.createObjectBuilder()
-            .add("key", lafKey)
-            .add("value", value.replace("\"", ""))
-            .add("code", StatusCodes.IMP_INVALID_VALUE).build();
-        Assert.assertFalse((expectWarning
-                ? "Missing warning: " : "Unexpected warning: ")
-            + warning.toString(),
-            expectWarning && !warnings.contains(warning));
+        final String keyKey = "key";
+        if (expectWarning) {
+            JsonObject expectedWarning = Json.createObjectBuilder()
+                .add(keyKey, lafKey)
+                .add("value", value.replace("\"", ""))
+                .add("code", StatusCodes.IMP_INVALID_VALUE).build();
+            Assert.assertFalse(
+                "Missing warning: " + expectedWarning.toString(),
+                !warnings.contains(expectedWarning));
+        } else {
+            for (JsonValue warningVal: warnings) {
+                JsonObject warning = (JsonObject) warningVal;
+                Assert.assertFalse(
+                    "Unexpected warning: " + warning.toString(),
+                    warning.getString(keyKey).startsWith("ZEITBASIS"));
+            }
+        }
     }
 
     private JsonObject testAsyncImportProbe(
         URL baseUrl,
         String lafData,
-        boolean expectSuccess,
-        Protocol prot
+        String lafSampleId,
+        boolean expectSuccess
     ) throws InterruptedException, CharacterCodingException {
-        prot.setType("laf");
-        prot.setPassed(false);
-        testProtocol.add(prot);
-
         final String asyncImportUrl = baseUrl + "data/import/async/";
         final String fileName = "test.laf";
 
@@ -940,8 +735,7 @@ public class ImporterTest extends BaseTest {
             .header("X-LADA-MST", mstId)
             .post(Entity.entity(requestJson.toString(),
                     MediaType.APPLICATION_JSON));
-        JsonObject importCreatedObject = parseSimpleResponse(
-            importCreated, prot);
+        JsonObject importCreatedObject = parseSimpleResponse(importCreated);
 
         final String refIdKey = "refId";
         assertContains(importCreatedObject, refIdKey);
@@ -958,7 +752,7 @@ public class ImporterTest extends BaseTest {
         final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
         final int waitASecond = 1000;
         do {
-            importStatusObject = parseSimpleResponse(statusRequest.get(), prot);
+            importStatusObject = parseSimpleResponse(statusRequest.get());
 
             final String doneKey = "done";
             assertContains(importStatusObject, doneKey);
@@ -983,11 +777,10 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject report = parseSimpleResponse(reportResponse, prot);
+        JsonObject report = parseSimpleResponse(reportResponse);
 
         assertContains(report, fileName);
         JsonObject fileReport = report.getJsonObject(fileName);
-        LOG.debug(fileReport);
 
         final String successKey = "success";
         assertContains(fileReport, successKey);
@@ -997,7 +790,6 @@ public class ImporterTest extends BaseTest {
         if (!expectSuccess) {
             Assert.assertFalse(
                 "Unexpectedly successful import: " + fileReport, success);
-            prot.setPassed(true);
             return fileReport;
         }
         Assert.assertTrue(
@@ -1013,7 +805,7 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
         JsonObject importedSample = parseResponse(
-            importedSampleResponse, prot).getJsonObject(dataKey);
+            importedSampleResponse).getJsonObject(dataKey);
         Assert.assertEquals(lafSampleId, importedSample.getString("extId"));
         Assert.assertEquals(mstId, importedSample.getString("measFacilId"));
         Assert.assertEquals(1, importedSample.getInt("regulationId"));
@@ -1024,10 +816,12 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
+        JsonArray importedSampleSpecifMeasVals =
+            parseResponse(importedSampleSpecifMeasValResponse)
+            .getJsonArray(dataKey);
+        Assert.assertEquals(1, importedSampleSpecifMeasVals.size());
         JsonObject importedSampleSpecifMeasVal =
-            parseResponse(importedSampleSpecifMeasValResponse, prot)
-            .getJsonArray(dataKey)
-            .getJsonObject(0);
+            importedSampleSpecifMeasVals.getJsonObject(0);
         Assert.assertEquals(
             sampleSpecifId,
             importedSampleSpecifMeasVal.getString("sampleSpecifId"));
@@ -1038,7 +832,7 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        final int measmId = parseResponse(importedMeasmResponse, prot)
+        final int measmId = parseResponse(importedMeasmResponse)
             .getJsonArray(dataKey)
             .getJsonObject(0)
             .getInt("id");
@@ -1050,13 +844,17 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
         JsonObject importedMeasVal =
-            parseResponse(importedMeasValResponse, prot)
+            parseResponse(importedMeasValResponse)
             .getJsonArray(dataKey)
             .getJsonObject(0);
         Assert.assertEquals(1, importedMeasVal.getInt("measdId"));
         Assert.assertEquals(1, importedMeasVal.getInt("measUnitId"));
 
-        prot.setPassed(true);
         return fileReport;
     }
+
+    private String randomProbeId() {
+        final int probeIdLength = 16;
+        return UUID.randomUUID().toString().substring(0, probeIdLength);
+   }
 }
