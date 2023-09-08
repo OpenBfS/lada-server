@@ -120,20 +120,13 @@ COPY master.filter (id, sql, param, filter_type_id, name) FROM stdin;
 3	(sample.meas_facil_id IN ( :mstId ) OR sample.appr_lab_id IN ( :mstId ))	mstId	4	probe_mst_id
 4	sample.env_medium_id IN ( :umwId )	umwId	4	probe_umw_id
 5	sample.is_test = cast(:test AS boolean)	test	2	probe_test
-6	probe.probeentnahme_beginn >= to_timestamp(cast(:timeBegin AS DOUBLE PRECISION))	timeBegin	3	probe_entnahme_beginn
-7	probe.probeentnahme_ende <= to_timestamp(cast(:timeEnd AS DOUBLE PRECISION))	timeEnd	3	probe_entnahme_beginn
 8	sample.regulation_id IN ( :datenbasis )	datenbasis	5	datenbasis
 9	sample.sample_meth_id IN ( :probenart )	probenart	5	probenart
 10	site.admin_unit_id IN (:gemId)	gemId	4	ort_gem_id
 11	site.ext_id ~ :ortId	ortId	0	ort_ort_id
-12	verwaltungseinheit.bezeichnung ~ :bezeichnung	bezeichnung	0	verwaltungseinheit_bezeichnung
 13	meas_facil.network_id IN ( :netzId )	netzId	4	netzbetreiber_id
 14	sample.sample_start_date BETWEEN to_timestamp(cast(:fromPeBegin AS DOUBLE PRECISION)) AND to_timestamp(cast(:toPeBegin AS DOUBLE PRECISION))	fromPeBegin,toPeBegin	6	Entnahmebeginn von-bis
 15	sample.sample_end_date BETWEEN to_timestamp(cast(:fromPeEnd AS DOUBLE PRECISION)) AND to_timestamp(cast(:toPeEnd AS DOUBLE PRECISION))	fromPeEnd,toPeEnd	6	Entnahmeende von-bis
-16	probe.letzte_aenderung BETWEEN to_timestamp(cast(probeLetzteAenderungFrom AS DOBULE PRECISION)) AND to_timestamp(cast(probeLetzteAenderungTo AS DOUBLE PRECISION))	probeLetzteAenderungFrom,probeLetzteAenderungTo	3	Letzte Aenderung von-bis
-17	probe.id = cast(:probeId AS INTEGER)	probeId	0	ProbeID
-18	:genTextParam ~ :genTextValue	genText	7	generic_text_filter
-19	status_stufe.id IN :statusStufe	statusStufe	5	statusStufe_filter
 20	sample.sched_start_date BETWEEN to_timestamp(cast(:fromSollBegin AS DOUBLE PRECISION)) AND to_timestamp(cast(:toSollBegin AS DOUBLE PRECISION))	fromSollBegin,toSollBegin	6	Sollbeginn von-bis
 21	sample.sched_end_date BETWEEN to_timestamp(cast(:fromSollEnde AS DOUBLE PRECISION)) AND to_timestamp(cast(:toSollEnde AS DOUBLE PRECISION))	fromSollEnde,toSollEnde	6	Sollend von-bis
 22	measm.min_sample_id ~ :nebenproben_nr	nebenproben_nr	0	messung_nebenproben_nr
@@ -142,27 +135,18 @@ COPY master.filter (id, sql, param, filter_type_id, name) FROM stdin;
 25	dataset_creator.network_id IN ( :netzId )	netzId	4	netzbetreiber_id
 26	mpg_categ.network_id IN ( :netzId )	netzId	4	netzbetreiber_id
 27	(mpg.meas_facil_id IN ( :mstId ) OR mpg.appr_lab_id IN ( :mstId ))	mstId	4	messprogramm_mst_id
-28	umwelt.umwelt_bereich ~ ( :umwelt_filter )	umwelt_filter	0	Umweltbereich
-29	probe.labor_mst_id IN ( :mlaborId )	mlaborId	4	probe_mlabor_id
-30	betriebsart.id IN ( :messRegime )	messRegime	5	messRegime
 31	mpg.is_active = cast(:aktiv AS boolean)	aktiv	2	mpr_aktiv
-32	status_wert.id IN :statusWert	statusWert	5	statusWert_filter
-33	k40.messwert BETWEEN :messwertFrom AND :messwertTo	messwertFrom,messwertTo	1	k40_messwert
 34	status_mp.id IN ( :statusK )	statusK	5	statusK
 35	mpg.regulation_id IN ( :datenbasis )	datenbasis	5	datenbasis
 36	mpg.sample_meth_id IN ( :probenart )	probenart	5	probenart
 37	mpg.env_medium_id IN ( :umwId )	umwId	4	mpr_umw_id
-38	kta_gruppe.id IN ( :anlage )	anlage	5	kta_gruppe
 39	rei_ag_gr.id IN ( :reiproggrp )	reiproggrp	5	rei_prog_grp
 40	mpg.is_test = cast(:test AS boolean)	test	2	mpr_test
 41	master.sampler.ext_id ~ :prnId	prnId	0	probenehmer_prnId
-42	messprogramm_kategorie.id IN ( :mplcode )	mplcode	5	mplcode
 43	measm.is_scheduled = cast(:geplant AS boolean)	geplant	2	geplant
 44	lada_meas_val.measd_id IN ( :messgroesseId )	messgroesseId	5	messgroesse
-45	probenehmer.id IN ( :prnId )	prnId	5	prn_id
 46	mmt.id IN ( :mmtId )	mmtId	4	mmt_id
 47	measm.measm_start_date BETWEEN to_timestamp(cast(:fromMessBegin AS DOUBLE PRECISION)) AND to_timestamp(cast(:toMessBegin AS DOUBLE PRECISION))	fromMessBegin,toMessBegin	6	Messbeginn von-bis
-48	messung.messdauer BETWEEN :messdauerFrom AND :messdauerTo	messdauerFrom,messdauerTo	1	messdauer
 49	lada_meas_val.meas_val BETWEEN :messwertFrom AND :messwertTo	messwertFrom,messwertTo	1	messwert
 50	lada_meas_val.detect_lim BETWEEN :nwgzumesswertFrom AND :nwgzumesswertTo	nwgzumesswertFrom,nwgzumesswertTo	1	nwg_zu_messwert
 51	sample.mid_coll_pd BETWEEN to_timestamp(cast(:fromMitteSZeitraum AS DOUBLE PRECISION)) AND to_timestamp(cast(:toMitteSZeitraum AS DOUBLE PRECISION))	fromMitteSZeitraum,toMitteSZeitraum	6	mitte_sammelzeitraum
