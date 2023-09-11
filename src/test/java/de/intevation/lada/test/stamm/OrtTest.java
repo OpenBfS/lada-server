@@ -9,15 +9,22 @@ package de.intevation.lada.test.stamm;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Base64;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.BaseTest;
+import de.intevation.lada.model.master.Site;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -28,15 +35,15 @@ public class OrtTest extends ServiceTest {
 
     private JsonObject expectedById;
     private JsonObject create;
+    private String testImage;
     private JsonObject createIncomplete;
 
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
@@ -47,9 +54,9 @@ public class OrtTest extends ServiceTest {
         });
 
         // Prepare expected object
-        JsonObject content = readJsonResource("/datasets/dbUnit_ort.json");
         JsonObject erzeuger =
-            content.getJsonArray("master.site").getJsonObject(0);
+            readXmlResource("datasets/dbUnit_master.xml", Site.class)
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);
@@ -58,6 +65,58 @@ public class OrtTest extends ServiceTest {
         create = readJsonResource("/datasets/ort.json");
         createIncomplete = readJsonResource("/datasets/ort_incomplete.json");
         Assert.assertNotNull(create);
+
+        testImage = readTxtResource("/datasets/testImage.txt");
+    }
+
+    /**
+     * Test the site image upload function.
+     *
+     * Passes if:
+     *   - An image can be uploaded using bytes
+     *   - The bytes received via the get interface equal the uploaded bytes
+     * @param imageDataUrl Image as dataurl to use for tests
+     * @param parameter Url parameter
+     */
+    private void testUploadImage(String imageDataUrl, String parameter) {
+        WebTarget reqTarget = client.target(baseUrl + parameter);
+        Builder reqBuilder = reqTarget.request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles);
+
+        // Get empty image
+        Response emptyResponse = reqBuilder.get();
+        Assert.assertEquals(
+            Status.NO_CONTENT.getStatusCode(), emptyResponse.getStatus());
+
+        // Upload image
+        Response postResponse = reqBuilder.post(Entity.entity(
+                imageDataUrl, MediaType.TEXT_PLAIN));
+        Assert.assertEquals(
+            Status.NO_CONTENT.getStatusCode(), postResponse.getStatus());
+
+        // Get image
+        reqBuilder = reqTarget.request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles);
+        Response response = reqBuilder.get();
+        Assert.assertEquals(
+            Status.OK.getStatusCode(), response.getStatus());
+        byte[] responseBytes = response.readEntity(byte[].class);
+
+        //Convert dataurl to bytes and use as expected results
+        String encodingPrefix = "base64,";
+        int contentStartIndex = imageDataUrl.indexOf(encodingPrefix)
+                + encodingPrefix.length();
+        byte[] bytes = Base64.getDecoder().decode(
+            imageDataUrl.substring(contentStartIndex));
+
+        Assert.assertArrayEquals(bytes, responseBytes);
+
+        // Delete image
+        Response deleteResponse = reqBuilder.delete();
+        Assert.assertEquals(
+            Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
 
     /**
@@ -80,6 +139,9 @@ public class OrtTest extends ServiceTest {
 
         update("site", "rest/site/" + createdId,
             "longText", "Langer Text", "Längerer Text");
+        //Test site images
+        testUploadImage(testImage, "rest/site/" + createdId + "/img");
+        testUploadImage(testImage, "rest/site/" + createdId + "/map");
         delete("site", "rest/site/" + createdId);
     }
 }

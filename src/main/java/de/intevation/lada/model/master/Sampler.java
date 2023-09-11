@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -76,6 +77,11 @@ public class Sampler implements Serializable {
     private String phone;
 
     @Size(max = 3)
+    private String phoneMobile;
+
+    @Email
+    private String email;
+
     private String routePlanning;
 
     @Size(max = 1)
@@ -217,6 +223,23 @@ public class Sampler implements Serializable {
     public void setReferenceCount(Integer referenceCount) {
         this.referenceCount = referenceCount;
     }
+
+    public String getPhoneMobile() {
+        return phoneMobile;
+    }
+
+    public void setPhoneMobile(String phoneMobile) {
+        this.phoneMobile = phoneMobile;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     /**
      * @return the readonly
      */

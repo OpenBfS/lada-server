@@ -7,7 +7,9 @@
  */
 package de.intevation.lada.rest;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -18,16 +20,23 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.servlet.http.HttpServletRequest;
 import javax.persistence.Query;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.QueryParam;
@@ -200,7 +209,7 @@ public class SiteService extends LadaService {
                 response.setWarnings(violation.getWarnings());
                 response.setNotifications(violation.getNotifications());
             }
-               return authorization.filter(response,Site.class);
+               return authorization.filter(response, Site.class);
     }
 
     /**
@@ -362,6 +371,100 @@ public class SiteService extends LadaService {
     }
 
     /**
+     * Retrieve image associated with site.
+     *
+     * @param id ID of site
+     * @param type Type of image (img or map)
+     * @return Image for given site of given type
+     * @throws NotFoundException if no site exists with given ID
+     */
+    @GET
+    @Path("{id}/{type}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public byte[] getSiteImage(
+            @PathParam("id") Integer id,
+            @PathParam("type") @Pattern(regexp = "img|map") String type
+    ) {
+        Site site = repository.getByIdPlain(Site.class, id);
+        if (site == null) {
+            throw new NotFoundException();
+        }
+        return type.equals("map") ? site.getMap() : site.getImg();
+    }
+
+    /**
+     * Associate image with site.
+     *
+     * @param id ID of site
+     * @param type Type of image (img or map)
+     * @param request The upload request
+     * @throws ForbiddenException if updating the site is not allowed
+     * @throws IOException if length of request body cannot be retrieved
+     * or other I/O errors occur.
+     */
+    @POST
+    @Path("{id}/{type}")
+    @Consumes(MediaType.TEXT_PLAIN)
+    public void uploadSiteImage(
+            @PathParam("id") Integer id,
+            @PathParam("type") @Pattern(regexp = "img|map") String type,
+            @Context HttpServletRequest request,
+            @NotBlank String dataUrl
+    ) throws IOException {
+        Site site = repository.getByIdPlain(Site.class, id);
+        if (!authorization.isAuthorized(
+                site,
+                RequestMethod.PUT,
+                Site.class)) {
+            throw new ForbiddenException();
+        }
+        int contentLength = request.getContentLength();
+        if (contentLength == -1) {
+            throw new IOException();
+        }
+        String encodingPrefix = "base64,";
+        int contentStartIndex = dataUrl.indexOf(encodingPrefix)
+                + encodingPrefix.length();
+
+        byte[] img = Base64.getDecoder().decode(
+                dataUrl.substring(contentStartIndex));
+        if (type.equals("map")) {
+            site.setMap(img);
+        } else {
+            site.setImg(img);
+        }
+        repository.update(site);
+    }
+
+    /**
+     * Delete image associated with site.
+     *
+     * @param id ID of site
+     * @param type Type of image (img or map)
+     * @throws ForbiddenException if updating the site is not allowed
+     */
+    @DELETE
+    @Path("{id}/{type}")
+    public void deleteSiteImage(
+            @PathParam("id") Integer id,
+            @PathParam("type") @Pattern(regexp = "img|map") String type
+    ) {
+        Site site = repository.getByIdPlain(Site.class, id);
+        if (!authorization.isAuthorized(
+                site,
+                RequestMethod.PUT,
+                Site.class)) {
+            throw new ForbiddenException();
+        }
+        if (type.equals("map")) {
+            site.setMap(null);
+        } else {
+            site.setImg(null);
+        }
+        repository.update(site);
+    }
+
+    /**
      * Return the Ortszuordnung instances referencing the given ort.
      * @param o Ort instance
      * @return Ortszuordnung instances as list
@@ -373,14 +476,14 @@ public class SiteService extends LadaService {
         return repository.filterPlain(refBuilder.getQuery());
     }
 
-    private int getPlausibleRefs(int sampleId){
+    private int getPlausibleRefs(int sampleId) {
         Query query =
         repository.queryFromString(
             "SELECT * FROM lada.get_measms_per_site(:sampleId);")
                 .setParameter("sampleId", sampleId);
         @SuppressWarnings("unchecked")
         List resultList = query.getResultList();
-        return ((int)resultList.get(0));
+        return ((int) resultList.get(0));
     }
 
     /**

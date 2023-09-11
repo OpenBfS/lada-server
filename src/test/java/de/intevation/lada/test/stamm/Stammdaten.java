@@ -9,7 +9,6 @@ package de.intevation.lada.test.stamm;
 
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.json.JsonObject;
@@ -23,7 +22,6 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 
 import de.intevation.lada.BaseTest;
-import de.intevation.lada.Protocol;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -37,10 +35,9 @@ public class Stammdaten extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
 
         matchers = new HashMap<>();
         matchers.put("regulation",
@@ -48,7 +45,7 @@ public class Stammdaten extends ServiceTest {
                 "id",
                 "lastMod",
                 "descr",
-                "regulation"
+                "name"
             )
         );
         matchers.put("measunit",
@@ -278,26 +275,17 @@ public class Stammdaten extends ServiceTest {
         String type,
         Object id
     ) {
-        Protocol prot = new Protocol();
-        prot.setName(type + "Service");
-        prot.setType("get by Id");
-        prot.setPassed(false);
-        protocol.add(prot);
-
         /* Create a client*/
         WebTarget target =
             client.target(baseUrl + "rest/" + type + "/" + id);
-        prot.addInfo(type + "Id", id);
         /* Request an object by id*/
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject content = BaseTest.parseResponse(response, prot);
+        JsonObject content = BaseTest.parseResponse(response);
         /* Verify the response*/
         MatcherAssert.assertThat(content.getJsonObject("data").keySet(),
             matchers.get(type));
-        prot.addInfo("object", "equals");
-        prot.setPassed(true);
     }
 }

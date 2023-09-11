@@ -88,11 +88,11 @@ ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN intervall_offset TO sample_pd_offse
 ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN gueltig_von TO valid_start_date;
 ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN gueltig_bis TO valid_end_date;
 ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN probe_nehmer_id TO sampler_id;
-ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN mpl_id TO state_mpg_id;
+ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN mpl_id TO mpg_categ_id;
 ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN probe_kommentar TO comm_sample;
 ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN rei_progpunkt_grp_id TO rei_ag_gr_id;
 ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN kta_gruppe_id TO nucl_facil_gr_id;
-ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN meh_id TO unit_id;
+ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN meh_id TO meas_unit_id;
 ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN letzte_aenderung TO last_mod;
 ALTER TABLE IF EXISTS lada.mpg RENAME COLUMN probenahmemenge TO sample_quant;
 CREATE VIEW land.messprogramm AS SELECT
@@ -115,11 +115,11 @@ CREATE VIEW land.messprogramm AS SELECT
 	valid_start_date AS gueltig_von,
 	valid_end_date AS gueltig_bis,
 	sampler_id AS probe_nehmer_id,
-	state_mpg_id AS mpl_id,
+	mpg_categ_id AS mpl_id,
 	comm_sample AS probe_kommentar,
 	rei_ag_gr_id AS rei_progpunkt_grp_id,
 	nucl_facil_gr_id AS kta_gruppe_id,
-	unit_id AS meh_id,
+	meas_unit_id AS meh_id,
 	last_mod AS letzte_aenderung,
 	sample_quant AS probenahmemenge
 FROM lada.mpg;
@@ -182,7 +182,7 @@ ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN messwert_nwg TO less_than_lod;
 ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN messwert TO meas_val;
 ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN messfehler TO error;
 ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN nwg_zu_messwert TO detect_lim;
-ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN meh_id TO unit_id;
+ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN meh_id TO meas_unit_id;
 ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN grenzwertueberschreitung TO is_threshold;
 ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN letzte_aenderung TO last_mod;
 ALTER TABLE IF EXISTS lada.meas_val RENAME COLUMN tree_modified TO tree_mod;
@@ -194,7 +194,7 @@ CREATE VIEW land.messwert AS SELECT
 	meas_val AS messwert,
 	error AS messfehler,
 	detect_lim AS nwg_zu_messwert,
-	unit_id AS meh_id,
+	meas_unit_id AS meh_id,
 	is_threshold AS grenzwertueberschreitung,
 	last_mod AS letzte_aenderung,
 	tree_mod AS tree_modified
@@ -207,7 +207,7 @@ ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messwert_nwg TO less_than
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messwert TO meas_val;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN messfehler TO error;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN nwg_zu_messwert TO detect_lim;
-ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN meh_id TO unit_id;
+ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN meh_id TO meas_unit_id;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN grenzwertueberschreitung TO is_threshold;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN status_kombi TO status_comb;
 ALTER TABLE IF EXISTS lada.meas_val_view RENAME COLUMN letzte_aenderung TO last_mod;
@@ -219,7 +219,7 @@ CREATE VIEW land.messwert_view AS SELECT
 	meas_val AS messwert,
 	error AS messfehler,
 	detect_lim AS nwg_zu_messwert,
-	unit_id AS meh_id,
+	meas_unit_id AS meh_id,
 	is_threshold AS grenzwertueberschreitung,
 	status_comb AS status_kombi,
 	last_mod AS letzte_aenderung
@@ -281,7 +281,7 @@ ALTER TABLE IF EXISTS lada.sample RENAME COLUMN mittelungsdauer TO mid_sample_da
 ALTER TABLE IF EXISTS lada.sample RENAME COLUMN letzte_aenderung TO last_mod;
 ALTER TABLE IF EXISTS lada.sample RENAME COLUMN erzeuger_id TO dataset_creator_id;
 ALTER TABLE IF EXISTS lada.sample RENAME COLUMN probe_nehmer_id TO sampler_id;
-ALTER TABLE IF EXISTS lada.sample RENAME COLUMN mpl_id TO state_mpg_id;
+ALTER TABLE IF EXISTS lada.sample RENAME COLUMN mpl_id TO mpg_categ_id;
 ALTER TABLE IF EXISTS lada.sample RENAME COLUMN mpr_id TO mpg_id;
 ALTER TABLE IF EXISTS lada.sample RENAME COLUMN solldatum_beginn TO sched_start_date;
 ALTER TABLE IF EXISTS lada.sample RENAME COLUMN solldatum_ende TO sched_end_date;
@@ -309,7 +309,7 @@ CREATE VIEW land.probe AS SELECT
 	last_mod AS letzte_aenderung,
 	dataset_creator_id AS erzeuger_id,
 	sampler_id AS probe_nehmer_id,
-	state_mpg_id AS mpl_id,
+	mpg_categ_id AS mpl_id,
 	mpg_id AS mpr_id,
 	sched_start_date AS solldatum_beginn,
 	sched_end_date AS solldatum_ende,
@@ -908,13 +908,13 @@ CREATE VIEW stamm.pflicht_messgroesse AS SELECT
 FROM master.oblig_measd_mp;
 
 ALTER TABLE IF EXISTS master.proben_zusatz RENAME TO sample_specif;
-ALTER TABLE IF EXISTS master.sample_specif RENAME COLUMN meh_id TO unit_id;
+ALTER TABLE IF EXISTS master.sample_specif RENAME COLUMN meh_id TO meas_unit_id;
 ALTER TABLE IF EXISTS master.sample_specif RENAME COLUMN beschreibung TO name;
 ALTER TABLE IF EXISTS master.sample_specif RENAME COLUMN zusatzwert TO ext_id;
 ALTER TABLE IF EXISTS master.sample_specif RENAME COLUMN letzte_aenderung TO last_mod;
 CREATE VIEW stamm.proben_zusatz AS SELECT
 	id,
-	unit_id AS meh_id,
+	meas_unit_id AS meh_id,
 	name AS beschreibung,
 	ext_id AS zusatzwert,
 	eudf_keyword,
@@ -1216,16 +1216,16 @@ CREATE VIEW stamm.tag_typ AS SELECT
 FROM master.tag_type;
 
 ALTER TABLE IF EXISTS master.tm_fm_umrechnung RENAME TO convers_dm_fm;
-ALTER TABLE IF EXISTS master.convers_dm_fm RENAME COLUMN meh_id TO unit_id;
-ALTER TABLE IF EXISTS master.convers_dm_fm RENAME COLUMN meh_id_nach TO to_unit_id ;
+ALTER TABLE IF EXISTS master.convers_dm_fm RENAME COLUMN meh_id TO meas_unit_id;
+ALTER TABLE IF EXISTS master.convers_dm_fm RENAME COLUMN meh_id_nach TO to_meas_unit_id ;
 ALTER TABLE IF EXISTS master.convers_dm_fm RENAME COLUMN umw_id TO env_medium_id;
 ALTER TABLE IF EXISTS master.convers_dm_fm RENAME COLUMN media_desk_pattern TO env_descrip_pattern;
 ALTER TABLE IF EXISTS master.convers_dm_fm RENAME COLUMN faktor TO conv_factor;
 ALTER TABLE IF EXISTS master.convers_dm_fm RENAME COLUMN letzte_aenderung TO last_mod;
 CREATE VIEW stamm.tm_fm_umrechnung AS SELECT
 	id,
-	unit_id AS meh_id,
-	to_unit_id  AS meh_id_nach,
+	meas_unit_id AS meh_id,
+	to_meas_unit_id  AS meh_id_nach,
 	env_medium_id AS umw_id,
 	env_descrip_pattern AS media_desk_pattern,
 	conv_factor AS faktor,

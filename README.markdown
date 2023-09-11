@@ -176,6 +176,19 @@ auch den LADA-Server ohne die automatischen Tests deployen und debuggen. Auch
 hier vorher sicherstellen, dass nur ein Deployment vorhanden ist, und den
 Wildfly neu starten.
 
+Zum Remote-Monitoring mit jconsole zunächst
+/opt/jboss/wildfly/bin/client/jboss-cli-client.jar aus dem Server-Container
+kopieren (mit docker cp) und jconsole folgendermaßen starten:
+
+ $ jconsole -debug -J--add-modules=jdk.unsupported \
+       -J-Djava.class.path=jboss-cli-client.jar
+
+Anschließend in jconsole unter "Remote Process" die URL
+"service:jmx:http-remoting-jmx://<your-docker-host>:<management-port>" angeben
+und Benutzername und Passwort entsprechend den Parametern zu add-user.sh
+im Dockerfile setzen. "<management-port>" entspricht dabei dem Host-Port zum
+Container-Port 9990.
+
 Dokumenation
 ------------
 Die Entwicklerdokumentation (Javadoc) kann mit dem folgenden Befehl im
@@ -299,30 +312,41 @@ Erstellen von Importerkonfigurationen
 Konfigurationen für den Importer enthalten drei Typen von Aktionen, die auf die
 zu importierenden Daten angewendet werden, bevor die Daten in die Datenbank
 geschrieben werden:
-1. "default": Standardwerte, die leere oder fehlende Angaben ergänzen
-2. "convert": Datenumwandlungen, die einen Ersatz von vorhandenen Daten
+1. "DEFAULT": Standardwerte, die leere oder fehlende Angaben ergänzen
+2. "CONVERT": Datenumwandlungen, die einen Ersatz von vorhandenen Daten
    darstellen
-3. "transform": Zeichenumwandlung, die einzelne Zeichen eines Wertes ändern
+3. "TRANSFORM": Zeichenumwandlung, die einzelne Zeichen eines Wertes ändern
 
-Eine Konfiguration wird in der Datenbanktabelle 'importer_config' im Schema
-"stammdaten" angelegt und hat die folgenden Felder:
+Eine Konfiguration wird in der Datenbanktabelle "import_config" im Schema
+"master" angelegt und hat die folgenden Felder:
 
 * id (serial): Primary Key
-* name (character varying(30)): Name der Datenbank-Tabelle,
-  z.B. bei einer Probe "probe". Die Zeitbasis hat den Namen "zeitbasis".
-* attribute (character varying(30)): Name des Attributes das bearbeitet werden
-  soll in CamelCase-Schreibweise. (Zeitbasis hat hier einen "dummy"-Eintrag)
-  Tabellenspalten, die als Foreign-Key auf andere Tabellen verweisen, werden
-  mit dem Tabellennamen referenziert und können so im Falle der Aktion
-  'convert' mit den sprechenden Bezeichnung genutzt werden.
-* mst_id (Foreign-Key auf mess_stelle): Enthält die Messstelle, für die diese
-  Konfiguration gültig ist.
-* from_value (character varying(100)): Für "default" bleibt diese Spalte leer,
-  für "convert" und "transform" enthält diese Spalte den Ursprungswert.
+* name (character varying(30)): Name der VIEW mit deutscher Übersetzung der
+  Datenbank-Tabelle, z.B. bei einer Probe "probe".
+  Wenn "attribute" auf einen in LafObjectListener und LafObjectMapper verwendeten
+  Attribut-Schlüssel verweist, ist der Inhalt bedeutungslos.
+* attribute (character varying(30)): Name des Datenbank-Attributes, das bearbeitet
+  werden soll in CamelCase-Schreibweise (z.B. "mainSampleId"),
+  oder ein in LafObjectListener und LafObjectMapper
+  verwendeter Attribut-Schlüssel (z.B. "HAUPTPROBENNUMMER" oder "ZEITBASIS",
+  Groß-/Kleinschreibung wird ignoriert), wobei zu beachten ist:
+  1.) Mehrfach verwendete Schlüssel (z.B. "MST_ID" sowohl für Proben-
+  als auch für Messungs-Kommentare), werden entsprechend auch mehrfach auf die
+  Eingangs-Daten angewendet.
+  2.) Schlüssel, die alternative Darstellungsformen für das selbe Attribut
+  kodieren, werden im LafObjectMapper nach einer spezifischen Rangordnung
+  angewendet, so dass ein "DEFAULT" für einen höher-rangigen Schlüssel die
+  Verwendung eines niedriger-rangigen Schlüssels in den Eingangs-Daten
+  überschreiben kann (z.B. ein "DEFAULT" für "ZEITBASIS" macht "ZEITBASIS_S"
+  in den Eingangs-Daten unwirksam).
+* meas_facil_id (Foreign-Key auf meas_facil): Enthält die Messstelle,
+  für die diese Konfiguration gültig ist.
+* from_value (character varying(100)): Für "DEFAULT" bleibt diese Spalte leer,
+  für "CONVERT" und "TRANSFORM" enthält diese Spalte den Ursprungswert.
 * to_value (character varying(100)): Enthält den Zielwert der Konfiguration
 * action (character varying(20)): Enthält eine der drei Aktionen als Text:
-  "default", "convert" oder "transform"
+  "DEFAULT", "CONVERT" oder "TRANSFORM".
 
 Die Transformation im speziellen enthält in "from_value" und "to_value" die
-hexadezimale Darstellung eines Zeichen in Unicode. Also z.B. für "+" den
+hexadezimale Darstellung eines Zeichens in Unicode. Also z.B. für "+" den
 Wert "2b", für "#" den Wert "23".

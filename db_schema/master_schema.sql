@@ -421,7 +421,7 @@ CREATE TRIGGER last_mod_auth_coord_ofc_env_medium_mp BEFORE UPDATE ON master.aut
 CREATE TABLE regulation (
     id serial PRIMARY KEY,
     descr character varying(30),
-    regulation character varying(12),
+    name character varying(12),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_regulation BEFORE UPDATE ON master.regulation FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
@@ -712,8 +712,12 @@ CREATE TABLE site (
     height_asl real,
     rei_ag_gr_id integer REFERENCES rei_ag_gr,
     munic_div_id integer REFERENCES munic_div,
+    img BYTEA,
+    map BYTEA,
+    route character varying(1024),
     UNIQUE(ext_id, network_id)
 );
+
 
 CREATE INDEX site_network_id_idx ON master.site USING btree (network_id);
 
@@ -780,6 +784,8 @@ CREATE TABLE sampler (
     zip character varying(5),
     street character varying(30),
     phone character varying(20),
+    phone_mobile character varying(20),
+    email character varying(254),
     route_planning character varying(3),
     type character(1),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
@@ -902,12 +908,15 @@ CREATE TABLE import_conf (
     attribute character varying(30) NOT NULL,
     meas_facil_id character varying(5) NOT NULL REFERENCES meas_facil,
     from_val character varying(100),
-    to_val character varying(100),
-    action character varying(10),
-    CHECK (action = 'default' OR
-        action = 'convert' OR
-        action = 'transform'),
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    to_val character varying(100) NOT NULL,
+    action character varying(10)
+        CHECK (action IN('DEFAULT', 'CONVERT', 'TRANSFORM')),
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    CHECK(action = 'DEFAULT' OR from_val IS NOT NULL),
+    CHECK(action <> 'TRANSFORM'
+        -- hexadecimal unicode code points expected
+        OR from_val SIMILAR TO '[0-9a-f]+' AND to_val SIMILAR TO '[0-9a-f]+'),
+    UNIQUE(meas_facil_id, name, attribute, action, from_val)
 );
 CREATE TRIGGER last_mod_import_conf BEFORE UPDATE ON master.import_conf FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
@@ -946,7 +955,7 @@ CREATE TABLE grid_col_conf (
 CREATE TABLE tag (
     id serial PRIMARY KEY,
     name text NOT NULL,
-    meas_facil_id character varying REFERENCES meas_facil(id),
+    meas_facil_id character varying(5) REFERENCES meas_facil,
     is_auto_tag boolean NOT NULL DEFAULT false,
     network_id varchar(2) REFERENCES network,
     lada_user_id INTEGER REFERENCES lada_user,
@@ -960,8 +969,8 @@ CREATE UNIQUE INDEX global_tag_unique_idx ON master.tag (name) WHERE network_id 
 CREATE UNIQUE INDEX network_tag_unique_idx ON master.tag (name, network_id) WHERE meas_facil_id IS NULL;
 CREATE TABLE master.convers_dm_fm(
   id serial PRIMARY KEY,
-  unit_id smallint NOT NULL REFERENCES meas_unit(id),
-  to_unit_id  smallint NOT NULL REFERENCES meas_unit(id),
+  meas_unit_id smallint NOT NULL REFERENCES meas_unit(id),
+  to_meas_unit_id  smallint NOT NULL REFERENCES meas_unit(id),
   env_medium_id character varying(3) NOT NULL REFERENCES env_medium(id),
   env_descrip_pattern character varying(100),
   conv_factor numeric(25,12) NOT NULL,

@@ -120,14 +120,10 @@ public class UniversalService extends LadaService {
         for (GridColConf columnValue : gridColumnValues) {
             GridColMp gridColumn = repository.getByIdPlain(
                 GridColMp.class,
-                Integer.valueOf(columnValue.getGridColMpId())
+                columnValue.getGridColMpId()
             );
             //Check if column can be used for authorization
-            Disp resultType =
-                repository.getByIdPlain(
-                    Disp.class,
-                    gridColumn.getDisp().getId()
-                );
+            Disp resultType = gridColumn.getDisp();
             if (resultType != null) {
                 int ndx = -1, i = 0;
                 for (String authType: hierarchy.keySet()) {

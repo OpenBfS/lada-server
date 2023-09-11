@@ -9,7 +9,6 @@ package de.intevation.lada.test.stamm;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -17,7 +16,7 @@ import javax.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.master.MpgCateg;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -32,21 +31,18 @@ public class MessprogrammKategorieTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod"
         });
 
         // Prepare expected object
-        JsonObject content =
-            readJsonResource("/datasets/dbUnit_messprogrammkategorie.json");
         JsonObject erzeuger =
-            content.getJsonArray(
-                "master.mpg_categ").getJsonObject(0);
+            readXmlResource("datasets/dbUnit_master.xml", MpgCateg.class)
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);

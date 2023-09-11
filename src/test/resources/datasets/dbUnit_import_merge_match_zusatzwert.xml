@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Dataset used to match against the db table
+    Note: Null values needs to be included to ensure the dataset has the correct column count-->
+<dataset>
+    <lada.sample_specif_meas_val
+        id = "1000"
+        sample_id = "1000"
+        sample_specif_id = "A74"
+        meas_val = "5.8"
+        error = "1.2"
+        detect_lim = "1.3"
+        last_mod = "2012-05-08 12:00:00"
+        tree_mod = "2012-05-09 12:00:00"
+        smaller_than = "[null]"
+    />
+    <lada.sample_specif_meas_val
+        id = "1001"
+        sample_id = "1000"
+        sample_specif_id = "A75"
+        meas_val = "1.8"
+        error = "0.2"
+        detect_lim = "0.3"
+        last_mod = "2012-05-08 12:00:00"
+        tree_mod = "2012-05-09 12:00:00"
+        smaller_than = "[null]"
+    />
+    <lada.sample_specif_meas_val
+        id = "1002"
+        sample_id = "1000"
+        sample_specif_id = "A76"
+        meas_val = "1.8"
+        error = "0.2"
+        detect_lim = "0.3"
+        last_mod = "2012-05-08 12:00:00"
+        tree_mod = "2012-05-09 12:00:00"
+        smaller_than = "[null]"
+    />
+</dataset>

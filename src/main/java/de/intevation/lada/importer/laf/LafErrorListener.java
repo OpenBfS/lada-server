@@ -15,13 +15,12 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 
 import de.intevation.lada.importer.ReportItem;
+import de.intevation.lada.util.data.StatusCodes;
 
 /**
  * Listener to track errors in parser.
  */
 public class LafErrorListener extends BaseErrorListener {
-
-    private static final int ERR670 = 670;
 
     /**
      * The instance of the listener.
@@ -48,7 +47,7 @@ public class LafErrorListener extends BaseErrorListener {
         ReportItem err = new ReportItem();
         err.setKey(sourceName);
         err.setValue("line " + line + ": " + msg);
-        err.setCode(ERR670);
+        err.setCode(StatusCodes.IMP_PARSER_ERROR);
         this.errors.add(err);
     }
 

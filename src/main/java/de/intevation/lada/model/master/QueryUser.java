@@ -23,6 +23,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(schema = SchemaName.NAME)
@@ -37,6 +38,7 @@ public class QueryUser implements Serializable {
     private String descr;
 
     @Size(max = 80)
+    @NotBlank
     private String name;
 
     @NotNull

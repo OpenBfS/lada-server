@@ -136,7 +136,9 @@ Maven Checkstyle plugin. Some design related checks where removed.
     <module name="MethodLength">
       <property name="severity" value="warning"/>
     </module>
-    <module name="ParameterNumber"/>
+    <module name="ParameterNumber">
+      <property name="severity" value="warning"/>
+    </module>
 
 
     <!-- Checks for whitespace                               -->

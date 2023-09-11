@@ -9,7 +9,6 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.json.JsonObject;
 import javax.json.JsonValue;
@@ -18,7 +17,7 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -33,12 +32,11 @@ public class MessungTest extends ServiceTest {
     private JsonObject create;
 
     @Override
-    public void init(
+    public void init (
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "lastMod",
@@ -47,13 +45,10 @@ public class MessungTest extends ServiceTest {
         });
 
         // Prepare expected probe object
-        JsonObject content = readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject messung =
-            content.getJsonArray("lada.measm").getJsonObject(0);
-        // Automatic conversion of key for external ID does not work
-        final String extIdKey = "ext_id";
-        expectedById = convertObject(messung, extIdKey)
-            .add("extId", messung.get(extIdKey))
+            readXmlResource("datasets/dbUnit_lada.xml", Measm.class)
+            .getJsonObject(0);
+        expectedById = convertObject(messung)
             .add("parentModified", TS1)
             .add("readonly", JsonValue.FALSE)
             .add("owner", JsonValue.TRUE)
@@ -74,8 +69,20 @@ public class MessungTest extends ServiceTest {
         get("measm", "rest/measm?sampleId=1000");
         getById("measm", "rest/measm/1200", expectedById);
         JsonObject created = create("measm", "rest/measm", create);
-        update("measm", "rest/measm/1200", "minSampleId", "T100", "U200");
-        getAuditTrail("measm", "rest/audit/messung/1200");
+
+        final String updateFieldKey = "minSampleId";
+        final String updateFieldValue = "U200";
+        update(
+            "measm",
+            "rest/measm/1200",
+            updateFieldKey,
+            "T100",
+            updateFieldValue);
+        getAuditTrail(
+            "measm",
+            "rest/audit/messung/1200",
+            updateFieldKey,
+            updateFieldValue);
         delete(
             "measm",
             "rest/measm/" + created.getJsonObject("data").get("id"));
