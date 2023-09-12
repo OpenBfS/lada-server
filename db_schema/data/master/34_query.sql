@@ -120,20 +120,13 @@ COPY master.filter (id, sql, param, filter_type_id, name) FROM stdin;
 3	(sample.meas_facil_id IN ( :mstId ) OR sample.appr_lab_id IN ( :mstId ))	mstId	4	probe_mst_id
 4	sample.env_medium_id IN ( :umwId )	umwId	4	probe_umw_id
 5	sample.is_test = cast(:test AS boolean)	test	2	probe_test
-6	probe.probeentnahme_beginn >= to_timestamp(cast(:timeBegin AS DOUBLE PRECISION))	timeBegin	3	probe_entnahme_beginn
-7	probe.probeentnahme_ende <= to_timestamp(cast(:timeEnd AS DOUBLE PRECISION))	timeEnd	3	probe_entnahme_beginn
 8	sample.regulation_id IN ( :datenbasis )	datenbasis	5	datenbasis
 9	sample.sample_meth_id IN ( :probenart )	probenart	5	probenart
 10	site.admin_unit_id IN (:gemId)	gemId	4	ort_gem_id
 11	site.ext_id ~ :ortId	ortId	0	ort_ort_id
-12	verwaltungseinheit.bezeichnung ~ :bezeichnung	bezeichnung	0	verwaltungseinheit_bezeichnung
 13	meas_facil.network_id IN ( :netzId )	netzId	4	netzbetreiber_id
 14	sample.sample_start_date BETWEEN to_timestamp(cast(:fromPeBegin AS DOUBLE PRECISION)) AND to_timestamp(cast(:toPeBegin AS DOUBLE PRECISION))	fromPeBegin,toPeBegin	6	Entnahmebeginn von-bis
 15	sample.sample_end_date BETWEEN to_timestamp(cast(:fromPeEnd AS DOUBLE PRECISION)) AND to_timestamp(cast(:toPeEnd AS DOUBLE PRECISION))	fromPeEnd,toPeEnd	6	Entnahmeende von-bis
-16	probe.letzte_aenderung BETWEEN to_timestamp(cast(probeLetzteAenderungFrom AS DOBULE PRECISION)) AND to_timestamp(cast(probeLetzteAenderungTo AS DOUBLE PRECISION))	probeLetzteAenderungFrom,probeLetzteAenderungTo	3	Letzte Aenderung von-bis
-17	probe.id = cast(:probeId AS INTEGER)	probeId	0	ProbeID
-18	:genTextParam ~ :genTextValue	genText	7	generic_text_filter
-19	status_stufe.id IN :statusStufe	statusStufe	5	statusStufe_filter
 20	sample.sched_start_date BETWEEN to_timestamp(cast(:fromSollBegin AS DOUBLE PRECISION)) AND to_timestamp(cast(:toSollBegin AS DOUBLE PRECISION))	fromSollBegin,toSollBegin	6	Sollbeginn von-bis
 21	sample.sched_end_date BETWEEN to_timestamp(cast(:fromSollEnde AS DOUBLE PRECISION)) AND to_timestamp(cast(:toSollEnde AS DOUBLE PRECISION))	fromSollEnde,toSollEnde	6	Sollend von-bis
 22	measm.min_sample_id ~ :nebenproben_nr	nebenproben_nr	0	messung_nebenproben_nr
@@ -142,27 +135,18 @@ COPY master.filter (id, sql, param, filter_type_id, name) FROM stdin;
 25	dataset_creator.network_id IN ( :netzId )	netzId	4	netzbetreiber_id
 26	mpg_categ.network_id IN ( :netzId )	netzId	4	netzbetreiber_id
 27	(mpg.meas_facil_id IN ( :mstId ) OR mpg.appr_lab_id IN ( :mstId ))	mstId	4	messprogramm_mst_id
-28	umwelt.umwelt_bereich ~ ( :umwelt_filter )	umwelt_filter	0	Umweltbereich
-29	probe.labor_mst_id IN ( :mlaborId )	mlaborId	4	probe_mlabor_id
-30	betriebsart.id IN ( :messRegime )	messRegime	5	messRegime
 31	mpg.is_active = cast(:aktiv AS boolean)	aktiv	2	mpr_aktiv
-32	status_wert.id IN :statusWert	statusWert	5	statusWert_filter
-33	k40.messwert BETWEEN :messwertFrom AND :messwertTo	messwertFrom,messwertTo	1	k40_messwert
 34	status_mp.id IN ( :statusK )	statusK	5	statusK
 35	mpg.regulation_id IN ( :datenbasis )	datenbasis	5	datenbasis
 36	mpg.sample_meth_id IN ( :probenart )	probenart	5	probenart
 37	mpg.env_medium_id IN ( :umwId )	umwId	4	mpr_umw_id
-38	kta_gruppe.id IN ( :anlage )	anlage	5	kta_gruppe
 39	rei_ag_gr.id IN ( :reiproggrp )	reiproggrp	5	rei_prog_grp
 40	mpg.is_test = cast(:test AS boolean)	test	2	mpr_test
 41	master.sampler.ext_id ~ :prnId	prnId	0	probenehmer_prnId
-42	messprogramm_kategorie.id IN ( :mplcode )	mplcode	5	mplcode
 43	measm.is_scheduled = cast(:geplant AS boolean)	geplant	2	geplant
 44	lada_meas_val.measd_id IN ( :messgroesseId )	messgroesseId	5	messgroesse
-45	probenehmer.id IN ( :prnId )	prnId	5	prn_id
 46	mmt.id IN ( :mmtId )	mmtId	4	mmt_id
 47	measm.measm_start_date BETWEEN to_timestamp(cast(:fromMessBegin AS DOUBLE PRECISION)) AND to_timestamp(cast(:toMessBegin AS DOUBLE PRECISION))	fromMessBegin,toMessBegin	6	Messbeginn von-bis
-48	messung.messdauer BETWEEN :messdauerFrom AND :messdauerTo	messdauerFrom,messdauerTo	1	messdauer
 49	lada_meas_val.meas_val BETWEEN :messwertFrom AND :messwertTo	messwertFrom,messwertTo	1	messwert
 50	lada_meas_val.detect_lim BETWEEN :nwgzumesswertFrom AND :nwgzumesswertTo	nwgzumesswertFrom,nwgzumesswertTo	1	nwg_zu_messwert
 51	sample.mid_coll_pd BETWEEN to_timestamp(cast(:fromMitteSZeitraum AS DOUBLE PRECISION)) AND to_timestamp(cast(:toMitteSZeitraum AS DOUBLE PRECISION))	fromMitteSZeitraum,toMitteSZeitraum	6	mitte_sammelzeitraum
@@ -1156,7 +1140,7 @@ COPY master.grid_col_conf (id, lada_user_id, grid_col_mp_id, query_user_id, sort
 270	0	1217	10	\N	\N	\N	f	t	15	55	f	f	f
 275	0	1212	10	\N	\N	\N	f	t	11	120	f	f	f
 280	0	1240	10	\N	\N	\N	f	t	20	46	f	f	f
-293	0	1226	10	\N	\N	false	t	f	\N	40	f	f	f
+293	0	1226	10	\N	\N	\N	t	f	\N	40	f	f	f
 296	0	1238	10	\N	\N	\N	f	t	13	100	f	f	f
 178	0	4119	9	\N	\N	\N	f	t	17	141	f	f	f
 179	0	4122	9	\N	\N	\N	t	t	0	145	f	f	f
@@ -1181,7 +1165,7 @@ COPY master.grid_col_conf (id, lada_user_id, grid_col_mp_id, query_user_id, sort
 192	0	4104	9	\N	\N	\N	f	t	3	53	f	f	f
 195	0	4118	9	\N	\N	\N	f	t	15	120	f	f	f
 202	0	4140	9	\N	\N	\N	f	f	-1	125	f	f	f
-205	0	4135	9	\N	\N	false	t	f	-1	40	f	f	f
+205	0	4135	9	\N	\N	\N	t	f	-1	40	f	f	f
 208	0	4125	9	\N	\N	\N	t	t	20	150	f	f	f
 253	0	1222	10	\N	\N	\N	f	t	10	70	f	f	f
 261	0	1202	10	\N	\N	\N	t	t	3	92	f	f	f
@@ -1202,7 +1186,7 @@ COPY master.grid_col_conf (id, lada_user_id, grid_col_mp_id, query_user_id, sort
 16	0	104	1	\N	\N	\N	f	f	-1	52	f	f	f
 17	0	108	1	\N	\N	\N	f	f	-1	125	f	f	f
 18	0	114	1	\N	\N	\N	f	f	-1	150	f	f	f
-21	0	126	1	\N	\N	false	t	f	-1	40	f	f	f
+21	0	126	1	\N	\N	\N	t	f	-1	40	f	f	f
 23	0	107	1	\N	\N	\N	f	t	9	69	f	f	f
 24	0	111	1	\N	\N	\N	f	t	11	125	f	f	f
 25	0	119	1	\N	\N	\N	t	t	8	150	f	f	f
@@ -1238,7 +1222,7 @@ COPY master.grid_col_conf (id, lada_user_id, grid_col_mp_id, query_user_id, sort
 64	0	1107	2	\N	\N	\N	f	f	-1	52	f	f	f
 65	0	1106	2	\N	\N	\N	f	t	4	77	f	f	f
 66	0	1101	2	\N	\N	\N	f	f	-1	92	f	f	f
-67	0	1150	2	\N	\N	false	t	f	-1	40	f	f	f
+67	0	1150	2	\N	\N	\N	t	f	-1	40	f	f	f
 68	0	1122	2	\N	\N	\N	f	f	-1	75	f	f	f
 69	0	1114	2	\N	\N	\N	f	t	12	150	f	f	f
 70	0	1142	2	\N	\N	\N	f	f	-1	76	f	f	f
@@ -1407,7 +1391,7 @@ COPY master.grid_col_conf (id, lada_user_id, grid_col_mp_id, query_user_id, sort
 454	0	4230	11	asc	1	\N	t	t	3	69	f	f	f
 455	0	4231	11	\N	\N	\N	f	t	4	200	f	f	f
 456	0	4232	11	asc	3	\N	f	t	6	200	f	f	f
-457	0	4233	11	\N	\N	false	t	f	-1	40	f	f	f
+457	0	4233	11	\N	\N	\N	t	f	-1	40	f	f	f
 458	0	4234	11	\N	\N	\N	f	f	-1	150	f	f	f
 459	0	4235	11	\N	\N	\N	t	t	2	154	f	f	f
 460	0	4236	11	\N	\N	\N	f	f	-1	70	f	f	f
@@ -1580,7 +1564,7 @@ COPY master.grid_col_conf (id, lada_user_id, grid_col_mp_id, query_user_id, sort
 813	0	1404	27	\N	\N	\N	t	f	\N	200	f	f	f
 814	0	1405	27	\N	\N	\N	f	t	2	80	f	f	f
 815	0	1406	27	\N	\N	\N	f	t	3	100	f	f	f
-816	0	1407	27	\N	\N	false	t	f	\N	80	f	f	f
+816	0	1407	27	\N	\N	\N	t	f	\N	80	f	f	f
 817	0	1408	27	\N	\N	\N	f	t	4	100	f	f	f
 818	0	1409	27	\N	\N	\N	f	t	5	100	f	f	f
 819	0	1410	27	\N	\N	\N	t	t	6	150	f	f	f
@@ -1637,7 +1621,7 @@ COPY master.grid_col_conf (id, lada_user_id, grid_col_mp_id, query_user_id, sort
 886	0	1543	31	\N	\N	\N	f	f	\N	100	f	f	f
 887	0	1544	31	\N	\N	\N	f	f	\N	55	f	f	f
 888	0	1545	31	\N	\N	\N	f	f	\N	150	f	f	f
-889	0	1546	31	\N	\N	false	t	f	\N	40	f	f	f
+889	0	1546	31	\N	\N	\N	t	f	\N	40	f	f	f
 890	0	1547	31	\N	\N	\N	f	f	\N	150	f	f	f
 891	0	1548	31	\N	\N	\N	f	f	\N	70	f	f	f
 892	0	1549	31	\N	\N	\N	f	f	\N	164	f	f	f
@@ -1718,7 +1702,7 @@ COPY master.grid_col_conf (id, lada_user_id, grid_col_mp_id, query_user_id, sort
 968	0	4332	35	\N	\N	\N	f	f	-1	100	f	f	f
 969	0	4333	35	\N	\N	\N	f	f	-1	55	f	f	f
 970	0	4334	35	\N	\N	\N	f	f	-1	150	f	f	f
-971	0	4335	35	\N	\N	false	t	f	-1	40	f	f	f
+971	0	4335	35	\N	\N	\N	t	f	-1	40	f	f	f
 972	0	4336	35	\N	\N	\N	f	f	-1	150	f	f	f
 973	0	4337	35	\N	\N	\N	f	t	4	154	f	f	f
 974	0	4338	35	\N	\N	\N	f	f	-1	70	f	f	f
@@ -1795,7 +1779,7 @@ COPY master.grid_col_conf (id, lada_user_id, grid_col_mp_id, query_user_id, sort
 1045	0	1647	36	\N	\N	\N	f	f	-1	100	f	f	f
 1046	0	1648	36	\N	\N	\N	f	f	-1	55	f	f	f
 1047	0	1649	36	\N	\N	\N	f	f	-1	150	f	f	f
-1048	0	1650	36	\N	\N	false	t	f	-1	40	f	f	f
+1048	0	1650	36	\N	\N	\N	t	f	-1	40	f	f	f
 1049	0	1651	36	\N	\N	\N	f	f	-1	150	f	f	f
 1050	0	1652	36	\N	\N	\N	f	f	-1	164	f	f	f
 1051	0	1653	36	\N	\N	\N	f	f	\N	70	f	f	f

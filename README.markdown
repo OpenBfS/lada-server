@@ -176,6 +176,19 @@ auch den LADA-Server ohne die automatischen Tests deployen und debuggen. Auch
 hier vorher sicherstellen, dass nur ein Deployment vorhanden ist, und den
 Wildfly neu starten.
 
+Zum Remote-Monitoring mit jconsole zunächst
+/opt/jboss/wildfly/bin/client/jboss-cli-client.jar aus dem Server-Container
+kopieren (mit docker cp) und jconsole folgendermaßen starten:
+
+ $ jconsole -debug -J--add-modules=jdk.unsupported \
+       -J-Djava.class.path=jboss-cli-client.jar
+
+Anschließend in jconsole unter "Remote Process" die URL
+"service:jmx:http-remoting-jmx://<your-docker-host>:<management-port>" angeben
+und Benutzername und Passwort entsprechend den Parametern zu add-user.sh
+im Dockerfile setzen. "<management-port>" entspricht dabei dem Host-Port zum
+Container-Port 9990.
+
 Dokumenation
 ------------
 Die Entwicklerdokumentation (Javadoc) kann mit dem folgenden Befehl im
