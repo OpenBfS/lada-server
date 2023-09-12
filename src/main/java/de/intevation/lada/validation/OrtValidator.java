@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation;
 
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 
@@ -23,7 +23,7 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
-@ApplicationScoped
+@Dependent
 public class OrtValidator extends Validator<Site> {
 
     @Inject

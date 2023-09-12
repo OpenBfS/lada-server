@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation;
 
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 
@@ -22,7 +22,7 @@ import de.intevation.lada.validation.rules.Rule;
  * and uses these rules to validate the object.
  *
  */
-@ApplicationScoped
+@Dependent
 public class MessprogrammMmtValidator extends Validator<MpgMmtMp> {
 
     @Inject

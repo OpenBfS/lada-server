@@ -337,6 +337,11 @@
             <artifactId>antlr4-runtime</artifactId>
             <version>${antlr.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!--Geotools-->
         <dependency>

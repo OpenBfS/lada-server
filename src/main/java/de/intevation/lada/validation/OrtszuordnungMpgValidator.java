@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation;
 
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 
@@ -21,7 +21,7 @@ import de.intevation.lada.validation.rules.Rule;
  * Instantiates the set of rules for GeolocatMpg objects and uses these
  * rules to validate the object.
  */
-@ApplicationScoped
+@Dependent
 public class OrtszuordnungMpgValidator extends Validator<GeolocatMpg> {
 
     @Inject
