@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.messprogrammMmt;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import de.intevation.lada.model.lada.MpgMmtMp;
 import de.intevation.lada.model.master.Measd;

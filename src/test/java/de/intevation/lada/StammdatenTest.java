@@ -9,12 +9,13 @@ package de.intevation.lada;
 
 import java.net.URL;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

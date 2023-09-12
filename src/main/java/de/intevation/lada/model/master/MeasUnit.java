@@ -11,16 +11,17 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.json.bind.annotation.JsonbTransient;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import static javax.persistence.TemporalType.TIMESTAMP;
-import javax.persistence.Transient;
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import static jakarta.persistence.TemporalType.TIMESTAMP;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(schema = SchemaName.NAME)
@@ -38,7 +39,8 @@ public class MeasUnit implements Serializable {
      * Get all MasseinheitUmrechnungs for units that can be converted into
      * this one.
      */
-    @OneToMany(mappedBy = "toUnitId", fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "to_unit_id")
     @JsonbTransient
     private List<UnitConvers> unitConversTo;
 

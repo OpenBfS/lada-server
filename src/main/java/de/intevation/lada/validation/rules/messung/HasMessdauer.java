@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.messung;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;

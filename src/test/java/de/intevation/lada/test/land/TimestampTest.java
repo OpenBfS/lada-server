@@ -9,9 +9,9 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.ws.rs.client.Client;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
 

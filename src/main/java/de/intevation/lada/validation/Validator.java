@@ -9,9 +9,9 @@ package de.intevation.lada.validation;
 
 import java.util.Set;
 
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+import jakarta.validation.ConstraintViolation;
 
 import de.intevation.lada.validation.rules.Rule;
 
@@ -26,7 +26,7 @@ import de.intevation.lada.validation.rules.Rule;
 public abstract class Validator<T> {
 
     @Inject
-    private javax.validation.Validator beanValidator;
+    private jakarta.validation.Validator beanValidator;
 
     /**
      * Validates given object.

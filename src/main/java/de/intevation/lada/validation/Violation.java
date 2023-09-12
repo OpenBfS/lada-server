@@ -7,8 +7,8 @@
  */
 package de.intevation.lada.validation;
 
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 
 /**
  * Container for violations detected during validation.

@@ -10,7 +10,7 @@ package de.intevation.lada.validation.rules.messprogramm;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.master.EnvDescrip;

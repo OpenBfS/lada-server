@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.query;
 
-import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,9 +19,9 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.persistence.Query;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.persistence.Query;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 
 import de.intevation.lada.model.master.BaseQuery;
 import de.intevation.lada.model.master.Filter;
@@ -164,7 +163,7 @@ public class QueryTools {
     public int getTotalCountForQuery() {
         Query q = prepareQuery(
             "SELECT count(*) FROM (" + this.sql + ") as query");
-        return ((BigInteger) q.getSingleResult()).intValueExact();
+        return Math.toIntExact((Long) q.getSingleResult());
     }
 
     /**

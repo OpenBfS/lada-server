@@ -9,12 +9,11 @@ package de.intevation.lada.model.master;
 
 import java.io.Serializable;
 
-import javax.json.bind.annotation.JsonbTransient;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import org.hibernate.annotations.Type;
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import org.locationtech.jts.geom.Point;
 
@@ -44,8 +43,6 @@ public class AdminUnit implements Serializable {
 
     private String govDistId;
 
-
-    @Type(type = "jts_geometry")
     @Column(columnDefinition = "geometry(Point, 4326)")
     @JsonbTransient
     private Point geomCenter;

@@ -10,10 +10,10 @@ package de.intevation.lada.test.land;
 import java.net.URL;
 import java.util.Arrays;
 
-import javax.json.JsonObject;
-import javax.json.JsonValue;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.Response;
 
 import org.junit.Assert;
 

@@ -7,8 +7,8 @@
  */
 package de.intevation.lada.validation.rules.messung;
 
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
+import jakarta.inject.Inject;
+import jakarta.persistence.NoResultException;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.util.data.QueryBuilder;

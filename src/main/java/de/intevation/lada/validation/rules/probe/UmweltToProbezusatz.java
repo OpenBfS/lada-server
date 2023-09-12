@@ -8,7 +8,7 @@
 package de.intevation.lada.validation.rules.probe;
 
 import java.util.List;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;

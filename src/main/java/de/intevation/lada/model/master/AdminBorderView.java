@@ -9,12 +9,10 @@ package de.intevation.lada.model.master;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Type;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import org.locationtech.jts.geom.MultiPolygon;
 
@@ -30,7 +28,6 @@ public class AdminBorderView implements Serializable {
 
     private Boolean isMunic;
 
-    @Type(type = "jts_geometry")
     @Column(columnDefinition = "geometry(MultiPolygon, 4326)")
     private MultiPolygon shape;
 

@@ -10,23 +10,18 @@ package de.intevation.lada.model.master;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import static javax.persistence.TemporalType.TIMESTAMP;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
-
-import com.fasterxml.jackson.databind.JsonNode;
-
-import de.intevation.lada.util.data.JsonObjectType;
+import jakarta.json.JsonObject;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 @Table(schema = SchemaName.NAME)
-@TypeDefs({ @TypeDef(name = "JsonObject", typeClass = JsonObjectType.class) })
 public class AuditTrailSiteView implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -38,15 +33,15 @@ public class AuditTrailSiteView implements Serializable {
     @Temporal(TIMESTAMP)
     private Date lastMod;
 
-    @Type(type = "JsonObject")
-    private JsonNode changedFields;
+    @JdbcTypeCode(SqlTypes.JSON)
+    private JsonObject changedFields;
 
     private String siteId;
 
     private Integer objectId;
 
-    @Type(type = "JsonObject")
-    private JsonNode rowData;
+    @JdbcTypeCode(SqlTypes.JSON)
+    private JsonObject rowData;
 
     private String tableName;
 
@@ -69,11 +64,11 @@ public class AuditTrailSiteView implements Serializable {
         this.lastMod = lastMod;
     }
 
-    public JsonNode getChangedFields() {
+    public JsonObject getChangedFields() {
         return this.changedFields;
     }
 
-    public void setChangedFields(JsonNode changedFields) {
+    public void setChangedFields(JsonObject changedFields) {
         this.changedFields = changedFields;
     }
 
@@ -101,11 +96,11 @@ public class AuditTrailSiteView implements Serializable {
         this.objectId = objectId;
     }
 
-    public JsonNode getRowData() {
+    public JsonObject getRowData() {
         return this.rowData;
     }
 
-    public void setRowData(JsonNode rowData) {
+    public void setRowData(JsonObject rowData) {
         this.rowData = rowData;
     }
 

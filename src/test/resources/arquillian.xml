@@ -26,7 +26,7 @@
 <!--    </engine> -->
 
     <!-- Force the use of the Servlet 3.0 protocol with all containers, as it is the most mature -->
-    <defaultProtocol type="Servlet 3.0" />
+    <defaultProtocol type="Servlet 5.0" />
 
     <!-- Example configuration for a remote JBoss Enterprise Application Platform 6 or AS 7 instance -->
     <container qualifier="jboss" default="true">

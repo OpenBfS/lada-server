@@ -7,8 +7,8 @@
  */
 package de.intevation.lada.util.data;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 /**
  * Converter to store a given empty string as null.

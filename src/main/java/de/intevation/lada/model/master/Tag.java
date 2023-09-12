@@ -10,20 +10,21 @@ package de.intevation.lada.model.master;
 import java.util.Date;
 import java.util.Set;
 
-import javax.json.bind.annotation.JsonbTransient;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import static javax.persistence.TemporalType.TIMESTAMP;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import static jakarta.persistence.TemporalType.TIMESTAMP;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import de.intevation.lada.model.lada.TagLink;
 
@@ -65,7 +66,8 @@ public class Tag {
     @Temporal(TIMESTAMP)
     private Date createdAt;
 
-    @OneToMany(mappedBy = "tagId", cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "tag_id", updatable = false)
     @JsonbTransient
     private Set<TagLink> tagZuordnungs;
 

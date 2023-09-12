@@ -9,7 +9,7 @@ package de.intevation.lada.model.master;
 
 import java.io.Serializable;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 /**
  * The MmtMessgroesse primary key.

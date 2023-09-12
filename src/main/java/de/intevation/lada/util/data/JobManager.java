@@ -11,9 +11,9 @@ package de.intevation.lada.util.data;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ThreadLocalRandom;
-import javax.annotation.Resource;
-import javax.enterprise.concurrent.ManagedExecutorService;
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.annotation.Resource;
+import jakarta.enterprise.concurrent.ManagedExecutorService;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.jboss.logging.Logger;
 

@@ -9,7 +9,7 @@ package de.intevation.lada;
 
 import java.text.ParseException;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Ignore;

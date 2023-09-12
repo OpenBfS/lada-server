@@ -11,9 +11,9 @@ package de.intevation.lada.exporter.laf;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.json.JsonNumber;
-import javax.json.JsonValue;
+import jakarta.inject.Inject;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonValue;
 
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.Exporter;

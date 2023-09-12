@@ -19,7 +19,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Locale;
 
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 
 import de.intevation.lada.util.data.Job;
 

@@ -17,9 +17,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.json.JsonObject;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+import jakarta.json.JsonObject;
 
 import de.intevation.lada.exporter.csv.CsvExportJob;
 import de.intevation.lada.exporter.json.JsonExportJob;
