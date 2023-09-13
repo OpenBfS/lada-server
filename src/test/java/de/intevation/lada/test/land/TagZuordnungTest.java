@@ -25,7 +25,6 @@ import de.intevation.lada.test.ServiceTest;
  * Test tagzuordnung entities.
  */
 public class TagZuordnungTest extends ServiceTest {
-    private final String name = "tagzuordnung";
     private final String tagUrl = "rest/tag/taglink/";
 
     private JsonArray create;
@@ -57,8 +56,8 @@ public class TagZuordnungTest extends ServiceTest {
      */
     public void execute() {
         // test assigning tags
-        bulkOperation(name, tagUrl, create);
-        JsonObject tagResponse = get("tag", "rest/tag/");
+        bulkOperation(tagUrl, create);
+        JsonObject tagResponse = get("rest/tag/");
         List<Integer> tagIds = create.stream()
             .map(zuord -> zuord.asJsonObject().getInt("tagId"))
             .collect(Collectors.toList());
@@ -77,33 +76,33 @@ public class TagZuordnungTest extends ServiceTest {
         });
 
         // test filtering tags by assignment
-        tagResponse = get("tag", "rest/tag?sampleId=9999");
+        tagResponse = get("rest/tag?sampleId=9999");
         Assert.assertTrue(
             "Returned data despite filtering for non-existent ID",
             tagResponse.getJsonArray(data).isEmpty());
 
-        tagResponse = get("tag", "rest/tag?sampleId=1901");
+        tagResponse = get("rest/tag?sampleId=1901");
         Assert.assertEquals(
             "Number of tags for given Sample ID:",
             2, tagResponse.getJsonArray(data).size());
 
-        tagResponse = get("tag", "rest/tag?measmId=1801");
+        tagResponse = get("rest/tag?measmId=1801");
         Assert.assertEquals(
             "Number of tags for given Messung ID:",
             1, tagResponse.getJsonArray(data).size());
 
-        tagResponse = get("tag", "rest/tag?measmId=1801&measmId=1802");
+        tagResponse = get("rest/tag?measmId=1801&measmId=1802");
         Assert.assertTrue(
             "Expected empty result filtering by tagged and un-tagged object",
             tagResponse.getJsonArray(data).isEmpty());
 
-        bulkOperation(name, tagUrl, create2);
-        tagResponse = get("tag", "rest/tag?measmId=1801&measmId=1802");
+        bulkOperation(tagUrl, create2);
+        tagResponse = get("rest/tag?measmId=1801&measmId=1802");
         Assert.assertEquals(
             "Number of tags for given Messung IDs:",
             1, tagResponse.getJsonArray(data).size());
 
         // Test unassigning tags
-        bulkOperation(name, tagUrl + "delete", create);
+        bulkOperation(tagUrl + "delete", create);
     }
 }

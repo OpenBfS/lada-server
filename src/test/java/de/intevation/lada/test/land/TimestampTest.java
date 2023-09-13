@@ -53,7 +53,7 @@ public class TimestampTest extends ServiceTest {
                 .add("isTest", true)
                 .add(sampleStartDateKey, i)
                 .build();
-            JsonObject created = create("probe", "rest/sample", create);
+            JsonObject created = create("rest/sample", create);
             Assert.assertEquals(
                 expectedOutput,
                 created.getJsonObject("data").getString(sampleStartDateKey));

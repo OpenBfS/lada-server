@@ -262,7 +262,7 @@ public class Stammdaten extends ServiceTest {
         String type
     ) {
         Assert.assertNotNull(type);
-        get(type, "rest/" + type);
+        get("rest/" + type);
     }
 
     /**

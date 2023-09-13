@@ -65,26 +65,22 @@ public class MessungTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("measm", "rest/measm", Response.Status.BAD_REQUEST);
-        get("measm", "rest/measm?sampleId=1000");
-        getById("measm", "rest/measm/1200", expectedById);
-        JsonObject created = create("measm", "rest/measm", create);
+        get("rest/measm", Response.Status.BAD_REQUEST);
+        get("rest/measm?sampleId=1000");
+        getById("rest/measm/1200", expectedById);
+        JsonObject created = create("rest/measm", create);
 
         final String updateFieldKey = "minSampleId";
         final String updateFieldValue = "U200";
         update(
-            "measm",
             "rest/measm/1200",
             updateFieldKey,
             "T100",
             updateFieldValue);
         getAuditTrail(
-            "measm",
             "rest/audit/messung/1200",
             updateFieldKey,
             updateFieldValue);
-        delete(
-            "measm",
-            "rest/measm/" + created.getJsonObject("data").get("id"));
+        delete("rest/measm/" + created.getJsonObject("data").get("id"));
     }
 }

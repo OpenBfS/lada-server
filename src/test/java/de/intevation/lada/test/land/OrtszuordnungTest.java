@@ -60,18 +60,15 @@ public class OrtszuordnungTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("geolocat", "rest/geolocat?sampleId=1000");
-        getById("geolocat", "rest/geolocat/1000", expectedById);
+        get("rest/geolocat?sampleId=1000");
+        getById("rest/geolocat/1000", expectedById);
         JsonObject created =
-            create("geolocat", "rest/geolocat", create);
+            create("rest/geolocat", create);
         update(
-            "geolocat",
             "rest/geolocat/1000",
             "addSiteText",
             "Test",
             "Test geändert");
-        delete(
-            "geolocat",
-            "rest/geolocat/" + created.getJsonObject("data").get("id"));
+        delete("rest/geolocat/" + created.getJsonObject("data").get("id"));
     }
 }

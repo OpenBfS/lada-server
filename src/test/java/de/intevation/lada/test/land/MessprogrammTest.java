@@ -68,10 +68,9 @@ public class MessprogrammTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("mpg", "rest/mpg", Status.METHOD_NOT_ALLOWED);
-        getById("mpg", "rest/mpg/999", expectedById);
+        get("rest/mpg", Status.METHOD_NOT_ALLOWED);
+        getById("rest/mpg/999", expectedById);
         update(
-            "mpg",
             "rest/mpg/999",
             "envDescripDisplay",
             "D: 50 90 01 06 02 05 00 00 00 00 00 00",
@@ -79,7 +78,6 @@ public class MessprogrammTest extends ServiceTest {
 
         // Ensure invalid envDescripDisplay is rejected
         update(
-            "mpg",
             "rest/mpg/999",
             "envDescripDisplay",
             "D: 50 90 01 06 02 05 00 00 00 00 00 01",
@@ -87,11 +85,8 @@ public class MessprogrammTest extends ServiceTest {
             Status.BAD_REQUEST);
 
         //Check if referencing probe still has an mpgId
-        getById("mpg->sample", "rest/sample/999", expectedSample);
-        JsonObject created =
-            create("mpg", "rest/mpg", create);
-        delete(
-            "mpg",
-            "rest/mpg/" + created.getJsonObject("data").get("id"));
+        getById("rest/sample/999", expectedSample);
+        JsonObject created = create("rest/mpg", create);
+        delete("rest/mpg/" + created.getJsonObject("data").get("id"));
     }
 }

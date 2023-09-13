@@ -123,25 +123,25 @@ public class OrtTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("ort", "rest/site");
+        get("rest/site");
 
         //Test search interface
-        JsonObject result = get("site-search", "rest/site?search=Text");
+        JsonObject result = get("rest/site?search=Text");
         Assert.assertNotEquals(0, result.getJsonArray("data").size());
 
-        getById("ort", "rest/site/1000", expectedById);
-        int createdId = create("site", "rest/site", create)
+        getById("rest/site/1000", expectedById);
+        int createdId = create("rest/site", create)
             .getJsonObject("data").getInt("id");
 
         /*Test creation of site objects without an admin unit
           which should be completed by the server*/
-        create("site-incomplete", "rest/site", createIncomplete);
+        create("rest/site", createIncomplete);
 
-        update("site", "rest/site/" + createdId,
+        update("rest/site/" + createdId,
             "longText", "Langer Text", "Längerer Text");
         //Test site images
         testUploadImage(testImage, "rest/site/" + createdId + "/img");
         testUploadImage(testImage, "rest/site/" + createdId + "/map");
-        delete("site", "rest/site/" + createdId);
+        delete("rest/site/" + createdId);
     }
 }
