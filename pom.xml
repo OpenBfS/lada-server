@@ -17,7 +17,7 @@
     <properties>
         <antlr.version>4.9.2</antlr.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <!-- GeoTools Version
              Note: GeoTools >= 20 is no longer compatible with JTS < 1.15 -->
         <geotools.version>20.0</geotools.version>
@@ -92,7 +92,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.11.0</version>
                 <configuration>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
@@ -100,6 +100,11 @@
                     <target>${java.version}</target>
                     <compilerArgument>-Xlint:unchecked</compilerArgument>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
             </plugin>
             <plugin>
                 <groupId>org.antlr</groupId>
