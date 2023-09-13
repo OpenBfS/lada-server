@@ -7,18 +7,12 @@
  */
 package de.intevation.lada.exporter.json;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import jakarta.inject.Inject;
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 
 import de.intevation.lada.exporter.QueryExportJob;
 import de.intevation.lada.model.lada.MeasVal;
@@ -34,8 +28,6 @@ import de.intevation.lada.exporter.ExportFormat;
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
 public class JsonExportJob extends QueryExportJob {
-
-    private static final int LENGTH = 1024;
 
     /**
      * Map of data types and the according sub data key.
@@ -58,17 +50,12 @@ public class JsonExportJob extends QueryExportJob {
     }
 
     @Override
-    protected List<Map<String, Object>> mergeMessungData(
+    protected Collection<Map<String, Object>> mergeMessungData(
+        Map<Integer, Map<String, Object>> idMap,
         List<Measm> messungData
     ) {
-        // Create a map of id->record
-        Map<Integer, Map<String, Object>> idMap = new HashMap<>();
         final String sDataJsonKey = ID_TYPE_TO_SUBDATA_KEY.get(this.idType);
-        primaryData.forEach(record -> {
-            idMap.put((Integer) record.get(idColumn), record);
-        });
 
-        List<Map<String, Object>> merged = primaryData;
         messungData.forEach(messung -> {
             Map<String, Object> mergedMessung = transformFieldValues(messung);
             //Append messung to probe
@@ -82,21 +69,17 @@ public class JsonExportJob extends QueryExportJob {
                     sDataJsonKey);
             messungenList.add(mergedMessung);
         });
-        return merged;
+        return idMap.values();
     }
 
     @Override
-    protected List<Map<String, Object>> mergeMesswertData(
+    protected Collection<Map<String, Object>> mergeMesswertData(
+        Map<Integer, Map<String, Object>> idMap,
         List<MeasVal> messwertData
     ) {
         // Create a map of id->record
-        Map<Integer, Map<String, Object>> idMap = new HashMap<>();
         final String sDataJsonKey = ID_TYPE_TO_SUBDATA_KEY.get(this.idType);
-        primaryData.forEach(record -> {
-            idMap.put((Integer) record.get(idColumn), record);
-        });
 
-        List<Map<String, Object>> merged = primaryData;
         messwertData.forEach(messwert -> {
             Map<String, Object> mergedMesswert = transformFieldValues(messwert);
             //Append messung to probe
@@ -110,50 +93,22 @@ public class JsonExportJob extends QueryExportJob {
                     sDataJsonKey);
             messwertList.add(mergedMesswert);
         });
-        return merged;
+        return idMap.values();
     }
 
 
     @Override
     public void runWithTx() {
-        parseExportParameters();
-
-        // Fetch primary records
-        primaryData = getQueryResult();
-
-        List<Map<String, Object>> exportData = primaryData;
-        // If needed, fetch and merge sub data
-        if (exportSubdata) {
-            exportData = mergeSubData();
-        }
-
         //Export data to json
-        JsonObjectBuilder optionBuilder = Json.createObjectBuilder();
-        if (idColumn != null) {
-            optionBuilder.add("id", idColumn);
-        }
-        JsonObject exportOptions = optionBuilder.build();
-        InputStream exported = exporter.export(
-            exportData,
-            encoding,
-            exportOptions,
+        writeResultToFile(exporter.export(
+            getExportData(),
+            this.encoding,
+            this.exportParameters,
             this.columnsToExport,
             ID_TYPE_TO_SUBDATA_KEY.get(this.idType),
-            qId,
+            this.qId,
             this.dateFormat,
-            null);
-
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[LENGTH];
-        int length;
-        try {
-            while ((length = exported.read(buffer)) != -1) {
-                result.write(buffer, 0, length);
-            }
-            writeResultToFile(result.toString(encoding));
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
-        }
+            null));
 
         logger.debug(String.format("Finished JSON export"));
     }

@@ -17,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.json.JsonObject;
@@ -28,12 +27,10 @@ import de.intevation.lada.exporter.laf.LafExportJob;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.JobManager;
 
-
 /**
  * Class creating and managing ExportJobs.
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
-@ApplicationScoped
 public class ExportJobManager extends JobManager {
 
     @Inject
@@ -66,10 +63,7 @@ public class ExportJobManager extends JobManager {
         Locale locale,
         UserInfo userInfo
     ) throws IllegalArgumentException {
-        String id = getNextIdentifier();
         ExportJob newJob;
-        logger.debug(String.format("Creating new job: %s", id));
-
         switch (format) {
             case "csv":
                 newJob = csvExportJobProvider.get();
@@ -96,11 +90,8 @@ public class ExportJobManager extends JobManager {
         newJob.setEncoding(encoding);
         newJob.setExportParameter(params);
         newJob.setUserInfo(userInfo);
-
         newJob.setFuture(executor.submit(newJob));
-        activeJobs.put(id, newJob);
-
-        return id;
+        return addJob(newJob);
     }
 
     /**
@@ -157,9 +148,6 @@ public class ExportJobManager extends JobManager {
         String id
     ) throws JobNotFoundException, FileNotFoundException {
         ExportJob job = getJobById(id);
-        if (job == null) {
-            throw new JobNotFoundException();
-        }
         Path filePath = job.getOutputFilePath();
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try {

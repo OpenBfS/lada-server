@@ -1,8 +1,11 @@
 #!/bin/sh -e
 # SYNOPSIS
-# ./setup-db.sh [-cn] [ROLE_NAME] [ROLE_PW] [DB_NAME]
+# ./setup-db.sh [-cn] [-g N] [ROLE_NAME] [ROLE_PW] [DB_NAME]
 #   -c         clean - drop an existing database
 #   -n         no data - do not import example data
+#   -g         generate N samples, each with N measms, each with either
+#              N meas_vals or the maximum possible number of meas_vals, which
+#              is contrained by the number of available measds.
 #   ROLE_NAME  name of db user (default = lada)
 #   ROLE_PW    login password  (default = ROLE_NAME)
 #   DB_NAME    name of the databaes (default = ROLE_NAME)
@@ -12,13 +15,18 @@
 
 DIR=$(readlink -f $(dirname $0))
 
-while getopts "cn" opt; do
+while getopts "cng:" opt; do
     case "$opt" in
         c)
             DROP_DB="true"
             ;;
         n)
             NO_DATA="true"
+            ;;
+        g)
+            NO_DATA="true"
+            N_SAMPLES="$OPTARG"
+            GENERATE="true"
             ;;
     esac
 done
@@ -107,7 +115,7 @@ SRC_URI=https://daten.gdz.bkg.bund.de/produkte/vg/vg250_ebenen_0101/aktuell/vg25
 BASE_NAME=vg250_01-01.utm32s.shape.ebenen
 SHAPE_DIR=${BASE_NAME}/vg250_ebenen_0101
 if [ ! -f ${BASE_NAME}.zip ]; then
-    curl -fO ${SRC_URI}
+    curl -sfO ${SRC_URI}
 fi
 unzip -u ${BASE_NAME}.zip "*VG250_*"
 
@@ -153,57 +161,34 @@ if [ "$NO_DATA" != "true" ]; then
          "REFRESH MATERIALIZED VIEW master.admin_border_view"
 
     echo "load data:"
-    for file in \
-        master_data_status_order_mp.sql \
-        master_data_admin_unit.sql \
-        master_data_network.sql \
-        master_data_meas_facil.sql \
-        master_data_auth.sql \
-        master_data_opr_mod.sql \
-        master_data_meas_unit.sql \
-        master_data_unit_convers.sql \
-        master_data_env_medium.sql \
-        master_data_auth_coord_ofc_env_medium_mp.sql \
-        master_data_regulation.sql \
-        master_data_dataset_creator.sql \
-        master_data_env_descrip_env_medium_mp.sql \
-        master_data_env_descrip.sql \
-        master_data_spat_ref_sys.sql \
-        master_data_mmt.sql \
-        master_data_measd.sql \
-        master_data_measd_gr.sql \
-        master_data_site_class.sql \
-        master_data_state.sql \
-        master_data_nucl_facil.sql \
-        master_data_type_regulation.sql \
-        master_data_oblig_measd_mp.sql \
-        master_data_sample_specif.sql \
-        master_data_env_specif_mp.sql \
-        master_data_sample_meth.sql \
-        master_data_mpg_transfer.sql \
-        master_data_poi.sql \
-        master_data_mpg_categ.sql \
-        master_data_munic_div.sql \
-        master_data_rei.sql \
-        master_data_site.sql \
-        master_data_sampler.sql \
-        master_data_query.sql \
-        master_data_user_context.sql \
-        master_data_import_config.sql \
-        master_data_convers_dm_fm.sql\
-        master_data_ref_val.sql\
-        master_data_targ_act.sql\
-        master_data_tag.sql\
-        lada_data.sql \
-        lada_mpg.sql
-	
+    for file in "$DIR"/data/master/[0-9]*.sql "$DIR"/data/lada/[0-9]*.sql;
     do
-        [ -f private_${file} ] && file=private_${file}
+        # If file with the same name prefixed "private_" exists, take that
+        private=$(dirname $file)/private_$(basename $file)
+        [ -f ${private} ] && file=${private}
         echo "  ${file%.sql}"
-        psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/$file
+        psql -q $DB_CONNECT_STRING -d $DB_NAME -f $file
+    done
+fi
+
+if [ "$GENERATE" = "true" ]; then
+    echo "load master data:"
+    for file in "$DIR"/data/master/[0-9]*.sql;
+    do
+        psql -q $DB_CONNECT_STRING -d $DB_NAME -f $file
     done
 
-    echo init sequences
-    psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/master_init_sequences.sql
-
+    echo "generating data ..."
+    echo "\set n $N_SAMPLES
+          WITH samples AS (INSERT INTO lada.sample (meas_facil_id, appr_lab_id)
+              SELECT '06010', '06010' FROM generate_series(1, :n)
+              RETURNING id),
+          measms AS (INSERT INTO lada.measm (sample_id, mmt_id)
+              SELECT id, 'AB' FROM samples, generate_series(1, :n)
+              RETURNING id)
+          INSERT INTO lada.meas_val (measm_id, measd_id, meas_unit_id)
+              SELECT measms.id, measd.id, 0
+              FROM measms,
+                  (SELECT id FROM master.measd FETCH NEXT :n ROWS ONLY) AS measd" | \
+        psql $DB_CONNECT_STRING -d $DB_NAME
 fi

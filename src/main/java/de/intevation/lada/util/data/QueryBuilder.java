@@ -8,6 +8,7 @@
 package de.intevation.lada.util.data;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -170,10 +171,10 @@ public class QueryBuilder<T> {
      * All elements in <i>values</i> will be concatenated with AND operator.
      *
      * @param id        The database column name.
-     * @param values    List of values.
+     * @param values    Iterable of values.
      * @return The builder itself.
      */
-    public QueryBuilder<T> and(String id, List<String> values) {
+    public QueryBuilder<T> and(String id, Iterable<String> values) {
         if (values == null) {
             Predicate p = this.builder.isNull(this.root.get(id));
             if (this.filter != null) {
@@ -192,10 +193,10 @@ public class QueryBuilder<T> {
      * All elements in <i>values</i> will be concatenated with OR operator.
      *
      * @param id        The database column name.
-     * @param values    List of values.
+     * @param values    Collection of values.
      * @return The builder itself.
      */
-    public QueryBuilder<T> or(String id, List<String> values) {
+    public QueryBuilder<T> or(String id, Collection<String> values) {
         if (values == null) {
             Predicate p = this.builder.isNull(this.root.get(id));
             if (this.filter != null) {
@@ -212,10 +213,10 @@ public class QueryBuilder<T> {
      * All elements in <i>values</i> will be concatenated with OR operator.
      *
      * @param id        The database column name.
-     * @param values    List of values.
+     * @param values    Iterable of values.
      * @return The builder itself.
      */
-    public QueryBuilder<T> orIntList(String id, List<Integer> values) {
+    public QueryBuilder<T> orIntList(String id, Iterable<Integer> values) {
         for (Integer v: values) {
             this.or(id, v);
         }
@@ -268,11 +269,11 @@ public class QueryBuilder<T> {
      *
      * @param <M>   The type of the values.
      * @param key   The database column.
-     * @param values    The list of values.
+     * @param values    The collection of values.
      *
      * @return The current Querybuilder.
      */
-    public <M> QueryBuilder<T> orIn(String key, List<M> values) {
+    public <M> QueryBuilder<T> orIn(String key, Collection<M> values) {
         Expression<M> exp = this.root.get(key);
         Predicate p = exp.in(values);
         if (this.filter == null) {
@@ -289,11 +290,11 @@ public class QueryBuilder<T> {
      *
      * @param <M>   The type of the values.
      * @param key   The database column.
-     * @param values    The list of values.
+     * @param values    The collection of values.
      *
      * @return The current Querybuilder.
      */
-    public <M> QueryBuilder<T> andIn(String key, List<M> values) {
+    public <M> QueryBuilder<T> andIn(String key, Collection<M> values) {
         Expression<M> exp = this.root.get(key);
         Predicate p = exp.in(values);
         if (this.filter == null) {

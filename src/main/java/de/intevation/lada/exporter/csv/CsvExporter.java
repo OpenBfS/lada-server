@@ -159,7 +159,7 @@ public class CsvExporter implements Exporter {
      */
     @Override
     public InputStream export(
-        List<Map<String, Object>> queryResult,
+        Iterable<Map<String, Object>> queryResult,
         Charset encoding,
         JsonObject options,
         List<String> columnsToInclude,
@@ -197,9 +197,11 @@ public class CsvExporter implements Exporter {
                         ? csvOptions.getString(
                             "quoteType") : "doublequote").getChar();
                 }
+                final String subDataColumnNamesKey = "subDataColumnNames";
                 subDataColumnNames =
-                    options.containsKey("subDataColumnNames")
-                    ? options.getJsonObject("subDataColumnNames") : null;
+                    options.containsKey(subDataColumnNamesKey)
+                    && !options.isNull(subDataColumnNamesKey)
+                    ? options.getJsonObject(subDataColumnNamesKey) : null;
             } catch (IllegalArgumentException iae) {
                 logger.error(
                     String.format(
@@ -215,11 +217,9 @@ public class CsvExporter implements Exporter {
         decimalFormat.setGroupingUsed(false);
 
         //Get header fields
-        Collection<String> keys = columnsToInclude == null
-            ? queryResult.get(0).keySet()
-            : columnsToInclude;
+        String[] header = getReadableColumnNames(
+            columnsToInclude, subDataColumnNames, qId);
 
-        String[] header = getReadableColumnNames(keys, subDataColumnNames, qId);
         //Create CSV format
         CSVFormat format = CSVFormat.DEFAULT
             .withDelimiter(fieldSeparator)
@@ -234,7 +234,7 @@ public class CsvExporter implements Exporter {
             //For every queryResult row
             queryResult.forEach(row -> {
                 ArrayList<String> rowItems = new ArrayList<String>();
-                for (String key: keys) {
+                for (String key: columnsToInclude) {
                     Object value = row.get(key);
 
                     //Value is a status kombi

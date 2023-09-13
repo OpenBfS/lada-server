@@ -97,7 +97,7 @@ public class JsonExporter implements Exporter {
      * @param encoding Ignored. Result is always UTF_8.
      * @param options Export options as JSON Object. Options are: <p>
      *        <ul>
-     *          <li> id: Name of the id column, mandatory </li>
+     *          <li> idField: Name of the id column, mandatory </li>
      *          <li> subData: key of the subData json object, optional </li>
      *        </ul>
      *
@@ -108,7 +108,7 @@ public class JsonExporter implements Exporter {
     @Override
     @SuppressWarnings("unchecked")
     public InputStream export(
-        List<Map<String, Object>> queryResult,
+        Iterable<Map<String, Object>> queryResult,
         Charset encoding,
         JsonObject options,
         List<String> columnsToInclude,
@@ -118,7 +118,7 @@ public class JsonExporter implements Exporter {
         Locale locale
     ) {
         final JsonObjectBuilder builder = Json.createObjectBuilder();
-        String idColumn = options.getString("id");
+        String idColumn = options.getString("idField");
 
         //For each result
         queryResult.forEach(item -> {

@@ -194,7 +194,8 @@ public class ExporterTest extends BaseTest {
         Assert.assertEquals(
             "Unexpected CSV content",
             "hauptprobenNr,umwId,probeId,extId,messwerteCount\r\n"
-            + "120510002,L6,1000,453,1\r\n"
+            + "120510002,L6,1000,453,2\r\n"
+            + "120510002,L6,1000,454,0\r\n"
             + "120510001,L6,1001,,\r\n",
             result);
     }
@@ -212,7 +213,8 @@ public class ExporterTest extends BaseTest {
         Assert.assertEquals(
             "Unexpected CSV content",
             "messungId,id,measUnitId,measdId\r\n"
-            + "1200,1000,Sv,test\r\n",
+            + "1200,1000,Sv,test\r\n"
+            + "1200,1001,Sv,test\r\n",
             result);
     }
 
@@ -265,7 +267,8 @@ public class ExporterTest extends BaseTest {
             + "{\"hauptproben_nr\":\"120510002\","
             + "\"umw_id\":\"L6\","
             + "\"probeId\":1000,"
-            + "\"Messungen\":[{\"messwerteCount\":1,\"extId\":453}]}}",
+            + "\"Messungen\":[{\"messwerteCount\":2,\"extId\":453},"
+            + "{\"messwerteCount\":0,\"extId\":454}]}}",
             result);
     }
 
@@ -284,7 +287,8 @@ public class ExporterTest extends BaseTest {
             "{\"1200\":"
             + "{\"messungId\":1200,"
             + "\"messwerte\":["
-            + "{\"measUnitId\":\"Sv\",\"measdId\":\"test\",\"id\":1000}]}}",
+            + "{\"measUnitId\":\"Sv\",\"measdId\":\"test\",\"id\":1000},"
+            + "{\"measUnitId\":\"Sv\",\"measdId\":\"test\",\"id\":1001}]}}",
             result);
     }
 
