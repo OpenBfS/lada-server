@@ -12,7 +12,7 @@
 # http://yourdockerhost:8181/lada-server
 #
 
-FROM debian:bullseye
+FROM debian:bookworm
 MAINTAINER raimund.renkert@intevation.de
 
 #
@@ -20,17 +20,17 @@ MAINTAINER raimund.renkert@intevation.de
 #
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
-            curl openjdk-11-jdk-headless libpostgis-java libjts-java \
+            curl ca-certificates-java openjdk-17-jdk-headless libpostgis-java libjts-java \
             git maven
 
 
 #
 # Set ENV for pacakge versions
-ENV WILDFLY_VERSION 29.0.0.Final
+ENV WILDFLY_VERSION 29.0.1.Final
 # see wildfly pom.xml for hibernate_spatial_version
 ENV HIBERNATE_VERSION 6.2.6.Final
 ENV GEOLATTE_GEOM_VERSION 1.9.0
-ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
+ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-amd64/
 
 RUN echo "Building Image using WILDFLY_VERSION=${WILDFLY_VERSION}, HIBERNATE_VERSION=${HIBERNATE_VERSION}, GEOLATTE_GEOM_VERSION=${GEOLATTE_GEOM_VERSION}."
 
@@ -66,6 +66,8 @@ RUN curl -s $MVN_REPO/org/geolatte/geolatte-geom/${GEOLATTE_GEOM_VERSION}/geolat
 RUN ln -s /usr/share/java/postgresql.jar \
        $JBOSS_HOME/modules/org/postgres/main/
 RUN ln -s /usr/share/java/postgis-jdbc.jar \
+       $JBOSS_HOME/modules/org/postgres/main/
+RUN ln -s /usr/share/java/postgis-geometry.jar \
        $JBOSS_HOME/modules/org/postgres/main/
 RUN ln -s /usr/share/java/jts-core.jar \
        $HIBERNATE_MODULE/jts-core.jar

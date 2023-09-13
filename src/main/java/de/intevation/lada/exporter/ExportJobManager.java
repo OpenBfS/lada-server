@@ -27,7 +27,6 @@ import de.intevation.lada.exporter.laf.LafExportJob;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.JobManager;
 
-
 /**
  * Class creating and managing ExportJobs.
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>

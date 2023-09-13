@@ -73,6 +73,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(LESS_THAN_LOD_SMALLER_THAN);
         val.setError(null);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         Violation violation = validator.validate(val);
         Assert.assertTrue(violation.hasWarnings());
@@ -90,6 +91,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(null);
         val.setError(1.0f);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         Violation violation = validator.validate(val);
         if (violation.hasWarnings()
@@ -169,6 +171,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(LESS_THAN_LOD_SMALLER_THAN);
         val.setMeasVal(null);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         Violation violation = validator.validate(val);
         if (violation.hasWarnings()
@@ -192,6 +195,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(null);
         val.setMeasVal(1.0d);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         Violation violation = validator.validate(val);
         if (violation.hasWarnings()
@@ -386,6 +390,8 @@ public class MeasValTest {
         MeasVal val = new MeasVal();
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
+
         Violation violation = validator.validate(val);
         String warningKey = MEASD_ID
             + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
@@ -454,6 +460,7 @@ public class MeasValTest {
         MeasVal val = new MeasVal();
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(OTHER_MEASD_ID);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         Violation violation = validator.validate(val);
         if (violation.hasErrors()

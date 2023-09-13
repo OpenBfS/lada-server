@@ -4,6 +4,7 @@
 
     <resources>
         <resource-root path="postgis-jdbc.jar"/>
+        <resource-root path="postgis-geometry.jar"/>
         <resource-root path="postgresql.jar"/>
     </resources>
 
