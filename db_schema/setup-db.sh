@@ -180,8 +180,13 @@ if [ "$GENERATE" = "true" ]; then
 
     echo "generating data ..."
     echo "\set n $N_SAMPLES
-          WITH samples AS (INSERT INTO lada.sample (meas_facil_id, appr_lab_id)
-              SELECT '06010', '06010' FROM generate_series(1, :n)
+          WITH samples AS (INSERT INTO lada.sample (
+                  meas_facil_id,
+                  appr_lab_id,
+                  regulation_id,
+                  opr_mode_id,
+                  sample_meth_id)
+              SELECT '06010', '06010', 1, 1, 1 FROM generate_series(1, :n)
               RETURNING id),
           measms AS (INSERT INTO lada.measm (sample_id, mmt_id)
               SELECT id, 'AB' FROM samples, generate_series(1, :n)
