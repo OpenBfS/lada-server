@@ -58,17 +58,14 @@ public class ProbenehmerTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("sampler", "rest/sampler");
-        getById("sampler", "rest/sampler/1000", expectedById);
+        get("rest/sampler");
+        getById("rest/sampler/1000", expectedById);
         update(
-            "sampler",
             "rest/sampler/1000",
             "descr",
             "Testbezeichnung",
             "geändert");
-        JsonObject created = create("sampler", "rest/sampler", create);
-        delete(
-            "sampler",
-            "rest/sampler/" + created.getJsonObject("data").get("id"));
+        JsonObject created = create("rest/sampler", create);
+        delete("rest/sampler/" + created.getJsonObject("data").get("id"));
     }
 }

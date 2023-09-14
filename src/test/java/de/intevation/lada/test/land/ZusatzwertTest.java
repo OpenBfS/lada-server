@@ -62,12 +62,11 @@ public class ZusatzwertTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("samplespecifmeasval", "rest/samplespecifmeasval?sampleId=1000");
-        getById("samplespecifmeasval", "rest/samplespecifmeasval/1000", expectedById);
-        JsonObject created = create("zusatzwert", "rest/samplespecifmeasval", create);
-        update("samplespecifmeasval", "rest/samplespecifmeasval/1000", "sampleSpecifId", "A75", "A74");
-        delete(
-            "samplespecifmeasval",
-            "rest/samplespecifmeasval/" + created.getJsonObject("data").get("id"));
+        get("rest/samplespecifmeasval?sampleId=1000");
+        getById("rest/samplespecifmeasval/1000", expectedById);
+        JsonObject created = create("rest/samplespecifmeasval", create);
+        update("rest/samplespecifmeasval/1000", "sampleSpecifId", "A75", "A74");
+        delete("rest/samplespecifmeasval/"
+            + created.getJsonObject("data").get("id"));
     }
 }

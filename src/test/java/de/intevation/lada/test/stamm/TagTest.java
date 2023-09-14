@@ -25,7 +25,6 @@ public class TagTest extends ServiceTest {
 
     private JsonObject create;
 
-    private final String name = "tag";
     private final String tagUrl = "rest/tag/";
 
     private final String dataKey = "data";
@@ -49,7 +48,7 @@ public class TagTest extends ServiceTest {
         testMstTag();
         testNetzbetreiberTag();
         promoteMstTag();
-        delete(name, tagUrl + "103"); // Delete tag with assignment
+        delete(tagUrl + "103"); // Delete tag with assignment
     }
 
     /**
@@ -75,11 +74,9 @@ public class TagTest extends ServiceTest {
     public void promoteMstTag() {
         JsonObject tagToTest = createTagJson(
             Tag.TAG_TYPE_MST, "mstTagPromoted");
-        JsonObject createResponse = create(name, tagUrl, tagToTest);
+        JsonObject createResponse = create(tagUrl, tagToTest);
         long createdId = createResponse.getJsonObject(dataKey).getInt("id");
-        update(name, tagUrl + createdId, "tagType",
-            "mst",
-            "global");
+        update(tagUrl + createdId, "tagType", "mst", "global");
     }
 
     /**
@@ -87,7 +84,7 @@ public class TagTest extends ServiceTest {
      * @param tagToTest Tag to test
      */
     private void testTagCRUD(JsonObject tagToTest) {
-        JsonObject createResponse = create(name, tagUrl, tagToTest);
+        JsonObject createResponse = create(tagUrl, tagToTest);
         long createdId = createResponse.getJsonObject(dataKey).getInt("id");
         String createdTyp = createResponse
             .getJsonObject(dataKey).getString("tagType");
@@ -98,25 +95,21 @@ public class TagTest extends ServiceTest {
             Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diff);
         }
         String tagUpdated = tagToTest.getString(tagNameAttribute) + "-mod";
-        JsonObject updateResponse = update(name, tagUrl + createdId,
+        JsonObject updateResponse = update(tagUrl + createdId,
             tagNameAttribute,
             tagToTest.getString(tagNameAttribute),
             tagUpdated);
-        JsonObject getResponse = get(name, tagUrl);
+        JsonObject getResponse = get(tagUrl);
         Assert.assertFalse(getResponse.getJsonArray(dataKey).isEmpty());
-        getById(name, tagUrl + createdId,
+        getById(tagUrl + createdId,
             updateResponse.getJsonObject(dataKey));
-        delete(name, tagUrl + createdId);
+        delete(tagUrl + createdId);
     }
 
-    /**
-     * Create json for a mst tag.
-     * @return Tag json object
-     */
     private JsonObject createTagJson(String type, String tag) {
         JsonObjectBuilder builder = convertObject(create);
         builder.add("tagType", type);
-        builder.add(name, tag);
+        builder.add("tag", tag);
         return builder.build();
     }
 }
