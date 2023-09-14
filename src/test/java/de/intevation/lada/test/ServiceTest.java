@@ -279,23 +279,21 @@ public class ServiceTest {
 
     /**
      * Base for all GET requests expecting success.
-     * @param name of the entity to request
      * @param parameter the url parameter used in the request.
      * @return the json object returned by the serive.
      */
-    public JsonObject get(String name, String parameter) {
-        return get(name, parameter, Response.Status.OK);
+    public JsonObject get(String parameter) {
+        return get(parameter, Response.Status.OK);
     }
 
     /**
      * Base for all GET requests.
-     * @param name of the entity to request
      * @param parameter the url parameter used in the request.
      * @param expectedStatus Expected HTTP status code
      * @return the json object returned by the serive.
      */
     public JsonObject get(
-        String name, String parameter, Response.Status expectedStatus
+        String parameter, Response.Status expectedStatus
     ) {
         WebTarget target = client.target(baseUrl + parameter);
         Response response = target.request()
@@ -314,13 +312,11 @@ public class ServiceTest {
 
     /**
      * Test the GET Service by requesting a single object by id.
-     * @param name the name of the entity to request.
      * @param parameter the parameters used in the request.
      * @param expected the expected json result.
      * @return The resulting json object.
      */
     public JsonObject getById(
-        String name,
         String parameter,
         JsonObject expected
     ) {
@@ -351,13 +347,12 @@ public class ServiceTest {
 
     /**
      * Test the CREATE Service.
-     * @param name the name of the entity to request.
      * @param parameter the parameters used in the request.
      * @param create the object to create, embedded in POST body.
      * @return The resulting json object.
      *
      */
-    public JsonObject create(String name, String parameter, JsonObject create) {
+    public JsonObject create(String parameter, JsonObject create) {
         WebTarget target = client.target(baseUrl + parameter);
         /* Send a post request containing a new object*/
         Response response = target.request()
@@ -371,14 +366,13 @@ public class ServiceTest {
 
     /**
      * Test service using a list of input objects.
-     * @param name the name of the entity to request.
      * @param parameter the parameters used in the request.
      * @param payload the objects embedded in POST body.
      * @return The resulting json object.
      *
      */
     public JsonObject bulkOperation(
-        String name, String parameter, JsonArray payload
+        String parameter, JsonArray payload
     ) {
         WebTarget target = client.target(baseUrl + parameter);
         /* Send a post request containing a new object*/
@@ -401,7 +395,6 @@ public class ServiceTest {
 
     /**
      * Test an update service expecting success.
-     * @param name the name of the entity to request.
      * @param parameter the parameters used in the request.
      * @param updateAttribute the name of the attribute to update.
      * @param oldValue the value to replace.
@@ -409,14 +402,12 @@ public class ServiceTest {
      * @return The resulting json object.
      */
     public JsonObject update(
-        String name,
         String parameter,
         String updateAttribute,
         String oldValue,
         String newValue
     ) {
         return update(
-            name,
             parameter,
             updateAttribute,
             oldValue,
@@ -427,7 +418,6 @@ public class ServiceTest {
 
     /**
      * Test an update service.
-     * @param name the name of the entity to request.
      * @param parameter the parameters used in the request.
      * @param updateAttribute the name of the attribute to update.
      * @param oldValue the value to replace.
@@ -436,7 +426,6 @@ public class ServiceTest {
      * @return The resulting json object.
      */
     public JsonObject update(
-        String name,
         String parameter,
         String updateAttribute,
         String oldValue,
@@ -502,11 +491,10 @@ public class ServiceTest {
 
     /**
      * Test the DELETE Service.
-     * @param name the name of the entity to delete.
      * @param parameter the parameters used in the request.
      * @return The resulting json object.
      */
-    public JsonObject delete(String name, String parameter) {
+    public JsonObject delete(String parameter) {
         WebTarget target =
             client.target(baseUrl + parameter);
         /* Delete object with ID given in URL */
@@ -522,13 +510,11 @@ public class ServiceTest {
     /**
      * Test AuditTrailService.
      *
-     * @param name the name of the entity.
      * @param parameter the parameters used in the request.
      * @param updateFieldKey Key of field expected to be changed.
      * @param newValue Value of field expected to be changed.
      */
     protected void getAuditTrail(
-        String name,
         String parameter,
         String updateFieldKey,
         String newValue

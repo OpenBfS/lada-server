@@ -57,18 +57,16 @@ public class GeolocatMpgTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("geolocatmpg", "rest/geolocatmpg?mpgId=1000");
-        getById("geolocatmpg", "rest/geolocatmpg/1000", expectedById);
+        get("rest/geolocatmpg?mpgId=1000");
+        getById("rest/geolocatmpg/1000", expectedById);
         JsonObject created =
-            create("geolocatmpg", "rest/geolocatmpg", create);
+            create("rest/geolocatmpg", create);
         update(
-            "geolocatmpg",
             "rest/geolocatmpg/1000",
             "addSiteText",
             "Test",
             "Test geändert");
         delete(
-            "geolocatmpg",
             "rest/geolocatmpg/" + created.getJsonObject("data").get("id"));
     }
 }

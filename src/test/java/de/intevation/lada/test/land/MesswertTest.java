@@ -64,14 +64,12 @@ public class MesswertTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("measval", "rest/measval?measmId=1200");
-        getById("measval", "rest/measval/10000", expectedById);
+        get("rest/measval?measmId=1200");
+        getById("rest/measval/10000", expectedById);
         normalize(expectedById);
-        JsonObject created = create("measval", "rest/measval", create);
-        update("measval", "rest/measval/10000", "lessThanLOD", "<", ">");
-        delete(
-            "measval",
-            "rest/measval/" + created.getJsonObject("data").get("id"));
+        JsonObject created = create("rest/measval", create);
+        update("rest/measval/10000", "lessThanLOD", "<", ">");
+        delete("rest/measval/" + created.getJsonObject("data").get("id"));
     }
 
     /**

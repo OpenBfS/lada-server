@@ -56,23 +56,13 @@ public class MessprogrammMmtTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        final String name = "mpgmmtmp";
         final String url = "rest/mpgmmtmp/";
         final String id = "1000";
 
-        getById(name, url + id, expectedById);
-        get(name, url + "?mpgId=1000");
-        update(
-            name,
-            url + id,
-            "mmtId",
-            "A3",
-            "B3"
-        );
-        JsonObject created =
-            create(name, url, create);
-        delete(
-            name,
-            url + created.getJsonObject("data").get("id"));
+        getById(url + id, expectedById);
+        get(url + "?mpgId=1000");
+        update(url + id, "mmtId", "A3", "B3");
+        JsonObject created = create(url, create);
+        delete(url + created.getJsonObject("data").get("id"));
     }
 }
