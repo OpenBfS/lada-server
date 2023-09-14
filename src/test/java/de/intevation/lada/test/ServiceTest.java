@@ -23,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Scanner;
@@ -299,6 +300,7 @@ public class ServiceTest {
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
+            .accept(MediaType.APPLICATION_JSON)
             .get();
         JsonObject content = BaseTest.parseResponse(
             response, expectedStatus);
@@ -325,6 +327,7 @@ public class ServiceTest {
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
+            .accept(MediaType.APPLICATION_JSON)
             .get();
         JsonObject content = BaseTest.parseResponse(response);
         /* Verify the response*/
@@ -353,13 +356,33 @@ public class ServiceTest {
      *
      */
     public JsonObject create(String parameter, JsonObject create) {
+        return create(parameter, create, Locale.GERMAN, Response.Status.OK);
+    }
+
+    /**
+     * Test the CREATE Service.
+     * @param parameter the parameters used in the request.
+     * @param create the object to create, embedded in POST body.
+     * @param acceptLanguage Acceptable language
+     * @param expectedStatus Expected HTTP status code
+     * @return The resulting json object.
+     *
+     */
+    public JsonObject create(
+        String parameter,
+        JsonObject create,
+        Locale acceptLanguage,
+        Response.Status expectedStatus
+    ) {
         WebTarget target = client.target(baseUrl + parameter);
         /* Send a post request containing a new object*/
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
+            .accept(MediaType.APPLICATION_JSON)
+            .acceptLanguage(acceptLanguage)
             .post(Entity.entity(create.toString(), MediaType.APPLICATION_JSON));
-        JsonObject content = BaseTest.parseResponse(response);
+        JsonObject content = BaseTest.parseResponse(response, expectedStatus);
 
         return content;
     }
@@ -379,6 +402,7 @@ public class ServiceTest {
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
+            .accept(MediaType.APPLICATION_JSON)
             .post(Entity.entity(
                     payload.toString(), MediaType.APPLICATION_JSON));
         JsonObject content = BaseTest.parseResponse(response);
@@ -464,6 +488,7 @@ public class ServiceTest {
         Response updated = putTarget.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
+            .accept(MediaType.APPLICATION_JSON)
             .put(Entity.entity(updatedEntity, MediaType.APPLICATION_JSON));
 
         /* Verify the response*/

@@ -9,7 +9,11 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Locale;
+import java.util.Map;
 
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.ws.rs.client.Client;
@@ -86,6 +90,33 @@ public class ProbeTest extends ServiceTest {
             "D: 59 04 01 00 05 05 01 02 00 00 00 00",
             "",
             Status.BAD_REQUEST);
+
+        // Test localized validation during sample creation
+        Map<Locale, String> msgs = Map.of(
+            Locale.GERMAN, "Größe muss zwischen 0 und 3 sein",
+            Locale.US, "size must be between 0 and 3");
+        final String envMediumId = "envMediumId";
+        JsonObject payload = Json.createObjectBuilder()
+            .add(envMediumId, "too much text for envMediumId")
+            .add("regulationId", 1)
+            .add("sampleMethId", 1)
+            .add("isTest", false)
+            .add("oprModeId", 1)
+            .build();
+        for (Locale language: msgs.keySet()) {
+            JsonArray violations = create(
+                "rest/sample", payload, language, Status.BAD_REQUEST)
+                .getJsonArray("parameterViolations");
+            violations.forEach(val -> {
+                JsonObject obj = (JsonObject) val;
+                if (
+                    obj.getString("path").equals("create.arg0." + envMediumId)
+                ) {
+                    Assert.assertEquals(
+                        msgs.get(language), obj.getString("message"));
+                }
+            });
+        }
 
         getAuditTrail(
             "rest/audit/probe/1000",

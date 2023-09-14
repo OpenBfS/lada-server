@@ -265,7 +265,7 @@ public class BaseTest {
             expectedStatus.getStatusCode(),
             response.getStatus());
 
-        if (Response.Status.OK.equals(expectedStatus)) {
+        if (!responseBody.isEmpty()) {
             try {
                 JsonObject content = Json.createReader(
                     new StringReader(responseBody)).readObject();
