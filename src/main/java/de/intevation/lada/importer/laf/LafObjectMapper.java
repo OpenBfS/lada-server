@@ -1304,10 +1304,10 @@ public class LafObjectMapper {
         // check if erreichbar
         QueryBuilder<StatusAccessMpView> errFilter = repository
             .queryBuilder(StatusAccessMpView.class)
-            .and("levId", statusStufe)
-            .and("valId", statusWert)
-            .and("curLev", currentKombi.getStatusLev().getId())
-            .and("curVal", currentKombi.getStatusVal().getId());
+            .and("statusLevId", statusStufe)
+            .and("statusValId", statusWert)
+            .and("curLevId", currentKombi.getStatusLev().getId())
+            .and("curValId", currentKombi.getStatusVal().getId());
         List<StatusAccessMpView> erreichbar =
             repository.filterPlain(errFilter.getQuery());
         if (erreichbar.isEmpty()) {
