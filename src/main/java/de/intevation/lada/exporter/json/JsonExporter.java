@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -132,11 +131,11 @@ public class JsonExporter implements Exporter {
                     rowBuilder.add(key, (Integer) value);
                 } else if (value instanceof Double) {
                     rowBuilder.add(key, (Double) value);
-                } else if (value instanceof Timestamp) {
+                } else if (value instanceof Date) {
                     //Convert to target timezone
-                    Timestamp time = (Timestamp) value;
+                    Date time = (Date) value;
                     Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(new Date(time.getTime()));
+                    calendar.setTime(time);
                     rowBuilder.add(
                         key, dateFormat.format(calendar.getTime()));
                 } else {
