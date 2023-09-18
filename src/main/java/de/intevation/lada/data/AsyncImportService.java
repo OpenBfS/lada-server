@@ -23,7 +23,6 @@ import jakarta.ws.rs.core.Response;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.importer.ImportJobManager;
-import de.intevation.lada.importer.laf.LafImporter;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -43,12 +42,6 @@ import de.intevation.lada.rest.LadaService;
  */
 @Path("import/async")
 public class AsyncImportService extends LadaService {
-
-    /**
-     * The importer.
-     */
-    @Inject
-    private LafImporter importer;
 
     @Inject
     private Repository repository;
