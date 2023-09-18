@@ -7,11 +7,15 @@
  */
 package de.intevation.lada.validation;
 
+import java.util.Locale;
 import java.util.Set;
 
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+
+import org.hibernate.validator.HibernateValidator;
 
 import de.intevation.lada.validation.rules.Rule;
 
@@ -27,6 +31,17 @@ public abstract class Validator<T> {
 
     @Inject
     private jakarta.validation.Validator beanValidator;
+
+    /**
+     * @param locale Set locale for message localization.
+     */
+    public void setLocale(Locale locale) {
+        this.beanValidator = Validation.byProvider(HibernateValidator.class)
+            .configure()
+            .defaultLocale(locale)
+            .buildValidatorFactory()
+            .getValidator();
+    }
 
     /**
      * Validates given object.

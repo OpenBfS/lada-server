@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import jakarta.inject.Inject;
@@ -50,6 +51,8 @@ public class LafImportJob extends Job {
     private JsonObject jsonInput;
 
     private MeasFacil mst;
+
+    private Locale locale;
 
     private JsonObject result;
 
@@ -158,7 +161,7 @@ public class LafImportJob extends Job {
                 builder.and("measFacilId", mstId);
                 config = repository.filterPlain(builder.getQuery());
             }
-            importer.doImport(content, userInfo, mstId, config);
+            importer.doImport(content, userInfo, mstId, config, locale);
 
             Map<String, Object> fileResponseData = new HashMap<>();
             if (!importer.getErrors().isEmpty()) {
@@ -212,5 +215,9 @@ public class LafImportJob extends Job {
 
     public void setMst(MeasFacil mst) {
         this.mst = mst;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 }

@@ -16,6 +16,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.UUID;
 
@@ -599,6 +601,42 @@ public class ImporterTest extends BaseTest {
     }
 
     /**
+     * Test message localization in asynchronous import.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncImportProbeI18n(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        final String noOprModeLAF = String.format(
+            lafTemplate, lafSampleId, regulation, sampleSpecifId,
+            "", measd, measUnit).lines().filter(
+                line -> !line.startsWith("MESSPROGRAMM")).collect(
+                    Collectors.joining("\n"));
+
+        Map<Locale, String> msgs = Map.of(
+            Locale.GERMAN, "darf nicht null sein",
+            Locale.US, "must not be null");
+        final String errorsKey = "errors";
+        for (Locale locale: msgs.keySet()) {
+            JsonObject report = testAsyncImportProbe(
+                baseUrl, locale, noOprModeLAF, "", false);
+            assertContains(report, errorsKey);
+            JsonArray errors = report.getJsonObject(errorsKey)
+                .getJsonArray(lafSampleId);
+            LOG.debug(errors);
+            JsonObject expectedError = Json.createObjectBuilder()
+                .add("key", "validation#probe")
+                .add("value", "oprModeId")
+                .add("code", msgs.get(locale)).build();
+            Assert.assertTrue(
+                "Missing error: " + expectedError.toString(),
+                errors.contains(expectedError));
+        }
+    }
+
+    /**
      * Test asynchronous import of a Sample object with attribute conversion.
      */
     @Test
@@ -719,6 +757,17 @@ public class ImporterTest extends BaseTest {
         String lafSampleId,
         boolean expectSuccess
     ) throws InterruptedException, CharacterCodingException {
+        return testAsyncImportProbe(
+            baseUrl, Locale.US, lafData, lafSampleId, expectSuccess);
+    }
+
+    private JsonObject testAsyncImportProbe(
+        URL baseUrl,
+        Locale locale,
+        String lafData,
+        String lafSampleId,
+        boolean expectSuccess
+    ) throws InterruptedException, CharacterCodingException {
         final String asyncImportUrl = baseUrl + "data/import/async/";
         final String fileName = "test.laf";
 
@@ -735,6 +784,7 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .header("X-LADA-MST", mstId)
+            .acceptLanguage(locale)
             .post(Entity.entity(requestJson.toString(),
                     MediaType.APPLICATION_JSON));
         JsonObject importCreatedObject = parseSimpleResponse(importCreated);

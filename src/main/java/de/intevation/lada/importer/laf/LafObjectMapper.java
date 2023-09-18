@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -2222,5 +2223,14 @@ public class LafObjectMapper {
      */
     public void setMeasFacilId(String measFacilId) {
         this.measFacilId = measFacilId;
+    }
+
+    /**
+     * @param locale Set locale for validation messages.
+     */
+    public void setLocale(Locale locale) {
+        this.probeValidator.setLocale(locale);
+        this.messungValidator.setLocale(locale);
+        this.ortValidator.setLocale(locale);
     }
 }

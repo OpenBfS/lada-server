@@ -202,7 +202,8 @@ public class LafImportService extends LadaService {
                 config = repository.filterPlain(builder.getQuery());
             }
 
-            importer.doImport(content, userInfo, mstId, config);
+            importer.doImport(
+                content, userInfo, mstId, config, request.getLocale());
 
             Map<String, Object> fileResponseData =
                 new HashMap<String, Object>();
@@ -302,7 +303,8 @@ public class LafImportService extends LadaService {
             config = (List<ImportConf>) repository.filterPlain(
                 builder.getQuery());
         }
-        importer.doImport(content, userInfo, mstId, config);
+        importer.doImport(
+            content, userInfo, mstId, config, request.getLocale());
         Map<String, Object> respData = new HashMap<String, Object>();
         Boolean success = true;
         if (!importer.getErrors().isEmpty()) {

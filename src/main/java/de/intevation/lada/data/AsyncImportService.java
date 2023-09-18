@@ -81,7 +81,8 @@ public class AsyncImportService extends LadaService {
         }
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
-            importJobManager.createImportJob(userInfo, jsonInput, mst);
+            importJobManager.createImportJob(
+                userInfo, jsonInput, mst, request.getLocale());
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
