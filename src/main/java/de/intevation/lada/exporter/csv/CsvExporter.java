@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -25,6 +23,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Collection;
+import java.util.Date;
 
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
@@ -249,11 +248,11 @@ public class CsvExporter implements Exporter {
                     } else if (value instanceof Float) {
                         decimalFormat.applyPattern("###0.0#");
                         rowItems.add(decimalFormat.format((Float) value));
-                    } else if (value instanceof Timestamp) {
+                    } else if (value instanceof Date) {
                         //Convert to target timezone
-                        Timestamp time = (Timestamp) value;
+                        Date time = (Date) value;
                         Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(new Date(time.getTime()));
+                        calendar.setTime(time);
                         rowItems.add(dateFormat.format(calendar.getTime()));
                     } else if (value instanceof Boolean) {
                         rowItems.add(value != null
