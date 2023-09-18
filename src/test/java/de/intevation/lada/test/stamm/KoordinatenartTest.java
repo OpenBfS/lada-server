@@ -57,8 +57,8 @@ public class KoordinatenartTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get(name, url);
-        getById(name, url + expectedById.getInt("id"), expectedById);
+        get(url);
+        getById(url + expectedById.getInt("id"), expectedById);
         recalculate();
     }
 

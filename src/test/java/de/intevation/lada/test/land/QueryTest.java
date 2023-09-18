@@ -19,7 +19,7 @@ public class QueryTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("queruser", "rest/queryuser");
+        get("rest/queryuser");
         // TODO: Test create, update, delete
     }
 }

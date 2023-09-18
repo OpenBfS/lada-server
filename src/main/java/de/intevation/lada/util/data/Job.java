@@ -25,6 +25,7 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
+import javax.ws.rs.core.Response;
 
 import org.jboss.logging.Logger;
 
@@ -96,13 +97,15 @@ public abstract class Job implements Runnable {
                     this.currentStatus.setStatus(Status.FINISHED);
                 } catch (CancellationException | InterruptedException e) {
                     this.currentStatus.setStatus(Status.ERROR);
-                    this.currentStatus.setMessage(e.getMessage());
+                    this.currentStatus.setMessage(Response.Status
+                        .INTERNAL_SERVER_ERROR.getReasonPhrase());
                 } catch (ExecutionException ee) {
                     Throwable cause = ee.getCause();
                     logger.error(cause.getMessage());
                     cause.printStackTrace();
                     this.currentStatus.setStatus(Status.ERROR);
-                    this.currentStatus.setMessage(cause.getMessage());
+                    this.currentStatus.setMessage(Response.Status
+                        .INTERNAL_SERVER_ERROR.getReasonPhrase());
                 }
             }
         }

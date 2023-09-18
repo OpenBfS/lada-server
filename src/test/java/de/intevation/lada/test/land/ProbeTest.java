@@ -67,14 +67,13 @@ public class ProbeTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("probe", "rest/sample", Status.METHOD_NOT_ALLOWED);
-        getById("probe", "rest/sample/1000", expectedById);
-        JsonObject created = create("probe", "rest/sample", create);
+        get("rest/sample", Status.METHOD_NOT_ALLOWED);
+        getById("rest/sample/1000", expectedById);
+        JsonObject created = create("rest/sample", create);
 
         final String updateFieldKey = "mainSampleId";
         final String newValue = "130510002";
         update(
-            "probe",
             "rest/sample/1000",
             updateFieldKey,
             "120510002",
@@ -82,7 +81,6 @@ public class ProbeTest extends ServiceTest {
 
         // Ensure invalid envDescripDisplay is rejected
         update(
-            "probe",
             "rest/sample/1000",
             "envDescripDisplay",
             "D: 59 04 01 00 05 05 01 02 00 00 00 00",
@@ -90,12 +88,9 @@ public class ProbeTest extends ServiceTest {
             Status.BAD_REQUEST);
 
         getAuditTrail(
-            "probe",
             "rest/audit/probe/1000",
             updateFieldKey,
             newValue);
-        delete(
-            "probe",
-            "rest/sample/" + created.getJsonObject("data").get("id"));
+        delete("rest/sample/" + created.getJsonObject("data").get("id"));
     }
 }

@@ -269,7 +269,7 @@ public class StatusProtService extends LadaService {
             }
             } else if (newStatusWert != 7) {
                     Violation error = new Violation();
-                    error.addError("messwert", StatusCodes.VALUE_MISSING);
+                    error.addError("measVal", StatusCodes.VALUE_MISSING);
                     violation.addErrors(error.getErrors());
                     violationCollection.addErrors(violation.getErrors());
             }

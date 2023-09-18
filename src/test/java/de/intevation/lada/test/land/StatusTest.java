@@ -62,9 +62,9 @@ public class StatusTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("statusprot", "rest/statusprot?measmId=1000");
-        getById("statusprot", "rest/statusprot/1000", expectedById);
-        create("statusprot", "rest/statusprot", create);
+        get("rest/statusprot?measmId=1000");
+        getById("rest/statusprot/1000", expectedById);
+        create("rest/statusprot", create);
     }
 
 }
