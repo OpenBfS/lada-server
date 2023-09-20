@@ -21,7 +21,7 @@ import de.intevation.lada.validation.rules.Rule;
 
 
 /**
- * Interface for object validators.
+ * Abstract base class for object validators.
  *
  * @param <T> Type of objects to be validated by implementing validator
  *
