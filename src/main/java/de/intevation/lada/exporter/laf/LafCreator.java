@@ -9,7 +9,6 @@ package de.intevation.lada.exporter.laf;
 
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-//import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -162,12 +161,11 @@ implements Creator {
             repository.getByIdPlain(
                 MeasFacil.class, probe.getMeasFacilId());
 
-        QueryBuilder<SampleSpecifMeasVal> zusatzBuilder =
-            repository.queryBuilder(SampleSpecifMeasVal.class);
-        zusatzBuilder.and("sampleId", probe.getId());
-        Response zusatz =
-            repository.filter(zusatzBuilder.getQuery());
-        List<SampleSpecifMeasVal> zusatzwerte = (List<SampleSpecifMeasVal>) zusatz.getData();
+        QueryBuilder<SampleSpecifMeasVal> zusatzBuilder = repository
+            .queryBuilder(SampleSpecifMeasVal.class)
+            .and("sampleId", probe.getId());
+        List<SampleSpecifMeasVal> zusatzwerte =
+            repository.filterPlain(zusatzBuilder.getQuery());
 
         String laf = "";
         laf += lafLine("PROBE_ID", probe.getExtId(), CN);
@@ -340,9 +338,10 @@ implements Creator {
     }
 
     /**
-     * Write {@link LOrt} attributes.
+     * Write Geolocat attributes.
      *
-     * @param Geolocat
+     * @param o Geolocat
+     * @param typePrefix Prefix denoting typeRegulation
      * @return LAF conform string
      */
     @SuppressWarnings("unchecked")
@@ -524,14 +523,18 @@ implements Creator {
             w = stKombi.getStatusVal().getId();
             if (st < stufe) {
                 stufe = st;
-                status[stufe-1] = w;
-            };
+                status[stufe - 1] = w;
+            }
             if (stufe == 1) {
                 break;
-            };
+            }
         }
-        if ( status[2] != 0 && status[1] == 0) {status[1] = status[2];}
-        if ( status[1] != 0 && status[0] == 0) {status[0] = status[1];}
+        if (status[2] != 0 && status[1] == 0) {
+            status[1] = status[2];
+        }
+        if (status[1] != 0 && status[0] == 0) {
+            status[0] = status[1];
+        }
         return "" + status[0] + status[1] + status[2] + "0";
     }
 
