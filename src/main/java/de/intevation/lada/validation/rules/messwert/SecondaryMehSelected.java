@@ -58,7 +58,7 @@ public class SecondaryMehSelected implements Rule {
             }
             //Check if the messwert is the secondary mehId
             if (secMehId.equals(messwert.getMeasUnitId())) {
-                violation.addNotification("unitId", StatusCodes.VAL_SEC_UNIT);
+                violation.addNotification("measUnitId", StatusCodes.VAL_SEC_UNIT);
                 return violation;
             }
             /*Check if the messwert is convertable into the secondary unit but
@@ -85,7 +85,7 @@ public class SecondaryMehSelected implements Rule {
                     .equals(messwert.getMeasUnitId())
                 ) {
                     violation.addNotification(
-                        "unitId", StatusCodes.VAL_SEC_UNIT);
+                        "measUnitId", StatusCodes.VAL_SEC_UNIT);
                 }
             });
         }
