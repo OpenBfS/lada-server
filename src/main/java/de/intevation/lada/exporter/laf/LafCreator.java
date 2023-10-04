@@ -9,7 +9,6 @@ package de.intevation.lada.exporter.laf;
 
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-//import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -162,12 +161,11 @@ implements Creator {
             repository.getByIdPlain(
                 MeasFacil.class, probe.getMeasFacilId());
 
-        QueryBuilder<SampleSpecifMeasVal> zusatzBuilder =
-            repository.queryBuilder(SampleSpecifMeasVal.class);
-        zusatzBuilder.and("sampleId", probe.getId());
-        Response zusatz =
-            repository.filter(zusatzBuilder.getQuery());
-        List<SampleSpecifMeasVal> zusatzwerte = (List<SampleSpecifMeasVal>) zusatz.getData();
+        QueryBuilder<SampleSpecifMeasVal> zusatzBuilder = repository
+            .queryBuilder(SampleSpecifMeasVal.class)
+            .and("sampleId", probe.getId());
+        List<SampleSpecifMeasVal> zusatzwerte =
+            repository.filterPlain(zusatzBuilder.getQuery());
 
         String laf = "";
         laf += lafLine("PROBE_ID", probe.getExtId(), CN);
@@ -340,9 +338,10 @@ implements Creator {
     }
 
     /**
-     * Write {@link LOrt} attributes.
+     * Write Geolocat attributes.
      *
-     * @param Geolocat
+     * @param o Geolocat
+     * @param typePrefix Prefix denoting typeRegulation
      * @return LAF conform string
      */
     @SuppressWarnings("unchecked")
@@ -354,36 +353,35 @@ implements Creator {
             laf += lafLine(typePrefix + "ORTS_ZUSATZTEXT",
                 o.getAddSiteText(), CN);
         }
-        QueryBuilder<Site> oBuilder = repository.queryBuilder(Site.class);
-        oBuilder.and("id", o.getSiteId());
-        List<Site> sOrte =
-            (List<Site>) repository.filter(
-                oBuilder.getQuery()
-            ).getData();
 
-        if (sOrte.get(0).getStateId() != null) {
+        QueryBuilder<Site> oBuilder = repository
+            .queryBuilder(Site.class)
+            .and("id", o.getSiteId());
+        Site sOrt = repository.getSinglePlain(oBuilder.getQuery());
+
+        if (sOrt.getStateId() != null) {
             laf += lafLine(typePrefix + "HERKUNFTSLAND_S",
-                String.format("%08d", sOrte.get(0).getStateId()));
+                String.format("%08d", sOrt.getStateId()));
         }
 
-        if (sOrte.get(0).getAdminUnitId() != null
-            && sOrte.get(0).getAdminUnitId().length() > 0
+        if (sOrt.getAdminUnitId() != null
+            && sOrt.getAdminUnitId().length() > 0
         ) {
             laf += lafLine(typePrefix + "GEMEINDESCHLUESSEL",
-                sOrte.get(0).getAdminUnitId());
+                sOrt.getAdminUnitId());
         }
 
-        if (sOrte.get(0).getMunicDivId() != null) {
+        if (sOrt.getMunicDivId() != null) {
             MunicDiv gu = repository.getByIdPlain(
-                MunicDiv.class, sOrte.get(0).getMunicDivId());
+                MunicDiv.class, sOrt.getMunicDivId());
             laf += lafLine(typePrefix + "ORTS_ZUSATZKENNZAHL",
                 gu.getSiteId(), CN);
         }
 
-        String koord = String.format("%02d", sOrte.get(0).getSpatRefSysId());
+        String koord = String.format("%02d", sOrt.getSpatRefSysId());
         koord += " \"";
-        koord += sOrte.get(0).getCoordXExt() + "\" \"";
-        koord += sOrte.get(0).getCoordYExt() + "\"";
+        koord += sOrt.getCoordXExt() + "\" \"";
+        koord += sOrt.getCoordYExt() + "\"";
         laf += lafLine(typePrefix + "KOORDINATEN_S", koord);
 
         if ("P_".equals(typePrefix) && o.getPoiId() != null) {
@@ -396,7 +394,7 @@ implements Creator {
         ) {
             laf += lafLine(
                 typePrefix + "ORTS_ZUSATZCODE",
-                sOrte.get(0).getExtId(),
+                sOrt.getExtId(),
                 CN);
         } else if ("U_".equals(typePrefix)
             && o.getPoiId() != null
@@ -406,10 +404,6 @@ implements Creator {
                 o.getPoiId(),
                 CN);
         }
-//        if (sOrte.get(0).getHoeheUeberNn() != null) {
-//            laf += lafLine(typePrefix + "HOEHE_NN",
-//                String.format("%f", sOrte.get(0).getHoeheUeberNn()));
-//        }
         return laf;
     }
 
@@ -524,14 +518,18 @@ implements Creator {
             w = stKombi.getStatusVal().getId();
             if (st < stufe) {
                 stufe = st;
-                status[stufe-1] = w;
-            };
+                status[stufe - 1] = w;
+            }
             if (stufe == 1) {
                 break;
-            };
+            }
         }
-        if ( status[2] != 0 && status[1] == 0) {status[1] = status[2];}
-        if ( status[1] != 0 && status[0] == 0) {status[0] = status[1];}
+        if (status[2] != 0 && status[1] == 0) {
+            status[1] = status[2];
+        }
+        if (status[1] != 0 && status[0] == 0) {
+            status[0] = status[1];
+        }
         return "" + status[0] + status[1] + status[2] + "0";
     }
 
