@@ -272,13 +272,7 @@ public class AuditTrailService extends LadaService {
         case "measm":
             Measm m = repository.getByIdPlain(
                 Measm.class, audit.getObjectId());
-            node.setIdentifier(
-                m == null
-                ? "(deleted)"
-                : m.getMinSampleId() == null
-                    ? m.getExtId().toString()
-                    : m.getMinSampleId()
-                );
+            node.setIdentifier(getIdentifier(m));
             break;
         default:
             // Do nothing
@@ -288,9 +282,8 @@ public class AuditTrailService extends LadaService {
             Measm m = repository.getByIdPlain(
                 Measm.class, audit.getMeasmId());
             AuditEntryIdentifier identifier = new AuditEntryIdentifier();
-            identifier.setMeasm(
-                m.getMinSampleId() == null
-                ? m.getExtId().toString() : m.getMinSampleId());
+            identifier.setMeasm(getIdentifier(m));
+
             switch (audit.getTableName()) {
             case "comm_measm":
                 identifier.setIdentifier(
@@ -345,11 +338,7 @@ public class AuditTrailService extends LadaService {
         AuditResponseData auditData = new AuditResponseData();
         List<AuditEntry> entries = new ArrayList<>();
         auditData.setId(messung.getId());
-        auditData.setIdentifier(
-            messung.getMinSampleId() == null
-            ? messung.getExtId().toString()
-            : messung.getMinSampleId()
-        );
+        auditData.setIdentifier(getIdentifier(messung));
         for (AuditTrailMeasmView a : audit) {
             //If audit entry shows a messwert, do not show if:
             // - StatusKombi is 1 (MST - nicht vergeben)
@@ -478,6 +467,14 @@ public class AuditTrailService extends LadaService {
             }
         });
         return builder.build();
+    }
+
+    private String getIdentifier(Measm measm) {
+        return measm == null
+            ? "(deleted)"
+            : measm.getMinSampleId() == null
+                ? measm.getExtId().toString()
+                : measm.getMinSampleId();
     }
 
     /**
