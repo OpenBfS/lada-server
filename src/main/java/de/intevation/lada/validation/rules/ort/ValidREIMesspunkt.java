@@ -75,7 +75,7 @@ public class ValidREIMesspunkt implements Rule {
             }
 
         } else {
-                violation.addWarning("ktaGruppeId", StatusCodes.VALUE_MISSING);
+                violation.addWarning("nuclFacilGrId", StatusCodes.VALUE_MISSING);
         }
         if (violation.hasErrors() || violation.hasWarnings()) {
             return violation;

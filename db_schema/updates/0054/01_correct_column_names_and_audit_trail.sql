@@ -38,3 +38,13 @@ UPDATE lada.audit_trail
 SET row_data=public.jsonb_rename_keys(row_data, ARRAY['state_mpg_id', 'mpg_categ_id']),
 changed_fields=public.jsonb_rename_keys(changed_fields, ARRAY['state_mpg_id', 'mpg_categ_id'])
 WHERE table_name='sample';
+
+UPDATE master.audit_trail
+SET row_data=public.jsonb_rename_keys(row_data, ARRAY['munic_id', 'admin_unit_id']),
+changed_fields=public.jsonb_rename_keys(changed_fields, ARRAY['munic_id', 'admin_unit_id'])
+WHERE table_name='site';
+
+UPDATE master.audit_trail
+SET row_data=row_data #- '{nuts_id}',
+changed_fields=changed_fields #- '{nuts_id}'
+WHERE table_name='site';
