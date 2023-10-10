@@ -22,6 +22,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue.ValueType;
+import jakarta.persistence.Query;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -169,9 +170,9 @@ public class AuditTrailService extends LadaService {
         UserInfo userInfo = authorization.getInfo();
 
         //Get ort ids connected to this probe
-        QueryBuilder<Geolocat> refBuilder =
-            repository.queryBuilder(Geolocat.class);
-        refBuilder.and("sampleId", pId);
+        QueryBuilder<Geolocat> refBuilder = repository
+            .queryBuilder(Geolocat.class)
+            .and("sampleId", pId);
         List<Integer> ortIds = new LinkedList<Integer>();
         for (Geolocat zuordnung
             : repository.filterPlain(refBuilder.getQuery())
@@ -180,11 +181,11 @@ public class AuditTrailService extends LadaService {
         }
 
         // Get all entries for the probe and its sub objects.
-        QueryBuilder<AuditTrailSampleView> builder =
-            repository.queryBuilder(AuditTrailSampleView.class);
-        builder.and("objectId", pId);
-        builder.and("tableName", "sample");
-        builder.or("sampleId", pId);
+        QueryBuilder<AuditTrailSampleView> builder = repository
+            .queryBuilder(AuditTrailSampleView.class)
+            .and("objectId", pId)
+            .and("tableName", "sample")
+            .or("sampleId", pId);
         if (ortIds.size() > 0) {
             builder.orIn("siteId", ortIds);
         }
@@ -196,7 +197,7 @@ public class AuditTrailService extends LadaService {
         List<AuditEntry> entries = new ArrayList<>();
         auditResponseData.setId(probe.getId());
         auditResponseData.setIdentifier(
-            (probe.getMainSampleId() == null)
+            probe.getMainSampleId() == null
             ? probe.getExtId()
             : probe.getMainSampleId()
         );
@@ -245,17 +246,19 @@ public class AuditTrailService extends LadaService {
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
         node.setChangedFields(translateValues(audit.getChangedFields()));
-        if ("site".equals(audit.getTableName())) {
+
+        switch (audit.getTableName()) {
+        case "site":
             node.setIdentifier(audit.getRowData().get("ext_id").toString());
-        }
-        if ("comm_sample".equals(audit.getTableName())) {
+            break;
+        case "comm_sample":
             node.setIdentifier(audit.getRowData().get("date").toString());
-        }
-        if ("sample_specif_meas_val".equals(audit.getTableName())) {
+            break;
+        case "sample_specif_meas_val":
             node.setIdentifier(
                 audit.getRowData().get("sample_specif_id").toString());
-        }
-        if ("geolocat".equals(audit.getTableName())) {
+            break;
+        case "geolocat":
             String value = translateId(
                 "site",
                 "ext_id",
@@ -263,30 +266,28 @@ public class AuditTrailService extends LadaService {
                 "id",
                 de.intevation.lada.model.master.SchemaName.NAME);
             node.setIdentifier(value);
-        }
-        if ("measm".equals(audit.getTableName())) {
+            break;
+        case "measm":
             Measm m = repository.getByIdPlain(
                 Measm.class, audit.getObjectId());
-            node.setIdentifier(
-                (m == null)
-                ? "(deleted)"
-                : (m.getMinSampleId() == null)
-                    ? m.getExtId().toString()
-                    : m.getMinSampleId()
-                );
+            node.setIdentifier(getIdentifier(m));
+            break;
+        default:
+            // Do nothing
         }
+
         if (audit.getMeasmId() != null) {
             Measm m = repository.getByIdPlain(
                 Measm.class, audit.getMeasmId());
             AuditEntryIdentifier identifier = new AuditEntryIdentifier();
-            identifier.setMeasm(
-                (m.getMinSampleId() == null)
-                ? m.getExtId().toString() : m.getMinSampleId());
-            if ("comm_measm".equals(audit.getTableName())) {
+            identifier.setMeasm(getIdentifier(m));
+
+            switch (audit.getTableName()) {
+            case "comm_measm":
                 identifier.setIdentifier(
                     audit.getRowData().get("date").toString());
-            }
-            if ("meas_val".equals(audit.getTableName())) {
+                break;
+            case "meas_val":
                 String value = translateId(
                     "measd",
                     "name",
@@ -294,6 +295,9 @@ public class AuditTrailService extends LadaService {
                     "id",
                     de.intevation.lada.model.master.SchemaName.NAME);
                 identifier.setIdentifier(value);
+                break;
+            default:
+                // Do nothing
             }
             node.setIdentifier(identifier);
         }
@@ -320,24 +324,19 @@ public class AuditTrailService extends LadaService {
         Sample probe =
             repository.getByIdPlain(Sample.class, messung.getSampleId());
         UserInfo userInfo = authorization.getInfo();
-        QueryBuilder<AuditTrailMeasmView> builder =
-            repository.queryBuilder(AuditTrailMeasmView.class);
-        builder.and("objectId", mId);
-        builder.and("tableName", "measm");
-        builder.or("measmId", mId);
+        QueryBuilder<AuditTrailMeasmView> builder = repository
+            .queryBuilder(AuditTrailMeasmView.class)
+            .and("objectId", mId)
+            .and("tableName", "measm")
+            .or("measmId", mId);
         builder.orderBy("tstamp", true);
         List<AuditTrailMeasmView> audit =
             repository.filterPlain(builder.getQuery());
 
-        // Create an empty JsonObject
         AuditResponseData auditData = new AuditResponseData();
         List<AuditEntry> entries = new ArrayList<>();
         auditData.setId(messung.getId());
-        auditData.setIdentifier(
-            (messung.getMinSampleId() == null)
-            ? messung.getExtId().toString()
-            : messung.getMinSampleId()
-        );
+        auditData.setIdentifier(getIdentifier(messung));
         for (AuditTrailMeasmView a : audit) {
             //If audit entry shows a messwert, do not show if:
             // - StatusKombi is 1 (MST - nicht vergeben)
@@ -349,7 +348,6 @@ public class AuditTrailService extends LadaService {
                 continue;
             }
             entries.add(createEntry(a));
-
         }
         auditData.setAudit(entries);
         return new Response(
@@ -372,10 +370,12 @@ public class AuditTrailService extends LadaService {
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
         node.setChangedFields(audit.getChangedFields());
-        if ("comm_measm".equals(audit.getTableName())) {
+
+        switch (audit.getTableName()) {
+        case "comm_measm":
             node.setIdentifier(audit.getRowData().get("date").toString());
-        }
-        if ("meas_val".equals(audit.getTableName())) {
+            break;
+        case "meas_val":
             String value = translateId(
                 "measd",
                 "name",
@@ -383,6 +383,9 @@ public class AuditTrailService extends LadaService {
                 "id",
                 de.intevation.lada.model.master.SchemaName.NAME);
             node.setIdentifier(value);
+            break;
+        default:
+            // Do nothing
         }
         return node;
     }
@@ -397,17 +400,14 @@ public class AuditTrailService extends LadaService {
         String idField,
         String schema
     ) {
-        String sql = "SELECT "
-            + field
-            + " FROM "
-            + schema + "." + table
-            + " WHERE "
-            + idField
-            + " = :id ;";
-        jakarta.persistence.Query query = repository.queryFromString(sql);
         if (id == null) {
             return "";
         }
+
+        String sql = "SELECT " + field
+            + " FROM " + schema + "." + table
+            + " WHERE " + idField + " = :id ;";
+        Query query = repository.queryFromString(sql);
         try {
             int value = Integer.parseInt(id);
             query.setParameter("id", value);
@@ -464,6 +464,14 @@ public class AuditTrailService extends LadaService {
             }
         });
         return builder.build();
+    }
+
+    private String getIdentifier(Measm measm) {
+        return measm == null
+            ? "(deleted)"
+            : measm.getMinSampleId() == null
+                ? measm.getExtId().toString()
+                : measm.getMinSampleId();
     }
 
     /**

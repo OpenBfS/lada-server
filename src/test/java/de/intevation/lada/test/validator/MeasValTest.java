@@ -25,7 +25,7 @@ public class MeasValTest {
     private static final String ERROR = "error";
     private static final String MEASD_ID = "measdId";
     private static final String MEAS_VAL = "measVal";
-    private static final String UNIT_ID = "unitId";
+    private static final String UNIT_ID = "measUnitId";
     private static final String VALIDATION_KEY_SEPARATOR = "#";
 
     //Other constants

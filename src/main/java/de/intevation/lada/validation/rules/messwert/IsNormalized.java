@@ -58,7 +58,7 @@ public class IsNormalized implements Rule {
 
             //If  meh is not set
             if (mehId == null && secMehId == null){
-                violation.addWarning("unitId", StatusCodes.VAL_UNIT_UMW);
+                violation.addWarning("measUnitId", StatusCodes.VAL_UNIT_UMW);
                 return violation;
             }
 
@@ -87,14 +87,14 @@ public class IsNormalized implements Rule {
                 QueryBuilder<Measd> builder_messgr = repository.queryBuilder(Measd.class);
                 builder_messgr.and("id", messwert.getMeasdId());
                 List<Measd> messgroesse = repository.filterPlain(builder_messgr.getQuery());
-                violation.addWarning("unitId#"+messgroesse.get(0).getName(), StatusCodes.VAL_UNIT_NORMALIZE);
+                violation.addWarning("measUnitId#"+messgroesse.get(0).getName(), StatusCodes.VAL_UNIT_NORMALIZE);
             } else if ( (mehId != null && mehId.equals(messwert.getMeasUnitId())) || (secMehId != null && secMehId.equals(messwert.getMeasUnitId())) ) {
                 return null;
             } else {
                 QueryBuilder<Measd> builder_messgr = repository.queryBuilder(Measd.class);
                 builder_messgr.and("id", messwert.getMeasdId());
                 List<Measd> messgroesse = repository.filterPlain(builder_messgr.getQuery());
-                violation.addWarning("unitId#"+messgroesse.get(0).getName(), StatusCodes.VAL_UNIT_UMW);
+                violation.addWarning("measUnitId#"+messgroesse.get(0).getName(), StatusCodes.VAL_UNIT_UMW);
             }
         }
         return violation;
