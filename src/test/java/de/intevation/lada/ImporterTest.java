@@ -625,7 +625,6 @@ public class ImporterTest extends BaseTest {
             assertContains(report, errorsKey);
             JsonArray errors = report.getJsonObject(errorsKey)
                 .getJsonArray(lafSampleId);
-            LOG.debug(errors);
             JsonObject expectedError = Json.createObjectBuilder()
                 .add("key", "validation#probe")
                 .add("value", "oprModeId")

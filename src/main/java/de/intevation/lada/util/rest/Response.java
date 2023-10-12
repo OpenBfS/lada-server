@@ -26,7 +26,7 @@ public class Response implements Serializable {
     private String message;
     private Object data;
     private Map<String, List<String>> errors;
-    private Map<String, List<Integer>>warnings;
+    private Map<String, List<String>>warnings;
     private Map<String, List<Integer>> notifications;
     private int totalCount;
 
@@ -41,9 +41,9 @@ public class Response implements Serializable {
         this.success = s;
         this.message = Integer.toString(code);
         this.data = d;
-        this.errors = new HashMap<String, List<String>>();
-        this.warnings = new HashMap<String, List<Integer>>();
-        this.notifications = new HashMap<String, List<Integer>>();
+        this.errors = new HashMap<>();
+        this.warnings = new HashMap<>();
+        this.notifications = new HashMap<>();
         this.totalCount = 0;
     }
 
@@ -58,9 +58,9 @@ public class Response implements Serializable {
         this.success = s;
         this.message = Integer.toString(code);
         this.data = d;
-        this.errors = new HashMap<String, List<String>>();
-        this.warnings = new HashMap<String, List<Integer>>();
-        this.notifications = new HashMap<String, List<Integer>>();
+        this.errors = new HashMap<>();
+        this.warnings = new HashMap<>();
+        this.notifications = new HashMap<>();
         this.totalCount = count;
     }
 
@@ -96,11 +96,11 @@ public class Response implements Serializable {
         this.errors.putAll(errors);
     }
 
-    public Map<String, List<Integer>> getWarnings() {
+    public Map<String, List<String>> getWarnings() {
         return warnings;
     }
 
-    public void setWarnings(Map<String, List<Integer>> warnings) {
+    public void setWarnings(Map<String, List<String>> warnings) {
         this.warnings.putAll(warnings);
     }
 

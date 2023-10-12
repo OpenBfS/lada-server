@@ -17,7 +17,7 @@ import jakarta.json.bind.annotation.JsonbTransient;
  */
 public abstract class BaseModel {
     private Map<String, List<String>> errors;
-    private Map<String, List<Integer>> warnings;
+    private Map<String, List<String>> warnings;
     private Map<String, List<Integer>> notifications;
 
     public Map<String, List<String>>getErrors() {
@@ -29,12 +29,12 @@ public abstract class BaseModel {
         this.errors = errors;
     }
 
-    public Map<String, List<Integer>> getWarnings() {
+    public Map<String, List<String>> getWarnings() {
         return this.warnings;
     }
 
     @JsonbTransient
-    public void setWarnings(Map<String, List<Integer>> warnings) {
+    public void setWarnings(Map<String, List<String>> warnings) {
         this.warnings = warnings;
     }
 

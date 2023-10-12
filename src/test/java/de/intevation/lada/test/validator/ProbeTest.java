@@ -15,6 +15,8 @@ import java.util.Date;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
 import de.intevation.lada.model.lada.Sample;
@@ -246,7 +248,7 @@ public class ProbeTest {
         Assert.assertTrue(violation.getWarnings().containsKey(ENTNAHME_ORT));
         Assert.assertTrue(
             violation.getWarnings().get(ENTNAHME_ORT).contains(
-                StatusCodes.VALUE_MISSING));
+                String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
     /**
@@ -288,7 +290,7 @@ public class ProbeTest {
             violation.getWarnings().containsKey(SAMPLE_START_DATE));
         Assert.assertTrue(
             violation.getWarnings().get(SAMPLE_START_DATE).contains(
-                StatusCodes.VALUE_MISSING));
+                String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
     /**
@@ -327,10 +329,10 @@ public class ProbeTest {
         Violation violation = validator.validate(sample);
         Assert.assertTrue(
             violation.getWarnings().get(SAMPLE_START_DATE).contains(
-                StatusCodes.VALUE_MISSING));
+                String.valueOf(StatusCodes.VALUE_MISSING)));
         Assert.assertTrue(
             violation.getWarnings().get(SAMPLE_START_DATE).contains(
-                StatusCodes.DATE_BEGIN_AFTER_END));
+                String.valueOf(StatusCodes.DATE_BEGIN_AFTER_END)));
     }
 
     /**
@@ -351,7 +353,7 @@ public class ProbeTest {
         Violation violation = validator.validate(sample);
         Assert.assertTrue(
             violation.getWarnings().get(SAMPLE_START_DATE).contains(
-                StatusCodes.DATE_BEGIN_AFTER_END));
+                String.valueOf(StatusCodes.DATE_BEGIN_AFTER_END)));
     }
 
     /**
@@ -370,7 +372,7 @@ public class ProbeTest {
         Violation violation = validator.validate(sample);
         Assert.assertTrue(
             violation.getWarnings().get(SAMPLE_START_DATE).contains(
-            StatusCodes.DATE_IN_FUTURE));
+                String.valueOf(StatusCodes.DATE_IN_FUTURE)));
     }
 
     /**
@@ -408,8 +410,9 @@ public class ProbeTest {
         Violation violation = validator.validate(sample);
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey(ENV_MEDIUM_ID));
-        Assert.assertTrue(violation.getWarnings().get(ENV_MEDIUM_ID).contains(
-                StatusCodes.VALUE_MISSING));
+        MatcherAssert.assertThat(
+            violation.getWarnings().get(ENV_MEDIUM_ID),
+            CoreMatchers.hasItem("must not be blank"));
     }
 
     /**
@@ -428,8 +431,9 @@ public class ProbeTest {
         Violation violation = validator.validate(sample);
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey(ENV_MEDIUM_ID));
-        Assert.assertTrue(violation.getWarnings().get(ENV_MEDIUM_ID).contains(
-                StatusCodes.VALUE_MISSING));
+        MatcherAssert.assertThat(
+            violation.getWarnings().get(ENV_MEDIUM_ID),
+            CoreMatchers.hasItem("must not be blank"));
     }
 
     /**
@@ -474,8 +478,8 @@ public class ProbeTest {
         Violation violation = validator.validate(sample);
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey(SAMPLE_METH_ID));
-        Assert.assertTrue(violation.getWarnings()
-            .get(SAMPLE_METH_ID).contains(StatusCodes.VAL_SINGLE_DATE));
+        Assert.assertTrue(violation.getWarnings().get(SAMPLE_METH_ID).contains(
+                String.valueOf(StatusCodes.VAL_SINGLE_DATE)));
     }
 
     /**
@@ -497,8 +501,8 @@ public class ProbeTest {
         Violation violation = validator.validate(sample);
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey(ORIG_DATE));
-        Assert.assertTrue(violation.getWarnings()
-            .get(ORIG_DATE).contains(StatusCodes.URSPR_DATE_BEFORE_BEGIN));
+        Assert.assertTrue(violation.getWarnings().get(ORIG_DATE).contains(
+                String.valueOf(StatusCodes.URSPR_DATE_BEFORE_BEGIN)));
     }
 
     /**
@@ -541,8 +545,8 @@ public class ProbeTest {
         if (violation.hasWarnings()) {
             boolean valDeskWarn =
                 violation.getWarnings().containsKey(ENV_DESCRIP_DISPLAY)
-                && violation.getWarnings()
-                    .get(ENV_DESCRIP_DISPLAY).contains(StatusCodes.VAL_DESK);
+                && violation.getWarnings().get(ENV_DESCRIP_DISPLAY).contains(
+                    String.valueOf(StatusCodes.VAL_DESK));
             Assert.assertFalse(valDeskWarn);
         }
     }
@@ -565,7 +569,7 @@ public class ProbeTest {
         Assert.assertTrue(violation.getWarnings()
             .containsKey(ENV_DESCRIP_DISPLAY));
         Assert.assertTrue(violation.getWarnings().get(ENV_DESCRIP_DISPLAY)
-            .contains(StatusCodes.VALUE_MISSING));
+            .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
     /**
@@ -586,7 +590,7 @@ public class ProbeTest {
         Assert.assertTrue(violation.getWarnings()
             .containsKey(ENV_DESCRIP_DISPLAY));
         Assert.assertTrue(violation.getWarnings().get(ENV_DESCRIP_DISPLAY)
-            .contains(StatusCodes.VAL_S1_NOTSET));
+            .contains(String.valueOf(StatusCodes.VAL_S1_NOTSET)));
     }
 
     /**
@@ -628,7 +632,7 @@ public class ProbeTest {
         Assert.assertTrue(violation.getWarnings()
             .containsKey(warningKey));
         Assert.assertTrue(violation.getWarnings().get(warningKey)
-            .contains(StatusCodes.VALUE_NOT_MATCHING));
+            .contains(String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
     }
 
     /**
@@ -692,7 +696,7 @@ public class ProbeTest {
         Assert.assertTrue(violation.getWarnings()
             .containsKey(SAMPLE_END_DATE));
         Assert.assertTrue(violation.getWarnings().get(SAMPLE_END_DATE)
-            .contains(StatusCodes.VALUE_MISSING));
+            .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
     /**
@@ -716,7 +720,7 @@ public class ProbeTest {
         Assert.assertTrue(violation.getWarnings()
             .containsKey(SAMPLE_END_DATE));
         Assert.assertTrue(violation.getWarnings().get(SAMPLE_END_DATE)
-            .contains(StatusCodes.VALUE_MISSING));
+            .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
     /**
@@ -757,7 +761,7 @@ public class ProbeTest {
         Assert.assertTrue(violation.getWarnings()
             .containsKey(GEOLOCAT_R));
         Assert.assertTrue(violation.getWarnings().get(GEOLOCAT_R)
-            .contains(StatusCodes.VALUE_MISSING));
+            .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
     /**
@@ -809,10 +813,10 @@ public class ProbeTest {
             && violation.getWarnings().containsKey(NUCL_FACIL_GR_ID);
         Assert.assertTrue(hasBothWarningKeys);
         boolean hasCorrectWarningValues =
-            violation.getWarnings().get(REI_AG_GR_ID)
-                .contains(StatusCodes.VALUE_MISSING)
-            && violation.getWarnings().get(NUCL_FACIL_GR_ID)
-                .contains(StatusCodes.VALUE_MISSING);
+            violation.getWarnings().get(REI_AG_GR_ID).contains(
+                String.valueOf(StatusCodes.VALUE_MISSING))
+            && violation.getWarnings().get(NUCL_FACIL_GR_ID).contains(
+                String.valueOf(StatusCodes.VALUE_MISSING));
         Assert.assertTrue(hasCorrectWarningValues);
     }
 
@@ -857,7 +861,7 @@ public class ProbeTest {
         Assert.assertTrue(violation.getWarnings()
             .containsKey(ENV_MEDIUM_ID));
         Assert.assertTrue(violation.getWarnings().get(ENV_MEDIUM_ID)
-            .contains(StatusCodes.VAL_UWB_NOT_MATCHING_REI));
+            .contains(String.valueOf(StatusCodes.VAL_UWB_NOT_MATCHING_REI)));
     }
 
     /**
@@ -878,9 +882,8 @@ public class ProbeTest {
         if (violation.hasWarnings()) {
             Assert.assertFalse(
                 violation.getWarnings().containsKey(ENV_MEDIUM_ID)
-                && violation.getWarnings()
-                    .get(ENV_MEDIUM_ID)
-                    .contains(StatusCodes.VAL_UWB_NOT_MATCHING_REI));
+                && violation.getWarnings().get(ENV_MEDIUM_ID).contains(
+                    String.valueOf(StatusCodes.VAL_UWB_NOT_MATCHING_REI)));
         }
     }
 
@@ -903,7 +906,7 @@ public class ProbeTest {
         Assert.assertTrue(violation.getWarnings()
             .containsKey(SAMPLE_SPECIF_MEAS_VAL));
         Assert.assertTrue(violation.getWarnings().get(SAMPLE_SPECIF_MEAS_VAL)
-            .contains(StatusCodes.VAL_PZW));
+            .contains(String.valueOf(StatusCodes.VAL_PZW)));
 
     }
 
@@ -926,7 +929,7 @@ public class ProbeTest {
                 violation.getWarnings().containsKey(SAMPLE_SPECIF_MEAS_VAL)
                 && violation.getWarnings()
                     .get(SAMPLE_SPECIF_MEAS_VAL)
-                    .contains(StatusCodes.VAL_PZW));
+                    .contains(String.valueOf(StatusCodes.VAL_PZW)));
         }
     }
 

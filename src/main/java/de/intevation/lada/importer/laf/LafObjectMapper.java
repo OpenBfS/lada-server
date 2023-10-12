@@ -356,10 +356,10 @@ public class LafObjectMapper {
                                     "validation#probe", err.getKey(), code));
                         }
                     }
-                    for (Entry<String, List<Integer>> warn
+                    for (Entry<String, List<String>> warn
                              :violation.getWarnings().entrySet()
                     ) {
-                        for (Integer code : warn.getValue()) {
+                        for (String code : warn.getValue()) {
                             currentWarnings.add(
                                 new ReportItem(
                                     "validation#probe", warn.getKey(), code));
@@ -639,10 +639,10 @@ public class LafObjectMapper {
                         new ReportItem("validation#probe", err.getKey(), code));
                 }
             }
-            for (Entry<String, List<Integer>> warn
+            for (Entry<String, List<String>> warn
                      : violation.getWarnings().entrySet()
             ) {
-                for (Integer code : warn.getValue()) {
+                for (String code : warn.getValue()) {
                     currentWarnings.add(
                         new ReportItem(
                             "validation#probe", warn.getKey(), code));
@@ -838,10 +838,10 @@ public class LafObjectMapper {
                     new ReportItem("validation#messung", err.getKey(), code));
             }
         }
-        for (Entry<String, List<Integer>> warn
+        for (Entry<String, List<String>> warn
                  : violation.getWarnings().entrySet()
         ) {
-            for (Integer code : warn.getValue()) {
+            for (String code : warn.getValue()) {
                 currentWarnings.add(
                     new ReportItem("validation#messung", warn.getKey(), code));
             }
@@ -1726,10 +1726,10 @@ public class LafObjectMapper {
             return null;
         }
         Violation violation = ortValidator.validate(o);
-        for (Entry<String, List<Integer>> warn
+        for (Entry<String, List<String>> warn
                  : violation.getWarnings().entrySet()
         ) {
-            for (Integer code : warn.getValue()) {
+            for (String code : warn.getValue()) {
                 currentWarnings.add(
                     new ReportItem("validation", warn.getKey(), code));
             }

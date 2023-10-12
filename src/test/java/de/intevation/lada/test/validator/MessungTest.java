@@ -190,7 +190,7 @@ public class MessungTest {
             .containsKey(MEASM_START_DATE));
         Assert.assertTrue(
             violation.getWarnings().get(MEASM_START_DATE).contains(
-                StatusCodes.DATE_IN_FUTURE));
+                String.valueOf(StatusCodes.DATE_IN_FUTURE)));
     }
 
     /**
@@ -214,7 +214,7 @@ public class MessungTest {
             .containsKey(warnKey));
         Assert.assertTrue(
             violation.getWarnings().get(warnKey).contains(
-                StatusCodes.VALUE_NOT_MATCHING));
+                String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
     }
 
     /**
@@ -250,7 +250,7 @@ public class MessungTest {
             .containsKey(MEASM_START_DATE));
         Assert.assertTrue(
             violation.getWarnings().get(MEASM_START_DATE).contains(
-                StatusCodes.VALUE_MISSING));
+                String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
     /**
@@ -287,7 +287,7 @@ public class MessungTest {
             .containsKey(warnKey));
         Assert.assertTrue(
             violation.getWarnings().get(warnKey).contains(
-                StatusCodes.VALUE_MISSING));
+                String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
     /**

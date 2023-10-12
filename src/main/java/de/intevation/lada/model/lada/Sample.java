@@ -34,6 +34,7 @@ import org.hibernate.annotations.DynamicInsert;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.util.data.EmptyStringConverter;
+import de.intevation.lada.validation.ValidationGroupWarning;
 
 
 @Entity
@@ -117,6 +118,7 @@ public class Sample extends BaseModel implements Serializable {
     private EnvMedium envMedium;
 
     @Size(max = 3)
+    @NotBlank(groups = ValidationGroupWarning.class)
     private String envMediumId;
 
     private Integer reiAgGrId;

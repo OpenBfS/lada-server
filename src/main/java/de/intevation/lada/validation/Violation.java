@@ -17,19 +17,19 @@ import jakarta.ws.rs.core.MultivaluedMap;
  */
 public class Violation {
 
-    private MultivaluedMap<String, Integer> warnings;
+    private MultivaluedMap<String, String> warnings;
 
     private MultivaluedMap<String, String> errors;
 
     private MultivaluedMap<String, Integer> notifications;
 
     public Violation() {
-        this.warnings = new MultivaluedHashMap<String, Integer>();
+        this.warnings = new MultivaluedHashMap<>();
         this.errors = new MultivaluedHashMap<>();
-        this.notifications = new MultivaluedHashMap<String, Integer>();
+        this.notifications = new MultivaluedHashMap<>();
     }
 
-    public MultivaluedMap<String, Integer> getWarnings() {
+    public MultivaluedMap<String, String> getWarnings() {
         return this.warnings;
     }
 
@@ -41,8 +41,12 @@ public class Violation {
       return this.notifications;
     }
 
-    public void addWarning(String key, Integer value) {
+    public void addWarning(String key, String value) {
         this.warnings.add(key, value);
+    }
+
+    public void addWarning(String key, Integer value) {
+        this.warnings.add(key, value.toString());
     }
 
     public void addError(String key, String value) {
@@ -57,7 +61,7 @@ public class Violation {
       this.notifications.add(key, value);
     }
 
-    public void addWarnings(MultivaluedMap<String, Integer> w) {
+    public void addWarnings(MultivaluedMap<String, String> w) {
         for (String key: w.keySet()) {
             this.warnings.addAll(key, w.get(key));
         }

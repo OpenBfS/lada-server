@@ -535,7 +535,7 @@ public class MpgTest {
         Assert.assertTrue(violation.getWarnings()
             .containsKey(warningKey));
         Assert.assertTrue(violation.getWarnings().get(warningKey)
-            .contains(StatusCodes.VALUE_NOT_MATCHING));
+            .contains(String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
     }
 
 }

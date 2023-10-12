@@ -72,8 +72,8 @@ public class SiteTest {
         Violation violation = validator.validate(site);
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey(MUNIC_ID));
-        Assert.assertTrue(violation.getWarnings()
-            .get(MUNIC_ID).contains(StatusCodes.GEO_COORD_UNCHECKED));
+        Assert.assertTrue(violation.getWarnings().get(MUNIC_ID).contains(
+                String.valueOf(StatusCodes.GEO_COORD_UNCHECKED)));
     }
 
     /**
@@ -94,11 +94,11 @@ public class SiteTest {
             Assert.assertTrue(
                 !violation.getWarnings().containsKey(COORD_X_EXT)
                 || !violation.getWarnings().get(COORD_X_EXT)
-                    .contains(StatusCodes.GEO_POINT_OUTSIDE));
+                    .contains(String.valueOf(StatusCodes.GEO_POINT_OUTSIDE)));
             Assert.assertTrue(
                 !violation.getWarnings().containsKey(COORD_Y_EXT)
                 || !violation.getWarnings().get(COORD_Y_EXT)
-                    .contains(StatusCodes.GEO_POINT_OUTSIDE));
+                    .contains(String.valueOf(StatusCodes.GEO_POINT_OUTSIDE)));
         }
     }
 
@@ -118,11 +118,11 @@ public class SiteTest {
         Violation violation = validator.validate(site);
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey(COORD_X_EXT));
-        Assert.assertTrue(violation.getWarnings()
-            .get(COORD_X_EXT).contains(StatusCodes.GEO_NOT_MATCHING));
+        Assert.assertTrue(violation.getWarnings().get(COORD_X_EXT).contains(
+                String.valueOf(StatusCodes.GEO_NOT_MATCHING)));
         Assert.assertTrue(violation.getWarnings().containsKey(COORD_Y_EXT));
-        Assert.assertTrue(violation.getWarnings()
-            .get(COORD_Y_EXT).contains(StatusCodes.GEO_NOT_MATCHING));
+        Assert.assertTrue(violation.getWarnings().get(COORD_Y_EXT).contains(
+                String.valueOf(StatusCodes.GEO_NOT_MATCHING)));
     }
 
     /**
@@ -143,11 +143,11 @@ public class SiteTest {
             Assert.assertTrue(
                 !violation.getWarnings().containsKey(COORD_X_EXT)
                 || !violation.getWarnings().get(COORD_X_EXT)
-                    .contains(StatusCodes.GEO_POINT_OUTSIDE));
+                    .contains(String.valueOf(StatusCodes.GEO_POINT_OUTSIDE)));
             Assert.assertTrue(
                 !violation.getWarnings().containsKey(COORD_Y_EXT)
                 || !violation.getWarnings().get(COORD_Y_EXT)
-                    .contains(StatusCodes.GEO_POINT_OUTSIDE));
+                    .contains(String.valueOf(StatusCodes.GEO_POINT_OUTSIDE)));
         }
     }
 
@@ -229,7 +229,7 @@ public class SiteTest {
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey(EXT_ID));
         Assert.assertTrue(violation.getWarnings().get(EXT_ID)
-            .contains(StatusCodes.VALUE_OUTSIDE_RANGE));
+            .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
     }
 
     /**
@@ -246,7 +246,7 @@ public class SiteTest {
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey(EXT_ID));
         Assert.assertTrue(violation.getWarnings().get(EXT_ID)
-            .contains(StatusCodes.ORT_ANLAGE_MISSING));
+            .contains(String.valueOf(StatusCodes.ORT_ANLAGE_MISSING)));
     }
 
     /**
@@ -265,7 +265,7 @@ public class SiteTest {
         Assert.assertTrue(violation.getWarnings()
             .containsKey(REI_NUCL_FACIL_GR_ID));
         Assert.assertTrue(violation.getWarnings().get(REI_NUCL_FACIL_GR_ID)
-            .contains(StatusCodes.VALUE_NOT_MATCHING));
+            .contains(String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
     }
 
     /**
@@ -281,7 +281,7 @@ public class SiteTest {
         Assert.assertTrue(violation.getWarnings()
             .containsKey(KTA_GRUPPE_ID));
         Assert.assertTrue(violation.getWarnings().get(KTA_GRUPPE_ID)
-            .contains(StatusCodes.VALUE_MISSING));
+            .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
     /**

@@ -77,6 +77,14 @@ public abstract class Validator<T> {
             return violations;
         }
 
+        Set<ConstraintViolation<T>> beanViolationWarnings =
+            beanValidator.validate(object, ValidationGroupWarning.class);
+        for (ConstraintViolation<T> violation: beanViolationWarnings) {
+            violations.addWarning(
+                violation.getPropertyPath().toString(),
+                violation.getMessage());
+        }
+
         for (Rule rule : rules) {
             Violation result = rule.execute(object);
             if (result != null) {

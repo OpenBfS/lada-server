@@ -61,7 +61,7 @@ public class MeasValTest {
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey(ERROR));
         Assert.assertTrue(violation.getWarnings()
-            .get(ERROR).contains(StatusCodes.VALUE_MISSING));
+            .get(ERROR).contains(String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
     /**
@@ -79,7 +79,7 @@ public class MeasValTest {
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey(ERROR));
         Assert.assertTrue(violation.getWarnings()
-            .get(ERROR).contains(StatusCodes.VAL_UNCERT));
+            .get(ERROR).contains(String.valueOf(StatusCodes.VAL_UNCERT)));
     }
 
     /**
@@ -98,9 +98,9 @@ public class MeasValTest {
                 && violation.getWarnings().containsKey(ERROR)) {
             Assert.assertFalse(
                 violation.getWarnings().get(ERROR)
-                    .contains(StatusCodes.VALUE_MISSING)
+                    .contains(String.valueOf(StatusCodes.VALUE_MISSING))
                 || violation.getWarnings().get(ERROR)
-                    .contains(StatusCodes.VAL_UNCERT));
+                    .contains(String.valueOf(StatusCodes.VAL_UNCERT)));
         }
     }
 
@@ -119,9 +119,9 @@ public class MeasValTest {
                 && violation.getWarnings().containsKey(ERROR)) {
             Assert.assertFalse(
                 violation.getWarnings().get(ERROR)
-                    .contains(StatusCodes.VALUE_MISSING)
+                    .contains(String.valueOf(StatusCodes.VALUE_MISSING))
                 || violation.getWarnings().get(ERROR)
-                    .contains(StatusCodes.VAL_UNCERT));
+                    .contains(String.valueOf(StatusCodes.VAL_UNCERT)));
         }
     }
 
@@ -140,7 +140,7 @@ public class MeasValTest {
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings().containsKey(MEAS_VAL));
         Assert.assertTrue(violation.getWarnings()
-            .get(MEAS_VAL).contains(StatusCodes.VALUE_MISSING));
+            .get(MEAS_VAL).contains(String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
     /**
@@ -177,7 +177,7 @@ public class MeasValTest {
         if (violation.hasWarnings()
                 && violation.getWarnings().containsKey(MEAS_VAL)) {
             Assert.assertFalse(violation.getWarnings().get(MEAS_VAL)
-                    .contains(StatusCodes.VALUE_MISSING));
+                .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
         }
         if (violation.hasErrors()
                 && violation.getErrors().containsKey(MEAS_VAL)) {
@@ -201,7 +201,7 @@ public class MeasValTest {
         if (violation.hasWarnings()
                 && violation.getWarnings().containsKey(MEAS_VAL)) {
             Assert.assertFalse(violation.getWarnings().get(MEAS_VAL)
-                    .contains(StatusCodes.VALUE_MISSING));
+                .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
         }
         if (violation.hasErrors()
                 && violation.getErrors().containsKey(MEAS_VAL)) {
@@ -281,9 +281,9 @@ public class MeasValTest {
         if (violation.hasWarnings()
                 && violation.getWarnings().containsKey(warningKey)) {
             Assert.assertFalse(violation.getWarnings().get(warningKey)
-                    .contains(StatusCodes.VAL_UNIT_NORMALIZE));
+                .contains(String.valueOf(StatusCodes.VAL_UNIT_NORMALIZE)));
             Assert.assertFalse(violation.getWarnings().get(warningKey)
-                    .contains(StatusCodes.VAL_UNIT_UMW));
+                .contains(String.valueOf(StatusCodes.VAL_UNIT_UMW)));
         }
     }
 
@@ -302,9 +302,9 @@ public class MeasValTest {
         if (violation.hasWarnings()
                 && violation.getWarnings().containsKey(warningKey)) {
             Assert.assertFalse(violation.getWarnings().get(warningKey)
-                    .contains(StatusCodes.VAL_UNIT_NORMALIZE));
+                .contains(String.valueOf(StatusCodes.VAL_UNIT_NORMALIZE)));
             Assert.assertFalse(violation.getWarnings().get(warningKey)
-                    .contains(StatusCodes.VAL_UNIT_UMW));
+                .contains(String.valueOf(StatusCodes.VAL_UNIT_UMW)));
         }
     }
 
@@ -322,8 +322,8 @@ public class MeasValTest {
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings()
             .containsKey(warningKey));
-        Assert.assertTrue(violation.getWarnings()
-            .get(warningKey).contains(StatusCodes.VAL_UNIT_NORMALIZE));
+        Assert.assertTrue(violation.getWarnings().get(warningKey).contains(
+                String.valueOf(StatusCodes.VAL_UNIT_NORMALIZE)));
     }
 
     /**
@@ -340,8 +340,8 @@ public class MeasValTest {
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings()
             .containsKey(warningKey));
-        Assert.assertTrue(violation.getWarnings()
-            .get(warningKey).contains(StatusCodes.VAL_UNIT_UMW));
+        Assert.assertTrue(violation.getWarnings().get(warningKey).contains(
+                String.valueOf(StatusCodes.VAL_UNIT_UMW)));
     }
 
     /**
@@ -359,8 +359,8 @@ public class MeasValTest {
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings()
             .containsKey(warningKey));
-        Assert.assertTrue(violation.getWarnings()
-            .get(warningKey).contains(StatusCodes.VAL_UNIT_UMW));
+        Assert.assertTrue(violation.getWarnings().get(warningKey).contains(
+                String.valueOf(StatusCodes.VAL_UNIT_UMW)));
     }
 
     /**
@@ -378,9 +378,8 @@ public class MeasValTest {
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings()
             .containsKey(warningKey));
-        Assert.assertTrue(violation.getWarnings()
-            .get(warningKey)
-            .contains(StatusCodes.VAL_MESSGROESSE_NOT_MATCHING_MMT));
+        Assert.assertTrue(violation.getWarnings().get(warningKey).contains(
+                String.valueOf(StatusCodes.VAL_MESSGROESSE_NOT_MATCHING_MMT)));
     }
 
     /**
@@ -398,7 +397,8 @@ public class MeasValTest {
         if (violation.hasWarnings()
                 && violation.getWarnings().containsKey(warningKey)) {
             Assert.assertFalse(violation.getWarnings().get(warningKey)
-                .contains(StatusCodes.VAL_MESSGROESSE_NOT_MATCHING_MMT));
+                .contains(String.valueOf(
+                        StatusCodes.VAL_MESSGROESSE_NOT_MATCHING_MMT)));
         }
     }
 
