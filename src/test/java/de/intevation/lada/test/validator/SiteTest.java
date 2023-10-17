@@ -31,7 +31,7 @@ public class SiteTest {
     private static final String COORD_Y_EXT = "coordYExt";
     private static final String EXT_ID = "extId";
     private static final String MUNIC_ID = "municId";
-    private static final String KTA_GRUPPE_ID = "ktaGruppeId";
+    private static final String KTA_GRUPPE_ID = "nuclFacilGrId";
     private static final String REI_NUCL_FACIL_GR_ID = "reiNuclFacilGrId";
     private static final String SITE_CLASS_ID = "siteClassId";
 

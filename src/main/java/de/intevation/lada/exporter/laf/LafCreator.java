@@ -392,13 +392,24 @@ implements Creator {
         } else if ("U_".equals(typePrefix)
             && "R".equals(o.getTypeRegulation())
         ) {
-            laf += lafLine(
-                typePrefix + "ORTS_ZUSATZCODE",
-                sOrt.getExtId(),
-                CN);
-        } else if ("U_".equals(typePrefix)
-            && o.getPoiId() != null
-        ) {
+            QueryBuilder<Sample> sBuilder = repository
+                .queryBuilder(Sample.class)
+                .and("id", o.getSampleId());
+            Sample s = repository.getSinglePlain(sBuilder.getQuery());
+            if (s.getRegulationId() == DATENBASIS4) {
+                laf += lafLine(
+                    typePrefix + "ORTS_ZUSATZCODE",
+                    sOrt.getExtId(),
+                    CN);
+            } else {
+                if (o.getPoiId() != null) {
+                    laf += lafLine(
+                        typePrefix + "ORTS_ZUSATZCODE",
+                        o.getPoiId(),
+                        CN);
+                }
+            }
+        } else if ("U_".equals(typePrefix) && o.getPoiId() != null) {
             laf += lafLine(
                 typePrefix + "ORTS_ZUSATZCODE",
                 o.getPoiId(),
