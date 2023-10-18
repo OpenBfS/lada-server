@@ -82,10 +82,13 @@ public class StatusMpService extends LadaService {
             repository.entityManager().createNativeQuery(
                 "SELECT * FROM master.status_mp "
                 + "WHERE id IN(SELECT to_id FROM master.status_ord_mp "
-                + "  JOIN lada.measm ON from_id = status "
-                + "  WHERE measm.id IN(:measmIds))",
+                + "  JOIN lada.status_prot ON from_id = status_mp_id"
+                + "  JOIN lada.measm ON status_prot.id = status "
+                + "  WHERE measm.id IN(:measmIds)) "
+                + "AND status_lev_id IN(:levIds)",
                 StatusMp.class)
             .setParameter("measmIds", measmIds)
+            .setParameter("levIds", authorization.getInfo().getFunktionen())
             .getResultList());
     }
 }
