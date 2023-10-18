@@ -392,10 +392,7 @@ implements Creator {
         } else if ("U_".equals(typePrefix)
             && "R".equals(o.getTypeRegulation())
         ) {
-            QueryBuilder<Sample> sBuilder = repository
-                .queryBuilder(Sample.class)
-                .and("id", o.getSampleId());
-            Sample s = repository.getSinglePlain(sBuilder.getQuery());
+            Sample s = repository.getByIdPlain(Sample.class, o.getSampleId());
             if (s.getRegulationId() == DATENBASIS4) {
                 laf += lafLine(
                     typePrefix + "ORTS_ZUSATZCODE",
