@@ -14,8 +14,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
-import javax.json.JsonArray;
-import javax.json.JsonNumber;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -28,7 +26,6 @@ import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -79,30 +76,11 @@ public class StatusMpService extends LadaService {
     @POST
     @Path("getbyids")
     public Response getById(
-        JsonArray ids
+        List<Integer> messIds
     ) {
-        UserInfo user = authorization.getInfo();
-        List<JsonNumber> idList = ids.getValuesAs(JsonNumber.class);
-        List<Integer> intList = new ArrayList<>();
-        for (JsonNumber id : idList) {
-            intList.add(id.intValue());
-        }
-        return new Response(true, StatusCodes.OK, getReachable(intList, user));
-    }
-
-    /**
-     * Get the list of possible status values following the actual status
-     * values of the Messungen represented by the given IDs.
-     *
-     * @return Disjunction of possible status values for all Messungen
-     */
-    private List<StatusMp> getReachable(
-        List<Integer> messIds,
-        UserInfo user
-    ) {
-        QueryBuilder<Measm> messungQuery =
-            repository.queryBuilder(Measm.class);
-        messungQuery.orIn("id", messIds);
+        QueryBuilder<Measm> messungQuery = repository
+            .queryBuilder(Measm.class)
+            .orIn("id", messIds);
         List<Measm> messungen = repository.filterPlain(
             messungQuery.getQuery());
 
@@ -114,20 +92,21 @@ public class StatusMpService extends LadaService {
             StatusMp kombi = repository.getByIdPlain(
                 StatusMp.class, status.getStatusMpId());
 
-            QueryBuilder<StatusAccessMpView> errFilter =
-                repository.queryBuilder(StatusAccessMpView.class);
-            errFilter.andIn("statusLevId", user.getFunktionen());
-            errFilter.and("curLevId", kombi.getStatusLev().getId());
-            errFilter.and("curValId", kombi.getStatusVal().getId());
+            QueryBuilder<StatusAccessMpView> errFilter = repository
+                .queryBuilder(StatusAccessMpView.class)
+                .andIn("statusLevId", authorization.getInfo().getFunktionen())
+                .and("curLevId", kombi.getStatusLev().getId())
+                .and("curValId", kombi.getStatusVal().getId());
             List<StatusAccessMpView> err = repository.filterPlain(
-                    errFilter.getQuery());
+                errFilter.getQuery());
             for (StatusAccessMpView e : err) {
                 erreichbare.put(e.getId(), e);
             }
         }
 
         if (erreichbare.size() == 0) {
-            return new ArrayList<StatusMp>();
+            return new Response(
+                true, StatusCodes.OK, new ArrayList<StatusMp>());
         }
 
         QueryBuilder<StatusMp> kombiFilter =
@@ -135,12 +114,15 @@ public class StatusMpService extends LadaService {
         for (Entry<Integer, StatusAccessMpView> erreichbar
             : erreichbare.entrySet()
         ) {
-                QueryBuilder<StatusMp> tmp = kombiFilter.getEmptyBuilder();
-                tmp.and("statusVal", erreichbar.getValue().getStatusValId())
-                    .and("statusLev", erreichbar.getValue().getStatusLevId());
-                kombiFilter.or(tmp);
+            QueryBuilder<StatusMp> tmp = kombiFilter.getEmptyBuilder()
+                .and("statusVal", erreichbar.getValue().getStatusValId())
+                .and("statusLev", erreichbar.getValue().getStatusLevId());
+            kombiFilter.or(tmp);
         }
 
-        return repository.filterPlain(kombiFilter.getQuery());
+        return new Response(
+            true,
+            StatusCodes.OK,
+            repository.filterPlain(kombiFilter.getQuery()));
     }
 }
