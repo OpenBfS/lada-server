@@ -33,6 +33,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
+import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.persistence.Table;
 import javax.ws.rs.client.Client;
@@ -352,7 +353,7 @@ public class ServiceTest {
      * @return The resulting json object.
      *
      */
-    public JsonObject create(String parameter, JsonObject create) {
+    public JsonObject create(String parameter, JsonStructure create) {
         WebTarget target = client.target(baseUrl + parameter);
         /* Send a post request containing a new object*/
         Response response = target.request()
