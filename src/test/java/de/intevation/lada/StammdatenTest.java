@@ -28,6 +28,7 @@ import de.intevation.lada.test.stamm.MunicDivTest;
 import de.intevation.lada.test.stamm.OrtTest;
 import de.intevation.lada.test.stamm.ProbenehmerTest;
 import de.intevation.lada.test.stamm.Stammdaten;
+import de.intevation.lada.test.stamm.StatusMpTest;
 import de.intevation.lada.test.stamm.TagTest;
 
 
@@ -59,6 +60,7 @@ public class StammdatenTest extends BaseTest {
     private TagTest tagTest;
     private TagZuordnungTest tagZuordnungTest;
     private MunicDivTest municDivTest;
+    private StatusMpTest statusMpTest;
 
     public StammdatenTest() {
         stammdatenTest = new Stammdaten();
@@ -71,6 +73,7 @@ public class StammdatenTest extends BaseTest {
         tagTest = new TagTest();
         tagZuordnungTest = new TagZuordnungTest();
         municDivTest = new MunicDivTest();
+        statusMpTest = new StatusMpTest();
         verboseLogging = false;
         testDatasetName = "datasets/dbUnit_master.xml";
     }
@@ -587,5 +590,16 @@ public class StammdatenTest extends BaseTest {
     public final void testReiAgGrById(@ArquillianResource URL baseUrl) {
         stammdatenTest.init(this.client, baseUrl);
         stammdatenTest.getById("reiaggr", ID101);
+    }
+
+    /**
+     * Tests StatusMpService.
+     * @param baseUrl The server url used for the request
+     */
+    @Test
+    @RunAsClient
+    public final void testStatusMp(@ArquillianResource URL baseUrl) {
+        statusMpTest.init(this.client, baseUrl);
+        statusMpTest.execute();
     }
 }

@@ -7,29 +7,18 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import jakarta.inject.Inject;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonNumber;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
-import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.lada.StatusProt;
-import de.intevation.lada.model.master.StatusAccessMpView;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
-import de.intevation.lada.util.auth.UserInfo;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
@@ -76,71 +65,27 @@ public class StatusMpService extends LadaService {
         return repository.getById(StatusMp.class, id);
     }
 
+    /**
+     * Get the union of status mappings that can be set on given measms.
+     *
+     * @param measmIds IDs of measms for which status mappings are requested
+     * @return Status mappings that can be set on given measms
+     */
     @POST
     @Path("getbyids")
     public Response getById(
-        JsonArray ids
+        List<Integer> measmIds
     ) {
-        UserInfo user = authorization.getInfo();
-        List<JsonNumber> idList = ids.getValuesAs(JsonNumber.class);
-        List<Integer> intList = new ArrayList<>();
-        for (JsonNumber id : idList) {
-            intList.add(id.intValue());
-        }
-        return new Response(true, StatusCodes.OK, getReachable(intList, user));
-    }
-
-    /**
-     * Get the list of possible status values following the actual status
-     * values of the Messungen represented by the given IDs.
-     *
-     * @return Disjunction of possible status values for all Messungen
-     */
-    private List<StatusMp> getReachable(
-        List<Integer> messIds,
-        UserInfo user
-    ) {
-        QueryBuilder<Measm> messungQuery =
-            repository.queryBuilder(Measm.class);
-        messungQuery.orIn("id", messIds);
-        List<Measm> messungen = repository.filterPlain(
-            messungQuery.getQuery());
-
-        Map<Integer, StatusAccessMpView> erreichbare =
-            new HashMap<Integer, StatusAccessMpView>();
-        for (Measm messung : messungen) {
-            StatusProt status = repository.getByIdPlain(
-                StatusProt.class, messung.getStatus());
-            StatusMp kombi = repository.getByIdPlain(
-                StatusMp.class, status.getStatusMpId());
-
-            QueryBuilder<StatusAccessMpView> errFilter =
-                repository.queryBuilder(StatusAccessMpView.class);
-            errFilter.andIn("statusLevId", user.getFunktionen());
-            errFilter.and("curLevId", kombi.getStatusLev().getId());
-            errFilter.and("curValId", kombi.getStatusVal().getId());
-            List<StatusAccessMpView> err = repository.filterPlain(
-                    errFilter.getQuery());
-            for (StatusAccessMpView e : err) {
-                erreichbare.put(e.getId(), e);
-            }
-        }
-
-        if (erreichbare.size() == 0) {
-            return new ArrayList<StatusMp>();
-        }
-
-        QueryBuilder<StatusMp> kombiFilter =
-            repository.queryBuilder(StatusMp.class);
-        for (Entry<Integer, StatusAccessMpView> erreichbar
-            : erreichbare.entrySet()
-        ) {
-                QueryBuilder<StatusMp> tmp = kombiFilter.getEmptyBuilder();
-                tmp.and("statusVal", erreichbar.getValue().getStatusValId())
-                    .and("statusLev", erreichbar.getValue().getStatusLevId());
-                kombiFilter.or(tmp);
-        }
-
-        return repository.filterPlain(kombiFilter.getQuery());
+        return new Response(
+            true,
+            StatusCodes.OK,
+            repository.entityManager().createNativeQuery(
+                "SELECT * FROM master.status_mp "
+                + "WHERE id IN(SELECT to_id FROM master.status_ord_mp "
+                + "  JOIN lada.measm ON from_id = status "
+                + "  WHERE measm.id IN(:measmIds))",
+                StatusMp.class)
+            .setParameter("measmIds", measmIds)
+            .getResultList());
     }
 }
