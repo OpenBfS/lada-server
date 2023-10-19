@@ -455,7 +455,7 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <!-- Keep version in sync with package in base image -->
-            <version>42.2.15</version>
+            <version>42.3.8</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
