@@ -295,10 +295,10 @@ public class SiteService extends LadaService {
             MultivaluedMap<String, Integer> error =
                 new MultivaluedHashMap<String, Integer>();
             if (!dbCoordX.equals(ort.getCoordXExt())) {
-                error.add("koordXExtern", StatusCodes.GEO_UNCHANGEABLE_COORD);
+                error.add("coordXExt", StatusCodes.GEO_UNCHANGEABLE_COORD);
             }
             if (!dbCoordY.equals(ort.getCoordYExt())) {
-                error.add("koordYExtern", StatusCodes.GEO_UNCHANGEABLE_COORD);
+                error.add("coordYExt", StatusCodes.GEO_UNCHANGEABLE_COORD);
             }
             Response response =
                 new Response(false, StatusCodes.ERROR_VALIDATION, ort);
