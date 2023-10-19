@@ -34,6 +34,7 @@ import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonReader;
+import jakarta.json.JsonStructure;
 import jakarta.json.JsonValue;
 import jakarta.persistence.Table;
 import jakarta.ws.rs.client.Client;
@@ -355,7 +356,7 @@ public class ServiceTest {
      * @return The resulting json object.
      *
      */
-    public JsonObject create(String parameter, JsonObject create) {
+    public JsonObject create(String parameter, JsonStructure create) {
         return create(parameter, create, Locale.GERMAN, Response.Status.OK);
     }
 
@@ -370,7 +371,7 @@ public class ServiceTest {
      */
     public JsonObject create(
         String parameter,
-        JsonObject create,
+        JsonStructure create,
         Locale acceptLanguage,
         Response.Status expectedStatus
     ) {
