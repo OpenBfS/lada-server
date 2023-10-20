@@ -214,6 +214,7 @@ Maven Checkstyle plugin. Some design related checks where removed.
       <property name="severity" value="warning"/>
       <property name="constantWaiverParentToken" value="ASSIGN,ARRAY_INIT,EXPR,
       UNARY_PLUS, UNARY_MINUS, TYPECAST, ELIST, DIV, PLUS, STAR, METHOD_CALL "/>
+      <property name="ignoreAnnotation" value="true"/>
     </module>
     <module name="MultipleStringLiterals">
       <property name="severity" value="warning"/>
