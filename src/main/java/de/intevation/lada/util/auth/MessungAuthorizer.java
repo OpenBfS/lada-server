@@ -175,7 +175,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
         ) {
             QueryBuilder<AuthCoordOfcEnvMediumMp> lstFilter =
                 repository.queryBuilder(AuthCoordOfcEnvMediumMp.class);
-            lstFilter.or("mstId", userInfo.getMessstellen());
+            lstFilter.or("measFacilId", userInfo.getMessstellen());
             List<AuthCoordOfcEnvMediumMp> lsts =
                 repository.filterPlain(lstFilter.getQuery());
             for (int i = 0; i < lsts.size(); i++) {
