@@ -3,12 +3,9 @@ Lada-Server
 Die Software bietet Funktionalität zur Erfassung und Bearbeitung
 von Messdaten. Sowie der Planung der Messungen.
 
-Weitere Informationen finden sich auf der Projektwebseite unter
-der Adresse: https://wald.intevation.org/projects/lada/
+Die Erstversion entstand 2013-2015 durch [Intevation](https://intevation.de) 
+im Auftrag des Bundesamt für Strahlenschutz.
 
-Die Software entstand im Rahmen einer Software Entwicklung durch die
-Intevation GmbH im Auftrag des Bundesamt für Strahlenschutz in den Jahren 2013
-bis 2015.
 
 Kontakt
 -------
@@ -350,3 +347,7 @@ Eine Konfiguration wird in der Datenbanktabelle "import_config" im Schema
 Die Transformation im speziellen enthält in "from_value" und "to_value" die
 hexadezimale Darstellung eines Zeichens in Unicode. Also z.B. für "+" den
 Wert "2b", für "#" den Wert "23".
+
+## Historie
+Bis Mitte 2017 wurde die folgende Entwicklungplattform genutzt:
+https://wald.intevation.org/projects/lada/ .
