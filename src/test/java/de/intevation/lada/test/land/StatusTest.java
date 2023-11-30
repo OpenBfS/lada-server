@@ -29,6 +29,7 @@ public class StatusTest extends ServiceTest {
     private static final long TS1 = 1450371851654L;
     private JsonObject expectedById;
     private JsonObject create;
+    private JsonObject reset;
 
     @Override
     public void init(
@@ -53,9 +54,10 @@ public class StatusTest extends ServiceTest {
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);
 
-        // Load object to test POST request
+        // Load objects to test POST requests
         create = readJsonResource("/datasets/status.json");
         Assert.assertNotNull(create);
+        reset = readJsonResource("/datasets/status-reset.json");
     }
 
     /**
@@ -65,6 +67,7 @@ public class StatusTest extends ServiceTest {
         get("rest/statusprot?measmId=1000");
         getById("rest/statusprot/1000", expectedById);
         create("rest/statusprot", create);
+        create("rest/statusprot", reset);
     }
 
 }
