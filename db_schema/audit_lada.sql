@@ -14,7 +14,10 @@ CREATE TABLE audit_trail(
       changed_fields JSONB,
       sample_id INTEGER,
       measm_id INTEGER GENERATED always AS 
-        (cast(row_data ->> 'measm_id' AS integer)) STORED
+        (CASE 
+            WHEN table_name = 'measm' THEN object_id
+            ELSE cast(row_data ->> 'measm_id' AS integer)
+        END) STORED
 );
 CREATE INDEX audit_trail_sample_id_idx
     ON lada.audit_trail USING btree (sample_id ASC NULLS LAST);
