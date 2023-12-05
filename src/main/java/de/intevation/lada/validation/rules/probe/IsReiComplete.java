@@ -33,11 +33,11 @@ public class IsReiComplete implements Rule {
             && probe.getRegulationId() != 4
         ) {
             if (probe.getReiAgGrId() != null) {
-                violation.addError(
+                violation.addWarning(
                     "reiAgGrId", StatusCodes.VALUE_NOT_MATCHING);
             }
             if (probe.getNuclFacilGrId() != null) {
-                violation.addError(
+                violation.addWarning(
                     "nuclFacilGrId", StatusCodes.VALUE_NOT_MATCHING);
             }
             if (violation.hasErrors()) {

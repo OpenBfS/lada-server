@@ -46,7 +46,7 @@ public class HasEntnahmeOrt implements Rule {
                     && !o.getId().equals(ort.getId())
                 ) {
                     Violation violation = new Violation();
-                    violation.addError(
+                    violation.addWarning(
                         "typeRegulation", StatusCodes.VALUE_AMBIGOUS);
                     return violation;
                 }
@@ -68,7 +68,7 @@ public class HasEntnahmeOrt implements Rule {
                     && !o.getId().equals(ort.getId())
                 ) {
                     Violation violation = new Violation();
-                    violation.addError(
+                    violation.addWarning(
                         "typeRegulation", StatusCodes.VALUE_AMBIGOUS);
                     return violation;
                 }

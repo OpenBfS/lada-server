@@ -27,7 +27,7 @@ public class HasDatenbasis implements Rule {
         Sample probe = (Sample) object;
         if (probe.getRegulationId() == null) {
             Violation violation = new Violation();
-            violation.addError("regulationId", StatusCodes.VALUE_MISSING);
+            violation.addWarning("regulationId", StatusCodes.VALUE_MISSING);
             return violation;
         }
         return null;
