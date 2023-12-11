@@ -193,7 +193,7 @@ public class OrtFactory {
             QueryBuilder<Site> builderExists =
                 repository.queryBuilder(Site.class)
                 .and("networkId", ort.getNetworkId())
-                .andLike("adminUnitId", "%" + ort.getAdminUnitId());
+                .andLike("extId", "%" + ort.getAdminUnitId());
             List<Site> ortExists = repository.filterPlain(
                 builderExists.getQuery());
             if (v == null) {

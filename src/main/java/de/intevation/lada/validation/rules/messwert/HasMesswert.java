@@ -32,7 +32,7 @@ public class HasMesswert implements Rule {
             violation.addWarning("measVal", StatusCodes.VALUE_MISSING);
             return violation;
         } else if (messwertNwg != null && wert != null) {
-            violation.addError("measVal", StatusCodes.VAL_MEASURE);
+            violation.addWarning("measVal", StatusCodes.VAL_MEASURE);
             return violation;
         }
         return null;    }
