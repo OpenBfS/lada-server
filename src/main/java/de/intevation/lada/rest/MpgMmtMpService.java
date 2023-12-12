@@ -32,7 +32,6 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 /**
  * REST service for MpgMmtMp objects.
@@ -110,13 +109,10 @@ public class MpgMmtMpService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
-        Violation violation = validator.validate(messprogrammmmt);
-        if (violation.hasErrors()) {
-            Response response = new Response(
+        validator.validate(messprogrammmmt);
+        if (messprogrammmmt.hasErrors()) {
+            return new Response(
                 false, StatusCodes.ERROR_VALIDATION, messprogrammmmt);
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            return response;
         }
 
         setMessgroesseObjects(messprogrammmmt);
@@ -146,13 +142,10 @@ public class MpgMmtMpService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
-        Violation violation = validator.validate(messprogrammmmt);
-        if (violation.hasErrors()) {
-            Response response = new Response(
+        validator.validate(messprogrammmmt);
+        if (messprogrammmmt.hasErrors()) {
+            return new Response(
                 false, StatusCodes.ERROR_VALIDATION, messprogrammmmt);
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            return response;
         }
 
         setMessgroesseObjects(messprogrammmmt);

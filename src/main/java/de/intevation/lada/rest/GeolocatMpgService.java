@@ -32,7 +32,6 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 /**
  * REST service for GeolocatMpg objects.
@@ -88,11 +87,7 @@ public class GeolocatMpgService extends LadaService {
                 List<GeolocatMpg> ortszuordnungs =
                     (List<GeolocatMpg>) r.getData();
                 for (GeolocatMpg otz: ortszuordnungs) {
-                    Violation violation = validator.validate(otz);
-                    if (violation.hasErrors() || violation.hasWarnings()) {
-                        otz.setErrors(violation.getErrors());
-                        otz.setWarnings(violation.getWarnings());
-                    }
+                    validator.validate(otz);
                 }
                 return new Response(true, StatusCodes.OK, ortszuordnungs);
             } else {
@@ -112,12 +107,7 @@ public class GeolocatMpgService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Response response = repository.getById(GeolocatMpg.class, id);
-        GeolocatMpg ort = (GeolocatMpg) response.getData();
-        Violation violation = validator.validate(ort);
-        if (violation.hasErrors() || violation.hasWarnings()) {
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-        }
+        validator.validate(response.getData());
         return authorization.filter(
             response,
             GeolocatMpg.class);
@@ -138,23 +128,13 @@ public class GeolocatMpgService extends LadaService {
                 GeolocatMpg.class)) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        Violation violation = validator.validate(ort);
-        if (violation.hasErrors()) {
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            return response;
-        }
-
-        /* Persist the new object*/
-        Response response = repository.create(ort);
-        if (violation.hasWarnings()) {
-            response.setWarnings(violation.getWarnings());
+        validator.validate(ort);
+        if (ort.hasErrors()) {
+            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
         }
 
         return authorization.filter(
-            response,
+            repository.create(ort),
             GeolocatMpg.class);
     }
 
@@ -175,20 +155,13 @@ public class GeolocatMpgService extends LadaService {
                 GeolocatMpg.class)) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        Violation violation = validator.validate(ort);
-        if (violation.hasErrors()) {
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            return response;
+        validator.validate(ort);
+        if (ort.hasErrors()) {
+            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
         }
 
         Response response = repository.update(ort);
-        if (violation.hasWarnings()) {
-            response.setWarnings(violation.getWarnings());
-        }
-
+        validator.validate(response.getData());
         return authorization.filter(
             response,
             GeolocatMpg.class);

@@ -36,7 +36,6 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 /**
  * REST service for MeasVal objects.
@@ -105,15 +104,7 @@ public class MeasValService extends LadaService {
             @SuppressWarnings("unchecked")
             List<MeasVal> messwerts = (List<MeasVal>) r.getData();
             for (MeasVal messwert: messwerts) {
-                Violation violation = validator.validate(messwert);
-                if (violation.hasErrors()
-                    || violation.hasWarnings()
-                    || violation.hasNotifications()
-                ) {
-                    messwert.setErrors(violation.getErrors());
-                    messwert.setWarnings(violation.getWarnings());
-                    messwert.setNotifications(violation.getNotifications());
-                }
+                validator.validate(messwert);
             }
             return new Response(true, StatusCodes.OK, messwerts);
         }
@@ -142,12 +133,7 @@ public class MeasValService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        Violation violation = validator.validate(messwert);
-        if (violation.hasErrors() || violation.hasWarnings()) {
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            response.setNotifications(violation.getNotifications());
-        }
+        validator.validate(messwert);
         return authorization.filter(
             response,
             MeasVal.class);
@@ -169,26 +155,14 @@ public class MeasValService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        Violation violation = validator.validate(messwert);
-        if (violation.hasErrors()) {
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, messwert);
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            response.setNotifications(violation.getNotifications());
-            return response;
+        validator.validate(messwert);
+        if (messwert.hasErrors()) {
+            return new Response(false, StatusCodes.ERROR_VALIDATION, messwert);
         }
 
         /* Persist the new messung object*/
-        Response response = repository.create(messwert);
-        if (violation.hasWarnings()) {
-            response.setWarnings(violation.getWarnings());
-        }
-        if (violation.hasNotifications()) {
-           response.setNotifications(violation.getNotifications());
-        }
         return authorization.filter(
-            response,
+            repository.create(messwert),
             MeasVal.class);
     }
 
@@ -213,23 +187,13 @@ public class MeasValService extends LadaService {
         if (lock.isLocked(messwert)) {
             return new Response(false, StatusCodes.CHANGED_VALUE, null);
         }
-        Violation violation = validator.validate(messwert);
-        if (violation.hasErrors()) {
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, messwert);
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            response.setNotifications(violation.getNotifications());
-            return response;
+        validator.validate(messwert);
+        if (messwert.hasErrors()) {
+            return new Response(false, StatusCodes.ERROR_VALIDATION, messwert);
         }
 
         Response response = repository.update(messwert);
-        if (violation.hasWarnings()) {
-            response.setWarnings(violation.getWarnings());
-        }
-        if (violation.hasNotifications()) {
-           response.setNotifications(violation.getNotifications());
-        }
+        validator.validate(response.getData());
         return authorization.filter(
             response,
             MeasVal.class);
@@ -290,25 +254,17 @@ public class MeasValService extends LadaService {
             if (lock.isLocked(messwert)) {
                 return new Response(false, StatusCodes.CHANGED_VALUE, null);
             }
-            Violation violation = validator.validate(messwert);
-            if (violation.hasErrors()) {
-                Response response =
-                    new Response(false, StatusCodes.ERROR_VALIDATION, messwert);
-                response.setErrors(violation.getErrors());
-                response.setWarnings(violation.getWarnings());
-                response.setNotifications(violation.getNotifications());
-                return response;
+            validator.validate(messwert);
+            if (messwert.hasErrors()) {
+                return new Response(
+                    false, StatusCodes.ERROR_VALIDATION, messwert);
             }
+
             Response response = repository.update(messwert);
-            if (violation.hasWarnings()) {
-                response.setWarnings(violation.getWarnings());
-            }
-            if (violation.hasNotifications()) {
-                response.setNotifications(violation.getNotifications());
-            }
+            validator.validate(response.getData());
             authorization.filter(
-                    response,
-                    MeasVal.class);
+                response,
+                MeasVal.class);
         }
         return new Response(true, StatusCodes.OK, messwerte);
     }

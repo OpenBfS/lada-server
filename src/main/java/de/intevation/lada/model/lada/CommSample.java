@@ -19,11 +19,11 @@ import javax.persistence.Temporal;
 import static javax.persistence.TemporalType.TIMESTAMP;
 import javax.persistence.Transient;
 
-
+import de.intevation.lada.model.BaseModel;
 
 @Entity
 @Table(schema = SchemaName.NAME)
-public class CommSample implements Serializable {
+public class CommSample extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id

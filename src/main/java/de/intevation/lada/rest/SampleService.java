@@ -38,7 +38,6 @@ import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 /**
  * REST service for Sample objects.
@@ -127,13 +126,7 @@ public class SampleService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Response response = repository.getById(Sample.class, id);
-        Violation violation = validator.validate(response.getData());
-        if (violation.hasWarnings()) {
-            response.setWarnings(violation.getWarnings());
-        }
-        if (violation.hasNotifications()) {
-            response.setNotifications(violation.getNotifications());
-        }
+        validator.validate(response.getData());
         return this.authorization.filter(response, Sample.class);
     }
 
@@ -156,14 +149,9 @@ public class SampleService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        Violation violation = validator.validate(probe);
-        if (violation.hasErrors()) {
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, probe);
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            response.setNotifications(violation.getNotifications());
-            return response;
+        validator.validate(probe);
+        if (probe.hasErrors()) {
+            return new Response(false, StatusCodes.ERROR_VALIDATION, probe);
         }
         if (probe.getEnvMediumId() == null
             || "".equals(probe.getEnvMediumId())
@@ -180,18 +168,8 @@ public class SampleService extends LadaService {
         }
         probe = factory.findMedia(probe);
 
-        /* Persist the new probe object*/
-        Response newProbe = repository.create(probe);
-
-        if (violation.hasWarnings()) {
-            newProbe.setWarnings(violation.getWarnings());
-        }
-        if (violation.hasNotifications()) {
-            newProbe.setNotifications(violation.getNotifications());
-        }
-
         return authorization.filter(
-            newProbe,
+            repository.create(probe),
             Sample.class);
     }
 
@@ -338,22 +316,12 @@ public class SampleService extends LadaService {
             }
         }
         probe = factory.findMedia(probe);
-        Violation violation = validator.validate(probe);
-        if (violation.hasErrors()) {
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, null);
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            response.setNotifications(violation.getNotifications());
-            return response;
+        validator.validate(probe);
+        if (probe.hasErrors()) {
+            return new Response(false, StatusCodes.ERROR_VALIDATION, null);
         }
         Response response = repository.update(probe);
-        if (violation.hasWarnings()) {
-            response.setWarnings(violation.getWarnings());
-        }
-        if (violation.hasNotifications()) {
-           response.setNotifications(violation.getNotifications());
-        }
+        validator.validate(response.getData());
         return authorization.filter(
             response,
             Sample.class);

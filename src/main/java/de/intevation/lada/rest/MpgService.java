@@ -35,7 +35,6 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 /**
  * REST service for Mpg objects.
@@ -102,13 +101,10 @@ public class MpgService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
-        Violation violation = validator.validate(messprogramm);
-        if (violation.hasErrors()) {
-            Response response = new Response(
+        validator.validate(messprogramm);
+        if (messprogramm.hasErrors()) {
+            return new Response(
                 false, StatusCodes.ERROR_VALIDATION, messprogramm);
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            return response;
         }
 
         if (messprogramm.getEnvMediumId() == null
@@ -148,13 +144,10 @@ public class MpgService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
-        Violation violation = validator.validate(messprogramm);
-        if (violation.hasErrors()) {
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, messprogramm);
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            return response;
+        validator.validate(messprogramm);
+        if (messprogramm.hasErrors()) {
+            return new Response(
+                false, StatusCodes.ERROR_VALIDATION, messprogramm);
         }
 
         if ((messprogramm.getEnvMediumId() == null

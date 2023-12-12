@@ -107,12 +107,7 @@ public class StatusProtService extends LadaService {
         @SuppressWarnings("unchecked")
         List<StatusProt> status = (List<StatusProt>) r.getData();
         for (StatusProt s: status) {
-            Violation violation = validator.validate(s);
-            if (violation.hasErrors() || violation.hasWarnings()) {
-                s.setErrors(violation.getErrors());
-                s.setWarnings(violation.getWarnings());
-                s.setNotifications(violation.getNotifications());
-            }
+            validator.validate(s);
         }
         return new Response(true, StatusCodes.OK, status);
     }
@@ -210,7 +205,6 @@ public class StatusProtService extends LadaService {
         StatusMp newKombi,
         Measm messung
     ) {
-        Violation violation = new Violation();
         Violation violationCollection = new Violation();
         int newStatusWert = newKombi.getStatusVal().getId();
         if (newStatusWert == 1
@@ -220,17 +214,17 @@ public class StatusProtService extends LadaService {
             Sample probe = repository.getByIdPlain(
                 Sample.class, messung.getSampleId());
             // init violation_collection with probe validation
-            Violation probeViolation = probeValidator.validate(probe);
-            violationCollection.addErrors(probeViolation.getErrors());
-            violationCollection.addWarnings(probeViolation.getWarnings());
+            probeValidator.validate(probe);
+            violationCollection.addErrors(probe.getErrors());
+            violationCollection.addWarnings(probe.getWarnings());
             violationCollection.addNotifications(
-                probeViolation.getNotifications());
+                probe.getNotifications());
 
             //validate messung object
-            violation  = messungValidator.validate(messung);
-            violationCollection.addErrors(violation.getErrors());
-            violationCollection.addWarnings(violation.getWarnings());
-            violationCollection.addNotifications(violation.getNotifications());
+            messungValidator.validate(messung);
+            violationCollection.addErrors(messung.getErrors());
+            violationCollection.addWarnings(messung.getWarnings());
+            violationCollection.addNotifications(messung.getNotifications());
 
             //validate messwert objects
             QueryBuilder<MeasVal> builder =
@@ -243,8 +237,6 @@ public class StatusProtService extends LadaService {
             boolean hasValidMesswerte = false;
             if (!messwerte.isEmpty()) {
             for (MeasVal messwert: messwerte) {
-                violation = messwertValidator.validate(messwert);
-
                 boolean hasNoMesswert = false;
 
                 if (messwert.getMeasVal() == null
@@ -257,21 +249,22 @@ public class StatusProtService extends LadaService {
                     hasValidMesswerte = true;
                     Violation error = new Violation();
                     error.addError("status", StatusCodes.STATUS_RO);
-                    violation.addErrors(error.getErrors());
+                    violationCollection.addErrors(error.getErrors());
                 }
-                if (violation.hasErrors() || violation.hasWarnings()) {
-                    violationCollection.addErrors(violation.getErrors());
-                    violationCollection.addWarnings(violation.getWarnings());
+
+                messwertValidator.validate(messwert);
+                if (messwert.hasErrors() || messwert.hasWarnings()) {
+                    violationCollection.addErrors(messwert.getErrors());
+                    violationCollection.addWarnings(messwert.getWarnings());
                 }
                 violationCollection.addNotifications(
-                    violation.getNotifications());
+                    messwert.getNotifications());
 
             }
             } else if (newStatusWert != 7) {
                     Violation error = new Violation();
                     error.addError("measVal", StatusCodes.VALUE_MISSING);
-                    violation.addErrors(error.getErrors());
-                    violationCollection.addErrors(violation.getErrors());
+                    violationCollection.addErrors(error.getErrors());
             }
             if (newStatusWert == 7 && !hasValidMesswerte) {
                 for (int i = 0; i < messwerte.size(); i++) {
@@ -286,17 +279,18 @@ public class StatusProtService extends LadaService {
             List<Geolocat> assignedOrte = repository.filterPlain(ortBuilder.getQuery());
 
             for (Geolocat o : assignedOrte){
-                violation = ortValidator.validate(repository.getByIdPlain(Site.class, o.getSiteId()));
-                violationCollection.addErrors(violation.getErrors());
-                violationCollection.addWarnings(violation.getWarnings());
-                violationCollection.addNotifications(violation.getNotifications());
+                Site site = repository.getByIdPlain(Site.class, o.getSiteId());
+                ortValidator.validate(site);
+                violationCollection.addErrors(site.getErrors());
+                violationCollection.addWarnings(site.getWarnings());
+                violationCollection.addNotifications(site.getNotifications());
             }
 
             // validate statusobject
-            violation = validator.validate(status);
-            violationCollection.addErrors(violation.getErrors());
-            violationCollection.addWarnings(violation.getWarnings());
-            violationCollection.addNotifications(violation.getNotifications());
+            validator.validate(status);
+            violationCollection.addErrors(status.getErrors());
+            violationCollection.addWarnings(status.getWarnings());
+            violationCollection.addNotifications(status.getNotifications());
 
             if (newStatusWert != 7
                 && (violationCollection.hasErrors()
@@ -310,8 +304,7 @@ public class StatusProtService extends LadaService {
                     violationCollection.getNotifications());
                 return response;
             } else if (newStatusWert == 7
-                && (probeViolation.hasErrors()
-                || probeViolation.hasWarnings())
+                && (probe.hasErrors() || probe.hasWarnings())
             ) {
                 Response response =
                 new Response(false, StatusCodes.ERROR_MERGING, status);

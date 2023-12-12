@@ -27,7 +27,6 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 /**
  * REST service to operate on CommSample objects.
@@ -106,24 +105,12 @@ public class CommSampleService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        Violation violation = validator.validate(kommentar);
-        if (violation.hasErrors()) {
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, kommentar);
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            response.setNotifications(violation.getNotifications());
-            return response;
+        validator.validate(kommentar);
+        if (kommentar.hasErrors()) {
+            return new Response(false, StatusCodes.ERROR_VALIDATION, kommentar);
         } else {
-            /* Persist the new object*/
-            Response response = repository.create(kommentar);
-            if (violation.hasWarnings()) {
-                response.setWarnings(violation.getWarnings());
-            }
-            if (violation.hasNotifications()) {
-                response.setNotifications(violation.getNotifications());
-            }
-            return authorization.filter(response, CommSample.class);
+            return authorization.filter(
+                repository.create(kommentar), CommSample.class);
         }
     }
 
@@ -145,15 +132,13 @@ public class CommSampleService extends LadaService {
         ) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        Violation violation = validator.validate(kommentar);
-        if (violation.hasErrors()||violation.hasWarnings()) {
-            Response response =
-                new Response(false, StatusCodes.VAL_EXISTS, kommentar);
-            return response;
+        validator.validate(kommentar);
+        if (kommentar.hasErrors() || kommentar.hasWarnings()) {
+            return new Response(false, StatusCodes.VAL_EXISTS, kommentar);
         } else {
-        return authorization.filter(
-            repository.update(kommentar),
-            CommSample.class);
+            return authorization.filter(
+                repository.update(kommentar),
+                CommSample.class);
         }
     }
 

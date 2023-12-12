@@ -69,24 +69,25 @@ public class ProbeTest extends ServiceTest {
     public final void execute() {
         get("rest/sample", Status.METHOD_NOT_ALLOWED);
 
+        final String dataKey = "data";
         final String warningsKey = "warnings";
         final String expectedWarningKey = "entnahmeOrt";
 
         MatcherAssert.assertThat(
             getById("rest/sample/1000", expectedById)
-                .getJsonObject(warningsKey).keySet(),
+                .getJsonObject(dataKey).getJsonObject(warningsKey).keySet(),
             CoreMatchers.hasItem(expectedWarningKey));
 
         JsonObject created = create("rest/sample", create);
         MatcherAssert.assertThat(
-            created.getJsonObject(warningsKey).keySet(),
+            created.getJsonObject(dataKey).getJsonObject(warningsKey).keySet(),
             CoreMatchers.hasItem(expectedWarningKey));
 
         final String updateFieldKey = "mainSampleId";
         final String newValue = "130510002";
         MatcherAssert.assertThat(
             update("rest/sample/1000", updateFieldKey, "120510002", newValue)
-                .getJsonObject(warningsKey).keySet(),
+                .getJsonObject(dataKey).getJsonObject(warningsKey).keySet(),
             CoreMatchers.hasItem(expectedWarningKey));
 
         // Ensure invalid envDescripDisplay is rejected

@@ -30,7 +30,7 @@ public class MessprogrammValidator implements Validator<Mpg> {
     private Instance<Rule> rules;
 
     @Override
-    public Violation validate(Object object) {
-        return validate((Mpg) object, rules);
+    public void validate(Object object) {
+        validate((Mpg) object, rules);
     }
 }

@@ -32,7 +32,6 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 /**
  * REST service for Measm objects.
@@ -89,16 +88,7 @@ public class MeasmService extends LadaService {
                     messung,
                     RequestMethod.PUT,
                     Measm.class));
-            Violation violation = validator.validate(messung);
-            if (violation.hasErrors()
-                || violation.hasWarnings()
-                || violation.hasNotifications()
-            ) {
-                messung.setErrors(violation.getErrors());
-                messung.setWarnings(violation.getWarnings());
-                messung.setNotifications(
-                    violation.getNotifications());
-            }
+            validator.validate(messung);
         }
         return new Response(true, StatusCodes.OK, messungs);
     }
@@ -115,16 +105,7 @@ public class MeasmService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Response response = repository.getById(Measm.class, id);
-        Measm messung = (Measm) response.getData();
-        Violation violation = validator.validate(messung);
-        if (violation.hasErrors()
-            || violation.hasWarnings()
-            || violation.hasNotifications()
-        ) {
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            response.setNotifications(violation.getNotifications());
-        }
+        validator.validate(response.getData());
         return authorization.filter(
             response,
             Measm.class);
@@ -147,26 +128,13 @@ public class MeasmService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
 
-        Violation violation = validator.validate(messung);
-        if (violation.hasErrors()) {
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, messung);
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            response.setNotifications(violation.getNotifications());
-            return response;
+        validator.validate(messung);
+        if (messung.hasErrors()) {
+            return new Response(false, StatusCodes.ERROR_VALIDATION, messung);
         }
 
-        /* Persist the new messung object*/
-        Response response = repository.create(messung);
-        if (violation.hasWarnings()) {
-            response.setWarnings(violation.getWarnings());
-        }
-        if (violation.hasNotifications()) {
-            response.setNotifications(violation.getNotifications());
-        }
         return authorization.filter(
-            response,
+            repository.create(messung),
             Measm.class);
     }
 
@@ -191,22 +159,13 @@ public class MeasmService extends LadaService {
         if (lock.isLocked(messung)) {
             return new Response(false, StatusCodes.CHANGED_VALUE, null);
         }
-        Violation violation = validator.validate(messung);
-        if (violation.hasErrors()) {
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, messung);
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            response.setNotifications(violation.getNotifications());
-            return response;
+        validator.validate(messung);
+        if (messung.hasErrors()) {
+            return new Response(false, StatusCodes.ERROR_VALIDATION, messung);
         }
+
         Response response = repository.update(messung);
-        if (violation.hasWarnings()) {
-            response.setWarnings(violation.getWarnings());
-        }
-        if (violation.hasNotifications()) {
-            response.setNotifications(violation.getNotifications());
-        }
+        validator.validate(response.getData());
         return authorization.filter(
             response,
             Measm.class);

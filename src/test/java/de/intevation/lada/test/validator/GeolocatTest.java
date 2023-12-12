@@ -16,7 +16,6 @@ import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 @Transactional
 public class GeolocatTest {
@@ -45,10 +44,10 @@ public class GeolocatTest {
         loc.setTypeRegulation(TYPE_REGULATION_E);
         loc.setSampleId(SAMPLE_WITH_E_GEOLOCAT);
 
-        Violation violation = sampleVal.validate(loc);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(TYPE_REGULATION));
-        Assert.assertTrue(violation.getWarnings()
+        sampleVal.validate(loc);
+        Assert.assertTrue(loc.hasWarnings());
+        Assert.assertTrue(loc.getWarnings().containsKey(TYPE_REGULATION));
+        Assert.assertTrue(loc.getWarnings()
                 .get(TYPE_REGULATION).contains(StatusCodes.VALUE_AMBIGOUS));
     }
 
@@ -60,8 +59,8 @@ public class GeolocatTest {
         loc.setTypeRegulation(TYPE_REGULATION_E);
         loc.setSampleId(SAMPLE_WITHOUT_E_GEOLOCAT);
 
-        Violation violation = sampleVal.validate(loc);
-        Assert.assertFalse(violation.hasErrors());
+        sampleVal.validate(loc);
+        Assert.assertFalse(loc.hasErrors());
     }
 
     /**
@@ -72,10 +71,10 @@ public class GeolocatTest {
         loc.setTypeRegulation(TYPE_REGULATION_E);
         loc.setMpgId(MPG_WITH_E_GEOLOCAT);
 
-        Violation violation = mpgVal.validate(loc);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(TYPE_REGULATION));
-        Assert.assertTrue(violation.getWarnings()
+        mpgVal.validate(loc);
+        Assert.assertTrue(loc.hasWarnings());
+        Assert.assertTrue(loc.getWarnings().containsKey(TYPE_REGULATION));
+        Assert.assertTrue(loc.getWarnings()
                 .get(TYPE_REGULATION).contains(StatusCodes.VALUE_AMBIGOUS));
     }
 
@@ -86,7 +85,7 @@ public class GeolocatTest {
         GeolocatMpg loc = new GeolocatMpg();
         loc.setTypeRegulation(TYPE_REGULATION_E);
         loc.setMpgId(MPG_WITHOUT_E_GEOLOCAT);
-        Violation violation = mpgVal.validate(loc);
-        Assert.assertFalse(violation.hasErrors());
+        mpgVal.validate(loc);
+        Assert.assertFalse(loc.hasErrors());
     }
 }

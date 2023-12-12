@@ -15,7 +15,6 @@ import org.junit.Assert;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -68,10 +67,10 @@ public class SiteTest {
         site.setAdminUnitId(INVALID_ADMIN_UNIT_ID);
         site.setGeom(insideBorder);
 
-        Violation violation = validator.validate(site);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(MUNIC_ID));
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(site);
+        Assert.assertTrue(site.hasWarnings());
+        Assert.assertTrue(site.getWarnings().containsKey(MUNIC_ID));
+        Assert.assertTrue(site.getWarnings()
             .get(MUNIC_ID).contains(StatusCodes.GEO_COORD_UNCHECKED));
     }
 
@@ -87,15 +86,15 @@ public class SiteTest {
         site.setIsFuzzy(true);
         site.setGeom(justOutsideBorder);
 
-        Violation violation = validator.validate(site);
-        if (violation.hasWarnings()) {
+        validator.validate(site);
+        if (site.hasWarnings()) {
             Assert.assertTrue(
-                !violation.getWarnings().containsKey(COORD_X_EXT)
-                || !violation.getWarnings().get(COORD_X_EXT)
+                !site.getWarnings().containsKey(COORD_X_EXT)
+                || !site.getWarnings().get(COORD_X_EXT)
                     .contains(StatusCodes.GEO_POINT_OUTSIDE));
             Assert.assertTrue(
-                !violation.getWarnings().containsKey(COORD_Y_EXT)
-                || !violation.getWarnings().get(COORD_Y_EXT)
+                !site.getWarnings().containsKey(COORD_Y_EXT)
+                || !site.getWarnings().get(COORD_Y_EXT)
                     .contains(StatusCodes.GEO_POINT_OUTSIDE));
         }
     }
@@ -112,13 +111,13 @@ public class SiteTest {
         site.setIsFuzzy(false);
         site.setGeom(justOutsideBorder);
 
-        Violation violation = validator.validate(site);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(COORD_X_EXT));
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(site);
+        Assert.assertTrue(site.hasWarnings());
+        Assert.assertTrue(site.getWarnings().containsKey(COORD_X_EXT));
+        Assert.assertTrue(site.getWarnings()
             .get(COORD_X_EXT).contains(StatusCodes.GEO_NOT_MATCHING));
-        Assert.assertTrue(violation.getWarnings().containsKey(COORD_Y_EXT));
-        Assert.assertTrue(violation.getWarnings()
+        Assert.assertTrue(site.getWarnings().containsKey(COORD_Y_EXT));
+        Assert.assertTrue(site.getWarnings()
             .get(COORD_Y_EXT).contains(StatusCodes.GEO_NOT_MATCHING));
     }
 
@@ -134,15 +133,15 @@ public class SiteTest {
         site.setIsFuzzy(false);
         site.setGeom(insideBorder);
 
-        Violation violation = validator.validate(site);
-        if (violation.hasWarnings()) {
+        validator.validate(site);
+        if (site.hasWarnings()) {
             Assert.assertTrue(
-                !violation.getWarnings().containsKey(COORD_X_EXT)
-                || !violation.getWarnings().get(COORD_X_EXT)
+                !site.getWarnings().containsKey(COORD_X_EXT)
+                || !site.getWarnings().get(COORD_X_EXT)
                     .contains(StatusCodes.GEO_POINT_OUTSIDE));
             Assert.assertTrue(
-                !violation.getWarnings().containsKey(COORD_Y_EXT)
-                || !violation.getWarnings().get(COORD_Y_EXT)
+                !site.getWarnings().containsKey(COORD_Y_EXT)
+                || !site.getWarnings().get(COORD_Y_EXT)
                     .contains(StatusCodes.GEO_POINT_OUTSIDE));
         }
     }
@@ -155,10 +154,10 @@ public class SiteTest {
         site.setNetworkId(EXISTING_NETWORK_ID);
         site.setExtId("D_00191");
 
-        Violation violation = validator.validate(site);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey(EXT_ID));
-        Assert.assertTrue(violation.getErrors().get(EXT_ID)
+        validator.validate(site);
+        Assert.assertTrue(site.hasErrors());
+        Assert.assertTrue(site.getErrors().containsKey(EXT_ID));
+        Assert.assertTrue(site.getErrors().get(EXT_ID)
             .contains(StatusCodes.IMP_DUPLICATE));
     }
 
@@ -170,11 +169,11 @@ public class SiteTest {
         site.setNetworkId(EXISTING_NETWORK_ID);
         site.setExtId("D_00192");
 
-        Violation violation = validator.validate(site);
-        if (violation.hasErrors()) {
+        validator.validate(site);
+        if (site.hasErrors()) {
             Assert.assertTrue(
-                !violation.getErrors().containsKey(EXT_ID)
-                || !violation.getErrors().get(EXT_ID)
+                !site.getErrors().containsKey(EXT_ID)
+                || !site.getErrors().get(EXT_ID)
                     .contains(StatusCodes.IMP_DUPLICATE));
         }
     }
@@ -186,10 +185,10 @@ public class SiteTest {
         Site site = new Site();
         site.setSiteClassId(0);
 
-        Violation violation = validator.validate(site);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey(SITE_CLASS_ID));
-        Assert.assertTrue(violation.getErrors().get(SITE_CLASS_ID)
+        validator.validate(site);
+        Assert.assertTrue(site.hasErrors());
+        Assert.assertTrue(site.getErrors().containsKey(SITE_CLASS_ID));
+        Assert.assertTrue(site.getErrors().get(SITE_CLASS_ID)
             .contains(StatusCodes.VALUE_OUTSIDE_RANGE));
     }
 
@@ -200,11 +199,11 @@ public class SiteTest {
         Site site = new Site();
         site.setSiteClassId(1);
 
-        Violation violation = validator.validate(site);
-        if (violation.hasErrors()) {
+        validator.validate(site);
+        if (site.hasErrors()) {
             Assert.assertTrue(
-                !violation.getErrors().containsKey(SITE_CLASS_ID)
-                || !violation.getErrors().get(SITE_CLASS_ID)
+                !site.getErrors().containsKey(SITE_CLASS_ID)
+                || !site.getErrors().get(SITE_CLASS_ID)
                     .contains(StatusCodes.VALUE_OUTSIDE_RANGE));
         }
     }
@@ -218,10 +217,10 @@ public class SiteTest {
         site.setSiteClassId(SITE_CLASS_REI);
         site.setNuclFacilGrId(NUCL_FACIL_GR_ID_MAPPED);
 
-        Violation violation = validator.validate(site);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(EXT_ID));
-        Assert.assertTrue(violation.getWarnings().get(EXT_ID)
+        validator.validate(site);
+        Assert.assertTrue(site.hasWarnings());
+        Assert.assertTrue(site.getWarnings().containsKey(EXT_ID));
+        Assert.assertTrue(site.getWarnings().get(EXT_ID)
             .contains(StatusCodes.VALUE_OUTSIDE_RANGE));
     }
 
@@ -234,10 +233,10 @@ public class SiteTest {
         site.setSiteClassId(SITE_CLASS_REI);
         site.setNuclFacilGrId(NUCL_FACIL_GR_ID_MAPPED);
 
-        Violation violation = validator.validate(site);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(EXT_ID));
-        Assert.assertTrue(violation.getWarnings().get(EXT_ID)
+        validator.validate(site);
+        Assert.assertTrue(site.hasWarnings());
+        Assert.assertTrue(site.getWarnings().containsKey(EXT_ID));
+        Assert.assertTrue(site.getWarnings().get(EXT_ID)
             .contains(StatusCodes.ORT_ANLAGE_MISSING));
     }
 
@@ -250,11 +249,11 @@ public class SiteTest {
         site.setExtId(NUCL_FACIL_EXT_ID_UNMAPPED);
         site.setNuclFacilGrId(NUCL_FACIL_GR_ID_MAPPED);
         site.setSiteClassId(SITE_CLASS_REI);
-        Violation violation = validator.validate(site);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(site);
+        Assert.assertTrue(site.hasWarnings());
+        Assert.assertTrue(site.getWarnings()
             .containsKey(REI_NUCL_FACIL_GR_ID));
-        Assert.assertTrue(violation.getWarnings().get(REI_NUCL_FACIL_GR_ID)
+        Assert.assertTrue(site.getWarnings().get(REI_NUCL_FACIL_GR_ID)
             .contains(StatusCodes.VALUE_NOT_MATCHING));
     }
 
@@ -264,11 +263,11 @@ public class SiteTest {
     public void reiSiteWithoutNuclFacilGrId() {
         Site site = new Site();
         site.setSiteClassId(SITE_CLASS_REI);
-        Violation violation = validator.validate(site);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(site);
+        Assert.assertTrue(site.hasWarnings());
+        Assert.assertTrue(site.getWarnings()
             .containsKey(KTA_GRUPPE_ID));
-        Assert.assertTrue(violation.getWarnings().get(KTA_GRUPPE_ID)
+        Assert.assertTrue(site.getWarnings().get(KTA_GRUPPE_ID)
             .contains(StatusCodes.VALUE_MISSING));
     }
 
@@ -280,9 +279,9 @@ public class SiteTest {
         site.setSiteClassId(SITE_CLASS_REI);
         site.setExtId(NUCL_FACIL_EXT_ID_MAPPED);
         site.setNuclFacilGrId(1);
-        Violation violation = validator.validate(site);
-        if (violation.hasWarnings()) {
-            Assert.assertFalse(violation.getWarnings()
+        validator.validate(site);
+        if (site.hasWarnings()) {
+            Assert.assertFalse(site.getWarnings()
                 .containsKey(REI_NUCL_FACIL_GR_ID));
         }
     }

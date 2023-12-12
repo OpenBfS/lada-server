@@ -9,6 +9,7 @@ package de.intevation.lada.validation;
 
 import javax.enterprise.inject.Instance;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.validation.rules.Rule;
 
 
@@ -19,7 +20,7 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
-public interface Validator<T> {
+public interface Validator<T extends BaseModel> {
 
     /**
      * Validates given object.
@@ -28,35 +29,31 @@ public interface Validator<T> {
      * validate(T, Instance<Rule>)
      *
      * @param object The object to be validated
-     * @return A Violation object
      */
-    Violation validate(Object object);
+    void validate(Object object);
 
     /**
      * Default method for validating objects of type T with given set of rules.
      *
      * @param object The object to be validated
      * @param rules The rules to apply
-     * @return A Violation object
      */
-    default Violation validate(T object, Instance<Rule> rules) {
-        Violation violations = new Violation();
+    default void validate(T object, Instance<Rule> rules) {
         if (object != null) {
             for (Rule rule : rules) {
                 Violation result = rule.execute(object);
                 if (result != null) {
                     if (result.hasWarnings()) {
-                        violations.addWarnings(result.getWarnings());
+                        object.addWarnings(result.getWarnings());
                     }
                     if (result.hasErrors()) {
-                        violations.addErrors(result.getErrors());
+                        object.addErrors(result.getErrors());
                     }
                     if (result.hasNotifications()) {
-                        violations.addNotifications(result.getNotifications());
+                        object.addNotifications(result.getNotifications());
                     }
                 }
             }
         }
-        return violations;
     }
 }

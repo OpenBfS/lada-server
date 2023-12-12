@@ -31,7 +31,7 @@ public class StatusValidator implements Validator<StatusProt> {
     private Instance<Rule> rules;
 
     @Override
-    public Violation validate(Object object) {
-        return validate((StatusProt) object, rules);
+    public void validate(Object object) {
+        validate((StatusProt) object, rules);
     }
 }

@@ -31,7 +31,7 @@ public class MesswertValidator implements Validator<MeasVal> {
     private Instance<Rule> rules;
 
     @Override
-    public Violation validate(Object object) {
-        return validate((MeasVal) object, rules);
+    public void validate(Object object) {
+        validate((MeasVal) object, rules);
     }
 }
