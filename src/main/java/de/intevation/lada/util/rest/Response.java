@@ -9,9 +9,6 @@ package de.intevation.lada.util.rest;
 
 import java.io.Serializable;
 
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
-
 
 /**
 * Response object storing information about success, warnings, errors and
@@ -26,9 +23,6 @@ public class Response implements Serializable {
     private Boolean success;
     private String message;
     private Object data;
-    private MultivaluedMap<String, Integer> errors;
-    private MultivaluedMap<String, Integer> warnings;
-    private MultivaluedMap<String, Integer> notifications;
     private int totalCount;
 
     /**
@@ -42,9 +36,6 @@ public class Response implements Serializable {
         this.success = s;
         this.message = Integer.toString(code);
         this.data = d;
-        this.errors = new MultivaluedHashMap<String, Integer>();
-        this.warnings = new MultivaluedHashMap<String, Integer>();
-        this.notifications = new MultivaluedHashMap<String, Integer>();
         this.totalCount = 0;
     }
 
@@ -59,9 +50,6 @@ public class Response implements Serializable {
         this.success = s;
         this.message = Integer.toString(code);
         this.data = d;
-        this.errors = new MultivaluedHashMap<String, Integer>();
-        this.warnings = new MultivaluedHashMap<String, Integer>();
-        this.notifications = new MultivaluedHashMap<String, Integer>();
         this.totalCount = count;
     }
 
@@ -87,34 +75,6 @@ public class Response implements Serializable {
 
     public void setData(Object data) {
         this.data = data;
-    }
-
-    public MultivaluedMap<String, Integer> getErrors() {
-        return errors;
-    }
-
-    public void setErrors(MultivaluedMap<String, Integer> errors) {
-        this.errors.putAll(errors);
-//        this.errors = this.convertCodes(errors);
-    }
-
-    public MultivaluedMap<String, Integer> getWarnings() {
-        return warnings;
-    }
-
-    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
-        this.warnings.putAll(warnings);
-        //this.warnings = this.convertCodes(warnings);
-    }
-
-    public MultivaluedMap<String, Integer> getNotifications() {
-      return notifications;
-    }
-
-    public void setNotifications(
-        MultivaluedMap<String, Integer> notifications
-    ) {
-      this.notifications.putAll(notifications);
     }
 
     /**

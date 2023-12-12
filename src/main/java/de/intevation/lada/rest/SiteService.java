@@ -224,10 +224,8 @@ public class SiteService extends LadaService {
             for (ReportItem err : ortFactory.getErrors()) {
                 factoryErrs.addError(err.getKey(), err.getCode());
             }
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-            response.setErrors(factoryErrs.getErrors());
-            return response;
+            ort.setErrors(factoryErrs.getErrors());
+            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
         }
 
         validator.validate(ort);
@@ -280,10 +278,8 @@ public class SiteService extends LadaService {
             if (!dbCoordY.equals(ort.getCoordYExt())) {
                 error.add("coordYExt", StatusCodes.GEO_UNCHANGEABLE_COORD);
             }
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-            response.setErrors(error);
-            return response;
+            ort.setErrors(error);
+            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
         }
 
         ortFactory.transformCoordinates(ort);
@@ -292,10 +288,8 @@ public class SiteService extends LadaService {
             for (ReportItem err : ortFactory.getErrors()) {
                 factoryErrs.addError(err.getKey(), err.getCode());
             }
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-            response.setErrors(factoryErrs.getErrors());
-            return response;
+            ort.setErrors(factoryErrs.getErrors());
+            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
         }
 
         validator.validate(ort);

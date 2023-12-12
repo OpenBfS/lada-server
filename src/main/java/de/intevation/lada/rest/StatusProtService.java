@@ -296,34 +296,29 @@ public class StatusProtService extends LadaService {
                 && (violationCollection.hasErrors()
                 || violationCollection.hasWarnings())
             ) {
-                Response response =
-                    new Response(false, StatusCodes.ERROR_MERGING, status);
-                response.setErrors(violationCollection.getErrors());
-                response.setWarnings(violationCollection.getWarnings());
-                response.setNotifications(
+                status.setErrors(violationCollection.getErrors());
+                status.setWarnings(violationCollection.getWarnings());
+                status.setNotifications(
                     violationCollection.getNotifications());
-                return response;
+                return new Response(false, StatusCodes.ERROR_MERGING, status);
             } else if (newStatusWert == 7
                 && (probe.hasErrors() || probe.hasWarnings())
             ) {
-                Response response =
-                new Response(false, StatusCodes.ERROR_MERGING, status);
-                response.setErrors(violationCollection.getErrors());
-                response.setWarnings(violationCollection.getWarnings());
-                response.setNotifications(
+                status.setErrors(violationCollection.getErrors());
+                status.setWarnings(violationCollection.getWarnings());
+                status.setNotifications(
                     violationCollection.getNotifications());
-                return response;
+                return new Response(false, StatusCodes.ERROR_MERGING, status);
             }
         }
         //Set datum to null to use database timestamp
         status.setDate(null);
-        Response response = repository.create(status);
-        //NOTE: The referenced messung status field is updated by a DB trigger
         if (violationCollection != null) {
-            response.setNotifications(violationCollection.getNotifications());
+            status.setNotifications(violationCollection.getNotifications());
         }
+        //NOTE: The referenced messung status field is updated by a DB trigger
         return authorization.filter(
-            response,
+            repository.create(status),
             StatusProt.class);
     }
 
