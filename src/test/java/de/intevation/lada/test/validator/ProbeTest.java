@@ -15,6 +15,8 @@ import java.util.Date;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
 import de.intevation.lada.model.lada.Sample;
@@ -29,7 +31,6 @@ import de.intevation.lada.validation.Violation;
  */
 @Transactional
 public class ProbeTest {
-
 
     //Validation keys
     private static final String ENTNAHME_ORT = "entnahmeOrt";
@@ -602,17 +603,16 @@ public class ProbeTest {
         sample.setReiAgGrId(EXAMPLE_REI_AG_GR_ID);
         sample.setNuclFacilGrId(EXAMPLE_NUCL_FACIL_ID);
         Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasErrors());
-        boolean hasBothErrorKeys =
-            violation.getErrors().containsKey(REI_AG_GR_ID)
-            && violation.getErrors().containsKey(NUCL_FACIL_GR_ID);
-        Assert.assertTrue(hasBothErrorKeys);
-        boolean hasCorrectErrorValues =
-            violation.getErrors().get(REI_AG_GR_ID)
-                .contains(StatusCodes.VALUE_NOT_MATCHING)
-            && violation.getErrors().get(NUCL_FACIL_GR_ID)
-                .contains(StatusCodes.VALUE_NOT_MATCHING);
-        Assert.assertTrue(hasCorrectErrorValues);
+        Assert.assertTrue(violation.hasWarnings());
+        MatcherAssert.assertThat(
+            violation.getWarnings().keySet(),
+            CoreMatchers.hasItems(REI_AG_GR_ID, NUCL_FACIL_GR_ID));
+        MatcherAssert.assertThat(
+            violation.getWarnings().get(REI_AG_GR_ID),
+            CoreMatchers.hasItem(StatusCodes.VALUE_NOT_MATCHING));
+        MatcherAssert.assertThat(
+            violation.getWarnings().get(NUCL_FACIL_GR_ID),
+            CoreMatchers.hasItem(StatusCodes.VALUE_NOT_MATCHING));
     }
 
     /**

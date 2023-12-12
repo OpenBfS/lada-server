@@ -40,7 +40,7 @@ public class IsReiComplete implements Rule {
                 violation.addWarning(
                     "nuclFacilGrId", StatusCodes.VALUE_NOT_MATCHING);
             }
-            if (violation.hasErrors()) {
+            if (violation.hasWarnings()) {
                 return violation;
             }
             return null;
