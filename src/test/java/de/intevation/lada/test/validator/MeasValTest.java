@@ -155,9 +155,9 @@ public class MeasValTest {
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         Violation violation = validator.validate(val);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey(MEAS_VAL));
-        Assert.assertTrue(violation.getErrors()
+        Assert.assertTrue(violation.hasWarnings());
+        Assert.assertTrue(violation.getWarnings().containsKey(MEAS_VAL));
+        Assert.assertTrue(violation.getWarnings()
             .get(MEAS_VAL).contains(StatusCodes.VAL_MEASURE));
     }
 
