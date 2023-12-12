@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.MultivaluedHashMap;
 
 import de.intevation.lada.model.QueryColumns;
 import de.intevation.lada.model.master.GridColConf;
@@ -64,6 +64,7 @@ public class SqlService extends LadaService {
      * </code>
      * </pre>
      * @return JSON object with query string as data element
+     * @throws BadRequestException
      */
     @POST
     public Response execute(
@@ -80,7 +81,8 @@ public class SqlService extends LadaService {
         }
 
         try {
-            QueryTools queryTools = new QueryTools(repository, gridColumnValues);
+            QueryTools queryTools = new QueryTools(
+                repository, gridColumnValues);
             String sql = queryTools.getSql();
             if (sql == null) {
                 return new Response(true, StatusCodes.OK, null);
@@ -89,12 +91,7 @@ public class SqlService extends LadaService {
                 prepareStatement(sql, queryTools.getFilterValues());
             return new Response(true, StatusCodes.OK, statement);
         } catch (IllegalArgumentException iae) {
-            Response r = new Response(false, StatusCodes.SQL_INVALID_FILTER, null);
-            MultivaluedMap<String, Integer> error =
-                new MultivaluedHashMap<String, Integer>();
-            error.add(iae.getMessage(), StatusCodes.SQL_INVALID_FILTER);
-            r.setErrors(error);
-            return r;
+            throw new BadRequestException(iae.getMessage());
         }
     }
 
