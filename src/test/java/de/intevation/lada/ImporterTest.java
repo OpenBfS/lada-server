@@ -33,6 +33,8 @@ import javax.ws.rs.client.SyncInvoker;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -561,7 +563,16 @@ public class ImporterTest extends BaseTest {
         final String laf = String.format(
             lafTemplate, lafSampleId,
             regulation, sampleSpecifId, "", measd, measUnit);
-        testAsyncImportProbe(baseUrl, laf, lafSampleId, true);
+        JsonObject report = testAsyncImportProbe(
+            baseUrl, laf, lafSampleId, true);
+        JsonObject expectedWarning = Json.createObjectBuilder()
+            .add("key", "validation#probe")
+            .add("value", "sampleStartDate")
+            .add("code", StatusCodes.VALUE_MISSING)
+            .build();
+        MatcherAssert.assertThat(
+            report.getJsonObject("warnings").getJsonArray(lafSampleId),
+            CoreMatchers.hasItem(expectedWarning));
     }
 
     /**
