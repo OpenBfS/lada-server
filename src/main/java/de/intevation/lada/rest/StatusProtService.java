@@ -368,21 +368,21 @@ public class StatusProtService extends LadaService {
         Measm messung
     ) {
         // Create a new Status with value = 8.
-        QueryBuilder<StatusMp> kombiFilter =
-            repository.queryBuilder(StatusMp.class);
         StatusMp oldKombi =
             repository.getByIdPlain(
                 StatusMp.class, oldStatus.getStatusMpId());
 
-        kombiFilter.and("statusLev", oldKombi.getStatusLev().getId());
-        kombiFilter.and("statusVal", 8);
-        List<StatusMp> newKombi =
-            repository.filterPlain(kombiFilter.getQuery());
+        StatusMp newKombi = (StatusMp) repository.entityManager()
+            .createNativeQuery("SELECT * FROM master.status_mp "
+                + "WHERE status_lev_id = :statusLev AND status_val_id = 8",
+                StatusMp.class)
+            .setParameter("statusLev", oldKombi.getStatusLev().getId())
+            .getSingleResult();
         StatusProt statusNew = new StatusProt();
         statusNew.setDate(new Timestamp(new Date().getTime()));
         statusNew.setMeasFacilId(newStatus.getMeasFacilId());
         statusNew.setMeasmId(newStatus.getMeasmId());
-        statusNew.setStatusMpId(newKombi.get(0).getId());
+        statusNew.setStatusMpId(newKombi.getId());
         statusNew.setText(newStatus.getText());
 
         repository.create(statusNew);

@@ -15,10 +15,11 @@ import java.util.Map;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.Response.Status;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
 import de.intevation.lada.model.lada.Sample;
@@ -52,15 +53,14 @@ public class ProbeTest extends ServiceTest {
         JsonObject probe = filterJsonArrayById(
             readXmlResource("datasets/dbUnit_lada.xml", Sample.class),
             1000);
-        JsonObjectBuilder builder = convertObject(probe);
-        builder.addNull("midSampleDate");
-        builder.addNull("sampleEndDate");
-        builder.addNull("datasetCreatorId");
-        builder.addNull("mpgCategId");
-        builder.add("readonly", false);
-        builder.add("owner", true);
-        expectedById = builder.build();
-        Assert.assertNotNull(expectedById);
+        expectedById = convertObject(probe)
+            .addNull("midSampleDate")
+            .addNull("sampleEndDate")
+            .addNull("datasetCreatorId")
+            .addNull("mpgCategId")
+            .add("readonly", false)
+            .add("owner", true)
+            .build();
 
         // Load probe object to test POST request
         create = readJsonResource("/datasets/probe.json");
@@ -72,16 +72,26 @@ public class ProbeTest extends ServiceTest {
      */
     public final void execute() {
         get("rest/sample", Status.METHOD_NOT_ALLOWED);
-        getById("rest/sample/1000", expectedById);
+
+        final String warningsKey = "warnings";
+        final String expectedWarningKey = "entnahmeOrt";
+
+        MatcherAssert.assertThat(
+            getById("rest/sample/1000", expectedById)
+                .getJsonObject(warningsKey).keySet(),
+            CoreMatchers.hasItem(expectedWarningKey));
+
         JsonObject created = create("rest/sample", create);
+        MatcherAssert.assertThat(
+            created.getJsonObject(warningsKey).keySet(),
+            CoreMatchers.hasItem(expectedWarningKey));
 
         final String updateFieldKey = "mainSampleId";
         final String newValue = "130510002";
-        update(
-            "rest/sample/1000",
-            updateFieldKey,
-            "120510002",
-            newValue);
+        MatcherAssert.assertThat(
+            update("rest/sample/1000", updateFieldKey, "120510002", newValue)
+                .getJsonObject(warningsKey).keySet(),
+            CoreMatchers.hasItem(expectedWarningKey));
 
         // Ensure invalid envDescripDisplay is rejected
         update(

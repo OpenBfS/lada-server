@@ -32,7 +32,6 @@ import de.intevation.lada.validation.Violation;
 @Transactional
 public class ProbeTest {
 
-
     //Validation keys
     private static final String ENTNAHME_ORT = "entnahmeOrt";
     private static final String ENV_DESCRIP_DISPLAY = "envDescripDisplay";
@@ -779,19 +778,18 @@ public class ProbeTest {
         sample.setIsTest(false);
 
         Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasErrors());
-        boolean hasBothErrorKeys =
-            violation.getErrors().containsKey(REI_AG_GR_ID)
-            && violation.getErrors().containsKey(NUCL_FACIL_GR_ID);
-        Assert.assertTrue(hasBothErrorKeys);
-        boolean hasCorrectErrorValues =
-            violation.getErrors().get(REI_AG_GR_ID)
-                .contains(
-                    String.valueOf(StatusCodes.VALUE_NOT_MATCHING))
-            && violation.getErrors().get(NUCL_FACIL_GR_ID)
-                .contains(
-                    String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
-        Assert.assertTrue(hasCorrectErrorValues);
+        Assert.assertTrue(violation.hasWarnings());
+        MatcherAssert.assertThat(
+            violation.getWarnings().keySet(),
+            CoreMatchers.hasItems(REI_AG_GR_ID, NUCL_FACIL_GR_ID));
+        MatcherAssert.assertThat(
+            violation.getWarnings().get(REI_AG_GR_ID),
+            CoreMatchers.hasItem(
+                String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
+        MatcherAssert.assertThat(
+            violation.getWarnings().get(NUCL_FACIL_GR_ID),
+            CoreMatchers.hasItem(
+                String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
     }
 
     /**

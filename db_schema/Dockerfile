@@ -8,7 +8,7 @@
 # `-v $PWD:/opt/lada_sql/' and run setup-db.sh within the container.
 #
 
-FROM debian:bullseye
+FROM debian:bookworm
 MAINTAINER tom.gottfried@intevation.de
 
 #
@@ -29,7 +29,7 @@ ENV LC_ALL en_US.UTF-8
 #
 RUN apt-get update && \
     apt-get install -y curl unzip gnupg
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main" \
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bookworm-pgdg main" \
     >> /etc/apt/sources.list
 RUN curl -s https://www.postgresql.org/media/keys/ACCC4CF8.asc > \
         /etc/apt/trusted.gpg.d/apt.postgresql.asc

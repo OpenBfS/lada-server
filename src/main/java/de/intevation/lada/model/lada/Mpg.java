@@ -323,7 +323,7 @@ public class Mpg extends BaseModel implements Serializable {
         return reiAgGrId;
     }
 
-    public void setAgGrId(Integer reiAgGrId) {
+    public void setReiAgGrId(Integer reiAgGrId) {
         this.reiAgGrId = reiAgGrId;
     }
 

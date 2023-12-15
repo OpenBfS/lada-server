@@ -20,36 +20,13 @@ import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.Auth;
 
 /**
- * REST service for MessStellenKomi objects.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":[{
- *      "netzbetreiberId": [string],
- *      "mstId": [string],
- *      "laborMstId": [string],
- *  }],
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
+ * REST service for Auth objects.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Path("auth")
 public class AuthService extends LadaService {
 
-    /**
-     * The data repository granting read access.
-     */
     @Inject
     private Repository repository;
 

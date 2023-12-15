@@ -48,9 +48,9 @@ public class GeolocatTest {
         loc.setSiteId(EXISTITING_SITE_ID);
 
         Violation violation = sampleVal.validate(loc);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey(TYPE_REGULATION));
-        Assert.assertTrue(violation.getErrors()
+        Assert.assertTrue(violation.hasWarnings());
+        Assert.assertTrue(violation.getWarnings().containsKey(TYPE_REGULATION));
+        Assert.assertTrue(violation.getWarnings()
                 .get(TYPE_REGULATION).contains(
                     String.valueOf(StatusCodes.VALUE_AMBIGOUS)));
     }
@@ -78,9 +78,9 @@ public class GeolocatTest {
         loc.setSiteId(EXISTITING_SITE_ID);
 
         Violation violation = mpgVal.validate(loc);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey(TYPE_REGULATION));
-        Assert.assertTrue(violation.getErrors()
+        Assert.assertTrue(violation.hasWarnings());
+        Assert.assertTrue(violation.getWarnings().containsKey(TYPE_REGULATION));
+        Assert.assertTrue(violation.getWarnings()
                 .get(TYPE_REGULATION).contains(
                     String.valueOf(StatusCodes.VALUE_AMBIGOUS)));
     }

@@ -295,11 +295,11 @@ public class SiteService extends LadaService {
                 || !dbCoordY.equals(ort.getCoordYExt()))) {
             MultivaluedMap<String, String> error = new MultivaluedHashMap<>();
             if (!dbCoordX.equals(ort.getCoordXExt())) {
-                error.add("koordXExtern",
+                error.add("coordXExt",
                     Integer.toString(StatusCodes.GEO_UNCHANGEABLE_COORD));
             }
             if (!dbCoordY.equals(ort.getCoordYExt())) {
-                error.add("koordYExtern",
+                error.add("coordYExt",
                     Integer.toString(StatusCodes.GEO_UNCHANGEABLE_COORD));
             }
             Response response =

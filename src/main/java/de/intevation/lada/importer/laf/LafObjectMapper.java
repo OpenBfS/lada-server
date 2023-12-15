@@ -1284,13 +1284,16 @@ public class LafObjectMapper {
     ) {
         // validation check of new status entries
         int newKombi = 0;
-        QueryBuilder<StatusMp> builder = repository.queryBuilder(StatusMp.class)
-            .and("statusVal", statusWert)
-            .and("statusLev", statusStufe);
-        List<StatusMp> kombi = repository.filterPlain(builder.getQuery());
-        if (kombi != null && !kombi.isEmpty()) {
-            newKombi = kombi.get(0).getId();
-        } else {
+        try {
+            newKombi = ((StatusMp) repository.entityManager()
+                .createNativeQuery("SELECT * FROM master.status_mp "
+                    + "WHERE status_lev_id = :statusLev "
+                    + "AND status_val_id = :statusVal",
+                    StatusMp.class)
+                .setParameter("statusVal", statusWert)
+                .setParameter("statusLev", statusStufe)
+                .getSingleResult()).getId();
+        } catch (NoResultException nre) {
             currentWarnings.add(
                 new ReportItem(
                     "status#" + statusStufe,

@@ -50,7 +50,7 @@ public class Sample extends BaseModel implements Serializable {
     @NotNull
     private Integer oprModeId;
 
-    @NotNull
+    @NotNull(groups = ValidationGroupWarning.class)
     private Integer regulationId;
 
     private Integer datasetCreatorId;
@@ -94,7 +94,7 @@ public class Sample extends BaseModel implements Serializable {
     @Temporal(TIMESTAMP)
     private Date sampleEndDate;
 
-    @NotNull
+    @NotNull(groups = ValidationGroupWarning.class)
     private Integer sampleMethId;
 
     @Temporal(TIMESTAMP)
