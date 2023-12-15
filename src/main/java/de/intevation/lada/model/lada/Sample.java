@@ -34,7 +34,7 @@ import org.hibernate.annotations.DynamicInsert;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.util.data.EmptyStringConverter;
-import de.intevation.lada.validation.ValidationGroupWarning;
+import de.intevation.lada.validation.groups.Warnings;
 
 
 @Entity
@@ -50,7 +50,7 @@ public class Sample extends BaseModel implements Serializable {
     @NotNull
     private Integer oprModeId;
 
-    @NotNull(groups = ValidationGroupWarning.class)
+    @NotNull(groups = Warnings.class)
     private Integer regulationId;
 
     private Integer datasetCreatorId;
@@ -94,7 +94,7 @@ public class Sample extends BaseModel implements Serializable {
     @Temporal(TIMESTAMP)
     private Date sampleEndDate;
 
-    @NotNull(groups = ValidationGroupWarning.class)
+    @NotNull(groups = Warnings.class)
     private Integer sampleMethId;
 
     @Temporal(TIMESTAMP)
@@ -118,7 +118,7 @@ public class Sample extends BaseModel implements Serializable {
     private EnvMedium envMedium;
 
     @Size(max = 3)
-    @NotBlank(groups = ValidationGroupWarning.class)
+    @NotBlank(groups = Warnings.class)
     private String envMediumId;
 
     private Integer reiAgGrId;

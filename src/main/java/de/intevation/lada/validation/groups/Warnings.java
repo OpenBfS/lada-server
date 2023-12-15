@@ -6,9 +6,9 @@
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
 
-package de.intevation.lada.validation;
+package de.intevation.lada.validation.groups;
 
 /**
  * Marker interface for grouping bean validation constraints.
  */
-public interface ValidationGroupWarning { }
+public interface Warnings { }

@@ -18,6 +18,7 @@ import jakarta.validation.Validation;
 import org.hibernate.validator.HibernateValidator;
 
 import de.intevation.lada.validation.rules.Rule;
+import de.intevation.lada.validation.groups.Warnings;
 
 
 /**
@@ -78,7 +79,7 @@ public abstract class Validator<T> {
         }
 
         Set<ConstraintViolation<T>> beanViolationWarnings =
-            beanValidator.validate(object, ValidationGroupWarning.class);
+            beanValidator.validate(object, Warnings.class);
         for (ConstraintViolation<T> violation: beanViolationWarnings) {
             violations.addWarning(
                 violation.getPropertyPath().toString(),
