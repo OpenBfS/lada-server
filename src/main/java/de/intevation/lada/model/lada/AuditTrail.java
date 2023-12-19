@@ -10,22 +10,18 @@ package de.intevation.lada.model.lada;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.json.JsonObject;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import static javax.persistence.TemporalType.TIMESTAMP;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
-
-import de.intevation.lada.util.data.JsonObjectType;
+import jakarta.json.JsonObject;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 @Table(schema = SchemaName.NAME)
-@TypeDefs({ @TypeDef(name = "JsonObject", typeClass = JsonObjectType.class) })
 public class AuditTrail implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -36,12 +32,12 @@ public class AuditTrail implements Serializable {
     @Temporal(TIMESTAMP)
     private Date actionTstampClk;
 
-    @Type(type = "JsonObject")
+    @JdbcTypeCode(SqlTypes.JSON)
     private JsonObject changedFields;
 
     private Integer objectId;
 
-    @Type(type = "JsonObject")
+    @JdbcTypeCode(SqlTypes.JSON)
     private JsonObject rowData;
 
     private String tableName;

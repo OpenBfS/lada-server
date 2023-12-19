@@ -9,21 +9,21 @@ package de.intevation.lada.rest;
 
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -70,10 +70,10 @@ public class GridColConfService extends LadaService {
             builder.createQuery(GridColConf.class);
         Root<GridColConf> root = criteriaQuery.from(GridColConf.class);
         Join<GridColConf, QueryUser> value =
-            root.join("queryUser", javax.persistence.criteria.JoinType.LEFT);
+            root.join("queryUser", jakarta.persistence.criteria.JoinType.LEFT);
         Join<MeasFacil, QueryUser> mess =
-            value.join("messStelles", javax.persistence.criteria.JoinType.LEFT);
-        Predicate filter = builder.equal(root.get("queryUser"), queryUser);
+            value.join("messStelles", jakarta.persistence.criteria.JoinType.LEFT);
+        Predicate filter = builder.equal(root.get("queryUser").get("id"), queryUser);
         Predicate uId = builder.equal(root.get("ladaUserId"), userInfo.getUserId());
         Predicate zeroIdFilter = builder.equal(root.get("ladaUserId"), "0");
         Predicate userFilter = builder.or(uId, zeroIdFilter);

@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.messprogramm;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.master.SampleSpecif;

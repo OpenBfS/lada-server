@@ -25,9 +25,9 @@ import java.util.ResourceBundle;
 import java.util.Collection;
 import java.util.Date;
 
-import javax.inject.Inject;
-import javax.json.JsonObject;
-import javax.persistence.NoResultException;
+import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
+import jakarta.persistence.NoResultException;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;

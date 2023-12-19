@@ -7,8 +7,8 @@
  */
 package de.intevation.lada.test.validator;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import org.junit.Assert;
 
@@ -54,6 +54,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(null);
         val.setError(null);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
         Assert.assertTrue(val.hasWarnings());
@@ -71,6 +72,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(LESS_THAN_LOD_SMALLER_THAN);
         val.setError(null);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
         Assert.assertTrue(val.hasWarnings());
@@ -88,6 +90,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(null);
         val.setError(1.0f);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
         if (val.hasWarnings()
@@ -130,6 +133,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(null);
         val.setMeasVal(null);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
         Assert.assertTrue(val.hasWarnings());
@@ -147,6 +151,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(LESS_THAN_LOD_SMALLER_THAN);
         val.setMeasVal(1.0d);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
         Assert.assertTrue(val.hasWarnings());
@@ -164,6 +169,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(LESS_THAN_LOD_SMALLER_THAN);
         val.setMeasVal(null);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
         if (val.hasWarnings()
@@ -187,6 +193,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(null);
         val.setMeasVal(1.0d);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
         if (val.hasWarnings()
@@ -209,6 +216,7 @@ public class MeasValTest {
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasVal(0.0d);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
         Assert.assertTrue(val.hasNotifications());
@@ -226,6 +234,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(LESS_THAN_LOD_SMALLER_THAN);
         val.setDetectLim(null);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
         Assert.assertTrue(val.hasErrors());
@@ -244,6 +253,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(LESS_THAN_LOD_SMALLER_THAN);
         val.setDetectLim(1.0d);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
         if (val.hasErrors()
@@ -357,6 +367,7 @@ public class MeasValTest {
         MeasVal val = new MeasVal();
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(OTHER_MEASD_ID);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
         validator.validate(val);
         String warningKey = MEASD_ID
             + VALIDATION_KEY_SEPARATOR + OTHER_MEASD_NAME;
@@ -375,6 +386,7 @@ public class MeasValTest {
         MeasVal val = new MeasVal();
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
         validator.validate(val);
         String warningKey = MEASD_ID
             + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
@@ -425,6 +437,7 @@ public class MeasValTest {
         MeasVal val = new MeasVal();
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
         Assert.assertTrue(val.hasErrors());
@@ -441,6 +454,7 @@ public class MeasValTest {
         MeasVal val = new MeasVal();
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(OTHER_MEASD_ID);
+        val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
         if (val.hasErrors()

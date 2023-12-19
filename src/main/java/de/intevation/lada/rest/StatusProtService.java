@@ -11,14 +11,14 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import jakarta.inject.Inject;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
@@ -355,21 +355,21 @@ public class StatusProtService extends LadaService {
         Measm messung
     ) {
         // Create a new Status with value = 8.
-        QueryBuilder<StatusMp> kombiFilter =
-            repository.queryBuilder(StatusMp.class);
         StatusMp oldKombi =
             repository.getByIdPlain(
                 StatusMp.class, oldStatus.getStatusMpId());
 
-        kombiFilter.and("statusLev", oldKombi.getStatusLev().getId());
-        kombiFilter.and("statusVal", 8);
-        List<StatusMp> newKombi =
-            repository.filterPlain(kombiFilter.getQuery());
+        StatusMp newKombi = (StatusMp) repository.entityManager()
+            .createNativeQuery("SELECT * FROM master.status_mp "
+                + "WHERE status_lev_id = :statusLev AND status_val_id = 8",
+                StatusMp.class)
+            .setParameter("statusLev", oldKombi.getStatusLev().getId())
+            .getSingleResult();
         StatusProt statusNew = new StatusProt();
         statusNew.setDate(new Timestamp(new Date().getTime()));
         statusNew.setMeasFacilId(newStatus.getMeasFacilId());
         statusNew.setMeasmId(newStatus.getMeasmId());
-        statusNew.setStatusMpId(newKombi.get(0).getId());
+        statusNew.setStatusMpId(newKombi.getId());
         statusNew.setText(newStatus.getText());
 
         repository.create(statusNew);

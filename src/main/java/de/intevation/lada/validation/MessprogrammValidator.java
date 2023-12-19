@@ -7,9 +7,9 @@
  */
 package de.intevation.lada.validation;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.validation.annotation.ValidationRule;

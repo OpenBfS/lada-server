@@ -10,8 +10,8 @@ package de.intevation.lada.factory;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.persistence.Query;
+import jakarta.inject.Inject;
+import jakarta.persistence.Query;
 import org.jboss.logging.Logger;
 
 import org.locationtech.jts.geom.Coordinate;

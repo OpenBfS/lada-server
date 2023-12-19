@@ -16,12 +16,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.stream.Collectors;
 
-import javax.json.Json;
-import javax.json.JsonException;
-import javax.json.JsonObject;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.Response;
+import jakarta.json.Json;
+import jakarta.json.JsonException;
+import jakarta.json.JsonObject;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.Response;
 
 import org.jboss.logging.Logger;
 import org.dbunit.Assertion;
@@ -36,7 +36,6 @@ import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.After;
@@ -138,10 +137,11 @@ public class BaseTest {
                 .getDefinedPackage("de.intevation.lada"))
             .addAsResource("lada_server_en.properties", "lada_server_en.properties")
             .addAsResource("lada_server_de.properties", "lada_server_de.properties")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
             .addAsLibraries(compileAndRuntimeDeps)
             .addAsResource("META-INF/test-persistence.xml",
                 "META-INF/persistence.xml")
+            .addAsResource("META-INF/test-beans.xml",
+                "META-INF/beans.xml")
             //Add cleanup script and datasets for container mode tests
             .addAsResource(DATASETS_DIR, DATASETS_DIR);
         //Add additional test dependencies
@@ -153,6 +153,9 @@ public class BaseTest {
             archive);
         addWithDependencies(
             "org.jboss.arquillian.extension:arquillian-transaction-jta",
+            archive);
+        addWithDependencies(
+            "org.eclipse.parsson:parsson",
             archive);
         return archive;
     }
@@ -256,9 +259,8 @@ public class BaseTest {
         Response.Status expectedStatus
     ) {
         String responseBody = response.readEntity(String.class);
-        logger.trace(responseBody);
         Assert.assertEquals(
-            "Unexpected response status code",
+            "Unexpected status code with response\n" + responseBody + "\n",
             expectedStatus.getStatusCode(),
             response.getStatus());
 

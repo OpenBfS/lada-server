@@ -9,7 +9,6 @@ package de.intevation.lada.util.rest;
 
 import java.io.Serializable;
 
-
 /**
 * Response object storing information about success, warnings, errors and
 * the data object. This class is used as return value in REST services.

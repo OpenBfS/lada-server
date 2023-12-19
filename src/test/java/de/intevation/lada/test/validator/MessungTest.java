@@ -7,14 +7,14 @@
  */
 package de.intevation.lada.test.validator;
 
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
 
 import org.junit.Assert;
 

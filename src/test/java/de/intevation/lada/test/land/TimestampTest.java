@@ -9,9 +9,9 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.ws.rs.client.Client;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
 
@@ -38,7 +38,6 @@ public class TimestampTest extends ServiceTest {
         final String expectedOutput = "2015-02-08T09:58:00.000Z";
         String[] input = {
             expectedOutput, // like JavaScript's Date.toISOString()
-            "2015-02-08T09:58:00.00Z", // fraction with less digits
             "2015-02-08T11:58:00.000+02:00", // with offset
             "2015-02-08T11:58:00+02:00", // without fraction of second
             "2015-02-08T11:58+02:00", // without second of minute

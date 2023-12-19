@@ -8,13 +8,13 @@
 package de.intevation.lada.rest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
 
 import de.intevation.lada.model.QueryColumns;
 import de.intevation.lada.model.master.GridColConf;
@@ -97,7 +97,7 @@ public class SqlService extends LadaService {
 
     private String prepareStatement(
         String sql,
-        MultivaluedMap<String, Object> filters
+        Map<String, List<Object>> filters
     ) {
         String parameters = "";
         Set<String> filterKeys = filters.keySet();

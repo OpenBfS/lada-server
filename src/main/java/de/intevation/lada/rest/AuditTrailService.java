@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.rest;
 
-import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,15 +16,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue.ValueType;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonValue.ValueType;
+import jakarta.persistence.Query;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.model.lada.AuditTrailMeasmView;
 import de.intevation.lada.model.lada.AuditTrailSampleView;
@@ -245,9 +245,7 @@ public class AuditTrailService extends LadaService {
         node.setTimestamp(audit.getTstamp().getTime());
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
-        JsonObject changedFields = Json.createReader(
-            new StringReader(audit.getChangedFields().toString())).readObject();
-        node.setChangedFields(translateValues(changedFields));
+        node.setChangedFields(translateValues(audit.getChangedFields()));
 
         switch (audit.getTableName()) {
         case "site":
@@ -371,8 +369,7 @@ public class AuditTrailService extends LadaService {
         node.setTimestamp(audit.getTstamp().getTime());
         node.setType(audit.getTableName());
         node.setAction(audit.getAction());
-        node.setChangedFields(Json.createReader(new StringReader(
-                    audit.getChangedFields().toString())).readObject());
+        node.setChangedFields(audit.getChangedFields());
 
         switch (audit.getTableName()) {
         case "comm_measm":
@@ -410,7 +407,7 @@ public class AuditTrailService extends LadaService {
         String sql = "SELECT " + field
             + " FROM " + schema + "." + table
             + " WHERE " + idField + " = :id ;";
-        javax.persistence.Query query = repository.queryFromString(sql);
+        Query query = repository.queryFromString(sql);
         try {
             int value = Integer.parseInt(id);
             query.setParameter("id", value);

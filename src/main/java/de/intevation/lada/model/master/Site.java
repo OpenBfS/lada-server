@@ -10,23 +10,24 @@ package de.intevation.lada.model.master;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.json.bind.annotation.JsonbTransient;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import static javax.persistence.TemporalType.TIMESTAMP;
-import javax.persistence.Transient;
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import static jakarta.persistence.TemporalType.TIMESTAMP;
+import jakarta.persistence.Transient;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import org.locationtech.jts.geom.Point;
-
-import org.hibernate.annotations.Type;
 
 import de.intevation.lada.model.BaseModel;
 
@@ -93,17 +94,16 @@ public class Site extends BaseModel implements Serializable {
 
     private Integer reiAgGrId;
 
-    @Type(type = "jts_geometry")
     @Column(columnDefinition = "geometry(Point, 4326)")
     private Point geom;
 
     @Lob
-    @Type(type="org.hibernate.type.BinaryType")
+    @JdbcTypeCode(value = SqlTypes.BINARY)
     @JsonbTransient
     private byte[] img;
 
     @Lob
-    @Type(type="org.hibernate.type.BinaryType")
+    @JdbcTypeCode(value = SqlTypes.BINARY)
     @JsonbTransient
     private byte[] map;
 

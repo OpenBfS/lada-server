@@ -7,48 +7,48 @@
  */
 package de.intevation.lada.model;
 
-import javax.json.bind.annotation.JsonbTransient;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import jakarta.json.bind.annotation.JsonbTransient;
 
 /**
  * Provides shared attributes for model entities.
  */
 public abstract class BaseModel {
-    private MultivaluedMap<String, Integer> errors =
-        new MultivaluedHashMap<>();
+    private Map<String, List<Integer>> errors
+        = new HashMap<String, List<Integer>>();
+    private Map<String, List<Integer>> warnings
+        = new HashMap<String, List<Integer>>();
+    private Map<String, List<Integer>> notifications
+        = new HashMap<String, List<Integer>>();
 
-    private MultivaluedMap<String, Integer> warnings =
-        new MultivaluedHashMap<>();
-
-    private MultivaluedMap<String, Integer> notifications =
-        new MultivaluedHashMap<>();
-
-    public MultivaluedMap<String, Integer> getErrors() {
+    public Map<String, List<Integer>>getErrors() {
         return this.errors;
     }
 
     @JsonbTransient
-    public void setErrors(MultivaluedMap<String, Integer> errors) {
+    public void setErrors(Map<String, List<Integer>> errors) {
         this.errors = errors;
     }
 
-    public MultivaluedMap<String, Integer> getWarnings() {
+    public Map<String, List<Integer>> getWarnings() {
         return this.warnings;
     }
 
     @JsonbTransient
-    public void setWarnings(MultivaluedMap<String, Integer> warnings) {
+    public void setWarnings(Map<String, List<Integer>> warnings) {
         this.warnings = warnings;
     }
 
-    public MultivaluedMap<String, Integer> getNotifications() {
+    public Map<String, List<Integer>> getNotifications() {
         return this.notifications;
     }
 
     @JsonbTransient
     public void setNotifications(
-        MultivaluedMap<String, Integer> notifications
+        Map<String, List<Integer>> notifications
     ) {
         this.notifications = notifications;
     }
@@ -58,9 +58,13 @@ public abstract class BaseModel {
      *
      * @param e Errors to add
      */
-    public void addErrors(MultivaluedMap<String, Integer> e) {
+    public void addErrors(Map<String, List<Integer>> e) {
         for (String key: e.keySet()) {
-            this.errors.addAll(key, e.get(key));
+            if (this.errors.containsKey(key)) {
+                this.errors.get(key).addAll(e.get(key));
+            } else {
+                this.errors.put(key, e.get(key));
+            }
         }
     }
 
@@ -69,9 +73,13 @@ public abstract class BaseModel {
      *
      * @param w Warnings to add
      */
-    public void addWarnings(MultivaluedMap<String, Integer> w) {
+    public void addWarnings(Map<String, List<Integer>> w) {
         for (String key: w.keySet()) {
-            this.warnings.addAll(key, w.get(key));
+            if (this.warnings.containsKey(key)) {
+                this.warnings.get(key).addAll(w.get(key));
+            } else {
+                this.warnings.put(key, w.get(key));
+            }
         }
     }
 
@@ -80,9 +88,13 @@ public abstract class BaseModel {
      *
      * @param n Notifications to add
      */
-    public void addNotifications(MultivaluedMap<String, Integer> n) {
+    public void addNotifications(Map<String, List<Integer>> n) {
         for (String key: n.keySet()) {
-            this.notifications.addAll(key, n.get(key));
+            if (this.notifications.containsKey(key)) {
+                this.notifications.get(key).addAll(n.get(key));
+            } else {
+                this.notifications.put(key, n.get(key));
+            }
         }
     }
 

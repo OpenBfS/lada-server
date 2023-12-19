@@ -11,20 +11,20 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.validation.Valid;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 
 import org.jboss.logging.Logger;
 
@@ -75,7 +75,7 @@ public class QueryUserService extends LadaService {
             builder.createQuery(QueryUser.class);
         Root<QueryUser> root = criteriaQuery.from(QueryUser.class);
         Join<MeasFacil, QueryUser> mess =
-            root.join("messStelles", javax.persistence.criteria.JoinType.LEFT);
+            root.join("messStelles", jakarta.persistence.criteria.JoinType.LEFT);
         Predicate filter =
             builder.equal(root.get("ladaUserId"), userInfo.getUserId());
         filter = builder.or(filter, root.get("ladaUserId").in(DEFAULT_USER_ID));

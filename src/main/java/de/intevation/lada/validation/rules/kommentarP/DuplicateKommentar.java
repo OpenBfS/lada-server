@@ -7,8 +7,8 @@
  */
 package de.intevation.lada.validation.rules.kommentarP;
 
-import javax.inject.Inject;
-import javax.persistence.Query;
+import jakarta.inject.Inject;
+import jakarta.persistence.Query;
 
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.util.data.Repository;

@@ -31,15 +31,15 @@ COPY auth (id, ldap_gr, network_id, meas_facil_id, appr_lab_id, auth_funct_id) F
 4	mst_11010	11	11010	11010	0
 5	mst_12010	12	12010	12010	0
 6	mst_12020	12	12020	12020	0
-7	mst_06_status	06	06010	06010	1
-8	mst_06-status	06	06060	06060	1
+7	mst_06010_status	06	06010	06010	1
+8	mst_06060_status	06	06060	06060	1
 9	mst_11010_status	11	11010	11010	1
 10	mst_12010_status	12	12010	12010	1
 11	mst_12020_status	12	12020	12020	1
-16	land_06_status	06	06112	\N	2
-17	land_11_status	11	11042	\N	2
-21	land_12_status	12	12032	\N	2
-22	lst_kiel	\N	20050	\N	3
-23	lst_fisch	\N	20040	\N	3
-24	land_06_stamm	06	\N	\N	4
+16	nb_06_netz_status	06	06112	\N	2
+17	nb_11_netz_status	11	11042	\N	2
+21	nb_12_netz_status	12	12032	\N	2
+22	lst_20050_status	\N	20050	\N	3
+23	lst_20040_status	\N	20040	\N	3
+24	nb_06_stamm	06	\N	\N	4
 \.

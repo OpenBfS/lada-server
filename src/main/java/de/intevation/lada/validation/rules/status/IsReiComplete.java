@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.status;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.jboss.logging.Logger;
 

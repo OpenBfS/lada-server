@@ -9,7 +9,8 @@ package de.intevation.lada.importer;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
+
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
 import de.intevation.lada.model.lada.Sample;

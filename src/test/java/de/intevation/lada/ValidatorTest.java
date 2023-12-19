@@ -7,9 +7,9 @@
  */
 package de.intevation.lada;
 
-import java.text.ParseException;
+import jakarta.inject.Inject;
 
-import javax.inject.Inject;
+import java.text.ParseException;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Ignore;

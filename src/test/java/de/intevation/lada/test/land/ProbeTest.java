@@ -10,9 +10,9 @@ package de.intevation.lada.test.land;
 import java.net.URL;
 import java.util.Arrays;
 
-import javax.json.JsonObject;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response.Status;
+import jakarta.json.JsonObject;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;

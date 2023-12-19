@@ -7,8 +7,8 @@
  */
 package de.intevation.lada.test.validator;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import org.junit.Assert;
 
