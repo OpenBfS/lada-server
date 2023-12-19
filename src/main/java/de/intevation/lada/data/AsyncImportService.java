@@ -66,6 +66,24 @@ public class AsyncImportService extends LadaService {
     @Inject
     ImportJobManager importJobManager;
 
+    /**
+    ** Import a given list of files, generate a tag and set it to all
+    ** imported records.
+    ** Expected input format:
+    ** <pre>
+    ** <code>
+    ** {
+    **   "encoding": "UTF-8",
+    **   "files": {
+    **     "firstFileName.laf": "base64 encoded content",
+    **     "secondFilename.laf": "base64 encoded content",
+    **     //...
+    **   }
+    ** }
+    ** </code>
+    ** </pre>
+    **/
+
     @POST
     @Path("laf")
     public Response createAsyncImport(
