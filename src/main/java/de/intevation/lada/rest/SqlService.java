@@ -15,7 +15,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
-
+import jakarta.ws.rs.core.Response.Status;
 import de.intevation.lada.model.QueryColumns;
 import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.query.QueryTools;
@@ -91,7 +91,10 @@ public class SqlService extends LadaService {
                 prepareStatement(sql, queryTools.getFilterValues());
             return new Response(true, StatusCodes.OK, statement);
         } catch (IllegalArgumentException iae) {
-            throw new BadRequestException(iae.getMessage());
+            throw new BadRequestException(
+                jakarta.ws.rs.core.Response
+                .status(Status.BAD_REQUEST)
+                .entity(iae.getMessage()).build());
         }
     }
 
