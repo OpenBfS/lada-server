@@ -135,8 +135,12 @@ public class BaseTest {
         WebArchive archive = ShrinkWrap.create(WebArchive.class, archiveName)
             .addPackages(true, ClassLoader.getSystemClassLoader()
                 .getDefinedPackage("de.intevation.lada"))
-            .addAsResource("lada_server_en.properties", "lada_server_en.properties")
-            .addAsResource("lada_server_de.properties", "lada_server_de.properties")
+            .addAsResource("lada_server_en.properties",
+                "lada_server_en.properties")
+            .addAsResource("lada_server_de.properties",
+                "lada_server_de.properties")
+            .addAsResource("ValidationMessages.properties",
+                "ValidationMessages.properties")
             .addAsLibraries(compileAndRuntimeDeps)
             .addAsResource("META-INF/test-persistence.xml",
                 "META-INF/persistence.xml")

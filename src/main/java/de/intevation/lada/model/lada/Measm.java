@@ -23,6 +23,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
+import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -30,7 +31,10 @@ import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.DynamicInsert;
 
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.model.master.Mmt;
 import de.intevation.lada.util.data.EmptyStringConverter;
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 
 // The DynamicInsert Annotation has the effect, that the persisted object still
@@ -39,6 +43,7 @@ import de.intevation.lada.util.data.EmptyStringConverter;
 @Entity
 @DynamicInsert(true)
 @Table(schema = SchemaName.NAME)
+@GroupSequence({ Measm.class, DatabaseConstraints.class })
 public class Measm extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -63,6 +68,7 @@ public class Measm extends BaseModel implements Serializable {
 
     @NotBlank
     @Size(max = 2)
+    @IsValidPrimaryKey(groups = DatabaseConstraints.class, clazz = Mmt.class)
     private String mmtId;
 
     @Convert(converter = EmptyStringConverter.class)

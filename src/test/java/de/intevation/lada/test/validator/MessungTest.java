@@ -16,6 +16,8 @@ import java.util.Date;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
 import de.intevation.lada.model.lada.Measm;
@@ -378,5 +380,26 @@ public class MessungTest {
             Assert.assertFalse(violation.
                 getNotifications().containsKey(notficationKey));
         }
+    }
+
+    /**
+     * Test measm with invalid mmtId.
+     */
+    public void measmWithInvalidMmt() {
+        Measm measm = new Measm();
+        measm.setId(EXISTING_MEASM_ID);
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        final String invalidKey = "XX";
+        measm.setMmtId(invalidKey);
+
+        Violation violation = validator.validate(measm);
+        final String mmtIdKey = "mmtId";
+        MatcherAssert.assertThat(
+            violation.getErrors().keySet(),
+            CoreMatchers.hasItem(mmtIdKey));
+        MatcherAssert.assertThat(
+            violation.getErrors().get(mmtIdKey),
+            CoreMatchers.hasItem(
+                "'" + invalidKey + "' is no valid primary key"));
     }
 }

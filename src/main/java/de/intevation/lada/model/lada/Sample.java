@@ -24,6 +24,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
+import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -33,13 +34,17 @@ import org.hibernate.annotations.DynamicInsert;
 
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.EnvMedium;
+import de.intevation.lada.model.master.OprMode;
 import de.intevation.lada.util.data.EmptyStringConverter;
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.groups.Warnings;
+import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 
 @Entity
 @DynamicInsert(true)
 @Table(schema = SchemaName.NAME)
+@GroupSequence({ Sample.class, DatabaseConstraints.class })
 public class Sample extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -48,6 +53,8 @@ public class Sample extends BaseModel implements Serializable {
     private Integer id;
 
     @NotNull
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = OprMode.class)
     private Integer oprModeId;
 
     @NotNull(groups = Warnings.class)

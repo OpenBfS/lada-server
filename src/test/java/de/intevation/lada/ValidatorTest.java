@@ -587,6 +587,14 @@ public class ValidatorTest extends BaseTest {
     }
 
     /**
+     * Test measm with invalid mmtId.
+     */
+    @Test
+    public void measmWithInvalidMmt() {
+        messungTest.measmWithInvalidMmt();
+    }
+
+    /**
      * Test mpg objects with proper valid start and end date.
      */
     @Test
