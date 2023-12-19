@@ -256,9 +256,8 @@ public class BaseTest {
         Response.Status expectedStatus
     ) {
         String responseBody = response.readEntity(String.class);
-        logger.trace(responseBody);
         Assert.assertEquals(
-            "Unexpected response status code",
+            "Unexpected status code with response\n" + responseBody + "\n",
             expectedStatus.getStatusCode(),
             response.getStatus());
 
