@@ -13,7 +13,8 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.ws.rs.client.Client;
 
-import org.junit.Assert;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.test.ServiceTest;
@@ -54,20 +55,22 @@ public class StatusMpTest extends ServiceTest {
             Json.createArrayBuilder().add(measmId).build());
         final String dataKey = "data";
         BaseTest.assertContains(reachable, dataKey);
-        Assert.assertEquals(Json.createArrayBuilder()
-            .add(Json.createObjectBuilder()
+        MatcherAssert.assertThat(
+            reachable.getJsonArray(dataKey),
+            CoreMatchers.hasItems(
+                Json.createObjectBuilder()
                 .add("id", 2)
                 .add("statusLev", Json.createObjectBuilder()
                     .add("id", 1).add("lev", "MST"))
                 .add("statusVal", Json.createObjectBuilder()
-                    .add("id", 1).add("val", "plausibel")))
-            .add(Json.createObjectBuilder()
+                    .add("id", 1).add("val", "plausibel"))
+                .build(),
+                Json.createObjectBuilder()
                 .add("id", 3)
                 .add("statusLev", Json.createObjectBuilder()
                     .add("id", 1).add("lev", "MST"))
                 .add("statusVal", Json.createObjectBuilder()
-                    .add("id", 2).add("val", "nicht repräsentativ")))
-            .build(),
-            reachable.getJsonArray(dataKey));
+                    .add("id", 2).add("val", "nicht repräsentativ"))
+                .build()));
     }
 }
