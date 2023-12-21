@@ -34,6 +34,7 @@ import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Mmt;
 import de.intevation.lada.util.data.EmptyStringConverter;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 
@@ -44,6 +45,8 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @DynamicInsert(true)
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ Measm.class, DatabaseConstraints.class })
+@Unique(groups = DatabaseConstraints.class,
+    clazz = Measm.class, fields = { "minSampleId", "sampleId" })
 public class Measm extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

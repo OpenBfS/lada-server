@@ -50,8 +50,6 @@ public class MessungTest {
         = "2012-05-03 13:07:00";
 
     //Other constants
-    private static final int ID776 = 776;
-
     private static final SimpleDateFormat DB_UNIT_DATE_FORMAT
         = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -121,10 +119,13 @@ public class MessungTest {
         messung.setMmtId(EXISTING_MMT_ID);
         Violation violation = validator.validate(messung);
         Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey(MIN_SAMPLE_ID));
-        Assert.assertTrue(
-            violation.getErrors().get(MIN_SAMPLE_ID).contains(
-            String.valueOf(StatusCodes.VALUE_AMBIGOUS)));
+        MatcherAssert.assertThat(
+            violation.getErrors().keySet(),
+            CoreMatchers.hasItem(MIN_SAMPLE_ID));
+        MatcherAssert.assertThat(
+            violation.getErrors().get(MIN_SAMPLE_ID),
+            CoreMatchers.hasItem(
+                "Non-unique value combination for [minSampleId, sampleId]"));
     }
 
     /**
@@ -134,11 +135,9 @@ public class MessungTest {
         Measm messung = new Measm();
         messung.setMinSampleId(MIN_SAMPLE_ID_00G2);
         messung.setSampleId(EXISTING_SAMPLE_ID);
+        messung.setMmtId(EXISTING_MMT_ID);
         Violation violation = validator.validate(messung);
-        if (violation.hasErrors()) {
-            Assert.assertFalse(
-                violation.getErrors().containsKey(MIN_SAMPLE_ID));
-        }
+        Assert.assertFalse(violation.hasErrors());
     }
 
     /**
@@ -149,12 +148,9 @@ public class MessungTest {
         messung.setId(EXISTING_MEASM_ID);
         messung.setSampleId(EXISTING_SAMPLE_ID);
         messung.setMinSampleId(MIN_SAMPLE_ID_00G2);
+        messung.setMmtId(EXISTING_MMT_ID);
         Violation violation = validator.validate(messung);
-        if (violation.hasErrors()) {
-            Assert.assertFalse(
-                violation.getErrors().containsKey(MIN_SAMPLE_ID));
-            return;
-        }
+        Assert.assertFalse(violation.hasErrors());
     }
 
     /**
@@ -162,17 +158,13 @@ public class MessungTest {
      */
     public void existingNebenprobenNrUpdate() {
         Measm measm = new Measm();
-        measm.setId(ID776);
+        measm.setId(EXISTING_MEASM_ID);
         measm.setSampleId(EXISTING_SAMPLE_ID);
         measm.setMinSampleId(EXISTING_MIN_SAMPLE_ID);
         measm.setMmtId(EXISTING_MMT_ID);
 
         Violation violation = validator.validate(measm);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey(MIN_SAMPLE_ID));
-        Assert.assertTrue(
-            violation.getErrors().get(MIN_SAMPLE_ID).contains(
-                String.valueOf(StatusCodes.VALUE_AMBIGOUS)));
+        Assert.assertFalse(violation.hasErrors());
     }
 
     /**
