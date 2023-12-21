@@ -23,22 +23,21 @@ public class IsValidPrimaryKeyValidator
 
     private Class<?> clazz;
 
-    private Repository repository;
-
     @Override
     public void initialize(IsValidPrimaryKey constraintAnnotation) {
         this.clazz = constraintAnnotation.clazz();
-
-        // Get instance programmatically because dependency injection is not
-        // guaranteed to work in ConstraintValidator implementations
-        this.repository = CDI.current().getBeanContainer().createInstance()
-            .select(Repository.class).get();
     }
 
     @Override
     @Transactional
     public boolean isValid(Object value, ConstraintValidatorContext ctx) {
-        if (value == null || repository.getByIdPlain(clazz, value) != null) {
+        if (value == null
+            // Get instance programmatically because dependency injection is not
+            // guaranteed to work in ConstraintValidator implementations
+            || CDI.current().getBeanContainer().createInstance()
+                .select(Repository.class).get()
+                .getByIdPlain(clazz, value) != null
+        ) {
             return true;
         }
         return false;
