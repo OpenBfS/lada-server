@@ -30,11 +30,12 @@ public class MeasValTest {
 
     //Other constants
     private static final int EXISTING_MEASM_ID = 1200;
-    private static final int EXISTING_MEASD_ID = 56;
-    private static final int OTHER_MEASD_ID = 57;
+    private static final int EXISTING_EMPTY_MEASM_ID = 1201;
+    private static final int EXISTING_MEASD_ID = 57;
+    private static final int OTHER_MEASD_ID = 56;
     private static final String LESS_THAN_LOD_SMALLER_THAN = "<";
-    private static final String EXISTING_MEASD_NAME = "Mangan";
-    private static final String OTHER_MEASD_NAME = "Other";
+    private static final String EXISTING_MEASD_NAME = "Other";
+    private static final String OTHER_MEASD_NAME = "Mangan";
     private static final int EXISTING_ENV_MEDIUM_PRIMARY_UNIT = 207;
     private static final int EXISTING_ENV_MEDIUM_SECONDARY_UNIT = 208;
     private static final int EXISTING_ENV_MEDIUM_UNIT_CONVERTABLE_TO_PRIMARY
@@ -369,12 +370,12 @@ public class MeasValTest {
     public void mmtDoesNotMatchMeasd() {
         MeasVal val = new MeasVal();
         val.setMeasmId(EXISTING_MEASM_ID);
-        val.setMeasdId(OTHER_MEASD_ID);
+        val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         Violation violation = validator.validate(val);
         String warningKey = MEASD_ID
-            + VALIDATION_KEY_SEPARATOR + OTHER_MEASD_NAME;
+            + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
         Assert.assertTrue(violation.hasWarnings());
         Assert.assertTrue(violation.getWarnings()
             .containsKey(warningKey));
@@ -388,7 +389,7 @@ public class MeasValTest {
     public void mmtDoesMatchMeasd() {
         MeasVal val = new MeasVal();
         val.setMeasmId(EXISTING_MEASM_ID);
-        val.setMeasdId(EXISTING_MEASD_ID);
+        val.setMeasdId(OTHER_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         Violation violation = validator.validate(val);
@@ -441,16 +442,15 @@ public class MeasValTest {
     public void measdIsNotUniqueInMeasm() {
         MeasVal val = new MeasVal();
         val.setMeasmId(EXISTING_MEASM_ID);
-        val.setMeasdId(EXISTING_MEASD_ID);
+        val.setMeasdId(OTHER_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
+        val.setError(1.0f);
+        val.setMeasVal(2.0d);
 
         Violation violation = validator.validate(val);
         Assert.assertTrue(violation.hasErrors());
         Assert.assertTrue(violation.getErrors()
             .containsKey(MEASD_ID));
-        Assert.assertTrue(violation.getErrors()
-            .get(MEASD_ID)
-            .contains(String.valueOf(StatusCodes.VALUE_AMBIGOUS)));
     }
 
     /**
@@ -458,7 +458,7 @@ public class MeasValTest {
      */
     public void measdIsUniqueInMeasm() {
         MeasVal val = new MeasVal();
-        val.setMeasmId(EXISTING_MEASM_ID);
+        val.setMeasmId(EXISTING_EMPTY_MEASM_ID);
         val.setMeasdId(OTHER_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 

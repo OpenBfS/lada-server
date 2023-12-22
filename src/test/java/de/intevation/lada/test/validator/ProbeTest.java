@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.ResourceBundle;
 
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -63,7 +64,6 @@ public class ProbeTest {
     private static final String EXISTING_APPR_LAB_ID = "06010";
     private static final int EXISTING_OPR_MODE = 1;
 
-
     //Other constants
     private static final long TS1 = 1376287046510L;
     private static final long TS2 = 1376287046511L;
@@ -80,9 +80,27 @@ public class ProbeTest {
     private static final String EXAMPLE_ENV_DESCRIP_DISPLAY
         = "D: 01 59 03 01 01 02 05 01 02 00 00 00";
 
-
     @Inject
     private Validator<Sample> validator;
+
+    //Expected validation messages
+    private static final String UNIQUE_PLACEHOLDER = "{fields}";
+    private final String valMessageUniqueMainSampleIdMeasFacilId;
+    private final String valMessageUniqueExtId;
+
+    /**
+     * Constructor.
+     */
+    public ProbeTest() {
+        ResourceBundle validationMessages
+            = ResourceBundle.getBundle("ValidationMessages");
+        String uniquePattern = validationMessages.getString(
+            "de.intevation.lada.validation.constraints.Unique.message");
+        valMessageUniqueMainSampleIdMeasFacilId = uniquePattern
+            .replace(UNIQUE_PLACEHOLDER, "[mainSampleId, measFacilId]");
+        valMessageUniqueExtId = uniquePattern
+            .replace(UNIQUE_PLACEHOLDER, "[extId]");
+    }
 
     /**
      * Test hauptprobennr.
@@ -141,9 +159,8 @@ public class ProbeTest {
         Violation violation = validator.validate(sample);
         Assert.assertTrue(violation.hasErrors());
         Assert.assertTrue(violation.getErrors().containsKey(MAIN_SAMPLE_ID));
-        Assert.assertTrue(
-            violation.getErrors().get(MAIN_SAMPLE_ID).contains(
-                String.valueOf(StatusCodes.VALUE_AMBIGOUS)));
+        Assert.assertEquals(valMessageUniqueMainSampleIdMeasFacilId,
+            violation.getErrors().get(MAIN_SAMPLE_ID).get(0));
     }
 
     /**
@@ -204,9 +221,8 @@ public class ProbeTest {
         Violation violation = validator.validate(sample);
         Assert.assertTrue(violation.hasErrors());
         Assert.assertTrue(violation.getErrors().containsKey(MAIN_SAMPLE_ID));
-        Assert.assertTrue(
-            violation.getErrors().get(MAIN_SAMPLE_ID).contains(
-                String.valueOf(StatusCodes.VALUE_AMBIGOUS)));
+        Assert.assertEquals(valMessageUniqueMainSampleIdMeasFacilId,
+            violation.getErrors().get(MAIN_SAMPLE_ID).get(0));
     }
 
     /**
@@ -945,8 +961,8 @@ public class ProbeTest {
         Assert.assertTrue(violation.hasErrors());
         Assert.assertTrue(violation.getErrors()
             .containsKey(EXT_ID));
-        Assert.assertTrue(violation.getErrors().get(EXT_ID)
-            .contains(String.valueOf(StatusCodes.VALUE_AMBIGOUS)));
+        Assert.assertEquals(valMessageUniqueExtId,
+            violation.getErrors().get(EXT_ID).get(0));
     }
 
     /**

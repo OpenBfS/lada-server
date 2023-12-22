@@ -10,6 +10,8 @@ package de.intevation.lada.test.validator;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import java.util.ResourceBundle;
+
 import org.junit.Assert;
 
 import de.intevation.lada.model.master.Site;
@@ -39,6 +41,7 @@ public class SiteTest {
     private static final String INVALID_ADMIN_UNIT_ID = "420042";
     private static final String VALID_ADMIN_UNIT_ID = "11000000";
 
+    private static final String EXAMPLE_EXT_ID = "1234";
     private static final String EXISTING_NETWORK_ID = "06";
     private static final int SITE_CLASS_REI = 3;
 
@@ -57,6 +60,23 @@ public class SiteTest {
     @Inject
     private Validator<Site> validator;
 
+    //Expected validation messages
+    private static final String UNIQUE_PLACEHOLDER = "{fields}";
+    private final String valMessageUniqueExtId;
+
+    /**
+     * Constructor.
+     */
+    public SiteTest() {
+        ResourceBundle validationMessages
+            = ResourceBundle.getBundle("ValidationMessages");
+        String uniquePattern = validationMessages.getString(
+            "de.intevation.lada.validation.constraints.Unique.message");
+        valMessageUniqueExtId = uniquePattern
+            .replace(UNIQUE_PLACEHOLDER, "[extId, networkId]");
+
+    }
+
     /**
      * Test site object with adminUnit without border view entry.
      */
@@ -68,6 +88,7 @@ public class SiteTest {
         site.setAdminUnitId(INVALID_ADMIN_UNIT_ID);
         site.setGeom(insideBorder);
         site.setNetworkId(EXISTING_NETWORK_ID);
+        site.setExtId(EXAMPLE_EXT_ID);
 
         Violation violation = validator.validate(site);
         Assert.assertTrue(violation.hasWarnings());
@@ -162,8 +183,8 @@ public class SiteTest {
         Violation violation = validator.validate(site);
         Assert.assertTrue(violation.hasErrors());
         Assert.assertTrue(violation.getErrors().containsKey(EXT_ID));
-        Assert.assertTrue(violation.getErrors().get(EXT_ID)
-            .contains(String.valueOf(StatusCodes.IMP_DUPLICATE)));
+        Assert.assertEquals(valMessageUniqueExtId,
+            violation.getErrors().get(EXT_ID).get(0));
     }
 
     /**
@@ -237,7 +258,7 @@ public class SiteTest {
      */
     public void reiSiteNoNuclFacils() {
         Site site = new Site();
-        site.setExtId("1234");
+        site.setExtId(EXAMPLE_EXT_ID);
         site.setSiteClassId(SITE_CLASS_REI);
         site.setNuclFacilGrId(NUCL_FACIL_GR_ID_MAPPED);
         site.setNetworkId(EXISTING_NETWORK_ID);
@@ -273,6 +294,7 @@ public class SiteTest {
      */
     public void reiSiteWithoutNuclFacilGrId() {
         Site site = new Site();
+        site.setExtId(EXAMPLE_EXT_ID);
         site.setSiteClassId(SITE_CLASS_REI);
         site.setNetworkId(EXISTING_NETWORK_ID);
 

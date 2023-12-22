@@ -45,6 +45,7 @@ import de.intevation.lada.model.master.SampleMeth;
 import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.util.data.EmptyStringConverter;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.Warnings;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
@@ -53,6 +54,10 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @DynamicInsert(true)
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ Sample.class, DatabaseConstraints.class })
+@Unique(fields = {"mainSampleId", "measFacilId"},
+    groups = DatabaseConstraints.class, clazz = Sample.class)
+@Unique(fields = {"extId"},
+    groups = DatabaseConstraints.class, clazz = Sample.class)
 public class Sample extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

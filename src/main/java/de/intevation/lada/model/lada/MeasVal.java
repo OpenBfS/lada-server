@@ -30,12 +30,15 @@ import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.MeasUnit;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ MeasVal.class, DatabaseConstraints.class })
+@Unique(fields = {"measdId", "measmId"},
+    groups = DatabaseConstraints.class, clazz = MeasVal.class)
 public class MeasVal extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -25,6 +25,7 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import org.hibernate.annotations.JdbcTypeCode;
@@ -33,11 +34,14 @@ import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ Site.class, DatabaseConstraints.class })
+@Unique(fields = {"extId", "networkId"},
+    groups = DatabaseConstraints.class, clazz = Site.class)
 public class Site extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -99,6 +103,7 @@ public class Site extends BaseModel implements Serializable {
     private String networkId;
 
     @Size(max = 20)
+    @NotNull
     private String extId;
 
 
