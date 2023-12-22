@@ -31,6 +31,8 @@ public class SampleSpecif implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = SampleSpecif.class)
     private String id;
 
     @NotNull

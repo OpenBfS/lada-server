@@ -33,6 +33,7 @@ public class MpgTest {
     private static final String SAMPLE_PD_END_DATE = "samplePdEndDate";
     private static final String SAMPLE_PD_START_DATE = "samplePdStartDate";
     private static final String SAMPLE_SPECIFS = "sampleSpecifs";
+    private static final String SAMPLE_SPECIFS_FK_ARRAY = "sampleSpecifs[].id";
     private static final String VALID_END_DATE = "validEndDate";
     private static final String VALID_START_DATE = "validStartDate";
 
@@ -431,10 +432,8 @@ public class MpgTest {
         Violation violation = validator.validate(mpg);
 
         Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey(SAMPLE_SPECIFS));
         Assert.assertTrue(violation.getErrors()
-            .get(SAMPLE_SPECIFS)
-            .contains(String.valueOf(StatusCodes.NOT_EXISTING)));
+            .containsKey(SAMPLE_SPECIFS_FK_ARRAY));
     }
 
     /**
