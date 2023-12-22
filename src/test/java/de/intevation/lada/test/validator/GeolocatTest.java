@@ -26,7 +26,7 @@ public class GeolocatTest {
 
     // Other contstants
     public static final int SAMPLE_WITH_E_GEOLOCAT = 1000;
-    public static final int SAMPLE_WITHOUT_E_GEOLOCAT = 1002;
+    public static final int SAMPLE_WITHOUT_E_GEOLOCAT = 3000;
     public static final int MPG_WITH_E_GEOLOCAT = 999;
     public static final int MPG_WITHOUT_E_GEOLOCAT = 998;
     public static final int EXISTITING_SITE_ID = 1000;

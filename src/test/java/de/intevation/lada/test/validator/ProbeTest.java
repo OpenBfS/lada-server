@@ -60,7 +60,7 @@ public class ProbeTest {
     private static final Integer SAMPLE_METH_ID_INDIVIDUAL = 1;
     private static final Integer SAMPLE_METH_ID_S = 3;
     private static final Integer SAMPLE_METH_ID_CONT = 9;
-    private static final String EXISTING_APPR_LAB_ID = "06";
+    private static final String EXISTING_APPR_LAB_ID = "06010";
     private static final int EXISTING_OPR_MODE = 1;
 
 
@@ -428,11 +428,8 @@ public class ProbeTest {
         sample.setIsTest(false);
 
         Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(ENV_MEDIUM_ID));
-        MatcherAssert.assertThat(
-            violation.getWarnings().get(ENV_MEDIUM_ID),
-            CoreMatchers.hasItem("must not be blank"));
+        Assert.assertTrue(violation.hasErrors());
+        Assert.assertTrue(violation.getErrors().containsKey(ENV_MEDIUM_ID));
     }
 
     /**

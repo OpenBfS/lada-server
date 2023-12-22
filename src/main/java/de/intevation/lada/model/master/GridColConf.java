@@ -9,6 +9,8 @@ package de.intevation.lada.model.master;
 
 import java.io.Serializable;
 
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,11 +20,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(schema = SchemaName.NAME)
+@GroupSequence({ GridColConf.class, DatabaseConstraints.class })
 public class GridColConf implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -47,6 +51,8 @@ public class GridColConf implements Serializable {
 
     private Integer sortIndex;
 
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = LadaUser.class)
     private Integer ladaUserId;
 
     private boolean isVisible;
@@ -63,10 +69,14 @@ public class GridColConf implements Serializable {
     //Connected grid column's id, used for creating/updating grid_column_values
     @Transient
     @NotNull
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = GridColMp.class)
     private Integer gridColMpId;
 
     @Transient
     @NotNull
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = QueryUser.class)
     private Integer queryUserId;
 
     public GridColConf() {

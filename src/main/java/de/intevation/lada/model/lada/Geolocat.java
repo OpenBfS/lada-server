@@ -21,14 +21,22 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
+import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.model.master.Poi;
+import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.TypeRegulation;
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.groups.DatabaseConstraints;
+import de.intevation.lada.validation.groups.Warnings;
 
 
 @Entity
 @Table(schema = SchemaName.NAME)
+@GroupSequence({ Geolocat.class, DatabaseConstraints.class })
 public class Geolocat extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -41,18 +49,27 @@ public class Geolocat extends BaseModel implements Serializable {
     private Date lastMod;
 
     @NotNull
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Site.class)
     private Integer siteId;
 
     @Size(max = 1)
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = TypeRegulation.class)
+    @NotNull(groups = Warnings.class)
     private String typeRegulation;
 
     @Size(max = 100)
     private String addSiteText;
 
     @NotNull
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Sample.class)
     private Integer sampleId;
 
     @Size(max = 7)
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Poi.class)
     private String poiId;
 
     @Column(insertable = false, updatable = false)

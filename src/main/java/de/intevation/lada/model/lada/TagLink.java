@@ -7,16 +7,20 @@
  */
 package de.intevation.lada.model.lada;
 
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotNull;
 
 
 @Entity
 @Table(schema = SchemaName.NAME)
+@GroupSequence({ TagLink.class, DatabaseConstraints.class })
 public class TagLink {
     public static final long serialVersionUID = 1L;
 
@@ -24,8 +28,12 @@ public class TagLink {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Sample.class)
     private Integer sampleId;
 
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Measm.class)
     private Integer measmId;
 
     @NotNull

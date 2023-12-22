@@ -22,14 +22,18 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
+import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
+import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.util.data.EmptyStringConverter;
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 @Entity
 @Table(schema = SchemaName.NAME)
+@GroupSequence({ SampleSpecifMeasVal.class, DatabaseConstraints.class })
 public class SampleSpecifMeasVal implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -50,10 +54,14 @@ public class SampleSpecifMeasVal implements Serializable {
     private String smallerThan;
 
     @NotNull
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Sample.class)
     private Integer sampleId;
 
     @NotBlank
     @Size(max = 3)
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = SampleSpecif.class)
     private String sampleSpecifId;
 
     @Column(insertable = false, updatable = false)

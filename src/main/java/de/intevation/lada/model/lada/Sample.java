@@ -33,8 +33,16 @@ import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.DynamicInsert;
 
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.EnvMedium;
+import de.intevation.lada.model.master.MeasFacil;
+import de.intevation.lada.model.master.MpgCateg;
+import de.intevation.lada.model.master.NuclFacilGr;
 import de.intevation.lada.model.master.OprMode;
+import de.intevation.lada.model.master.Regulation;
+import de.intevation.lada.model.master.ReiAgGr;
+import de.intevation.lada.model.master.SampleMeth;
+import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.util.data.EmptyStringConverter;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.groups.Warnings;
@@ -58,8 +66,12 @@ public class Sample extends BaseModel implements Serializable {
     private Integer oprModeId;
 
     @NotNull(groups = Warnings.class)
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Regulation.class)
     private Integer regulationId;
 
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = DatasetCreator.class)
     private Integer datasetCreatorId;
 
     @Convert(converter = EmptyStringConverter.class)
@@ -71,6 +83,8 @@ public class Sample extends BaseModel implements Serializable {
 
     @NotBlank
     @Size(max = 5)
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = MeasFacil.class)
     private String apprLabId;
 
     @Column(insertable = false)
@@ -85,14 +99,22 @@ public class Sample extends BaseModel implements Serializable {
 
     private Long midSampleDate;
 
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = MpgCateg.class)
     private Integer mpgCategId;
 
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Mpg.class)
     private Integer mpgId;
 
     @NotBlank
     @Size(max = 5)
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = MeasFacil.class)
     private String measFacilId;
 
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Sampler.class)
     private Integer samplerId;
 
     @Temporal(TIMESTAMP)
@@ -102,6 +124,8 @@ public class Sample extends BaseModel implements Serializable {
     private Date sampleEndDate;
 
     @NotNull(groups = Warnings.class)
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = SampleMeth.class)
     private Integer sampleMethId;
 
     @Temporal(TIMESTAMP)
@@ -126,10 +150,16 @@ public class Sample extends BaseModel implements Serializable {
 
     @Size(max = 3)
     @NotBlank(groups = Warnings.class)
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = EnvMedium.class)
     private String envMediumId;
 
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = ReiAgGr.class)
     private Integer reiAgGrId;
 
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = NuclFacilGr.class)
     private Integer nuclFacilGrId;
 
     @Transient

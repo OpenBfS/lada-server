@@ -26,6 +26,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
+import jakarta.validation.GroupSequence;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -35,10 +36,25 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.model.master.AdminUnit;
+import de.intevation.lada.model.master.EnvMedium;
+import de.intevation.lada.model.master.MeasFacil;
+import de.intevation.lada.model.master.MeasUnit;
+import de.intevation.lada.model.master.MpgCateg;
+import de.intevation.lada.model.master.NuclFacilGr;
+import de.intevation.lada.model.master.OprMode;
+import de.intevation.lada.model.master.Regulation;
+import de.intevation.lada.model.master.ReiAgGr;
+import de.intevation.lada.model.master.SampleMeth;
 import de.intevation.lada.model.master.SampleSpecif;
+import de.intevation.lada.model.master.Sampler;
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.groups.DatabaseConstraints;
+import de.intevation.lada.validation.groups.Warnings;
 
 @Entity
 @Table(schema = SchemaName.NAME)
+@GroupSequence({ Mpg.class, DatabaseConstraints.class })
 public class Mpg extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -57,11 +73,19 @@ public class Mpg extends BaseModel implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = OprMode.class)
+    @NotNull(groups = Warnings.class)
     private Integer oprModeId;
 
     @NotNull
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Regulation.class)
     private Integer regulationId;
 
+    @Size(max = 8)
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = AdminUnit.class)
     private String adminUnitId;
 
     @NotNull
@@ -81,6 +105,8 @@ public class Mpg extends BaseModel implements Serializable {
 
     @NotBlank
     @Size(max = 5)
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = MeasFacil.class)
     private String apprLabId;
 
     @Column(insertable = false)
@@ -92,16 +118,26 @@ public class Mpg extends BaseModel implements Serializable {
 
     @NotBlank
     @Size(max = 5)
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = MeasFacil.class)
     private String measFacilId;
 
+
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = MpgCateg.class)
     private Integer mpgCategId;
 
     @Size(max = 80)
     private String commSample;
 
+
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Sampler.class)
     private Integer samplerId;
 
     @NotNull
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = SampleMeth.class)
     private Integer sampleMethId;
 
     @NotNull
@@ -118,14 +154,24 @@ public class Mpg extends BaseModel implements Serializable {
     private Boolean isTest;
 
     @Size(max = 3)
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = EnvMedium.class)
     private String envMediumId;
 
+
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = ReiAgGr.class)
     private Integer reiAgGrId;
 
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = NuclFacilGr.class)
     private Integer nuclFacilGrId;
 
     private Boolean isActive;
 
+
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = MeasUnit.class)
     private Integer measUnitId;
 
     private String sampleQuant;

@@ -10,6 +10,8 @@ package de.intevation.lada.model.master;
 import java.io.Serializable;
 import java.util.Date;
 
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +21,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
+import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -27,6 +30,7 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(schema = SchemaName.NAME)
+@GroupSequence({ DatasetCreator.class, DatabaseConstraints.class })
 public class DatasetCreator implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -48,10 +52,14 @@ public class DatasetCreator implements Serializable {
 
     @NotBlank
     @Size(max = 5)
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = MeasFacil.class)
     private String measFacilId;
 
     @NotBlank
     @Size(max = 2)
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Network.class)
     private String networkId;
 
     @Transient

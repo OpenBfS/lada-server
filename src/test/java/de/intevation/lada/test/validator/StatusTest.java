@@ -29,6 +29,7 @@ public class StatusTest {
     private static final String REI_AG_GR_ID = "reiAgGrId";
     private static final String STATUS = "status";
     private static final String STATUS_MP = "statusMp";
+    private static final String STATUS_MP_ID = "statusMpId";
 
     //Other constants
     private static final int ID1 = 1;
@@ -58,10 +59,7 @@ public class StatusTest {
         status.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
         Violation violation = validator.validate(status);
         Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey(STATUS_MP));
-        Assert.assertTrue(
-            violation.getErrors().get(STATUS_MP).contains(
-                String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
+        Assert.assertTrue(violation.getErrors().containsKey(STATUS_MP_ID));
     }
 
     /**

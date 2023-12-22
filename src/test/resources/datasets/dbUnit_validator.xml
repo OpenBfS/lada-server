@@ -23,6 +23,7 @@
     <master.unit_convers id = "210" from_unit_id = "210" to_unit_id = "208" factor = "1.0"/>
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "207" unit_2 = "208"/>
     <master.env_medium id = "L42" name = "Example env Medium" unit_1 = "207"/>
+    <master.env_medium id = "L54" name = "Example env 2" unit_1 = "207"/>
     <master.rei_ag_gr id = "1" name = "rei_name" descr = "rei_descr" />
     <master.nucl_facil id = "1" ext_id = "A123" name = "nucl_facil_name" />
     <master.nucl_facil id = "2" ext_id = "Othr" name = "nucl_facil_name" />

@@ -36,6 +36,7 @@ import de.intevation.lada.util.data.EmptyStringConverter;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
+import de.intevation.lada.validation.groups.Warnings;
 
 
 // The DynamicInsert Annotation has the effect, that the persisted object still
@@ -79,12 +80,17 @@ public class Measm extends BaseModel implements Serializable {
     private String minSampleId;
 
     @NotNull
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Sample.class)
     private Integer sampleId;
 
     @OneToOne
     @JoinColumn(insertable = false, updatable = false)
     private Sample sample;
 
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = StatusProt.class)
+    @NotNull(groups = Warnings.class)
     private Integer status;
 
     @OneToOne

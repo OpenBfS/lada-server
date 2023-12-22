@@ -22,14 +22,20 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
+import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.model.master.MeasUnit;
+import de.intevation.lada.model.master.Measd;
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 
 @Entity
 @Table(schema = SchemaName.NAME)
+@GroupSequence({ MeasVal.class, DatabaseConstraints.class })
 public class MeasVal extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -44,14 +50,20 @@ public class MeasVal extends BaseModel implements Serializable {
     private Date lastMod;
 
     @NotNull
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = MeasUnit.class)
     private Integer measUnitId;
 
     private Float error;
 
     @NotNull
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Measd.class)
     private Integer measdId;
 
     @NotNull
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Measm.class)
     private Integer measmId;
 
     private Double measVal;

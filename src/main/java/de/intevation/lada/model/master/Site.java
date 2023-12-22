@@ -23,6 +23,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
+import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -31,9 +32,12 @@ import org.hibernate.type.SqlTypes;
 import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 @Entity
 @Table(schema = SchemaName.NAME)
+@GroupSequence({ Site.class, DatabaseConstraints.class })
 public class Site extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -43,6 +47,9 @@ public class Site extends BaseModel implements Serializable {
 
     private Boolean isReiActive;
 
+
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = NuclFacilGr.class)
     private Integer nuclFacilGrId;
 
     @Size(max = 70)
@@ -52,8 +59,14 @@ public class Site extends BaseModel implements Serializable {
     @JoinColumn(updatable = false, insertable = false)
     private AdminUnit adminUnit;
 
+
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = AdminUnit.class)
     private String adminUnitId;
 
+
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = MunicDiv.class)
     private Integer municDivId;
 
     private Float heightAsl;
@@ -81,18 +94,29 @@ public class Site extends BaseModel implements Serializable {
 
     @NotBlank
     @Size(max = 2)
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Network.class)
     private String networkId;
 
     @Size(max = 20)
     private String extId;
 
+
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = SiteClass.class)
     private Integer siteClassId;
 
+
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Poi.class)
     private String poiId;
 
     @Size(max = 2)
     private String reiSector;
 
+
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = State.class)
     private Integer stateId;
 
     private Boolean isFuzzy;
@@ -103,8 +127,14 @@ public class Site extends BaseModel implements Serializable {
     @Size(max = 10)
     private String reiCompetence;
 
+
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = SpatRefSys.class)
     private Integer spatRefSysId;
 
+
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = ReiAgGr.class)
     private Integer reiAgGrId;
 
     @Column(columnDefinition = "geometry(Point, 4326)")
