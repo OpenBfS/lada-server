@@ -26,14 +26,16 @@ import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-
 import de.intevation.lada.model.lada.TagLink;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ Tag.class, DatabaseConstraints.class })
+@Unique(groups = DatabaseConstraints.class,
+    clazz = Tag.class, fields = { "name", "networkId", "measFacilId" })
 public class Tag {
 
     // Default time after which mst tags expire in days

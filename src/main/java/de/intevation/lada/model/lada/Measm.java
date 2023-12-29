@@ -48,6 +48,8 @@ import de.intevation.lada.validation.groups.Warnings;
 @GroupSequence({ Measm.class, DatabaseConstraints.class })
 @Unique(groups = DatabaseConstraints.class,
     clazz = Measm.class, fields = { "minSampleId", "sampleId" })
+@Unique(groups = DatabaseConstraints.class,
+    clazz = Measm.class, fields = { "extId", "sampleId" })
 public class Measm extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

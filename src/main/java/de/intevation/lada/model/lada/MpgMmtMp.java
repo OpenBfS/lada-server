@@ -34,11 +34,14 @@ import jakarta.validation.constraints.Size;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.Mmt;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ MpgMmtMp.class, DatabaseConstraints.class })
+@Unique(fields = {"mpgId", "mmtId"},
+    groups = DatabaseConstraints.class, clazz = MpgMmtMp.class)
 public class MpgMmtMp implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -29,11 +29,14 @@ import jakarta.validation.constraints.Size;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.util.data.EmptyStringConverter;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ SampleSpecifMeasVal.class, DatabaseConstraints.class })
+@Unique(fields = {"sampleId", "sampleSpecifId"},
+    groups = DatabaseConstraints.class, clazz = SampleSpecifMeasVal.class)
 public class SampleSpecifMeasVal implements Serializable {
     private static final long serialVersionUID = 1L;
 

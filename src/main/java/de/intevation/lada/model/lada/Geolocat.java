@@ -30,6 +30,7 @@ import de.intevation.lada.model.master.Poi;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.TypeRegulation;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import de.intevation.lada.validation.groups.Warnings;
 
@@ -37,6 +38,8 @@ import de.intevation.lada.validation.groups.Warnings;
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ Geolocat.class, DatabaseConstraints.class })
+@Unique(fields = {"sampleId", "siteId", "typeRegulation"},
+    groups = DatabaseConstraints.class, clazz = Geolocat.class)
 public class Geolocat extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

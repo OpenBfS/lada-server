@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,6 +35,8 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ MpgCateg.class, DatabaseConstraints.class })
+@Unique(groups = DatabaseConstraints.class,
+    clazz = MpgCateg.class, fields = { "extId", "networkId" })
 public class MpgCateg implements Serializable {
     private static final long serialVersionUID = 1L;
 

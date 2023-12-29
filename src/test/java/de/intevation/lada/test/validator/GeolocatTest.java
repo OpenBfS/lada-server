@@ -21,8 +21,10 @@ import de.intevation.lada.validation.Violation;
 @Transactional
 public class GeolocatTest {
 
+
     // Validation keys
     private static final String TYPE_REGULATION = "typeRegulation";
+    private static final String SAMPLE_ID = "sampleId";
 
     // Other contstants
     public static final int SAMPLE_WITH_E_GEOLOCAT = 1000;
@@ -48,11 +50,8 @@ public class GeolocatTest {
         loc.setSiteId(EXISTITING_SITE_ID);
 
         Violation violation = sampleVal.validate(loc);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(TYPE_REGULATION));
-        Assert.assertTrue(violation.getWarnings()
-                .get(TYPE_REGULATION).contains(
-                    String.valueOf(StatusCodes.VALUE_AMBIGOUS)));
+        Assert.assertTrue(violation.hasErrors());
+        Assert.assertTrue(violation.getErrors().containsKey(SAMPLE_ID));
     }
 
     /**
