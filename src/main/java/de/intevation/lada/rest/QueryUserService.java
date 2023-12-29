@@ -211,9 +211,6 @@ public class QueryUserService extends LadaService {
     ) {
         UserInfo userInfo = authorization.getInfo();
         QueryUser query = repository.getByIdPlain(QueryUser.class, id);
-        if (query == null) {
-            return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
         if (query.getLadaUserId().equals(userInfo.getUserId())) {
             return repository.delete(query);
         }

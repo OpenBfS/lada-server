@@ -242,12 +242,6 @@ public class SiteService extends LadaService {
             return new Response(false, StatusCodes.NOT_ALLOWED, ort);
         }
 
-        Site dbOrt = repository.getByIdPlain(
-            Site.class, ort.getId());
-        if (dbOrt == null) {
-            return new Response(false, StatusCodes.NOT_EXISTING, ort);
-        }
-
         ortFactory.transformCoordinates(ort);
         if (ortFactory.hasErrors()) {
             Violation factoryErrs = new Violation();
@@ -315,9 +309,6 @@ public class SiteService extends LadaService {
             @PathParam("type") @Pattern(regexp = "img|map") String type
     ) {
         Site site = repository.getByIdPlain(Site.class, id);
-        if (site == null) {
-            throw new NotFoundException();
-        }
         return type.equals("map") ? site.getMap() : site.getImg();
     }
 

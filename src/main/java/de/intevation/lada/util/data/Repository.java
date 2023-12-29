@@ -18,6 +18,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 
 import org.jboss.logging.Logger;
 
@@ -132,13 +133,10 @@ public class Repository {
      * @param id The id of the object.
      *
      * @return Response object containg the requested object.
+     * @throws NotFoundException if no entity with given ID exists
      */
     public <T> Response getById(Class<T> clazz, Object id) {
-        T item = getByIdPlain(clazz, id);
-        if (item == null) {
-            return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
-        return new Response(true, StatusCodes.OK, item);
+        return new Response(true, StatusCodes.OK, getByIdPlain(clazz, id));
     }
 
     /**
@@ -224,8 +222,13 @@ public class Repository {
      * @param id The id of the object.
      *
      * @return The requested object or null if not found.
+     * @throws NotFoundException if no entity with given ID exists
      */
     public <T> T getByIdPlain(Class<T> clazz, Object id) {
-        return em.find(clazz, id);
+        T item = em.find(clazz, id);
+        if (item == null) {
+            throw new NotFoundException();
+        }
+        return item;
     }
 }

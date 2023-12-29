@@ -25,6 +25,7 @@ import java.util.Map;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Context;
@@ -151,8 +152,10 @@ public class LafImportService extends LadaService {
                 StatusCodes.NOT_ALLOWED,
                 "Missing header for messtelle.");
         }
-        MeasFacil mst = repository.getByIdPlain(MeasFacil.class, mstId);
-        if (mst == null) {
+        MeasFacil mst;
+        try {
+            mst = repository.getByIdPlain(MeasFacil.class, mstId);
+        } catch (NotFoundException nfe) {
             return new Response(
                 false,
                 StatusCodes.NOT_ALLOWED,
@@ -273,8 +276,10 @@ public class LafImportService extends LadaService {
     ) {
         UserInfo userInfo = authorization.getInfo();
         String mstId = request.getHeader("X-LADA-MST");
-        MeasFacil mst = repository.getByIdPlain(MeasFacil.class, mstId);
-        if (mst == null) {
+        MeasFacil mst;
+        try {
+            mst = repository.getByIdPlain(MeasFacil.class, mstId);
+        } catch (NotFoundException nfe) {
             return new Response(
                 false,
                 StatusCodes.NOT_ALLOWED,

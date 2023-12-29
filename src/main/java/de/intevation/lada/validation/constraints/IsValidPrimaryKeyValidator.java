@@ -35,8 +35,8 @@ public class IsValidPrimaryKeyValidator
             // Get instance programmatically because dependency injection is not
             // guaranteed to work in ConstraintValidator implementations
             || CDI.current().getBeanContainer().createInstance()
-                .select(Repository.class).get()
-                .getByIdPlain(clazz, value) != null
+                .select(Repository.class).get().entityManager()
+                .find(clazz, value) != null
         ) {
             return true;
         }

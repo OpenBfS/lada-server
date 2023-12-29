@@ -13,6 +13,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -76,7 +77,6 @@ public class AsyncImportService extends LadaService {
     ** </code>
     ** </pre>
     **/
-
     @POST
     @Path("laf")
     public Response createAsyncImport(
@@ -92,11 +92,14 @@ public class AsyncImportService extends LadaService {
             errBuilder.add("data", "Missing header for messtelle.");
             return Response.ok(errBuilder.build().toString()).build();
         }
-        MeasFacil mst = repository.getByIdPlain(MeasFacil.class, mstId);
-        if (mst == null) {
+        MeasFacil mst;
+        try {
+            mst = repository.getByIdPlain(MeasFacil.class, mstId);
+        } catch (NotFoundException nfe) {
             errBuilder.add("data", "Wrong header for messtelle.");
             return Response.ok(errBuilder.build().toString()).build();
         }
+
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             importJobManager.createImportJob(
