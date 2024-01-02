@@ -463,10 +463,6 @@ public class MeasValTest {
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         Violation violation = validator.validate(val);
-        if (violation.hasErrors()
-                && violation.getWarnings().containsKey(MEASD_ID)) {
-            Assert.assertFalse(violation.getErrors().get(MEASD_ID)
-                .contains(String.valueOf(StatusCodes.VALUE_AMBIGOUS)));
-        }
+        Assert.assertFalse(violation.hasErrors());
     }
 }
