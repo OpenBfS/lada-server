@@ -123,12 +123,10 @@ public class GeolocatMpgService extends LadaService {
     public Response create(
         @Valid GeolocatMpg ort
     ) {
-        if (!authorization.isAuthorized(
-                ort,
-                RequestMethod.POST,
-                GeolocatMpg.class)) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            ort,
+            RequestMethod.POST,
+            GeolocatMpg.class);
         validator.validate(ort);
         if (ort.hasErrors()) {
             return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
@@ -150,12 +148,10 @@ public class GeolocatMpgService extends LadaService {
         @PathParam("id") Integer id,
         @Valid GeolocatMpg ort
     ) {
-        if (!authorization.isAuthorized(
-                ort,
-                RequestMethod.PUT,
-                GeolocatMpg.class)) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            ort,
+            RequestMethod.PUT,
+            GeolocatMpg.class);
         validator.validate(ort);
         if (ort.hasErrors()) {
             return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
@@ -181,12 +177,10 @@ public class GeolocatMpgService extends LadaService {
     ) {
         GeolocatMpg ortObj = repository.getByIdPlain(
             GeolocatMpg.class, id);
-        if (!authorization.isAuthorized(
-                ortObj,
-                RequestMethod.PUT,
-                GeolocatMpg.class)) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            ortObj,
+            RequestMethod.PUT,
+            GeolocatMpg.class);
 
         return repository.delete(ortObj);
     }

@@ -95,13 +95,10 @@ public class SamplerService extends LadaService {
     public Response create(
         @Valid Sampler probenehmer
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
             probenehmer,
             RequestMethod.POST,
-            Sampler.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, probenehmer);
-        }
+            Sampler.class);
         QueryBuilder<Sampler> builder =
             repository.queryBuilder(Sampler.class);
         builder.and("extId", probenehmer.getExtId());
@@ -120,13 +117,10 @@ public class SamplerService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Sampler probenehmer
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
             probenehmer,
             RequestMethod.PUT,
-            Sampler.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, probenehmer);
-        }
+            Sampler.class);
         QueryBuilder<Sampler> builder =
             repository.queryBuilder(Sampler.class);
         builder.and("extId", probenehmer.getExtId());
@@ -148,15 +142,10 @@ public class SamplerService extends LadaService {
     ) {
         Sampler probenehmer = repository.getByIdPlain(
             Sampler.class, id);
-        if (probenehmer == null
-            || !authorization.isAuthorized(
-                probenehmer,
-                RequestMethod.DELETE,
-                Sampler.class
-            )
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            probenehmer,
+            RequestMethod.DELETE,
+            Sampler.class);
         if (getPRNZuordnungs(probenehmer).size() > 0) {
             return new Response(false, StatusCodes.ERROR_DELETE, probenehmer);
         }

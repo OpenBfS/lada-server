@@ -482,7 +482,6 @@ implements Creator {
                 (m.getIsCompleted() ? "1" : "0"));
             laf += lafLine("BEARBEITUNGSSTATUS", writeStatus(m));
             if (this.userInfo != null
-                // TODO: GET is correct RequestMethod here?
                 && authorization.isAuthorized(
                     m, RequestMethod.GET, Measm.class)
             ) {

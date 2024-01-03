@@ -148,13 +148,10 @@ public class SampleService extends LadaService {
     public Response create(
         @Valid Sample probe
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
                 probe,
                 RequestMethod.POST,
-                Sample.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+                Sample.class);
         validator.validate(probe);
         if (probe.hasErrors()) {
             return new Response(false, StatusCodes.ERROR_VALIDATION, probe);
@@ -287,13 +284,10 @@ public class SampleService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Sample probe
     ) {
-        if (!authorization.isAuthorized(
-                probe,
-                RequestMethod.PUT,
-                Sample.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            probe,
+            RequestMethod.PUT,
+            Sample.class);
         if (lock.isLocked(probe)) {
             return new Response(false, StatusCodes.CHANGED_VALUE, null);
         }
@@ -338,13 +332,10 @@ public class SampleService extends LadaService {
             return probe;
         }
         Sample probeObj = (Sample) probe.getData();
-        if (!authorization.isAuthorized(
-                probeObj,
-                RequestMethod.DELETE,
-                Sample.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            probeObj,
+            RequestMethod.DELETE,
+            Sample.class);
         return repository.delete(probeObj);
     }
 }

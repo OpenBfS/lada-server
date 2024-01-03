@@ -69,11 +69,8 @@ public class CommMeasmService extends LadaService {
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
         Measm messung = repository.getByIdPlain(Measm.class, measmId);
-        if (!authorization.isAuthorized(
-                messung, RequestMethod.GET, Measm.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+                messung, RequestMethod.GET, Measm.class);
 
         QueryBuilder<CommMeasm> builder =
             repository.queryBuilder(CommMeasm.class);
@@ -98,11 +95,8 @@ public class CommMeasmService extends LadaService {
         CommMeasm kommentar = (CommMeasm) response.getData();
         Measm messung = repository.getByIdPlain(
             Measm.class, kommentar.getMeasmId());
-        if (!authorization.isAuthorized(
-                messung, RequestMethod.GET, Measm.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            messung, RequestMethod.GET, Measm.class);
 
         return authorization.filter(
             response,
@@ -117,13 +111,10 @@ public class CommMeasmService extends LadaService {
     public Response create(
         @Valid CommMeasm kommentar
     ) {
-        if (!authorization.isAuthorized(
-                kommentar,
-                RequestMethod.POST,
-                CommMeasm.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            kommentar,
+            RequestMethod.POST,
+            CommMeasm.class);
         validator.validate(kommentar);
         if (kommentar.hasErrors()) {
             return new Response(false, StatusCodes.ERROR_VALIDATION, kommentar);
@@ -144,13 +135,10 @@ public class CommMeasmService extends LadaService {
         @PathParam("id") Integer id,
         @Valid CommMeasm kommentar
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
                 kommentar,
                 RequestMethod.PUT,
-                CommMeasm.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+                CommMeasm.class);
         validator.validate(kommentar);
         if (kommentar.hasErrors() || kommentar.hasWarnings()) {
             return new Response(false, StatusCodes.VAL_EXISTS, kommentar);
@@ -173,13 +161,10 @@ public class CommMeasmService extends LadaService {
         @PathParam("id") Integer id
     ) {
         CommMeasm kommentarObj = repository.getByIdPlain(CommMeasm.class, id);
-        if (!authorization.isAuthorized(
-                kommentarObj,
-                RequestMethod.DELETE,
-                CommMeasm.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            kommentarObj,
+            RequestMethod.DELETE,
+            CommMeasm.class);
         return repository.delete(kommentarObj);
     }
 }

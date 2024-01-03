@@ -98,14 +98,10 @@ public class DatasetCreatorService extends LadaService {
     public Response create(
         @Valid DatasetCreator datensatzerzeuger
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
             datensatzerzeuger,
             RequestMethod.POST,
-            DatasetCreator.class)
-        ) {
-            return new Response(
-                false, StatusCodes.NOT_ALLOWED, datensatzerzeuger);
-        }
+            DatasetCreator.class);
         QueryBuilder<DatasetCreator> builder =
             repository.queryBuilder(DatasetCreator.class);
         builder.and(
@@ -126,14 +122,10 @@ public class DatasetCreatorService extends LadaService {
         @PathParam("id") Integer id,
         @Valid DatasetCreator datensatzerzeuger
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
             datensatzerzeuger,
             RequestMethod.PUT,
-            DatasetCreator.class)
-        ) {
-            return new Response(
-                false, StatusCodes.NOT_ALLOWED, datensatzerzeuger);
-        }
+            DatasetCreator.class);
         QueryBuilder<DatasetCreator> builder =
             repository.queryBuilder(DatasetCreator.class);
         builder.and(
@@ -157,15 +149,10 @@ public class DatasetCreatorService extends LadaService {
     ) {
         DatasetCreator datensatzerzeuger = repository.getByIdPlain(
             DatasetCreator.class, id);
-        if (datensatzerzeuger == null
-            || !authorization.isAuthorized(
-                datensatzerzeuger,
-                RequestMethod.DELETE,
-                DatasetCreator.class
-            )
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            datensatzerzeuger,
+            RequestMethod.DELETE,
+            DatasetCreator.class);
         return repository.delete(datensatzerzeuger);
     }
 }

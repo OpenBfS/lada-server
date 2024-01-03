@@ -15,6 +15,7 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -151,12 +152,13 @@ public class StatusProtService extends LadaService {
         }
 
         // Is user authorized to edit status at all?
+        // TODO: Move to authorization
         Response r = authorization.filter(
             new Response(true, StatusCodes.OK, messung),
             Measm.class);
         Measm filteredMessung = (Measm) r.getData();
         if (!filteredMessung.getStatusEdit()) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, status);
+            throw new ForbiddenException();
         }
 
         if (messung.getStatus() == null) {
@@ -172,6 +174,7 @@ public class StatusProtService extends LadaService {
 
             // Check if the user is allowed to change to the requested
             // status_kombi
+            // TODO: Move to authorization
             if (userInfo.getFunktionenForMst(
                     status.getMeasFacilId()).contains(
                         newKombi.getStatusLev().getId())
@@ -193,8 +196,7 @@ public class StatusProtService extends LadaService {
                     return setNewStatus(status, newKombi, messung);
                 }
             } else {
-                // Not allowed.
-                return new Response(false, StatusCodes.NOT_ALLOWED, status);
+                throw new ForbiddenException();
             }
         }
     }

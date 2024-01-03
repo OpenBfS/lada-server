@@ -104,13 +104,10 @@ public class SampleSpecifMeasValService extends LadaService {
     public Response create(
         @Valid SampleSpecifMeasVal zusatzwert
     ) {
-        if (!authorization.isAuthorized(
-                zusatzwert,
-                RequestMethod.POST,
-                SampleSpecifMeasVal.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            zusatzwert,
+            RequestMethod.POST,
+            SampleSpecifMeasVal.class);
 
         // TODO: perform validation to avoid violating database constraints
         return authorization.filter(
@@ -129,13 +126,10 @@ public class SampleSpecifMeasValService extends LadaService {
         @PathParam("id") Integer id,
         @Valid SampleSpecifMeasVal zusatzwert
     ) {
-        if (!authorization.isAuthorized(
-                zusatzwert,
-                RequestMethod.PUT,
-                SampleSpecifMeasVal.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            zusatzwert,
+            RequestMethod.PUT,
+            SampleSpecifMeasVal.class);
         if (lock.isLocked(zusatzwert)) {
             return new Response(false, StatusCodes.CHANGED_VALUE, null);
         }
@@ -156,14 +150,12 @@ public class SampleSpecifMeasValService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        SampleSpecifMeasVal obj = repository.getByIdPlain(SampleSpecifMeasVal.class, id);
-        if (!authorization.isAuthorized(
-                obj,
-                RequestMethod.DELETE,
-                SampleSpecifMeasVal.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        SampleSpecifMeasVal obj = repository.getByIdPlain(
+            SampleSpecifMeasVal.class, id);
+        authorization.authorize(
+            obj,
+            RequestMethod.DELETE,
+            SampleSpecifMeasVal.class);
         if (lock.isLocked(obj)) {
             return new Response(false, StatusCodes.CHANGED_VALUE, null);
         }
