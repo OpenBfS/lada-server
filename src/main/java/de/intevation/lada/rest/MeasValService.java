@@ -173,9 +173,7 @@ public class MeasValService extends LadaService {
                 messwert,
                 RequestMethod.PUT,
                 MeasVal.class);
-        if (lock.isLocked(messwert)) {
-            return new Response(false, StatusCodes.CHANGED_VALUE, null);
-        }
+        lock.isLocked(messwert);
         validator.validate(messwert);
         if (messwert.hasErrors()) {
             return new Response(false, StatusCodes.ERROR_VALIDATION, messwert);
@@ -229,9 +227,7 @@ public class MeasValService extends LadaService {
                 messwert,
                 RequestMethod.PUT,
                 MeasVal.class);
-            if (lock.isLocked(messwert)) {
-                return new Response(false, StatusCodes.CHANGED_VALUE, null);
-            }
+            lock.isLocked(messwert);
             validator.validate(messwert);
             if (messwert.hasErrors()) {
                 return new Response(
@@ -263,9 +259,7 @@ public class MeasValService extends LadaService {
             messwertObj,
             RequestMethod.DELETE,
             MeasVal.class);
-        if (lock.isLocked(messwertObj)) {
-            return new Response(false, StatusCodes.NO_ACCESS, null);
-        }
+        lock.isLocked(messwertObj);
         /* Delete the messwert object*/
         return repository.delete(messwertObj);
     }

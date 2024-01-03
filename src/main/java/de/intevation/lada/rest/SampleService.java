@@ -288,9 +288,7 @@ public class SampleService extends LadaService {
             probe,
             RequestMethod.PUT,
             Sample.class);
-        if (lock.isLocked(probe)) {
-            return new Response(false, StatusCodes.CHANGED_VALUE, null);
-        }
+        lock.isLocked(probe);
         if (probe.getEnvMediumId() == null
             || probe.getEnvMediumId().isEmpty()
         ) {

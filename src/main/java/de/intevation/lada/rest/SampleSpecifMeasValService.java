@@ -27,7 +27,6 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -130,9 +129,7 @@ public class SampleSpecifMeasValService extends LadaService {
             zusatzwert,
             RequestMethod.PUT,
             SampleSpecifMeasVal.class);
-        if (lock.isLocked(zusatzwert)) {
-            return new Response(false, StatusCodes.CHANGED_VALUE, null);
-        }
+        lock.isLocked(zusatzwert);
 
         return authorization.filter(
             repository.update(zusatzwert),
@@ -156,9 +153,7 @@ public class SampleSpecifMeasValService extends LadaService {
             obj,
             RequestMethod.DELETE,
             SampleSpecifMeasVal.class);
-        if (lock.isLocked(obj)) {
-            return new Response(false, StatusCodes.CHANGED_VALUE, null);
-        }
+        lock.isLocked(obj);
         /* Delete the object*/
         return repository.delete(obj);
     }

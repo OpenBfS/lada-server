@@ -152,9 +152,7 @@ public class MeasmService extends LadaService {
             messung,
             RequestMethod.PUT,
             Measm.class);
-        if (lock.isLocked(messung)) {
-            return new Response(false, StatusCodes.CHANGED_VALUE, null);
-        }
+        lock.isLocked(messung);
         validator.validate(messung);
         if (messung.hasErrors()) {
             return new Response(false, StatusCodes.ERROR_VALIDATION, messung);
@@ -183,9 +181,7 @@ public class MeasmService extends LadaService {
             messungObj,
             RequestMethod.DELETE,
             Measm.class);
-        if (lock.isLocked(messungObj)) {
-            return new Response(false, StatusCodes.CHANGED_VALUE, null);
-        }
+        lock.isLocked(messungObj);
 
         /* Delete the messung object*/
         return repository.delete(messungObj);

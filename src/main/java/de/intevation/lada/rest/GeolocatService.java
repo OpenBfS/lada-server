@@ -152,9 +152,7 @@ public class GeolocatService extends LadaService {
                 ort,
                 RequestMethod.PUT,
                 Geolocat.class);
-        if (lock.isLocked(ort)) {
-            return new Response(false, StatusCodes.CHANGED_VALUE, null);
-        }
+        lock.isLocked(ort);
 
         validator.validate(ort);
         if (ort.hasErrors()) {
@@ -184,9 +182,7 @@ public class GeolocatService extends LadaService {
             ortObj,
             RequestMethod.PUT,
             Geolocat.class);
-        if (lock.isLocked(ortObj)) {
-            return new Response(false, StatusCodes.CHANGED_VALUE, null);
-        }
+        lock.isLocked(ortObj);
 
         return repository.delete(ortObj);
     }

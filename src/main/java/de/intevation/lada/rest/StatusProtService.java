@@ -147,9 +147,7 @@ public class StatusProtService extends LadaService {
         UserInfo userInfo = authorization.getInfo();
         Measm messung = repository.getByIdPlain(
             Measm.class, status.getMeasmId());
-        if (lock.isLocked(messung)) {
-            return new Response(false, StatusCodes.CHANGED_VALUE, status);
-        }
+        lock.isLocked(messung);
 
         // Is user authorized to edit status at all?
         // TODO: Move to authorization
