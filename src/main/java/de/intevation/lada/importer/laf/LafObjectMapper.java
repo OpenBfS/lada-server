@@ -234,7 +234,6 @@ public class LafObjectMapper {
                  : object.getAttributes().entrySet()) {
             addProbeAttribute(attribute, probe, netzbetreiberId);
         }
-        configMapper.applyConfigs(probe);
         if (probe.getApprLabId() == null) {
             probe.setApprLabId(probe.getMeasFacilId());
         }
@@ -716,7 +715,6 @@ public class LafObjectMapper {
         ) {
             addMessungAttribute(attribute, messung);
         }
-        configMapper.applyConfigs(messung);
         // Check if the user is authorized to create the object
         if (
             !authorizer.isAuthorized(messung, RequestMethod.POST, Measm.class)
@@ -943,7 +941,6 @@ public class LafObjectMapper {
                 Timestamp.from(
                     Instant.now().atZone(ZoneOffset.UTC).toInstant()));
         }
-        configMapper.applyConfigs(kommentar);
         if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
             currentWarnings.add(
                 new ReportItem(
@@ -1017,7 +1014,6 @@ public class LafObjectMapper {
         }
         zusatzwert.setSampleSpecifId(zusatz.get(0).getId());
 
-        configMapper.applyConfigs(zusatzwert);
         return zusatzwert;
     }
 
@@ -1124,7 +1120,6 @@ public class LafObjectMapper {
             messwert.setIsThreshold(
                 attributes.get("GRENZWERT").equalsIgnoreCase("J"));
         }
-        configMapper.applyConfigs(messwert);
         if (messwert.getLessThanLOD() != null
             && messwert.getDetectLim() == null
         ) {
@@ -1196,7 +1191,6 @@ public class LafObjectMapper {
             return null;
         }
         kommentar.setText(attributes.get("TEXT"));
-        configMapper.applyConfigs(kommentar);
         if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
             currentWarnings.add(
                 new ReportItem(
@@ -1592,7 +1586,6 @@ public class LafObjectMapper {
         if (rawOrt.containsKey(type + "_ORTS_ZUSATZTEXT")) {
             ort.setAddSiteText(rawOrt.get(type + "_ORTS_ZUSATZTEXT"));
         }
-        configMapper.applyConfigs(ort);
         return ort;
     }
 
@@ -1602,7 +1595,6 @@ public class LafObjectMapper {
         Sample probe
     ) {
         Site o = new Site();
-        configMapper.applyConfigs(o);
         // If laf contains coordinates, find a ort with matching coordinates or
         // create one.
         if ((attributes.get(type + "KOORDINATEN_ART") != null

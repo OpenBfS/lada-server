@@ -904,7 +904,6 @@ INSERT INTO tz (id, name) VALUES
 
 CREATE TABLE import_conf (
     id serial PRIMARY KEY,
-    name character varying(30) NOT NULL,
     attribute character varying(30) NOT NULL,
     meas_facil_id character varying(5) NOT NULL REFERENCES meas_facil,
     from_val character varying(100),
@@ -916,7 +915,7 @@ CREATE TABLE import_conf (
     CHECK(action <> 'TRANSFORM'
         -- hexadecimal unicode code points expected
         OR from_val SIMILAR TO '[0-9a-f]+' AND to_val SIMILAR TO '[0-9a-f]+'),
-    UNIQUE(meas_facil_id, name, attribute, action, from_val)
+    UNIQUE(meas_facil_id, attribute, action, from_val)
 );
 CREATE TRIGGER last_mod_import_conf BEFORE UPDATE ON master.import_conf FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 

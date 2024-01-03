@@ -321,13 +321,7 @@ Eine Konfiguration wird in der Datenbanktabelle "import_config" im Schema
 "master" angelegt und hat die folgenden Felder:
 
 * id (serial): Primary Key
-* name (character varying(30)): Name der VIEW mit deutscher Übersetzung der
-  Datenbank-Tabelle, z.B. bei einer Probe "probe".
-  Wenn "attribute" auf einen in LafObjectListener und LafObjectMapper verwendeten
-  Attribut-Schlüssel verweist, ist der Inhalt bedeutungslos.
-* attribute (character varying(30)): Name des Datenbank-Attributes, das bearbeitet
-  werden soll in CamelCase-Schreibweise (z.B. "mainSampleId"),
-  oder ein in LafObjectListener und LafObjectMapper
+* attribute (character varying(30)): Ein in LafObjectListener und LafObjectMapper
   verwendeter Attribut-Schlüssel (z.B. "HAUPTPROBENNUMMER" oder "ZEITBASIS",
   Groß-/Kleinschreibung wird ignoriert), wobei zu beachten ist:
   1.) Mehrfach verwendete Schlüssel (z.B. "MST_ID" sowohl für Proben-

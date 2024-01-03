@@ -36,8 +36,6 @@ public class ImportConf implements Serializable {
 
     private String measFacilId;
 
-    private String name;
-
     private String toVal;
 
     @Column(insertable = false)
@@ -85,14 +83,6 @@ public class ImportConf implements Serializable {
 
     public void setMeasFacilId(String measFacilId) {
         this.measFacilId = measFacilId;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getToVal() {

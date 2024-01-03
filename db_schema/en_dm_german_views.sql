@@ -520,7 +520,6 @@ FROM master.grid_col_conf;
 
 CREATE VIEW stamm.importer_config AS SELECT
 	id,
-	name,
 	attribute,
 	meas_facil_id AS mst_id,
 	from_val AS from_value,

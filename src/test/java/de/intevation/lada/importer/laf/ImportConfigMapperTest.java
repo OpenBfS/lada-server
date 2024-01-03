@@ -14,7 +14,6 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.Action;
 import de.intevation.lada.model.master.ImportConf;
 
@@ -22,25 +21,6 @@ import de.intevation.lada.model.master.ImportConf;
  * Unit tests for ImportConfigMapper.
  */
 public class ImportConfigMapperTest {
-
-    /**
-     * Test applying default to sample object.
-     */
-    @Test
-    public void applyConfigDefaultSampleTest() {
-        final String expected = "01010";
-
-        ImportConf config = new ImportConf();
-        config.setName("probe");
-        config.setAttribute("measFacilId");
-        config.setToVal(expected);
-        config.setAction(Action.DEFAULT);
-        ImportConfigMapper mapper = new ImportConfigMapper(List.of(config));
-
-        Sample sample = new Sample();
-        mapper.applyConfigs(sample);
-        Assert.assertEquals(expected, sample.getMeasFacilId());
-    }
 
     /**
      * Test mapper attribute default.
