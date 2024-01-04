@@ -25,7 +25,6 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import org.hibernate.annotations.JdbcTypeCode;
@@ -103,7 +102,6 @@ public class Site extends BaseModel implements Serializable {
     private String networkId;
 
     @Size(max = 20)
-    @NotNull
     private String extId;
 
 
