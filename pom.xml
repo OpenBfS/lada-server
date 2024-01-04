@@ -620,7 +620,7 @@
     <repositories>
         <repository>
             <id>OSGEO Release Repo</id>
-            <url>https://repo.osgeo.org/repository/release</url>
+            <url>https://repo.osgeo.org/repository/release/</url>
         </repository>
         <!-- See https://github.com/wildfly/wildfly/pull/16453 -->
         <repository>
