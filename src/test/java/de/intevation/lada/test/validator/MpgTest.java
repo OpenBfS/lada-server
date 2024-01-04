@@ -12,13 +12,14 @@ import java.util.Set;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 /**
  * Test validation rules for Mpg objects.
@@ -62,6 +63,42 @@ public class MpgTest {
     private Validator<Mpg> validator;
 
     /**
+     * Test mpg objects with valid start and end date below minimum value.
+     */
+    public void validStartEndDateBelowMin() {
+        Mpg mpg = new Mpg();
+        mpg.setValidStartDate(DOY_MIN - 1);
+        mpg.setValidEndDate(DOY_MIN - 1);
+
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
+        Assert.assertTrue(mpg.getErrors().containsKey(VALID_START_DATE));
+        Assert.assertTrue(mpg.getErrors().containsKey(VALID_END_DATE));
+        Assert.assertTrue(mpg.getErrors()
+            .get(VALID_START_DATE).contains(StatusCodes.VALUE_OUTSIDE_RANGE));
+        Assert.assertTrue(mpg.getErrors()
+            .get(VALID_END_DATE).contains(StatusCodes.VALUE_OUTSIDE_RANGE));
+    }
+
+    /**
+     * Test mpg objects with valid start and end date above maximum value.
+     */
+    public void validStartEndDateAboveMax() {
+        Mpg mpg = new Mpg();
+        mpg.setValidStartDate(DOY_MAX + 1);
+        mpg.setValidEndDate(DOY_MAX + 1);
+
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
+        Assert.assertTrue(mpg.getErrors().containsKey(VALID_START_DATE));
+        Assert.assertTrue(mpg.getErrors().containsKey(VALID_END_DATE));
+        Assert.assertTrue(mpg.getErrors()
+            .get(VALID_START_DATE).contains(StatusCodes.VALUE_OUTSIDE_RANGE));
+        Assert.assertTrue(mpg.getErrors()
+            .get(VALID_END_DATE).contains(StatusCodes.VALUE_OUTSIDE_RANGE));
+    }
+
+    /**
      * Test mpg objects with proper valid start and end date.
      */
     public void validStartEndDate() {
@@ -69,11 +106,11 @@ public class MpgTest {
         mpg.setValidStartDate(DOY_MAX - 1);
         mpg.setValidEndDate(DOY_MAX - 1);
 
-        Violation violation = validator.validate(mpg);
-        if (violation.hasErrors()) {
-            Assert.assertFalse(violation.getErrors()
+        validator.validate(mpg);
+        if (mpg.hasErrors()) {
+            Assert.assertFalse(mpg.getErrors()
                 .containsKey(VALID_START_DATE));
-            Assert.assertFalse(violation.getErrors()
+            Assert.assertFalse(mpg.getErrors()
             .containsKey(VALID_END_DATE));
         }
     }
@@ -94,11 +131,11 @@ public class MpgTest {
         mpg.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
         mpg.setSampleMethId(EXISTING_SAMPLE_METH_ID);
 
-        Violation violation = validator.validate(mpg);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors()
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
+        Assert.assertTrue(mpg.getErrors()
             .containsKey(SAMPLE_PD_START_DATE));
-        Assert.assertTrue(violation.getErrors()
+        Assert.assertTrue(mpg.getErrors()
             .get(SAMPLE_PD_START_DATE)
             .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
     }
@@ -118,11 +155,11 @@ public class MpgTest {
         mpg.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
         mpg.setSampleMethId(EXISTING_SAMPLE_METH_ID);
 
-        Violation violation = validator.validate(mpg);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors()
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
+        Assert.assertTrue(mpg.getErrors()
             .containsKey(SAMPLE_PD_START_DATE));
-        Assert.assertTrue(violation.getErrors()
+        Assert.assertTrue(mpg.getErrors()
             .get(SAMPLE_PD_START_DATE)
             .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
     }
@@ -143,11 +180,11 @@ public class MpgTest {
         mpg.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
         mpg.setSampleMethId(EXISTING_SAMPLE_METH_ID);
 
-        Violation violation = validator.validate(mpg);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors()
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
+        Assert.assertTrue(mpg.getErrors()
             .containsKey(SAMPLE_PD_END_DATE));
-        Assert.assertTrue(violation.getErrors()
+        Assert.assertTrue(mpg.getErrors()
             .get(SAMPLE_PD_END_DATE)
             .contains(String.valueOf((StatusCodes.VALUE_OUTSIDE_RANGE))));
     }
@@ -167,11 +204,11 @@ public class MpgTest {
         mpg.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
         mpg.setSampleMethId(EXISTING_SAMPLE_METH_ID);
 
-        Violation violation = validator.validate(mpg);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors()
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
+        Assert.assertTrue(mpg.getErrors()
             .containsKey(SAMPLE_PD_END_DATE));
-        Assert.assertTrue(violation.getErrors()
+        Assert.assertTrue(mpg.getErrors()
             .get(SAMPLE_PD_END_DATE)
             .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
     }
@@ -193,11 +230,11 @@ public class MpgTest {
         mpg.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
         mpg.setSampleMethId(EXISTING_SAMPLE_METH_ID);
 
-        Violation violation = validator.validate(mpg);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors()
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
+        Assert.assertTrue(mpg.getErrors()
             .containsKey(SAMPLE_PD_OFFSET));
-        Assert.assertTrue(violation.getErrors()
+        Assert.assertTrue(mpg.getErrors()
             .get(SAMPLE_PD_OFFSET)
             .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
     }
@@ -213,19 +250,19 @@ public class MpgTest {
         mpg.setSamplePdStartDate(PD_2);
         mpg.setSamplePdEndDate(PD_3);
         mpg.setSamplePdOffset(DOY_MAX - 1);
-        Violation violation = validator.validate(mpg);
-        if (violation.hasErrors()) {
+        validator.validate(mpg);
+        if (mpg.hasErrors()) {
             Assert.assertTrue(
-                !violation.getErrors().containsKey(SAMPLE_PD_START_DATE)
-                || !violation.getErrors().get(SAMPLE_PD_START_DATE)
+                !mpg.getErrors().containsKey(SAMPLE_PD_START_DATE)
+                || !mpg.getErrors().get(SAMPLE_PD_START_DATE)
                     .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
             Assert.assertTrue(
-                !violation.getErrors().containsKey(SAMPLE_PD_END_DATE)
-                || !violation.getErrors().get(SAMPLE_PD_END_DATE)
+                !mpg.getErrors().containsKey(SAMPLE_PD_END_DATE)
+                || !mpg.getErrors().get(SAMPLE_PD_END_DATE)
                     .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
             Assert.assertTrue(
-                !violation.getErrors().containsKey(SAMPLE_PD_OFFSET)
-                || !violation.getErrors().get(SAMPLE_PD_OFFSET)
+                !mpg.getErrors().containsKey(SAMPLE_PD_OFFSET)
+                || !mpg.getErrors().get(SAMPLE_PD_OFFSET)
                     .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
         }
     }
@@ -245,11 +282,11 @@ public class MpgTest {
         mpg.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
         mpg.setSampleMethId(EXISTING_SAMPLE_METH_ID);
 
-        Violation violation = validator.validate(mpg);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors()
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
+        Assert.assertTrue(mpg.getErrors()
             .containsKey(SAMPLE_PD_START_DATE));
-        Assert.assertTrue(violation.getErrors()
+        Assert.assertTrue(mpg.getErrors()
             .get(SAMPLE_PD_START_DATE)
             .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
     }
@@ -269,11 +306,11 @@ public class MpgTest {
         mpg.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
         mpg.setSampleMethId(EXISTING_SAMPLE_METH_ID);
 
-        Violation violation = validator.validate(mpg);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors()
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
+        Assert.assertTrue(mpg.getErrors()
             .containsKey(SAMPLE_PD_END_DATE));
-        Assert.assertTrue(violation.getErrors()
+        Assert.assertTrue(mpg.getErrors()
             .get(SAMPLE_PD_END_DATE)
             .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
     }
@@ -295,13 +332,31 @@ public class MpgTest {
         mpg.setSampleMethId(EXISTING_SAMPLE_METH_ID);
 
 
-        Violation violation = validator.validate(mpg);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors()
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
+        Assert.assertTrue(mpg.getErrors()
             .containsKey(SAMPLE_PD_OFFSET));
-        Assert.assertTrue(violation.getErrors()
-            .get(SAMPLE_PD_OFFSET)
-            .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+        Assert.assertTrue(mpg.getErrors().get(SAMPLE_PD_OFFSET).contains(
+                String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+    }
+
+    /**
+     * Test mpg with invalid samplePd.
+     */
+    public void invalidSamplePd() {
+        Mpg mpg = new Mpg();
+        mpg.setSamplePd("X42");
+        mpg.setValidStartDate(DOM_MIN);
+        mpg.setValidEndDate(DOM_MAX);
+        mpg.setSamplePdStartDate(PD_1);
+        mpg.setSamplePdEndDate(PD_4);
+
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
+        Assert.assertTrue(mpg.getErrors()
+            .containsKey(SAMPLE_PD));
+        Assert.assertTrue(mpg.getErrors().get(SAMPLE_PD).contains(
+                String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
     }
 
     /**
@@ -319,13 +374,12 @@ public class MpgTest {
         mpg.setSamplePdStartDate(DOM_MAX + 1);
         mpg.setSamplePdEndDate(DOM_MAX);
 
-        Violation violation = validator.validate(mpg);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors()
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
+        Assert.assertTrue(mpg.getErrors()
             .containsKey(SAMPLE_PD_START_DATE));
-        Assert.assertTrue(violation.getErrors()
-            .get(SAMPLE_PD_START_DATE)
-            .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+        Assert.assertTrue(mpg.getErrors().get(SAMPLE_PD_START_DATE).contains(
+                String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
     }
 
     /**
@@ -343,11 +397,11 @@ public class MpgTest {
         mpg.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
         mpg.setSampleMethId(EXISTING_SAMPLE_METH_ID);
 
-        Violation violation = validator.validate(mpg);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors()
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
+        Assert.assertTrue(mpg.getErrors()
             .containsKey(SAMPLE_PD_END_DATE));
-        Assert.assertTrue(violation.getErrors()
+        Assert.assertTrue(mpg.getErrors()
             .get(SAMPLE_PD_END_DATE)
             .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
     }
@@ -368,11 +422,11 @@ public class MpgTest {
         mpg.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
         mpg.setSampleMethId(EXISTING_SAMPLE_METH_ID);
 
-        Violation violation = validator.validate(mpg);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors()
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
+        Assert.assertTrue(mpg.getErrors()
             .containsKey(SAMPLE_PD_OFFSET));
-        Assert.assertTrue(violation.getErrors()
+        Assert.assertTrue(mpg.getErrors()
             .get(SAMPLE_PD_OFFSET)
             .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
     }
@@ -392,18 +446,18 @@ public class MpgTest {
         mpg.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
         mpg.setSampleMethId(EXISTING_SAMPLE_METH_ID);
 
-        Violation violation = validator.validate(mpg);
-        Assert.assertTrue(violation.hasErrors());
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
 
-        Assert.assertTrue(violation.getErrors()
+        Assert.assertTrue(mpg.getErrors()
             .containsKey(SAMPLE_PD_START_DATE));
-        Assert.assertTrue(violation.getErrors()
+        Assert.assertTrue(mpg.getErrors()
             .get(SAMPLE_PD_START_DATE)
             .contains(String.valueOf(StatusCodes.DATE_BEGIN_AFTER_END)));
 
-        Assert.assertTrue(violation.getErrors()
+        Assert.assertTrue(mpg.getErrors()
             .containsKey(SAMPLE_PD_END_DATE));
-        Assert.assertTrue(violation.getErrors()
+        Assert.assertTrue(mpg.getErrors()
             .get(SAMPLE_PD_END_DATE)
             .contains(String.valueOf(StatusCodes.DATE_BEGIN_AFTER_END)));
     }
@@ -413,7 +467,8 @@ public class MpgTest {
      */
     public void sampleSpecifDoesNotExist() {
         SampleSpecif spec = new SampleSpecif();
-        spec.setId("A99");
+        final String specId = "A99";
+        spec.setId(specId);
         spec.setName("name");
         spec.setExtId("A");
         Mpg mpg = new Mpg();
@@ -429,11 +484,12 @@ public class MpgTest {
         mpg.setSamplePdStartDate(DOM_MIN);
         mpg.setSamplePdEndDate(DOM_MAX);
 
-        Violation violation = validator.validate(mpg);
-
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors()
-            .containsKey(SAMPLE_SPECIFS_FK_ARRAY));
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
+        MatcherAssert.assertThat(mpg.getErrors().keySet(),
+            CoreMatchers.hasItem(SAMPLE_SPECIFS_FK_ARRAY));
+        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_SPECIFS_FK_ARRAY),
+            CoreMatchers.hasItem("'" + specId + "' is no valid primary key"));
     }
 
     /**
@@ -453,11 +509,11 @@ public class MpgTest {
         mpg.setValidEndDate(DOM_MAX);
         mpg.setSamplePdStartDate(DOM_MIN);
         mpg.setSamplePdEndDate(DOM_MAX);
-        Violation violation = validator.validate(mpg);
-        if (violation.hasErrors()) {
+        validator.validate(mpg);
+        if (mpg.hasErrors()) {
             Assert.assertTrue(
-                !violation.getErrors().containsKey(SAMPLE_SPECIFS)
-                || !violation.getErrors().get(SAMPLE_SPECIFS)
+                !mpg.getErrors().containsKey(SAMPLE_SPECIFS)
+                || !mpg.getErrors().get(SAMPLE_SPECIFS)
                     .contains(String.valueOf(StatusCodes.NOT_EXISTING)));
         }
     }
@@ -480,10 +536,12 @@ public class MpgTest {
         mpg.setSamplePdStartDate(DOM_MIN);
         mpg.setSamplePdEndDate(DOM_MAX);
 
-        Violation violation = validator.validate(mpg);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors()
-            .containsKey(ENV_DESCRIP_DISPLAY));
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasErrors());
+        MatcherAssert.assertThat(mpg.getErrors().keySet(),
+            CoreMatchers.hasItem(ENV_DESCRIP_DISPLAY));
+        MatcherAssert.assertThat(mpg.getErrors().get(ENV_DESCRIP_DISPLAY),
+            CoreMatchers.hasItem("must match \"D:( [0-9][0-9]){12}\""));
     }
 
     /**
@@ -504,10 +562,10 @@ public class MpgTest {
         mpg.setValidEndDate(DOM_MAX);
         mpg.setSamplePdStartDate(DOM_MIN);
         mpg.setSamplePdEndDate(DOM_MAX);
-        Violation violation = validator.validate(mpg);
-        if (violation.hasWarnings()) {
+        validator.validate(mpg);
+        if (mpg.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey("envMediumId#N71"));
+                mpg.getWarnings().containsKey("envMediumId#N71"));
         }
     }
 
@@ -529,11 +587,11 @@ public class MpgTest {
         mpg.setSamplePdStartDate(DOM_MIN);
         mpg.setSamplePdEndDate(DOM_MAX);
         String warningKey = "envMediumId#L54";
-        Violation violation = validator.validate(mpg);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(mpg);
+        Assert.assertTrue(mpg.hasWarnings());
+        Assert.assertTrue(mpg.getWarnings()
             .containsKey(warningKey));
-        Assert.assertTrue(violation.getWarnings().get(warningKey)
+        Assert.assertTrue(mpg.getWarnings().get(warningKey)
             .contains(String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
     }
 

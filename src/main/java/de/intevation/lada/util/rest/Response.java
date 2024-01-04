@@ -8,9 +8,6 @@
 package de.intevation.lada.util.rest;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
 * Response object storing information about success, warnings, errors and
@@ -25,9 +22,6 @@ public class Response implements Serializable {
     private Boolean success;
     private String message;
     private Object data;
-    private Map<String, List<String>> errors;
-    private Map<String, List<String>>warnings;
-    private Map<String, List<Integer>> notifications;
     private int totalCount;
 
     /**
@@ -41,9 +35,6 @@ public class Response implements Serializable {
         this.success = s;
         this.message = Integer.toString(code);
         this.data = d;
-        this.errors = new HashMap<>();
-        this.warnings = new HashMap<>();
-        this.notifications = new HashMap<>();
         this.totalCount = 0;
     }
 
@@ -58,9 +49,6 @@ public class Response implements Serializable {
         this.success = s;
         this.message = Integer.toString(code);
         this.data = d;
-        this.errors = new HashMap<>();
-        this.warnings = new HashMap<>();
-        this.notifications = new HashMap<>();
         this.totalCount = count;
     }
 
@@ -86,32 +74,6 @@ public class Response implements Serializable {
 
     public void setData(Object data) {
         this.data = data;
-    }
-
-    public Map<String, List<String>> getErrors() {
-        return errors;
-    }
-
-    public void setErrors(Map<String, List<String>> errors) {
-        this.errors.putAll(errors);
-    }
-
-    public Map<String, List<String>> getWarnings() {
-        return warnings;
-    }
-
-    public void setWarnings(Map<String, List<String>> warnings) {
-        this.warnings.putAll(warnings);
-    }
-
-    public Map<String, List<Integer>> getNotifications() {
-      return notifications;
-    }
-
-    public void setNotifications(
-        Map<String, List<Integer>>  notifications
-    ) {
-      this.notifications.putAll(notifications);
     }
 
     /**

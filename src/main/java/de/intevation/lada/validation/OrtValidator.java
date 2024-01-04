@@ -31,8 +31,8 @@ public class OrtValidator extends Validator<Site> {
     private Instance<Rule> rules;
 
     @Override
-    public Violation validate(Object object) {
-        return validate((Site) object, rules);
+    public void validate(Object object) {
+        validate((Site) object, rules);
     }
 
 }

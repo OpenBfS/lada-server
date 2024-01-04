@@ -16,7 +16,6 @@ import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 @Transactional
 public class GeolocatTest {
@@ -49,9 +48,10 @@ public class GeolocatTest {
         loc.setSampleId(SAMPLE_WITH_E_GEOLOCAT);
         loc.setSiteId(EXISTITING_SITE_ID);
 
-        Violation violation = sampleVal.validate(loc);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey(SAMPLE_ID));
+        // TODO: Changed to error when and why?
+        sampleVal.validate(loc);
+        Assert.assertTrue(loc.hasErrors());
+        Assert.assertTrue(loc.getErrors().containsKey(SAMPLE_ID));
     }
 
     /**
@@ -63,8 +63,8 @@ public class GeolocatTest {
         loc.setSampleId(SAMPLE_WITHOUT_E_GEOLOCAT);
         loc.setSiteId(EXISTITING_SITE_ID);
 
-        Violation violation = sampleVal.validate(loc);
-        Assert.assertFalse(violation.hasErrors());
+        sampleVal.validate(loc);
+        Assert.assertFalse(loc.hasErrors());
     }
 
     /**
@@ -76,12 +76,11 @@ public class GeolocatTest {
         loc.setMpgId(MPG_WITH_E_GEOLOCAT);
         loc.setSiteId(EXISTITING_SITE_ID);
 
-        Violation violation = mpgVal.validate(loc);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(TYPE_REGULATION));
-        Assert.assertTrue(violation.getWarnings()
-                .get(TYPE_REGULATION).contains(
-                    String.valueOf(StatusCodes.VALUE_AMBIGOUS)));
+        mpgVal.validate(loc);
+        Assert.assertTrue(loc.hasWarnings());
+        Assert.assertTrue(loc.getWarnings().containsKey(TYPE_REGULATION));
+        Assert.assertTrue(loc.getWarnings().get(TYPE_REGULATION).contains(
+                String.valueOf(StatusCodes.VALUE_AMBIGOUS)));
     }
 
     /**
@@ -92,8 +91,7 @@ public class GeolocatTest {
         loc.setTypeRegulation(TYPE_REGULATION_E);
         loc.setMpgId(MPG_WITHOUT_E_GEOLOCAT);
         loc.setSiteId(EXISTITING_SITE_ID);
-
-        Violation violation = mpgVal.validate(loc);
-        Assert.assertFalse(violation.hasErrors());
+        mpgVal.validate(loc);
+        Assert.assertFalse(loc.hasErrors());
     }
 }

@@ -24,34 +24,33 @@ SET search_path = master, pg_catalog;
 -- Data for Name: import_conf; Type: TABLE DATA; Schema: stammdaten; Owner: postgres
 --
 
-COPY import_conf (id, name, attribute, meas_facil_id, from_val, to_val, action) FROM stdin;
-1	messwert	messEinheit	06010	BQ	Bq	CONVERT
-2	messwert	messEinheit	06010	BQ/KG	Bq/kg	CONVERT
-3	messwert	messEinheit	06010	Bq/kgFM	Bq/kg(FM)	CONVERT
-4	messwert	messEinheit	06010	BQ/kgFM	Bq/kg(FM)	CONVERT
-5	messwert	messEinheit	06010	Bq/KGFM	Bq/kg(FM)	CONVERT
-6	messwert	messEinheit	06010	Bq/kgGR	Bq/kg(GR)	CONVERT
-7	messwert	messEinheit	06010	BQ/KGGR	Bq/kg(GR)	CONVERT
-8	messwert	messEinheit	06010	Bq/kgTM	Bq/kg(TM)	CONVERT
-9	messwert	messEinheit	06010	BQ/KGTM	Bq/kg(TM)	CONVERT
-10	messwert	messEinheit	06010	Bq/m2	Bq/m²	CONVERT
-11	messwert	messEinheit	06010	Bq/m3	Bq/m³	CONVERT
-12	messwert	messEinheit	06010	KBQ/Kg	kBq/kg	CONVERT
-13	messwert	messEinheit	06010	KBQ/KG	kBq/kg	CONVERT
-14	messwert	messEinheit	06010	KBQ/Kgtm	kBq/kg(TM)	CONVERT
-16	messwert	messgroesse	06010	20	2d	TRANSFORM
-17	probe	envDescripDisplay	06010	2d	30	TRANSFORM
-18	probe	deskriptoren	06010	2d	30	TRANSFORM
-19	messwert	messgroesse	06060	20	2d	TRANSFORM
-20	messwert	messEinheit	11010	Bq/d*P	Bq/(d*p)	CONVERT
-21	messwert	messEinheit	11010	Bq/ d*P	Bq/(d*p)	CONVERT
-22	messwert	messEinheit	11010	Bq/ (d*P)	Bq/(d*p)	CONVERT
-23	messwert	messEinheit	11010	Bq/(d*P)	Bq/(d*p)	CONVERT
-25	messwert	messgroesse	11010	20	2d	TRANSFORM
-26	probe	messstelle	12010	\N	12020	DEFAULT
-27	messwert	messgroesse	12010	20	2d	TRANSFORM
-29	messwert	messgroesse	12020	20	2d	TRANSFORM
-30	dummy	zeitbasis	06010	\N	ges. Zeit	DEFAULT
+COPY import_conf (id, attribute, meas_facil_id, from_val, to_val, action) FROM stdin;
+1	messEinheit	06010	BQ	Bq	CONVERT
+2	messEinheit	06010	BQ/KG	Bq/kg	CONVERT
+3	messEinheit	06010	Bq/kgFM	Bq/kg(FM)	CONVERT
+4	messEinheit	06010	BQ/kgFM	Bq/kg(FM)	CONVERT
+5	messEinheit	06010	Bq/KGFM	Bq/kg(FM)	CONVERT
+6	messEinheit	06010	Bq/kgGR	Bq/kg(GR)	CONVERT
+7	messEinheit	06010	BQ/KGGR	Bq/kg(GR)	CONVERT
+8	messEinheit	06010	Bq/kgTM	Bq/kg(TM)	CONVERT
+9	messEinheit	06010	BQ/KGTM	Bq/kg(TM)	CONVERT
+10	messEinheit	06010	Bq/m2	Bq/m²	CONVERT
+11	messEinheit	06010	Bq/m3	Bq/m³	CONVERT
+12	messEinheit	06010	KBQ/Kg	kBq/kg	CONVERT
+13	messEinheit	06010	KBQ/KG	kBq/kg	CONVERT
+14	messEinheit	06010	KBQ/Kgtm	kBq/kg(TM)	CONVERT
+16	messgroesse	06010	20	2d	TRANSFORM
+18	deskriptoren	06010	2d	30	TRANSFORM
+19	messgroesse	06060	20	2d	TRANSFORM
+20	messEinheit	11010	Bq/d*P	Bq/(d*p)	CONVERT
+21	messEinheit	11010	Bq/ d*P	Bq/(d*p)	CONVERT
+22	messEinheit	11010	Bq/ (d*P)	Bq/(d*p)	CONVERT
+23	messEinheit	11010	Bq/(d*P)	Bq/(d*p)	CONVERT
+25	messgroesse	11010	20	2d	TRANSFORM
+26	messstelle	12010	\N	12020	DEFAULT
+27	messgroesse	12010	20	2d	TRANSFORM
+29	messgroesse	12020	20	2d	TRANSFORM
+30	zeitbasis	06010	\N	ges. Zeit	DEFAULT
 \.
 
 

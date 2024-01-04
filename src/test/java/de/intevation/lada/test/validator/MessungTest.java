@@ -23,7 +23,6 @@ import org.junit.Assert;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 /**
  * Test messung entities.
@@ -65,13 +64,13 @@ public class MessungTest {
      * Test nebenproben nr.
      */
     public void hasNebenprobenNr() {
-        Measm messung = new Measm();
-        messung.setMinSampleId("10R1");
-        messung.setSampleId(EXISTING_SAMPLE_ID);
-        Violation violation = validator.validate(messung);
-        if (violation.hasWarnings()) {
+        Measm measm = new Measm();
+        measm.setMinSampleId("10R1");
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        validator.validate(measm);
+        if (measm.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey(MIN_SAMPLE_ID));
+                measm.getWarnings().containsKey(MIN_SAMPLE_ID));
         }
     }
 
@@ -79,16 +78,16 @@ public class MessungTest {
      * Test without nebenproben nr.
      */
     public void hasNoNebenprobenNr() {
-        Measm messung = new Measm();
-        messung.setSampleId(EXISTING_SAMPLE_ID);
-        messung.setMmtId(EXISTING_MMT_ID);
-        Violation violation = validator.validate(messung);
-        Assert.assertTrue(violation.hasNotifications());
-        Assert.assertTrue(violation.getNotifications()
-            .containsKey(MIN_SAMPLE_ID));
-        Assert.assertTrue(
-            violation.getNotifications().get(MIN_SAMPLE_ID)
-                .contains(StatusCodes.VALUE_MISSING));
+        Measm measm = new Measm();
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        measm.setMmtId(EXISTING_MMT_ID);
+        validator.validate(measm);
+        Assert.assertTrue(measm.hasNotifications());
+        MatcherAssert.assertThat(measm.getNotifications().keySet(),
+            CoreMatchers.hasItem(MIN_SAMPLE_ID));
+        MatcherAssert.assertThat(
+            measm.getNotifications().get(MIN_SAMPLE_ID),
+            CoreMatchers.hasItem(StatusCodes.VALUE_MISSING));
     }
 
     /**
@@ -100,12 +99,12 @@ public class MessungTest {
         measm.setSampleId(EXISTING_SAMPLE_ID);
         measm.setMmtId(EXISTING_MMT_ID);
 
-        Violation violation = validator.validate(measm);
-        Assert.assertTrue(violation.hasNotifications());
-        Assert.assertTrue(violation.getNotifications()
+        validator.validate(measm);
+        Assert.assertTrue(measm.hasNotifications());
+        Assert.assertTrue(measm.getNotifications()
             .containsKey(MIN_SAMPLE_ID));
         Assert.assertTrue(
-            violation.getNotifications().get(MIN_SAMPLE_ID)
+            measm.getNotifications().get(MIN_SAMPLE_ID)
                 .contains(StatusCodes.VALUE_MISSING));
     }
 
@@ -117,13 +116,13 @@ public class MessungTest {
         messung.setMinSampleId(EXISTING_MIN_SAMPLE_ID);
         messung.setSampleId(EXISTING_SAMPLE_ID);
         messung.setMmtId(EXISTING_MMT_ID);
-        Violation violation = validator.validate(messung);
-        Assert.assertTrue(violation.hasErrors());
+        validator.validate(messung);
+        Assert.assertTrue(messung.hasErrors());
         MatcherAssert.assertThat(
-            violation.getErrors().keySet(),
+            messung.getErrors().keySet(),
             CoreMatchers.hasItem(MIN_SAMPLE_ID));
         MatcherAssert.assertThat(
-            violation.getErrors().get(MIN_SAMPLE_ID),
+            messung.getErrors().get(MIN_SAMPLE_ID),
             CoreMatchers.hasItem(
                 "Non-unique value combination for [minSampleId, sampleId]"));
     }
@@ -136,8 +135,8 @@ public class MessungTest {
         messung.setMinSampleId(MIN_SAMPLE_ID_00G2);
         messung.setSampleId(EXISTING_SAMPLE_ID);
         messung.setMmtId(EXISTING_MMT_ID);
-        Violation violation = validator.validate(messung);
-        Assert.assertFalse(violation.hasErrors());
+        validator.validate(messung);
+        Assert.assertFalse(messung.hasErrors());
     }
 
     /**
@@ -149,8 +148,8 @@ public class MessungTest {
         messung.setSampleId(EXISTING_SAMPLE_ID);
         messung.setMinSampleId(MIN_SAMPLE_ID_00G2);
         messung.setMmtId(EXISTING_MMT_ID);
-        Violation violation = validator.validate(messung);
-        Assert.assertFalse(violation.hasErrors());
+        validator.validate(messung);
+        Assert.assertFalse(messung.hasErrors());
     }
 
     /**
@@ -163,8 +162,8 @@ public class MessungTest {
         measm.setMinSampleId(EXISTING_MIN_SAMPLE_ID);
         measm.setMmtId(EXISTING_MMT_ID);
 
-        Violation violation = validator.validate(measm);
-        Assert.assertFalse(violation.hasErrors());
+        validator.validate(measm);
+        Assert.assertFalse(measm.hasErrors());
     }
 
     /**
@@ -178,12 +177,12 @@ public class MessungTest {
         measm.setMmtId(EXISTING_MMT_ID);
 
 
-        Violation violation = validator.validate(measm);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(measm);
+        Assert.assertTrue(measm.hasWarnings());
+        Assert.assertTrue(measm.getWarnings()
             .containsKey(MEASM_START_DATE));
         Assert.assertTrue(
-            violation.getWarnings().get(MEASM_START_DATE).contains(
+            measm.getWarnings().get(MEASM_START_DATE).contains(
                 String.valueOf(StatusCodes.DATE_IN_FUTURE)));
     }
 
@@ -202,12 +201,12 @@ public class MessungTest {
         measm.setMmtId(EXISTING_MMT_ID);
         String warnKey = MEASM_START_DATE
             + VALIDATION_KEY_SEPARATOR + measm.getMinSampleId();
-        Violation violation = validator.validate(measm);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(measm);
+        Assert.assertTrue(measm.hasWarnings());
+        Assert.assertTrue(measm.getWarnings()
             .containsKey(warnKey));
         Assert.assertTrue(
-            violation.getWarnings().get(warnKey).contains(
+            measm.getWarnings().get(warnKey).contains(
                 String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
     }
 
@@ -223,9 +222,9 @@ public class MessungTest {
         measm.setSampleId(EXISTING_SAMPLE_ID);
         measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
         measm.setMeasmStartDate(Date.from(measmStartDate));
-        Violation violation = validator.validate(measm);
-        if (violation.hasWarnings()) {
-            Assert.assertFalse(violation.getWarnings().containsKey(
+        validator.validate(measm);
+        if (measm.hasWarnings()) {
+            Assert.assertFalse(measm.getWarnings().containsKey(
                 MEASM_START_DATE + VALIDATION_KEY_SEPARATOR
                 + measm.getMinSampleId()));
         }
@@ -238,12 +237,12 @@ public class MessungTest {
         Measm measm = new Measm();
         measm.setSampleId(EXISTING_SAMPLE_ID);
         measm.setMmtId(EXISTING_MMT_ID);
-        Violation violation = validator.validate(measm);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(measm);
+        Assert.assertTrue(measm.hasWarnings());
+        Assert.assertTrue(measm.getWarnings()
             .containsKey(MEASM_START_DATE));
         Assert.assertTrue(
-            violation.getWarnings().get(MEASM_START_DATE).contains(
+            measm.getWarnings().get(MEASM_START_DATE).contains(
                 String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
@@ -255,12 +254,12 @@ public class MessungTest {
         measm.setSampleId(EXISTING_SAMPLE_ID_REGULATION_161);
         measm.setMmtId(EXISTING_MMT_ID);
 
-        Violation violation = validator.validate(measm);
-        Assert.assertTrue(violation.hasNotifications());
-        Assert.assertTrue(violation.getNotifications()
+        validator.validate(measm);
+        Assert.assertTrue(measm.hasNotifications());
+        Assert.assertTrue(measm.getNotifications()
             .containsKey(MEASM_START_DATE));
         Assert.assertTrue(
-            violation.getNotifications().get(MEASM_START_DATE).contains(
+            measm.getNotifications().get(MEASM_START_DATE).contains(
                 StatusCodes.VALUE_MISSING));
     }
 
@@ -273,14 +272,14 @@ public class MessungTest {
         measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
         measm.setMmtId(EXISTING_MMT_ID);
 
-        Violation violation = validator.validate(measm);
+        validator.validate(measm);
         String warnKey = MEAS_PD + VALIDATION_KEY_SEPARATOR
             + measm.getMinSampleId();
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        Assert.assertTrue(measm.hasWarnings());
+        Assert.assertTrue(measm.getWarnings()
             .containsKey(warnKey));
         Assert.assertTrue(
-            violation.getWarnings().get(warnKey).contains(
+            measm.getWarnings().get(warnKey).contains(
                 String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
@@ -293,12 +292,12 @@ public class MessungTest {
         measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
         measm.setMmtId(EXISTING_MMT_ID);
 
-        Violation violation = validator.validate(measm);
-        Assert.assertTrue(violation.hasNotifications());
-        Assert.assertTrue(violation.getNotifications()
+        validator.validate(measm);
+        Assert.assertTrue(measm.hasNotifications());
+        Assert.assertTrue(measm.getNotifications()
             .containsKey(MEAS_PD));
         Assert.assertTrue(
-            violation.getNotifications().get(MEAS_PD).contains(
+            measm.getNotifications().get(MEAS_PD).contains(
                 StatusCodes.VALUE_MISSING));
     }
 
@@ -311,12 +310,12 @@ public class MessungTest {
         measm.setMmtId(EXISTING_MMT_ID);
 
 
-        Violation violation = validator.validate(measm);
-        Assert.assertTrue(violation.hasNotifications());
-        Assert.assertTrue(violation.getNotifications()
+        validator.validate(measm);
+        Assert.assertTrue(measm.hasNotifications());
+        Assert.assertTrue(measm.getNotifications()
             .containsKey(MEAS_PD));
         Assert.assertTrue(
-            violation.getNotifications().get(MEAS_PD).contains(
+            measm.getNotifications().get(MEAS_PD).contains(
                 StatusCodes.VALUE_MISSING));
     }
 
@@ -327,13 +326,13 @@ public class MessungTest {
         Measm measm = new Measm();
         measm.setSampleId(EXISTING_SAMPLE_ID);
         measm.setMeasPd(1);
-        Violation violation = validator.validate(measm);
-        if (violation.hasWarnings()) {
-            Assert.assertFalse(violation
+        validator.validate(measm);
+        if (measm.hasWarnings()) {
+            Assert.assertFalse(measm
                 .getWarnings().containsKey(MEAS_PD));
         }
-        if (violation.hasNotifications()) {
-            Assert.assertFalse(violation.
+        if (measm.hasNotifications()) {
+            Assert.assertFalse(measm.
                 getNotifications().containsKey(MEAS_PD));
         }
     }
@@ -346,13 +345,13 @@ public class MessungTest {
         measm.setSampleId(EXISTING_SAMPLE_ID);
         measm.setMmtId(EXISTING_MMT_ID);
 
-        Violation violation = validator.validate(measm);
+        validator.validate(measm);
         String notficationKey = MEASD_ID + VALIDATION_KEY_SEPARATOR
             + EXISTING_MEASD_NAME;
-        Assert.assertTrue(violation.hasNotifications());
-        Assert.assertTrue(violation.getNotifications()
+        Assert.assertTrue(measm.hasNotifications());
+        Assert.assertTrue(measm.getNotifications()
             .containsKey(notficationKey));
-        Assert.assertTrue(violation.getNotifications()
+        Assert.assertTrue(measm.getNotifications()
             .get(notficationKey).contains(StatusCodes.VAL_OBL_MEASURE));
     }
 
@@ -365,12 +364,12 @@ public class MessungTest {
         measm.setSampleId(EXISTING_SAMPLE_ID);
         measm.setMmtId(EXISTING_MMT_ID);
 
-        Violation violation = validator.validate(measm);
-        if (violation.hasNotifications()) {
+        validator.validate(measm);
+        if (measm.hasNotifications()) {
             String notficationKey = MEASD_ID
                 + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
-            Assert.assertFalse(violation.
-                getNotifications().containsKey(notficationKey));
+            Assert.assertFalse(measm
+                .getNotifications().containsKey(notficationKey));
         }
     }
 
@@ -384,13 +383,13 @@ public class MessungTest {
         final String invalidKey = "XX";
         measm.setMmtId(invalidKey);
 
-        Violation violation = validator.validate(measm);
+        validator.validate(measm);
         final String mmtIdKey = "mmtId";
         MatcherAssert.assertThat(
-            violation.getErrors().keySet(),
+            measm.getErrors().keySet(),
             CoreMatchers.hasItem(mmtIdKey));
         MatcherAssert.assertThat(
-            violation.getErrors().get(mmtIdKey),
+            measm.getErrors().get(mmtIdKey),
             CoreMatchers.hasItem(
                 "'" + invalidKey + "' is no valid primary key"));
     }

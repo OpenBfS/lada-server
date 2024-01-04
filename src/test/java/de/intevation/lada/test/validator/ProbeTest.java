@@ -23,10 +23,9 @@ import org.junit.Assert;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 /**
- * Test probe validations.
+ * Test sample validations.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
@@ -115,10 +114,10 @@ public class ProbeTest {
         sample.setIsTest(false);
 
         sample.setMainSampleId("4554567890");
-        Violation violation = validator.validate(sample);
-        if (violation.hasErrors()) {
+        validator.validate(sample);
+        if (sample.hasErrors()) {
             Assert.assertFalse(
-                violation.getErrors().containsKey(MAIN_SAMPLE_ID));
+                sample.getErrors().containsKey(MAIN_SAMPLE_ID));
         }
     }
 
@@ -134,12 +133,12 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasNotifications());
-        Assert.assertTrue(violation.getNotifications()
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasNotifications());
+        Assert.assertTrue(sample.getNotifications()
             .containsKey(MAIN_SAMPLE_ID));
         Assert.assertTrue(
-            violation.getNotifications().get(MAIN_SAMPLE_ID).contains(
+            sample.getNotifications().get(MAIN_SAMPLE_ID).contains(
                 StatusCodes.VALUE_MISSING));
     }
 
@@ -156,11 +155,11 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey(MAIN_SAMPLE_ID));
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasErrors());
+        Assert.assertTrue(sample.getErrors().containsKey(MAIN_SAMPLE_ID));
         Assert.assertEquals(valMessageUniqueMainSampleIdMeasFacilId,
-            violation.getErrors().get(MAIN_SAMPLE_ID).get(0));
+            sample.getErrors().get(MAIN_SAMPLE_ID).get(0));
     }
 
     /**
@@ -176,10 +175,10 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        if (violation.hasErrors()) {
+        validator.validate(sample);
+        if (sample.hasErrors()) {
             Assert.assertFalse(
-                violation.getErrors().containsKey(MAIN_SAMPLE_ID));
+                sample.getErrors().containsKey(MAIN_SAMPLE_ID));
         }
     }
 
@@ -197,10 +196,10 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        if (violation.hasErrors()) {
+        validator.validate(sample);
+        if (sample.hasErrors()) {
             Assert.assertFalse(
-                violation.getErrors().containsKey(MAIN_SAMPLE_ID));
+                sample.getErrors().containsKey(MAIN_SAMPLE_ID));
         }
     }
 
@@ -218,11 +217,11 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey(MAIN_SAMPLE_ID));
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasErrors());
+        Assert.assertTrue(sample.getErrors().containsKey(MAIN_SAMPLE_ID));
         Assert.assertEquals(valMessageUniqueMainSampleIdMeasFacilId,
-            violation.getErrors().get(MAIN_SAMPLE_ID).get(0));
+            sample.getErrors().get(MAIN_SAMPLE_ID).get(0));
     }
 
     /**
@@ -238,10 +237,10 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        if (violation.hasWarnings()) {
+        validator.validate(sample);
+        if (sample.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey(ENTNAHME_ORT));
+                sample.getWarnings().containsKey(ENTNAHME_ORT));
         }
     }
 
@@ -258,11 +257,11 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(ENTNAHME_ORT));
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasWarnings());
+        Assert.assertTrue(sample.getWarnings().containsKey(ENTNAHME_ORT));
         Assert.assertTrue(
-            violation.getWarnings().get(ENTNAHME_ORT).contains(
+            sample.getWarnings().get(ENTNAHME_ORT).contains(
                 String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
@@ -280,10 +279,10 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        if (violation.hasWarnings()) {
+        validator.validate(sample);
+        if (sample.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey(SAMPLE_START_DATE));
+                sample.getWarnings().containsKey(SAMPLE_START_DATE));
         }
     }
 
@@ -299,12 +298,12 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasWarnings());
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasWarnings());
         Assert.assertTrue(
-            violation.getWarnings().containsKey(SAMPLE_START_DATE));
+            sample.getWarnings().containsKey(SAMPLE_START_DATE));
         Assert.assertTrue(
-            violation.getWarnings().get(SAMPLE_START_DATE).contains(
+            sample.getWarnings().get(SAMPLE_START_DATE).contains(
                 String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
@@ -321,10 +320,10 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        if (violation.hasWarnings()) {
+        validator.validate(sample);
+        if (sample.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey(SAMPLE_START_DATE));
+                sample.getWarnings().containsKey(SAMPLE_START_DATE));
         }
     }
 
@@ -341,12 +340,12 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
+        validator.validate(sample);
         Assert.assertTrue(
-            violation.getWarnings().get(SAMPLE_START_DATE).contains(
+            sample.getWarnings().get(SAMPLE_START_DATE).contains(
                 String.valueOf(StatusCodes.VALUE_MISSING)));
         Assert.assertTrue(
-            violation.getWarnings().get(SAMPLE_START_DATE).contains(
+            sample.getWarnings().get(SAMPLE_START_DATE).contains(
                 String.valueOf(StatusCodes.DATE_BEGIN_AFTER_END)));
     }
 
@@ -365,9 +364,9 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
+        validator.validate(sample);
         Assert.assertTrue(
-            violation.getWarnings().get(SAMPLE_START_DATE).contains(
+            sample.getWarnings().get(SAMPLE_START_DATE).contains(
                 String.valueOf(StatusCodes.DATE_BEGIN_AFTER_END)));
     }
 
@@ -384,9 +383,9 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
+        validator.validate(sample);
         Assert.assertTrue(
-            violation.getWarnings().get(SAMPLE_START_DATE).contains(
+            sample.getWarnings().get(SAMPLE_START_DATE).contains(
                 String.valueOf(StatusCodes.DATE_IN_FUTURE)));
     }
 
@@ -403,9 +402,9 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        if (violation.hasWarnings()) {
-            Assert.assertFalse(violation.getWarnings()
+        validator.validate(sample);
+        if (sample.hasWarnings()) {
+            Assert.assertFalse(sample.getWarnings()
                 .containsKey(ENV_MEDIUM_ID));
         }
     }
@@ -422,11 +421,11 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(ENV_MEDIUM_ID));
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasWarnings());
+        Assert.assertTrue(sample.getWarnings().containsKey(ENV_MEDIUM_ID));
         MatcherAssert.assertThat(
-            violation.getWarnings().get(ENV_MEDIUM_ID),
+            sample.getWarnings().get(ENV_MEDIUM_ID),
             CoreMatchers.hasItem("must not be blank"));
     }
 
@@ -443,9 +442,9 @@ public class ProbeTest {
         sample.setOprModeId(EXISTING_OPR_MODE);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey(ENV_MEDIUM_ID));
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasErrors());
+        Assert.assertTrue(sample.getErrors().containsKey(ENV_MEDIUM_ID));
     }
 
     /**
@@ -463,10 +462,10 @@ public class ProbeTest {
         sample.setSampleEndDate(Date.from(now));
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        if (violation.hasWarnings()) {
+        validator.validate(sample);
+        if (sample.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey(SAMPLE_METH_ID));
+                sample.getWarnings().containsKey(SAMPLE_METH_ID));
         }
     }
 
@@ -487,10 +486,10 @@ public class ProbeTest {
         sample.setOprModeId(EXISTING_OPR_MODE);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(SAMPLE_METH_ID));
-        Assert.assertTrue(violation.getWarnings().get(SAMPLE_METH_ID).contains(
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasWarnings());
+        Assert.assertTrue(sample.getWarnings().containsKey(SAMPLE_METH_ID));
+        Assert.assertTrue(sample.getWarnings().get(SAMPLE_METH_ID).contains(
                 String.valueOf(StatusCodes.VAL_SINGLE_DATE)));
     }
 
@@ -510,10 +509,10 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(ORIG_DATE));
-        Assert.assertTrue(violation.getWarnings().get(ORIG_DATE).contains(
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasWarnings());
+        Assert.assertTrue(sample.getWarnings().containsKey(ORIG_DATE));
+        Assert.assertTrue(sample.getWarnings().get(ORIG_DATE).contains(
                 String.valueOf(StatusCodes.URSPR_DATE_BEFORE_BEGIN)));
     }
 
@@ -533,10 +532,10 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        if (violation.hasWarnings()) {
+        validator.validate(sample);
+        if (sample.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey(ORIG_DATE));
+                sample.getWarnings().containsKey(ORIG_DATE));
         }
     }
 
@@ -553,11 +552,11 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        if (violation.hasWarnings()) {
+        validator.validate(sample);
+        if (sample.hasWarnings()) {
             boolean valDeskWarn =
-                violation.getWarnings().containsKey(ENV_DESCRIP_DISPLAY)
-                && violation.getWarnings().get(ENV_DESCRIP_DISPLAY).contains(
+                sample.getWarnings().containsKey(ENV_DESCRIP_DISPLAY)
+                && sample.getWarnings().get(ENV_DESCRIP_DISPLAY).contains(
                     String.valueOf(StatusCodes.VAL_DESK));
             Assert.assertFalse(valDeskWarn);
         }
@@ -576,11 +575,11 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasWarnings());
+        Assert.assertTrue(sample.getWarnings()
             .containsKey(ENV_DESCRIP_DISPLAY));
-        Assert.assertTrue(violation.getWarnings().get(ENV_DESCRIP_DISPLAY)
+        Assert.assertTrue(sample.getWarnings().get(ENV_DESCRIP_DISPLAY)
             .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
@@ -597,12 +596,33 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasWarnings());
+        Assert.assertTrue(sample.getWarnings()
             .containsKey(ENV_DESCRIP_DISPLAY));
-        Assert.assertTrue(violation.getWarnings().get(ENV_DESCRIP_DISPLAY)
+        Assert.assertTrue(sample.getWarnings().get(ENV_DESCRIP_DISPLAY)
             .contains(String.valueOf(StatusCodes.VAL_S1_NOTSET)));
+    }
+
+    /**
+     * Test sample with inval envDescripDisplay.
+     */
+    public void envDescripDisplayInvalidDisplayString() {
+        Sample sample = new Sample();
+        sample.setEnvDescripDisplay("77 88 99 00");
+        sample.setRegulationId(REGULATION_ID_REI);
+        sample.setApprLabId(EXISTING_APPR_LAB_ID);
+        sample.setMeasFacilId(MST_06010);
+        sample.setOprModeId(EXISTING_OPR_MODE);
+        sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
+        sample.setIsTest(false);
+
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasErrors());
+        MatcherAssert.assertThat(sample.getErrors().keySet(),
+            CoreMatchers.hasItem(ENV_DESCRIP_DISPLAY));
+        MatcherAssert.assertThat(sample.getErrors().get(ENV_DESCRIP_DISPLAY),
+            CoreMatchers.hasItem("must match \"D:( [0-9][0-9]){12}\""));
     }
 
     /**
@@ -618,10 +638,10 @@ public class ProbeTest {
         sample.setRegulationId(REGULATION_ID_REI);
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
-        Violation violation = validator.validate(sample);
-        if (violation.hasWarnings()) {
+        validator.validate(sample);
+        if (sample.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey("envMediumId#N71"));
+                sample.getWarnings().containsKey("envMediumId#N71"));
         }
     }
 
@@ -639,11 +659,11 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
         String warningKey = "envMediumId#L54";
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasWarnings());
+        Assert.assertTrue(sample.getWarnings()
             .containsKey(warningKey));
-        Assert.assertTrue(violation.getWarnings().get(warningKey)
+        Assert.assertTrue(sample.getWarnings().get(warningKey)
             .contains(String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
     }
 
@@ -659,10 +679,10 @@ public class ProbeTest {
         sample.setRegulationId(REGULATION_ID_REI);
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
-        Violation violation = validator.validate(sample);
-        if (violation.hasWarnings()) {
+        validator.validate(sample);
+        if (sample.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey(GEOLOCAT_U));
+                sample.getWarnings().containsKey(GEOLOCAT_U));
         }
     }
 
@@ -682,10 +702,10 @@ public class ProbeTest {
         sample.setRegulationId(REGULATION_ID_REI);
         sample.setSampleMethId(SAMPLE_METH_ID_CONT);
 
-        Violation violation = validator.validate(sample);
-        if (violation.hasWarnings()) {
+        validator.validate(sample);
+        if (sample.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey(SAMPLE_END_DATE));
+                sample.getWarnings().containsKey(SAMPLE_END_DATE));
         }
     }
 
@@ -703,11 +723,11 @@ public class ProbeTest {
         sample.setOprModeId(EXISTING_OPR_MODE);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasWarnings());
+        Assert.assertTrue(sample.getWarnings()
             .containsKey(SAMPLE_END_DATE));
-        Assert.assertTrue(violation.getWarnings().get(SAMPLE_END_DATE)
+        Assert.assertTrue(sample.getWarnings().get(SAMPLE_END_DATE)
             .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
@@ -727,11 +747,11 @@ public class ProbeTest {
         sample.setOprModeId(EXISTING_OPR_MODE);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasWarnings());
+        Assert.assertTrue(sample.getWarnings()
             .containsKey(SAMPLE_END_DATE));
-        Assert.assertTrue(violation.getWarnings().get(SAMPLE_END_DATE)
+        Assert.assertTrue(sample.getWarnings().get(SAMPLE_END_DATE)
             .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
@@ -748,10 +768,10 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        if (violation.hasWarnings()) {
+        validator.validate(sample);
+        if (sample.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey(GEOLOCAT_R));
+                sample.getWarnings().containsKey(GEOLOCAT_R));
         }
     }
 
@@ -768,11 +788,11 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasWarnings());
+        Assert.assertTrue(sample.getWarnings()
             .containsKey(GEOLOCAT_R));
-        Assert.assertTrue(violation.getWarnings().get(GEOLOCAT_R)
+        Assert.assertTrue(sample.getWarnings().get(GEOLOCAT_R)
             .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
@@ -790,17 +810,17 @@ public class ProbeTest {
         sample.setOprModeId(EXISTING_OPR_MODE);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasWarnings());
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasWarnings());
         MatcherAssert.assertThat(
-            violation.getWarnings().keySet(),
+            sample.getWarnings().keySet(),
             CoreMatchers.hasItems(REI_AG_GR_ID, NUCL_FACIL_GR_ID));
         MatcherAssert.assertThat(
-            violation.getWarnings().get(REI_AG_GR_ID),
+            sample.getWarnings().get(REI_AG_GR_ID),
             CoreMatchers.hasItem(
                 String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
         MatcherAssert.assertThat(
-            violation.getWarnings().get(NUCL_FACIL_GR_ID),
+            sample.getWarnings().get(NUCL_FACIL_GR_ID),
             CoreMatchers.hasItem(
                 String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
     }
@@ -817,16 +837,16 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasWarnings());
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasWarnings());
         boolean hasBothWarningKeys =
-            violation.getWarnings().containsKey(REI_AG_GR_ID)
-            && violation.getWarnings().containsKey(NUCL_FACIL_GR_ID);
+            sample.getWarnings().containsKey(REI_AG_GR_ID)
+            && sample.getWarnings().containsKey(NUCL_FACIL_GR_ID);
         Assert.assertTrue(hasBothWarningKeys);
         boolean hasCorrectWarningValues =
-            violation.getWarnings().get(REI_AG_GR_ID).contains(
+            sample.getWarnings().get(REI_AG_GR_ID).contains(
                 String.valueOf(StatusCodes.VALUE_MISSING))
-            && violation.getWarnings().get(NUCL_FACIL_GR_ID).contains(
+            && sample.getWarnings().get(NUCL_FACIL_GR_ID).contains(
                 String.valueOf(StatusCodes.VALUE_MISSING));
         Assert.assertTrue(hasCorrectWarningValues);
     }
@@ -845,12 +865,12 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        if (violation.hasWarnings()) {
+        validator.validate(sample);
+        if (sample.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey(REI_AG_GR_ID));
+                sample.getWarnings().containsKey(REI_AG_GR_ID));
             Assert.assertFalse(
-                violation.getWarnings().containsKey(NUCL_FACIL_GR_ID));
+                sample.getWarnings().containsKey(NUCL_FACIL_GR_ID));
         }
     }
 
@@ -867,11 +887,11 @@ public class ProbeTest {
         sample.setOprModeId(EXISTING_OPR_MODE);
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasWarnings());
+        Assert.assertTrue(sample.getWarnings()
             .containsKey(ENV_MEDIUM_ID));
-        Assert.assertTrue(violation.getWarnings().get(ENV_MEDIUM_ID)
+        Assert.assertTrue(sample.getWarnings().get(ENV_MEDIUM_ID)
             .contains(String.valueOf(StatusCodes.VAL_UWB_NOT_MATCHING_REI)));
     }
 
@@ -889,11 +909,11 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        if (violation.hasWarnings()) {
+        validator.validate(sample);
+        if (sample.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey(ENV_MEDIUM_ID)
-                && violation.getWarnings().get(ENV_MEDIUM_ID).contains(
+                sample.getWarnings().containsKey(ENV_MEDIUM_ID)
+                && sample.getWarnings().get(ENV_MEDIUM_ID).contains(
                     String.valueOf(StatusCodes.VAL_UWB_NOT_MATCHING_REI)));
         }
     }
@@ -912,11 +932,11 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasWarnings());
+        Assert.assertTrue(sample.getWarnings()
             .containsKey(SAMPLE_SPECIF_MEAS_VAL));
-        Assert.assertTrue(violation.getWarnings().get(SAMPLE_SPECIF_MEAS_VAL)
+        Assert.assertTrue(sample.getWarnings().get(SAMPLE_SPECIF_MEAS_VAL)
             .contains(String.valueOf(StatusCodes.VAL_PZW)));
 
     }
@@ -934,11 +954,11 @@ public class ProbeTest {
         sample.setRegulationId(REGULATION_ID_REI);
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
-        Violation violation = validator.validate(sample);
-        if (violation.hasWarnings()) {
+        validator.validate(sample);
+        if (sample.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey(SAMPLE_SPECIF_MEAS_VAL)
-                && violation.getWarnings()
+                sample.getWarnings().containsKey(SAMPLE_SPECIF_MEAS_VAL)
+                && sample.getWarnings()
                     .get(SAMPLE_SPECIF_MEAS_VAL)
                     .contains(String.valueOf(StatusCodes.VAL_PZW)));
         }
@@ -957,12 +977,12 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors()
+        validator.validate(sample);
+        Assert.assertTrue(sample.hasErrors());
+        Assert.assertTrue(sample.getErrors()
             .containsKey(EXT_ID));
         Assert.assertEquals(valMessageUniqueExtId,
-            violation.getErrors().get(EXT_ID).get(0));
+            sample.getErrors().get(EXT_ID).get(0));
     }
 
     /**
@@ -978,10 +998,10 @@ public class ProbeTest {
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
 
-        Violation violation = validator.validate(sample);
-        if (violation.hasErrors()) {
+        validator.validate(sample);
+        if (sample.hasErrors()) {
             Assert.assertFalse(
-                violation.getErrors().containsKey(EXT_ID));
+                sample.getErrors().containsKey(EXT_ID));
         }
     }
 }

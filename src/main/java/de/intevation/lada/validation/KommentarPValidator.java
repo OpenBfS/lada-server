@@ -30,7 +30,7 @@ public class KommentarPValidator extends Validator<CommSample> {
     private Instance<Rule> rules;
 
     @Override
-    public Violation validate(Object object) {
-        return validate((CommSample) object, rules);
+    public void validate(Object object) {
+        validate((CommSample) object, rules);
     }
 }

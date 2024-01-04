@@ -264,6 +264,14 @@ public class ValidatorTest extends BaseTest {
     }
 
     /**
+     * Test sample with invalid envDescripDisplay.
+     */
+    @Test
+    public void sampleEnvDescripDisplayInvalidDisplayString() {
+        probeTest.envDescripDisplayInvalidDisplayString();
+    }
+
+    /**
      * Test sample with matching envMediumId.
      */
     @Test

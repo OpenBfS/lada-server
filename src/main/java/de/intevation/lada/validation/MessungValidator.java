@@ -31,7 +31,7 @@ public class MessungValidator extends Validator<Measm> {
     private Instance<Rule> rules;
 
     @Override
-    public Violation validate(Object object) {
-        return validate((Measm) object, rules);
+    public void validate(Object object) {
+        validate((Measm) object, rules);
     }
 }

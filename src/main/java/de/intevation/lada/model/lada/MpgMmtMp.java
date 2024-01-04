@@ -31,6 +31,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.Mmt;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
@@ -42,7 +43,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @GroupSequence({ MpgMmtMp.class, DatabaseConstraints.class })
 @Unique(fields = {"mpgId", "mmtId"},
     groups = DatabaseConstraints.class, clazz = MpgMmtMp.class)
-public class MpgMmtMp implements Serializable {
+public class MpgMmtMp extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id

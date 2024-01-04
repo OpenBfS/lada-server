@@ -12,12 +12,11 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.core.MultivaluedMap;
-import jakarta.ws.rs.core.MultivaluedHashMap;
-
+import jakarta.ws.rs.core.Response.Status;
 import de.intevation.lada.model.QueryColumns;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Mpg;
@@ -85,6 +84,7 @@ public class UniversalService extends LadaService {
      * @param start URL parameter used as offset for paging
      * @param limit URL parameter used as limit for paging
      * @return JSON encoded query results
+     * @throws BadRequestException
      */
     @POST
     public Response execute(
@@ -207,13 +207,10 @@ public class UniversalService extends LadaService {
 
             return new Response(true, StatusCodes.OK, result, size);
         } catch (IllegalArgumentException iae) {
-            Response r = new Response(false, StatusCodes.SQL_INVALID_FILTER, null);
-            MultivaluedMap<String, String> error = new MultivaluedHashMap<>();
-            error.add(
-                iae.getMessage(),
-                Integer.toString(StatusCodes.SQL_INVALID_FILTER));
-            r.setErrors(error);
-            return r;
+            throw new BadRequestException(
+                jakarta.ws.rs.core.Response
+                .status(Status.BAD_REQUEST)
+                .entity(iae.getMessage()).build());
         }
     }
 }

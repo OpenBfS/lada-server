@@ -165,12 +165,7 @@ public class SiteService extends LadaService {
                     o,
                     RequestMethod.PUT,
                     Site.class));
-            Violation violation = validator.validate(o);
-            if (violation.hasErrors() || violation.hasWarnings()) {
-                o.setErrors(violation.getErrors());
-                o.setWarnings(violation.getWarnings());
-                o.setNotifications(violation.getNotifications());
-            }
+            validator.validate(o);
         }
         return new Response(true, StatusCodes.OK, orte, size);
     }
@@ -203,13 +198,8 @@ public class SiteService extends LadaService {
                 Site.class
             )
         );
-        Violation violation = validator.validate(ort);
-            if (violation.hasErrors() || violation.hasWarnings()) {
-                response.setErrors(violation.getErrors());
-                response.setWarnings(violation.getWarnings());
-                response.setNotifications(violation.getNotifications());
-            }
-               return authorization.filter(response, Site.class);
+        validator.validate(ort);
+        return authorization.filter(response, Site.class);
     }
 
     /**
@@ -235,31 +225,19 @@ public class SiteService extends LadaService {
             for (ReportItem err : ortFactory.getErrors()) {
                 factoryErrs.addError(err.getKey(), err.getCode());
             }
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-            response.setErrors(factoryErrs.getErrors());
-            return response;
+            ort.setErrors(factoryErrs.getErrors());
+            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
         }
 
-        Violation violation = validator.validate(ort);
-        if (violation.hasErrors()) {
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            response.setNotifications(violation.getNotifications());
-            return response;
+        validator.validate(ort);
+        if (ort.hasErrors()) {
+            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
         }
 
         Response response = new Response(true, StatusCodes.OK, ort);
         if (ort.getId() == null) {
             response = repository.create(ort);
         }
-        if (violation.hasWarnings()) {
-            response.setWarnings(violation.getWarnings());
-            response.setNotifications(violation.getNotifications());
-        }
-
         return response;
     }
 
@@ -302,10 +280,8 @@ public class SiteService extends LadaService {
                 error.add("coordYExt",
                     Integer.toString(StatusCodes.GEO_UNCHANGEABLE_COORD));
             }
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-            response.setErrors(error);
-            return response;
+            ort.setErrors(error);
+            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
         }
 
         ortFactory.transformCoordinates(ort);
@@ -314,28 +290,17 @@ public class SiteService extends LadaService {
             for (ReportItem err : ortFactory.getErrors()) {
                 factoryErrs.addError(err.getKey(), err.getCode());
             }
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-            response.setErrors(factoryErrs.getErrors());
-            return response;
+            ort.setErrors(factoryErrs.getErrors());
+            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
         }
 
-        Violation violation = validator.validate(ort);
-        if (violation.hasErrors()) {
-            Response response =
-                new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-            response.setErrors(violation.getErrors());
-            response.setWarnings(violation.getWarnings());
-            response.setNotifications(violation.getNotifications());
-            return response;
+        validator.validate(ort);
+        if (ort.hasErrors()) {
+            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
         }
 
         Response response = repository.update(ort);
-        if (violation.hasWarnings()) {
-            response.setWarnings(violation.getWarnings());
-            response.setNotifications(violation.getNotifications());
-        }
-
+        validator.validate(response.getData());
         return response;
     }
 

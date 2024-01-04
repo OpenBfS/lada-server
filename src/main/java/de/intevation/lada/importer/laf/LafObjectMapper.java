@@ -77,7 +77,6 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 /**
  * Create database objects and map the attributes from laf raw data.
@@ -236,7 +235,6 @@ public class LafObjectMapper {
                  : object.getAttributes().entrySet()) {
             addProbeAttribute(attribute, probe, netzbetreiberId);
         }
-        configMapper.applyConfigs(probe);
         if (probe.getApprLabId() == null) {
             probe.setApprLabId(probe.getMeasFacilId());
         }
@@ -342,13 +340,13 @@ public class LafObjectMapper {
                 return;
             } else if (i == Identified.NEW) {
                 // It is a brand new probe!
-                Violation violation = probeValidator.validate(probe);
-                if (!violation.hasErrors()) {
+                probeValidator.validate(probe);
+                if (!probe.hasErrors()) {
                     Response created = repository.create(probe);
                     newProbe = ((Sample) created.getData());
                 } else {
                     for (Entry<String, List<String>> err
-                        : violation.getErrors().entrySet()
+                             : probe.getErrors().entrySet()
                     ) {
                         for (String code : err.getValue()) {
                             currentErrors.add(
@@ -357,7 +355,7 @@ public class LafObjectMapper {
                         }
                     }
                     for (Entry<String, List<String>> warn
-                             :violation.getWarnings().entrySet()
+                             : probe.getWarnings().entrySet()
                     ) {
                         for (String code : warn.getValue()) {
                             currentWarnings.add(
@@ -366,7 +364,7 @@ public class LafObjectMapper {
                         }
                     }
                     for (Entry<String, List<Integer>> notes
-                             : violation.getNotifications().entrySet()
+                             : probe.getNotifications().entrySet()
                     ) {
                         for (Integer code :notes.getValue()) {
                             currentNotifications.add(
@@ -630,9 +628,9 @@ public class LafObjectMapper {
             }
 
             // Validate probe object
-            Violation violation = probeValidator.validate(newProbe);
+            probeValidator.validate(newProbe);
             for (Entry<String, List<String>> err
-                : violation.getErrors().entrySet()
+                     : newProbe.getErrors().entrySet()
             ) {
                 for (String code : err.getValue()) {
                     currentErrors.add(
@@ -640,7 +638,7 @@ public class LafObjectMapper {
                 }
             }
             for (Entry<String, List<String>> warn
-                     : violation.getWarnings().entrySet()
+                     : newProbe.getWarnings().entrySet()
             ) {
                 for (String code : warn.getValue()) {
                     currentWarnings.add(
@@ -649,7 +647,7 @@ public class LafObjectMapper {
                 }
             }
             for (Entry<String, List<Integer>> notes
-                     : violation.getNotifications().entrySet()
+                     : newProbe.getNotifications().entrySet()
             ) {
                 for (Integer code: notes.getValue()) {
                     currentNotifications.add(new ReportItem(
@@ -718,7 +716,6 @@ public class LafObjectMapper {
         ) {
             addMessungAttribute(attribute, messung);
         }
-        configMapper.applyConfigs(messung);
         // Check if the user is authorized to create the object
         if (
             !authorizer.isAuthorized(messung, RequestMethod.POST, Measm.class)
@@ -829,9 +826,9 @@ public class LafObjectMapper {
         merger.mergeMesswerte(newMessung, messwerte);
 
         // Check for warnings and errors for messung ...
-        Violation violation = messungValidator.validate(newMessung);
+        messungValidator.validate(newMessung);
         for (Entry<String, List<String>> err
-            : violation.getErrors().entrySet()
+                 : newMessung.getErrors().entrySet()
         ) {
             for (String code : err.getValue()) {
                 currentErrors.add(
@@ -839,7 +836,7 @@ public class LafObjectMapper {
             }
         }
         for (Entry<String, List<String>> warn
-                 : violation.getWarnings().entrySet()
+                 : newMessung.getWarnings().entrySet()
         ) {
             for (String code : warn.getValue()) {
                 currentWarnings.add(
@@ -847,7 +844,7 @@ public class LafObjectMapper {
             }
         }
         for (Entry<String, List<Integer>> notes
-                 : violation.getNotifications().entrySet()
+                 : newMessung.getNotifications().entrySet()
         ) {
             for (Integer code : notes.getValue()) {
                 currentNotifications.add(
@@ -856,9 +853,9 @@ public class LafObjectMapper {
         }
         // ... and messwerte
         for (MeasVal messwert: messwerte) {
-            Violation messwViolation = messwertValidator.validate(messwert);
-            if (messwViolation.hasWarnings()) {
-                messwViolation.getWarnings().forEach((k, v) -> {
+            messwertValidator.validate(messwert);
+            if (messwert.hasWarnings()) {
+                messwert.getWarnings().forEach((k, v) -> {
                     v.forEach((value) -> {
                         currentWarnings.add(
                             new ReportItem("validation#messwert", k, value));
@@ -866,8 +863,8 @@ public class LafObjectMapper {
                 });
             }
 
-            if (messwViolation.hasErrors()) {
-                messwViolation.getErrors().forEach((k, v) -> {
+            if (messwert.hasErrors()) {
+                messwert.getErrors().forEach((k, v) -> {
                     v.forEach((value) -> {
                         currentErrors.add(
                             new ReportItem("validation#messwert", k, value));
@@ -875,8 +872,8 @@ public class LafObjectMapper {
                 });
             }
 
-            if (messwViolation.hasNotifications()) {
-                messwViolation.getNotifications().forEach((k, v) -> {
+            if (messwert.hasNotifications()) {
+                messwert.getNotifications().forEach((k, v) -> {
                     v.forEach((value) -> {
                         currentNotifications.add(
                             new ReportItem("validation#messwert", k, value));
@@ -945,7 +942,6 @@ public class LafObjectMapper {
                 Timestamp.from(
                     Instant.now().atZone(ZoneOffset.UTC).toInstant()));
         }
-        configMapper.applyConfigs(kommentar);
         if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
             currentWarnings.add(
                 new ReportItem(
@@ -955,17 +951,16 @@ public class LafObjectMapper {
             return null;
         }
 
-        Violation commentViolation = commentPValidator.validate(kommentar);
-
-        if (commentViolation.hasErrors() || commentViolation.hasWarnings()) {
-            if (commentViolation.hasErrors()) {
-                commentViolation.getErrors().forEach((k, v) -> {
+        commentPValidator.validate(kommentar);
+        if (kommentar.hasErrors() || kommentar.hasWarnings()) {
+            if (kommentar.hasErrors()) {
+                kommentar.getErrors().forEach((k, v) -> {
                     v.forEach((value) -> {
                         currentErrors.add(new ReportItem("Status ", k, value));
                     });
                 });
-            } else if (commentViolation.hasWarnings()) {
-                commentViolation.getWarnings().forEach((k, v) -> {
+            } else if (kommentar.hasWarnings()) {
+                kommentar.getWarnings().forEach((k, v) -> {
                     v.forEach((value) -> {
                         currentWarnings.add(
                             new ReportItem("Status ", k, value));
@@ -1020,7 +1015,6 @@ public class LafObjectMapper {
         }
         zusatzwert.setSampleSpecifId(zusatz.get(0).getId());
 
-        configMapper.applyConfigs(zusatzwert);
         return zusatzwert;
     }
 
@@ -1127,7 +1121,6 @@ public class LafObjectMapper {
             messwert.setIsThreshold(
                 attributes.get("GRENZWERT").equalsIgnoreCase("J"));
         }
-        configMapper.applyConfigs(messwert);
         if (messwert.getLessThanLOD() != null
             && messwert.getDetectLim() == null
         ) {
@@ -1199,7 +1192,6 @@ public class LafObjectMapper {
             return null;
         }
         kommentar.setText(attributes.get("TEXT"));
-        configMapper.applyConfigs(kommentar);
         if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
             currentWarnings.add(
                 new ReportItem(
@@ -1209,18 +1201,17 @@ public class LafObjectMapper {
             return null;
         }
 
-        Violation commentViolation = commentMValidator.validate(kommentar);
-
-        if (commentViolation.hasErrors() || commentViolation.hasWarnings()) {
-            if (commentViolation.hasErrors()) {
-                commentViolation.getErrors().forEach((k, v) -> {
+        commentMValidator.validate(kommentar);
+        if (kommentar.hasErrors() || kommentar.hasWarnings()) {
+            if (kommentar.hasErrors()) {
+                kommentar.getErrors().forEach((k, v) -> {
                     v.forEach((value) -> {
                         currentWarnings.add(
                             new ReportItem("Status ", k, value));
                     });
                 });
-            } else if (commentViolation.hasWarnings()) {
-                commentViolation.getWarnings().forEach((k, v) -> {
+            } else if (kommentar.hasWarnings()) {
+                kommentar.getWarnings().forEach((k, v) -> {
                     v.forEach((value) -> {
                         currentWarnings.add(
                             new ReportItem("Status ", k, value));
@@ -1366,18 +1357,18 @@ public class LafObjectMapper {
         newStatus.setMeasmId(messung.getId());
         newStatus.setMeasFacilId(mstId);
         newStatus.setStatusMpId(newKombi);
-        Violation statusViolation = statusValidator.validate(newStatus);
 
-        if (statusViolation.hasWarnings()) {
-            statusViolation.getWarnings().forEach((k, v) -> {
+        statusValidator.validate(newStatus);
+        if (newStatus.hasWarnings()) {
+            newStatus.getWarnings().forEach((k, v) -> {
                 v.forEach((value) -> {
                     currentWarnings.add(new ReportItem("Status ", k, value));
                 });
             });
         }
 
-        if (statusViolation.hasNotifications()) {
-            statusViolation.getNotifications().forEach((k, v) -> {
+        if (newStatus.hasNotifications()) {
+            newStatus.getNotifications().forEach((k, v) -> {
                 v.forEach((value) -> {
                     currentNotifications.add(
                         new ReportItem("Status ", k, value));
@@ -1385,15 +1376,15 @@ public class LafObjectMapper {
             });
         }
 
-        if (statusViolation.hasErrors()) {
-            statusViolation.getErrors().forEach((k, v) -> {
+        if (newStatus.hasErrors()) {
+            newStatus.getErrors().forEach((k, v) -> {
                 v.forEach((value) -> {
                     currentErrors.add(new ReportItem("Status ", k, value));
                 });
             });
         }
 
-        if (statusViolation.hasErrors() || statusViolation.hasWarnings()) {
+        if (newStatus.hasErrors() || newStatus.hasWarnings()) {
             return false;
         }
 
@@ -1596,7 +1587,6 @@ public class LafObjectMapper {
         if (rawOrt.containsKey(type + "_ORTS_ZUSATZTEXT")) {
             ort.setAddSiteText(rawOrt.get(type + "_ORTS_ZUSATZTEXT"));
         }
-        configMapper.applyConfigs(ort);
         return ort;
     }
 
@@ -1606,7 +1596,6 @@ public class LafObjectMapper {
         Sample probe
     ) {
         Site o = new Site();
-        configMapper.applyConfigs(o);
         // If laf contains coordinates, find a ort with matching coordinates or
         // create one.
         if ((attributes.get(type + "KOORDINATEN_ART") != null
@@ -1728,18 +1717,18 @@ public class LafObjectMapper {
             currentWarnings.addAll(ortFactory.getErrors());
             return null;
         }
-        Violation violation = ortValidator.validate(o);
+        ortValidator.validate(o);
         for (Entry<String, List<String>> warn
-                 : violation.getWarnings().entrySet()
+                 : o.getWarnings().entrySet()
         ) {
             for (String code : warn.getValue()) {
                 currentWarnings.add(
                     new ReportItem("validation", warn.getKey(), code));
             }
         }
-        if (violation.hasErrors()) {
+        if (o.hasErrors()) {
             for (Entry<String, List<String>> err
-                : violation.getErrors().entrySet()) {
+                     : o.getErrors().entrySet()) {
                 for (String code : err.getValue()) {
                     // Add to warnings because Sample object might be imported
                     currentWarnings.add(

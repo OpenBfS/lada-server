@@ -15,7 +15,6 @@ import org.junit.Assert;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 /**
  * Test validation rules for CommMeasm objects.
@@ -45,10 +44,10 @@ public class CommMeasmTest {
         comm.setText(COMMENT_TEXT_EXISTING);
         comm.setMeasFacilId(MEAS_FACIL);
 
-        Violation violation = validator.validate(comm);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey(TEXT));
-        Assert.assertTrue(violation.getErrors()
+        validator.validate(comm);
+        Assert.assertTrue(comm.hasErrors());
+        Assert.assertTrue(comm.getErrors().containsKey(TEXT));
+        Assert.assertTrue(comm.getErrors()
             .get(TEXT).contains(String.valueOf(StatusCodes.VAL_EXISTS)));
     }
 
@@ -61,9 +60,9 @@ public class CommMeasmTest {
         comm.setText(COMMENT_TEXT_NEW);
         comm.setMeasFacilId(MEAS_FACIL);
 
-        Violation violation = validator.validate(comm);
-        if (violation.hasErrors() && violation.getErrors().containsKey(TEXT)) {
-            Assert.assertFalse(violation.getErrors()
+        validator.validate(comm);
+        if (comm.hasErrors() && comm.getErrors().containsKey(TEXT)) {
+            Assert.assertFalse(comm.getErrors()
                 .get(TEXT).contains(String.valueOf(StatusCodes.VAL_EXISTS)));
         }
 

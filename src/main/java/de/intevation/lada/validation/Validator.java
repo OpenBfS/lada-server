@@ -17,6 +17,7 @@ import jakarta.validation.Validation;
 
 import org.hibernate.validator.HibernateValidator;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.validation.rules.Rule;
 import de.intevation.lada.validation.groups.Warnings;
 
@@ -28,7 +29,7 @@ import de.intevation.lada.validation.groups.Warnings;
  *
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
-public abstract class Validator<T> {
+public abstract class Validator<T extends BaseModel> {
 
     @Inject
     private jakarta.validation.Validator beanValidator;
@@ -51,37 +52,33 @@ public abstract class Validator<T> {
      * validate(T, Instance<Rule>)
      *
      * @param object The object to be validated
-     * @return A Violation object
      */
-    public abstract Violation validate(Object object);
+    public abstract void validate(Object object);
 
     /**
      * Validate objects of type T with given set of rules.
      *
      * @param object The object to be validated
      * @param rules The rules to apply
-     * @return A Violation object
      */
-    protected Violation validate(T object, Instance<Rule> rules) {
-        Violation violations = new Violation();
-
+    protected void validate(T object, Instance<Rule> rules) {
         // Bean Validation
         Set<ConstraintViolation<T>> beanViolations =
             beanValidator.validate(object);
         if (!beanViolations.isEmpty()) {
-            // Do not expect other rules to work with invalid Beans
             for (ConstraintViolation<T> violation: beanViolations) {
-                violations.addError(
+                object.addError(
                     violation.getPropertyPath().toString(),
                     violation.getMessage());
             }
-            return violations;
+            // Do not expect other rules to work with invalid Beans
+            return;
         }
 
         Set<ConstraintViolation<T>> beanViolationWarnings =
             beanValidator.validate(object, Warnings.class);
         for (ConstraintViolation<T> violation: beanViolationWarnings) {
-            violations.addWarning(
+            object.addWarning(
                 violation.getPropertyPath().toString(),
                 violation.getMessage());
         }
@@ -90,16 +87,15 @@ public abstract class Validator<T> {
             Violation result = rule.execute(object);
             if (result != null) {
                 if (result.hasWarnings()) {
-                    violations.addWarnings(result.getWarnings());
+                    object.addWarnings(result.getWarnings());
                 }
                 if (result.hasErrors()) {
-                    violations.addErrors(result.getErrors());
+                    object.addErrors(result.getErrors());
                 }
                 if (result.hasNotifications()) {
-                    violations.addNotifications(result.getNotifications());
+                    object.addNotifications(result.getNotifications());
                 }
             }
         }
-        return violations;
     }
 }

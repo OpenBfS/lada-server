@@ -10,12 +10,13 @@ package de.intevation.lada.test.validator;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 @Transactional
 public class MeasValTest {
@@ -58,11 +59,11 @@ public class MeasValTest {
         val.setError(null);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        Violation violation = validator.validate(val);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(ERROR));
-        Assert.assertTrue(violation.getWarnings()
-            .get(ERROR).contains(String.valueOf(StatusCodes.VALUE_MISSING)));
+        validator.validate(val);
+        Assert.assertTrue(val.hasWarnings());
+        Assert.assertTrue(val.getWarnings().containsKey(ERROR));
+        Assert.assertTrue(val.getWarnings().get(ERROR).contains(
+                String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
     /**
@@ -76,10 +77,10 @@ public class MeasValTest {
         val.setError(null);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        Violation violation = validator.validate(val);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(ERROR));
-        Assert.assertTrue(violation.getWarnings()
+        validator.validate(val);
+        Assert.assertTrue(val.hasWarnings());
+        Assert.assertTrue(val.getWarnings().containsKey(ERROR));
+        Assert.assertTrue(val.getWarnings()
             .get(ERROR).contains(String.valueOf(StatusCodes.VAL_UNCERT)));
     }
 
@@ -94,14 +95,14 @@ public class MeasValTest {
         val.setError(1.0f);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        Violation violation = validator.validate(val);
-        if (violation.hasWarnings()
-                && violation.getWarnings().containsKey(ERROR)) {
+        validator.validate(val);
+        if (val.hasWarnings()
+                && val.getWarnings().containsKey(ERROR)) {
             Assert.assertFalse(
-                violation.getWarnings().get(ERROR)
-                    .contains(String.valueOf(StatusCodes.VALUE_MISSING))
-                || violation.getWarnings().get(ERROR)
-                    .contains(String.valueOf(StatusCodes.VAL_UNCERT)));
+                val.getWarnings().get(ERROR)
+                .contains(String.valueOf(StatusCodes.VALUE_MISSING))
+                || val.getWarnings().get(ERROR)
+                .contains(String.valueOf(StatusCodes.VAL_UNCERT)));
         }
     }
 
@@ -115,14 +116,14 @@ public class MeasValTest {
         val.setLessThanLOD(LESS_THAN_LOD_SMALLER_THAN);
         val.setError(null);
 
-        Violation violation = validator.validate(val);
-        if (violation.hasWarnings()
-                && violation.getWarnings().containsKey(ERROR)) {
+        validator.validate(val);
+        if (val.hasWarnings()
+                && val.getWarnings().containsKey(ERROR)) {
             Assert.assertFalse(
-                violation.getWarnings().get(ERROR)
-                    .contains(String.valueOf(StatusCodes.VALUE_MISSING))
-                || violation.getWarnings().get(ERROR)
-                    .contains(String.valueOf(StatusCodes.VAL_UNCERT)));
+                val.getWarnings().get(ERROR)
+                .contains(String.valueOf(StatusCodes.VALUE_MISSING))
+                || val.getWarnings().get(ERROR)
+                .contains(String.valueOf(StatusCodes.VAL_UNCERT)));
         }
     }
 
@@ -137,11 +138,11 @@ public class MeasValTest {
         val.setMeasVal(null);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        Violation violation = validator.validate(val);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(MEAS_VAL));
-        Assert.assertTrue(violation.getWarnings()
-            .get(MEAS_VAL).contains(String.valueOf(StatusCodes.VALUE_MISSING)));
+        validator.validate(val);
+        Assert.assertTrue(val.hasWarnings());
+        Assert.assertTrue(val.getWarnings().containsKey(MEAS_VAL));
+        Assert.assertTrue(val.getWarnings().get(MEAS_VAL).contains(
+                String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
     /**
@@ -155,12 +156,11 @@ public class MeasValTest {
         val.setMeasVal(1.0d);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        Violation violation = validator.validate(val);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey(MEAS_VAL));
-        Assert.assertTrue(violation.getWarnings()
-            .get(MEAS_VAL).contains(
-                String.valueOf(StatusCodes.VAL_MEASURE)));
+        validator.validate(val);
+        Assert.assertTrue(val.hasWarnings());
+        Assert.assertTrue(val.getWarnings().containsKey(MEAS_VAL));
+        Assert.assertTrue(val.getWarnings()
+            .get(MEAS_VAL).contains(String.valueOf(StatusCodes.VAL_MEASURE)));
     }
 
     /**
@@ -174,16 +174,16 @@ public class MeasValTest {
         val.setMeasVal(null);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        Violation violation = validator.validate(val);
-        if (violation.hasWarnings()
-                && violation.getWarnings().containsKey(MEAS_VAL)) {
-            Assert.assertFalse(violation.getWarnings().get(MEAS_VAL)
+        validator.validate(val);
+        if (val.hasWarnings()
+                && val.getWarnings().containsKey(MEAS_VAL)) {
+            Assert.assertFalse(val.getWarnings().get(MEAS_VAL)
                 .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
         }
-        if (violation.hasErrors()
-                && violation.getErrors().containsKey(MEAS_VAL)) {
-            Assert.assertFalse(violation.getErrors().get(MEAS_VAL)
-                    .contains(String.valueOf(StatusCodes.VAL_MEASURE)));
+        if (val.hasErrors()
+                && val.getErrors().containsKey(MEAS_VAL)) {
+            Assert.assertFalse(val.getErrors().get(MEAS_VAL)
+                .contains(String.valueOf(StatusCodes.VAL_MEASURE)));
         }
     }
 
@@ -198,16 +198,16 @@ public class MeasValTest {
         val.setMeasVal(1.0d);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        Violation violation = validator.validate(val);
-        if (violation.hasWarnings()
-                && violation.getWarnings().containsKey(MEAS_VAL)) {
-            Assert.assertFalse(violation.getWarnings().get(MEAS_VAL)
+        validator.validate(val);
+        if (val.hasWarnings()
+                && val.getWarnings().containsKey(MEAS_VAL)) {
+            Assert.assertFalse(val.getWarnings().get(MEAS_VAL)
                 .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
         }
-        if (violation.hasErrors()
-                && violation.getErrors().containsKey(MEAS_VAL)) {
-            Assert.assertFalse(violation.getErrors().get(MEAS_VAL)
-                    .contains(String.valueOf(StatusCodes.VAL_MEASURE)));
+        if (val.hasErrors()
+                && val.getErrors().containsKey(MEAS_VAL)) {
+            Assert.assertFalse(val.getErrors().get(MEAS_VAL)
+                .contains(String.valueOf(StatusCodes.VAL_MEASURE)));
         }
     }
 
@@ -221,10 +221,10 @@ public class MeasValTest {
         val.setMeasVal(0.0d);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        Violation violation = validator.validate(val);
-        Assert.assertTrue(violation.hasNotifications());
-        Assert.assertTrue(violation.getNotifications().containsKey(MEAS_VAL));
-        Assert.assertTrue(violation.getNotifications()
+        validator.validate(val);
+        Assert.assertTrue(val.hasNotifications());
+        Assert.assertTrue(val.getNotifications().containsKey(MEAS_VAL));
+        Assert.assertTrue(val.getNotifications()
             .get(MEAS_VAL).contains(StatusCodes.VAL_ZERO));
     }
 
@@ -239,12 +239,11 @@ public class MeasValTest {
         val.setDetectLim(null);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        Violation violation = validator.validate(val);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors()
+        validator.validate(val);
+        Assert.assertTrue(val.hasErrors());
+        Assert.assertTrue(val.getErrors()
             .containsKey(DETECT_LIM));
-        Assert.assertTrue(violation.getErrors()
-            .get(DETECT_LIM).contains(
+        Assert.assertTrue(val.getErrors().get(DETECT_LIM).contains(
                 String.valueOf(StatusCodes.VALUE_MISSING)));
     }
 
@@ -259,11 +258,11 @@ public class MeasValTest {
         val.setDetectLim(1.0d);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        Violation violation = validator.validate(val);
-        if (violation.hasErrors()
-                && violation.getErrors().containsKey(DETECT_LIM)) {
-            Assert.assertFalse(violation.getErrors().get(DETECT_LIM)
-                    .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
+        validator.validate(val);
+        if (val.hasErrors()
+                && val.getErrors().containsKey(DETECT_LIM)) {
+            Assert.assertFalse(val.getErrors().get(DETECT_LIM).contains(
+                    String.valueOf(StatusCodes.VALUE_MISSING)));
         }
     }
 
@@ -276,14 +275,14 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        Violation violation = validator.validate(val);
+        validator.validate(val);
         String warningKey = UNIT_ID
             + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
-        if (violation.hasWarnings()
-                && violation.getWarnings().containsKey(warningKey)) {
-            Assert.assertFalse(violation.getWarnings().get(warningKey)
+        if (val.hasWarnings()
+                && val.getWarnings().containsKey(warningKey)) {
+            Assert.assertFalse(val.getWarnings().get(warningKey)
                 .contains(String.valueOf(StatusCodes.VAL_UNIT_NORMALIZE)));
-            Assert.assertFalse(violation.getWarnings().get(warningKey)
+            Assert.assertFalse(val.getWarnings().get(warningKey)
                 .contains(String.valueOf(StatusCodes.VAL_UNIT_UMW)));
         }
     }
@@ -297,14 +296,14 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_SECONDARY_UNIT);
 
-        Violation violation = validator.validate(val);
+        validator.validate(val);
         String warningKey = UNIT_ID
             + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
-        if (violation.hasWarnings()
-                && violation.getWarnings().containsKey(warningKey)) {
-            Assert.assertFalse(violation.getWarnings().get(warningKey)
+        if (val.hasWarnings()
+                && val.getWarnings().containsKey(warningKey)) {
+            Assert.assertFalse(val.getWarnings().get(warningKey)
                 .contains(String.valueOf(StatusCodes.VAL_UNIT_NORMALIZE)));
-            Assert.assertFalse(violation.getWarnings().get(warningKey)
+            Assert.assertFalse(val.getWarnings().get(warningKey)
                 .contains(String.valueOf(StatusCodes.VAL_UNIT_UMW)));
         }
     }
@@ -317,13 +316,13 @@ public class MeasValTest {
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_UNIT_CONVERTABLE_TO_PRIMARY);
-        Violation violation = validator.validate(val);
+        validator.validate(val);
         String warningKey = UNIT_ID
             + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        Assert.assertTrue(val.hasWarnings());
+        Assert.assertTrue(val.getWarnings()
             .containsKey(warningKey));
-        Assert.assertTrue(violation.getWarnings().get(warningKey).contains(
+        Assert.assertTrue(val.getWarnings().get(warningKey).contains(
                 String.valueOf(StatusCodes.VAL_UNIT_NORMALIZE)));
     }
 
@@ -335,13 +334,13 @@ public class MeasValTest {
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_UNIT_CONVERTABLE_TO_SECONDARY);
-        Violation violation = validator.validate(val);
+        validator.validate(val);
         String warningKey = UNIT_ID
             + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        Assert.assertTrue(val.hasWarnings());
+        Assert.assertTrue(val.getWarnings()
             .containsKey(warningKey));
-        Assert.assertTrue(violation.getWarnings().get(warningKey).contains(
+        Assert.assertTrue(val.getWarnings().get(warningKey).contains(
                 String.valueOf(StatusCodes.VAL_UNIT_UMW)));
     }
 
@@ -354,13 +353,13 @@ public class MeasValTest {
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(UNIT_ID_NOT_CONVERTABLE);
-        Violation violation = validator.validate(val);
+        validator.validate(val);
         String warningKey = UNIT_ID
             + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        Assert.assertTrue(val.hasWarnings());
+        Assert.assertTrue(val.getWarnings()
             .containsKey(warningKey));
-        Assert.assertTrue(violation.getWarnings().get(warningKey).contains(
+        Assert.assertTrue(val.getWarnings().get(warningKey).contains(
                 String.valueOf(StatusCodes.VAL_UNIT_UMW)));
     }
 
@@ -372,14 +371,13 @@ public class MeasValTest {
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
-
-        Violation violation = validator.validate(val);
+        validator.validate(val);
         String warningKey = MEASD_ID
             + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings()
+        Assert.assertTrue(val.hasWarnings());
+        Assert.assertTrue(val.getWarnings()
             .containsKey(warningKey));
-        Assert.assertTrue(violation.getWarnings().get(warningKey).contains(
+        Assert.assertTrue(val.getWarnings().get(warningKey).contains(
                 String.valueOf(StatusCodes.VAL_MESSGROESSE_NOT_MATCHING_MMT)));
     }
 
@@ -391,13 +389,12 @@ public class MeasValTest {
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(OTHER_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
-
-        Violation violation = validator.validate(val);
+        validator.validate(val);
         String warningKey = MEASD_ID
             + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
-        if (violation.hasWarnings()
-                && violation.getWarnings().containsKey(warningKey)) {
-            Assert.assertFalse(violation.getWarnings().get(warningKey)
+        if (val.hasWarnings()
+                && val.getWarnings().containsKey(warningKey)) {
+            Assert.assertFalse(val.getWarnings().get(warningKey)
                 .contains(String.valueOf(
                         StatusCodes.VAL_MESSGROESSE_NOT_MATCHING_MMT)));
         }
@@ -412,10 +409,10 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_SECONDARY_UNIT);
 
-        Violation violation = validator.validate(val);
-        Assert.assertTrue(violation.hasNotifications());
-        Assert.assertTrue(violation.getNotifications().containsKey(UNIT_ID));
-        Assert.assertTrue(violation.getNotifications()
+        validator.validate(val);
+        Assert.assertTrue(val.hasNotifications());
+        Assert.assertTrue(val.getNotifications().containsKey(UNIT_ID));
+        Assert.assertTrue(val.getNotifications()
             .get(UNIT_ID).contains(StatusCodes.VAL_SEC_UNIT));
     }
 
@@ -429,10 +426,10 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_UNIT_CONVERTABLE_TO_SECONDARY);
 
-        Violation violation = validator.validate(val);
-        Assert.assertTrue(violation.hasNotifications());
-        Assert.assertTrue(violation.getNotifications().containsKey(UNIT_ID));
-        Assert.assertTrue(violation.getNotifications()
+        validator.validate(val);
+        Assert.assertTrue(val.hasNotifications());
+        Assert.assertTrue(val.getNotifications().containsKey(UNIT_ID));
+        Assert.assertTrue(val.getNotifications()
             .get(UNIT_ID).contains(StatusCodes.VAL_SEC_UNIT));
     }
 
@@ -447,10 +444,13 @@ public class MeasValTest {
         val.setError(1.0f);
         val.setMeasVal(2.0d);
 
-        Violation violation = validator.validate(val);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors()
-            .containsKey(MEASD_ID));
+        validator.validate(val);
+        Assert.assertTrue(val.hasErrors());
+        MatcherAssert.assertThat(val.getErrors().keySet(),
+            CoreMatchers.hasItem(MEASD_ID));
+        MatcherAssert.assertThat(val.getErrors().get(MEASD_ID),
+            CoreMatchers.hasItem(
+                "Non-unique value combination for [measdId, measmId]"));
     }
 
     /**
@@ -462,7 +462,7 @@ public class MeasValTest {
         val.setMeasdId(OTHER_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        Violation violation = validator.validate(val);
-        Assert.assertFalse(violation.hasErrors());
+        validator.validate(val);
+        Assert.assertFalse(val.hasErrors());
     }
 }
