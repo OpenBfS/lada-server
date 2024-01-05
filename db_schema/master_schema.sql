@@ -957,7 +957,7 @@ CREATE TABLE tag (
     meas_facil_id character varying(5) REFERENCES meas_facil,
     is_auto_tag boolean NOT NULL DEFAULT false,
     network_id varchar(2) REFERENCES network,
-    lada_user_id INTEGER REFERENCES lada_user,
+    lada_user_id INTEGER REFERENCES lada_user ON DELETE SET NULL,
     tag_type TEXT REFERENCES tag_type NOT NULL,
     val_until TIMESTAMP without time zone,
     created_at TIMESTAMP without time zone NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
