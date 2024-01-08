@@ -3,7 +3,7 @@
     "regulationId":2,
     "datasetCreatorId": null,
     "mainSampleId":"4554554550",
-    "envDescripName":"",
+    "envDescripName": null,
     "envDescripDisplay": "D: 00 00 00 00 00 00 00 00 00 00 00 00",
     "midSampleDate": null,
     "mpgCategId": null,

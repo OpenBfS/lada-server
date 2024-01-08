@@ -564,7 +564,7 @@ public class ProbeFactory {
                 + ".get_media_from_media_desk( :mediaDesk );")
                     .setParameter("mediaDesk", mediaDesk)
                     .getSingleResult();
-            probe.setEnvDescripName(result != null ? result.toString() : "");
+            probe.setEnvDescripName(result != null ? result.toString() : null);
         }
         return probe;
     }

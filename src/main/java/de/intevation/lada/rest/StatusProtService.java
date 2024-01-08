@@ -386,7 +386,7 @@ public class StatusProtService extends LadaService {
             nV.setMeasFacilId(newStatus.getMeasFacilId());
             nV.setMeasmId(newStatus.getMeasmId());
             nV.setStatusMpId(1);
-            nV.setText("");
+            nV.setText(null);
             retValue = repository.create(nV);
         } else {
             QueryBuilder<StatusProt> lastFilter =
@@ -415,7 +415,7 @@ public class StatusProtService extends LadaService {
             copy.setMeasFacilId(orig.getMeasFacilId());
             copy.setMeasmId(orig.getMeasmId());
             copy.setStatusMpId(orig.getStatusMpId());
-            copy.setText("");
+            copy.setText(null);
             retValue = repository.create(copy);
         }
         return retValue;

@@ -42,7 +42,7 @@ CREATE FUNCTION set_measm_status() RETURNS trigger
         VALUES ((SELECT meas_facil_id
                      FROM lada.sample
                      WHERE id = NEW.sample_id),
-                now() AT TIME ZONE 'utc', '', NEW.id, 1)
+                now() AT TIME ZONE 'utc', NULL, NEW.id, 1)
         RETURNING id into status_id;
         UPDATE lada.measm SET status = status_id where id = NEW.id;
         RETURN NEW;
@@ -191,7 +191,7 @@ CREATE SEQUENCE sample_sample_id_seq
 
 CREATE TABLE mpg (
     id serial PRIMARY KEY,
-    comm_mpg character varying(1000),
+    comm_mpg character varying(1000) CHECK (comm_mpg <> ''),
     is_test boolean DEFAULT false NOT NULL,
     is_active boolean DEFAULT true NOT NULL,
     meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
@@ -203,7 +203,7 @@ CREATE TABLE mpg (
         (env_descrip_display ~ '^D:( [0-9][0-9]){12}$'),
     env_medium_id character varying(3) REFERENCES master.env_medium,
     sample_meth_id integer NOT NULL REFERENCES master.sample_meth,
-    sample_pd character varying(2) NOT NULL,
+    sample_pd character varying(2) NOT NULL CHECK (sample_pd <> ''),
     sample_pd_start_date integer NOT NULL,
     sample_pd_end_date integer NOT NULL,
     sample_pd_offset integer NOT NULL DEFAULT 0,
@@ -211,11 +211,11 @@ CREATE TABLE mpg (
     valid_end_date integer NOT NULL CHECK(valid_end_date BETWEEN 1 AND 365),
     sampler_id integer REFERENCES master.sampler,
     mpg_categ_id integer REFERENCES master.mpg_categ,
-    comm_sample character varying(80),
+    comm_sample character varying(80) CHECK (comm_sample <> ''),
     rei_ag_gr_id integer REFERENCES master.rei_ag_gr,
     nucl_facil_gr_id integer REFERENCES master.nucl_facil_gr,
     meas_unit_id smallint REFERENCES master.meas_unit,
-    sample_quant character varying(90),
+    sample_quant character varying(90) CHECK (sample_quant <> ''),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc') NOT NULL,
     CHECK (sample_pd = 'J'
                AND sample_pd_start_date BETWEEN valid_start_date AND valid_end_date
@@ -285,19 +285,19 @@ CREATE TABLE mpg_mmt_mp_measd (
 
 CREATE TABLE sample (
     id serial PRIMARY KEY,
-    ext_id character varying(16) UNIQUE NOT NULL
+    ext_id character varying(16) UNIQUE NOT NULL CHECK (ext_id <> '')
         DEFAULT 'sss'
             || lpad(nextval('lada.sample_sample_id_seq')::varchar, 12, '0')
             || 'Y',
     is_test boolean DEFAULT false NOT NULL,
     meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
     appr_lab_id character varying(5) NOT NULL REFERENCES master.meas_facil,
-    main_sample_id character varying(20),
+    main_sample_id character varying(20) CHECK (main_sample_id <> ''),
     regulation_id smallint REFERENCES master.regulation NOT NULL,
     opr_mode_id integer REFERENCES master.opr_mode NOT NULL,
     sample_meth_id smallint REFERENCES master.sample_meth NOT NULL,
     env_descrip_display character varying(100) CHECK(env_descrip_display ~ '^D:( [0-9][0-9]){12}$'),
-    env_descrip_name character varying(100),
+    env_descrip_name character varying(100) CHECK (env_descrip_name <> ''),
     env_medium_id character varying(3) REFERENCES master.env_medium,
     sample_start_date timestamp without time zone,
     sample_end_date timestamp without time zone,
@@ -334,7 +334,7 @@ CREATE TABLE comm_sample (
     id serial PRIMARY KEY,
     meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
     date timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    text character varying(1024),
+    text character varying(1024) CHECK (text <> ''),
     sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE
 );
 
@@ -348,7 +348,7 @@ CREATE TABLE geolocat (
     sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE,
     site_id integer NOT NULL REFERENCES master.site,
     type_regulation character varying(1) REFERENCES master.type_regulation,
-    add_site_text character varying(100),
+    add_site_text character varying(100) CHECK (add_site_text <> ''),
     poi_id character varying(7) REFERENCES master.poi,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
@@ -367,7 +367,7 @@ CREATE TABLE geolocat_mpg (
     mpg_id integer NOT NULL REFERENCES mpg ON DELETE CASCADE,
     site_id integer NOT NULL REFERENCES master.site,
     type_regulation character varying(1) REFERENCES master.type_regulation,
-    add_site_text character varying(100),
+    add_site_text character varying(100) CHECK (add_site_text <> ''),
     poi_id character varying(7) REFERENCES master.poi,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
@@ -386,7 +386,7 @@ CREATE TABLE sample_specif_meas_val (
     meas_val double precision,
     error real,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    smaller_than character varying(1),
+    smaller_than character varying(1) CHECK (smaller_than <> ''),
     tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE (sample_id, sample_specif_id)
 );
@@ -402,7 +402,7 @@ CREATE TABLE measm (
     id serial PRIMARY KEY,
     ext_id integer NOT NULL,
     sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE,
-    min_sample_id character varying(4),
+    min_sample_id character varying(4) CHECK (min_sample_id <> ''),
     mmt_id character varying(2) NOT NULL REFERENCES master.mmt ON DELETE CASCADE,
     meas_pd integer,
     measm_start_date timestamp without time zone,
@@ -427,7 +427,7 @@ CREATE TABLE comm_measm (
     id serial PRIMARY KEY,
     meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
     date timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    text character varying(1024),
+    text character varying(1024) CHECK (text <> ''),
     measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE
 );
 
@@ -440,7 +440,7 @@ CREATE TABLE meas_val (
     id serial PRIMARY KEY,
     measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE,
     measd_id integer NOT NULL REFERENCES master.measd,
-    less_than_lod character varying(1),
+    less_than_lod character varying(1) CHECK (less_than_lod <> ''),
     meas_val double precision,
     error real,
     detect_lim double precision,
@@ -461,7 +461,7 @@ CREATE TABLE status_prot (
     id serial PRIMARY KEY,
     meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
     date timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    text character varying(1024),
+    text character varying(1024) CHECK (text <> ''),
     measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE,
     status_mp_id integer NOT NULL REFERENCES master.status_mp,
     tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
