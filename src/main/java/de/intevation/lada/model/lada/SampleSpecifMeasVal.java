@@ -53,7 +53,7 @@ public class SampleSpecifMeasVal implements Serializable {
     private Double measVal;
 
     @Convert(converter = EmptyStringConverter.class)
-    @Size(max = 1)
+    @Size(max = 1, min = 1)
     private String smallerThan;
 
     @NotNull

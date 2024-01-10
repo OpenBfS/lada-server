@@ -95,7 +95,7 @@ public class MessungTest {
      */
     public void hasEmptyNebenprobenNr() {
         Measm measm = new Measm();
-        measm.setMinSampleId("");
+        measm.setMinSampleId(null);
         measm.setSampleId(EXISTING_SAMPLE_ID);
         measm.setMmtId(EXISTING_MMT_ID);
 

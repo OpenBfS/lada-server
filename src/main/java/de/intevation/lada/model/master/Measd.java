@@ -20,6 +20,7 @@ import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 import jakarta.validation.GroupSequence;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -35,24 +36,24 @@ public class Measd implements Serializable {
         groups = DatabaseConstraints.class, clazz = Measd.class)
     private Integer id;
 
-    @Size(max = 300)
+    @Size(max = 300, min = 1)
     private String descr;
 
-    @Size(max = 9)
+    @Size(max = 9, min = 1)
     private String defColor;
 
     private Long eudfNuclId;
 
-    @Size(max = 6)
+    @Size(max = 6, min = 1)
     private String idfExtId;
 
     @NotNull
     private Boolean isRefNucl;
 
-    @Size(max = 7)
+    @Size(max = 7, min = 1)
     private String bvlFormatId;
 
-    @NotNull
+    @NotBlank
     @Size(max = 50)
     private String name;
 

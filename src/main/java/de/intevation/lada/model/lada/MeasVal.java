@@ -71,7 +71,7 @@ public class MeasVal extends BaseModel implements Serializable {
 
     private Double measVal;
 
-    @Size(max = 1)
+    @Size(max = 1, min = 1)
     private String lessThanLOD;
 
     private Double detectLim;

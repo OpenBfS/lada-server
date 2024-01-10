@@ -43,11 +43,11 @@ public class DatasetCreator implements Serializable {
     private Integer id;
 
     @NotNull
-    @Size(max = 120)
+    @Size(max = 120, min = 1)
     private String descr;
 
     @NotNull
-    @Size(max = 2)
+    @Size(max = 2, min = 1)
     private String extId;
 
     @Column(insertable = false)

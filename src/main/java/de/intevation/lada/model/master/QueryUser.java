@@ -34,7 +34,7 @@ public class QueryUser implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull
+    @NotBlank
     private String descr;
 
     @Size(max = 80)

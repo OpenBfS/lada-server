@@ -61,7 +61,7 @@ public class GeolocatMpg extends BaseModel implements Serializable {
     @NotNull(groups = Warnings.class)
     private String typeRegulation;
 
-    @Size(max = 100)
+    @Size(max = 100, min = 1)
     private String addSiteText;
 
     @Size(max = 7)

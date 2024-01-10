@@ -80,10 +80,11 @@ public class Sample extends BaseModel implements Serializable {
     private Integer datasetCreatorId;
 
     @Convert(converter = EmptyStringConverter.class)
+    @Size(min = 1)
     private String mainSampleId;
 
     @Convert(converter = EmptyStringConverter.class)
-    @Size(max = 16)
+    @Size(max = 16, min = 1)
     private String extId;
 
     @NotBlank
@@ -96,7 +97,7 @@ public class Sample extends BaseModel implements Serializable {
     @Temporal(TIMESTAMP)
     private Date lastMod;
 
-    @Size(max = 100)
+    @Size(max = 100, min = 1)
     private String envDescripName;
 
     @Pattern(regexp = "D:( [0-9][0-9]){12}")

@@ -78,7 +78,7 @@ public class Measm extends BaseModel implements Serializable {
     private String mmtId;
 
     @Convert(converter = EmptyStringConverter.class)
-    @Size(max = 4)
+    @Size(max = 4, min = 1)
     private String minSampleId;
 
     @NotNull

@@ -61,7 +61,7 @@ public class StatusProt extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = StatusMp.class)
     private Integer statusMpId;
 
-    @Size(max = 1024)
+    @Size(max = 1024, min = 1)
     private String text;
 
     @Column(insertable = false, updatable = false)

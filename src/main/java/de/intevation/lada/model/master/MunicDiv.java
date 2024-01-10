@@ -53,7 +53,7 @@ public class MunicDiv implements Serializable {
         groups = DatabaseConstraints.class, clazz = Site.class)
     private Integer siteId;
 
-    @Size(max = 180)
+    @Size(max = 180, min = 1)
     private String name;
 
     @Column(insertable = false)

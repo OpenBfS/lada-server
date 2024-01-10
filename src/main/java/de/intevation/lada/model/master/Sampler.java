@@ -25,7 +25,6 @@ import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 
@@ -42,21 +41,21 @@ public class Sampler implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Size(max = 25)
+    @Size(max = 25, min = 1)
     private String editor;
 
-    @Size(max = 60)
+    @Size(max = 60, min = 1)
     private String comm;
 
-    @Size(max = 80)
+    @Size(max = 80, min = 1)
     private String inst;
 
     @Size(max = 80)
-    @NotNull
+    @NotBlank
     private String descr;
 
     @Size(max = 10)
-    @NotNull
+    @NotBlank
     private String shortText;
 
     @Column(insertable = false)
@@ -69,31 +68,33 @@ public class Sampler implements Serializable {
         groups = DatabaseConstraints.class, clazz = Network.class)
     private String networkId;
 
-    @Size(max = 20)
+    @Size(max = 20, min = 1)
     private String city;
 
-    @Size(max = 5)
+    @Size(max = 5, min = 1)
     private String zip;
 
     @Size(max = 9)
-    @NotNull
+    @NotBlank
     private String extId;
 
-    @Size(max = 30)
+    @Size(max = 30, min = 1)
     private String street;
 
-    @Size(max = 20)
+    @Size(max = 20, min = 1)
     private String phone;
 
-    @Size(max = 3)
+    @Size(max = 3, min = 1)
     private String phoneMobile;
 
     @Email
+    @Size(min = 1)
     private String email;
 
+    @Size(min = 1)
     private String routePlanning;
 
-    @Size(max = 1)
+    @Size(max = 1, min = 1)
     private String type;
 
     @Transient

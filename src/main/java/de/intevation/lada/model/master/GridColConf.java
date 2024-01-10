@@ -46,7 +46,7 @@ public class GridColConf implements Serializable {
 
     private boolean isFilterNull;
 
-    @Size(max = 4)
+    @Size(max = 4, min = 1)
     private String sort;
 
     private Integer sortIndex;

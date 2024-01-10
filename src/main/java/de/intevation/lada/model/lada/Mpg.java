@@ -100,7 +100,7 @@ public class Mpg extends BaseModel implements Serializable {
 
     private Integer samplePdOffset;
 
-    @Size(max = 1000)
+    @Size(max = 1000, min = 1)
     private String commMpg;
 
     @NotBlank
@@ -127,7 +127,7 @@ public class Mpg extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = MpgCateg.class)
     private Integer mpgCategId;
 
-    @Size(max = 80)
+    @Size(max = 80, min = 1)
     private String commSample;
 
 
@@ -140,7 +140,7 @@ public class Mpg extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = SampleMeth.class)
     private Integer sampleMethId;
 
-    @NotNull
+    @NotBlank
     @Size(max = 2)
     @Pattern(regexp = "[JHQMWT]$|W4|W2")
     private String samplePd;
@@ -174,6 +174,7 @@ public class Mpg extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = MeasUnit.class)
     private Integer measUnitId;
 
+    @Size(min = 1)
     private String sampleQuant;
 
     @OneToMany(fetch = FetchType.EAGER)

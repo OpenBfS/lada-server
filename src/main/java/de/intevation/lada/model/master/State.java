@@ -16,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(schema = SchemaName.NAME)
@@ -31,18 +32,23 @@ public class State implements Serializable {
 
     private Integer spatRefSysId;
 
+    @Size(min = 1)
     private String coordXExt;
 
+    @Size(min = 1)
     private String coordYExt;
 
+    @Size(min = 1)
     private String ctry;
 
+    @Size(min = 1)
     private String iso3166;
 
     @Column(insertable = false)
     @Temporal(TIMESTAMP)
     private Date lastMod;
 
+    @Size(min = 1)
     private String intVehRegCode;
 
     public State() {

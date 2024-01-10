@@ -55,7 +55,7 @@ public class Site extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = NuclFacilGr.class)
     private Integer nuclFacilGrId;
 
-    @Size(max = 70)
+    @Size(max = 70, min = 1)
     private String reiReportText;
 
     @ManyToOne
@@ -76,23 +76,23 @@ public class Site extends BaseModel implements Serializable {
 
     private Float alt;
 
-    @Size(max = 22)
+    @Size(max = 22, min = 1)
     private String coordXExt;
 
-    @Size(max = 22)
+    @Size(max = 22, min = 1)
     private String coordYExt;
 
-    @Size(max = 22)
+    @Size(max = 22, min = 1)
     private String shortText;
 
-    @Size(max = 100)
+    @Size(max = 100, min = 1)
     private String longText;
 
     @Column(insertable = false)
     @Temporal(TIMESTAMP)
     private Date lastMod;
 
-    @Size(max = 10)
+    @Size(max = 10, min = 1)
     private String reiOprMode;
 
     @NotBlank
@@ -101,7 +101,7 @@ public class Site extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = Network.class)
     private String networkId;
 
-    @Size(max = 20)
+    @Size(max = 20, min = 1)
     private String extId;
 
 
@@ -114,7 +114,7 @@ public class Site extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = Poi.class)
     private String poiId;
 
-    @Size(max = 2)
+    @Size(max = 2, min = 1)
     private String reiSector;
 
 
@@ -124,10 +124,10 @@ public class Site extends BaseModel implements Serializable {
 
     private Boolean isFuzzy;
 
-    @Size(max = 1)
+    @Size(max = 1, min = 1)
     private String reiZone;
 
-    @Size(max = 10)
+    @Size(max = 10, min = 1)
     private String reiCompetence;
 
 
@@ -153,6 +153,7 @@ public class Site extends BaseModel implements Serializable {
     @JsonbTransient
     private byte[] map;
 
+    @Size(min = 1)
     private String route;
 
     @Transient

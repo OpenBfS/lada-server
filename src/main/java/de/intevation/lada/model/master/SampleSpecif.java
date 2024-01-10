@@ -20,7 +20,7 @@ import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 import jakarta.validation.GroupSequence;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 
@@ -35,14 +35,14 @@ public class SampleSpecif implements Serializable {
         groups = DatabaseConstraints.class, clazz = SampleSpecif.class)
     private String id;
 
-    @NotNull
+    @NotBlank
     @Size(max = 50)
     private String name;
 
-    @Size(max = 40)
+    @Size(max = 40, min = 1)
     private String eudfKeyword;
 
-    @NotNull
+    @NotBlank
     @Size(max = 7)
     private String extId;
 

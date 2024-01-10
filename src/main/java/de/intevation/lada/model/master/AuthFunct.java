@@ -16,6 +16,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(schema = SchemaName.NAME)
@@ -25,6 +26,7 @@ public class AuthFunct implements Serializable {
     @Id
     private Integer id;
 
+    @Size(min = 1)
     private String funct;
 
     @Column(insertable = false)
