@@ -55,6 +55,7 @@ public class GeolocatMpg extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = Site.class)
     private Integer siteId;
 
+    @NotNull
     @Size(max = 1)
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = TypeRegulation.class)
