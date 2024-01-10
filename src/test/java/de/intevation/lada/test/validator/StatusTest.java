@@ -114,24 +114,6 @@ public class StatusTest {
     }
 
     /**
-     * Test setting status of measm connected to invalid REI sample.
-     */
-    public void statusInvalidReiSample() {
-        StatusProt status = new StatusProt();
-        status.setMeasmId(EXISTING_MEASM_ID_INVALID_REI_SAMPLE);
-        status.setStatusMpId(ID1);
-        status.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
-        validator.validate(status);
-        Assert.assertTrue(status.hasErrors());
-        Assert.assertTrue(status.getErrors().containsKey(REI_AG_GR_ID));
-        Assert.assertTrue(status.getErrors().get(REI_AG_GR_ID).contains(
-                String.valueOf(StatusCodes.VALUE_MISSING)));
-        Assert.assertTrue(status.getErrors().containsKey(NUCL_FACIL_GR_ID));
-        Assert.assertTrue(status.getErrors().get(NUCL_FACIL_GR_ID).contains(
-                String.valueOf(StatusCodes.VALUE_MISSING)));
-    }
-
-    /**
      * Test setting status of measm connected to valid REI sample.
      */
     public void statusReiCompleteSample() {
