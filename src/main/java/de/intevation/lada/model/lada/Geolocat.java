@@ -60,7 +60,6 @@ public class Geolocat extends BaseModel implements Serializable {
     @Size(max = 1)
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = TypeRegulation.class)
-    @NotNull(groups = Warnings.class)
     private String typeRegulation;
 
     @Size(max = 100, min = 1)
