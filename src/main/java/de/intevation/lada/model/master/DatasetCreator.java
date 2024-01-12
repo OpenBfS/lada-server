@@ -42,12 +42,12 @@ public class DatasetCreator implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull
-    @Size(max = 120, min = 1)
+    @NotBlank
+    @Size(max = 120)
     private String descr;
 
-    @NotNull
-    @Size(max = 2, min = 1)
+    @NotBlank
+    @Size(max = 2)
     private String extId;
 
     @Column(insertable = false)
