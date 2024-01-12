@@ -32,7 +32,6 @@ import de.intevation.lada.model.master.TypeRegulation;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
-import de.intevation.lada.validation.groups.Warnings;
 
 
 @Entity
