@@ -18,6 +18,8 @@
     />
 
     <!--master data-->
+    <master.type_regulation id = "X" name = "TestX"/>
+    <master.type_regulation id = "Y" name = "TestY"/>
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
     <master.regulation id = "2" name = "reg-2"/>
     <master.regulation id = "9" name = "reg-9"/>
@@ -124,6 +126,7 @@
     />
     <lada.geolocat_mpg
         id = "1000"
+        type_regulation = "X"
         mpg_id = "999"
         site_id = "1000"
         add_site_text = "Test"
@@ -202,6 +205,7 @@
     />
     <lada.geolocat
         id = "1000"
+        type_regulation = "X"
         sample_id = "1000"
         site_id = "1000"
         add_site_text = "Test"

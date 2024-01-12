@@ -52,7 +52,8 @@ public class CommMeasm extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = MeasFacil.class)
     private String measFacilId;
 
-    @Size(max = 1024, min = 1)
+    @NotBlank
+    @Size(max = 1024)
     private String text;
 
     @Transient

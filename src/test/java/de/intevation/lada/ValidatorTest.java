@@ -489,14 +489,6 @@ public class ValidatorTest extends BaseTest {
     }
 
     /**
-     * Test setting status of measm connected to invalid REI sample.
-     */
-    @Test
-    public void statusInvalidReiSample() {
-        statusTest.statusInvalidReiSample();
-    }
-
-    /**
      * Test setting status of measm connected to valid REI sample.
      */
     @Test

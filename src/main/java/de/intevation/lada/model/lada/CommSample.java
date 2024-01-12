@@ -52,7 +52,8 @@ public class CommSample extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = Sample.class)
     private Integer sampleId;
 
-    @Size(max = 1024, min = 1)
+    @NotBlank
+    @Size(max = 1024)
     private String text;
 
     @Transient

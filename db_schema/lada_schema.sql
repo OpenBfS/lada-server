@@ -334,7 +334,7 @@ CREATE TABLE comm_sample (
     id serial PRIMARY KEY,
     meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
     date timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    text character varying(1024) CHECK (text <> ''),
+    text character varying(1024) NOT NULL CHECK (text <> ''),
     sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE
 );
 
@@ -347,7 +347,7 @@ CREATE TABLE geolocat (
     id serial PRIMARY KEY,
     sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE,
     site_id integer NOT NULL REFERENCES master.site,
-    type_regulation character varying(1) REFERENCES master.type_regulation,
+    type_regulation character varying(1) NOT NULL REFERENCES master.type_regulation,
     add_site_text character varying(100) CHECK (add_site_text <> ''),
     poi_id character varying(7) REFERENCES master.poi,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
@@ -366,7 +366,7 @@ CREATE TABLE geolocat_mpg (
     id serial PRIMARY KEY,
     mpg_id integer NOT NULL REFERENCES mpg ON DELETE CASCADE,
     site_id integer NOT NULL REFERENCES master.site,
-    type_regulation character varying(1) REFERENCES master.type_regulation,
+    type_regulation character varying(1) NOT NULL REFERENCES master.type_regulation,
     add_site_text character varying(100) CHECK (add_site_text <> ''),
     poi_id character varying(7) REFERENCES master.poi,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
@@ -427,7 +427,7 @@ CREATE TABLE comm_measm (
     id serial PRIMARY KEY,
     meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
     date timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    text character varying(1024) CHECK (text <> ''),
+    text character varying(1024) NOT NULL CHECK (text <> ''),
     measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE
 );
 
