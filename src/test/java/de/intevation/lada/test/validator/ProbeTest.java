@@ -96,7 +96,7 @@ public class ProbeTest {
         String uniquePattern = validationMessages.getString(
             "de.intevation.lada.validation.constraints.Unique.message");
         valMessageUniqueMainSampleIdMeasFacilId = uniquePattern
-            .replace(UNIQUE_PLACEHOLDER, "[mainSampleId, measFacilId]");
+            .replace(UNIQUE_PLACEHOLDER, "[mainSampleId, isTest, measFacilId]");
         valMessageUniqueExtId = uniquePattern
             .replace(UNIQUE_PLACEHOLDER, "[extId]");
     }

@@ -54,7 +54,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @DynamicInsert(true)
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ Sample.class, DatabaseConstraints.class })
-@Unique(fields = {"mainSampleId", "measFacilId"},
+@Unique(fields = {"mainSampleId", "isTest", "measFacilId"},
     groups = DatabaseConstraints.class, clazz = Sample.class)
 @Unique(fields = {"extId"},
     groups = DatabaseConstraints.class, clazz = Sample.class)
