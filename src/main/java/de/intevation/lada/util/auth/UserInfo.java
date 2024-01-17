@@ -27,7 +27,7 @@ public class UserInfo {
     // Prevent instances without useful data.
     private UserInfo() { };
 
-    public UserInfo(String name, Integer userId, List<Auth> auth) {
+    UserInfo(String name, Integer userId, List<Auth> auth) {
         this.name = name;
         this.userId = userId;
         this.auth = auth;

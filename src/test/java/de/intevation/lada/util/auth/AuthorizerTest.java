@@ -6,7 +6,7 @@
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
 
-package de.intevation.lada;
+package de.intevation.lada.util.auth;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -32,6 +32,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.GeolocatMpg;
@@ -43,19 +44,6 @@ import de.intevation.lada.model.master.Auth;
 import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Tag;
-import de.intevation.lada.util.auth.Authorization;
-import de.intevation.lada.util.auth.BaseAuthorizer;
-import de.intevation.lada.util.auth.HeaderAuthorization;
-import de.intevation.lada.util.auth.MessprogrammAuthorizer;
-import de.intevation.lada.util.auth.MessprogrammIdAuthorizer;
-import de.intevation.lada.util.auth.MessungAuthorizer;
-import de.intevation.lada.util.auth.MessungIdAuthorizer;
-import de.intevation.lada.util.auth.NetzbetreiberAuthorizer;
-import de.intevation.lada.util.auth.ProbeAuthorizer;
-import de.intevation.lada.util.auth.ProbeIdAuthorizer;
-import de.intevation.lada.util.auth.TagAuthorizer;
-import de.intevation.lada.util.auth.TagZuordnungAuthorizer;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
@@ -71,7 +59,7 @@ public class AuthorizerTest extends BaseTest {
 
     private Logger log = Logger.getLogger(AuthorizerTest.class);
 
-    //Error collector to collector nested test errors
+    //Error collector to collect nested test errors
     @Rule
     public ErrorCollector collector = new ErrorCollector();
 
@@ -83,6 +71,7 @@ public class AuthorizerTest extends BaseTest {
 
     @PersistenceContext
     private EntityManager em;
+
     /**
      * Test constructor.
      */
@@ -120,22 +109,26 @@ public class AuthorizerTest extends BaseTest {
         //Test authorized sample
         collector.checkThat(
             "Authorized sample",
-            baseAuthorizer.isProbeReadOnly(ParameterizedTests.SAMPLE_ID_AUTORIZED),
+            baseAuthorizer.isProbeReadOnly(
+                ParameterizedTests.SAMPLE_ID_AUTORIZED),
             CoreMatchers.is(false));
         //Test locked sample
         collector.checkThat(
             "Unauthorized sample",
-            baseAuthorizer.isProbeReadOnly(ParameterizedTests.SAMPLE_ID_LOCKED_BY_STATUS),
+            baseAuthorizer.isProbeReadOnly(
+                ParameterizedTests.SAMPLE_ID_LOCKED_BY_STATUS),
             CoreMatchers.is(true));
         //Test unlocked measm
         collector.checkThat(
             "Unlocked measm",
-            baseAuthorizer.isMessungReadOnly(ParameterizedTests.MEASM_ID_STATUS_EDITABLE),
+            baseAuthorizer.isMessungReadOnly(
+                ParameterizedTests.MEASM_ID_STATUS_EDITABLE),
             CoreMatchers.is(false));
         //Test locked measm
         collector.checkThat(
                 "Locked measm",
-                baseAuthorizer.isMessungReadOnly(ParameterizedTests.MEASM_ID_STATUS_LOCKED),
+                baseAuthorizer.isMessungReadOnly(
+                    ParameterizedTests.MEASM_ID_STATUS_LOCKED),
                 CoreMatchers.is(true));
     }
 
@@ -203,7 +196,8 @@ public class AuthorizerTest extends BaseTest {
          * @return List of test data rows.
          */
         @Parameters(name =
-            "[#{index} {4}] TestObjectId: {5}, Method: {1}, exptectedAuthResult: {2}, expectedReadonly: {3}")
+            "[#{index} {4}] TestObjectId: {5}, Method: {1}, "
+            + "exptectedAuthResult: {2}, expectedReadonly: {3}")
         public static List<Object[]> getParameters() {
             List<Object[]> paramList = new ArrayList<>();
             paramList.addAll(createMpgTestData());
