@@ -9,12 +9,10 @@
 package de.intevation.lada.util.auth;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.hamcrest.CoreMatchers;
@@ -48,8 +46,7 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+
 
 /**
  * Class testing authorizers.
@@ -64,13 +61,8 @@ public class AuthorizerTest extends BaseTest {
     public ErrorCollector collector = new ErrorCollector();
 
     private static Authorization authorization;
-    private static UserInfo userInfo;
+
     private static Repository repository;
-
-    private static final int USER_ID = 2;
-
-    @PersistenceContext
-    private EntityManager em;
 
     /**
      * Test constructor.
@@ -92,11 +84,14 @@ public class AuthorizerTest extends BaseTest {
      * Init authorizer.
      */
     @Before
-    public void initAuthorizer() {
-        Auth auth = em.find(Auth.class, 1);
-        List<Auth> auths = Arrays.asList(new Auth[]{auth});
-        userInfo = new UserInfo(testUser, USER_ID, auths);
-        authorization = new HeaderAuthorization(userInfo, repository);
+    public void initAuthorization() {
+        final int userId = 2;
+        this.authorization = new HeaderAuthorization(
+            new UserInfo(
+                testUser,
+                userId,
+                List.of(repository.getByIdPlain(Auth.class, 1))),
+            repository);
     }
 
     /**
@@ -110,7 +105,7 @@ public class AuthorizerTest extends BaseTest {
         collector.checkThat(
             "Authorized sample",
             baseAuthorizer.isProbeReadOnly(
-                ParameterizedTests.SAMPLE_ID_AUTORIZED),
+                ParameterizedTests.SAMPLE_ID_AUTHORIZED),
             CoreMatchers.is(false));
         //Test locked sample
         collector.checkThat(
@@ -126,10 +121,10 @@ public class AuthorizerTest extends BaseTest {
             CoreMatchers.is(false));
         //Test locked measm
         collector.checkThat(
-                "Locked measm",
-                baseAuthorizer.isMessungReadOnly(
-                    ParameterizedTests.MEASM_ID_STATUS_LOCKED),
-                CoreMatchers.is(true));
+            "Locked measm",
+            baseAuthorizer.isMessungReadOnly(
+                ParameterizedTests.MEASM_ID_STATUS_LOCKED),
+            CoreMatchers.is(true));
     }
 
     /**
@@ -153,7 +148,6 @@ public class AuthorizerTest extends BaseTest {
         });
     }
 
-
     /**
      * Nested test class running parameterized tests using junit
      * parameterized runnner.
@@ -169,7 +163,7 @@ public class AuthorizerTest extends BaseTest {
         private static final int MEASM_ID_STATUS_LOCKED = 1212;
         private static final int MEASM_ID_STATUS_EDITABLE = 1209;
         private static final int MEASM_ID_NO_STATUS = 1200;
-        private static final int SAMPLE_ID_AUTORIZED = 1099;
+        private static final int SAMPLE_ID_AUTHORIZED = 1099;
         private static final int SAMPLE_ID_UNAUTORIZED = 1001;
         private static final int SAMPLE_ID_LOCKED_BY_STATUS = 1100;
         private static final int MPG_ID_AUTHORIZED = 1000;
@@ -229,7 +223,9 @@ public class AuthorizerTest extends BaseTest {
          * Will be skipped if no expected readonly status is given.
          */
         @Test
-        public void testFilter() {
+        public void testFilter()
+            throws NoSuchMethodException, SecurityException,
+            IllegalAccessException, InvocationTargetException {
             //Skip if method is not GET or no expected result is given
             if (!method.equals(RequestMethod.GET)
                     || expectedReadonly == null) {
@@ -239,19 +235,9 @@ public class AuthorizerTest extends BaseTest {
             Object filtered = authorization
                 .filter(response, testObject.getClass())
                 .getData();
-            //Check readonly status
-            Object readonly;
-            try {
-                Method m = filtered.getClass()
-                    .getMethod("isReadonly");
-                readonly = m.invoke(filtered);
-            } catch (NoSuchMethodException | SecurityException
-                | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException e) {
-                readonly = null;
-            }
-            assertNotNull(readonly);
-            assertEquals(expectedReadonly, readonly);
+            assertEquals(
+                expectedReadonly,
+                filtered.getClass().getMethod("isReadonly").invoke(filtered));
         }
 
         /**
@@ -284,12 +270,10 @@ public class AuthorizerTest extends BaseTest {
          * @throws IllegalArgumentException Thrown if no testobject is given.
          */
         private static Object[] createTestDataRow(
-                Object testObject, RequestMethod requestMethod,
-                Boolean expectedResult, Boolean expectedReadonly,
-                Class<?> authorizerClass) {
-            if (testObject == null) {
-                throw new IllegalArgumentException("No test object given");
-            }
+            Object testObject, RequestMethod requestMethod,
+            Boolean expectedResult, Boolean expectedReadonly,
+            Class<?> authorizerClass
+        ) {
             //Get test object id
             Object id = null;
             try {
@@ -297,14 +281,14 @@ public class AuthorizerTest extends BaseTest {
                     .getMethod("getId");
                 id = m.invoke(testObject);
             } catch (NoSuchMethodException | SecurityException
-                | IllegalAccessException | IllegalArgumentException
+                | IllegalAccessException
                 | InvocationTargetException e) {
-                id = testObject;
+                throw new RuntimeException(e);
             }
             return new Object[]{
                 testObject, requestMethod,
                 expectedResult, expectedReadonly,
-                    authorizerClass.getSimpleName(), id};
+                authorizerClass.getSimpleName(), id};
         }
 
         /**
@@ -587,7 +571,7 @@ public class AuthorizerTest extends BaseTest {
 
             //Test authorized sample id
             CommSample authorized = new CommSample();
-            authorized.setSampleId(SAMPLE_ID_AUTORIZED);
+            authorized.setSampleId(SAMPLE_ID_AUTHORIZED);
             data.add(createTestDataRow(
                 authorized, RequestMethod.GET, true, false, authorizer));
             data.add(createTestDataRow(
@@ -704,7 +688,7 @@ public class AuthorizerTest extends BaseTest {
             //Test global tag and authorized sample
             TagLink authorizedSample = new TagLink();
             authorizedSample.setTagId(TAG_ID_GLOBAL);
-            authorizedSample.setSampleId(SAMPLE_ID_AUTORIZED);
+            authorizedSample.setSampleId(SAMPLE_ID_AUTHORIZED);
             data.add(createTestDataRow(
                 authorizedSample, RequestMethod.GET, false, authorizer));
             data.add(createTestDataRow(
