@@ -11,9 +11,10 @@ package de.intevation.lada.util.auth;
 import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.junit.Arquillian;
@@ -64,6 +65,27 @@ public class AuthorizerTest extends BaseTest {
 
     private static Repository repository;
 
+    //Constants
+    private static final int TAG_ID_GLOBAL = 103;
+    private static final String NETWORK_ID_AUTHORIZED = "06";
+    private static final String NETWORK_ID_UNAUTHORIZED = "01";
+    private static final int MEASM_ID_LOCKED_BY_SAMPLE = 1201;
+    private static final int MEASM_ID_STATUS_LOCKED = 1212;
+    private static final int MEASM_ID_STATUS_EDITABLE = 1209;
+    private static final int MEASM_ID_NO_STATUS = 1200;
+    private static final int SAMPLE_ID_AUTHORIZED = 1099;
+    private static final int SAMPLE_ID_UNAUTORIZED = 1001;
+    private static final int SAMPLE_ID_LOCKED_BY_STATUS = 1100;
+    private static final int MPG_ID_AUTHORIZED = 1000;
+    private static final int MPG_ID_UNAUTHORIZED = 1001;
+    private static final String MEAS_FACIL_ID_01010 = "01010";
+    private static final String MEAS_FACIL_ID_06010 = "06010";
+
+    //Record used to store expected test results in.
+    public record ExpectedResults(
+        boolean getResult, boolean postResult,
+        boolean putResult, boolean deleteResult) { }
+
     /**
      * Test constructor.
      */
@@ -86,7 +108,7 @@ public class AuthorizerTest extends BaseTest {
     @Before
     public void initAuthorization() {
         final int userId = 2;
-        this.authorization = new HeaderAuthorization(
+        authorization = new HeaderAuthorization(
             new UserInfo(
                 testUser,
                 userId,
@@ -95,48 +117,91 @@ public class AuthorizerTest extends BaseTest {
     }
 
     /**
-     * Test base authorizer functions.
+     * Test base authorizer with authorized sample.
      */
     @Test
     @Transactional
-    public void testBaseAuthorizer() {
+    public void testBaseAuthorizerAuthorizedSample() {
         BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
         //Test authorized sample
         collector.checkThat(
             "Authorized sample",
             baseAuthorizer.isProbeReadOnly(
-                ParameterizedTests.SAMPLE_ID_AUTHORIZED),
+                SAMPLE_ID_AUTHORIZED),
             CoreMatchers.is(false));
+    }
+
+    /**
+     * Test base authorizer with unauthorized sample.
+     */
+    @Test
+    @Transactional
+    public void testBaseAuthorizerUnauthorizedSample() {
+        BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
         //Test locked sample
         collector.checkThat(
             "Unauthorized sample",
             baseAuthorizer.isProbeReadOnly(
-                ParameterizedTests.SAMPLE_ID_LOCKED_BY_STATUS),
-            CoreMatchers.is(true));
-        //Test unlocked measm
-        collector.checkThat(
-            "Unlocked measm",
-            baseAuthorizer.isMessungReadOnly(
-                ParameterizedTests.MEASM_ID_STATUS_EDITABLE),
-            CoreMatchers.is(false));
-        //Test locked measm
-        collector.checkThat(
-            "Locked measm",
-            baseAuthorizer.isMessungReadOnly(
-                ParameterizedTests.MEASM_ID_STATUS_LOCKED),
+                SAMPLE_ID_LOCKED_BY_STATUS),
             CoreMatchers.is(true));
     }
 
     /**
-     * Run parameterized tests.
+     * Test base authorizer with authorized measm.
+     */
+    @Test
+    @Transactional
+    public void testBaseAuthorizerAuthorizedMeasm() {
+        BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
+        //Test unlocked measm
+        collector.checkThat(
+            "Unlocked measm",
+            baseAuthorizer.isMessungReadOnly(
+                MEASM_ID_STATUS_EDITABLE),
+            CoreMatchers.is(false));
+    }
+
+    /**
+     * Test base authorizer with locked sample.
+     */
+    @Test
+    @Transactional
+    public void testBaseAuthorizerUnauthorizedMeasm() {
+        BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
+        //Test locked measm
+        collector.checkThat(
+            "Locked measm",
+            baseAuthorizer.isMessungReadOnly(
+                MEASM_ID_STATUS_LOCKED),
+            CoreMatchers.is(true));
+    }
+
+    /**
+     * Run parameterized isAuthorized tests.
      * @throws Exception Exception that may occure during run
      */
     @Test
     @Transactional
-    public void runHeaderAuthorizationTests() throws Exception {
-        Result result = JUnitCore.runClasses(ParameterizedTests.class);
+    public void runIsAuthorizedTests() throws Exception {
+        processResult(JUnitCore.runClasses(IsAuthorizedTests.class),
+            "isAuthorizedTests");
+    }
+
+    /**
+     * Run parameterized filter tests.
+     * @throws Exception Exception that may occure during run
+     */
+    @Test
+    @Transactional
+    public void runFilterTests() throws Exception {
+        processResult(JUnitCore.runClasses(FilterTests.class),
+            "FilterTests");
+    }
+
+    private void processResult(Result result, String testName) {
         log.info(String.format(
-            "Tests run: %d, failed: %d, ignored: %d",
+            "%s: Tests run: %d, failed: %d, ignored: %d",
+            testName,
             result.getRunCount(), result.getFailureCount(),
             result.getIgnoreCount()));
         result.getFailures().forEach(failure -> {
@@ -149,27 +214,10 @@ public class AuthorizerTest extends BaseTest {
     }
 
     /**
-     * Nested test class running parameterized tests using junit
-     * parameterized runnner.
+     * Nested test class testing all authorizers isAuthorized function.
      */
     @RunWith(Parameterized.class)
-    public static class ParameterizedTests {
-
-        //Constants
-        private static final int TAG_ID_GLOBAL = 103;
-        private static final String NETWORK_ID_AUTHORIZED = "06";
-        private static final String NETWORK_ID_UNAUTHORIZED = "01";
-        private static final int MEASM_ID_LOCKED_BY_SAMPLE = 1201;
-        private static final int MEASM_ID_STATUS_LOCKED = 1212;
-        private static final int MEASM_ID_STATUS_EDITABLE = 1209;
-        private static final int MEASM_ID_NO_STATUS = 1200;
-        private static final int SAMPLE_ID_AUTHORIZED = 1099;
-        private static final int SAMPLE_ID_UNAUTORIZED = 1001;
-        private static final int SAMPLE_ID_LOCKED_BY_STATUS = 1100;
-        private static final int MPG_ID_AUTHORIZED = 1000;
-        private static final int MPG_ID_UNAUTHORIZED = 1001;
-        private static final String MEAS_FACIL_ID_01010 = "01010";
-        private static final String MEAS_FACIL_ID_06010 = "06010";
+    public static class IsAuthorizedTests {
 
         //Test parameters
         @Parameter(0)
@@ -178,33 +226,28 @@ public class AuthorizerTest extends BaseTest {
         public RequestMethod method;
         @Parameter(2)
         public Boolean expectedResult;
-        @Parameter(3)
-        public Boolean expectedReadonly;
-        @Parameter(4)
-        public String authorizer;
-        @Parameter(5)
-        public Object testObjectId;
 
         /**
-         * Create test data list.
+         * Get the test data list.
          * @return List of test data rows.
          */
-        @Parameters(name =
-            "[#{index} {4}] TestObjectId: {5}, Method: {1}, "
-            + "exptectedAuthResult: {2}, expectedReadonly: {3}")
+        @Parameters(name = "[#{index}] TestObject: {0}")
         public static List<Object[]> getParameters() {
-            List<Object[]> paramList = new ArrayList<>();
-            paramList.addAll(createMpgTestData());
-            paramList.addAll(createMpgIdTestData());
-            paramList.addAll(createMeasmTestData());
-            paramList.addAll(createMeasmIdTestData());
-            paramList.addAll(createNetworkTestData());
-            paramList.addAll(createSampleTestData());
-            paramList.addAll(createSampleIdTestData());
-            paramList.addAll(createTagTestData());
-            paramList.addAll(createTagLinkTestData());
-
-            return paramList;
+            List<Object[]> data = new ArrayList<Object[]>();
+            createTestData().forEach((object, results) -> {
+                List<Object[]> newEntry = List.of(
+                    new Object[]{object, RequestMethod.GET,
+                        results.getResult()},
+                    new Object[]{object, RequestMethod.POST,
+                        results.postResult()},
+                    new Object[]{object, RequestMethod.PUT,
+                        results.putResult()},
+                    new Object[]{object, RequestMethod.DELETE,
+                        results.deleteResult()}
+                );
+                data.addAll(newEntry);
+            });
+            return data;
         }
 
         /**
@@ -217,526 +260,268 @@ public class AuthorizerTest extends BaseTest {
                     testObject, method, testClass);
             assertEquals(expectedResult, authorized);
         }
+    }
+
+    /**
+     * Nested test class testing all authorizers filter function.
+     */
+    @RunWith(Parameterized.class)
+    public static class FilterTests {
+
+        //Test parameters
+        @Parameter(0)
+        public Object testObject;
+        @Parameter(1)
+        public Boolean expectedReadonly;
+
+        /**
+         * Get the test data list for the filter test.
+         *
+         * The tests are using the inverted put authorization result as
+         * expected readonly value.
+         * @return List of test data rows.
+         */
+        @Parameters(name = "[#{index}] TestObject: {0}")
+        public static List<Object[]> getParameters() {
+            return createTestData()
+                .entrySet()
+                .stream()
+                //Expected readonly is the inverted put authorization result
+                .map(entry -> {
+                    return new Object[]{
+                        entry.getKey(), !entry.getValue().putResult()};
+                })
+                .toList();
+        }
 
         /**
          * Test the authorizer filter method.
          * Will be skipped if no expected readonly status is given.
+         * @throws RuntimeException
          */
         @Test
-        public void testFilter()
-            throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, InvocationTargetException {
-            //Skip if method is not GET or no expected result is given
-            if (!method.equals(RequestMethod.GET)
-                    || expectedReadonly == null) {
-                return;
-            }
+        public void testFilter() {
             Response response = new Response(true, 0, testObject);
             Object filtered = authorization
                 .filter(response, testObject.getClass())
                 .getData();
-            assertEquals(
-                expectedReadonly,
-                filtered.getClass().getMethod("isReadonly").invoke(filtered));
-        }
-
-        /**
-         * Create a test data row.
-         * @param testObject Object to test
-         * @param requestMethod Request method
-         * @param expectedResult Expected authorization result
-         * @param authorizerClass Authorizer class
-         * @return Test data row as Object[]
-         * @throws IllegalArgumentException Thrown if no testobject is given.
-         */
-        private static Object[] createTestDataRow(
-            Object testObject, RequestMethod requestMethod,
-            Boolean expectedResult,
-            Class<?> authorizerClass) {
-            return createTestDataRow(
-                testObject, requestMethod,
-                expectedResult, null, authorizerClass);
-        }
-
-        /**
-         * Create a test data row.
-         * @param testObject Object to test
-         * @param requestMethod Request method
-         * @param expectedResult Expected authorization result
-         * @param expectedReadonly Expected readonly status.
-         *                         May be null if not applicable.
-         * @param authorizerClass Authorizer class
-         * @return Test data row as Object[]
-         * @throws IllegalArgumentException Thrown if no testobject is given.
-         */
-        private static Object[] createTestDataRow(
-            Object testObject, RequestMethod requestMethod,
-            Boolean expectedResult, Boolean expectedReadonly,
-            Class<?> authorizerClass
-        ) {
-            //Get test object id
-            Object id = null;
             try {
-                Method m = testObject.getClass()
-                    .getMethod("getId");
-                id = m.invoke(testObject);
-            } catch (NoSuchMethodException | SecurityException
-                | IllegalAccessException
-                | InvocationTargetException e) {
+                assertEquals(expectedReadonly,
+                    filtered.getClass()
+                    .getMethod("isReadonly").invoke(filtered));
+            } catch (IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException | NoSuchMethodException
+                    | SecurityException e) {
                 throw new RuntimeException(e);
             }
-            return new Object[]{
-                testObject, requestMethod,
-                expectedResult, expectedReadonly,
-                authorizerClass.getSimpleName(), id};
         }
+    }
 
-        /**
-         * Create test data for mpg authorizer tests.
-         * @return List of test data rows
-         */
-        private static List<Object[]> createMpgTestData() {
-            Class<?> authorizer = MessprogrammAuthorizer.class;
-            List<Object[]> data = new ArrayList<>();
+    /**
+     * Create test data for parameterized tests.
+     * @return Test data map
+     */
+    public static Map<Object, ExpectedResults> createTestData() {
+        Map<Object, ExpectedResults> testData
+            = new HashMap<Object, ExpectedResults>();
+        testData.putAll(createMpgTestData());
+        testData.putAll(createMpgIdTestData());
+        testData.putAll(createMeasmTestData());
+        testData.putAll(createMeasmIdTestData());
+        testData.putAll(createNetworkTestData());
+        testData.putAll(createSampleTestData());
+        testData.putAll(createSampleIdTestData());
+        testData.putAll(createTagTestData());
+        testData.putAll(createTagLinkTestData());
 
-            //Test mpg that should be editable
-            Mpg authorized = new Mpg();
-            authorized.setMeasFacilId(MEAS_FACIL_ID_06010);
-            data.add(createTestDataRow(
-                authorized, RequestMethod.GET, true, false, authorizer));
-            data.add(createTestDataRow(
-                authorized, RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(
-                authorized, RequestMethod.PUT, true, authorizer));
-            data.add(createTestDataRow(
-                authorized, RequestMethod.DELETE, true, authorizer));
+        return testData;
+    }
 
-            //Test mpg that should not be editable
-            Mpg unauth = new Mpg();
-            unauth.setMeasFacilId(MEAS_FACIL_ID_01010);
-            data.add(createTestDataRow(
-                unauth, RequestMethod.GET, true, true, authorizer));
-            data.add(createTestDataRow(
-                unauth, RequestMethod.POST, false, authorizer));
-            data.add(createTestDataRow(
-                unauth, RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(
-                unauth, RequestMethod.DELETE, false, authorizer));
-            return data;
-        }
+    private static Map<Object, ExpectedResults> createMpgTestData() {
+        //Test mpg that should be editable
+        Mpg authorized = new Mpg();
+        authorized.setMeasFacilId(MEAS_FACIL_ID_06010);
+        //Test mpg that should not be editable
+        Mpg unauth = new Mpg();
+        unauth.setMeasFacilId(MEAS_FACIL_ID_01010);
 
-        /**
-         * Create test data for mpg id authorizer tests.
-         * @return List of test data rows
-         */
-        private static List<Object[]> createMpgIdTestData() {
-            Class<?> authorizer = MessprogrammIdAuthorizer.class;
-            List<Object[]> data = new ArrayList<>();
+        return Map.of(
+            authorized, new ExpectedResults(true, true, true, true),
+            unauth, new ExpectedResults(true, false, false, false)
+        );
+    }
 
-            //Test geolocatMpg attached to editable mpg
-            GeolocatMpg authorized = new GeolocatMpg();
-            authorized.setMpgId(MPG_ID_AUTHORIZED);
-            data.add(createTestDataRow(authorized,
-                RequestMethod.GET, true, false, authorizer));
-            data.add(createTestDataRow(authorized,
-                RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(authorized,
-                RequestMethod.PUT, true, authorizer));
-            data.add(createTestDataRow(authorized,
-                RequestMethod.DELETE, true, authorizer));
+    private static Map<Object, ExpectedResults> createMpgIdTestData() {
+        //Test geolocatMpg attached to editable mpg
+        GeolocatMpg authorized = new GeolocatMpg();
+        authorized.setMpgId(MPG_ID_AUTHORIZED);
+        //Test geolocatMpg attached to non editable mpg
+        GeolocatMpg unauth = new GeolocatMpg();
+        unauth.setMpgId(MPG_ID_UNAUTHORIZED);
 
-            //Test geolocatMpg attached to non editable mpg
-            GeolocatMpg unauth = new GeolocatMpg();
-            unauth.setMpgId(MPG_ID_UNAUTHORIZED);
-            data.add(createTestDataRow(unauth,
-                RequestMethod.GET, false, true, authorizer));
-            data.add(createTestDataRow(unauth,
-                RequestMethod.POST, false, authorizer));
-            data.add(createTestDataRow(unauth,
-                RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(unauth,
-                RequestMethod.DELETE, false, authorizer));
-            return data;
-        }
+        return Map.of(
+            authorized, new ExpectedResults(true, true, true, true),
+            unauth, new ExpectedResults(false, false, false, false)
+        );
+    }
 
-        private static List<Object[]> createMeasmTestData() {
-            Class<?> authorizer = MessungAuthorizer.class;
-            List<Object[]> data = new ArrayList<>();
+    private static Map<Object, ExpectedResults> createMeasmTestData() {
+        //Test editable measm without status
+        Measm noStatus = repository.getByIdPlain(
+            Measm.class, MEASM_ID_NO_STATUS);
+        //Test measm with editable status
+        Measm editableStatus = repository.getByIdPlain(
+            Measm.class, MEASM_ID_STATUS_EDITABLE);
+        //Test measm locked by status
+        Measm lockedByStatus = repository.getByIdPlain(
+            Measm.class, MEASM_ID_STATUS_LOCKED);
+        //Test measm locked by connected sample
+        Measm lockedBySample = repository.getByIdPlain(
+            Measm.class, MEASM_ID_LOCKED_BY_SAMPLE);
 
-            //Test editable measm without status
-            Measm noStatus = repository.getByIdPlain(
-                Measm.class, MEASM_ID_NO_STATUS);
-            data.add(createTestDataRow(
-                noStatus, RequestMethod.GET, true, false, authorizer));
-            data.add(createTestDataRow(
-                noStatus, RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(
-                noStatus, RequestMethod.PUT, true, authorizer));
-            data.add(createTestDataRow(
-                noStatus, RequestMethod.DELETE, true, authorizer));
+        return Map.of(
+            noStatus, new ExpectedResults(true, true, true, true),
+            editableStatus, new ExpectedResults(true, true, true, true),
+            lockedByStatus, new ExpectedResults(true, true, false, false),
+            lockedBySample, new ExpectedResults(false, false, false, false)
+        );
+    }
 
-            //Test measm with editable status
-            Measm editableStatus = repository.getByIdPlain(
-                Measm.class, MEASM_ID_STATUS_EDITABLE);
-            data.add(createTestDataRow(
-                editableStatus, RequestMethod.GET, true, false, authorizer));
-            data.add(createTestDataRow(
-                editableStatus, RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(
-                editableStatus, RequestMethod.PUT, true, authorizer));
-            data.add(createTestDataRow(
-                editableStatus, RequestMethod.DELETE, true, authorizer));
+    private static Map<Object, ExpectedResults> createMeasmIdTestData() {
+        //Test editable measm without status
+        CommMeasm noStatus = new CommMeasm();
+        noStatus.setMeasmId(MEASM_ID_NO_STATUS);
+        //Test measm with editable status
+        CommMeasm editableStatus = new CommMeasm();
+        editableStatus.setMeasmId(MEASM_ID_STATUS_EDITABLE);
+        //Test measm locked by status
+        CommMeasm lockedByStatus = new CommMeasm();
+        lockedByStatus.setMeasmId(MEASM_ID_STATUS_LOCKED);
+        //Test measm locked by connected sample
+        CommMeasm lockedBySample = new CommMeasm();
+        lockedBySample.setMeasmId(MEASM_ID_LOCKED_BY_SAMPLE);
 
-            //Test measm locked by status
-            Measm lockedByStatus = repository.getByIdPlain(
-                Measm.class, MEASM_ID_STATUS_LOCKED);
-            data.add(createTestDataRow(
-                lockedByStatus, RequestMethod.GET, true, false, authorizer));
-            data.add(createTestDataRow(
-                lockedByStatus, RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(
-                lockedByStatus, RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(
-                lockedByStatus, RequestMethod.DELETE, false, authorizer));
+        return Map.of(
+            noStatus, new ExpectedResults(false, true, true, true),
+            editableStatus, new ExpectedResults(false, true, true, true),
+            lockedByStatus, new ExpectedResults(false, true, true, true),
+            lockedBySample, new ExpectedResults(false, false, false, false)
+        );
+    }
 
-            //Test measm locked by connected sample
-            Measm lockedBySample = repository.getByIdPlain(
-                Measm.class, MEASM_ID_LOCKED_BY_SAMPLE);
-            data.add(createTestDataRow(
-                lockedBySample, RequestMethod.GET, false, true, authorizer));
-            data.add(createTestDataRow(
-                lockedBySample, RequestMethod.POST, false, authorizer));
-            data.add(createTestDataRow(
-                lockedBySample, RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(
-                lockedBySample, RequestMethod.DELETE, false, authorizer));
-            return data;
-        }
+    private static Map<Object, ExpectedResults> createNetworkTestData() {
+        //Test authorized sampler
+        Sampler authorized = new Sampler();
+        authorized.setNetworkId(NETWORK_ID_AUTHORIZED);
+        //Test unauthorized sampler
+        Sampler unauth = new Sampler();
+        unauth.setNetworkId(NETWORK_ID_UNAUTHORIZED);
+        //Test Site special handling
+        //Test authorized site
+        Site authorizedSite = new Site();
+        authorizedSite.setNetworkId(NETWORK_ID_AUTHORIZED);
+        //Test unauthorized site
+        Site unauthSite = new Site();
+        unauthSite.setNetworkId(NETWORK_ID_UNAUTHORIZED);
 
-        private static List<Object[]> createMeasmIdTestData() {
-            Class<?> authorizer = MessungIdAuthorizer.class;
-            List<Object[]> data = new ArrayList<>();
+        return Map.of(
+            authorized, new ExpectedResults(false, true, true, true),
+            unauth, new ExpectedResults(false, false, false, false),
+            authorizedSite, new ExpectedResults(false, true, true, true),
+            unauthSite, new ExpectedResults(false, false, false, false)
+        );
+    }
 
-            //Test editable measm without status
-            CommMeasm noStatus = new CommMeasm();
-            noStatus.setMeasmId(MEASM_ID_NO_STATUS);
-            data.add(createTestDataRow(
-                noStatus, RequestMethod.GET, false, false, authorizer));
-            data.add(createTestDataRow(
-                noStatus, RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(
-                noStatus, RequestMethod.PUT, true, authorizer));
-            data.add(createTestDataRow(
-                noStatus, RequestMethod.DELETE, true, authorizer));
+    private static Map<Object, ExpectedResults> createSampleTestData() {
+        //Test authorized sample
+        Sample authorized = new Sample();
+        authorized.setMeasFacilId(MEAS_FACIL_ID_06010);
+        //Test unauthorized sample
+        Sample unauthorized = new Sample();
+        unauthorized.setMeasFacilId(MEAS_FACIL_ID_01010);
+        //Test sample locked by measm status
+        Sample statusLocked = repository.getByIdPlain(
+            Sample.class, SAMPLE_ID_LOCKED_BY_STATUS);
 
-            //Test measm with editable status
-            CommMeasm editableStatus = new CommMeasm();
-            editableStatus.setMeasmId(MEASM_ID_STATUS_EDITABLE);
-            data.add(createTestDataRow(
-                editableStatus, RequestMethod.GET, false, authorizer));
-            data.add(createTestDataRow(
-                editableStatus, RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(
-                editableStatus, RequestMethod.PUT, true, authorizer));
-            data.add(createTestDataRow(
-                editableStatus, RequestMethod.DELETE, true, authorizer));
+        return Map.of(
+            authorized, new ExpectedResults(true, true, true, true),
+            unauthorized, new ExpectedResults(false, false, false, false),
+            statusLocked, new ExpectedResults(true, true, false, false)
+        );
+    }
 
-            //Test measm locked by status
-            CommMeasm lockedByStatus = new CommMeasm();
-            lockedByStatus.setMeasmId(MEASM_ID_STATUS_LOCKED);
-            data.add(createTestDataRow(
-                lockedByStatus, RequestMethod.GET, false, authorizer));
-            data.add(createTestDataRow(
-                lockedByStatus, RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(
-                lockedByStatus, RequestMethod.PUT, true, authorizer));
-            data.add(createTestDataRow(
-                lockedByStatus, RequestMethod.DELETE, true, authorizer));
+    private static Map<Object, ExpectedResults> createSampleIdTestData() {
+        //Test authorized sample id
+        CommSample authorized = new CommSample();
+        authorized.setSampleId(SAMPLE_ID_AUTHORIZED);
+        //Test unauthorized sample id
+        CommSample unauthorized = new CommSample();
+        unauthorized.setSampleId(SAMPLE_ID_UNAUTORIZED);
+        //Test sample id locked by measm status
+        CommSample statusLocked = new CommSample();
+            statusLocked.setSampleId(SAMPLE_ID_LOCKED_BY_STATUS);
 
-            //Test measm locked by connected sample
-            CommMeasm lockedBySample = new CommMeasm();
-            lockedBySample.setMeasmId(MEASM_ID_LOCKED_BY_SAMPLE);
-            data.add(createTestDataRow(
-                lockedBySample, RequestMethod.GET, false, true, authorizer));
-            data.add(createTestDataRow(
-                lockedBySample, RequestMethod.POST, false, authorizer));
-            data.add(createTestDataRow(
-                lockedBySample, RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(
-                lockedBySample, RequestMethod.DELETE, false, authorizer));
-            return data;
-        }
+        return Map.of(
+            authorized, new ExpectedResults(true, true, true, true),
+            unauthorized, new ExpectedResults(false, false, false, false),
+            statusLocked, new ExpectedResults(false, false, false, false)
+        );
+    }
 
-        private static List<Object[]> createNetworkTestData() {
-            Class<?> authorizer = NetzbetreiberAuthorizer.class;
-            List<Object[]> data = new ArrayList<>();
+    private static Map<Object, ExpectedResults> createTagTestData() {
+        //Test that global tags are never authorized
+        Tag global = new Tag();
+        global.setTagType(Tag.TAG_TYPE_GLOBAL);
+        //Test meas facil tag of own meas facil
+        Tag authorizedMeasFacil = new Tag();
+        authorizedMeasFacil.setTagType(Tag.TAG_TYPE_MST);
+        authorizedMeasFacil.setMeasFacilId(MEAS_FACIL_ID_06010);
+        //Test meas facil tag of other meas facil
+        Tag unauthorizedMeasFacil = new Tag();
+        unauthorizedMeasFacil.setTagType(Tag.TAG_TYPE_MST);
+        unauthorizedMeasFacil.setMeasFacilId(MEAS_FACIL_ID_01010);
+        //Test authorized network tag
+        Tag authorizedNetwork = new Tag();
+        authorizedNetwork.setTagType(Tag.TAG_TYPE_NETZBETREIBER);
+        authorizedNetwork.setNetworkId(NETWORK_ID_AUTHORIZED);
+        //Test unauthorized network tag
+        Tag unauthorizedNetwork = new Tag();
+        unauthorizedNetwork.setTagType(Tag.TAG_TYPE_NETZBETREIBER);
+        unauthorizedNetwork.setNetworkId(NETWORK_ID_UNAUTHORIZED);
 
-            //Test authorized sampler
-            Sampler authorized = new Sampler();
-            authorized.setNetworkId(NETWORK_ID_AUTHORIZED);
-            data.add(createTestDataRow(authorized,
-                RequestMethod.GET, false, authorizer));
-            data.add(createTestDataRow(authorized,
-                RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(authorized,
-                RequestMethod.PUT, true, authorizer));
-            data.add(createTestDataRow(authorized,
-                RequestMethod.DELETE, true, authorizer));
+        return Map.of(
+            global, new ExpectedResults(false, false, false, false),
+            authorizedMeasFacil, new ExpectedResults(true, true, true, true),
+            unauthorizedMeasFacil,
+                new ExpectedResults(false, false, false, false),
+            authorizedNetwork, new ExpectedResults(true, true, true, true),
+            unauthorizedNetwork, new ExpectedResults(false, false, false, false)
+        );
+    }
 
-            //Test unauthorized sampler
-            Sampler unauth = new Sampler();
-            unauth.setNetworkId(NETWORK_ID_UNAUTHORIZED);
-            data.add(createTestDataRow(unauth,
-                RequestMethod.GET, false, authorizer));
-            data.add(createTestDataRow(unauth,
-                RequestMethod.POST, false, authorizer));
-            data.add(createTestDataRow(unauth,
-                RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(unauth,
-                RequestMethod.DELETE, false, authorizer));
+    private static Map<Object, ExpectedResults> createTagLinkTestData() {
+        //Test global tag and authorized sample
+        TagLink authorizedSample = new TagLink();
+        authorizedSample.setTagId(TAG_ID_GLOBAL);
+        authorizedSample.setSampleId(SAMPLE_ID_AUTHORIZED);
+        //Test global tag and authorized sample
+        TagLink unauthorizedSample = new TagLink();
+        unauthorizedSample.setTagId(TAG_ID_GLOBAL);
+        unauthorizedSample.setSampleId(SAMPLE_ID_UNAUTORIZED);
+        //Test global tag and authorized measm
+        TagLink authorizedMeasm = new TagLink();
+        authorizedMeasm.setTagId(TAG_ID_GLOBAL);
+        authorizedMeasm.setMeasmId(MEASM_ID_NO_STATUS);
+        //Test global tag and authorized measm
+        TagLink unauthorizedMeasm = new TagLink();
+        unauthorizedMeasm.setTagId(TAG_ID_GLOBAL);
+        unauthorizedMeasm.setMeasmId(MEASM_ID_STATUS_LOCKED);
 
-            //Test Site special handling
-            //Test authorized site
-            Site authorizedSite = new Site();
-            authorizedSite.setNetworkId(NETWORK_ID_AUTHORIZED);
-            data.add(createTestDataRow(authorizedSite,
-                RequestMethod.GET, false, authorizer));
-            data.add(createTestDataRow(authorizedSite,
-                RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(authorizedSite,
-                RequestMethod.PUT, true, authorizer));
-            data.add(createTestDataRow(authorizedSite,
-                RequestMethod.DELETE, true, authorizer));
-
-            //Test unauthorized site
-            Site unauthSite = new Site();
-            unauthSite.setNetworkId(NETWORK_ID_UNAUTHORIZED);
-            data.add(createTestDataRow(unauthSite,
-                RequestMethod.GET, false, authorizer));
-            data.add(createTestDataRow(unauthSite,
-                RequestMethod.POST, false, authorizer));
-            data.add(createTestDataRow(unauthSite,
-                RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(unauthSite,
-                RequestMethod.DELETE, false, authorizer));
-
-            return data;
-        }
-
-        private static List<Object[]> createSampleTestData() {
-            Class<?> authorizer = ProbeAuthorizer.class;
-            List<Object[]> data = new ArrayList<>();
-
-            //Test authorized sample
-            Sample authorized = new Sample();
-            authorized.setMeasFacilId(MEAS_FACIL_ID_06010);
-            data.add(createTestDataRow(
-                authorized, RequestMethod.GET, true, false, authorizer));
-            data.add(createTestDataRow(
-                authorized, RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(
-                authorized, RequestMethod.PUT, true, authorizer));
-            data.add(createTestDataRow(
-                authorized, RequestMethod.DELETE, true, authorizer));
-
-            //Test unauthorized sample
-            Sample unauthorized = new Sample();
-            unauthorized.setMeasFacilId(MEAS_FACIL_ID_01010);
-            data.add(createTestDataRow(
-                unauthorized, RequestMethod.GET, false, true, authorizer));
-            data.add(createTestDataRow(
-                unauthorized, RequestMethod.POST, false, authorizer));
-            data.add(createTestDataRow(
-                unauthorized, RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(
-                unauthorized, RequestMethod.DELETE, false, authorizer));
-
-            //Test sample locked by measm status
-            Sample statusLocked = repository.getByIdPlain(
-                Sample.class, SAMPLE_ID_LOCKED_BY_STATUS);
-            data.add(createTestDataRow(
-                statusLocked, RequestMethod.GET, true, authorizer));
-            data.add(createTestDataRow(
-                statusLocked, RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(
-                statusLocked, RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(
-                statusLocked, RequestMethod.DELETE, false, authorizer));
-            return data;
-        }
-
-        private static List<Object[]> createSampleIdTestData() {
-            Class<?> authorizer = ProbeIdAuthorizer.class;
-            List<Object[]> data = new ArrayList<>();
-
-            //Test authorized sample id
-            CommSample authorized = new CommSample();
-            authorized.setSampleId(SAMPLE_ID_AUTHORIZED);
-            data.add(createTestDataRow(
-                authorized, RequestMethod.GET, true, false, authorizer));
-            data.add(createTestDataRow(
-                authorized, RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(
-                authorized, RequestMethod.PUT, true, authorizer));
-            data.add(createTestDataRow(
-                authorized, RequestMethod.DELETE, true, authorizer));
-
-            //Test unauthorized sample id
-            CommSample unauthorized = new CommSample();
-            unauthorized.setSampleId(SAMPLE_ID_UNAUTORIZED);
-            data.add(createTestDataRow(
-                unauthorized, RequestMethod.GET, false, true, authorizer));
-            data.add(createTestDataRow(
-                unauthorized, RequestMethod.POST, false, authorizer));
-            data.add(createTestDataRow(
-                unauthorized, RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(
-                unauthorized, RequestMethod.DELETE, false, authorizer));
-
-            //Test sample id locked by measm status
-            CommSample statusLocked = new CommSample();
-                statusLocked.setSampleId(SAMPLE_ID_LOCKED_BY_STATUS);
-            data.add(createTestDataRow(
-                statusLocked, RequestMethod.GET, false, authorizer));
-            data.add(createTestDataRow(
-                statusLocked, RequestMethod.POST, false, authorizer));
-            data.add(createTestDataRow(
-                statusLocked, RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(
-                statusLocked, RequestMethod.DELETE, false, authorizer));
-            return data;
-        }
-
-        private static List<Object[]> createTagTestData() {
-            Class<?> authorizer = TagAuthorizer.class;
-            List<Object[]> data = new ArrayList<>();
-
-            //Test that global tags are never authorized
-            Tag global = new Tag();
-            global.setTagType(Tag.TAG_TYPE_GLOBAL);
-            data.add(createTestDataRow(
-                global, RequestMethod.GET, false, true, authorizer));
-            data.add(createTestDataRow(
-                global, RequestMethod.POST, false, authorizer));
-            data.add(createTestDataRow(
-                global, RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(
-                global, RequestMethod.DELETE, false, authorizer));
-
-            //Test meas facil tag of own meas facil
-            Tag authorizedMeasFacil = new Tag();
-            authorizedMeasFacil.setTagType(Tag.TAG_TYPE_MST);
-            authorizedMeasFacil.setMeasFacilId(MEAS_FACIL_ID_06010);
-            data.add(createTestDataRow(
-                authorizedMeasFacil, RequestMethod.GET,
-                true, false, authorizer));
-            data.add(createTestDataRow(
-                authorizedMeasFacil, RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(
-                authorizedMeasFacil, RequestMethod.PUT, true, authorizer));
-            data.add(createTestDataRow(
-                authorizedMeasFacil, RequestMethod.DELETE, true, authorizer));
-
-            //Test meas facil tag of other meas facil
-            Tag unauthorizedMeasFacil = new Tag();
-            unauthorizedMeasFacil.setTagType(Tag.TAG_TYPE_MST);
-            unauthorizedMeasFacil.setMeasFacilId(MEAS_FACIL_ID_01010);
-            data.add(createTestDataRow(
-                unauthorizedMeasFacil, RequestMethod.GET,
-                false, true, authorizer));
-            data.add(createTestDataRow(
-                unauthorizedMeasFacil, RequestMethod.POST, false, authorizer));
-            data.add(createTestDataRow(
-                unauthorizedMeasFacil, RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(
-                unauthorizedMeasFacil, RequestMethod.DELETE,
-                false, authorizer));
-
-            //Test authorized network tag
-            Tag authorizedNetwork = new Tag();
-            authorizedNetwork.setTagType(Tag.TAG_TYPE_NETZBETREIBER);
-            authorizedNetwork.setNetworkId(NETWORK_ID_AUTHORIZED);
-            data.add(createTestDataRow(
-                authorizedNetwork, RequestMethod.GET, true, false, authorizer));
-            data.add(createTestDataRow(
-                authorizedNetwork, RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(
-                authorizedNetwork, RequestMethod.PUT, true, authorizer));
-            data.add(createTestDataRow(
-                authorizedNetwork, RequestMethod.DELETE, true, authorizer));
-
-            //Test unauthorized network tag
-            Tag unauthorizedNetwork = new Tag();
-            unauthorizedNetwork.setTagType(Tag.TAG_TYPE_NETZBETREIBER);
-            unauthorizedNetwork.setNetworkId(NETWORK_ID_UNAUTHORIZED);
-            data.add(createTestDataRow(
-                unauthorizedNetwork, RequestMethod.GET,
-                false, true, authorizer));
-            data.add(createTestDataRow(
-                unauthorizedNetwork, RequestMethod.POST, false, authorizer));
-            data.add(createTestDataRow(
-                unauthorizedNetwork, RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(
-                unauthorizedNetwork, RequestMethod.DELETE, false, authorizer));
-            return data;
-        }
-
-        private static List<Object[]> createTagLinkTestData() {
-            Class<?> authorizer = TagZuordnungAuthorizer.class;
-            List<Object[]> data = new ArrayList<>();
-
-            //Test global tag and authorized sample
-            TagLink authorizedSample = new TagLink();
-            authorizedSample.setTagId(TAG_ID_GLOBAL);
-            authorizedSample.setSampleId(SAMPLE_ID_AUTHORIZED);
-            data.add(createTestDataRow(
-                authorizedSample, RequestMethod.GET, false, authorizer));
-            data.add(createTestDataRow(
-                authorizedSample, RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(
-                authorizedSample, RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(
-                authorizedSample, RequestMethod.DELETE, true, authorizer));
-
-            //Test global tag and authorized sample
-            TagLink unauthorizedSample = new TagLink();
-            unauthorizedSample.setTagId(TAG_ID_GLOBAL);
-            unauthorizedSample.setSampleId(SAMPLE_ID_UNAUTORIZED);
-            data.add(createTestDataRow(
-                unauthorizedSample, RequestMethod.GET, false, authorizer));
-            data.add(createTestDataRow(
-                unauthorizedSample, RequestMethod.POST, false, authorizer));
-            data.add(createTestDataRow(
-                unauthorizedSample, RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(
-                unauthorizedSample, RequestMethod.DELETE, false, authorizer));
-
-            //Test global tag and authorized measm
-            TagLink authorizedMeasm = new TagLink();
-            authorizedMeasm.setTagId(TAG_ID_GLOBAL);
-            authorizedMeasm.setMeasmId(MEASM_ID_NO_STATUS);
-            data.add(createTestDataRow(
-                authorizedMeasm, RequestMethod.GET, false, authorizer));
-            data.add(createTestDataRow(
-                authorizedMeasm, RequestMethod.POST, true, authorizer));
-            data.add(createTestDataRow(
-                authorizedMeasm, RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(
-                authorizedMeasm, RequestMethod.DELETE, true, authorizer));
-
-            //Test global tag and authorized measm
-            TagLink unauthorizedMeasm = new TagLink();
-            unauthorizedMeasm.setTagId(TAG_ID_GLOBAL);
-            unauthorizedMeasm.setMeasmId(MEASM_ID_STATUS_LOCKED);
-            data.add(createTestDataRow(
-                unauthorizedMeasm, RequestMethod.GET, false, authorizer));
-            data.add(createTestDataRow(
-                unauthorizedMeasm, RequestMethod.POST, false, authorizer));
-            data.add(createTestDataRow(
-                unauthorizedMeasm, RequestMethod.PUT, false, authorizer));
-            data.add(createTestDataRow(
-                unauthorizedMeasm, RequestMethod.DELETE, false, authorizer));
-            return data;
-        }
+        return Map.of(
+            authorizedSample, new ExpectedResults(false, true, false, true),
+            unauthorizedSample, new ExpectedResults(false, false, false, false),
+            authorizedMeasm, new ExpectedResults(false, true, false, true),
+            unauthorizedMeasm, new ExpectedResults(false, false, false, false)
+        );
     }
 }
