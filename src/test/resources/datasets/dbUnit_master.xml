@@ -53,6 +53,15 @@
         is_gov_dist = "false"
         geom_center = "POINT(32487017 5519769)"
     />
+    <master.admin_unit
+        id = "11000001"
+        state_id = "11000000"
+        name = "Text"
+        is_state = "true"
+        is_munic = "true"
+        is_rural_dist = "true"
+        is_gov_dist = "false"
+    />
     <master.spat_ref_sys id = "4" />
     <master.spat_ref_sys id = "5" />
     <master.site_class id = "1" />
@@ -131,6 +140,32 @@
         site_class_id = "1"
         short_text = "kurz"
         rei_report_text = "bericht"
+    />
+    <master.site
+        id = "1002"
+        network_id = "06"
+        ext_id = "Text"
+        long_text = "Lang"
+        admin_unit_id = "11000000"
+        is_fuzzy = "true"
+        spat_ref_sys_id = "5"
+        coord_x_ext = "32487017"
+        coord_y_ext = "5519769"
+        geom = "SRID=4326;POINT(49.83021 8.81948)"
+        short_text = "kurz"
+    />
+    <master.site
+        id = "1003"
+        network_id = "06"
+        ext_id = "X"
+        long_text = "Lang"
+        admin_unit_id = "11000001"
+        is_fuzzy = "true"
+        spat_ref_sys_id = "5"
+        coord_x_ext = "32487017"
+        coord_y_ext = "5519769"
+        geom = "SRID=4326;POINT(49.83021 8.81948)"
+        short_text = "kurz"
     />
     <!-- Env descrip data-->
     <master.env_descrip
@@ -675,7 +710,7 @@
         id = "1001"
         network_id = "06"
         ext_id = "D_00192"
-        long_text = "Langer Text"
+        long_text = "Lang"
         state_id = "0"
         admin_unit_id = "11000000"
         is_fuzzy = "true"
@@ -685,7 +720,7 @@
         last_mod = "2015-03-01 12:00:00"
         geom = "SRID=4326;POINT(49.83021 8.81948)"
         site_class_id = "1"
-        short_text = "kurz"
+        short_text = "Text"
         rei_report_text = "bericht"
     />
     <master.munic_div

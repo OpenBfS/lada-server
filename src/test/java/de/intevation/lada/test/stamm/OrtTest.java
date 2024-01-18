@@ -127,7 +127,10 @@ public class OrtTest extends ServiceTest {
 
         //Test search interface
         JsonObject result = get("rest/site?search=Text");
-        Assert.assertNotEquals(0, result.getJsonArray("data").size());
+        // "Text" appears in extId, longText, shortText and adminUnit.name,
+        // each in one object
+        final int expectedSize = 4;
+        Assert.assertEquals(expectedSize, result.getJsonArray("data").size());
 
         getById("rest/site/1000", expectedById);
         int createdId = create("rest/site", create)
