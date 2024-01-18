@@ -13,13 +13,6 @@ import java.util.Base64;
 import java.util.List;
 
 import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.persistence.Query;
 import jakarta.validation.Valid;
@@ -47,7 +40,6 @@ import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
-import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -67,6 +59,11 @@ import de.intevation.lada.validation.Violation;
  */
 @Path("site")
 public class SiteService extends LadaService {
+
+    private static final String QUERY_TEMPLATE =
+        "SELECT site.* FROM master.site "
+        + "LEFT JOIN master.admin_unit AS au ON admin_unit_id = au.id "
+        + "%s";
 
     @Inject
     private Logger logger;
@@ -106,48 +103,51 @@ public class SiteService extends LadaService {
         @QueryParam("start") Integer start,
         @QueryParam("limit") Integer limit
     ) {
-        List<Site> orte = new ArrayList<>();
-        EntityManager em = repository.entityManager();
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Site> query = builder.createQuery(Site.class);
-        Root<Site> root = query.from(Site.class);
-        Predicate filter = null;
+        // Build SQL query string
+        List<String> whereClauseParts = new ArrayList<>();
         if (networkId != null) {
-            Predicate netzbetreiberFilter =
-                builder.equal(root.get("networkId"), networkId);
-            filter = builder.and(netzbetreiberFilter);
+            whereClauseParts.add("network_id IN(:networkId)");
         }
         if (search != null) {
-            Join<Site, AdminUnit> join =
-                root.join("adminUnit", JoinType.LEFT);
-            String pattern = "%" + search + "%";
-            Predicate idFilter = builder.like(root.get("extId"), pattern);
-            Predicate kurzTextFilter =
-                builder.like(root.get("shortText"), pattern);
-            Predicate langtextFilter =
-                builder.like(root.get("longText"), pattern);
-            Predicate bezFilter =
-                builder.like(join.get("name"), pattern);
-            Predicate searchFilter =
-                builder.or(idFilter, kurzTextFilter, langtextFilter, bezFilter);
-            filter =
-                filter == null
-                ? searchFilter : builder.and(filter, searchFilter);
-        }
-        if (filter != null) {
-            query.where(filter);
-        }
-        orte = repository.filterPlain(query);
-
-        int size = orte.size();
-        // TODO: Push paging down to database
-        if (start != null && limit != null) {
-            int end = limit + start;
-            if (limit.intValue() == 0 || end > size) {
-                end = size;
+            List<String> filters = new ArrayList<>();
+            for (String attr: List.of(
+                    "ext_id", "short_text", "long_text", "name")) {
+                filters.add(attr + " LIKE(:pattern)");
             }
-            orte = orte.subList(start, end);
+            whereClauseParts.add(String.join(" OR ", filters));
         }
+        String whereClause = "";
+        if (!whereClauseParts.isEmpty()) {
+            whereClause =
+                "WHERE (" + String.join(") AND (", whereClauseParts) + ")";
+        }
+        String queryString = String.format(QUERY_TEMPLATE, whereClause);
+
+        // Build queries
+        Query siteQuery = repository.entityManager().createNativeQuery(
+            queryString, Site.class);
+        Query countQuery = repository.entityManager().createNativeQuery(
+            "SELECT count(*) FROM (" + queryString + ") as query");
+        List<Query> queries = List.of(siteQuery, countQuery);
+        if (networkId != null) {
+            for (Query query: queries) {
+                query.setParameter("networkId", networkId);
+            }
+        }
+        if (search != null) {
+            for (Query query: queries) {
+                query.setParameter("pattern", "%" + search + "%");
+            }
+        }
+        if (start != null) {
+            siteQuery.setFirstResult(start);
+        }
+        if (limit != null) {
+            siteQuery.setMaxResults(limit);
+        }
+
+        @SuppressWarnings("unchecked")
+        List<Site> orte = siteQuery.getResultList();
         for (Site o : orte) {
             List<Geolocat> zuordnungs = getOrtsZuordnungs(o);
             o.setReferenceCount(zuordnungs.size());
@@ -161,6 +161,9 @@ public class SiteService extends LadaService {
                     Site.class));
             validator.validate(o);
         }
+
+        int size = Math.toIntExact((Long) countQuery.getSingleResult());
+
         return new Response(true, StatusCodes.OK, orte, size);
     }
 
