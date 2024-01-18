@@ -52,7 +52,6 @@ import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -108,7 +107,6 @@ public class SiteService extends LadaService {
         @QueryParam("limit") Integer limit
     ) {
         List<Site> orte = new ArrayList<>();
-        UserInfo user = authorization.getInfo();
         EntityManager em = repository.entityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Site> query = builder.createQuery(Site.class);
@@ -118,10 +116,6 @@ public class SiteService extends LadaService {
             Predicate netzbetreiberFilter =
                 builder.equal(root.get("networkId"), networkId);
             filter = builder.and(netzbetreiberFilter);
-        } else {
-            for (String nb : user.getNetzbetreiber()) {
-                builder.or(builder.equal(root.get("networkId"), nb));
-            }
         }
         if (search != null) {
             Join<Site, AdminUnit> join =
