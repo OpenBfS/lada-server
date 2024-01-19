@@ -16,20 +16,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.jboss.logging.Logger;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ErrorCollector;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.junit.runners.model.MultipleFailureException;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.CommMeasm;
@@ -46,8 +44,8 @@ import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
-import jakarta.inject.Inject;
 
+import jakarta.inject.Inject;
 
 /**
  * Class testing authorizers.
@@ -56,10 +54,6 @@ import jakarta.inject.Inject;
 public class AuthorizerTest extends BaseTest {
 
     private Logger log = Logger.getLogger(AuthorizerTest.class);
-
-    //Error collector to collect nested test errors
-    @Rule
-    public ErrorCollector collector = new ErrorCollector();
 
     private static Authorization authorization;
 
@@ -124,11 +118,10 @@ public class AuthorizerTest extends BaseTest {
     public void testBaseAuthorizerAuthorizedSample() {
         BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
         //Test authorized sample
-        collector.checkThat(
-            "Authorized sample",
+        assertEquals(
             baseAuthorizer.isProbeReadOnly(
                 SAMPLE_ID_AUTHORIZED),
-            CoreMatchers.is(false));
+            false);
     }
 
     /**
@@ -139,11 +132,11 @@ public class AuthorizerTest extends BaseTest {
     public void testBaseAuthorizerUnauthorizedSample() {
         BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
         //Test locked sample
-        collector.checkThat(
+        assertEquals(
             "Unauthorized sample",
             baseAuthorizer.isProbeReadOnly(
                 SAMPLE_ID_LOCKED_BY_STATUS),
-            CoreMatchers.is(true));
+            true);
     }
 
     /**
@@ -154,11 +147,11 @@ public class AuthorizerTest extends BaseTest {
     public void testBaseAuthorizerAuthorizedMeasm() {
         BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
         //Test unlocked measm
-        collector.checkThat(
+        assertEquals(
             "Unlocked measm",
             baseAuthorizer.isMessungReadOnly(
                 MEASM_ID_STATUS_EDITABLE),
-            CoreMatchers.is(false));
+            false);
     }
 
     /**
@@ -169,11 +162,11 @@ public class AuthorizerTest extends BaseTest {
     public void testBaseAuthorizerUnauthorizedMeasm() {
         BaseAuthorizer baseAuthorizer = new ProbeAuthorizer(repository);
         //Test locked measm
-        collector.checkThat(
+        assertEquals(
             "Locked measm",
             baseAuthorizer.isMessungReadOnly(
                 MEASM_ID_STATUS_LOCKED),
-            CoreMatchers.is(true));
+            true);
     }
 
     /**
@@ -198,19 +191,23 @@ public class AuthorizerTest extends BaseTest {
             "FilterTests");
     }
 
-    private void processResult(Result result, String testName) {
+    private void processResult(Result result, String testName)
+        throws Exception {
         log.info(String.format(
             "%s: Tests run: %d, failed: %d, ignored: %d",
             testName,
             result.getRunCount(), result.getFailureCount(),
             result.getIgnoreCount()));
+        List<Throwable> errors = new ArrayList<Throwable>();
         result.getFailures().forEach(failure -> {
             String descr = failure.getDescription().getDisplayName();
             String msg = failure.getMessage();
             String error = String.format("%s: %s", descr, msg);
             log.error(error);
-            collector.addError(new Throwable(error, failure.getException()));
+            errors.add(failure.getException());
         });
+        //Throw exception manually to ensure all errors are printed
+        MultipleFailureException.assertEmpty(errors);
     }
 
     /**
