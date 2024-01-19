@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.inject.Inject;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -37,6 +38,7 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.Validator;
 
 /**
@@ -92,8 +94,12 @@ public class SampleService extends LadaService {
      * Expected format for payload in POST request to createFromMessprogramm().
      */
     public static class PostData {
-        private List<Integer> ids;
+        @NotNull
+        private List<@NotNull @IsValidPrimaryKey(
+            clazz = Mpg.class) Integer> ids;
+
         private boolean dryrun;
+
         private Calendar start;
         private Calendar end;
 
@@ -193,12 +199,8 @@ public class SampleService extends LadaService {
     @POST
     @Path("messprogramm")
     public Response createFromMessprogramm(
-        PostData object
+        @Valid PostData object
     ) {
-        if (object.ids == null) {
-            return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
-
         Map<String, Object> responseData = new HashMap<String, Object>();
         Map<String, Object> probenData = new HashMap<String, Object>();
         List<Integer> generatedProbeIds = new ArrayList<Integer>();
@@ -207,13 +209,6 @@ public class SampleService extends LadaService {
             HashMap<String, Object> data = new HashMap<String, Object>();
             Mpg messprogramm = repository.getByIdPlain(
                 Mpg.class, id);
-            if (messprogramm == null) {
-                data.put("success", false);
-                data.put("message", StatusCodes.NOT_EXISTING);
-                data.put("data", "Invalid mst id");
-                probenData.put("" + id, data);
-                return;
-            }
 
             if (!object.dryrun) {
                 // Use a dummy probe with same mstId as the messprogramm to

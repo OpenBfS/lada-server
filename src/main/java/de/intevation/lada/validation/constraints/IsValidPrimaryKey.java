@@ -9,6 +9,7 @@ package de.intevation.lada.validation.constraints;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.TYPE_USE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -22,7 +23,7 @@ import jakarta.validation.Payload;
 /**
  * Check if value is a valid primary key for an entity of the given class.
  */
-@Target({ FIELD, ANNOTATION_TYPE })
+@Target({ FIELD, ANNOTATION_TYPE, TYPE_USE })
 @Retention(RUNTIME)
 @Constraint(validatedBy = { IsValidPrimaryKeyValidator.class })
 @Documented
