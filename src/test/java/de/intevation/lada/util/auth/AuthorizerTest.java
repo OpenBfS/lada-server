@@ -303,23 +303,24 @@ public class AuthorizerTest extends BaseTest {
         /**
          * Test the authorizer filter method.
          * Will be skipped if no expected readonly status is given.
-         * @throws RuntimeException
+         * @throws SecurityException
+         * @throws NoSuchMethodException
+         * @throws InvocationTargetException
+         * @throws IllegalArgumentException
+         * @throws IllegalAccessException
          */
         @Test
-        public void testFilter() {
+        public void testFilter() throws
+                IllegalAccessException, IllegalArgumentException,
+                InvocationTargetException, NoSuchMethodException,
+                SecurityException {
             Response response = new Response(true, 0, testObject);
             Object filtered = authorization
                 .filter(response, testObject.getClass())
                 .getData();
-            try {
-                assertEquals(expectedReadonly,
-                    filtered.getClass()
-                    .getMethod("isReadonly").invoke(filtered));
-            } catch (IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException | NoSuchMethodException
-                    | SecurityException e) {
-                throw new RuntimeException(e);
-            }
+            assertEquals(expectedReadonly,
+                filtered.getClass()
+                .getMethod("isReadonly").invoke(filtered));
         }
     }
 
