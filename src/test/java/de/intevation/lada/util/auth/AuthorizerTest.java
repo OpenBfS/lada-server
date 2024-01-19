@@ -283,6 +283,15 @@ public class AuthorizerTest extends BaseTest {
             return createTestData()
                 .entrySet()
                 .stream()
+                //Remove testObjects without readonly field
+                .filter(entry -> {
+                    try {
+                        entry.getKey().getClass().getMethod("isReadonly");
+                        return true;
+                    } catch (NoSuchMethodException nsme) {
+                        return false;
+                    }
+                })
                 //Expected readonly is the inverted put authorization result
                 .map(entry -> {
                     return new Object[]{
