@@ -40,7 +40,7 @@ public class HasEntnahmeOrt implements Rule {
         Integer id = probe.getId();
         if (id == null) {
             Violation violation = new Violation();
-            violation.addWarning("entnahmeOrt", StatusCodes.VALUE_MISSING);
+            violation.addWarning("geolocats", StatusCodes.VALUE_MISSING);
             return violation;
         }
         if (probe.getReiAgGrId() != null
@@ -59,7 +59,7 @@ public class HasEntnahmeOrt implements Rule {
 
         if (orte.size()>1) {
             Violation violation = new Violation();
-            violation.addWarning("entnahmeOrt", StatusCodes.VALUE_AMBIGOUS);
+            violation.addWarning("geolocats", StatusCodes.VALUE_AMBIGOUS);
             return violation;
         }
 
@@ -74,7 +74,7 @@ public class HasEntnahmeOrt implements Rule {
             }
         }
         Violation violation = new Violation();
-        violation.addWarning("entnahmeOrt", StatusCodes.VALUE_MISSING);
+        violation.addWarning("geolocats", StatusCodes.VALUE_MISSING);
         return violation;
     }
 

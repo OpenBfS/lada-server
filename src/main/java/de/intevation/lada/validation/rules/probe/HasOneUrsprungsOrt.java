@@ -39,7 +39,7 @@ public class HasOneUrsprungsOrt implements Rule {
         Integer id = probe.getId();
         if (id == null) {
             Violation violation = new Violation();
-            violation.addWarning("entnahmeOrt", StatusCodes.VALUE_MISSING);
+            violation.addWarning("geolocats", StatusCodes.VALUE_MISSING);
             return violation;
         }
         if (probe.getReiAgGrId() != null
@@ -59,7 +59,7 @@ public class HasOneUrsprungsOrt implements Rule {
         List<Geolocat> orte = (List<Geolocat>) response.getData();
         if (orte.size()>1) {
             Violation violation = new Violation();
-            violation.addWarning("ursprungsOrt", StatusCodes.ORT_SINGLE_UORT);
+            violation.addWarning("geolocats", StatusCodes.ORT_SINGLE_UORT);
             return violation;
         } else {
             return null;
