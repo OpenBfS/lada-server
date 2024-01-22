@@ -41,7 +41,6 @@ public class MessungTest {
     private static final int EXISTING_SAMPLE_ID = 1000;
     private static final int EXISTING_SAMPLE_ID_SAMPLE_METH_CONT = 2000;
     private static final int EXISTING_SAMPLE_ID_REGULATION_161 = 3000;
-    private static final String EXISTING_MEASD_NAME = "Mangan";
     private static final int EXISTING_MEASM_ID = 1200;
     private static final String EXISTING_MIN_SAMPLE_ID = "T100";
     private static final String EXISTING_MMT_ID = "A3";
@@ -54,8 +53,6 @@ public class MessungTest {
 
     private static final String NEW_MIN_SAMPLE_ID = "42AB";
     private static final String MIN_SAMPLE_ID_00G2 = "00G2";
-
-    private static final String VALIDATION_KEY_SEPARATOR = "#";
 
     @Inject
     private Validator<Measm> validator;
@@ -199,8 +196,7 @@ public class MessungTest {
         measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
         measm.setMeasmStartDate(Date.from(measmStartDate));
         measm.setMmtId(EXISTING_MMT_ID);
-        String warnKey = MEASM_START_DATE
-            + VALIDATION_KEY_SEPARATOR + measm.getMinSampleId();
+        String warnKey = MEASM_START_DATE;
         validator.validate(measm);
         Assert.assertTrue(measm.hasWarnings());
         Assert.assertTrue(measm.getWarnings()
@@ -225,8 +221,7 @@ public class MessungTest {
         validator.validate(measm);
         if (measm.hasWarnings()) {
             Assert.assertFalse(measm.getWarnings().containsKey(
-                MEASM_START_DATE + VALIDATION_KEY_SEPARATOR
-                + measm.getMinSampleId()));
+                MEASM_START_DATE));
         }
     }
 
@@ -273,8 +268,7 @@ public class MessungTest {
         measm.setMmtId(EXISTING_MMT_ID);
 
         validator.validate(measm);
-        String warnKey = MEAS_PD + VALIDATION_KEY_SEPARATOR
-            + measm.getMinSampleId();
+        String warnKey = MEAS_PD;
         Assert.assertTrue(measm.hasWarnings());
         Assert.assertTrue(measm.getWarnings()
             .containsKey(warnKey));
@@ -346,8 +340,7 @@ public class MessungTest {
         measm.setMmtId(EXISTING_MMT_ID);
 
         validator.validate(measm);
-        String notficationKey = MEASD_ID + VALIDATION_KEY_SEPARATOR
-            + EXISTING_MEASD_NAME;
+        String notficationKey = MEASD_ID;
         Assert.assertTrue(measm.hasNotifications());
         Assert.assertTrue(measm.getNotifications()
             .containsKey(notficationKey));
@@ -366,8 +359,7 @@ public class MessungTest {
 
         validator.validate(measm);
         if (measm.hasNotifications()) {
-            String notficationKey = MEASD_ID
-                + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
+            String notficationKey = MEASD_ID;
             Assert.assertFalse(measm
                 .getNotifications().containsKey(notficationKey));
         }

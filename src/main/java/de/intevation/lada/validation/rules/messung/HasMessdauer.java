@@ -50,7 +50,7 @@ public class HasMessdauer implements Rule {
             } else {
                 Violation violation = new Violation();
                 violation.addWarning(
-                    "measPd#" + messung.getMinSampleId(),
+                    "measPd",
                     StatusCodes.VALUE_MISSING);
                 return violation;
             }

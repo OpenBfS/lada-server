@@ -109,7 +109,7 @@ public class DeskriptorToUmwelt implements Rule {
         if (media.size() == 0) {
             Violation violation = new Violation();
             violation.addWarning(
-                "envMediumId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                "envMediumId", StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
 
@@ -140,7 +140,7 @@ public class DeskriptorToUmwelt implements Rule {
         if (data.isEmpty()) {
             Violation violation = new Violation();
             violation.addWarning(
-                "envMediumId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                "envMediumId", StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
 
@@ -153,7 +153,7 @@ public class DeskriptorToUmwelt implements Rule {
         ) {
             Violation violation = new Violation();
             violation.addWarning(
-                "envMediumId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                "envMediumId", StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         } else if (!unique && (datenbasisId == 4 || datenbasisId == 1)) {
             if (data.size() != data.stream().filter(
@@ -161,7 +161,7 @@ public class DeskriptorToUmwelt implements Rule {
             ) {
                 Violation violation = new Violation();
                 violation.addNotification(
-                    "envMediumId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                    "envMediumId", StatusCodes.VALUE_NOT_MATCHING);
                 return violation;
             } else {
                 return null;
@@ -342,7 +342,7 @@ public class DeskriptorToUmwelt implements Rule {
             }
             Violation violation = new Violation();
             violation.addWarning(
-                "envMediumId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                "envMediumId", StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
     }

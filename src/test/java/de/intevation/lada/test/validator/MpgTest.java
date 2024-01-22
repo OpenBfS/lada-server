@@ -565,7 +565,7 @@ public class MpgTest {
         validator.validate(mpg);
         if (mpg.hasWarnings()) {
             Assert.assertFalse(
-                mpg.getWarnings().containsKey("envMediumId#N71"));
+                mpg.getWarnings().containsKey("envMediumId"));
         }
     }
 
@@ -586,7 +586,7 @@ public class MpgTest {
         mpg.setValidEndDate(DOM_MAX);
         mpg.setSamplePdStartDate(DOM_MIN);
         mpg.setSamplePdEndDate(DOM_MAX);
-        String warningKey = "envMediumId#L54";
+        String warningKey = "envMediumId";
         validator.validate(mpg);
         Assert.assertTrue(mpg.hasWarnings());
         Assert.assertTrue(mpg.getWarnings()

@@ -27,7 +27,6 @@ public class MeasValTest {
     private static final String MEASD_ID = "measdId";
     private static final String MEAS_VAL = "measVal";
     private static final String UNIT_ID = "measUnitId";
-    private static final String VALIDATION_KEY_SEPARATOR = "#";
 
     //Other constants
     private static final int EXISTING_MEASM_ID = 1200;
@@ -35,8 +34,6 @@ public class MeasValTest {
     private static final int EXISTING_MEASD_ID = 57;
     private static final int OTHER_MEASD_ID = 56;
     private static final String LESS_THAN_LOD_SMALLER_THAN = "<";
-    private static final String EXISTING_MEASD_NAME = "Other";
-    private static final String OTHER_MEASD_NAME = "Mangan";
     private static final int EXISTING_ENV_MEDIUM_PRIMARY_UNIT = 207;
     private static final int EXISTING_ENV_MEDIUM_SECONDARY_UNIT = 208;
     private static final int EXISTING_ENV_MEDIUM_UNIT_CONVERTABLE_TO_PRIMARY
@@ -276,8 +273,7 @@ public class MeasValTest {
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
-        String warningKey = UNIT_ID
-            + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
+        String warningKey = UNIT_ID;
         if (val.hasWarnings()
                 && val.getWarnings().containsKey(warningKey)) {
             Assert.assertFalse(val.getWarnings().get(warningKey)
@@ -297,8 +293,7 @@ public class MeasValTest {
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_SECONDARY_UNIT);
 
         validator.validate(val);
-        String warningKey = UNIT_ID
-            + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
+        String warningKey = UNIT_ID;
         if (val.hasWarnings()
                 && val.getWarnings().containsKey(warningKey)) {
             Assert.assertFalse(val.getWarnings().get(warningKey)
@@ -317,8 +312,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_UNIT_CONVERTABLE_TO_PRIMARY);
         validator.validate(val);
-        String warningKey = UNIT_ID
-            + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
+        String warningKey = UNIT_ID;
         Assert.assertTrue(val.hasWarnings());
         Assert.assertTrue(val.getWarnings()
             .containsKey(warningKey));
@@ -335,8 +329,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_UNIT_CONVERTABLE_TO_SECONDARY);
         validator.validate(val);
-        String warningKey = UNIT_ID
-            + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
+        String warningKey = UNIT_ID;
         Assert.assertTrue(val.hasWarnings());
         Assert.assertTrue(val.getWarnings()
             .containsKey(warningKey));
@@ -354,8 +347,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(UNIT_ID_NOT_CONVERTABLE);
         validator.validate(val);
-        String warningKey = UNIT_ID
-            + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
+        String warningKey = UNIT_ID;
         Assert.assertTrue(val.hasWarnings());
         Assert.assertTrue(val.getWarnings()
             .containsKey(warningKey));
@@ -372,8 +364,7 @@ public class MeasValTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
         validator.validate(val);
-        String warningKey = MEASD_ID
-            + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
+        String warningKey = MEASD_ID;
         Assert.assertTrue(val.hasWarnings());
         Assert.assertTrue(val.getWarnings()
             .containsKey(warningKey));
@@ -390,8 +381,7 @@ public class MeasValTest {
         val.setMeasdId(OTHER_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
         validator.validate(val);
-        String warningKey = MEASD_ID
-            + VALIDATION_KEY_SEPARATOR + EXISTING_MEASD_NAME;
+        String warningKey = MEASD_ID;
         if (val.hasWarnings()
                 && val.getWarnings().containsKey(warningKey)) {
             Assert.assertFalse(val.getWarnings().get(warningKey)

@@ -641,7 +641,7 @@ public class ProbeTest {
         validator.validate(sample);
         if (sample.hasWarnings()) {
             Assert.assertFalse(
-                sample.getWarnings().containsKey("envMediumId#N71"));
+                sample.getWarnings().containsKey("envMediumId"));
         }
     }
 
@@ -658,7 +658,7 @@ public class ProbeTest {
         sample.setRegulationId(REGULATION_ID_REI);
         sample.setSampleMethId(SAMPLE_METH_ID_INDIVIDUAL);
         sample.setIsTest(false);
-        String warningKey = "envMediumId#L54";
+        String warningKey = "envMediumId";
         validator.validate(sample);
         Assert.assertTrue(sample.hasWarnings());
         Assert.assertTrue(sample.getWarnings()

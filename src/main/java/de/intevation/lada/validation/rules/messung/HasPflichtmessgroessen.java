@@ -15,7 +15,6 @@ import jakarta.inject.Inject;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.ObligMeasdMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -95,14 +94,9 @@ public class HasPflichtmessgroessen implements Rule {
         pflicht.removeAll(tmp);
 
         if (!pflicht.isEmpty()) {
-            for (ObligMeasdMp p : pflicht) {
-                Measd mg =
-                    repository.getByIdPlain(
-                        Measd.class, p.getMeasdId());
-                violation.addNotification(
-                    "measdId#" + mg.getName(),
-                    StatusCodes.VAL_OBL_MEASURE);
-            }
+            violation.addNotification(
+                "measdId",
+                StatusCodes.VAL_OBL_MEASURE);
         }
         return violation.hasNotifications() ? violation : null;
     }

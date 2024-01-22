@@ -13,7 +13,6 @@ import jakarta.inject.Inject;
 
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.MmtMeasdView;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -55,10 +54,8 @@ public class MessgroesseToMessmethode implements Rule {
             }
         }
         if (!hit) {
-            Measd mg = repository.getByIdPlain(
-                Measd.class, messwert.getMeasdId());
             violation.addWarning(
-                "measdId#" + mg.getName(),
+                "measdId",
                 StatusCodes.VAL_MESSGROESSE_NOT_MATCHING_MMT);
         }
         if (violation.hasWarnings()) {

@@ -67,7 +67,7 @@ public class DateMesszeitpunkt implements Rule {
         ) {
             Violation violation = new Violation();
             violation.addWarning(
-                "measmStartDate#" + messung.getMinSampleId(),
+                "measmStartDate",
                 StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
