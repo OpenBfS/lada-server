@@ -498,6 +498,8 @@ public class MpgTest {
     public void sampleSpecifDoesExist() {
         SampleSpecif spec = new SampleSpecif();
         spec.setId("A42");
+        spec.setName("name");
+        spec.setExtId("A");
         Mpg mpg = new Mpg();
         mpg.setSampleSpecifs(Set.of(spec));
         mpg.setRegulationId(EXISTING_REGULATION_ID);
@@ -510,12 +512,9 @@ public class MpgTest {
         mpg.setSamplePdStartDate(DOM_MIN);
         mpg.setSamplePdEndDate(DOM_MAX);
         validator.validate(mpg);
-        if (mpg.hasErrors()) {
-            Assert.assertTrue(
-                !mpg.getErrors().containsKey(SAMPLE_SPECIFS)
-                || !mpg.getErrors().get(SAMPLE_SPECIFS)
-                    .contains(String.valueOf(StatusCodes.NOT_EXISTING)));
-        }
+        Assert.assertFalse(
+            "Unexpected errors: " + mpg.getErrors(),
+            mpg.hasErrors());
     }
 
     /**
