@@ -14,10 +14,13 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response.Status;
 
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.test.ServiceTest;
 
@@ -87,6 +90,21 @@ public class MessprogrammTest extends ServiceTest {
         //Check if referencing probe still has an mpgId
         getById("rest/sample/999", expectedSample);
         JsonObject created = create("rest/mpg", create);
-        delete("rest/mpg/" + created.getJsonObject("data").get("id"));
+        final int createdId = created.getJsonObject("data").getInt("id");
+
+        // Test setting active status
+        final JsonObject setActive = Json.createObjectBuilder()
+            .add("aktiv", true)
+            .add("ids", Json.createArrayBuilder().add(createdId))
+            .build();
+        BaseTest.parseResponse(client.target(baseUrl + "rest/mpg/aktiv")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .accept(MediaType.APPLICATION_JSON)
+            .put(Entity.entity(setActive.toString(),
+                    MediaType.APPLICATION_JSON)));
+
+        delete("rest/mpg/" + createdId);
     }
 }
