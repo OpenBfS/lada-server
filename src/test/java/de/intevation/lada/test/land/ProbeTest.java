@@ -75,7 +75,7 @@ public class ProbeTest extends ServiceTest {
 
         final String dataKey = "data";
         final String warningsKey = "warnings";
-        final String expectedWarningKey = "entnahmeOrt";
+        final String expectedWarningKey = "geolocats";
 
         MatcherAssert.assertThat(
             getById("rest/sample/1000", expectedById)

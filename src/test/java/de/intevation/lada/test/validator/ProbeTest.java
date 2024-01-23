@@ -33,7 +33,7 @@ import de.intevation.lada.validation.Validator;
 public class ProbeTest {
 
     //Validation keys
-    private static final String ENTNAHME_ORT = "entnahmeOrt";
+    private static final String ENTNAHME_ORT = "geolocats";
     private static final String ENV_DESCRIP_DISPLAY = "envDescripDisplay";
     private static final String ENV_MEDIUM_ID = "envMediumId";
     private static final String EXT_ID = "extId";
@@ -46,7 +46,7 @@ public class ProbeTest {
     private static final String SAMPLE_START_DATE = "sampleStartDate";
     private static final String SAMPLE_END_DATE = "sampleEndDate";
     private static final String SAMPLE_SPECIF_MEAS_VAL
-        = "sample_specif_meas_val";
+        = "sampleSpecifMeasVals";
     private static final String SAMPLE_METH_ID = "sampleMethId";
 
     //Test data ids
