@@ -232,7 +232,7 @@ public class AuthorizerTest extends BaseTest {
          * @return List of test data rows.
          */
         @Parameters(name =
-            "[#{index} isAuthorized] Test: {3}, Method: {1}, TestObject: {0}")
+            "Test: {3}, Method: {1}, TestObject: {0}")
         public static List<Object[]> getParameters() {
             List<Object[]> data = new ArrayList<Object[]>();
             createTestData().forEach((object, testConfig) -> {
@@ -287,7 +287,7 @@ public class AuthorizerTest extends BaseTest {
          * expected readonly value.
          * @return List of test data rows.
          */
-        @Parameters(name = "[#{index} Filter] Test: {2}")
+        @Parameters(name = "Test: {2}")
         public static List<Object[]> getParameters() {
             return createTestData()
                 .entrySet()
