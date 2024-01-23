@@ -94,10 +94,10 @@ public class MessprogrammTest extends ServiceTest {
 
         // Test setting active status
         final JsonObject setActive = Json.createObjectBuilder()
-            .add("aktiv", true)
+            .add("active", true)
             .add("ids", Json.createArrayBuilder().add(createdId))
             .build();
-        BaseTest.parseResponse(client.target(baseUrl + "rest/mpg/aktiv")
+        BaseTest.parseResponse(client.target(baseUrl + "rest/mpg/active")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)

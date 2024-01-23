@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.inject.Inject;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -34,6 +33,7 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.Validator;
 
 /**
@@ -65,6 +65,32 @@ public class MpgService extends LadaService {
 
     @Inject
     private ProbeFactory factory;
+
+    /**
+     * Expected format for payload in PUT request to setActive.
+     */
+    public static class SetActive {
+        @NotNull
+        private Boolean active;
+
+        @NotNull
+        private List<@NotNull @IsValidPrimaryKey(
+            clazz = Mpg.class) Integer> ids;
+
+        public Boolean isActive() {
+            return this.active;
+        }
+        public void setActive(Boolean active) {
+            this.active = active;
+        }
+
+        public List<Integer> getIds() {
+            return this.ids;
+        }
+        public void setIds(List<Integer> ids) {
+            this.ids = ids;
+        }
+    }
 
     /**
      * Get a Mpg object by id.
@@ -173,37 +199,17 @@ public class MpgService extends LadaService {
      * Update the active attribute of existing Mpg objects as bulk
      * operation.
      *
+     * @param data Object representing active status and list of IDs
      * @return Response object containing the success status of the operation
      * per Mpg.
      */
     @PUT
-    @Path("aktiv")
-    public Response setAktiv(
-        JsonObject data
+    @Path("active")
+    public Response setActive(
+        @Valid SetActive data
     ) {
-        Boolean active;
-        try {
-            active = data.getBoolean("aktiv");
-        } catch (NullPointerException npe) {
-            return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
-
-        List<Integer> idList = new ArrayList<>();
-        try {
-            JsonArray ids = data.getJsonArray("ids");
-            if (ids.size() == 0) {
-                return new Response(false, StatusCodes.NOT_EXISTING, null);
-            }
-            for (int i = 0; i < ids.size(); i++) {
-                idList.add(ids.getInt(i));
-            }
-        } catch (NullPointerException npe) {
-            return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
-
-        QueryBuilder<Mpg> builder =
-            repository.queryBuilder(Mpg.class);
-        builder.orIn("id", idList);
+        QueryBuilder<Mpg> builder = repository.queryBuilder(Mpg.class)
+            .orIn("id", data.getIds());
         List<Mpg> messprogramme =
             repository.filterPlain(builder.getQuery());
 
@@ -215,7 +221,7 @@ public class MpgService extends LadaService {
             if (authorization.isAuthorized(
                     m, RequestMethod.PUT, Mpg.class)
             ) {
-                m.setIsActive(active);
+                m.setIsActive(data.isActive());
                 Response r = repository.update(m);
                 int code = Integer.valueOf(r.getMessage()).intValue();
                 mpResult.put("success", code);
