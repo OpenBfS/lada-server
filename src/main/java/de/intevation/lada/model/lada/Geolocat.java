@@ -37,7 +37,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ Geolocat.class, DatabaseConstraints.class })
-@Unique(fields = {"sampleId", "siteId", "typeRegulation"},
+@Unique(fields = {"typeRegulation", "sampleId", "siteId"},
     groups = DatabaseConstraints.class, clazz = Geolocat.class)
 public class Geolocat extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;

@@ -35,7 +35,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ SampleSpecifMeasVal.class, DatabaseConstraints.class })
-@Unique(fields = {"sampleId", "sampleSpecifId"},
+@Unique(fields = {"sampleSpecifId", "sampleId"},
     groups = DatabaseConstraints.class, clazz = SampleSpecifMeasVal.class)
 public class SampleSpecifMeasVal implements Serializable {
     private static final long serialVersionUID = 1L;

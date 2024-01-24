@@ -41,7 +41,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ MpgMmtMp.class, DatabaseConstraints.class })
-@Unique(fields = {"mpgId", "mmtId"},
+@Unique(fields = {"mmtId", "mpgId"},
     groups = DatabaseConstraints.class, clazz = MpgMmtMp.class)
 public class MpgMmtMp extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
