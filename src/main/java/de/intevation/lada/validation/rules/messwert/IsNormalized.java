@@ -15,7 +15,6 @@ import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.MeasUnit;
-import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.model.master.UnitConvers;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -57,41 +56,45 @@ public class IsNormalized implements Rule {
             Integer secMehId = umwelt.getUnit2();
 
             //If  meh is not set
-            if (mehId == null && secMehId == null){
+            if (mehId == null && secMehId == null) {
                 violation.addWarning("measUnitId", StatusCodes.VAL_UNIT_UMW);
                 return violation;
             }
 
-            //Check if the messwert mehId can be converted to primary or secondary meh
+            // Check if the messwert mehId can be converted to primary or
+            // secondary meh
             Boolean convert = false;
             MeasUnit fromUnit = repository.getByIdPlain(
                     MeasUnit.class, messwert.getMeasUnitId());
             if (mehId != null && !mehId.equals(messwert.getMeasUnitId())) {
-
                 QueryBuilder<UnitConvers> builder =
                 repository.queryBuilder(UnitConvers.class);
                 builder.and("toUnitId", mehId);
                 builder.and("fromUnit", fromUnit);
-                List<UnitConvers> result = repository.filterPlain(builder.getQuery());
+                List<UnitConvers> result = repository
+                    .filterPlain(builder.getQuery());
                 convert = result.size() > 0;
-            } else if (secMehId != null && !secMehId.equals(messwert.getMeasUnitId())) {
+            } else if (secMehId != null
+                && !secMehId.equals(messwert.getMeasUnitId())
+            ) {
                 QueryBuilder<UnitConvers> builder =
                 repository.queryBuilder(UnitConvers.class);
                 builder.and("toUnitId", secMehId);
                 builder.and("fromUnit", fromUnit);
-                List<UnitConvers> result = repository.filterPlain(builder.getQuery());
+                List<UnitConvers> result = repository.filterPlain(
+                    builder.getQuery());
                 convert = result.size() > 0;
             }
 
             if (convert) {
-                QueryBuilder<Measd> builder_messgr = repository.queryBuilder(Measd.class);
-                builder_messgr.and("id", messwert.getMeasdId());
-                violation.addWarning("measUnitId", StatusCodes.VAL_UNIT_NORMALIZE);
-            } else if ( (mehId != null && mehId.equals(messwert.getMeasUnitId())) || (secMehId != null && secMehId.equals(messwert.getMeasUnitId())) ) {
+                violation.addWarning(
+                    "measUnitId", StatusCodes.VAL_UNIT_NORMALIZE);
+            } else if ((mehId != null
+                    && mehId.equals(messwert.getMeasUnitId()))
+                || (secMehId != null
+                    && secMehId.equals(messwert.getMeasUnitId()))) {
                 return null;
             } else {
-                QueryBuilder<Measd> builder_messgr = repository.queryBuilder(Measd.class);
-                builder_messgr.and("id", messwert.getMeasdId());
                 violation.addWarning("measUnitId", StatusCodes.VAL_UNIT_UMW);
             }
         }
