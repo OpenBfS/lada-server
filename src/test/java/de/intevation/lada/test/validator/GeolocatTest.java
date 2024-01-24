@@ -10,6 +10,8 @@ package de.intevation.lada.test.validator;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
 import de.intevation.lada.model.lada.Geolocat;
@@ -48,10 +50,17 @@ public class GeolocatTest {
         loc.setSampleId(SAMPLE_WITH_E_GEOLOCAT);
         loc.setSiteId(EXISTITING_SITE_ID);
 
-        // TODO: Changed to error when and why?
         sampleVal.validate(loc);
         Assert.assertTrue(loc.hasErrors());
-        Assert.assertTrue(loc.getErrors().containsKey(SAMPLE_ID));
+        final String typeRegulationKey = "typeRegulation";
+        MatcherAssert.assertThat(
+            loc.getErrors().keySet(),
+            CoreMatchers.hasItem(typeRegulationKey));
+        MatcherAssert.assertThat(
+            loc.getErrors().get(typeRegulationKey),
+            CoreMatchers.hasItem(
+                "Non-unique value combination for "
+                + "[typeRegulation, sampleId, siteId]"));
     }
 
     /**
