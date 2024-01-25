@@ -72,7 +72,8 @@ public class TagService extends LadaService {
      * Get tags.
      *
      * @param sampleIds filter by IDs of Sample objects.
-     * @param measmIds filter by IDs of Measm objects. Ignored if sampleId is given.
+     * @param measmIds filter by IDs of Measm objects.
+     * Ignored if sampleIds is given.
      *
      * @return Response with list of Tag objects.
      */
@@ -92,9 +93,10 @@ public class TagService extends LadaService {
             Join<Tag, TagLink> joinTagZuordnung =
                 root.join("tagZuordnungs");
             // Work-around missing SQL INTERSECTION in JPA:
-            final String filterBy = sampleIds.isEmpty() ? "measmId" : "sampleId";
-            final Iterator<Integer> filterIds =
-                sampleIds.isEmpty() ? measmIds.iterator() : sampleIds.iterator();
+            final String filterBy = sampleIds.isEmpty()
+                ? "measmId" : "sampleId";
+            final Iterator<Integer> filterIds = sampleIds.isEmpty()
+                ? measmIds.iterator() : sampleIds.iterator();
             Predicate idFilter = builder.equal(
                 joinTagZuordnung.get(filterBy), filterIds.next());
             result = repository.filterPlain(criteriaQuery.where(idFilter));
@@ -142,12 +144,12 @@ public class TagService extends LadaService {
             if (tag.getNetworkId() == null) {
                 tag.setNetworkId(mst.getNetworkId());
             } else if (!tag.getNetworkId().equals(mst.getNetworkId())) {
-                return new Response(false, StatusCodes.VALUE_NOT_MATCHING, "mst");
+                return new Response(
+                    false, StatusCodes.VALUE_NOT_MATCHING, "mst");
             }
         }
 
-        if (!tagTyp.equals(origTagTyp)
-        ) {
+        if (!tagTyp.equals(origTagTyp)) {
             // User changed type but not gueltigBis
             switch (tagTyp) {
             // Remove expiration timestamp for 'advanced' tags
@@ -203,7 +205,8 @@ public class TagService extends LadaService {
             if (tag.getNetworkId() == null) {
                 tag.setNetworkId(mst.getNetworkId());
             } else if (!tag.getNetworkId().equals(mst.getNetworkId())) {
-                return new Response(false, StatusCodes.VALUE_NOT_MATCHING, "mst");
+                return new Response(
+                    false, StatusCodes.VALUE_NOT_MATCHING, "mst");
             }
         }
 
