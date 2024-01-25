@@ -16,6 +16,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.validation.Valid;
@@ -75,7 +76,7 @@ public class QueryUserService extends LadaService {
             builder.createQuery(QueryUser.class);
         Root<QueryUser> root = criteriaQuery.from(QueryUser.class);
         Join<MeasFacil, QueryUser> mess =
-            root.join("messStelles", jakarta.persistence.criteria.JoinType.LEFT);
+            root.join("messStelles", JoinType.LEFT);
         Predicate filter =
             builder.equal(root.get("ladaUserId"), userInfo.getUserId());
         filter = builder.or(filter, root.get("ladaUserId").in(DEFAULT_USER_ID));
@@ -130,6 +131,9 @@ public class QueryUserService extends LadaService {
 
     /**
      * Update an existing query_user object in the database.
+     *
+     * @param query The query to be updated
+     * @return Response with updated query
      */
     @PUT
     @Path("{id}")
@@ -144,9 +148,9 @@ public class QueryUserService extends LadaService {
         }
 
         query.setLadaUserId(userInfo.getUserId());
-        QueryBuilder<QueryMeasFacilMp> builder =
-            repository.queryBuilder(QueryMeasFacilMp.class);
-        builder.and("queryUser", query);
+        QueryBuilder<QueryMeasFacilMp> builder = repository
+            .queryBuilder(QueryMeasFacilMp.class)
+            .and("queryUser", query);
         List<QueryMeasFacilMp> qms =
             repository.filterPlain(builder.getQuery());
         List<QueryMeasFacilMp> delete = new ArrayList<>();
