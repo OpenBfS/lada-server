@@ -33,6 +33,7 @@ import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.NonBlankString;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
@@ -55,7 +56,8 @@ public class Site extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = NuclFacilGr.class)
     private Integer nuclFacilGrId;
 
-    @Size(max = 70, min = 1)
+    @Size(max = 70)
+    @NonBlankString
     private String reiReportText;
 
     @ManyToOne
@@ -76,23 +78,28 @@ public class Site extends BaseModel implements Serializable {
 
     private Float alt;
 
-    @Size(max = 22, min = 1)
+    @Size(max = 22)
+    @NonBlankString
     private String coordXExt;
 
-    @Size(max = 22, min = 1)
+    @Size(max = 22)
+    @NonBlankString
     private String coordYExt;
 
-    @Size(max = 22, min = 1)
+    @Size(max = 22)
+    @NonBlankString
     private String shortText;
 
-    @Size(max = 100, min = 1)
+    @Size(max = 100)
+    @NonBlankString
     private String longText;
 
     @Column(insertable = false)
     @Temporal(TIMESTAMP)
     private Date lastMod;
 
-    @Size(max = 10, min = 1)
+    @Size(max = 10)
+    @NonBlankString
     private String reiOprMode;
 
     @NotBlank
@@ -101,7 +108,8 @@ public class Site extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = Network.class)
     private String networkId;
 
-    @Size(max = 20, min = 1)
+    @Size(max = 20)
+    @NonBlankString
     private String extId;
 
 
@@ -114,7 +122,8 @@ public class Site extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = Poi.class)
     private String poiId;
 
-    @Size(max = 2, min = 1)
+    @Size(max = 2)
+    @NonBlankString
     private String reiSector;
 
 
@@ -124,10 +133,12 @@ public class Site extends BaseModel implements Serializable {
 
     private Boolean isFuzzy;
 
-    @Size(max = 1, min = 1)
+    @Size(max = 1)
+    @NonBlankString
     private String reiZone;
 
-    @Size(max = 10, min = 1)
+    @Size(max = 10)
+    @NonBlankString
     private String reiCompetence;
 
 
@@ -153,7 +164,7 @@ public class Site extends BaseModel implements Serializable {
     @JsonbTransient
     private byte[] map;
 
-    @Size(min = 1)
+    @NonBlankString
     private String route;
 
     @Transient

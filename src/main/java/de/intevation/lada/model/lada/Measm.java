@@ -34,6 +34,7 @@ import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Mmt;
 import de.intevation.lada.util.data.EmptyStringConverter;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.NonBlankString;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import de.intevation.lada.validation.groups.Warnings;
@@ -78,7 +79,8 @@ public class Measm extends BaseModel implements Serializable {
     private String mmtId;
 
     @Convert(converter = EmptyStringConverter.class)
-    @Size(max = 4, min = 1)
+    @Size(max = 4)
+    @NonBlankString
     private String minSampleId;
 
     @NotNull

@@ -28,6 +28,7 @@ import de.intevation.lada.model.master.Poi;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.TypeRegulation;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.NonBlankString;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 
@@ -60,7 +61,8 @@ public class GeolocatMpg extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = TypeRegulation.class)
     private String typeRegulation;
 
-    @Size(max = 100, min = 1)
+    @Size(max = 100)
+    @NonBlankString
     private String addSiteText;
 
     @Size(max = 7)

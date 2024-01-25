@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.NonBlankString;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.persistence.Column;
@@ -41,13 +42,16 @@ public class Sampler implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Size(max = 25, min = 1)
+    @Size(max = 25)
+    @NonBlankString
     private String editor;
 
-    @Size(max = 60, min = 1)
+    @Size(max = 60)
+    @NonBlankString
     private String comm;
 
-    @Size(max = 80, min = 1)
+    @Size(max = 80)
+    @NonBlankString
     private String inst;
 
     @Size(max = 80)
@@ -68,33 +72,39 @@ public class Sampler implements Serializable {
         groups = DatabaseConstraints.class, clazz = Network.class)
     private String networkId;
 
-    @Size(max = 20, min = 1)
+    @Size(max = 20)
+    @NonBlankString
     private String city;
 
-    @Size(max = 5, min = 1)
+    @Size(max = 5)
+    @NonBlankString
     private String zip;
 
     @Size(max = 9)
     @NotBlank
     private String extId;
 
-    @Size(max = 30, min = 1)
+    @Size(max = 30)
+    @NonBlankString
     private String street;
 
-    @Size(max = 20, min = 1)
+    @Size(max = 20)
+    @NonBlankString
     private String phone;
 
-    @Size(max = 3, min = 1)
+    @Size(max = 3)
+    @NonBlankString
     private String phoneMobile;
 
     @Email
-    @Size(min = 1)
+    @NonBlankString
     private String email;
 
-    @Size(min = 1)
+    @NonBlankString
     private String routePlanning;
 
-    @Size(max = 1, min = 1)
+    @Size(max = 1)
+    @NonBlankString
     private String type;
 
     @Transient

@@ -30,6 +30,7 @@ import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.MeasUnit;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.NonBlankString;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
@@ -71,7 +72,8 @@ public class MeasVal extends BaseModel implements Serializable {
 
     private Double measVal;
 
-    @Size(max = 1, min = 1)
+    @Size(max = 1)
+    @NonBlankString
     private String lessThanLOD;
 
     private Double detectLim;

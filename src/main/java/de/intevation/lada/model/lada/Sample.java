@@ -45,6 +45,7 @@ import de.intevation.lada.model.master.SampleMeth;
 import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.util.data.EmptyStringConverter;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.NonBlankString;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.Warnings;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
@@ -80,11 +81,11 @@ public class Sample extends BaseModel implements Serializable {
     private Integer datasetCreatorId;
 
     @Convert(converter = EmptyStringConverter.class)
-    @Size(min = 1)
+    @NonBlankString
     private String mainSampleId;
 
     @Convert(converter = EmptyStringConverter.class)
-    @Size(max = 16, min = 1)
+    @NonBlankString
     private String extId;
 
     @NotBlank
@@ -97,7 +98,8 @@ public class Sample extends BaseModel implements Serializable {
     @Temporal(TIMESTAMP)
     private Date lastMod;
 
-    @Size(max = 100, min = 1)
+    @Size(max = 100)
+    @NonBlankString
     private String envDescripName;
 
     @Pattern(regexp = "D:( [0-9][0-9]){12}")

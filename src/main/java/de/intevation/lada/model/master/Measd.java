@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.NonBlankString;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,21 +37,25 @@ public class Measd implements Serializable {
         groups = DatabaseConstraints.class, clazz = Measd.class)
     private Integer id;
 
-    @Size(max = 300, min = 1)
+    @Size(max = 300)
+    @NonBlankString
     private String descr;
 
-    @Size(max = 9, min = 1)
+    @Size(max = 9)
+    @NonBlankString
     private String defColor;
 
     private Long eudfNuclId;
 
-    @Size(max = 6, min = 1)
+    @Size(max = 6)
+    @NonBlankString
     private String idfExtId;
 
     @NotNull
     private Boolean isRefNucl;
 
-    @Size(max = 7, min = 1)
+    @Size(max = 7)
+    @NonBlankString
     private String bvlFormatId;
 
     @NotBlank

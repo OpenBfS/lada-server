@@ -29,6 +29,7 @@ import jakarta.validation.constraints.Size;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.util.data.EmptyStringConverter;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.NonBlankString;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
@@ -53,7 +54,8 @@ public class SampleSpecifMeasVal implements Serializable {
     private Double measVal;
 
     @Convert(converter = EmptyStringConverter.class)
-    @Size(max = 1, min = 1)
+    @Size(max = 1)
+    @NonBlankString
     private String smallerThan;
 
     @NotNull
