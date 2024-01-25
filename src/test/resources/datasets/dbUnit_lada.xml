@@ -16,8 +16,20 @@
         meas_facil_id = "06010"
         auth_funct_id = "4"
     />
+    <master.lada_user
+        id = "2"
+        name = "testeins"
+    />
 
     <!--master data-->
+    <master.base_query id = "1999" sql = "SELECT id FROM master.base_query" />
+    <master.query_user
+        id = "1099"
+        descr = "TestQueryDescr"
+        lada_user_id = "2"
+        name = "TestQuery"
+        base_query_id = "1999"
+    />
     <master.type_regulation id = "X" name = "TestX"/>
     <master.type_regulation id = "Y" name = "TestY"/>
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
