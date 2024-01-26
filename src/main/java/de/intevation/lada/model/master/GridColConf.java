@@ -23,6 +23,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(schema = SchemaName.NAME)
@@ -47,6 +48,7 @@ public class GridColConf implements Serializable {
     private boolean isFilterNull;
 
     @NonBlankString
+    @Size(max = 4)
     private String sort;
 
     private Integer sortIndex;

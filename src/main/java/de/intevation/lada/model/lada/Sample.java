@@ -86,6 +86,7 @@ public class Sample extends BaseModel implements Serializable {
 
     @Convert(converter = EmptyStringConverter.class)
     @NonBlankString
+    @Size(max = 16)
     private String extId;
 
     @NotBlank
