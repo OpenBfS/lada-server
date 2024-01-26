@@ -522,3 +522,6 @@ ALTER TABLE master.admin_unit
 
 ALTER TABLE master.network
     ADD CONSTRAINT network_id_check CHECK (trim(both ' ' from id) <> '');
+
+ALTER TABLE master.type_regulation
+    ADD CHECK (trim(both ' ' from id) <> '');
