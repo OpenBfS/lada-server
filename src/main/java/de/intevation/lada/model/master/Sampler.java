@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
-import de.intevation.lada.validation.constraints.NonBlankString;
+import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.persistence.Column;
@@ -43,15 +43,15 @@ public class Sampler implements Serializable {
     private Integer id;
 
     @Size(max = 25)
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String editor;
 
     @Size(max = 60)
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String comm;
 
     @Size(max = 80)
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String inst;
 
     @Size(max = 80)
@@ -73,11 +73,11 @@ public class Sampler implements Serializable {
     private String networkId;
 
     @Size(max = 20)
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String city;
 
     @Size(max = 5)
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String zip;
 
     @Size(max = 9)
@@ -85,26 +85,26 @@ public class Sampler implements Serializable {
     private String extId;
 
     @Size(max = 30)
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String street;
 
     @Size(max = 20)
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String phone;
 
     @Size(max = 3)
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String phoneMobile;
 
     @Email
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String email;
 
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String routePlanning;
 
     @Size(max = 1)
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String type;
 
     @Transient

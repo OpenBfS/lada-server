@@ -10,7 +10,7 @@ package de.intevation.lada.model.master;
 import java.io.Serializable;
 import java.util.Date;
 
-import de.intevation.lada.validation.constraints.NonBlankString;
+import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -26,7 +26,7 @@ public class AuthFunct implements Serializable {
     @Id
     private Integer id;
 
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String funct;
 
     @Column(insertable = false)

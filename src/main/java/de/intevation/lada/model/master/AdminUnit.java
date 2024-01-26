@@ -17,7 +17,7 @@ import jakarta.persistence.Table;
 
 import org.locationtech.jts.geom.Point;
 
-import de.intevation.lada.validation.constraints.NonBlankString;
+import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 
 @Entity
 @Table(schema = SchemaName.NAME)
@@ -27,10 +27,10 @@ public class AdminUnit implements Serializable {
     @Id
     private String id;
 
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String name;
 
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String stateId;
 
     private Boolean isState;
@@ -41,13 +41,13 @@ public class AdminUnit implements Serializable {
 
     private Boolean isGovDist;
 
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String ruralDistId;
 
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String zip;
 
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String govDistId;
 
     @Column(columnDefinition = "geometry(Point, 4326)")

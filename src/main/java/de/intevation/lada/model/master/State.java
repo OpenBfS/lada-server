@@ -10,7 +10,7 @@ package de.intevation.lada.model.master;
 import java.io.Serializable;
 import java.util.Date;
 
-import de.intevation.lada.validation.constraints.NonBlankString;
+import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -32,23 +32,23 @@ public class State implements Serializable {
 
     private Integer spatRefSysId;
 
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String coordXExt;
 
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String coordYExt;
 
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String ctry;
 
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String iso3166;
 
     @Column(insertable = false)
     @Temporal(TIMESTAMP)
     private Date lastMod;
 
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String intVehRegCode;
 
     public State() {

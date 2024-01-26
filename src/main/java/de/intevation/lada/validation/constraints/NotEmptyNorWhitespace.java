@@ -36,7 +36,7 @@ import jakarta.validation.constraints.Size;
 @Retention(RUNTIME)
 @Constraint(validatedBy = { })
 @Documented
-public @interface NonBlankString {
+public @interface NotEmptyNorWhitespace {
     /**
      * Validation message.
      */

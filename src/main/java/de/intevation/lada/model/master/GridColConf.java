@@ -10,7 +10,7 @@ package de.intevation.lada.model.master;
 import java.io.Serializable;
 
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
-import de.intevation.lada.validation.constraints.NonBlankString;
+import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Entity;
@@ -47,7 +47,7 @@ public class GridColConf implements Serializable {
 
     private boolean isFilterNull;
 
-    @NonBlankString
+    @NotEmptyNorWhitespace
     @Size(max = 4)
     private String sort;
 

@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
-import de.intevation.lada.validation.constraints.NonBlankString;
+import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,7 +55,7 @@ public class MunicDiv implements Serializable {
     private Integer siteId;
 
     @Size(max = 180)
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String name;
 
     @Column(insertable = false)

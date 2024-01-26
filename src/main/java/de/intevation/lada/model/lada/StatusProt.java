@@ -28,7 +28,7 @@ import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
-import de.intevation.lada.validation.constraints.NonBlankString;
+import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 
@@ -63,7 +63,7 @@ public class StatusProt extends BaseModel implements Serializable {
     private Integer statusMpId;
 
     @Size(max = 1024)
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String text;
 
     @Column(insertable = false, updatable = false)

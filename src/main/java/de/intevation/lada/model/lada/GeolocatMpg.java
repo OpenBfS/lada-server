@@ -29,7 +29,7 @@ import de.intevation.lada.model.master.Poi;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.TypeRegulation;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
-import de.intevation.lada.validation.constraints.NonBlankString;
+import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 
@@ -63,7 +63,7 @@ public class GeolocatMpg extends BaseModel implements Serializable {
     private String typeRegulation;
 
     @Size(max = 100)
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String addSiteText;
 
     @Size(max = 7)

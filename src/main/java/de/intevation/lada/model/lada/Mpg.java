@@ -49,7 +49,7 @@ import de.intevation.lada.model.master.SampleMeth;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
-import de.intevation.lada.validation.constraints.NonBlankString;
+import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import de.intevation.lada.validation.groups.Warnings;
 
@@ -102,7 +102,7 @@ public class Mpg extends BaseModel implements Serializable {
     private Integer samplePdOffset;
 
     @Size(max = 1000)
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String commMpg;
 
     @NotBlank
@@ -130,7 +130,7 @@ public class Mpg extends BaseModel implements Serializable {
     private Integer mpgCategId;
 
     @Size(max = 80)
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String commSample;
 
 
@@ -177,7 +177,7 @@ public class Mpg extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = MeasUnit.class)
     private Integer measUnitId;
 
-    @NonBlankString
+    @NotEmptyNorWhitespace
     private String sampleQuant;
 
     @OneToMany(fetch = FetchType.EAGER)
