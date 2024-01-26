@@ -40,8 +40,7 @@ public @interface NonBlankString {
     /**
      * Validation message.
      */
-    String message() default
-        "{de.intevation.lada.validation.constraints.NonBlankString.message}";
+    String message() default "";
 
     Class<?>[] groups() default { };
 
