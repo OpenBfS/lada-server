@@ -290,7 +290,7 @@ $BODY$;
 CREATE TABLE spat_ref_sys (
     id serial PRIMARY KEY,
     name character varying(50) CHECK (trim(both ' ' from name) <> ''),
-    idf_geo_key character varying(1),
+    idf_geo_key character varying(1) CHECK (trim(both ' ' from idf_geo_key) <> ''),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_spat_ref_sys BEFORE UPDATE ON spat_ref_sys FOR EACH ROW EXECUTE PROCEDURE update_last_mod();

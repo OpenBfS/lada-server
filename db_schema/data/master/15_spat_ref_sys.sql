@@ -31,7 +31,7 @@ COPY spat_ref_sys (id, name, idf_geo_key) FROM stdin;
 3	UTM-MGRS (WGS84)	M
 4	geografisch-dezimal (WGS84)	g
 5	UTM (WGS84)	U
-6	ETRS89	
+6	ETRS89	\N
 8	UTM (Hayford)	u
 9	UTM-MGRS (Hayford)	m
 \.
