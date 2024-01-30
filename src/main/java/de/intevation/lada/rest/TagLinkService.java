@@ -115,7 +115,7 @@ public class TagLinkService extends LadaService {
     @POST
     @Path("delete")
     public Response deleteTagReference(
-        List<TagLink> tagLinks
+        @Valid List<TagLink> tagLinks
     ) {
         List<Response> responseList = new ArrayList<>();
 
