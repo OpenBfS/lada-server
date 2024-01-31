@@ -57,6 +57,9 @@ public class TagZuordnungTest extends ServiceTest {
     public void execute() {
         // test assigning tags
         bulkOperation(tagUrl, create);
+        // Should accept existing tag links
+        bulkOperation(tagUrl, create);
+
         JsonObject tagResponse = get("rest/tag/");
         List<Integer> tagIds = create.stream()
             .map(zuord -> zuord.asJsonObject().getInt("tagId"))
@@ -103,6 +106,8 @@ public class TagZuordnungTest extends ServiceTest {
             1, tagResponse.getJsonArray(data).size());
 
         // Test unassigning tags
+        bulkOperation(tagUrl + "delete", create);
+        // Should accept existing tag links
         bulkOperation(tagUrl + "delete", create);
     }
 }

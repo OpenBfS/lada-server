@@ -8,7 +8,6 @@
 package de.intevation.lada.model.lada;
 
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
-import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,10 +21,6 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ TagLink.class, DatabaseConstraints.class })
-@Unique(groups = DatabaseConstraints.class,
-    clazz = TagLink.class, fields = { "sampleId", "tagId" })
-@Unique(groups = DatabaseConstraints.class,
-    clazz = TagLink.class, fields = { "measmId", "tagId" })
 public class TagLink {
     public static final long serialVersionUID = 1L;
 
