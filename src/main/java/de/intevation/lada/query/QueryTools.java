@@ -184,7 +184,7 @@ public class QueryTools {
             if (customColumn.getIsFilterActive()
                 && customColumn.getFilterVal() != null
                 && !customColumn.getFilterVal().isEmpty()
-                && !customColumn.getIsFilterIsNull()
+                && !customColumn.getIsFilterNull()
             ) {
                 Filter filter = customColumn.getGridColMp().getFilter();
                 String filterValue = customColumn.getFilterVal();
@@ -250,7 +250,7 @@ public class QueryTools {
                     }
                 }
             } else if (customColumn.getIsFilterActive()
-                       && customColumn.getIsFilterIsNull()
+                       && customColumn.getIsFilterNull()
             ) {
                 Filter filter = customColumn.getGridColMp().getFilter();
                 String currentFilterString = filter.getSql();
@@ -359,7 +359,7 @@ public class QueryTools {
             if (customColumn.getIsFilterActive()
                 && customColumn.getFilterVal() != null
                 && !customColumn.getFilterVal().isEmpty()
-                && !customColumn.getIsFilterIsNull()
+                && !customColumn.getIsFilterNull()
             ) {
 
                 Filter filter = customColumn.getGridColMp().getFilter();

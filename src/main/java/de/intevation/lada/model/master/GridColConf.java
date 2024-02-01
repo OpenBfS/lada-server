@@ -205,7 +205,7 @@ public class GridColConf implements Serializable {
         this.isFilterRegex = isFilterRegex;
     }
 
-    public boolean getIsFilterIsNull() {
+    public boolean getIsFilterNull() {
         return isFilterNull;
     }
 
