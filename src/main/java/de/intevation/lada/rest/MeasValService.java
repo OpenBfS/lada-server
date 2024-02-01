@@ -202,19 +202,14 @@ public class MeasValService extends LadaService {
 
     /**
      * Normalise all MeasVal objects connected to the given Messung.
-     * @param measmId The measm id needs to be given
-     * as URL parameter 'measmId'.
+     * @param measmId The measm ID needs to be given as URL parameter 'measmId'.
      * @return Response object containing the updated MeasVal objects.
      */
     @PUT
     @Path("normalize")
     public Response normalize(
-        @QueryParam("measmId") Integer measmId
+        @QueryParam("measmId") @NotNull Integer measmId
     ) {
-        if (measmId == null) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
-
         //Load messung, probe and umwelt to get MessEinheit to convert to
         Measm messung = repository.getByIdPlain(Measm.class, measmId);
         if (!authorization.isAuthorized(
