@@ -128,7 +128,7 @@ ALTER TABLE measd_gr
     ADD CHECK (name <> '');
 
 ALTER TABLE mpg_categ
-    ADD CHECK (network_id <> ''),
+    ADD CHECK (name <> ''),
     ADD CHECK (ext_id <> '');
 
 UPDATE rei_ag SET descr = NULL WHERE descr = '';

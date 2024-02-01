@@ -97,6 +97,7 @@ ALTER TABLE measd_gr
     DROP CONSTRAINT IF EXISTS measd_gr_name_check;
 
 ALTER TABLE mpg_categ
+    DROP CONSTRAINT IF EXISTS mpg_categ_name_check,
     DROP CONSTRAINT IF EXISTS mpg_categ_ext_id_check;
 
 ALTER TABLE rei_ag
@@ -354,6 +355,7 @@ ALTER TABLE measd_gr
     ADD CHECK (trim(both ' ' from name) <> '');
 
 ALTER TABLE mpg_categ
+    ADD CHECK (trim(both ' ' from name) <> ''),
     ADD CHECK (trim(both ' ' from ext_id) <> '');
 
 ALTER TABLE rei_ag
