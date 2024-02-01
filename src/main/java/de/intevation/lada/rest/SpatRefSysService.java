@@ -8,6 +8,10 @@
 package de.intevation.lada.rest;
 
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.validation.GroupSequence;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -18,6 +22,9 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.SpatRefSys;
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.groups.DatabaseConstraints;
+
 
 /**
  * REST service for SpatRefSys objects.
@@ -35,10 +42,23 @@ public class SpatRefSysService extends LadaService {
     /**
      * Expected format for the payload in POST request to recalculate().
      */
+    @GroupSequence({ SpatRefSysService.PostData.class,
+                DatabaseConstraints.class })
     public static class PostData {
-        private int from;
-        private int to;
+        @NotNull
+        @IsValidPrimaryKey(
+            groups = DatabaseConstraints.class, clazz = SpatRefSys.class)
+        private Integer from;
+
+        @NotNull
+        @IsValidPrimaryKey(
+            groups = DatabaseConstraints.class, clazz = SpatRefSys.class)
+        private Integer to;
+
+        @NotBlank
         private String x;
+
+        @NotBlank
         private String y;
 
         public void setFrom(int from) {
@@ -83,7 +103,7 @@ public class SpatRefSysService extends LadaService {
 
     @POST
     public Response recalculate(
-        PostData object
+        @Valid PostData object
     ) {
         KdaUtil.Result result = new KdaUtil().transform(
             object.from, object.to, object.x, object.y);
