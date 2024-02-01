@@ -262,6 +262,7 @@ ALTER TABLE status_prot
 -- Master tables
 SET search_path to master;
 
+UPDATE spat_ref_sys SET idf_geo_key = NULL WHERE idf_geo_key = '';
 ALTER table spat_ref_sys
     ADD CHECK (trim(both ' ' from name) <> ''),
     ADD CHECK (trim(both ' ' from idf_geo_key) <> '');
