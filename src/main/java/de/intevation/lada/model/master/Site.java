@@ -9,16 +9,20 @@ package de.intevation.lada.model.master;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
@@ -32,12 +36,15 @@ import org.hibernate.type.SqlTypes;
 import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 @Entity
+@EntityListeners(SiteListener.class)
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ Site.class, DatabaseConstraints.class })
 @Unique(fields = {"extId", "networkId"},
@@ -176,10 +183,22 @@ public class Site extends BaseModel implements Serializable {
     @Transient
     private Double latitude;
 
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "site_id", insertable = false, updatable = false)
+    @JsonbTransient
+    private Set<Geolocat> geolocats;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "site_id", insertable = false, updatable = false)
+    @JsonbTransient
+    private Set<GeolocatMpg> geolocatMpgs;
+
     @Transient
     private Integer referenceCount;
 
     @Transient
+    //Number of plausible sample references
+    //Updated in the entity listener
     private Integer plausibleReferenceCount;
 
     @Transient
@@ -438,11 +457,8 @@ public class Site extends BaseModel implements Serializable {
     }
 
     public Integer getReferenceCount() {
-        return this.referenceCount;
-    }
-
-    public void setReferenceCount(Integer referenceCount) {
-        this.referenceCount = referenceCount;
+        return this.geolocats != null
+        ? this.geolocats.size() : 0;
     }
 
     public Integer getPlausibleReferenceCount() {
@@ -454,11 +470,8 @@ public class Site extends BaseModel implements Serializable {
     }
 
     public Integer getReferenceCountMp() {
-        return this.referenceCountMp;
-    }
-
-    public void setReferenceCountMp(Integer referenceCountMp) {
-        this.referenceCountMp = referenceCountMp;
+        return this.geolocatMpgs != null
+        ? this.geolocatMpgs.size() : 0;
     }
 
     public byte[] getImg() {
@@ -483,5 +496,21 @@ public class Site extends BaseModel implements Serializable {
 
     public void setRoute(String route) {
         this.route = route;
+    }
+
+    public Set<Geolocat> getGeolocats() {
+        return geolocats;
+    }
+
+    public void setGeolocats(Set<Geolocat> geolocats) {
+        this.geolocats = geolocats;
+    }
+
+    public Set<GeolocatMpg> getGeolocatMpgs() {
+        return geolocatMpgs;
+    }
+
+    public void setGeolocatMpgs(Set<GeolocatMpg> geolocatMpgs) {
+        this.geolocatMpgs = geolocatMpgs;
     }
 }

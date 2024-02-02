@@ -38,13 +38,10 @@ import org.jboss.logging.Logger;
 
 import de.intevation.lada.factory.OrtFactory;
 import de.intevation.lada.importer.ReportItem;
-import de.intevation.lada.model.lada.Geolocat;
-import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -149,11 +146,6 @@ public class SiteService extends LadaService {
         @SuppressWarnings("unchecked")
         List<Site> orte = siteQuery.getResultList();
         for (Site o : orte) {
-            List<Geolocat> zuordnungs = getOrtsZuordnungs(o);
-            o.setReferenceCount(zuordnungs.size());
-            o.setPlausibleReferenceCount(getPlausibleRefs(o.getId()));
-            List<GeolocatMpg> zuordnungsMp = getOrtsZuordnungsMp(o);
-            o.setReferenceCountMp(zuordnungsMp.size());
             o.setReadonly(
                 !authorization.isAuthorized(
                     o,
@@ -183,11 +175,6 @@ public class SiteService extends LadaService {
         if (ort == null) {
             return new Response(false, StatusCodes.NOT_EXISTING, null);
         }
-        List<Geolocat> zuordnungs = getOrtsZuordnungs(ort);
-        ort.setReferenceCount(zuordnungs.size());
-        ort.setPlausibleReferenceCount(getPlausibleRefs(ort.getId()));
-        List<GeolocatMpg> zuordnungsMp = getOrtsZuordnungsMp(ort);
-        ort.setReferenceCountMp(zuordnungsMp.size());
         ort.setReadonly(
             !authorization.isAuthorized(
                 ort,
@@ -265,7 +252,7 @@ public class SiteService extends LadaService {
         String dbCoordX = dbOrt.getCoordXExt();
         String dbCoordY = dbOrt.getCoordYExt();
 
-        if (getPlausibleRefs(dbOrt.getId()) > 0
+        if (dbOrt.getPlausibleReferenceCount() > 0
                 && (!dbCoordX.equals(ort.getCoordXExt())
                 || !dbCoordY.equals(ort.getCoordYExt()))) {
             MultivaluedMap<String, String> error = new MultivaluedHashMap<>();
@@ -317,8 +304,8 @@ public class SiteService extends LadaService {
             return response;
         }
         Site ort = (Site) response.getData();
-        if (getOrtsZuordnungs(ort).size() > 0
-                || getOrtsZuordnungsMp(ort).size() > 0) {
+        if (ort.getReferenceCount() > 0
+                || ort.getReferenceCountMp() > 0) {
             return new Response(false, StatusCodes.ERROR_DELETE, ort);
         }
         if (!authorization.isAuthorized(
@@ -424,39 +411,5 @@ public class SiteService extends LadaService {
             site.setImg(null);
         }
         repository.update(site);
-    }
-
-    /**
-     * Return the Ortszuordnung instances referencing the given ort.
-     * @param o Ort instance
-     * @return Ortszuordnung instances as list
-     */
-    private List<Geolocat> getOrtsZuordnungs(Site o) {
-        QueryBuilder<Geolocat> refBuilder =
-            repository.queryBuilder(Geolocat.class);
-        refBuilder.and("siteId", o.getId());
-        return repository.filterPlain(refBuilder.getQuery());
-    }
-
-    private int getPlausibleRefs(int sampleId) {
-        Query query =
-        repository.queryFromString(
-            "SELECT * FROM lada.get_measms_per_site(:sampleId);")
-                .setParameter("sampleId", sampleId);
-        @SuppressWarnings("unchecked")
-        List resultList = query.getResultList();
-        return ((int) resultList.get(0));
-    }
-
-    /**
-     * Return the OrtszuordnungMp instances referencing the given ort.
-     * @param o Ort instance
-     * @return Ortszuordnung instances as list
-     */
-    private List<GeolocatMpg> getOrtsZuordnungsMp(Site o) {
-        QueryBuilder<GeolocatMpg> refBuilder =
-            repository.queryBuilder(GeolocatMpg.class);
-        refBuilder.and("siteId", o.getId());
-        return repository.filterPlain(refBuilder.getQuery());
     }
 }
