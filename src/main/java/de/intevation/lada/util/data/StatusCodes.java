@@ -44,7 +44,6 @@ public class StatusCodes {
     public static final int GEO_COORD_UNCHECKED = 650;
     public static final int GEO_POINT_OUTSIDE = 651;
     public static final int GEO_NOT_MATCHING = 652;
-    public static final int GEO_UNCHANGEABLE_COORD = 653;
     public static final int STATUS_RO = 654;
     public static final int ORT_SINGLE_UORT = 655;
     public static final int ORT_REIMP_MISSING = 656;

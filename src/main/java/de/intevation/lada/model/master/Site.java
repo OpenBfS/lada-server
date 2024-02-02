@@ -38,6 +38,7 @@ import org.locationtech.jts.geom.Point;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
+import de.intevation.lada.validation.constraints.CanChangeCoordinates;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.Unique;
@@ -49,6 +50,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @GroupSequence({ Site.class, DatabaseConstraints.class })
 @Unique(fields = {"extId", "networkId"},
     groups = DatabaseConstraints.class, clazz = Site.class)
+@CanChangeCoordinates(groups = DatabaseConstraints.class)
 public class Site extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -57,7 +59,6 @@ public class Site extends BaseModel implements Serializable {
     private Integer id;
 
     private Boolean isReiActive;
-
 
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = NuclFacilGr.class)

@@ -30,8 +30,6 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.MultivaluedHashMap;
-import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.QueryParam;
 
 import org.jboss.logging.Logger;
@@ -248,24 +246,6 @@ public class SiteService extends LadaService {
             Site.class, ort.getId());
         if (dbOrt == null) {
             return new Response(false, StatusCodes.NOT_EXISTING, ort);
-        }
-        String dbCoordX = dbOrt.getCoordXExt();
-        String dbCoordY = dbOrt.getCoordYExt();
-
-        if (dbOrt.getPlausibleReferenceCount() > 0
-                && (!dbCoordX.equals(ort.getCoordXExt())
-                || !dbCoordY.equals(ort.getCoordYExt()))) {
-            MultivaluedMap<String, String> error = new MultivaluedHashMap<>();
-            if (!dbCoordX.equals(ort.getCoordXExt())) {
-                error.add("coordXExt",
-                    Integer.toString(StatusCodes.GEO_UNCHANGEABLE_COORD));
-            }
-            if (!dbCoordY.equals(ort.getCoordYExt())) {
-                error.add("coordYExt",
-                    Integer.toString(StatusCodes.GEO_UNCHANGEABLE_COORD));
-            }
-            ort.setErrors(error);
-            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
         }
 
         ortFactory.transformCoordinates(ort);
