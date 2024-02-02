@@ -8,9 +8,9 @@
 package de.intevation.lada.model;
 
 import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 
@@ -18,35 +18,35 @@ import jakarta.json.bind.annotation.JsonbTransient;
  * Provides shared attributes for model entities.
  */
 public abstract class BaseModel {
-    private Map<String, List<String>> errors = new HashMap<>();
-    private Map<String, List<String>> warnings = new HashMap<>();
-    private Map<String, List<Integer>> notifications = new HashMap<>();
+    private Map<String, Set<String>> errors = new HashMap<>();
+    private Map<String, Set<String>> warnings = new HashMap<>();
+    private Map<String, Set<Integer>> notifications = new HashMap<>();
 
-    public Map<String, List<String>>getErrors() {
+    public Map<String, Set<String>>getErrors() {
         return this.errors;
     }
 
     @JsonbTransient
-    public void setErrors(Map<String, List<String>> errors) {
+    public void setErrors(Map<String, Set<String>> errors) {
         this.errors = errors;
     }
 
-    public Map<String, List<String>> getWarnings() {
+    public Map<String, Set<String>> getWarnings() {
         return this.warnings;
     }
 
     @JsonbTransient
-    public void setWarnings(Map<String, List<String>> warnings) {
+    public void setWarnings(Map<String, Set<String>> warnings) {
         this.warnings = warnings;
     }
 
-    public Map<String, List<Integer>> getNotifications() {
+    public Map<String, Set<Integer>> getNotifications() {
         return this.notifications;
     }
 
     @JsonbTransient
     public void setNotifications(
-        Map<String, List<Integer>> notifications
+        Map<String, Set<Integer>> notifications
     ) {
         this.notifications = notifications;
     }
@@ -56,7 +56,7 @@ public abstract class BaseModel {
      *
      * @param e Errors to add
      */
-    public void addErrors(Map<String, List<String>> e) {
+    public void addErrors(Map<String, Set<String>> e) {
         for (String key: e.keySet()) {
             if (this.errors.containsKey(key)) {
                 this.errors.get(key).addAll(e.get(key));
@@ -71,7 +71,7 @@ public abstract class BaseModel {
      *
      * @param w Warnings to add
      */
-    public void addWarnings(Map<String, List<String>> w) {
+    public void addWarnings(Map<String, Set<String>> w) {
         for (String key: w.keySet()) {
             if (this.warnings.containsKey(key)) {
                 this.warnings.get(key).addAll(w.get(key));
@@ -86,7 +86,7 @@ public abstract class BaseModel {
      *
      * @param n Notifications to add
      */
-    public void addNotifications(Map<String, List<Integer>> n) {
+    public void addNotifications(Map<String, Set<Integer>> n) {
         for (String key: n.keySet()) {
             if (this.notifications.containsKey(key)) {
                 this.notifications.get(key).addAll(n.get(key));
@@ -104,7 +104,7 @@ public abstract class BaseModel {
      */
     public void addError(String key, String value) {
         if (!this.errors.containsKey(key)) {
-            this.errors.put(key, new ArrayList<String>());
+            this.errors.put(key, new HashSet<String>());
         }
         this.errors.get(key).add(value);
     }
@@ -117,7 +117,7 @@ public abstract class BaseModel {
      */
     public void addWarning(String key, String value) {
         if (!this.warnings.containsKey(key)) {
-            this.warnings.put(key, new ArrayList<String>());
+            this.warnings.put(key, new HashSet<String>());
         }
         this.warnings.get(key).add(value);
     }

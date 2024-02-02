@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
@@ -345,7 +346,7 @@ public class LafObjectMapper {
                     Response created = repository.create(probe);
                     newProbe = ((Sample) created.getData());
                 } else {
-                    for (Entry<String, List<String>> err
+                    for (Entry<String, Set<String>> err
                              : probe.getErrors().entrySet()
                     ) {
                         for (String code : err.getValue()) {
@@ -354,7 +355,7 @@ public class LafObjectMapper {
                                     "validation#probe", err.getKey(), code));
                         }
                     }
-                    for (Entry<String, List<String>> warn
+                    for (Entry<String, Set<String>> warn
                              : probe.getWarnings().entrySet()
                     ) {
                         for (String code : warn.getValue()) {
@@ -363,7 +364,7 @@ public class LafObjectMapper {
                                     "validation#probe", warn.getKey(), code));
                         }
                     }
-                    for (Entry<String, List<Integer>> notes
+                    for (Entry<String, Set<Integer>> notes
                              : probe.getNotifications().entrySet()
                     ) {
                         for (Integer code :notes.getValue()) {
@@ -629,7 +630,7 @@ public class LafObjectMapper {
 
             // Validate probe object
             probeValidator.validate(newProbe);
-            for (Entry<String, List<String>> err
+            for (Entry<String, Set<String>> err
                      : newProbe.getErrors().entrySet()
             ) {
                 for (String code : err.getValue()) {
@@ -637,7 +638,7 @@ public class LafObjectMapper {
                         new ReportItem("validation#probe", err.getKey(), code));
                 }
             }
-            for (Entry<String, List<String>> warn
+            for (Entry<String, Set<String>> warn
                      : newProbe.getWarnings().entrySet()
             ) {
                 for (String code : warn.getValue()) {
@@ -646,7 +647,7 @@ public class LafObjectMapper {
                             "validation#probe", warn.getKey(), code));
                 }
             }
-            for (Entry<String, List<Integer>> notes
+            for (Entry<String, Set<Integer>> notes
                      : newProbe.getNotifications().entrySet()
             ) {
                 for (Integer code: notes.getValue()) {
@@ -827,7 +828,7 @@ public class LafObjectMapper {
 
         // Check for warnings and errors for messung ...
         messungValidator.validate(newMessung);
-        for (Entry<String, List<String>> err
+        for (Entry<String, Set<String>> err
                  : newMessung.getErrors().entrySet()
         ) {
             for (String code : err.getValue()) {
@@ -835,7 +836,7 @@ public class LafObjectMapper {
                     new ReportItem("validation#messung", err.getKey(), code));
             }
         }
-        for (Entry<String, List<String>> warn
+        for (Entry<String, Set<String>> warn
                  : newMessung.getWarnings().entrySet()
         ) {
             for (String code : warn.getValue()) {
@@ -843,7 +844,7 @@ public class LafObjectMapper {
                     new ReportItem("validation#messung", warn.getKey(), code));
             }
         }
-        for (Entry<String, List<Integer>> notes
+        for (Entry<String, Set<Integer>> notes
                  : newMessung.getNotifications().entrySet()
         ) {
             for (Integer code : notes.getValue()) {
@@ -1718,7 +1719,7 @@ public class LafObjectMapper {
             return null;
         }
         ortValidator.validate(o);
-        for (Entry<String, List<String>> warn
+        for (Entry<String, Set<String>> warn
                  : o.getWarnings().entrySet()
         ) {
             for (String code : warn.getValue()) {
@@ -1727,7 +1728,7 @@ public class LafObjectMapper {
             }
         }
         if (o.hasErrors()) {
-            for (Entry<String, List<String>> err
+            for (Entry<String, Set<String>> err
                      : o.getErrors().entrySet()) {
                 for (String code : err.getValue()) {
                     // Add to warnings because Sample object might be imported

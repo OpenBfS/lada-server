@@ -12,6 +12,8 @@ import jakarta.transaction.Transactional;
 
 import java.util.ResourceBundle;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
 import de.intevation.lada.model.master.Site;
@@ -182,8 +184,9 @@ public class SiteTest {
         validator.validate(site);
         Assert.assertTrue(site.hasErrors());
         Assert.assertTrue(site.getErrors().containsKey(EXT_ID));
-        Assert.assertEquals(valMessageUniqueExtId,
-            site.getErrors().get(EXT_ID).get(0));
+        MatcherAssert.assertThat(
+            site.getErrors().get(EXT_ID),
+            CoreMatchers.hasItem(valMessageUniqueExtId));
     }
 
     /**
