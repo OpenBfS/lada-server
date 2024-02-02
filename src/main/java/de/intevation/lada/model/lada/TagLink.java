@@ -7,8 +7,10 @@
  */
 package de.intevation.lada.model.lada;
 
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,6 +39,8 @@ public class TagLink {
     private Integer measmId;
 
     @NotNull
+    @IsValidPrimaryKey(
+        groups = DatabaseConstraints.class, clazz = Tag.class)
     private Integer tagId;
 
     public Integer getId() {
