@@ -486,14 +486,14 @@ public class JsonExporter implements Exporter {
             return;
         }
 
-        QueryBuilder<EnvDescrip> builder =
-            repository.queryBuilder(EnvDescrip.class);
         int vorgaenger = 0;
         ObjectNode node = new ObjectNode(JsonNodeFactory.instance);
         boolean isZebs = Integer.parseInt(parts[1]) == 1;
         int hdV = 0;
         int ndV = 0;
         for (int i = 0; i < parts.length - 1; i++) {
+            QueryBuilder<EnvDescrip> builder =
+                repository.queryBuilder(EnvDescrip.class);
             String beschreibung = "";
             if (Integer.parseInt(parts[i + 1]) != 0) {
                 builder.and("lev", i);
