@@ -20,7 +20,7 @@ import de.intevation.lada.validation.Validator;
  * Test validation rules for CommMeasm objects.
  */
 @Transactional
-public class CommMeasmTest {
+public class CommMeasmTest extends ValidatorBaseTest {
 
     private static final String MEAS_FACIL = "06010";
 
@@ -61,10 +61,6 @@ public class CommMeasmTest {
         comm.setMeasFacilId(MEAS_FACIL);
 
         validator.validate(comm);
-        if (comm.hasErrors() && comm.getErrors().containsKey(TEXT)) {
-            Assert.assertFalse(comm.getErrors()
-                .get(TEXT).contains(String.valueOf(StatusCodes.VAL_EXISTS)));
-        }
-
+        assertNoWarningsOrErrors(comm);
     }
 }

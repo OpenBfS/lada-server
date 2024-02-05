@@ -26,7 +26,7 @@ import org.locationtech.jts.geom.Point;
  * Test validation rules for Site objects.
  */
 @Transactional
-public class SiteTest {
+public class SiteTest extends ValidatorBaseTest {
     //Validator keys
     private static final String COORD_X_EXT = "coordXExt";
     private static final String COORD_Y_EXT = "coordYExt";
@@ -46,15 +46,15 @@ public class SiteTest {
 
     private static final String NUCL_FACIL_EXT_ID_UNMAPPED = "Othr";
     private static final String NUCL_FACIL_EXT_ID_SHORT = "123";
-    private static final String NUCL_FACIL_EXT_ID_MAPPED = "A123";
+    private static final String NUCL_FACIL_EXT_ID_MAPPED = "A1234";
     private static final int NUCL_FACIL_GR_ID_MAPPED = 1;
 
-    private static final double COORDINATE_OUTSIDE_X = 48.1579;
-    private static final double COORDINATE_OUTSIDE_Y = 11.535333;
-    private static final double COORDINATE_JUST_OUTSIDE_X = 52.401365;
-    private static final double COORDINATE_JUST_OUTSIDE_Y = 13.108697;
-    private static final double COORDINATE_INSIDE_X = 52.514818;
-    private static final double COORDINATE_INSIDE_Y = 13.402758;
+    private static final double COORDINATE_OUTSIDE_Y = 48.1579;
+    private static final double COORDINATE_OUTSIDE_X = 11.535333;
+    private static final double COORDINATE_JUST_OUTSIDE_Y = 52.401365;
+    private static final double COORDINATE_JUST_OUTSIDE_X = 13.108697;
+    private static final double COORDINATE_INSIDE_Y = 52.409959;
+    private static final double COORDINATE_INSIDE_X = 13.10257;
 
     @Inject
     private Validator<Site> validator;
@@ -110,16 +110,7 @@ public class SiteTest {
         site.setNetworkId(EXISTING_NETWORK_ID);
 
         validator.validate(site);
-        if (site.hasWarnings()) {
-            Assert.assertTrue(
-                !site.getWarnings().containsKey(COORD_X_EXT)
-                || !site.getWarnings().get(COORD_X_EXT)
-                    .contains(String.valueOf(StatusCodes.GEO_POINT_OUTSIDE)));
-            Assert.assertTrue(
-                !site.getWarnings().containsKey(COORD_Y_EXT)
-                || !site.getWarnings().get(COORD_Y_EXT)
-                    .contains(String.valueOf(StatusCodes.GEO_POINT_OUTSIDE)));
-        }
+        assertNoWarningsOrErrors(site);
     }
 
     /**
@@ -139,10 +130,10 @@ public class SiteTest {
         Assert.assertTrue(site.hasWarnings());
         Assert.assertTrue(site.getWarnings().containsKey(COORD_X_EXT));
         Assert.assertTrue(site.getWarnings().get(COORD_X_EXT).contains(
-                String.valueOf(StatusCodes.GEO_NOT_MATCHING)));
+                String.valueOf(StatusCodes.GEO_POINT_OUTSIDE)));
         Assert.assertTrue(site.getWarnings().containsKey(COORD_Y_EXT));
         Assert.assertTrue(site.getWarnings().get(COORD_Y_EXT).contains(
-                String.valueOf(StatusCodes.GEO_NOT_MATCHING)));
+                String.valueOf(StatusCodes.GEO_POINT_OUTSIDE)));
     }
 
     /**
@@ -159,16 +150,7 @@ public class SiteTest {
         site.setNetworkId(EXISTING_NETWORK_ID);
 
         validator.validate(site);
-        if (site.hasWarnings()) {
-            Assert.assertTrue(
-                !site.getWarnings().containsKey(COORD_X_EXT)
-                || !site.getWarnings().get(COORD_X_EXT)
-                    .contains(String.valueOf(StatusCodes.GEO_POINT_OUTSIDE)));
-            Assert.assertTrue(
-                !site.getWarnings().containsKey(COORD_Y_EXT)
-                || !site.getWarnings().get(COORD_Y_EXT)
-                    .contains(String.valueOf(StatusCodes.GEO_POINT_OUTSIDE)));
-        }
+        assertNoWarningsOrErrors(site);
     }
 
     /**
@@ -195,12 +177,7 @@ public class SiteTest {
         site.setExtId("D_00192");
 
         validator.validate(site);
-        if (site.hasErrors()) {
-            Assert.assertTrue(
-                !site.getErrors().containsKey(EXT_ID)
-                || !site.getErrors().get(EXT_ID)
-                    .contains(String.valueOf(StatusCodes.IMP_DUPLICATE)));
-        }
+        assertNoWarningsOrErrors(site);
     }
 
     /**
@@ -227,12 +204,7 @@ public class SiteTest {
         site.setNetworkId(EXISTING_NETWORK_ID);
 
         validator.validate(site);
-        if (site.hasErrors()) {
-            Assert.assertTrue(
-                !site.getErrors().containsKey(SITE_CLASS_ID)
-                || !site.getErrors().get(SITE_CLASS_ID)
-                    .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
-        }
+        assertNoWarningsOrErrors(site);
     }
 
     /**
@@ -316,9 +288,7 @@ public class SiteTest {
         site.setNetworkId(EXISTING_NETWORK_ID);
 
         validator.validate(site);
-        if (site.hasWarnings()) {
-            Assert.assertFalse(site.getWarnings()
-                .containsKey(REI_NUCL_FACIL_GR_ID));
-        }
+        validator.validate(site);
+        assertNoWarningsOrErrors(site);
     }
 }

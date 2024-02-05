@@ -29,7 +29,7 @@ import de.intevation.lada.validation.Validator;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @Transactional
-public class MessungTest {
+public class MessungTest extends ValidatorBaseTest {
 
     //Validation keys
     private static final String MEAS_PD = "measPd";
@@ -42,6 +42,7 @@ public class MessungTest {
     private static final int EXISTING_SAMPLE_ID_SAMPLE_METH_CONT = 2000;
     private static final int EXISTING_SAMPLE_ID_REGULATION_161 = 3000;
     private static final int EXISTING_MEASM_ID = 1200;
+    private static final int EXISTING_STATUS_PROT_ID = 1000;
     private static final String EXISTING_MIN_SAMPLE_ID = "T100";
     private static final String EXISTING_MMT_ID = "A3";
     private static final String EXISTING_SAMPLE_START_DATE
@@ -61,23 +62,18 @@ public class MessungTest {
      * Test nebenproben nr.
      */
     public void hasNebenprobenNr() {
-        Measm measm = new Measm();
+        Measm measm = createMinimalValidMeasm();
         measm.setMinSampleId("10R1");
-        measm.setSampleId(EXISTING_SAMPLE_ID);
         validator.validate(measm);
-        if (measm.hasWarnings()) {
-            Assert.assertFalse(
-                measm.getWarnings().containsKey(MIN_SAMPLE_ID));
-        }
+        assertNoWarningsOrErrors(measm);
     }
 
     /**
      * Test without nebenproben nr.
      */
     public void hasNoNebenprobenNr() {
-        Measm measm = new Measm();
-        measm.setSampleId(EXISTING_SAMPLE_ID);
-        measm.setMmtId(EXISTING_MMT_ID);
+        Measm measm = createMinimalValidMeasm();
+        measm.setMinSampleId(null);
         validator.validate(measm);
         Assert.assertTrue(measm.hasNotifications());
         MatcherAssert.assertThat(measm.getNotifications().keySet(),
@@ -91,28 +87,30 @@ public class MessungTest {
      * Test empty nebenproben nr.
      */
     public void hasEmptyNebenprobenNr() {
-        Measm measm = new Measm();
-        measm.setMinSampleId(null);
-        measm.setSampleId(EXISTING_SAMPLE_ID);
-        measm.setMmtId(EXISTING_MMT_ID);
-
+        Measm measm = createMinimalValidMeasm();
+        measm.setMinSampleId("");
         validator.validate(measm);
-        Assert.assertTrue(measm.hasNotifications());
-        Assert.assertTrue(measm.getNotifications()
-            .containsKey(MIN_SAMPLE_ID));
-        Assert.assertTrue(
-            measm.getNotifications().get(MIN_SAMPLE_ID)
-                .contains(StatusCodes.VALUE_MISSING));
+        Assert.assertTrue(measm.hasErrors());
+        MatcherAssert.assertThat(
+            measm.getErrors().keySet(),
+            CoreMatchers.hasItem(MIN_SAMPLE_ID));
+        MatcherAssert.assertThat(
+            measm.getErrors().get(MIN_SAMPLE_ID),
+            CoreMatchers.hasItem(
+                "size must be between 1 and 2147483647"));
+        MatcherAssert.assertThat(
+            measm.getErrors().get(MIN_SAMPLE_ID),
+            CoreMatchers.hasItem(
+                "must match \".*\\S+.*\""));
     }
 
     /**
      * Test new existing nebenproben nr.
      */
     public void existingNebenprobenNrNew() {
-        Measm messung = new Measm();
+        Measm messung = createMinimalValidMeasm();
+        messung.setId(null);
         messung.setMinSampleId(EXISTING_MIN_SAMPLE_ID);
-        messung.setSampleId(EXISTING_SAMPLE_ID);
-        messung.setMmtId(EXISTING_MMT_ID);
         validator.validate(messung);
         Assert.assertTrue(messung.hasErrors());
         MatcherAssert.assertThat(
@@ -128,10 +126,9 @@ public class MessungTest {
      * Test new unique nebenproben nr.
      */
     public void uniqueNebenprobenNrNew() {
-        Measm messung = new Measm();
+        Measm messung = createMinimalValidMeasm();
+        messung.setId(null);
         messung.setMinSampleId(MIN_SAMPLE_ID_00G2);
-        messung.setSampleId(EXISTING_SAMPLE_ID);
-        messung.setMmtId(EXISTING_MMT_ID);
         validator.validate(messung);
         Assert.assertFalse(messung.hasErrors());
     }
@@ -140,11 +137,8 @@ public class MessungTest {
      * Test update unique nebenproben nr.
      */
     public void uniqueNebenprobenNrUpdate() {
-        Measm messung = new Measm();
-        messung.setId(EXISTING_MEASM_ID);
-        messung.setSampleId(EXISTING_SAMPLE_ID);
+        Measm messung = createMinimalValidMeasm();
         messung.setMinSampleId(MIN_SAMPLE_ID_00G2);
-        messung.setMmtId(EXISTING_MMT_ID);
         validator.validate(messung);
         Assert.assertFalse(messung.hasErrors());
     }
@@ -153,11 +147,8 @@ public class MessungTest {
      * Test update existing nebenproben nr.
      */
     public void existingNebenprobenNrUpdate() {
-        Measm measm = new Measm();
-        measm.setId(EXISTING_MEASM_ID);
-        measm.setSampleId(EXISTING_SAMPLE_ID);
+        Measm measm = createMinimalValidMeasm();
         measm.setMinSampleId(EXISTING_MIN_SAMPLE_ID);
-        measm.setMmtId(EXISTING_MMT_ID);
 
         validator.validate(measm);
         Assert.assertFalse(measm.hasErrors());
@@ -168,10 +159,8 @@ public class MessungTest {
      */
     public void measmStartDateInFuture() {
         Instant tomorrow = Instant.now().plus(1, ChronoUnit.DAYS);
-        Measm measm = new Measm();
-        measm.setSampleId(EXISTING_SAMPLE_ID);
+        Measm measm = createMinimalValidMeasm();
         measm.setMeasmStartDate(Date.from(tomorrow));
-        measm.setMmtId(EXISTING_MMT_ID);
 
 
         validator.validate(measm);
@@ -191,11 +180,10 @@ public class MessungTest {
         Instant sampleStartDate = DB_UNIT_DATE_FORMAT
             .parse(EXISTING_SAMPLE_START_DATE).toInstant();
         Instant measmStartDate = sampleStartDate.minus(1, ChronoUnit.DAYS);
-        Measm measm = new Measm();
-        measm.setSampleId(EXISTING_SAMPLE_ID);
+
+        Measm measm = createMinimalValidMeasm();
         measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
         measm.setMeasmStartDate(Date.from(measmStartDate));
-        measm.setMmtId(EXISTING_MMT_ID);
         String warnKey = MEASM_START_DATE;
         validator.validate(measm);
         Assert.assertTrue(measm.hasWarnings());
@@ -214,24 +202,19 @@ public class MessungTest {
         Instant sampleStartDate = DB_UNIT_DATE_FORMAT
             .parse(EXISTING_SAMPLE_START_DATE).toInstant();
         Instant measmStartDate = sampleStartDate.plus(1, ChronoUnit.DAYS);
-        Measm measm = new Measm();
-        measm.setSampleId(EXISTING_SAMPLE_ID);
+        Measm measm = createMinimalValidMeasm();
         measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
         measm.setMeasmStartDate(Date.from(measmStartDate));
         validator.validate(measm);
-        if (measm.hasWarnings()) {
-            Assert.assertFalse(measm.getWarnings().containsKey(
-                MEASM_START_DATE));
-        }
+        assertNoWarningsOrErrors(measm);
     }
 
     /**
      * Test measm without start date.
      */
     public void measmWithoutStartDate() {
-        Measm measm = new Measm();
-        measm.setSampleId(EXISTING_SAMPLE_ID);
-        measm.setMmtId(EXISTING_MMT_ID);
+        Measm measm = createMinimalValidMeasm();
+        measm.setMeasmStartDate(null);
         validator.validate(measm);
         Assert.assertTrue(measm.hasWarnings());
         Assert.assertTrue(measm.getWarnings()
@@ -245,9 +228,9 @@ public class MessungTest {
      * Test measm without start date connected to a sample with regulation id 1.
      */
     public void measmWithoutStartDateRegulation161Sample() {
-        Measm measm = new Measm();
+        Measm measm = createMinimalValidMeasm();
         measm.setSampleId(EXISTING_SAMPLE_ID_REGULATION_161);
-        measm.setMmtId(EXISTING_MMT_ID);
+        measm.setMeasmStartDate(null);
 
         validator.validate(measm);
         Assert.assertTrue(measm.hasNotifications());
@@ -262,10 +245,9 @@ public class MessungTest {
      * Test measm without a measPd.
      */
     public void measmWithoutMeasPD() {
-        Measm measm = new Measm();
-        measm.setSampleId(EXISTING_SAMPLE_ID);
+        Measm measm = createMinimalValidMeasm();
         measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
-        measm.setMmtId(EXISTING_MMT_ID);
+        measm.setMeasPd(null);
 
         validator.validate(measm);
         String warnKey = MEAS_PD;
@@ -281,10 +263,10 @@ public class MessungTest {
      * Test measm without a measPd connected to a sample with regulation id 1.
      */
     public void measmWithoutMeasPDRegulation161Sample() {
-        Measm measm = new Measm();
+        Measm measm = createMinimalValidMeasm();
         measm.setSampleId(EXISTING_SAMPLE_ID_REGULATION_161);
+        measm.setMeasPd(null);
         measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
-        measm.setMmtId(EXISTING_MMT_ID);
 
         validator.validate(measm);
         Assert.assertTrue(measm.hasNotifications());
@@ -299,10 +281,9 @@ public class MessungTest {
      * Test measm without a measPd connected to a continuous sample.
      */
     public void measmWithoutMeasPDRContSample() {
-        Measm measm = new Measm();
+        Measm measm = createMinimalValidMeasm();
+        measm.setMeasPd(null);
         measm.setSampleId(EXISTING_SAMPLE_ID_SAMPLE_METH_CONT);
-        measm.setMmtId(EXISTING_MMT_ID);
-
 
         validator.validate(measm);
         Assert.assertTrue(measm.hasNotifications());
@@ -317,27 +298,18 @@ public class MessungTest {
      * Test measm with measPd.
      */
     public void measmWithMeasPd() {
-        Measm measm = new Measm();
-        measm.setSampleId(EXISTING_SAMPLE_ID);
+        Measm measm = createMinimalValidMeasm();
         measm.setMeasPd(1);
         validator.validate(measm);
-        if (measm.hasWarnings()) {
-            Assert.assertFalse(measm
-                .getWarnings().containsKey(MEAS_PD));
-        }
-        if (measm.hasNotifications()) {
-            Assert.assertFalse(measm.
-                getNotifications().containsKey(MEAS_PD));
-        }
+        assertNoWarningsOrErrors(measm);
     }
 
     /**
      * Test measm missing obligatory measds.
      */
     public void measmWithoutObligMeasd() {
-        Measm measm = new Measm();
-        measm.setSampleId(EXISTING_SAMPLE_ID);
-        measm.setMmtId(EXISTING_MMT_ID);
+        Measm measm = createMinimalValidMeasm();
+        measm.setId(null);
 
         validator.validate(measm);
         String notficationKey = MEASD_ID;
@@ -352,26 +324,17 @@ public class MessungTest {
      * Test measm with all obligatory measds.
      */
     public void measmWithObligMeasd() {
-        Measm measm = new Measm();
-        measm.setId(EXISTING_MEASM_ID);
-        measm.setSampleId(EXISTING_SAMPLE_ID);
-        measm.setMmtId(EXISTING_MMT_ID);
+        Measm measm = createMinimalValidMeasm();
 
         validator.validate(measm);
-        if (measm.hasNotifications()) {
-            String notficationKey = MEASD_ID;
-            Assert.assertFalse(measm
-                .getNotifications().containsKey(notficationKey));
-        }
+        assertNoWarningsOrErrors(measm);
     }
 
     /**
      * Test measm with invalid mmtId.
      */
     public void measmWithInvalidMmt() {
-        Measm measm = new Measm();
-        measm.setId(EXISTING_MEASM_ID);
-        measm.setSampleId(EXISTING_SAMPLE_ID);
+        Measm measm = createMinimalValidMeasm();
         final String invalidKey = "XX";
         measm.setMmtId(invalidKey);
 
@@ -384,5 +347,17 @@ public class MessungTest {
             measm.getErrors().get(mmtIdKey),
             CoreMatchers.hasItem(
                 "'" + invalidKey + "' is no valid primary key"));
+    }
+
+    private Measm createMinimalValidMeasm() {
+        Measm measm = new Measm();
+        measm.setId(EXISTING_MEASM_ID);
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        measm.setMmtId(EXISTING_MMT_ID);
+        measm.setMinSampleId(MIN_SAMPLE_ID_00G2);
+        measm.setMeasPd(1);
+        measm.setMeasmStartDate(new Date());
+        measm.setStatus(EXISTING_STATUS_PROT_ID);
+        return measm;
     }
 }

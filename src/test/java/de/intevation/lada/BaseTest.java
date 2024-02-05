@@ -352,4 +352,8 @@ public class BaseTest {
         Assertion.assertEqualsIgnoreCols(
             iExpectedDataset, iActualDataset, tableName, ignoredCols);
     }
+
+    protected IDatabaseConnection getConnection() {
+        return con;
+    }
 }

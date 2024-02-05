@@ -20,7 +20,7 @@ import de.intevation.lada.validation.Validator;
  * Test validation rules for CommSample objects.
  */
 @Transactional
-public class CommSampleTest {
+public class CommSampleTest extends ValidatorBaseTest {
 
     //Validation keys
     private static final String TEXT = "text";
@@ -57,12 +57,9 @@ public class CommSampleTest {
         CommSample comm = new CommSample();
         comm.setSampleId(EXISTING_SAMPLE_ID);
         comm.setText(COMMENT_TEXT_NEW);
+        comm.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
 
         validator.validate(comm);
-        if (comm.hasErrors() && comm.getErrors().containsKey(TEXT)) {
-            Assert.assertFalse(comm.getErrors()
-                .get(TEXT).contains(String.valueOf(StatusCodes.VAL_EXISTS)));
-        }
-
+        assertNoWarningsOrErrors(comm);
     }
 }

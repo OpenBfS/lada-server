@@ -18,6 +18,7 @@ DELETE FROM mpg_transf;
 DELETE FROM regulation;
 DELETE FROM env_specif_mp;
 DELETE FROM rei_ag_gr_env_medium_mp;
+DELETE FROM env_descrip_env_medium_mp;
 DELETE FROM env_medium;
 DELETE FROM unit_convers;
 DELETE FROM meas_unit;

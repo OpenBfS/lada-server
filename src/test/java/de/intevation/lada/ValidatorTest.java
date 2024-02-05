@@ -7,12 +7,13 @@
  */
 package de.intevation.lada;
 
+import java.sql.SQLException;
 import java.text.ParseException;
 
 import jakarta.inject.Inject;
 
 import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -71,11 +72,29 @@ public class ValidatorTest extends BaseTest {
     }
 
     /**
-     * Test hauptprobennr.
+     * Set up validator tests.
+     * @throws SQLException
+     */
+    @Before
+    public void setupValidatorTests() throws SQLException {
+        //Refresh materialized views
+        String sql = "REFRESH MATERIALIZED VIEW master.admin_border_view;";
+        getConnection().getConnection().prepareStatement(sql).execute();
+    }
+    /**
+     * Test valid sample.
      */
     @Test
-    public void probeHasHauptprobenNr() {
-        probeTest.hasHauptprobenNr();
+    public void sampleValidSample() {
+        probeTest.validSample();
+    }
+
+    /**
+     * Test valid rei sample.
+     */
+    @Test
+    public void sampleValidREiSample() {
+        probeTest.validReiSample();
     }
 
     /**
@@ -183,14 +202,6 @@ public class ValidatorTest extends BaseTest {
     }
 
     /**
-     * Test probe has umwelt.
-     */
-    @Test
-    public void probeHasUmwelt() {
-        probeTest.hasUmwelt();
-    }
-
-    /**
      * Test probe has no umwelt.
      */
     @Test
@@ -240,14 +251,6 @@ public class ValidatorTest extends BaseTest {
     }
 
     /**
-     * Test sample with valid envDescripDisplay.
-     */
-    @Test
-    public void sampleEnvDescripDisplay() {
-        probeTest.envDescripDisplay();
-    }
-
-    /**
      * Test sample without envDescripDisplay.
      */
     @Test
@@ -272,29 +275,12 @@ public class ValidatorTest extends BaseTest {
     }
 
     /**
-     * Test sample with matching envMediumId.
-     */
-    @Test
-    public void sampleEnvDescripWithMatchingEnvMediumId() {
-        probeTest.envDescripWithMatchingEnvMediumId();
-    }
-
-    /**
      * Test sample without matching envMediumId.
      */
     @Test
     public void sampleEnvDescripWithoutMatchingEnvMediumId() {
         probeTest.envDescripWithoutMatchingEnvMediumId();
     }
-
-    /**
-     * Test sample with single U Type geolocat.
-     */
-    @Test
-    public void sampleHasSingleUTypeGeolocat() {
-        probeTest.hasSingleUTypeGeolocat();
-    }
-
     /**
      * Test sample with sampleEndDate.
      */
@@ -323,14 +309,6 @@ public class ValidatorTest extends BaseTest {
      * Test REI sample with R type geolocat.
      */
     @Test
-    public void sampleHasRTypeGeolocat() {
-        probeTest.hasRTypeGeolocat();
-    }
-
-    /**
-     * Test REI sample with R type geolocat.
-     */
-    @Test
     public void sampleHasNoRTypeGeolocat() {
         probeTest.hasNoRTypeGeolocat();
     }
@@ -352,29 +330,12 @@ public class ValidatorTest extends BaseTest {
     }
 
     /**
-     * Test REI sample with REI data.
-     */
-    @Test
-    public void sampleWithREIData() {
-        probeTest.sampleWithREIData();
-    }
-
-    /**
      * Test REI sample without matching envMedium.
      */
     @Test
     public void reiSampleWithoutMatchingEnvMedium() {
         probeTest.reiSampleWithoutMatchingEnvMedium();
     }
-
-    /**
-     * Test rei sample with matching envMediumId.
-     */
-    @Test
-    public void reiSampleWithMatchingEnvMedium() {
-        probeTest.reiSampleWithMatchingEnvMedium();
-    }
-
 
     /**
      * Test sample with sample specif but without matching env medium.
@@ -598,8 +559,8 @@ public class ValidatorTest extends BaseTest {
      * Test mpg objects with proper valid start and end date.
      */
     @Test
-    public void mpgValidStartEndDate() {
-        mpgTest.validStartEndDate();
+    public void mpgValidMpg() {
+        mpgTest.validMpg();
     }
 
     /**
@@ -731,14 +692,6 @@ public class ValidatorTest extends BaseTest {
     }
 
     /**
-     * Test mpg with matching envMediumId.
-     */
-    @Test
-    public void mpgEnvDescripWithMatchingEnvMediumId() {
-        mpgTest.envDescripWithMatchingEnvMediumId();
-    }
-
-    /**
      * Test mpg without matching envMediumId.
      */
     @Test
@@ -798,8 +751,6 @@ public class ValidatorTest extends BaseTest {
      * Test site object far outside to the admin border.
      */
     @Test
-    @Ignore
-    //TODO: This currently does not return the expected validation warnings
     public void siteOutsiteAdminBorders() {
         siteTest.siteOutsiteAdminBorders();
     }

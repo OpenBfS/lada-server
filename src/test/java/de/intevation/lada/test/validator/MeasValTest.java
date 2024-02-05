@@ -19,7 +19,7 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
 
 @Transactional
-public class MeasValTest {
+public class MeasValTest extends ValidatorBaseTest {
 
     //Validation keys
     private static final String DETECT_LIM = "detectLim";
@@ -33,6 +33,7 @@ public class MeasValTest {
     private static final int EXISTING_EMPTY_MEASM_ID = 1201;
     private static final int EXISTING_MEASD_ID = 57;
     private static final int OTHER_MEASD_ID = 56;
+    private static final int UNMATCHED_MEASD_ID = 58;
     private static final String LESS_THAN_LOD_SMALLER_THAN = "<";
     private static final int EXISTING_ENV_MEDIUM_PRIMARY_UNIT = 207;
     private static final int EXISTING_ENV_MEDIUM_SECONDARY_UNIT = 208;
@@ -41,6 +42,8 @@ public class MeasValTest {
     private static final int EXISTING_ENV_MEDIUM_UNIT_CONVERTABLE_TO_SECONDARY
         = 210;
     private static final int UNIT_ID_NOT_CONVERTABLE = 211;
+
+    private static final float ERROR_GT_ZERO = 0.5f;
 
     @Inject
     Validator<MeasVal> validator;
@@ -89,18 +92,12 @@ public class MeasValTest {
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(null);
+        val.setMeasVal(1.0d);
         val.setError(1.0f);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
-        if (val.hasWarnings()
-                && val.getWarnings().containsKey(ERROR)) {
-            Assert.assertFalse(
-                val.getWarnings().get(ERROR)
-                .contains(String.valueOf(StatusCodes.VALUE_MISSING))
-                || val.getWarnings().get(ERROR)
-                .contains(String.valueOf(StatusCodes.VAL_UNCERT)));
-        }
+        assertNoWarningsOrErrors(val);
     }
 
     /**
@@ -114,14 +111,7 @@ public class MeasValTest {
         val.setError(null);
 
         validator.validate(val);
-        if (val.hasWarnings()
-                && val.getWarnings().containsKey(ERROR)) {
-            Assert.assertFalse(
-                val.getWarnings().get(ERROR)
-                .contains(String.valueOf(StatusCodes.VALUE_MISSING))
-                || val.getWarnings().get(ERROR)
-                .contains(String.valueOf(StatusCodes.VAL_UNCERT)));
-        }
+        assertNoWarningsOrErrors(val);
     }
 
     /**
@@ -168,20 +158,12 @@ public class MeasValTest {
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(LESS_THAN_LOD_SMALLER_THAN);
+        val.setDetectLim(0.0d);
         val.setMeasVal(null);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
-        if (val.hasWarnings()
-                && val.getWarnings().containsKey(MEAS_VAL)) {
-            Assert.assertFalse(val.getWarnings().get(MEAS_VAL)
-                .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
-        }
-        if (val.hasErrors()
-                && val.getErrors().containsKey(MEAS_VAL)) {
-            Assert.assertFalse(val.getErrors().get(MEAS_VAL)
-                .contains(String.valueOf(StatusCodes.VAL_MEASURE)));
-        }
+        assertNoWarningsOrErrors(val);
     }
 
     /**
@@ -192,20 +174,12 @@ public class MeasValTest {
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setLessThanLOD(null);
+        val.setError(ERROR_GT_ZERO);
         val.setMeasVal(1.0d);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
-        if (val.hasWarnings()
-                && val.getWarnings().containsKey(MEAS_VAL)) {
-            Assert.assertFalse(val.getWarnings().get(MEAS_VAL)
-                .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
-        }
-        if (val.hasErrors()
-                && val.getErrors().containsKey(MEAS_VAL)) {
-            Assert.assertFalse(val.getErrors().get(MEAS_VAL)
-                .contains(String.valueOf(StatusCodes.VAL_MEASURE)));
-        }
+        assertNoWarningsOrErrors(val);
     }
 
     /**
@@ -256,11 +230,7 @@ public class MeasValTest {
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
-        if (val.hasErrors()
-                && val.getErrors().containsKey(DETECT_LIM)) {
-            Assert.assertFalse(val.getErrors().get(DETECT_LIM).contains(
-                    String.valueOf(StatusCodes.VALUE_MISSING)));
-        }
+        assertNoWarningsOrErrors(val);
     }
 
     /**
@@ -271,16 +241,11 @@ public class MeasValTest {
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
+        val.setError(ERROR_GT_ZERO);
+        val.setMeasVal(1.0d);
 
         validator.validate(val);
-        String warningKey = UNIT_ID;
-        if (val.hasWarnings()
-                && val.getWarnings().containsKey(warningKey)) {
-            Assert.assertFalse(val.getWarnings().get(warningKey)
-                .contains(String.valueOf(StatusCodes.VAL_UNIT_NORMALIZE)));
-            Assert.assertFalse(val.getWarnings().get(warningKey)
-                .contains(String.valueOf(StatusCodes.VAL_UNIT_UMW)));
-        }
+        assertNoWarningsOrErrors(val);
     }
 
     /**
@@ -291,16 +256,11 @@ public class MeasValTest {
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_SECONDARY_UNIT);
+        val.setError(ERROR_GT_ZERO);
+        val.setMeasVal(1.0d);
 
         validator.validate(val);
-        String warningKey = UNIT_ID;
-        if (val.hasWarnings()
-                && val.getWarnings().containsKey(warningKey)) {
-            Assert.assertFalse(val.getWarnings().get(warningKey)
-                .contains(String.valueOf(StatusCodes.VAL_UNIT_NORMALIZE)));
-            Assert.assertFalse(val.getWarnings().get(warningKey)
-                .contains(String.valueOf(StatusCodes.VAL_UNIT_UMW)));
-        }
+        assertNoWarningsOrErrors(val);
     }
 
     /**
@@ -361,7 +321,7 @@ public class MeasValTest {
     public void mmtDoesNotMatchMeasd() {
         MeasVal val = new MeasVal();
         val.setMeasmId(EXISTING_MEASM_ID);
-        val.setMeasdId(EXISTING_MEASD_ID);
+        val.setMeasdId(UNMATCHED_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
         validator.validate(val);
         String warningKey = MEASD_ID;
@@ -378,16 +338,12 @@ public class MeasValTest {
     public void mmtDoesMatchMeasd() {
         MeasVal val = new MeasVal();
         val.setMeasmId(EXISTING_MEASM_ID);
-        val.setMeasdId(OTHER_MEASD_ID);
+        val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
+        val.setError(ERROR_GT_ZERO);
+        val.setMeasVal(1.0d);
         validator.validate(val);
-        String warningKey = MEASD_ID;
-        if (val.hasWarnings()
-                && val.getWarnings().containsKey(warningKey)) {
-            Assert.assertFalse(val.getWarnings().get(warningKey)
-                .contains(String.valueOf(
-                        StatusCodes.VAL_MESSGROESSE_NOT_MATCHING_MMT)));
-        }
+        assertNoWarningsOrErrors(val);
     }
 
     /**
