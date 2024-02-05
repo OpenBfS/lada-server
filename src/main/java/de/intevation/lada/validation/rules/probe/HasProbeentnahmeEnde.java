@@ -37,7 +37,7 @@ public class HasProbeentnahmeEnde implements Rule {
             || ((probe.getSampleMethId() == 9
                 || probe.getSampleMethId() == 3)
             && probe.getRegulationId() != 4
-            && (ende == null || ende.before(begin))))
+            && (ende == null || begin == null || ende.before(begin))))
         ) {
             Violation violation = new Violation();
             violation.addWarning(
