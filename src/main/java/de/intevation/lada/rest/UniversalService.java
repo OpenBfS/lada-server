@@ -11,25 +11,24 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.MultivaluedHashMap;
-
+import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Response.Status;
 import de.intevation.lada.model.QueryColumns;
-import de.intevation.lada.model.land.Messprogramm;
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
-import de.intevation.lada.model.stammdaten.GridColumn;
-import de.intevation.lada.model.stammdaten.GridColumnValue;
-import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
-import de.intevation.lada.model.stammdaten.Ort;
-import de.intevation.lada.model.stammdaten.Probenehmer;
-import de.intevation.lada.model.stammdaten.ResultType;
-import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Mpg;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.master.DatasetCreator;
+import de.intevation.lada.model.master.Disp;
+import de.intevation.lada.model.master.GridColConf;
+import de.intevation.lada.model.master.GridColMp;
+import de.intevation.lada.model.master.MpgCateg;
+import de.intevation.lada.model.master.Sampler;
+import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -49,7 +48,7 @@ import de.intevation.lada.util.rest.Response;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/universal")
+@Path("universal")
 public class UniversalService extends LadaService {
 
     /**
@@ -85,15 +84,15 @@ public class UniversalService extends LadaService {
      * @param start URL parameter used as offset for paging
      * @param limit URL parameter used as limit for paging
      * @return JSON encoded query results
+     * @throws BadRequestException
      */
     @POST
-    @Path("/")
     public Response execute(
         @QueryParam("start") int start, // default for primitive type: 0
         @QueryParam("limit") Integer limit,
         QueryColumns columns
     ) {
-        List<GridColumnValue> gridColumnValues = columns.getColumns();
+        List<GridColConf> gridColumnValues = columns.getColumns();
 
         String authorizationColumnIndex = null;
         Class<?> authorizationColumnType = null;
@@ -110,25 +109,21 @@ public class UniversalService extends LadaService {
         final LinkedHashMap<String, Class<?>> hierarchy
             = new LinkedHashMap<String, Class<?>>();
         hierarchy.put("tagId",       Tag.class);
-        hierarchy.put("mprkat",      MessprogrammKategorie.class);
-        hierarchy.put("dsatzerz",    DatensatzErzeuger.class);
-        hierarchy.put("probenehmer", Probenehmer.class);
-        hierarchy.put("ortId",       Ort.class);
-        hierarchy.put("mpId",        Messprogramm.class);
-        hierarchy.put("probeId",     Probe.class);
-        hierarchy.put("messungId",   Messung.class);
+        hierarchy.put("mprkat",      MpgCateg.class);
+        hierarchy.put("dsatzerz",    DatasetCreator.class);
+        hierarchy.put("probenehmer", Sampler.class);
+        hierarchy.put("ortId",       Site.class);
+        hierarchy.put("mpId",        Mpg.class);
+        hierarchy.put("probeId",     Sample.class);
+        hierarchy.put("messungId",   Measm.class);
         int resultNdx = hierarchy.size();
-        for (GridColumnValue columnValue : gridColumnValues) {
-            GridColumn gridColumn = repository.getByIdPlain(
-                GridColumn.class,
-                Integer.valueOf(columnValue.getGridColumnId())
+        for (GridColConf columnValue : gridColumnValues) {
+            GridColMp gridColumn = repository.getByIdPlain(
+                GridColMp.class,
+                columnValue.getGridColMpId()
             );
             //Check if column can be used for authorization
-            ResultType resultType =
-                repository.getByIdPlain(
-                    ResultType.class,
-                    gridColumn.getDataType().getId()
-                );
+            Disp resultType = gridColumn.getDisp();
             if (resultType != null) {
                 int ndx = -1, i = 0;
                 for (String authType: hierarchy.keySet()) {
@@ -144,7 +139,7 @@ public class UniversalService extends LadaService {
                         resultType.getName());
                 }
             }
-            columnValue.setGridColumn(gridColumn);
+            columnValue.setGridColMp(gridColumn);
         }
 
         try {
@@ -171,25 +166,25 @@ public class UniversalService extends LadaService {
                 if (doAuthorize) {
                     if (idToAuthorize != null) {
                         //If column is an ort, get Netzbetreiberid
-                        if (authorizationColumnType == Ort.class) {
-                            Ort ort = repository.getByIdPlain(
-                                Ort.class, idToAuthorize);
-                            idToAuthorize = ort.getNetzbetreiberId();
+                        if (authorizationColumnType == Site.class) {
+                            Site ort = repository.getByIdPlain(
+                                Site.class, idToAuthorize);
+                            idToAuthorize = ort.getNetworkId();
                         }
-                        if (authorizationColumnType == DatensatzErzeuger.class) {
-                            DatensatzErzeuger de = repository.getByIdPlain(
-                                DatensatzErzeuger.class, idToAuthorize);
-                            idToAuthorize = de.getNetzbetreiberId();
+                        if (authorizationColumnType == DatasetCreator.class) {
+                            DatasetCreator de = repository.getByIdPlain(
+                                DatasetCreator.class, idToAuthorize);
+                            idToAuthorize = de.getNetworkId();
                         }
-                        if (authorizationColumnType == Probenehmer.class) {
-                            Probenehmer pn = repository.getByIdPlain(
-                                Probenehmer.class, idToAuthorize);
-                            idToAuthorize = pn.getNetzbetreiberId();
+                        if (authorizationColumnType == Sampler.class) {
+                            Sampler pn = repository.getByIdPlain(
+                                Sampler.class, idToAuthorize);
+                            idToAuthorize = pn.getNetworkId();
                         }
-                        if (authorizationColumnType == MessprogrammKategorie.class) {
-                            MessprogrammKategorie mk = repository.getByIdPlain(
-                                MessprogrammKategorie.class, idToAuthorize);
-                            idToAuthorize = mk.getNetzbetreiberId();
+                        if (authorizationColumnType == MpgCateg.class) {
+                            MpgCateg mk = repository.getByIdPlain(
+                                MpgCateg.class, idToAuthorize);
+                            idToAuthorize = mk.getNetworkId();
                         }
                         if (authorizationColumnType == Tag.class) {
                             Tag tag = repository.getByIdPlain(
@@ -212,12 +207,10 @@ public class UniversalService extends LadaService {
 
             return new Response(true, StatusCodes.OK, result, size);
         } catch (IllegalArgumentException iae) {
-            Response r = new Response(false, StatusCodes.SQL_INVALID_FILTER, null);
-            MultivaluedMap<String, Integer> error =
-                new MultivaluedHashMap<String, Integer>();
-            error.add(iae.getMessage(), StatusCodes.SQL_INVALID_FILTER);
-            r.setErrors(error);
-            return r;
+            throw new BadRequestException(
+                jakarta.ws.rs.core.Response
+                .status(Status.BAD_REQUEST)
+                .entity(iae.getMessage()).build());
         }
     }
 }

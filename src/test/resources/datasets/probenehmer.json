@@ -1,15 +1,15 @@
 {
-    "netzbetreiberId": "06",
-    "prnId": "AR6",
-    "bearbeiter": "Testbearbeiter",
-    "bemerkung": "Testbemerkung",
-    "betrieb": "Testbetrieb",
-    "bezeichnung": "Testbezeichnung",
-    "kurzBezeichnung": "Testkurz",
-    "ort": "Testhausen",
-    "plz": "12345",
-    "strasse": "Teststrasse",
-    "telefon": "01100011",
-    "tourenplan": "kpt",
-    "typ": "a"
+    "networkId": "06",
+    "extId": "AR6",
+    "editor": "Testbearbeiter",
+    "comm": "Testbemerkung",
+    "inst": "Testbetrieb",
+    "descr": "Testbezeichnung",
+    "shortText": "Testkurz",
+    "city": "Testhausen",
+    "zip": "12345",
+    "street": "Teststrasse",
+    "phone": "01100011",
+    "routePlanning": "kpt",
+    "type": "a"
 }

@@ -9,16 +9,15 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
-import javax.ws.rs.client.Client;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonValue;
+import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -34,21 +33,19 @@ public class KommentarMTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "datum",
+            "date",
             "treeModified"
         });
 
         // Prepare expected probe object
-        JsonObject content =
-            readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject messung =
-            content.getJsonArray("land.kommentar_m").getJsonObject(0);
+            readXmlResource("datasets/dbUnit_lada.xml", CommMeasm.class)
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messung);
         builder.add("parentModified", TS1);
         builder.add("readonly", JsonValue.FALSE);
@@ -65,17 +62,15 @@ public class KommentarMTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("mkommentar", "rest/mkommentar?messungsId=1200");
-        getById("mkommentar", "rest/mkommentar/1000", expectedById);
-        JsonObject created = create("mkommentar", "rest/mkommentar", create);
+        get("rest/commmeasm?measmId=1200");
+        getById("rest/commmeasm/1000", expectedById);
+        JsonObject created = create("rest/commmeasm", create);
         update(
-            "mkommentar",
-            "rest/mkommentar/1000",
+            "rest/commmeasm/1000",
             "text", "Testkommentar",
             "Testkommentar geändert");
         delete(
-            "mkommentar",
-            "rest/mkommentar/" + created.getJsonObject("data").get("id"));
+            "rest/commmeasm/" + created.getJsonObject("data").get("id"));
     }
 
 }

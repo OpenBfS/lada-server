@@ -136,7 +136,9 @@ Maven Checkstyle plugin. Some design related checks where removed.
     <module name="MethodLength">
       <property name="severity" value="warning"/>
     </module>
-    <module name="ParameterNumber"/>
+    <module name="ParameterNumber">
+      <property name="severity" value="warning"/>
+    </module>
 
 
     <!-- Checks for whitespace                               -->
@@ -201,6 +203,9 @@ Maven Checkstyle plugin. Some design related checks where removed.
       <property name="ignoreSetter" value="true"/>
       <property name="ignoreConstructorParameter" value="true"/>
     </module>
+    <module name="ParameterAssignment">
+      <property name="severity" value="warning"/>
+    </module>
     <module name="IllegalInstantiation"/>
     <module name="InnerAssignment">
       <property name="severity" value="warning"/>
@@ -209,6 +214,7 @@ Maven Checkstyle plugin. Some design related checks where removed.
       <property name="severity" value="warning"/>
       <property name="constantWaiverParentToken" value="ASSIGN,ARRAY_INIT,EXPR,
       UNARY_PLUS, UNARY_MINUS, TYPECAST, ELIST, DIV, PLUS, STAR, METHOD_CALL "/>
+      <property name="ignoreAnnotation" value="true"/>
     </module>
     <module name="MultipleStringLiterals">
       <property name="severity" value="warning"/>

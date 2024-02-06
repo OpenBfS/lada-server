@@ -8,18 +8,18 @@
 
 package de.intevation.lada.importer;
 
+import java.util.Locale;
 import java.util.Map;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.json.JsonObject;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+import jakarta.json.JsonObject;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.intevation.lada.importer.laf.LafImportJob;
-import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.JobManager;
 
@@ -27,7 +27,6 @@ import de.intevation.lada.util.data.JobManager;
 /**
  * Class managing import jobs.
  */
-@ApplicationScoped
 public class ImportJobManager extends JobManager {
 
     @Inject
@@ -42,21 +41,20 @@ public class ImportJobManager extends JobManager {
      * @param userInfo User info
      * @param params Parameters
      * @param mst MessStelle
+     * @param locale Locale to use for message localization
      * @return New job refId
      */
     public String createImportJob(
-        UserInfo userInfo, JsonObject params, MessStelle mst) {
-        String id = getNextIdentifier();
-        logger.debug(String.format("Creating new job: %s", id));
-
+        UserInfo userInfo, JsonObject params, MeasFacil mst, Locale locale
+    ) {
         LafImportJob newJob = lafImportJobProvider.get();
         newJob.setJsonInput(params);
         newJob.setUserInfo(userInfo);
         newJob.setMst(mst);
+        newJob.setLocale(locale);
 
         newJob.setFuture(executor.submit(newJob));
-        activeJobs.put(id, newJob);
-        return id;
+        return addJob(newJob);
     }
 
     /**
@@ -68,9 +66,6 @@ public class ImportJobManager extends JobManager {
     public String getImportResult(String id) throws JobNotFoundException {
         LafImportJob job = (LafImportJob) getJobById(id);
         String jsonString = "";
-        if (job == null) {
-            throw new JobNotFoundException();
-        }
         logger.debug(String.format("Returning result for job %s", id));
         try {
             Map<String, Map<String, Object>> importData = job.getImportData();

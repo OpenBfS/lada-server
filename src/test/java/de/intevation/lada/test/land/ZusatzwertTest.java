@@ -9,16 +9,15 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
-import javax.ws.rs.client.Client;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonValue;
+import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -34,22 +33,20 @@ public class ZusatzwertTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung",
-            "treeModified"
+            "lastMod",
+            "treeMod"
         });
 
         // Prepare expected probe object
-        JsonObject content =
-            readJsonResource("/datasets/dbUnit_probe.json");
-        JsonObject messung =
-            content.getJsonArray("land.zusatz_wert").getJsonObject(0);
-        JsonObjectBuilder builder = convertObject(messung);
+        JsonObject content = readXmlResource(
+            "datasets/dbUnit_lada.xml", SampleSpecifMeasVal.class)
+            .getJsonObject(0);
+        JsonObjectBuilder builder = convertObject(content);
         builder.add("parentModified", TS1);
         builder.add("readonly", JsonValue.FALSE);
         builder.add("owner", JsonValue.TRUE);
@@ -65,12 +62,11 @@ public class ZusatzwertTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("zusatzwert", "rest/zusatzwert");
-        getById("zusatzwert", "rest/zusatzwert/1000", expectedById);
-        JsonObject created = create("zusatzwert", "rest/zusatzwert", create);
-        update("zusatzwert", "rest/zusatzwert/1000", "pzsId", "A75", "A74");
-        delete(
-            "zusatzwert",
-            "rest/zusatzwert/" + created.getJsonObject("data").get("id"));
+        get("rest/samplespecifmeasval?sampleId=1000");
+        getById("rest/samplespecifmeasval/1000", expectedById);
+        JsonObject created = create("rest/samplespecifmeasval", create);
+        update("rest/samplespecifmeasval/1000", "sampleSpecifId", "A75", "A74");
+        delete("rest/samplespecifmeasval/"
+            + created.getJsonObject("data").get("id"));
     }
 }

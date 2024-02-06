@@ -9,13 +9,12 @@ package de.intevation.lada.test.stamm;
 
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.json.JsonObject;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
+import jakarta.json.JsonObject;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Response;
 
 import org.junit.Assert;
 import org.hamcrest.Matcher;
@@ -23,7 +22,6 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 
 import de.intevation.lada.BaseTest;
-import de.intevation.lada.Protocol;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -37,72 +35,71 @@ public class Stammdaten extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
 
         matchers = new HashMap<>();
-        matchers.put("datenbasis",
+        matchers.put("regulation",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "beschreibung",
-                "datenbasis"
+                "lastMod",
+                "descr",
+                "name"
             )
         );
-        matchers.put("messeinheit",
+        matchers.put("measunit",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "beschreibung",
-                "einheit",
-                "eudfMesseinheitId",
-                "umrechnungsFaktorEudf",
+                "lastMod",
+                "name",
+                "unitSymbol",
+                "eudfUnitId",
+                "eudfConversFactor",
                 "primary"
             )
         );
-        matchers.put("messgroesse",
+        matchers.put("measd",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "beschreibung",
-                "defaultFarbe",
-                "eudfNuklidId",
-                "idfNuklidKey",
-                "istLeitnuklid",
-                "kennungBvl",
-                "messgroesse"
+                "lastMod",
+                "descr",
+                "defColor",
+                "eudfNuclId",
+                "idfExtId",
+                "isRefNucl",
+                "bvlFormatId",
+                "name"
             )
         );
-        matchers.put("messmethode",
+        matchers.put("mmt",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "beschreibung",
-                "messmethode"
+                "lastMod",
+                "descr",
+                "name"
             )
         );
-        matchers.put("messstelle",
+        matchers.put("measfacil",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "amtskennung",
-                "beschreibung",
-                "messStelle",
-                "mstTyp",
-                "netzbetreiberId"
+                "lastMod",
+                "trunkCode",
+                "address",
+                "name",
+                "measFacilType",
+                "networkId"
             )
         );
-        matchers.put("netzbetreiber",
+        matchers.put("network",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "aktiv",
-                "idfNetzbetreiber",
-                "isBmn",
-                "mailverteiler",
-                "netzbetreiber"
+                "lastMod",
+                "isActive",
+                "idfNetworkId",
+                "isFmn",
+                "mailList",
+                "name"
             )
         );
         matchers.put("pflichtmessgroesse",
@@ -115,23 +112,23 @@ public class Stammdaten extends ServiceTest {
                 "umwId"
             )
         );
-        matchers.put("probenart",
+        matchers.put("samplemeth",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "beschreibung",
-                "probenart",
-                "probenartEudfId"
+                "lastMod",
+                "name",
+                "extId",
+                "eudfSampleMethId"
             )
         );
-        matchers.put("probenzusatz",
+        matchers.put("samplespecif",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
-                "beschreibung",
+                "lastMod",
+                "name",
                 "eudfKeyword",
-                "zusatzwert",
-                "messEinheitId"
+                "extId",
+                "measUnitId"
             )
         );
         matchers.put("location",
@@ -145,7 +142,6 @@ public class Stammdaten extends ServiceTest {
                 "latitude",
                 "longitude",
                 "letzteAenderung",
-                "nutsCode",
                 "unscharf",
                 "netzbetreiberId",
                 "staatId",
@@ -155,53 +151,104 @@ public class Stammdaten extends ServiceTest {
                 "geom"
             )
         );
-        matchers.put("koordinatenart",
+        matchers.put("spatrefsys",
             Matchers.containsInAnyOrder(
                 "id",
-                "letzteAenderung",
+                "lastMod",
                 "idfGeoKey",
-                "koordinatenart"
+                "name"
             )
         );
-        matchers.put("staat",
+        matchers.put("siteclass",
             Matchers.containsInAnyOrder(
-                "id",
-                "letzteAenderung",
-                "eu",
-                "hklId",
-                "koordXExtern",
-                "koordYExtern",
-                "staat",
-                "staatIso",
-                "staatKurz",
-                "kdaId"
+            "id",
+            "lastMod",
+            "name",
+            "extId"
             )
         );
-        matchers.put("umwelt",
+        matchers.put("typeregulation",
             Matchers.containsInAnyOrder(
-                "id",
-                "letzteAenderung",
-                "beschreibung",
-                "umweltBereich",
-                "mehId",
-                "secMehId"
+            "id",
+            "name",
+            "lastMod"
             )
         );
-        matchers.put("verwaltungseinheit",
+        matchers.put("poi",
+            Matchers.containsInAnyOrder(
+            "id",
+            "name",
+            "lastMod"
+            )
+        );
+        matchers.put("state",
             Matchers.containsInAnyOrder(
                 "id",
-                "bezeichnung",
-                "bundesland",
-                "isBundesland",
-                "isGemeinde",
-                "isLandkreis",
-                "isRegbezirk",
-                "kreis",
+                "lastMod",
+                "isEuCountry",
+                "ctryOrigId",
+                "coordXExt",
+                "coordYExt",
+                "ctry",
+                "iso3166",
+                "intVehRegCode",
+                "spatRefSysId"
+            )
+        );
+        matchers.put("targactmmtgr",
+            Matchers.containsInAnyOrder(
+                "id",
+                "name",
+                "targEnvGrDispl"
+            )
+        );
+        matchers.put("targenvgr",
+            Matchers.containsInAnyOrder(
+                "id",
+                "name",
+                "descr"
+            )
+        );
+        matchers.put("envmedium",
+            Matchers.containsInAnyOrder(
+                "id",
+                "lastMod",
+                "descr",
+                "name",
+                "unit1",
+                "unit2"
+            )
+        );
+        matchers.put("envspecifmp",
+            Matchers.containsInAnyOrder(
+                "id",
+                "sampleSpecifId",
+                "envMediumId",
+                "lastMod"
+            )
+        );
+        matchers.put("adminunit",
+            Matchers.containsInAnyOrder(
+                "id",
+                "name",
+                "stateId",
+                "isState",
+                "isMunic",
+                "isRuralDist",
+                "isGovDist",
+                "ruralDistId",
                 "latitude",
                 "longitude",
-                "nuts",
-                "plz",
-                "regbezirk"
+                "zip",
+                "govDistId"
+            )
+        );
+        matchers.put("reiaggr",
+            Matchers.containsInAnyOrder(
+                "id",
+                "name",
+                "descr",
+                "lastMod"
             )
         );
     }
@@ -215,7 +262,7 @@ public class Stammdaten extends ServiceTest {
         String type
     ) {
         Assert.assertNotNull(type);
-        get(type, "rest/" + type);
+        get("rest/" + type);
     }
 
     /**
@@ -228,25 +275,17 @@ public class Stammdaten extends ServiceTest {
         String type,
         Object id
     ) {
-        Protocol prot = new Protocol();
-        prot.setName(type + "Service");
-        prot.setType("get by Id");
-        prot.setPassed(false);
-        protocol.add(prot);
-
         /* Create a client*/
         WebTarget target =
             client.target(baseUrl + "rest/" + type + "/" + id);
-        prot.addInfo(type + "Id", id);
         /* Request an object by id*/
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject content = BaseTest.parseResponse(response, prot);
+        JsonObject content = BaseTest.parseResponse(response);
         /* Verify the response*/
         MatcherAssert.assertThat(content.getJsonObject("data").keySet(),
             matchers.get(type));
-        prot.addInfo("object", "equals");
     }
 }

@@ -8,15 +8,14 @@
 package de.intevation.lada.test.stamm;
 
 import java.net.URL;
-import java.util.List;
 
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.client.Client;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -30,15 +29,14 @@ public class DeskriptorenTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
 
         // Prepare expected object
         JsonObject content =
-            readJsonResource("/datasets/dbUnit_deskriptor.json")
-                .getJsonArray("stamm.deskriptoren").getJsonObject(0);
+            readXmlResource("datasets/dbUnit_master.xml", EnvDescrip.class)
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(content);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);
@@ -48,9 +46,8 @@ public class DeskriptorenTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("deskriptor", "rest/deskriptor");
-        get("deskriptor", "rest/deskriptor?layer=1");
-        get("deskriptor", "rest/deskriptor?layer=1&parents=1&parents=2");
-        getById("deskriptor", "rest/deskriptor/1000", expectedById);
+        get("rest/envdescrip?lev=1");
+        get("rest/envdescrip?lev=1&predId=1&predId=2");
+        getById("rest/envdescrip/1000", expectedById);
     }
 }

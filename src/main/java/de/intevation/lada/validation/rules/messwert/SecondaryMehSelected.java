@@ -9,11 +9,12 @@ package de.intevation.lada.validation.rules.messwert;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.stammdaten.MessEinheit;
-import de.intevation.lada.model.stammdaten.Umwelt;
+import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.master.EnvMedium;
+import de.intevation.lada.model.master.MeasUnit;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
@@ -36,40 +37,42 @@ public class SecondaryMehSelected implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messwert messwert = (Messwert) object;
-        Umwelt umwelt = null;
+        MeasVal messwert = (MeasVal) object;
+        EnvMedium umwelt = null;
         Violation violation = new Violation();
 
-        if (messwert.getMessung() != null
-                && messwert.getMessung().getProbe() != null) {
-            umwelt = messwert.getMessung().getProbe().getUmwelt();
+        if (messwert.getMeasmId() != null) {
+            Measm measm = messwert.getMeasm() != null
+                ? messwert.getMeasm()
+                : repository.getByIdPlain(Measm.class, messwert.getMeasmId());
+            umwelt = measm.getSample().getEnvMedium();
         }
 
         // If umwelt record is present
         if (umwelt != null) {
-            Integer mehId = umwelt.getMehId();
-            Integer secMehId = umwelt.getSecMehId();
+            Integer mehId = umwelt.getUnit1();
+            Integer secMehId = umwelt.getUnit2();
             //If secondary meh is set
             if (secMehId == null) {
                 return null;
             }
             //Check if the messwert is the secondary mehId
-            if (secMehId.equals(messwert.getMehId())) {
-                violation.addNotification("mehId", StatusCodes.VAL_SEC_UNIT);
+            if (secMehId.equals(messwert.getMeasUnitId())) {
+                violation.addNotification("measUnitId", StatusCodes.VAL_SEC_UNIT);
                 return violation;
             }
             /*Check if the messwert is convertable into the secondary unit but
             not into the primary */
-            MessEinheit meh =
+            MeasUnit meh =
                 repository.getByIdPlain(
-                    MessEinheit.class, mehId);
-            MessEinheit secMeh =
+                    MeasUnit.class, mehId);
+            MeasUnit secMeh =
                 repository.getByIdPlain(
-                    MessEinheit.class, secMehId);
+                    MeasUnit.class, secMehId);
             AtomicBoolean primary = new AtomicBoolean(false);
-            meh.getMassEinheitUmrechnungZus().forEach(umrechnung -> {
-                if (umrechnung.getMehVon().getId()
-                    .equals(messwert.getMehId())
+            meh.getUnitConversTo().forEach(umrechnung -> {
+                if (umrechnung.getFromUnit().getId()
+                    .equals(messwert.getMeasUnitId())
                 ) {
                     primary.set(true);
                 }
@@ -77,12 +80,12 @@ public class SecondaryMehSelected implements Rule {
             if (primary.get()) {
                 return null;
             }
-            secMeh.getMassEinheitUmrechnungZus().forEach(secUmrechnung -> {
-                if (secUmrechnung.getMehVon().getId()
-                    .equals(messwert.getMehId())
+            secMeh.getUnitConversTo().forEach(secUmrechnung -> {
+                if (secUmrechnung.getFromUnit().getId()
+                    .equals(messwert.getMeasUnitId())
                 ) {
                     violation.addNotification(
-                        "mehId", StatusCodes.VAL_SEC_UNIT);
+                        "measUnitId", StatusCodes.VAL_SEC_UNIT);
                 }
             });
         }

@@ -9,17 +9,20 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response.Status;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.Response.Status;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -34,31 +37,30 @@ public class ProbeTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung",
-            "probeentnahmeBeginn",
-            "solldatumBeginn",
-            "solldatumEnde",
-            "treeModified"
+            "lastMod",
+            "sampleStartDate",
+            "schedStartDate",
+            "schedEndDate",
+            "treeMod"
         });
 
         // Prepare expected probe object
-        JsonObject content = readJsonResource("/datasets/dbUnit_probe.json");
-        JsonObject probe = content.getJsonArray("land.probe").getJsonObject(0);
-        JsonObjectBuilder builder = convertObject(probe);
-        builder.add("mittelungsdauer", JsonValue.NULL);
-        builder.add("probeentnahmeEnde", JsonValue.NULL);
-        builder.add("erzeugerId", JsonValue.NULL);
-        builder.add("mplId", JsonValue.NULL);
-        builder.add("readonly", JsonValue.FALSE);
-        builder.add("owner", JsonValue.TRUE);
-        expectedById = builder.build();
-        Assert.assertNotNull(expectedById);
+        JsonObject probe = filterJsonArrayById(
+            readXmlResource("datasets/dbUnit_lada.xml", Sample.class),
+            1000);
+        expectedById = convertObject(probe)
+            .addNull("midSampleDate")
+            .addNull("sampleEndDate")
+            .addNull("datasetCreatorId")
+            .addNull("mpgCategId")
+            .add("readonly", false)
+            .add("owner", true)
+            .build();
 
         // Load probe object to test POST request
         create = readJsonResource("/datasets/probe.json");
@@ -69,17 +71,68 @@ public class ProbeTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("probe", "rest/probe", Status.METHOD_NOT_ALLOWED);
-        getById("probe", "rest/probe/1000", expectedById);
-        JsonObject created = create("probe", "rest/probe", create);
+        get("rest/sample", Status.METHOD_NOT_ALLOWED);
+
+        final String dataKey = "data";
+        final String warningsKey = "warnings";
+        final String expectedWarningKey = "geolocats";
+
+        MatcherAssert.assertThat(
+            getById("rest/sample/1000", expectedById)
+                .getJsonObject(dataKey).getJsonObject(warningsKey).keySet(),
+            CoreMatchers.hasItem(expectedWarningKey));
+
+        JsonObject created = create("rest/sample", create);
+        MatcherAssert.assertThat(
+            created.getJsonObject(dataKey).getJsonObject(warningsKey).keySet(),
+            CoreMatchers.hasItem(expectedWarningKey));
+
+        final String updateFieldKey = "mainSampleId";
+        final String newValue = "130510002";
+        MatcherAssert.assertThat(
+            update("rest/sample/1000", updateFieldKey, "120510002", newValue)
+                .getJsonObject(dataKey).getJsonObject(warningsKey).keySet(),
+            CoreMatchers.hasItem(expectedWarningKey));
+
+        // Ensure invalid envDescripDisplay is rejected
         update(
-            "probe",
-            "rest/probe/1000",
-            "hauptprobenNr",
-            "120510002",
-            "130510002");
-        delete(
-            "probe",
-            "rest/probe/" + created.getJsonObject("data").get("id"));
+            "rest/sample/1000",
+            "envDescripDisplay",
+            "D: 59 04 01 00 05 05 01 02 00 00 00 00",
+            "",
+            Status.BAD_REQUEST);
+
+        // Test localized validation during sample creation
+        Map<Locale, String> msgs = Map.of(
+            Locale.GERMAN, "Größe muss zwischen 0 und 3 sein",
+            Locale.US, "size must be between 0 and 3");
+        final String envMediumId = "envMediumId";
+        JsonObject payload = Json.createObjectBuilder()
+            .add(envMediumId, "too much text for envMediumId")
+            .add("regulationId", 1)
+            .add("sampleMethId", 1)
+            .add("isTest", false)
+            .add("oprModeId", 1)
+            .build();
+        for (Locale language: msgs.keySet()) {
+            JsonArray violations = create(
+                "rest/sample", payload, language, Status.BAD_REQUEST)
+                .getJsonArray("parameterViolations");
+            violations.forEach(val -> {
+                JsonObject obj = (JsonObject) val;
+                if (
+                    obj.getString("path").equals("create.arg0." + envMediumId)
+                ) {
+                    Assert.assertEquals(
+                        msgs.get(language), obj.getString("message"));
+                }
+            });
+        }
+
+        getAuditTrail(
+            "rest/audit/probe/1000",
+            updateFieldKey,
+            newValue);
+        delete("rest/sample/" + created.getJsonObject("data").get("id"));
     }
 }

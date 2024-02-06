@@ -8,10 +8,10 @@
 
 package de.intevation.lada.util.auth;
 
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.model.land.TagZuordnung;
-import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.TagLink;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
@@ -41,39 +41,39 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
         switch (method) {
         case POST:
         case DELETE:
-            TagZuordnung zuordnung = (TagZuordnung) data;
+            TagLink zuordnung = (TagLink) data;
             Tag tag = repository.getByIdPlain(Tag.class, zuordnung.getTagId());
             if (tag == null) {
                 return false;
             }
 
-            switch (tag.getTypId()) {
+            switch (tag.getTagType()) {
             case Tag.TAG_TYPE_GLOBAL:
-                if (zuordnung.getMessungId() != null) {
+                if (zuordnung.getMeasmId() != null) {
                     return messungAuthorizer.isAuthorized(
                         repository.getByIdPlain(
-                            Messung.class, zuordnung.getMessungId()),
+                            Measm.class, zuordnung.getMeasmId()),
                         RequestMethod.PUT,
                         userInfo,
-                        Messung.class
+                        Measm.class
                     );
                 }
-                if (zuordnung.getProbeId() != null) {
+                if (zuordnung.getSampleId() != null) {
                     return probeAuthorizer.isAuthorized(
                         repository.getByIdPlain(
-                            Probe.class, zuordnung.getProbeId()),
+                            Sample.class, zuordnung.getSampleId()),
                         RequestMethod.PUT,
                         userInfo,
-                        Probe.class
+                        Sample.class
                     );
                 }
-                // Should not happen because either Messung or Probe is assigned
+                // Should not happen because either Messung or Sample is assigned
                 return false;
             case Tag.TAG_TYPE_NETZBETREIBER:
                 return userInfo.getNetzbetreiber().contains(
-                    tag.getNetzbetreiberId());
+                    tag.getNetworkId());
             case Tag.TAG_TYPE_MST:
-                return userInfo.getMessstellen().contains(tag.getMstId());
+                return userInfo.getMessstellen().contains(tag.getMeasFacilId());
             default:
                 throw new IllegalArgumentException("Unknown tag type");
             }
@@ -89,8 +89,8 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        TagZuordnung zuordnung = repository.getByIdPlain(
-            TagZuordnung.class, id);
+        TagLink zuordnung = repository.getByIdPlain(
+            TagLink.class, id);
         return isAuthorized(zuordnung, method, userInfo, clazz);
     }
 

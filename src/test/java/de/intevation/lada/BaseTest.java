@@ -8,26 +8,40 @@
 package de.intevation.lada;
 
 import java.io.StringReader;
+import java.sql.SQLException;
+import java.io.BufferedReader;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
-import javax.json.Json;
-import javax.json.JsonException;
-import javax.json.JsonObject;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.Response;
+import jakarta.json.Json;
+import jakarta.json.JsonException;
+import jakarta.json.JsonObject;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.core.Response;
 
 import org.jboss.logging.Logger;
+import org.dbunit.Assertion;
+import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.DatabaseConfig;
+import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ReplacementDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
+import org.dbunit.operation.DatabaseOperation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.postgresql.ds.PGSimpleDataSource;
 
 /**
  * Base class for Lada server tests.
@@ -54,27 +68,52 @@ public class BaseTest {
     private static Logger logger = Logger.getLogger(BaseTest.class);
 
     /**
-     * Results to print out when tests are done.
-     */
-    protected static List<Protocol> testProtocol;
-
-    /**
      * The client to be used for interface tests.
      */
     protected Client client;
+
+    /**
+     * Database connection.
+     */
+    private IDatabaseConnection con;
 
     /**
      * Enable verbose output for tests.
      */
     protected static boolean verboseLogging = false;
 
+    protected String testDatasetName;
+
+    private static final String DATASETS_DIR = "datasets";
+    private static final String CLEANUP_SCRIPT = DATASETS_DIR + "/cleanup.sql";
+    private static final String NULL_PLACEHOLDER = "[null]";
+
     /**
      * Set up shared infrastructure for test methods.
      */
     @Before
-    public void setup() {
-        this.testProtocol = new ArrayList<Protocol>();
+    public void setup()
+        throws DatabaseUnitException, SQLException, IOException {
         this.client = ClientBuilder.newClient();
+
+        // Set up database connection
+        PGSimpleDataSource ds = new PGSimpleDataSource();
+        final String testDbUserPw = "lada_test";
+        ds.setServerNames(new String[]{"db"});
+        ds.setDatabaseName(testDbUserPw);
+        ds.setUser(testDbUserPw);
+        ds.setPassword(testDbUserPw);
+        this.con = new DatabaseConnection(ds.getConnection());
+        DatabaseConfig config = con.getConfig();
+        config.setProperty(
+            DatabaseConfig.FEATURE_QUALIFIED_TABLE_NAMES,
+            true);
+        config.setProperty(
+            DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
+            new PostgresqlDataTypeFactory());
+
+        // Insert test data
+        doDbOperation(DatabaseOperation.CLEAN_INSERT);
     }
 
     /**
@@ -85,43 +124,57 @@ public class BaseTest {
      */
     @Deployment(testable = true)
     public static WebArchive createDeployment() throws Exception {
-        File antlr = Maven.resolver().loadPomFromFile("pom.xml")
-            .resolve("org.antlr:antlr4-runtime")
-            .withoutTransitivity().asSingleFile();
+        //Get compile and runtime dependencies from pom.xml
+        // Note: Test dependencies can not be added this way as they seem to
+        //       break the deployment
+        File[] compileAndRuntimeDeps = Maven.resolver()
+            .loadPomFromFile("pom.xml")
+            .importCompileAndRuntimeDependencies().resolve()
+            .withTransitivity().asFile();
 
         WebArchive archive = ShrinkWrap.create(WebArchive.class, archiveName)
             .addPackages(true, ClassLoader.getSystemClassLoader()
                 .getDefinedPackage("de.intevation.lada"))
-            .addAsResource("lada_server_en.properties", "lada_server_en.properties")
-            .addAsResource("lada_server_de.properties", "lada_server_de.properties")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-            .addAsLibrary(antlr)
+            .addAsResource("lada_server_en.properties",
+                "lada_server_en.properties")
+            .addAsResource("lada_server_de.properties",
+                "lada_server_de.properties")
+            .addAsResource("ValidationMessages.properties",
+                "ValidationMessages.properties")
+            .addAsLibraries(compileAndRuntimeDeps)
             .addAsResource("META-INF/test-persistence.xml",
-                "META-INF/persistence.xml");
-        addWithDependencies("org.geotools:gt-api", archive);
-        addWithDependencies("org.geotools:gt-referencing", archive);
-        addWithDependencies("org.geotools:gt-epsg-hsql", archive);
-        addWithDependencies("org.geotools:gt-opengis", archive);
-
+                "META-INF/persistence.xml")
+            .addAsResource("META-INF/test-beans.xml",
+                "META-INF/beans.xml")
+            //Add cleanup script and datasets for container mode tests
+            .addAsResource(DATASETS_DIR, DATASETS_DIR);
+        //Add additional test dependencies
+        addWithDependencies("org.postgresql:postgresql", archive);
+        addWithDependencies("net.postgis:postgis-jdbc", archive);
+        addWithDependencies("org.dbunit:dbunit", archive);
+        addWithDependencies(
+            "org.jboss.arquillian.extension:arquillian-transaction-api",
+            archive);
+        addWithDependencies(
+            "org.jboss.arquillian.extension:arquillian-transaction-jta",
+            archive);
+        addWithDependencies(
+            "org.eclipse.parsson:parsson",
+            archive);
         return archive;
-    }
-
-    /**
-     * Prints out the test results.
-     */
-    @After
-    public final void printLogs() {
-        for (Protocol p : testProtocol) {
-            logger.info(p.toString(verboseLogging));
-        }
     }
 
     /**
      * Tear down shared infrastructure for test methods.
      */
     @After
-    public void tearDown() {
+    public void tearDown()
+            throws DatabaseUnitException, SQLException, IOException {
         this.client.close();
+
+        // Ensure clean database after test
+        cleanup();
+        con.close();
     }
 
     /**
@@ -149,25 +202,10 @@ public class BaseTest {
      * @param response The response to be parsed.
      * @return Parsed JsonObject or null in case of failure
      */
-    public static JsonObject parseResponse(Response response) {
-        return parseResponse(response, null);
-    }
-
-    /**
-     * Utility method to parse JSON in a Response object.
-     *
-     * Asserts that the response has HTTP status code 200 and a parseable
-     * JSON body corresponding to a de.intevation.lada.util.rest.Response.
-     *
-     * @param response The response to be parsed.
-     * @param protocol Protocol to add exception info in case of failure
-     * @return Parsed JsonObject or null in case of failure
-     */
     public static JsonObject parseResponse(
-        Response response,
-        Protocol protocol
+        Response response
     ) {
-        return parseResponse(response, protocol, Response.Status.OK);
+        return parseResponse(response, Response.Status.OK);
     }
 
     /**
@@ -175,17 +213,15 @@ public class BaseTest {
      * corresponding to a de.intevation.lada.util.rest.Response.
      *
      * @param response The response to be parsed.
-     * @param protocol Protocol to add exception info in case of failure
      * @param expectedStatus Expected HTTP status code
      * @return Parsed JsonObject or null in case of (expected) failure
      */
     public static JsonObject parseResponse(
         Response response,
-        Protocol protocol,
         Response.Status expectedStatus
     ) {
         JsonObject content = parseSimpleResponse(
-            response, protocol, expectedStatus);
+            response, expectedStatus);
 
         /* Verify the response*/
         if (Response.Status.OK.equals(expectedStatus)) {
@@ -193,16 +229,8 @@ public class BaseTest {
             assertContains(content, successKey);
             Assert.assertTrue("Unsuccessful response object:\n" + content,
                 content.getBoolean(successKey));
-            if (protocol != null) {
-                protocol.addInfo(
-                    successKey, content.getBoolean(successKey));
-            }
             assertContains(content, messageKey);
             Assert.assertEquals("200", content.getString(messageKey));
-            if (protocol != null) {
-                protocol.addInfo(
-                    messageKey, content.getString(messageKey));
-            }
         }
 
         return content;
@@ -215,45 +243,37 @@ public class BaseTest {
      * JSON body.
      *
      * @param response The response to be parsed.
-     * @param protocol Protocol to add exception info in case of failure
      * @return Parsed JsonObject or null in case of (expected) failure
      */
     public static JsonObject parseSimpleResponse(
-        Response response,
-        Protocol protocol
+        Response response
     ) {
-        return parseSimpleResponse(response, protocol, Response.Status.OK);
+        return parseSimpleResponse(response, Response.Status.OK);
     }
 
     /**
      * Utility method to check status and parse JSON in a Response object.
      *
      * @param response The response to be parsed.
-     * @param protocol Protocol to add exception info in case of failure
      * @param expectedStatus Expected HTTP status code
      * @return Parsed JsonObject or null in case of (expected) failure
      */
     public static JsonObject parseSimpleResponse(
         Response response,
-        Protocol protocol,
         Response.Status expectedStatus
     ) {
         String responseBody = response.readEntity(String.class);
-        logger.trace(responseBody);
         Assert.assertEquals(
-            "Unexpected response status code",
+            "Unexpected status code with response\n" + responseBody + "\n",
             expectedStatus.getStatusCode(),
             response.getStatus());
 
-        if (Response.Status.OK.equals(expectedStatus)) {
+        if (!responseBody.isEmpty()) {
             try {
                 JsonObject content = Json.createReader(
                     new StringReader(responseBody)).readObject();
                 return content;
             } catch (JsonException je) {
-                if (protocol != null) {
-                    protocol.addInfo("exception", je.getMessage());
-                }
                 Assert.fail(je.getMessage());
             }
         }
@@ -271,5 +291,65 @@ public class BaseTest {
             "Response does not contain expected key '" + key + "': "
             + json.toString(),
             json.containsKey(key));
+    }
+
+    private void doDbOperation(
+        DatabaseOperation op
+    ) throws DatabaseUnitException, SQLException {
+        IDataSet dataset = new FlatXmlDataSetBuilder()
+            .setColumnSensing(true)
+            .build(getClass().getClassLoader()
+                .getResourceAsStream(testDatasetName));
+
+        op.execute(con, dataset);
+    }
+
+    private void cleanup()
+        throws DatabaseUnitException, SQLException, IOException {
+        String sql;
+        //Read cleanup script
+        try (InputStream is = getClass().getClassLoader()
+                .getResourceAsStream(CLEANUP_SCRIPT)) {
+            if (is == null) {
+                throw new IOException(
+                    "Could not find cleanup script: " + CLEANUP_SCRIPT);
+            }
+            try (InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader reader = new BufferedReader(isr)) {
+                sql = reader.lines().collect(
+                    Collectors.joining(System.lineSeparator()));
+            }
+        }
+        con.getConnection().prepareStatement(sql).execute();
+    }
+
+    /**
+     * Check if given table matches the expected dataset.
+     *
+     * The expected datasets must contain all of the tables columns to ensure
+     * the correct column count.
+     * Null values can be set using the "[null]" placeholder.
+     * @param expectedDataset Path to expected xml dataset.
+     * @param tableName Table to check.
+     * @param ignoredCols Columns to ignore.
+     * @throws DatabaseUnitException
+     * @throws SQLException
+     */
+    public void shouldMatchDataSet(
+            String expectedDataset,
+            String tableName, String[] ignoredCols)
+            throws DatabaseUnitException, SQLException {
+        IDataSet xmlDataset = new FlatXmlDataSetBuilder()
+            .setColumnSensing(true)
+            .build(getClass().getClassLoader()
+                .getResourceAsStream(expectedDataset));
+        //Replace null placeholders with null references
+        ReplacementDataSet iExpectedDataset = new ReplacementDataSet(
+                xmlDataset);
+        iExpectedDataset.addReplacementObject(NULL_PLACEHOLDER, null);
+
+        IDataSet iActualDataset = con.createDataSet();
+        Assertion.assertEqualsIgnoreCols(
+            iExpectedDataset, iActualDataset, tableName, ignoredCols);
     }
 }

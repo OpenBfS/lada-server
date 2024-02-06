@@ -9,31 +9,35 @@ package de.intevation.lada.exporter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
-import javax.json.JsonArray;
-import javax.json.JsonNumber;
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.JsonValue;
-import javax.json.JsonValue.ValueType;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonString;
+import jakarta.json.JsonValue;
+import jakarta.json.JsonValue.ValueType;
 
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.land.StatusProtokoll;
-import de.intevation.lada.model.stammdaten.Filter;
-import de.intevation.lada.model.stammdaten.FilterType;
-import de.intevation.lada.model.stammdaten.GridColumn;
-import de.intevation.lada.model.stammdaten.GridColumnValue;
-import de.intevation.lada.model.stammdaten.StatusKombi;
-import de.intevation.lada.model.stammdaten.StatusStufe;
-import de.intevation.lada.model.stammdaten.StatusWert;
-import de.intevation.lada.model.stammdaten.MessEinheit;
-import de.intevation.lada.model.stammdaten.Messgroesse;
+import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.StatusProt;
+import de.intevation.lada.model.master.Filter;
+import de.intevation.lada.model.master.FilterType;
+import de.intevation.lada.model.master.GridColConf;
+import de.intevation.lada.model.master.GridColMp;
+import de.intevation.lada.model.master.MeasUnit;
+import de.intevation.lada.model.master.Measd;
+import de.intevation.lada.model.master.StatusLev;
+import de.intevation.lada.model.master.StatusMp;
+import de.intevation.lada.model.master.StatusVal;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.data.QueryBuilder;
 
@@ -66,7 +70,7 @@ public abstract class QueryExportJob extends ExportJob {
     /**
      * Query result.
      */
-    protected List<GridColumnValue> columns;
+    protected List<GridColConf> columns;
 
     /**
      * Columns to use for export.
@@ -74,14 +78,10 @@ public abstract class QueryExportJob extends ExportJob {
     protected List<String> columnsToExport;
 
     /**
-     * Map of data types and the according sub data types.
+     * Date format to convert timestamps to (time zone defaults to UTC).
      */
-    private Map<String, String> mapPrimaryToSubDataTypes;
-
-    /**
-     * Timezone to convert timestamps to.
-     */
-    protected String timezone;
+    protected DateFormat dateFormat =
+        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
      * Query id.
@@ -89,22 +89,13 @@ public abstract class QueryExportJob extends ExportJob {
     protected Integer qId;
 
     /**
-     * Primary data query result.
-     */
-    protected List<Map<String, Object>> primaryData;
-
-    /**
      * Constructor.
      */
     public QueryExportJob() {
-        columns = new ArrayList <GridColumnValue>();
+        columns = new ArrayList <GridColConf>();
         columnsToExport = new ArrayList<String>();
 
-        mapPrimaryToSubDataTypes = new HashMap<String, String>();
-        mapPrimaryToSubDataTypes.put("probeId", "messung");
-        mapPrimaryToSubDataTypes.put("messungId", "messwert");
-
-        this.timezone = "UTC";
+        this.dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     /**
@@ -123,7 +114,7 @@ public abstract class QueryExportJob extends ExportJob {
         //Create filter object
         Filter filter = new Filter();
         filter.setFilterType(filterType);
-        filter.setParameter(dataIndex);
+        filter.setParam(dataIndex);
         filter.setSql(String.format(
                 "CAST(%1$s AS text) IN ( :%1$s )", dataIndex));
         return filter;
@@ -161,163 +152,182 @@ public abstract class QueryExportJob extends ExportJob {
     }
 
     /**
-     * Execute the query.
-     * @return Query result as list
+     * Execute query to fetch export data and merge sub-data, if requested.
+     * @return Query result, including sub-data, if requested.
      */
-    protected List<Map<String, Object>> getQueryResult() {
+    protected Collection<Map<String, Object>> getExportData() {
+        parseExportParameters();
+
         QueryTools queryTools = new QueryTools(repository, columns);
-        List<Map<String, Object>> result = queryTools.getResultForQuery();
+        List<Map<String, Object>> primaryData = queryTools.getResultForQuery();
         logger.debug(String.format(
                 "Fetched %d primary records",
-                result == null ? 0 : result.size()));
-        return result;
-    }
+                primaryData == null ? 0 : primaryData.size()));
 
-    /**
-     * Get the sub data for the query.
-     * @return Query result as list
-     */
-    protected List<?> getSubData() {
-        if (primaryData == null) {
-            return null;
+        if (exportSubdata) {
+            return mergeSubData(primaryData);
         }
-        //Get ids of primary records
-        List<Integer> primaryDataIds = new ArrayList<Integer>();
-        primaryData.forEach(item -> {
-            primaryDataIds.add((Integer) item.get(idColumn));
-        });
-
-        //Get subdata
-        String subDataType = mapPrimaryToSubDataTypes.get(idType);
-        if (subDataType == null) {
-            throw new IllegalArgumentException(
-                String.format("Unknown id type: %s", idType));
-        }
-        switch (subDataType) {
-            case "messung": return getMessungSubData(primaryDataIds);
-            case "messwert": return getMesswertSubData(primaryDataIds);
-            default: return null;
-        }
+        return primaryData;
     }
 
     /**
-     * Load messung data filtered by the given ids.
-     * @param primaryDataIds Ids to filter for
-     * @return Messwert records as list
+     * Transform Measm object into map with keys according to subDataColumns.
+     * @param measm Measm for which field values should be transformed
+     * @return Map with field names and transformed values of original measm
      */
-    private List<Messung> getMessungSubData(List<Integer> primaryDataIds) {
-        QueryBuilder<Messung> messungBuilder = repository.queryBuilder(
-            Messung.class);
-        messungBuilder.andIn("probeId", primaryDataIds);
-        return repository.filterPlain(messungBuilder.getQuery());
+    protected Map<String, Object> transformFieldValues(Measm measm) {
+        Map<String, Object> transformed = new HashMap<>();
+        subDataColumns.forEach(subDataColumn -> {
+                Object fieldValue = null;
+                switch (subDataColumn) {
+                case "statusKombi":
+                    StatusProt prot =
+                        repository.getByIdPlain(
+                            StatusProt.class, measm.getStatus());
+                    StatusMp mp =
+                        repository.getByIdPlain(
+                            StatusMp.class, prot.getStatusMpId());
+                    StatusLev lev = mp.getStatusLev();
+                    StatusVal val = mp.getStatusVal();
+                    fieldValue = String.format(
+                        "%s - %s", lev.getLev(), val.getVal());
+                    break;
+                case "messwerteCount":
+                    QueryBuilder<MeasVal> builder = repository
+                        .queryBuilder(MeasVal.class)
+                        .and("measmId", measm.getId());
+                    // TODO: A nice example of ORM-induced database misuse:
+                    fieldValue = repository.filterPlain(builder.getQuery())
+                        .size();
+                    break;
+                default:
+                    fieldValue = getFieldByName(subDataColumn, measm);
+                }
+                transformed.put(subDataColumn, fieldValue);
+            });
+        return transformed;
     }
 
     /**
-     * Load messwert data filtered by the given ids.
-     * @param primaryDataIds Ids to filter for
-     * @return Messwert records as list
+     * Transform MeasVal object into map with keys according to subDataColumns.
+     * @param measVal MeasVal for which field values should be transformed
+     * @return Map with field names and transformed values of original measVal
      */
-    private List<Messwert> getMesswertSubData(List<Integer> primaryDataIds) {
-        QueryBuilder<Messwert> messwertBuilder = repository.queryBuilder(
-            Messwert.class);
-        messwertBuilder.andIn("messungsId", primaryDataIds);
-        return repository.filterPlain(messwertBuilder.getQuery());
-    }
-
-    /**
-     * Get the status of the given messung as String.
-     * Format: [statusStufe - statusWert]
-     * @param messung Messung to get status for
-     * @return Status as string
-     */
-    protected String getStatusString(Messung messung) {
-        StatusProtokoll protokoll =
-            repository.getByIdPlain(
-                StatusProtokoll.class, messung.getStatus());
-        StatusKombi kombi =
-            repository.getByIdPlain(
-                StatusKombi.class, protokoll.getStatusKombi());
-        StatusStufe stufe = kombi.getStatusStufe();
-        StatusWert wert = kombi.getStatusWert();
-        return String.format("%s - %s", stufe.getStufe(), wert.getWert());
-    }
-
-    /**
-     * Get the number of messwerte records referencing the given messung.
-     * @param messung Messung to get messwert count for
-     * @return Number of messwert records
-     */
-    protected int getMesswertCount(Messung messung) {
-        QueryBuilder<Messwert> builder = repository.queryBuilder(
-            Messwert.class);
-        builder.and("messungsId", messung.getId());
-        // TODO: This is a nice example of ORM-induced database misuse:
-        return repository.filterPlain(builder.getQuery()).size();
-    }
-
-    /**
-    * Get the messeinheit for messwert values using given messwert
-    * @param messwert messwertId sungId to get messeinheit for
-    * @return messeinheit
-     */
-    protected String getMesseinheit(Messwert messwert) {
-        QueryBuilder<MessEinheit> builder = repository.queryBuilder(
-            MessEinheit.class);
-        builder.and("id", messwert.getMehId());
-        List<MessEinheit> messeinheit = repository.filterPlain(builder.getQuery());
-        return messeinheit.get(0).getEinheit();
-    }
-
-    /**
-    * Get the messgroesse for messwert values using given messwert
-    * @param messwert messwertId sungId to get messgroesse for
-    * @return messgroesse
-     */
-    protected String getMessgroesse(Messwert messwert) {
-        QueryBuilder<Messgroesse> builder = repository.queryBuilder(
-            Messgroesse.class);
-        builder.and("id", messwert.getMessgroesseId());
-        List<Messgroesse> messgroesse = repository.filterPlain(builder.getQuery());
-        return messgroesse.get(0).getMessgroesse();
-    }
-
-    /**
-     * Get the sub data type to the given primary data type.
-     * @param primaryDataType Primary data type
-     * @return Sub data type as String
-     */
-    protected String getSubDataType(String primaryDataType) {
-        return mapPrimaryToSubDataTypes.get(primaryDataType);
+    protected Map<String, Object> transformFieldValues(MeasVal measVal) {
+        Map<String, Object> transformed = new HashMap<>();
+        subDataColumns.forEach(subDataColumn -> {
+                Object fieldValue = null;
+                switch (subDataColumn) {
+                case "measUnitId":
+                    fieldValue = repository.getByIdPlain(
+                        MeasUnit.class, measVal.getMeasUnitId())
+                        .getUnitSymbol();
+                    break;
+                case "measdId":
+                    fieldValue = repository.getByIdPlain(
+                        Measd.class, measVal.getMeasdId()).getName();
+                    break;
+                default:
+                    fieldValue = getFieldByName(subDataColumn, measVal);
+                }
+                transformed.put(subDataColumn, fieldValue);
+            });
+        return transformed;
     }
 
     /**
      * Merge sub data into the primary query result.
-     * @param subData Data to merge into result
-     * @return Merged data as list
+     *
+     * @param primaryData The primary query result as list
+     * @return Merged data
+     * @throws IllegalArgumentException in case of unknown sub-data type
      */
-    protected abstract List<Map<String, Object>> mergeSubData(
-        List<?> subData
+    protected Collection<Map<String, Object>> mergeSubData(
+        List<Map<String, Object>> primaryData
+    ) {
+        if (primaryData == null) {
+            return null;
+        }
+
+        // Create a map of id->record
+        Map<Integer, Map<String, Object>> idMap = new HashMap<>();
+        primaryData.forEach(record -> {
+            idMap.put((Integer) record.get(idColumn), record);
+        });
+
+        //Get subdata
+        switch (this.idType) {
+            case "probeId":
+                QueryBuilder<Measm> messungBuilder = repository
+                    .queryBuilder(Measm.class)
+                    .andIn("sampleId", idMap.keySet());
+                return mergeMessungData(
+                    idMap,
+                    repository.filterPlain(messungBuilder.getQuery()));
+            case "messungId":
+                QueryBuilder<MeasVal> messwertBuilder = repository
+                    .queryBuilder(MeasVal.class)
+                    .andIn("measmId", idMap.keySet());
+                return mergeMesswertData(
+                    idMap,
+                    repository.filterPlain(messwertBuilder.getQuery()));
+            default:
+                throw new IllegalArgumentException(
+                    String.format("Unknown idType: %s", this.idType));
+        }
+    }
+
+    /**
+     * Merge primary result and measm data.
+     *
+     * @param primaryData The primary query result as map of IDs with records
+     * @param messungData Data to merge
+     * @return Merged data
+     */
+    protected abstract Collection<Map<String, Object>> mergeMessungData(
+        Map<Integer, Map<String, Object>> primaryData,
+        List<Measm> messungData
+    );
+
+    /**
+     * Merge primary result and measVal data.
+     *
+     * @param primaryData The primary query result as map of IDs with records
+     * @param messwertData Data to merge
+     * @return Merged data
+     */
+    protected abstract Collection<Map<String, Object>> mergeMesswertData(
+        Map<Integer, Map<String, Object>> primaryData,
+        List<MeasVal> messwertData
     );
 
     /**
      * Parse export parameters.
+     *
+     * @throws IllegalArgumentException if exportSubData is true but no
+     * subDataColumns arge given.
      */
     protected void parseExportParameters() {
         if (exportParameters == null) {
             return;
         }
         //Check if subdata shall be exported
-        exportSubdata = exportParameters.getBoolean("exportSubData");
+        this.exportSubdata = exportParameters.getBoolean(
+            "exportSubData", false);
         //Get identifier type
-        idColumn = exportParameters.isNull("idField")
+        this.idColumn = exportParameters.isNull("idField")
             ? null : exportParameters.getString("idField");
         //Get target timezone
-        timezone = exportParameters.getString("timezone");
+        final String timezoneKey = "timezone";
+        if (exportParameters.containsKey(timezoneKey)) {
+            this.dateFormat.setTimeZone(TimeZone.getTimeZone(
+                    exportParameters.getString(timezoneKey)));
+        }
 
         //Check if sub data columns are present if subdata is exported
         if (exportSubdata
             && !exportParameters.containsKey("subDataColumns")
-            && exportParameters.get("subDataColumns") != null) {
+        ) {
             throw new IllegalArgumentException(
                 "Subdata is exported but no subdata columns are present");
         }
@@ -335,8 +345,8 @@ public abstract class QueryExportJob extends ExportJob {
 
         exportParameters.getJsonArray("columns").forEach(jsonValue -> {
             JsonObject columnObj = (JsonObject) jsonValue;
-            GridColumnValue columnValue = new GridColumnValue();
-            columnValue.setgridColumnId(columnObj.getInt("gridColumnId"));
+            GridColConf columnValue = new GridColConf();
+            columnValue.setGridColMpId(columnObj.getInt("gridColMpId"));
             String sort = columnObj.get("sort") != null
                 && columnObj.get("sort").getValueType() == ValueType.STRING
                 ? columnObj.getString("sort") : null;
@@ -345,20 +355,25 @@ public abstract class QueryExportJob extends ExportJob {
                 && columnObj.get("sortIndex").getValueType() == ValueType.NUMBER
                 ? columnObj.getInt("sortIndex") : null;
             columnValue.setSortIndex(sortIndex);
-            columnValue.setFilterValue(columnObj.getString("filterValue"));
-            columnValue.setFilterActive(columnObj.getBoolean("filterActive"));
-            columnValue.setFilterIsNull(columnObj.getBoolean("filterIsNull"));
-            columnValue.setFilterNegate(columnObj.getBoolean("filterNegate"));
-            columnValue.setFilterRegex(columnObj.getBoolean("filterRegex"));
-            GridColumn gridColumn = repository.getByIdPlain(
-                GridColumn.class, columnValue.getGridColumnId());
+            columnValue.setFilterVal(
+                columnObj.getString("filterVal"));
+            columnValue.setIsFilterActive(
+                columnObj.getBoolean("isFilterActive"));
+            columnValue.setIsFilterNull(
+                columnObj.getBoolean("isFilterNull"));
+            columnValue.setIsFilterNegate(
+                columnObj.getBoolean("isFilterNegate"));
+            columnValue.setIsFilterRegex(
+                columnObj.getBoolean("isFilterRegex"));
+            GridColMp gridColumn = repository.getByIdPlain(
+                GridColMp.class, columnValue.getGridColMpId());
 
-            columnValue.setGridColumn(gridColumn);
+            columnValue.setGridColMp(gridColumn);
 
             //Check if the column contains the id
-            if (columnValue.getGridColumn().getDataIndex().equals(idColumn)) {
+            if (columnValue.getGridColMp().getDataIndex().equals(idColumn)) {
                 // Get the column type
-                idType = gridColumn.getDataType().getName();
+                this.idType = gridColumn.getDisp().getName();
 
                 // Get IDs to filter result
                 JsonArray idsToExport = exportParameters
@@ -401,17 +416,17 @@ public abstract class QueryExportJob extends ExportJob {
                             filterValue.append(",");
                         }
                     }
-                    columnValue.setFilterValue(filterValue.toString());
-                    columnValue.setFilterActive(true);
-                    columnValue.setFilterIsNull(false);
-                    columnValue.setFilterNegate(false);
-                    columnValue.setFilterRegex(false);
+                    columnValue.setFilterVal(filterValue.toString());
+                    columnValue.setIsFilterActive(true);
+                    columnValue.setIsFilterNull(false);
+                    columnValue.setIsFilterNegate(false);
+                    columnValue.setIsFilterRegex(false);
                 }
 
             }
             columns.add(columnValue);
             if (columnObj.getBoolean("export")) {
-                columnsToExport.add(columnValue.getGridColumn().getDataIndex());
+                columnsToExport.add(columnValue.getGridColMp().getDataIndex());
             }
         });
 
@@ -420,10 +435,10 @@ public abstract class QueryExportJob extends ExportJob {
         }
 
         //Get query id
-        GridColumn gridColumn = repository.getByIdPlain(
-            GridColumn.class,
-            Integer.valueOf(columns.get(0).getGridColumnId())
+        GridColMp gridColumn = repository.getByIdPlain(
+            GridColMp.class,
+            Integer.valueOf(columns.get(0).getGridColMpId())
         );
-        qId = gridColumn.getBaseQuery();
+        qId = gridColumn.getBaseQueryId();
     }
 }

@@ -9,18 +9,18 @@ package de.intevation.lada.importer;
 
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.persistence.PersistenceException;
+import jakarta.inject.Inject;
+import jakarta.persistence.PersistenceException;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.model.land.KommentarM;
-import de.intevation.lada.model.land.KommentarP;
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.land.Ortszuordnung;
-import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.model.land.ZusatzWert;
+import de.intevation.lada.model.lada.CommMeasm;
+import de.intevation.lada.model.lada.CommSample;
+import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.Response;
@@ -42,68 +42,68 @@ public class ObjectMerger {
      * @param src the source object
      * @return returns true on success
      */
-    public boolean merge(Probe target, Probe src) {
-        if (src.getBaId() != null) {
-            target.setBaId(src.getBaId());
+    public boolean merge(Sample target, Sample src) {
+        if (src.getOprModeId() != null) {
+            target.setOprModeId(src.getOprModeId());
         }
-        if (src.getDatenbasisId() != null) {
-            target.setDatenbasisId(src.getDatenbasisId());
+        if (src.getRegulationId() != null) {
+            target.setRegulationId(src.getRegulationId());
         }
-        if (src.getErzeugerId() != null) {
-            target.setErzeugerId(src.getErzeugerId());
+        if (src.getDatasetCreatorId() != null) {
+            target.setDatasetCreatorId(src.getDatasetCreatorId());
         }
-        if (src.getHauptprobenNr() != null
-            && !src.getHauptprobenNr().isEmpty()
+        if (src.getMainSampleId() != null
+            && !src.getMainSampleId().isEmpty()
         ) {
-            target.setHauptprobenNr(src.getHauptprobenNr());
+            target.setMainSampleId(src.getMainSampleId());
         }
-        if (src.getLaborMstId() != null) {
-            target.setLaborMstId(src.getLaborMstId());
+        if (src.getApprLabId() != null) {
+            target.setApprLabId(src.getApprLabId());
         }
-        if (src.getMedia() != null) {
-            target.setMedia(src.getMedia());
+        if (src.getEnvDescripName() != null) {
+            target.setEnvDescripName(src.getEnvDescripName());
         }
-        if (src.getMediaDesk() != null) {
-            target.setMediaDesk(src.getMediaDesk());
+        if (src.getEnvDescripDisplay() != null) {
+            target.setEnvDescripDisplay(src.getEnvDescripDisplay());
         }
-        if (src.getMittelungsdauer() != null) {
-            target.setMittelungsdauer(src.getMittelungsdauer());
+        if (src.getMidSampleDate() != null) {
+            target.setMidSampleDate(src.getMidSampleDate());
         }
-        if (src.getMplId() != null) {
-            target.setMplId(src.getMplId());
+        if (src.getMpgCategId() != null) {
+            target.setMpgCategId(src.getMpgCategId());
         }
-        if (src.getProbeentnahmeBeginn() != null) {
-            target.setProbeentnahmeBeginn(src.getProbeentnahmeBeginn());
+        if (src.getSampleStartDate() != null) {
+            target.setSampleStartDate(src.getSampleStartDate());
         }
-        if (src.getProbeentnahmeEnde() != null) {
-            target.setProbeentnahmeEnde(src.getProbeentnahmeEnde());
+        if (src.getSampleEndDate() != null) {
+            target.setSampleEndDate(src.getSampleEndDate());
         }
-        if (src.getProbenartId() != null) {
-            target.setProbenartId(src.getProbenartId());
+        if (src.getSampleMethId() != null) {
+            target.setSampleMethId(src.getSampleMethId());
         }
-        if (src.getProbeNehmerId() != null) {
-            target.setProbeNehmerId(src.getProbeNehmerId());
+        if (src.getSamplerId() != null) {
+            target.setSamplerId(src.getSamplerId());
         }
-        if (src.getSolldatumBeginn() != null) {
-            target.setSolldatumBeginn(src.getSolldatumBeginn());
+        if (src.getSchedStartDate() != null) {
+            target.setSchedStartDate(src.getSchedStartDate());
         }
-        if (src.getSolldatumEnde() != null) {
-            target.setSolldatumEnde(src.getSolldatumEnde());
+        if (src.getSchedEndDate() != null) {
+            target.setSchedEndDate(src.getSchedEndDate());
         }
-        if (src.getUrsprungszeit() != null) {
-            target.setUrsprungszeit(src.getUrsprungszeit());
+        if (src.getOrigDate() != null) {
+            target.setOrigDate(src.getOrigDate());
         }
-        if (src.getTest() != null) {
-            if (target.getTest() == null) {
-                target.setTest(src.getTest());
+        if (src.getIsTest() != null) {
+            if (target.getIsTest() == null) {
+                target.setIsTest(src.getIsTest());
             }
         } else {
             // Set explicit to false, if is null in src to not violate
             // constraints
-            target.setTest(false);
+            target.setIsTest(false);
         }
-        if (src.getUmwId() != null) {
-            target.setUmwId(src.getUmwId());
+        if (src.getEnvMediumId() != null) {
+            target.setEnvMediumId(src.getEnvMediumId());
         }
         Response r = repository.update(target);
         return r.getSuccess();
@@ -115,29 +115,29 @@ public class ObjectMerger {
      * @param src the source object
      * @return the merger instance
      */
-    public ObjectMerger mergeMessung(Messung target, Messung src) {
-        if (target.getNebenprobenNr() == null
-            || target.getNebenprobenNr().isEmpty()
+    public ObjectMerger mergeMessung(Measm target, Measm src) {
+        if (target.getMinSampleId() == null
+            || target.getMinSampleId().isEmpty()
         ) {
-            target.setNebenprobenNr(src.getNebenprobenNr());
+            target.setMinSampleId(src.getMinSampleId());
         }
-        if (src.getFertig() != null) {
-            target.setFertig(src.getFertig());
-        } else if (target.getFertig() == null) {
-            target.setFertig(false);
+        if (src.getIsCompleted() != null) {
+            target.setIsCompleted(src.getIsCompleted());
+        } else if (target.getIsCompleted() == null) {
+            target.setIsCompleted(false);
         }
-        if (src.getGeplant() != null) {
-            if (target.getGeplant() == null) {
-                target.setGeplant(src.getGeplant());
+        if (src.getIsScheduled() != null) {
+            if (target.getIsScheduled() == null) {
+                target.setIsScheduled(src.getIsScheduled());
             }
-        } else if (target.getGeplant() == null) {
-            target.setGeplant(false);
+        } else if (target.getIsScheduled() == null) {
+            target.setIsScheduled(false);
         }
-        if (src.getMessdauer() != null) {
-            target.setMessdauer(src.getMessdauer());
+        if (src.getMeasPd() != null) {
+            target.setMeasPd(src.getMeasPd());
         }
-        if (src.getMesszeitpunkt() != null) {
-            target.setMesszeitpunkt(src.getMesszeitpunkt());
+        if (src.getMeasmStartDate() != null) {
+            target.setMeasmStartDate(src.getMeasmStartDate());
         }
         if (src.getMmtId() != null) {
             target.setMmtId(src.getMmtId());
@@ -153,15 +153,15 @@ public class ObjectMerger {
      * @return the merge instance
      */
     public ObjectMerger mergeZusatzwerte(
-        Probe target,
-        List<ZusatzWert> zusatzwerte
+        Sample target,
+        List<SampleSpecifMeasVal> zusatzwerte
     ) {
-        QueryBuilder<ZusatzWert> builder =
-            repository.queryBuilder(ZusatzWert.class);
+        QueryBuilder<SampleSpecifMeasVal> builder =
+            repository.queryBuilder(SampleSpecifMeasVal.class);
         for (int i = 0; i < zusatzwerte.size(); i++) {
-            builder.and("probeId", target.getId());
-            builder.and("pzsId", zusatzwerte.get(i).getPzsId());
-            List<ZusatzWert> found =
+            builder.and("sampleId", target.getId());
+            builder.and("sampleSpecifId", zusatzwerte.get(i).getSampleSpecifId());
+            List<SampleSpecifMeasVal> found =
                 repository.filterPlain(builder.getQuery());
             if (found.isEmpty()) {
                 repository.create(zusatzwerte.get(i));
@@ -177,8 +177,8 @@ public class ObjectMerger {
             //
             // Current solution:
             // Remove all db objects to be able to create new ones.
-            found.get(0).setMessfehler(zusatzwerte.get(i).getMessfehler());
-            found.get(0).setMesswertPzs(zusatzwerte.get(i).getMesswertPzs());
+            found.get(0).setError(zusatzwerte.get(i).getError());
+            found.get(0).setMeasVal(zusatzwerte.get(i).getMeasVal());
             repository.update(found.get(0));
             builder = builder.getEmptyBuilder();
         }
@@ -192,16 +192,19 @@ public class ObjectMerger {
      * @return the merge instance
      */
     public ObjectMerger mergeKommentare(
-        Probe target,
-        List<KommentarP> kommentare
+        Sample target,
+        List<CommSample> kommentare
     ) {
-        QueryBuilder<KommentarP> builder =
-            repository.queryBuilder(KommentarP.class);
         for (int i = 0; i < kommentare.size(); i++) {
-            builder.and("probeId", target.getId());
-            builder.and("mstId", kommentare.get(i).getMstId());
-            builder.and("datum", kommentare.get(i).getDatum());
-            List<KommentarP> found =
+            //TODO: QueryBuilder instance can not be reused here
+            //This may be a hibernate 6 bug, see:
+            //https://hibernate.atlassian.net/browse/HHH-15951
+            QueryBuilder<CommSample> builder =
+                repository.queryBuilder(CommSample.class);
+            builder.and("sampleId", target.getId());
+            builder.and("measFacilId", kommentare.get(i).getMeasFacilId());
+            builder.and("date", kommentare.get(i).getDate());
+            List<CommSample> found =
                 repository.filterPlain(builder.getQuery());
             if (found.isEmpty()) {
                 repository.create(kommentare.get(i));
@@ -224,16 +227,19 @@ public class ObjectMerger {
      * @return the merger instance
      */
     public ObjectMerger mergeMessungKommentare(
-        Messung target,
-        List<KommentarM> kommentare
+        Measm target,
+        List<CommMeasm> kommentare
     ) {
-        QueryBuilder<KommentarM> builder =
-            repository.queryBuilder(KommentarM.class);
         for (int i = 0; i < kommentare.size(); i++) {
-            builder.and("messungsId", target.getId());
-            builder.and("mstId", kommentare.get(i).getMstId());
-            builder.and("datum", kommentare.get(i).getDatum());
-            List<KommentarM> found =
+            //TODO: QueryBuilder instance can not be reused here
+            //This may be a hibernate 6 bug, see:
+            //https://hibernate.atlassian.net/browse/HHH-15951
+            QueryBuilder<CommMeasm> builder =
+                repository.queryBuilder(CommMeasm.class);
+            builder.and("measmId", target.getId());
+            builder.and("measFacilId", kommentare.get(i).getMeasFacilId());
+            builder.and("date", kommentare.get(i).getDate());
+            List<CommMeasm> found =
                 repository.filterPlain(builder.getQuery());
             if (found.isEmpty()) {
                 repository.create(kommentare.get(i));
@@ -256,13 +262,13 @@ public class ObjectMerger {
      * @return the merger instance
      */
     public ObjectMerger mergeMesswerte(
-        Messung target,
-        List<Messwert> messwerte
+        Measm target,
+        List<MeasVal> messwerte
     ) {
-        QueryBuilder<Messwert> builder =
-            repository.queryBuilder(Messwert.class);
-        builder.and("messungsId", target.getId());
-        List<Messwert> found =
+        QueryBuilder<MeasVal> builder =
+            repository.queryBuilder(MeasVal.class);
+        builder.and("measmId", target.getId());
+        List<MeasVal> found =
             repository.filterPlain(builder.getQuery());
         if (found.isEmpty()) {
             for (int i = 0; i < messwerte.size(); i++) {
@@ -298,13 +304,13 @@ public class ObjectMerger {
      */
     public ObjectMerger mergeEntnahmeOrt(
         int probeId,
-        Ortszuordnung ort
+        Geolocat ort
     ) {
-        QueryBuilder<Ortszuordnung> builder =
-            repository.queryBuilder(Ortszuordnung.class);
-        builder.and("probeId", probeId);
-        builder.and("ortszuordnungTyp", "E");
-        List<Ortszuordnung> found =
+        QueryBuilder<Geolocat> builder =
+            repository.queryBuilder(Geolocat.class);
+        builder.and("sampleId", probeId);
+        builder.and("typeRegulation", "E");
+        List<Geolocat> found =
             repository.filterPlain(builder.getQuery());
         if (found.isEmpty()) {
             repository.create(ort);
@@ -336,15 +342,15 @@ public class ObjectMerger {
      */
     public ObjectMerger mergeUrsprungsOrte(
         int probeId,
-        List<Ortszuordnung> orte
+        List<Geolocat> orte
     ) {
-        QueryBuilder<Ortszuordnung> builder =
-            repository.queryBuilder(Ortszuordnung.class);
+        QueryBuilder<Geolocat> builder =
+            repository.queryBuilder(Geolocat.class);
         for (int i = 0; i < orte.size(); i++) {
-            builder.and("probeId", probeId);
-            builder.and("ortszuordnungTyp", "U");
-            builder.and("ortId", orte.get(i).getOrtId());
-            List<Ortszuordnung> found =
+            builder.and("sampleId", probeId);
+            builder.and("typeRegulation", "U");
+            builder.and("siteId", orte.get(i).getSiteId());
+            List<Geolocat> found =
                 repository.filterPlain(builder.getQuery());
             if (found.isEmpty()) {
                 repository.create(orte.get(i));

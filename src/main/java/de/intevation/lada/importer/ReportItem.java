@@ -25,7 +25,7 @@ package de.intevation.lada.importer;
 public class ReportItem {
     private String key;
     private Object value;
-    private Integer code;
+    private String code;
 
     /**
      * Default constructor.
@@ -39,10 +39,16 @@ public class ReportItem {
      * @param v The value caused the error/warning.
      * @param c The code specifying the error/warning.
      */
-    public ReportItem(String k, Object v, Integer c) {
+    public ReportItem(String k, Object v, String c) {
         this.key = k;
         this.value = v;
         this.code = c;
+    }
+
+    public ReportItem(String k, Object v, Integer c) {
+        this.key = k;
+        this.value = v;
+        this.code = c.toString();
     }
 
     /**
@@ -76,14 +82,21 @@ public class ReportItem {
     /**
      * @return the code
      */
-    public Integer getCode() {
+    public String getCode() {
         return code;
     }
 
     /**
      * @param code the code to set
      */
-    public void setCode(Integer code) {
+    public void setCode(String code) {
         this.code = code;
+    }
+
+    /**
+     * @param code the code to set
+     */
+    public void setCode(Integer code) {
+        this.code = code.toString();
     }
 }

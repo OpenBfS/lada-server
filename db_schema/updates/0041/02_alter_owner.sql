@@ -1,0 +1,4 @@
+ALTER SCHEMA lada OWNER TO lada;
+ALTER SCHEMA master OWNER TO lada;
+
+--TBC

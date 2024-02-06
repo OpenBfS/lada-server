@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.messwert;
 
-import de.intevation.lada.model.land.Messwert;
+import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -24,12 +24,12 @@ public class HasNwgZuMesswert implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messwert messwert = (Messwert) object;
-        String messwertNwg = messwert.getMesswertNwg();
-        Double nachweisgrenze = messwert.getNwgZuMesswert();
+        MeasVal messwert = (MeasVal) object;
+        String messwertNwg = messwert.getLessThanLOD();
+        Double nachweisgrenze = messwert.getDetectLim();
         Violation violation = new Violation();
         if (messwertNwg != null && nachweisgrenze == null) {
-            violation.addError("nwgZuMesswert", StatusCodes.VALUE_MISSING);
+            violation.addError("detectLim", StatusCodes.VALUE_MISSING);
             return violation;
         }
         return null;

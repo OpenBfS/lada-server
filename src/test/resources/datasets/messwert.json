@@ -1,11 +1,11 @@
 {
-    "messungsId": 1200,
-    "messgroesseId": 57,
-    "messwert":1,
-    "messwertNwg": null,
-    "messfehler":1,
-    "nwgZuMesswert":3,
-    "mehId":207,
-    "grenzwertueberschreitung":false
+    "measmId": 1200,
+    "measdId": 57,
+    "measVal":1,
+    "lessThanLOD": null,
+    "error":1,
+    "detectLim":3,
+    "measUnitId":207,
+    "isThreshold":false
 }
 

@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.messprogramm;
 
-import de.intevation.lada.model.land.Messprogramm;
+import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -22,26 +22,24 @@ public class ValidFromTo implements Rule {
 
     private static final int DOY_MIN = 1;
 
-    // Leap years should be handled in generation of Probe objects
+    // Leap years should be handled in generation of Sample objects
     private static final int DOY_MAX = 365;
 
     @Override
     public Violation execute(Object object) {
-        Messprogramm messprogramm = (Messprogramm) object;
+        Mpg messprogramm = (Mpg) object;
         Violation violation = new Violation();
 
-        if (messprogramm.getGueltigVon() != null
-            && (messprogramm.getGueltigVon() < DOY_MIN
-                || messprogramm.getGueltigVon() > DOY_MAX)) {
+        if (messprogramm.getValidStartDate() < DOY_MIN
+                || messprogramm.getValidStartDate() > DOY_MAX) {
                 violation.addError(
-                    "gueltigVon", StatusCodes.VALUE_OUTSIDE_RANGE);
+                    "validStartDate", StatusCodes.VALUE_OUTSIDE_RANGE);
             }
 
-        if (messprogramm.getGueltigBis() != null
-            && (messprogramm.getGueltigBis() < DOY_MIN
-                || messprogramm.getGueltigBis() > DOY_MAX)) {
+        if (messprogramm.getValidEndDate() < DOY_MIN
+                || messprogramm.getValidEndDate() > DOY_MAX) {
                 violation.addError(
-                    "gueltigBis", StatusCodes.VALUE_OUTSIDE_RANGE);
+                    "validEndDate", StatusCodes.VALUE_OUTSIDE_RANGE);
             }
 
         return violation.hasErrors()

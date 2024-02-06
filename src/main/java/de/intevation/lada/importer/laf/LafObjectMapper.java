@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.importer.laf;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -18,12 +16,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
+import jakarta.persistence.NoResultException;
+
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
 import org.jboss.logging.Logger;
@@ -35,39 +36,39 @@ import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.IdentifierConfig;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.ReportItem;
-import de.intevation.lada.model.land.KommentarM;
-import de.intevation.lada.model.land.KommentarP;
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.land.Ortszuordnung;
-import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.model.land.StatusProtokoll;
-import de.intevation.lada.model.land.ZusatzWert;
-import de.intevation.lada.model.land.TagZuordnung;
-import de.intevation.lada.model.stammdaten.Datenbasis;
-import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
-import de.intevation.lada.model.stammdaten.ImporterConfig;
-import de.intevation.lada.model.stammdaten.KoordinatenArt;
-import de.intevation.lada.model.stammdaten.KtaGruppe;
-import de.intevation.lada.model.stammdaten.MessEinheit;
-import de.intevation.lada.model.stammdaten.MessMethode;
-import de.intevation.lada.model.stammdaten.MessStelle;
-import de.intevation.lada.model.stammdaten.Messgroesse;
-import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
-import de.intevation.lada.model.stammdaten.MessprogrammTransfer;
-import de.intevation.lada.model.stammdaten.Ort;
-import de.intevation.lada.model.stammdaten.Ortszusatz;
-import de.intevation.lada.model.stammdaten.ProbenZusatz;
-import de.intevation.lada.model.stammdaten.Probenart;
-import de.intevation.lada.model.stammdaten.Probenehmer;
-import de.intevation.lada.model.stammdaten.ReiProgpunktGruppe;
-import de.intevation.lada.model.stammdaten.Staat;
-import de.intevation.lada.model.stammdaten.StatusErreichbar;
-import de.intevation.lada.model.stammdaten.StatusKombi;
-import de.intevation.lada.model.stammdaten.Tag;
-import de.intevation.lada.model.stammdaten.Umwelt;
-import de.intevation.lada.model.stammdaten.Verwaltungseinheit;
-import de.intevation.lada.model.stammdaten.Zeitbasis;
+import de.intevation.lada.model.lada.CommMeasm;
+import de.intevation.lada.model.lada.CommSample;
+import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.StatusProt;
+import de.intevation.lada.model.lada.TagLink;
+import de.intevation.lada.model.master.AdminUnit;
+import de.intevation.lada.model.master.DatasetCreator;
+import de.intevation.lada.model.master.EnvMedium;
+import de.intevation.lada.model.master.ImportConf;
+import de.intevation.lada.model.master.MeasFacil;
+import de.intevation.lada.model.master.MeasUnit;
+import de.intevation.lada.model.master.Measd;
+import de.intevation.lada.model.master.Mmt;
+import de.intevation.lada.model.master.MpgCateg;
+import de.intevation.lada.model.master.MpgTransf;
+import de.intevation.lada.model.master.NuclFacilGr;
+import de.intevation.lada.model.master.Poi;
+import de.intevation.lada.model.master.Regulation;
+import de.intevation.lada.model.master.ReiAgGr;
+import de.intevation.lada.model.master.SampleMeth;
+import de.intevation.lada.model.master.SampleSpecif;
+import de.intevation.lada.model.master.Sampler;
+import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.SpatRefSys;
+import de.intevation.lada.model.master.State;
+import de.intevation.lada.model.master.StatusAccessMpView;
+import de.intevation.lada.model.master.StatusMp;
+import de.intevation.lada.model.master.Tag;
+import de.intevation.lada.model.master.Tz;
 import de.intevation.lada.util.auth.HeaderAuthorization;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.MesswertNormalizer;
@@ -77,8 +78,6 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationConfig;
 
 /**
  * Create database objects and map the attributes from laf raw data.
@@ -91,19 +90,16 @@ public class LafObjectMapper {
     private HeaderAuthorization authorizer;
 
     @Inject
-    @ValidationConfig(type = "Probe")
-    private Validator probeValidator;
+    private Validator<Sample> probeValidator;
 
     @Inject
-    @ValidationConfig(type = "Messung")
-    private Validator messungValidator;
+    private Validator<Measm> messungValidator;
 
     @Inject
-    @ValidationConfig(type = "Ort")
-    private Validator ortValidator;
+    private Validator<Site> ortValidator;
 
     @Inject
-    @IdentifierConfig(type = "Probe")
+    @IdentifierConfig(type = "Sample")
     private Identifier probeIdentifier;
 
     @Inject
@@ -111,12 +107,16 @@ public class LafObjectMapper {
     private Identifier messungIdentifier;
 
     @Inject
-    @ValidationConfig(type = "Messwert")
-    private Validator messwertValidator;
+    private Validator<MeasVal> messwertValidator;
 
     @Inject
-    @ValidationConfig(type = "Status")
-    private Validator statusValidator;
+    private Validator<StatusProt> statusValidator;
+
+    @Inject
+    private Validator<CommSample> commentPValidator;
+
+    @Inject
+    private Validator<CommMeasm> commentMValidator;
 
     @Inject
     private ObjectMerger merger;
@@ -144,7 +144,10 @@ public class LafObjectMapper {
 
     private UserInfo userInfo;
 
-    private List<ImporterConfig> config;
+    private String measFacilId;
+
+    private List<ImportConf> config;
+    private ImportConfigMapper configMapper;
 
     /**
      * Map the raw data to database objects.
@@ -154,82 +157,69 @@ public class LafObjectMapper {
         errors = new HashMap<>();
         warnings = new HashMap<>();
         notifications = new HashMap<>();
-        importProbeIds = new ArrayList<Integer>();
-        for (int i = 0; i < data.getProben().size(); i++) {
-            create(data.getProben().get(i));
+        importProbeIds = new ArrayList<>();
+        for (LafRawData.Sample sample: data.getProben()) {
+            create(sample);
         }
     }
 
-    private void create(LafRawData.Probe object) {
+    private void create(LafRawData.Sample object) {
         currentWarnings = new ArrayList<>();
         currentErrors = new ArrayList<>();
         currentNotifications = new ArrayList<>();
-        Probe probe = new Probe();
+        Sample probe = new Sample();
         String netzbetreiberId = null;
 
-        Iterator<ImporterConfig> importerConfig = config.iterator();
-        while (importerConfig.hasNext()) {
-            ImporterConfig current = importerConfig.next();
-            if ("ZEITBASIS".equals(current.getName().toUpperCase())) {
-                currentZeitbasis = Integer.valueOf(current.getToValue());
-            }
-            if ("PROBE".equals(current.getName().toUpperCase())
-                && "MSTID".equals(current.getAttribute().toUpperCase())
-                && "DEFAULT".equals(current.getAction().toUpperCase())) {
-                probe.setMstId(current.getToValue());
-            }
-        }
+        this.configMapper.applyConfigs(object.getAttributes());
+
         if (object.getAttributes().containsKey("MESSSTELLE")) {
-            probe.setMstId(object.getAttributes().get("MESSSTELLE"));
+            probe.setMeasFacilId(object.getAttributes().get("MESSSTELLE"));
         }
-        if (probe.getMstId() == null) {
-            currentErrors.add(
-                new ReportItem(
-                    "MESSSTELLE", "", StatusCodes.IMP_MISSING_VALUE));
-            errors.put(object.getIdentifier(),
-                new ArrayList<ReportItem>(currentErrors));
-            return;
+        if (probe.getMeasFacilId() == null) {
+            if (measFacilId == null) {
+                currentErrors.add(
+                    new ReportItem(
+                        "MESSSTELLE", "", StatusCodes.IMP_MISSING_VALUE));
+                errors.put(object.getIdentifier(),
+                    new ArrayList<ReportItem>(currentErrors));
+                return;
+            }
+            probe.setMeasFacilId(measFacilId);
         } else {
-            MessStelle mst = repository.getByIdPlain(
-                MessStelle.class, probe.getMstId());
+            MeasFacil mst = repository.getByIdPlain(
+                MeasFacil.class, probe.getMeasFacilId());
             if (mst == null) {
                 currentErrors.add(
                     new ReportItem(
                         "MESSSTELLE",
-                        probe.getMstId(), StatusCodes.IMP_INVALID_VALUE));
+                        probe.getMeasFacilId(), StatusCodes.IMP_INVALID_VALUE));
                 errors.put(
                     object.getIdentifier(),
                     new ArrayList<ReportItem>(currentErrors));
                 return;
             }
-            netzbetreiberId = mst.getNetzbetreiberId();
+            netzbetreiberId = mst.getNetworkId();
         }
 
         if (object.getAttributes().containsKey("ZEITBASIS")) {
-            List<ImporterConfig> cfg =
-            getImporterConfigByAttributeUpper("ZEITBASIS");
             String attribute = object.getAttributes().get("ZEITBASIS");
-            if (!cfg.isEmpty() && attribute.equals(cfg.get(0).getFromValue())) {
-                attribute = cfg.get(0).getToValue();
-            }
-            QueryBuilder<Zeitbasis> builder =
-                repository.queryBuilder(Zeitbasis.class);
-            builder.and("bezeichnung", attribute);
-            List<Zeitbasis> zb = repository.filterPlain(builder.getQuery());
-            if (zb == null || zb.isEmpty()) {
+            QueryBuilder<Tz> builder = repository.queryBuilder(Tz.class)
+                .and("name", attribute);
+            try {
+                currentZeitbasis = repository.getSinglePlain(builder.getQuery())
+                    .getId();
+            } catch (NoResultException e) {
                 currentWarnings.add(
                     new ReportItem(
                         "ZEITBASIS",
                         object.getAttributes().get(
                             "ZEITBASIS"), StatusCodes.IMP_INVALID_VALUE));
-            } else {
-                currentZeitbasis = zb.get(0).getId();
             }
         } else if (object.getAttributes().containsKey("ZEITBASIS_S")) {
             currentZeitbasis =
                 Integer.valueOf(object.getAttributes().get("ZEITBASIS_S"));
-            Zeitbasis zeitbasis = repository.getByIdPlain(
-                Zeitbasis.class,
+            Tz zeitbasis = repository.getByIdPlain(
+                Tz.class,
                 currentZeitbasis
             );
             if (zeitbasis == null) {
@@ -243,30 +233,26 @@ public class LafObjectMapper {
 
         // Fill the object with data
         for (Entry<String, String> attribute
-            : object.getAttributes().entrySet()
-        ) {
+                 : object.getAttributes().entrySet()) {
             addProbeAttribute(attribute, probe, netzbetreiberId);
         }
-        doDefaults(probe);
-        doConverts(probe);
-        doTransforms(probe);
-        if (probe.getLaborMstId() == null) {
-            probe.setLaborMstId(probe.getMstId());
+        if (probe.getApprLabId() == null) {
+            probe.setApprLabId(probe.getMeasFacilId());
         }
         // Use the deskriptor string to find the medium
         probe = factory.findMedia(probe);
-        if (probe.getUmwId() == null) {
+        if (probe.getEnvMediumId() == null) {
             factory.findUmweltId(probe);
         }
 
         // Check if the user is authorized to create the probe
         if (
-            !authorizer.isAuthorized(probe, RequestMethod.POST, Probe.class)
+            !authorizer.isAuthorized(probe, RequestMethod.POST, Sample.class)
         ) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.NOT_ALLOWED);
             err.setKey(userInfo.getName());
-            err.setValue("Messstelle " + probe.getMstId());
+            err.setValue("Messstelle " + probe.getMeasFacilId());
             currentWarnings.clear();
             currentErrors.add(err);
             errors.put(
@@ -274,29 +260,27 @@ public class LafObjectMapper {
                 new ArrayList<ReportItem>(currentErrors));
             return;
         }
-        // logProbe(probe);
-
-        // Check for errors and warnings
 
         // Compare the probe with objects in the db
-        Probe newProbe = null;
+        Sample newProbe = null;
         boolean oldProbeIsReadonly = false;
         try {
             Identified i = probeIdentifier.find(probe);
-            Probe old = (Probe) probeIdentifier.getExisting();
+            Sample old = (Sample) probeIdentifier.getExisting();
             // Matching probe was found in the db. Update it!
             if (i == Identified.UPDATE) {
                 oldProbeIsReadonly = authorizer.isProbeReadOnly(old.getId());
                 if (
                     // TODO: Should use RequestMethod.PUT?
-                    authorizer.isAuthorized(old, RequestMethod.GET, Probe.class)
+                    authorizer.isAuthorized(
+                        old, RequestMethod.GET, Sample.class)
                 ) {
                     if (oldProbeIsReadonly) {
                         newProbe = old;
                         currentNotifications.add(
                             new ReportItem(
                                 "probe",
-                                old.getExterneProbeId(),
+                                old.getExtId(),
                                 StatusCodes.IMP_UNCHANGABLE));
                     } else {
                         if (merger.merge(old, probe)) {
@@ -309,25 +293,25 @@ public class LafObjectMapper {
                             currentErrors.add(err);
                             if (!currentErrors.isEmpty()) {
                                 errors.put(object.getIdentifier(),
-                                new ArrayList<ReportItem>(currentErrors));
+                                    new ArrayList<ReportItem>(currentErrors));
                             }
                             if (!currentWarnings.isEmpty()) {
                                 warnings.put(object.getIdentifier(),
-                                new ArrayList<ReportItem>(currentWarnings));
+                                    new ArrayList<ReportItem>(currentWarnings));
                             }
                             if (!currentNotifications.isEmpty()) {
                                 notifications.put(object.getIdentifier(),
-                                new ArrayList<ReportItem>(
-                                    currentNotifications));
+                                    new ArrayList<ReportItem>(
+                                        currentNotifications));
                             }
                             return;
                         }
                     }
                 } else {
-                ReportItem err = new ReportItem();
+                    ReportItem err = new ReportItem();
                     err.setCode(StatusCodes.NOT_ALLOWED);
                     err.setKey(userInfo.getName());
-                    err.setValue("Messstelle " + old.getMstId());
+                    err.setValue("Messstelle " + old.getMeasFacilId());
                     currentWarnings.clear();
                     currentErrors.add(err);
                     errors.put(
@@ -336,7 +320,7 @@ public class LafObjectMapper {
                     return;
                 }
             } else if (i == Identified.REJECT) {
-                // Probe was found but some data does not match
+                // Sample was found but some data does not match
                 ReportItem err = new ReportItem();
                 err.setCode(StatusCodes.IMP_PRESENT);
                 err.setKey("duplicate");
@@ -351,37 +335,37 @@ public class LafObjectMapper {
                         new ArrayList<ReportItem>(currentWarnings));
                 }
                 if (!currentNotifications.isEmpty()) {
-                   notifications.put(object.getIdentifier(),
-                   new ArrayList<ReportItem>(currentNotifications));
+                    notifications.put(object.getIdentifier(),
+                        new ArrayList<ReportItem>(currentNotifications));
                 }
                 return;
             } else if (i == Identified.NEW) {
                 // It is a brand new probe!
-                Violation violation = probeValidator.validate(probe);
-                if (!violation.hasErrors()) {
+                probeValidator.validate(probe);
+                if (!probe.hasErrors()) {
                     Response created = repository.create(probe);
-                    newProbe = ((Probe) created.getData());
+                    newProbe = ((Sample) created.getData());
                 } else {
-                    for (Entry<String, List<Integer>> err
-                        : violation.getErrors().entrySet()
+                    for (Entry<String, Set<String>> err
+                             : probe.getErrors().entrySet()
                     ) {
-                        for (Integer code : err.getValue()) {
+                        for (String code : err.getValue()) {
                             currentErrors.add(
                                 new ReportItem(
                                     "validation#probe", err.getKey(), code));
                         }
                     }
-                    for (Entry<String, List<Integer>> warn
-                        :violation.getWarnings().entrySet()
+                    for (Entry<String, Set<String>> warn
+                             : probe.getWarnings().entrySet()
                     ) {
-                        for (Integer code : warn.getValue()) {
+                        for (String code : warn.getValue()) {
                             currentWarnings.add(
                                 new ReportItem(
                                     "validation#probe", warn.getKey(), code));
                         }
                     }
-                    for (Entry<String, List<Integer>> notes
-                        : violation.getNotifications().entrySet()
+                    for (Entry<String, Set<Integer>> notes
+                             : probe.getNotifications().entrySet()
                     ) {
                         for (Integer code :notes.getValue()) {
                             currentNotifications.add(
@@ -393,14 +377,14 @@ public class LafObjectMapper {
             }
             if (newProbe != null) {
                 importProbeIds.add(newProbe.getId());
-            }  else if (probe != null) {
+            } else if (probe != null) {
                 importProbeIds.add(probe.getId());
             }
         } catch (InvalidTargetObjectTypeException e) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.ERROR_VALIDATION);
             err.setKey("not known");
-            err.setValue("No valid Probe Object");
+            err.setValue("No valid Sample Object");
             currentErrors.add(err);
             if (!currentErrors.isEmpty()) {
                 errors.put(object.getIdentifier(),
@@ -411,8 +395,8 @@ public class LafObjectMapper {
                     new ArrayList<ReportItem>(currentWarnings));
             }
             if (!currentNotifications.isEmpty()) {
-              notifications.put(object.getIdentifier(),
-              new ArrayList<ReportItem>(currentNotifications));
+                notifications.put(object.getIdentifier(),
+                    new ArrayList<ReportItem>(currentNotifications));
             }
             return;
         }
@@ -420,11 +404,9 @@ public class LafObjectMapper {
         if (newProbe != null) {
             if (!oldProbeIsReadonly) {
                 // Create kommentar objects
-                List<KommentarP> kommentare = new ArrayList<>();
-                for (int i = 0; i < object.getKommentare().size(); i++) {
-                    KommentarP tmp =
-                        createProbeKommentar(
-                            object.getKommentare().get(i), newProbe);
+                List<CommSample> kommentare = new ArrayList<>();
+                for (Map<String, String> commRaw: object.getKommentare()) {
+                    CommSample tmp = createProbeKommentar(commRaw, newProbe);
                     if (tmp != null) {
                         kommentare.add(tmp);
                     }
@@ -433,11 +415,10 @@ public class LafObjectMapper {
                 merger.mergeKommentare(newProbe, kommentare);
 
                 // Create zusatzwert objects
-                List<ZusatzWert> zusatzwerte = new ArrayList<>();
-                for (int i = 0; i < object.getZusatzwerte().size(); i++) {
-                    ZusatzWert tmp =
-                        createZusatzwert(
-                            object.getZusatzwerte().get(i), newProbe.getId());
+                List<SampleSpecifMeasVal> zusatzwerte = new ArrayList<>();
+                for (Map<String, String> raw: object.getZusatzwerte()) {
+                    SampleSpecifMeasVal tmp =
+                        createZusatzwert(raw, newProbe.getId());
                     if (tmp != null) {
                         zusatzwerte.add(tmp);
                     }
@@ -445,92 +426,256 @@ public class LafObjectMapper {
                 // Persist zusatzwert objects
                 merger.mergeZusatzwerte(newProbe, zusatzwerte);
 
+                // Create site objects
+                this.configMapper.applyConfigs(object.getEntnahmeOrt());
+                for (Map<String, String> uOrt: object.getUrsprungsOrte()) {
+                    this.configMapper.applyConfigs(uOrt);
+                }
                 // Special things for REI-Messpunkt
-                if (probe.getReiProgpunktGrpId() != null
-                    || Integer.valueOf(3).equals(probe.getDatenbasisId())
-                    || Integer.valueOf(4).equals(probe.getDatenbasisId())
+                if (probe.getReiAgGrId() != null
+                    || Integer.valueOf(3).equals(probe.getRegulationId())
+                    || Integer.valueOf(4).equals(probe.getRegulationId())
                 ) {
                     createReiMesspunkt(object, newProbe);
                 } else {
-                    // Merge entnahmeOrt
-                    createEntnahmeOrt(object.getEntnahmeOrt(), newProbe);
+                    // Check if we have EOrte present
+                    QueryBuilder<Geolocat> builderPresentEOrte = repository
+                        .queryBuilder(Geolocat.class)
+                        .and("sampleId", newProbe.getId())
+                        .and("typeRegulation", "E");
+                    List<Geolocat> presentEOrte =
+                        repository.filterPlain(builderPresentEOrte.getQuery());
 
-                    // Create ursprungsOrte
-                    //Check if ursprungsOrte present and clean up
-                    if (object.getUrsprungsOrte().size() > 0){
-                    QueryBuilder<Ortszuordnung> builderUOrt =
-                        repository.queryBuilder(Ortszuordnung.class);
-                        builderUOrt.and("probeId", newProbe.getId());
-                        builderUOrt.and("ortszuordnungTyp", "U");
-                    Response uOrtQuery =
-                        repository.filter(builderUOrt.getQuery());
-                    @SuppressWarnings("unchecked")
-                    List<Ortszuordnung> uOrteProbe = (List<Ortszuordnung>) uOrtQuery.getData();
-                    if (!uOrteProbe.isEmpty()){
-                        for (Ortszuordnung elemOrt : uOrteProbe){
-                            repository.delete(elemOrt);
-                        }
-                    }
-                    }
-                    //Add Ursprungsort from LAF
-                    List<Ortszuordnung> uOrte = new ArrayList<>();
-                    for (int i = 0; i < object.getUrsprungsOrte().size(); i++) {
-                        Ortszuordnung tmp =
-                            createUrsprungsOrt(
-                                object.getUrsprungsOrte().get(i), newProbe);
+                    // Check if we have UOrte present
+                    QueryBuilder<Geolocat> builderPresentUOrte = repository
+                        .queryBuilder(Geolocat.class)
+                        .and("sampleId", newProbe.getId())
+                        .and("typeRegulation", "U");
+                    List<Geolocat> presentUOrte =
+                        repository.filterPlain(builderPresentUOrte.getQuery());
+
+                    // Check if we have ROrte present
+                    QueryBuilder<Geolocat> builderPresentROrte = repository
+                        .queryBuilder(Geolocat.class)
+                        .and("sampleId", newProbe.getId())
+                        .and("typeRegulation", "R");
+                    List<Geolocat> presentROrte =
+                        repository.filterPlain(builderPresentROrte.getQuery());
+
+                    //Switch if we need to create an R-Ort
+                    Boolean rOrt = false;
+                    // First create or find entnahmeOrte and ursprungsOrte
+                    // Create the new entnahmeOrt but do not persist
+                    Geolocat eOrt = createOrtszuordnung(
+                        object.getEntnahmeOrt(), "E", newProbe);
+
+                    //Create/Find Ursprungsort(e) from LAF
+                    List<Geolocat> uOrte = new ArrayList<>();
+                    //If object.getUrsprungsOrte().size() > 1
+                    for (Map<String, String> raw: object.getUrsprungsOrte()) {
+                        Geolocat tmp = createOrtszuordnung(raw, "U", newProbe);
                         if (tmp != null) {
                             uOrte.add(tmp);
                         }
                     }
-                    // Persist ursprungsOrte
-                    merger.mergeUrsprungsOrte(newProbe.getId(), uOrte);
+
+                    // If the LAF delivers eOrt and uOrt and those are a match
+                    // by created/found - Id -- we need to create an R-Ort
+                    if (uOrte.size() > 0
+                        && eOrt != null
+                        && uOrte.stream().anyMatch(
+                            uOrt -> uOrt.getSiteId().equals(
+                                eOrt.getSiteId()))) {
+                        rOrt = true;
+                    }
+
+                    //further conditionals for eOrt
+                    if (eOrt != null) {
+                        //Check if the new Ort matches an U-Ort if exists
+                        if (presentUOrte.size() > 0
+                            && eOrt != null
+                            && presentUOrte.stream().anyMatch(
+                                uOrt -> uOrt.getSiteId().equals(
+                                    eOrt.getSiteId()))) {
+                            rOrt = true;
+                        } else if (presentROrte.size() > 0
+                            && eOrt != null
+                            && presentROrte.stream().anyMatch(
+                                rtypeOrt -> rtypeOrt.getSiteId().equals(
+                                    eOrt.getSiteId()))) {
+                            rOrt = true;
+                        } else if (presentROrte.size() > 0 && eOrt != null) {
+                            for (Geolocat loc: presentROrte) {
+                                loc.setTypeRegulation("U");
+                                repository.update(loc);
+                            }
+                            rOrt = false;
+                        }
+                    }
+
+                    //conditionals for the ursprungsOrte
+                    if (uOrte.size() == 1) {
+                        // Check if the new Ort matches the U-Ort if exists,
+                        // this only works if we have 1 Ursprungsort in the LAF,
+                        // if we have more we must assume multiple ursprungsorte
+                        if (presentEOrte.size() > 0
+                            && uOrte.size() > 0
+                            && presentEOrte.stream().anyMatch(
+                                etypeOrt -> etypeOrt.getSiteId().equals(
+                                    uOrte.get(0).getSiteId()))) {
+                            rOrt = true;
+                        } else if (presentROrte.size() > 0
+                            && uOrte.size() > 0
+                            && presentROrte.stream().anyMatch(
+                                rtypeOrt -> rtypeOrt.getSiteId().equals(
+                                    uOrte.get(0).getSiteId()))) {
+                            //ToDo: We need to handle R-Orte!
+                            rOrt = true;
+                        } else if (presentROrte.size() > 0
+                            && uOrte.size() > 0) {
+                            for (Geolocat loc: presentROrte) {
+                                loc.setTypeRegulation("E");
+                                repository.update(loc);
+                            }
+                            rOrt = false;
+                        }
+                    }
+
+                    if (!rOrt) {
+                        //persist general entnahmeOrt
+                        if (eOrt != null) {
+                            merger.mergeEntnahmeOrt(newProbe.getId(), eOrt);
+                        }
+                        if (uOrte.size() > 0) {
+                            //remove present U-Orte
+                            QueryBuilder<Geolocat> builderUOrt = repository
+                                .queryBuilder(Geolocat.class)
+                                .and("sampleId", newProbe.getId())
+                                .and("typeRegulation", "U");
+                            List<Geolocat> uOrteProbe =
+                                repository.filterPlain(builderUOrt.getQuery());
+                            if (!uOrteProbe.isEmpty()) {
+                                for (Geolocat elemOrt : uOrteProbe) {
+                                    repository.delete(elemOrt);
+                                }
+                            }
+                            merger.mergeUrsprungsOrte(newProbe.getId(), uOrte);
+                        }
+                    } else {
+                        if (rOrt && presentROrte.size() == 1) {
+                            // we may have additional information for
+                            // the ortszuordnung such as an ortszusatz,
+                            // we make an update.
+                            QueryBuilder<Geolocat> builderUOrt = repository
+                                .queryBuilder(Geolocat.class)
+                                .and("sampleId", newProbe.getId())
+                                .and("typeRegulation", "R");
+                            List<Geolocat> uOrteProbe =
+                                repository.filterPlain(builderUOrt.getQuery());
+                            if (!uOrteProbe.isEmpty()) {
+                                for (Geolocat elemOrt : uOrteProbe) {
+                                    repository.delete(elemOrt);
+                                }
+                            }
+
+                            if ((eOrt != null)) {
+                                eOrt.setTypeRegulation(("R"));
+                                merger.mergeEntnahmeOrt(newProbe.getId(), eOrt);
+                            }
+                            if (uOrte.size() == 1 && eOrt == null) {
+                                uOrte.get(0).setTypeRegulation("R");
+                                merger.mergeUrsprungsOrte(
+                                    newProbe.getId(), uOrte);
+                            }
+                        }
+                        // clean up ursprungsorte before!
+                        if (object.getUrsprungsOrte().size() > 0
+                            || presentUOrte.size() > 0) {
+                            QueryBuilder<Geolocat> builderUOrt = repository
+                                .queryBuilder(Geolocat.class)
+                                .and("sampleId", newProbe.getId())
+                                .and("typeRegulation", "U");
+                            List<Geolocat> uOrteProbe =
+                                repository.filterPlain(builderUOrt.getQuery());
+                            if (!uOrteProbe.isEmpty()) {
+                                for (Geolocat elemOrt : uOrteProbe) {
+                                    repository.delete(elemOrt);
+                                }
+                            }
+                        }
+                        if (eOrt != null) {
+                            eOrt.setTypeRegulation("R");
+                            //Merging the entnahmeOrt cleans it up!
+                            merger.mergeEntnahmeOrt(newProbe.getId(), eOrt);
+                        } else if (uOrte.size() == 1) {
+                            // Clean-up entnahmeOrte before merge
+                            QueryBuilder<Geolocat> builderEOrt = repository
+                                .queryBuilder(Geolocat.class)
+                                .and("sampleId", newProbe.getId())
+                                .and("typeRegulation", "E");
+                            List<Geolocat> eOrteProbe =
+                                repository.filterPlain(builderEOrt.getQuery());
+                            if (!eOrteProbe.isEmpty()) {
+                                for (Geolocat elemOrt : eOrteProbe) {
+                                    repository.delete(elemOrt);
+                                }
+                            }
+
+                            uOrte.get(0).setTypeRegulation("R");
+                            merger.mergeUrsprungsOrte(newProbe.getId(), uOrte);
+                        }
+                    }
                 }
             }
 
             // Validate probe object
-            Violation violation = probeValidator.validate(newProbe);
-            for (Entry<String, List<Integer>> err
-                : violation.getErrors().entrySet()
+            probeValidator.validate(newProbe);
+            for (Entry<String, Set<String>> err
+                     : newProbe.getErrors().entrySet()
             ) {
-                for (Integer code : err.getValue()) {
+                for (String code : err.getValue()) {
                     currentErrors.add(
                         new ReportItem("validation#probe", err.getKey(), code));
                 }
             }
-            for (Entry<String, List<Integer>> warn
-                : violation.getWarnings().entrySet()
+            for (Entry<String, Set<String>> warn
+                     : newProbe.getWarnings().entrySet()
             ) {
-                for (Integer code : warn.getValue()) {
+                for (String code : warn.getValue()) {
                     currentWarnings.add(
-                        new ReportItem("validation#probe", warn.getKey(), code));
+                        new ReportItem(
+                            "validation#probe", warn.getKey(), code));
                 }
             }
-            for (Entry<String, List<Integer>> notes
-                : violation.getNotifications().entrySet()
+            for (Entry<String, Set<Integer>> notes
+                     : newProbe.getNotifications().entrySet()
             ) {
-              for (Integer code: notes.getValue()) {
-                currentNotifications.add(
-                    new ReportItem("validation#probe", notes.getKey(), code));
-              }
+                for (Integer code: notes.getValue()) {
+                    currentNotifications.add(new ReportItem(
+                            "validation#probe", notes.getKey(), code));
+                }
             }
-            // Create messung objects
-            for (int i = 0; i < object.getMessungen().size(); i++) {
-                create(
-                    object.getMessungen().get(i),
-                    newProbe,
-                    newProbe.getMstId());
+
+            // Create measms
+            for (LafRawData.Messung measmRaw: object.getMessungen()) {
+                create(measmRaw, newProbe);
             }
-            //if key SZENARIO is present in imported file, assign global tag to probe and its messung objects
+
+            // If key SZENARIO is present in imported file, assign
+            // global tag to probe and its messung objects
             if (object.getAttributes().containsKey("SZENARIO")) {
                 //assign to probe object
-                assignGlobalTag(object.getAttributes().get("SZENARIO"), newProbe);
+                assignGlobalTag(
+                    object.getAttributes().get("SZENARIO"), newProbe);
                 //assign to messung objects
-                QueryBuilder<Messung> builderMessung =
-                    repository.queryBuilder(Messung.class);
-                builderMessung.and("probeId", newProbe.getId());
-                List<Messung> messungen =  repository.filterPlain(builderMessung.getQuery());
-                for (Messung messung: messungen) {
-                    assignGlobalTag(object.getAttributes().get("SZENARIO"), messung);
+                QueryBuilder<Measm> builderMessung = repository
+                    .queryBuilder(Measm.class)
+                    .and("sampleId", newProbe.getId());
+                List<Measm> messungen =
+                    repository.filterPlain(builderMessung.getQuery());
+                for (Measm messung: messungen) {
+                    assignGlobalTag(
+                        object.getAttributes().get("SZENARIO"), messung);
                 }
             }
         }
@@ -551,309 +696,35 @@ public class LafObjectMapper {
             }
         }
         if (!currentNotifications.isEmpty()) {
-          if (notifications.containsKey(object.getIdentifier())) {
-            notifications.get(
-                object.getIdentifier()).addAll(currentNotifications);
-          } else {
-            notifications.put(object.getIdentifier(),
-            new ArrayList<ReportItem>(currentNotifications));
-          }
-        }
-    }
-
-    private void doDefaults(Probe probe) {
-        doDefaults(probe, Probe.class, "probe");
-    }
-
-    private void doConverts(Probe probe) {
-        doConverts(probe, Probe.class, "probe");
-    }
-
-    private void doTransforms(Probe probe) {
-        doTransformations(probe, Probe.class, "probe");
-    }
-
-    private void doDefaults(Messung messung) {
-        doDefaults(messung, Messung.class, "messung");
-    }
-
-    private void doConverts(Messung messung) {
-        doConverts(messung, Messung.class, "messung");
-    }
-
-    private void doTransforms(Messung messung) {
-        doTransformations(messung, Messung.class, "messung");
-    }
-
-    private void doDefaults(Messwert messwert) {
-        doDefaults(messwert, Messwert.class, "messwert");
-    }
-
-    private void doConverts(Messwert messwert) {
-        doConverts(messwert, Messwert.class, "messwert");
-    }
-
-    private void doTransforms(Messwert messwert) {
-        doTransformations(messwert, Messwert.class, "messwert");
-    }
-
-    private void doDefaults(ZusatzWert zusatzwert) {
-        doDefaults(zusatzwert, ZusatzWert.class, "zusatwert");
-    }
-
-    private void doConverts(ZusatzWert zusatzwert) {
-        doConverts(zusatzwert, ZusatzWert.class, "zusatzwert");
-    }
-
-    private void doTransforms(ZusatzWert zusatzwert) {
-        doTransformations(zusatzwert, ZusatzWert.class, "zusatwert");
-    }
-
-    private void doDefaults(KommentarM kommentar) {
-        doDefaults(kommentar, KommentarM.class, "kommentarm");
-    }
-
-    private void doConverts(KommentarM kommentar) {
-        doConverts(kommentar, KommentarM.class, "kommentarm");
-    }
-
-    private void doTransforms(KommentarM kommentar) {
-        doTransformations(kommentar, KommentarM.class, "kommentarm");
-    }
-
-    private void doDefaults(KommentarP kommentar) {
-        doDefaults(kommentar, KommentarP.class, "kommentarp");
-    }
-
-    private void doConverts(KommentarP kommentar) {
-        doConverts(kommentar, KommentarP.class, "kommentarp");
-    }
-
-    private void doTransforms(KommentarP kommentar) {
-        doTransformations(kommentar, KommentarP.class, "kommentarp");
-    }
-
-    private void doDefaults(Ortszuordnung ort) {
-        doDefaults(ort, Ortszuordnung.class, "ortszuordnung");
-    }
-
-    private void doConverts(Ortszuordnung ort) {
-        doConverts(ort, Ortszuordnung.class, "ortszuordnung");
-    }
-
-    private void doTransforms(Ortszuordnung ort) {
-        doTransformations(ort, Ortszuordnung.class, "ortszuordnung");
-    }
-
-    private void doDefaults(Ort o) {
-        doDefaults(o, Ort.class, "ort");
-    }
-
-    private <T> void doDefaults(Object object, Class<T> clazz, String table) {
-        Iterator<ImporterConfig> i = config.iterator();
-        while (i.hasNext()) {
-            ImporterConfig current = i.next();
-            if (table.equals(current.getName())
-                && "default".equals(current.getAction())
-            ) {
-                String attribute = current.getAttribute();
-                Method getter;
-                Method setter = null;
-                try {
-                    getter = clazz.getMethod("get"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1));
-                    String methodName = "set"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1);
-                    for (Method method : clazz.getMethods()) {
-                        String name = method.getName();
-                        if (!methodName.equals(name)) {
-                            continue;
-                        }
-                        setter = method;
-                        break;
-                    }
-                } catch (NoSuchMethodException | SecurityException e) {
-                    logger.debug("attribute " + attribute + " does not exist");
-                    return;
-                }
-                try {
-                    Object value = getter.invoke(object);
-                    if (value == null && setter != null) {
-                        Class<?>[] types = setter.getParameterTypes();
-                        if (types.length == 1) {
-                            // we have exactly one parameter, thats fine.
-                            if (types[0].isAssignableFrom(Integer.class)) {
-                                // the parameter is of type Integer!
-                                // Cast to integer
-                                setter.invoke(
-                                    object,
-                                    Integer.valueOf(current.getToValue()));
-                            } else {
-                                // we handle the default as string.
-                                // Other parameter types are not implemented!
-                                setter.invoke(object, current.getToValue());
-                            }
-                        }
-                    }
-                } catch (IllegalAccessException
-                    | IllegalArgumentException
-                    | InvocationTargetException e
-                ) {
-                    logger.debug("Could not set attribute " + attribute);
-                    return;
-                }
+            if (notifications.containsKey(object.getIdentifier())) {
+                notifications.get(
+                    object.getIdentifier()).addAll(currentNotifications);
+            } else {
+                notifications.put(object.getIdentifier(),
+                    new ArrayList<ReportItem>(currentNotifications));
             }
         }
     }
 
-    private List<ImporterConfig> getImporterConfigByAttributeUpper(
-        String attribute
-    ) {
-        Iterator<ImporterConfig> i = config.iterator();
-        List<ImporterConfig> result = new ArrayList<ImporterConfig>();
-        while (i.hasNext()) {
-            ImporterConfig current = i.next();
-            if (current.getAttribute().toUpperCase().equals(attribute)) {
-                result.add(current);
-            }
-        }
-        return result;
-    }
-
-    private <T> void doConverts(Object object, Class<T> clazz, String table) {
-        Iterator<ImporterConfig> i = config.iterator();
-        while (i.hasNext()) {
-            ImporterConfig current = i.next();
-            if (table.equals(current.getName())
-                && "convert".equals(current.getAction())
-            ) {
-                String attribute = current.getAttribute();
-                Method getter;
-                Method setter = null;
-                try {
-                    getter = clazz.getMethod("get"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1));
-                    String methodName = "set"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1);
-                    for (Method method : clazz.getMethods()) {
-                        String name = method.getName();
-                        if (!methodName.equals(name)) {
-                            continue;
-                        }
-                        setter = method;
-                        break;
-                    }
-                } catch (NoSuchMethodException | SecurityException e) {
-                    logger.warn("attribute " + attribute + " does not exist");
-                    return;
-                }
-                try {
-                    Object value = getter.invoke(object);
-                    if (value.equals(current.getFromValue())
-                        && setter != null
-                    ) {
-                        setter.invoke(object, current.getToValue());
-                    }
-                } catch (IllegalAccessException
-                    | IllegalArgumentException
-                    | InvocationTargetException e
-                ) {
-                    logger.warn("Could not convert attribute " + attribute);
-                    return;
-                }
-            }
-        }
-    }
-
-    private <T> void doTransformations(
-        Object object,
-        Class<T> clazz,
-        String table
-    ) {
-        Iterator<ImporterConfig> i = config.iterator();
-        while (i.hasNext()) {
-            ImporterConfig current = i.next();
-            if (table.equals(current.getName())
-                && "transform".equals(current.getAction())
-            ) {
-                String attribute = current.getAttribute();
-                Method getter;
-                Method setter = null;
-                try {
-                    getter = clazz.getMethod("get"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1));
-                    String methodName = "set"
-                        + attribute.substring(0, 1).toUpperCase()
-                        + attribute.substring(1);
-                    for (Method method : clazz.getMethods()) {
-                        String name = method.getName();
-                        if (methodName.equals(name)) {
-                            setter = method;
-                            break;
-                        }
-                    }
-                    if (setter == null) {
-                        logger.warn(
-                            "Could not transform attribute " + attribute);
-                        return;
-                    }
-                } catch (NoSuchMethodException | SecurityException e) {
-                    logger.warn("attribute " + attribute + " does not exist");
-                    return;
-                }
-                try {
-                    Object value = getter.invoke(object);
-                    if (value == null) {
-                        logger.warn("Attribute " + attribute + " is not set");
-                        return;
-                    }
-                    char from = (char) Integer.parseInt(
-                        current.getFromValue(), 16);
-                    char to = (char) Integer.parseInt(
-                        current.getToValue(), 16);
-                    value = value.toString().replaceAll(
-                        "[" + String.valueOf(from) + "]", String.valueOf(to));
-                    setter.invoke(object, value);
-                } catch (IllegalAccessException
-                    | IllegalArgumentException
-                    | InvocationTargetException e
-                ) {
-                    logger.warn("Could not transform attribute " + attribute);
-                    return;
-                }
-            }
-        }
-    }
-
-    private void create(
-        LafRawData.Messung object,
-        Probe probe, String mstId
-    ) {
-        Messung messung = new Messung();
-        messung.setProbeId(probe.getId());
+    private void create(LafRawData.Messung object, Sample probe) {
+        Measm messung = new Measm();
+        messung.setSampleId(probe.getId());
 
         // Fill the new messung with data
+        this.configMapper.applyConfigs(object.getAttributes());
         for (Entry<String, String> attribute
-            : object.getAttributes().entrySet()
+                 : object.getAttributes().entrySet()
         ) {
             addMessungAttribute(attribute, messung);
         }
-        doDefaults(messung);
-        doConverts(messung);
-        doTransforms(messung);
         // Check if the user is authorized to create the object
         if (
-            !authorizer.isAuthorized(messung, RequestMethod.POST, Messung.class)
+            !authorizer.isAuthorized(messung, RequestMethod.POST, Measm.class)
         ) {
             ReportItem warn = new ReportItem();
             warn.setCode(StatusCodes.NOT_ALLOWED);
             warn.setKey(userInfo.getName());
-            warn.setValue("Messung: " + messung.getNebenprobenNr());
+            warn.setValue("Messung: " + messung.getMinSampleId());
             currentErrors.add(warn);
             return;
         }
@@ -866,13 +737,13 @@ public class LafObjectMapper {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.ERROR_VALIDATION);
             err.setKey("not valid");
-            err.setValue("Messung: " + messung.getNebenprobenNr());
+            err.setValue("Messung: " + messung.getMinSampleId());
             currentErrors.add(err);
             return;
         }
-        Messung newMessung;
+        Measm newMessung;
         boolean oldMessungIsReadonly = false;
-        Messung old = (Messung) messungIdentifier.getExisting();
+        Measm old = (Measm) messungIdentifier.getExisting();
         switch (ident) {
         case UPDATE:
             oldMessungIsReadonly =
@@ -881,7 +752,7 @@ public class LafObjectMapper {
                 currentNotifications.add(
                     new ReportItem(
                         "messung",
-                        old.getExterneMessungsId(),
+                        old.getExtId(),
                         StatusCodes.IMP_UNCHANGABLE));
                 return;
             } else {
@@ -903,81 +774,78 @@ public class LafObjectMapper {
                 ReportItem err2 = new ReportItem();
                 err2.setCode(StatusCodes.VALUE_MISSING);
                 err2.setKey("not valid (missing Messmethode)");
-                err2.setValue("Messung: " + messung.getNebenprobenNr());
+                err2.setValue("Messung: " + messung.getMinSampleId());
                 currentErrors.add(err2);
                 return;
             }
 
             // Create a new messung and the first status
-            newMessung = (Messung) repository.create(messung).getData();
+            newMessung = (Measm) repository.create(messung).getData();
             break;
         default:
             throw new IllegalArgumentException(
                 "Identified with unexpected enum constant");
         }
 
-        List<KommentarM> kommentare = new ArrayList<KommentarM>();
-        for (int i = 0; i < object.getKommentare().size(); i++) {
-            KommentarM tmp =
-                createMessungKommentar(
-                    object.getKommentare().get(i), newMessung.getId(), probe);
+        // Add commMeasms
+        List<CommMeasm> kommentare = new ArrayList<CommMeasm>();
+        for (Map<String, String> commRaw: object.getKommentare()) {
+            CommMeasm tmp = createMessungKommentar(
+                commRaw, newMessung.getId(), probe);
             if (tmp != null) {
                 kommentare.add(tmp);
             }
         }
         merger.mergeMessungKommentare(newMessung, kommentare);
-        List<Messwert> messwerte = new ArrayList<Messwert>();
+
+        // Add measVals
+        List<MeasVal> messwerte = new ArrayList<MeasVal>();
         List<Integer> messgroessenListe = new ArrayList<Integer>();
-        for (int i = 0; i < object.getMesswerte().size(); i++) {
-            Messwert tmp =
-                createMesswert(
-                    object.getMesswerte().get(i), newMessung.getId());
+        for (Map<String, String> measValRaw: object.getMesswerte()) {
+            MeasVal tmp =
+                createMesswert(measValRaw, newMessung.getId());
             if (tmp != null) {
                 //find duplicates
-                if (messgroessenListe.contains(tmp.getMessgroesseId())) {
+                if (messgroessenListe.contains(tmp.getMeasdId())) {
                     currentWarnings.add(new ReportItem(
-                        (object.getMesswerte().get(i).get("MESSGROESSE_ID")
-                            == null)
-                        ? "MESSWERT - MESSGROESSE"
-                        : "MESSWERT - MESSGROESSE_ID",
-                        (object.getMesswerte().get(i).get("MESSGROESSE_ID")
-                            == null)
-                        ? object.getMesswerte().get(i).get(
-                            "MESSGROESSE").toString()
-                        : object.getMesswerte().get(i).get(
-                            "MESSGROESSE_ID").toString(),
+                            measValRaw.get("MESSGROESSE_ID") == null
+                            ? "MESSWERT - MESSGROESSE"
+                            : "MESSWERT - MESSGROESSE_ID",
+                            measValRaw.get("MESSGROESSE_ID") == null
+                            ? measValRaw.get("MESSGROESSE")
+                            : measValRaw.get("MESSGROESSE_ID"),
                             StatusCodes.IMP_DUPLICATE));
                 } else {
-                   //temporary messwertobjects
                     messwerte.add(tmp);
-                    messgroessenListe.add(tmp.getMessgroesseId());
+                    messgroessenListe.add(tmp.getMeasdId());
                 }
             }
         }
         messwerte = messwertNormalizer.normalizeMesswerte(
-            messwerte, probe.getUmwId());
+            messwerte, probe.getEnvMediumId());
         //persist messwerte
         merger.mergeMesswerte(newMessung, messwerte);
+
         // Check for warnings and errors for messung ...
-        Violation violation = messungValidator.validate(newMessung);
-        for (Entry<String, List<Integer>> err
-            : violation.getErrors().entrySet()
+        messungValidator.validate(newMessung);
+        for (Entry<String, Set<String>> err
+                 : newMessung.getErrors().entrySet()
         ) {
-            for (Integer code : err.getValue()) {
+            for (String code : err.getValue()) {
                 currentErrors.add(
                     new ReportItem("validation#messung", err.getKey(), code));
             }
         }
-        for (Entry<String, List<Integer>> warn
-            : violation.getWarnings().entrySet()
+        for (Entry<String, Set<String>> warn
+                 : newMessung.getWarnings().entrySet()
         ) {
-            for (Integer code : warn.getValue()) {
+            for (String code : warn.getValue()) {
                 currentWarnings.add(
                     new ReportItem("validation#messung", warn.getKey(), code));
             }
         }
-        for (Entry<String, List<Integer>> notes
-            : violation.getNotifications().entrySet()
+        for (Entry<String, Set<Integer>> notes
+                 : newMessung.getNotifications().entrySet()
         ) {
             for (Integer code : notes.getValue()) {
                 currentNotifications.add(
@@ -985,13 +853,10 @@ public class LafObjectMapper {
             }
         }
         // ... and messwerte
-        QueryBuilder<Messwert> messwBuilder =
-            repository.queryBuilder(Messwert.class);
-        messwBuilder.and("messungsId", newMessung.getId());
-        for (Messwert messwert: messwerte) {
-            Violation messwViolation = messwertValidator.validate(messwert);
-            if (messwViolation.hasWarnings()) {
-                messwViolation.getWarnings().forEach((k, v) -> {
+        for (MeasVal messwert: messwerte) {
+            messwertValidator.validate(messwert);
+            if (messwert.hasWarnings()) {
+                messwert.getWarnings().forEach((k, v) -> {
                     v.forEach((value) -> {
                         currentWarnings.add(
                             new ReportItem("validation#messwert", k, value));
@@ -999,8 +864,8 @@ public class LafObjectMapper {
                 });
             }
 
-            if (messwViolation.hasErrors()) {
-                messwViolation.getErrors().forEach((k, v) -> {
+            if (messwert.hasErrors()) {
+                messwert.getErrors().forEach((k, v) -> {
                     v.forEach((value) -> {
                         currentErrors.add(
                             new ReportItem("validation#messwert", k, value));
@@ -1008,8 +873,8 @@ public class LafObjectMapper {
                 });
             }
 
-            if (messwViolation.hasNotifications()) {
-                messwViolation.getNotifications().forEach((k, v) -> {
+            if (messwert.hasNotifications()) {
+                messwert.getNotifications().forEach((k, v) -> {
                     v.forEach((value) -> {
                         currentNotifications.add(
                             new ReportItem("validation#messwert", k, value));
@@ -1022,16 +887,19 @@ public class LafObjectMapper {
         if (!object.hasErrors()) {
             if (object.getAttributes().containsKey("BEARBEITUNGSSTATUS")) {
                 createStatusProtokoll(
-                    object.getAttributes().get(
-                        "BEARBEITUNGSSTATUS"), newMessung, mstId);
+                    object.getAttributes().get("BEARBEITUNGSSTATUS"),
+                    newMessung,
+                    probe.getMeasFacilId());
             }
         }
     }
 
-    private KommentarP createProbeKommentar(
+    private CommSample createProbeKommentar(
         Map<String, String> attributes,
-        Probe probe
+        Sample probe
     ) {
+        this.configMapper.applyConfigs(attributes);
+
         if (attributes.get("TEXT").equals("")) {
             currentWarnings.add(
                 new ReportItem(
@@ -1040,10 +908,10 @@ public class LafObjectMapper {
         }
 
         // TODO: Why does the following duplicate a validation rule?
-        QueryBuilder<KommentarP> kommentarBuilder = repository
-            .queryBuilder(KommentarP.class)
-            .and("probeId", probe.getId());
-        List<KommentarP> kommentarExist = repository.filterPlain(
+        QueryBuilder<CommSample> kommentarBuilder = repository
+            .queryBuilder(CommSample.class)
+            .and("sampleId", probe.getId());
+        List<CommSample> kommentarExist = repository.filterPlain(
             kommentarBuilder.getQuery());
 
         // TODO: Should be the job of EXISTS and a WHERE-clause in database
@@ -1059,110 +927,112 @@ public class LafObjectMapper {
                     StatusCodes.IMP_DUPLICATE));
             return null;
         }
-        KommentarP kommentar = new KommentarP();
-        kommentar.setProbeId(probe.getId());
+        CommSample kommentar = new CommSample();
+        kommentar.setSampleId(probe.getId());
         kommentar.setText(attributes.get("TEXT"));
         if (attributes.containsKey("MST_ID")) {
-            kommentar.setMstId(attributes.get("MST_ID"));
+            kommentar.setMeasFacilId(attributes.get("MST_ID"));
         } else {
-            kommentar.setMstId(probe.getMstId());
+            kommentar.setMeasFacilId(probe.getMeasFacilId());
         }
         if (attributes.containsKey("DATE")) {
             String date = attributes.get("DATE") + " " + attributes.get("TIME");
-            kommentar.setDatum(getDate(date));
+            kommentar.setDate(getDate(date));
         } else {
-            kommentar.setDatum(
+            kommentar.setDate(
                 Timestamp.from(
                     Instant.now().atZone(ZoneOffset.UTC).toInstant()));
         }
-        doDefaults(kommentar);
-        doConverts(kommentar);
-        doTransforms(kommentar);
-        if (!userInfo.getMessstellen().contains(kommentar.getMstId())) {
+        if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
             currentWarnings.add(
                 new ReportItem(
                     userInfo.getName(),
-                    "Kommentar: " + kommentar.getMstId(),
+                    "Kommentar: " + kommentar.getMeasFacilId(),
                     StatusCodes.NOT_ALLOWED));
             return null;
         }
+
+        commentPValidator.validate(kommentar);
+        if (kommentar.hasErrors() || kommentar.hasWarnings()) {
+            if (kommentar.hasErrors()) {
+                kommentar.getErrors().forEach((k, v) -> {
+                    v.forEach((value) -> {
+                        currentErrors.add(new ReportItem("Status ", k, value));
+                    });
+                });
+            } else if (kommentar.hasWarnings()) {
+                kommentar.getWarnings().forEach((k, v) -> {
+                    v.forEach((value) -> {
+                        currentWarnings.add(
+                            new ReportItem("Status ", k, value));
+                    });
+                });
+            }
+            return null;
+        }
+
         return kommentar;
     }
 
-    private ZusatzWert createZusatzwert(
+    private SampleSpecifMeasVal createZusatzwert(
         Map<String, String> attributes,
         int probeId
     ) {
-        ZusatzWert zusatzwert = new ZusatzWert();
-        zusatzwert.setProbeId(probeId);
+        this.configMapper.applyConfigs(attributes);
+
+        SampleSpecifMeasVal zusatzwert = new SampleSpecifMeasVal();
+        zusatzwert.setSampleId(probeId);
+
         if (attributes.containsKey("MESSFEHLER")) {
-            zusatzwert.setMessfehler(
+            zusatzwert.setError(
                 Float.valueOf(
                     attributes.get("MESSFEHLER").replaceAll(",", ".")));
         }
+
         String wert = attributes.get("MESSWERT_PZS");
         if (wert.startsWith("<")) {
             wert = wert.substring(1);
-            zusatzwert.setKleinerAls("<");
+            zusatzwert.setSmallerThan("<");
         }
-        zusatzwert.setMesswertPzs(Double.valueOf(wert.replaceAll(",", ".")));
-        List<ImporterConfig> cfgs =
-            getImporterConfigByAttributeUpper("ZUSATZWERT");
+        zusatzwert.setMeasVal(Double.valueOf(wert.replaceAll(",", ".")));
+
         String attribute = attributes.get("PZS");
         boolean isId = false;
         if (attribute == null) {
             attribute = attributes.get("PZS_ID");
             isId = true;
         }
-        for (int i = 0; i < cfgs.size(); i++) {
-            ImporterConfig cfg = cfgs.get(i);
-            if (cfg.getAction().equals("convert")
-                && cfg.getFromValue().equals(attribute)
-            ) {
-                attribute = cfg.getToValue();
-            }
-            if (cfg.getAction().equals("transform")) {
-                char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
-                char to = (char) Integer.parseInt(cfg.getToValue(), 16);
-                attribute = attribute.replaceAll(
-                    "[" + String.valueOf(from) + "]", String.valueOf(to));
-            }
-        }
-        QueryBuilder<ProbenZusatz> builder =
-            repository.queryBuilder(ProbenZusatz.class);
-        if (isId) {
-            builder.and("id", attribute);
-        } else {
-            builder.and("zusatzwert", attribute);
-        }
-        List<ProbenZusatz> zusatz =
-            (List<ProbenZusatz>) repository.filterPlain(builder.getQuery());
 
-        doDefaults(zusatzwert);
-        doConverts(zusatzwert);
-        doTransforms(zusatzwert);
+        QueryBuilder<SampleSpecif> builder = repository
+            .queryBuilder(SampleSpecif.class)
+            .and(isId ? "id" : "extId", attribute);
+        List<SampleSpecif> zusatz = repository.filterPlain(builder.getQuery());
         if (zusatz == null || zusatz.isEmpty()) {
             currentWarnings.add(new ReportItem(
-                (isId) ? "PROBENZUSATZBESCHREIBUNG" : "PZB_S",
-                attribute,
-                StatusCodes.IMP_INVALID_VALUE));
+                    isId ? "PROBENZUSATZBESCHREIBUNG" : "PZB_S",
+                    attribute,
+                    StatusCodes.IMP_INVALID_VALUE));
             return null;
         }
-        zusatzwert.setPzsId(zusatz.get(0).getId());
+        zusatzwert.setSampleSpecifId(zusatz.get(0).getId());
+
         return zusatzwert;
     }
 
-    private Messwert createMesswert(
+    private MeasVal createMesswert(
         Map<String, String> attributes,
         int messungsId
     ) {
-        Messwert messwert = new Messwert();
-        messwert.setMessungsId(messungsId);
+        this.configMapper.applyConfigs(attributes);
+
+        MeasVal messwert = new MeasVal();
+        messwert.setMeasmId(messungsId);
+
         if (attributes.containsKey("MESSGROESSE_ID")) {
-                Messgroesse messgreosse = repository.getByIdPlain(
-                    Messgroesse.class,
-                    Integer.valueOf(attributes.get("MESSGROESSE_ID"))
-                );
+            Measd messgreosse = repository.getByIdPlain(
+                Measd.class,
+                Integer.valueOf(attributes.get("MESSGROESSE_ID"))
+            );
             if (messgreosse == null) {
                 currentWarnings.add(
                     new ReportItem(
@@ -1171,29 +1041,10 @@ public class LafObjectMapper {
                         StatusCodes.IMP_INVALID_VALUE));
                 return null;
             }
-            messwert.setMessgroesseId(
+            messwert.setMeasdId(
                 Integer.valueOf(attributes.get("MESSGROESSE_ID")));
         } else if (attributes.containsKey("MESSGROESSE")) {
-            List<ImporterConfig> cfgs =
-                getImporterConfigByAttributeUpper("MESSGROESSE");
             String attribute = attributes.get("MESSGROESSE");
-            for (int i = 0; i < cfgs.size(); i++) {
-                ImporterConfig cfg = cfgs.get(i);
-                if (cfg != null
-                    && cfg.getAction().equals("convert")
-                    && cfg.getFromValue().equals(attribute)
-                ) {
-                    attribute = cfg.getToValue();
-                }
-                if (cfg != null && cfg.getAction().equals("transform")) {
-                    char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
-                    char to = (char) Integer.parseInt(cfg.getToValue(), 16);
-                    attribute = attribute.replaceAll(
-                        "[" + String.valueOf(from) + "]", String.valueOf(to));
-                }
-            }
-            QueryBuilder<Messgroesse> builder =
-                repository.queryBuilder(Messgroesse.class);
             // accept various nuclide notations (e.g.
             // "Cs-134", "CS 134", "Cs134", "CS134", ...)
             String messgroesseString = attribute;
@@ -1206,9 +1057,9 @@ public class LafObjectMapper {
                         .toLowerCase();
             }
 
-            builder.and("messgroesse", messgroesseString);
-            List<Messgroesse> groesse =
-                (List<Messgroesse>) repository.filterPlain(builder.getQuery());
+            QueryBuilder<Measd> builder = repository.queryBuilder(Measd.class)
+                .and("name", messgroesseString);
+            List<Measd> groesse = repository.filterPlain(builder.getQuery());
             if (groesse == null || groesse.isEmpty()) {
                 currentWarnings.add(
                     new ReportItem(
@@ -1217,13 +1068,13 @@ public class LafObjectMapper {
                         StatusCodes.IMP_INVALID_VALUE));
                 return null;
             }
-            messwert.setMessgroesseId(groesse.get(0).getId());
+            messwert.setMeasdId(groesse.get(0).getId());
         }
         if (attributes.containsKey("MESSEINHEIT_ID")) {
-                MessEinheit messEinheit = repository.getByIdPlain(
-                    MessEinheit.class,
-                    Integer.valueOf(attributes.get("MESSEINHEIT_ID"))
-                );
+            MeasUnit messEinheit = repository.getByIdPlain(
+                MeasUnit.class,
+                Integer.valueOf(attributes.get("MESSEINHEIT_ID"))
+            );
             if (messEinheit == null) {
                 currentWarnings.add(
                     new ReportItem(
@@ -1232,32 +1083,14 @@ public class LafObjectMapper {
                         StatusCodes.IMP_INVALID_VALUE));
                 return null;
             }
-            messwert.setMehId(
+            messwert.setMeasUnitId(
                 Integer.valueOf(attributes.get("MESSEINHEIT_ID")));
         } else if (attributes.containsKey("MESSEINHEIT")) {
-            List<ImporterConfig> cfgs =
-                getImporterConfigByAttributeUpper("MESSEINHEIT");
             String attribute = attributes.get("MESSEINHEIT");
-            for (int i = 0; i < cfgs.size(); i++) {
-                ImporterConfig cfg = cfgs.get(i);
-                if (cfg != null
-                    && cfg.getAction().equals("convert")
-                    && cfg.getFromValue().equals(attribute)
-                ) {
-                    attribute = cfg.getToValue();
-                }
-                if (cfg != null && cfg.getAction().equals("transform")) {
-                    char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
-                    char to = (char) Integer.parseInt(cfg.getToValue(), 16);
-                    attribute = attribute.replaceAll(
-                        "[" + String.valueOf(from) + "]", String.valueOf(to));
-                }
-            }
-            QueryBuilder<MessEinheit> builder =
-                repository.queryBuilder(MessEinheit.class);
-            builder.and("einheit", attribute);
-            List<MessEinheit> einheit =
-                (List<MessEinheit>) repository.filterPlain(builder.getQuery());
+            QueryBuilder<MeasUnit> builder = repository
+                .queryBuilder(MeasUnit.class)
+                .and("unitSymbol", attribute);
+            List<MeasUnit> einheit = repository.filterPlain(builder.getQuery());
             if (einheit == null || einheit.isEmpty()) {
                 currentWarnings.add(
                     new ReportItem(
@@ -1266,85 +1099,84 @@ public class LafObjectMapper {
                         StatusCodes.IMP_INVALID_VALUE));
                 return null;
             }
-            messwert.setMehId(einheit.get(0).getId());
+            messwert.setMeasUnitId(einheit.get(0).getId());
         }
 
         String wert = attributes.get("MESSWERT");
         if (wert.startsWith("<")) {
             wert = wert.substring(1);
-            messwert.setMesswertNwg("<");
+            messwert.setLessThanLOD("<");
         }
-        messwert.setMesswert(Double.valueOf(wert.replaceAll(",", ".")));
+        messwert.setMeasVal(Double.valueOf(wert.replaceAll(",", ".")));
         if (attributes.containsKey("MESSFEHLER")) {
-            messwert.setMessfehler(
+            messwert.setError(
                 Double.valueOf(
                     attributes.get("MESSFEHLER")
                         .replaceAll(",", ".")).floatValue());
         }
         if (attributes.containsKey("NWG")) {
-            messwert.setNwgZuMesswert(
+            messwert.setDetectLim(
                 Double.valueOf(attributes.get("NWG").replaceAll(",", ".")));
         }
         if (attributes.containsKey("GRENZWERT")) {
-            messwert.setGrenzwertueberschreitung(
+            messwert.setIsThreshold(
                 attributes.get("GRENZWERT").equalsIgnoreCase("J"));
         }
-        doDefaults(messwert);
-        doConverts(messwert);
-        doTransforms(messwert);
-        if (messwert.getMesswertNwg() != null
-            && messwert.getNwgZuMesswert() == null
+        if (messwert.getLessThanLOD() != null
+            && messwert.getDetectLim() == null
         ) {
-            messwert.setNwgZuMesswert(messwert.getMesswert());
-            messwert.setMesswert(null);
-        } else if (messwert.getMesswertNwg() != null
-            && messwert.getMesswert().equals(messwert.getNwgZuMesswert())
-            || messwert.getMesswertNwg() != null
-            && messwert.getMesswert() == 0.0
+            messwert.setDetectLim(messwert.getMeasVal());
+            messwert.setMeasVal(null);
+        } else if (messwert.getLessThanLOD() != null
+            && messwert.getMeasVal().equals(messwert.getDetectLim())
+            || messwert.getLessThanLOD() != null
+            && messwert.getMeasVal() == 0.0
         ) {
-            messwert.setMesswert(null);
+            messwert.setMeasVal(null);
         }
-        if (messwert.getMessfehler() != null) {
-            if (messwert.getMesswertNwg() != null
-                && messwert.getMessfehler() == 0
+        if (messwert.getError() != null) {
+            if (messwert.getLessThanLOD() != null
+                && messwert.getError() == 0
             ) {
-                messwert.setMessfehler(null);
+                messwert.setError(null);
             }
         }
         return messwert;
     }
 
-    private KommentarM createMessungKommentar(
+    private CommMeasm createMessungKommentar(
         Map<String, String> attributes,
         int messungsId,
-        Probe probe
+        Sample probe
     ) {
+        this.configMapper.applyConfigs(attributes);
+
         if (attributes.get("TEXT").equals("")) {
             currentWarnings.add(
                 new ReportItem("KOMMENTAR", "Text", StatusCodes.VALUE_MISSING));
             return null;
         }
-        KommentarM kommentar = new KommentarM();
-        kommentar.setMessungsId(messungsId);
+        CommMeasm kommentar = new CommMeasm();
+        kommentar.setMeasmId(messungsId);
         if (attributes.containsKey("MST_ID")) {
-            kommentar.setMstId(attributes.get("MST_ID"));
+            kommentar.setMeasFacilId(attributes.get("MST_ID"));
         } else {
-            kommentar.setMstId(probe.getMstId());
+            kommentar.setMeasFacilId(probe.getMeasFacilId());
         }
         if (attributes.containsKey("DATE")) {
             String date = attributes.get("DATE") + " " + attributes.get("TIME");
-            kommentar.setDatum(getDate(date));
+            kommentar.setDate(getDate(date));
         } else {
-            kommentar.setDatum(
+            kommentar.setDate(
                 Timestamp.from(
                     Instant.now().atZone(ZoneOffset.UTC).toInstant()));
         }
 
         // TODO: Why does the following duplicate a validation rule?
-        QueryBuilder<KommentarM> kommentarBuilder = repository
-            .queryBuilder(KommentarM.class)
-            .and("messungsId", messungsId);
-        List<KommentarM> kommentarExist = repository.filterPlain(
+        QueryBuilder<CommMeasm> kommentarBuilder = repository
+            .queryBuilder(CommMeasm.class)
+            .and("measmId", messungsId);
+        List<CommMeasm> kommentarExist = repository.filterPlain(
             kommentarBuilder.getQuery());
 
         // TODO: Should be the job of EXISTS and a WHERE-clause in database
@@ -1361,35 +1193,53 @@ public class LafObjectMapper {
             return null;
         }
         kommentar.setText(attributes.get("TEXT"));
-        doDefaults(kommentar);
-        doConverts(kommentar);
-        doTransforms(kommentar);
-        if (!userInfo.getMessstellen().contains(kommentar.getMstId())) {
+        if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
             currentWarnings.add(
                 new ReportItem(
                     userInfo.getName(),
-                    "Messungs Kommentar: " + kommentar.getMstId(),
+                    "Messungs Kommentar: " + kommentar.getMeasFacilId(),
                     StatusCodes.NOT_ALLOWED));
             return null;
         }
+
+        commentMValidator.validate(kommentar);
+        if (kommentar.hasErrors() || kommentar.hasWarnings()) {
+            if (kommentar.hasErrors()) {
+                kommentar.getErrors().forEach((k, v) -> {
+                    v.forEach((value) -> {
+                        currentWarnings.add(
+                            new ReportItem("Status ", k, value));
+                    });
+                });
+            } else if (kommentar.hasWarnings()) {
+                kommentar.getWarnings().forEach((k, v) -> {
+                    v.forEach((value) -> {
+                        currentWarnings.add(
+                            new ReportItem("Status ", k, value));
+                    });
+                });
+            }
+            return null;
+        }
+
         return kommentar;
     }
 
     private void createStatusProtokoll(
         String status,
-        Messung messung,
+        Measm messung,
         String mstId
     ) {
         //check for warnings in Probeobject - if true prevent status 7
         Boolean probeWarnings = true;
-        probeWarnings = currentWarnings.stream().anyMatch(elem -> (elem.getKey().equals("validation#probe")));
+        probeWarnings = currentWarnings.stream().anyMatch(
+            elem -> (elem.getKey().equals("validation#probe")));
 
         for (int i = 1; i <= 3; i++) {
             if (status.substring(i - 1, i).equals("0")) {
                 // no further status settings
                 return;
-            } else if (currentErrors.isEmpty() && currentWarnings.isEmpty()
-              ) {
+            } else if (currentErrors.isEmpty() && currentWarnings.isEmpty()) {
                 if (!addStatusProtokollEntry(
                         i,
                         Integer.valueOf(status.substring(i - 1, i)),
@@ -1398,20 +1248,22 @@ public class LafObjectMapper {
                 ) {
                     return;
                 }
-                } else if (status.substring(i - 1, i).equals("7") && !probeWarnings) {
-                        if (!addStatusProtokollEntry(
-                            i,
-                            Integer.valueOf(status.substring(i - 1, i)),
-                            messung,
-                            mstId)
-                        ) {
-                            return;
-                        }
+            } else if (status.substring(i - 1, i).equals("7")
+                && !probeWarnings
+            ) {
+                if (!addStatusProtokollEntry(
+                        i,
+                        Integer.valueOf(status.substring(i - 1, i)),
+                        messung,
+                        mstId)
+                ) {
+                    return;
+                }
             } else {
-             currentErrors.add(
-                 new ReportItem(
-                     "Statusvergabe", "Status", StatusCodes.VALUE_MISSING));
-         return;
+                currentErrors.add(
+                    new ReportItem(
+                        "Statusvergabe", "Status", StatusCodes.VALUE_MISSING));
+                return;
             }
         }
     }
@@ -1419,20 +1271,21 @@ public class LafObjectMapper {
     private boolean addStatusProtokollEntry(
         int statusStufe,
         int statusWert,
-        Messung messung,
+        Measm messung,
         String mstId
     ) {
         // validation check of new status entries
         int newKombi = 0;
-        QueryBuilder<StatusKombi> builder =
-            repository.queryBuilder(StatusKombi.class);
-        builder.and("statusWert", statusWert);
-        builder.and("statusStufe", statusStufe);
-        List<StatusKombi> kombi =
-            (List<StatusKombi>) repository.filterPlain(builder.getQuery());
-        if (kombi != null && !kombi.isEmpty()) {
-            newKombi = kombi.get(0).getId();
-        } else {
+        try {
+            newKombi = ((StatusMp) repository.entityManager()
+                .createNativeQuery("SELECT * FROM master.status_mp "
+                    + "WHERE status_lev_id = :statusLev "
+                    + "AND status_val_id = :statusVal",
+                    StatusMp.class)
+                .setParameter("statusVal", statusWert)
+                .setParameter("statusLev", statusStufe)
+                .getSingleResult()).getId();
+        } catch (NoResultException nre) {
             currentWarnings.add(
                 new ReportItem(
                     "status#" + statusStufe,
@@ -1441,18 +1294,18 @@ public class LafObjectMapper {
             return false;
         }
         // get current status kombi
-        StatusProtokoll currentStatus = repository.getByIdPlain(
-            StatusProtokoll.class, messung.getStatus());
-        StatusKombi currentKombi = repository.getByIdPlain(
-            StatusKombi.class, currentStatus.getStatusKombi());
+        StatusProt currentStatus = repository.getByIdPlain(
+            StatusProt.class, messung.getStatus());
+        StatusMp currentKombi = repository.getByIdPlain(
+            StatusMp.class, currentStatus.getStatusMpId());
         // check if erreichbar
-        QueryBuilder<StatusErreichbar> errFilter =
-            repository.queryBuilder(StatusErreichbar.class);
-        errFilter.and("stufeId", statusStufe);
-        errFilter.and("wertId", statusWert);
-        errFilter.and("curStufe", currentKombi.getStatusStufe().getId());
-        errFilter.and("curWert", currentKombi.getStatusWert().getId());
-        List<StatusErreichbar> erreichbar =
+        QueryBuilder<StatusAccessMpView> errFilter = repository
+            .queryBuilder(StatusAccessMpView.class)
+            .and("statusLevId", statusStufe)
+            .and("statusValId", statusWert)
+            .and("curLevId", currentKombi.getStatusLev().getId())
+            .and("curValId", currentKombi.getStatusVal().getId());
+        List<StatusAccessMpView> erreichbar =
             repository.filterPlain(errFilter.getQuery());
         if (erreichbar.isEmpty()) {
             currentWarnings.add(
@@ -1462,31 +1315,30 @@ public class LafObjectMapper {
                     StatusCodes.IMP_INVALID_VALUE));
             return false;
         }
+
         //Cleanup Messwerte for Status 7
-            QueryBuilder<Messwert> builderMW =
-                repository.queryBuilder(Messwert.class);
-            builderMW.and("messungsId", messung.getId());
-            Response messwertQry =
-                repository.filter(builderMW.getQuery());
-            @SuppressWarnings("unchecked")
-            List<Messwert> messwerte = (List<Messwert>) messwertQry.getData();
-            boolean hasValidMesswerte = false;
-            if (!messwerte.isEmpty() && statusWert == 7) {
-            for (Messwert messwert: messwerte) {
+        QueryBuilder<MeasVal> builderMW = repository
+            .queryBuilder(MeasVal.class)
+            .and("measmId", messung.getId());
+        List<MeasVal> messwerte =
+            repository.filterPlain(builderMW.getQuery());
+        boolean hasValidMesswerte = false;
+        if (!messwerte.isEmpty() && statusWert == 7) {
+            for (MeasVal messwert: messwerte) {
 
                 boolean hasNoMesswert = false;
 
-                if (messwert.getMesswert() == null
-                     && messwert.getMesswertNwg() == null) {
-                     hasNoMesswert = true;
+                if (messwert.getMeasVal() == null
+                    && messwert.getLessThanLOD() == null) {
+                    hasNoMesswert = true;
                 }
                 if (!hasNoMesswert) {
                     hasValidMesswerte = true;
                     currentWarnings.add(
-                         new ReportItem(
-                             "status#" + statusStufe,
-                             statusWert,
-                             StatusCodes.STATUS_RO));
+                        new ReportItem(
+                            "status#" + statusStufe,
+                            statusWert,
+                            StatusCodes.STATUS_RO));
                 }
                 if (hasValidMesswerte) {
                     return false;
@@ -1494,30 +1346,30 @@ public class LafObjectMapper {
             }
 
             if (statusWert == 7 && !hasValidMesswerte) {
-                for (int i = 0; i < messwerte.size(); i++) {
-                    repository.delete(messwerte.get(i));
+                for (MeasVal mv: messwerte) {
+                    repository.delete(mv);
                 }
             }
         }
 
         // Validator: StatusAssignment
-        StatusProtokoll newStatus = new StatusProtokoll();
-        newStatus.setDatum(new Timestamp(new Date().getTime()));
-        newStatus.setMessungsId(messung.getId());
-        newStatus.setMstId(mstId);
-        newStatus.setStatusKombi(newKombi);
-        Violation statusViolation = statusValidator.validate(newStatus);
+        StatusProt newStatus = new StatusProt();
+        newStatus.setDate(new Timestamp(new Date().getTime()));
+        newStatus.setMeasmId(messung.getId());
+        newStatus.setMeasFacilId(mstId);
+        newStatus.setStatusMpId(newKombi);
 
-        if (statusViolation.hasWarnings()) {
-            statusViolation.getWarnings().forEach((k, v) -> {
+        statusValidator.validate(newStatus);
+        if (newStatus.hasWarnings()) {
+            newStatus.getWarnings().forEach((k, v) -> {
                 v.forEach((value) -> {
-                    currentErrors.add(new ReportItem("Status ", k, value));
+                    currentWarnings.add(new ReportItem("Status ", k, value));
                 });
             });
         }
 
-        if (statusViolation.hasNotifications()) {
-            statusViolation.getNotifications().forEach((k, v) -> {
+        if (newStatus.hasNotifications()) {
+            newStatus.getNotifications().forEach((k, v) -> {
                 v.forEach((value) -> {
                     currentNotifications.add(
                         new ReportItem("Status ", k, value));
@@ -1525,37 +1377,37 @@ public class LafObjectMapper {
             });
         }
 
-        if (statusViolation.hasErrors()) {
-            statusViolation.getErrors().forEach((k, v) -> {
+        if (newStatus.hasErrors()) {
+            newStatus.getErrors().forEach((k, v) -> {
                 v.forEach((value) -> {
                     currentErrors.add(new ReportItem("Status ", k, value));
                 });
             });
         }
 
-        if (statusViolation.hasErrors() || statusViolation.hasWarnings()) {
-          return false;
+        if (newStatus.hasErrors() || newStatus.hasWarnings()) {
+            return false;
         }
 
         // check auth
-        MessStelle messStelle =
-            repository.getByIdPlain(MessStelle.class, mstId);
+        MeasFacil messStelle =
+            repository.getByIdPlain(MeasFacil.class, mstId);
         if ((statusStufe == 1
-            && userInfo.getFunktionenForMst(mstId).contains(1))
+                && userInfo.getFunktionenForMst(mstId).contains(1))
             || (statusStufe == 2
                 && userInfo.getNetzbetreiber().contains(
-                    messStelle.getNetzbetreiberId())
+                    messStelle.getNetworkId())
                 && userInfo.getFunktionenForNetzbetreiber(
-                    messStelle.getNetzbetreiberId()).contains(2))
+                    messStelle.getNetworkId()).contains(2))
             || (statusStufe == 3
                 && userInfo.getFunktionen().contains(3))
         ) {
             //persist newStatus if authorized to do so
             repository.create(newStatus);
             if (newKombi == 0 || newKombi == 9 || newKombi == 13) {
-                messung.setFertig(false);
+                messung.setIsCompleted(false);
             } else {
-                messung.setFertig(true);
+                messung.setIsCompleted(true);
             }
             messung.setStatus(newStatus.getId());
             repository.update(messung);
@@ -1570,15 +1422,13 @@ public class LafObjectMapper {
         }
     }
 
-    private void createReiMesspunkt(LafRawData.Probe object, Probe probe) {
-
-        QueryBuilder<Ortszuordnung> builder =
-            repository.queryBuilder(Ortszuordnung.class);
-        builder.and("probeId", probe.getId());
-        List<Ortszuordnung> zuordnungen =
+    private void createReiMesspunkt(LafRawData.Sample object, Sample probe) {
+        QueryBuilder<Geolocat> builder = repository.queryBuilder(Geolocat.class)
+            .and("sampleId", probe.getId());
+        List<Geolocat> zuordnungen =
             repository.filterPlain(builder.getQuery());
         if (!zuordnungen.isEmpty()) {
-            // Probe already has an ort.
+            // Sample already has an ort.
             return;
         }
 
@@ -1589,44 +1439,46 @@ public class LafObjectMapper {
             // WE HAVE A REI-MESSPUNKT!
             // Search for the ort in db
             Map<String, String> uo = uort.get(0);
-            QueryBuilder<Ort> builder1 = repository.queryBuilder(Ort.class);
-            builder1.and("ortId", uo.get("U_ORTS_ZUSATZCODE"));
-            List<Ort> messpunkte =
+            QueryBuilder<Site> builder1 = repository.queryBuilder(Site.class)
+                .and("extId", uo.get("U_ORTS_ZUSATZCODE"));
+            List<Site> messpunkte =
                 repository.filterPlain(builder1.getQuery());
             if (!messpunkte.isEmpty()) {
-                Ortszuordnung ort = new Ortszuordnung();
-                ort.setOrtszuordnungTyp("R");
-                ort.setProbeId(probe.getId());
-                ort.setOrtId(messpunkte.get(0).getId());
-                ort.setOzId(messpunkte.get(0).getOzId());
+                Geolocat ort = new Geolocat();
+                ort.setTypeRegulation("R");
+                ort.setSampleId(probe.getId());
+                ort.setSiteId(messpunkte.get(0).getId());
+                ort.setPoiId(messpunkte.get(0).getPoiId());
                 if (uo.containsKey("U_ORTS_ZUSATZTEXT")) {
-                    ort.setOrtszusatztext(uo.get("U_ORTS_ZUSATZTEXT"));
+                    ort.setAddSiteText(uo.get("U_ORTS_ZUSATZTEXT"));
                 }
                 repository.create(ort);
-                probe.setKtaGruppeId(messpunkte.get(0).getKtaGruppeId());
+                probe.setNuclFacilGrId(messpunkte.get(0).getNuclFacilGrId());
                 repository.update(probe);
             } else if (uo.get("U_ORTS_ZUSATZCODE").length() == 4) {
-                QueryBuilder<KtaGruppe> builderKta =
-                    repository.queryBuilder(KtaGruppe.class);
-                builderKta.and("ktaGruppe", uo.get("U_ORTS_ZUSATZCODE"));
-                List<KtaGruppe> ktaGrp =
+                QueryBuilder<NuclFacilGr> builderKta = repository
+                    .queryBuilder(NuclFacilGr.class)
+                    .and("extId", uo.get("U_ORTS_ZUSATZCODE"));
+                List<NuclFacilGr> ktaGrp =
                     repository.filterPlain(builderKta.getQuery());
                 if (!ktaGrp.isEmpty()) {
-                    Ort o = null;
-                    //check for Koordinates U_Ort (primary): If none are present, assume Koordinates
+                    Site o = null;
+                    // Check for Koordinates U_Ort (primary):
+                    // If none are present, assume Koordinates
                     //in P_Ort. If P_Ort is not valid - this import must fail.
                     if (uort.get(0).get("U_KOORDINATEN_ART_S") != null
-                    && uort.get(0).get("U_KOORDINATEN_ART_S").equals("")
-                    && uort.get(0).get("U_KOORDINATEN_X") != null
-                    && uort.get(0).get("U_KOORDINATEN_X").equals("")
-                    && uort.get(0).get("U_KOORDINATEN_Y") != null
-                    && uort.get(0).get("U_KOORDINATEN_Y").equals("")
+                        && !uort.get(0).get("U_KOORDINATEN_ART_S").equals("")
+                        && uort.get(0).get("U_KOORDINATEN_X") != null
+                        && !uort.get(0).get("U_KOORDINATEN_X").equals("")
+                        && uort.get(0).get("U_KOORDINATEN_Y") != null
+                        && !uort.get(0).get("U_KOORDINATEN_Y").equals("")
                     ) {
                         o = findOrCreateOrt(uort.get(0), "U_", probe);
                     }
 
                     if (o == null) {
-                        Ort oE = findOrCreateOrt(object.getEntnahmeOrt(), "P_", probe);
+                        Site oE = findOrCreateOrt(
+                            object.getEntnahmeOrt(), "P_", probe);
                         if (oE == null) {
                             ReportItem warn = new ReportItem();
                             warn.setCode(StatusCodes.VALUE_MISSING);
@@ -1638,19 +1490,19 @@ public class LafObjectMapper {
                             o = oE;
                         }
                     } else {
-                        o.setOrtTyp(1);
-                        o.setKtaGruppeId(ktaGrp.get(0).getId());
+                        o.setSiteClassId(1);
+                        o.setNuclFacilGrId(ktaGrp.get(0).getId());
                         repository.update(o);
 
-                        Ortszuordnung ort = new Ortszuordnung();
-                        ort.setOrtId(o.getId());
-                        ort.setOrtszuordnungTyp("R");
-                        ort.setProbeId(probe.getId());
-                        ort.setOzId(o.getOzId());
+                        Geolocat ort = new Geolocat();
+                        ort.setSiteId(o.getId());
+                        ort.setTypeRegulation("R");
+                        ort.setSampleId(probe.getId());
+                        ort.setPoiId(o.getPoiId());
 
                         repository.create(ort);
 
-                        probe.setKtaGruppeId(ktaGrp.get(0).getId());
+                        probe.setNuclFacilGrId(ktaGrp.get(0).getId());
                         repository.update(probe);
                     }
                 } else {
@@ -1668,7 +1520,7 @@ public class LafObjectMapper {
                 currentWarnings.add(warn);
             }
         } else {
-            Ort o = null;
+            Site o = null;
             if (uort.size() > 0) {
                 o = findOrCreateOrt(uort.get(0), "U_", probe);
             }
@@ -1678,19 +1530,19 @@ public class LafObjectMapper {
             if (o == null) {
                 return;
             }
-            o.setOrtTyp(3);
+            o.setSiteClassId(3);
             repository.update(o);
-            Ortszuordnung ort = new Ortszuordnung();
-            ort.setOrtId(o.getId());
-            ort.setOrtszuordnungTyp("R");
-            ort.setProbeId(probe.getId());
+            Geolocat ort = new Geolocat();
+            ort.setSiteId(o.getId());
+            ort.setTypeRegulation("R");
+            ort.setSampleId(probe.getId());
             if (uort.size() > 0
                 && uort.get(0).containsKey("U_ORTS_ZUSATZCODE")
             ) {
                 Map<String, String> uo = uort.get(0);
-                o.setOrtId(uo.get("U_ORTS_ZUSATZCODE"));
+                o.setExtId(uo.get("U_ORTS_ZUSATZCODE"));
                 if (uo.containsKey("U_ORTS_ZUSATZTEXT")) {
-                    ort.setOrtszusatztext(uo.get("U_ORTS_ZUSATZTEXT"));
+                    ort.setAddSiteText(uo.get("U_ORTS_ZUSATZTEXT"));
                 }
             }
             repository.create(ort);
@@ -1698,146 +1550,102 @@ public class LafObjectMapper {
         return;
     }
 
-    private Ortszuordnung createUrsprungsOrt(
-        Map<String, String> ursprungsOrt,
-        Probe probe
+    private Geolocat createOrtszuordnung(
+        Map<String, String> rawOrt,
+        String type,
+        Sample probe
     ) {
-        if (ursprungsOrt.isEmpty()) {
+        if (rawOrt.isEmpty()) {
             return null;
         }
-        Ortszuordnung ort = new Ortszuordnung();
-        ort.setOrtszuordnungTyp("U");
-        ort.setProbeId(probe.getId());
-
-        Ort o = findOrCreateOrt(ursprungsOrt, "U_", probe);
+        Geolocat ort = new Geolocat();
+        ort.setTypeRegulation(type);
+        ort.setSampleId(probe.getId());
+        if (type.equals("E")) {
+            type = "P";
+        }
+        Site o = findOrCreateOrt(rawOrt, type + "_", probe);
         if (o == null) {
             return null;
         }
-        ort.setOrtId(o.getId());
-        ort.setOzId(o.getOzId());
-        if (ursprungsOrt.containsKey("U_ORTS_ZUSATZCODE")) {
-            Ortszusatz zusatz = repository.getByIdPlain(
-                Ortszusatz.class,
-                ursprungsOrt.get("U_ORTS_ZUSATZCODE")
+        ort.setSiteId(o.getId());
+        ort.setPoiId(o.getPoiId());
+        if (rawOrt.containsKey(type + "_ORTS_ZUSATZCODE")) {
+            Poi zusatz = repository.getByIdPlain(
+                Poi.class,
+                rawOrt.get(type + "_ORTS_ZUSATZCODE")
             );
             if (zusatz == null) {
                 currentWarnings.add(
                     new ReportItem(
-                        "U_ORTS_ZUSATZCODE",
-                        ursprungsOrt.get("U_ORTS_ZUSATZCODE"),
+                        type + "_ORTS_ZUSATZCODE",
+                        rawOrt.get(type + "_ORTS_ZUSATZCODE"),
                         StatusCodes.IMP_INVALID_VALUE));
             } else {
-                ort.setOzId(zusatz.getOzsId());
+                ort.setPoiId(zusatz.getId());
             }
         }
-        if (ursprungsOrt.containsKey("U_ORTS_ZUSATZTEXT")) {
-            ort.setOrtszusatztext(ursprungsOrt.get("U_ORTS_ZUSATZTEXT"));
+        if (rawOrt.containsKey(type + "_ORTS_ZUSATZTEXT")) {
+            ort.setAddSiteText(rawOrt.get(type + "_ORTS_ZUSATZTEXT"));
         }
-        doDefaults(ort);
-        doConverts(ort);
-        doTransforms(ort);
         return ort;
     }
 
-    private void createEntnahmeOrt(
-        Map<String, String> entnahmeOrt,
-        Probe probe
-    ) {
-        if (entnahmeOrt.isEmpty()) {
-            return;
-        }
-        Ortszuordnung ort = new Ortszuordnung();
-        ort.setOrtszuordnungTyp("E");
-        ort.setProbeId(probe.getId());
-
-        Ort o = findOrCreateOrt(entnahmeOrt, "P_", probe);
-        if (o == null) {
-            return;
-        }
-        ort.setOrtId(o.getId());
-        ort.setOzId(o.getOzId());
-        if (entnahmeOrt.containsKey("P_ORTS_ZUSATZCODE")) {
-            Ortszusatz zusatz = repository.getByIdPlain(
-                Ortszusatz.class,
-                entnahmeOrt.get("P_ORTS_ZUSATZCODE")
-            );
-            if (zusatz == null) {
-                currentWarnings.add(
-                    new ReportItem(
-                        "P_ORTS_ZUSATZCODE",
-                        entnahmeOrt.get("P_ORTS_ZUSATZCODE"),
-                        StatusCodes.IMP_INVALID_VALUE));
-            } else {
-                ort.setOzId(zusatz.getOzsId());
-            }
-        }
-        if (entnahmeOrt.containsKey("P_ORTS_ZUSATZTEXT")) {
-            ort.setOrtszusatztext(entnahmeOrt.get("P_ORTS_ZUSATZTEXT"));
-        }
-        doDefaults(ort);
-        doConverts(ort);
-        doTransforms(ort);
-        merger.mergeEntnahmeOrt(probe.getId(), ort);
-    }
-
-    private Ort findOrCreateOrt(
+    private Site findOrCreateOrt(
         Map<String, String> attributes,
         String type,
-        Probe probe
+        Sample probe
     ) {
-        Ort o = new Ort();
-        doDefaults(o);
+        Site o = new Site();
         // If laf contains coordinates, find a ort with matching coordinates or
         // create one.
         if ((attributes.get(type + "KOORDINATEN_ART") != null
-            || attributes.get(type + "KOORDINATEN_ART_S") != null)
+                || attributes.get(type + "KOORDINATEN_ART_S") != null)
             && !attributes.get(type + "KOORDINATEN_X").equals("")
             && attributes.get(type + "KOORDINATEN_X") != null
             && !attributes.get(type + "KOORDINATEN_Y").equals("")
             && attributes.get(type + "KOORDINATEN_Y") != null
         ) {
             if (attributes.get(type + "KOORDINATEN_ART_S") != null) {
-                o.setKdaId(Integer.valueOf(
-                    attributes.get(type + "KOORDINATEN_ART_S")));
-                KoordinatenArt koordinatenArt = repository.getByIdPlain(
-                    KoordinatenArt.class, o.getKdaId());
+                o.setSpatRefSysId(Integer.valueOf(
+                        attributes.get(type + "KOORDINATEN_ART_S")));
+                SpatRefSys koordinatenArt = repository.getByIdPlain(
+                    SpatRefSys.class, o.getSpatRefSysId());
                 if (koordinatenArt == null) {
                     currentWarnings.add(
                         new ReportItem(
                             type + "KOORDINATEN_ART_S",
                             attributes.get(type + "KOORDINATEN_ART_S"),
                             StatusCodes.IMP_INVALID_VALUE));
-                    o.setKdaId(null);
+                    o.setSpatRefSysId(null);
                 }
             } else {
-                QueryBuilder<KoordinatenArt> kdaBuilder =
-                    repository.queryBuilder(KoordinatenArt.class);
-                kdaBuilder.and(
-                    "koordinatenart", attributes.get(type + "KOORDINATEN_ART"));
-                List<KoordinatenArt> arten =
-                    repository.filterPlain(
-                        kdaBuilder.getQuery());
+                QueryBuilder<SpatRefSys> kdaBuilder = repository
+                    .queryBuilder(SpatRefSys.class)
+                    .and("name", attributes.get(type + "KOORDINATEN_ART"));
+                List<SpatRefSys> arten =
+                    repository.filterPlain(kdaBuilder.getQuery());
                 if (arten == null || arten.isEmpty()) {
                     currentWarnings.add(
                         new ReportItem(
                             type + "KOORDINATEN_ART",
                             attributes.get(type + "KOORDINATEN_ART"),
                             StatusCodes.IMP_INVALID_VALUE));
-                    o.setKdaId(null);
+                    o.setSpatRefSysId(null);
                 } else {
-                    o.setKdaId(arten.get(0).getId());
+                    o.setSpatRefSysId(arten.get(0).getId());
                 }
             }
-            o.setKoordXExtern(attributes.get(type + "KOORDINATEN_X"));
-            o.setKoordYExtern(attributes.get(type + "KOORDINATEN_Y"));
+            o.setCoordXExt(attributes.get(type + "KOORDINATEN_X"));
+            o.setCoordYExt(attributes.get(type + "KOORDINATEN_Y"));
         }
         // If laf contains gemeinde attributes, find a ort with matching gemId
         // or create one.
         if (attributes.get(type + "GEMEINDENAME") != null) {
-            QueryBuilder<Verwaltungseinheit> builder =
-                repository.queryBuilder(Verwaltungseinheit.class);
-            builder.and("bezeichnung", attributes.get(type + "GEMEINDENAME"));
-            List<Verwaltungseinheit> ves =
+            QueryBuilder<AdminUnit> builder = repository
+                .queryBuilder(AdminUnit.class)
+                .and("name", attributes.get(type + "GEMEINDENAME"));
+            List<AdminUnit> ves =
                 repository.filterPlain(builder.getQuery());
             if (ves == null || ves.size() == 0) {
                 currentWarnings.add(
@@ -1846,19 +1654,19 @@ public class LafObjectMapper {
                         attributes.get(type + "GEMEINDENAME"),
                         StatusCodes.IMP_INVALID_VALUE));
             } else {
-                o.setGemId(ves.get(0).getId());
+                o.setAdminUnitId(ves.get(0).getId());
             }
         } else if (attributes.get(type + "GEMEINDESCHLUESSEL") != null) {
-            o.setGemId(attributes.get(type + "GEMEINDESCHLUESSEL"));
-            Verwaltungseinheit v =
+            o.setAdminUnitId(attributes.get(type + "GEMEINDESCHLUESSEL"));
+            AdminUnit v =
                 repository.getByIdPlain(
-                    Verwaltungseinheit.class, o.getGemId());
+                    AdminUnit.class, o.getAdminUnitId());
             if (v == null) {
                 currentWarnings.add(
                     new ReportItem(
-                        type + "GEMEINDESCHLUESSEL", o.getGemId(),
+                        type + "GEMEINDESCHLUESSEL", o.getAdminUnitId(),
                         StatusCodes.IMP_INVALID_VALUE));
-                o.setGemId(null);
+                o.setAdminUnitId(null);
             }
         }
         String key = "";
@@ -1869,61 +1677,61 @@ public class LafObjectMapper {
             key = "HERKUNFTSLAND_S";
             hLand = attributes.get(type + "HERKUNFTSLAND_S");
         } else if (attributes.get(type + "HERKUNFTSLAND_KURZ") != null) {
-            staatFilter = "staatKurz";
+            staatFilter = "intVehRegCode";
             key = "HERKUNFTSLAND_KURZ";
             hLand = attributes.get(type + "HERKUNFTSLAND_KURZ");
         } else if (attributes.get(type + "HERKUNFTSLAND_LANG") != null) {
-            staatFilter = "staat";
+            staatFilter = "ctry";
             key = "HERKUNFTSLAND_LANG";
             hLand = attributes.get(type + "HERKUNFTSLAND_LANG");
         }
 
         if (staatFilter.length() > 0) {
-            QueryBuilder<Staat> builderStaat =
-                repository.queryBuilder(Staat.class);
-            builderStaat.and(staatFilter, hLand);
-            List<Staat> staat =
+            QueryBuilder<State> builderStaat = repository
+                .queryBuilder(State.class)
+                .and(staatFilter, hLand);
+            List<State> staat =
                 repository.filterPlain(builderStaat.getQuery());
             if (staat == null || staat.size() == 0) {
                 currentWarnings.add(
                     new ReportItem(key, hLand, StatusCodes.IMP_INVALID_VALUE));
             } else if (staat.size() > 0) {
-                o.setStaatId(staat.get(0).getId());
+                o.setStateId(staat.get(0).getId());
             }
         }
         if (attributes.containsKey(type + "HOEHE_NN")) {
-            o.setHoeheUeberNn(Float.valueOf(attributes.get(type + "HOEHE_NN")));
+            o.setHeightAsl(Float.valueOf(attributes.get(type + "HOEHE_NN")));
         }
 
-        // checkk if all attributes are empty
-        if (o.getKdaId() == null
-            && o.getGemId() == null
-            && o.getStaatId() == null) {
+        // Check if all attributes are empty
+        if (o.getSpatRefSysId() == null
+            && o.getAdminUnitId() == null
+            && o.getStateId() == null) {
             return null;
         }
 
-        MessStelle mst = repository.getByIdPlain(
-            MessStelle.class, probe.getMstId());
-        o.setNetzbetreiberId(mst.getNetzbetreiberId());
+        MeasFacil mst = repository.getByIdPlain(
+            MeasFacil.class, probe.getMeasFacilId());
+        o.setNetworkId(mst.getNetworkId());
         o = ortFactory.completeOrt(o);
         if (o == null || o.getGeom() == null) {
             currentWarnings.addAll(ortFactory.getErrors());
             return null;
         }
-        Violation violation = ortValidator.validate(o);
-        for (Entry<String, List<Integer>> warn
-            : violation.getWarnings().entrySet()
+        ortValidator.validate(o);
+        for (Entry<String, Set<String>> warn
+                 : o.getWarnings().entrySet()
         ) {
-            for (Integer code : warn.getValue()) {
+            for (String code : warn.getValue()) {
                 currentWarnings.add(
                     new ReportItem("validation", warn.getKey(), code));
             }
         }
-        if (violation.hasErrors()) {
-            for (Entry<String, List<Integer>> err
-                : violation.getErrors().entrySet()) {
-                for (Integer code : err.getValue()) {
-                    // Add to warnings because Probe object might be imported
+        if (o.hasErrors()) {
+            for (Entry<String, Set<String>> err
+                     : o.getErrors().entrySet()) {
+                for (String code : err.getValue()) {
+                    // Add to warnings because Sample object might be imported
                     currentWarnings.add(
                         new ReportItem("validation", err.getKey(), code));
                 }
@@ -1941,11 +1749,11 @@ public class LafObjectMapper {
         ZoneId fromLaf = ZoneId.of("UTC");
         switch (currentZeitbasis) {
             case 1: fromLaf = ZoneId.of("UTC+2");
-                    break;
+                break;
             case 3: fromLaf = ZoneId.of("UTC+1");
-                    break;
+                break;
             case 4: fromLaf = ZoneId.of("CET");
-                    break;
+                break;
             default: break;
         }
         DateTimeFormatter formatter =
@@ -1957,30 +1765,29 @@ public class LafObjectMapper {
 
     //Assign global Tag based on LAF field SZENARIO
     private void assignGlobalTag(String szenario, Object object) {
-        QueryBuilder<Tag> builderTag =
-                repository.queryBuilder(Tag.class);
-            builderTag.and("tag", szenario);
-            builderTag.and("typId", "global");
-            List<Tag> globalTag =
-                repository.filterPlain(builderTag.getQuery());
+        QueryBuilder<Tag> builderTag = repository.queryBuilder(Tag.class)
+            .and("name", szenario)
+            .and("tagType", "global");
+        List<Tag> globalTag = repository.filterPlain(builderTag.getQuery());
 
-        if (globalTag.isEmpty()){
+        if (globalTag.isEmpty()) {
             ReportItem note = new ReportItem();
             note.setCode(StatusCodes.VALUE_NOT_MATCHING);
             note.setKey("globalTag");
             note.setValue(szenario);
             currentWarnings.add(note);
         } else {
-                TagZuordnung tagZuord = new TagZuordnung();
+            TagLink tagZuord = new TagLink();
 
-            if (object instanceof Probe) {
-                Probe probe = (Probe) object;
-                QueryBuilder<TagZuordnung> builderZuord =
-                        repository.queryBuilder(TagZuordnung.class);
-                    builderZuord.and("probeId", probe.getId());
-                    List<TagZuordnung> globalTagZuord =
-                        repository.filterPlain(builderZuord.getQuery());
-                 if (globalTagZuord.stream().anyMatch(z -> z.getTagId().equals(globalTag.get(0).getId()))) {
+            if (object instanceof Sample) {
+                Sample probe = (Sample) object;
+                QueryBuilder<TagLink> builderZuord = repository
+                    .queryBuilder(TagLink.class)
+                    .and("sampleId", probe.getId());
+                List<TagLink> globalTagZuord =
+                    repository.filterPlain(builderZuord.getQuery());
+                if (globalTagZuord.stream().anyMatch(
+                        z -> z.getTagId().equals(globalTag.get(0).getId()))) {
                     ReportItem note = new ReportItem();
                     note.setCode(StatusCodes.VAL_EXISTS);
                     note.setKey("globalTag#probe");
@@ -1988,18 +1795,19 @@ public class LafObjectMapper {
                     currentNotifications.add(note);
                 } else {
                     tagZuord.setTagId(globalTag.get(0).getId());
-                    tagZuord.setProbeId(probe.getId());
+                    tagZuord.setSampleId(probe.getId());
                     repository.create(tagZuord);
                 }
-            } else if (object instanceof Messung) {
-                Messung messung = (Messung) object;
-                QueryBuilder<TagZuordnung> builderZuord =
-                    repository.queryBuilder(TagZuordnung.class);
-                builderZuord.and("messungId", messung.getId());
-                List<TagZuordnung> globalTagZuord =
+            } else if (object instanceof Measm) {
+                Measm messung = (Measm) object;
+                QueryBuilder<TagLink> builderZuord = repository
+                    .queryBuilder(TagLink.class)
+                    .and("measmId", messung.getId());
+                List<TagLink> globalTagZuord =
                     repository.filterPlain(builderZuord.getQuery());
 
-                if (globalTagZuord.stream().anyMatch(z -> z.getTagId().equals(globalTag.get(0).getId()))) {
+                if (globalTagZuord.stream().anyMatch(
+                        z -> z.getTagId().equals(globalTag.get(0).getId()))) {
                     ReportItem note = new ReportItem();
                     note.setCode(StatusCodes.VAL_EXISTS);
                     note.setKey("globalTag#messung");
@@ -2007,51 +1815,26 @@ public class LafObjectMapper {
                     currentNotifications.add(note);
                 } else {
                     tagZuord.setTagId(globalTag.get(0).getId());
-                    tagZuord.setMessungId(messung.getId());
+                    tagZuord.setMeasmId(messung.getId());
                     repository.create(tagZuord);
                 }
             }
         }
     }
 
-    private void logProbe(Probe probe) {
-        logger.debug("%PROBE%");
-        logger.debug("datenbasis: " + probe.getDatenbasisId());
-        logger.debug("betriebsart: " + probe.getBaId());
-        logger.debug("erzeuger: " + probe.getErzeugerId());
-        logger.debug("hauptprobennummer: " + probe.getHauptprobenNr());
-        logger.debug("externeprobeid: " + probe.getExterneProbeId());
-        logger.debug("labor: " + probe.getLaborMstId());
-        logger.debug("deskriptoren: " + probe.getMediaDesk());
-        logger.debug("media: " + probe.getMedia());
-        logger.debug("mittelung: " + probe.getMittelungsdauer());
-        logger.debug("mpl: " + probe.getMplId());
-        logger.debug("mpr: " + probe.getMprId());
-        logger.debug("mst: " + probe.getMstId());
-        logger.debug("pnbeginn: " + probe.getProbeentnahmeBeginn());
-        logger.debug("pnende: " + probe.getProbeentnahmeEnde());
-        logger.debug("probenart: " + probe.getProbenartId());
-        logger.debug("probenehmer: " + probe.getProbeNehmerId());
-        logger.debug("sbeginn: " + probe.getSolldatumBeginn());
-        logger.debug("sende: " + probe.getSolldatumEnde());
-        logger.debug("ursprungszeit: " + probe.getUrsprungszeit());
-        logger.debug("test: " + probe.getTest());
-        logger.debug("umw: " + probe.getUmwId());
-    }
-
     private void addProbeAttribute(
         Entry<String, String> attribute,
-        Probe probe,
+        Sample probe,
         String netzbetreiberId
     ) {
         String key = attribute.getKey();
         String value = attribute.getValue();
 
         if ("DATENBASIS_S".equals(key)
-            && probe.getDatenbasisId() == null
+            && probe.getRegulationId() == null
         ) {
-            Datenbasis datenbasis = repository.getByIdPlain(
-                Datenbasis.class,
+            Regulation datenbasis = repository.getByIdPlain(
+                Regulation.class,
                 Integer.valueOf(value.toString())
             );
             if (datenbasis == null) {
@@ -2061,9 +1844,9 @@ public class LafObjectMapper {
                 return;
             }
             Integer v = Integer.valueOf(value.toString());
-            probe.setDatenbasisId(v);
+            probe.setRegulationId(v);
         } else if ("DATENBASIS_S".equals(key)
-            && probe.getDatenbasisId() != null) {
+            && probe.getRegulationId() != null) {
             currentWarnings.add(
                 new ReportItem(
                     key, value.toString(), StatusCodes.IMP_DUPLICATE));
@@ -2071,40 +1854,22 @@ public class LafObjectMapper {
 
 
         if ("DATENBASIS".equals(key)
-            && probe.getDatenbasisId() == null
+            && probe.getRegulationId() == null
         ) {
-            List<ImporterConfig> cfgs =
-                getImporterConfigByAttributeUpper("DATENBASIS");
-            String attr = value.toString();
-            for (int i = 0; i < cfgs.size(); i++) {
-                ImporterConfig cfg = cfgs.get(i);
-                if (cfg != null
-                    && cfg.getAction().equals("convert")
-                    && cfg.getFromValue().equals(attr)
-                ) {
-                    attr = cfg.getToValue();
-                }
-                if (cfg != null && cfg.getAction().equals("transform")) {
-                    char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
-                    char to = (char) Integer.parseInt(cfg.getToValue(), 16);
-                    attr = attr.replaceAll(
-                        "[" + String.valueOf(from) + "]", String.valueOf(to));
-                }
-            }
-            QueryBuilder<Datenbasis> builder =
-                repository.queryBuilder(Datenbasis.class);
-            builder.and("datenbasis", attr);
-            List<Datenbasis> datenbasis =
-                (List<Datenbasis>) repository.filterPlain(builder.getQuery());
+            QueryBuilder<Regulation> builder = repository
+                .queryBuilder(Regulation.class)
+                .and("name", value);
+            List<Regulation> datenbasis =
+                repository.filterPlain(builder.getQuery());
             if (datenbasis == null || datenbasis.isEmpty()) {
                 currentErrors.add(
-                    new ReportItem(key, attr, StatusCodes.IMP_INVALID_VALUE));
+                    new ReportItem(key, value, StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
             Integer v = datenbasis.get(0).getId();
-            probe.setDatenbasisId(v);
+            probe.setRegulationId(v);
         } else if ("DATENBASIS".equals(key)
-            && probe.getDatenbasisId() != null
+            && probe.getRegulationId() != null
         ) {
             currentWarnings.add(
                 new ReportItem(
@@ -2112,38 +1877,37 @@ public class LafObjectMapper {
         }
 
         if ("PROBE_ID".equals(key)) {
-            probe.setExterneProbeId(value);
+            probe.setExtId(value);
         }
 
         if ("HAUPTPROBENNUMMER".equals(key)) {
-            probe.setHauptprobenNr(value.toString());
+            probe.setMainSampleId(value.toString());
         }
 
         if ("MPR_ID".equals(key)) {
             Integer v = Integer.valueOf(value.toString());
-            probe.setMprId(v);
+            probe.setMpgId(v);
         }
 
         if ("MESSLABOR".equals(key)) {
-            MessStelle mst = repository.getByIdPlain(
-                MessStelle.class, value.toString());
+            MeasFacil mst = repository.getByIdPlain(
+                MeasFacil.class, value.toString());
             if (mst == null) {
                 currentWarnings.add(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setLaborMstId(value.toString());
+            probe.setApprLabId(value.toString());
         }
 
         if ("MESSPROGRAMM_S".equals(key)
-            && probe.getBaId() == null
+            && probe.getOprModeId() == null
         ) {
-            QueryBuilder<MessprogrammTransfer> builder =
-                repository.queryBuilder(MessprogrammTransfer.class);
-            builder.and("messprogrammS", value);
-            List<MessprogrammTransfer> transfer =
-                (List<MessprogrammTransfer>) repository.filterPlain(
+            QueryBuilder<MpgTransf> builder = repository
+                .queryBuilder(MpgTransf.class)
+                .and("extId", value);
+            List<MpgTransf> transfer = repository.filterPlain(
                     builder.getQuery());
             if (transfer == null || transfer.isEmpty()) {
                 currentWarnings.add(
@@ -2151,135 +1915,133 @@ public class LafObjectMapper {
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setBaId(transfer.get(0).getBaId());
-            if (probe.getDatenbasisId() == null) {
-                probe.setDatenbasisId(transfer.get(0).getDatenbasisId());
+            probe.setOprModeId(transfer.get(0).getOprModeId());
+            if (probe.getRegulationId() == null) {
+                probe.setRegulationId(transfer.get(0).getRegulationId());
             }
         }
         if ("MESSPROGRAMM_C".equals(key)) {
-            QueryBuilder<MessprogrammTransfer> builder =
-                repository.queryBuilder(MessprogrammTransfer.class);
-            builder.and("messprogrammC", value);
-            List<MessprogrammTransfer> transfer =
-                (List<MessprogrammTransfer>) repository.filterPlain(
-                    builder.getQuery());
+            QueryBuilder<MpgTransf> builder = repository
+                .queryBuilder(MpgTransf.class)
+                .and("name", value);
+            List<MpgTransf> transfer =
+                repository.filterPlain(builder.getQuery());
             if (transfer == null || transfer.isEmpty()) {
                 currentWarnings.add(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setBaId(transfer.get(0).getBaId());
-            if (probe.getDatenbasisId() == null) {
-                probe.setDatenbasisId(transfer.get(0).getDatenbasisId());
+            probe.setOprModeId(transfer.get(0).getOprModeId());
+            if (probe.getRegulationId() == null) {
+                probe.setRegulationId(transfer.get(0).getRegulationId());
             }
         }
 
         if ("ERZEUGER".equals(key)) {
-            QueryBuilder<DatensatzErzeuger> builder =
-                repository.queryBuilder(DatensatzErzeuger.class);
-            builder.and("netzbetreiberId", netzbetreiberId);
-            builder.and("mstId", probe.getMstId());
-            builder.and("datensatzErzeugerId", value);
-            List<DatensatzErzeuger> datensatzErzeuger =
-                    (List<DatensatzErzeuger>) repository.filterPlain(
-                            builder.getQuery());
+            QueryBuilder<DatasetCreator> builder = repository
+                .queryBuilder(DatasetCreator.class)
+                .and("networkId", netzbetreiberId)
+                .and("measFacilId", probe.getMeasFacilId())
+                .and("extId", value);
+            List<DatasetCreator> datensatzErzeuger =
+                repository.filterPlain(builder.getQuery());
             if (datensatzErzeuger == null || datensatzErzeuger.isEmpty()) {
                 currentWarnings.add(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setErzeugerId(datensatzErzeuger.get(0).getId());
+            probe.setDatasetCreatorId(datensatzErzeuger.get(0).getId());
         }
 
         if ("MESSPROGRAMM_LAND".equals(key)) {
-            QueryBuilder<MessprogrammKategorie> builder =
-                repository.queryBuilder(MessprogrammKategorie.class);
-            builder.and("netzbetreiberId", netzbetreiberId);
-            builder.and("code", value);
-            List<MessprogrammKategorie> kategorie =
-                    (List<MessprogrammKategorie>) repository.filterPlain(
-                            builder.getQuery());
+            QueryBuilder<MpgCateg> builder = repository
+                .queryBuilder(MpgCateg.class)
+                .and("networkId", netzbetreiberId)
+                .and("extId", value);
+            List<MpgCateg> kategorie =
+                repository.filterPlain(builder.getQuery());
             if (kategorie == null || kategorie.isEmpty()) {
                 currentWarnings.add(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setMplId(kategorie.get(0).getId());
+            probe.setMpgCategId(kategorie.get(0).getId());
         }
 
         if ("PROBENAHMEINSTITUTION".equals(key)) {
-            QueryBuilder<Probenehmer> builder =
-                repository.queryBuilder(Probenehmer.class);
-            builder.and("netzbetreiberId", netzbetreiberId);
-            builder.and("prnId", value);
-            List<Probenehmer> prn =
-                    (List<Probenehmer>) repository.filterPlain(
-                        builder.getQuery());
+            QueryBuilder<Sampler> builder = repository
+                .queryBuilder(Sampler.class)
+                .and("networkId", netzbetreiberId)
+                .and("extId", value);
+            List<Sampler> prn = repository.filterPlain(builder.getQuery());
             if (prn == null || prn.isEmpty()) {
                 currentWarnings.add(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setProbeNehmerId(prn.get(0).getId());
+            probe.setSamplerId(prn.get(0).getId());
         }
 
         if ("SOLL_DATUM_UHRZEIT_A".equals(key)) {
-            probe.setSolldatumBeginn(getDate(value.toString()));
+            probe.setSchedStartDate(getDate(value.toString()));
         }
         if ("SOLL_DATUM_UHRZEIT_E".equals(key)) {
-            probe.setSolldatumEnde(getDate(value.toString()));
+            probe.setSchedEndDate(getDate(value.toString()));
         }
         if ("PROBENAHME_DATUM_UHRZEIT_A".equals(key)) {
-            probe.setProbeentnahmeBeginn(getDate(value.toString()));
+            probe.setSampleStartDate(getDate(value.toString()));
         }
         if ("PROBENAHME_DATUM_UHRZEIT_E".equals(key)) {
-            probe.setProbeentnahmeEnde(getDate(value.toString()));
+            probe.setSampleEndDate(getDate(value.toString()));
         }
         if ("URSPRUNGS_DATUM_UHRZEIT".equals(key)) {
-            probe.setUrsprungszeit(getDate(value.toString()));
+            probe.setOrigDate(getDate(value.toString()));
         }
 
         if ("UMWELTBEREICH_S".equals(key)
-            && probe.getUmwId() == null
+            && probe.getEnvMediumId() == null
         ) {
-            Umwelt umw = repository.getByIdPlain(
-                Umwelt.class, value.toString());
+            EnvMedium umw = repository.getByIdPlain(
+                EnvMedium.class, value.toString());
             if (umw == null) {
                 currentWarnings.add(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setUmwId(value.toString());
-        } else if ("UMWELTBEREICH_S".equals(key) && probe.getUmwId() != null) {
+            probe.setEnvMediumId(value.toString());
+        } else if ("UMWELTBEREICH_S".equals(key)
+            && probe.getEnvMediumId() != null
+        ) {
             currentWarnings.add(
                 new ReportItem(
                     key, value.toString(), StatusCodes.IMP_DUPLICATE));
         }
         if ("UMWELTBEREICH_C".equals(key)
-            && probe.getUmwId() == null
+            && probe.getEnvMediumId() == null
             && value != null
         ) {
-            QueryBuilder<Umwelt> builder =
-                repository.queryBuilder(Umwelt.class);
             int length = value.toString().length() > 80
                 ? 80
                 : value.toString().length();
-            builder.and("umweltBereich", value.toString().substring(0, length));
-            List<Umwelt> umwelt =
-                (List<Umwelt>) repository.filterPlain(builder.getQuery());
+            QueryBuilder<EnvMedium> builder = repository
+                .queryBuilder(EnvMedium.class)
+                .and("name", value.toString().substring(0, length));
+            List<EnvMedium> umwelt = repository.filterPlain(builder.getQuery());
             if (umwelt == null || umwelt.isEmpty()) {
                 currentWarnings.add(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setUmwId(umwelt.get(0).getId());
-        } else if ("UMWELTBEREICH_C".equals(key) && probe.getUmwId() != null) {
+            probe.setEnvMediumId(umwelt.get(0).getId());
+        } else if ("UMWELTBEREICH_C".equals(key)
+            && probe.getEnvMediumId() != null
+        ) {
             currentWarnings.add(
                 new ReportItem(
                     key, value.toString(), StatusCodes.IMP_DUPLICATE));
@@ -2302,26 +2064,26 @@ public class LafObjectMapper {
             for (int i =  0; i < value.length() - 4; i += 2) {
                 tmp.add(value.substring(i, i + 2));
             }
-            probe.setMediaDesk(String.join(" ", tmp));
+            probe.setEnvDescripDisplay(String.join(" ", tmp));
         }
 
         if ("TESTDATEN".equals(key)) {
             if (value.toString().equals("1")) {
-                probe.setTest(true);
+                probe.setIsTest(true);
             } else if (value.toString().equals("0")) {
-                probe.setTest(false);
+                probe.setIsTest(false);
             }
         }
 
         if ("REI_PROGRAMMPUNKTGRUPPE".equals(key)
             || "REI_PROGRAMMPUNKT".equals(key)) {
-            QueryBuilder<ReiProgpunktGruppe> builder =
-                repository.queryBuilder(ReiProgpunktGruppe.class);
-            builder.and("reiProgPunktGruppe", value.toString());
-            List<ReiProgpunktGruppe> list =
+            QueryBuilder<ReiAgGr> builder = repository
+                .queryBuilder(ReiAgGr.class)
+                .and("name", value.toString());
+            List<ReiAgGr> list =
                 repository.filterPlain(builder.getQuery());
             if (!list.isEmpty()) {
-                probe.setReiProgpunktGrpId(list.get(0).getId());
+                probe.setReiAgGrId(list.get(0).getId());
             } else {
                 currentWarnings.add(
                     new ReportItem(
@@ -2330,40 +2092,22 @@ public class LafObjectMapper {
         }
 
         if ("MEDIUM".equals(key)) {
-            probe.setMedia(value.toString());
+            probe.setEnvDescripName(value.toString());
         }
 
         if ("PROBENART".equals(key) && value != null) {
-            List<ImporterConfig> cfgs =
-                getImporterConfigByAttributeUpper("PROBENART");
-            String attr = value.toString();
-            for (int i = 0; i < cfgs.size(); i++) {
-                ImporterConfig cfg = cfgs.get(i);
-                if (cfg != null
-                    && cfg.getAction().equals("convert")
-                    && cfg.getFromValue().equals(attr)
-                ) {
-                    attr = cfg.getToValue();
-                }
-                if (cfg != null && cfg.getAction().equals("transform")) {
-                    char from = (char) Integer.parseInt(cfg.getFromValue(), 16);
-                    char to = (char) Integer.parseInt(cfg.getToValue(), 16);
-                    attr = attr.replaceAll(
-                        "[" + String.valueOf(from) + "]", String.valueOf(to));
-                }
-            }
-            QueryBuilder<Probenart> builder =
-                repository.queryBuilder(Probenart.class);
-            builder.and("probenart", attr);
-            List<Probenart> probenart =
-                (List<Probenart>) repository.filterPlain(builder.getQuery());
+            QueryBuilder<SampleMeth> builder = repository
+                .queryBuilder(SampleMeth.class)
+                .and("extId", value);
+            List<SampleMeth> probenart =
+                repository.filterPlain(builder.getQuery());
             if (probenart == null || probenart.isEmpty()) {
                 currentWarnings.add(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
                 return;
             }
-            probe.setProbenartId(probenart.get(0).getId());
+            probe.setSampleMethId(probenart.get(0).getId());
         }
     }
     /**
@@ -2373,25 +2117,26 @@ public class LafObjectMapper {
      * @param messung   The entity object.
      * @return The updated entity object.
      */
-    public Messung addMessungAttribute(
+    public Measm addMessungAttribute(
         Entry<String, String> attribute,
-        Messung messung
+        Measm messung
     ) {
         String key = attribute.getKey();
         String value = attribute.getValue();
+
         if ("MESSUNGS_ID".equals(key)) {
-            messung.setExterneMessungsId(Integer.valueOf(value));
+            messung.setExtId(Integer.valueOf(value));
         }
         if ("NEBENPROBENNUMMER".equals(key)) {
-            messung.setNebenprobenNr(value.toString());
+            messung.setMinSampleId(value.toString());
         } else if ("MESS_DATUM_UHRZEIT".equals(key)) {
-            messung.setMesszeitpunkt(getDate(value.toString()));
+            messung.setMeasmStartDate(getDate(value.toString()));
         } else if ("MESSZEIT_SEKUNDEN".equals(key)) {
             Integer i = Integer.valueOf(value.toString());
-            messung.setMessdauer(i);
+            messung.setMeasPd(i);
         } else if ("MESSMETHODE_S".equals(key)) {
-            MessMethode mmt = repository.getByIdPlain(
-                MessMethode.class, value.toString());
+            Mmt mmt = repository.getByIdPlain(
+                Mmt.class, value.toString());
             if (mmt == null) {
                 currentWarnings.add(
                     new ReportItem(
@@ -2400,11 +2145,9 @@ public class LafObjectMapper {
                 messung.setMmtId(value.toString());
             }
         } else if ("MESSMETHODE_C".equals(key)) {
-            QueryBuilder<MessMethode> builder =
-                repository.queryBuilder(MessMethode.class);
-            builder.and("messmethode", value.toString());
-            List<MessMethode> mm =
-                (List<MessMethode>) repository.filterPlain(builder.getQuery());
+            QueryBuilder<Mmt> builder = repository.queryBuilder(Mmt.class)
+                .and("name", value.toString());
+            List<Mmt> mm = repository.filterPlain(builder.getQuery());
             if (mm == null || mm.isEmpty()) {
                 ReportItem warn = new ReportItem();
                 warn.setCode(StatusCodes.IMP_MISSING_VALUE);
@@ -2416,9 +2159,9 @@ public class LafObjectMapper {
             }
         } else if ("ERFASSUNG_ABGESCHLOSSEN".equals(key)) {
             if (value.toString().equals("1")) {
-                messung.setFertig(true);
+                messung.setIsCompleted(true);
             } else if (value.toString().equals("0")) {
-                messung.setFertig(false);
+                messung.setIsCompleted(false);
             }
         }
         return messung;
@@ -2442,7 +2185,7 @@ public class LafObjectMapper {
      * @return the notifications
      */
     public Map<String, List<ReportItem>> getNotifications() {
-       return notifications;
+        return notifications;
     }
 
     /**
@@ -2450,13 +2193,6 @@ public class LafObjectMapper {
      */
     public List<Integer> getImportedProbeIds() {
         return importProbeIds;
-    }
-
-    /**
-     * @return the userInfo
-     */
-    public UserInfo getUserInfo() {
-        return userInfo;
     }
 
     /**
@@ -2468,16 +2204,26 @@ public class LafObjectMapper {
     }
 
     /**
-     * @return the config
+     * @param config the config to set
      */
-    public List<ImporterConfig> getConfig() {
-        return config;
+    public void setConfig(List<ImportConf> config) {
+        this.config = config;
+        this.configMapper = new ImportConfigMapper(config);
     }
 
     /**
-     * @param config the config to set
+     * @param measFacilId ID of the default measurement facility
      */
-    public void setConfig(List<ImporterConfig> config) {
-        this.config = config;
+    public void setMeasFacilId(String measFacilId) {
+        this.measFacilId = measFacilId;
+    }
+
+    /**
+     * @param locale Set locale for validation messages.
+     */
+    public void setLocale(Locale locale) {
+        this.probeValidator.setLocale(locale);
+        this.messungValidator.setLocale(locale);
+        this.ortValidator.setLocale(locale);
     }
 }

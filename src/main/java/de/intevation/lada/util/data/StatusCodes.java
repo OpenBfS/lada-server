@@ -15,7 +15,6 @@ public class StatusCodes {
     public static final int OK = 200;
     public static final int NOT_EXISTING = 600;
     public static final int PRESENT = 601;
-    public static final int NOT_A_PROBE = 602;
     public static final int NOT_A_COMMENT = 607;
     public static final int ERROR_DB_CONNECTION = 603;
     public static final int ERROR_VALIDATION = 604;
@@ -32,6 +31,7 @@ public class StatusCodes {
     public static final int VAL_S1_NOTSET = 637;
     public static final int VAL_OBL_MEASURE = 638;
     public static final int VAL_SINGLE_DATE = 639;
+    public static final int VAL_MESSGROESSE_NOT_MATCHING_MMT = 640;
     public static final int VAL_DATE_IN_FUTURE = 641;
     public static final int VAL_MEAS_DATE_BEFORE = 642;
     public static final int VAL_END_BEFORE_BEGIN = 643;
@@ -44,7 +44,6 @@ public class StatusCodes {
     public static final int GEO_COORD_UNCHECKED = 650;
     public static final int GEO_POINT_OUTSIDE = 651;
     public static final int GEO_NOT_MATCHING = 652;
-    public static final int GEO_UNCHANGEABLE_COORD = 653;
     public static final int STATUS_RO = 654;
     public static final int ORT_SINGLE_UORT = 655;
     public static final int ORT_REIMP_MISSING = 656;
@@ -52,7 +51,7 @@ public class StatusCodes {
     public static final int ORT_REIMP_TOO_LONG = 658;
     public static final int DATE_IN_FUTURE = 661;
     public static final int DATE_BEGIN_AFTER_END = 662;
-    public static final int URSPR_Date_BEFORE_BEGIN = 663;
+    public static final int URSPR_DATE_BEFORE_BEGIN = 663;
     public static final int IMP_PARSER_ERROR = 670;
     public static final int IMP_PRESENT = 671;
     public static final int IMP_DUPLICATE = 672;
@@ -60,7 +59,6 @@ public class StatusCodes {
     public static final int IMP_DATE_ERROR = 674;
     public static final int IMP_INVALID_VALUE = 675;
     public static final int IMP_UNCHANGABLE = 676;
-    public static final int SQL_INVALID_FILTER = 678;
     public static final int OP_NOT_POSSIBLE = 696;
     public static final int CHANGED_VALUE = 697;
     public static final int NO_ACCESS = 698;

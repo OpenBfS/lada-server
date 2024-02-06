@@ -1,9 +1,0 @@
-{
-    "stamm.messprogramm_kategorie": [{
-        "id": 1000,
-        "netzbetreiber_id": "06",
-        "code": "mp2",
-        "bezeichnung": "Testbezeichnung",
-        "letzte_aenderung": "2015-03-01 12:00:00"
-    }]
-}

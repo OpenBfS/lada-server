@@ -9,11 +9,12 @@ package de.intevation.lada.util.data;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.stammdaten.MassEinheitUmrechnung;
-import de.intevation.lada.model.stammdaten.Umwelt;
+import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.master.EnvMedium;
+import de.intevation.lada.model.master.MeasUnit;
+import de.intevation.lada.model.master.UnitConvers;
 
 
 public class MesswertNormalizer {
@@ -31,14 +32,17 @@ public class MesswertNormalizer {
      * @param mehIdFrom MehId to convert from
      * @return Conversions as list
      */
-    private List<MassEinheitUmrechnung> getConversions(
+    private List<UnitConvers> getConversions(
         Integer mehIdTo,
         Integer mehIdFrom
     ) {
-        QueryBuilder<MassEinheitUmrechnung> builder =
-            repository.queryBuilder(MassEinheitUmrechnung.class);
-        builder.and("mehIdZu", mehIdTo);
-        builder.and("mehVon", mehIdFrom);
+        MeasUnit fromUnit = repository.getByIdPlain(
+                MeasUnit.class, mehIdFrom);
+
+        QueryBuilder<UnitConvers> builder =
+            repository.queryBuilder(UnitConvers.class);
+        builder.and("toUnitId", mehIdTo);
+        builder.and("fromUnit", fromUnit);
         return repository.filterPlain(builder.getQuery());
     }
 
@@ -49,50 +53,50 @@ public class MesswertNormalizer {
      * @param umwId UmweltId to get the standard unit from
      * @return List<Messwert> with converted units.
      */
-    public List<Messwert> normalizeMesswerte(
-        List<Messwert> messwerte,
+    public List<MeasVal> normalizeMesswerte(
+        List<MeasVal> messwerte,
         String umwId
     ) {
         if (umwId == null || umwId.equals("")) {
             return messwerte;
         }
-        Umwelt umwelt =
-            repository.getByIdPlain(Umwelt.class, umwId);
-        Integer mehIdToConvertTo = umwelt.getMehId();
-        Integer secMehIdToConvertTo = umwelt.getSecMehId();
+        EnvMedium umwelt =
+            repository.getByIdPlain(EnvMedium.class, umwId);
+        Integer mehIdToConvertTo = umwelt.getUnit1();
+        Integer secMehIdToConvertTo = umwelt.getUnit2();
 
-        for (Messwert messwert: messwerte) {
+        for (MeasVal messwert: messwerte) {
             if (mehIdToConvertTo != null
-                && mehIdToConvertTo.equals(messwert.getMehId())
+                && mehIdToConvertTo.equals(messwert.getMeasUnitId())
                 || secMehIdToConvertTo != null
-                && secMehIdToConvertTo.equals(messwert.getMehId())
+                && secMehIdToConvertTo.equals(messwert.getMeasUnitId())
             ) {
                 // no conversion needed
                 continue;
             }
             //Get the conversion factors
-            List<MassEinheitUmrechnung> primaryMeu = getConversions(
-                    mehIdToConvertTo, messwert.getMehId());
-            List<MassEinheitUmrechnung> secondaryMeu = getConversions(
-                    secMehIdToConvertTo, messwert.getMehId());
+            List<UnitConvers> primaryMeu = getConversions(
+                    mehIdToConvertTo, messwert.getMeasUnitId());
+            List<UnitConvers> secondaryMeu = getConversions(
+                    secMehIdToConvertTo, messwert.getMeasUnitId());
             if (primaryMeu.size() == 0 && secondaryMeu.size() == 0) {
                 //No suitable conversion found: continue
                 continue;
             }
-            MassEinheitUmrechnung meu = primaryMeu.size() > 0
+            UnitConvers meu = primaryMeu.size() > 0
                     ? primaryMeu.get(0) : secondaryMeu.get(0);
-            Double factor = meu.getFaktor();
+            Double factor = meu.getFactor();
 
             //Update einheit
-            messwert.setMehId(
+            messwert.setMeasUnitId(
                 primaryMeu.size() > 0 ? mehIdToConvertTo : secMehIdToConvertTo);
             //Update messwert
-            if (messwert.getMesswert() != null) {
-                messwert.setMesswert(messwert.getMesswert() * factor);
+            if (messwert.getMeasVal() != null) {
+                messwert.setMeasVal(messwert.getMeasVal() * factor);
             }
             //update nwgZuMesswert
-            if (messwert.getNwgZuMesswert() != null) {
-                messwert.setNwgZuMesswert(messwert.getNwgZuMesswert() * factor);
+            if (messwert.getDetectLim() != null) {
+                messwert.setDetectLim(messwert.getDetectLim() * factor);
             }
         }
         return messwerte;

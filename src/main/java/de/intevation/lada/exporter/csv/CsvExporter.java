@@ -13,23 +13,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.sql.Date;
-import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.TimeZone;
+import java.util.Collection;
+import java.util.Date;
 
-import javax.inject.Inject;
-import javax.json.JsonObject;
+import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
+import jakarta.persistence.NoResultException;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -38,10 +36,10 @@ import org.jboss.logging.Logger;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
-import de.intevation.lada.model.stammdaten.GridColumn;
-import de.intevation.lada.model.stammdaten.StatusKombi;
-import de.intevation.lada.model.stammdaten.StatusStufe;
-import de.intevation.lada.model.stammdaten.StatusWert;
+import de.intevation.lada.model.master.GridColMp;
+import de.intevation.lada.model.master.StatusLev;
+import de.intevation.lada.model.master.StatusMp;
+import de.intevation.lada.model.master.StatusVal;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -84,12 +82,12 @@ public class CsvExporter implements Exporter {
     }
 
     private String getStatusStringByid(Integer id) {
-        StatusKombi kombi =
-            repository.getByIdPlain(StatusKombi.class, id);
-        StatusStufe stufe = kombi.getStatusStufe();
-        StatusWert wert = kombi.getStatusWert();
+        StatusMp kombi =
+            repository.getByIdPlain(StatusMp.class, id);
+        StatusLev stufe = kombi.getStatusLev();
+        StatusVal wert = kombi.getStatusVal();
 
-        return String.format("%s - %s", stufe.getStufe(), wert.getWert());
+        return String.format("%s - %s", stufe.getLev(), wert.getVal());
     }
 
     /**
@@ -97,37 +95,38 @@ public class CsvExporter implements Exporter {
      *
      * The names are either fetched from the database or used from the given
      * sub data column name object
-     * @param keys Keys to get name for
+     * @param keys Array of GridColMp.dataIndex keys to get names for
      * @param subDataColumnNames Object containing sub data column names
+     * @param qId GridColMp.baseQueryId for filtering GridColMp objects
      * @return Name array
      */
     private String[] getReadableColumnNames(
-        String[] keys,
+        Collection<String> keys,
         JsonObject subDataColumnNames,
         Integer qId
     ) {
-        String[] names = new String[keys.length];
-        ArrayList<String> keysList = new ArrayList<String>(Arrays.asList(keys));
+        String[] names = new String[keys.size()];
         int index = 0;
-        for (String key : keysList) {
-            QueryBuilder<GridColumn> builder =
-                repository.queryBuilder(GridColumn.class);
-            builder.and("dataIndex", key);
-            builder.and("baseQuery", qId);
-            List<GridColumn> result =
-                repository.filterPlain(builder.getQuery());
+        for (String key : keys) {
             String name = key;
-            if (result.size() > 0) {
-                GridColumn column = result.get(0);
-                name = column.getName();
-            } else {
-                name = subDataColumnNames.containsKey(key)
+
+            QueryBuilder<GridColMp> builder =
+                repository.queryBuilder(GridColMp.class)
+                .and("dataIndex", key)
+                .and("baseQueryId", qId);
+            try {
+                GridColMp column =
+                    repository.getSinglePlain(builder.getQuery());
+                name = column.getGridCol();
+            } catch (NoResultException e) {
+                name = subDataColumnNames != null
+                    && subDataColumnNames.containsKey(key)
                     ? subDataColumnNames.getString(key)
                     : key;
             }
             names[index] = name;
             index++;
-        };
+        }
         return names;
     }
 
@@ -138,7 +137,7 @@ public class CsvExporter implements Exporter {
      *                    while every map key represents a column
      * @param encoding Encoding to use
      * @param options Optional export options as JSON Object.
-     *                Valid options are: <p>
+     *                Valid options are "csvOptions" with: <p>
      *   <ul>
      *     <li> decimalSeparator: "comma" | "period", defaults to "period" </li>
      *     <li> fieldSeparator: "comma" | "semicolon" | "period" |
@@ -146,12 +145,10 @@ public class CsvExporter implements Exporter {
      *     <li> rowDelimiter: "windows" | "linux", defaults to "windows" </li>
      *     <li> quoteType: "singlequote" |
      *          "doublequote", defaults to "doublequote" </li>
-     *     <li> timezone: Target timezone for timestamp conversion </li>
-     *     <li> subDataColumnNames: JsonObject containing dataIndex:
-     *          ColumnName key-value-pairs used to get readable column
-     *          names </li>
      *   </ul>
-     *                Invalid options will cause the export to fail.
+     * and "subDataColumnNames": JsonObject containing dataIndex:
+     * ColumnName key-value-pairs used to get readable column names
+     * Invalid options will cause the export to fail.
      *
      * @param columnsToInclude List of column names to include in the export.
      *                         If not set, all columns will be exported
@@ -161,11 +158,13 @@ public class CsvExporter implements Exporter {
      */
     @Override
     public InputStream export(
-        List<Map<String, Object>> queryResult,
+        Iterable<Map<String, Object>> queryResult,
         Charset encoding,
         JsonObject options,
-        ArrayList<String> columnsToInclude,
+        List<String> columnsToInclude,
+        String subDataKey,
         Integer qId,
+        DateFormat dateFormat,
         Locale locale
     ) {
         ResourceBundle i18n = ResourceBundle.getBundle(BUNDLE_FILE, locale);
@@ -174,30 +173,34 @@ public class CsvExporter implements Exporter {
         char fieldSeparator = CsvOptions.valueOf("comma").getChar();
         String rowDelimiter = CsvOptions.valueOf("windows").getValue();
         char quoteType = CsvOptions.valueOf("doublequote").getChar();
-        String timezoneOption = "UTC";
         JsonObject subDataColumnNames = null;
         //Parse options
         if (options != null) {
             try {
-                decimalSeparator = CsvOptions.valueOf(
-                    options.containsKey("decimalSeparator")
-                    ? options.getString("decimalSeparator")
-                    : "period").getChar();
-                fieldSeparator = CsvOptions.valueOf(
-                    options.containsKey("fieldSeparator")
-                    ? options.getString("fieldSeparator") : "comma").getChar();
-                rowDelimiter = CsvOptions.valueOf(
-                    options.containsKey("rowDelimiter")
-                    ? options.getString("rowDelimiter") : "windows").getValue();
-                quoteType = CsvOptions.valueOf(
-                    options.containsKey("quoteType")
-                    ? options.getString("quoteType") : "doublequote").getChar();
-                timezoneOption =
-                    options.containsKey("timezone")
-                    ? options.getString("timezone") : "UTC";
+                if (options.containsKey("csvOptions")) {
+                    JsonObject csvOptions = options.getJsonObject("csvOptions");
+                    decimalSeparator = CsvOptions.valueOf(
+                        csvOptions.containsKey("decimalSeparator")
+                        ? csvOptions.getString("decimalSeparator")
+                        : "period").getChar();
+                    fieldSeparator = CsvOptions.valueOf(
+                        csvOptions.containsKey("fieldSeparator")
+                        ? csvOptions.getString(
+                            "fieldSeparator") : "comma").getChar();
+                    rowDelimiter = CsvOptions.valueOf(
+                        csvOptions.containsKey("rowDelimiter")
+                        ? csvOptions.getString(
+                            "rowDelimiter") : "windows").getValue();
+                    quoteType = CsvOptions.valueOf(
+                        csvOptions.containsKey("quoteType")
+                        ? csvOptions.getString(
+                            "quoteType") : "doublequote").getChar();
+                }
+                final String subDataColumnNamesKey = "subDataColumnNames";
                 subDataColumnNames =
-                    options.containsKey("subDataColumnNames")
-                    ? options.getJsonObject("subDataColumnNames") : null;
+                    options.containsKey(subDataColumnNamesKey)
+                    && !options.isNull(subDataColumnNamesKey)
+                    ? options.getJsonObject(subDataColumnNamesKey) : null;
             } catch (IllegalArgumentException iae) {
                 logger.error(
                     String.format(
@@ -213,17 +216,9 @@ public class CsvExporter implements Exporter {
         decimalFormat.setGroupingUsed(false);
 
         //Get header fields
-        String[] keys;
-        if (columnsToInclude == null) {
-            Set<String> keySet = queryResult.get(0).keySet();
-            keys = new String[keySet.size()];
-            keySet.toArray(keys);
-        } else {
-            keys = new String[columnsToInclude.size()];
-            columnsToInclude.toArray(keys);
-        }
+        String[] header = getReadableColumnNames(
+            columnsToInclude, subDataColumnNames, qId);
 
-        String[] header = getReadableColumnNames(keys, subDataColumnNames, qId);
         //Create CSV format
         CSVFormat format = CSVFormat.DEFAULT
             .withDelimiter(fieldSeparator)
@@ -235,17 +230,17 @@ public class CsvExporter implements Exporter {
 
         try {
             final CSVPrinter printer = new CSVPrinter(result, format);
-            final String timezone = timezoneOption;
             //For every queryResult row
             queryResult.forEach(row -> {
                 ArrayList<String> rowItems = new ArrayList<String>();
-                for (int i = 0; i < keys.length; i++) {
-                    Object value = row.get(keys[i]);
+                for (String key: columnsToInclude) {
+                    Object value = row.get(key);
 
                     //Value is a status kombi
-                    if (keys[i].equals("statusK")) {
+                    if (key.equals("statusK")) {
                         rowItems.add(getStatusStringByid((Integer) value));
-                    } else if (keys[i].equals("latitude") | keys[i].equals("longitude")) {
+                    } else if (key.equals("latitude")
+                        | key.equals("longitude")) {
                         rowItems.add(value.toString());
                     } else if (value instanceof Double) {
                         decimalFormat.applyPattern("0.###E00");
@@ -253,15 +248,12 @@ public class CsvExporter implements Exporter {
                     } else if (value instanceof Float) {
                         decimalFormat.applyPattern("###0.0#");
                         rowItems.add(decimalFormat.format((Float) value));
-                    } else if (value instanceof Timestamp) {
+                    } else if (value instanceof Date) {
                         //Convert to target timezone
-                        Timestamp time = (Timestamp) value;
+                        Date time = (Date) value;
                         Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(new Date(time.getTime()));
-                        SimpleDateFormat sdf =
-                            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        sdf.setTimeZone(TimeZone.getTimeZone(timezone));
-                        rowItems.add(sdf.format(calendar.getTime()));
+                        calendar.setTime(time);
+                        rowItems.add(dateFormat.format(calendar.getTime()));
                     } else if (value instanceof Boolean) {
                         rowItems.add(value != null
                             ? i18n.getString(value.toString()) : null);

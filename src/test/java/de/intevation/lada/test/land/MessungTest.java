@@ -9,16 +9,15 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
-import javax.json.JsonObject;
-import javax.json.JsonValue;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.Response;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -33,27 +32,23 @@ public class MessungTest extends ServiceTest {
     private JsonObject create;
 
     @Override
-    public void init(
+    public void init (
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung",
-            "messzeitpunkt",
-            "treeModified"
+            "lastMod",
+            "measmStartDate",
+            "treeMod"
         });
 
         // Prepare expected probe object
-        JsonObject content = readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject messung =
-            content.getJsonArray("land.messung").getJsonObject(0);
-        // Automatic conversion of key for external ID does not work
-        final String extIdKey = "ext_id";
-        expectedById = convertObject(messung, extIdKey)
-            .add("externeMessungsId", messung.get(extIdKey))
+            readXmlResource("datasets/dbUnit_lada.xml", Measm.class)
+            .getJsonObject(0);
+        expectedById = convertObject(messung)
             .add("parentModified", TS1)
             .add("readonly", JsonValue.FALSE)
             .add("owner", JsonValue.TRUE)
@@ -70,13 +65,22 @@ public class MessungTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("messung", "rest/messung", Response.Status.BAD_REQUEST);
-        get("messung", "rest/messung?probeId=1000");
-        getById("messung", "rest/messung/1200", expectedById);
-        JsonObject created = create("messung", "rest/messung", create);
-        update("messung", "rest/messung/1200", "nebenprobenNr", "T100", "U200");
-        delete(
-            "messung",
-            "rest/messung/" + created.getJsonObject("data").get("id"));
+        get("rest/measm", Response.Status.BAD_REQUEST);
+        get("rest/measm?sampleId=1000");
+        getById("rest/measm/1200", expectedById);
+        JsonObject created = create("rest/measm", create);
+
+        final String updateFieldKey = "minSampleId";
+        final String updateFieldValue = "U200";
+        update(
+            "rest/measm/1200",
+            updateFieldKey,
+            "T100",
+            updateFieldValue);
+        getAuditTrail(
+            "rest/audit/messung/1200",
+            updateFieldKey,
+            updateFieldValue);
+        delete("rest/measm/" + created.getJsonObject("data").get("id"));
     }
 }

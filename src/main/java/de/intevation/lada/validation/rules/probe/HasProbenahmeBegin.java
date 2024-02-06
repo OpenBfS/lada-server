@@ -7,9 +7,9 @@
  */
 package de.intevation.lada.validation.rules.probe;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -21,17 +21,17 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationRule("Probe")
+@ValidationRule("Sample")
 public class HasProbenahmeBegin implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Probe probe = (Probe) object;
-        Timestamp begin = probe.getProbeentnahmeBeginn();
+        Sample probe = (Sample) object;
+        Date begin = probe.getSampleStartDate();
         if (begin == null) {
             Violation violation = new Violation();
             violation.addWarning(
-                "probeentnahmeBeginn", StatusCodes.VALUE_MISSING);
+                "sampleStartDate", StatusCodes.VALUE_MISSING);
             return violation;
         }
         return null;

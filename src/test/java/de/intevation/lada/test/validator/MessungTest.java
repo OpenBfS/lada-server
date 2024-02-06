@@ -7,220 +7,382 @@
  */
 package de.intevation.lada.test.validator;
 
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 /**
  * Test messung entities.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
+@Transactional
 public class MessungTest {
 
-    private static final int ID990 = 990;
-    private static final int ID776 = 776;
-    private static final int ID45 = 45;
-    private static final int ID611 = 611;
-    private static final int ID631 = 631;
-    private static final int ID4 = 4;
-    private Validator validator;
+    //Validation keys
+    private static final String MEAS_PD = "measPd";
+    private static final String MEASD_ID = "measdId";
+    private static final String MEASM_START_DATE = "measmStartDate";
+    private static final String MIN_SAMPLE_ID = "minSampleId";
 
-    public void setValidator(Validator validator) {
-        this.validator = validator;
-    }
+    //ID constants from test dataset
+    private static final int EXISTING_SAMPLE_ID = 1000;
+    private static final int EXISTING_SAMPLE_ID_SAMPLE_METH_CONT = 2000;
+    private static final int EXISTING_SAMPLE_ID_REGULATION_161 = 3000;
+    private static final int EXISTING_MEASM_ID = 1200;
+    private static final String EXISTING_MIN_SAMPLE_ID = "T100";
+    private static final String EXISTING_MMT_ID = "A3";
+    private static final String EXISTING_SAMPLE_START_DATE
+        = "2012-05-03 13:07:00";
+
+    //Other constants
+    private static final SimpleDateFormat DB_UNIT_DATE_FORMAT
+        = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    private static final String NEW_MIN_SAMPLE_ID = "42AB";
+    private static final String MIN_SAMPLE_ID_00G2 = "00G2";
+
+    @Inject
+    private Validator<Measm> validator;
 
     /**
      * Test nebenproben nr.
-     * @param protocol the test protocol.
      */
-    public final void hasNebenprobenNr(List<Protocol> protocol) {
-        Protocol prot = new Protocol();
-        prot.setName("MessungValidator");
-        prot.setType("has nebenprobenNr");
-        prot.setPassed(false);
-        protocol.add(prot);
-        Messung messung = new Messung();
-        messung.setNebenprobenNr("10R1");
-        messung.setProbeId(ID4);
-        Violation violation = validator.validate(messung);
-        if (violation.hasWarnings()) {
+    public void hasNebenprobenNr() {
+        Measm measm = new Measm();
+        measm.setMinSampleId("10R1");
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        validator.validate(measm);
+        if (measm.hasWarnings()) {
             Assert.assertFalse(
-                violation.getWarnings().containsKey("nebenprobenNr"));
+                measm.getWarnings().containsKey(MIN_SAMPLE_ID));
         }
-        prot.setPassed(true);
     }
 
     /**
      * Test without nebenproben nr.
-     * @param protocol the test protocol.
      */
-    public final void hasNoNebenprobenNr(List<Protocol> protocol) {
-        Protocol prot = new Protocol();
-        prot.setName("MessungValidator");
-        prot.setType("has no nebenprobenNr");
-        prot.setPassed(false);
-        protocol.add(prot);
-        Messung messung = new Messung();
-        messung.setProbeId(ID4);
-        Violation violation = validator.validate(messung);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey("nebenprobenNr"));
-        Assert.assertTrue(
-            violation.getWarnings().get("nebenprobenNr").contains(ID631));
-        prot.setPassed(true);
+    public void hasNoNebenprobenNr() {
+        Measm measm = new Measm();
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        measm.setMmtId(EXISTING_MMT_ID);
+        validator.validate(measm);
+        Assert.assertTrue(measm.hasNotifications());
+        MatcherAssert.assertThat(measm.getNotifications().keySet(),
+            CoreMatchers.hasItem(MIN_SAMPLE_ID));
+        MatcherAssert.assertThat(
+            measm.getNotifications().get(MIN_SAMPLE_ID),
+            CoreMatchers.hasItem(StatusCodes.VALUE_MISSING));
     }
 
     /**
      * Test empty nebenproben nr.
-     * @param protocol the test protocol.
      */
-    public final void hasEmptyNebenprobenNr(List<Protocol> protocol) {
-        Protocol prot = new Protocol();
-        prot.setName("MessungValidator");
-        prot.setType("has empty nebenprobenNr");
-        prot.setPassed(false);
-        protocol.add(prot);
-        Messung messung = new Messung();
-        messung.setNebenprobenNr("");
-        messung.setProbeId(ID4);
-        Violation violation = validator.validate(messung);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey("nebenprobenNr"));
+    public void hasEmptyNebenprobenNr() {
+        Measm measm = new Measm();
+        measm.setMinSampleId(null);
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        measm.setMmtId(EXISTING_MMT_ID);
+
+        validator.validate(measm);
+        Assert.assertTrue(measm.hasNotifications());
+        Assert.assertTrue(measm.getNotifications()
+            .containsKey(MIN_SAMPLE_ID));
         Assert.assertTrue(
-            violation.getWarnings().get("nebenprobenNr").contains(ID631));
-        prot.setPassed(true);
+            measm.getNotifications().get(MIN_SAMPLE_ID)
+                .contains(StatusCodes.VALUE_MISSING));
     }
 
     /**
      * Test new existing nebenproben nr.
-     * @param protocol the test protocol.
      */
-    public final void existingNebenprobenNrNew(List<Protocol> protocol) {
-        Protocol prot = new Protocol();
-        prot.setName("MessungValidator");
-        prot.setType("existing nebenprobenNr (new)");
-        prot.setPassed(false);
-        protocol.add(prot);
-        Messung messung = new Messung();
-        messung.setNebenprobenNr("00G1");
-        messung.setProbeId(ID4);
-        Violation violation = validator.validate(messung);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey("nebenprobenNr"));
-        Assert.assertTrue(
-            violation.getErrors().get("nebenprobenNr").contains(ID611));
-        prot.setPassed(true);
+    public void existingNebenprobenNrNew() {
+        Measm messung = new Measm();
+        messung.setMinSampleId(EXISTING_MIN_SAMPLE_ID);
+        messung.setSampleId(EXISTING_SAMPLE_ID);
+        messung.setMmtId(EXISTING_MMT_ID);
+        validator.validate(messung);
+        Assert.assertTrue(messung.hasErrors());
+        MatcherAssert.assertThat(
+            messung.getErrors().keySet(),
+            CoreMatchers.hasItem(MIN_SAMPLE_ID));
+        MatcherAssert.assertThat(
+            messung.getErrors().get(MIN_SAMPLE_ID),
+            CoreMatchers.hasItem(
+                "Non-unique value combination for [minSampleId, sampleId]"));
     }
 
     /**
      * Test new unique nebenproben nr.
-     * @param protocol the test protocol.
      */
-    public final void uniqueNebenprobenNrNew(List<Protocol> protocol) {
-        Protocol prot = new Protocol();
-        prot.setName("MessungValidator");
-        prot.setType("unique nebenprobenNr (new)");
-        prot.setPassed(false);
-        protocol.add(prot);
-        Messung messung = new Messung();
-        messung.setNebenprobenNr("00G2");
-        messung.setProbeId(ID4);
-        Violation violation = validator.validate(messung);
-        if (violation.hasErrors()) {
-            Assert.assertFalse(
-                violation.getErrors().containsKey("nebenprobenNr"));
-        }
-        prot.setPassed(true);
+    public void uniqueNebenprobenNrNew() {
+        Measm messung = new Measm();
+        messung.setMinSampleId(MIN_SAMPLE_ID_00G2);
+        messung.setSampleId(EXISTING_SAMPLE_ID);
+        messung.setMmtId(EXISTING_MMT_ID);
+        validator.validate(messung);
+        Assert.assertFalse(messung.hasErrors());
     }
 
     /**
      * Test update unique nebenproben nr.
-     * @param protocol the test protocol.
      */
-    public final void uniqueNebenprobenNrUpdate(List<Protocol> protocol) {
-        Protocol prot = new Protocol();
-        prot.setName("MessungValidator");
-        prot.setType("unique nebenprobenNr (update)");
-        prot.setPassed(false);
-        protocol.add(prot);
-        Messung messung = new Messung();
-        messung.setId(ID45);
-        messung.setProbeId(ID4);
-        messung.setNebenprobenNr("00G2");
-        Violation violation = validator.validate(messung);
-        if (violation.hasErrors()) {
-            Assert.assertFalse(
-                violation.getErrors().containsKey("hauptprobenNr"));
-            return;
-        }
-        prot.setPassed(true);
+    public void uniqueNebenprobenNrUpdate() {
+        Measm messung = new Measm();
+        messung.setId(EXISTING_MEASM_ID);
+        messung.setSampleId(EXISTING_SAMPLE_ID);
+        messung.setMinSampleId(MIN_SAMPLE_ID_00G2);
+        messung.setMmtId(EXISTING_MMT_ID);
+        validator.validate(messung);
+        Assert.assertFalse(messung.hasErrors());
     }
 
     /**
      * Test update existing nebenproben nr.
-     * @param protocol the test protocol.
      */
-    public final void existingNebenprobenNrUpdate(List<Protocol> protocol) {
-        Protocol prot = new Protocol();
-        prot.setName("MessungValidator");
-        prot.setType("existing nebenprobenNr (update)");
-        prot.setPassed(false);
-        protocol.add(prot);
-        Messung messung = new Messung();
-        messung.setId(ID776);
-        messung.setProbeId(1);
-        messung.setNebenprobenNr("0003");
-        Violation violation = validator.validate(messung);
-        Assert.assertTrue(violation.hasErrors());
-        Assert.assertTrue(violation.getErrors().containsKey("nebenprobenNr"));
-        Assert.assertTrue(
-            violation.getErrors().get("nebenprobenNr").contains(ID611));
-        prot.setPassed(true);
+    public void existingNebenprobenNrUpdate() {
+        Measm measm = new Measm();
+        measm.setId(EXISTING_MEASM_ID);
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        measm.setMinSampleId(EXISTING_MIN_SAMPLE_ID);
+        measm.setMmtId(EXISTING_MMT_ID);
+
+        validator.validate(measm);
+        Assert.assertFalse(measm.hasErrors());
     }
 
     /**
-     * Test messwert.
-     * @param protocol the test protocol.
+     * Test measm with start date in future.
      */
-    public final void hasMesswert(List<Protocol> protocol) {
-        Protocol prot = new Protocol();
-        prot.setName("MessungValidator");
-        prot.setType("has messwert");
-        prot.setPassed(false);
-        protocol.add(prot);
-        Messung messung = new Messung();
-        messung.setId(1);
-        messung.setProbeId(ID4);
-        Violation violation = validator.validate(messung);
-        if (violation.hasWarnings()) {
-            Assert.assertFalse(violation.getWarnings().containsKey("messwert"));
+    public void measmStartDateInFuture() {
+        Instant tomorrow = Instant.now().plus(1, ChronoUnit.DAYS);
+        Measm measm = new Measm();
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        measm.setMeasmStartDate(Date.from(tomorrow));
+        measm.setMmtId(EXISTING_MMT_ID);
+
+
+        validator.validate(measm);
+        Assert.assertTrue(measm.hasWarnings());
+        Assert.assertTrue(measm.getWarnings()
+            .containsKey(MEASM_START_DATE));
+        Assert.assertTrue(
+            measm.getWarnings().get(MEASM_START_DATE).contains(
+                String.valueOf(StatusCodes.DATE_IN_FUTURE)));
+    }
+
+    /**
+     * Test measm with start date before sampleStartDate.
+     * @throws ParseException Thrown if date parsing fails
+     */
+    public void measmStartDateBeforeSampleStartDate() throws ParseException {
+        Instant sampleStartDate = DB_UNIT_DATE_FORMAT
+            .parse(EXISTING_SAMPLE_START_DATE).toInstant();
+        Instant measmStartDate = sampleStartDate.minus(1, ChronoUnit.DAYS);
+        Measm measm = new Measm();
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
+        measm.setMeasmStartDate(Date.from(measmStartDate));
+        measm.setMmtId(EXISTING_MMT_ID);
+        String warnKey = MEASM_START_DATE;
+        validator.validate(measm);
+        Assert.assertTrue(measm.hasWarnings());
+        Assert.assertTrue(measm.getWarnings()
+            .containsKey(warnKey));
+        Assert.assertTrue(
+            measm.getWarnings().get(warnKey).contains(
+                String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
+    }
+
+    /**
+     * Test measm with start date before sampleStartDate.
+     * @throws ParseException Thrown if date parsing fails
+     */
+    public void measmStartDateAfterSampleStartDate() throws ParseException {
+        Instant sampleStartDate = DB_UNIT_DATE_FORMAT
+            .parse(EXISTING_SAMPLE_START_DATE).toInstant();
+        Instant measmStartDate = sampleStartDate.plus(1, ChronoUnit.DAYS);
+        Measm measm = new Measm();
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
+        measm.setMeasmStartDate(Date.from(measmStartDate));
+        validator.validate(measm);
+        if (measm.hasWarnings()) {
+            Assert.assertFalse(measm.getWarnings().containsKey(
+                MEASM_START_DATE));
         }
-        prot.setPassed(true);
     }
 
     /**
-     * Test no messwert.
-     * @param protocol the test protocol.
+     * Test measm without start date.
      */
-    public final void hasNoMesswert(List<Protocol> protocol) {
-        Protocol prot = new Protocol();
-        prot.setName("MessungValidator");
-        prot.setType("has no messwert");
-        prot.setPassed(false);
-        protocol.add(prot);
-        Messung messung = new Messung();
-        messung.setId(ID990);
-        messung.setProbeId(ID4);
-        Violation violation = validator.validate(messung);
-        Assert.assertTrue(violation.hasWarnings());
-        Assert.assertTrue(violation.getWarnings().containsKey("messwert"));
+    public void measmWithoutStartDate() {
+        Measm measm = new Measm();
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        measm.setMmtId(EXISTING_MMT_ID);
+        validator.validate(measm);
+        Assert.assertTrue(measm.hasWarnings());
+        Assert.assertTrue(measm.getWarnings()
+            .containsKey(MEASM_START_DATE));
         Assert.assertTrue(
-            violation.getWarnings().get("messwert").contains(ID631));
-        prot.setPassed(true);
+            measm.getWarnings().get(MEASM_START_DATE).contains(
+                String.valueOf(StatusCodes.VALUE_MISSING)));
+    }
+
+    /**
+     * Test measm without start date connected to a sample with regulation id 1.
+     */
+    public void measmWithoutStartDateRegulation161Sample() {
+        Measm measm = new Measm();
+        measm.setSampleId(EXISTING_SAMPLE_ID_REGULATION_161);
+        measm.setMmtId(EXISTING_MMT_ID);
+
+        validator.validate(measm);
+        Assert.assertTrue(measm.hasNotifications());
+        Assert.assertTrue(measm.getNotifications()
+            .containsKey(MEASM_START_DATE));
+        Assert.assertTrue(
+            measm.getNotifications().get(MEASM_START_DATE).contains(
+                StatusCodes.VALUE_MISSING));
+    }
+
+    /**
+     * Test measm without a measPd.
+     */
+    public void measmWithoutMeasPD() {
+        Measm measm = new Measm();
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
+        measm.setMmtId(EXISTING_MMT_ID);
+
+        validator.validate(measm);
+        String warnKey = MEAS_PD;
+        Assert.assertTrue(measm.hasWarnings());
+        Assert.assertTrue(measm.getWarnings()
+            .containsKey(warnKey));
+        Assert.assertTrue(
+            measm.getWarnings().get(warnKey).contains(
+                String.valueOf(StatusCodes.VALUE_MISSING)));
+    }
+
+    /**
+     * Test measm without a measPd connected to a sample with regulation id 1.
+     */
+    public void measmWithoutMeasPDRegulation161Sample() {
+        Measm measm = new Measm();
+        measm.setSampleId(EXISTING_SAMPLE_ID_REGULATION_161);
+        measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
+        measm.setMmtId(EXISTING_MMT_ID);
+
+        validator.validate(measm);
+        Assert.assertTrue(measm.hasNotifications());
+        Assert.assertTrue(measm.getNotifications()
+            .containsKey(MEAS_PD));
+        Assert.assertTrue(
+            measm.getNotifications().get(MEAS_PD).contains(
+                StatusCodes.VALUE_MISSING));
+    }
+
+    /**
+     * Test measm without a measPd connected to a continuous sample.
+     */
+    public void measmWithoutMeasPDRContSample() {
+        Measm measm = new Measm();
+        measm.setSampleId(EXISTING_SAMPLE_ID_SAMPLE_METH_CONT);
+        measm.setMmtId(EXISTING_MMT_ID);
+
+
+        validator.validate(measm);
+        Assert.assertTrue(measm.hasNotifications());
+        Assert.assertTrue(measm.getNotifications()
+            .containsKey(MEAS_PD));
+        Assert.assertTrue(
+            measm.getNotifications().get(MEAS_PD).contains(
+                StatusCodes.VALUE_MISSING));
+    }
+
+    /**
+     * Test measm with measPd.
+     */
+    public void measmWithMeasPd() {
+        Measm measm = new Measm();
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        measm.setMeasPd(1);
+        validator.validate(measm);
+        if (measm.hasWarnings()) {
+            Assert.assertFalse(measm
+                .getWarnings().containsKey(MEAS_PD));
+        }
+        if (measm.hasNotifications()) {
+            Assert.assertFalse(measm.
+                getNotifications().containsKey(MEAS_PD));
+        }
+    }
+
+    /**
+     * Test measm missing obligatory measds.
+     */
+    public void measmWithoutObligMeasd() {
+        Measm measm = new Measm();
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        measm.setMmtId(EXISTING_MMT_ID);
+
+        validator.validate(measm);
+        String notficationKey = MEASD_ID;
+        Assert.assertTrue(measm.hasNotifications());
+        Assert.assertTrue(measm.getNotifications()
+            .containsKey(notficationKey));
+        Assert.assertTrue(measm.getNotifications()
+            .get(notficationKey).contains(StatusCodes.VAL_OBL_MEASURE));
+    }
+
+    /**
+     * Test measm with all obligatory measds.
+     */
+    public void measmWithObligMeasd() {
+        Measm measm = new Measm();
+        measm.setId(EXISTING_MEASM_ID);
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        measm.setMmtId(EXISTING_MMT_ID);
+
+        validator.validate(measm);
+        if (measm.hasNotifications()) {
+            String notficationKey = MEASD_ID;
+            Assert.assertFalse(measm
+                .getNotifications().containsKey(notficationKey));
+        }
+    }
+
+    /**
+     * Test measm with invalid mmtId.
+     */
+    public void measmWithInvalidMmt() {
+        Measm measm = new Measm();
+        measm.setId(EXISTING_MEASM_ID);
+        measm.setSampleId(EXISTING_SAMPLE_ID);
+        final String invalidKey = "XX";
+        measm.setMmtId(invalidKey);
+
+        validator.validate(measm);
+        final String mmtIdKey = "mmtId";
+        MatcherAssert.assertThat(
+            measm.getErrors().keySet(),
+            CoreMatchers.hasItem(mmtIdKey));
+        MatcherAssert.assertThat(
+            measm.getErrors().get(mmtIdKey),
+            CoreMatchers.hasItem(
+                "'" + invalidKey + "' is no valid primary key"));
     }
 }

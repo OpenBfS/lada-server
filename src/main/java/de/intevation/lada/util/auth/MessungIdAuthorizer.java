@@ -12,9 +12,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
@@ -36,7 +36,7 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
 
         Method m;
         try {
-            m = clazz.getMethod("getMessungsId");
+            m = clazz.getMethod("getMeasmId");
         } catch (NoSuchMethodException | SecurityException e1) {
             return false;
         }
@@ -58,10 +58,10 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Messung messung =
-            repository.getByIdPlain(Messung.class, id);
-        Probe probe = repository.getByIdPlain(
-            Probe.class, messung.getProbeId());
+        Measm messung =
+            repository.getByIdPlain(Measm.class, id);
+        Sample probe = repository.getByIdPlain(
+            Sample.class, messung.getSampleId());
         if (messung.getStatus() == null) {
             return false;
         }
@@ -105,24 +105,25 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         try {
-            Method getMessungsId = clazz.getMethod("getMessungsId");
+            Method getMessungsId = clazz.getMethod("getMeasmId");
             Integer id = (Integer) getMessungsId.invoke(data);
-            Messung messung = repository.getByIdPlain(
-                Messung.class, id);
-            Probe probe = repository.getByIdPlain(
-                Probe.class, messung.getProbeId());
+            Measm messung = repository.getByIdPlain(
+                Measm.class, id);
+            Sample probe = repository.getByIdPlain(
+                Sample.class, messung.getSampleId());
 
             boolean readOnly = true;
             boolean owner = false;
-            MessStelle mst =
-                repository.getByIdPlain(MessStelle.class, probe.getMstId());
+            MeasFacil mst =
+                repository.getByIdPlain(
+                    MeasFacil.class, probe.getMeasFacilId());
             if (!userInfo.getNetzbetreiber().contains(
-                    mst.getNetzbetreiberId())) {
+                    mst.getNetworkId())) {
                 owner = false;
                 readOnly = true;
             } else {
                 if (userInfo.belongsTo(
-                    probe.getMstId(), probe.getLaborMstId())
+                    probe.getMeasFacilId(), probe.getApprLabId())
                 ) {
                     owner = true;
                 } else {

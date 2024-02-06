@@ -19,33 +19,45 @@ SET row_security = off;
 -- Name: lada_messwert; Type: VIEW; Schema: public; Owner: postgres
 --
 
-CREATE VIEW public.lada_messwert AS
- SELECT messwert.id,
-    messwert.messungs_id,
-    messwert.messgroesse_id,
-    messwert.messwert_nwg,
-    messwert.messwert,
-    messwert.messfehler,
-    messwert.nwg_zu_messwert,
-    messwert.meh_id,
-    messwert.grenzwertueberschreitung,
-    status_protokoll.status_kombi,
-    messwert.letzte_aenderung
-   FROM ((land.messwert
-     JOIN land.messung ON ((messwert.messungs_id = messung.id)))
-     JOIN land.status_protokoll ON (((messung.status = status_protokoll.id) AND (status_protokoll.status_kombi <> 1))));
-ALTER TABLE public.lada_messwert OWNER TO postgres;
-GRANT SELECT ON TABLE public.lada_messwert TO lada;
+CREATE VIEW public.lada_meas_val AS
+ SELECT meas_val.id,
+    meas_val.measm_id,
+    meas_val.measd_id,
+    meas_val.less_than_lod,
+    meas_val.meas_val,
+    meas_val.error,
+    meas_val.detect_lim,
+    meas_val.meas_unit_id,
+    meas_val.is_threshold,
+    status_prot.status_mp_id,
+    meas_val.last_mod
+   FROM ((lada.meas_val
+     JOIN lada.measm ON ((meas_val.measm_id = measm.id)))
+     JOIN lada.status_prot ON (((measm.status = status_prot.id) AND (status_prot.status_mp_id <> 1))));
 
---
--- Name: rueckfrage_messung; Type: VIEW; Schema: land; Owner: postgres
---
-
-CREATE OR REPLACE VIEW land.rueckfrage_messung
+CREATE OR REPLACE VIEW lada.meas_val_view
  AS
- SELECT DISTINCT status_protokoll.messungs_id
-   FROM land.status_protokoll
-  WHERE (status_protokoll.status_kombi = ANY (ARRAY[9, 13]));
-ALTER TABLE land.rueckfrage_messung
-    OWNER TO postgres;
-GRANT SELECT ON TABLE land.rueckfrage_messung TO lada;
+ SELECT meas_val.id,
+    meas_val.measm_id,
+    meas_val.measd_id,
+    meas_val.less_than_lod,
+    meas_val.meas_val,
+    meas_val.error,
+    meas_val.detect_lim,
+    meas_val.meas_unit_id,
+    meas_val.is_threshold,
+    status_prot.status_mp_id,
+    meas_val.last_mod
+   FROM lada.meas_val
+     JOIN lada.measm ON meas_val.measm_id = measm.id
+     JOIN lada.status_prot ON measm.status = status_prot.id AND status_prot.status_mp_id <> 1;
+
+--
+-- Name: query_measm_view; Type: VIEW; Schema: lada; Owner: postgres
+--
+
+CREATE OR REPLACE VIEW lada.query_measm_view
+ AS
+ SELECT DISTINCT status_prot.measm_id
+   FROM lada.status_prot
+  WHERE (status_prot.status_mp_id = ANY (ARRAY[9, 13]));

@@ -9,12 +9,12 @@ package de.intevation.lada.lock;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.Timestamp;
+import java.util.Date;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.Repository;
 
 
@@ -40,18 +40,18 @@ public class TimestampLocker implements ObjectLocker {
      */
     @Override
     public boolean isLocked(Object o) {
-        if (o instanceof Probe) {
-            Probe newProbe = (Probe) o;
-            Probe oldProbe = repository.getByIdPlain(
-                Probe.class, newProbe.getId());
-            if (oldProbe.getTreeModified().getTime()
-                > newProbe.getTreeModified().getTime()) {
+        if (o instanceof Sample) {
+            Sample newProbe = (Sample) o;
+            Sample oldProbe = repository.getByIdPlain(
+                Sample.class, newProbe.getId());
+            if (oldProbe.getTreeMod().getTime()
+                > newProbe.getTreeMod().getTime()) {
                 return true;
             }
         } else {
             Method[] methods = o.getClass().getMethods();
             for (Method m: methods) {
-                if (m.getName().equals("getProbeId")) {
+                if (m.getName().equals("getSampleId")) {
                     Integer id;
                     try {
                         id = (Integer) m.invoke(o);
@@ -59,10 +59,10 @@ public class TimestampLocker implements ObjectLocker {
                             | InvocationTargetException e) {
                         return true;
                     }
-                    Probe probe = repository.getByIdPlain(Probe.class, id);
-                    return isNewer(o, probe.getTreeModified());
+                    Sample probe = repository.getByIdPlain(Sample.class, id);
+                    return isNewer(o, probe.getTreeMod());
                 }
-                if (m.getName().equals("getMessungsId")) {
+                if (m.getName().equals("getMeasmId")) {
                     Integer id;
                     try {
                         id = (Integer) m.invoke(o);
@@ -70,9 +70,9 @@ public class TimestampLocker implements ObjectLocker {
                             | InvocationTargetException e) {
                         return true;
                     }
-                    Messung messung =
-                        repository.getByIdPlain(Messung.class, id);
-                    return isNewer(o, messung.getTreeModified());
+                    Measm messung =
+                        repository.getByIdPlain(Measm.class, id);
+                    return isNewer(o, messung.getTreeMod());
                 }
             }
         }
@@ -86,11 +86,11 @@ public class TimestampLocker implements ObjectLocker {
      * @param t     The timestamp.
      * @return True if the object is newer.
      */
-    private boolean isNewer(Object o, Timestamp t) {
+    private boolean isNewer(Object o, Date t) {
         Method m;
         try {
             m = o.getClass().getMethod("getParentModified");
-            Timestamp ot = (Timestamp) m.invoke(o);
+            Date ot = (Date) m.invoke(o);
             if (ot == null) {
                 return true;
             }

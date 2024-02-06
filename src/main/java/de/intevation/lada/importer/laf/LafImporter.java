@@ -14,10 +14,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -26,20 +27,15 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.importer.ImportConfig;
-import de.intevation.lada.importer.ImportFormat;
-import de.intevation.lada.importer.Importer;
 import de.intevation.lada.importer.ReportItem;
-import de.intevation.lada.model.stammdaten.ImporterConfig;
+import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.util.auth.UserInfo;
+import de.intevation.lada.util.data.StatusCodes;
 
 /**
  * Importer for the LAF file format.
  */
-@ImportConfig(format = ImportFormat.LAF)
-public class LafImporter implements Importer {
-
-    private static final int ERR673 = 673;
+public class LafImporter {
 
     @Inject
     private Logger logger;
@@ -59,12 +55,16 @@ public class LafImporter implements Importer {
      * Start the import of the LAF data.
      * @param lafString The laf formated data as string
      * @param userInfo The current user info
+     * @param measFacilId Default measFacilId
      * @param config The import config to use
+     * @param locale Locale for validation messages
      */
     public void doImport(
         String lafString,
         UserInfo userInfo,
-        List<ImporterConfig> config
+        String measFacilId,
+        List<ImportConf> config,
+        Locale locale
     ) {
         // Append newline to avoid parser errors.
         // Every line can be the last line, so it is easier to append a
@@ -95,14 +95,14 @@ public class LafImporter implements Importer {
                 ReportItem warn = new ReportItem();
                 warn.setKey("UEBERTRAGUNGSFORMAT");
                 warn.setValue("");
-                warn.setCode(ERR673);
+                warn.setCode(StatusCodes.IMP_MISSING_VALUE);
                 parserWarnings.add(warn);
             }
             if (!listener.hasVersion()) {
                 ReportItem warn = new ReportItem();
                 warn.setKey("VERSION");
                 warn.setValue("");
-                warn.setCode(ERR673);
+                warn.setCode(StatusCodes.IMP_MISSING_VALUE);
                 parserWarnings.add(warn);
             }
             if (!errorListener.getErrors().isEmpty()) {
@@ -116,6 +116,8 @@ public class LafImporter implements Importer {
             }
             mapper.setUserInfo(userInfo);
             mapper.setConfig(config);
+            mapper.setMeasFacilId(measFacilId);
+            mapper.setLocale(locale);
             mapper.mapObjects(listener.getData());
             importProbeIds = mapper.getImportedProbeIds();
             for (Entry<String, List<ReportItem>> entry
@@ -152,22 +154,14 @@ public class LafImporter implements Importer {
         }
     }
 
-    @Override
-    public void reset() {
-
-    }
-
-    @Override
     public Map<String, List<ReportItem>> getErrors() {
         return this.errors;
     }
 
-    @Override
     public Map<String, List<ReportItem>> getWarnings() {
         return this.warnings;
     }
 
-    @Override
     public Map<String, List<ReportItem>> getNotifications() {
         return this.notifications;
     }

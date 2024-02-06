@@ -9,12 +9,12 @@ package de.intevation.lada.validation.rules.status;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.model.land.StatusProtokoll;
-import de.intevation.lada.model.stammdaten.StatusReihenfolge;
+import de.intevation.lada.model.lada.StatusProt;
+import de.intevation.lada.model.master.StatusOrdMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -37,25 +37,25 @@ public class StatusFolge implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        StatusProtokoll status = (StatusProtokoll) object;
+        StatusProt status = (StatusProt) object;
 
         // Get the previous status
-        QueryBuilder<StatusProtokoll> lastFilter =
-            repository.queryBuilder(StatusProtokoll.class);
+        QueryBuilder<StatusProt> lastFilter =
+            repository.queryBuilder(StatusProt.class);
 
-        lastFilter.and("messungsId", status.getMessungsId());
-        lastFilter.orderBy("datum", true);
-        List<StatusProtokoll> protos =
+        lastFilter.and("measmId", status.getMeasmId());
+        lastFilter.orderBy("id", true);
+        List<StatusProt> protos =
             repository.filterPlain(lastFilter.getQuery());
         if (protos.isEmpty()) {
             return null;
         }
-        StatusProtokoll last = protos.get(protos.size() - 1);
-        QueryBuilder<StatusReihenfolge> folgeFilter =
-            repository.queryBuilder(StatusReihenfolge.class);
-        folgeFilter.and("vonId", last.getStatusKombi());
-        folgeFilter.and("zuId", status.getStatusKombi());
-        List<StatusReihenfolge> reihenfolge =
+        StatusProt last = protos.get(protos.size() - 1);
+        QueryBuilder<StatusOrdMp> folgeFilter =
+            repository.queryBuilder(StatusOrdMp.class);
+        folgeFilter.and("fromId", last.getStatusMpId());
+        folgeFilter.and("toId", status.getStatusMpId());
+        List<StatusOrdMp> reihenfolge =
             repository.filterPlain(folgeFilter.getQuery());
         if (reihenfolge.isEmpty()) {
             Violation violation = new Violation();

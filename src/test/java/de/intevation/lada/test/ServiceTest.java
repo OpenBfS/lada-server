@@ -7,33 +7,48 @@
  */
 package de.intevation.lada.test;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonReader;
-import javax.json.JsonValue;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonStructure;
+import jakarta.json.JsonValue;
+import jakarta.persistence.Table;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
-import org.apache.commons.lang.WordUtils;
+import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.ITableMetaData;
+import org.dbunit.dataset.NoSuchColumnException;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.junit.Assert;
 
 import org.locationtech.jts.io.ParseException;
@@ -42,8 +57,9 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.BaseTest;
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.NamingStrategy;
 import de.intevation.lada.test.land.ProbeTest;
+import de.intevation.lada.util.rest.JSONBConfig;
 
 /**
  * Class for Lada service tests.
@@ -54,11 +70,6 @@ public class ServiceTest {
 
     private static final String LAT_KEY = "latitude";
     private static final String LONG_KEY = "longitude";
-
-    /**
-     * Test protocol for output of results.
-     */
-    protected List<Protocol> protocol;
 
     /**
      * Timestamp attributes.
@@ -82,20 +93,104 @@ public class ServiceTest {
 
     /**
      * Initialize the tests.
+     * @param c Client instance used for issueing requests.
      * @param bUrl The server url used for the request.
-     * @param p The resulting test protocol
      */
-    public void init(Client c, URL bUrl, List<Protocol> p) {
+    public void init(Client c, URL bUrl) {
         this.client = c;
         this.baseUrl = bUrl;
-        this.protocol = p;
     }
 
     /**
-     * @return The test protocol
+     * Filter the given JsonArray for an object with the given id.
+     * @param array Array to filter
+     * @param id Id to search for
+     * @return JsonObject with the given id
      */
-    public List<Protocol> getProtocol() {
-        return protocol;
+    protected JsonObject filterJsonArrayById(JsonArray array, int id) {
+        return array
+            .stream()
+            .filter(val -> id == val.asJsonObject().getInt("id"))
+            .findFirst().get()
+            .asJsonObject();
+    }
+
+    /**
+     * Read txt resource and return as string.
+     * @param resource Resource to read
+     * @return Resource as string
+     */
+    protected String readTxtResource(String resource) {
+        InputStream stream =
+            ProbeTest.class.getResourceAsStream(resource);
+        Scanner scanner = new Scanner(stream, "UTF-8");
+        scanner.useDelimiter("\\A");
+        String raw = scanner.next();
+        scanner.close();
+        return raw;
+    }
+
+    /**
+     * Read the given xml resource and return as JSON.
+     * @param resource Name of resource with DbUnit XML dataset
+     * @param clazz Model class for which data are extracted from resource
+     * @return Array of objcets from the given resource corresponding to
+     * clazz as JSON
+     * @throws RuntimeException if resource cannot be read as DbUnit dataset
+     * or bean introspection of clazz fails
+     */
+    protected JsonArray readXmlResource(String resource, Class<?> clazz) {
+        try {
+            IDataSet xml = new FlatXmlDataSetBuilder()
+                .setColumnSensing(true)
+                .build(getClass().getClassLoader()
+                    .getResourceAsStream(resource));
+
+            BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
+            String tablename = clazz.getAnnotation(Table.class).schema() + "."
+                + NamingStrategy.camelToSnake(
+                    beanInfo.getBeanDescriptor().getName());
+            ITable table = xml.getTable(tablename);
+            ITableMetaData datasetMetadata = xml.getTableMetaData(tablename);
+
+            JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+            for (int row = 0; row < table.getRowCount(); row++) {
+                JsonObjectBuilder builder = Json.createObjectBuilder();
+                for (
+                    PropertyDescriptor column: beanInfo.getPropertyDescriptors()
+                ) {
+                    //Check if column is present in dataset
+                    String key = column.getName();
+                    String columnName = NamingStrategy.camelToSnake(key);
+                    try {
+                        datasetMetadata.getColumnIndex(columnName);
+                    } catch (NoSuchColumnException nsce) {
+                        continue;
+                    }
+                    Object value = table.getValue(row, columnName);
+                    if (value == null) {
+                        continue;
+                    }
+                    Class<?> type =
+                        column.getWriteMethod().getParameterTypes()[0];
+                    if (type.isAssignableFrom(Integer.class)) {
+                        builder.add(key, Integer.parseInt((String) value));
+                    } else if (type.isAssignableFrom(Double.class)
+                        || type.isAssignableFrom(Float.class)
+                    ) {
+                        builder.add(key, Double.parseDouble((String) value));
+                    } else if (type.isAssignableFrom(Boolean.class)) {
+                        builder.add(key, Boolean.parseBoolean((String) value));
+                    } else {
+                        builder.add(key, (String) value);
+                    }
+                }
+                arrayBuilder.add(builder);
+            }
+            return arrayBuilder.build();
+        } catch (DataSetException | IntrospectionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -149,14 +244,17 @@ public class ServiceTest {
             if (Arrays.asList(exclusions).contains(entry.getKey())) {
                 continue;
             }
-            String key = WordUtils.capitalize(
-                entry.getKey(), new char[]{'_'}).replaceAll("_", "");
-            key = key.replaceFirst(
-                key.substring(0, 1), key.substring(0, 1).toLowerCase());
+
+            String key = entry.getKey();
             if (timestampAttributes.contains(key)) {
                 Timestamp timestamp = Timestamp.valueOf(
                     entry.getValue().toString().replaceAll("\"", ""));
-                builder.add(key, timestamp.getTime());
+                DateTimeFormatter formatter = DateTimeFormatter
+                    .ofPattern(JSONBConfig.DATE_FORMAT)
+                    .withZone(ZoneId.of("UTC"));
+
+                String dateString = formatter.format(timestamp.toInstant());
+                builder.add(key, dateString);
             } else if (geomPointAttributes.contains(key)) {
                 // Convert EWKT to latitude and longitude
                 String wkt = entry.getValue().toString().split(";")[1];
@@ -170,9 +268,6 @@ public class ServiceTest {
                     builder.add(LONG_KEY, point.getX());
                     builder.add(LAT_KEY, point.getY());
                 } catch (ParseException | IllegalArgumentException e) {
-                    Protocol prot = new Protocol();
-                    prot.addInfo("exception", e.getMessage());
-                    protocol.add(prot);
                     Assert.fail("Exception while parsing WKT '"
                         + wkt + "':\n"
                         + e.getMessage());
@@ -186,166 +281,145 @@ public class ServiceTest {
 
     /**
      * Base for all GET requests expecting success.
-     * @param name of the entity to request
      * @param parameter the url parameter used in the request.
      * @return the json object returned by the serive.
      */
-    public JsonObject get(String name, String parameter) {
-        return get(name, parameter, Response.Status.OK);
+    public JsonObject get(String parameter) {
+        return get(parameter, Response.Status.OK);
     }
 
     /**
      * Base for all GET requests.
-     * @param name of the entity to request
      * @param parameter the url parameter used in the request.
      * @param expectedStatus Expected HTTP status code
      * @return the json object returned by the serive.
      */
     public JsonObject get(
-        String name, String parameter, Response.Status expectedStatus
+        String parameter, Response.Status expectedStatus
     ) {
-        Protocol prot = new Protocol();
-        prot.setName(name + " service");
-        prot.setType("get");
-        prot.setPassed(false);
-        protocol.add(prot);
-
         WebTarget target = client.target(baseUrl + parameter);
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
+            .accept(MediaType.APPLICATION_JSON)
             .get();
         JsonObject content = BaseTest.parseResponse(
-            response, prot, expectedStatus);
+            response, expectedStatus);
 
         if (Response.Status.OK.equals(expectedStatus)) {
             Assert.assertNotNull(content.getJsonArray("data"));
-            prot.addInfo("objects", content.getJsonArray("data").size());
         }
 
-        prot.setPassed(true);
         return content;
     }
 
     /**
      * Test the GET Service by requesting a single object by id.
-     * @param name the name of the entity to request.
      * @param parameter the parameters used in the request.
      * @param expected the expected json result.
      * @return The resulting json object.
      */
     public JsonObject getById(
-        String name,
         String parameter,
         JsonObject expected
     ) {
-        Protocol prot = new Protocol();
-        prot.setName(name + " service");
-        prot.setType("get by Id");
-        prot.setPassed(false);
-        protocol.add(prot);
-
         WebTarget target = client.target(baseUrl + parameter);
-        prot.addInfo("parameter", parameter);
         /* Request a object by id*/
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
+            .accept(MediaType.APPLICATION_JSON)
             .get();
-        JsonObject content = BaseTest.parseResponse(response, prot);
+        JsonObject content = BaseTest.parseResponse(response);
         /* Verify the response*/
         Assert.assertFalse(content.getJsonObject("data").isEmpty());
         JsonObject object = content.getJsonObject("data");
         for (Entry<String, JsonValue> entry : expected.entrySet()) {
             if (entry.getKey().equals("parentModified")
-                || entry.getKey().equals("treeModified")
-                || entry.getKey().equals("letzteAenderung")) {
+                || entry.getKey().equals("treeMod")
+                || entry.getKey().equals("lastMod")) {
                 continue;
             }
+            String key = entry.getKey();
             Assert.assertEquals(
-                String.format("%s:", entry.getKey()),
+                String.format("%s:", key),
                 entry.getValue(),
-                object.get(entry.getKey()));
+                object.get(key));
         }
-        prot.addInfo("object", "equals");
-        prot.setPassed(true);
         return content;
     }
 
     /**
      * Test the CREATE Service.
-     * @param name the name of the entity to request.
      * @param parameter the parameters used in the request.
      * @param create the object to create, embedded in POST body.
      * @return The resulting json object.
      *
      */
-    public JsonObject create(String name, String parameter, JsonObject create) {
-        Protocol prot = new Protocol();
-        prot.setName(name + " service");
-        prot.setType("create");
-        prot.setPassed(false);
-        protocol.add(prot);
+    public JsonObject create(String parameter, JsonStructure create) {
+        return create(parameter, create, Locale.GERMAN, Response.Status.OK);
+    }
 
+    /**
+     * Test the CREATE Service.
+     * @param parameter the parameters used in the request.
+     * @param create the object to create, embedded in POST body.
+     * @param acceptLanguage Acceptable language
+     * @param expectedStatus Expected HTTP status code
+     * @return The resulting json object.
+     *
+     */
+    public JsonObject create(
+        String parameter,
+        JsonStructure create,
+        Locale acceptLanguage,
+        Response.Status expectedStatus
+    ) {
         WebTarget target = client.target(baseUrl + parameter);
         /* Send a post request containing a new object*/
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
+            .accept(MediaType.APPLICATION_JSON)
+            .acceptLanguage(acceptLanguage)
             .post(Entity.entity(create.toString(), MediaType.APPLICATION_JSON));
-        JsonObject content = BaseTest.parseResponse(response, prot);
+        JsonObject content = BaseTest.parseResponse(response, expectedStatus);
 
-        prot.setPassed(true);
         return content;
     }
 
     /**
      * Test service using a list of input objects.
-     * @param name the name of the entity to request.
      * @param parameter the parameters used in the request.
      * @param payload the objects embedded in POST body.
      * @return The resulting json object.
      *
      */
     public JsonObject bulkOperation(
-        String name, String parameter, JsonArray payload
+        String parameter, JsonArray payload
     ) {
-        final String type = "bulk";
-        System.out.print(".");
-        Protocol prot = new Protocol();
-        prot.setName(name + " service");
-        prot.setType(type);
-        prot.setPassed(false);
-        protocol.add(prot);
-
         WebTarget target = client.target(baseUrl + parameter);
         /* Send a post request containing a new object*/
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
+            .accept(MediaType.APPLICATION_JSON)
             .post(Entity.entity(
                     payload.toString(), MediaType.APPLICATION_JSON));
-        JsonObject content = BaseTest.parseResponse(response, prot);
+        JsonObject content = BaseTest.parseResponse(response);
         //Check each result
         content.getJsonArray("data").forEach(object -> {
             JsonObject responseObj = (JsonObject) object;
-            Protocol objectProt = new Protocol();
-            prot.setName(name + " service");
-            prot.setType(type);
             Assert.assertTrue(
                 "Unsuccessful response list element:\n" + responseObj,
                 responseObj.getBoolean("success"));
             Assert.assertEquals("200", responseObj.getString("message"));
-            objectProt.setPassed(true);
-            protocol.add(objectProt);
         });
-        prot.setPassed(true);
         return content;
     }
 
     /**
-     * Test an update service.
-     * @param name the name of the entity to request.
+     * Test an update service expecting success.
      * @param parameter the parameters used in the request.
      * @param updateAttribute the name of the attribute to update.
      * @param oldValue the value to replace.
@@ -353,18 +427,36 @@ public class ServiceTest {
      * @return The resulting json object.
      */
     public JsonObject update(
-        String name,
         String parameter,
         String updateAttribute,
         String oldValue,
         String newValue
     ) {
-        Protocol prot = new Protocol();
-        prot.setName(name + " service");
-        prot.setType("update");
-        prot.setPassed(false);
-        protocol.add(prot);
+        return update(
+            parameter,
+            updateAttribute,
+            oldValue,
+            newValue,
+            Response.Status.OK
+        );
+    }
 
+    /**
+     * Test an update service.
+     * @param parameter the parameters used in the request.
+     * @param updateAttribute the name of the attribute to update.
+     * @param oldValue the value to replace.
+     * @param newValue the new value to set.
+     * @param expectedStatus Expected HTTP status code
+     * @return The resulting json object.
+     */
+    public JsonObject update(
+        String parameter,
+        String updateAttribute,
+        String oldValue,
+        String newValue,
+        Response.Status expectedStatus
+    ) {
         /* Request object corresponding to id in URL */
         final String objKey = "data";
         WebTarget target = client.target(baseUrl + parameter);
@@ -373,7 +465,13 @@ public class ServiceTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
         JsonObject oldObject = BaseTest.parseResponse(
-            response, prot).getJsonObject(objKey);
+            response).getJsonObject(objKey);
+
+        BaseTest.assertContains(oldObject, updateAttribute);
+        Assert.assertEquals(
+            "Value in to be updated field '" + updateAttribute + "':",
+            oldValue,
+            oldObject.getString(updateAttribute));
 
         /* Value replacement */
         JsonObjectBuilder updateBuilder = Json.createObjectBuilder();
@@ -385,19 +483,22 @@ public class ServiceTest {
             }
         });
         String updatedEntity = updateBuilder.build().toString();
-        prot.addInfo("updated datafield", updateAttribute);
-        prot.addInfo("updated value", oldValue);
-        prot.addInfo("updated to", newValue);
 
         /* Send modified object via put request*/
         WebTarget putTarget = client.target(baseUrl + parameter);
         Response updated = putTarget.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
+            .accept(MediaType.APPLICATION_JSON)
             .put(Entity.entity(updatedEntity, MediaType.APPLICATION_JSON));
 
         /* Verify the response*/
-        JsonObject updatedObject = BaseTest.parseResponse(updated, prot);
+        JsonObject updatedObject = BaseTest.parseResponse(
+            updated, expectedStatus);
+        if (!Response.Status.OK.equals(expectedStatus)) {
+            return updatedObject;
+        }
+
         Assert.assertEquals(newValue,
             updatedObject.getJsonObject("data").getString(updateAttribute));
 
@@ -405,41 +506,86 @@ public class ServiceTest {
         if (oldObject.containsKey(modTimeKey)) {
             Assert.assertTrue(
                 "Object modification timestamp did not increase",
-                updatedObject.getJsonObject(objKey).getJsonNumber(modTimeKey)
-                    .longValueExact()
-                > oldObject.getJsonNumber(modTimeKey).longValueExact()
+                Long.parseLong(
+                    updatedObject.getJsonObject(objKey).getString(modTimeKey))
+                > Long.parseLong(oldObject.getString(modTimeKey))
             );
         }
 
-        prot.setPassed(true);
         return updatedObject;
     }
 
     /**
      * Test the DELETE Service.
-     * @param name the name of the entity to delete.
      * @param parameter the parameters used in the request.
      * @return The resulting json object.
      */
-    public JsonObject delete(String name, String parameter) {
-        Protocol prot = new Protocol();
-        prot.setName(name + " service");
-        prot.setType("delete");
-        prot.setPassed(false);
-        protocol.add(prot);
-
+    public JsonObject delete(String parameter) {
         WebTarget target =
             client.target(baseUrl + parameter);
-        prot.addInfo("parameter", parameter);
         /* Delete object with ID given in URL */
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .delete();
-        JsonObject content = BaseTest.parseResponse(response, prot);
+        JsonObject content = BaseTest.parseResponse(response);
 
-        prot.setPassed(true);
         return content;
+    }
+
+    /**
+     * Test AuditTrailService.
+     *
+     * @param parameter the parameters used in the request.
+     * @param updateFieldKey Key of field expected to be changed.
+     * @param newValue Value of field expected to be changed.
+     */
+    protected void getAuditTrail(
+        String parameter,
+        String updateFieldKey,
+        String newValue
+    ) {
+        WebTarget target =
+            client.target(baseUrl + parameter);
+        Response response = target.request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        JsonObject data = BaseTest.parseResponse(response)
+            .getJsonObject("data");
+
+        final String auditKey = "audit";
+        BaseTest.assertContains(data, auditKey);
+        JsonArray audit = data.getJsonArray(auditKey);
+        Assert.assertTrue(
+            "Missing audit entry for field '" + updateFieldKey
+            + "' changed to value '" + newValue + "'",
+            hasAuditedUpdate(audit, updateFieldKey, newValue));
+
+    }
+
+    private boolean hasAuditedUpdate(
+        JsonArray audit,
+        String updateFieldKey,
+        String newValue
+    ) {
+        final String changedFieldsKey = "changedFields",
+            actionKey = "action",
+            snakeFieldKey = NamingStrategy.camelToSnake(updateFieldKey);
+        for (JsonValue v : audit) {
+            JsonObject o = (JsonObject) v;
+            BaseTest.assertContains(o, actionKey);
+            BaseTest.assertContains(o, changedFieldsKey);
+            JsonObject changedFields = o.getJsonObject(changedFieldsKey);
+            if ("U".equals(o.getString(actionKey))
+                && changedFields.containsKey(snakeFieldKey)
+                && newValue.equals(
+                    changedFields.getString(snakeFieldKey))
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -447,15 +593,13 @@ public class ServiceTest {
      * @param to Date as unix timestamp
      * @return Difference in days as long
      */
-    protected long getDaysFromNow(long to) {
+    protected long getDaysFromNow(String to) {
         LocalDateTime fromDate = LocalDateTime.ofInstant(
             Instant.ofEpochMilli(System.currentTimeMillis()),
             ZoneOffset.UTC)
             .truncatedTo(ChronoUnit.DAYS);
-        LocalDateTime toDate = LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(to),
-            ZoneOffset.UTC)
-            .truncatedTo(ChronoUnit.DAYS);
+        LocalDateTime toDate = LocalDateTime.parse(
+            to, DateTimeFormatter.ofPattern(JSONBConfig.DATE_FORMAT));
         return ChronoUnit.DAYS.between(fromDate, toDate);
     }
 }

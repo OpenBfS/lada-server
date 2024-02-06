@@ -7,13 +7,13 @@
  */
 package de.intevation.lada.validation.rules.messung;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 /**
@@ -30,25 +30,27 @@ public class HasMessdauer implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messung messung = (Messung) object;
-        Probe probe =
-            repository.getByIdPlain(Probe.class, messung.getProbeId());
+        Measm messung = (Measm) object;
+        Sample probe =
+            repository.getByIdPlain(Sample.class, messung.getSampleId());
 
-        if (messung.getMessdauer() == null) {
+        if (messung.getMeasPd() == null) {
             //Exception for continous samples or Datenbasis = §161
-            if (probe.getProbenartId() != null
-                && probe.getProbenartId() == 9
-                || probe.getDatenbasisId() != null
-                && probe.getDatenbasisId() == 1) {
+            if (probe != null
+                && (probe.getSampleMethId() != null
+                    && probe.getSampleMethId() == 9
+                    || probe.getRegulationId() != null
+                    && probe.getRegulationId() == 1)
+            ) {
                 Violation violation = new Violation();
                 violation.addNotification(
-                    "messdauer", StatusCodes.VALUE_MISSING);
+                    "measPd", StatusCodes.VALUE_MISSING);
                 return violation;
 
             } else {
                 Violation violation = new Violation();
                 violation.addWarning(
-                    "messdauer#" + messung.getNebenprobenNr(),
+                    "measPd",
                     StatusCodes.VALUE_MISSING);
                 return violation;
             }

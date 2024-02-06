@@ -8,16 +8,16 @@
 package de.intevation.lada.rest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.MultivaluedHashMap;
-
+import jakarta.inject.Inject;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Response.Status;
 import de.intevation.lada.model.QueryColumns;
-import de.intevation.lada.model.stammdaten.GridColumnValue;
+import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -31,7 +31,7 @@ import de.intevation.lada.util.rest.Response;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/sql")
+@Path("sql")
 public class SqlService extends LadaService {
 
     /**
@@ -64,15 +64,15 @@ public class SqlService extends LadaService {
      * </code>
      * </pre>
      * @return JSON object with query string as data element
+     * @throws BadRequestException
      */
     @POST
-    @Path("/")
     public Response execute(
         QueryColumns columns
     ) {
         // There is nothing to authorize and it is ensured
         // that a user is authenticated.
-        List<GridColumnValue> gridColumnValues = columns.getColumns();
+        List<GridColConf> gridColumnValues = columns.getColumns();
 
         if (gridColumnValues == null
             || gridColumnValues.isEmpty()) {
@@ -81,7 +81,8 @@ public class SqlService extends LadaService {
         }
 
         try {
-            QueryTools queryTools = new QueryTools(repository, gridColumnValues);
+            QueryTools queryTools =
+                new QueryTools(repository, gridColumnValues);
             String sql = queryTools.getSql();
             if (sql == null) {
                 return new Response(true, StatusCodes.OK, null);
@@ -90,18 +91,16 @@ public class SqlService extends LadaService {
                 prepareStatement(sql, queryTools.getFilterValues());
             return new Response(true, StatusCodes.OK, statement);
         } catch (IllegalArgumentException iae) {
-            Response r = new Response(false, StatusCodes.SQL_INVALID_FILTER, null);
-            MultivaluedMap<String, Integer> error =
-                new MultivaluedHashMap<String, Integer>();
-            error.add(iae.getMessage(), StatusCodes.SQL_INVALID_FILTER);
-            r.setErrors(error);
-            return r;
+            throw new BadRequestException(
+                jakarta.ws.rs.core.Response
+                .status(Status.BAD_REQUEST)
+                .entity(iae.getMessage()).build());
         }
     }
 
     private String prepareStatement(
         String sql,
-        MultivaluedMap<String, Object> filters
+        Map<String, List<Object>> filters
     ) {
         String parameters = "";
         Set<String> filterKeys = filters.keySet();

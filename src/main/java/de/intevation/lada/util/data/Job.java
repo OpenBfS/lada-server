@@ -8,21 +8,24 @@
 
 package de.intevation.lada.util.data;
 
-import static javax.transaction.Status.STATUS_NO_TRANSACTION;
+import static jakarta.transaction.Status.STATUS_NO_TRANSACTION;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import javax.inject.Inject;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
-
-import com.fasterxml.jackson.annotation.JsonValue;
+import jakarta.inject.Inject;
+import jakarta.json.bind.annotation.JsonbTypeSerializer;
+import jakarta.json.bind.serializer.JsonbSerializer;
+import jakarta.json.bind.serializer.SerializationContext;
+import jakarta.json.stream.JsonGenerator;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.HeuristicRollbackException;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.UserTransaction;
+import jakarta.ws.rs.core.Response;
 
 import org.jboss.logging.Logger;
 
@@ -64,11 +67,6 @@ public abstract class Job implements Runnable {
      */
     public enum Status {
         WAITING, FINISHED, ERROR;
-
-        @JsonValue
-        public String getName() {
-            return this.name().toLowerCase();
-        }
     }
 
     /**
@@ -99,13 +97,15 @@ public abstract class Job implements Runnable {
                     this.currentStatus.setStatus(Status.FINISHED);
                 } catch (CancellationException | InterruptedException e) {
                     this.currentStatus.setStatus(Status.ERROR);
-                    this.currentStatus.setMessage(e.getMessage());
+                    this.currentStatus.setMessage(Response.Status
+                        .INTERNAL_SERVER_ERROR.getReasonPhrase());
                 } catch (ExecutionException ee) {
                     Throwable cause = ee.getCause();
                     logger.error(cause.getMessage());
                     cause.printStackTrace();
                     this.currentStatus.setStatus(Status.ERROR);
-                    this.currentStatus.setMessage(cause.getMessage());
+                    this.currentStatus.setMessage(Response.Status
+                        .INTERNAL_SERVER_ERROR.getReasonPhrase());
                 }
             }
         }
@@ -143,7 +143,7 @@ public abstract class Job implements Runnable {
                 | HeuristicMixedException
                 | HeuristicRollbackException e
             ) {
-                throw new RuntimeException(e.getMessage());
+                throw new RuntimeException(e);
             }
         }
     }
@@ -157,7 +157,7 @@ public abstract class Job implements Runnable {
     }
 
     /**
-     * Exception thrown if an unfished ExportJob is about to be removed
+     * Exception thrown if an unfished Job is about to be removed
      * while still runnning.
      */
     public static class JobNotFinishedException extends Exception {
@@ -169,12 +169,22 @@ public abstract class Job implements Runnable {
      * Stores job status and message
      */
     public static class JobStatus {
+        @JsonbTypeSerializer(StatusSerializer.class)
         private Status status;
         private String message;
         private boolean done;
         private boolean notifications;
-        private Boolean warnings;
-        private Boolean errors;
+        private boolean warnings;
+        private boolean errors;
+
+        private static class StatusSerializer
+            implements JsonbSerializer<Status> {
+            public void serialize(
+                Status status, JsonGenerator generator, SerializationContext ctx
+            ) {
+                generator.write(status.name().toLowerCase());
+            }
+        }
 
         public JobStatus(Status s) {
             this(s, "", false);
@@ -184,8 +194,6 @@ public abstract class Job implements Runnable {
             this.status = s;
             this.message = m != null ? m : "";
             this.done = d;
-            warnings = null;
-            errors = null;
         }
 
         public boolean isDone() {

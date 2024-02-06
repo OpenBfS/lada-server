@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.messung;
 
-import de.intevation.lada.model.land.Messung;
+import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -24,12 +24,12 @@ public class HasNebenprobenNr implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messung messung = (Messung) object;
-        if (messung.getNebenprobenNr() == null
-            || messung.getNebenprobenNr().equals("")) {
+        Measm messung = (Measm) object;
+        if (messung.getMinSampleId() == null
+            || messung.getMinSampleId().equals("")) {
             Violation violation = new Violation();
             violation.addNotification(
-                "nebenprobenNr", StatusCodes.VALUE_MISSING);
+                "minSampleId", StatusCodes.VALUE_MISSING);
             return violation;
         }
         return null;

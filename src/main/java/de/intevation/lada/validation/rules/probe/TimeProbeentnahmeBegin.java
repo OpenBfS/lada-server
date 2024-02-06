@@ -7,10 +7,9 @@
  */
 package de.intevation.lada.validation.rules.probe;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -23,33 +22,33 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationRule("Probe")
+@ValidationRule("Sample")
 public class TimeProbeentnahmeBegin implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Probe probe = (Probe) object;
-        Timestamp begin = probe.getProbeentnahmeBeginn();
-        Timestamp end = probe.getProbeentnahmeEnde();
+        Sample probe = (Sample) object;
+        Date begin = probe.getSampleStartDate();
+        Date end = probe.getSampleEndDate();
         if (begin == null) {
             if (end == null) {
                 return null;
             }
             Violation violation = new Violation();
             violation.addWarning(
-                "probeentnahmeBeginn", StatusCodes.DATE_BEGIN_AFTER_END);
+                "sampleStartDate", StatusCodes.DATE_BEGIN_AFTER_END);
             return violation;
         }
         if (begin.after(new Date())) {
             Violation violation = new Violation();
             violation.addWarning(
-                "probeentnahmeBeginn", StatusCodes.DATE_IN_FUTURE);
+                "sampleStartDate", StatusCodes.DATE_IN_FUTURE);
             return violation;
         }
         if (end != null && begin.after(end)) {
             Violation violation = new Violation();
             violation.addWarning(
-                "probeentnahmeBeginn", StatusCodes.DATE_BEGIN_AFTER_END);
+                "sampleStartDate", StatusCodes.DATE_BEGIN_AFTER_END);
             return violation;
         }
         return null;

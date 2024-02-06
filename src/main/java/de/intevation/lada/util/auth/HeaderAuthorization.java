@@ -11,31 +11,32 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.persistence.NoResultException;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.NoResultException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.Context;
 
-import de.intevation.lada.model.land.KommentarM;
-import de.intevation.lada.model.land.KommentarP;
-import de.intevation.lada.model.land.Messprogramm;
-import de.intevation.lada.model.land.MessprogrammMmt;
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.land.Ortszuordnung;
-import de.intevation.lada.model.land.OrtszuordnungMp;
-import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.model.land.StatusProtokoll;
-import de.intevation.lada.model.land.TagZuordnung;
-import de.intevation.lada.model.land.ZusatzWert;
-import de.intevation.lada.model.stammdaten.Auth;
-import de.intevation.lada.model.stammdaten.DatensatzErzeuger;
-import de.intevation.lada.model.stammdaten.LadaUser;
-import de.intevation.lada.model.stammdaten.MessprogrammKategorie;
-import de.intevation.lada.model.stammdaten.Ort;
-import de.intevation.lada.model.stammdaten.Probenehmer;
-import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.lada.CommMeasm;
+import de.intevation.lada.model.lada.CommSample;
+import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.GeolocatMpg;
+import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Mpg;
+import de.intevation.lada.model.lada.MpgMmtMp;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.StatusProt;
+import de.intevation.lada.model.lada.TagLink;
+import de.intevation.lada.model.master.Auth;
+import de.intevation.lada.model.master.DatasetCreator;
+import de.intevation.lada.model.master.LadaUser;
+import de.intevation.lada.model.master.MpgCateg;
+import de.intevation.lada.model.master.MunicDiv;
+import de.intevation.lada.model.master.Sampler;
+import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -71,7 +72,7 @@ public class HeaderAuthorization implements Authorization {
         String[] mst = request.getAttribute("lada.user.roles").toString()
             .replace("[", "").replace("]", "").replace(" ", "").split(",");
         QueryBuilder<Auth> authBuilder = repository.queryBuilder(Auth.class);
-        authBuilder.andIn("ldapGroup", Arrays.asList(mst));
+        authBuilder.andIn("ldapGr", Arrays.asList(mst));
         List<Auth> auth = repository.filterPlain(authBuilder.getQuery());
 
         // The user's ID
@@ -123,23 +124,24 @@ public class HeaderAuthorization implements Authorization {
             new TagZuordnungAuthorizer(repository);
 
         this.authorizers = Map.ofEntries(
-            Map.entry(Probe.class, probeAuthorizer),
-            Map.entry(Messung.class, messungAuthorizer),
-            Map.entry(Ortszuordnung.class, pIdAuthorizer),
-            Map.entry(KommentarP.class, pIdAuthorizer),
-            Map.entry(ZusatzWert.class, pIdAuthorizer),
-            Map.entry(KommentarM.class, mIdAuthorizer),
-            Map.entry(Messwert.class, mIdAuthorizer),
-            Map.entry(StatusProtokoll.class, mIdAuthorizer),
-            Map.entry(Probenehmer.class, netzAuthorizer),
-            Map.entry(DatensatzErzeuger.class, netzAuthorizer),
-            Map.entry(MessprogrammKategorie.class, netzAuthorizer),
-            Map.entry(Ort.class, netzAuthorizer),
-            Map.entry(Messprogramm.class, messprogrammAuthorizer),
-            Map.entry(MessprogrammMmt.class, messprogrammAuthorizer),
-            Map.entry(OrtszuordnungMp.class, mpIdAuthorizer),
+            Map.entry(Sample.class, probeAuthorizer),
+            Map.entry(Measm.class, messungAuthorizer),
+            Map.entry(Geolocat.class, pIdAuthorizer),
+            Map.entry(CommSample.class, pIdAuthorizer),
+            Map.entry(SampleSpecifMeasVal.class, pIdAuthorizer),
+            Map.entry(CommMeasm.class, mIdAuthorizer),
+            Map.entry(MeasVal.class, mIdAuthorizer),
+            Map.entry(StatusProt.class, mIdAuthorizer),
+            Map.entry(Sampler.class, netzAuthorizer),
+            Map.entry(DatasetCreator.class, netzAuthorizer),
+            Map.entry(MunicDiv.class, netzAuthorizer),
+            Map.entry(MpgCateg.class, netzAuthorizer),
+            Map.entry(Site.class, netzAuthorizer),
+            Map.entry(Mpg.class, messprogrammAuthorizer),
+            Map.entry(MpgMmtMp.class, messprogrammAuthorizer),
+            Map.entry(GeolocatMpg.class, mpIdAuthorizer),
             Map.entry(Tag.class, tagAuthorizer),
-            Map.entry(TagZuordnung.class, tagZuordnungAuthorizer)
+            Map.entry(TagLink.class, tagZuordnungAuthorizer)
         );
     }
 
@@ -222,7 +224,7 @@ public class HeaderAuthorization implements Authorization {
      */
     @Override
     public boolean isProbeReadOnly(Integer probeId) {
-        Authorizer a = authorizers.get(Probe.class);
+        Authorizer a = authorizers.get(Sample.class);
         return a.isProbeReadOnly(probeId);
     }
 
@@ -234,7 +236,7 @@ public class HeaderAuthorization implements Authorization {
      */
     @Override
     public boolean isMessungReadOnly(Integer messungId) {
-        Authorizer a = authorizers.get(Messung.class);
+        Authorizer a = authorizers.get(Measm.class);
         return a.isMessungReadOnly(messungId);
     }
 }

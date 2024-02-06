@@ -17,12 +17,11 @@
     <properties>
         <antlr.version>4.9.2</antlr.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <!-- GeoTools Version
              Note: GeoTools >= 20 is no longer compatible with JTS < 1.15 -->
         <geotools.version>20.0</geotools.version>
         <checkstyle.plugin.version>3.1.2</checkstyle.plugin.version>
-        <arquillian.persistence.version>1.0.0.Alpha7</arquillian.persistence.version>
     </properties>
 
     <build>
@@ -86,29 +85,38 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12.4</version>
+                <version>3.1.2</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.11.0</version>
                 <configuration>
                     <showDeprecation>true</showDeprecation>
                     <showWarnings>true</showWarnings>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                     <compilerArgument>-Xlint:unchecked</compilerArgument>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.hibernate.validator</groupId>
+                            <artifactId>hibernate-validator-annotation-processor</artifactId>
+                            <version>8.0.1.Final</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
             </plugin>
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
                 <version>${antlr.version}</version>
-                <configuration>
-                    <outputDirectory>${basedir}/src/main/java</outputDirectory>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -163,6 +171,13 @@
                         <artifactId>checkstyle</artifactId>
                         <version>10.2</version>
                     </dependency>
+                    <!-- Needed for running Checkstyle directly without Maven,
+                         which can be useful e.g. for editor integration. -->
+                    <dependency>
+                        <groupId>commons-collections</groupId>
+                        <artifactId>commons-collections</artifactId>
+                        <version>3.2.2</version>
+                    </dependency>
                 </dependencies>
                 <executions>
                     <execution>
@@ -175,14 +190,14 @@
                 </executions>
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
+                    <sourceDirectories>
+                        ${project.build.sourceDirectory}
+                    </sourceDirectories>
                     <includeTestSourceDirectory>
                         true
                     </includeTestSourceDirectory>
                     <includeResources>false</includeResources>
                     <includeTestResources>false</includeTestResources>
-                    <excludes>
-                        **/LafBaseListener.java,**/LafListener.java,**/LafParser.java,**/LafLexer.java
-                    </excludes>
                     <logViolationsToConsole>
                         true
                     </logViolationsToConsole>
@@ -191,7 +206,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>analyze</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>analyze-only</goal>
+                        </goals>
+                        <configuration>
+                            <failOnWarning>true</failOnWarning>
+                        </configuration>
+                    </execution>
+                </executions>
                 <configuration>
                     <ignoreUnusedRuntime>true</ignoreUnusedRuntime>
                     <ignoredUnusedDeclaredDependencies>
@@ -205,13 +232,22 @@
                             org.wildfly.arquillian:wildfly-arquillian-container-remote
                         </ignoredUnusedDeclaredDependency>
                         <ignoredUnusedDeclaredDependency>
-                            org.jboss.arquillian.extension:arquillian-persistence-dbunit
-                        </ignoredUnusedDeclaredDependency>
-                        <ignoredUnusedDeclaredDependency>
                             org.jboss.resteasy:resteasy-client
                         </ignoredUnusedDeclaredDependency>
                         <ignoredUnusedDeclaredDependency>
                             org.jboss.shrinkwrap.resolver:shrinkwrap-resolver-impl-maven
+                        </ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>
+                            net.postgis:postgis-jdbc
+                        </ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>
+                            org.jboss.arquillian.extension:arquillian-transaction-jta
+                        </ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>
+                            org.eclipse.parsson:parsson
+                        </ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>
+                            org.jboss.logmanager:jboss-logmanager
                         </ignoredUnusedDeclaredDependency>
                     </ignoredUnusedDeclaredDependencies>
                 </configuration>
@@ -223,7 +259,7 @@
         <dependencies>
             <dependency>
                 <groupId>org.wildfly.bom</groupId>
-                <artifactId>wildfly-jakartaee8-with-tools</artifactId>
+                <artifactId>wildfly-ee-with-tools</artifactId>
                 <version>${env.WILDFLY_VERSION}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -254,47 +290,43 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>jakarta.json.bind</groupId>
+            <artifactId>jakarta.json.bind-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.spec.javax.ws.rs</groupId>
-            <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.spec.javax.annotation</groupId>
-            <artifactId>jboss-annotations-api_1.3_spec</artifactId>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.spec.javax.ejb</groupId>
-            <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.spec.javax.transaction</groupId>
-            <artifactId>jboss-transaction-api_1.3_spec</artifactId>
+            <groupId>jakarta.enterprise.concurrent</groupId>
+            <artifactId>jakarta.enterprise.concurrent-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.spec.javax.servlet</groupId>
-            <artifactId>jboss-servlet-api_4.0_spec</artifactId>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.spec.javax.enterprise.concurrent</groupId>
-            <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
-            <scope>provided</scope>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>2.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -308,33 +340,26 @@
         </dependency>
         <!-- Hibernate -->
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-spatial</artifactId>
-            <version>${env.HIBERNATE_VERSION}</version>
-            <scope>provided</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
             <version>${antlr.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
+        <!--Geotools-->
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-referencing</artifactId>
             <version>${geotools.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-epsg-hsql</artifactId>
-            <version>${geotools.version}</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
@@ -347,15 +372,27 @@
             <version>${geotools.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-epsg-hsql</artifactId>
+            <version>${geotools.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>org.locationtech.jts</groupId>
             <artifactId>jts-core</artifactId>
             <version>1.16.0</version>
         </dependency>
 
+        <!--Apache commons-->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
             <version>1.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.12.0</version>
         </dependency>
 
         <!-- Logging -->
@@ -363,6 +400,13 @@
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Classgraph -->
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.8.151</version>
         </dependency>
 
         <!-- Arquillian/Testing -->
@@ -418,22 +462,17 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-persistence-api</artifactId>
-            <version>${arquillian.persistence.version}</version>
+            <groupId>org.dbunit</groupId>
+            <artifactId>dbunit</artifactId>
+            <version>2.7.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-persistence-dbunit</artifactId>
-            <version>${arquillian.persistence.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <!-- Keep version in sync with package in base image -->
+            <version>42.3.8</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
@@ -451,13 +490,37 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
+            <groupId>net.postgis</groupId>
+            <artifactId>postgis-jdbc</artifactId>
+            <version>2021.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.parsson</groupId>
+            <artifactId>parsson</artifactId>
+            <version>1.1.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logmanager</groupId>
+            <artifactId>jboss-logmanager</artifactId>
+            <version>3.0.2.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <!--Additional arquillian extensions-->
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-transaction-api</artifactId>
+            <version>2.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-transaction-jta</artifactId>
+            <version>2.0.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
     <profiles>
         <profile>
             <id>remote-test</id>
@@ -476,18 +539,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-
-        <profile>
-            <id>managed-test</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.wildfly</groupId>
-                    <artifactId>wildfly-arquillian-container-managed</artifactId>
-                    <version>8.2.1.Final</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
         </profile>
 
         <profile>
@@ -535,14 +586,14 @@
                 <configuration>
                     <enableRSS>false</enableRSS>
                     <configLocation>checkstyle.xml</configLocation>
+                    <sourceDirectories>
+                        ${project.build.sourceDirectory}
+                    </sourceDirectories>
                     <includeTestSourceDirectory>
                         true
                     </includeTestSourceDirectory>
                     <includeResources>false</includeResources>
                     <includeTestResources>false</includeTestResources>
-                    <excludes>
-                        **/LafBaseListener.java,**/LafListener.java,**/LafParser.java,**/LafLexer.java
-                    </excludes>
                 </configuration>
                 <reportSets>
                     <reportSet>
@@ -569,8 +620,13 @@
     <repositories>
         <repository>
             <id>OSGEO Release Repo</id>
-            <url>https://repo.osgeo.org/repository/release</url>
+            <url>https://repo.osgeo.org/repository/release/</url>
+        </repository>
+        <!-- See https://github.com/wildfly/wildfly/pull/16453 -->
+        <repository>
+            <id>JBoss forks</id>
+            <url>https://repository.jboss.org/nexus/content/repositories/public/</url>
         </repository>
     </repositories>
-    <version>4.6.0-SNAPSHOT</version>
+    <version>4.8.0-SNAPSHOT</version>
 </project>

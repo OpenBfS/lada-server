@@ -7,8 +7,10 @@
  */
 package de.intevation.lada.validation;
 
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Container for violations detected during validation.
@@ -17,58 +19,87 @@ import javax.ws.rs.core.MultivaluedMap;
  */
 public class Violation {
 
-    private MultivaluedMap<String, Integer> warnings;
+    private Map<String, Set<String>> warnings;
 
-    private MultivaluedMap<String, Integer> errors;
+    private Map<String, Set<String>> errors;
 
-    private MultivaluedMap<String, Integer> notifications;
+    private Map<String, Set<Integer>>notifications;
 
     public Violation() {
-        this.warnings = new MultivaluedHashMap<String, Integer>();
-        this.errors = new MultivaluedHashMap<String, Integer>();
-        this.notifications = new MultivaluedHashMap<String, Integer>();
+        this.warnings = new HashMap<>();
+        this.errors = new HashMap<>();
+        this.notifications = new HashMap<>();
     }
 
-    public MultivaluedMap<String, Integer> getWarnings() {
+    public Map<String, Set<String>> getWarnings() {
         return this.warnings;
     }
 
-    public MultivaluedMap<String, Integer> getErrors() {
+    public Map<String, Set<String>> getErrors() {
         return this.errors;
     }
 
-    public MultivaluedMap<String, Integer> getNotifications() {
+    public Map<String, Set<Integer>> getNotifications() {
       return this.notifications;
     }
 
+    public void addWarning(String key, String value) {
+        if (!this.warnings.containsKey(key)) {
+            this.warnings.put(key, new HashSet<String>());
+        }
+        this.warnings.get(key).add(value);
+    }
+
     public void addWarning(String key, Integer value) {
-        this.warnings.add(key, value);
+        addWarning(key, value.toString());
+    }
+
+    public void addError(String key, String value) {
+        if (!this.errors.containsKey(key)) {
+            this.errors.put(key, new HashSet<String>());
+        }
+        this.errors.get(key).add(value);
     }
 
     public void addError(String key, Integer value) {
-        this.errors.add(key, value);
+        addError(key, value.toString());
     }
 
     public void addNotification(String key, Integer value) {
-      this.notifications.add(key, value);
+        if (!this.notifications.containsKey(key)) {
+            this.notifications.put(key, new HashSet<Integer>());
+        }
+        this.notifications.get(key).add(value);
     }
 
-    public void addWarnings(MultivaluedMap<String, Integer> w) {
+    public void addWarnings(Map<String, Set<String>> w) {
         for (String key: w.keySet()) {
-            this.warnings.addAll(key, w.get(key));
+            if (this.warnings.containsKey(key)) {
+                this.warnings.get(key).addAll(w.get(key));
+            } else {
+                this.warnings.put(key, w.get(key));
+            }
         }
     }
 
-    public void addErrors(MultivaluedMap<String, Integer> e) {
+    public void addErrors(Map<String, Set<String>> e) {
         for (String key: e.keySet()) {
-            this.errors.addAll(key, e.get(key));
+            if (this.errors.containsKey(key)) {
+                this.errors.get(key).addAll(e.get(key));
+            } else {
+                this.errors.put(key, e.get(key));
+            }
         }
     }
 
-    public void addNotifications(MultivaluedMap<String, Integer> n) {
-     for (String key: n.keySet()) {
-       this.notifications.addAll(key, n.get(key));
-     }
+    public void addNotifications(Map<String, Set<Integer>> n) {
+        for (String key: n.keySet()) {
+            if (this.notifications.containsKey(key)) {
+                this.notifications.get(key).addAll(n.get(key));
+            } else {
+                this.notifications.put(key, n.get(key));
+            }
+        }
     }
 
     public boolean hasWarnings() {

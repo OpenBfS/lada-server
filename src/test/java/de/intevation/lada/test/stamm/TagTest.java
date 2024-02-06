@@ -8,16 +8,14 @@
 package de.intevation.lada.test.stamm;
 
 import java.net.URL;
-import java.util.List;
 
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.client.Client;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
-import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -27,18 +25,18 @@ public class TagTest extends ServiceTest {
 
     private JsonObject create;
 
-    private final String name = "tag";
     private final String tagUrl = "rest/tag/";
 
     private final String dataKey = "data";
 
+    private final String tagNameAttribute = "name";
+
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         create = readJsonResource("/datasets/tag_create.json");
         Assert.assertNotNull(create);
     }
@@ -50,7 +48,7 @@ public class TagTest extends ServiceTest {
         testMstTag();
         testNetzbetreiberTag();
         promoteMstTag();
-        delete(name, tagUrl + "103"); // Delete tag with assignment
+        delete(tagUrl + "103"); // Delete tag with assignment
     }
 
     /**
@@ -76,11 +74,9 @@ public class TagTest extends ServiceTest {
     public void promoteMstTag() {
         JsonObject tagToTest = createTagJson(
             Tag.TAG_TYPE_MST, "mstTagPromoted");
-        JsonObject createResponse = create(name, tagUrl, tagToTest);
+        JsonObject createResponse = create(tagUrl, tagToTest);
         long createdId = createResponse.getJsonObject(dataKey).getInt("id");
-        update(name, tagUrl + createdId, "typId",
-            "mst",
-            "global");
+        update(tagUrl + createdId, "tagType", "mst", "global");
     }
 
     /**
@@ -88,36 +84,32 @@ public class TagTest extends ServiceTest {
      * @param tagToTest Tag to test
      */
     private void testTagCRUD(JsonObject tagToTest) {
-        JsonObject createResponse = create(name, tagUrl, tagToTest);
+        JsonObject createResponse = create(tagUrl, tagToTest);
         long createdId = createResponse.getJsonObject(dataKey).getInt("id");
         String createdTyp = createResponse
-            .getJsonObject(dataKey).getString("typId");
+            .getJsonObject(dataKey).getString("tagType");
         if (createdTyp.equals("mst") || createdTyp.equals("auto")) {
-            long createdGueltigBis
-                = createResponse.getJsonObject(dataKey)
-                .getJsonNumber("gueltigBis").longValue();
+            String createdGueltigBis = createResponse.getJsonObject(dataKey)
+                .getString("valUntil");
             long diff = getDaysFromNow(createdGueltigBis);
             Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diff);
         }
-        String tagUpdated = tagToTest.getString(name) + "-mod";
-        JsonObject updateResponse = update(name, tagUrl + createdId, name,
-            tagToTest.getString(name),
+        String tagUpdated = tagToTest.getString(tagNameAttribute) + "-mod";
+        JsonObject updateResponse = update(tagUrl + createdId,
+            tagNameAttribute,
+            tagToTest.getString(tagNameAttribute),
             tagUpdated);
-        JsonObject getResponse = get(name, tagUrl);
+        JsonObject getResponse = get(tagUrl);
         Assert.assertFalse(getResponse.getJsonArray(dataKey).isEmpty());
-        getById(name, tagUrl + createdId,
+        getById(tagUrl + createdId,
             updateResponse.getJsonObject(dataKey));
-        delete(name, tagUrl + createdId);
+        delete(tagUrl + createdId);
     }
 
-    /**
-     * Create json for a mst tag.
-     * @return Tag json object
-     */
     private JsonObject createTagJson(String type, String tag) {
         JsonObjectBuilder builder = convertObject(create);
-        builder.add("typId", type);
-        builder.add(name, tag);
+        builder.add("tagType", type);
+        builder.add("tag", tag);
         return builder.build();
     }
 }

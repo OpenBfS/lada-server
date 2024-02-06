@@ -11,136 +11,133 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 --
--- Name: land; Type: SCHEMA; Schema: -; Owner: -
+-- Name: lada; Type: SCHEMA; Schema: -; Owner: -
 --
 
-CREATE SCHEMA land;
+CREATE SCHEMA lada;
 
-SET search_path = land, pg_catalog;
+SET search_path = lada, pg_catalog;
 
-CREATE FUNCTION set_messung_ext_id() RETURNS trigger
+CREATE FUNCTION set_measm_ext_id() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN
         IF NEW.ext_id IS NULL THEN
             NEW.ext_id = (
                 SELECT coalesce(max(ext_id),0)
-                   FROM land.messung
-                   WHERE probe_id = NEW.probe_id) + 1;
+                   FROM lada.measm
+                   WHERE sample_id = NEW.sample_id) + 1;
         END IF;
         RETURN NEW;
     END;
 $$;
 
-CREATE FUNCTION set_messung_status() RETURNS trigger
+CREATE FUNCTION set_measm_status() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     DECLARE status_id integer;
     BEGIN
-        INSERT INTO land.status_protokoll
-            (mst_id, datum, text, messungs_id, status_kombi)
-        VALUES ((SELECT mst_id
-                     FROM land.probe
-                     WHERE id = NEW.probe_id),
-                now() AT TIME ZONE 'utc', '', NEW.id, 1)
+        INSERT INTO lada.status_prot
+            (meas_facil_id, date, text, measm_id, status_mp_id)
+        VALUES ((SELECT meas_facil_id
+                     FROM lada.sample
+                     WHERE id = NEW.sample_id),
+                now() AT TIME ZONE 'utc', NULL, NEW.id, 1)
         RETURNING id into status_id;
-        UPDATE land.messung SET status = status_id where id = NEW.id;
+        UPDATE lada.measm SET status = status_id where id = NEW.id;
         RETURN NEW;
     END;
 $$;
 
-CREATE FUNCTION update_letzte_aenderung() RETURNS trigger
+CREATE FUNCTION update_last_mod() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN
-        NEW.letzte_aenderung = now() AT TIME ZONE 'utc';
+        NEW.last_mod = now() AT TIME ZONE 'utc';
         RETURN NEW;
     END;
 $$;
 
 
 --
--- Name: update_time_status(); Type: FUNCTION; Schema: land; Owner: -
+-- Name: update_time_status(); Type: FUNCTION; Schema: lada; Owner: -
 --
 
-CREATE FUNCTION update_tree_modified() RETURNS trigger
+CREATE FUNCTION update_tree_mod() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN
-        NEW.tree_modified = now() AT TIME ZONE 'utc';
+        NEW.tree_mod = now() AT TIME ZONE 'utc';
         RETURN NEW;
     END;
 $$;
 
 
 --
--- Name: update_time_messung(); Type: FUNCTION; Schema: land; Owner: -
+-- Name: update_time_messung(); Type: FUNCTION; Schema: lada; Owner: -
 --
 
-CREATE FUNCTION update_tree_modified_messung() RETURNS trigger
+CREATE FUNCTION update_tree_mod_measm() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN
-        RAISE NOTICE 'messung is %',NEW.id;
-        NEW.tree_modified = now() AT TIME ZONE 'utc';
-        UPDATE land.messwert SET tree_modified = now() AT TIME ZONE 'utc' WHERE messungs_id = NEW.id;
-		UPDATE land.status_protokoll SET tree_modified = now() AT TIME ZONE 'utc' WHERE messungs_id = NEW.id;
+        NEW.tree_mod = now() AT TIME ZONE 'utc';
+        UPDATE lada.meas_val SET tree_mod = now() AT TIME ZONE 'utc' WHERE measm_id = NEW.id;
+        UPDATE lada.status_prot SET tree_mod = now() AT TIME ZONE 'utc' WHERE measm_id = NEW.id;
         RETURN NEW;
     END;
 $$;
 
 
 --
--- Name: update_time_probe(); Type: FUNCTION; Schema: land; Owner: -
+-- Name: update_time_probe(); Type: FUNCTION; Schema: lada; Owner: -
 --
 
-CREATE FUNCTION update_tree_modified_probe() RETURNS trigger
+CREATE FUNCTION update_tree_mod_sample() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN
-        RAISE NOTICE 'probe is %',NEW.id;
-        NEW.tree_modified = now() AT TIME ZONE 'utc';
-        RAISE NOTICE 'updating other rows';
-        UPDATE land.messung SET tree_modified = now() AT TIME ZONE 'utc' WHERE probe_id = NEW.id;
-        UPDATE land.ortszuordnung SET tree_modified = now() AT TIME ZONE 'utc' WHERE probe_id = NEW.id;
-        UPDATE land.zusatz_wert SET tree_modified = now() AT TIME ZONE 'utc' WHERE probe_id = NEW.id;
+        NEW.tree_mod = now() AT TIME ZONE 'utc';
+        UPDATE lada.measm SET tree_mod = now() AT TIME ZONE 'utc' WHERE sample_id = NEW.id;
+        UPDATE lada.geolocat SET tree_mod = now() AT TIME ZONE 'utc' WHERE sample_id = NEW.id;
+        UPDATE lada.sample_specif_meas_val SET tree_mod = now() AT TIME ZONE 'utc' WHERE sample_id = NEW.id;
         RETURN NEW;
     END;
 $$;
 
 --
--- Name: update_status_messung(); Type: FUNCTION; Schema: land; Owner: -
+-- Name: update_status_messung(); Type: FUNCTION; Schema: lada; Owner: -
 --
 
-CREATE OR REPLACE FUNCTION update_status_messung() RETURNS trigger
+CREATE OR REPLACE FUNCTION update_status_measm() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
     BEGIN
         CASE
-            WHEN new.status_kombi in (2, 3, 4, 5, 6, 7, 8, 10, 11, 12)
+            WHEN new.status_mp_id in (2, 3, 4, 5, 6, 7, 8, 10, 11, 12)
             THEN
-                UPDATE land.messung SET fertig = true, status = NEW.id WHERE id = NEW.messungs_id;
-            WHEN new.status_kombi in (1, 9, 13)
+                UPDATE lada.measm SET is_completed = true, status = NEW.id
+                    WHERE id = NEW.measm_id;
+            WHEN new.status_mp_id in (1, 9, 13)
             THEN
-                UPDATE land.messung SET fertig = false, status = NEW.id WHERE id = NEW.messungs_id;
+                UPDATE lada.measm SET is_completed = false, status = NEW.id
+                    WHERE id = NEW.measm_id;
             ELSE
-                UPDATE land.messung SET status = NEW.id WHERE id = NEW.messungs_id;
+                UPDATE lada.measm SET status = NEW.id WHERE id = NEW.measm_id;
         END CASE;
         RETURN NEW;
     END
 $$;
 
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
-
 --
--- Name: messung_messung_ext_id; Type: SEQUENCE; Schema: land; Owner: -
+-- Name: measm_measm_ext_id_seq; Type: SEQUENCE; Schema: lada; Owner: -
 --
 
-CREATE SEQUENCE messung_messung_ext_id
+CREATE SEQUENCE measm_measm_ext_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -149,10 +146,10 @@ CREATE SEQUENCE messung_messung_ext_id
 
 
 --
--- Name: probe_probe_id_seq; Type: SEQUENCE; Schema: land; Owner: -
+-- Name: sample_sample_id_seq; Type: SEQUENCE; Schema: lada; Owner: -
 --
 
-CREATE SEQUENCE probe_probe_id_seq
+CREATE SEQUENCE sample_sample_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -161,434 +158,459 @@ CREATE SEQUENCE probe_probe_id_seq
 
 
 --
--- Name: messprogramm; Type: TABLE; Schema: land; Owner: -; Tablespace:
+-- Name: mpg; Type: TABLE; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE TABLE messprogramm (
+CREATE TABLE mpg (
     id serial PRIMARY KEY,
-    kommentar character varying(1000),
-    test boolean DEFAULT false NOT NULL,
-    aktiv boolean DEFAULT true NOT NULL,
-    mst_id character varying(5) NOT NULL REFERENCES stamm.mess_stelle,
-    labor_mst_id character varying(5) NOT NULL REFERENCES stamm.mess_stelle,
-    datenbasis_id integer NOT NULL REFERENCES stamm.datenbasis,
-    ba_id integer DEFAULT 1 REFERENCES stamm.betriebsart,
-    gem_id character varying(8) REFERENCES stamm.verwaltungseinheit,
-    media_desk character varying(100) CHECK(media_desk LIKE '% %'),
-    umw_id character varying(3) REFERENCES stamm.umwelt,
-    probenart_id integer NOT NULL REFERENCES stamm.probenart,
-    probenintervall character varying(2) NOT NULL,
-    teilintervall_von integer NOT NULL,
-    teilintervall_bis integer NOT NULL,
-    intervall_offset integer NOT NULL DEFAULT 0,
-    gueltig_von integer NOT NULL CHECK(gueltig_von BETWEEN 1 AND 365),
-    gueltig_bis integer NOT NULL CHECK(gueltig_bis BETWEEN 1 AND 365),
-    probe_nehmer_id integer REFERENCES stamm.probenehmer,
-    mpl_id integer REFERENCES stamm.messprogramm_kategorie,
-    probe_kommentar character varying(80),
-    rei_progpunkt_grp_id integer REFERENCES stamm.rei_progpunkt_gruppe,
-    kta_gruppe_id integer REFERENCES stamm.kta_gruppe,
-    meh_id smallint REFERENCES stamm.mess_einheit,
-    probenahmemenge character varying(90),
-    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc') NOT NULL,
-    CHECK (probenintervall = 'J'
-               AND teilintervall_von BETWEEN gueltig_von AND gueltig_bis
-               AND teilintervall_bis BETWEEN gueltig_von AND gueltig_bis
-               AND intervall_offset BETWEEN 0 AND 364
-           OR probenintervall = 'H'
-               AND teilintervall_von BETWEEN 1 AND 184
-               AND teilintervall_bis BETWEEN 1 AND 184
-               AND intervall_offset BETWEEN 0 AND 183
-           OR probenintervall = 'Q'
-               AND teilintervall_von BETWEEN 1 AND 92
-               AND teilintervall_bis BETWEEN 1 AND 92
-               AND intervall_offset BETWEEN 0 AND 91
-           OR probenintervall = 'M'
-               AND teilintervall_von BETWEEN 1 AND 31
-               AND teilintervall_bis BETWEEN 1 AND 31
-               AND intervall_offset BETWEEN 0 AND 30
-           OR probenintervall = 'W4'
-               AND teilintervall_von BETWEEN 1 AND 28
-               AND teilintervall_bis BETWEEN 1 AND 28
-               AND intervall_offset BETWEEN 0 AND 27
-           OR probenintervall = 'W2'
-               AND teilintervall_von BETWEEN 1 AND 14
-               AND teilintervall_bis BETWEEN 1 AND 14
-               AND intervall_offset BETWEEN 0 AND 13
-           OR probenintervall = 'W'
-               AND teilintervall_von BETWEEN 1 AND 7
-               AND teilintervall_bis BETWEEN 1 AND 7
-               AND intervall_offset BETWEEN 0 AND 6
-           OR probenintervall = 'T'
-               AND teilintervall_von = 1
-               AND teilintervall_bis = 1
-               AND intervall_offset = 0
+    comm_mpg character varying(1000) CHECK (trim(both ' ' from comm_mpg) <> ''),
+    is_test boolean DEFAULT false NOT NULL,
+    is_active boolean DEFAULT true NOT NULL,
+    meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
+    appr_lab_id character varying(5) NOT NULL REFERENCES master.meas_facil,
+    regulation_id integer NOT NULL REFERENCES master.regulation,
+    opr_mode_id integer DEFAULT 1 REFERENCES master.opr_mode,
+    admin_unit_id character varying(8) REFERENCES master.admin_unit,
+    env_descrip_display character varying(100) CHECK
+        (env_descrip_display ~ '^D:( [0-9][0-9]){12}$'),
+    env_medium_id character varying(3) REFERENCES master.env_medium,
+    sample_meth_id integer NOT NULL REFERENCES master.sample_meth,
+    sample_pd character varying(2) NOT NULL CHECK (trim(both ' ' from sample_pd) <> ''),
+    sample_pd_start_date integer NOT NULL,
+    sample_pd_end_date integer NOT NULL,
+    sample_pd_offset integer NOT NULL DEFAULT 0,
+    valid_start_date integer NOT NULL CHECK(valid_start_date BETWEEN 1 AND 365),
+    valid_end_date integer NOT NULL CHECK(valid_end_date BETWEEN 1 AND 365),
+    sampler_id integer REFERENCES master.sampler,
+    mpg_categ_id integer REFERENCES master.mpg_categ,
+    comm_sample character varying(80) CHECK (trim(both ' ' from comm_sample) <> ''),
+    rei_ag_gr_id integer REFERENCES master.rei_ag_gr,
+    nucl_facil_gr_id integer REFERENCES master.nucl_facil_gr,
+    meas_unit_id smallint REFERENCES master.meas_unit,
+    sample_quant character varying(90) CHECK (trim(both ' ' from sample_quant) <> ''),
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc') NOT NULL,
+    CHECK (sample_pd = 'J'
+               AND sample_pd_start_date BETWEEN valid_start_date AND valid_end_date
+               AND sample_pd_end_date BETWEEN valid_start_date AND valid_end_date
+               AND sample_pd_offset BETWEEN 0 AND 364
+           OR sample_pd = 'H'
+               AND sample_pd_start_date BETWEEN 1 AND 184
+               AND sample_pd_end_date BETWEEN 1 AND 184
+               AND sample_pd_offset BETWEEN 0 AND 183
+           OR sample_pd = 'Q'
+               AND sample_pd_start_date BETWEEN 1 AND 92
+               AND sample_pd_end_date BETWEEN 1 AND 92
+               AND sample_pd_offset BETWEEN 0 AND 91
+           OR sample_pd = 'M'
+               AND sample_pd_start_date BETWEEN 1 AND 31
+               AND sample_pd_end_date BETWEEN 1 AND 31
+               AND sample_pd_offset BETWEEN 0 AND 30
+           OR sample_pd = 'W4'
+               AND sample_pd_start_date BETWEEN 1 AND 28
+               AND sample_pd_end_date BETWEEN 1 AND 28
+               AND sample_pd_offset BETWEEN 0 AND 27
+           OR sample_pd = 'W2'
+               AND sample_pd_start_date BETWEEN 1 AND 14
+               AND sample_pd_end_date BETWEEN 1 AND 14
+               AND sample_pd_offset BETWEEN 0 AND 13
+           OR sample_pd = 'W'
+               AND sample_pd_start_date BETWEEN 1 AND 7
+               AND sample_pd_end_date BETWEEN 1 AND 7
+               AND sample_pd_offset BETWEEN 0 AND 6
+           OR sample_pd = 'T'
+               AND sample_pd_start_date = 1
+               AND sample_pd_end_date = 1
+               AND sample_pd_offset = 0
            ),
-    CHECK (teilintervall_von <= teilintervall_bis)
+    CHECK (sample_pd_start_date <= sample_pd_end_date)
 );
-CREATE TRIGGER letzte_aenderung_messprogramm BEFORE UPDATE ON messprogramm FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
+CREATE TRIGGER last_mod_mpg BEFORE UPDATE ON mpg FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
-CREATE TABLE messprogramm_proben_zusatz (
+CREATE TABLE mpg_sample_specif (
     id SERIAL PRIMARY KEY,
-    proben_zusatz_id character varying(3) REFERENCES stamm.proben_zusatz NOT NULL,
-    messprogramm_id INTEGER REFERENCES messprogramm ON DELETE CASCADE NOT NULL,
-    UNIQUE (proben_zusatz_id, messprogramm_id)
+    sample_specif_id character varying(3) REFERENCES master.sample_specif NOT NULL,
+    mpg_id INTEGER REFERENCES mpg ON DELETE CASCADE NOT NULL,
+    UNIQUE (sample_specif_id, mpg_id)
 );
 
 --
--- Name: messprogramm_mmt; Type: TABLE; Schema: land; Owner: -; Tablespace:
+-- Name: mpg_mmt_mp; Type: TABLE; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE TABLE messprogramm_mmt (
+CREATE TABLE mpg_mmt_mp (
     id serial PRIMARY KEY,
-    messprogramm_id integer NOT NULL REFERENCES messprogramm ON DELETE CASCADE,
-    mmt_id character varying(2) NOT NULL REFERENCES stamm.mess_methode,
-    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    mpg_id integer NOT NULL REFERENCES mpg ON DELETE CASCADE,
+    mmt_id character varying(2) NOT NULL REFERENCES master.mmt,
+    UNIQUE(mpg_id, mmt_id),
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-CREATE TRIGGER letzte_aenderung_messprogramm_mmt BEFORE UPDATE ON messprogramm_mmt FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
+CREATE TRIGGER last_mod_mpg_mmt_mp BEFORE UPDATE ON mpg_mmt_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
-CREATE TABLE messprogramm_mmt_messgroesse (
+CREATE TABLE mpg_mmt_mp_measd (
     id serial PRIMARY KEY,
-    messprogramm_mmt_id integer REFERENCES messprogramm_mmt ON DELETE CASCADE NOT NULL,
-    messgroesse_id integer REFERENCES stamm.messgroesse NOT NULL,
-    UNIQUE (messprogramm_mmt_id, messgroesse_id)
+    mpg_mmt_mp_id integer REFERENCES mpg_mmt_mp ON DELETE CASCADE,
+    measd_id integer REFERENCES master.measd,
+    UNIQUE (mpg_mmt_mp_id, measd_id)
 );
 
 --
--- Name: probe; Type: TABLE; Schema: land; Owner: -; Tablespace:
+-- Name: sample; Type: TABLE; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE TABLE probe (
+CREATE TABLE sample (
     id serial PRIMARY KEY,
-    ext_id character varying(16) UNIQUE NOT NULL
+    ext_id character varying(16) UNIQUE NOT NULL CHECK (trim(both ' ' from ext_id) <> '')
         DEFAULT 'sss'
-            || lpad(nextval('land.probe_probe_id_seq')::varchar, 12, '0')
+            || lpad(nextval('lada.sample_sample_id_seq')::varchar, 12, '0')
             || 'Y',
-    test boolean DEFAULT false NOT NULL,
-    mst_id character varying(5) NOT NULL REFERENCES stamm.mess_stelle,
-    labor_mst_id character varying(5) NOT NULL REFERENCES stamm.mess_stelle,
-    hauptproben_nr character varying(20),
-    datenbasis_id smallint REFERENCES stamm.datenbasis,
-    ba_id integer REFERENCES stamm.betriebsart,
-    probenart_id smallint REFERENCES stamm.probenart,
-    media_desk character varying(100) CHECK(media_desk LIKE '% %'),
-    media character varying(100),
-    umw_id character varying(3) REFERENCES stamm.umwelt,
-    probeentnahme_beginn timestamp without time zone,
-    probeentnahme_ende timestamp without time zone,
-    mittelungsdauer bigint,
-    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    erzeuger_id integer REFERENCES stamm.datensatz_erzeuger,
-    probe_nehmer_id integer REFERENCES stamm.probenehmer,
-    mpl_id integer REFERENCES stamm.messprogramm_kategorie,
-    mpr_id integer REFERENCES messprogramm,
-    solldatum_beginn timestamp without time zone,
-    solldatum_ende timestamp without time zone,
-    ursprungszeit timestamp without time zone,
-    tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    rei_progpunkt_grp_id integer REFERENCES stamm.rei_progpunkt_gruppe,
-    kta_gruppe_id integer REFERENCES stamm.kta_gruppe,
-    mitte_sammelzeitraum timestamp without time zone GENERATED ALWAYS AS (
+    is_test boolean DEFAULT false NOT NULL,
+    meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
+    appr_lab_id character varying(5) NOT NULL REFERENCES master.meas_facil,
+    main_sample_id character varying(20) CHECK (trim(both ' ' from main_sample_id) <> ''),
+    regulation_id smallint REFERENCES master.regulation NOT NULL,
+    opr_mode_id integer REFERENCES master.opr_mode NOT NULL,
+    sample_meth_id smallint REFERENCES master.sample_meth NOT NULL,
+    env_descrip_display character varying(100) CHECK(env_descrip_display ~ '^D:( [0-9][0-9]){12}$'),
+    env_descrip_name character varying(100) CHECK (trim(both ' ' from env_descrip_name) <> ''),
+    env_medium_id character varying(3) REFERENCES master.env_medium,
+    sample_start_date timestamp without time zone,
+    sample_end_date timestamp without time zone,
+    mid_sample_date bigint,
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    dataset_creator_id integer REFERENCES master.dataset_creator,
+    sampler_id integer REFERENCES master.sampler,
+    mpg_categ_id integer REFERENCES master.mpg_categ,
+    mpg_id integer REFERENCES mpg,
+    sched_start_date timestamp without time zone,
+    sched_end_date timestamp without time zone,
+    orig_date timestamp without time zone,
+    tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    rei_ag_gr_id integer REFERENCES master.rei_ag_gr,
+    nucl_facil_gr_id integer REFERENCES master.nucl_facil_gr,
+    mid_coll_pd timestamp without time zone GENERATED ALWAYS AS (
         CASE
-            WHEN (probeentnahme_beginn IS NULL) THEN NULL::timestamp without time zone
-            WHEN ((probeentnahme_beginn IS NOT NULL) AND (probeentnahme_ende IS NULL)) THEN probeentnahme_beginn
-            ELSE (probeentnahme_beginn + ((probeentnahme_ende - probeentnahme_beginn) / (2)::double precision))
+            WHEN (sample_start_date IS NULL) THEN NULL::timestamp without time zone
+            WHEN ((sample_start_date IS NOT NULL) AND (sample_end_date IS NULL)) THEN sample_start_date
+            ELSE (sample_start_date + ((sample_end_date - sample_start_date) / (2)::double precision))
         END) STORED,
-    UNIQUE (test, mst_id, hauptproben_nr),
-    CHECK(solldatum_beginn <= solldatum_ende)
+    UNIQUE (is_test, meas_facil_id, main_sample_id),
+    CHECK(sched_start_date <= sched_end_date)
 );
-CREATE TRIGGER letzte_aenderung_probe BEFORE UPDATE ON probe FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
-CREATE TRIGGER tree_modified_probe BEFORE UPDATE ON probe FOR EACH ROW EXECUTE PROCEDURE update_tree_modified_probe();
+CREATE TRIGGER last_mod_sample BEFORE UPDATE ON sample FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
+CREATE TRIGGER tree_mod_sample BEFORE UPDATE ON sample FOR EACH ROW EXECUTE PROCEDURE update_tree_mod_sample();
 
 
 --
--- Name: kommentar_p; Type: TABLE; Schema: land; Owner: -; Tablespace:
+-- Name: comm_sample; Type: TABLE; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE TABLE kommentar_p (
+CREATE TABLE comm_sample (
     id serial PRIMARY KEY,
-    mst_id character varying(5) NOT NULL REFERENCES stamm.mess_stelle,
-    datum timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    text character varying(1024),
-    probe_id integer NOT NULL REFERENCES probe ON DELETE CASCADE
+    meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
+    date timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    text character varying(1024) NOT NULL CHECK (trim(both ' ' from text) <> ''),
+    sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE
 );
 
 
 --
--- Name: ortszuordnung; Type: TABLE; Schema: land; Owner: -; Tablespace:
+-- Name: geolocat; Type: TABLE; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE TABLE ortszuordnung (
+CREATE TABLE geolocat (
     id serial PRIMARY KEY,
-    probe_id integer NOT NULL REFERENCES probe ON DELETE CASCADE,
-    ort_id integer NOT NULL REFERENCES stamm.ort,
-    ortszuordnung_typ character varying(1) REFERENCES stamm.ortszuordnung_typ,
-    ortszusatztext character varying(100),
-    oz_id character varying(7) REFERENCES stamm.ortszusatz,
-    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    EXCLUDE (probe_id WITH =) WHERE (ortszuordnung_typ = 'E')
+    sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE,
+    site_id integer NOT NULL REFERENCES master.site,
+    type_regulation character varying(1) NOT NULL REFERENCES master.type_regulation,
+    add_site_text character varying(100) CHECK (trim(both ' ' from add_site_text) <> ''),
+    poi_id character varying(7) REFERENCES master.poi,
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE(sample_id, site_id, type_regulation),
+    EXCLUDE (sample_id WITH =) WHERE (type_regulation = 'E')
 );
-CREATE TRIGGER letzte_aenderung_ortszuordnung BEFORE UPDATE ON ortszuordnung FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
-CREATE TRIGGER tree_modified_ortszuordnung BEFORE UPDATE ON ortszuordnung FOR EACH ROW EXECUTE PROCEDURE update_tree_modified();
+CREATE TRIGGER last_mod_geolocat BEFORE UPDATE ON geolocat FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
+CREATE TRIGGER tree_mod_geolocat BEFORE UPDATE ON geolocat FOR EACH ROW EXECUTE PROCEDURE update_tree_mod();
 
 --
--- Name: ortszuordnung_mp; Type: TABLE; Schema: land; Owner: -; Tablespace:
+-- Name: geolocat_mpg; Type: TABLE; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE TABLE ortszuordnung_mp (
+CREATE TABLE geolocat_mpg (
     id serial PRIMARY KEY,
-    messprogramm_id integer NOT NULL REFERENCES messprogramm ON DELETE CASCADE,
-    ort_id integer NOT NULL REFERENCES stamm.ort,
-    ortszuordnung_typ character varying(1) REFERENCES stamm.ortszuordnung_typ,
-    ortszusatztext character varying(100),
-    oz_id character varying(7) REFERENCES stamm.ortszusatz,
-    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    EXCLUDE (messprogramm_id WITH =) WHERE (ortszuordnung_typ = 'E')
+    mpg_id integer NOT NULL REFERENCES mpg ON DELETE CASCADE,
+    site_id integer NOT NULL REFERENCES master.site,
+    type_regulation character varying(1) NOT NULL REFERENCES master.type_regulation,
+    add_site_text character varying(100) CHECK (trim(both ' ' from add_site_text) <> ''),
+    poi_id character varying(7) REFERENCES master.poi,
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    EXCLUDE (mpg_id WITH =) WHERE (type_regulation = 'E')
 );
-CREATE TRIGGER letzte_aenderung_ortszuordnung_mp BEFORE UPDATE ON ortszuordnung_mp FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
+CREATE TRIGGER last_mod_geolocat_mpg BEFORE UPDATE ON geolocat_mpg FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 --
--- Name: zusatz_wert; Type: TABLE; Schema: land; Owner: -; Tablespace:
+-- Name: sample_specif_meas_val; Type: TABLE; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE TABLE zusatz_wert (
+CREATE TABLE sample_specif_meas_val (
     id serial PRIMARY KEY,
-    probe_id integer NOT NULL REFERENCES probe ON DELETE CASCADE,
-    pzs_id character varying(3) NOT NULL REFERENCES stamm.proben_zusatz,
-    messwert_pzs double precision,
-    messfehler real,
-    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    kleiner_als character varying(1),
-    tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    UNIQUE (probe_id, pzs_id)
+    sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE,
+    sample_specif_id character varying(3) NOT NULL REFERENCES master.sample_specif,
+    meas_val double precision,
+    error real,
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    smaller_than character varying(1) CHECK (trim(both ' ' from smaller_than) <> ''),
+    tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE (sample_id, sample_specif_id)
 );
-CREATE TRIGGER letzte_aenderung_zusatzwert BEFORE UPDATE ON zusatz_wert FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
-CREATE TRIGGER tree_modified_zusatzwert BEFORE UPDATE ON zusatz_wert FOR EACH ROW EXECUTE PROCEDURE update_tree_modified();
+CREATE TRIGGER last_mod_zusatzwert BEFORE UPDATE ON sample_specif_meas_val FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
+CREATE TRIGGER tree_mod_zusatzwert BEFORE UPDATE ON sample_specif_meas_val FOR EACH ROW EXECUTE PROCEDURE update_tree_mod();
 
 
 --
--- Name: messung; Type: TABLE; Schema: land; Owner: -; Tablespace:
+-- Name: measm; Type: TABLE; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE TABLE messung (
+CREATE TABLE measm (
     id serial PRIMARY KEY,
     ext_id integer NOT NULL,
-    probe_id integer NOT NULL REFERENCES probe ON DELETE CASCADE,
-    nebenproben_nr character varying(4),
-    mmt_id character varying(2) NOT NULL REFERENCES stamm.mess_methode ON DELETE CASCADE,
-    messdauer integer,
-    messzeitpunkt timestamp without time zone,
-    fertig boolean DEFAULT false NOT NULL,
+    sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE,
+    min_sample_id character varying(4) CHECK (trim(both ' ' from min_sample_id) <> ''),
+    mmt_id character varying(2) NOT NULL REFERENCES master.mmt ON DELETE CASCADE,
+    meas_pd integer,
+    measm_start_date timestamp without time zone,
+    is_completed boolean DEFAULT false NOT NULL,
     status integer,
-    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    geplant boolean DEFAULT false NOT NULL,
-    tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    UNIQUE (id, ext_id),
-    UNIQUE (id, nebenproben_nr)
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    is_scheduled boolean DEFAULT false NOT NULL,
+    tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE (sample_id, ext_id),
+    UNIQUE (sample_id, min_sample_id)
 );
-CREATE TRIGGER letzte_aenderung_messung BEFORE UPDATE ON messung FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
-CREATE TRIGGER tree_modified_messung BEFORE UPDATE ON messung FOR EACH ROW EXECUTE PROCEDURE update_tree_modified_messung();
-CREATE TRIGGER ext_id BEFORE INSERT ON land.messung FOR EACH ROW EXECUTE PROCEDURE set_messung_ext_id();
-CREATE TRIGGER status_messung AFTER INSERT ON land.messung FOR EACH ROW EXECUTE PROCEDURE set_messung_status();
+CREATE TRIGGER last_mod_measm BEFORE UPDATE ON measm FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
+CREATE TRIGGER tree_mod_measm BEFORE UPDATE ON measm FOR EACH ROW EXECUTE PROCEDURE update_tree_mod_measm();
+CREATE TRIGGER ext_id BEFORE INSERT ON lada.measm FOR EACH ROW EXECUTE PROCEDURE set_measm_ext_id();
+CREATE TRIGGER status_measm AFTER INSERT ON lada.measm FOR EACH ROW EXECUTE PROCEDURE set_measm_status();
 
 --
--- Name: kommentar_m; Type: TABLE; Schema: land; Owner: -; Tablespace:
+-- Name: comm_measm; Type: TABLE; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE TABLE kommentar_m (
+CREATE TABLE comm_measm (
     id serial PRIMARY KEY,
-    mst_id character varying(5) NOT NULL REFERENCES stamm.mess_stelle,
-    datum timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    text character varying(1024),
-    messungs_id integer NOT NULL REFERENCES messung ON DELETE CASCADE
+    meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
+    date timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    text character varying(1024) NOT NULL CHECK (trim(both ' ' from text) <> ''),
+    measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE
 );
 
 
 --
--- Name: messwert; Type: TABLE; Schema: land; Owner: -; Tablespace:
+-- Name: meas_val; Type: TABLE; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE TABLE messwert (
+CREATE TABLE meas_val (
     id serial PRIMARY KEY,
-    messungs_id integer NOT NULL REFERENCES messung ON DELETE CASCADE,
-    messgroesse_id integer NOT NULL REFERENCES stamm.messgroesse,
-    messwert_nwg character varying(1),
-    messwert double precision,
-    messfehler real,
-    nwg_zu_messwert double precision,
-    meh_id smallint NOT NULL REFERENCES stamm.mess_einheit,
-    grenzwertueberschreitung boolean DEFAULT false,
-    letzte_aenderung timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    UNIQUE (messungs_id, messgroesse_id)
+    measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE,
+    measd_id integer NOT NULL REFERENCES master.measd,
+    less_than_lod character varying(1) CHECK (trim(both ' ' from less_than_lod) <> ''),
+    meas_val double precision,
+    error real,
+    detect_lim double precision,
+    meas_unit_id smallint NOT NULL REFERENCES master.meas_unit,
+    is_threshold boolean DEFAULT false,
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE (measm_id, measd_id)
 );
-CREATE TRIGGER letzte_aenderung_messwert BEFORE UPDATE ON messwert FOR EACH ROW EXECUTE PROCEDURE update_letzte_aenderung();
-CREATE TRIGGER tree_modified_messwert BEFORE UPDATE ON messwert FOR EACH ROW EXECUTE PROCEDURE update_tree_modified();
+CREATE TRIGGER last_mod_meas_val BEFORE UPDATE ON meas_val FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
+CREATE TRIGGER tree_mod_meas_val BEFORE UPDATE ON meas_val FOR EACH ROW EXECUTE PROCEDURE update_tree_mod();
 
 --
--- Name: status_protokoll; Type: TABLE; Schema: land; Owner: -; Tablespace:
+-- Name: status_prot; Type: TABLE; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE TABLE status_protokoll (
+CREATE TABLE status_prot (
     id serial PRIMARY KEY,
-    mst_id character varying(5) NOT NULL REFERENCES stamm.mess_stelle,
-    datum timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    text character varying(1024),
-    messungs_id integer NOT NULL REFERENCES messung ON DELETE CASCADE,
-    status_kombi integer NOT NULL REFERENCES stamm.status_kombi,
-    tree_modified timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
+    date timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    text character varying(1024) CHECK (trim(both ' ' from text) <> ''),
+    measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE,
+    status_mp_id integer NOT NULL REFERENCES master.status_mp,
+    tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
-CREATE TRIGGER tree_modified_status_protokoll BEFORE UPDATE ON status_protokoll FOR EACH ROW EXECUTE PROCEDURE update_tree_modified();
-CREATE TRIGGER update_messung_after_status_protokoll_created AFTER INSERT ON status_protokoll FOR EACH ROW EXECUTE PROCEDURE update_status_messung();
+CREATE TRIGGER tree_mod_status_prot BEFORE UPDATE ON status_prot FOR EACH ROW EXECUTE PROCEDURE update_tree_mod();
+CREATE TRIGGER update_measm_after_status_prot_created AFTER INSERT ON status_prot FOR EACH ROW EXECUTE PROCEDURE update_status_measm();
 
-ALTER TABLE ONLY messung
-    ADD CONSTRAINT messung_status_protokoll_id_fkey FOREIGN KEY (status) REFERENCES status_protokoll(id);
+ALTER TABLE ONLY measm
+    ADD CONSTRAINT messung_status_protokoll_id_fkey FOREIGN KEY (status) REFERENCES status_prot(id);
 
-CREATE TABLE tagzuordnung
+CREATE TABLE tag_link
 (
     id serial PRIMARY KEY,
-    probe_id integer REFERENCES probe ON DELETE CASCADE,
-    messung_id integer REFERENCES messung ON DELETE CASCADE,
-    tag_id integer NOT NULL REFERENCES stamm.tag ON DELETE CASCADE,
-    datum timestamp without time zone
+    sample_id integer REFERENCES sample ON DELETE CASCADE,
+    measm_id integer REFERENCES measm ON DELETE CASCADE,
+    tag_id integer NOT NULL REFERENCES master.tag ON DELETE CASCADE,
+    date timestamp without time zone
         NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-    CHECK(probe_id IS NOT NULL OR messung_id IS NOT NULL),
-    UNIQUE (probe_id, tag_id),
-    UNIQUE (messung_id, tag_id)
+    CHECK(sample_id IS NOT NULL OR measm_id IS NOT NULL),
+    UNIQUE (sample_id, tag_id),
+    UNIQUE (measm_id, tag_id)
 );
 --
--- Name: messung_probe_id_idx; Type: INDEX; Schema: land; Owner: -; Tablespace:
+-- Name: measm_sample_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE INDEX messung_probe_id_idx ON messung USING btree (probe_id);
-
-
---
--- Name: ort_probe_id_idx; Type: INDEX; Schema: land; Owner: -; Tablespace:
---
-
-CREATE INDEX ort_probe_id_idx ON ortszuordnung USING btree (probe_id);
+CREATE INDEX measm_sample_id_idx ON measm USING btree (sample_id);
 
 
 --
--- Name: zusatz_wert_probe_id_idx; Type: INDEX; Schema: land; Owner: -; Tablespace:
+-- Name: site_sample_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE INDEX zusatz_wert_probe_id_idx ON zusatz_wert USING btree (probe_id);
-
-
---
--- Name: kommentar_probe_id_idx; Type: INDEX; Schema: land; Owner: -; Tablespace:
---
-
-CREATE INDEX kommentar_probe_id_idx ON kommentar_p USING btree (probe_id);
+CREATE INDEX site_sample_id_idx ON geolocat USING btree (sample_id);
 
 
 --
--- Name: messwert_messungs_id_idx; Type: INDEX; Schema: land; Owner: -; Tablespace:
+-- Name: sample_specif_meas_val_sample_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE INDEX messwert_messungs_id_idx ON messwert USING btree (messungs_id);
-
-
---
--- Name: status_messungs_id_idx; Type: INDEX; Schema: land; Owner: -; Tablespace:
---
-
-CREATE INDEX status_messungs_id_idx ON status_protokoll USING btree (messungs_id);
+CREATE INDEX sample_specif_meas_val_sample_id_idx ON sample_specif_meas_val USING btree (sample_id);
 
 
 --
--- Name: kommentar_messungs_id_idx; Type: INDEX; Schema: land; Owner: -; Tablespace:
+-- Name: comm_sample_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
 --
 
-CREATE INDEX kommentar_messungs_id_idx ON kommentar_m USING btree (messungs_id);
-
-
---
--- Name: COLUMN ortszuordnung.ortszuordnung_typ; Type: COMMENT; Schema: land; Owner: -
---
-
-COMMENT ON COLUMN ortszuordnung.ortszuordnung_typ IS 'E = Entnahmeport, U = Ursprungsort, Z = Ortszusatz';
+CREATE INDEX comm_sample_id_idx ON comm_sample USING btree (sample_id);
 
 
 --
--- Name: COLUMN probe.id; Type: COMMENT; Schema: land; Owner: -
+-- Name: meas_val_measm_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
 --
 
-COMMENT ON COLUMN probe.id IS 'interner Probenschlüssel';
-
-
---
--- Name: COLUMN probe.test; Type: COMMENT; Schema: land; Owner: -
---
-
-COMMENT ON COLUMN probe.test IS 'Ist Testdatensatz?';
+CREATE INDEX meas_val_measm_id_idx ON meas_val USING btree (measm_id);
 
 
 --
--- Name: COLUMN probe.mst_id; Type: COMMENT; Schema: land; Owner: -
+-- Name: status_prot_measm_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
 --
 
-COMMENT ON COLUMN probe.mst_id IS 'ID für Messstelle';
-
-
---
--- Name: COLUMN probe.labor_mst_id; Type: COMMENT; Schema: land; Owner: -
---
-
-COMMENT ON COLUMN probe.labor_mst_id IS '-- ID für Messlabor';
+CREATE INDEX status_prot_measm_id_idx ON status_prot USING btree (measm_id);
 
 
 --
--- Name: COLUMN probe.hauptproben_nr; Type: COMMENT; Schema: land; Owner: -
+-- Name: comm_measm_measm_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
 --
 
-COMMENT ON COLUMN probe.hauptproben_nr IS 'externer Probensclüssel';
+CREATE INDEX comm_measm_id_idx ON comm_measm USING btree (measm_id);
 
+--NEW 221220
 
---
--- Name: COLUMN probe.ba_id; Type: COMMENT; Schema: land; Owner: -
---
-
-COMMENT ON COLUMN probe.ba_id IS 'ID der Betriebsart (normal/Routine oder Störfall/intensiv)';
-
-
---
--- Name: COLUMN probe.probenart_id; Type: COMMENT; Schema: land; Owner: -
---
-
-COMMENT ON COLUMN probe.probenart_id IS 'ID der Probenart(Einzel-, Sammel-, Misch- ...Probe)';
-
-
---
--- Name: COLUMN probe.media_desk; Type: COMMENT; Schema: land; Owner: -
---
-
-COMMENT ON COLUMN probe.media_desk IS 'Mediencodierung (Deskriptoren oder ADV-Codierung)';
-
-
---
--- Name: COLUMN probe.media; Type: COMMENT; Schema: land; Owner: -
---
-
-COMMENT ON COLUMN probe.media IS 'dekodierte Medienbezeichnung (aus media_desk abgeleitet)';
-
+--Indices that are in production environment
+CREATE INDEX geolocat_mpg_mpg_id_idx ON lada.geolocat_mpg USING btree (mpg_id ASC NULLS LAST);
+CREATE INDEX sample_env_medium_id_idx ON lada.sample USING btree (env_medium_id);
+CREATE INDEX sample_meas_facil_id_idx ON lada.sample USING btree (meas_facil_id);
+CREATE INDEX sample_mid_collect_period_idx ON lada.sample USING btree (COALESCE(sample_start_date + (sample_end_date - sample_start_date) / 2::double precision, sample_start_date));
+CREATE INDEX sample_nucl_facil_gr_id_idx ON lada.sample USING btree (nucl_facil_gr_id);
+CREATE INDEX sample_opr_mode_id_idx ON lada.sample USING btree (opr_mode_id);
+CREATE INDEX sample_regulation_id_idx ON lada.sample USING btree (regulation_id);
+CREATE INDEX sample_rei_ag_gr_id_idx ON lada.sample USING btree (rei_ag_gr_id);
+CREATE INDEX sample_sample_start_date_idx ON lada.sample USING btree (sample_start_date);
+CREATE INDEX state_sample_mid_collect_period_id_ndx ON lada.sample USING btree (mid_coll_pd);
+CREATE INDEX tag_link_measm_id_idx ON lada.tag_link USING btree (measm_id ASC NULLS LAST) TABLESPACE pg_default;
+CREATE INDEX tag_link_sample_id_idx ON lada.tag_link USING btree (sample_id ASC NULLS LAST) TABLESPACE pg_default;
+CREATE INDEX measm_status_idx ON lada.measm USING btree (status ASC NULLS LAST) TABLESPACE pg_default;
+--CREATE INDEX audit_trail_object_id_idx ON lada.audit_trail USING btree (object_id ASC NULLS LAST) TABLESPACE pg_default;
+--CREATE INDEX audit_trail_table_name_idx ON lada.audit_trail USING btree (table_name COLLATE pg_catalog."default" ASC NULLS LAST) TABLESPACE pg_default;
+CREATE INDEX mpg_meas_facil_id_idx ON lada.mpg USING btree (meas_facil_id COLLATE pg_catalog."default" ASC NULLS LAST) TABLESPACE pg_default;
+CREATE INDEX mpg_mmt_mp_mpg_id_idx ON lada.mpg_mmt_mp USING btree (mpg_id ASC NULLS LAST) TABLESPACE pg_default;
+CREATE INDEX status_prot_status_mp_id_idx ON lada.status_prot USING btree (status_mp_id ASC NULLS LAST) TABLESPACE pg_default;
+CREATE INDEX meas_val_measd_id_idx ON lada.meas_val USING btree (measd_id ASC NULLS LAST) TABLESPACE pg_default;
 
 --
--- Name: COLUMN probe.umw_id; Type: COMMENT; Schema: land; Owner: -
+-- Name: COLUMN geolocat.type_regulation; Type: COMMENT; Schema: lada; Owner: -
 --
 
-COMMENT ON COLUMN probe.umw_id IS 'ID für Umweltbereich';
+COMMENT ON COLUMN geolocat.type_regulation IS 'E = Entnahmeort, U = Ursprungsort, Z = Ortszusatz';
 
 
 --
--- Name: COLUMN messprogramm.media_desk; Type: COMMENT; Schema: land; Owner: -
+-- Name: COLUMN sample.id; Type: COMMENT; Schema: lada; Owner: -
 --
 
-COMMENT ON COLUMN messprogramm.media_desk IS 'dekodierte Medienbezeichnung (aus media_desk abgeleitet)';
+COMMENT ON COLUMN sample.id IS 'internal sample_id';
+
+
+--
+-- Name: COLUMN sample.test; Type: COMMENT; Schema: lada; Owner: -
+--
+
+COMMENT ON COLUMN sample.is_test IS 'is test data?';
+
+
+--
+-- Name: COLUMN sample.mst_id; Type: COMMENT; Schema: lada; Owner: -
+--
+
+COMMENT ON COLUMN sample.meas_facil_id IS 'ID for measuring facility';
+
+
+--
+-- Name: COLUMN sample.labor_mst_id; Type: COMMENT; Schema: lada; Owner: -
+--
+
+COMMENT ON COLUMN sample.appr_lab_id IS 'ID for approved laboratory';
+
+
+--
+-- Name: COLUMN sample.hauptproben_nr; Type: COMMENT; Schema: lada; Owner: -
+--
+
+COMMENT ON COLUMN sample.main_sample_id IS 'external sample id';
+
+
+--
+-- Name: COLUMN sample.ba_id; Type: COMMENT; Schema: lada; Owner: -
+--
+
+COMMENT ON COLUMN sample.opr_mode_id IS 'ID of operation mode (normal/Routine oder Störfall/intensiv)';
+
+
+--
+-- Name: COLUMN sample.probenart_id; Type: COMMENT; Schema: lada; Owner: -
+--
+
+COMMENT ON COLUMN sample.sample_meth_id IS 'ID of sample method (Einzel-, Sammel-, Misch- ...Probe)';
+
+
+--
+-- Name: COLUMN sample.env_descrip_display; Type: COMMENT; Schema: lada; Owner: -
+--
+
+COMMENT ON COLUMN sample.env_descrip_display IS 'Mediencodierung (Deskriptoren oder ADV-Codierung)';
+
+
+--
+-- Name: COLUMN sample.media; Type: COMMENT; Schema: lada; Owner: -
+--
+
+COMMENT ON COLUMN sample.env_descrip_name IS 'dekodierte Medienbezeichnung (aus env_descrip_display abgeleitet)';
+
+
+--
+-- Name: COLUMN sample.umw_id; Type: COMMENT; Schema: lada; Owner: -
+--
+
+COMMENT ON COLUMN sample.env_medium_id IS 'ID for environmental medium';
+
+
+--
+-- Name: COLUMN mpg.media_desk; Type: COMMENT; Schema: lada; Owner: -
+--
+
+COMMENT ON COLUMN mpg.env_descrip_display IS 'dekodierte Medienbezeichnung (aus env_descrip_display abgeleitet)';
 
 
 COMMIT;

@@ -7,14 +7,11 @@
  */
 package de.intevation.lada.validation;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 
-import de.intevation.lada.model.land.Ortszuordnung;
-import de.intevation.lada.model.land.OrtszuordnungMp;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.validation.annotation.ValidationConfig;
+import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
 
@@ -26,38 +23,16 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:raimund.renkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationConfig(type = "Ortszuordnung")
-@ApplicationScoped
-public class OrtszuordnungValidator implements Validator {
+@Dependent
+public class OrtszuordnungValidator extends Validator<Geolocat> {
 
     @Inject
     @ValidationRule("Ortszuordnung")
     private Instance<Rule> rules;
 
     @Override
-    public Violation validate(Object object) {
-        Violation violations = new Violation();
-        if (!(object instanceof Ortszuordnung)
-            && !(object instanceof OrtszuordnungMp)
-        ) {
-            violations.addError("ortszuordnung", StatusCodes.NOT_A_PROBE);
-            return violations;
-        }
-        for (Rule rule : rules) {
-            Violation result = rule.execute(object);
-            if (result != null) {
-                if (result.hasWarnings()) {
-                    violations.addWarnings(result.getWarnings());
-                }
-                if (result.hasErrors()) {
-                    violations.addErrors(result.getErrors());
-                }
-                if (result.hasNotifications()) {
-                    violations.addNotifications(result.getNotifications());
-                }
-            }
-        }
-        return violations;
+    public void validate(Object object) {
+        validate((Geolocat) object, rules);
     }
 
 }

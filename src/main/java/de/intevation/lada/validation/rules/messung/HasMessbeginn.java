@@ -7,14 +7,14 @@
  */
 package de.intevation.lada.validation.rules.messung;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.Repository;
 /**
  * Validation rule for messung.
@@ -30,20 +30,22 @@ public class HasMessbeginn implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messung messung = (Messung) object;
-        Probe probe =
-            repository.getByIdPlain(Probe.class, messung.getProbeId());
-        if (messung.getMesszeitpunkt() == null
-            &&(
-            probe.getDatenbasisId() != null
-            && probe.getDatenbasisId() != 1
-            )){
+        Measm messung = (Measm) object;
+        Sample probe =
+            repository.getByIdPlain(Sample.class, messung.getSampleId());
+
+        if (messung.getMeasmStartDate() == null
+            && probe != null
+            && probe.getRegulationId() != null
+            && probe.getRegulationId() != 1
+        ) {
             Violation violation = new Violation();
-            violation.addWarning("messzeitpunkt", StatusCodes.VALUE_MISSING);
+            violation.addWarning("measmStartDate", StatusCodes.VALUE_MISSING);
             return violation;
-        } else if (messung.getMesszeitpunkt() == null) {
-             Violation violation = new Violation();
-            violation.addNotification("messzeitpunkt", StatusCodes.VALUE_MISSING);
+        } else if (messung.getMeasmStartDate() == null) {
+            Violation violation = new Violation();
+            violation.addNotification(
+                "measmStartDate", StatusCodes.VALUE_MISSING);
             return violation;
         } else {
             return null;

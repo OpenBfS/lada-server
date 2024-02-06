@@ -1,8 +1,11 @@
 #!/bin/sh -e
 # SYNOPSIS
-# ./setup-db.sh [-cn] [ROLE_NAME] [ROLE_PW] [DB_NAME]
+# ./setup-db.sh [-cn] [-g N] [ROLE_NAME] [ROLE_PW] [DB_NAME]
 #   -c         clean - drop an existing database
 #   -n         no data - do not import example data
+#   -g         generate N samples, each with N measms, each with either
+#              N meas_vals or the maximum possible number of meas_vals, which
+#              is contrained by the number of available measds.
 #   ROLE_NAME  name of db user (default = lada)
 #   ROLE_PW    login password  (default = ROLE_NAME)
 #   DB_NAME    name of the databaes (default = ROLE_NAME)
@@ -12,13 +15,18 @@
 
 DIR=$(readlink -f $(dirname $0))
 
-while getopts "cn" opt; do
+while getopts "cng:" opt; do
     case "$opt" in
         c)
             DROP_DB="true"
             ;;
         n)
             NO_DATA="true"
+            ;;
+        g)
+            NO_DATA="true"
+            N_SAMPLES="$OPTARG"
+            GENERATE="true"
             ;;
     esac
 done
@@ -36,7 +44,7 @@ echo "DB_NAME = $DB_NAME"
 DB_CONNECT_STRING="-v ON_ERROR_STOP=on "
 
 # if variable DB_SRV and otional DB_PORT is set a remote database connection will be used
-if [ -n "$DB_SRV" ] ; then DB_CONNECT_STRING="-h $DB_SRV" ; fi
+if [ -n "$DB_SRV" ] ; then DB_CONNECT_STRING="$DB_CONNECT_STRING -h $DB_SRV" ; fi
 if [ -n "$DB_SRV" -a -n "$DB_PORT"  ] ; then
   DB_CONNECT_STRING="$DB_CONNECT_STRING -p $DB_PORT"
 fi
@@ -55,7 +63,7 @@ fi
 
 echo create db $DB_NAME
 psql $DB_CONNECT_STRING --command \
-     "CREATE DATABASE $DB_NAME ENCODING = 'UTF8'"
+     "CREATE DATABASE $DB_NAME OWNER = $ROLE_NAME ENCODING = 'UTF8'"
 
 echo create postgis extension
 psql $DB_CONNECT_STRING -d $DB_NAME  --command  \
@@ -67,35 +75,39 @@ psql $DB_CONNECT_STRING -d $DB_NAME  --command  \
 
 echo create version table
 psql $DB_CONNECT_STRING -d $DB_NAME \
-     -f $DIR/updates/0000/01.add_schema_version.sql
+    -c "SET role $ROLE_NAME;" \
+    -f $DIR/updates/0000/01.add_schema_version.sql
 for d in "$DIR"/updates/* ; do
   new_ver=$( basename $d )
 done
 psql $DB_CONNECT_STRING -d $DB_NAME --command \
      "INSERT INTO lada_schema_version(version) VALUES ($new_ver)"
 
-echo create stammdaten schema
-psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/stammdaten_schema.sql
+echo create master schema
+psql -q $DB_CONNECT_STRING -d $DB_NAME \
+    -c "SET role $ROLE_NAME;" \
+    -f $DIR/master_schema.sql #master_schema.sql
 
 echo create lada schema
-psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/lada_schema.sql
+psql -q $DB_CONNECT_STRING -d $DB_NAME \
+    -c "SET role $ROLE_NAME;" \
+    -f $DIR/lada_schema.sql
 
 echo create audit-trail table/trigger/views
 for file in \
-    audit_stamm.sql \
-    audit_land.sql \
+    audit_master.sql \
+    audit_lada.sql \
     lada_views.sql
 do
-    psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/$file
+    psql -q $DB_CONNECT_STRING -d $DB_NAME \
+        -c "SET role $ROLE_NAME;" \
+        -f $DIR/$file
 done
 
 echo set grants
-psql $DB_CONNECT_STRING -d $DB_NAME --command \
-     "GRANT USAGE ON SCHEMA stamm, land TO $ROLE_NAME;
-      GRANT USAGE
-            ON ALL SEQUENCES IN SCHEMA stamm, land TO $ROLE_NAME;
-      GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES
-            ON ALL TABLES IN SCHEMA stamm, land TO $ROLE_NAME;"
+psql $DB_CONNECT_STRING -d $DB_NAME \
+ --command "GRANT ALL ON ALL TABLES IN SCHEMA lada, master TO $ROLE_NAME;"\
+ --command "GRANT ALL ON ALL SEQUENCES IN SCHEMA lada, master TO $ROLE_NAME;"
 
 echo download german administrative borders
 cd /tmp
@@ -103,7 +115,7 @@ SRC_URI=https://daten.gdz.bkg.bund.de/produkte/vg/vg250_ebenen_0101/aktuell/vg25
 BASE_NAME=vg250_01-01.utm32s.shape.ebenen
 SHAPE_DIR=${BASE_NAME}/vg250_ebenen_0101
 if [ ! -f ${BASE_NAME}.zip ]; then
-    curl -fO ${SRC_URI}
+    curl -sfO ${SRC_URI}
 fi
 unzip -u ${BASE_NAME}.zip "*VG250_*"
 
@@ -117,14 +129,22 @@ do
     TABLE=$(echo $file_table | awk '{print $2}')
     shp2pgsql -p -s 25832:4326 \
         ${SHAPE_DIR}/VG250_${FILE} \
-        geo.vg250_${TABLE} | psql -q $DB_CONNECT_STRING -d $DB_NAME
+        geo.vg250_${TABLE} |\
+        sed "1iSET role $ROLE_NAME;" |\
+        psql -q $DB_CONNECT_STRING -d $DB_NAME
 done
 
-echo create verwaltungsgrenze view
+echo create main border view
 psql -q $DB_CONNECT_STRING -d $DB_NAME \
-    -f $DIR/stammdaten_verwaltungsgrenze_view.sql
-psql $DB_CONNECT_STRING -d $DB_NAME --command \
-     "GRANT SELECT, REFERENCES ON TABLE stamm.verwaltungsgrenze TO $ROLE_NAME;"
+    -c "SET role $ROLE_NAME;" \
+    -f $DIR/master_admin_border_view.sql
+
+echo create german views
+psql -q $DB_CONNECT_STRING -d $DB_NAME \
+    -c "SET role $ROLE_NAME;" \
+    -c "CREATE SCHEMA land AUTHORIZATION $ROLE_NAME" \
+    -c "CREATE SCHEMA stamm AUTHORIZATION $ROLE_NAME" \
+    -f $DIR/en_dm_german_views.sql
 
 if [ "$NO_DATA" != "true" ]; then
     echo import german administrative borders
@@ -136,62 +156,44 @@ if [ "$NO_DATA" != "true" ]; then
             ${SHAPE_DIR}/VG250_${FILE} \
             geo.vg250_${TABLE} | psql -q $DB_CONNECT_STRING -d $DB_NAME
     done
-    echo refresh verwaltungsgrenze view
+    echo refresh main border view
     psql $DB_CONNECT_STRING -d $DB_NAME --command \
-         "REFRESH MATERIALIZED VIEW stamm.verwaltungsgrenze"
+         "REFRESH MATERIALIZED VIEW master.admin_border_view"
 
     echo "load data:"
-    for file in \
-        stammdaten_data_status_reihenfolge.sql \
-        stammdaten_data_verwaltungseinheit.sql \
-        stammdaten_data_netzbetreiber.sql \
-        stammdaten_data_mess_stelle.sql \
-        stammdaten_data_auth.sql \
-        stammdaten_data_betriebsart.sql \
-        stammdaten_data_mess_einheit.sql \
-        stammdaten_data_mass_einheit_umrechnung.sql \
-        stammdaten_data_umwelt.sql \
-        stammdaten_data_auth_lst_umw.sql \
-        stammdaten_data_datenbasis.sql \
-        stammdaten_data_datensatz_erzeuger.sql \
-        stammdaten_data_deskriptor_umwelt.sql \
-        stammdaten_data_deskriptoren.sql \
-        stammdaten_data_koordinaten_art.sql \
-        stammdaten_data_messmethode.sql \
-        stammdaten_data_messgroesse.sql \
-        stammdaten_data_messgroessen_gruppe.sql \
-        stammdaten_data_ort_typ.sql \
-        stammdaten_data_staat.sql \
-        stammdaten_data_kta.sql \
-        stammdaten_data_ortszuordnung_typ.sql \
-        stammdaten_data_pflicht_messgroesse.sql \
-        stammdaten_data_proben_zusatz.sql \
-        stammdaten_data_umwelt_zusatz.sql \
-        stammdaten_data_probenart.sql \
-        stammdaten_data_messprogramm_transfer.sql \
-        stammdaten_data_ortszusatz.sql \
-        stammdaten_data_messprogramm_kategorie.sql \
-        stammdaten_data_gemeindeuntergliederung.sql \
-        stammdaten_data_rei.sql \
-        stammdaten_data_ort.sql \
-        stammdaten_data_probenehmer.sql \
-        stammdaten_data_zeitbasis.sql \
-        stammdaten_data_query.sql \
-        stammdaten_data_user_context.sql \
-        stammdaten_data_importer_config.sql \
-        stammdaten_data_tm_fm_umrechnung.sql\
-        stammdaten_data_richtwert.sql\
-        stammdaten_data_sollist.sql\
-        stammdaten_data_tag.sql\
-        lada_data.sql \
-        lada_messprogramm.sql
+    for file in "$DIR"/data/master/[0-9]*.sql "$DIR"/data/lada/[0-9]*.sql;
     do
-        [ -f private_${file} ] && file=private_${file}
+        # If file with the same name prefixed "private_" exists, take that
+        private=$(dirname $file)/private_$(basename $file)
+        [ -f ${private} ] && file=${private}
         echo "  ${file%.sql}"
-        psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/$file
+        psql -q $DB_CONNECT_STRING -d $DB_NAME -f $file
+    done
+fi
+
+if [ "$GENERATE" = "true" ]; then
+    echo "load master data:"
+    for file in "$DIR"/data/master/[0-9]*.sql;
+    do
+        psql -q $DB_CONNECT_STRING -d $DB_NAME -f $file
     done
 
-    echo init sequences
-    psql -q $DB_CONNECT_STRING -d $DB_NAME -f $DIR/stammdaten_init_sequences.sql
-
+    echo "generating data ..."
+    echo "\set n $N_SAMPLES
+          WITH samples AS (INSERT INTO lada.sample (
+                  meas_facil_id,
+                  appr_lab_id,
+                  regulation_id,
+                  opr_mode_id,
+                  sample_meth_id)
+              SELECT '06010', '06010', 1, 1, 1 FROM generate_series(1, :n)
+              RETURNING id),
+          measms AS (INSERT INTO lada.measm (sample_id, mmt_id)
+              SELECT id, 'AB' FROM samples, generate_series(1, :n)
+              RETURNING id)
+          INSERT INTO lada.meas_val (measm_id, measd_id, meas_unit_id)
+              SELECT measms.id, measd.id, 0
+              FROM measms,
+                  (SELECT id FROM master.measd FETCH NEXT :n ROWS ONLY) AS measd" | \
+        psql $DB_CONNECT_STRING -d $DB_NAME
 fi

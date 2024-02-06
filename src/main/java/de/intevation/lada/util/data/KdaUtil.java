@@ -136,9 +136,6 @@ public class KdaUtil {
     public Result transform(
         int kdaFrom, int kdaTo, String x, String y
     ) {
-        if (x == null || y == null) {
-            return null;
-        }
         x = x.replace(',', '.');
         y = y.replace(',', '.');
         Transform t;

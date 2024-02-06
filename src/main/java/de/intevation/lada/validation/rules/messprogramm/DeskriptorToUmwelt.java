@@ -10,11 +10,11 @@ package de.intevation.lada.validation.rules.messprogramm;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import de.intevation.lada.model.land.Messprogramm;
-import de.intevation.lada.model.stammdaten.DeskriptorUmwelt;
-import de.intevation.lada.model.stammdaten.Deskriptoren;
+import de.intevation.lada.model.lada.Mpg;
+import de.intevation.lada.model.master.EnvDescrip;
+import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -37,16 +37,13 @@ public class DeskriptorToUmwelt implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messprogramm messprogramm = (Messprogramm) object;
-        if (messprogramm.getMediaDesk() == null
-            || messprogramm.getMediaDesk().equals("")
+        Mpg messprogramm = (Mpg) object;
+        if (messprogramm.getEnvDescripDisplay() == null
+            || messprogramm.getEnvDescripDisplay().equals("")
         ) {
             return null;
         }
-        if (messprogramm.getUmwId() == null) {
-            return null;
-        }
-        String[] mediaDesk = messprogramm.getMediaDesk().split(" ");
+        String[] mediaDesk = messprogramm.getEnvDescripDisplay().split(" ");
         if (mediaDesk.length <= 1) {
             return null;
         }
@@ -70,20 +67,20 @@ public class DeskriptorToUmwelt implements Rule {
             } else {
                 parent = ndParent;
             }
-            QueryBuilder<Deskriptoren> builder = repository.queryBuilder(
-                 Deskriptoren.class);
+            QueryBuilder<EnvDescrip> builder = repository.queryBuilder(
+                 EnvDescrip.class);
             if (parent != null) {
-                builder.and("vorgaenger", parent);
+                builder.and("predId", parent);
             }
-            builder.and("sn", mediaDesk[i]);
-            builder.and("ebene", i - 1);
+            builder.and("levVal", mediaDesk[i]);
+            builder.and("lev", i - 1);
             Response response = repository.filter(
                 builder.getQuery());
             @SuppressWarnings("unchecked")
-            List<Deskriptoren> data = (List<Deskriptoren>) response.getData();
+            List<EnvDescrip> data = (List<EnvDescrip>) response.getData();
             if (data.isEmpty()) {
                 Violation violation = new Violation();
-                violation.addWarning("mediaDesk", StatusCodes.VAL_DESK);
+                violation.addWarning("envDescripDisplay", StatusCodes.VAL_DESK);
                 return violation;
             }
             hdParent = data.get(0).getId();
@@ -93,7 +90,7 @@ public class DeskriptorToUmwelt implements Rule {
             }
         }
         Violation violation =
-            validateUmwelt(mediaIds, messprogramm.getUmwId(), zebs, 0);
+            validateUmwelt(mediaIds, messprogramm.getEnvMediumId(), zebs, 0);
         return violation;
     }
 
@@ -103,20 +100,20 @@ public class DeskriptorToUmwelt implements Rule {
         boolean isZebs,
         int ndx
     ) {
-        QueryBuilder<DeskriptorUmwelt> builder =
-            repository.queryBuilder(DeskriptorUmwelt.class);
+        QueryBuilder<EnvDescripEnvMediumMp> builder =
+            repository.queryBuilder(EnvDescripEnvMediumMp.class);
 
         if (media.size() == 0) {
             Violation violation = new Violation();
             violation.addWarning(
-                "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                "envMediumId", StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
 
         int size = 1;
         for (int i = size; i >= 0; i--) {
             String field = "s" + (i > 9 ? i : "0" + i);
-            QueryBuilder<DeskriptorUmwelt> tmp = builder.getEmptyBuilder();
+            QueryBuilder<EnvDescripEnvMediumMp> tmp = builder.getEmptyBuilder();
             if (media.get(i) != -1) {
                 tmp.and(field, media.get(i));
                 tmp.or(field, null);
@@ -128,27 +125,27 @@ public class DeskriptorToUmwelt implements Rule {
         Response response =
             repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
-        List<DeskriptorUmwelt> data =
-            (List<DeskriptorUmwelt>) response.getData();
+        List<EnvDescripEnvMediumMp> data =
+            (List<EnvDescripEnvMediumMp>) response.getData();
         if (data.isEmpty()) {
             Violation violation = new Violation();
             violation.addWarning(
-                "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                "envMediumId", StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
 
         boolean unique = isUnique(data);
-        if (unique && umwId.equals(data.get(0).getUmwId())) {
+        if (unique && umwId.equals(data.get(0).getEnvMediumId())) {
             return null;
-        } else if (unique && !umwId.equals(data.get(0).getUmwId())) {
+        } else if (unique && !umwId.equals(data.get(0).getEnvMediumId())) {
             Violation violation = new Violation();
             violation.addWarning(
-                "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                "envMediumId", StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         } else {
             Violation violation = new Violation();
             violation.addWarning(
-                "umwId#" + umwId, StatusCodes.VALUE_NOT_MATCHING);
+                "envMediumId", StatusCodes.VALUE_NOT_MATCHING);
 
             int found = -1;
             int lastMatch = -12;
@@ -241,20 +238,20 @@ public class DeskriptorToUmwelt implements Rule {
                     }
                 }
             }
-            if (found >= 0 && data.get(found).getUmwId().equals(umwId)) {
+            if (found >= 0 && data.get(found).getEnvMediumId().equals(umwId)) {
                 return null;
             }
             return violation;
         }
     }
 
-    private boolean isUnique(List<DeskriptorUmwelt> list) {
+    private boolean isUnique(List<EnvDescripEnvMediumMp> list) {
         if (list.isEmpty()) {
             return false;
         }
-        String element = list.get(0).getUmwId();
+        String element = list.get(0).getEnvMediumId();
         for (int i = 1; i < list.size(); i++) {
-            if (!element.equals(list.get(i).getUmwId())) {
+            if (!element.equals(list.get(i).getEnvMediumId())) {
                 return false;
             }
         }

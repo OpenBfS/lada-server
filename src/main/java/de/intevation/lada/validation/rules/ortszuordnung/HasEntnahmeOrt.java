@@ -9,10 +9,10 @@ package de.intevation.lada.validation.rules.ortszuordnung;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import de.intevation.lada.model.land.Ortszuordnung;
-import de.intevation.lada.model.land.OrtszuordnungMp;
+import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -29,47 +29,47 @@ public class HasEntnahmeOrt implements Rule {
     @Override
     public Violation execute(Object object) {
         Integer id = null;
-        if (object instanceof Ortszuordnung) {
-            Ortszuordnung ort = (Ortszuordnung) object;
-            if (!"E".equals(ort.getOrtszuordnungTyp())) {
+        if (object instanceof Geolocat) {
+            Geolocat ort = (Geolocat) object;
+            if (!"E".equals(ort.getTypeRegulation())) {
                 return null;
             }
-            id = ort.getProbeId();
-            QueryBuilder<Ortszuordnung> builder =
-                repository.queryBuilder(Ortszuordnung.class);
+            id = ort.getSampleId();
+            QueryBuilder<Geolocat> builder =
+                repository.queryBuilder(Geolocat.class);
 
-            builder.and("probeId", id);
-            List<Ortszuordnung> orte = repository.filterPlain(
+            builder.and("sampleId", id);
+            List<Geolocat> orte = repository.filterPlain(
                 builder.getQuery());
-            for (Ortszuordnung o : orte) {
-                if ("E".equals(o.getOrtszuordnungTyp())
+            for (Geolocat o : orte) {
+                if ("E".equals(o.getTypeRegulation())
                     && !o.getId().equals(ort.getId())
                 ) {
                     Violation violation = new Violation();
-                    violation.addError(
-                        "ortszuordnungTyp", StatusCodes.VALUE_AMBIGOUS);
+                    violation.addWarning(
+                        "typeRegulation", StatusCodes.VALUE_AMBIGOUS);
                     return violation;
                 }
             }
-        } else if (object instanceof OrtszuordnungMp) {
-            OrtszuordnungMp ort = (OrtszuordnungMp) object;
-            if (!"E".equals(ort.getOrtszuordnungTyp())) {
+        } else if (object instanceof GeolocatMpg) {
+            GeolocatMpg ort = (GeolocatMpg) object;
+            if (!"E".equals(ort.getTypeRegulation())) {
                 return null;
             }
-            id = ort.getMessprogrammId();
-            QueryBuilder<OrtszuordnungMp> builder =
-                repository.queryBuilder(OrtszuordnungMp.class);
+            id = ort.getMpgId();
+            QueryBuilder<GeolocatMpg> builder =
+                repository.queryBuilder(GeolocatMpg.class);
 
-            builder.and("messprogrammId", id);
-            List<OrtszuordnungMp> orte = repository.filterPlain(
+            builder.and("mpgId", id);
+            List<GeolocatMpg> orte = repository.filterPlain(
                 builder.getQuery());
-            for (OrtszuordnungMp o : orte) {
-                if ("E".equals(o.getOrtszuordnungTyp())
+            for (GeolocatMpg o : orte) {
+                if ("E".equals(o.getTypeRegulation())
                     && !o.getId().equals(ort.getId())
                 ) {
                     Violation violation = new Violation();
-                    violation.addError(
-                        "ortszuordnungTyp", StatusCodes.VALUE_AMBIGOUS);
+                    violation.addWarning(
+                        "typeRegulation", StatusCodes.VALUE_AMBIGOUS);
                     return violation;
                 }
             }

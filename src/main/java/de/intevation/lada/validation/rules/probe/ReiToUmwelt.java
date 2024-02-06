@@ -9,10 +9,10 @@ package de.intevation.lada.validation.rules.probe;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.model.stammdaten.ReiProgpunktGrpUmwZuord;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.master.ReiAgGrEnvMediumMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -26,7 +26,7 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationRule("Probe")
+@ValidationRule("Sample")
 public class ReiToUmwelt implements Rule {
 
     @Inject
@@ -34,31 +34,31 @@ public class ReiToUmwelt implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Probe probe = (Probe) object;
-        if (probe.getDatenbasisId() != null
-            && probe.getDatenbasisId() != 3
-            && probe.getDatenbasisId() != 4
+        Sample probe = (Sample) object;
+        if (probe.getRegulationId() != null
+            && probe.getRegulationId() != 3
+            && probe.getRegulationId() != 4
         ) {
             return null;
         }
-        if (probe.getUmwId() == null) {
+        if (probe.getEnvMediumId() == null) {
             return null;
         }
-        if (probe.getReiProgpunktGrpId() == null) {
+        if (probe.getReiAgGrId() == null) {
             return null;
         }
-        QueryBuilder<ReiProgpunktGrpUmwZuord> builder =
-            repository.queryBuilder(ReiProgpunktGrpUmwZuord.class);
-        builder.and("reiProgpunktGrpId", probe.getReiProgpunktGrpId());
-        List<ReiProgpunktGrpUmwZuord> zuord =
+        QueryBuilder<ReiAgGrEnvMediumMp> builder =
+            repository.queryBuilder(ReiAgGrEnvMediumMp.class);
+        builder.and("reiAgGrId", probe.getReiAgGrId());
+        List<ReiAgGrEnvMediumMp> zuord =
             repository.filterPlain(builder.getQuery());
-        for (ReiProgpunktGrpUmwZuord entry : zuord) {
-            if (entry.getUmwId().equals(probe.getUmwId())) {
+        for (ReiAgGrEnvMediumMp entry : zuord) {
+            if (entry.getEnvMediumId().equals(probe.getEnvMediumId())) {
                 return null;
             }
         }
         Violation violation = new Violation();
-        violation.addWarning("umwId", StatusCodes.VAL_UWB_NOT_MATCHING_REI);
+        violation.addWarning("envMediumId", StatusCodes.VAL_UWB_NOT_MATCHING_REI);
         return violation;
     }
 }

@@ -9,16 +9,15 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
-import javax.ws.rs.client.Client;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonValue;
+import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -34,20 +33,17 @@ public class OrtszuordnungTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung"
+            "lastMod"
         });
 
-        // Prepare expected probe object
-        JsonObject content =
-            readJsonResource("/datasets/dbUnit_probe.json");
         JsonObject messung =
-            content.getJsonArray("land.ortszuordnung").getJsonObject(0);
+            readXmlResource("datasets/dbUnit_lada.xml", Geolocat.class)
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messung);
         builder.add("parentModified", TS1);
         builder.add("readonly", JsonValue.FALSE);
@@ -64,18 +60,15 @@ public class OrtszuordnungTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("ortszuordnung", "rest/ortszuordnung");
-        getById("ortszuordnung", "rest/ortszuordnung/1000", expectedById);
+        get("rest/geolocat?sampleId=1000");
+        getById("rest/geolocat/1000", expectedById);
         JsonObject created =
-            create("ortszuordnung", "rest/ortszuordnung", create);
+            create("rest/geolocat", create);
         update(
-            "ortszuordnung",
-            "rest/ortszuordnung/1000",
-            "ortszusatztext",
+            "rest/geolocat/1000",
+            "addSiteText",
             "Test",
             "Test geändert");
-        delete(
-            "ortszuordnung",
-            "rest/ortszuordnung/" + created.getJsonObject("data").get("id"));
+        delete("rest/geolocat/" + created.getJsonObject("data").get("id"));
     }
 }

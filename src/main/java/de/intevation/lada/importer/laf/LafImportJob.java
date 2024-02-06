@@ -8,7 +8,7 @@
 
 package de.intevation.lada.importer.laf;
 
-import static de.intevation.lada.rest.importer.LafImportService.logLAFFile;
+import static de.intevation.lada.data.LafImportService.logLAFFile;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -17,21 +17,19 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonString;
-import javax.json.JsonValue;
+import jakarta.inject.Inject;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonString;
+import jakarta.json.JsonValue;
 
-import de.intevation.lada.importer.ImportConfig;
-import de.intevation.lada.importer.ImportFormat;
-import de.intevation.lada.importer.Importer;
-import de.intevation.lada.model.stammdaten.ImporterConfig;
-import de.intevation.lada.model.stammdaten.MessStelle;
-import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.master.ImportConf;
+import de.intevation.lada.model.master.MeasFacil;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.StatusCodes;
@@ -46,14 +44,15 @@ import de.intevation.lada.util.rest.Response;
 public class LafImportJob extends Job {
 
     @Inject
-    @ImportConfig(format = ImportFormat.LAF)
-    private Importer importer;
+    private LafImporter importer;
 
     private Map<String, Map<String, Object>> importData;
 
     private JsonObject jsonInput;
 
-    private MessStelle mst;
+    private MeasFacil mst;
+
+    private Locale locale;
 
     private JsonObject result;
 
@@ -155,18 +154,16 @@ public class LafImportJob extends Job {
         String mstId = this.mst.getId();
         files.forEach((fileName, content) -> {
             logLAFFile(mstId, content, charset);
-            List<ImporterConfig> config = new ArrayList<ImporterConfig>();
+            List<ImportConf> config = new ArrayList<ImportConf>();
             if (!"".equals(mstId)) {
-                QueryBuilder<ImporterConfig> builder =
-                    repository.queryBuilder(ImporterConfig.class);
-                builder.and("mstId", mstId);
-                config =
-                    (List<ImporterConfig>) repository.filterPlain(
-                        builder.getQuery());
+                QueryBuilder<ImportConf> builder =
+                    repository.queryBuilder(ImportConf.class);
+                builder.and("measFacilId", mstId);
+                config = repository.filterPlain(builder.getQuery());
             }
-            importer.doImport(content, userInfo, config);
-            Map<String, Object> fileResponseData =
-                new HashMap<String, Object>();
+            importer.doImport(content, userInfo, mstId, config, locale);
+
+            Map<String, Object> fileResponseData = new HashMap<>();
             if (!importer.getErrors().isEmpty()) {
                 fileResponseData.put("errors", importer.getErrors());
                 this.currentStatus.setErrors(true);
@@ -180,7 +177,7 @@ public class LafImportJob extends Job {
                     "notifications", importer.getNotifications());
                 this.currentStatus.setNotifications(true);
             }
-            fileResponseData.put("success", true);
+            fileResponseData.put("success", !currentStatus.getErrors());
             fileResponseData.put(
                 "probeIds", ((LafImporter) importer).getImportedIds());
             importResponseData.put(fileName, fileResponseData);
@@ -193,7 +190,7 @@ public class LafImportJob extends Job {
         if (importedProbeids.size() > 0) {
             //Generate a tag for the imported probe records
             Response tagCreation =
-                tagUtil.generateTag("IMP", mst.getNetzbetreiberId());
+                tagUtil.generateTag("IMP", mst.getNetworkId());
             if (!tagCreation.getSuccess()) {
                 // TODO Tag creation failed -> import success?
                 importData = importResponseData;
@@ -205,7 +202,7 @@ public class LafImportJob extends Job {
 
             //Put new tag in import response
             importResponseData.forEach((file, responseData) -> {
-                responseData.put("tag", newTag.getTag());
+                responseData.put("tag", newTag.getName());
             });
         }
         importData = importResponseData;
@@ -216,7 +213,11 @@ public class LafImportJob extends Job {
          this.jsonInput = jsonInput;
     }
 
-    public void setMst(MessStelle mst) {
+    public void setMst(MeasFacil mst) {
         this.mst = mst;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 }

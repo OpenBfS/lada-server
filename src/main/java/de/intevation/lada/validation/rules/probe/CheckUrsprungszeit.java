@@ -7,9 +7,10 @@
  */
 package de.intevation.lada.validation.rules.probe;
 
-import java.sql.Timestamp;
 
-import de.intevation.lada.model.land.Probe;
+import java.util.Date;
+
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -21,19 +22,19 @@ import de.intevation.lada.validation.rules.Rule;
  *
  *
  */
-@ValidationRule("Probe")
+@ValidationRule("Sample")
 public class CheckUrsprungszeit implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Probe probe = (Probe) object;
-        Timestamp uZeit = probe.getUrsprungszeit();
-        Timestamp begin = probe.getProbeentnahmeBeginn();
+        Sample probe = (Sample) object;
+        Date uZeit = probe.getOrigDate();
+        Date begin = probe.getSampleStartDate();
         if (uZeit != null && begin != null && uZeit.after(begin)
         ) {
             Violation violation = new Violation();
             violation.addWarning(
-                "ursprungszeit", StatusCodes.URSPR_Date_BEFORE_BEGIN);
+                "origDate", StatusCodes.URSPR_DATE_BEFORE_BEGIN);
             return violation;
         }
         return null;

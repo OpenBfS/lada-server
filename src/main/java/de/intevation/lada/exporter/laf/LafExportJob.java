@@ -8,22 +8,19 @@
 
 package de.intevation.lada.exporter.laf;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.json.JsonNumber;
-import javax.json.JsonValue;
+import jakarta.inject.Inject;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonValue;
 
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.Exporter;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.ExportJob;
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
 import de.intevation.lada.util.data.QueryBuilder;
 
 /**
@@ -32,8 +29,6 @@ import de.intevation.lada.util.data.QueryBuilder;
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
 public class LafExportJob extends ExportJob {
-
-    private static final int LENGTH = 1024;
 
     /**
      * The laf exporter.
@@ -78,44 +73,31 @@ public class LafExportJob extends ExportJob {
         //Get probe and messung records
         List<Integer> pIds = new ArrayList<Integer>();
         if (!probeIds.isEmpty()) {
-            QueryBuilder<Probe> pBuilder = repository.queryBuilder(
-                Probe.class);
+            QueryBuilder<Sample> pBuilder = repository.queryBuilder(
+                Sample.class);
             pBuilder.andIn("id", probeIds);
-            List<Probe> pObjects = repository.filterPlain(
+            List<Sample> pObjects = repository.filterPlain(
                 pBuilder.getQuery());
-            for (Probe p : pObjects) {
+            for (Sample p : pObjects) {
                 pIds.add(p.getId());
             }
         }
 
         List<Integer> mIds = new ArrayList<Integer>();
         if (!messungIds.isEmpty()) {
-            QueryBuilder<Messung> mBuilder = repository.queryBuilder(
-                Messung.class);
+            QueryBuilder<Measm> mBuilder = repository.queryBuilder(
+                Measm.class);
             mBuilder.andIn("id", messungIds);
-            List<Messung> mObjects = repository.filterPlain(
+            List<Measm> mObjects = repository.filterPlain(
                 mBuilder.getQuery());
-            for (Messung m : mObjects) {
+            for (Measm m : mObjects) {
                 mIds.add(m.getId());
             }
         }
 
         //Export and write to file
-        InputStream exported =
-            exporter.exportProben(pIds, mIds, encoding, userInfo);
-        logger.debug("Finished export to memory, writing to file.");
-
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[LENGTH];
-        int length;
-        try {
-            while ((length = exported.read(buffer)) != -1) {
-                result.write(buffer, 0, length);
-            }
-            writeResultToFile(new String(result.toByteArray(), encoding));
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe.getMessage());
-        }
+        writeResultToFile(
+            exporter.exportProben(pIds, mIds, encoding, userInfo));
 
         logger.debug(String.format("Finished LAF export"));
     }

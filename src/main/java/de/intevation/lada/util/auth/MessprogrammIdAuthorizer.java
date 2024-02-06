@@ -11,8 +11,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import de.intevation.lada.model.land.Messprogramm;
-import de.intevation.lada.model.stammdaten.MessStelle;
+
+import de.intevation.lada.model.lada.Mpg;
+import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
@@ -33,7 +34,7 @@ public class MessprogrammIdAuthorizer extends BaseAuthorizer {
     ) {
         Method m;
         try {
-            m = clazz.getMethod("getMessprogrammId");
+            m = clazz.getMethod("getMpgId");
         } catch (NoSuchMethodException | SecurityException e1) {
             return false;
         }
@@ -46,14 +47,14 @@ public class MessprogrammIdAuthorizer extends BaseAuthorizer {
         ) {
             return false;
         }
-        Messprogramm messprogramm =
-            repository.getByIdPlain(Messprogramm.class, id);
-        String mstId = messprogramm.getMstId();
+        Mpg messprogramm =
+            repository.getByIdPlain(Mpg.class, id);
+        String mstId = messprogramm.getMeasFacilId();
         if (mstId != null) {
-            MessStelle mst = repository.getByIdPlain(
-                MessStelle.class, mstId);
+            MeasFacil mst = repository.getByIdPlain(
+                MeasFacil.class, mstId);
             if (userInfo.getFunktionenForNetzbetreiber(
-                    mst.getNetzbetreiberId()).contains(4)
+                    mst.getNetworkId()).contains(4)
             ) {
                 return true;
             }
@@ -105,17 +106,17 @@ public class MessprogrammIdAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         try {
-            Method getMessprogrammId = clazz.getMethod("getMessprogrammId");
+            Method getMessprogrammId = clazz.getMethod("getMpgId");
             Integer id = (Integer) getMessprogrammId.invoke(data);
-            Messprogramm messprogramm = repository.getByIdPlain(
-                Messprogramm.class, id);
-            String mstId = messprogramm.getMstId();
+            Mpg messprogramm = repository.getByIdPlain(
+                Mpg.class, id);
+            String mstId = messprogramm.getMeasFacilId();
             boolean owner = false;
             if (mstId != null) {
-                MessStelle mst = repository.getByIdPlain(
-                    MessStelle.class, mstId);
+                MeasFacil mst = repository.getByIdPlain(
+                    MeasFacil.class, mstId);
                 if (userInfo.getFunktionenForNetzbetreiber(
-                        mst.getNetzbetreiberId()).contains(4)
+                        mst.getNetworkId()).contains(4)
                 ) {
                     owner = true;
                 }

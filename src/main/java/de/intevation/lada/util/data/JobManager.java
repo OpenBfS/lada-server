@@ -8,11 +8,13 @@
 
 package de.intevation.lada.util.data;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ThreadLocalRandom;
-import javax.annotation.Resource;
-import javax.enterprise.concurrent.ManagedExecutorService;
+
+import jakarta.annotation.Resource;
+import jakarta.enterprise.concurrent.ManagedExecutorService;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.jboss.logging.Logger;
 
@@ -25,6 +27,7 @@ import de.intevation.lada.util.data.Job.Status;
  * Abstract class for managing jobs.
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
+@ApplicationScoped
 public abstract class JobManager {
 
     protected static JobIdentifier identifier =
@@ -35,7 +38,7 @@ public abstract class JobManager {
     @Resource
     protected ManagedExecutorService executor;
 
-    protected Map<String, Job> activeJobs = new HashMap<>();
+    private ConcurrentMap<String, Job> activeJobs = new ConcurrentHashMap<>();
 
     /**
      * Get job by id.
@@ -91,14 +94,22 @@ public abstract class JobManager {
     }
 
     /**
-     * Calculates and returns the next job identifier.
+     * Add job and return the next job identifier.
      *
      * The new identifier will be stored in lastIdentifier.
+     * @param newJob A new job
      * @return New identifier as String
      */
-    protected synchronized String getNextIdentifier() {
+    protected synchronized String addJob(Job newJob) {
         identifier.next();
-        return identifier.toString();
+        String id = identifier.toString();
+        logger.debug(String.format("Creating new job: %s", id));
+        if (activeJobs.put(id, newJob) != null) {
+            // This should never happen
+            throw new RuntimeException(
+                String.format("Job with id %s already exists", id));
+        }
+        return id;
     }
 
     /**
@@ -107,14 +118,17 @@ public abstract class JobManager {
      * @param jobId ID of job to remove
      */
     protected void removeJob(String jobId) {
-        try {
-            logger.debug(String.format("Removing job %s", jobId));
-            activeJobs.get(jobId).cleanup();
-        } catch (JobNotFinishedException jfe) {
-            logger.warn(String.format(
-                "Tried to remove unfinished job %s", jobId));
-        }
-        activeJobs.remove(jobId);
+        logger.debug(String.format("Removing job %s", jobId));
+        Job job = activeJobs.get(jobId);
+        if (job != null) {
+            try {
+                job.cleanup();
+            } catch (JobNotFinishedException jfe) {
+                logger.warn(String.format(
+                        "Tried to remove unfinished job %s", jobId));
+            }
+            activeJobs.remove(jobId);
+        } // else, job has already been removed by concurrent request.
     }
 
     /**

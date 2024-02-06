@@ -9,16 +9,15 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.client.Client;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.lada.MpgMmtMp;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -28,32 +27,23 @@ public class MessprogrammMmtTest extends ServiceTest {
     private JsonObject expectedById;
     private JsonObject create;
 
-    /**
-     * @return The test protocol
-     */
-    public List<Protocol> getProtocol() {
-        return protocol;
-    }
-
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
         });
 
         // Prepare expected object
-        JsonObject content =
-            readJsonResource("/datasets/dbUnit_messprogramm.json");
         JsonObject messprogrammMmt =
-            content.getJsonArray("land.messprogramm_mmt").getJsonObject(0);
+            readXmlResource("datasets/dbUnit_lada.xml", MpgMmtMp.class)
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messprogrammMmt);
-        builder.add("messgroessen", Json.createArrayBuilder().add(56));
+        builder.add("measds", Json.createArrayBuilder().add(56));
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);
 
@@ -66,24 +56,13 @@ public class MessprogrammMmtTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        final String name = "messprogrammmmt";
-        final String url = "rest/messprogrammmmt/";
+        final String url = "rest/mpgmmtmp/";
         final String id = "1000";
 
-        get(name, url);
-        getById(name, url + id, expectedById);
-        get(name, url + "?messprogrammId=1000");
-        update(
-            name,
-            url + id,
-            "mmtId",
-            "A3",
-            "B3"
-        );
-        JsonObject created =
-            create(name, url, create);
-        delete(
-            name,
-            url + created.getJsonObject("data").get("id"));
+        getById(url + id, expectedById);
+        get(url + "?mpgId=1000");
+        update(url + id, "mmtId", "A3", "B3");
+        JsonObject created = create(url, create);
+        delete(url + created.getJsonObject("data").get("id"));
     }
 }

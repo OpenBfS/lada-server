@@ -7,14 +7,15 @@
  */
 package de.intevation.lada.validation.rules.messwert;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import java.util.List;
 
-import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.stammdaten.Umwelt;
-import de.intevation.lada.model.stammdaten.MassEinheitUmrechnung;
-import de.intevation.lada.model.stammdaten.Messgroesse;
+import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.master.EnvMedium;
+import de.intevation.lada.model.master.MeasUnit;
+import de.intevation.lada.model.master.UnitConvers;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.StatusCodes;
@@ -38,57 +39,63 @@ public class IsNormalized implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messwert messwert = (Messwert) object;
-        Umwelt umwelt = null;
+        MeasVal messwert = (MeasVal) object;
+        EnvMedium umwelt = null;
         Violation violation = new Violation();
 
-        if (messwert.getMessung() != null
-                && messwert.getMessung().getProbe() != null) {
-            umwelt = messwert.getMessung().getProbe().getUmwelt();
+        if (messwert.getMeasmId() != null) {
+            Measm measm = messwert.getMeasm() != null
+                ? messwert.getMeasm()
+                : repository.getByIdPlain(Measm.class, messwert.getMeasmId());
+            umwelt = measm.getSample().getEnvMedium();
         }
 
         // If umwelt record is present
         if (umwelt != null) {
-            Integer mehId = umwelt.getMehId();
-            Integer secMehId = umwelt.getSecMehId();
+            Integer mehId = umwelt.getUnit1();
+            Integer secMehId = umwelt.getUnit2();
 
             //If  meh is not set
-            if (mehId == null && secMehId == null){
-                violation.addWarning("mehId", StatusCodes.VAL_UNIT_UMW);
+            if (mehId == null && secMehId == null) {
+                violation.addWarning("measUnitId", StatusCodes.VAL_UNIT_UMW);
                 return violation;
             }
 
-            //Check if the messwert mehId can be converted to primary or secondary meh
+            // Check if the messwert mehId can be converted to primary or
+            // secondary meh
             Boolean convert = false;
-
-            if (mehId != null && !mehId.equals(messwert.getMehId())) {
-                QueryBuilder<MassEinheitUmrechnung> builder =
-                repository.queryBuilder(MassEinheitUmrechnung.class);
-                builder.and("mehIdZu", mehId);
-                builder.and("mehVon", messwert.getMehId());
-                List<MassEinheitUmrechnung> result = repository.filterPlain(builder.getQuery());
+            MeasUnit fromUnit = repository.getByIdPlain(
+                    MeasUnit.class, messwert.getMeasUnitId());
+            if (mehId != null && !mehId.equals(messwert.getMeasUnitId())) {
+                QueryBuilder<UnitConvers> builder =
+                repository.queryBuilder(UnitConvers.class);
+                builder.and("toUnitId", mehId);
+                builder.and("fromUnit", fromUnit);
+                List<UnitConvers> result = repository
+                    .filterPlain(builder.getQuery());
                 convert = result.size() > 0;
-            } else if (secMehId != null && !secMehId.equals(messwert.getMehId())) {
-                QueryBuilder<MassEinheitUmrechnung> builder =
-                repository.queryBuilder(MassEinheitUmrechnung.class);
-                builder.and("mehIdZu", secMehId);
-                builder.and("mehVon", messwert.getMehId());
-                List<MassEinheitUmrechnung> result = repository.filterPlain(builder.getQuery());
+            } else if (secMehId != null
+                && !secMehId.equals(messwert.getMeasUnitId())
+            ) {
+                QueryBuilder<UnitConvers> builder =
+                repository.queryBuilder(UnitConvers.class);
+                builder.and("toUnitId", secMehId);
+                builder.and("fromUnit", fromUnit);
+                List<UnitConvers> result = repository.filterPlain(
+                    builder.getQuery());
                 convert = result.size() > 0;
             }
 
             if (convert) {
-                QueryBuilder<Messgroesse> builder_messgr = repository.queryBuilder(Messgroesse.class);
-                builder_messgr.and("id", messwert.getMessgroesseId());
-                List<Messgroesse> messgroesse = repository.filterPlain(builder_messgr.getQuery());
-                violation.addWarning("mehId#"+messgroesse.get(0).getMessgroesse(), StatusCodes.VAL_UNIT_NORMALIZE);
-            } else if ( (mehId != null && mehId.equals(messwert.getMehId())) || (secMehId != null && secMehId.equals(messwert.getMehId())) ) {
+                violation.addWarning(
+                    "measUnitId", StatusCodes.VAL_UNIT_NORMALIZE);
+            } else if ((mehId != null
+                    && mehId.equals(messwert.getMeasUnitId()))
+                || (secMehId != null
+                    && secMehId.equals(messwert.getMeasUnitId()))) {
                 return null;
             } else {
-                QueryBuilder<Messgroesse> builder_messgr = repository.queryBuilder(Messgroesse.class);
-                builder_messgr.and("id", messwert.getMessgroesseId());
-                List<Messgroesse> messgroesse = repository.filterPlain(builder_messgr.getQuery());
-                violation.addWarning("mehId#"+messgroesse.get(0).getMessgroesse(), StatusCodes.VAL_UNIT_UMW);
+                violation.addWarning("measUnitId", StatusCodes.VAL_UNIT_UMW);
             }
         }
         return violation;

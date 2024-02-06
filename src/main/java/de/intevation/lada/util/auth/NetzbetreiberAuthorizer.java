@@ -30,7 +30,7 @@ public class NetzbetreiberAuthorizer extends BaseAuthorizer {
         String id;
         Method m;
         try {
-            m = clazz.getMethod("getNetzbetreiberId");
+            m = clazz.getMethod("getNetworkId");
         } catch (NoSuchMethodException | SecurityException e1) {
             return false;
         }
@@ -59,7 +59,7 @@ public class NetzbetreiberAuthorizer extends BaseAuthorizer {
            - If user tries to create: Can user edit probe objects?
         */
         if (clazz.isAssignableFrom(
-                de.intevation.lada.model.stammdaten.Ort.class)
+                de.intevation.lada.model.master.Site.class)
         ) {
             return
             ((method == RequestMethod.PUT

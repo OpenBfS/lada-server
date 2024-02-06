@@ -9,15 +9,14 @@ package de.intevation.lada.test.stamm;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.client.Client;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -31,20 +30,18 @@ public class DatensatzErzeugerTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung"
+            "lastMod"
         });
 
         // Prepare expected object
-        JsonObject content = readJsonResource(
-            "/datasets/dbUnit_datensatzerzeuger.json");
-        JsonObject erzeuger = content.getJsonArray(
-            "stamm.datensatz_erzeuger").getJsonObject(0);
+        JsonObject erzeuger =
+            readXmlResource("datasets/dbUnit_master.xml", DatasetCreator.class)
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);
@@ -58,19 +55,17 @@ public class DatensatzErzeugerTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("datensatzerzeuger", "rest/datensatzerzeuger");
+        get("rest/datasetcreator");
         getById(
-            "datensatzerzeuger",
-            "rest/datensatzerzeuger/1000",
+            "rest/datasetcreator/1000",
             expectedById);
         update(
-            "datensatzerzeuger",
-            "rest/datensatzerzeuger/1000",
-            "bezeichnung",
+            "rest/datasetcreator/1000",
+            "descr",
             "Testbezeichnung",
             "geändert");
         create(
-            "datensatzerzeuger", "rest/datensatzerzeuger", create);
+            "rest/datasetcreator", create);
 /*        delete("datensatzerzeuger",
             "rest/datensatzerzeuger/"
             + created.getJsonObject("data").get("id"));*/

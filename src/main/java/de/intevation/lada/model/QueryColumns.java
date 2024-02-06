@@ -7,12 +7,12 @@
  */
 package de.intevation.lada.model;
 
-import de.intevation.lada.model.stammdaten.GridColumnValue;
-
 import java.util.List;
 
-import javax.persistence.Basic;
-import javax.persistence.FetchType;
+import jakarta.persistence.Basic;
+import jakarta.persistence.FetchType;
+
+import de.intevation.lada.model.master.GridColConf;
 
 /**
  * Persistent class containing user column definitions, used for
@@ -21,15 +21,15 @@ import javax.persistence.FetchType;
 public class QueryColumns {
 
     @Basic(fetch = FetchType.EAGER)
-    private List<GridColumnValue> columns;
+    private List<GridColConf> columns;
 
     public QueryColumns() { }
 
-    public void setColumns(List<GridColumnValue> columns) {
+    public void setColumns(List<GridColConf> columns) {
         this.columns = columns;
     }
 
-    public List<GridColumnValue> getColumns() {
+    public List<GridColConf> getColumns() {
         return this.columns;
     }
 }

@@ -8,11 +8,11 @@
 package de.intevation.lada.validation.rules.probe;
 
 import java.util.List;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.model.land.ZusatzWert;
-import de.intevation.lada.model.stammdaten.UmweltZusatz;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.model.master.EnvSpecifMp;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -26,7 +26,7 @@ import de.intevation.lada.util.data.Repository;
  *
  * @author <a href="mailto:jbuermeyer@bfs.de">Jonas Buermeyer</a>
  */
-@ValidationRule("Probe")
+@ValidationRule("Sample")
 public class UmweltToProbezusatz implements Rule {
 
     @Inject
@@ -34,29 +34,34 @@ public class UmweltToProbezusatz implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Probe probe = (Probe) object;
-        if (probe.getUmwId() == null
-            || probe.getUmwId().equals("")
+        Sample probe = (Sample) object;
+        if (probe.getEnvMediumId() == null
+            || probe.getEnvMediumId().equals("")
         ) {
             return null;
         } else {
-            String umwId = probe.getUmwId();
-            QueryBuilder<UmweltZusatz> builderUmwZus =
-                repository.queryBuilder(UmweltZusatz.class);
-                builderUmwZus.and("umwId", umwId);
-            List <UmweltZusatz> UmwZus = repository.filterPlain(builderUmwZus.getQuery());
+            String umwId = probe.getEnvMediumId();
+            QueryBuilder<EnvSpecifMp> builderUmwZus = repository
+                .queryBuilder(EnvSpecifMp.class)
+                .and("envMediumId", umwId);
+            List <EnvSpecifMp> umwZus = repository.filterPlain(
+                builderUmwZus.getQuery());
 
-            QueryBuilder<ZusatzWert> builderZusatz =
-                repository.queryBuilder(ZusatzWert.class);
-                builderZusatz.and("probeId", probe.getId());
-            List <ZusatzWert> ZusWert = repository.filterPlain(builderZusatz.getQuery());
-            for (ZusatzWert zusW: ZusWert) {
-                Boolean ZusWertFound = UmwZus.stream().anyMatch(u -> u.getPzsId().equals(zusW.getPzsId()));
-                if (ZusWertFound) {
+            QueryBuilder<SampleSpecifMeasVal> builderZusatz = repository
+                .queryBuilder(SampleSpecifMeasVal.class)
+                .and("sampleId", probe.getId());
+            List <SampleSpecifMeasVal> zusWert = repository.filterPlain(
+                builderZusatz.getQuery());
+            for (SampleSpecifMeasVal zusW: zusWert) {
+                Boolean zusWertFound = umwZus.stream().anyMatch(
+                    u -> u.getSampleSpecifId().equals(
+                        zusW.getSampleSpecifId()));
+                if (zusWertFound) {
                     return null;
                 } else {
                     Violation violation = new Violation();
-                    violation.addWarning("zusatzwert", StatusCodes.VAL_PZW);
+                    violation.addWarning(
+                        "sampleSpecifMeasVals", StatusCodes.VAL_PZW);
                     return violation;
                 }
             }

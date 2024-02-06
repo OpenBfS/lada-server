@@ -16,28 +16,32 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.UUID;
 
-import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.SyncInvoker;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.Resource;
+import jakarta.inject.Inject;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.UserTransaction;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.SyncInvoker;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.junit.InSequence;
-import org.jboss.arquillian.persistence.ApplyScriptBefore;
-import org.jboss.arquillian.persistence.Cleanup;
-import org.jboss.arquillian.persistence.CleanupStrategy;
-import org.jboss.arquillian.persistence.DataSource;
-import org.jboss.arquillian.persistence.ShouldMatchDataSet;
-import org.jboss.arquillian.persistence.TestExecutionPhase;
-import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.transaction.api.annotation.Transactional;
+import org.jboss.logging.Logger;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -47,15 +51,16 @@ import de.intevation.lada.importer.Identified;
 import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.IdentifierConfig;
 import de.intevation.lada.importer.ObjectMerger;
-import de.intevation.lada.model.land.KommentarM;
-import de.intevation.lada.model.land.KommentarP;
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.model.land.ZusatzWert;
+import de.intevation.lada.model.lada.CommMeasm;
+import de.intevation.lada.model.lada.CommSample;
+import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
+import de.intevation.lada.util.data.StatusCodes;
 
 
 /**
@@ -64,8 +69,9 @@ import de.intevation.lada.util.data.Repository;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 @RunWith(Arquillian.class)
-@ApplyScriptBefore("datasets/clean_and_seed.sql")
 public class ImporterTest extends BaseTest {
+
+    private static final Logger LOG = Logger.getLogger(ImporterTest.class);
 
     private static final double MESS15D = 1.5d;
     private static final int MGID56 = 56;
@@ -78,40 +84,37 @@ public class ImporterTest extends BaseTest {
     private static final int PNID = 726;
     private static final int MPRID1000 = 1000;
     private static final int PID1000 = 1000;
-    private static final int T1 = 1;
-    private static final int T2 = 2;
-    private static final int T3 = 3;
-    private static final int T4 = 4;
-    private static final int T5 = 5;
-    private static final int T6 = 6;
-    private static final int T7 = 7;
-    private static final int T8 = 8;
-    private static final int T9 = 9;
-    private static final int T10 = 10;
-    private static final int T11 = 11;
-    private static final int T12 = 12;
-    private static final int T13 = 13;
-    private static final int T14 = 14;
-    private static final int T15 = 15;
-    private static final int T16 = 16;
-    private static final int T17 = 17;
     private static final Integer DID9 = 9;
 
-    private final String laf = "%PROBE%\n"
-        + "UEBERTRAGUNGSFORMAT \"7\"\n"
+    @Resource UserTransaction transaction;
+
+    private final String mstId = "06010";
+    private final String regulation = "test";
+    private final String sampleSpecifId = "A1";
+    private final String measd = "H-3";
+    private final String measUnit = "Bq/kgFM";
+    private final String lafTemplate = "%%PROBE%%\n"
+        + "UEBERTRAGUNGSFORMAT 7\n"
         + "VERSION \"0084\"\n"
-        + "PROBE_ID \"XXX\"\n"
-        + "MESSSTELLE \"06010\"\n"
+        + "PROBE_ID \"%s\"\n"
         + "PROBENART \"E\"\n"
+        + "TESTDATEN 0\n"
         + "MESSPROGRAMM_S 1\n"
-        + "DATENBASIS_S 02\n"
-        + "%ENDE%\n";
+        + "DATENBASIS \"%s\"\n"
+        + "PZB_S \"%s\" 42 \"\" 5.0\n"
+        + "%s"
+        + "%%MESSUNG%%\n"
+        + "MESSMETHODE_S \"A3\"\n"
+        + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
+        + "%%ENDE%%\n";
+
+    final String dataKey = "data";
 
     @PersistenceContext
     EntityManager em;
 
     @Inject
-    @IdentifierConfig(type = "Probe")
+    @IdentifierConfig(type = "Sample")
     Identifier probeIdentifier;
 
     @Inject
@@ -124,33 +127,24 @@ public class ImporterTest extends BaseTest {
     @Inject
     ObjectMerger merger;
 
+    public ImporterTest() {
+        testDatasetName = "datasets/dbUnit_import.xml";
+    }
+
     /**
      * Identify probe objects.
      *
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(0)
-    @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyProbeByHPNrMST() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify probe");
-        protocol.addInfo(
-            "import",
-            "Compare and find Probe by HP-Nr. and MST, Update");
-
-        Probe probe = new Probe();
-        probe.setHauptprobenNr("120510002");
-        probe.setMstId("06010");
+        Sample probe = new Sample();
+        probe.setMainSampleId("120510002");
+        probe.setMeasFacilId(mstId);
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.UPDATE, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -158,27 +152,14 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T1)
-    @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyProbeByHPNrMSTNew() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify probe");
-        protocol.addInfo(
-            "import",
-            "Compare and find Probe by HP-Nr. and MST, New");
-
-        Probe probe = new Probe();
-        probe.setHauptprobenNr("120510003");
-        probe.setMstId("06010");
+        Sample probe = new Sample();
+        probe.setMainSampleId("120510003");
+        probe.setMeasFacilId(mstId);
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.NEW, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -187,26 +168,13 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T2)
-    @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyProbeByExterneProbeId() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify probe");
-        protocol.addInfo(
-            "import",
-            "Compare and find Probe by externeProbeId, Update");
-
-        Probe probe = new Probe();
-        probe.setExterneProbeId("T001");
+        Sample probe = new Sample();
+        probe.setExtId("T001");
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.UPDATE, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -214,26 +182,13 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during test.
      */
     @Test
-    @InSequence(T3)
-    @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyProbeByExterneProbeIdNew() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify probe");
-        protocol.addInfo(
-            "import",
-            "Compare and find Probe by externeProbeId, New");
-
-        Probe probe = new Probe();
-        probe.setExterneProbeId("T002");
+        Sample probe = new Sample();
+        probe.setExtId("T002");
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.NEW, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -241,28 +196,15 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T4)
-    @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyProbeByExterneProbeIdReject() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify probe");
-        protocol.addInfo(
-            "import",
-            "Compare and find Probe by externeProbeId, Reject");
-
-        Probe probe = new Probe();
-        probe.setExterneProbeId("T001");
-        probe.setHauptprobenNr("120510003");
-        probe.setMstId("06010");
+        Sample probe = new Sample();
+        probe.setExtId("T001");
+        probe.setMainSampleId("120510003");
+        probe.setMeasFacilId(mstId);
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.REJECT, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -270,28 +212,15 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that ca occur during the test.
      */
     @Test
-    @InSequence(T5)
-    @UsingDataSet("datasets/dbUnit_probe_import.json")
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyProbeByExterneProbeIdUpdate() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify probe");
-        protocol.addInfo(
-            "import",
-            "Compare and find Probe by externeProbeId, Update");
-
-        Probe probe = new Probe();
-        probe.setExterneProbeId("T001");
-        probe.setHauptprobenNr("");
-        probe.setMstId("06010");
+        Sample probe = new Sample();
+        probe.setExtId("T001");
+        probe.setMainSampleId("");
+        probe.setMeasFacilId(mstId);
 
         Identified found = probeIdentifier.find(probe);
         Assert.assertEquals(Identified.UPDATE, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -299,27 +228,14 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T6)
-    @UsingDataSet("datasets/dbUnit_messung_import.json")
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyMessungByNpNr() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify messung");
-        protocol.addInfo(
-            "import",
-            "Compare and find Messung by NP-Nr., Update");
-
-        Messung messung = new Messung();
-        messung.setProbeId(PID1000);
-        messung.setNebenprobenNr("06A0");
+        Measm messung = new Measm();
+        messung.setSampleId(PID1000);
+        messung.setMinSampleId("06A0");
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.UPDATE, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -327,25 +243,14 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T7)
-    @UsingDataSet("datasets/dbUnit_messung_import.json")
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyMessungByNpNrNew() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify messung");
-        protocol.addInfo("import", "Compare and find Messung by NP-Nr., New");
-
-        Messung messung = new Messung();
-        messung.setProbeId(PID1000);
-        messung.setNebenprobenNr("06A1");
+        Measm messung = new Measm();
+        messung.setSampleId(PID1000);
+        messung.setMinSampleId("06A1");
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.NEW, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -353,27 +258,14 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T8)
-    @UsingDataSet("datasets/dbUnit_messung_import.json")
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyMessungByExterneMessungsId() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify messung");
-        protocol.addInfo(
-            "import",
-            "Compare and find Messung by externeMessungsId, Update");
-
-        Messung messung = new Messung();
-        messung.setProbeId(PID1000);
-        messung.setExterneMessungsId(1);
+        Measm messung = new Measm();
+        messung.setSampleId(PID1000);
+        messung.setExtId(1);
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.UPDATE, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -381,57 +273,33 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T9)
-    @UsingDataSet("datasets/dbUnit_messung_import.json")
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyMessungByExterneMessungsIdNew() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify messung");
-        protocol.addInfo(
-            "import",
-            "Compare and find Messung by externeMessungsId, New");
-
-        Messung messung = new Messung();
-        messung.setProbeId(PID1000);
-        messung.setExterneMessungsId(2);
+        Measm messung = new Measm();
+        messung.setSampleId(PID1000);
+        messung.setExtId(2);
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.NEW, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
      * Identify messung object by external id for reject.
      * @throws Exception that can occur during the test.
      */
-    @Test
     @Ignore
-    @InSequence(T10)
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Test
+    @Transactional
+    //TODO: This unexpectedly returns an update instead of an reject
     public final void identifyMessungByExterneMessungsIdReject()
     throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify messung");
-        protocol.addInfo(
-            "import",
-            "Compare and find Messung by externeMessungsId, Reject");
-
-        Messung messung = new Messung();
-        messung.setProbeId(PID1000);
-        messung.setExterneMessungsId(1);
-        messung.setNebenprobenNr("06A2");
+        Measm messung = new Measm();
+        messung.setSampleId(PID1000);
+        messung.setExtId(1);
+        messung.setMinSampleId("06A2");
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.REJECT, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -439,29 +307,16 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T11)
-    @UsingDataSet("datasets/dbUnit_messung_import.json")
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
+    @Transactional
     public final void identifyMessungByExterneMessungsIdUpdate()
     throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("identify messung");
-        protocol.addInfo(
-            "import",
-            "Compare and find Messung by externeMessungsId, Update");
-
-        Messung messung = new Messung();
-        messung.setProbeId(PID1000);
-        messung.setExterneMessungsId(1);
-        messung.setNebenprobenNr("");
+        Measm messung = new Measm();
+        messung.setSampleId(PID1000);
+        messung.setExtId(1);
+        messung.setMinSampleId("");
 
         Identified found = messungIdentifier.find(messung);
         Assert.assertEquals(Identified.UPDATE, found);
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
     }
 
     /**
@@ -469,42 +324,32 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T12)
-    @UsingDataSet("datasets/dbUnit_import_merge.json")
-    @ShouldMatchDataSet(value = "datasets/dbUnit_import_merge_match.json",
-        excludeColumns = {"letzte_aenderung", "tree_modified"})
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeProbe() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("merge probe");
-        protocol.addInfo("import", "Merge objects");
-
-        Probe probe = new Probe();
-        probe.setExterneProbeId("T001");
-        probe.setHauptprobenNr("120510002");
-        probe.setMstId("06010");
-        probe.setBaId(1);
-        probe.setDatenbasisId(DID9);
-        probe.setMedia(
+        transaction.begin();
+        Sample probe = new Sample();
+        probe.setExtId("T001");
+        probe.setMainSampleId("120510002");
+        probe.setMeasFacilId(mstId);
+        probe.setOprModeId(1);
+        probe.setRegulationId(DID9);
+        probe.setEnvDescripName(
             "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet");
-        probe.setMediaDesk("D: 59 04 01 00 05 05 01 02 00 00 00 00");
-        probe.setMprId(MPRID1000);
-        probe.setProbeNehmerId(PNID);
-        probe.setTest(false);
-        probe.setLaborMstId("06010");
-        probe.setProbenartId(2);
-        probe.setUmwId("A6");
-        probe.setSolldatumBeginn(Timestamp.valueOf("2013-05-01 16:00:00"));
-        probe.setSolldatumEnde(Timestamp.valueOf("2013-05-05 16:00:00"));
-        probe.setProbeentnahmeBeginn(Timestamp.valueOf("2012-05-03 13:07:00"));
-        Probe dbProbe = repository.getByIdPlain(Probe.class, PID1000);
+        probe.setEnvDescripDisplay("D: 59 04 01 00 05 05 01 02 00 00 00 00");
+        probe.setMpgId(MPRID1000);
+        probe.setSamplerId(PNID);
+        probe.setIsTest(false);
+        probe.setApprLabId(mstId);
+        probe.setSampleMethId(2);
+        probe.setEnvMediumId("A6");
+        probe.setSchedStartDate(Timestamp.valueOf("2013-05-01 16:00:00"));
+        probe.setSchedEndDate(Timestamp.valueOf("2013-05-05 16:00:00"));
+        probe.setSampleStartDate(Timestamp.valueOf("2012-05-03 13:07:00"));
+        Sample dbProbe = repository.getByIdPlain(Sample.class, PID1000);
         merger.merge(dbProbe, probe);
+        transaction.commit();
 
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
+        shouldMatchDataSet("datasets/dbUnit_import_merge_match.xml",
+            "lada.sample", new String[]{"last_mod", "tree_mod", "mid_coll_pd"});
     }
 
     /**
@@ -512,33 +357,24 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test
      */
     @Test
-    @InSequence(T13)
-    @UsingDataSet("datasets/dbUnit_import_merge.json")
-    @ShouldMatchDataSet(
-        value = "datasets/dbUnit_import_merge_match_messung.json",
-        excludeColumns = {"letzte_aenderung", "tree_modified"})
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeMessung() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("merge messung");
-        protocol.addInfo("import", "Merge objects");
-
-        Messung messung = new Messung();
-        messung.setNebenprobenNr("06A0");
-        messung.setGeplant(true);
-        messung.setFertig(false);
-        messung.setMessdauer(MDAUER1000);
+        transaction.begin();
+        Measm messung = new Measm();
+        messung.setMinSampleId("06A0");
+        messung.setIsScheduled(true);
+        messung.setIsCompleted(false);
+        messung.setMeasPd(MDAUER1000);
         messung.setMmtId("A3");
-        messung.setMesszeitpunkt(Timestamp.valueOf("2012-05-06 14:00:00"));
-        Messung dbMessung =
-            repository.getByIdPlain(Messung.class, MID1200);
+        messung.setMeasmStartDate(Timestamp.valueOf("2012-05-06 14:00:00"));
+        Measm dbMessung =
+            repository.getByIdPlain(Measm.class, MID1200);
         merger.mergeMessung(dbMessung, messung);
+        transaction.commit();
 
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
+        shouldMatchDataSet(
+            "datasets/dbUnit_import_merge_match_messung.xml",
+            "lada.measm",
+            new String[]{"status", "last_mod", "tree_mod"});
     }
 
     // TODO Record order can get mixed up here which cause the test to fail as
@@ -549,49 +385,40 @@ public class ImporterTest extends BaseTest {
      */
     @Test
     @Ignore
-    @InSequence(T14)
-    @UsingDataSet("datasets/dbUnit_import_merge.json")
-    @ShouldMatchDataSet(
-        value = "datasets/dbUnit_import_merge_match_zusatzwert.json",
-        excludeColumns = {"id", "letzte_aenderung", "tree_modified"})
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeZusatzwert() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("merge zusatzwert");
-        protocol.addInfo("import", "Merge objects");
+        transaction.begin();
+        Sample probe = repository.getByIdPlain(Sample.class, PID1000);
+        List<SampleSpecifMeasVal> zusatzwerte = new ArrayList<SampleSpecifMeasVal>();
+        SampleSpecifMeasVal wert1 = new SampleSpecifMeasVal();
+        wert1.setSampleId(PID1000);
+        wert1.setError(MESSFEHLER12F);
+        wert1.setSmallerThan("<");
+        wert1.setSampleSpecifId("A74");
 
-        Probe probe = repository.getByIdPlain(Probe.class, PID1000);
-        List<ZusatzWert> zusatzwerte = new ArrayList<ZusatzWert>();
-        ZusatzWert wert1 = new ZusatzWert();
-        wert1.setProbeId(PID1000);
-        wert1.setMessfehler(MESSFEHLER12F);
-        wert1.setKleinerAls("<");
-        wert1.setPzsId("A74");
+        SampleSpecifMeasVal wert2 = new SampleSpecifMeasVal();
+        wert2.setSampleId(PID1000);
+        wert2.setError(MESSFEHLER02F);
+        wert2.setMeasVal(MESS18D);
+        wert1.setSmallerThan(null);
+        wert2.setSampleSpecifId("A75");
 
-        ZusatzWert wert2 = new ZusatzWert();
-        wert2.setProbeId(PID1000);
-        wert2.setMessfehler(MESSFEHLER02F);
-        wert2.setMesswertPzs(MESS18D);
-        wert1.setKleinerAls(null);
-        wert2.setPzsId("A75");
-
-        ZusatzWert wert3 = new ZusatzWert();
-        wert3.setProbeId(PID1000);
-        wert3.setMessfehler(MESSFEHLER02F);
-        wert3.setMesswertPzs(MESS18D);
-        wert1.setKleinerAls(null);
-        wert3.setPzsId("A76");
+        SampleSpecifMeasVal wert3 = new SampleSpecifMeasVal();
+        wert3.setSampleId(PID1000);
+        wert3.setError(MESSFEHLER02F);
+        wert3.setMeasVal(MESS18D);
+        wert1.setSmallerThan(null);
+        wert3.setSampleSpecifId("A76");
 
         zusatzwerte.add(wert1);
         zusatzwerte.add(wert2);
         zusatzwerte.add(wert3);
         merger.mergeZusatzwerte(probe, zusatzwerte);
+        transaction.commit();
 
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
+        shouldMatchDataSet(
+            "datasets/dbUnit_import_merge_match_zusatzwert.xml",
+            "lada.sample_specif_meas_val",
+            new String[]{"id", "last_mod", "tree_mod"});
     }
 
     /**
@@ -599,32 +426,20 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test
      */
     @Test
-    @InSequence(T15)
-    @UsingDataSet("datasets/dbUnit_import_merge.json")
-    @ShouldMatchDataSet(
-        value = "datasets/dbUnit_import_merge_match_kommentar.json",
-        excludeColumns = {"id"})
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeProbeKommentar() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("merge probe kommentar");
-        protocol.addInfo("import", "Merge objects");
-
-        Probe probe = repository.getByIdPlain(Probe.class, PID1000);
-        List<KommentarP> kommentare = new ArrayList<KommentarP>();
-        KommentarP komm1 = new KommentarP();
-        komm1.setProbeId(PID1000);
-        komm1.setDatum(Timestamp.valueOf("2012-05-08 12:00:00"));
-        komm1.setMstId("06010");
+        transaction.begin();
+        Sample probe = repository.getByIdPlain(Sample.class, PID1000);
+        List<CommSample> kommentare = new ArrayList<CommSample>();
+        CommSample komm1 = new CommSample();
+        komm1.setSampleId(PID1000);
+        komm1.setDate(Timestamp.valueOf("2012-05-08 12:00:00"));
+        komm1.setMeasFacilId(mstId);
         komm1.setText("Testtext2");
 
-        KommentarP komm2 = new KommentarP();
-        komm2.setProbeId(PID1000);
-        komm2.setDatum(Timestamp.valueOf("2012-04-08 12:00:00"));
-        komm2.setMstId("06010");
+        CommSample komm2 = new CommSample();
+        komm2.setSampleId(PID1000);
+        komm2.setDate(Timestamp.valueOf("2012-04-08 12:00:00"));
+        komm2.setMeasFacilId(mstId);
         komm2.setText("Testtext3");
 
         kommentare.add(komm1);
@@ -632,9 +447,12 @@ public class ImporterTest extends BaseTest {
 
         merger.mergeKommentare(probe, kommentare);
         Assert.assertEquals(2, kommentare.size());
+        transaction.commit();
 
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
+        shouldMatchDataSet(
+            "datasets/dbUnit_import_merge_match_kommentar.xml",
+            "lada.comm_sample",
+            new String[]{"id"});
     }
 
     /**
@@ -642,33 +460,21 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T16)
-    @UsingDataSet("datasets/dbUnit_import_merge.json")
-    @ShouldMatchDataSet(
-        value = "datasets/dbUnit_import_merge_match_kommentarm.json",
-        excludeColumns = {"id"})
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeMessungKommentar() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("merge messung kommentar");
-        protocol.addInfo("import", "Merge objects");
-
-        Messung messung =
-            repository.getByIdPlain(Messung.class, MID1200);
-        List<KommentarM> kommentare = new ArrayList<KommentarM>();
-        KommentarM komm1 = new KommentarM();
-        komm1.setMessungsId(MID1200);
-        komm1.setDatum(Timestamp.valueOf("2012-05-08 12:00:00"));
-        komm1.setMstId("06010");
+        transaction.begin();
+        Measm messung =
+            repository.getByIdPlain(Measm.class, MID1200);
+        List<CommMeasm> kommentare = new ArrayList<CommMeasm>();
+        CommMeasm komm1 = new CommMeasm();
+        komm1.setMeasmId(MID1200);
+        komm1.setDate(Timestamp.valueOf("2012-05-08 12:00:00"));
+        komm1.setMeasFacilId(mstId);
         komm1.setText("Testtext2");
 
-        KommentarM komm2 = new KommentarM();
-        komm2.setMessungsId(MID1200);
-        komm2.setDatum(Timestamp.valueOf("2012-03-08 12:00:00"));
-        komm2.setMstId("06010");
+        CommMeasm komm2 = new CommMeasm();
+        komm2.setMeasmId(MID1200);
+        komm2.setDate(Timestamp.valueOf("2012-03-08 12:00:00"));
+        komm2.setMeasFacilId(mstId);
         komm2.setText("Testtext3");
 
         kommentare.add(komm1);
@@ -676,9 +482,12 @@ public class ImporterTest extends BaseTest {
 
         merger.mergeMessungKommentare(messung, kommentare);
         Assert.assertEquals(2, kommentare.size());
+        transaction.commit();
 
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
+        shouldMatchDataSet(
+            "datasets/dbUnit_import_merge_match_kommentarm.xml",
+            "lada.comm_measm",
+            new String[]{"id"});
     }
 
     /**
@@ -686,56 +495,44 @@ public class ImporterTest extends BaseTest {
      * @throws Exception that can occur during the test.
      */
     @Test
-    @InSequence(T17)
-    @UsingDataSet("datasets/dbUnit_import_merge.json")
-    @ShouldMatchDataSet(
-        value = "datasets/dbUnit_import_merge_match_messwert.json",
-        excludeColumns = {"id"})
-    @DataSource("java:jboss/lada-test")
-    @Cleanup(phase = TestExecutionPhase.AFTER,
-        strategy = CleanupStrategy.USED_TABLES_ONLY)
     public final void mergeMesswerte() throws Exception {
-        Protocol protocol = new Protocol();
-        protocol.setName("import");
-        protocol.setType("merge messwerte");
-        protocol.addInfo("import", "Merge objects");
-
-        Messung messung =
-            repository.getByIdPlain(Messung.class, MID1200);
-        List<Messwert> messwerte = new ArrayList<Messwert>();
-        Messwert wert1 = new Messwert();
-        wert1.setMessungsId(MID1200);
-        wert1.setMehId(MEHID207);
-        wert1.setMessgroesseId(MGID56);
-        wert1.setMesswert(MESS15D);
+        transaction.begin();
+        Measm messung =
+            repository.getByIdPlain(Measm.class, MID1200);
+        List<MeasVal> messwerte = new ArrayList<MeasVal>();
+        MeasVal wert1 = new MeasVal();
+        wert1.setMeasmId(MID1200);
+        wert1.setMeasUnitId(MEHID207);
+        wert1.setMeasdId(MGID56);
+        wert1.setMeasVal(MESS15D);
         messwerte.add(wert1);
 
         merger.mergeMesswerte(messung, messwerte);
-        QueryBuilder<Messwert> builder =
-            repository.queryBuilder(Messwert.class);
-        builder.and("messungsId", messung.getId());
-        List<Messwert> dbWerte =
+        QueryBuilder<MeasVal> builder =
+            repository.queryBuilder(MeasVal.class);
+        builder.and("measmId", messung.getId());
+        List<MeasVal> dbWerte =
             repository.filterPlain(builder.getQuery());
         Assert.assertEquals(1, dbWerte.size());
+        transaction.commit();
 
-        protocol.setPassed(true);
-        testProtocol.add(protocol);
+        shouldMatchDataSet(
+            "datasets/dbUnit_import_merge_match_messwert.xml",
+            "lada.meas_val",
+            new String[]{"id", "last_mod", "tree_mod"});
     }
 
     /**
-     * Test synchronous import of a Probe object.
+     * Test synchronous import of a Sample object.
      */
     @Test
-    @InSequence(18)
     @RunAsClient
     public final void testImportProbe(
         @ArquillianResource URL baseUrl
     ) {
-        Protocol prot = new Protocol();
-        prot.setName("syncimport service");
-        prot.setType("laf");
-        prot.setPassed(false);
-        testProtocol.add(prot);
+        final String laf = String.format(
+            lafTemplate, randomProbeId(),
+            regulation, sampleSpecifId, "", measd, measUnit);
 
         /* Request synchronous import */
         Response importResponse = client.target(
@@ -743,12 +540,11 @@ public class ImporterTest extends BaseTest {
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .header("X-LADA-MST", "06010")
+            .header("X-LADA-MST", mstId)
             .post(Entity.entity(laf, MediaType.TEXT_PLAIN));
-        JsonObject importResponseObject = parseResponse(importResponse, prot);
+        JsonObject importResponseObject = parseResponse(importResponse);
 
-        /* Check if a Probe object has been imported */
-        final String dataKey = "data";
+        /* Check if a Sample object has been imported */
         assertContains(importResponseObject, dataKey);
         JsonObject data = importResponseObject.getJsonObject(dataKey);
 
@@ -756,43 +552,252 @@ public class ImporterTest extends BaseTest {
         assertContains(data, probeIdsKey);
         Assert.assertEquals(1,
             data.getJsonArray(probeIdsKey).size());
-
-        prot.setPassed(true);
     }
 
     /**
-     * Test asynchronous import of a Probe object.
+     * Test successful asynchronous import of a Sample object.
      */
     @Test
-    @InSequence(18)
     @RunAsClient
-    public final void testAsyncImportProbe(
+    public final void testAsyncImportProbeSuccess(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
-        Protocol prot = new Protocol();
-        prot.setName("asyncimport service");
-        prot.setType("laf");
-        prot.setPassed(false);
-        testProtocol.add(prot);
+        final String lafSampleId = randomProbeId();
+        final String laf = String.format(
+            lafTemplate, lafSampleId,
+            regulation, sampleSpecifId, "", measd, measUnit);
+        JsonObject report = testAsyncImportProbe(
+            baseUrl, laf, lafSampleId, true);
+        JsonObject expectedWarning = Json.createObjectBuilder()
+            .add("key", "validation#probe")
+            .add("value", "sampleStartDate")
+            .add("code", String.valueOf(StatusCodes.VALUE_MISSING))
+            .build();
+        MatcherAssert.assertThat(
+            report.getJsonObject("warnings").getJsonArray(lafSampleId),
+            CoreMatchers.hasItem(expectedWarning));
+    }
+
+    /**
+     * Test import with lowercase LAF keywords.
+     */
+    @Test
+    @RunAsClient
+    public final void testImportLowercaseKeywords(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        final String lowerCaseLAF = String.format(
+            lafTemplate, lafSampleId, regulation, sampleSpecifId,
+            "", measd, measUnit).lines().map(line -> {
+                    if (line.matches("^\\w+ .*")) {
+                        String[] words = line.split(" ");
+                        words[0] = words[0].toLowerCase();
+                        return String.join(" ", words);
+                    }
+                    return line;
+                }).collect(Collectors.joining("\n"));
+        testAsyncImportProbe(baseUrl, lowerCaseLAF, lafSampleId, true);
+    }
+
+    /**
+     * Test unsuccessful asynchronous import of a Probe object.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncImportProbeNoSuccess(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        testAsyncImportProbe(baseUrl, "no valid LAF", "", false);
+    }
+
+    /**
+     * Test message localization in asynchronous import.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncImportProbeI18n(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        final String noOprModeLAF = String.format(
+            lafTemplate, lafSampleId, regulation, sampleSpecifId,
+            "", measd, measUnit).lines().filter(
+                line -> !line.startsWith("MESSPROGRAMM")).collect(
+                    Collectors.joining("\n"));
+
+        Map<Locale, String> msgs = Map.of(
+            Locale.GERMAN, "darf nicht null sein",
+            Locale.US, "must not be null");
+        final String errorsKey = "errors";
+        for (Locale locale: msgs.keySet()) {
+            JsonObject report = testAsyncImportProbe(
+                baseUrl, locale, noOprModeLAF, "", false);
+            assertContains(report, errorsKey);
+            JsonArray errors = report.getJsonObject(errorsKey)
+                .getJsonArray(lafSampleId);
+            JsonObject expectedError = Json.createObjectBuilder()
+                .add("key", "validation#probe")
+                .add("value", "oprModeId")
+                .add("code", msgs.get(locale)).build();
+            Assert.assertTrue(
+                "Missing error: " + expectedError.toString(),
+                errors.contains(expectedError));
+        }
+    }
+
+    /**
+     * Test asynchronous import of a Sample object with attribute conversion.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncImportProbeImportConfConvert(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        testAsyncImportProbe(
+            baseUrl,
+            String.format(
+                lafTemplate, lafSampleId, "conv", sampleSpecifId,
+                "", measd, measUnit),
+            lafSampleId,
+            true);
+    }
+
+    /**
+     * Test asynchronous import with attribute transformation in MeasVal.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncImportMeasValImportConfTransform(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        testAsyncImportProbe(
+            baseUrl,
+            String.format(
+                lafTemplate, lafSampleId, "conv", sampleSpecifId,
+                "", "H 3", measUnit),
+            lafSampleId,
+            true);
+    }
+
+    /**
+     * Test asynchronous import with attribute conversion
+     * in SampleSpecifMeasVal.
+     */
+    @Test
+    @RunAsClient
+    @Ignore
+    public final void testAsyncImportSampleSpecifMeasValImportConfTransform(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        testAsyncImportProbe(
+            baseUrl,
+            String.format(
+                lafTemplate, lafSampleId, "conv", "XX",
+                "", measd, measUnit),
+            lafSampleId,
+            true);
+    }
+
+    /**
+     * Test "Zeitbasis" handling in LAF8 import.
+     */
+    @Test
+    @RunAsClient
+    public final void testZeitbasis(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        testZeitbasis(baseUrl, "ZEITBASIS", "\"MESZ\"", false);
+        testZeitbasis(baseUrl, "ZEITBASIS", "\"INVALID\"", true);
+        testZeitbasis(baseUrl, "ZEITBASIS_S", "1", false);
+        testZeitbasis(baseUrl, "ZEITBASIS_S", "0", true);
+
+        // Use default from import_conf
+        testZeitbasis(baseUrl, "", "", false);
+    }
+
+    private void testZeitbasis(
+        URL baseUrl,
+        String lafKey,
+        String value,
+        boolean expectWarning
+    ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        // Add "ZEITBASIS" attribute to LAF string
+        String lafZb = String.format(
+            lafTemplate,
+            lafSampleId,
+            regulation,
+            sampleSpecifId,
+            lafKey + " " + value + "\n",
+            measd,
+            measUnit);
+        LOG.trace(lafZb);
+
+        JsonArray warnings = testAsyncImportProbe(
+            baseUrl, lafZb, lafSampleId, true)
+            .getJsonObject("warnings").getJsonArray(lafSampleId);
+        LOG.trace(warnings);
+        final String keyKey = "key";
+        if (expectWarning) {
+            JsonObject expectedWarning = Json.createObjectBuilder()
+                .add(keyKey, lafKey)
+                .add("value", value.replace("\"", ""))
+                .add("code", String.valueOf(StatusCodes.IMP_INVALID_VALUE))
+                .build();
+            Assert.assertFalse(
+                "Missing warning: " + expectedWarning.toString(),
+                !warnings.contains(expectedWarning));
+        } else {
+            for (JsonValue warningVal: warnings) {
+                JsonObject warning = (JsonObject) warningVal;
+                Assert.assertFalse(
+                    "Unexpected warning: " + warning.toString(),
+                    warning.getString(keyKey).startsWith("ZEITBASIS"));
+            }
+        }
+    }
+
+    private JsonObject testAsyncImportProbe(
+        URL baseUrl,
+        String lafData,
+        String lafSampleId,
+        boolean expectSuccess
+    ) throws InterruptedException, CharacterCodingException {
+        return testAsyncImportProbe(
+            baseUrl, Locale.US, lafData, lafSampleId, expectSuccess);
+    }
+
+    private JsonObject testAsyncImportProbe(
+        URL baseUrl,
+        Locale locale,
+        String lafData,
+        String lafSampleId,
+        boolean expectSuccess
+    ) throws InterruptedException, CharacterCodingException {
+        final String asyncImportUrl = baseUrl + "data/import/async/";
+        final String fileName = "test.laf";
 
         /* Request asynchronous import */
         JsonObject requestJson = Json.createObjectBuilder()
             .add("encoding", "utf-8")
             .add("files", Json.createObjectBuilder()
-                .add("test.laf", Base64.getEncoder().encodeToString(
-                        laf.getBytes(StandardCharsets.UTF_8))))
+                .add(fileName, Base64.getEncoder().encodeToString(
+                        lafData.getBytes(StandardCharsets.UTF_8))))
             .build();
 
-        Response importCreated = client.target(
-            baseUrl + "data/import/async/laf")
+        Response importCreated = client.target(asyncImportUrl + "laf")
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .header("X-LADA-MST", "06010")
+            .header("X-LADA-MST", mstId)
+            .acceptLanguage(locale)
             .post(Entity.entity(requestJson.toString(),
                     MediaType.APPLICATION_JSON));
-        JsonObject importCreatedObject = parseSimpleResponse(
-            importCreated, prot);
+        JsonObject importCreatedObject = parseSimpleResponse(importCreated);
 
         final String refIdKey = "refId";
         assertContains(importCreatedObject, refIdKey);
@@ -800,7 +805,7 @@ public class ImporterTest extends BaseTest {
 
         /* Request status of asynchronous import */
         SyncInvoker statusRequest = client.target(
-            baseUrl + "data/import/async/status/" + refId)
+            asyncImportUrl + "status/" + refId)
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles);
@@ -809,7 +814,7 @@ public class ImporterTest extends BaseTest {
         final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
         final int waitASecond = 1000;
         do {
-            importStatusObject = parseSimpleResponse(statusRequest.get(), prot);
+            importStatusObject = parseSimpleResponse(statusRequest.get());
 
             final String doneKey = "done";
             assertContains(importStatusObject, doneKey);
@@ -827,8 +832,91 @@ public class ImporterTest extends BaseTest {
             Job.Status.FINISHED.name().toLowerCase(),
             importStatusObject.getString(statusKey));
 
-        // TODO: Test if data correctly entered database
+        /* Fetch import result report */
+        Response reportResponse = client.target(
+            asyncImportUrl + "result/" + refId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        JsonObject report = parseSimpleResponse(reportResponse);
 
-        prot.setPassed(true);
+        assertContains(report, fileName);
+        JsonObject fileReport = report.getJsonObject(fileName);
+
+        final String successKey = "success";
+        assertContains(fileReport, successKey);
+        boolean success = fileReport.getBoolean(successKey);
+        final String sampleIdsKey = "probeIds";
+        assertContains(fileReport, sampleIdsKey);
+        if (!expectSuccess) {
+            Assert.assertFalse(
+                "Unexpectedly successful import: " + fileReport, success);
+            return fileReport;
+        }
+        Assert.assertTrue(
+            "Unsuccessful import: " + fileReport, success);
+
+        // Test if data correctly entered database
+        final int sampleId = fileReport.getJsonArray(sampleIdsKey)
+            .getJsonNumber(0).intValue();
+        Response importedSampleResponse = client.target(
+            baseUrl + "rest/sample/" + sampleId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        JsonObject importedSample = parseResponse(
+            importedSampleResponse).getJsonObject(dataKey);
+        Assert.assertEquals(lafSampleId, importedSample.getString("extId"));
+        Assert.assertEquals(mstId, importedSample.getString("measFacilId"));
+        Assert.assertEquals(1, importedSample.getInt("regulationId"));
+
+        Response importedSampleSpecifMeasValResponse = client.target(
+            baseUrl + "rest/samplespecifmeasval?sampleId=" + sampleId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        JsonArray importedSampleSpecifMeasVals =
+            parseResponse(importedSampleSpecifMeasValResponse)
+            .getJsonArray(dataKey);
+        Assert.assertEquals(1, importedSampleSpecifMeasVals.size());
+        JsonObject importedSampleSpecifMeasVal =
+            importedSampleSpecifMeasVals.getJsonObject(0);
+        Assert.assertEquals(
+            sampleSpecifId,
+            importedSampleSpecifMeasVal.getString("sampleSpecifId"));
+
+        Response importedMeasmResponse = client.target(
+            baseUrl + "rest/measm?sampleId=" + sampleId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        final int measmId = parseResponse(importedMeasmResponse)
+            .getJsonArray(dataKey)
+            .getJsonObject(0)
+            .getInt("id");
+
+        Response importedMeasValResponse = client.target(
+            baseUrl + "rest/measval?measmId=" + measmId)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .get();
+        JsonObject importedMeasVal =
+            parseResponse(importedMeasValResponse)
+            .getJsonArray(dataKey)
+            .getJsonObject(0);
+        Assert.assertEquals(1, importedMeasVal.getInt("measdId"));
+        Assert.assertEquals(1, importedMeasVal.getInt("measUnitId"));
+
+        return fileReport;
     }
+
+    private String randomProbeId() {
+        final int probeIdLength = 16;
+        return UUID.randomUUID().toString().substring(0, probeIdLength);
+   }
 }

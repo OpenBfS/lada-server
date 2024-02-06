@@ -1,7 +1,7 @@
 {
-    "datensatzErzeugerId": "07",
-    "letzteAenderung": 1381413048800,
-    "mstId": "06010",
-    "bezeichnung": "Test 1",
-    "netzbetreiberId": "06"
+    "extId": "07",
+    "lastMod": "2013-10-10T13:50:48.800Z",
+    "measFacilId": "06010",
+    "descr": "Test 1",
+    "networkId": "06"
 }

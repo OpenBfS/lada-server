@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.probe;
 
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -19,39 +19,39 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationRule("Probe")
+@ValidationRule("Sample")
 public class IsReiComplete implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Probe probe = (Probe) object;
+        Sample probe = (Sample) object;
         Violation violation = new Violation();
-        if (probe.getDatenbasisId() == null) {
+        if (probe.getRegulationId() == null) {
             return null;
         }
-        if (probe.getDatenbasisId() != 3
-            && probe.getDatenbasisId() != 4
+        if (probe.getRegulationId() != 3
+            && probe.getRegulationId() != 4
         ) {
-            if (probe.getReiProgpunktGrpId() != null) {
-                violation.addError(
-                    "reiProgpunktGrpId", StatusCodes.VALUE_NOT_MATCHING);
+            if (probe.getReiAgGrId() != null) {
+                violation.addWarning(
+                    "reiAgGrId", StatusCodes.VALUE_NOT_MATCHING);
             }
-            if (probe.getKtaGruppeId() != null) {
-                violation.addError(
-                    "ktaGruppeId", StatusCodes.VALUE_NOT_MATCHING);
+            if (probe.getNuclFacilGrId() != null) {
+                violation.addWarning(
+                    "nuclFacilGrId", StatusCodes.VALUE_NOT_MATCHING);
             }
-            if (violation.hasErrors()) {
+            if (violation.hasWarnings()) {
                 return violation;
             }
             return null;
         }
-        if (probe.getReiProgpunktGrpId() == null) {
+        if (probe.getReiAgGrId() == null) {
             violation.addWarning(
-                "reiProgpunktGrpId", StatusCodes.VALUE_MISSING);
+                "reiAgGrId", StatusCodes.VALUE_MISSING);
         }
-        if (probe.getKtaGruppeId() == null) {
+        if (probe.getNuclFacilGrId() == null) {
             violation.addWarning(
-                "ktaGruppeId", StatusCodes.VALUE_MISSING);
+                "nuclFacilGrId", StatusCodes.VALUE_MISSING);
         }
         if (violation.hasWarnings()) {
             return violation;

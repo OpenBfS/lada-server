@@ -7,8 +7,9 @@
  */
 package de.intevation.lada.query;
 
-import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,15 +19,15 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.persistence.Query;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.persistence.Query;
+import jakarta.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedMap;
 
-import de.intevation.lada.model.stammdaten.Filter;
-import de.intevation.lada.model.stammdaten.GridColumn;
-import de.intevation.lada.model.stammdaten.GridColumnValue;
-import de.intevation.lada.model.stammdaten.BaseQuery;
-import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.master.BaseQuery;
+import de.intevation.lada.model.master.Filter;
+import de.intevation.lada.model.master.GridColConf;
+import de.intevation.lada.model.master.GridColMp;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Repository;
 
 /**
@@ -49,7 +50,7 @@ public class QueryTools {
     // ORDER BY clause
     private String sortSql;
 
-    private List<GridColumnValue> customColumns;
+    private List<GridColConf> customColumns;
 
     private MultivaluedMap<String, Object> filterValues;
 
@@ -60,15 +61,15 @@ public class QueryTools {
      */
     public QueryTools(
         Repository repository,
-        List<GridColumnValue> customColumns
+        List<GridColConf> customColumns
     )  throws IllegalArgumentException {
         this.repository = repository;
 
-        for (GridColumnValue columnValue : customColumns) {
-            if (columnValue.getGridColumn() == null) {
-                GridColumn gridColumn = repository.getByIdPlain(
-                    GridColumn.class, columnValue.getGridColumnId());
-                columnValue.setGridColumn(gridColumn);
+        for (GridColConf columnValue : customColumns) {
+            if (columnValue.getGridColMp() == null) {
+                GridColMp gridColumn = repository.getByIdPlain(
+                    GridColMp.class, columnValue.getGridColMpId());
+                columnValue.setGridColMp(gridColumn);
             }
         }
         this.customColumns = customColumns;
@@ -77,7 +78,7 @@ public class QueryTools {
             customColumns,
             repository.getByIdPlain(
                 BaseQuery.class,
-                customColumns.get(0).getGridColumn().getBaseQuery()
+                customColumns.get(0).getGridColMp().getBaseQueryId()
             ).getSql());
 
         this.sortSql = prepareSortSql(customColumns);
@@ -125,12 +126,28 @@ public class QueryTools {
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
         for (Object row: query.getResultList()) {
             Map<String, Object> set = new HashMap<String, Object>();
-            for (GridColumnValue column: this.customColumns) {
+            /* If row contains or is a java.sql.Timestamp:
+             * Convert to date to allow serialization
+             */
+            if (row instanceof Object[]) {
+                Object[] rowArr = (Object[]) row;
+                for (int i = 0; i < rowArr.length; i++) {
+                    Object col = rowArr[i];
+                    if (col instanceof Timestamp) {
+                        Timestamp ts = (Timestamp) col;
+                        rowArr[i] = new Date(ts.getTime());
+                    }
+                }
+            } else if (row instanceof Timestamp) {
+                Timestamp ts = (Timestamp) row;
+                row = new Date(ts.getTime());
+            }
+            for (GridColConf column: this.customColumns) {
                 set.put(
-                    column.getGridColumn().getDataIndex(),
+                    column.getGridColMp().getDataIndex(),
                     row instanceof Object[]
                         ? ((Object[]) row)[
-                            column.getGridColumn().getPosition() - 1]
+                            column.getGridColMp().getPosition() - 1]
                         : row);
             }
             ret.add(set);
@@ -146,7 +163,7 @@ public class QueryTools {
     public int getTotalCountForQuery() {
         Query q = prepareQuery(
             "SELECT count(*) FROM (" + this.sql + ") as query");
-        return ((BigInteger) q.getSingleResult()).intValueExact();
+        return Math.toIntExact((Long) q.getSingleResult());
     }
 
     /**
@@ -156,22 +173,22 @@ public class QueryTools {
      * @param sql The base query without WHERE and ORDER BY clause.
      * @return The query including WHERE clause.
      */
-    static String prepareSql(List<GridColumnValue> customColumns, String sql) {
+    static String prepareSql(List<GridColConf> customColumns, String sql) {
         String filterSql = "";
         String genericFilterSql = "";
         boolean subquery = false;
 
-        for (GridColumnValue customColumn : customColumns) {
+        for (GridColConf customColumn : customColumns) {
             boolean generic = false;
-            if (customColumn.getFilterActive()
-                && customColumn.getFilterValue() != null
-                && !customColumn.getFilterValue().isEmpty()
-                && !customColumn.getFilterIsNull()
+            if (customColumn.getIsFilterActive()
+                && customColumn.getFilterVal() != null
+                && !customColumn.getFilterVal().isEmpty()
+                && !customColumn.getIsFilterIsNull()
             ) {
-                Filter filter = customColumn.getGridColumn().getFilter();
-                String filterValue = customColumn.getFilterValue();
+                Filter filter = customColumn.getGridColMp().getFilter();
+                String filterValue = customColumn.getFilterVal();
                 String currentFilterString = filter.getSql();
-                String currentFilterParam = filter.getParameter();
+                String currentFilterParam = filter.getParam();
                 String filterType = filter.getFilterType().getType();
                 if (GENERICTEXT_FILTER_TYPE.equals(filterType)
                     || GENERICID_FILTER_TYPE.equals(filterType)
@@ -180,14 +197,14 @@ public class QueryTools {
                     generic = true;
                 }
                 if (GENERICTEXT_FILTER_TYPE.equals(filterType)) {
-                    String genTextParam = ":" + filter.getParameter() + "Param";
-                    String genTextValue = filter.getParameter() + "Value";
+                    String genTextParam = ":" + filter.getParam() + "Param";
+                    String genTextValue = filter.getParam() + "Value";
                     currentFilterString =
                         currentFilterString.replace(
                             genTextParam,
-                            customColumn.getGridColumn().getDataIndex());
+                            customColumn.getGridColMp().getDataIndex());
                     currentFilterParam =
-                        genTextValue + customColumn.getGridColumnId();
+                        genTextValue + customColumn.getGridColMpId();
                     currentFilterString =
                         currentFilterString.replace(
                             ":" + genTextValue, ":" + currentFilterParam);
@@ -195,7 +212,7 @@ public class QueryTools {
                     String[] tagIds = filterValue.split(",");
                     int tagNumber = tagIds.length;
                     String paramlist = "";
-                    String param = filter.getParameter();
+                    String param = filter.getParam();
                     String tagFilterSql = filter.getSql();
                     for (int i = 0; i < tagNumber; i++) {
                         if (i != tagNumber - 1) {
@@ -206,7 +223,7 @@ public class QueryTools {
                     }
                     tagFilterSql =
                         tagFilterSql.replace(
-                            ":" + filter.getParameter(), paramlist);
+                            ":" + filter.getParam(), paramlist);
                     if (filterSql.isEmpty()) {
                         filterSql += " WHERE " + tagFilterSql;
                     } else {
@@ -214,7 +231,7 @@ public class QueryTools {
                     }
                     continue;
                 }
-                if (customColumn.getFilterNegate()) {
+                if (customColumn.getIsFilterNegate()) {
                     currentFilterString = "NOT(" + currentFilterString + ")";
                 }
                 if (generic) {
@@ -231,17 +248,17 @@ public class QueryTools {
                         filterSql += " AND " + currentFilterString;
                     }
                 }
-            } else if (customColumn.getFilterActive()
-                       && customColumn.getFilterIsNull()
+            } else if (customColumn.getIsFilterActive()
+                       && customColumn.getIsFilterIsNull()
             ) {
-                Filter filter = customColumn.getGridColumn().getFilter();
+                Filter filter = customColumn.getGridColMp().getFilter();
                 String currentFilterString = filter.getSql();
                 String filterType = filter.getFilterType().getType();
                 if (GENERICTEXT_FILTER_TYPE.equals(filterType)) {
                     currentFilterString =
-                        customColumn.getGridColumn().getDataIndex()
+                        customColumn.getGridColMp().getDataIndex()
                         + " IS NULL";
-                    if (customColumn.getFilterNegate()) {
+                    if (customColumn.getIsFilterNegate()) {
                         currentFilterString =
                             "NOT(" + currentFilterString + ")";
                     }
@@ -257,7 +274,7 @@ public class QueryTools {
                         currentFilterString.replaceAll(" .*", " IS NULL ");
                     currentFilterString =
                         currentFilterString.replaceAll(".*\\(", "");
-                    if (customColumn.getFilterNegate()) {
+                    if (customColumn.getIsFilterNegate()) {
                         currentFilterString =
                             "NOT(" + currentFilterString + ")";
                     }
@@ -287,15 +304,15 @@ public class QueryTools {
      * @param customColumns List<GridColumnValue> with filter and sort settings.
      * @return The "ORDER BY" clause
      */
-    static String prepareSortSql(List<GridColumnValue> customColumns) {
+    static String prepareSortSql(List<GridColConf> customColumns) {
         TreeMap<Integer, String> sortIndMap = new TreeMap<Integer, String>();
         String sortSql = "";
 
-        for (GridColumnValue customColumn : customColumns) {
+        for (GridColConf customColumn : customColumns) {
             if (customColumn.getSort() != null
                 && !customColumn.getSort().isEmpty()) {
                     String sortValue =
-                        customColumn.getGridColumn().getDataIndex() + " "
+                        customColumn.getGridColMp().getDataIndex() + " "
                         + customColumn.getSort() + " ";
                 Integer key =
                     customColumn.getSortIndex() != null
@@ -337,23 +354,23 @@ public class QueryTools {
         //Map containing all filters and filter values
         this.filterValues = new MultivaluedHashMap<String, Object>();
 
-        for (GridColumnValue customColumn : this.customColumns) {
-            if (customColumn.getFilterActive()
-                && customColumn.getFilterValue() != null
-                && !customColumn.getFilterValue().isEmpty()
-                && !customColumn.getFilterIsNull()
+        for (GridColConf customColumn : this.customColumns) {
+            if (customColumn.getIsFilterActive()
+                && customColumn.getFilterVal() != null
+                && !customColumn.getFilterVal().isEmpty()
+                && !customColumn.getIsFilterIsNull()
             ) {
 
-                Filter filter = customColumn.getGridColumn().getFilter();
-                String filterValue = customColumn.getFilterValue();
-                String currentFilterParam = filter.getParameter();
+                Filter filter = customColumn.getGridColMp().getFilter();
+                String filterValue = customColumn.getFilterVal();
+                String currentFilterParam = filter.getParam();
                 String filterType = filter.getFilterType().getType();
 
                 //Check if filter is generic and replace param and value param
                 if (GENERICTEXT_FILTER_TYPE.equals(filterType)) {
-                    String genTextValue = filter.getParameter() + "Value";
+                    String genTextValue = filter.getParam() + "Value";
                     currentFilterParam =
-                        genTextValue + customColumn.getGridColumnId();
+                        genTextValue + customColumn.getGridColMpId();
                 }
 
                 // If a tag filter is applied, split param into n
@@ -361,13 +378,13 @@ public class QueryTools {
                 if (TAG_FILTER_TYPE.equals(filterType)) {
                     String[] tagIds = filterValue.split(",");
                     int tagNumber = tagIds.length;
-                    String param = filter.getParameter();
+                    String param = filter.getParam();
                     for (int i = 0; i < tagNumber; i++) {
                         String tag =
                             repository.getByIdPlain(
                                 Tag.class,
                                 Integer.parseInt(tagIds[i])
-                            ).getTag();
+                            ).getName();
                         this.filterValues.add(param + i, tag);
                     }
                     continue;
@@ -377,7 +394,7 @@ public class QueryTools {
                 if (GENERICTEXT_FILTER_TYPE.equals(filterType)
                     || TEXT_FILTER_TYPE.equals(filterType)
                 ) {
-                    if (!customColumn.getFilterRegex()) {
+                    if (!customColumn.getIsFilterRegex()) {
                         filterValue += "%";
                         filterValue = translateToRegex(filterValue);
                     }
@@ -389,9 +406,9 @@ public class QueryTools {
                     }
                 }
 
-                if (!filter.getFilterType().getMultiselect()) {
+                if (!filter.getFilterType().getIsMultiselect()) {
                     if (filter.getFilterType().getType().equals("number")) {
-                        String[] params = filter.getParameter().split(",");
+                        String[] params = filter.getParam().split(",");
                         String[] values = filterValue.split(",", -1);
                         if (values.length != 2) {
                             throw new IllegalArgumentException(
@@ -423,7 +440,7 @@ public class QueryTools {
                     ) {
                         // Get parameters as comma separated values,
                         // expected to be in milliseconds
-                        String[] params = filter.getParameter().split(",");
+                        String[] params = filter.getParam().split(",");
                         Matcher matcher =
                             multiselectPattern.matcher(filterValue);
                         if (matcher.find()) {
@@ -450,12 +467,12 @@ public class QueryTools {
                                 Integer vNumber =
                                     Integer.valueOf(value.toString());
                                 this.filterValues.add(
-                                    filter.getParameter(), vNumber);
+                                    filter.getParam(), vNumber);
                             }
                         } else {
                             for (String value : multiselect) {
                                 this.filterValues.add(
-                                    filter.getParameter(), value);
+                                    filter.getParam(), value);
                             }
                         }
                     }

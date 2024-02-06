@@ -9,10 +9,10 @@ package de.intevation.lada.validation.rules.probe;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.model.stammdaten.Deskriptoren;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -27,7 +27,7 @@ import de.intevation.lada.validation.rules.Rule;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationRule("Probe")
+@ValidationRule("Sample")
 public class Deskriptor implements Rule {
 
     @Inject
@@ -35,26 +35,26 @@ public class Deskriptor implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Probe probe = (Probe) object;
-        if (probe.getMediaDesk() == null) {
+        Sample probe = (Sample) object;
+        if (probe.getEnvDescripDisplay() == null) {
             Violation violation = new Violation();
-            violation.addWarning("mediaDesk", StatusCodes.VALUE_MISSING);
+            violation.addWarning("envDescripDisplay", StatusCodes.VALUE_MISSING);
             return violation;
         }
-        String[] mediaDesk = probe.getMediaDesk().split(" ");
+        String[] mediaDesk = probe.getEnvDescripDisplay().split(" ");
         if (mediaDesk.length <= 1) {
             Violation violation = new Violation();
-            violation.addWarning("mediaDesk", StatusCodes.VALUE_MISSING);
+            violation.addWarning("envDescripDisplay", StatusCodes.VALUE_MISSING);
             return violation;
         }
         if (mediaDesk.length >= 1
-            && probe.getDatenbasisId() != null
-            && probe.getDatenbasisId() == 4
+            && probe.getRegulationId() != null
+            && probe.getRegulationId() == 4
             && (mediaDesk[1].equals("00")
             || mediaDesk[2].equals("00"))
         ) {
             Violation violation = new Violation();
-            violation.addWarning("mediaDesk", StatusCodes.VAL_S1_NOTSET);
+            violation.addWarning("envDescripDisplay", StatusCodes.VAL_S1_NOTSET);
             return violation;
         }
 
@@ -76,20 +76,20 @@ public class Deskriptor implements Rule {
             } else {
                 parent = ndParent;
             }
-            QueryBuilder<Deskriptoren> builder =
-                repository.queryBuilder(Deskriptoren.class);
+            QueryBuilder<EnvDescrip> builder =
+                repository.queryBuilder(EnvDescrip.class);
             if (parent != null) {
-                builder.and("vorgaenger", parent);
+                builder.and("predId", parent);
             }
-            builder.and("sn", mediaDesk[i]);
-            builder.and("ebene", i - 1);
+            builder.and("levVal", mediaDesk[i]);
+            builder.and("lev", i - 1);
             Response response =
                 repository.filter(builder.getQuery());
             @SuppressWarnings("unchecked")
-            List<Deskriptoren> data = (List<Deskriptoren>) response.getData();
+            List<EnvDescrip> data = (List<EnvDescrip>) response.getData();
             if (data.isEmpty()) {
                 Violation violation = new Violation();
-                violation.addWarning("mediaDesk", StatusCodes.VAL_DESK);
+                violation.addWarning("envDescripDisplay", StatusCodes.VAL_DESK);
                 return violation;
             }
             hdParent = data.get(0).getId();

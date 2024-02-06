@@ -10,10 +10,10 @@ package de.intevation.lada.validation.rules.probe;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import de.intevation.lada.model.land.Ortszuordnung;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -27,7 +27,7 @@ import de.intevation.lada.validation.rules.Rule;
  * Validates if the probe has a "entnahmeort".
  *
  */
-@ValidationRule("Probe")
+@ValidationRule("Sample")
 public class HasOneUrsprungsOrt implements Rule {
 
     @Inject
@@ -35,31 +35,31 @@ public class HasOneUrsprungsOrt implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Probe probe = (Probe) object;
+        Sample probe = (Sample) object;
         Integer id = probe.getId();
         if (id == null) {
             Violation violation = new Violation();
-            violation.addWarning("entnahmeOrt", StatusCodes.VALUE_MISSING);
+            violation.addWarning("geolocats", StatusCodes.VALUE_MISSING);
             return violation;
         }
-        if (probe.getReiProgpunktGrpId() != null
-            || Integer.valueOf(3).equals(probe.getDatenbasisId())
-            || Integer.valueOf(4).equals(probe.getDatenbasisId())) {
+        if (probe.getReiAgGrId() != null
+            || Integer.valueOf(3).equals(probe.getRegulationId())
+            || Integer.valueOf(4).equals(probe.getRegulationId())) {
                 return null;
         }
 
         List<String> zuordTypeFilter = Arrays.asList("U", "R");
 
-        QueryBuilder<Ortszuordnung> builder =
-            repository.queryBuilder(Ortszuordnung.class);
-        builder.and("probeId", id);
-        builder.andIn("ortszuordnungTyp", zuordTypeFilter);
+        QueryBuilder<Geolocat> builder =
+            repository.queryBuilder(Geolocat.class);
+        builder.and("sampleId", id);
+        builder.andIn("typeRegulation", zuordTypeFilter);
         Response response = repository.filter(builder.getQuery());
         @SuppressWarnings("unchecked")
-        List<Ortszuordnung> orte = (List<Ortszuordnung>) response.getData();
+        List<Geolocat> orte = (List<Geolocat>) response.getData();
         if (orte.size()>1) {
             Violation violation = new Violation();
-            violation.addWarning("ursprungsOrt", StatusCodes.ORT_SINGLE_UORT);
+            violation.addWarning("geolocats", StatusCodes.ORT_SINGLE_UORT);
             return violation;
         } else {
             return null;

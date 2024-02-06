@@ -12,8 +12,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.model.stammdaten.MessStelle;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
@@ -34,7 +34,7 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         Integer id;
         Method m;
         try {
-            m = clazz.getMethod("getProbeId");
+            m = clazz.getMethod("getSampleId");
         } catch (NoSuchMethodException | SecurityException e1) {
             return false;
         }
@@ -55,8 +55,8 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Probe probe =
-            repository.getByIdPlain(Probe.class, id);
+        Sample probe =
+            repository.getByIdPlain(Sample.class, id);
         return !isProbeReadOnly((Integer) id)
             && getAuthorization(userInfo, probe);
     }
@@ -93,25 +93,28 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         Object data,
         Class<T> clazz
     ) {
+        if (data == null) {
+            return null;
+        }
         try {
-            Method getProbeId = clazz.getMethod("getProbeId");
+            Method getProbeId = clazz.getMethod("getSampleId");
             Integer id = (Integer) getProbeId.invoke(data);
-            Probe probe =
-                (Probe) repository.getById(
-                    Probe.class, id).getData();
+            Sample probe =
+                (Sample) repository.getById(
+                    Sample.class, id).getData();
 
             boolean readOnly = true;
             boolean owner = false;
-            MessStelle mst =
+            MeasFacil mst =
                 repository.getByIdPlain(
-                    MessStelle.class, probe.getMstId());
+                    MeasFacil.class, probe.getMeasFacilId());
             if (!userInfo.getNetzbetreiber().contains(
-                    mst.getNetzbetreiberId())) {
+                    mst.getNetworkId())) {
                 owner = false;
                 readOnly = true;
             } else {
                 if (userInfo.belongsTo(
-                    probe.getMstId(), probe.getLaborMstId())
+                    probe.getMeasFacilId(), probe.getApprLabId())
                 ) {
                     owner = true;
                 } else {

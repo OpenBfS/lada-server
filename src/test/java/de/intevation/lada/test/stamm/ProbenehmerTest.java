@@ -9,15 +9,14 @@ package de.intevation.lada.test.stamm;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.client.Client;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -32,26 +31,26 @@ public class ProbenehmerTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
             "letzteAenderung"
         });
 
+        // Load object to test POST request
+        create = readJsonResource("/datasets/probenehmer.json");
+
         // Prepare expected object
-        JsonObject content =
-            readJsonResource("/datasets/dbUnit_probenehmer.json");
-        JsonObject probenehmer =
-            content.getJsonArray("stamm.probenehmer").getJsonObject(0);
+        JsonObject probenehmer = filterJsonArrayById(
+            readXmlResource("datasets/dbUnit_master.xml", Sampler.class),
+            1000);
+
         JsonObjectBuilder builder = convertObject(probenehmer);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);
 
-        // Load object to test POST request
-        create = readJsonResource("/datasets/probenehmer.json");
         Assert.assertNotNull(create);
     }
 
@@ -59,17 +58,14 @@ public class ProbenehmerTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("probenehmer", "rest/probenehmer");
-        getById("probenehmer", "rest/probenehmer/1000", expectedById);
+        get("rest/sampler");
+        getById("rest/sampler/1000", expectedById);
         update(
-            "probenehmer",
-            "rest/probenehmer/1000",
-            "bezeichnung",
+            "rest/sampler/1000",
+            "descr",
             "Testbezeichnung",
             "geändert");
-        JsonObject created = create("probenehmer", "rest/probenehmer", create);
-        delete(
-            "probenehmer",
-            "rest/probenehmer/" + created.getJsonObject("data").get("id"));
+        JsonObject created = create("rest/sampler", create);
+        delete("rest/sampler/" + created.getJsonObject("data").get("id"));
     }
 }

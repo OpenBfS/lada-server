@@ -10,9 +10,9 @@ package de.intevation.lada.rest;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 import org.jboss.logging.Logger;
 
@@ -42,7 +42,7 @@ import de.intevation.lada.util.rest.Response;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("rest/version")
+@Path("version")
 public class VersionService extends LadaService {
 
     @Inject
@@ -56,7 +56,6 @@ public class VersionService extends LadaService {
      * @return Response object containing version.
      */
     @GET
-    @Path("/")
     public Response get() {
         String version = "unknown";
         try {

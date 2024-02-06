@@ -1,9 +1,0 @@
-{
-    "stamm.datensatz_erzeuger": [{
-        "id": 1000,
-        "bezeichnung": "Testbezeichnung",
-        "netzbetreiber_id": "06",
-        "mst_id": "06010",
-        "datensatz_erzeuger_id": "06"
-    }]
-}

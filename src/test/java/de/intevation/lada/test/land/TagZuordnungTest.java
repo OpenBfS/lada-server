@@ -11,23 +11,21 @@ import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
-import javax.ws.rs.client.Client;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
+import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
-import de.intevation.lada.model.stammdaten.Tag;
+import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.test.ServiceTest;
 
 /**
  * Test tagzuordnung entities.
  */
 public class TagZuordnungTest extends ServiceTest {
-    private final String name = "tagzuordnung";
-    private final String tagUrl = "rest/tag/zuordnung/";
+    private final String tagUrl = "rest/tag/taglink/";
 
     private JsonArray create;
     private JsonArray create2;
@@ -37,10 +35,9 @@ public class TagZuordnungTest extends ServiceTest {
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         create = readJsonArrayResource("/datasets/tagzuordnung_create.json");
         Assert.assertNotNull(create);
         create2 = readJsonArrayResource("/datasets/tagzuordnung_create2.json");
@@ -59,8 +56,11 @@ public class TagZuordnungTest extends ServiceTest {
      */
     public void execute() {
         // test assigning tags
-        bulkOperation(name, tagUrl, create);
-        JsonObject tagResponse = get("tag", "rest/tag/");
+        bulkOperation(tagUrl, create);
+        // Should accept existing tag links
+        bulkOperation(tagUrl, create);
+
+        JsonObject tagResponse = get("rest/tag/");
         List<Integer> tagIds = create.stream()
             .map(zuord -> zuord.asJsonObject().getInt("tagId"))
             .collect(Collectors.toList());
@@ -73,39 +73,41 @@ public class TagZuordnungTest extends ServiceTest {
         // Test validity of newly assigned tags
         tags.forEach(tagVal -> {
             JsonObject tag = (JsonObject) tagVal;
-            long gueltigBisLong = tag.getJsonNumber("gueltigBis").longValue();
+            String gueltigBisLong = tag.getString("valUntil");
             long diffInDays = getDaysFromNow(gueltigBisLong);
             Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diffInDays);
         });
 
         // test filtering tags by assignment
-        tagResponse = get("tag", "rest/tag?pid=9999");
+        tagResponse = get("rest/tag?sampleId=9999");
         Assert.assertTrue(
             "Returned data despite filtering for non-existent ID",
             tagResponse.getJsonArray(data).isEmpty());
 
-        tagResponse = get("tag", "rest/tag?pid=1901");
+        tagResponse = get("rest/tag?sampleId=1901");
         Assert.assertEquals(
-            "Number of tags for given Probe ID:",
+            "Number of tags for given Sample ID:",
             2, tagResponse.getJsonArray(data).size());
 
-        tagResponse = get("tag", "rest/tag?mid=1801");
+        tagResponse = get("rest/tag?measmId=1801");
         Assert.assertEquals(
             "Number of tags for given Messung ID:",
             1, tagResponse.getJsonArray(data).size());
 
-        tagResponse = get("tag", "rest/tag?mid=1801&mid=1802");
+        tagResponse = get("rest/tag?measmId=1801&measmId=1802");
         Assert.assertTrue(
             "Expected empty result filtering by tagged and un-tagged object",
             tagResponse.getJsonArray(data).isEmpty());
 
-        bulkOperation(name, tagUrl, create2);
-        tagResponse = get("tag", "rest/tag?mid=1801&mid=1802");
+        bulkOperation(tagUrl, create2);
+        tagResponse = get("rest/tag?measmId=1801&measmId=1802");
         Assert.assertEquals(
             "Number of tags for given Messung IDs:",
             1, tagResponse.getJsonArray(data).size());
 
         // Test unassigning tags
-        bulkOperation(name, tagUrl + "delete", create);
+        bulkOperation(tagUrl + "delete", create);
+        // Should accept existing tag links
+        bulkOperation(tagUrl + "delete", create);
     }
 }

@@ -10,12 +10,12 @@ package de.intevation.lada.util.auth;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.model.land.StatusProtokoll;
-import de.intevation.lada.model.stammdaten.AuthLstUmw;
-import de.intevation.lada.model.stammdaten.MessStelle;
-import de.intevation.lada.model.stammdaten.StatusKombi;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.StatusProt;
+import de.intevation.lada.model.master.AuthCoordOfcEnvMediumMp;
+import de.intevation.lada.model.master.MeasFacil;
+import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -34,10 +34,10 @@ public class MessungAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Messung messung = (Messung) data;
-        Probe probe =
+        Measm messung = (Measm) data;
+        Sample probe =
             repository.getByIdPlain(
-                Probe.class, messung.getProbeId());
+                Sample.class, messung.getSampleId());
         if (method == RequestMethod.PUT
             || method == RequestMethod.DELETE) {
             return !this.isMessungReadOnly(messung.getId())
@@ -46,15 +46,15 @@ public class MessungAuthorizer extends BaseAuthorizer {
         if (method == RequestMethod.POST) {
             return getAuthorization(userInfo, probe);
         }
-        StatusProtokoll status = repository.getByIdPlain(
-            StatusProtokoll.class,
+        StatusProt status = repository.getByIdPlain(
+            StatusProt.class,
             messung.getStatus()
         );
-        StatusKombi kombi = repository.getByIdPlain(
-            StatusKombi.class,
-            status.getStatusKombi()
+        StatusMp kombi = repository.getByIdPlain(
+            StatusMp.class,
+            status.getStatusMpId()
         );
-        return kombi.getStatusWert().getId() > 0
+        return kombi.getStatusVal().getId() > 0
             || getAuthorization(userInfo, probe);
     }
 
@@ -65,8 +65,8 @@ public class MessungAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Messung messung;
-        messung = repository.getByIdPlain(Messung.class, id);
+        Measm messung;
+        messung = repository.getByIdPlain(Measm.class, id);
         return isAuthorized(messung, method, userInfo, clazz);
     }
 
@@ -79,13 +79,13 @@ public class MessungAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         if (data.getData() instanceof List<?>) {
-            List<Messung> messungen = new ArrayList<Messung>();
-            for (Messung messung :(List<Messung>) data.getData()) {
+            List<Measm> messungen = new ArrayList<Measm>();
+            for (Measm messung :(List<Measm>) data.getData()) {
                 messungen.add(setAuthData(userInfo, messung));
             }
             data.setData(messungen);
-        } else if (data.getData() instanceof Messung) {
-            Messung messung = (Messung) data.getData();
+        } else if (data.getData() instanceof Measm) {
+            Measm messung = (Measm) data.getData();
             data.setData(setAuthData(userInfo, messung));
         }
         return data;
@@ -98,18 +98,18 @@ public class MessungAuthorizer extends BaseAuthorizer {
      * @param messung     The messung object.
      * @return The messung.
      */
-    private Messung setAuthData(
+    private Measm setAuthData(
         UserInfo userInfo,
-        Messung messung
+        Measm messung
     ) {
-        Probe probe =
-            (Probe) repository.getById(
-                Probe.class, messung.getProbeId()).getData();
-        MessStelle mst =
+        Sample probe =
+            (Sample) repository.getById(
+                Sample.class, messung.getSampleId()).getData();
+        MeasFacil mst =
             repository.getByIdPlain(
-                MessStelle.class, probe.getMstId());
+                MeasFacil.class, probe.getMeasFacilId());
 
-        if (userInfo.belongsTo(probe.getMstId(), probe.getLaborMstId())) {
+        if (userInfo.belongsTo(probe.getMeasFacilId(), probe.getApprLabId())) {
             messung.setOwner(true);
             messung.setReadonly(false);
         } else {
@@ -129,14 +129,14 @@ public class MessungAuthorizer extends BaseAuthorizer {
             return messung;
         }
 
-        StatusProtokoll status = repository.getByIdPlain(
-            StatusProtokoll.class,
+        StatusProt status = repository.getByIdPlain(
+            StatusProt.class,
             messung.getStatus()
         );
-        StatusKombi kombi = repository.getByIdPlain(
-            StatusKombi.class, status.getStatusKombi());
-        int stufe = kombi.getStatusStufe().getId();
-        int wert  = kombi.getStatusWert().getId();
+        StatusMp kombi = repository.getByIdPlain(
+            StatusMp.class, status.getStatusMpId());
+        int stufe = kombi.getStatusLev().getId();
+        int wert  = kombi.getStatusVal().getId();
 
         messung.setReadonly(wert != 0 && wert != 4);
         if ((stufe == 1 && wert == 00) || wert == 4) {
@@ -144,7 +144,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
         }
 
         // Has the user the right to edit status for the 'Messstelle'?
-        if (userInfo.getFunktionenForMst(probe.getMstId()).contains(1)
+        if (userInfo.getFunktionenForMst(probe.getMeasFacilId()).contains(1)
             && (stufe == 0 || stufe == 1)
         ) {
             messung.setStatusEditMst(true);
@@ -153,7 +153,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
 
         // Has the user the right to edit status for the 'Netzbetreiber'?
         if (userInfo.getFunktionenForNetzbetreiber(
-                mst.getNetzbetreiberId()).contains(2)
+                mst.getNetworkId()).contains(2)
             && (stufe == 0 && messung.getStatusEditMst()
             || stufe == 1
             || stufe == 2)
@@ -173,13 +173,13 @@ public class MessungAuthorizer extends BaseAuthorizer {
                 || stufe == 2
                 || stufe == 3)
         ) {
-            QueryBuilder<AuthLstUmw> lstFilter =
-                repository.queryBuilder(AuthLstUmw.class);
-            lstFilter.or("mstId", userInfo.getMessstellen());
-            List<AuthLstUmw> lsts =
+            QueryBuilder<AuthCoordOfcEnvMediumMp> lstFilter =
+                repository.queryBuilder(AuthCoordOfcEnvMediumMp.class);
+            lstFilter.or("measFacilId", userInfo.getMessstellen());
+            List<AuthCoordOfcEnvMediumMp> lsts =
                 repository.filterPlain(lstFilter.getQuery());
             for (int i = 0; i < lsts.size(); i++) {
-                if (lsts.get(i).getUmwId().equals(probe.getUmwId())) {
+                if (lsts.get(i).getEnvMediumId().equals(probe.getEnvMediumId())) {
                     messung.setStatusEditLst(true);
                 }
                 if (messung.getStatusEditLst()) {

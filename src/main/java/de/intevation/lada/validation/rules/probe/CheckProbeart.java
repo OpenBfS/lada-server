@@ -7,8 +7,9 @@
  */
 package de.intevation.lada.validation.rules.probe;
 
-import java.sql.Timestamp;
-import de.intevation.lada.model.land.Probe;
+import java.util.Date;
+
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -19,7 +20,7 @@ import de.intevation.lada.validation.rules.Rule;
  * Validates if the "probeart" matches date values.
  *
  */
-@ValidationRule("Probe")
+@ValidationRule("Sample")
 public class CheckProbeart implements Rule {
 
     private static final Integer DATENBASIS_161 = 1;
@@ -27,16 +28,16 @@ public class CheckProbeart implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Probe probe = (Probe) object;
-        Timestamp end = probe.getProbeentnahmeEnde();
-        Timestamp begin = probe.getProbeentnahmeBeginn();
-        if (probe.getProbenartId() != null
-            && !DATENBASIS_161.equals(probe.getDatenbasisId())) {
+        Sample probe = (Sample) object;
+        Date end = probe.getSampleEndDate();
+        Date begin = probe.getSampleStartDate();
+        if (probe.getSampleMethId() != null
+            && !DATENBASIS_161.equals(probe.getRegulationId())) {
           if (begin != null && end != null
               && !begin.equals(end)
-              && PROBENART_INDIVIDUAL.equals(probe.getProbenartId())) {
+              && PROBENART_INDIVIDUAL.equals(probe.getSampleMethId())) {
             Violation violation = new Violation();
-            violation.addWarning("probenartId", StatusCodes.VAL_SINGLE_DATE);
+            violation.addWarning("sampleMethId", StatusCodes.VAL_SINGLE_DATE);
             return violation;
           }
         } else {

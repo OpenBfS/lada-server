@@ -8,21 +8,20 @@
 package de.intevation.lada.test.stamm;
 
 import java.net.URL;
-import java.util.List;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
-import de.intevation.lada.Protocol;
+import de.intevation.lada.model.master.SpatRefSys;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -34,23 +33,21 @@ public class KoordinatenartTest extends ServiceTest {
 
     private JsonObject expectedById;
 
-    private final String name = "koordinatenart";
+    private final String name = "spatrefsys";
 
-    private final String url = "rest/koordinatenart/";
+    private final String url = "rest/spatrefsys/";
 
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
 
         // Prepare expected object
-        JsonObject content = readJsonResource(
-            "/datasets/dbUnit_koordinatenart.json");
         JsonObject erzeuger =
-            content.getJsonArray("stamm.koordinaten_art").getJsonObject(0);
+            readXmlResource("datasets/dbUnit_master.xml", SpatRefSys.class)
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(erzeuger);
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);
@@ -60,18 +57,12 @@ public class KoordinatenartTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get(name, url);
-        getById(name, url + KDA_ID, expectedById);
+        get(url);
+        getById(url + expectedById.getInt("id"), expectedById);
         recalculate();
     }
 
     private void recalculate() {
-        Protocol prot = new Protocol();
-        prot.setName(name + " service");
-        prot.setType("recalculate");
-        prot.setPassed(false);
-        protocol.add(prot);
-
         final String xKey = "x", yKey = "y", coord = "1";
         JsonObject requestJson = Json.createObjectBuilder()
             .add("from", KDA_ID)
@@ -86,7 +77,7 @@ public class KoordinatenartTest extends ServiceTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.entity(
                     requestJson.toString(), MediaType.APPLICATION_JSON));
-        JsonObject content = BaseTest.parseResponse(response, prot);
+        JsonObject content = BaseTest.parseResponse(response);
 
         /* Verify the response*/
         final String dataKey = "data";
@@ -96,7 +87,5 @@ public class KoordinatenartTest extends ServiceTest {
         BaseTest.assertContains(data, yKey);
         Assert.assertEquals(coord, data.getString(xKey));
         Assert.assertEquals(coord, data.getString(yKey));
-
-        prot.setPassed(true);
     }
 }

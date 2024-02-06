@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <!--Auth data-->
+    <master.network id = "06" />
+    <master.meas_facil id = "06010" network_id = "06" />
+    <!--Master data-->
+    <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
+    <master.regulation id = "1" />
+    <master.regulation id = "4" />
+    <master.regulation id = "9" />
+    <master.type_regulation id = "E" />
+    <master.type_regulation id = "U" />
+    <master.type_regulation id = "R" />
+    <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
+    <master.sample_meth id = "3" ext_id = "S" eudf_sample_meth_id = "A" />
+    <master.sample_meth id = "9" ext_id = "X" eudf_sample_meth_id = "A" />
+    <master.meas_unit id = "207" />
+    <master.meas_unit id = "208" />
+    <master.meas_unit id = "209" />
+    <master.meas_unit id = "210" />
+    <master.meas_unit id = "211" />
+    <master.unit_convers id = "209" from_unit_id = "209" to_unit_id = "207" factor = "1.0"/>
+    <master.unit_convers id = "210" from_unit_id = "210" to_unit_id = "208" factor = "1.0"/>
+    <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "207" unit_2 = "208"/>
+    <master.env_medium id = "L42" name = "Example env Medium" unit_1 = "207"/>
+    <master.env_medium id = "L54" name = "Example env 2" unit_1 = "207"/>
+    <master.rei_ag_gr id = "1" name = "rei_name" descr = "rei_descr" />
+    <master.nucl_facil id = "1" ext_id = "A123" name = "nucl_facil_name" />
+    <master.nucl_facil id = "2" ext_id = "Othr" name = "nucl_facil_name" />
+    <master.nucl_facil id = "3" ext_id = "123" name = "nucl_facil_name" />
+    <master.nucl_facil_gr id = "1" ext_id = "GRA1" name = "nucl_facil_gr_name" />
+    <master.nucl_facil_gr_mp id = "1" nucl_facil_id = "1" nucl_facil_gr_id = "1" />
+    <master.rei_ag_gr_env_medium_mp id = "1" rei_ag_gr_id = "1" env_medium_id = "L6" />
+    <master.sampler
+        id = "726"
+        network_id = "06"
+        ext_id = "prn"
+        descr = "test"
+        short_text = "test"
+    />
+    <master.mmt id = "A3" />
+    <master.mmt id = "A4" />
+    <master.measd id = "56" name = "Mangan" />
+    <master.measd id = "57" name = "Other" />
+    <master.measd_gr id = "1" />
+    <master.measd_gr_mp measd_id = "56" measd_gr_id = "1" />
+    <master.mmt_measd_gr_mp mmt_id = "A3" measd_gr_id = "1" />
+    <master.oblig_measd_mp
+        id = "1"
+        mmt_id = "A3"
+        measd_id = "56"
+        regulation_id = "9"
+        env_medium_id = "L6"
+    />
+    <master.sample_specif
+        id = "A74"
+        name = "Volumenstrom"
+        ext_id = "VOLSTR"
+    />
+    <master.sample_specif
+        id = "A42"
+        name = "Other"
+        ext_id = "OTH"
+    />
+    <master.env_specif_mp id = "1" sample_specif_id = "A74" env_medium_id = "L6" />
+    <master.env_specif_mp id = "2" sample_specif_id = "A42" env_medium_id = "L42" />
+    <master.env_descrip id = "1" lev = "0" lev_val = "10" />
+    <master.env_descrip id = "2" lev = "1" lev_val = "11" pred_id = "1"/>
+    <master.env_descrip id = "3" lev = "2" lev_val = "12" pred_id = "2"/>
+    <master.admin_unit
+        id = "11000000"
+        state_id = "11000000"
+        name = "Berlin"
+        is_state = "true"
+        is_munic = "true"
+        is_rural_dist = "true"
+        is_gov_dist = "false"
+    />
+    <master.admin_unit
+        id = "420042"
+        state_id = "11000000"
+        name = "Berlin"
+        is_state = "true"
+        is_munic = "true"
+        is_rural_dist = "true"
+        is_gov_dist = "false"
+    />
+    <master.spat_ref_sys id = "5" />
+    <master.site_class id = "1" />
+    <master.site_class id = "3" />
+    <master.state
+        id = "0"
+        ctry = "Deutschland"
+        ctry_orig_id = "0"
+        iso_3166 = "DE"
+        coord_x_ext = "123123"
+        coord_y_ext = "312321"
+    />
+    <master.site
+        id = "1000"
+        network_id = "06"
+        ext_id = "D_00191"
+        long_text = "Langer Text"
+        state_id = "0"
+        admin_unit_id = "11000000"
+        is_fuzzy = "true"
+        spat_ref_sys_id = "5"
+        coord_x_ext = "32487017"
+        coord_y_ext = "5519769"
+        last_mod = "2015-03-01 12:00:00"
+        geom = "SRID=4326;POINT(49.83021 8.81948)"
+        site_class_id = "1"
+        short_text = "kurz"
+        rei_report_text = "bericht"
+    />
+    <master.status_ord_mp id = "1" from_id = "1" to_id = "2" />
+    <!--Sample data-->
+    <lada.sample
+        id = "1000"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        last_mod = "2012-05-05 11:12:00"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "1"
+        is_test = "false"
+        env_medium_id = "L6"
+        main_sample_id = "120510002"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+        tree_mod = "2012-05-08 10:00:00"
+        ext_id = "sample_ext_id"
+    />
+    <lada.comm_sample
+        id = "1000"
+        sample_id = "1000"
+        date = "2012-05-11 12:01:00"
+        meas_facil_id = "06010"
+        text = "Testkommentar"
+    />
+    <lada.measm
+        id = "1200"
+        sample_id = "1000"
+        min_sample_id = "T100"
+        ext_id = "453"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        measm_start_date = "2012-05-06 14:00:00"
+        is_completed = "false"
+        last_mod = "2012-05-08 12:00:00"
+        is_scheduled = "true"
+        tree_mod = "2012-05-09 12:00:00"
+    />
+    <lada.measm
+        id = "1201"
+        sample_id = "1000"
+        min_sample_id = "T101"
+        ext_id = "454"
+        mmt_id = "A4"
+        meas_pd = "3600"
+        measm_start_date = "2012-05-06 14:00:00"
+        is_completed = "false"
+        last_mod = "2012-05-08 12:00:00"
+        is_scheduled = "true"
+        tree_mod = "2012-05-09 12:00:00"
+    />
+    <lada.status_prot
+        id = "1000"
+        meas_facil_id = "06010"
+        date = "2012-05-08 11:00:00"
+        text = "Initialer Status"
+        measm_id = "1200"
+        status_mp_id = "1"
+        tree_mod = "2012-05-09 12:00:00"
+    />
+    <lada.meas_val
+        id = "10000"
+        measm_id = "1200"
+        measd_id = "56"
+        less_than_LOD = "&lt;"
+        error = "3.3"
+        detect_lim = "2.4"
+        meas_unit_id = "207"
+        is_threshold = "false"
+        last_mod = "2012-05-09 09:00:00"
+    />
+    <lada.geolocat
+        id = "1000"
+        type_regulation = "E"
+        sample_id = "1000"
+        site_id = "1000"
+        add_site_text = "Test"
+        last_mod = "2012-05-07 09:00:00"
+    />
+    <lada.sample_specif_meas_val
+        id = "1000"
+        sample_id = "1000"
+        sample_specif_id = "A74"
+        meas_val = "1.8"
+        error = "0.2"
+        last_mod = "2012-05-08 12:00:00"
+        tree_mod = "2012-05-09 12:00:00"
+    />
+    <lada.comm_measm
+        id = "1000"
+        measm_id = "1200"
+        date = "2012-05-08 11:00:00"
+        meas_facil_id = "06010"
+        text = "Testkommentar"
+    />
+    <!--Additional sample/geolocat data-->
+        <lada.sample
+        id = "2000"
+        opr_mode_id = "1"
+        regulation_id = "9"
+        last_mod = "2012-05-05 11:12:00"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "9"
+        is_test = "false"
+        env_medium_id = "L6"
+        main_sample_id = "9911554466"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+        tree_mod = "2012-05-08 10:00:00"
+        ext_id = "ext_id_2000"
+    />
+    <lada.sample
+        id = "3000"
+        opr_mode_id = "1"
+        regulation_id = "1"
+        last_mod = "2012-05-05 11:12:00"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "3"
+        is_test = "false"
+        env_medium_id = "L6"
+        main_sample_id = "112233445566"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+        tree_mod = "2012-05-08 10:00:00"
+        ext_id = "ext_id_3000"
+    />
+    <lada.geolocat
+        id = "1002"
+        type_regulation = "R"
+        sample_id = "3000"
+        site_id = "1000"
+        add_site_text = "Test"
+        last_mod = "2012-05-07 09:00:00"
+    />
+    <lada.geolocat
+        id = "1001"
+        type_regulation = "U"
+        sample_id = "1000"
+        site_id = "1000"
+        add_site_text = "Test"
+        last_mod = "2012-05-07 09:00:00"
+    />
+    <!--Samples/Measm for status validation testing-->
+    <!--Valid REI sample-->
+    <lada.sample
+        id = "4000"
+        opr_mode_id = "1"
+        regulation_id = "4"
+        last_mod = "2012-05-05 11:12:00"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        rei_ag_gr_id = "1"
+        nucl_facil_gr_id = "1"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "1"
+        is_test = "false"
+        env_medium_id = "L6"
+        main_sample_id = "1B4000"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+        tree_mod = "2012-05-08 10:00:00"
+        ext_id = "ext_id_4000"
+    />
+    <lada.measm
+        id = "4200"
+        sample_id = "4000"
+        min_sample_id = "T100"
+        ext_id = "453"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        measm_start_date = "2012-05-06 14:00:00"
+        is_completed = "false"
+        last_mod = "2012-05-08 12:00:00"
+        is_scheduled = "true"
+        tree_mod = "2012-05-09 12:00:00"
+    />
+    <!--Invalid REI sample-->
+    <lada.sample
+        id = "5000"
+        opr_mode_id = "1"
+        regulation_id = "4"
+        last_mod = "2012-05-05 11:12:00"
+        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
+        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        sample_start_date = "2012-05-03 13:07:00"
+        sample_meth_id = "1"
+        is_test = "false"
+        env_medium_id = "L6"
+        main_sample_id = "1A5000"
+        sampler_id = "726"
+        sched_start_date = "2012-05-01 16:00:00"
+        sched_end_date = "2012-05-05 16:00:00"
+        tree_mod = "2012-05-08 10:00:00"
+        ext_id = "ext_id_5000"
+    />
+    <lada.measm
+        id = "5200"
+        sample_id = "5000"
+        min_sample_id = "T100"
+        ext_id = "453"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        measm_start_date = "2012-05-06 14:00:00"
+        is_completed = "false"
+        last_mod = "2012-05-08 12:00:00"
+        is_scheduled = "true"
+        tree_mod = "2012-05-09 12:00:00"
+    />
+    <!-- Geolcat test data-->
+    <lada.mpg
+        id = "998"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "1"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "M"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "30"
+        sample_pd_offset = "0"
+        valid_start_date = "1"
+        valid_end_date = "365"
+        last_mod= "2015-03-01 12:00:00"
+    />
+    <lada.mpg
+        id = "999"
+        is_test = "false"
+        meas_facil_id = "06010"
+        appr_lab_id = "06010"
+        regulation_id = "1"
+        admin_unit_id = "11000000"
+        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
+        env_medium_id = "L6"
+        sample_meth_id = "1"
+        sample_pd = "M"
+        sample_pd_start_date = "1"
+        sample_pd_end_date = "30"
+        sample_pd_offset = "0"
+        valid_start_date = "1"
+        valid_end_date = "365"
+        last_mod= "2015-03-01 12:00:00"
+    />
+    <lada.geolocat_mpg
+        id = "1000"
+        type_regulation = "E"
+        mpg_id = "999"
+        site_id = "1000"
+        add_site_text = "Test"
+        last_mod = "2012-05-07 09:00:00"
+    />
+</dataset>

@@ -11,32 +11,30 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.model.land.KommentarP;
-import de.intevation.lada.model.land.Messprogramm;
-import de.intevation.lada.model.land.MessprogrammMmt;
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Messwert;
-import de.intevation.lada.model.land.Ortszuordnung;
-import de.intevation.lada.model.land.OrtszuordnungMp;
-import de.intevation.lada.model.land.Probe;
-import de.intevation.lada.model.land.ZusatzWert;
-import de.intevation.lada.model.stammdaten.DeskriptorUmwelt;
-import de.intevation.lada.model.stammdaten.Deskriptoren;
-import de.intevation.lada.model.stammdaten.Ort;
-import de.intevation.lada.model.stammdaten.ProbenZusatz;
+import de.intevation.lada.model.lada.CommSample;
+import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.GeolocatMpg;
+import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Mpg;
+import de.intevation.lada.model.lada.MpgMmtMp;
+import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.model.master.EnvDescrip;
+import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
+import de.intevation.lada.model.master.SampleSpecif;
+import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
+
 
 /**
  * This factory creates probe objects and its children using a messprogramm
@@ -141,22 +139,22 @@ public class ProbeFactory {
          * start date, which will be adjusted to the next possible start
          * of an intervall of the type given by the Messprogramm.
          *
-         * @param Messprogramm the Messprogramm to use
+         * @param Mpg the Messprogramm to use
          * @param Calendar initial start date
          */
         Intervall(
-            Messprogramm messprogramm,
+            Mpg messprogramm,
             Calendar start
         ) {
-            this.teilVon = messprogramm.getTeilintervallVon();
-            this.teilBis = messprogramm.getTeilintervallBis();
+            this.teilVon = messprogramm.getSamplePdStartDate();
+            this.teilBis = messprogramm.getSamplePdEndDate();
 
             this.intervallField = fieldsTable
-                .get(messprogramm.getProbenintervall())[0];
+                .get(messprogramm.getSamplePd())[0];
             this.subIntField = fieldsTable
-                .get(messprogramm.getProbenintervall())[1];
+                .get(messprogramm.getSamplePd())[1];
             this.intervallFactor = fieldsTable
-                .get(messprogramm.getProbenintervall())[2];
+                .get(messprogramm.getSamplePd())[2];
 
             this.from = (Calendar) start.clone();
 
@@ -182,7 +180,7 @@ public class ProbeFactory {
                     );
                 }
 
-                /* Ensure we do not generate Probe objects with
+                /* Ensure we do not generate Sample objects with
                  * begin before start, which might otherwise happen if
                  * start is after what teilVon represents for this intervall */
                 if (this.getFrom().before(start)) {
@@ -306,10 +304,6 @@ public class ProbeFactory {
     @Inject
     private Repository repository;
 
-    private List<Map<String, Object>> protocol;
-
-    private Map<String, Object> currentProtocol;
-
     /**
      * Create a list of probe objects.
      *
@@ -320,22 +314,20 @@ public class ProbeFactory {
      *
      * @return List of probe objects.
      */
-    public List<Probe> create(
-        Messprogramm messprogramm, Calendar start, Calendar end, boolean dryrun
+    public List<Sample> create(
+        Mpg messprogramm, Calendar start, Calendar end, boolean dryrun
     ) {
-        protocol = new ArrayList<>();
-
         /* Adjust to end of the day as we want to generate Probe objects
          * before or at this day. */
         end.set(Calendar.HOUR_OF_DAY, HOD23);
         end.set(Calendar.MINUTE, MIN59);
         end.set(Calendar.SECOND, SEC59);
 
-        int gueltigVon = messprogramm.getGueltigVon();
-        int gueltigBis = messprogramm.getGueltigBis();
-        int offset = messprogramm.getIntervallOffset();
+        int gueltigVon = messprogramm.getValidStartDate();
+        int gueltigBis = messprogramm.getValidEndDate();
+        int offset = messprogramm.getSamplePdOffset();
 
-        List<Probe> proben = new ArrayList<Probe>();
+        List<Sample> proben = new ArrayList<Sample>();
 
         for (Intervall intervall = new Intervall(messprogramm, start);
              intervall.getFrom().before(end);
@@ -374,7 +366,7 @@ public class ProbeFactory {
                         || solldatumBeginnDOY <= actualGueltigBis)
                 )
             ) {
-                Probe probe = createObjects(
+                Sample probe = createObjects(
                     messprogramm,
                     sollFrom.getTime(),
                     sollTo.getTime(),
@@ -395,160 +387,139 @@ public class ProbeFactory {
      * @param   messprogramm    The messprogramm containing probe details
      * @param   startDate       The date for 'solldatumbeginn'
      * @param   endDate         The date for 'solldatumende'
-     *
+     * @param   dryrun          Do not persist created objects
      * @return The new probe object.
      */
-    private Probe createObjects(
-        Messprogramm messprogramm,
+    private Sample createObjects(
+        Mpg messprogramm,
         Date startDate,
         Date endDate,
         boolean dryrun
     ) {
-        currentProtocol = new HashMap<>();
-        QueryBuilder<Probe> builderProbe =
-            repository.queryBuilder(Probe.class);
-        builderProbe.and("mprId", messprogramm.getId());
-        builderProbe.and("solldatumBeginn", startDate);
-        builderProbe.and("solldatumEnde", endDate);
+        QueryBuilder<MpgMmtMp> builder = repository
+            .queryBuilder(MpgMmtMp.class)
+            .and("mpgId", messprogramm.getId());
+        List<MpgMmtMp> mmts = repository.filterPlain(builder.getQuery());
 
-        QueryBuilder<MessprogrammMmt> builder =
-            repository.queryBuilder(MessprogrammMmt.class);
-        builder.and("messprogrammId", messprogramm.getId());
-        Response response = repository.filter(builder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<MessprogrammMmt> mmts = (List<MessprogrammMmt>) response.getData();
-        List<String> messungProtocol = new ArrayList<>();
-        List<Probe> proben =
-            repository.filterPlain(builderProbe.getQuery());
-
-        QueryBuilder<OrtszuordnungMp> builderOrt =
-            repository.queryBuilder(OrtszuordnungMp.class);
-        builderOrt.and("messprogrammId", messprogramm.getId());
-        List<OrtszuordnungMp> orte =
+        QueryBuilder<GeolocatMpg> builderOrt = repository
+            .queryBuilder(GeolocatMpg.class)
+            .and("mpgId", messprogramm.getId());
+        List<GeolocatMpg> orte =
             repository.filterPlain(builderOrt.getQuery());
 
+        // Prepare data for informative transient attributes
+        List<String> messungProtocol = new ArrayList<>();
+        for (MpgMmtMp mmt: mmts) {
+            messungProtocol.add(mmt.getMmtId());
+        }
+
+        String gemId = "";
+        for (GeolocatMpg ort : orte) {
+            if ("E".equals(ort.getTypeRegulation())) {
+                gemId = repository.getByIdPlain(
+                    Site.class, ort.getSiteId()).getAdminUnitId();
+            }
+        }
+
+        // Check for existing matching entity
+        QueryBuilder<Sample> builderProbe = repository
+            .queryBuilder(Sample.class)
+            .and("mpgId", messprogramm.getId())
+            .and("schedStartDate", startDate)
+            .and("schedEndDate", endDate);
+        List<Sample> proben = repository.filterPlain(builderProbe.getQuery());
+
+        // Add informative transient attributes to existing entity
         if (!proben.isEmpty()) {
             proben.get(0).setFound(true);
-            toProtocol(proben.get(0), dryrun);
-            protocol.add(currentProtocol);
-            for (int i = 0; i < mmts.size(); i++) {
-                MessprogrammMmt mmt = mmts.get(i);
-                messungProtocol.add(mmt.getMmtId());
-            }
-            currentProtocol.put("mmt", messungProtocol);
-            for (OrtszuordnungMp ort : orte) {
-                Ort o = repository.getByIdPlain(
-                    Ort.class, ort.getOrtId());
-                currentProtocol.put("gemId", o.getGemId());
-            }
+            proben.get(0).setMmt(messungProtocol);
+            proben.get(0).setGemId(gemId);
             return proben.get(0);
         }
-        Probe probe = new Probe();
-        probe.setBaId(messprogramm.getBaId());
-        probe.setDatenbasisId(messprogramm.getDatenbasisId());
-        probe.setMediaDesk(messprogramm.getMediaDesk());
+
+        // Create new entity
+        Sample probe = new Sample();
+        probe.setOprModeId(messprogramm.getOprModeId());
+        probe.setRegulationId(messprogramm.getRegulationId());
+        probe.setEnvDescripDisplay(messprogramm.getEnvDescripDisplay());
         probe = findMedia(probe);
-        probe.setMstId(messprogramm.getMstId());
-        probe.setLaborMstId(messprogramm.getLaborMstId());
-        probe.setProbenartId(messprogramm.getProbenartId());
-        probe.setProbeNehmerId(messprogramm.getProbeNehmerId());
-        probe.setSolldatumBeginn(new Timestamp(startDate.getTime()));
-        probe.setSolldatumEnde(new Timestamp(endDate.getTime()));
-        probe.setTest(messprogramm.getTest());
-        probe.setUmwId(messprogramm.getUmwId());
-        probe.setMprId(messprogramm.getId());
-        probe.setMplId(messprogramm.getMplId());
-        probe.setReiProgpunktGrpId(messprogramm.getReiProgpunktGrpId());
-        probe.setKtaGruppeId(messprogramm.getKtaGruppeId());
+        probe.setMeasFacilId(messprogramm.getMeasFacilId());
+        probe.setApprLabId(messprogramm.getApprLabId());
+        probe.setSampleMethId(messprogramm.getSampleMethId());
+        probe.setSamplerId(messprogramm.getSamplerId());
+        probe.setSchedStartDate(new Timestamp(startDate.getTime()));
+        probe.setSchedEndDate(new Timestamp(endDate.getTime()));
+        probe.setIsTest(messprogramm.getIsTest());
+        probe.setEnvMediumId(messprogramm.getEnvMediumId());
+        probe.setMpgId(messprogramm.getId());
+        probe.setMpgCategId(messprogramm.getMpgCategId());
+        probe.setReiAgGrId(messprogramm.getReiAgGrId());
+        probe.setNuclFacilGrId(messprogramm.getNuclFacilGrId());
         probe.setFound(false);
+        probe.setMmt(messungProtocol);
+        probe.setGemId(gemId);
 
         createObject(probe, dryrun);
-        toProtocol(probe, dryrun);
 
         //Create zusatzwert objects
-        Set<ProbenZusatz> pZusatzs = messprogramm.getProbenZusatzs();
+        Set<SampleSpecif> pZusatzs = messprogramm.getSampleSpecifs();
         List<String> zusatzWerts = new ArrayList<String>();
         if (pZusatzs != null) {
-            for (ProbenZusatz pZusatz: pZusatzs) {
-                ZusatzWert zusatz = new ZusatzWert();
-                zusatz.setProbeId(probe.getId());
-                zusatz.setPzsId(pZusatz.getId());
+            for (SampleSpecif pZusatz: pZusatzs) {
+                SampleSpecifMeasVal zusatz = new SampleSpecifMeasVal();
+                zusatz.setSampleId(probe.getId());
+                zusatz.setSampleSpecifId(pZusatz.getId());
                 createObject(zusatz, dryrun);
-                zusatzWerts.add(zusatz.getPzsId());
+                zusatzWerts.add(zusatz.getSampleSpecifId());
             }
-            currentProtocol.put("pZws", zusatzWerts);
         }
 
-        if (messprogramm.getProbeKommentar() != null
-            && !messprogramm.getProbeKommentar().equals("")
+        if (messprogramm.getCommSample() != null
+            && !messprogramm.getCommSample().equals("")
         ) {
-            KommentarP kommentar = new KommentarP();
-            kommentar.setDatum(new Timestamp(new Date().getTime()));
-            kommentar.setProbeId(probe.getId());
-            kommentar.setText(messprogramm.getProbeKommentar());
-            kommentar.setMstId(messprogramm.getMstId());
+            CommSample kommentar = new CommSample();
+            kommentar.setDate(new Timestamp(new Date().getTime()));
+            kommentar.setSampleId(probe.getId());
+            kommentar.setText(messprogramm.getCommSample());
+            kommentar.setMeasFacilId(messprogramm.getMeasFacilId());
 
             createObject(kommentar, dryrun);
         }
 
-        for (int i = 0; i < mmts.size(); i++) {
-            MessprogrammMmt mmt = mmts.get(i);
-            Messung messung = new Messung();
-            messung.setFertig(false);
-            messung.setGeplant(true);
+        for (MpgMmtMp mmt: mmts) {
+            Measm messung = new Measm();
+            messung.setIsCompleted(false);
+            messung.setIsScheduled(true);
             messung.setMmtId(mmt.getMmtId());
-            messung.setProbeId(probe.getId());
+            messung.setSampleId(probe.getId());
             createObject(messung, dryrun);
-            messungProtocol.add(mmt.getMmtId());
-            for (int mw : mmt.getMessgroessen()) {
-                Messwert wert = new Messwert();
-                wert.setMessgroesseId(mw);
-                wert.setMessungsId(messung.getId());
-                if (messprogramm.getMehId() != null) {
-                    wert.setMehId(messprogramm.getMehId());
+            for (int mw : mmt.getMeasds()) {
+                MeasVal wert = new MeasVal();
+                wert.setMeasdId(mw);
+                wert.setMeasmId(messung.getId());
+                if (messprogramm.getMeasUnitId() != null) {
+                    wert.setMeasUnitId(messprogramm.getMeasUnitId());
                 } else {
-                    wert.setMehId(0);
+                    wert.setMeasUnitId(0);
                 }
                 createObject(wert, dryrun);
             }
         }
-        currentProtocol.put("mmt", messungProtocol);
-        for (OrtszuordnungMp ort : orte) {
-            Ortszuordnung ortP = new Ortszuordnung();
-            ortP.setOrtszuordnungTyp(ort.getOrtszuordnungTyp());
-            ortP.setProbeId(probe.getId());
-            ortP.setOrtId(ort.getOrtId());
-            ortP.setOzId(ort.getOzId());
-            ortP.setOrtszusatztext(ort.getOrtszusatztext());
+        for (GeolocatMpg ort : orte) {
+            Geolocat ortP = new Geolocat();
+            ortP.setTypeRegulation(ort.getTypeRegulation());
+            ortP.setSampleId(probe.getId());
+            ortP.setSiteId(ort.getSiteId());
+            ortP.setPoiId(ort.getPoiId());
+            ortP.setAddSiteText(ort.getAddSiteText());
             createObject(ortP, dryrun);
-            Ort o = repository.getByIdPlain(
-                Ort.class, ortP.getOrtId());
-            currentProtocol.put("gemId", o.getGemId());
         }
         // Reolad the probe to have the old id
         if (!dryrun) {
-            probe = (Probe) repository.getById(
-                Probe.class, probe.getId()).getData();
+            probe = (Sample) repository.getById(
+                Sample.class, probe.getId()).getData();
         }
-        protocol.add(currentProtocol);
         return probe;
-    }
-
-    private void toProtocol(Probe probe, boolean dryrun) {
-        currentProtocol.put("id", probe.getId());
-        currentProtocol.put("externeProbeId", probe.getExterneProbeId());
-        currentProtocol.put("mstId", probe.getMstId());
-        currentProtocol.put("datenbasisId", probe.getDatenbasisId());
-        currentProtocol.put("baId", probe.getBaId());
-        currentProtocol.put("probenartId", probe.getProbenartId());
-        currentProtocol.put("solldatumBeginn", probe.getSolldatumBeginn());
-        currentProtocol.put("solldatumEnde", probe.getSolldatumEnde());
-        currentProtocol.put("mprId", probe.getMprId());
-        currentProtocol.put("mediaDesk", probe.getMediaDesk());
-        currentProtocol.put("umwId", probe.getUmwId());
-        currentProtocol.put("probeNehmerId", probe.getProbeNehmerId());
-        currentProtocol.put("found", probe.isFound());
-        currentProtocol.put("dryrun", dryrun);
     }
 
     private void createObject(Object item, boolean dryrun) {
@@ -565,14 +536,14 @@ public class ProbeFactory {
      *
      * @return The updated probe object.
      */
-    public Probe findUmweltId(Probe probe) {
-        String mediaDesk = probe.getMediaDesk();
+    public Sample findUmweltId(Sample probe) {
+        String mediaDesk = probe.getEnvDescripDisplay();
         if (mediaDesk != null) {
             String[] mediaDeskParts = mediaDesk.split(" ");
             if (mediaDeskParts.length <= 1) {
                 return probe;
             }
-            probe.setUmwId(findUmwelt(mediaDeskParts));
+            probe.setEnvMediumId(findUmwelt(mediaDeskParts));
         }
         return probe;
     }
@@ -584,16 +555,16 @@ public class ProbeFactory {
      *
      * @return The updated probe object.
      */
-    public Probe findMedia(Probe probe) {
-        String mediaDesk = probe.getMediaDesk();
+    public Sample findMedia(Sample probe) {
+        String mediaDesk = probe.getEnvDescripDisplay();
         if (mediaDesk != null) {
             Object result = repository.queryFromString(
                 "SELECT "
-                + de.intevation.lada.model.stammdaten.SchemaName.NAME
+                + de.intevation.lada.model.master.SchemaName.NAME
                 + ".get_media_from_media_desk( :mediaDesk );")
                     .setParameter("mediaDesk", mediaDesk)
                     .getSingleResult();
-            probe.setMedia(result != null ? result.toString() : "");
+            probe.setEnvDescripName(result != null ? result.toString() : null);
         }
         return probe;
     }
@@ -605,14 +576,14 @@ public class ProbeFactory {
      *
      * @return The updated messprogramm.
      */
-    public Messprogramm findUmweltId(Messprogramm messprogramm) {
-        String mediaDesk = messprogramm.getMediaDesk();
+    public Mpg findUmweltId(Mpg messprogramm) {
+        String mediaDesk = messprogramm.getEnvDescripDisplay();
         if (mediaDesk != null) {
             String[] mediaDeskParts = mediaDesk.split(" ");
             if (mediaDeskParts.length <= 1) {
                 return messprogramm;
             }
-            messprogramm.setUmwId(findUmwelt(mediaDeskParts));
+            messprogramm.setEnvMediumId(findUmwelt(mediaDeskParts));
         }
         return messprogramm;
     }
@@ -646,17 +617,14 @@ public class ProbeFactory {
             } else {
                 parent = ndParent;
             }
-            QueryBuilder<Deskriptoren> builder =
-                repository.queryBuilder(Deskriptoren.class);
+            QueryBuilder<EnvDescrip> builder =
+                repository.queryBuilder(EnvDescrip.class);
             if (parent != null) {
-                builder.and("vorgaenger", parent);
+                builder.and("predId", parent);
             }
-            builder.and("sn", mediaDesk[i]);
-            builder.and("ebene", i - 1);
-            Response response =
-                repository.filter(builder.getQuery());
-            @SuppressWarnings("unchecked")
-            List<Deskriptoren> data = (List<Deskriptoren>) response.getData();
+            builder.and("levVal", mediaDesk[i]);
+            builder.and("lev", i - 1);
+            List<EnvDescrip> data = repository.filterPlain(builder.getQuery());
             if (data.isEmpty()) {
                 return null;
             }
@@ -678,8 +646,8 @@ public class ProbeFactory {
      * @return The umwelt id or an empty string.
      */
     private String getUmwelt(List<Integer> media, boolean isZebs) {
-        QueryBuilder<DeskriptorUmwelt> builder =
-            repository.queryBuilder(DeskriptorUmwelt.class);
+        QueryBuilder<EnvDescripEnvMediumMp> builder =
+            repository.queryBuilder(EnvDescripEnvMediumMp.class);
 
         if (media.size() == 0) {
             return null;
@@ -688,7 +656,7 @@ public class ProbeFactory {
         int size = 1;
         for (int i = 0; i < media.size(); i++) {
             String field = "s" + (i > POS9 ? i : "0" + i);
-            QueryBuilder<DeskriptorUmwelt> tmp = builder.getEmptyBuilder();
+            QueryBuilder<EnvDescripEnvMediumMp> tmp = builder.getEmptyBuilder();
             if (media.get(i) != -1) {
                 tmp.and(field, media.get(i));
                 tmp.or(field, null);
@@ -697,18 +665,15 @@ public class ProbeFactory {
                 builder.and(field, null);
             }
         }
-        Response response =
-            repository.filter(builder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<DeskriptorUmwelt> data =
-            (List<DeskriptorUmwelt>) response.getData();
+        List<EnvDescripEnvMediumMp> data
+            = repository.filterPlain(builder.getQuery());
         if (data.isEmpty()) {
             return null;
         }
 
         boolean unique = isUnique(data);
         if (unique) {
-            return data.get(0).getUmwId();
+            return data.get(0).getEnvMediumId();
         } else {
             int found = -1;
             int lastMatch = -LM12;
@@ -802,7 +767,7 @@ public class ProbeFactory {
                 }
             }
             if (found >= 0) {
-                return data.get(found).getUmwId();
+                return data.get(found).getEnvMediumId();
             }
             return null;
         }
@@ -815,21 +780,17 @@ public class ProbeFactory {
      *
      * @return true if the objects have the same umwelt id else false.
      */
-    private boolean isUnique(List<DeskriptorUmwelt> list) {
+    private boolean isUnique(List<EnvDescripEnvMediumMp> list) {
         if (list.isEmpty()) {
             return false;
         }
-        String element = list.get(0).getUmwId();
+        String element = list.get(0).getEnvMediumId();
         for (int i = 1; i < list.size(); i++) {
-            if (!element.equals(list.get(i).getUmwId())) {
+            if (!element.equals(list.get(i).getEnvMediumId())) {
                 return false;
             }
         }
         return true;
-    }
-
-    public List<Map<String, Object>> getProtocol() {
-        return protocol;
     }
 
     /**
@@ -839,10 +800,10 @@ public class ProbeFactory {
      *
      * @return The updated messprogramm.
      */
-    public Probe getInitialMediaDesk(Probe probe) {
-        String umweltId = probe.getUmwId();
+    public Sample getInitialMediaDesk(Sample probe) {
+        String umweltId = probe.getEnvMediumId();
         if (umweltId != null) {
-            probe.setMediaDesk(getInitialMediaDesk(umweltId));
+            probe.setEnvDescripDisplay(getInitialMediaDesk(umweltId));
         }
         return probe;
     }
@@ -854,32 +815,28 @@ public class ProbeFactory {
      *
      * @return The updated messprogramm.
      */
-    public Messprogramm getInitialMediaDesk(Messprogramm messprogramm) {
-        String umweltId = messprogramm.getUmwId();
+    public Mpg getInitialMediaDesk(Mpg messprogramm) {
+        String umweltId = messprogramm.getEnvMediumId();
         if (umweltId != null) {
-            messprogramm.setMediaDesk(getInitialMediaDesk(umweltId));
+            messprogramm.setEnvDescripDisplay(getInitialMediaDesk(umweltId));
         }
         return messprogramm;
     }
 
     /**
-     * Find the minimal deskriptor string for the specified umwelt id
+     * Find the minimal deskriptor string for the specified umwelt id.
      *
-     * @param   umId  The umwelt id.
+     * @param   umwId  The umwelt id.
      *
-     * @return The deskripto string.
+     * @return The deskriptor string.
      */
     private String getInitialMediaDesk(String umwId) {
         logger.debug("getInitialMediaDesk - umw_id: " + umwId);
         String mediaDesk = "D:";
-        QueryBuilder<DeskriptorUmwelt> builder =
-            repository.queryBuilder(DeskriptorUmwelt.class);
-        builder.and("umwId",umwId);
-        Response response =
-            repository.filter(builder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<DeskriptorUmwelt> data =
-            (List<DeskriptorUmwelt>) response.getData();
+        QueryBuilder<EnvDescripEnvMediumMp> builder =
+            repository.queryBuilder(EnvDescripEnvMediumMp.class);
+        builder.and("envMediumId", umwId);
+        List<EnvDescripEnvMediumMp> data = repository.filterPlain(builder.getQuery());
         if (data.isEmpty()) {
             logger.debug("getInitialMediaDesk - media_desk : D: 00 00 00 00 00 00 00 00 00 00 00 00");
             return "D: 00 00 00 00 00 00 00 00 00 00 00 00";
@@ -934,78 +891,78 @@ public class ProbeFactory {
                     s11 = null;
                 }
             }
-            Deskriptoren d;
+            EnvDescrip d;
             if (s00 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(Deskriptoren.class, s00);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+                d = repository.getByIdPlain(EnvDescrip.class, s00);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s01 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(Deskriptoren.class, s01);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+                d = repository.getByIdPlain(EnvDescrip.class, s01);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s02 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(Deskriptoren.class, s02);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+                d = repository.getByIdPlain(EnvDescrip.class, s02);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s03 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(Deskriptoren.class, s03);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+                d = repository.getByIdPlain(EnvDescrip.class, s03);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s04 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(Deskriptoren.class, s04);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+                d = repository.getByIdPlain(EnvDescrip.class, s04);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s05 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(Deskriptoren.class, s05);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+                d = repository.getByIdPlain(EnvDescrip.class, s05);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s06 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(Deskriptoren.class, s06);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+                d = repository.getByIdPlain(EnvDescrip.class, s06);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s07 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(Deskriptoren.class, s07);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+                d = repository.getByIdPlain(EnvDescrip.class, s07);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s08 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(Deskriptoren.class, s08);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+                d = repository.getByIdPlain(EnvDescrip.class, s08);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s09 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(Deskriptoren.class, s09);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+                d = repository.getByIdPlain(EnvDescrip.class, s09);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s10 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(Deskriptoren.class, s10);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+                d = repository.getByIdPlain(EnvDescrip.class, s10);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s11 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(Deskriptoren.class, s11);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getSn());
+                d = repository.getByIdPlain(EnvDescrip.class, s11);
+                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             logger.debug("getInitialMediaDesk - umw_desk: " + mediaDesk);
             return mediaDesk;

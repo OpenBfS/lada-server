@@ -9,17 +9,19 @@ package de.intevation.lada.test.land;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response.Status;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.junit.Assert;
 
-import de.intevation.lada.Protocol;
+import de.intevation.lada.BaseTest;
+import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.test.ServiceTest;
 
 /**
@@ -28,33 +30,37 @@ import de.intevation.lada.test.ServiceTest;
  */
 public class MessprogrammTest extends ServiceTest {
     private JsonObject expectedById;
+    private JsonObject expectedSample;
     private JsonObject create;
 
     @Override
     public void init(
         Client c,
-        URL baseUrl,
-        List<Protocol> protocol
+        URL baseUrl
     ) {
-        super.init(c, baseUrl, protocol);
+        super.init(c, baseUrl);
         // Attributes with timestamps
         timestampAttributes = Arrays.asList(new String[]{
-            "letzteAenderung",
+            "lastMod",
             "treeModified"
         });
 
         // Prepare expected object
-        JsonObject content =
-            readJsonResource("/datasets/dbUnit_messprogramm.json");
         JsonObject messprogramm =
-            content.getJsonArray("land.messprogramm").getJsonObject(0);
+            readXmlResource("datasets/dbUnit_lada.xml", Mpg.class)
+            .getJsonObject(0);
         JsonObjectBuilder builder = convertObject(messprogramm);
-        builder.add("baId", 1);
-        builder.add("intervallOffset", 0);
-        builder.add("probeKommentar", JsonValue.NULL);
-        builder.add("probeNehmerId", JsonValue.NULL);
+        builder.add("oprModeId", 1);
+        builder.add("samplePdOffset", 0);
+        builder.addNull("commSample");
+        builder.addNull("samplerId");
         expectedById = builder.build();
         Assert.assertNotNull(expectedById);
+
+        //Prepare expected sample object
+        builder = Json.createObjectBuilder();
+        builder.add("mpgId", 999);
+        expectedSample = builder.build();
 
         // Load object to test POST request
         create = readJsonResource("/datasets/messprogramm.json");
@@ -65,18 +71,40 @@ public class MessprogrammTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("messprogramm", "rest/messprogramm", Status.METHOD_NOT_ALLOWED);
-        getById("messprogramm", "rest/messprogramm/1000", expectedById);
+        get("rest/mpg", Status.METHOD_NOT_ALLOWED);
+        getById("rest/mpg/999", expectedById);
         update(
-            "messprogramm",
-            "rest/messprogramm/1000",
-            "mediaDesk",
+            "rest/mpg/999",
+            "envDescripDisplay",
             "D: 50 90 01 06 02 05 00 00 00 00 00 00",
             "D: 50 90 01 06 02 05 00 00 00 00 00 01");
-        JsonObject created =
-            create("messprogramm", "rest/messprogramm", create);
-        delete(
-            "messprogramm",
-            "rest/messprogramm/" + created.getJsonObject("data").get("id"));
+
+        // Ensure invalid envDescripDisplay is rejected
+        update(
+            "rest/mpg/999",
+            "envDescripDisplay",
+            "D: 50 90 01 06 02 05 00 00 00 00 00 01",
+            "D: ",
+            Status.BAD_REQUEST);
+
+        //Check if referencing probe still has an mpgId
+        getById("rest/sample/999", expectedSample);
+        JsonObject created = create("rest/mpg", create);
+        final int createdId = created.getJsonObject("data").getInt("id");
+
+        // Test setting active status
+        final JsonObject setActive = Json.createObjectBuilder()
+            .add("active", true)
+            .add("ids", Json.createArrayBuilder().add(createdId))
+            .build();
+        BaseTest.parseResponse(client.target(baseUrl + "rest/mpg/active")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .accept(MediaType.APPLICATION_JSON)
+            .put(Entity.entity(setActive.toString(),
+                    MediaType.APPLICATION_JSON)));
+
+        delete("rest/mpg/" + createdId);
     }
 }

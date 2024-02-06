@@ -9,13 +9,12 @@ package de.intevation.lada.validation.rules.messung;
 
 import java.util.Date;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import de.intevation.lada.model.land.Messung;
-import de.intevation.lada.model.land.Probe;
+import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -35,43 +34,40 @@ public class DateMesszeitpunkt implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Messung messung = (Messung) object;
-        Integer probeId = messung.getProbeId();
-        Response response =
-            repository.getById(Probe.class, probeId);
-        Probe probe = (Probe) response.getData();
+        Measm messung = (Measm) object;
 
+        Sample probe = repository.getByIdPlain(
+            Sample.class, messung.getSampleId());
         if (probe == null) {
             Violation violation = new Violation();
-            violation.addError("lprobe", StatusCodes.ERROR_VALIDATION);
+            violation.addError("sample", StatusCodes.ERROR_VALIDATION);
             return violation;
         }
 
-        if (messung.getMesszeitpunkt() == null) {
+        if (messung.getMeasmStartDate() == null) {
             return null;
         }
 
-        if (messung.getMesszeitpunkt().after(new Date())) {
+        if (messung.getMeasmStartDate().after(new Date())) {
             Violation violation = new Violation();
-            violation.addWarning("messzeitpunkt", StatusCodes.DATE_IN_FUTURE);
+            violation.addWarning("measmStartDate", StatusCodes.DATE_IN_FUTURE);
             return violation;
         }
 
-        if (probe.getProbeentnahmeBeginn() == null
-            && probe.getProbeentnahmeEnde() == null) {
+        if (probe.getSampleStartDate() == null
+            && probe.getSampleEndDate() == null) {
             return null;
         }
 
-        if ((probe.getProbeentnahmeBeginn() != null
-            && probe.getProbeentnahmeBeginn().after(messung.getMesszeitpunkt())
-            || probe.getProbeentnahmeEnde() != null
-            && probe.getProbeentnahmeEnde().after(messung.getMesszeitpunkt()))
-            && (probe.getProbenartId() != null
-                && (probe.getProbenartId() == 3 || probe.getProbenartId() == 9))
+        if ((probe.getSampleStartDate() != null
+            && probe.getSampleStartDate().after(messung.getMeasmStartDate())
+            || (probe.getSampleEndDate() != null
+            && probe.getSampleEndDate().after(messung.getMeasmStartDate()))
+            )
         ) {
             Violation violation = new Violation();
             violation.addWarning(
-                "messzeitpunkt#" + messung.getNebenprobenNr(),
+                "measmStartDate",
                 StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }

@@ -9,13 +9,13 @@ package de.intevation.lada.validation.rules.ort;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.jboss.logging.Logger;
 import org.locationtech.jts.geom.Point;
 
-import de.intevation.lada.model.stammdaten.Ort;
-import de.intevation.lada.model.stammdaten.Verwaltungsgrenze;
+import de.intevation.lada.model.master.AdminBorderView;
+import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -40,21 +40,20 @@ public class CoordinatesInVE implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Ort ort = (Ort) object;
-        String gemId = "".equals(ort.getGemId())
+        Site ort = (Site) object;
+        String gemId = "".equals(ort.getAdminUnitId())
             ? null
-            : ort.getGemId();
+            : ort.getAdminUnitId();
 
         if (gemId != null && ort.getGeom() != null) {
-
-            QueryBuilder<Verwaltungsgrenze> vg =
-                repository.queryBuilder(Verwaltungsgrenze.class);
-            vg.and("gemId", gemId);
-            List<Verwaltungsgrenze> vgs = repository.filterPlain(
-                vg.getQuery());
+            QueryBuilder<AdminBorderView> vg = repository
+                .queryBuilder(AdminBorderView.class)
+                .and("municId", gemId);
+            List<AdminBorderView> vgs = repository.filterPlain(vg.getQuery());
             if (vgs == null || vgs.isEmpty()) {
                 Violation violation = new Violation();
-                violation.addWarning("gemId", StatusCodes.GEO_COORD_UNCHECKED);
+                violation.addWarning(
+                    "municId", StatusCodes.GEO_COORD_UNCHECKED);
                 return violation;
             }
 
@@ -64,38 +63,37 @@ public class CoordinatesInVE implements Rule {
                     + "Probably OrtFactory.transformCoordinates() has not "
                     + "been called on this ort.");
             }
-            Boolean unscharf = ort.getUnscharf();
+            Boolean unscharf = ort.getIsFuzzy();
             Violation violation = new Violation();
-            for (Verwaltungsgrenze singlevg : vgs) {
+            for (AdminBorderView singlevg : vgs) {
                 if (singlevg.getShape().contains(p)) {
                     if (unscharf != null && !unscharf) {
                         return null;
                     } else {
-                        ort.setUnscharf(false);
+                        ort.setIsFuzzy(false);
                         return null;
                     }
                 } else {
                     double dist = singlevg.getShape().distance(p);
                     dist = dist * (3.1415926 / 180) * 6378137;
                     if (dist < 1000) {
-                        ort.setUnscharf(true);
+                        ort.setIsFuzzy(true);
                         return null;
                     } else {
-                        ort.setUnscharf(false);
+                        ort.setIsFuzzy(false);
                         violation.addWarning(
-                            "koordXExtern", StatusCodes.GEO_POINT_OUTSIDE);
+                            "coordXExt", StatusCodes.GEO_POINT_OUTSIDE);
                         violation.addWarning(
-                            "koordYExtern", StatusCodes.GEO_POINT_OUTSIDE);
+                            "coordYExt", StatusCodes.GEO_POINT_OUTSIDE);
                         return violation;
                     }
                 }
-           }
+            }
 
-           violation.addWarning("koordXExtern", StatusCodes.GEO_NOT_MATCHING);
-           violation.addWarning("koordYExtern", StatusCodes.GEO_NOT_MATCHING);
-           return violation;
+            violation.addWarning("coordXExt", StatusCodes.GEO_NOT_MATCHING);
+            violation.addWarning("coordYExt", StatusCodes.GEO_NOT_MATCHING);
+            return violation;
         }
         return null;
     }
-
 }
