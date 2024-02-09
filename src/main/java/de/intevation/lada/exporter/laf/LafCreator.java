@@ -450,19 +450,16 @@ implements Creator {
         String laf = "";
         for (Measm m : mess) {
             laf += "%MESSUNG%\n";
-            QueryBuilder<MeasVal> wertBuilder =
-                repository.queryBuilder(MeasVal.class);
-            wertBuilder.and("measmId", m.getId());
-            Response messw =
-                repository.filter(wertBuilder.getQuery());
-            List<MeasVal> werte = (List<MeasVal>) messw.getData();
-            QueryBuilder<CommMeasm> kommBuilder =
-                repository.queryBuilder(CommMeasm.class);
-            kommBuilder.and("measmId", m.getId());
-            Response kommentar =
-                repository.filter(kommBuilder.getQuery());
-            List<CommMeasm> kommentare =
-                (List<CommMeasm>) kommentar.getData();
+            QueryBuilder<MeasVal> wertBuilder = repository
+                .queryBuilder(MeasVal.class)
+                .and("measmId", m.getId());
+            List<MeasVal> werte = repository.filterPlain(
+                wertBuilder.getQuery());
+            QueryBuilder<CommMeasm> kommBuilder = repository
+                .queryBuilder(CommMeasm.class)
+                .and("measmId", m.getId());
+            List<CommMeasm> kommentare = repository.filterPlain(
+                kommBuilder.getQuery());
             laf += lafLine("MESSUNGS_ID", m.getExtId().toString());
             laf += m.getMinSampleId() == null
                 ? ""
