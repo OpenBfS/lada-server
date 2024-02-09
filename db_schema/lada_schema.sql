@@ -248,8 +248,8 @@ CREATE TRIGGER last_mod_mpg_mmt_mp BEFORE UPDATE ON mpg_mmt_mp FOR EACH ROW EXEC
 
 CREATE TABLE mpg_mmt_mp_measd (
     id serial PRIMARY KEY,
-    mpg_mmt_mp_id integer REFERENCES mpg_mmt_mp ON DELETE CASCADE,
-    measd_id integer REFERENCES master.measd,
+    mpg_mmt_mp_id integer NOT NULL REFERENCES mpg_mmt_mp ON DELETE CASCADE,
+    measd_id integer NOT NULL REFERENCES master.measd,
     UNIQUE (mpg_mmt_mp_id, measd_id)
 );
 
