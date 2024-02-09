@@ -1,0 +1,4 @@
+SET ROLE lada;
+ALTER TABLE lada.measm DROP CONSTRAINT measm_mmt_id_fkey; 
+ALTER TABLE lada.measm ADD CONSTRAINT measm_mmt_id_fkey FOREIGN KEY (mmt_id) REFERENCES master.mmt (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION;
+

@@ -375,7 +375,7 @@ CREATE TABLE measm (
     ext_id integer NOT NULL,
     sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE,
     min_sample_id character varying(4) CHECK (trim(both ' ' from min_sample_id) <> ''),
-    mmt_id character varying(2) NOT NULL REFERENCES master.mmt ON DELETE CASCADE,
+    mmt_id character varying(2) NOT NULL REFERENCES master.mmt ON DELETE NO ACTION,
     meas_pd integer,
     measm_start_date timestamp without time zone,
     is_completed boolean DEFAULT false NOT NULL,
