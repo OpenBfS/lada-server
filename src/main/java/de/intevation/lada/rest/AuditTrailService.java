@@ -395,9 +395,6 @@ public class AuditTrailService extends LadaService {
         @PathParam("id") Integer mpgId
     ) {
         Mpg messprogramm = repository.getByIdPlain(Mpg.class, mpgId);
-        if (messprogramm == null) {
-            return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
 
         QueryBuilder<AuditTrailMpgView> builder =
             repository.queryBuilder(AuditTrailMpgView.class);
