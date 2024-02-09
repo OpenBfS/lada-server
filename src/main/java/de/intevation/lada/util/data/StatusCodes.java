@@ -60,7 +60,6 @@ public class StatusCodes {
     public static final int IMP_INVALID_VALUE = 675;
     public static final int IMP_UNCHANGABLE = 676;
     public static final int OP_NOT_POSSIBLE = 696;
-    public static final int CHANGED_VALUE = 697;
     public static final int NO_ACCESS = 698;
     public static final int NOT_ALLOWED = 699;
 }

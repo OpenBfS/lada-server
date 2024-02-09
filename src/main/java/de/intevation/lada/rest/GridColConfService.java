@@ -19,6 +19,7 @@ import jakarta.persistence.criteria.Root;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
@@ -107,16 +108,17 @@ public class GridColConfService extends LadaService {
         @Valid GridColConf gridColumnValue
     ) {
         UserInfo userInfo = authorization.getInfo();
+
+        // TODO: Move to authorization
         if (gridColumnValue.getLadaUserId() != null
             && !gridColumnValue.getLadaUserId().equals(userInfo.getUserId())
         ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
+            throw new ForbiddenException();
         } else {
             gridColumnValue.setLadaUserId(userInfo.getUserId());
             GridColMp gridColumn = new GridColMp();
             gridColumn.setId(gridColumnValue.getGridColMpId());
             gridColumnValue.setGridColMp(gridColumn);
-
 
             QueryUser queryUser = repository.getByIdPlain(
                 QueryUser.class, gridColumnValue.getQueryUserId());
@@ -124,7 +126,6 @@ public class GridColConfService extends LadaService {
 
             return repository.create(gridColumnValue);
         }
-
     }
 
     /**
@@ -141,7 +142,7 @@ public class GridColConfService extends LadaService {
         // userId set to the users ID.
         UserInfo userInfo = authorization.getInfo();
         if (!userInfo.getUserId().equals(gridColumnValue.getLadaUserId())) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
+            throw new ForbiddenException();
         } else {
             GridColMp gridColumn = repository.getByIdPlain(
                 GridColMp.class, gridColumnValue.getGridColMpId());
@@ -171,9 +172,10 @@ public class GridColConfService extends LadaService {
         UserInfo userInfo = authorization.getInfo();
         GridColConf gridColumnValue = repository.getByIdPlain(
             GridColConf.class, id);
+        // TODO: Move to authorization
         if (gridColumnValue.getLadaUserId().equals(userInfo.getUserId())) {
             return repository.delete(gridColumnValue);
         }
-        return new Response(false, StatusCodes.NOT_ALLOWED, null);
+        throw new ForbiddenException();
     }
 }

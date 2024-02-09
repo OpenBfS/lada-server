@@ -40,9 +40,6 @@ public class HasPflichtmessgroessen implements Rule {
         Measm messung = (Measm) object;
         Sample probe = repository.getByIdPlain(
             Sample.class, messung.getSampleId());
-        if (probe == null) {
-            return null;
-        }
 
         QueryBuilder<ObligMeasdMp> builder = repository
             .queryBuilder(ObligMeasdMp.class)

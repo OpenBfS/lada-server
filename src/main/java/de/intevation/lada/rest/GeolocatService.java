@@ -123,12 +123,10 @@ public class GeolocatService extends LadaService {
     public Response create(
         @Valid Geolocat ort
     ) {
-        if (!authorization.isAuthorized(
-                ort,
-                RequestMethod.POST,
-                Geolocat.class)) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            ort,
+            RequestMethod.POST,
+            Geolocat.class);
         validator.validate(ort);
         if (ort.hasErrors()) {
             return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
@@ -150,15 +148,11 @@ public class GeolocatService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Geolocat ort
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
                 ort,
                 RequestMethod.PUT,
-                Geolocat.class)) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
-        if (lock.isLocked(ort)) {
-            return new Response(false, StatusCodes.CHANGED_VALUE, null);
-        }
+                Geolocat.class);
+        lock.isLocked(ort);
 
         validator.validate(ort);
         if (ort.hasErrors()) {
@@ -184,15 +178,11 @@ public class GeolocatService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Geolocat ortObj = repository.getByIdPlain(Geolocat.class, id);
-        if (!authorization.isAuthorized(
-                ortObj,
-                RequestMethod.PUT,
-                Geolocat.class)) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
-        if (lock.isLocked(ortObj)) {
-            return new Response(false, StatusCodes.CHANGED_VALUE, null);
-        }
+        authorization.authorize(
+            ortObj,
+            RequestMethod.PUT,
+            Geolocat.class);
+        lock.isLocked(ortObj);
 
         return repository.delete(ortObj);
     }

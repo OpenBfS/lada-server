@@ -16,7 +16,6 @@ public interface ObjectLocker {
     /**
      * Check of object is locked.
      * @param o the object to check
-     * @return true if the object is currently locked
      */
-    boolean isLocked(Object o);
+    void isLocked(Object o);
 }

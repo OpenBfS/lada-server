@@ -181,7 +181,25 @@ SELECT
 FROM audit_trail
 WHERE audit_trail.table_name = 'measm' OR audit_trail.measm_id IS NOT NULL;
 
+-- View for mpg audit trail
+CREATE OR REPLACE VIEW audit_trail_mpg_view AS
+SELECT audit_trail.id,
+    audit_trail.table_name,
+    audit_trail.tstamp,
+    audit_trail.action,
+    audit_trail.object_id,
+    audit_trail.row_data,
+    audit_trail.changed_fields,
+    coalesce(cast(row_data ->> 'mpg_id' AS integer),
+        (SELECT mpg_id FROM lada.mpg_mmt_mp WHERE id = cast(
+            row_data ->> 'mpg_mmt_mp_id' AS integer))) AS mpg_id
+FROM audit_trail;
 
+SELECT master.audit_table('mpg', true, false, '{id, tree_mod, last_mod}'::text[]);
+SELECT master.audit_table('mpg_mmt_mp', true, false, '{id, mpg_id, tree_mod, last_mod}'::text[]);
+SELECT master.audit_table('mpg_mmt_mp_measd', true, false, '{id, mpg_mmt_mp, tree_mod, last_mod}'::text[]);
+SELECT master.audit_table('mpg_sample_specif', true, false, '{id, mpg_id, tree_mod, last_mod}'::text[]);
+SELECT master.audit_table('geolocat_mpg', true, false, '{id, mpg_id, tree_mod, last_mod}'::text[]);
 SELECT master.audit_table('sample', true, false, '{id, tree_mod, last_mod}'::text[]);
 SELECT master.audit_table('measm', true, false, '{id, sample_id, tree_mod, last_mod, status}'::text[]);
 SELECT master.audit_table('meas_val', true, false, '{id, measm_id, tree_mod, last_mod}'::text[]);

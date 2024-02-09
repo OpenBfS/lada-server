@@ -12,6 +12,7 @@ import java.util.List;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.Query;
+
 import org.jboss.logging.Logger;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -133,7 +134,7 @@ public class OrtFactory {
                     return orte.get(0);
                 } else {
                     //get verwaltungseinheiten
-                    AdminUnit v = repository.getByIdPlain(
+                    AdminUnit v = repository.entityManager().find(
                         AdminUnit.class, ort.getAdminUnitId());
                     if (v != null) {
                         for (Site oElem : orte) {
@@ -187,7 +188,7 @@ public class OrtFactory {
             if (ort.getStateId() == null) {
                 ort.setStateId(0);
             }
-            AdminUnit v = repository.getByIdPlain(
+            AdminUnit v = repository.entityManager().find(
                 AdminUnit.class, ort.getAdminUnitId());
             //Ort exists - check for OrtId
             QueryBuilder<Site> builderExists =
@@ -261,7 +262,7 @@ public class OrtFactory {
             && !hasGem
         ) {
             State staat =
-                repository.getByIdPlain(
+                repository.entityManager().find(
                     State.class, ort.getStateId());
             ort.setSpatRefSysId(staat.getSpatRefSysId());
             ort.setCoordXExt(staat.getCoordXExt());

@@ -142,8 +142,9 @@ public class ProbeTest extends ValidatorBaseTest {
         validator.validate(sample);
         Assert.assertTrue(sample.hasErrors());
         Assert.assertTrue(sample.getErrors().containsKey(MAIN_SAMPLE_ID));
-        Assert.assertEquals(valMessageUniqueMainSampleIdMeasFacilId,
-            sample.getErrors().get(MAIN_SAMPLE_ID).get(0));
+        MatcherAssert.assertThat(
+            sample.getErrors().get(MAIN_SAMPLE_ID),
+            CoreMatchers.hasItem(valMessageUniqueMainSampleIdMeasFacilId));
     }
 
     /**
@@ -181,8 +182,9 @@ public class ProbeTest extends ValidatorBaseTest {
         validator.validate(sample);
         Assert.assertTrue(sample.hasErrors());
         Assert.assertTrue(sample.getErrors().containsKey(MAIN_SAMPLE_ID));
-        Assert.assertEquals(valMessageUniqueMainSampleIdMeasFacilId,
-            sample.getErrors().get(MAIN_SAMPLE_ID).get(0));
+        MatcherAssert.assertThat(
+            sample.getErrors().get(MAIN_SAMPLE_ID),
+            CoreMatchers.hasItem(valMessageUniqueMainSampleIdMeasFacilId));
     }
 
     /**
@@ -610,8 +612,9 @@ public class ProbeTest extends ValidatorBaseTest {
         Assert.assertTrue(sample.hasErrors());
         Assert.assertTrue(sample.getErrors()
             .containsKey(EXT_ID));
-        Assert.assertEquals(valMessageUniqueExtId,
-            sample.getErrors().get(EXT_ID).get(0));
+        MatcherAssert.assertThat(
+            sample.getErrors().get(EXT_ID),
+            CoreMatchers.hasItem(valMessageUniqueExtId));
     }
 
     /**

@@ -45,6 +45,7 @@ public abstract class BaseAuthorizer implements Authorizer {
      * @param probeId   The probe Id.
      * @return True if the probe is readonly.
      */
+    @Override
     public boolean isProbeReadOnly(Integer probeId) {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
         builder.and("sampleId", probeId);
@@ -71,6 +72,7 @@ public abstract class BaseAuthorizer implements Authorizer {
         return false;
     }
 
+    @Override
     public boolean isMessungReadOnly(Integer messungsId) {
         Measm messung =
             repository.getByIdPlain(Measm.class, messungsId);

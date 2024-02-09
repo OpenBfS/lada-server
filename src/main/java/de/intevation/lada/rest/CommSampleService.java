@@ -99,13 +99,10 @@ public class CommSampleService extends LadaService {
     public Response create(
         @Valid CommSample kommentar
     ) {
-        if (!authorization.isAuthorized(
-                kommentar,
-                RequestMethod.POST,
-                CommSample.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            kommentar,
+            RequestMethod.POST,
+            CommSample.class);
         validator.validate(kommentar);
         if (kommentar.hasErrors()) {
             return new Response(false, StatusCodes.ERROR_VALIDATION, kommentar);
@@ -126,13 +123,10 @@ public class CommSampleService extends LadaService {
         @PathParam("id") Integer id,
         @Valid CommSample kommentar
     ) {
-        if (!authorization.isAuthorized(
-                kommentar,
-                RequestMethod.PUT,
-                CommSample.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            kommentar,
+            RequestMethod.PUT,
+            CommSample.class);
         validator.validate(kommentar);
         if (kommentar.hasErrors() || kommentar.hasWarnings()) {
             return new Response(false, StatusCodes.VAL_EXISTS, kommentar);
@@ -155,13 +149,10 @@ public class CommSampleService extends LadaService {
         @PathParam("id") Integer id
     ) {
         CommSample kommentarObj = repository.getByIdPlain(CommSample.class, id);
-        if (!authorization.isAuthorized(
-                kommentarObj,
-                RequestMethod.DELETE,
-                CommSample.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            kommentarObj,
+            RequestMethod.DELETE,
+            CommSample.class);
         return repository.delete(kommentarObj);
     }
 }

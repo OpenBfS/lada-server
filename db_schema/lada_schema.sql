@@ -227,9 +227,10 @@ CREATE TABLE mpg (
 CREATE TRIGGER last_mod_mpg BEFORE UPDATE ON mpg FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE mpg_sample_specif (
-    sample_specif_id character varying(3) REFERENCES master.sample_specif,
-    mpg_id INTEGER REFERENCES mpg ON DELETE CASCADE,
-    PRIMARY KEY (sample_specif_id, mpg_id)
+    id SERIAL PRIMARY KEY,
+    sample_specif_id character varying(3) REFERENCES master.sample_specif NOT NULL,
+    mpg_id INTEGER REFERENCES mpg ON DELETE CASCADE NOT NULL,
+    UNIQUE (sample_specif_id, mpg_id)
 );
 
 --
@@ -246,9 +247,10 @@ CREATE TABLE mpg_mmt_mp (
 CREATE TRIGGER last_mod_mpg_mmt_mp BEFORE UPDATE ON mpg_mmt_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE mpg_mmt_mp_measd (
-    mpg_mmt_mp_id integer REFERENCES mpg_mmt_mp ON DELETE CASCADE,
-    measd_id integer REFERENCES master.measd,
-    PRIMARY KEY (mpg_mmt_mp_id, measd_id)
+    id serial PRIMARY KEY,
+    mpg_mmt_mp_id integer NOT NULL REFERENCES mpg_mmt_mp ON DELETE CASCADE,
+    measd_id integer NOT NULL REFERENCES master.measd,
+    UNIQUE (mpg_mmt_mp_id, measd_id)
 );
 
 --
@@ -375,7 +377,7 @@ CREATE TABLE measm (
     ext_id integer NOT NULL,
     sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE,
     min_sample_id character varying(4) CHECK (trim(both ' ' from min_sample_id) <> ''),
-    mmt_id character varying(2) NOT NULL REFERENCES master.mmt ON DELETE CASCADE,
+    mmt_id character varying(2) NOT NULL REFERENCES master.mmt ON DELETE NO ACTION,
     meas_pd integer,
     measm_start_date timestamp without time zone,
     is_completed boolean DEFAULT false NOT NULL,

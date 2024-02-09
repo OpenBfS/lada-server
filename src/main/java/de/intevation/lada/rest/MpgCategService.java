@@ -93,13 +93,10 @@ public class MpgCategService extends LadaService {
     public Response create(
         @Valid MpgCateg kategorie
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
             kategorie,
             RequestMethod.POST,
-            MpgCateg.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, kategorie);
-        }
+            MpgCateg.class);
         QueryBuilder<MpgCateg> builder =
             repository.queryBuilder(MpgCateg.class);
         builder.and("extId", kategorie.getExtId());
@@ -118,13 +115,10 @@ public class MpgCategService extends LadaService {
         @PathParam("id") Integer id,
         @Valid MpgCateg kategorie
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
             kategorie,
             RequestMethod.PUT,
-            MpgCateg.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, kategorie);
-        }
+            MpgCateg.class);
         QueryBuilder<MpgCateg> builder =
             repository.queryBuilder(MpgCateg.class);
         builder.and("extId", kategorie.getExtId());
@@ -146,15 +140,10 @@ public class MpgCategService extends LadaService {
     ) {
         MpgCateg kategorie = repository.getByIdPlain(
             MpgCateg.class, id);
-        if (kategorie == null
-            || !authorization.isAuthorized(
+        authorization.authorize(
                 kategorie,
                 RequestMethod.DELETE,
-                MpgCateg.class
-            )
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+                MpgCateg.class);
         return repository.delete(kategorie);
     }
 }

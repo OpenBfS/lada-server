@@ -28,9 +28,11 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.model.lada.AuditTrailMeasmView;
+import de.intevation.lada.model.lada.AuditTrailMpgView;
 import de.intevation.lada.model.lada.AuditTrailSampleView;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -148,6 +150,8 @@ public class AuditTrailService extends LadaService {
             new TableMapper("nucl_facil_gr", "ext_id"));
         mappings.put("rei_ag_gr_id",
             new TableMapper("rei_ag_gr", "name"));
+        mappings.put("measds",
+            new TableMapper("measd", "name"));
     }
 
     /**
@@ -161,11 +165,7 @@ public class AuditTrailService extends LadaService {
     public Response getProbe(
         @PathParam("id") Integer pId
     ) {
-        // Get the plain probe object to have the hauptproben_nr.
         Sample probe = repository.getByIdPlain(Sample.class, pId);
-        if (probe == null) {
-            return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
 
         UserInfo userInfo = authorization.getInfo();
 
@@ -206,12 +206,10 @@ public class AuditTrailService extends LadaService {
             // - StatusKombi is 1 (MST - nicht vergeben)
             // - User is not owner of the messung
             if (a.getTableName().equals("messwert")) {
-                Measm messung =
-                    repository.getByIdPlain(
-                        Measm.class, a.getMeasmId());
+                Measm messung = repository.entityManager().find(
+                    Measm.class, a.getMeasmId());
                 if (messung != null) {
-                    StatusProt status =
-                    repository.getByIdPlain(
+                    StatusProt status = repository.getByIdPlain(
                         StatusProt.class, messung.getStatus());
                     if (status.getStatusMpId() == 1
                         && !userInfo.getMessstellen().contains(
@@ -316,9 +314,7 @@ public class AuditTrailService extends LadaService {
         @PathParam("id") Integer mId
     ) {
         Measm messung = repository.getByIdPlain(Measm.class, mId);
-        if (messung == null) {
-            return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
+
         StatusProt status =
             repository.getByIdPlain(StatusProt.class, messung.getStatus());
         Sample probe =
@@ -389,6 +385,75 @@ public class AuditTrailService extends LadaService {
         }
         return node;
     }
+
+    /**
+     * Service to generate audit trail for mpg objects.
+     */
+    @GET
+    @Path("/messprogramm/{id}")
+    public Response getMessprogramm(
+        @PathParam("id") Integer mpgId
+    ) {
+        Mpg messprogramm = repository.getByIdPlain(Mpg.class, mpgId);
+
+        QueryBuilder<AuditTrailMpgView> builder =
+            repository.queryBuilder(AuditTrailMpgView.class);
+        builder.and("objectId", mpgId);
+        builder.and("tableName", "mpg");
+        builder.or("mpgId", mpgId);
+        builder.orderBy("tstamp", true);
+        List<AuditTrailMpgView> audit =
+            repository.filterPlain(builder.getQuery());
+
+        // Create an empty JsonObject
+        AuditResponseData auditData = new AuditResponseData();
+        List<AuditEntry> entries = new ArrayList<>();
+        auditData.setId(messprogramm.getId());
+        auditData.setIdentifier(getIdentifier(messprogramm));
+        for (AuditTrailMpgView a : audit) {
+            entries.add(createEntry(a));
+        }
+        auditData.setAudit(entries);
+        return new Response(
+            true,
+            StatusCodes.OK,
+            auditData);
+    }
+
+    private AuditEntry createEntry(AuditTrailMpgView audit) {
+        AuditEntry node = new AuditEntry();
+        node.setTimestamp(audit.getTstamp().getTime());
+        node.setType(audit.getTableName());
+        node.setAction(audit.getAction());
+        node.setChangedFields(audit.getChangedFields());
+
+        if ("mpg_mmt_mp_measd".equals(audit.getTableName())) {
+            String value = translateId(
+                "measd",
+                "name",
+                audit.getRowData().get("measd_id").toString(),
+                "id",
+                de.intevation.lada.model.master.SchemaName.NAME);
+            node.setIdentifier(value);
+        }
+        if ("mpg_sample_specif".equals(audit.getTableName())) {
+            node.setIdentifier(audit.getRowData().get("sample_specif_id"));
+        }
+        if ("mpg_mmt_mp".equals(audit.getTableName())) {
+            node.setIdentifier(audit.getRowData().get("mmt_id").toString());
+        }
+        if ("geolocat_mpg".equals(audit.getTableName())) {
+            String value = translateId(
+                "site",
+                "ext_id",
+                audit.getRowData().get("site_id").toString(),
+                "id",
+                de.intevation.lada.model.master.SchemaName.NAME);
+            node.setIdentifier(value);
+        }
+        return node;
+    }
+
 
     /**
      * Translate a foreign key into the associated value.
@@ -472,6 +537,12 @@ public class AuditTrailService extends LadaService {
             : measm.getMinSampleId() == null
                 ? measm.getExtId().toString()
                 : measm.getMinSampleId();
+    }
+
+    private String getIdentifier(Mpg mpg) {
+        return mpg == null
+            ? "(deleted)"
+            : mpg.getId().toString();
     }
 
     /**
