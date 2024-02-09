@@ -18,7 +18,6 @@ import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -72,12 +71,9 @@ public class DeskriptorToUmwelt implements Rule {
             if (parent != null) {
                 builder.and("predId", parent);
             }
-            builder.and("levVal", mediaDesk[i]);
-            builder.and("lev", i - 1);
-            Response response = repository.filter(
-                builder.getQuery());
-            @SuppressWarnings("unchecked")
-            List<EnvDescrip> data = (List<EnvDescrip>) response.getData();
+            builder.and("levVal", mediaDesk[i])
+                .and("lev", i - 1);
+            List<EnvDescrip> data = repository.filterPlain(builder.getQuery());
             if (data.isEmpty()) {
                 Violation violation = new Violation();
                 violation.addWarning("envDescripDisplay", StatusCodes.VAL_DESK);
@@ -122,11 +118,8 @@ public class DeskriptorToUmwelt implements Rule {
                 builder.and(field, null);
             }
         }
-        Response response =
-            repository.filter(builder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<EnvDescripEnvMediumMp> data =
-            (List<EnvDescripEnvMediumMp>) response.getData();
+        List<EnvDescripEnvMediumMp> data = repository.filterPlain(
+            builder.getQuery());
         if (data.isEmpty()) {
             Violation violation = new Violation();
             violation.addWarning(

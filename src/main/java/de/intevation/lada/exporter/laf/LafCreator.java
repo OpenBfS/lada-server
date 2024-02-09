@@ -136,25 +136,17 @@ implements Creator {
      * @param probe The {@link LProbeInfo} object.
      * @return LAF conform string.
      */
-    @SuppressWarnings("unchecked")
     private String writeAttributes(Sample probe, List<Integer> messungen) {
-        QueryBuilder<CommSample> kommBuilder =
-            repository.queryBuilder(CommSample.class);
-        kommBuilder.and("sampleId", probe.getId());
-        Response kommentar =
-            repository.filter(kommBuilder.getQuery());
-        List<CommSample> kommentare = (List<CommSample>) kommentar.getData();
+        QueryBuilder<CommSample> kommBuilder = repository
+            .queryBuilder(CommSample.class)
+            .and("sampleId", probe.getId());
+        List<CommSample> kommentare = repository.filterPlain(
+            kommBuilder.getQuery());
 
         String probenart = null;
         if (probe.getSampleMethId() != null) {
-            QueryBuilder<SampleMeth> builder =
-                repository.queryBuilder(SampleMeth.class);
-            builder.and("id", probe.getSampleMethId());
-            List<SampleMeth> probenarten =
-                (List<SampleMeth>) repository.filter(
-                    builder.getQuery()
-                ).getData();
-            probenart = probenarten.get(0).getExtId();
+            probenart = repository.getByIdPlain(
+                SampleMeth.class, probe.getSampleMethId()).getExtId();
         }
 
         MeasFacil messstelle =
@@ -284,23 +276,17 @@ implements Creator {
      * @param zw    The {@link LZusatzWert}.
      * @return Single LAF line.
      */
-    @SuppressWarnings("unchecked")
     private String writeZusatzwert(SampleSpecifMeasVal zw) {
-        QueryBuilder<SampleSpecif> builder =
-            repository.queryBuilder(SampleSpecif.class);
-        builder.and("id", zw.getSampleSpecifId());
-        List<SampleSpecif> zusatz =
-            (List<SampleSpecif>) repository.filter(
-                builder.getQuery()
-            ).getData();
+        SampleSpecif zusatz = repository.getByIdPlain(
+            SampleSpecif.class, zw.getSampleSpecifId());
 
-        String value = "\"" + zusatz.get(0).getId() + "\"";
+        String value = "\"" + zusatz.getId() + "\"";
         value += ((zw.getSmallerThan() == null)
             ? " "
             : " " + zw.getSmallerThan());
         value += zw.getMeasVal();
-        value += " " + ((zusatz.get(0).getMeasUnitId() == null)
-            ? "\"\"" : zusatz.get(0).getMeasUnitId());
+        value += " " + ((zusatz.getMeasUnitId() == null)
+            ? "\"\"" : zusatz.getMeasUnitId());
         value += " " + ((zw.getError() == null) ? "" : zw.getError());
         return lafLine("PZB_S", value);
     }
@@ -311,14 +297,11 @@ implements Creator {
      * @param probe The {@link LProbeInfo} object.
      * @return LAF conform string
      */
-    @SuppressWarnings("unchecked")
     private String writeOrt(Sample probe) {
-        QueryBuilder<Geolocat> builder =
-            repository.queryBuilder(Geolocat.class);
-        builder.and("sampleId", probe.getId());
-        Response objects = repository.filter(builder.getQuery());
-        List<Geolocat> orte =
-            (List<Geolocat>) objects.getData();
+        QueryBuilder<Geolocat> builder = repository
+            .queryBuilder(Geolocat.class)
+            .and("sampleId", probe.getId());
+        List<Geolocat> orte = repository.filterPlain(builder.getQuery());
 
         String laf = "";
         for (Geolocat o : orte) {
@@ -344,7 +327,6 @@ implements Creator {
      * @param typePrefix Prefix denoting typeRegulation
      * @return LAF conform string
      */
-    @SuppressWarnings("unchecked")
     private String writeOrtData(Geolocat o, String typePrefix) {
         String laf = "";
         if (o.getAddSiteText() != null
@@ -435,7 +417,6 @@ implements Creator {
      * @param probe The {@link LProbeInfo} object.
      * @return LAF conform string.
      */
-    @SuppressWarnings("unchecked")
     private String writeMessung(Sample probe, List<Integer> messungen) {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
         if (messungen.isEmpty()) {
@@ -554,29 +535,17 @@ implements Creator {
      * @param mw    The {@link LMesswert} object.
      * @return Single LAF line.
      */
-    @SuppressWarnings("unchecked")
     private String writeMesswert(MeasVal mw) {
-        QueryBuilder<Measd> builder =
-            repository.queryBuilder(Measd.class);
-        builder.and("id", mw.getMeasdId());
-        List<Measd> groessen =
-            (List<Measd>) repository.filter(
-                builder.getQuery()).getData();
-
-        QueryBuilder<MeasUnit> eBuilder =
-            repository.queryBuilder(MeasUnit.class);
-        eBuilder.and("id", mw.getMeasUnitId());
-        List<MeasUnit> einheiten =
-            (List<MeasUnit>) repository.filter(
-                eBuilder.getQuery()).getData();
-
         String tag = "MESSWERT";
-        String value = "\"" + groessen.get(0).getName() + "\"";
+        String value = "\"" + repository.getByIdPlain(
+            Measd.class, mw.getMeasdId()).getName() + "\"";
         value += " ";
         value += mw.getLessThanLOD() == null ? " " : mw.getLessThanLOD();
         value += mw.getLessThanLOD() == null
             ? mw.getMeasVal() : mw.getDetectLim();
-        value += " \"" + einheiten.get(0).getUnitSymbol() + "\"";
+
+        value += " \"" + repository.getByIdPlain(
+            MeasUnit.class, mw.getMeasUnitId()).getUnitSymbol() + "\"";
         value += mw.getError() == null ? " 0.0" : " " + mw.getError();
         if (mw.getIsThreshold() == null
             || !mw.getIsThreshold()

@@ -92,9 +92,9 @@ public class MeasValService extends LadaService {
                 RequestMethod.GET,
                 Measm.class);
 
-        QueryBuilder<MeasVal> builder =
-            repository.queryBuilder(MeasVal.class);
-        builder.and("measmId", measmId);
+        QueryBuilder<MeasVal> builder = repository
+            .queryBuilder(MeasVal.class)
+            .and("measmId", measmId);
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
             MeasVal.class);
