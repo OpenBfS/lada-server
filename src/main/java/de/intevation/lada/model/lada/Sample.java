@@ -13,7 +13,6 @@ import java.util.List;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -43,7 +42,6 @@ import de.intevation.lada.model.master.Regulation;
 import de.intevation.lada.model.master.ReiAgGr;
 import de.intevation.lada.model.master.SampleMeth;
 import de.intevation.lada.model.master.Sampler;
-import de.intevation.lada.util.data.EmptyStringConverter;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.Unique;
@@ -80,11 +78,9 @@ public class Sample extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = DatasetCreator.class)
     private Integer datasetCreatorId;
 
-    @Convert(converter = EmptyStringConverter.class)
     @NotEmptyNorWhitespace
     private String mainSampleId;
 
-    @Convert(converter = EmptyStringConverter.class)
     @NotEmptyNorWhitespace
     @Size(max = 16)
     private String extId;

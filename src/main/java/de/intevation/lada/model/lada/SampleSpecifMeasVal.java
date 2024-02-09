@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,7 +26,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import de.intevation.lada.model.master.SampleSpecif;
-import de.intevation.lada.util.data.EmptyStringConverter;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.Unique;
@@ -53,7 +51,6 @@ public class SampleSpecifMeasVal implements Serializable {
 
     private Double measVal;
 
-    @Convert(converter = EmptyStringConverter.class)
     @Size(max = 1)
     @NotEmptyNorWhitespace
     private String smallerThan;

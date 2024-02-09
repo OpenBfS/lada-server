@@ -12,7 +12,6 @@ import java.util.Date;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,7 +31,6 @@ import org.hibernate.annotations.DynamicInsert;
 
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Mmt;
-import de.intevation.lada.util.data.EmptyStringConverter;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.Unique;
@@ -78,7 +76,6 @@ public class Measm extends BaseModel implements Serializable {
     @IsValidPrimaryKey(groups = DatabaseConstraints.class, clazz = Mmt.class)
     private String mmtId;
 
-    @Convert(converter = EmptyStringConverter.class)
     @Size(max = 4)
     @NotEmptyNorWhitespace
     private String minSampleId;
