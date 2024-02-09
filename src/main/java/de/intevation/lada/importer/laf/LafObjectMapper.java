@@ -186,7 +186,7 @@ public class LafObjectMapper {
             }
             probe.setMeasFacilId(measFacilId);
         } else {
-            MeasFacil mst = repository.getByIdPlain(
+            MeasFacil mst = repository.entityManager().find(
                 MeasFacil.class, probe.getMeasFacilId());
             if (mst == null) {
                 currentErrors.add(
@@ -218,11 +218,9 @@ public class LafObjectMapper {
         } else if (object.getAttributes().containsKey("ZEITBASIS_S")) {
             currentZeitbasis =
                 Integer.valueOf(object.getAttributes().get("ZEITBASIS_S"));
-            Tz zeitbasis = repository.getByIdPlain(
-                Tz.class,
-                currentZeitbasis
-            );
-            if (zeitbasis == null) {
+            Tz timezone = repository.entityManager()
+                .find(Tz.class, currentZeitbasis);
+            if (timezone == null) {
                 currentWarnings.add(
                     new ReportItem(
                         "ZEITBASIS_S",
@@ -1029,11 +1027,11 @@ public class LafObjectMapper {
         messwert.setMeasmId(messungsId);
 
         if (attributes.containsKey("MESSGROESSE_ID")) {
-            Measd messgreosse = repository.getByIdPlain(
+            Measd measd = repository.entityManager().find(
                 Measd.class,
                 Integer.valueOf(attributes.get("MESSGROESSE_ID"))
             );
-            if (messgreosse == null) {
+            if (measd == null) {
                 currentWarnings.add(
                     new ReportItem(
                         "MESSWERT - MESSGROESSE_ID",
@@ -1071,11 +1069,11 @@ public class LafObjectMapper {
             messwert.setMeasdId(groesse.get(0).getId());
         }
         if (attributes.containsKey("MESSEINHEIT_ID")) {
-            MeasUnit messEinheit = repository.getByIdPlain(
+            MeasUnit measUnit = repository.entityManager().find(
                 MeasUnit.class,
                 Integer.valueOf(attributes.get("MESSEINHEIT_ID"))
             );
-            if (messEinheit == null) {
+            if (measUnit == null) {
                 currentWarnings.add(
                     new ReportItem(
                         "MESSWERT - MESSEINHEIT_ID",
@@ -1571,7 +1569,7 @@ public class LafObjectMapper {
         ort.setSiteId(o.getId());
         ort.setPoiId(o.getPoiId());
         if (rawOrt.containsKey(type + "_ORTS_ZUSATZCODE")) {
-            Poi zusatz = repository.getByIdPlain(
+            Poi zusatz = repository.entityManager().find(
                 Poi.class,
                 rawOrt.get(type + "_ORTS_ZUSATZCODE")
             );
@@ -1609,9 +1607,9 @@ public class LafObjectMapper {
             if (attributes.get(type + "KOORDINATEN_ART_S") != null) {
                 o.setSpatRefSysId(Integer.valueOf(
                         attributes.get(type + "KOORDINATEN_ART_S")));
-                SpatRefSys koordinatenArt = repository.getByIdPlain(
+                SpatRefSys spatRefSys = repository.entityManager().find(
                     SpatRefSys.class, o.getSpatRefSysId());
-                if (koordinatenArt == null) {
+                if (spatRefSys == null) {
                     currentWarnings.add(
                         new ReportItem(
                             type + "KOORDINATEN_ART_S",
@@ -1658,10 +1656,9 @@ public class LafObjectMapper {
             }
         } else if (attributes.get(type + "GEMEINDESCHLUESSEL") != null) {
             o.setAdminUnitId(attributes.get(type + "GEMEINDESCHLUESSEL"));
-            AdminUnit v =
-                repository.getByIdPlain(
+            AdminUnit adminUnit = repository.entityManager().find(
                     AdminUnit.class, o.getAdminUnitId());
-            if (v == null) {
+            if (adminUnit == null) {
                 currentWarnings.add(
                     new ReportItem(
                         type + "GEMEINDESCHLUESSEL", o.getAdminUnitId(),
@@ -1833,11 +1830,11 @@ public class LafObjectMapper {
         if ("DATENBASIS_S".equals(key)
             && probe.getRegulationId() == null
         ) {
-            Regulation datenbasis = repository.getByIdPlain(
+            Regulation regulation = repository.entityManager().find(
                 Regulation.class,
                 Integer.valueOf(value.toString())
             );
-            if (datenbasis == null) {
+            if (regulation == null) {
                 currentWarnings.add(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
@@ -1890,9 +1887,9 @@ public class LafObjectMapper {
         }
 
         if ("MESSLABOR".equals(key)) {
-            MeasFacil mst = repository.getByIdPlain(
+            MeasFacil measFacil = repository.entityManager().find(
                 MeasFacil.class, value.toString());
-            if (mst == null) {
+            if (measFacil == null) {
                 currentWarnings.add(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
@@ -2005,9 +2002,9 @@ public class LafObjectMapper {
         if ("UMWELTBEREICH_S".equals(key)
             && probe.getEnvMediumId() == null
         ) {
-            EnvMedium umw = repository.getByIdPlain(
+            EnvMedium envMedium = repository.entityManager().find(
                 EnvMedium.class, value.toString());
-            if (umw == null) {
+            if (envMedium == null){
                 currentWarnings.add(
                     new ReportItem(
                         key, value.toString(), StatusCodes.IMP_INVALID_VALUE));
@@ -2135,7 +2132,7 @@ public class LafObjectMapper {
             Integer i = Integer.valueOf(value.toString());
             messung.setMeasPd(i);
         } else if ("MESSMETHODE_S".equals(key)) {
-            Mmt mmt = repository.getByIdPlain(
+            Mmt mmt = repository.entityManager().find(
                 Mmt.class, value.toString());
             if (mmt == null) {
                 currentWarnings.add(

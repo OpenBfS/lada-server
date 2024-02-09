@@ -21,6 +21,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
@@ -113,10 +114,11 @@ public class QueryUserService extends LadaService {
         @Valid QueryUser query
     ) {
         UserInfo userInfo = authorization.getInfo();
+        // TODO: Move to authorization
         if (query.getLadaUserId() != null
             && !query.getLadaUserId().equals(userInfo.getUserId())
         ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
+            throw new ForbiddenException();
         } else {
             query.setLadaUserId(userInfo.getUserId());
             for (String m : query.getMessStellesIds()) {
@@ -141,10 +143,11 @@ public class QueryUserService extends LadaService {
         @Valid QueryUser query
     ) {
         UserInfo userInfo = authorization.getInfo();
+        // TODO: Move to authorization
         if (query.getLadaUserId() != null
             && !query.getLadaUserId().equals(userInfo.getUserId())
         ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
+            throw new ForbiddenException();
         }
 
         query.setLadaUserId(userInfo.getUserId());
@@ -211,12 +214,10 @@ public class QueryUserService extends LadaService {
     ) {
         UserInfo userInfo = authorization.getInfo();
         QueryUser query = repository.getByIdPlain(QueryUser.class, id);
-        if (query == null) {
-            return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
+        // TODO: Move to authorization
         if (query.getLadaUserId().equals(userInfo.getUserId())) {
             return repository.delete(query);
         }
-        return new Response(false, StatusCodes.NOT_ALLOWED, null);
+        throw new ForbiddenException();
     }
 }

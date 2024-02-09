@@ -87,13 +87,10 @@ public class MeasValService extends LadaService {
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
         Measm messung = repository.getByIdPlain(Measm.class, measmId);
-        if (!authorization.isAuthorized(
+        authorization.authorize(
                 messung,
                 RequestMethod.GET,
-                Measm.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+                Measm.class);
 
         QueryBuilder<MeasVal> builder =
             repository.queryBuilder(MeasVal.class);
@@ -127,13 +124,10 @@ public class MeasValService extends LadaService {
         MeasVal messwert = (MeasVal) response.getData();
         Measm messung = repository.getByIdPlain(
             Measm.class, messwert.getMeasmId());
-        if (!authorization.isAuthorized(
+        authorization.authorize(
             messung,
             RequestMethod.GET,
-            Measm.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+            Measm.class);
         validator.validate(messwert);
         return authorization.filter(
             response,
@@ -149,13 +143,10 @@ public class MeasValService extends LadaService {
     public Response create(
         @Valid MeasVal messwert
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
                 messwert,
                 RequestMethod.POST,
-                MeasVal.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+                MeasVal.class);
         validator.validate(messwert);
         if (messwert.hasErrors()) {
             return new Response(false, StatusCodes.ERROR_VALIDATION, messwert);
@@ -178,16 +169,11 @@ public class MeasValService extends LadaService {
         @PathParam("id") Integer id,
         @Valid MeasVal messwert
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
                 messwert,
                 RequestMethod.PUT,
-                MeasVal.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
-        if (lock.isLocked(messwert)) {
-            return new Response(false, StatusCodes.CHANGED_VALUE, null);
-        }
+                MeasVal.class);
+        lock.isLocked(messwert);
         validator.validate(messwert);
         if (messwert.hasErrors()) {
             return new Response(false, StatusCodes.ERROR_VALIDATION, messwert);
@@ -212,13 +198,10 @@ public class MeasValService extends LadaService {
     ) {
         //Load messung, probe and umwelt to get MessEinheit to convert to
         Measm messung = repository.getByIdPlain(Measm.class, measmId);
-        if (!authorization.isAuthorized(
+        authorization.authorize(
             messung,
             RequestMethod.PUT,
-            Measm.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+            Measm.class);
 
         Sample probe =
             repository.getByIdPlain(
@@ -240,16 +223,11 @@ public class MeasValService extends LadaService {
             umwelt.getId());
 
         for (MeasVal messwert: messwerte) {
-            if (!authorization.isAuthorized(
+            authorization.authorize(
                 messwert,
                 RequestMethod.PUT,
-                MeasVal.class)
-            ) {
-                return new Response(false, StatusCodes.NOT_ALLOWED, null);
-            }
-            if (lock.isLocked(messwert)) {
-                return new Response(false, StatusCodes.CHANGED_VALUE, null);
-            }
+                MeasVal.class);
+            lock.isLocked(messwert);
             validator.validate(messwert);
             if (messwert.hasErrors()) {
                 return new Response(
@@ -277,16 +255,11 @@ public class MeasValService extends LadaService {
         @PathParam("id") Integer id
     ) {
         MeasVal messwertObj = repository.getByIdPlain(MeasVal.class, id);
-        if (!authorization.isAuthorized(
-                messwertObj,
-                RequestMethod.DELETE,
-                MeasVal.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
-        if (lock.isLocked(messwertObj)) {
-            return new Response(false, StatusCodes.NO_ACCESS, null);
-        }
+        authorization.authorize(
+            messwertObj,
+            RequestMethod.DELETE,
+            MeasVal.class);
+        lock.isLocked(messwertObj);
         /* Delete the messwert object*/
         return repository.delete(messwertObj);
     }

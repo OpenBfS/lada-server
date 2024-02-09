@@ -165,11 +165,7 @@ public class AuditTrailService extends LadaService {
     public Response getProbe(
         @PathParam("id") Integer pId
     ) {
-        // Get the plain probe object to have the hauptproben_nr.
         Sample probe = repository.getByIdPlain(Sample.class, pId);
-        if (probe == null) {
-            return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
 
         UserInfo userInfo = authorization.getInfo();
 
@@ -210,12 +206,10 @@ public class AuditTrailService extends LadaService {
             // - StatusKombi is 1 (MST - nicht vergeben)
             // - User is not owner of the messung
             if (a.getTableName().equals("messwert")) {
-                Measm messung =
-                    repository.getByIdPlain(
-                        Measm.class, a.getMeasmId());
+                Measm messung = repository.entityManager().find(
+                    Measm.class, a.getMeasmId());
                 if (messung != null) {
-                    StatusProt status =
-                    repository.getByIdPlain(
+                    StatusProt status = repository.getByIdPlain(
                         StatusProt.class, messung.getStatus());
                     if (status.getStatusMpId() == 1
                         && !userInfo.getMessstellen().contains(
@@ -320,9 +314,7 @@ public class AuditTrailService extends LadaService {
         @PathParam("id") Integer mId
     ) {
         Measm messung = repository.getByIdPlain(Measm.class, mId);
-        if (messung == null) {
-            return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
+
         StatusProt status =
             repository.getByIdPlain(StatusProt.class, messung.getStatus());
         Sample probe =

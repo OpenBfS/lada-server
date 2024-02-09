@@ -12,7 +12,8 @@ import java.lang.reflect.Method;
 import java.util.Date;
 
 import jakarta.inject.Inject;
-
+import jakarta.ws.rs.ClientErrorException;
+import jakarta.ws.rs.core.Response.Status;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.Repository;
@@ -36,17 +37,16 @@ public class TimestampLocker implements ObjectLocker {
      * Test whether a data object is locked or not.
      *
      * @param o The object to test.
-     * @return True if the object is locked else false.
      */
     @Override
-    public boolean isLocked(Object o) {
+    public void isLocked(Object o) {
         if (o instanceof Sample) {
             Sample newProbe = (Sample) o;
             Sample oldProbe = repository.getByIdPlain(
                 Sample.class, newProbe.getId());
             if (oldProbe.getTreeMod().getTime()
                 > newProbe.getTreeMod().getTime()) {
-                return true;
+                throw new ClientErrorException(Status.CONFLICT);
             }
         } else {
             Method[] methods = o.getClass().getMethods();
@@ -57,10 +57,13 @@ public class TimestampLocker implements ObjectLocker {
                         id = (Integer) m.invoke(o);
                     } catch (IllegalAccessException | IllegalArgumentException
                             | InvocationTargetException e) {
-                        return true;
+                        throw new ClientErrorException(Status.CONFLICT);
                     }
                     Sample probe = repository.getByIdPlain(Sample.class, id);
-                    return isNewer(o, probe.getTreeMod());
+                    if (isNewer(o, probe.getTreeMod())) {
+                        throw new ClientErrorException(Status.CONFLICT);
+                    }
+                    return;
                 }
                 if (m.getName().equals("getMeasmId")) {
                     Integer id;
@@ -68,15 +71,17 @@ public class TimestampLocker implements ObjectLocker {
                         id = (Integer) m.invoke(o);
                     } catch (IllegalAccessException | IllegalArgumentException
                             | InvocationTargetException e) {
-                        return true;
+                        throw new ClientErrorException(Status.CONFLICT);
                     }
                     Measm messung =
                         repository.getByIdPlain(Measm.class, id);
-                    return isNewer(o, messung.getTreeMod());
+                    if (isNewer(o, messung.getTreeMod())) {
+                        throw new ClientErrorException(Status.CONFLICT);
+                    }
+                    return;
                 }
             }
         }
-        return false;
     }
 
     /**

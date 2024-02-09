@@ -83,7 +83,8 @@ public class MeasmService extends LadaService {
         @SuppressWarnings("unchecked")
         List<Measm> messungs = (List<Measm>) r.getData();
         for (Measm messung: messungs) {
-            // TODO: Should have been set by authorization.filter() already
+            // TODO: Should have been set by authorization.filter() already,
+            // but that's unfortunately not the same as authorizing PUT.
             messung.setReadonly(
                 !authorization.isAuthorized(
                     messung,
@@ -121,13 +122,10 @@ public class MeasmService extends LadaService {
     public Response create(
         @Valid Measm messung
     ) {
-        if (!authorization.isAuthorized(
-                messung,
-                RequestMethod.POST,
-                Measm.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            messung,
+            RequestMethod.POST,
+            Measm.class);
 
         validator.validate(messung);
         if (messung.hasErrors()) {
@@ -150,16 +148,11 @@ public class MeasmService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Measm messung
     ) {
-        if (!authorization.isAuthorized(
-                messung,
-                RequestMethod.PUT,
-                Measm.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
-        if (lock.isLocked(messung)) {
-            return new Response(false, StatusCodes.CHANGED_VALUE, null);
-        }
+        authorization.authorize(
+            messung,
+            RequestMethod.PUT,
+            Measm.class);
+        lock.isLocked(messung);
         validator.validate(messung);
         if (messung.hasErrors()) {
             return new Response(false, StatusCodes.ERROR_VALIDATION, messung);
@@ -184,16 +177,11 @@ public class MeasmService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Measm messungObj = repository.getByIdPlain(Measm.class, id);
-        if (!authorization.isAuthorized(
-                messungObj,
-                RequestMethod.DELETE,
-                Measm.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
-        if (lock.isLocked(messungObj)) {
-            return new Response(false, StatusCodes.CHANGED_VALUE, null);
-        }
+        authorization.authorize(
+            messungObj,
+            RequestMethod.DELETE,
+            Measm.class);
+        lock.isLocked(messungObj);
 
         /* Delete the messung object*/
         return repository.delete(messungObj);

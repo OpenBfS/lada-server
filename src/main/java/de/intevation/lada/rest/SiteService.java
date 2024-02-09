@@ -193,13 +193,10 @@ public class SiteService extends LadaService {
     public Response create(
         @Valid Site ort
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
             ort,
             RequestMethod.POST,
-            Site.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, ort);
-        }
+            Site.class);
 
         ort = ortFactory.completeOrt(ort);
         if (ortFactory.hasErrors()) {
@@ -234,19 +231,10 @@ public class SiteService extends LadaService {
         @PathParam("id") Integer id,
         @Valid Site ort
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
             ort,
             RequestMethod.PUT,
-            Site.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, ort);
-        }
-
-        Site dbOrt = repository.getByIdPlain(
-            Site.class, ort.getId());
-        if (dbOrt == null) {
-            return new Response(false, StatusCodes.NOT_EXISTING, ort);
-        }
+            Site.class);
 
         ortFactory.transformCoordinates(ort);
         if (ortFactory.hasErrors()) {
@@ -288,13 +276,10 @@ public class SiteService extends LadaService {
                 || ort.getReferenceCountMp() > 0) {
             return new Response(false, StatusCodes.ERROR_DELETE, ort);
         }
-        if (!authorization.isAuthorized(
+        authorization.authorize(
             ort,
             RequestMethod.DELETE,
-            Site.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, ort);
-        }
+            Site.class);
 
         return repository.delete(ort);
     }
@@ -315,9 +300,6 @@ public class SiteService extends LadaService {
             @PathParam("type") @Pattern(regexp = "img|map") String type
     ) {
         Site site = repository.getByIdPlain(Site.class, id);
-        if (site == null) {
-            throw new NotFoundException();
-        }
         return type.equals("map") ? site.getMap() : site.getImg();
     }
 
@@ -341,12 +323,10 @@ public class SiteService extends LadaService {
             @NotBlank String dataUrl
     ) throws IOException {
         Site site = repository.getByIdPlain(Site.class, id);
-        if (!authorization.isAuthorized(
+        authorization.authorize(
                 site,
                 RequestMethod.PUT,
-                Site.class)) {
-            throw new ForbiddenException();
-        }
+                Site.class);
         int contentLength = request.getContentLength();
         if (contentLength == -1) {
             throw new IOException();
@@ -379,12 +359,10 @@ public class SiteService extends LadaService {
             @PathParam("type") @Pattern(regexp = "img|map") String type
     ) {
         Site site = repository.getByIdPlain(Site.class, id);
-        if (!authorization.isAuthorized(
+        authorization.authorize(
                 site,
                 RequestMethod.PUT,
-                Site.class)) {
-            throw new ForbiddenException();
-        }
+                Site.class);
         if (type.equals("map")) {
             site.setMap(null);
         } else {

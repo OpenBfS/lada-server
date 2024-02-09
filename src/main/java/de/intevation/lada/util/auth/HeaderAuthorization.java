@@ -15,6 +15,7 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.core.Context;
 
 import de.intevation.lada.model.lada.CommMeasm;
@@ -178,6 +179,26 @@ public class HeaderAuthorization implements Authorization {
      * @param data      The data to test.
      * @param method    The Http request type.
      * @param clazz     The data object class.
+     * @throws ForbiddenException if the user is not authorized.
+     */
+    @Override
+    public <T> void authorize(
+        Object data,
+        RequestMethod method,
+        Class<T> clazz
+    ) {
+        if (isAuthorized(data, method, clazz)) {
+            return;
+        }
+        throw new ForbiddenException();
+    }
+
+    /**
+     * Check whether a user is authorized to operate on the given data.
+     *
+     * @param data      The data to test.
+     * @param method    The Http request type.
+     * @param clazz     The data object class.
      * @return True if the user is authorized else returns false.
      */
     @Override
@@ -203,6 +224,7 @@ public class HeaderAuthorization implements Authorization {
      * @param clazz     The data object class.
      * @return True if the user is authorized else returns false.
      */
+    @Override
     public <T> boolean isAuthorizedById(
         Object id,
         RequestMethod method,

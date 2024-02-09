@@ -102,14 +102,10 @@ public class MpgMmtMpService extends LadaService {
     public Response create(
         @Valid MpgMmtMp messprogrammmmt
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
                 messprogrammmmt,
                 RequestMethod.POST,
-                MpgMmtMp.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
-
+                MpgMmtMp.class);
         validator.validate(messprogrammmmt);
         if (messprogrammmmt.hasErrors()) {
             return new Response(
@@ -135,13 +131,10 @@ public class MpgMmtMpService extends LadaService {
         @PathParam("id") Integer id,
         @Valid MpgMmtMp messprogrammmmt
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
                 messprogrammmmt,
                 RequestMethod.PUT,
-                MpgMmtMp.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+                MpgMmtMp.class);
 
         validator.validate(messprogrammmmt);
         if (messprogrammmmt.hasErrors()) {
@@ -169,13 +162,10 @@ public class MpgMmtMpService extends LadaService {
     ) {
         MpgMmtMp messprogrammmmtObj = repository.getByIdPlain(
             MpgMmtMp.class, id);
-        if (!authorization.isAuthorized(
+        authorization.authorize(
                 messprogrammmmtObj,
                 RequestMethod.DELETE,
-                Mpg.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+                Mpg.class);
         /* Delete the messprogrammmmt object*/
         return repository.delete(messprogrammmmtObj);
     }

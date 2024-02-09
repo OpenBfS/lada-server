@@ -27,7 +27,6 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -104,13 +103,10 @@ public class SampleSpecifMeasValService extends LadaService {
     public Response create(
         @Valid SampleSpecifMeasVal zusatzwert
     ) {
-        if (!authorization.isAuthorized(
-                zusatzwert,
-                RequestMethod.POST,
-                SampleSpecifMeasVal.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            zusatzwert,
+            RequestMethod.POST,
+            SampleSpecifMeasVal.class);
 
         // TODO: perform validation to avoid violating database constraints
         return authorization.filter(
@@ -129,16 +125,11 @@ public class SampleSpecifMeasValService extends LadaService {
         @PathParam("id") Integer id,
         @Valid SampleSpecifMeasVal zusatzwert
     ) {
-        if (!authorization.isAuthorized(
-                zusatzwert,
-                RequestMethod.PUT,
-                SampleSpecifMeasVal.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
-        if (lock.isLocked(zusatzwert)) {
-            return new Response(false, StatusCodes.CHANGED_VALUE, null);
-        }
+        authorization.authorize(
+            zusatzwert,
+            RequestMethod.PUT,
+            SampleSpecifMeasVal.class);
+        lock.isLocked(zusatzwert);
 
         return authorization.filter(
             repository.update(zusatzwert),
@@ -156,17 +147,13 @@ public class SampleSpecifMeasValService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        SampleSpecifMeasVal obj = repository.getByIdPlain(SampleSpecifMeasVal.class, id);
-        if (!authorization.isAuthorized(
-                obj,
-                RequestMethod.DELETE,
-                SampleSpecifMeasVal.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
-        if (lock.isLocked(obj)) {
-            return new Response(false, StatusCodes.CHANGED_VALUE, null);
-        }
+        SampleSpecifMeasVal obj = repository.getByIdPlain(
+            SampleSpecifMeasVal.class, id);
+        authorization.authorize(
+            obj,
+            RequestMethod.DELETE,
+            SampleSpecifMeasVal.class);
+        lock.isLocked(obj);
         /* Delete the object*/
         return repository.delete(obj);
     }

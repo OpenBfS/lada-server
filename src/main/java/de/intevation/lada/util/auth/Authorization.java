@@ -21,6 +21,11 @@ public interface Authorization {
     <T> Response filter(
         Response data, Class<T> clazz);
 
+    <T> void authorize(
+        Object data,
+        RequestMethod method,
+        Class<T> clazz);
+
     <T> boolean isAuthorized(
         Object data,
         RequestMethod method,

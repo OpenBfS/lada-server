@@ -92,13 +92,10 @@ public class MunicDivService extends LadaService {
     public Response create(
         @Valid MunicDiv gemUntergliederung
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
             gemUntergliederung,
             RequestMethod.POST,
-            MunicDiv.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, gemUntergliederung);
-        }
+            MunicDiv.class);
         QueryBuilder<MunicDiv> builder =
             repository.queryBuilder(MunicDiv.class);
         builder.and("siteId",
@@ -119,13 +116,10 @@ public class MunicDivService extends LadaService {
         @PathParam("id") Integer id,
         @Valid MunicDiv gemUntergliederung
     ) {
-        if (!authorization.isAuthorized(
+        authorization.authorize(
             gemUntergliederung,
             RequestMethod.PUT,
-            MunicDiv.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, gemUntergliederung);
-        }
+            MunicDiv.class);
         QueryBuilder<MunicDiv> builder =
             repository.queryBuilder(MunicDiv.class);
         builder.and("siteId", gemUntergliederung.getSiteId());
@@ -147,15 +141,10 @@ public class MunicDivService extends LadaService {
     ) {
         MunicDiv gemUntergliederung = repository.getByIdPlain(
             MunicDiv.class, id);
-        if (gemUntergliederung == null
-            || !authorization.isAuthorized(
-                gemUntergliederung,
-                RequestMethod.DELETE,
-                MunicDiv.class
-            )
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            gemUntergliederung,
+            RequestMethod.DELETE,
+            MunicDiv.class);
         return repository.delete(gemUntergliederung);
     }
 }

@@ -7,9 +7,8 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.ArrayList;
-
 import jakarta.inject.Inject;
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -19,7 +18,6 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.Network;
 
@@ -69,7 +67,7 @@ public class NetworkService extends LadaService {
         if (userInfo.getNetzbetreiber().contains(id)) {
             return repository.getById(Network.class, id);
         }
-        return new Response(
-            false, StatusCodes.CHANGED_VALUE, new ArrayList<Network>());
+        // TODO: Move to authorization
+        throw new ForbiddenException();
     }
 }

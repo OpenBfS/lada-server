@@ -128,11 +128,8 @@ public class TagService extends LadaService {
         @Valid Tag tag
     ) {
         Tag origTag = repository.getByIdPlain(Tag.class, tag.getId());
-        if (!authorization.isAuthorized(
-                origTag, RequestMethod.PUT, Tag.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+                origTag, RequestMethod.PUT, Tag.class);
 
         String tagTyp = tag.getTagType();
         String origTagTyp = origTag.getTagType();
@@ -191,11 +188,8 @@ public class TagService extends LadaService {
     public Response create(
         @Valid Tag tag
     ) {
-        if (!authorization.isAuthorized(
-                tag, RequestMethod.POST, Tag.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            tag, RequestMethod.POST, Tag.class);
 
         tag.setLadaUserId(authorization.getInfo().getUserId());
 
@@ -229,11 +223,8 @@ public class TagService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Tag tag = repository.getByIdPlain(Tag.class, id);
-        if (!authorization.isAuthorized(
-                tag, RequestMethod.DELETE, Tag.class)
-        ) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
+        authorization.authorize(
+            tag, RequestMethod.DELETE, Tag.class);
         return repository.delete(tag);
     }
 }
