@@ -76,7 +76,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 
 /**
@@ -320,8 +319,8 @@ public class LafObjectMapper {
                 // It is a brand new probe!
                 probeValidator.validate(probe);
                 if (!probe.hasErrors()) {
-                    Response created = repository.create(probe);
-                    newProbe = ((Sample) created.getData());
+                    repository.create(probe);
+                    newProbe = probe;
                 } else {
                     for (Entry<String, Set<String>> err
                              : probe.getErrors().entrySet()
