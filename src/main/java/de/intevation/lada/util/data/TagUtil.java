@@ -27,7 +27,7 @@ import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.TagLink;
 import de.intevation.lada.model.master.Tag;
-import de.intevation.lada.util.rest.Response;
+
 
 /**
  * Utility class containing methods for creating and setting tags.
@@ -46,9 +46,9 @@ public class TagUtil {
      * Format is: {prefix}_yyyyMMdd_{serialNumber}
      * @param prefix Prefix to set
      * @param netzbetreiberId netzbetreiberId to set in the tag
-     * @return Response of tag creation
+     * @return Generated tag
      */
-    public synchronized Response generateTag(
+    public synchronized Tag generateTag(
         String prefix,
         String netzbetreiberId
     ) {
@@ -101,7 +101,8 @@ public class TagUtil {
             .truncatedTo(ChronoUnit.DAYS);
         currentTag.setValUntil(Timestamp.from(then));
 
-        return repository.create(currentTag);
+        repository.create(currentTag);
+        return currentTag;
     }
 
     /**
