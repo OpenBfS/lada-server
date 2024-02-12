@@ -42,7 +42,7 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
+
 
 /**
  * This creator produces a LAF conform String containing all information about
@@ -120,11 +120,7 @@ implements Creator {
      * @return LAF conform string.
      */
     private String probeToLAF(Integer probeId, List<Integer> messungen) {
-        Response found = repository.getById(Sample.class, probeId);
-        if (found.getData() == null) {
-            return null;
-        }
-        Sample aProbe = (Sample) found.getData();
+        Sample aProbe = repository.getByIdPlain(Sample.class, probeId);
         String lafProbe = writeAttributes(aProbe, messungen);
         return lafProbe;
     }
