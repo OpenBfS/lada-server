@@ -23,7 +23,7 @@ import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
+
 
 /**
  * Merges the attributes of objects.
@@ -37,12 +37,11 @@ public class ObjectMerger {
     private Repository repository;
 
     /**
-     * Merge probe objects.
+     * Merge sample objects.
      * @param target the resulting probe objects
      * @param src the source object
-     * @return returns true on success
      */
-    public boolean merge(Sample target, Sample src) {
+    public void merge(Sample target, Sample src) {
         if (src.getOprModeId() != null) {
             target.setOprModeId(src.getOprModeId());
         }
@@ -105,8 +104,7 @@ public class ObjectMerger {
         if (src.getEnvMediumId() != null) {
             target.setEnvMediumId(src.getEnvMediumId());
         }
-        Response r = repository.update(target);
-        return r.getSuccess();
+        repository.update(target);
     }
 
     /**

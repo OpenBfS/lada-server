@@ -281,29 +281,8 @@ public class LafObjectMapper {
                                 old.getExtId(),
                                 StatusCodes.IMP_UNCHANGABLE));
                     } else {
-                        if (merger.merge(old, probe)) {
-                            newProbe = old;
-                        } else {
-                            ReportItem err = new ReportItem();
-                            err.setCode(StatusCodes.ERROR_MERGING);
-                            err.setKey("Database error");
-                            err.setValue("");
-                            currentErrors.add(err);
-                            if (!currentErrors.isEmpty()) {
-                                errors.put(object.getIdentifier(),
-                                    new ArrayList<ReportItem>(currentErrors));
-                            }
-                            if (!currentWarnings.isEmpty()) {
-                                warnings.put(object.getIdentifier(),
-                                    new ArrayList<ReportItem>(currentWarnings));
-                            }
-                            if (!currentNotifications.isEmpty()) {
-                                notifications.put(object.getIdentifier(),
-                                    new ArrayList<ReportItem>(
-                                        currentNotifications));
-                            }
-                            return;
-                        }
+                        merger.merge(old, probe);
+                        newProbe = old;
                     }
                 } else {
                     ReportItem err = new ReportItem();
