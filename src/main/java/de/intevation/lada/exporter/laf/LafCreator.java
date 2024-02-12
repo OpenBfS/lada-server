@@ -92,7 +92,7 @@ implements Creator {
      * @param probeId   The {@link LProbe} id.
      */
     @Override
-    public String createProbe(String probeId) {
+    public String createProbe(Integer probeId) {
         String lafProbe = "%PROBE%\n";
         lafProbe += lafLine("UEBERTRAGUNGSFORMAT", "7", CN);
         lafProbe += lafLine("VERSION", "0084", CN);
@@ -106,7 +106,7 @@ implements Creator {
      * @param probeId   The {@link LProbe} id.
      */
     @Override
-    public String createMessung(String probeId, List<Integer> messungen) {
+    public String createMessung(Integer probeId, List<Integer> messungen) {
         String lafProbe = "%PROBE%\n";
         lafProbe += lafLine("UEBERTRAGUNGSFORMAT", "7", CN);
         lafProbe += lafLine("VERSION", "0084", CN);
@@ -119,9 +119,8 @@ implements Creator {
      * @param probeId The {@link LProbe} id.
      * @return LAF conform string.
      */
-    private String probeToLAF(String probeId, List<Integer> messungen) {
-        Response found = repository.getById(
-            Sample.class, Integer.valueOf(probeId));
+    private String probeToLAF(Integer probeId, List<Integer> messungen) {
+        Response found = repository.getById(Sample.class, probeId);
         if (found.getData() == null) {
             return null;
         }
