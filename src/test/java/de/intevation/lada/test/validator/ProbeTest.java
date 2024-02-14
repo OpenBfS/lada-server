@@ -156,7 +156,13 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setMainSampleId(NEW_MAIN_SAMPLE_ID);
 
         validator.validate(sample);
-        assertNoWarningsOrErrors(sample);
+        Assert.assertTrue(sample.hasWarnings());
+        MatcherAssert.assertThat(
+            sample.getWarnings().keySet(),
+            CoreMatchers.hasItem(ENTNAHME_ORT));
+        MatcherAssert.assertThat(
+            sample.getWarnings().get(ENTNAHME_ORT),
+            CoreMatchers.hasItem(Integer.toString(StatusCodes.VALUE_MISSING)));
     }
 
     /**
