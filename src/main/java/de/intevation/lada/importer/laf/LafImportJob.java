@@ -34,7 +34,7 @@ import de.intevation.lada.util.data.Job;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
-import de.intevation.lada.util.rest.Response;
+
 
 /**
  * Asynchronous import job.
@@ -189,14 +189,7 @@ public class LafImportJob extends Job {
         // If import created at least a new record
         if (importedProbeids.size() > 0) {
             //Generate a tag for the imported probe records
-            Response tagCreation =
-                tagUtil.generateTag("IMP", mst.getNetworkId());
-            if (!tagCreation.getSuccess()) {
-                // TODO Tag creation failed -> import success?
-                importData = importResponseData;
-                return;
-            }
-            Tag newTag = (Tag) tagCreation.getData();
+            Tag newTag = tagUtil.generateTag("IMP", mst.getNetworkId());
             tagUtil.setTagsByProbeIds(
                 importedProbeids, newTag.getId());
 

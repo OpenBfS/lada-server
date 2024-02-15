@@ -26,7 +26,7 @@ public interface Creator {
      * @param probeId the id of the requested probe object.
      * @return the string representation
      */
-    String createProbe(String probeId);
+    String createProbe(Integer probeId);
 
     /**
      * Create a string representation of a messung objects.
@@ -34,5 +34,5 @@ public interface Creator {
      * @param messungen the list of messung ids
      * @return String representation of the messug objects
      */
-    String createMessung(String probeId, List<Integer> messungen);
+    String createMessung(Integer probeId, List<Integer> messungen);
 }

@@ -98,9 +98,9 @@ public class StatusProtService extends LadaService {
     public Response get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
-        QueryBuilder<StatusProt> builder =
-            repository.queryBuilder(StatusProt.class);
-        builder.and("measmId", measmId);
+        QueryBuilder<StatusProt> builder = repository
+            .queryBuilder(StatusProt.class)
+            .and("measmId", measmId);
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
             StatusProt.class);
@@ -226,13 +226,11 @@ public class StatusProtService extends LadaService {
             violationCollection.addNotifications(messung.getNotifications());
 
             //validate messwert objects
-            QueryBuilder<MeasVal> builder =
-                repository.queryBuilder(MeasVal.class);
-            builder.and("measmId", messung.getId());
-            Response messwertQry =
-                repository.filter(builder.getQuery());
-            @SuppressWarnings("unchecked")
-            List<MeasVal> messwerte = (List<MeasVal>) messwertQry.getData();
+            QueryBuilder<MeasVal> builder = repository
+                .queryBuilder(MeasVal.class)
+                .and("measmId", messung.getId());
+            List<MeasVal> messwerte = repository.filterPlain(
+                builder.getQuery());
             boolean hasValidMesswerte = false;
             if (!messwerte.isEmpty()) {
             for (MeasVal messwert: messwerte) {
@@ -275,9 +273,10 @@ public class StatusProtService extends LadaService {
             QueryBuilder<Geolocat> ortBuilder =
                 repository.queryBuilder(Geolocat.class);
                 ortBuilder.and("sampleId", probe.getId());
-            List<Geolocat> assignedOrte = repository.filterPlain(ortBuilder.getQuery());
+            List<Geolocat> assignedOrte = repository.filterPlain(
+                ortBuilder.getQuery());
 
-            for (Geolocat o : assignedOrte){
+            for (Geolocat o : assignedOrte) {
                 Site site = repository.getByIdPlain(Site.class, o.getSiteId());
                 ortValidator.validate(site);
                 violationCollection.addErrors(site.getErrors());

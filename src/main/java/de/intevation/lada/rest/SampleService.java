@@ -255,18 +255,11 @@ public class SampleService extends LadaService {
             // Assume the user is associated to at least one Messstelle,
             // because authorization should ensure this.
             // TODO: Pick the correct instead of the first Netzbetreiber
-            Response tagCreation = tagUtil.generateTag(
+            Tag newTag = tagUtil.generateTag(
                 "PEP", List.copyOf(authorization.getInfo().getNetzbetreiber())
                     .get(0));
-            if (tagCreation.getSuccess()) {
-                Tag newTag = (Tag) tagCreation.getData();
-                tagUtil.setTagsByProbeIds(generatedProbeIds, newTag.getId());
-                responseData.put("tag", newTag.getName());
-            } else {
-                /* TODO: The whole request should be handled in one
-                 * transaction that should be rolled back at this point. */
-                responseData.put("tag", "XXX Creation of tag failed XXX");
-            }
+            tagUtil.setTagsByProbeIds(generatedProbeIds, newTag.getId());
+            responseData.put("tag", newTag.getName());
         }
         return new Response(true, StatusCodes.OK, responseData);
     }

@@ -76,7 +76,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 
 /**
@@ -281,29 +280,8 @@ public class LafObjectMapper {
                                 old.getExtId(),
                                 StatusCodes.IMP_UNCHANGABLE));
                     } else {
-                        if (merger.merge(old, probe)) {
-                            newProbe = old;
-                        } else {
-                            ReportItem err = new ReportItem();
-                            err.setCode(StatusCodes.ERROR_MERGING);
-                            err.setKey("Database error");
-                            err.setValue("");
-                            currentErrors.add(err);
-                            if (!currentErrors.isEmpty()) {
-                                errors.put(object.getIdentifier(),
-                                    new ArrayList<ReportItem>(currentErrors));
-                            }
-                            if (!currentWarnings.isEmpty()) {
-                                warnings.put(object.getIdentifier(),
-                                    new ArrayList<ReportItem>(currentWarnings));
-                            }
-                            if (!currentNotifications.isEmpty()) {
-                                notifications.put(object.getIdentifier(),
-                                    new ArrayList<ReportItem>(
-                                        currentNotifications));
-                            }
-                            return;
-                        }
+                        merger.merge(old, probe);
+                        newProbe = old;
                     }
                 } else {
                     ReportItem err = new ReportItem();
@@ -341,8 +319,8 @@ public class LafObjectMapper {
                 // It is a brand new probe!
                 probeValidator.validate(probe);
                 if (!probe.hasErrors()) {
-                    Response created = repository.create(probe);
-                    newProbe = ((Sample) created.getData());
+                    repository.create(probe);
+                    newProbe = probe;
                 } else {
                     for (Entry<String, Set<String>> err
                              : probe.getErrors().entrySet()

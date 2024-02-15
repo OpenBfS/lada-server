@@ -77,23 +77,21 @@ public class GeolocatMpgService extends LadaService {
     public Response get(
         @QueryParam("mpgId") @NotNull Integer mpgId
     ) {
-        QueryBuilder<GeolocatMpg> builder =
-            repository.queryBuilder(GeolocatMpg.class);
-        builder.and("mpgId", mpgId);
-        Response r =  authorization.filter(
+        QueryBuilder<GeolocatMpg> builder = repository
+            .queryBuilder(GeolocatMpg.class)
+            .and("mpgId", mpgId);
+        Response r = authorization.filter(
             repository.filter(builder.getQuery()),
             GeolocatMpg.class);
-            if (r.getSuccess()) {
-                @SuppressWarnings("unchecked")
-                List<GeolocatMpg> ortszuordnungs =
-                    (List<GeolocatMpg>) r.getData();
-                for (GeolocatMpg otz: ortszuordnungs) {
-                    validator.validate(otz);
-                }
-                return new Response(true, StatusCodes.OK, ortszuordnungs);
-            } else {
-                return r;
+        if (r.getSuccess()) {
+            @SuppressWarnings("unchecked")
+            List<GeolocatMpg> ortszuordnungs = (List<GeolocatMpg>) r.getData();
+            for (GeolocatMpg otz: ortszuordnungs) {
+                validator.validate(otz);
             }
+            return new Response(true, StatusCodes.OK, ortszuordnungs);
+        }
+        return r;
     }
 
     /**

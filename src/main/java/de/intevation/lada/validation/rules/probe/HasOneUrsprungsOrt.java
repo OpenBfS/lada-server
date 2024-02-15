@@ -17,7 +17,6 @@ import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Violation;
 import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
@@ -50,19 +49,16 @@ public class HasOneUrsprungsOrt implements Rule {
 
         List<String> zuordTypeFilter = Arrays.asList("U", "R");
 
-        QueryBuilder<Geolocat> builder =
-            repository.queryBuilder(Geolocat.class);
-        builder.and("sampleId", id);
-        builder.andIn("typeRegulation", zuordTypeFilter);
-        Response response = repository.filter(builder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<Geolocat> orte = (List<Geolocat>) response.getData();
-        if (orte.size()>1) {
+        QueryBuilder<Geolocat> builder = repository
+            .queryBuilder(Geolocat.class)
+            .and("sampleId", id)
+            .andIn("typeRegulation", zuordTypeFilter);
+        List<Geolocat> orte = repository.filterPlain(builder.getQuery());
+        if (orte.size() > 1) {
             Violation violation = new Violation();
             violation.addWarning("geolocats", StatusCodes.ORT_SINGLE_UORT);
             return violation;
-        } else {
-            return null;
         }
+        return null;
     }
 }

@@ -34,7 +34,9 @@ public class LadaApplication extends Application {
      * @return Set of classes
      */
     @SuppressWarnings("unchecked")
-    protected Set<Class<? extends LadaService>> getServiceClasses(String packageName) {
+    protected Set<Class<? extends LadaService>> getServiceClasses(
+        String packageName
+    ) {
         Set<Class<? extends LadaService>> classes;
 
         try (ScanResult packageResult = new ClassGraph().enableAllInfo()

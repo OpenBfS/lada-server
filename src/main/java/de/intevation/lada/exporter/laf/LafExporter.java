@@ -62,15 +62,14 @@ public class LafExporter implements Exporter {
         String laf = "";
         creator.setUserInfo(userInfo);
         for (Integer probeId: proben) {
-            laf += creator.createProbe(probeId.toString());
+            laf += creator.createProbe(probeId);
         }
         for (Integer messungId: messungen) {
             Measm m = repository.getByIdPlain(
                 Measm.class, messungId);
             List<Integer> mList = new ArrayList<>();
             mList.add(messungId);
-            laf += creator.createMessung(
-                m.getSampleId().toString(), mList);
+            laf += creator.createMessung(m.getSampleId(), mList);
         }
         laf += "%ENDE%";
         InputStream in = new ByteArrayInputStream(laf.getBytes(encoding));

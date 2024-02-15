@@ -15,7 +15,7 @@ import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
+
 
 public abstract class BaseAuthorizer implements Authorizer {
 
@@ -47,11 +47,10 @@ public abstract class BaseAuthorizer implements Authorizer {
      */
     @Override
     public boolean isProbeReadOnly(Integer probeId) {
-        QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
-        builder.and("sampleId", probeId);
-        Response response = repository.filter(builder.getQuery());
-        @SuppressWarnings("unchecked")
-        List<Measm> messungen = (List<Measm>) response.getData();
+        QueryBuilder<Measm> builder = repository
+            .queryBuilder(Measm.class)
+            .and("sampleId", probeId);
+        List<Measm> messungen = repository.filterPlain(builder.getQuery());
         for (int i = 0; i < messungen.size(); i++) {
             if (messungen.get(i).getStatus() == null) {
                 continue;
