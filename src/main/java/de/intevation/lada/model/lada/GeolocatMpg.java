@@ -78,9 +78,6 @@ public class GeolocatMpg extends BaseModel implements Serializable {
     @Transient
     private boolean owner;
 
-    @Transient
-    private boolean readonly;
-
     public GeolocatMpg() {
     }
 
@@ -160,19 +157,5 @@ public class GeolocatMpg extends BaseModel implements Serializable {
      */
     public void setOwner(boolean owner) {
         this.owner = owner;
-    }
-
-    /**
-     * @return the readonly
-     */
-    public boolean isReadonly() {
-        return readonly;
-    }
-
-    /**
-     * @param readonly the readonly to set
-     */
-    public void setReadonly(boolean readonly) {
-        this.readonly = readonly;
     }
 }

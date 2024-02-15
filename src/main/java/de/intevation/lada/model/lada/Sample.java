@@ -168,9 +168,6 @@ public class Sample extends BaseModel implements Serializable {
     private Integer nuclFacilGrId;
 
     @Transient
-    private boolean readonly;
-
-    @Transient
     private boolean owner;
 
     //Transient fields used for Site object generation
@@ -398,14 +395,6 @@ public class Sample extends BaseModel implements Serializable {
 
     public void setNuclFacilGrId(Integer nuclFacilGrId) {
         this.nuclFacilGrId = nuclFacilGrId;
-    }
-
-    public boolean isReadonly() {
-        return readonly;
-    }
-
-    public void setReadonly(boolean readonly) {
-        this.readonly = readonly;
     }
 
     public boolean isOwner() {

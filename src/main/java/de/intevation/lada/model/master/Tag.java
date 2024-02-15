@@ -22,9 +22,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
-import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
+
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.TagLink;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.Unique;
@@ -35,7 +36,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @GroupSequence({ Tag.class, DatabaseConstraints.class })
 @Unique(groups = DatabaseConstraints.class,
     clazz = Tag.class, fields = { "name", "networkId", "measFacilId" })
-public class Tag {
+public class Tag extends BaseModel {
 
     // Default time after which mst tags expire in days
     public static final int MST_TAG_EXPIRATION_TIME = 365;
@@ -85,9 +86,6 @@ public class Tag {
     private Set<TagLink> tagZuordnungs;
 
     private boolean isAutoTag;
-
-    @Transient
-    private boolean readonly;
 
     public Tag() { }
 
@@ -142,14 +140,6 @@ public class Tag {
 
     public Date getCreatedAt() {
         return createdAt;
-    }
-
-    public boolean isReadonly() {
-        return readonly;
-    }
-
-    public void setReadonly(boolean readonly) {
-        this.readonly = readonly;
     }
 
     /**

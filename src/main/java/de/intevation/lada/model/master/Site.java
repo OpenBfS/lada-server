@@ -176,9 +176,6 @@ public class Site extends BaseModel implements Serializable {
     private String route;
 
     @Transient
-    private boolean readonly;
-
-    @Transient
     private Double longitude;
 
     @Transient
@@ -447,14 +444,6 @@ public class Site extends BaseModel implements Serializable {
     @JsonbTransient
     public void setGeom(Point geom) {
         this.geom = geom;
-    }
-
-    public boolean isReadonly() {
-        return readonly;
-    }
-
-    public void setReadonly(boolean readonly) {
-        this.readonly = readonly;
     }
 
     public Integer getReferenceCount() {

@@ -22,6 +22,8 @@ public abstract class BaseModel {
     private Map<String, Set<String>> warnings = new HashMap<>();
     private Map<String, Set<Integer>> notifications = new HashMap<>();
 
+    private boolean readonly;
+
     public Map<String, Set<String>>getErrors() {
         return this.errors;
     }
@@ -147,5 +149,14 @@ public abstract class BaseModel {
      */
     public boolean hasNotifications() {
         return !this.notifications.isEmpty();
+    }
+
+    public boolean isReadonly() {
+        return readonly;
+    }
+
+    @JsonbTransient
+    public void setReadonly(boolean readonly) {
+        this.readonly = readonly;
     }
 }

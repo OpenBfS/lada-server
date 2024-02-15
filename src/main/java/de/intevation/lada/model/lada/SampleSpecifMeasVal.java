@@ -25,6 +25,8 @@ import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
@@ -36,7 +38,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @GroupSequence({ SampleSpecifMeasVal.class, DatabaseConstraints.class })
 @Unique(fields = {"sampleSpecifId", "sampleId"},
     groups = DatabaseConstraints.class, clazz = SampleSpecifMeasVal.class)
-public class SampleSpecifMeasVal implements Serializable {
+public class SampleSpecifMeasVal extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -76,9 +78,6 @@ public class SampleSpecifMeasVal implements Serializable {
 
     @Transient
     private boolean owner;
-
-    @Transient
-    private boolean readonly;
 
     @Transient
     private Date parentModified;
@@ -162,20 +161,6 @@ public class SampleSpecifMeasVal implements Serializable {
      */
     public void setOwner(boolean owner) {
         this.owner = owner;
-    }
-
-    /**
-     * @return the readonly
-     */
-    public boolean isReadonly() {
-        return readonly;
-    }
-
-    /**
-     * @param readonly the readonly to set
-     */
-    public void setReadonly(boolean readonly) {
-        this.readonly = readonly;
     }
 
     /**

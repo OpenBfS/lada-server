@@ -74,9 +74,6 @@ public class StatusProt extends BaseModel implements Serializable {
     private boolean owner;
 
     @Transient
-    private boolean readonly;
-
-    @Transient
     private Date parentModified;
 
     @Transient
@@ -156,20 +153,6 @@ public class StatusProt extends BaseModel implements Serializable {
      */
     public void setOwner(boolean owner) {
         this.owner = owner;
-    }
-
-    /**
-     * @return the readonly
-     */
-    public boolean isReadonly() {
-        return readonly;
-    }
-
-    /**
-     * @param readonly the readonly to set
-     */
-    public void setReadonly(boolean readonly) {
-        this.readonly = readonly;
     }
 
     /**

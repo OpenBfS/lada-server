@@ -195,9 +195,6 @@ public class Mpg extends BaseModel implements Serializable {
     @Transient
     private int referenceCount;
 
-    @Transient
-    private boolean readonly;
-
     public Mpg() {
     }
 
@@ -426,13 +423,4 @@ public class Mpg extends BaseModel implements Serializable {
         }
         return 0;
     }
-
-    public boolean isReadonly() {
-        return readonly;
-    }
-
-    public void setReadonly(boolean readonly) {
-        this.readonly = readonly;
-    }
-
 }
