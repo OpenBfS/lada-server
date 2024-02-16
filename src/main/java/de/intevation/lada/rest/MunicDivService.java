@@ -55,14 +55,17 @@ public class MunicDivService extends LadaService {
         List<MunicDiv> gemUntergliederung =
             repository.getAllPlain(MunicDiv.class);
         for (MunicDiv gu: gemUntergliederung) {
-            // TODO Do not iterate all the objects if its not necessary
-            gu.setReadonly(true);
-                // !authorization.isAuthorized(
-                //     gu,
-                //     RequestMethod.POST,
-                //     GemeindeUntergliederung.class));
+            gu.setReadonly(
+                !authorization.isAuthorized(
+                    gu,
+                    RequestMethod.POST,
+                    MunicDiv.class));
         }
-        return new Response(true, StatusCodes.OK, gemUntergliederung, gemUntergliederung.size());
+        return new Response(
+            true,
+            StatusCodes.OK,
+            gemUntergliederung,
+            gemUntergliederung.size());
     }
 
     /**
