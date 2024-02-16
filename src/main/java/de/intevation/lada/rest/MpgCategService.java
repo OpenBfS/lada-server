@@ -56,12 +56,11 @@ public class MpgCategService extends LadaService {
         List<MpgCateg> kategorie =
             repository.getAllPlain(MpgCateg.class);
         for (MpgCateg kat: kategorie) {
-            // TODO Do not iterate all the objects if its not necessary
-            kat.setReadonly(true);
-                // !authorization.isAuthorized(
-                //     kat,
-                //     RequestMethod.POST,
-                //     MessprogrammKategorie.class));
+            kat.setReadonly(
+                !authorization.isAuthorized(
+                    kat,
+                    RequestMethod.POST,
+                    MpgCateg.class));
         }
         return new Response(true, StatusCodes.OK, kategorie, kategorie.size());
     }

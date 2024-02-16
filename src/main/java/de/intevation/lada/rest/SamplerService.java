@@ -57,12 +57,11 @@ public class SamplerService extends LadaService {
         List<Sampler> nehmer =
             repository.getAllPlain(Sampler.class);
         for (Sampler p : nehmer) {
-            // TODO Do not iterate all the objects if its not necessary
-            p.setReadonly(true);
-                // !authorization.isAuthorized(
-                //     p,
-                //     RequestMethod.POST,
-                //     Probenehmer.class));
+            p.setReadonly(
+                !authorization.isAuthorized(
+                    p,
+                    RequestMethod.POST,
+                    Sampler.class));
         }
         return new Response(true, StatusCodes.OK, nehmer, nehmer.size());
     }

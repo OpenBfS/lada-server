@@ -60,12 +60,11 @@ public class DatasetCreatorService extends LadaService {
             repository.getAllPlain(DatasetCreator.class);
 
         for (DatasetCreator erz : datasetCreators) {
-            // TODO Do not iterate all the objects if its not necessary
-            erz.setReadonly(true);
-                // !authorization.isAuthorized(
-                //     erz,
-                //     RequestMethod.POST,
-                //     DatensatzErzeuger.class));
+            erz.setReadonly(
+                !authorization.isAuthorized(
+                    erz,
+                    RequestMethod.POST,
+                    DatasetCreator.class));
         }
         return new Response(true, StatusCodes.OK,
             datasetCreators, datasetCreators.size());
