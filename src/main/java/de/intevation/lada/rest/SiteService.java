@@ -170,9 +170,6 @@ public class SiteService extends LadaService {
     ) {
         Response response = repository.getById(Site.class, id);
         Site ort = (Site) response.getData();
-        if (ort == null) {
-            return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
         ort.setReadonly(
             !authorization.isAuthorized(
                 ort,
