@@ -10,6 +10,7 @@ package de.intevation.lada.util.auth;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.StatusProt;
@@ -73,7 +74,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Response filter(
+    public <T extends BaseModel> Response filter(
         Response data,
         UserInfo userInfo,
         Class<T> clazz

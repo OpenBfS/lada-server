@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.util.auth;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 
@@ -18,7 +19,7 @@ import de.intevation.lada.util.rest.Response;
 public interface Authorization {
     UserInfo getInfo();
 
-    <T> Response filter(
+    <T extends BaseModel> Response filter(
         Response data, Class<T> clazz);
 
     <T> void authorize(

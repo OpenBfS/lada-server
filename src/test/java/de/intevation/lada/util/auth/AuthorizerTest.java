@@ -31,6 +31,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.junit.runners.model.MultipleFailureException;
 
 import de.intevation.lada.BaseTest;
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.GeolocatMpg;
@@ -273,7 +274,7 @@ public class AuthorizerTest extends BaseTest {
 
         //Test parameters
         @Parameter(0)
-        public Object testObject;
+        public BaseModel testObject;
         @Parameter(1)
         public Boolean expectedReadonly;
         @Parameter(2)

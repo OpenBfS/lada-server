@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.core.Context;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.Geolocat;
@@ -165,7 +166,10 @@ public class HeaderAuthorization implements Authorization {
      * @return The Response object containing the filtered data.
      */
     @Override
-    public <T> Response filter(Response data, Class<T> clazz) {
+    public <T extends BaseModel> Response filter(
+        Response data,
+        Class<T> clazz
+    ) {
         Authorizer authorizer = authorizers.get(clazz);
         if (authorizer == null) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);

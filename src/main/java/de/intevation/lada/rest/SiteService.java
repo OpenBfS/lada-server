@@ -169,15 +169,7 @@ public class SiteService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Response response = repository.getById(Site.class, id);
-        Site ort = (Site) response.getData();
-        ort.setReadonly(
-            !authorization.isAuthorized(
-                ort,
-                RequestMethod.PUT,
-                Site.class
-            )
-        );
-        validator.validate(ort);
+        validator.validate(response.getData());
         return authorization.filter(response, Site.class);
     }
 

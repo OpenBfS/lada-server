@@ -8,6 +8,7 @@
 
 package de.intevation.lada.util.auth;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.TagLink;
@@ -95,7 +96,7 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> Response filter(
+    public <T extends BaseModel> Response filter(
         Response data,
         UserInfo userInfo,
         Class<T> clazz

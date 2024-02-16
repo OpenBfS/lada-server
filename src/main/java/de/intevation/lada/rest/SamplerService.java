@@ -54,16 +54,8 @@ public class SamplerService extends LadaService {
      */
     @GET
     public Response get() {
-        List<Sampler> nehmer =
-            repository.getAllPlain(Sampler.class);
-        for (Sampler p : nehmer) {
-            p.setReadonly(
-                !authorization.isAuthorized(
-                    p,
-                    RequestMethod.POST,
-                    Sampler.class));
-        }
-        return new Response(true, StatusCodes.OK, nehmer, nehmer.size());
+        return authorization.filter(
+            repository.getAll(Sampler.class), Sampler.class);
     }
 
     /**
@@ -78,16 +70,10 @@ public class SamplerService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Sampler p = repository.getByIdPlain(Sampler.class, id);
-        p.setReadonly(
-            !authorization.isAuthorized(
-                p,
-                RequestMethod.POST,
-                Sampler.class
-            )
-        );
         List<Sample> referencedProbes = getPRNZuordnungs(p);
         p.setReferenceCount(referencedProbes.size());
-        return new Response(true, StatusCodes.OK, p);
+        return authorization.filter(
+            new Response(true, StatusCodes.OK, p), Sampler.class);
     }
 
     @POST

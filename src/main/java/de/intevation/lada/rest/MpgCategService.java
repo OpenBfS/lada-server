@@ -53,16 +53,8 @@ public class MpgCategService extends LadaService {
      */
     @GET
     public Response get() {
-        List<MpgCateg> kategorie =
-            repository.getAllPlain(MpgCateg.class);
-        for (MpgCateg kat: kategorie) {
-            kat.setReadonly(
-                !authorization.isAuthorized(
-                    kat,
-                    RequestMethod.POST,
-                    MpgCateg.class));
-        }
-        return new Response(true, StatusCodes.OK, kategorie, kategorie.size());
+        return authorization.filter(
+            repository.getAll(MpgCateg.class), MpgCateg.class);
     }
 
     /**
@@ -76,16 +68,8 @@ public class MpgCategService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        MpgCateg mpk = repository.getByIdPlain(
-            MpgCateg.class, id);
-        mpk.setReadonly(
-            !authorization.isAuthorized(
-                mpk,
-                RequestMethod.POST,
-                MpgCateg.class
-            )
-        );
-        return new Response(true, StatusCodes.OK, mpk);
+        return authorization.filter(
+            repository.getById(MpgCateg.class, id), MpgCateg.class);
     }
 
     @POST

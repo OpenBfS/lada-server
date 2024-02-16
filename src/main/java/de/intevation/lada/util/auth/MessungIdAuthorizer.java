@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.MeasFacil;
@@ -73,7 +74,7 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Response filter(
+    public <T extends BaseModel> Response filter(
         Response data,
         UserInfo userInfo,
         Class<T> clazz

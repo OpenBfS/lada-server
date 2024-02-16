@@ -10,6 +10,7 @@ package de.intevation.lada.util.auth;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.MpgMmtMp;
 import de.intevation.lada.model.master.MeasFacil;
@@ -75,7 +76,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> Response filter(
+    public <T extends BaseModel> Response filter(
         Response data,
         UserInfo userInfo,
         Class<T> clazz

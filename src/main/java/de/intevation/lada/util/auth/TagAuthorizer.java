@@ -11,6 +11,7 @@ package de.intevation.lada.util.auth;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -68,7 +69,7 @@ public class TagAuthorizer extends BaseAuthorizer {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Response filter(
+    public <T extends BaseModel> Response filter(
         Response data,
         UserInfo userInfo,
         Class<T> clazz

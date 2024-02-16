@@ -52,20 +52,8 @@ public class MunicDivService extends LadaService {
      */
     @GET
     public Response get() {
-        List<MunicDiv> gemUntergliederung =
-            repository.getAllPlain(MunicDiv.class);
-        for (MunicDiv gu: gemUntergliederung) {
-            gu.setReadonly(
-                !authorization.isAuthorized(
-                    gu,
-                    RequestMethod.POST,
-                    MunicDiv.class));
-        }
-        return new Response(
-            true,
-            StatusCodes.OK,
-            gemUntergliederung,
-            gemUntergliederung.size());
+        return authorization.filter(
+            repository.getAll(MunicDiv.class), MunicDiv.class);
     }
 
     /**
@@ -79,16 +67,8 @@ public class MunicDivService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        MunicDiv gu = repository.getByIdPlain(
-            MunicDiv.class, id);
-        gu.setReadonly(
-            !authorization.isAuthorized(
-                gu,
-                RequestMethod.POST,
-                MunicDiv.class
-            )
-        );
-        return new Response(true, StatusCodes.OK, gu);
+        return authorization.filter(
+            repository.getById(MunicDiv.class, id), MunicDiv.class);
     }
 
     @POST

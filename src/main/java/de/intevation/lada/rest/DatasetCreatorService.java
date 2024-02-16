@@ -56,18 +56,8 @@ public class DatasetCreatorService extends LadaService {
      */
     @GET
     public Response get() {
-        List<DatasetCreator> datasetCreators =
-            repository.getAllPlain(DatasetCreator.class);
-
-        for (DatasetCreator erz : datasetCreators) {
-            erz.setReadonly(
-                !authorization.isAuthorized(
-                    erz,
-                    RequestMethod.POST,
-                    DatasetCreator.class));
-        }
-        return new Response(true, StatusCodes.OK,
-            datasetCreators, datasetCreators.size());
+        return authorization.filter(
+            repository.getAll(DatasetCreator.class), DatasetCreator.class);
     }
 
     /**
@@ -81,16 +71,8 @@ public class DatasetCreatorService extends LadaService {
     public Response getById(
         @PathParam("id") Integer id
     ) {
-        DatasetCreator erzeuger = repository.getByIdPlain(
-            DatasetCreator.class, id);
-        erzeuger.setReadonly(
-            !authorization.isAuthorized(
-                erzeuger,
-                RequestMethod.POST,
-                DatasetCreator.class
-            )
-        );
-        return new Response(true, StatusCodes.OK, erzeuger);
+        return authorization.filter(repository.getById(
+                DatasetCreator.class, id), DatasetCreator.class);
     }
 
     @POST
