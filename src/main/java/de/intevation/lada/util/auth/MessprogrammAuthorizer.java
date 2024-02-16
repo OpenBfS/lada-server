@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.util.auth;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.intevation.lada.model.BaseModel;
@@ -84,41 +83,30 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         if (data.getData() instanceof List<?>
             && !clazz.isAssignableFrom(MpgMmtMp.class)
         ) {
-            List<Mpg> messprogramme = new ArrayList<Mpg>();
-            for (Mpg messprogramm
-                : (List<Mpg>) data.getData()) {
-                messprogramme.add(setAuthData(userInfo, messprogramm));
+            for (Mpg messprogramm : (List<Mpg>) data.getData()) {
+                setAuthData(userInfo, messprogramm);
             }
-            data.setData(messprogramme);
         } else if (data.getData() instanceof Mpg) {
-            Mpg messprogramm = (Mpg) data.getData();
-            data.setData(setAuthData(userInfo, messprogramm));
+            setAuthData(userInfo, (Mpg) data.getData());
         }
         return data;
     }
 
     /**
-     * Set authorization data for the current probe object.
+     * Set authorization attributes.
      *
      * @param userInfo  The user information.
-     * @param probe     The probe object.
-     * @return The probe.
+     * @param messprogramm     The Mpg object.
      */
-    private Mpg setAuthData(
+    private void setAuthData(
         UserInfo userInfo,
         Mpg messprogramm
     ) {
         MeasFacil mst =
             repository.getByIdPlain(
                 MeasFacil.class, messprogramm.getMeasFacilId());
-        if (userInfo.getFunktionenForNetzbetreiber(
-                mst.getNetworkId()).contains(4)
-        ) {
-            messprogramm.setReadonly(false);
-            return messprogramm;
-        } else {
-            messprogramm.setReadonly(true);
-        }
-        return messprogramm;
+        messprogramm.setReadonly(
+            !userInfo.getFunktionenForNetzbetreiber(
+                mst.getNetworkId()).contains(4));
     }
 }
