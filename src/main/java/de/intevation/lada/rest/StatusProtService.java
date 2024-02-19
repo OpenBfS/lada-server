@@ -189,10 +189,9 @@ public class StatusProtService extends LadaService {
                     return authorization.filter(
                         resetStatus(status, oldStatus, messung),
                         StatusProt.class);
-                } else {
-                    // 2. user wants to set new status
-                    return setNewStatus(status, newKombi, messung);
                 }
+                // 2. user wants to set new status
+                return setNewStatus(status, newKombi, messung);
             } else {
                 throw new ForbiddenException();
             }

@@ -106,10 +106,9 @@ public class CommSampleService extends LadaService {
         validator.validate(kommentar);
         if (kommentar.hasErrors()) {
             return new Response(false, StatusCodes.ERROR_VALIDATION, kommentar);
-        } else {
-            return authorization.filter(
-                repository.create(kommentar), CommSample.class);
         }
+        return authorization.filter(
+            repository.create(kommentar), CommSample.class);
     }
 
     /**
@@ -130,11 +129,9 @@ public class CommSampleService extends LadaService {
         validator.validate(kommentar);
         if (kommentar.hasErrors() || kommentar.hasWarnings()) {
             return new Response(false, StatusCodes.VAL_EXISTS, kommentar);
-        } else {
-            return authorization.filter(
-                repository.update(kommentar),
-                CommSample.class);
         }
+        return authorization.filter(
+            repository.update(kommentar), CommSample.class);
     }
 
     /**
