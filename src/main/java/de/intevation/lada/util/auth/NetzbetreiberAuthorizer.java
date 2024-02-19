@@ -9,12 +9,11 @@ package de.intevation.lada.util.auth;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
 
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
+
 
 public class NetzbetreiberAuthorizer extends BaseAuthorizer {
 
@@ -80,28 +79,12 @@ public class NetzbetreiberAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T extends BaseModel> Response filter(
-        Response data,
+    public <T extends BaseModel> void setAuthAttrs(
+        BaseModel data,
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        if (data.getData() instanceof List<?>) {
-            for (BaseModel object: (List<BaseModel>) data.getData()) {
-                setAuthData(userInfo, object, clazz);
-            }
-        } else {
-            setAuthData(userInfo, (BaseModel) data.getData(), clazz);
-        }
-        return data;
-    }
-
-    private <T extends BaseModel> void setAuthData(
-        UserInfo userInfo,
-        BaseModel object,
-        Class<T> clazz
-    ) {
-        object.setReadonly(
-            !isAuthorized(object, RequestMethod.PUT, userInfo, clazz));
+        data.setReadonly(
+            !isAuthorized(data, RequestMethod.PUT, userInfo, clazz));
     }
 }

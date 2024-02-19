@@ -19,7 +19,7 @@ import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
+
 
 public class MessungAuthorizer extends BaseAuthorizer {
 
@@ -70,22 +70,15 @@ public class MessungAuthorizer extends BaseAuthorizer {
         return isAuthorized(messung, method, userInfo, clazz);
     }
 
-
-    @SuppressWarnings("unchecked")
     @Override
-    public <T extends BaseModel> Response filter(
-        Response data,
+    public <T extends BaseModel> void setAuthAttrs(
+        BaseModel data,
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        if (data.getData() instanceof List<?>) {
-            for (Measm messung :(List<Measm>) data.getData()) {
-                setAuthData(userInfo, messung);
-            }
-        } else if (data.getData() instanceof Measm) {
-            setAuthData(userInfo, (Measm) data.getData());
+        if (data instanceof Measm) {
+            setAuthData(userInfo, (Measm) data);
         }
-        return data;
     }
 
     /**

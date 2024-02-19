@@ -15,7 +15,7 @@ import de.intevation.lada.model.lada.TagLink;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
+
 
 /**
  * Authorizer class for TagZuordnung objects.
@@ -96,12 +96,11 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T extends BaseModel> Response filter(
-        Response data,
+    public <T extends BaseModel> void setAuthAttrs(
+        BaseModel data,
         UserInfo userInfo,
         Class<T> clazz
     ) {
         // Nothing to do
-        return data;
     }
 }

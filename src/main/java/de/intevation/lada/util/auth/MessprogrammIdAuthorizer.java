@@ -9,14 +9,12 @@ package de.intevation.lada.util.auth;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
 
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 
 
 public class MessprogrammIdAuthorizer extends BaseAuthorizer {
@@ -73,33 +71,10 @@ public class MessprogrammIdAuthorizer extends BaseAuthorizer {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <T extends BaseModel> Response filter(
-        Response data,
+    public <T extends BaseModel> void setAuthAttrs(
+        BaseModel data,
         UserInfo userInfo,
-        Class<T> clazz
-    ) {
-        if (data.getData() instanceof List<?>) {
-            for (Object object :(List<Object>) data.getData()) {
-                setAuthData(userInfo, object, clazz);
-            }
-        } else {
-            setAuthData(userInfo, data.getData(), clazz);
-        }
-        return data;
-    }
-
-    /**
-     * Authorize a single data object that has a probeId Attribute.
-     *
-     * @param userInfo  The user information.
-     * @param data      The Response object containing the data.
-     * @param clazz     The data object class.
-     */
-    private <T> void setAuthData(
-        UserInfo userInfo,
-        Object data,
         Class<T> clazz
     ) {
         try {

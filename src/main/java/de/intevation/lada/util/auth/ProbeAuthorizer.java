@@ -7,14 +7,12 @@
  */
 package de.intevation.lada.util.auth;
 
-import java.util.List;
-
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
+
 
 public class ProbeAuthorizer extends BaseAuthorizer {
 
@@ -49,21 +47,15 @@ public class ProbeAuthorizer extends BaseAuthorizer {
         return isAuthorized(probe, method, userInfo, clazz);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <T extends BaseModel> Response filter(
-        Response data,
+    public <T extends BaseModel> void setAuthAttrs(
+        BaseModel data,
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        if (data.getData() instanceof List<?>) {
-            for (Sample probe :(List<Sample>) data.getData()) {
-                setAuthData(userInfo, probe);
-            }
-        } else if (data.getData() instanceof Sample) {
-            setAuthData(userInfo, (Sample) data.getData());
+        if (data instanceof Sample) {
+            setAuthData(userInfo, (Sample) data);
         }
-        return data;
     }
 
     /**

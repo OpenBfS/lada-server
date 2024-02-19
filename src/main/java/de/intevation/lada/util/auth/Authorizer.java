@@ -7,9 +7,10 @@
  */
 package de.intevation.lada.util.auth;
 
+import java.util.List;
+
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 
 public interface Authorizer {
 
@@ -25,8 +26,18 @@ public interface Authorizer {
         UserInfo userInfo,
         Class<T> clazz);
 
-    <T extends BaseModel> Response filter(
-        Response data,
+    default <T extends BaseModel> void setAuthAttrs(
+        List<BaseModel> data,
+        UserInfo userInfo,
+        Class<T> clazz
+    ) {
+        for (BaseModel object: data) {
+            setAuthAttrs(object, userInfo, clazz);
+        }
+    }
+
+    <T extends BaseModel> void setAuthAttrs(
+        BaseModel data,
         UserInfo userInfo,
         Class<T> clazz);
 

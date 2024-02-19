@@ -166,6 +166,7 @@ public class HeaderAuthorization implements Authorization {
      * @return The Response object containing the filtered data.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends BaseModel> Response filter(
         Response data,
         Class<T> clazz
@@ -174,7 +175,14 @@ public class HeaderAuthorization implements Authorization {
         if (authorizer == null) {
             return new Response(false, StatusCodes.NOT_ALLOWED, null);
         }
-        return authorizer.filter(data, userInfo, clazz);
+        if (data.getData() instanceof List<?>) {
+            authorizer.setAuthAttrs(
+                (List<BaseModel>) data.getData(), userInfo, clazz);
+        } else {
+            authorizer.setAuthAttrs(
+                (BaseModel) data.getData(), userInfo, clazz);
+        }
+        return data;
     }
 
     /**

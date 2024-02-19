@@ -7,15 +7,13 @@
  */
 package de.intevation.lada.util.auth;
 
-import java.util.List;
-
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.MpgMmtMp;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
+
 
 public class MessprogrammAuthorizer extends BaseAuthorizer {
 
@@ -74,22 +72,14 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T extends BaseModel> Response filter(
-        Response data,
+    public <T extends BaseModel> void setAuthAttrs(
+        BaseModel data,
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        if (data.getData() instanceof List<?>
-            && !clazz.isAssignableFrom(MpgMmtMp.class)
-        ) {
-            for (Mpg messprogramm : (List<Mpg>) data.getData()) {
-                setAuthData(userInfo, messprogramm);
-            }
-        } else if (data.getData() instanceof Mpg) {
-            setAuthData(userInfo, (Mpg) data.getData());
+        if (data instanceof Mpg) {
+            setAuthData(userInfo, (Mpg) data);
         }
-        return data;
     }
 
     /**
