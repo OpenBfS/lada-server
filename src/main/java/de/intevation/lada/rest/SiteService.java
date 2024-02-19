@@ -256,11 +256,7 @@ public class SiteService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(Site.class, id);
-        if (!response.getSuccess()) {
-            return response;
-        }
-        Site ort = (Site) response.getData();
+        Site ort = repository.getByIdPlain(Site.class, id);
         if (ort.getReferenceCount() > 0
                 || ort.getReferenceCountMp() > 0) {
             return new Response(false, StatusCodes.ERROR_DELETE, ort);

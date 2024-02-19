@@ -91,9 +91,8 @@ public class MessungAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Measm messung
     ) {
-        Sample probe =
-            (Sample) repository.getById(
-                Sample.class, messung.getSampleId()).getData();
+        Sample probe = repository.getByIdPlain(
+            Sample.class, messung.getSampleId());
         MeasFacil mst =
             repository.getByIdPlain(
                 MeasFacil.class, probe.getMeasFacilId());

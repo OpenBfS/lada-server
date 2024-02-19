@@ -516,8 +516,7 @@ public class ProbeFactory {
         }
         // Reolad the probe to have the old id
         if (!dryrun) {
-            probe = (Sample) repository.getById(
-                Sample.class, probe.getId()).getData();
+            probe = repository.getByIdPlain(Sample.class, probe.getId());
         }
         return probe;
     }

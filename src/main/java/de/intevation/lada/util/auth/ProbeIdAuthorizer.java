@@ -72,9 +72,7 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         try {
             Method getProbeId = clazz.getMethod("getSampleId");
             Integer id = (Integer) getProbeId.invoke(data);
-            Sample probe =
-                (Sample) repository.getById(
-                    Sample.class, id).getData();
+            Sample probe = repository.getByIdPlain(Sample.class, id);
 
             boolean readOnly = true;
             boolean owner = false;

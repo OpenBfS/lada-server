@@ -318,11 +318,7 @@ public class SampleService extends LadaService {
     public Response delete(
         @PathParam("id") Integer id
     ) {
-        Response probe = repository.getById(Sample.class, id);
-        if (!probe.getSuccess()) {
-            return probe;
-        }
-        Sample probeObj = (Sample) probe.getData();
+        Sample probeObj = repository.getByIdPlain(Sample.class, id);
         authorization.authorize(
             probeObj,
             RequestMethod.DELETE,
