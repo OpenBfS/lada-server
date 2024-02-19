@@ -8,7 +8,6 @@
 
 package de.intevation.lada.util.auth;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.intevation.lada.model.BaseModel;
@@ -75,20 +74,17 @@ public class TagAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         if (data.getData() instanceof List<?>) {
-            List<Tag> tags = new ArrayList<Tag>();
             for (Tag tag: (List<Tag>) data.getData()) {
-                tags.add(setAuthData(userInfo, tag));
+                setAuthData(userInfo, tag);
             }
         } else if (data.getData() instanceof Tag) {
-            Tag tag = (Tag) data.getData();
-            data.setData(setAuthData(userInfo, tag));
+            setAuthData(userInfo, (Tag) data.getData());
         }
         return data;
     }
 
-    private Tag setAuthData(UserInfo userInfo, Tag tag) {
+    private void setAuthData(UserInfo userInfo, Tag tag) {
         tag.setReadonly(!isAuthorized(tag, RequestMethod.PUT,
             userInfo, Tag.class));
-        return tag;
     }
 }

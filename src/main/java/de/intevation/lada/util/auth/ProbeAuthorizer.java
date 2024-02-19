@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.util.auth;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.intevation.lada.model.BaseModel;
@@ -58,14 +57,11 @@ public class ProbeAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         if (data.getData() instanceof List<?>) {
-            List<Sample> proben = new ArrayList<Sample>();
             for (Sample probe :(List<Sample>) data.getData()) {
-                proben.add(setAuthData(userInfo, probe));
+                setAuthData(userInfo, probe);
             }
-            data.setData(proben);
         } else if (data.getData() instanceof Sample) {
-            Sample probe = (Sample) data.getData();
-            data.setData(setAuthData(userInfo, probe));
+            setAuthData(userInfo, (Sample) data.getData());
         }
         return data;
     }
@@ -75,23 +71,18 @@ public class ProbeAuthorizer extends BaseAuthorizer {
      *
      * @param userInfo  The user information.
      * @param probe     The probe object.
-     * @return The probe.
      */
-    private Sample setAuthData(UserInfo userInfo, Sample probe) {
+    private void setAuthData(UserInfo userInfo, Sample probe) {
         MeasFacil mst =
             repository.getByIdPlain(
                 MeasFacil.class, probe.getMeasFacilId());
         if (!userInfo.getNetzbetreiber().contains(mst.getNetworkId())) {
             probe.setOwner(false);
             probe.setReadonly(true);
-            return probe;
+            return;
         }
-        if (userInfo.belongsTo(probe.getMeasFacilId(), probe.getApprLabId())) {
-            probe.setOwner(true);
-        } else {
-            probe.setOwner(false);
-        }
+        probe.setOwner(
+            userInfo.belongsTo(probe.getMeasFacilId(), probe.getApprLabId()));
         probe.setReadonly(this.isProbeReadOnly(probe.getId()));
-        return probe;
     }
 }

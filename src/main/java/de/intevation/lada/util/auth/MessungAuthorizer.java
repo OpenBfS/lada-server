@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.util.auth;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.intevation.lada.model.BaseModel;
@@ -80,14 +79,11 @@ public class MessungAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         if (data.getData() instanceof List<?>) {
-            List<Measm> messungen = new ArrayList<Measm>();
             for (Measm messung :(List<Measm>) data.getData()) {
-                messungen.add(setAuthData(userInfo, messung));
+                setAuthData(userInfo, messung);
             }
-            data.setData(messungen);
         } else if (data.getData() instanceof Measm) {
-            Measm messung = (Measm) data.getData();
-            data.setData(setAuthData(userInfo, messung));
+            setAuthData(userInfo, (Measm) data.getData());
         }
         return data;
     }
@@ -97,9 +93,8 @@ public class MessungAuthorizer extends BaseAuthorizer {
      *
      * @param userInfo  The user information.
      * @param messung     The messung object.
-     * @return The messung.
      */
-    private Measm setAuthData(
+    private void setAuthData(
         UserInfo userInfo,
         Measm messung
     ) {
@@ -127,7 +122,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
             && !userInfo.getFunktionen().contains(2)
             && !userInfo.getFunktionen().contains(3)
         ) {
-            return messung;
+            return;
         }
 
         StatusProt status = repository.getByIdPlain(
@@ -188,8 +183,5 @@ public class MessungAuthorizer extends BaseAuthorizer {
                 }
             }
         }
-
-        return messung;
     }
-
 }
