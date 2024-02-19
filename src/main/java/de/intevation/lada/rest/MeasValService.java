@@ -83,6 +83,7 @@ public class MeasValService extends LadaService {
      * not authorized.
      */
     @GET
+    @SuppressWarnings("unchecked")
     public Response get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
@@ -98,13 +99,8 @@ public class MeasValService extends LadaService {
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
             MeasVal.class);
-        if (r.getSuccess()) {
-            @SuppressWarnings("unchecked")
-            List<MeasVal> messwerts = (List<MeasVal>) r.getData();
-            for (MeasVal messwert: messwerts) {
-                validator.validate(messwert);
-            }
-            return new Response(true, StatusCodes.OK, messwerts);
+        for (MeasVal messwert: (List<MeasVal>) r.getData()) {
+            validator.validate(messwert);
         }
         return r;
     }

@@ -74,6 +74,7 @@ public class GeolocatService extends LadaService {
      * @return Response containing requested objects.
      */
     @GET
+    @SuppressWarnings("unchecked")
     public Response get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
@@ -83,13 +84,8 @@ public class GeolocatService extends LadaService {
         Response r = authorization.filter(
             repository.filter(builder.getQuery()),
             Geolocat.class);
-        if (r.getSuccess()) {
-            @SuppressWarnings("unchecked")
-            List<Geolocat> ortszuordnungs = (List<Geolocat>) r.getData();
-            for (Geolocat otz: ortszuordnungs) {
-                validator.validate(otz);
-            }
-            return new Response(true, StatusCodes.OK, ortszuordnungs);
+        for (Geolocat otz: (List<Geolocat>) r.getData()) {
+            validator.validate(otz);
         }
         return r;
     }
