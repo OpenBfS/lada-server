@@ -13,6 +13,7 @@ import java.util.Date;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
+import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 import jakarta.persistence.Column;
@@ -31,6 +32,8 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ MunicDiv.class, DatabaseConstraints.class })
+@Unique(fields = {"networkId", "siteId"},
+    groups = DatabaseConstraints.class, clazz = MunicDiv.class)
 public class MunicDiv extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

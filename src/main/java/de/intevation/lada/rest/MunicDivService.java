@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.List;
-
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.DELETE;
@@ -21,9 +19,7 @@ import jakarta.ws.rs.PathParam;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.MunicDiv;
@@ -79,18 +75,7 @@ public class MunicDivService extends LadaService {
             gemUntergliederung,
             RequestMethod.POST,
             MunicDiv.class);
-        QueryBuilder<MunicDiv> builder =
-            repository.queryBuilder(MunicDiv.class);
-        builder.and("siteId",
-            gemUntergliederung.getSiteId());
-        builder.and("networkId",
-            gemUntergliederung.getNetworkId());
-        List<MunicDiv> gemUntergliederungn =
-            repository.filterPlain(builder.getQuery());
-        if (gemUntergliederungn.isEmpty()) {
-            return repository.create(gemUntergliederung);
-        }
-        return new Response(false, StatusCodes.IMP_DUPLICATE, null);
+        return repository.create(gemUntergliederung);
     }
 
     @PUT
@@ -103,17 +88,6 @@ public class MunicDivService extends LadaService {
             gemUntergliederung,
             RequestMethod.PUT,
             MunicDiv.class);
-        QueryBuilder<MunicDiv> builder =
-            repository.queryBuilder(MunicDiv.class);
-        builder.and("siteId", gemUntergliederung.getSiteId());
-        builder.and("networkId", gemUntergliederung.getNetworkId());
-        List<MunicDiv> gemUntergliederungn =
-            repository.filterPlain(builder.getQuery());
-        if (!gemUntergliederungn.isEmpty()
-            && !gemUntergliederungn.get(0).getId().equals(gemUntergliederung.getId())
-        ) {
-            return new Response(false, StatusCodes.IMP_DUPLICATE, null);
-        }
         return repository.update(gemUntergliederung);
     }
 

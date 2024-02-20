@@ -680,7 +680,8 @@ CREATE TABLE munic_div (
     admin_unit_id character varying(8) NOT NULL REFERENCES admin_unit,
     site_id integer NOT NULL,
     name character varying(180) CHECK (trim(both ' ' from name) <> ''),
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    UNIQUE(network_id, site_id)
 );
 CREATE TRIGGER last_mod_munic_div BEFORE UPDATE ON munic_div FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
