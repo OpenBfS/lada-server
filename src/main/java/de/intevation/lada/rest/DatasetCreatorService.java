@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.List;
-
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.DELETE;
@@ -21,9 +19,7 @@ import jakarta.ws.rs.PathParam;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
-import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.DatasetCreator;
@@ -83,18 +79,7 @@ public class DatasetCreatorService extends LadaService {
             datensatzerzeuger,
             RequestMethod.POST,
             DatasetCreator.class);
-        QueryBuilder<DatasetCreator> builder =
-            repository.queryBuilder(DatasetCreator.class);
-        builder.and(
-            "extId", datensatzerzeuger.getExtId());
-        builder.and("networkId", datensatzerzeuger.getNetworkId());
-        builder.and("measFacilId", datensatzerzeuger.getMeasFacilId());
-        List<DatasetCreator> erzeuger =
-            repository.filterPlain(builder.getQuery());
-        if (erzeuger.isEmpty()) {
-            return repository.create(datensatzerzeuger);
-        }
-        return new Response(false, StatusCodes.IMP_DUPLICATE, null);
+        return repository.create(datensatzerzeuger);
     }
 
     @PUT
@@ -107,19 +92,6 @@ public class DatasetCreatorService extends LadaService {
             datensatzerzeuger,
             RequestMethod.PUT,
             DatasetCreator.class);
-        QueryBuilder<DatasetCreator> builder =
-            repository.queryBuilder(DatasetCreator.class);
-        builder.and(
-            "extId", datensatzerzeuger.getExtId());
-        builder.and("networkId", datensatzerzeuger.getNetworkId());
-        builder.and("measFacilId", datensatzerzeuger.getMeasFacilId());
-        List<DatasetCreator> erzeuger =
-            repository.filterPlain(builder.getQuery());
-        if (!erzeuger.isEmpty()
-            && !erzeuger.get(0).getId().equals(datensatzerzeuger.getId())
-        ) {
-            return new Response(false, StatusCodes.IMP_DUPLICATE, null);
-        }
         return repository.update(datensatzerzeuger);
     }
 

@@ -84,16 +84,7 @@ public class SamplerService extends LadaService {
             probenehmer,
             RequestMethod.POST,
             Sampler.class);
-        QueryBuilder<Sampler> builder =
-            repository.queryBuilder(Sampler.class);
-        builder.and("extId", probenehmer.getExtId());
-        builder.and("networkId", probenehmer.getNetworkId());
-        List<Sampler> nehmer =
-            repository.filterPlain(builder.getQuery());
-        if (nehmer.isEmpty()) {
-            return repository.create(probenehmer);
-        }
-        return new Response(false, StatusCodes.IMP_DUPLICATE, null);
+        return repository.create(probenehmer);
     }
 
     @PUT
@@ -106,17 +97,6 @@ public class SamplerService extends LadaService {
             probenehmer,
             RequestMethod.PUT,
             Sampler.class);
-        QueryBuilder<Sampler> builder =
-            repository.queryBuilder(Sampler.class);
-        builder.and("extId", probenehmer.getExtId());
-        builder.and("networkId", probenehmer.getNetworkId());
-        List<Sampler> nehmer =
-            repository.filterPlain(builder.getQuery());
-        if (!nehmer.isEmpty()
-            && !nehmer.get(0).getId().equals(probenehmer.getId())
-        ) {
-            return new Response(false, StatusCodes.IMP_DUPLICATE, null);
-        }
         return repository.update(probenehmer);
     }
 
