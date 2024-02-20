@@ -43,7 +43,7 @@ public class UniversalServiceTest extends BaseTest {
     // Expected keys in JSON response
     private final String totalCountKey = "totalCount";
     private final String dataKey = "data";
-    private final String hpNrKey = "hauptproben_nr";
+    private final String hpNrKey = "main_sample_id";
 
     public UniversalServiceTest() {
         this.testDatasetName = "datasets/dbUnit_query.xml";
@@ -69,13 +69,14 @@ public class UniversalServiceTest extends BaseTest {
                 .add("gridColMpId", 2))
         ).build();
 
-    // Expected statement according to stamm.base_query.sql
-    // in dbUnit_probe_query.json
+    // Expected statement according to master.base_query.sql
+    // in dbUnit_query.json
     private final String sqlTemplate = "PREPARE request AS \n"
-        + "SELECT hauptproben_nr, umw_id, id AS probeId FROM land.probe%s;\n"
+        + "SELECT main_sample_id, env_medium_id, is_test, id AS probeId "
+        + "FROM lada.sample%s;\n"
         + "EXECUTE request%s;\nDEALLOCATE request;";
 
-    // A 'hauptproben_nr' from land.probe in dbUnit_probe_query.json
+    // A 'main_sample_id' from lada.sample in dbUnit_query.json
     private final String filterValue = "120510001";
 
     private JsonObject filteredRequestJson = Json.createObjectBuilder()
@@ -226,7 +227,7 @@ public class UniversalServiceTest extends BaseTest {
             String.format(
                 this.sqlTemplate,
                 // Corresponds to stamm.filter.sql in dbUnit_probe_query.json
-                " WHERE hauptproben_nr ~ $1",
+                " WHERE main_sample_id ~ $1",
                 "('^" + filterValue + ".*$')"),
             responseJson.getString(dataKey));
     }

@@ -19,7 +19,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Collection;
@@ -50,8 +49,6 @@ import de.intevation.lada.util.data.Repository;
  */
 @ExportConfig(format = ExportFormat.CSV)
 public class CsvExporter implements Exporter {
-
-    private static final String BUNDLE_FILE = "lada_server";
 
     @Inject Logger logger;
 
@@ -153,7 +150,7 @@ public class CsvExporter implements Exporter {
      * @param columnsToInclude List of column names to include in the export.
      *                         If not set, all columns will be exported
      * @param qId query id
-     * @param locale Locale to use
+     * @param i18n ResourceBundle for i18n
      * @return Export result as input stream or null if the export failed
      */
     @Override
@@ -165,10 +162,8 @@ public class CsvExporter implements Exporter {
         String subDataKey,
         Integer qId,
         DateFormat dateFormat,
-        Locale locale
+        ResourceBundle i18n
     ) {
-        ResourceBundle i18n = ResourceBundle.getBundle(BUNDLE_FILE, locale);
-
         char decimalSeparator = CsvOptions.valueOf("period").getChar();
         char fieldSeparator = CsvOptions.valueOf("comma").getChar();
         String rowDelimiter = CsvOptions.valueOf("windows").getValue();

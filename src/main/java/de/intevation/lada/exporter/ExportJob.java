@@ -17,7 +17,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.Locale;
+import java.util.ResourceBundle;
 
 import jakarta.json.JsonObject;
 
@@ -52,9 +52,9 @@ public abstract class ExportJob extends Job {
     protected String format;
 
     /**
-     * Export locale.
+     * ResourceBundle for export i18n.
      */
-    protected Locale locale;
+    protected ResourceBundle bundle;
 
     /**
      * Filename set by the users request.
@@ -89,14 +89,6 @@ public abstract class ExportJob extends Job {
 
     public Charset getEncoding() {
         return this.encoding;
-    }
-
-    /*
-     * Get the locale.
-     * @return Locale object
-     */
-    public Locale getLocale() {
-        return this.locale;
     }
 
     /**
@@ -135,12 +127,8 @@ public abstract class ExportJob extends Job {
         this.exportParameters = exportParams;
     }
 
-    /**
-     * Set the locale used for the export.
-     * @param locale Locale
-     */
-    public void setLocale(Locale locale) {
-        this.locale = locale;
+    public void setBundle(ResourceBundle bundle) {
+        this.bundle = bundle;
     }
 
     /**

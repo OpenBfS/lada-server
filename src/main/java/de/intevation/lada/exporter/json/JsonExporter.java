@@ -17,8 +17,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import jakarta.inject.Inject;
 import jakarta.json.Json;
@@ -114,7 +114,7 @@ public class JsonExporter implements Exporter {
         String subDataKey,
         Integer qId,
         DateFormat dateFormat,
-        Locale locale
+        ResourceBundle i18n
     ) {
         final JsonObjectBuilder builder = Json.createObjectBuilder();
         String idColumn = options.getString("idField");

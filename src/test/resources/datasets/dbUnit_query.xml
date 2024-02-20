@@ -37,7 +37,7 @@
     />
     <master.base_query
         id = "1"
-        sql = "SELECT hauptproben_nr, umw_id, id AS probeId FROM land.probe"
+        sql = "SELECT main_sample_id, env_medium_id, is_test, id AS probeId FROM lada.sample"
     />
     <master.base_query
         id = "2"
@@ -63,7 +63,7 @@
     />
     <master.filter
         id = "1"
-        sql = "hauptproben_nr ~ :hauptprobenNr"
+        sql = "main_sample_id ~ :hauptprobenNr"
         param = "hauptprobenNr"
         filter_type_id = "0"
     />
@@ -83,7 +83,7 @@
         id = "1"
         base_query_id = "1"
         grid_col = "hauptprobenNr"
-        data_index = "hauptproben_nr"
+        data_index = "main_sample_id"
         position = "1"
         filter_id = "1"
         disp_id = "1"
@@ -92,29 +92,37 @@
         id = "2"
         base_query_id = "1"
         grid_col = "umwId"
-        data_index = "umw_id"
+        data_index = "env_medium_id"
         position = "2"
         disp_id = "1"
     />
     <master.grid_col_mp
         id = "4"
         base_query_id = "1"
+        grid_col = "isTest"
+        data_index = "is_test"
+        position = "3"
+        disp_id = "1"
+    />
+    <master.grid_col_mp
+        id = "5"
+        base_query_id = "1"
         grid_col = "probeId"
         data_index = "probeId"
-        position = "3"
+        position = "4"
         disp_id = "2"
     />
     <master.grid_col_mp
         id = "3"
         base_query_id = "2"
         grid_col = "hauptprobenNr"
-        data_index = "hauptproben_nr"
+        data_index = "main_sample_id"
         position = "1"
         filter_id = "1"
         disp_id = "1"
     />
     <master.grid_col_mp
-        id = "5"
+        id = "6"
         base_query_id = "3"
         grid_col = "messungId"
         data_index = "messungId"
@@ -163,7 +171,7 @@
         appr_lab_id = "06010"
         sample_start_date = "2012-05-03 13:07:00"
         sample_meth_id = "1"
-        is_test = "false"
+        is_test = "true"
         env_medium_id = "L6"
         main_sample_id = "120510001"
         sampler_id = "726"

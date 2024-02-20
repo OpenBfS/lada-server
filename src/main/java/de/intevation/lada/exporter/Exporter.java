@@ -11,8 +11,8 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import jakarta.json.JsonObject;
 
@@ -79,7 +79,7 @@ public interface Exporter {
      * @param subDataKey Key for subData in JSON format
      * @param qId Query id
      * @param dateFormat DateFormat for timestamp formatting
-     * @param locale Locale to use
+     * @param i18n ResourceBundle for i18n
      * @return Export result as input stream or null if not implemented
      */
     default InputStream export(
@@ -90,7 +90,7 @@ public interface Exporter {
         String subDataKey,
         Integer qId,
         DateFormat dateFormat,
-        Locale locale
+        ResourceBundle i18n
     ) {
         return null;
     }

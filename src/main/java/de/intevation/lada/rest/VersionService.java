@@ -7,38 +7,16 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.ResourceBundle;
-import java.util.MissingResourceException;
-
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 
-import org.jboss.logging.Logger;
-
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 
 /**
  * REST service returning the server version.
- * <p>
- * The services produce data in the application/json media type.
- * A typical response holds information about the action performed and the data.
- * <pre>
- * <code>
- * {
- *  "success": [boolean];
- *  "message": [string],
- *  "data":{
- *      version: [string]
- *  },
- *  "errors": [object],
- *  "warnings": [object],
- *  "readonly": [boolean],
- *  "totalCount": [number]
- * }
- * </code>
- * </pre>
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
@@ -46,7 +24,7 @@ import de.intevation.lada.util.rest.Response;
 public class VersionService extends LadaService {
 
     @Inject
-    private Logger logger;
+    I18n i18n;
 
     /**
      * Get server Version.
@@ -57,13 +35,7 @@ public class VersionService extends LadaService {
      */
     @GET
     public Response get() {
-        String version = "unknown";
-        try {
-            version = ResourceBundle.getBundle("lada").getString("version");
-            return new Response(true, StatusCodes.OK, version);
-        } catch (MissingResourceException mre) {
-            logger.error(mre);
-        }
-        return new Response(false, StatusCodes.OK, version);
+        return new Response(true, StatusCodes.OK,
+            i18n.getString("version"));
     }
 }

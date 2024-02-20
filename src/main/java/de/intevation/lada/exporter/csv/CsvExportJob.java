@@ -160,7 +160,7 @@ public class CsvExportJob extends QueryExportJob {
             "",
             this.qId,
             this.dateFormat,
-            this.locale));
+            this.bundle));
 
         logger.debug(String.format("Finished CSV export"));
     }

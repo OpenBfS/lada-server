@@ -13,10 +13,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Locale.LanguageRange;
 
 import jakarta.inject.Inject;
 import jakarta.json.Json;
@@ -36,6 +32,7 @@ import jakarta.ws.rs.core.Response.Status;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.exporter.ExportJobManager;
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -70,6 +67,9 @@ public class AsyncExportService extends LadaService {
     @Inject
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
+
+    @Inject
+    I18n i18n;
 
     /**
      * Export data into a csv file.
@@ -146,15 +146,10 @@ public class AsyncExportService extends LadaService {
                 .build();
         }
 
-        String localeRange = request.getHeader(HttpHeaders.ACCEPT_LANGUAGE);
-        if (localeRange == null || localeRange.equals("")) {
-            localeRange = "de-DE";
-        }
-        Locale locale = getLocaleFromRequest(localeRange);
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
-                "csv", encoding, objects, locale, userInfo);
+                "csv", encoding, objects, i18n.getResourceBundle(), userInfo);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
@@ -215,16 +210,10 @@ public class AsyncExportService extends LadaService {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        String localeRange = request.getHeader(HttpHeaders.ACCEPT_LANGUAGE);
-        if (localeRange == null || localeRange.equals("")) {
-            localeRange = "de-DE";
-        }
-        Locale locale = getLocaleFromRequest(localeRange);
-
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
-                "laf", encoding, objects, locale, userInfo);
+                "laf", encoding, objects, i18n.getResourceBundle(), userInfo);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
@@ -285,15 +274,14 @@ public class AsyncExportService extends LadaService {
         JsonObject objects,
         @Context HttpServletRequest request
     ) {
-        String localeRange = request.getHeader(HttpHeaders.ACCEPT_LANGUAGE);
-        if (localeRange == null || localeRange.equals("")) {
-            localeRange = "de-DE";
-        }
-        Locale locale = getLocaleFromRequest(localeRange);
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
-                "json", StandardCharsets.UTF_8, objects, locale, userInfo);
+                "json",
+                StandardCharsets.UTF_8,
+                objects,
+                i18n.getResourceBundle(),
+                userInfo);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
@@ -407,18 +395,5 @@ public class AsyncExportService extends LadaService {
             encoding = "iso-8859-15";
         }
         return Charset.forName(encoding);
-    }
-
-    private Locale getLocaleFromRequest(String localeRanges) {
-        List<Locale> supportedLocales = new LinkedList<Locale>();
-        supportedLocales.add(Locale.GERMAN);
-        supportedLocales.add(Locale.ENGLISH);
-        List<LanguageRange> ranges = Locale.LanguageRange.parse(localeRanges);
-        List<Locale> locales = Locale.filter(ranges, supportedLocales);
-        if (locales.size() == 0) {
-            return Locale.ENGLISH;
-        } else {
-            return locales.get(0);
-        }
     }
 }

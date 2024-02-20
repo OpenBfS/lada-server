@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Locale;
+import java.util.ResourceBundle;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
@@ -51,7 +51,7 @@ public class ExportJobManager extends JobManager {
      * @param format Export format
      * @param encoding Result encoding
      * @param params Export parameters as JsonObject
-     * @param locale Locale to use
+     * @param bundle ResourceBundle for export i18n
      * @param userInfo UserInfo
      * @return The new ExportJob's id
      * @throws IllegalArgumentException if an invalid export format is specified
@@ -60,14 +60,14 @@ public class ExportJobManager extends JobManager {
         String format,
         Charset encoding,
         JsonObject params,
-        Locale locale,
+        ResourceBundle bundle,
         UserInfo userInfo
     ) throws IllegalArgumentException {
         ExportJob newJob;
         switch (format) {
             case "csv":
                 newJob = csvExportJobProvider.get();
-                newJob.setLocale(locale);
+                newJob.setBundle(bundle);
                 break;
             case "laf":
                 newJob = lafExportJobProvider.get();
