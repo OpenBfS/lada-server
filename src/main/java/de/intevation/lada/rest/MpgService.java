@@ -24,7 +24,6 @@ import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.model.lada.Mpg;
-import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -241,13 +240,8 @@ public class MpgService extends LadaService {
     ) {
         Mpg messprogrammObj = repository.getByIdPlain(
             Mpg.class, id);
-        /* check if probe references to the messprogramm exists */
-        // TODO: This is a nice example of ORM-induced database misuse:
-        QueryBuilder<Sample> builder = repository.queryBuilder(Sample.class);
-        builder.and("mpgId", messprogrammObj.getId());
-        List<Sample> probes =
-            repository.filterPlain(builder.getQuery());
-        if (probes.size() > 0) {
+        /* check if samples referencing the Mpg exist */
+        if (messprogrammObj.getReferenceCount() > 0) {
             return new Response(false, StatusCodes.ERROR_DELETE, null);
         }
 
