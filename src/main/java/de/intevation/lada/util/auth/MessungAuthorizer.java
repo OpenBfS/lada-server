@@ -28,7 +28,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> boolean isAuthorized(
+    public <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
         UserInfo userInfo,
@@ -41,10 +41,12 @@ public class MessungAuthorizer extends BaseAuthorizer {
         if (method == RequestMethod.PUT
             || method == RequestMethod.DELETE) {
             return !this.isMessungReadOnly(messung.getId())
-                && getAuthorization(userInfo, probe);
+                && getAuthorization(userInfo, probe)
+                ? null : I18N_KEY_FORBIDDEN;
         }
         if (method == RequestMethod.POST) {
-            return getAuthorization(userInfo, probe);
+            return getAuthorization(userInfo, probe)
+                ? null : I18N_KEY_FORBIDDEN;
         }
         StatusProt status = repository.getByIdPlain(
             StatusProt.class,
@@ -55,7 +57,8 @@ public class MessungAuthorizer extends BaseAuthorizer {
             status.getStatusMpId()
         );
         return kombi.getStatusVal().getId() > 0
-            || getAuthorization(userInfo, probe);
+            || getAuthorization(userInfo, probe)
+            ? null : I18N_KEY_FORBIDDEN;
     }
 
     @Override

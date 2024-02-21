@@ -24,40 +24,34 @@ public class MessprogrammIdAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> boolean isAuthorized(
+    public <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Method m;
         try {
-            m = clazz.getMethod("getMpgId");
-        } catch (NoSuchMethodException | SecurityException e1) {
-            return false;
-        }
-        Integer id;
-        try {
-            id = (Integer) m.invoke(data);
-        } catch (IllegalAccessException
-            | IllegalArgumentException
+            Method m = clazz.getMethod("getMpgId");
+            Integer id = (Integer) m.invoke(data);
+            Mpg messprogramm =
+                repository.getByIdPlain(Mpg.class, id);
+            String mstId = messprogramm.getMeasFacilId();
+            if (mstId != null) {
+                MeasFacil mst = repository.getByIdPlain(
+                    MeasFacil.class, mstId);
+                if (userInfo.getFunktionenForNetzbetreiber(
+                        mst.getNetworkId()).contains(4)
+                    ) {
+                    return null;
+                }
+            }
+            return I18N_KEY_FORBIDDEN;
+        } catch (NoSuchMethodException
+            | IllegalAccessException
             | InvocationTargetException e
         ) {
-            return false;
+            throw new RuntimeException(e);
         }
-        Mpg messprogramm =
-            repository.getByIdPlain(Mpg.class, id);
-        String mstId = messprogramm.getMeasFacilId();
-        if (mstId != null) {
-            MeasFacil mst = repository.getByIdPlain(
-                MeasFacil.class, mstId);
-            if (userInfo.getFunktionenForNetzbetreiber(
-                    mst.getNetworkId()).contains(4)
-            ) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

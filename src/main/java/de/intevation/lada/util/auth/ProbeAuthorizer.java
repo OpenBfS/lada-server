@@ -21,7 +21,7 @@ public class ProbeAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> boolean isAuthorized(
+    public <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
         UserInfo userInfo,
@@ -31,9 +31,11 @@ public class ProbeAuthorizer extends BaseAuthorizer {
         if (method == RequestMethod.PUT
             || method == RequestMethod.DELETE) {
             return !isProbeReadOnly(probe.getId())
-                && getAuthorization(userInfo, probe);
+                && getAuthorization(userInfo, probe)
+                ? null : I18N_KEY_FORBIDDEN;
         }
-        return getAuthorization(userInfo, probe);
+        return getAuthorization(userInfo, probe)
+            ? null : I18N_KEY_FORBIDDEN;
     }
 
     @Override

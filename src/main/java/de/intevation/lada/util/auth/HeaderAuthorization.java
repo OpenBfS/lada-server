@@ -17,7 +17,9 @@ import jakarta.persistence.NoResultException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response.Status;
 
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.model.lada.CommSample;
@@ -58,6 +60,9 @@ public class HeaderAuthorization implements Authorization {
     private UserInfo userInfo;
 
     private Map<Class, Authorizer> authorizers;
+
+    @Inject
+    private I18n i18n;
 
     /**
      * Injectable constructor to be used in request context.
@@ -187,6 +192,7 @@ public class HeaderAuthorization implements Authorization {
 
     /**
      * Check whether a user is authorized to operate on the given data.
+     * Use only in request context.
      *
      * @param data      The data to test.
      * @param method    The Http request type.
@@ -199,11 +205,16 @@ public class HeaderAuthorization implements Authorization {
         RequestMethod method,
         Class<T> clazz
     ) {
-        if (isAuthorized(data, method, clazz)) {
+        Authorizer authorizer = authorizers.get(clazz);
+        String reason = authorizer.isAuthorizedReason(
+            data, method, userInfo, clazz);
+        if (reason == null) {
             return;
         }
-        throw new ForbiddenException();
-    }
+        throw new ForbiddenException(
+            jakarta.ws.rs.core.Response.status(Status.FORBIDDEN)
+            .entity(i18n.getString(reason)).build());
+     }
 
     /**
      * Check whether a user is authorized to operate on the given data.

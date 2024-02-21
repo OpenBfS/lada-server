@@ -33,7 +33,7 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> boolean isAuthorized(
+    public <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
         UserInfo userInfo,
@@ -44,14 +44,11 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
         case DELETE:
             TagLink zuordnung = (TagLink) data;
             Tag tag = repository.getByIdPlain(Tag.class, zuordnung.getTagId());
-            if (tag == null) {
-                return false;
-            }
 
             switch (tag.getTagType()) {
             case Tag.TAG_TYPE_GLOBAL:
                 if (zuordnung.getMeasmId() != null) {
-                    return messungAuthorizer.isAuthorized(
+                    return messungAuthorizer.isAuthorizedReason(
                         repository.getByIdPlain(
                             Measm.class, zuordnung.getMeasmId()),
                         RequestMethod.PUT,
@@ -60,7 +57,7 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
                     );
                 }
                 if (zuordnung.getSampleId() != null) {
-                    return probeAuthorizer.isAuthorized(
+                    return probeAuthorizer.isAuthorizedReason(
                         repository.getByIdPlain(
                             Sample.class, zuordnung.getSampleId()),
                         RequestMethod.PUT,
@@ -69,17 +66,18 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
                     );
                 }
                 // Should not happen because either Messung or Sample is assigned
-                return false;
+                return I18N_KEY_FORBIDDEN;
             case Tag.TAG_TYPE_NETZBETREIBER:
-                return userInfo.getNetzbetreiber().contains(
-                    tag.getNetworkId());
+                return userInfo.getNetzbetreiber().contains(tag.getNetworkId())
+                    ? null : I18N_KEY_FORBIDDEN;
             case Tag.TAG_TYPE_MST:
-                return userInfo.getMessstellen().contains(tag.getMeasFacilId());
+                return userInfo.getMessstellen().contains(tag.getMeasFacilId())
+                    ? null : I18N_KEY_FORBIDDEN;
             default:
                 throw new IllegalArgumentException("Unknown tag type");
             }
         default:
-            return false;
+            return I18N_KEY_FORBIDDEN;
         }
     }
 

@@ -26,7 +26,7 @@ public class TagAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> boolean isAuthorized(
+    public <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
         UserInfo userInfo,
@@ -40,20 +40,23 @@ public class TagAuthorizer extends BaseAuthorizer {
                 case GET:
                 case POST:
                     return userInfo.getNetzbetreiber().contains(
-                        tag.getNetworkId());
+                        tag.getNetworkId())
+                        ? null : I18N_KEY_FORBIDDEN;
                 case PUT:
                 case DELETE:
                     return userInfo.getFunktionenForNetzbetreiber(
-                        tag.getNetworkId()).contains(4);
+                        tag.getNetworkId()).contains(4)
+                        ? null : I18N_KEY_FORBIDDEN;
                 default:
-                    return false;
+                    return I18N_KEY_FORBIDDEN;
                 }
             // Tags my only be edited by members of the referenced Messstelle
             case Tag.TAG_TYPE_MST:
-                return userInfo.getMessstellen().contains(tag.getMeasFacilId());
+                return userInfo.getMessstellen().contains(tag.getMeasFacilId())
+                    ? null : I18N_KEY_FORBIDDEN;
             // Global tags (and anything unknown) can not be edited
             default:
-                return false;
+                return I18N_KEY_FORBIDDEN;
         }
     }
 

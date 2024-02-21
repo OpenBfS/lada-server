@@ -14,11 +14,20 @@ import de.intevation.lada.util.rest.RequestMethod;
 
 public interface Authorizer {
 
-    <T> boolean isAuthorized(
+    <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
         UserInfo userInfo,
         Class<T> clazz);
+
+    default <T> boolean isAuthorized(
+        Object data,
+        RequestMethod method,
+        UserInfo userInfo,
+        Class<T> clazz
+    ) {
+        return isAuthorizedReason(data, method, userInfo, clazz) == null;
+    }
 
     <T> boolean isAuthorizedById(
         Object id,

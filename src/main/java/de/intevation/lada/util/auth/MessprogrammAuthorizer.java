@@ -22,7 +22,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> boolean isAuthorized(
+    public <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
         UserInfo userInfo,
@@ -30,7 +30,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
     ) {
         if (method == RequestMethod.GET) {
             // Allow read access to everybody
-            return true;
+            return null;
         }
         Mpg messprogramm;
         if (data instanceof Mpg) {
@@ -40,11 +40,8 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
                 Mpg.class,
                 ((MpgMmtMp) data).getMpgId()
             );
-            if (messprogramm == null) {
-                return false;
-            }
         } else {
-            return false;
+            return I18N_KEY_FORBIDDEN;
         }
         String mstId = messprogramm.getMeasFacilId();
         if (mstId != null) {
@@ -53,10 +50,10 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
             if (userInfo.getFunktionenForNetzbetreiber(
                     mst.getNetworkId()).contains(4)
             ) {
-                return true;
+                return null;
             }
         }
-        return false;
+        return I18N_KEY_FORBIDDEN;
     }
 
     @Override

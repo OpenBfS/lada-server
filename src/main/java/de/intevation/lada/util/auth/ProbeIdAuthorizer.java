@@ -24,29 +24,25 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
     }
 
     @Override
-    public <T> boolean isAuthorized(
+    public <T> String isAuthorizedReason(
         Object data,
         RequestMethod method,
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Integer id;
-        Method m;
         try {
-            m = clazz.getMethod("getSampleId");
-        } catch (NoSuchMethodException | SecurityException e1) {
-            return false;
-        }
-        try {
-            id = (Integer) m.invoke(data);
-        } catch (IllegalAccessException
-            | IllegalArgumentException
+            Method m = clazz.getMethod("getSampleId");
+            Integer id = (Integer) m.invoke(data);
+            return isAuthorizedById(id, method, userInfo, clazz)
+                ? null : I18N_KEY_FORBIDDEN;
+        } catch (NoSuchMethodException
+            | IllegalAccessException
             | InvocationTargetException e
         ) {
-            return false;
+            throw new RuntimeException(e);
         }
-        return isAuthorizedById(id, method, userInfo, clazz);
     }
+
     @Override
     public <T> boolean isAuthorizedById(
         Object id,
