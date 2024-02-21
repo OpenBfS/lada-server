@@ -129,6 +129,10 @@ public class HeaderAuthorization implements Authorization {
             new TagAuthorizer(repository);
         TagZuordnungAuthorizer tagZuordnungAuthorizer =
             new TagZuordnungAuthorizer(repository);
+        SiteAuthorizer siteAuthorizer =
+            new SiteAuthorizer(repository);
+        SamplerAuthorizer samplerAuthorizer =
+            new SamplerAuthorizer(repository);
 
         this.authorizers = Map.ofEntries(
             Map.entry(Sample.class, probeAuthorizer),
@@ -139,11 +143,11 @@ public class HeaderAuthorization implements Authorization {
             Map.entry(CommMeasm.class, mIdAuthorizer),
             Map.entry(MeasVal.class, mIdAuthorizer),
             Map.entry(StatusProt.class, mIdAuthorizer),
-            Map.entry(Sampler.class, netzAuthorizer),
+            Map.entry(Sampler.class, samplerAuthorizer),
             Map.entry(DatasetCreator.class, netzAuthorizer),
             Map.entry(MunicDiv.class, netzAuthorizer),
             Map.entry(MpgCateg.class, netzAuthorizer),
-            Map.entry(Site.class, netzAuthorizer),
+            Map.entry(Site.class, siteAuthorizer),
             Map.entry(Mpg.class, messprogrammAuthorizer),
             Map.entry(MpgMmtMp.class, messprogrammAuthorizer),
             Map.entry(GeolocatMpg.class, mpIdAuthorizer),

@@ -165,21 +165,10 @@ public class UniversalService extends LadaService {
                 boolean readonly;
                 if (doAuthorize) {
                     if (idToAuthorize != null) {
-                        //If column is an ort, get Netzbetreiberid
-                        if (authorizationColumnType == Site.class) {
-                            Site ort = repository.getByIdPlain(
-                                Site.class, idToAuthorize);
-                            idToAuthorize = ort.getNetworkId();
-                        }
                         if (authorizationColumnType == DatasetCreator.class) {
                             DatasetCreator de = repository.getByIdPlain(
                                 DatasetCreator.class, idToAuthorize);
                             idToAuthorize = de.getNetworkId();
-                        }
-                        if (authorizationColumnType == Sampler.class) {
-                            Sampler pn = repository.getByIdPlain(
-                                Sampler.class, idToAuthorize);
-                            idToAuthorize = pn.getNetworkId();
                         }
                         if (authorizationColumnType == MpgCateg.class) {
                             MpgCateg mk = repository.getByIdPlain(

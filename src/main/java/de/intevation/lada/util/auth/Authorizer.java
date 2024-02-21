@@ -45,10 +45,14 @@ public interface Authorizer {
         }
     }
 
-    <T extends BaseModel> void setAuthAttrs(
+    default <T extends BaseModel> void setAuthAttrs(
         BaseModel data,
         UserInfo userInfo,
-        Class<T> clazz);
+        Class<T> clazz
+    ) {
+        data.setReadonly(
+            !isAuthorized(data, RequestMethod.PUT, userInfo, clazz));
+    }
 
     boolean isProbeReadOnly(Integer probeId);
 

@@ -40,6 +40,7 @@ import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.TagLink;
 import de.intevation.lada.model.master.Auth;
+import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Tag;
@@ -440,12 +441,18 @@ public class AuthorizerTest extends BaseTest {
     }
 
     private static Map<Object, TestConfig> createNetworkTestData() {
-        //Test authorized sampler
-        Sampler authorized = new Sampler();
+        DatasetCreator authorized = new DatasetCreator();
         authorized.setNetworkId(NETWORK_ID_AUTHORIZED);
-        //Test unauthorized sampler
-        Sampler unauth = new Sampler();
+        DatasetCreator unauth = new DatasetCreator();
         unauth.setNetworkId(NETWORK_ID_UNAUTHORIZED);
+
+        //Test authorized sampler
+        Sampler authorizedSampler = new Sampler();
+        authorizedSampler.setNetworkId(NETWORK_ID_AUTHORIZED);
+        //Test unauthorized sampler
+        Sampler unauthSampler = new Sampler();
+        unauthSampler.setNetworkId(NETWORK_ID_UNAUTHORIZED);
+
         //Test Site special handling
         //Test authorized site
         Site authorizedSite = new Site();
@@ -458,6 +465,10 @@ public class AuthorizerTest extends BaseTest {
             authorized, new TestConfig(false, true, true, true,
                  "networkAuthorizer"),
             unauth, new TestConfig(false, false, false, false,
+                "networkUnauthorized"),
+            authorizedSampler, new TestConfig(false, true, true, true,
+                 "networkAuthorizer"),
+            unauthSampler, new TestConfig(false, false, false, false,
                 "networkUnauthorized"),
             authorizedSite, new TestConfig(false, true, true, true,
                 "networkAuthorizedSite"),
