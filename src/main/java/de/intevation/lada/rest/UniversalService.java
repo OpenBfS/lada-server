@@ -186,11 +186,6 @@ public class UniversalService extends LadaService {
                                 MpgCateg.class, idToAuthorize);
                             idToAuthorize = mk.getNetworkId();
                         }
-                        if (authorizationColumnType == Tag.class) {
-                            Tag tag = repository.getByIdPlain(
-                                Tag.class, idToAuthorize);
-                            idToAuthorize = tag.getId();
-                        }
 
                         readonly = !authorization.isAuthorizedById(
                             idToAuthorize,
