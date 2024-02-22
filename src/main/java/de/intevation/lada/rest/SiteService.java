@@ -144,17 +144,13 @@ public class SiteService extends LadaService {
         @SuppressWarnings("unchecked")
         List<Site> orte = siteQuery.getResultList();
         for (Site o : orte) {
-            o.setReadonly(
-                !authorization.isAuthorized(
-                    o,
-                    RequestMethod.PUT,
-                    Site.class));
             validator.validate(o);
         }
 
         int size = Math.toIntExact((Long) countQuery.getSingleResult());
 
-        return new Response(true, StatusCodes.OK, orte, size);
+        return authorization.filter(
+            new Response(true, StatusCodes.OK, orte, size), Site.class);
     }
 
     /**
