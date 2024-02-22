@@ -466,14 +466,14 @@ public class AuthorizerTest extends BaseTest {
                  "networkAuthorizer"),
             unauth, new TestConfig(false, false, false, false,
                 "networkUnauthorized"),
-            authorizedSampler, new TestConfig(false, true, true, true,
-                 "networkAuthorizer"),
+            authorizedSampler, new TestConfig(true, true, true, true,
+                 "authorizedSampler"),
             unauthSampler, new TestConfig(false, false, false, false,
-                "networkUnauthorized"),
-            authorizedSite, new TestConfig(false, true, true, true,
-                "networkAuthorizedSite"),
-            unauthSite, new TestConfig(false, false, false, false,
-                "networkUnauthorizedSite")
+                "unauthorizedSampler"),
+            authorizedSite, new TestConfig(true, true, true, true,
+                "authorizedSite"),
+            unauthSite, new TestConfig(true, false, false, false,
+                "unauthorizedSite")
         );
     }
 

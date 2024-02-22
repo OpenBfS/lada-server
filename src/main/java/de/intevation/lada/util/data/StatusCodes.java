@@ -19,7 +19,6 @@ public class StatusCodes {
     public static final int ERROR_DB_CONNECTION = 603;
     public static final int ERROR_VALIDATION = 604;
     public static final int ERROR_MERGING = 605;
-    public static final int ERROR_DELETE = 606;
     public static final int VALUE_AMBIGOUS = 611;
     public static final int VALUE_OUTSIDE_RANGE = 612;
     public static final int VALUE_MISSING = 631;

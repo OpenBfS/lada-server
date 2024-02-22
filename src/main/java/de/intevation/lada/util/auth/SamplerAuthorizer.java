@@ -25,12 +25,18 @@ public class SamplerAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        String netId = ((Sampler) data).getNetworkId();
-        return (method == RequestMethod.PUT
-            || method == RequestMethod.POST
-            || method == RequestMethod.DELETE
-            ) && userInfo.getFunktionenForNetzbetreiber(netId).contains(4)
-            ? null : I18N_KEY_FORBIDDEN;
+        Sampler sampler = (Sampler) data;
+        if (!userInfo.getFunktionenForNetzbetreiber(
+                sampler.getNetworkId()).contains(4)
+        ) {
+            return I18N_KEY_FORBIDDEN;
+        }
+        if (method == RequestMethod.DELETE
+            && sampler.getReferenceCount() > 0
+        ) {
+            return I18N_KEY_CANNOTDELETE;
+        }
+        return null;
     }
 
     @Override

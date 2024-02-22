@@ -240,11 +240,6 @@ public class MpgService extends LadaService {
     ) {
         Mpg messprogrammObj = repository.getByIdPlain(
             Mpg.class, id);
-        /* check if samples referencing the Mpg exist */
-        if (messprogrammObj.getReferenceCount() > 0) {
-            return new Response(false, StatusCodes.ERROR_DELETE, null);
-        }
-
         authorization.authorize(
             messprogrammObj,
             RequestMethod.DELETE,

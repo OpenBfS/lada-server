@@ -257,15 +257,10 @@ public class SiteService extends LadaService {
         @PathParam("id") Integer id
     ) {
         Site ort = repository.getByIdPlain(Site.class, id);
-        if (ort.getReferenceCount() > 0
-                || ort.getReferenceCountMp() > 0) {
-            return new Response(false, StatusCodes.ERROR_DELETE, ort);
-        }
         authorization.authorize(
             ort,
             RequestMethod.DELETE,
             Site.class);
-
         return repository.delete(ort);
     }
 

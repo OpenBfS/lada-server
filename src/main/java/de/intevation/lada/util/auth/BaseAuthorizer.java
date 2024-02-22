@@ -20,6 +20,7 @@ import de.intevation.lada.util.data.Repository;
 public abstract class BaseAuthorizer implements Authorizer {
 
     protected static final String I18N_KEY_FORBIDDEN = "forbidden";
+    protected static final String I18N_KEY_CANNOTDELETE = "cannot_delete";
 
     protected Repository repository;
 

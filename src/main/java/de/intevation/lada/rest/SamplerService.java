@@ -105,9 +105,6 @@ public class SamplerService extends LadaService {
             probenehmer,
             RequestMethod.DELETE,
             Sampler.class);
-        if (probenehmer.getReferenceCount() > 0) {
-            return new Response(false, StatusCodes.ERROR_DELETE, probenehmer);
-        }
         return repository.delete(probenehmer);
     }
 }

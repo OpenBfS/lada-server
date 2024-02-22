@@ -43,17 +43,19 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         } else {
             return I18N_KEY_FORBIDDEN;
         }
-        String mstId = messprogramm.getMeasFacilId();
-        if (mstId != null) {
-            MeasFacil mst = repository.getByIdPlain(
-                MeasFacil.class, mstId);
-            if (userInfo.getFunktionenForNetzbetreiber(
-                    mst.getNetworkId()).contains(4)
-            ) {
-                return null;
-            }
+
+        MeasFacil mst = repository.getByIdPlain(
+            MeasFacil.class, messprogramm.getMeasFacilId());
+        if (!userInfo.getFunktionenForNetzbetreiber(
+                mst.getNetworkId()).contains(4)) {
+            return I18N_KEY_FORBIDDEN;
         }
-        return I18N_KEY_FORBIDDEN;
+
+        if (data instanceof Mpg && messprogramm.getReferenceCount() > 0) {
+            return I18N_KEY_CANNOTDELETE;
+        }
+
+        return null;
     }
 
     @Override
