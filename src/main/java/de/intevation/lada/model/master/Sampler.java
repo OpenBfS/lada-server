@@ -9,8 +9,10 @@ package de.intevation.lada.model.master;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.Unique;
@@ -18,9 +20,12 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import static jakarta.persistence.TemporalType.TIMESTAMP;
@@ -109,8 +114,12 @@ public class Sampler extends BaseModel implements Serializable {
     @NotEmptyNorWhitespace
     private String type;
 
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "sampler_id", insertable = false, updatable = false)
+    private Set<Sample> samples;
+
     @Transient
-    private Integer referenceCount;
+    private int referenceCount;
 
     public Sampler() {
     }
@@ -235,12 +244,14 @@ public class Sampler extends BaseModel implements Serializable {
         this.type = type;
     }
 
-    public Integer getReferenceCount() {
-        return this.referenceCount;
-    }
-
-    public void setReferenceCount(Integer referenceCount) {
-        this.referenceCount = referenceCount;
+    /**
+     * @return The number of Sample objects referencing this sampler.
+     */
+    public int getReferenceCount() {
+        if (this.samples != null) {
+            return this.samples.size();
+        }
+        return 0;
     }
 
     public String getPhoneMobile() {
