@@ -132,7 +132,8 @@ public class OrtTest extends ServiceTest {
         final int expectedSize = 4;
         Assert.assertEquals(expectedSize, result.getJsonArray("data").size());
 
-        getById("rest/site/1000", expectedById);
+        final String existingSitePath = "rest/site/1000";
+        getById(existingSitePath, expectedById);
         int createdId = create("rest/site", create)
             .getJsonObject("data").getInt("id");
 
@@ -146,5 +147,8 @@ public class OrtTest extends ServiceTest {
         testUploadImage(testImage, "rest/site/" + createdId + "/img");
         testUploadImage(testImage, "rest/site/" + createdId + "/map");
         delete("rest/site/" + createdId);
+
+        // Test deleting site referenced by geolocats
+        delete(existingSitePath, Status.FORBIDDEN);
     }
 }

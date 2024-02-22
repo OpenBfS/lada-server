@@ -72,16 +72,17 @@ public class MessprogrammTest extends ServiceTest {
      */
     public final void execute() {
         get("rest/mpg", Status.METHOD_NOT_ALLOWED);
-        getById("rest/mpg/999", expectedById);
+        final String path = "rest/mpg/999";
+        getById(path, expectedById);
         update(
-            "rest/mpg/999",
+            path,
             "envDescripDisplay",
             "D: 50 90 01 06 02 05 00 00 00 00 00 00",
             "D: 50 90 01 06 02 05 00 00 00 00 00 01");
 
         // Ensure invalid envDescripDisplay is rejected
         update(
-            "rest/mpg/999",
+            path,
             "envDescripDisplay",
             "D: 50 90 01 06 02 05 00 00 00 00 00 01",
             "D: ",
@@ -106,5 +107,8 @@ public class MessprogrammTest extends ServiceTest {
                     MediaType.APPLICATION_JSON)));
 
         delete("rest/mpg/" + createdId);
+
+        // Test deleting Mpg referenced by samples
+        delete(path, Status.FORBIDDEN);
     }
 }

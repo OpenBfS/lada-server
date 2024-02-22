@@ -521,6 +521,16 @@ public class ServiceTest {
      * @return The resulting json object.
      */
     public JsonObject delete(String parameter) {
+        return delete(parameter, Response.Status.OK);
+    }
+
+    /**
+     * Test the DELETE Service.
+     * @param parameter the parameters used in the request.
+     * @param expectedStatus Expected HTTP status code
+     * @return The resulting json object.
+     */
+    public JsonObject delete(String parameter, Response.Status expectedStatus) {
         WebTarget target =
             client.target(baseUrl + parameter);
         /* Delete object with ID given in URL */
@@ -528,7 +538,7 @@ public class ServiceTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .delete();
-        JsonObject content = BaseTest.parseResponse(response);
+        JsonObject content = BaseTest.parseResponse(response, expectedStatus);
 
         return content;
     }

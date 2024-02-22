@@ -740,4 +740,14 @@
         from_id = "1"
         to_id = "3"
         />
+    <!-- Reference site for testing authorization of deletion -->
+    <master.type_regulation id = "X" name = "TestX"/>
+    <lada.geolocat
+        id = "1000"
+        type_regulation = "X"
+        sample_id = "1901"
+        site_id = "1000"
+        add_site_text = "Test"
+        last_mod = "2012-05-09 09:00:00"
+    />
 </dataset>
