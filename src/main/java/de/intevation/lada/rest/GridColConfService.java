@@ -148,10 +148,6 @@ public class GridColConfService extends LadaService {
                 GridColMp.class, gridColumnValue.getGridColMpId());
             QueryUser queryUser = repository.getByIdPlain(
                 QueryUser.class, gridColumnValue.getQueryUserId());
-            if (gridColumn == null || queryUser == null) {
-                return new Response(false, StatusCodes.VALUE_MISSING, null);
-            }
-
             gridColumnValue.setGridColMp(gridColumn);
             gridColumnValue.setQueryUser(queryUser);
 

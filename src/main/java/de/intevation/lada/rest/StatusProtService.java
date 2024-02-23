@@ -138,12 +138,6 @@ public class StatusProtService extends LadaService {
     public Response create(
         @Valid StatusProt status
     ) {
-        if (status.getMeasmId() == null
-            || status.getMeasFacilId() == null
-        ) {
-            return new Response(false, StatusCodes.VALUE_MISSING, status);
-        }
-
         UserInfo userInfo = authorization.getInfo();
         Measm messung = repository.getByIdPlain(
             Measm.class, status.getMeasmId());
