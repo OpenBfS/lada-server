@@ -215,8 +215,7 @@ public class StatusProtService extends LadaService {
             probeValidator.validate(probe);
             violationCollection.addErrors(probe.getErrors());
             violationCollection.addWarnings(probe.getWarnings());
-            violationCollection.addNotifications(
-                probe.getNotifications());
+            violationCollection.addNotifications(probe.getNotifications());
 
             //validate messung object
             messungValidator.validate(messung);
@@ -232,35 +231,33 @@ public class StatusProtService extends LadaService {
                 builder.getQuery());
             boolean hasValidMesswerte = false;
             if (!messwerte.isEmpty()) {
-            for (MeasVal messwert: messwerte) {
-                boolean hasNoMesswert = false;
+                for (MeasVal messwert: messwerte) {
+                    boolean hasNoMesswert = false;
 
-                if (messwert.getMeasVal() == null
-                     && messwert.getLessThanLOD() == null) {
-                     hasNoMesswert = true;
-                }
-                if (newStatusWert == 7
-                    && !hasNoMesswert
-                ) {
-                    hasValidMesswerte = true;
-                    Violation error = new Violation();
-                    error.addError("status", StatusCodes.STATUS_RO);
-                    violationCollection.addErrors(error.getErrors());
-                }
+                    if (messwert.getMeasVal() == null
+                        && messwert.getLessThanLOD() == null
+                    ) {
+                        hasNoMesswert = true;
+                    }
+                    if (newStatusWert == 7 && !hasNoMesswert) {
+                        hasValidMesswerte = true;
+                        Violation error = new Violation();
+                        error.addError("status", StatusCodes.STATUS_RO);
+                        violationCollection.addErrors(error.getErrors());
+                    }
 
-                messwertValidator.validate(messwert);
-                if (messwert.hasErrors() || messwert.hasWarnings()) {
-                    violationCollection.addErrors(messwert.getErrors());
-                    violationCollection.addWarnings(messwert.getWarnings());
+                    messwertValidator.validate(messwert);
+                    if (messwert.hasErrors() || messwert.hasWarnings()) {
+                        violationCollection.addErrors(messwert.getErrors());
+                        violationCollection.addWarnings(messwert.getWarnings());
+                    }
+                    violationCollection.addNotifications(
+                        messwert.getNotifications());
                 }
-                violationCollection.addNotifications(
-                    messwert.getNotifications());
-
-            }
             } else if (newStatusWert != 7) {
-                    Violation error = new Violation();
-                    error.addError("measVal", StatusCodes.VALUE_MISSING);
-                    violationCollection.addErrors(error.getErrors());
+                Violation error = new Violation();
+                error.addError("measVal", StatusCodes.VALUE_MISSING);
+                violationCollection.addErrors(error.getErrors());
             }
             if (newStatusWert == 7 && !hasValidMesswerte) {
                 for (int i = 0; i < messwerte.size(); i++) {
@@ -269,9 +266,9 @@ public class StatusProtService extends LadaService {
             }
 
             // validate orte
-            QueryBuilder<Geolocat> ortBuilder =
-                repository.queryBuilder(Geolocat.class);
-                ortBuilder.and("sampleId", probe.getId());
+            QueryBuilder<Geolocat> ortBuilder = repository
+                .queryBuilder(Geolocat.class)
+                .and("sampleId", probe.getId());
             List<Geolocat> assignedOrte = repository.filterPlain(
                 ortBuilder.getQuery());
 
@@ -291,7 +288,7 @@ public class StatusProtService extends LadaService {
 
             if (newStatusWert != 7
                 && (violationCollection.hasErrors()
-                || violationCollection.hasWarnings())
+                    || violationCollection.hasWarnings())
             ) {
                 status.setErrors(violationCollection.getErrors());
                 status.setWarnings(violationCollection.getWarnings());
