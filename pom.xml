@@ -244,9 +244,6 @@
                             org.jboss.arquillian.extension:arquillian-transaction-jta
                         </ignoredUnusedDeclaredDependency>
                         <ignoredUnusedDeclaredDependency>
-                            org.eclipse.parsson:parsson
-                        </ignoredUnusedDeclaredDependency>
-                        <ignoredUnusedDeclaredDependency>
                             org.jboss.logmanager:jboss-logmanager
                         </ignoredUnusedDeclaredDependency>
                     </ignoredUnusedDeclaredDependencies>
@@ -493,12 +490,6 @@
             <groupId>net.postgis</groupId>
             <artifactId>postgis-jdbc</artifactId>
             <version>2021.1.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.parsson</groupId>
-            <artifactId>parsson</artifactId>
-            <version>1.1.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
