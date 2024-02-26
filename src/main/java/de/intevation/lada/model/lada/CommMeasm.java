@@ -48,7 +48,7 @@ public class CommMeasm extends BaseModel implements Serializable {
 
     @NotBlank
     @Size(max = 5)
-        @IsValidPrimaryKey(
+    @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = MeasFacil.class)
     private String measFacilId;
 
