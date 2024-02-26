@@ -126,12 +126,7 @@ public class MeasmService extends LadaService {
             messung,
             RequestMethod.POST,
             Measm.class);
-
         validator.validate(messung);
-        if (messung.hasErrors()) {
-            return new Response(false, StatusCodes.ERROR_VALIDATION, messung);
-        }
-
         return authorization.filter(
             repository.create(messung),
             Measm.class);
@@ -153,10 +148,6 @@ public class MeasmService extends LadaService {
             RequestMethod.PUT,
             Measm.class);
         lock.isLocked(messung);
-        validator.validate(messung);
-        if (messung.hasErrors()) {
-            return new Response(false, StatusCodes.ERROR_VALIDATION, messung);
-        }
 
         Response response = repository.update(messung);
         validator.validate(response.getData());
