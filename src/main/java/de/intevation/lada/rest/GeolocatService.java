@@ -29,7 +29,6 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
@@ -122,10 +121,6 @@ public class GeolocatService extends LadaService {
             RequestMethod.POST,
             Geolocat.class);
         validator.validate(ort);
-        if (ort.hasErrors()) {
-            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-        }
-
         return authorization.filter(
             repository.create(ort),
             Geolocat.class);
@@ -147,12 +142,6 @@ public class GeolocatService extends LadaService {
                 RequestMethod.PUT,
                 Geolocat.class);
         lock.isLocked(ort);
-
-        validator.validate(ort);
-        if (ort.hasErrors()) {
-            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-        }
-
         Response response = repository.update(ort);
         validator.validate(response.getData());
         return authorization.filter(
