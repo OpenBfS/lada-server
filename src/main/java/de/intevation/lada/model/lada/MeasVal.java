@@ -29,6 +29,7 @@ import jakarta.validation.constraints.Size;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.MeasUnit;
 import de.intevation.lada.model.master.Measd;
+import de.intevation.lada.validation.constraints.HasDetectLim;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.Unique;
@@ -40,6 +41,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @GroupSequence({ MeasVal.class, DatabaseConstraints.class })
 @Unique(fields = {"measdId", "measmId"},
     groups = DatabaseConstraints.class, clazz = MeasVal.class)
+@HasDetectLim
 public class MeasVal extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

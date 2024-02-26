@@ -144,11 +144,6 @@ public class MeasValService extends LadaService {
                 RequestMethod.POST,
                 MeasVal.class);
         validator.validate(messwert);
-        if (messwert.hasErrors()) {
-            return new Response(false, StatusCodes.ERROR_VALIDATION, messwert);
-        }
-
-        /* Persist the new messung object*/
         return authorization.filter(
             repository.create(messwert),
             MeasVal.class);
@@ -170,10 +165,6 @@ public class MeasValService extends LadaService {
                 RequestMethod.PUT,
                 MeasVal.class);
         lock.isLocked(messwert);
-        validator.validate(messwert);
-        if (messwert.hasErrors()) {
-            return new Response(false, StatusCodes.ERROR_VALIDATION, messwert);
-        }
 
         Response response = repository.update(messwert);
         validator.validate(response.getData());
@@ -224,11 +215,6 @@ public class MeasValService extends LadaService {
                 RequestMethod.PUT,
                 MeasVal.class);
             lock.isLocked(messwert);
-            validator.validate(messwert);
-            if (messwert.hasErrors()) {
-                return new Response(
-                    false, StatusCodes.ERROR_VALIDATION, messwert);
-            }
 
             Response response = repository.update(messwert);
             validator.validate(response.getData());
