@@ -8,7 +8,6 @@
 package de.intevation.lada.validation.rules.messprogramm;
 
 import java.util.Map;
-import java.util.Set;
 
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.util.data.StatusCodes;
@@ -81,31 +80,22 @@ public class SubIntervall implements Rule {
             }
 
             // upper limits depend on (valid) intervall type
-            Set<String> probenintervallSet = INTERVALL_MAX.keySet();
-            if (!probenintervallSet.contains(probenintervall)) {
+            if (teilVon > INTERVALL_MAX.get(probenintervall)) {
                 violation.addError(
-                    "samplePD", StatusCodes.VALUE_OUTSIDE_RANGE);
-            } else {
-                for (String intervallKey : probenintervallSet) {
-                    if (intervallKey.equals(probenintervall)) {
-                        if (teilVon > INTERVALL_MAX.get(intervallKey)) {
-                            violation.addError(
-                                startDateKey,
-                                StatusCodes.VALUE_OUTSIDE_RANGE);
-                        }
-                        if (teilBis > INTERVALL_MAX.get(intervallKey)) {
-                            violation.addError(
-                                endDateKey,
-                                StatusCodes.VALUE_OUTSIDE_RANGE);
-                        }
-                        if (offset != null
-                            && offset > INTERVALL_MAX.get(intervallKey) - 1) {
-                            violation.addError(
-                                offsetKey,
-                                StatusCodes.VALUE_OUTSIDE_RANGE);
-                        }
-                    }
-                }
+                    startDateKey,
+                    StatusCodes.VALUE_OUTSIDE_RANGE);
+            }
+            if (teilBis > INTERVALL_MAX.get(probenintervall)) {
+                violation.addError(
+                    endDateKey,
+                    StatusCodes.VALUE_OUTSIDE_RANGE);
+            }
+            if (offset != null
+                && offset > INTERVALL_MAX.get(probenintervall) - 1
+            ) {
+                violation.addError(
+                    offsetKey,
+                    StatusCodes.VALUE_OUTSIDE_RANGE);
             }
         }
 

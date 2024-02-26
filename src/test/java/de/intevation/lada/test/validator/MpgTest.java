@@ -29,7 +29,6 @@ public class MpgTest extends ValidatorBaseTest {
 
     //Validation keys
     private static final String ENV_DESCRIP_DISPLAY = "envDescripDisplay";
-    private static final String SAMPLE_PD = "samplePD";
     private static final String SAMPLE_PD_OFFSET = "samplePdOffset";
     private static final String SAMPLE_PD_END_DATE = "samplePdEndDate";
     private static final String SAMPLE_PD_START_DATE = "samplePdStartDate";
@@ -287,17 +286,14 @@ public class MpgTest extends ValidatorBaseTest {
     public void invalidSamplePd() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setSamplePd("X42");
-        mpg.setValidStartDate(DOM_MIN);
-        mpg.setValidEndDate(DOM_MAX);
-        mpg.setSamplePdStartDate(PD_1);
-        mpg.setSamplePdEndDate(PD_4);
 
         validator.validate(mpg);
         Assert.assertTrue(mpg.hasErrors());
-        Assert.assertTrue(mpg.getErrors()
-            .containsKey(SAMPLE_PD));
-        Assert.assertTrue(mpg.getErrors().get(SAMPLE_PD).contains(
-                String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+        final String errorKey = "samplePd";
+        MatcherAssert.assertThat(mpg.getErrors().keySet(),
+            CoreMatchers.hasItem(errorKey));
+        MatcherAssert.assertThat(mpg.getErrors().get(errorKey),
+            CoreMatchers.hasItem("must match \"[JHQMWT]$|W4|W2\""));
     }
 
     /**
@@ -474,5 +470,4 @@ public class MpgTest extends ValidatorBaseTest {
         mpg.setEnvMediumId("N71");
         return mpg;
     }
-
 }

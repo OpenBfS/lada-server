@@ -668,6 +668,14 @@ public class ValidatorTest extends BaseTest {
     }
 
     /**
+     * Test mpg with samplePdStart date greater than samplePdEnd.
+     */
+    @Test
+    public void mpgInvalidSamplePd() {
+        mpgTest.invalidSamplePd();
+    }
+
+    /**
      * Test mpg with invalid sampleSpecif.
      */
     @Test
