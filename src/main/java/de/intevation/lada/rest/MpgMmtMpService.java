@@ -29,7 +29,6 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
@@ -107,14 +106,7 @@ public class MpgMmtMpService extends LadaService {
                 RequestMethod.POST,
                 MpgMmtMp.class);
         validator.validate(messprogrammmmt);
-        if (messprogrammmmt.hasErrors()) {
-            return new Response(
-                false, StatusCodes.ERROR_VALIDATION, messprogrammmmt);
-        }
-
         setMessgroesseObjects(messprogrammmmt);
-
-        /* Persist the new messprogrammmmt object*/
         return authorization.filter(
             repository.create(messprogrammmmt),
             MpgMmtMp.class);
@@ -137,11 +129,6 @@ public class MpgMmtMpService extends LadaService {
                 MpgMmtMp.class);
 
         validator.validate(messprogrammmmt);
-        if (messprogrammmmt.hasErrors()) {
-            return new Response(
-                false, StatusCodes.ERROR_VALIDATION, messprogrammmmt);
-        }
-
         setMessgroesseObjects(messprogrammmmt);
 
         return authorization.filter(
