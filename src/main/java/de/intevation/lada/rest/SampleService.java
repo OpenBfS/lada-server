@@ -153,9 +153,6 @@ public class SampleService extends LadaService {
                 RequestMethod.POST,
                 Sample.class);
         validator.validate(probe);
-        if (probe.hasErrors()) {
-            return new Response(false, StatusCodes.ERROR_VALIDATION, probe);
-        }
         if (probe.getEnvMediumId() == null
             || "".equals(probe.getEnvMediumId())
         ) {
@@ -296,10 +293,7 @@ public class SampleService extends LadaService {
             }
         }
         probe = factory.findMedia(probe);
-        validator.validate(probe);
-        if (probe.hasErrors()) {
-            return new Response(false, StatusCodes.ERROR_VALIDATION, null);
-        }
+
         Response response = repository.update(probe);
         validator.validate(response.getData());
         return authorization.filter(
