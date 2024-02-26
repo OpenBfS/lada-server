@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.rules.messprogramm;
 
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.Set;
 
 import de.intevation.lada.model.lada.Mpg;
@@ -23,20 +23,17 @@ import de.intevation.lada.validation.rules.Rule;
 @ValidationRule("Messprogramm")
 public class SubIntervall implements Rule {
 
-    private Hashtable<String, Integer> intervallMax;
+    private static final String YEARLY = "J";
 
-    public SubIntervall() {
-        this.intervallMax = new Hashtable<String, Integer>();
-
-        this.intervallMax.put("J",  365);
-        this.intervallMax.put("H",  184);
-        this.intervallMax.put("Q",  92);
-        this.intervallMax.put("M",  31);
-        this.intervallMax.put("W4", 28);
-        this.intervallMax.put("W2", 14);
-        this.intervallMax.put("W",  7);
-        this.intervallMax.put("T",  1);
-    }
+    private static final Map<String, Integer> INTERVALL_MAX = Map.of(
+        YEARLY, 365,
+        "H",    184,
+        "Q",    92,
+        "M",    31,
+        "W4",   28,
+        "W2",   14,
+        "W",    7,
+        "T",    1);
 
     @Override
     public Violation execute(Object object) {
@@ -50,62 +47,65 @@ public class SubIntervall implements Rule {
         Integer gueltigVon = messprogramm.getValidStartDate();
         Integer gueltigBis = messprogramm.getValidEndDate();
 
-        if ("J".equals(probenintervall)) {
+        final String startDateKey = "samplePdStartDate",
+            endDateKey = "samplePdEndDate",
+            offsetKey = "samplePdOffset";
+        if (YEARLY.equals(probenintervall)) {
             if (gueltigVon != null && gueltigBis != null) {
                 if (teilVon < gueltigVon || teilVon > gueltigBis) {
                     violation.addError(
-                        "samplePdStartDate",
+                        startDateKey,
                         StatusCodes.VALUE_OUTSIDE_RANGE);
                 }
                 if (teilBis < gueltigVon || teilBis > gueltigBis) {
                     violation.addError(
-                        "samplePdEndDate",
+                        endDateKey,
                         StatusCodes.VALUE_OUTSIDE_RANGE);
                 }
                 if (offset != null
-                    && offset > intervallMax.get("J") - 1) {
+                    && offset > INTERVALL_MAX.get(YEARLY) - 1) {
                     violation.addError(
-                        "samplePdOffset", StatusCodes.VALUE_OUTSIDE_RANGE);
+                        offsetKey, StatusCodes.VALUE_OUTSIDE_RANGE);
                 }
             }
         } else {
             // lower limits are independent of intervall type
             if (teilVon < 1) {
                 violation.addError(
-                    "samplePdStartDate", StatusCodes.VALUE_OUTSIDE_RANGE);
+                    startDateKey, StatusCodes.VALUE_OUTSIDE_RANGE);
             }
             if (teilBis < 1) {
                 violation.addError(
-                    "samplePdEndDate", StatusCodes.VALUE_OUTSIDE_RANGE);
+                    endDateKey, StatusCodes.VALUE_OUTSIDE_RANGE);
             }
             if (offset != null && offset < 0) {
                 violation.addError(
-                    "samplePdOffset", StatusCodes.VALUE_OUTSIDE_RANGE);
+                    offsetKey, StatusCodes.VALUE_OUTSIDE_RANGE);
             }
 
             // upper limits depend on (valid) intervall type
-            Set<String> probenintervallSet = intervallMax.keySet();
+            Set<String> probenintervallSet = INTERVALL_MAX.keySet();
             if (!probenintervallSet.contains(probenintervall)) {
                 violation.addError(
                     "samplePD", StatusCodes.VALUE_OUTSIDE_RANGE);
             } else {
                 for (String intervallKey : probenintervallSet) {
                     if (intervallKey.equals(probenintervall)) {
-                        if (teilVon > intervallMax.get(intervallKey)) {
+                        if (teilVon > INTERVALL_MAX.get(intervallKey)) {
                             violation.addError(
-                                "samplePdStartDate",
+                                startDateKey,
                                 StatusCodes.VALUE_OUTSIDE_RANGE);
                         }
-                        if (teilBis > intervallMax.get(intervallKey)) {
+                        if (teilBis > INTERVALL_MAX.get(intervallKey)) {
                             violation.addError(
-                                "samplePdEndDate",
+                                endDateKey,
                                 StatusCodes.VALUE_OUTSIDE_RANGE);
                         }
                         if (offset != null
                             && offset
-                            > intervallMax.get(intervallKey) - 1) {
+                            > INTERVALL_MAX.get(intervallKey) - 1) {
                             violation.addError(
-                                "samplePdOffset",
+                                offsetKey,
                                 StatusCodes.VALUE_OUTSIDE_RANGE);
                         }
                     }
@@ -116,9 +116,9 @@ public class SubIntervall implements Rule {
         // lower limit has to be less than or equal to upper limit
         if (teilVon > teilBis) {
             violation.addError(
-                "samplePdStartDate", StatusCodes.DATE_BEGIN_AFTER_END);
+                startDateKey, StatusCodes.DATE_BEGIN_AFTER_END);
             violation.addError(
-                "samplePdEndDate", StatusCodes.DATE_BEGIN_AFTER_END);
+                endDateKey, StatusCodes.DATE_BEGIN_AFTER_END);
         }
 
         return violation.hasErrors()
