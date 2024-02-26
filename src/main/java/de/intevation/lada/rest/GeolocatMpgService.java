@@ -126,10 +126,6 @@ public class GeolocatMpgService extends LadaService {
             RequestMethod.POST,
             GeolocatMpg.class);
         validator.validate(ort);
-        if (ort.hasErrors()) {
-            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-        }
-
         return authorization.filter(
             repository.create(ort),
             GeolocatMpg.class);
@@ -150,10 +146,6 @@ public class GeolocatMpgService extends LadaService {
             ort,
             RequestMethod.PUT,
             GeolocatMpg.class);
-        validator.validate(ort);
-        if (ort.hasErrors()) {
-            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-        }
 
         Response response = repository.update(ort);
         validator.validate(response.getData());
