@@ -59,6 +59,11 @@ import de.intevation.lada.validation.groups.Warnings;
 public class Mpg extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private static final int DOY_MIN = 1;
+
+    // Leap years should be handled in generation of Sample objects
+    private static final int DOY_MAX = 365;
+
     // Has to be kept in sync with database schema
     @PrePersist
     void setDefaults() {
@@ -90,13 +95,13 @@ public class Mpg extends BaseModel implements Serializable {
     private String adminUnitId;
 
     @NotNull
-    @Min(1)
-    @Max(365)
+    @Min(DOY_MIN)
+    @Max(DOY_MAX)
     private Integer validEndDate;
 
     @NotNull
-    @Min(1)
-    @Max(365)
+    @Min(DOY_MIN)
+    @Max(DOY_MAX)
     private Integer validStartDate;
 
     private Integer samplePdOffset;
