@@ -51,22 +51,19 @@ public class SubIntervall implements Rule {
             endDateKey = "samplePdEndDate",
             offsetKey = "samplePdOffset";
         if (YEARLY.equals(probenintervall)) {
-            if (gueltigVon != null && gueltigBis != null) {
-                if (teilVon < gueltigVon || teilVon > gueltigBis) {
-                    violation.addError(
-                        startDateKey,
-                        StatusCodes.VALUE_OUTSIDE_RANGE);
-                }
-                if (teilBis < gueltigVon || teilBis > gueltigBis) {
-                    violation.addError(
-                        endDateKey,
-                        StatusCodes.VALUE_OUTSIDE_RANGE);
-                }
-                if (offset != null
-                    && offset > INTERVALL_MAX.get(YEARLY) - 1) {
-                    violation.addError(
-                        offsetKey, StatusCodes.VALUE_OUTSIDE_RANGE);
-                }
+            if (teilVon < gueltigVon || teilVon > gueltigBis) {
+                violation.addError(
+                    startDateKey,
+                    StatusCodes.VALUE_OUTSIDE_RANGE);
+            }
+            if (teilBis < gueltigVon || teilBis > gueltigBis) {
+                violation.addError(
+                    endDateKey,
+                    StatusCodes.VALUE_OUTSIDE_RANGE);
+            }
+            if (offset != null && offset > INTERVALL_MAX.get(YEARLY) - 1) {
+                violation.addError(
+                    offsetKey, StatusCodes.VALUE_OUTSIDE_RANGE);
             }
         } else {
             // lower limits are independent of intervall type
@@ -102,8 +99,7 @@ public class SubIntervall implements Rule {
                                 StatusCodes.VALUE_OUTSIDE_RANGE);
                         }
                         if (offset != null
-                            && offset
-                            > INTERVALL_MAX.get(intervallKey) - 1) {
+                            && offset > INTERVALL_MAX.get(intervallKey) - 1) {
                             violation.addError(
                                 offsetKey,
                                 StatusCodes.VALUE_OUTSIDE_RANGE);
