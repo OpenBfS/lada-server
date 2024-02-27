@@ -83,14 +83,6 @@ public class SubIntervall implements Rule {
             }
         }
 
-        // lower limit has to be less than or equal to upper limit
-        if (teilVon > teilBis) {
-            violation.addError(
-                startDateKey, StatusCodes.DATE_BEGIN_AFTER_END);
-            violation.addError(
-                endDateKey, StatusCodes.DATE_BEGIN_AFTER_END);
-        }
-
         return violation.hasErrors()
             ? violation
             : null;
