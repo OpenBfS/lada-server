@@ -56,6 +56,9 @@ public class MpgTest extends ValidatorBaseTest {
     private static final String EXAMPLE_ENV_DESCRIP_FROM_SAMPLE_DATA
         = "D: 10 11 12 00 00 00 00 00 00 00 00 00";
 
+    private static final String GREATER_OR_EQUAL_ONE =
+        "must be greater than or equal to 1";
+
     @Inject
     private Validator<Mpg> validator;
 
@@ -232,11 +235,10 @@ public class MpgTest extends ValidatorBaseTest {
 
         validator.validate(mpg);
         Assert.assertTrue(mpg.hasErrors());
-        Assert.assertTrue(mpg.getErrors()
-            .containsKey(SAMPLE_PD_START_DATE));
-        Assert.assertTrue(mpg.getErrors()
-            .get(SAMPLE_PD_START_DATE)
-            .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+        MatcherAssert.assertThat(mpg.getErrors().keySet(),
+            CoreMatchers.hasItem(SAMPLE_PD_START_DATE));
+        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_START_DATE),
+            CoreMatchers.hasItem(GREATER_OR_EQUAL_ONE));
     }
 
     /**
@@ -252,11 +254,10 @@ public class MpgTest extends ValidatorBaseTest {
 
         validator.validate(mpg);
         Assert.assertTrue(mpg.hasErrors());
-        Assert.assertTrue(mpg.getErrors()
-            .containsKey(SAMPLE_PD_END_DATE));
-        Assert.assertTrue(mpg.getErrors()
-            .get(SAMPLE_PD_END_DATE)
-            .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+        MatcherAssert.assertThat(mpg.getErrors().keySet(),
+            CoreMatchers.hasItem(SAMPLE_PD_END_DATE));
+        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_END_DATE),
+            CoreMatchers.hasItem(GREATER_OR_EQUAL_ONE));
     }
 
     /**
@@ -274,10 +275,10 @@ public class MpgTest extends ValidatorBaseTest {
 
         validator.validate(mpg);
         Assert.assertTrue(mpg.hasErrors());
-        Assert.assertTrue(mpg.getErrors()
-            .containsKey(SAMPLE_PD_OFFSET));
-        Assert.assertTrue(mpg.getErrors().get(SAMPLE_PD_OFFSET).contains(
-                String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+        MatcherAssert.assertThat(mpg.getErrors().keySet(),
+            CoreMatchers.hasItem(SAMPLE_PD_OFFSET));
+        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_OFFSET),
+            CoreMatchers.hasItem("must be greater than or equal to 0"));
     }
 
     /**

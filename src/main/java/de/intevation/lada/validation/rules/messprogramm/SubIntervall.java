@@ -63,20 +63,6 @@ public class SubIntervall implements Rule {
                     offsetKey, StatusCodes.VALUE_OUTSIDE_RANGE);
             }
         } else {
-            // lower limits are independent of intervall type
-            if (teilVon < Mpg.DOY_MIN) {
-                violation.addError(
-                    startDateKey, StatusCodes.VALUE_OUTSIDE_RANGE);
-            }
-            if (teilBis < Mpg.DOY_MIN) {
-                violation.addError(
-                    endDateKey, StatusCodes.VALUE_OUTSIDE_RANGE);
-            }
-            if (offset != null && offset < 0) {
-                violation.addError(
-                    offsetKey, StatusCodes.VALUE_OUTSIDE_RANGE);
-            }
-
             // upper limits depend on (valid) intervall type
             if (teilVon > INTERVALL_MAX.get(probenintervall)) {
                 violation.addError(

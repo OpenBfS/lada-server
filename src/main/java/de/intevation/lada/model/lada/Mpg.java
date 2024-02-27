@@ -116,6 +116,7 @@ public class Mpg extends BaseModel implements Serializable {
     @Max(DOY_MAX)
     private Integer validStartDate;
 
+    @Min(0)
     private Integer samplePdOffset;
 
     @Size(max = 1000)
@@ -166,9 +167,11 @@ public class Mpg extends BaseModel implements Serializable {
     private String samplePd;
 
     @NotNull
+    @Min(DOY_MIN)
     private Integer samplePdEndDate;
 
     @NotNull
+    @Min(DOY_MIN)
     private Integer samplePdStartDate;
 
     private Boolean isTest;
