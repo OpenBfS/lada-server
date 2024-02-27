@@ -59,10 +59,22 @@ import de.intevation.lada.validation.groups.Warnings;
 public class Mpg extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private static final int DOY_MIN = 1;
-
+    // Constants for validation of samplePd, validStartDate and validEndDate,
+    public static final int DOY_MIN = 1;
     // Leap years should be handled in generation of Sample objects
-    private static final int DOY_MAX = 365;
+    public static final int DOY_MAX = 365;
+
+    public static final String SAMPLE_PD_REGEX = "J|H|Q|M|W4|W2|W|T";
+    private static final String[] SAMPLE_PD_VALUES =
+        SAMPLE_PD_REGEX.split("\\|");
+    public static final String YEARLY      = SAMPLE_PD_VALUES[0];
+    public static final String HALF_YEARLY = SAMPLE_PD_VALUES[1];
+    public static final String QUARTERLY   = SAMPLE_PD_VALUES[2];
+    public static final String MONTHLY     = SAMPLE_PD_VALUES[3];
+    public static final String FOUR_WEEKLY = SAMPLE_PD_VALUES[4];
+    public static final String TWO_WEEKLY  = SAMPLE_PD_VALUES[5];
+    public static final String WEEKLY      = SAMPLE_PD_VALUES[6];
+    public static final String DAILY       = SAMPLE_PD_VALUES[7];
 
     // Has to be kept in sync with database schema
     @PrePersist
@@ -150,7 +162,7 @@ public class Mpg extends BaseModel implements Serializable {
 
     @NotBlank
     @Size(max = 2)
-    @Pattern(regexp = "[JHQMWT]$|W4|W2")
+    @Pattern(regexp = SAMPLE_PD_REGEX)
     private String samplePd;
 
     @NotNull

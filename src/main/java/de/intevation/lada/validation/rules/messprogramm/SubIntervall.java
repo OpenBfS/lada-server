@@ -22,17 +22,15 @@ import de.intevation.lada.validation.rules.Rule;
 @ValidationRule("Messprogramm")
 public class SubIntervall implements Rule {
 
-    private static final String YEARLY = "J";
-
     private static final Map<String, Integer> INTERVALL_MAX = Map.of(
-        YEARLY, 365,
-        "H",    184,
-        "Q",    92,
-        "M",    31,
-        "W4",   28,
-        "W2",   14,
-        "W",    7,
-        "T",    1);
+        Mpg.YEARLY,      Mpg.DOY_MAX,
+        Mpg.HALF_YEARLY, 184,
+        Mpg.QUARTERLY,   92,
+        Mpg.MONTHLY,     31,
+        Mpg.FOUR_WEEKLY, 28,
+        Mpg.TWO_WEEKLY,  14,
+        Mpg.WEEKLY,      7,
+        Mpg.DAILY,       1);
 
     @Override
     public Violation execute(Object object) {
@@ -49,7 +47,7 @@ public class SubIntervall implements Rule {
         final String startDateKey = "samplePdStartDate",
             endDateKey = "samplePdEndDate",
             offsetKey = "samplePdOffset";
-        if (YEARLY.equals(probenintervall)) {
+        if (Mpg.YEARLY.equals(probenintervall)) {
             if (teilVon < gueltigVon || teilVon > gueltigBis) {
                 violation.addError(
                     startDateKey,
@@ -60,17 +58,17 @@ public class SubIntervall implements Rule {
                     endDateKey,
                     StatusCodes.VALUE_OUTSIDE_RANGE);
             }
-            if (offset != null && offset > INTERVALL_MAX.get(YEARLY) - 1) {
+            if (offset != null && offset > INTERVALL_MAX.get(Mpg.YEARLY) - 1) {
                 violation.addError(
                     offsetKey, StatusCodes.VALUE_OUTSIDE_RANGE);
             }
         } else {
             // lower limits are independent of intervall type
-            if (teilVon < 1) {
+            if (teilVon < Mpg.DOY_MIN) {
                 violation.addError(
                     startDateKey, StatusCodes.VALUE_OUTSIDE_RANGE);
             }
-            if (teilBis < 1) {
+            if (teilBis < Mpg.DOY_MIN) {
                 violation.addError(
                     endDateKey, StatusCodes.VALUE_OUTSIDE_RANGE);
             }

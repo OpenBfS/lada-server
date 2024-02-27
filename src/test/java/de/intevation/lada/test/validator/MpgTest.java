@@ -293,7 +293,7 @@ public class MpgTest extends ValidatorBaseTest {
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
             CoreMatchers.hasItem(errorKey));
         MatcherAssert.assertThat(mpg.getErrors().get(errorKey),
-            CoreMatchers.hasItem("must match \"[JHQMWT]$|W4|W2\""));
+            CoreMatchers.hasItem("must match \"" + Mpg.SAMPLE_PD_REGEX + "\""));
     }
 
     /**

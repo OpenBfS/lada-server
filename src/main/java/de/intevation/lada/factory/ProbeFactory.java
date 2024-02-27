@@ -11,8 +11,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import jakarta.inject.Inject;
@@ -69,33 +69,23 @@ public class ProbeFactory {
     // pattern to format deskriptor sn
     private static final String SN_FORMAT = " %02d";
 
-    private static Hashtable<String, int[]> fieldsTable =
-        new Hashtable<String, int[]>();
-
-    public ProbeFactory() {
-        final int[] t  = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR, 1 };
-        final int[] w  = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR,
-                     N_WEEK_DAYS };
-        final int[] w2 = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR,
-                     N_WEEK_DAYS * 2 };
-        final int[] w4 = {Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR,
-                     N_WEEK_DAYS * 4 };
-
-        final int[] m = {Calendar.MONTH, Calendar.DAY_OF_MONTH, 1 };
-        final int[] q = {Calendar.MONTH, Calendar.DAY_OF_MONTH, 3 };
-        final int[] h = {Calendar.MONTH, Calendar.DAY_OF_MONTH, 6 };
-
-        final int[] j = {Calendar.YEAR, Calendar.DAY_OF_YEAR, 1 };
-
-        fieldsTable.put("T", t);
-        fieldsTable.put("W", w);
-        fieldsTable.put("W2", w2);
-        fieldsTable.put("W4", w4);
-        fieldsTable.put("M", m);
-        fieldsTable.put("Q", q);
-        fieldsTable.put("H", h);
-        fieldsTable.put("J", j);
-    }
+    private static final Map<String, int[]> FIELDS_TABLE = Map.of(
+        Mpg.DAILY, new int[]{
+            Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR, 1},
+        Mpg.WEEKLY, new int[]{
+            Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR, N_WEEK_DAYS },
+        Mpg.TWO_WEEKLY, new int[]{
+            Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR, N_WEEK_DAYS * 2 },
+        Mpg.FOUR_WEEKLY, new int[]{
+            Calendar.DAY_OF_YEAR, Calendar.DAY_OF_YEAR, N_WEEK_DAYS * 4 },
+        Mpg.MONTHLY, new int[]{
+            Calendar.MONTH, Calendar.DAY_OF_MONTH, 1 },
+        Mpg.QUARTERLY, new int[]{
+            Calendar.MONTH, Calendar.DAY_OF_MONTH, 3 },
+        Mpg.HALF_YEARLY, new int[]{
+            Calendar.MONTH, Calendar.DAY_OF_MONTH, 6 },
+        Mpg.YEARLY, new int[]{
+            Calendar.YEAR, Calendar.DAY_OF_YEAR, 1 });
 
     /**
      * Time interval in sense of lada.
@@ -149,11 +139,11 @@ public class ProbeFactory {
             this.teilVon = messprogramm.getSamplePdStartDate();
             this.teilBis = messprogramm.getSamplePdEndDate();
 
-            this.intervallField = fieldsTable
+            this.intervallField = FIELDS_TABLE
                 .get(messprogramm.getSamplePd())[0];
-            this.subIntField = fieldsTable
+            this.subIntField = FIELDS_TABLE
                 .get(messprogramm.getSamplePd())[1];
-            this.intervallFactor = fieldsTable
+            this.intervallFactor = FIELDS_TABLE
                 .get(messprogramm.getSamplePd())[2];
 
             this.from = (Calendar) start.clone();
