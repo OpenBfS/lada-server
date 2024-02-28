@@ -51,6 +51,7 @@ import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.validation.constraints.BeginBeforeEnd;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
+import de.intevation.lada.validation.constraints.ValidSamplePd;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import de.intevation.lada.validation.groups.Warnings;
 
@@ -58,6 +59,7 @@ import de.intevation.lada.validation.groups.Warnings;
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ Mpg.class, DatabaseConstraints.class })
 @BeginBeforeEnd
+@ValidSamplePd
 public class Mpg extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -37,14 +37,10 @@ public class MpgTest extends ValidatorBaseTest {
     private static final String VALID_START_DATE = "validStartDate";
 
     //Other constants
-    private static final String INTERVAL_M = "M";
-    private static final String INTERVAL_YEAR = "J";
     private static final String EXISTING_MEAS_FACIL_ID = "06010";
     private static final int EXISTING_SAMPLE_METH_ID = 1;
     private static final int EXISTING_REGULATION_ID = 1;
     private static final int EXISTING_OPR_MODE = 1;
-    private static final int DOY_MIN = 1;
-    private static final int DOY_MAX = 365;
     private static final int DOM_MIN = 1;
     private static final int DOM_MAX = 31;
 
@@ -58,6 +54,8 @@ public class MpgTest extends ValidatorBaseTest {
 
     private static final String GREATER_OR_EQUAL_ONE =
         "must be greater than or equal to 1";
+    private static final String VALUE_OUTSIDE_RANGE =
+        "Value outside range of validity";
 
     @Inject
     private Validator<Mpg> validator;
@@ -67,17 +65,11 @@ public class MpgTest extends ValidatorBaseTest {
      */
     public void validStartEndDateBelowMin() {
         Mpg mpg = createMinimumValidMpg();
-        mpg.setValidStartDate(DOY_MIN - 1);
-        mpg.setValidEndDate(DOY_MIN - 1);
+        mpg.setValidStartDate(Mpg.DOY_MIN - 1);
+        mpg.setValidEndDate(Mpg.DOY_MIN - 1);
 
-        validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
-        Assert.assertTrue(mpg.getErrors().containsKey(VALID_START_DATE));
-        Assert.assertTrue(mpg.getErrors().containsKey(VALID_END_DATE));
-        Assert.assertTrue(mpg.getErrors()
-            .get(VALID_START_DATE).contains(StatusCodes.VALUE_OUTSIDE_RANGE));
-        Assert.assertTrue(mpg.getErrors()
-            .get(VALID_END_DATE).contains(StatusCodes.VALUE_OUTSIDE_RANGE));
+        validateStartEndDate(
+            mpg, "must be greater than or equal to " + Mpg.DOY_MIN);
     }
 
     /**
@@ -85,17 +77,21 @@ public class MpgTest extends ValidatorBaseTest {
      */
     public void validStartEndDateAboveMax() {
         Mpg mpg = createMinimumValidMpg();
-        mpg.setValidStartDate(DOY_MAX + 1);
-        mpg.setValidEndDate(DOY_MAX + 1);
+        mpg.setValidStartDate(Mpg.DOY_MAX + 1);
+        mpg.setValidEndDate(Mpg.DOY_MAX + 1);
+        validateStartEndDate(
+            mpg, "must be less than or equal to " + Mpg.DOY_MAX);
+    }
 
+    private void validateStartEndDate(Mpg mpg, String expectedError) {
         validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
-        Assert.assertTrue(mpg.getErrors().containsKey(VALID_START_DATE));
-        Assert.assertTrue(mpg.getErrors().containsKey(VALID_END_DATE));
-        Assert.assertTrue(mpg.getErrors()
-            .get(VALID_START_DATE).contains(StatusCodes.VALUE_OUTSIDE_RANGE));
-        Assert.assertTrue(mpg.getErrors()
-            .get(VALID_END_DATE).contains(StatusCodes.VALUE_OUTSIDE_RANGE));
+        assertHasErrors(mpg);
+        MatcherAssert.assertThat(mpg.getErrors().keySet(),
+            CoreMatchers.hasItems(VALID_START_DATE, VALID_END_DATE));
+        MatcherAssert.assertThat(mpg.getErrors().get(VALID_START_DATE),
+            CoreMatchers.hasItem(expectedError));
+        MatcherAssert.assertThat(mpg.getErrors().get(VALID_END_DATE),
+            CoreMatchers.hasItem(expectedError));
     }
 
     /**
@@ -111,19 +107,13 @@ public class MpgTest extends ValidatorBaseTest {
      */
     public void yearIntervalStartDateSmallerThanValid() {
         Mpg mpg = createMinimumValidMpg();
-        mpg.setSamplePd(INTERVAL_YEAR);
+        mpg.setSamplePd(Mpg.YEARLY);
         mpg.setSamplePdStartDate(PD_1);
         mpg.setSamplePdEndDate(PD_3);
         mpg.setValidStartDate(PD_2);
         mpg.setValidEndDate(PD_2);
 
-        validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
-        Assert.assertTrue(mpg.getErrors()
-            .containsKey(SAMPLE_PD_START_DATE));
-        Assert.assertTrue(mpg.getErrors()
-            .get(SAMPLE_PD_START_DATE)
-            .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+        validateStartDateOutsideRange(mpg);
     }
 
     /**
@@ -131,19 +121,22 @@ public class MpgTest extends ValidatorBaseTest {
      */
     public void yearIntervalStartDateGreaterThanValid() {
         Mpg mpg = createMinimumValidMpg();
-        mpg.setSamplePd(INTERVAL_YEAR);
+        mpg.setSamplePd(Mpg.YEARLY);
         mpg.setSamplePdStartDate(PD_3);
         mpg.setSamplePdEndDate(PD_4);
         mpg.setValidStartDate(PD_2);
         mpg.setValidEndDate(PD_2);
 
+        validateStartDateOutsideRange(mpg);
+    }
+
+    private void validateStartDateOutsideRange(Mpg mpg) {
         validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
-        Assert.assertTrue(mpg.getErrors()
-            .containsKey(SAMPLE_PD_START_DATE));
-        Assert.assertTrue(mpg.getErrors()
-            .get(SAMPLE_PD_START_DATE)
-            .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+        assertHasErrors(mpg);
+        MatcherAssert.assertThat(mpg.getErrors().keySet(),
+            CoreMatchers.hasItem(SAMPLE_PD_START_DATE));
+        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_START_DATE),
+            CoreMatchers.hasItem(VALUE_OUTSIDE_RANGE));
     }
 
     /**
@@ -151,18 +144,12 @@ public class MpgTest extends ValidatorBaseTest {
      */
     public void yearIntervalEndDateSmallerThanValid() {
         Mpg mpg = createMinimumValidMpg();
-        mpg.setSamplePd(INTERVAL_YEAR);
+        mpg.setSamplePd(Mpg.YEARLY);
         mpg.setSamplePdEndDate(PD_1);
         mpg.setValidStartDate(PD_2);
         mpg.setValidEndDate(PD_2);
 
-        validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
-        MatcherAssert.assertThat(mpg.getErrors().keySet(),
-            CoreMatchers.hasItem(SAMPLE_PD_END_DATE));
-        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_END_DATE),
-            CoreMatchers.hasItem(
-                String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+        validateEndDateOutsideRange(mpg);
     }
 
     /**
@@ -170,19 +157,22 @@ public class MpgTest extends ValidatorBaseTest {
      */
     public void yearIntervalEndDateGreaterThanValid() {
         Mpg mpg = createMinimumValidMpg();
-        mpg.setSamplePd(INTERVAL_YEAR);
+        mpg.setSamplePd(Mpg.YEARLY);
         mpg.setSamplePdStartDate(PD_2);
         mpg.setSamplePdEndDate(PD_4);
         mpg.setValidStartDate(PD_1);
         mpg.setValidEndDate(PD_3);
 
+        validateEndDateOutsideRange(mpg);
+    }
+
+    private void validateEndDateOutsideRange(Mpg mpg) {
         validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
+        assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
             CoreMatchers.hasItem(SAMPLE_PD_END_DATE));
         MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_END_DATE),
-            CoreMatchers.hasItem(
-                String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+            CoreMatchers.hasItem(VALUE_OUTSIDE_RANGE));
     }
 
     /**
@@ -190,20 +180,19 @@ public class MpgTest extends ValidatorBaseTest {
      */
     public void yearIntervalInvalidSamplePdOffset() {
         Mpg mpg = createMinimumValidMpg();
-        mpg.setSamplePd(INTERVAL_YEAR);
+        mpg.setSamplePd(Mpg.YEARLY);
         mpg.setSamplePdStartDate(PD_1);
         mpg.setSamplePdEndDate(PD_2);
-        mpg.setSamplePdOffset(DOY_MAX);
+        mpg.setSamplePdOffset(Mpg.DOY_MAX);
         mpg.setValidStartDate(PD_2);
         mpg.setValidEndDate(PD_3);
 
         validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
-        Assert.assertTrue(mpg.getErrors()
-            .containsKey(SAMPLE_PD_OFFSET));
-        Assert.assertTrue(mpg.getErrors()
-            .get(SAMPLE_PD_OFFSET)
-            .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+        assertHasErrors(mpg);
+        MatcherAssert.assertThat(mpg.getErrors().keySet(),
+            CoreMatchers.hasItem(SAMPLE_PD_OFFSET));
+        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_OFFSET),
+            CoreMatchers.hasItem(VALUE_OUTSIDE_RANGE));
     }
 
     /**
@@ -211,12 +200,12 @@ public class MpgTest extends ValidatorBaseTest {
      */
     public void yearValidInterval() {
         Mpg mpg = createMinimumValidMpg();
-        mpg.setSamplePd(INTERVAL_YEAR);
+        mpg.setSamplePd(Mpg.YEARLY);
         mpg.setValidStartDate(PD_1);
         mpg.setValidEndDate(PD_4);
         mpg.setSamplePdStartDate(PD_2);
         mpg.setSamplePdEndDate(PD_3);
-        mpg.setSamplePdOffset(DOY_MAX - 1);
+        mpg.setSamplePdOffset(Mpg.DOY_MAX - 1);
         validator.validate(mpg);
         assertNoWarningsOrErrors(mpg);
     }
@@ -226,14 +215,14 @@ public class MpgTest extends ValidatorBaseTest {
      */
     public void samplePdStartDateBelowLimit() {
         Mpg mpg = createMinimumValidMpg();
-        mpg.setSamplePd(INTERVAL_M);
+        mpg.setSamplePd(Mpg.MONTHLY);
         mpg.setValidStartDate(DOM_MIN);
         mpg.setValidEndDate(DOM_MAX);
         mpg.setSamplePdStartDate(0);
         mpg.setSamplePdEndDate(PD_1);
 
         validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
+        assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
             CoreMatchers.hasItem(SAMPLE_PD_START_DATE));
         MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_START_DATE),
@@ -245,14 +234,14 @@ public class MpgTest extends ValidatorBaseTest {
      */
     public void samplePdEndDateBelowLimit() {
         Mpg mpg = createMinimumValidMpg();
-        mpg.setSamplePd(INTERVAL_M);
+        mpg.setSamplePd(Mpg.MONTHLY);
         mpg.setValidStartDate(DOM_MIN);
         mpg.setValidEndDate(DOM_MAX);
         mpg.setSamplePdStartDate(PD_1);
         mpg.setSamplePdEndDate(0);
 
         validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
+        assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
             CoreMatchers.hasItem(SAMPLE_PD_END_DATE));
         MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_END_DATE),
@@ -264,7 +253,7 @@ public class MpgTest extends ValidatorBaseTest {
      */
     public void samplePdOffsetBelowLimit() {
         Mpg mpg = createMinimumValidMpg();
-        mpg.setSamplePd(INTERVAL_M);
+        mpg.setSamplePd(Mpg.MONTHLY);
         mpg.setValidStartDate(DOM_MIN);
         mpg.setValidEndDate(DOM_MAX);
         mpg.setSamplePdStartDate(PD_1);
@@ -273,7 +262,7 @@ public class MpgTest extends ValidatorBaseTest {
 
 
         validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
+        assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
             CoreMatchers.hasItem(SAMPLE_PD_OFFSET));
         MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_OFFSET),
@@ -288,7 +277,7 @@ public class MpgTest extends ValidatorBaseTest {
         mpg.setSamplePd("X42");
 
         validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
+        assertHasErrors(mpg);
         final String errorKey = "samplePd";
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
             CoreMatchers.hasItem(errorKey));
@@ -301,18 +290,17 @@ public class MpgTest extends ValidatorBaseTest {
      */
     public void samplePdStartDateGreaterThanIntervalMax() {
         Mpg mpg = createMinimumValidMpg();
-        mpg.setSamplePd(INTERVAL_M);
+        mpg.setSamplePd(Mpg.MONTHLY);
         mpg.setValidStartDate(DOM_MIN);
         mpg.setValidEndDate(DOM_MAX);
         mpg.setSamplePdStartDate(DOM_MAX + 1);
 
         validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
+        assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
             CoreMatchers.hasItem(SAMPLE_PD_START_DATE));
         MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_START_DATE),
-            CoreMatchers.hasItem(
-                String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+            CoreMatchers.hasItem(VALUE_OUTSIDE_RANGE));
     }
 
     /**
@@ -320,19 +308,18 @@ public class MpgTest extends ValidatorBaseTest {
      */
     public void samplePdEndDateGreaterThanIntervalMax() {
         Mpg mpg = createMinimumValidMpg();
-        mpg.setSamplePd(INTERVAL_M);
+        mpg.setSamplePd(Mpg.MONTHLY);
         mpg.setValidStartDate(DOM_MIN);
         mpg.setValidEndDate(DOM_MAX);
         mpg.setSamplePdStartDate(DOM_MIN);
         mpg.setSamplePdEndDate(DOM_MAX + 1);
 
         validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
-        Assert.assertTrue(mpg.getErrors()
-            .containsKey(SAMPLE_PD_END_DATE));
-        Assert.assertTrue(mpg.getErrors()
-            .get(SAMPLE_PD_END_DATE)
-            .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+        assertHasErrors(mpg);
+        MatcherAssert.assertThat(mpg.getErrors().keySet(),
+            CoreMatchers.hasItem(SAMPLE_PD_END_DATE));
+        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_END_DATE),
+            CoreMatchers.hasItem(VALUE_OUTSIDE_RANGE));
     }
 
     /**
@@ -340,7 +327,7 @@ public class MpgTest extends ValidatorBaseTest {
      */
     public void samplePdOffsetGreaterThanIntervalMax() {
         Mpg mpg = createMinimumValidMpg();
-        mpg.setSamplePd(INTERVAL_M);
+        mpg.setSamplePd(Mpg.MONTHLY);
         mpg.setValidStartDate(DOM_MIN);
         mpg.setValidEndDate(DOM_MAX);
             mpg.setSamplePdStartDate(DOM_MIN);
@@ -348,12 +335,11 @@ public class MpgTest extends ValidatorBaseTest {
         mpg.setSamplePdOffset(DOM_MAX + 1);
 
         validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
-        Assert.assertTrue(mpg.getErrors()
-            .containsKey(SAMPLE_PD_OFFSET));
-        Assert.assertTrue(mpg.getErrors()
-            .get(SAMPLE_PD_OFFSET)
-            .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+        assertHasErrors(mpg);
+        MatcherAssert.assertThat(mpg.getErrors().keySet(),
+            CoreMatchers.hasItem(SAMPLE_PD_OFFSET));
+        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_OFFSET),
+            CoreMatchers.hasItem(VALUE_OUTSIDE_RANGE));
     }
 
     /**
@@ -361,14 +347,14 @@ public class MpgTest extends ValidatorBaseTest {
      */
     public void samplePdStartGreaterThanEnd() {
         Mpg mpg = createMinimumValidMpg();
-        mpg.setSamplePd(INTERVAL_M);
+        mpg.setSamplePd(Mpg.MONTHLY);
         mpg.setValidStartDate(DOM_MIN);
         mpg.setValidEndDate(DOM_MAX);
         mpg.setSamplePdStartDate(PD_4);
         mpg.setSamplePdEndDate(PD_1);
 
         validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
+        assertHasErrors(mpg);
 
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
             CoreMatchers.hasItems(SAMPLE_PD_START_DATE, SAMPLE_PD_END_DATE));
@@ -392,7 +378,7 @@ public class MpgTest extends ValidatorBaseTest {
         mpg.setSampleSpecifs(Set.of(spec));
 
         validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
+        assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
             CoreMatchers.hasItem(SAMPLE_SPECIFS_FK_ARRAY));
         MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_SPECIFS_FK_ARRAY),
@@ -422,7 +408,7 @@ public class MpgTest extends ValidatorBaseTest {
         mpg.setEnvDescripDisplay("77 88 99 00");
 
         validator.validate(mpg);
-        Assert.assertTrue(mpg.hasErrors());
+        assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
             CoreMatchers.hasItem(ENV_DESCRIP_DISPLAY));
         MatcherAssert.assertThat(mpg.getErrors().get(ENV_DESCRIP_DISPLAY),
@@ -457,11 +443,11 @@ public class MpgTest extends ValidatorBaseTest {
         mpg.setApprLabId(EXISTING_MEAS_FACIL_ID);
         mpg.setRegulationId(EXISTING_REGULATION_ID);
         mpg.setSampleMethId(EXISTING_SAMPLE_METH_ID);
-        mpg.setSamplePd(INTERVAL_YEAR);
-        mpg.setSamplePdStartDate(DOY_MIN);
-        mpg.setSamplePdEndDate(DOY_MAX);
-        mpg.setValidStartDate(DOY_MIN);
-        mpg.setValidEndDate(DOY_MAX);
+        mpg.setSamplePd(Mpg.YEARLY);
+        mpg.setSamplePdStartDate(Mpg.DOY_MIN);
+        mpg.setSamplePdEndDate(Mpg.DOY_MAX);
+        mpg.setValidStartDate(Mpg.DOY_MIN);
+        mpg.setValidEndDate(Mpg.DOY_MAX);
         mpg.setEnvDescripDisplay(EXAMPLE_ENV_DESCRIP_FROM_SAMPLE_DATA);
         mpg.setEnvMediumId("N71");
         return mpg;

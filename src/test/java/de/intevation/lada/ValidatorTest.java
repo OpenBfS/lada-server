@@ -564,6 +564,22 @@ public class ValidatorTest extends BaseTest {
     }
 
     /**
+     * Test mpg object with invalid start and end date.
+     */
+    @Test
+    public void mpgValidStartEndDateBelowMin() {
+        mpgTest.validStartEndDateBelowMin();
+    }
+
+    /**
+     * Test mpg object with invalid start and end date.
+     */
+    @Test
+    public void mpgValidStartEndDateAboveMax() {
+        mpgTest.validStartEndDateAboveMax();
+    }
+
+    /**
      * Test mpg with pdStartDate smaller than valid.
      */
     @Test

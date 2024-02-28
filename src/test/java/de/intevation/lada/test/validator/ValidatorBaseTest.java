@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.test.validator;
 
-import static org.junit.Assert.assertFalse;
+import org.junit.Assert;
 
 import de.intevation.lada.model.BaseModel;
 
@@ -25,13 +25,21 @@ public abstract class ValidatorBaseTest {
      * @param entity Entity to check
      */
     protected void assertNoWarningsOrErrors(BaseModel entity) {
-        assertFalse(
+        Assert.assertFalse(
             MSG_UNEXPECTED_VALIDATION_ERRORS
                 + entity.getErrors(),
             entity.hasErrors());
-        assertFalse(
+        Assert.assertFalse(
             MSG_UNEXPECTED_VALIDATION_WARNINGS
                 + entity.getWarnings(),
             entity.hasWarnings());
+    }
+
+    /**
+     * Assert that the given entity has errors attached.
+     * @param entity Entity to check
+     */
+    protected void assertHasErrors(BaseModel entity) {
+        Assert.assertTrue("Expected errors missing", entity.hasErrors());
     }
 }

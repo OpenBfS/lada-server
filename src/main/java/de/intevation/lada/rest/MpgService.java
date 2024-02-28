@@ -124,10 +124,6 @@ public class MpgService extends LadaService {
             Mpg.class);
 
         validator.validate(messprogramm);
-        if (messprogramm.hasErrors()) {
-            return new Response(
-                false, StatusCodes.ERROR_VALIDATION, messprogramm);
-        }
 
         if (messprogramm.getEnvMediumId() == null
             || messprogramm.getEnvMediumId().length() == 0
@@ -164,10 +160,6 @@ public class MpgService extends LadaService {
             Mpg.class);
 
         validator.validate(messprogramm);
-        if (messprogramm.hasErrors()) {
-            return new Response(
-                false, StatusCodes.ERROR_VALIDATION, messprogramm);
-        }
 
         if ((messprogramm.getEnvMediumId() == null
                 || messprogramm.getEnvMediumId().equals(""))
