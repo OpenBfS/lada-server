@@ -153,43 +153,37 @@ public class StatusProtService extends LadaService {
             throw new ForbiddenException();
         }
 
-        if (messung.getStatus() == null) {
-            // set the first status as default
-            status.setStatusMpId(1);
-            return new Response(false, StatusCodes.OP_NOT_POSSIBLE, status);
-        } else {
-            StatusProt oldStatus = repository.getByIdPlain(
-                StatusProt.class, messung.getStatus());
-            StatusMp newKombi =
-                repository.getByIdPlain(
-                    StatusMp.class, status.getStatusMpId());
+        StatusProt oldStatus = repository.getByIdPlain(
+            StatusProt.class, messung.getStatus());
+        StatusMp newKombi =
+            repository.getByIdPlain(
+                StatusMp.class, status.getStatusMpId());
 
-            // Check if the user is allowed to change to the requested
-            // status_kombi
-            // TODO: Move to authorization
-            if (userInfo.getFunktionenForMst(
-                    status.getMeasFacilId()).contains(
-                        newKombi.getStatusLev().getId())
-                && (newKombi.getStatusLev().getId().equals(1)
-                    && messung.getStatusEditMst()
-                    || newKombi.getStatusLev().getId().equals(2)
-                    && messung.getStatusEditLand()
-                    || newKombi.getStatusLev().getId().equals(3)
-                    && messung.getStatusEditLst())
-                ) {
-                // 1. user user wants to reset the current status
-                //    'status wert' == 8
-                if (newKombi.getStatusVal().getId() == 8) {
-                    return authorization.filter(
-                        resetStatus(status, oldStatus, messung),
-                        StatusProt.class);
+        // Check if the user is allowed to change to the requested
+        // status_kombi
+        // TODO: Move to authorization
+        if (userInfo.getFunktionenForMst(
+                status.getMeasFacilId()).contains(
+                    newKombi.getStatusLev().getId())
+            && (newKombi.getStatusLev().getId().equals(1)
+                && messung.getStatusEditMst()
+                || newKombi.getStatusLev().getId().equals(2)
+                && messung.getStatusEditLand()
+                || newKombi.getStatusLev().getId().equals(3)
+                && messung.getStatusEditLst())
+            ) {
+            // 1. user user wants to reset the current status
+            //    'status wert' == 8
+            if (newKombi.getStatusVal().getId() == 8) {
+                return authorization.filter(
+                    resetStatus(status, oldStatus, messung),
+                    StatusProt.class);
                 }
-                // 2. user wants to set new status
-                return setNewStatus(status, newKombi, messung);
+            // 2. user wants to set new status
+            return setNewStatus(status, newKombi, messung);
             } else {
-                throw new ForbiddenException();
+            throw new ForbiddenException();
             }
-        }
     }
 
     private Response setNewStatus(
