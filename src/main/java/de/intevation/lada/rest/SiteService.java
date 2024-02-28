@@ -194,9 +194,6 @@ public class SiteService extends LadaService {
         }
 
         validator.validate(ort);
-        if (ort.hasErrors()) {
-            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-        }
 
         Response response = new Response(true, StatusCodes.OK, ort);
         if (ort.getId() == null) {
@@ -232,9 +229,6 @@ public class SiteService extends LadaService {
         }
 
         validator.validate(ort);
-        if (ort.hasErrors()) {
-            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-        }
 
         Response response = repository.update(ort);
         validator.validate(response.getData());
