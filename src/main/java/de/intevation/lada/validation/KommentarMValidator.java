@@ -30,7 +30,7 @@ public class KommentarMValidator extends Validator<CommMeasm> {
     private Instance<Rule> rules;
 
     @Override
-    public void validate(Object object) {
-        validate((CommMeasm) object, rules);
+    public CommMeasm validate(Object object) {
+        return validate((CommMeasm) object, rules);
     }
 }

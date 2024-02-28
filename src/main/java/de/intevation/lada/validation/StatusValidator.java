@@ -31,7 +31,7 @@ public class StatusValidator extends Validator<StatusProt> {
     private Instance<Rule> rules;
 
     @Override
-    public void validate(Object object) {
-        validate((StatusProt) object, rules);
+    public StatusProt validate(Object object) {
+        return validate((StatusProt) object, rules);
     }
 }

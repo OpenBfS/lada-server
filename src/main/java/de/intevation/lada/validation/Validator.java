@@ -52,16 +52,21 @@ public abstract class Validator<T extends BaseModel> {
      * validate(T, Instance<Rule>)
      *
      * @param object The object to be validated
+     * @return The validated object
      */
-    public abstract void validate(Object object);
+    public abstract T validate(Object object);
 
     /**
-     * Validate objects of type T with given set of rules.
+     * Validate objects of type T with Bean Validation constraints and
+     * given set of rules.
+     *
+     * Validation messages are attached to the passed object.
      *
      * @param object The object to be validated
      * @param rules The rules to apply
+     * @return The validated object
      */
-    protected void validate(T object, Instance<Rule> rules) {
+    protected T validate(T object, Instance<Rule> rules) {
         // Bean Validation
         Set<ConstraintViolation<T>> beanViolations =
             beanValidator.validate(object);
@@ -72,7 +77,7 @@ public abstract class Validator<T extends BaseModel> {
                     violation.getMessage());
             }
             // Do not expect other rules to work with invalid Beans
-            return;
+            return object;
         }
 
         Set<ConstraintViolation<T>> beanViolationWarnings =
@@ -97,5 +102,6 @@ public abstract class Validator<T extends BaseModel> {
                 }
             }
         }
+        return object;
     }
 }

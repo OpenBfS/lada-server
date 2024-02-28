@@ -31,7 +31,7 @@ public class ProbeValidator extends Validator<Sample> {
     private Instance<Rule> rules;
 
     @Override
-    public void validate(Object object) {
-        validate((Sample) object, rules);
+    public Sample validate(Object object) {
+        return validate((Sample) object, rules);
     }
 }

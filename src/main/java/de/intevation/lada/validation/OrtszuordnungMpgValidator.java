@@ -29,8 +29,7 @@ public class OrtszuordnungMpgValidator extends Validator<GeolocatMpg> {
     private Instance<Rule> rules;
 
     @Override
-    public void validate(Object object) {
-        validate((GeolocatMpg) object, rules);
+    public GeolocatMpg validate(Object object) {
+        return validate((GeolocatMpg) object, rules);
     }
-
 }

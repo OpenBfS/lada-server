@@ -31,8 +31,7 @@ public class OrtszuordnungValidator extends Validator<Geolocat> {
     private Instance<Rule> rules;
 
     @Override
-    public void validate(Object object) {
-        validate((Geolocat) object, rules);
+    public Geolocat validate(Object object) {
+        return validate((Geolocat) object, rules);
     }
-
 }
