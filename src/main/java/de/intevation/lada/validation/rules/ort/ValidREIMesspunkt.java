@@ -22,7 +22,6 @@ import de.intevation.lada.validation.annotation.ValidationRule;
 import de.intevation.lada.validation.rules.Rule;
 
 
-
 @ValidationRule("Ort")
 public class ValidREIMesspunkt implements Rule {
 
@@ -34,53 +33,66 @@ public class ValidREIMesspunkt implements Rule {
         Site ort = (Site) object;
 
         Violation violation = new Violation();
-        if ( ort == null || ort.getSiteClassId()==null || ort.getSiteClassId() != 3)  {
+        if (ort == null
+            || ort.getSiteClassId() == null
+            || ort.getSiteClassId() != 3
+        ) {
             return null;
         }
 
-        if (ort.getNuclFacilGrId()!=null) {
-            QueryBuilder<NuclFacilGrMp> builder =
-                repository.queryBuilder(NuclFacilGrMp.class);
-            builder.and("nuclFacilGrId", ort.getNuclFacilGrId());
-            List<NuclFacilGrMp> ktas = (List<NuclFacilGrMp>) repository.filterPlain(builder.getQuery());
+        final String nuclFacilGrIdKey = "nuclFacilGrId", extIdKey = "extId";
+        if (ort.getNuclFacilGrId() != null) {
+            QueryBuilder<NuclFacilGrMp> builder = repository
+                .queryBuilder(NuclFacilGrMp.class)
+                .and(nuclFacilGrIdKey, ort.getNuclFacilGrId());
+            List<NuclFacilGrMp> ktas = repository.filterPlain(
+                builder.getQuery());
 
             //Compare first 4 characters of Ort ID to stored KTAs
-            if ((ort.getExtId() == null || ort.getExtId().length() < 4 ) || ktas.size() < 1) {
-                violation.addWarning("extId", StatusCodes.VALUE_OUTSIDE_RANGE);
+            if (ort.getExtId() == null
+                || ort.getExtId().length() < 4
+                || ktas.size() < 1
+            ) {
+                violation.addWarning(extIdKey, StatusCodes.VALUE_OUTSIDE_RANGE);
             } else {
-                String KTAOrtId = ort.getExtId().substring(0,4);
-                QueryBuilder<NuclFacil> builderKtaList =
-                    repository.queryBuilder(NuclFacil.class);
-                    builderKtaList.and("extId", KTAOrtId);
-                List<NuclFacil> KtaList = repository.filterPlain(builderKtaList.getQuery());
+                String ktaOrtId = ort.getExtId().substring(0, 4);
+                QueryBuilder<NuclFacil> builderKtaList = repository
+                    .queryBuilder(NuclFacil.class)
+                    .and(extIdKey, ktaOrtId);
+                List<NuclFacil> ktaList = repository.filterPlain(
+                    builderKtaList.getQuery());
 
-                if (KtaList.size() < 1 || KtaList == null) {
-                    violation.addWarning("extId", StatusCodes.ORT_ANLAGE_MISSING);
+                if (ktaList.size() < 1) {
+                    violation.addWarning(
+                        extIdKey, StatusCodes.ORT_ANLAGE_MISSING);
                     return violation;
                 }
 
-                for (NuclFacilGrMp kta : ktas){
-                    if ( kta.getNuclFacilId() != KtaList.get(0).getId() ) {
-                        violation.addWarning("reiNuclFacilGrId", StatusCodes.VALUE_NOT_MATCHING);
-                    } else if ( ort.getExtId().length() < 5
-                        && kta.getNuclFacilId() == KtaList.get(0).getId() ){
-                        violation.addWarning("extId", StatusCodes.ORT_REIMP_MISSING);
-                    } else if (  ort.getExtId().length() > 12  && kta.getNuclFacilId() == KtaList.get(0).getId() ){
-                        violation.addWarning("extId", StatusCodes.ORT_REIMP_TOO_LONG);
+                for (NuclFacilGrMp kta : ktas) {
+                    if (kta.getNuclFacilId() != ktaList.get(0).getId()) {
+                        violation.addWarning(
+                            "reiNuclFacilGrId", StatusCodes.VALUE_NOT_MATCHING);
+                    } else if (ort.getExtId().length() < 5
+                        && kta.getNuclFacilId() == ktaList.get(0).getId()
+                    ) {
+                        violation.addWarning(
+                            extIdKey, StatusCodes.ORT_REIMP_MISSING);
+                    } else if (ort.getExtId().length() > 12
+                        && kta.getNuclFacilId() == ktaList.get(0).getId()
+                    ) {
+                        violation.addWarning(
+                            extIdKey, StatusCodes.ORT_REIMP_TOO_LONG);
                     } else {
                         break;
                     }
                 }
-
             }
-
         } else {
-                violation.addWarning("nuclFacilGrId", StatusCodes.VALUE_MISSING);
+            violation.addWarning(nuclFacilGrIdKey, StatusCodes.VALUE_MISSING);
         }
         if (violation.hasErrors() || violation.hasWarnings()) {
             return violation;
-        } else {
-            return null;
         }
+        return null;
     }
 }
