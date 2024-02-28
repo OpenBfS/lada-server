@@ -28,6 +28,7 @@ import jakarta.validation.constraints.NotBlank;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.TagLink;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.NetworkMatchingMeasFacil;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
@@ -36,6 +37,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @GroupSequence({ Tag.class, DatabaseConstraints.class })
 @Unique(groups = DatabaseConstraints.class,
     clazz = Tag.class, fields = { "name", "networkId", "measFacilId" })
+@NetworkMatchingMeasFacil(groups = DatabaseConstraints.class)
 public class Tag extends BaseModel {
 
     // Default time after which mst tags expire in days

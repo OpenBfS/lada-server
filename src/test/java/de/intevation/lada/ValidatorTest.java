@@ -26,6 +26,7 @@ import de.intevation.lada.test.validator.MpgTest;
 import de.intevation.lada.test.validator.ProbeTest;
 import de.intevation.lada.test.validator.SiteTest;
 import de.intevation.lada.test.validator.StatusTest;
+import de.intevation.lada.test.validator.TagTest;
 
 
 /**
@@ -62,6 +63,9 @@ public class ValidatorTest extends BaseTest {
 
     @Inject
     private MeasValTest measValTest;
+
+    @Inject
+    private TagTest tagTest;
 
     /**
      * Constructor.
@@ -1069,5 +1073,15 @@ public class ValidatorTest extends BaseTest {
     @Test
     public void measValMeasdIsUniqueInMeasm() {
         measValTest.measdIsUniqueInMeasm();
+    }
+
+    @Test
+    public void tagMatchingNetworkMeasFacil() {
+        tagTest.matchingNetworkMeasFacil();
+    }
+
+    @Test
+    public void tagNotMatchingNetworkMeasFacil() {
+        tagTest.notMatchingNetworkMeasFacil();
     }
 }

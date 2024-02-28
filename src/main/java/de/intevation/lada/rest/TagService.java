@@ -140,9 +140,6 @@ public class TagService extends LadaService {
                 MeasFacil.class, tag.getMeasFacilId());
             if (tag.getNetworkId() == null) {
                 tag.setNetworkId(mst.getNetworkId());
-            } else if (!tag.getNetworkId().equals(mst.getNetworkId())) {
-                return new Response(
-                    false, StatusCodes.VALUE_NOT_MATCHING, "mst");
             }
         }
 
@@ -198,9 +195,6 @@ public class TagService extends LadaService {
                 MeasFacil.class, tag.getMeasFacilId());
             if (tag.getNetworkId() == null) {
                 tag.setNetworkId(mst.getNetworkId());
-            } else if (!tag.getNetworkId().equals(mst.getNetworkId())) {
-                return new Response(
-                    false, StatusCodes.VALUE_NOT_MATCHING, "mst");
             }
         }
 
