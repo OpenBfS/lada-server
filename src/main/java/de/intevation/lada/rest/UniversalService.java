@@ -148,10 +148,6 @@ public class UniversalService extends LadaService {
             List<Map<String, Object>> result = queryTools.getResultForQuery(
                 start, limit);
 
-            if (result == null) {
-                return new Response(true, StatusCodes.OK, null);
-            }
-
             // TODO: This issues a potentially costly 'SELECT count(*)'
             // for every request. Better not to rely on total count at client side?
             int size = queryTools.getTotalCountForQuery();
