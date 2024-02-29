@@ -49,34 +49,32 @@ public class TimestampLocker implements ObjectLocker {
                 throw new ClientErrorException(Status.CONFLICT);
             }
         } else {
-            Method[] methods = o.getClass().getMethods();
-            for (Method m: methods) {
+            try {
                 try {
-                    if (m.getName().equals("getSampleId")) {
-                        Integer id = (Integer) m.invoke(o);
-                        Sample probe =
-                            repository.getByIdPlain(Sample.class, id);
-                        if (isNewer(o, probe.getTreeMod())) {
-                            throw new ClientErrorException(Status.CONFLICT);
-                        }
-                        return;
+                    Method m = o.getClass().getMethod("getSampleId");
+                    Integer id = (Integer) m.invoke(o);
+                    Sample probe =
+                        repository.getByIdPlain(Sample.class, id);
+                    if (isNewer(o, probe.getTreeMod())) {
+                        throw new ClientErrorException(Status.CONFLICT);
                     }
-                    if (m.getName().equals("getMeasmId")) {
-                        Integer id = (Integer) m.invoke(o);
-                        Measm messung =
-                            repository.getByIdPlain(Measm.class, id);
-                        if (isNewer(o, messung.getTreeMod())) {
-                            throw new ClientErrorException(Status.CONFLICT);
-                        }
-                        return;
+                    return;
+                } catch (NoSuchMethodException e) {
+                    Method m = o.getClass().getMethod("getMeasmId");
+                    Integer id = (Integer) m.invoke(o);
+                    Measm messung =
+                        repository.getByIdPlain(Measm.class, id);
+                    if (isNewer(o, messung.getTreeMod())) {
+                        throw new ClientErrorException(Status.CONFLICT);
                     }
-                } catch (NoSuchMethodException
-                    | IllegalAccessException
-                    | InvocationTargetException e
-                ) {
-                    // TODO: Use types instead of reflection
-                    throw new RuntimeException(e);
+                    return;
                 }
+            } catch (NoSuchMethodException
+                | IllegalAccessException
+                | InvocationTargetException e
+                ) {
+                // TODO: Use types instead of reflection
+                throw new RuntimeException(e);
             }
         }
     }
@@ -90,10 +88,14 @@ public class TimestampLocker implements ObjectLocker {
      */
     private boolean isNewer(Object o, Date t) throws
         // TODO: Use types instead of reflection
-        NoSuchMethodException,
         IllegalAccessException,
         InvocationTargetException {
-        Method m = o.getClass().getMethod("getParentModified");
+        Method m;
+        try {
+            m = o.getClass().getMethod("getParentModified");
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
         Date ot = (Date) m.invoke(o);
         if (ot == null) {
             return true;
