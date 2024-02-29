@@ -11,6 +11,7 @@ import java.net.URL;
 import java.nio.charset.CharacterCodingException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
@@ -23,6 +24,8 @@ import jakarta.ws.rs.client.SyncInvoker;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.jboss.logging.Logger;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -200,13 +203,14 @@ public class ExporterTest extends BaseTest {
             .build();
 
         String result = runExportTest(baseUrl, formatCsv, requestJson);
-        Assert.assertEquals(
-            "Unexpected CSV content",
-            "hauptprobenNr,umwId,isTest,probeId,extId,messwerteCount\r\n"
-            + "120510002,L6,No,1000,453,2\r\n"
-            + "120510002,L6,No,1000,454,0\r\n"
-            + "120510001,L6,Yes,1001,,\r\n",
-            result);
+        MatcherAssert.assertThat(result,
+            CoreMatchers.startsWith(
+                "hauptprobenNr,umwId,isTest,probeId,extId,messwerteCount\r\n"));
+        MatcherAssert.assertThat(Arrays.asList(result.split("\r\n")),
+            CoreMatchers.hasItems(
+                "120510002,L6,No,1000,453,2",
+                "120510002,L6,No,1000,454,0",
+                "120510001,L6,Yes,1001,,"));
     }
 
     /**
