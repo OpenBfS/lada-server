@@ -207,9 +207,8 @@ public class MpgService extends LadaService {
                     m, RequestMethod.PUT, Mpg.class)
             ) {
                 m.setIsActive(data.isActive());
-                Response r = repository.update(m);
-                int code = Integer.valueOf(r.getMessage()).intValue();
-                mpResult.put("success", code);
+                repository.update(m);
+                mpResult.put("success", StatusCodes.OK);
             } else {
                 mpResult.put("success", StatusCodes.NOT_ALLOWED);
             }
