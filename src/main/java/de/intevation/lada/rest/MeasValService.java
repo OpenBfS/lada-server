@@ -12,6 +12,8 @@ import java.util.List;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.ClientErrorException;
+import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -20,6 +22,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
@@ -71,6 +74,9 @@ public class MeasValService extends LadaService {
 
     @Inject
     private MesswertNormalizer messwertNormalizer;
+
+    @Inject
+    private I18n i18n;
 
     /**
      * Get MeasVal objects.
@@ -193,10 +199,10 @@ public class MeasValService extends LadaService {
         Sample probe =
             repository.getByIdPlain(
                 Sample.class, messung.getSampleId());
-        if (probe.getEnvMediumId() == null
-            || probe.getEnvMediumId().equals("")
-        ) {
-            return new Response(true, StatusCodes.OP_NOT_POSSIBLE, null);
+        if (probe.getEnvMediumId() == null) {
+            throw new ClientErrorException(jakarta.ws.rs.core.Response
+                .status(Status.CONFLICT)
+                .entity(i18n.getString("op_not_possible")).build());
         }
         EnvMedium umwelt =
             repository.getByIdPlain(
