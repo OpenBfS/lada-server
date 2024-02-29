@@ -13,7 +13,9 @@ import java.util.Date;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.ClientErrorException;
-import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.Response;
+
+import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.Repository;
@@ -33,6 +35,9 @@ public class TimestampLocker implements ObjectLocker {
     @Inject
     Repository repository;
 
+    @Inject
+    private I18n i18n;
+
     /**
      * Test whether a data object is locked or not.
      *
@@ -40,14 +45,21 @@ public class TimestampLocker implements ObjectLocker {
      */
     @Override
     public void isLocked(Object o) {
+        if (checkIsLocked(o)) {
+            throw new ClientErrorException(Response
+                .status(Response.Status.CONFLICT)
+                .entity(i18n.getString("dataset_changed")).build());
+        }
+        return;
+    }
+
+    private boolean checkIsLocked(Object o) {
         if (o instanceof Sample) {
             Sample newProbe = (Sample) o;
             Sample oldProbe = repository.getByIdPlain(
                 Sample.class, newProbe.getId());
-            if (oldProbe.getTreeMod().getTime()
-                > newProbe.getTreeMod().getTime()) {
-                throw new ClientErrorException(Status.CONFLICT);
-            }
+            return oldProbe.getTreeMod().getTime()
+                > newProbe.getTreeMod().getTime();
         } else {
             try {
                 try {
@@ -55,19 +67,13 @@ public class TimestampLocker implements ObjectLocker {
                     Integer id = (Integer) m.invoke(o);
                     Sample probe =
                         repository.getByIdPlain(Sample.class, id);
-                    if (isNewer(o, probe.getTreeMod())) {
-                        throw new ClientErrorException(Status.CONFLICT);
-                    }
-                    return;
+                    return isNewer(o, probe.getTreeMod());
                 } catch (NoSuchMethodException e) {
                     Method m = o.getClass().getMethod("getMeasmId");
                     Integer id = (Integer) m.invoke(o);
                     Measm messung =
                         repository.getByIdPlain(Measm.class, id);
-                    if (isNewer(o, messung.getTreeMod())) {
-                        throw new ClientErrorException(Status.CONFLICT);
-                    }
-                    return;
+                    return isNewer(o, messung.getTreeMod());
                 }
             } catch (NoSuchMethodException
                 | IllegalAccessException
