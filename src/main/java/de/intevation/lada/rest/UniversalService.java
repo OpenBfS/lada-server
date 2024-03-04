@@ -17,7 +17,8 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response.Status;
-import de.intevation.lada.model.QueryColumns;
+import jakarta.validation.constraints.NotEmpty;
+
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
@@ -90,17 +91,10 @@ public class UniversalService extends LadaService {
     public Response execute(
         @QueryParam("start") int start, // default for primitive type: 0
         @QueryParam("limit") Integer limit,
-        QueryColumns columns
+        @NotEmpty List<GridColConf> gridColumnValues
     ) {
-        List<GridColConf> gridColumnValues = columns.getColumns();
-
         String authorizationColumnIndex = null;
         Class<?> authorizationColumnType = null;
-        if (gridColumnValues == null
-            || gridColumnValues.isEmpty()) {
-            //TODO Error code if no columns are given
-            return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
 
         /**
          * Determines the class used for authorizing result entries:
@@ -144,7 +138,7 @@ public class UniversalService extends LadaService {
 
         try {
             QueryTools queryTools = new QueryTools(
-                repository, columns.getColumns());
+                repository, gridColumnValues);
             List<Map<String, Object>> result = queryTools.getResultForQuery(
                 start, limit);
 
