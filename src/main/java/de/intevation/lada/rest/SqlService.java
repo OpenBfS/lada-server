@@ -83,12 +83,9 @@ public class SqlService extends LadaService {
         try {
             QueryTools queryTools =
                 new QueryTools(repository, gridColumnValues);
-            String sql = queryTools.getSql();
-            if (sql == null) {
-                return new Response(true, StatusCodes.OK, null);
-            }
-            String statement =
-                prepareStatement(sql, queryTools.getFilterValues());
+            String statement = prepareStatement(
+                queryTools.getSql(),
+                queryTools.getFilterValues());
             return new Response(true, StatusCodes.OK, statement);
         } catch (IllegalArgumentException iae) {
             throw new BadRequestException(
