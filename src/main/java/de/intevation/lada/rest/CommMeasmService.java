@@ -25,7 +25,6 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
@@ -116,9 +115,6 @@ public class CommMeasmService extends LadaService {
             RequestMethod.POST,
             CommMeasm.class);
         validator.validate(kommentar);
-        if (kommentar.hasErrors()) {
-            return new Response(false, StatusCodes.ERROR_VALIDATION, kommentar);
-        }
         return authorization.filter(
             repository.create(kommentar), CommMeasm.class);
     }
@@ -139,9 +135,6 @@ public class CommMeasmService extends LadaService {
                 RequestMethod.PUT,
                 CommMeasm.class);
         validator.validate(kommentar);
-        if (kommentar.hasErrors() || kommentar.hasWarnings()) {
-            return new Response(false, StatusCodes.VAL_EXISTS, kommentar);
-        }
         return authorization.filter(
             repository.update(kommentar), CommMeasm.class);
     }
