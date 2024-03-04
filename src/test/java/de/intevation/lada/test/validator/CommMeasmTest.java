@@ -10,8 +10,6 @@ package de.intevation.lada.test.validator;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
-import org.junit.Assert;
-
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.validation.Validator;
 
@@ -22,11 +20,6 @@ import de.intevation.lada.validation.Validator;
 public class CommMeasmTest extends ValidatorBaseTest {
 
     private static final String MEAS_FACIL = "06010";
-
-    //Validation keys
-    private static final String ERROR_KEY = "measmId";
-    private static final String ERROR_VALUE
-        = "Non-unique value combination for [measmId, text]";
 
     //Other constants
     private static final String COMMENT_TEXT_EXISTING = "Testkommentar";
@@ -46,10 +39,10 @@ public class CommMeasmTest extends ValidatorBaseTest {
         comm.setMeasFacilId(MEAS_FACIL);
 
         validator.validate(comm);
-        Assert.assertTrue(comm.hasErrors());
-        Assert.assertTrue(comm.getErrors().containsKey(ERROR_KEY));
-        Assert.assertTrue(comm.getErrors()
-            .get(ERROR_KEY).contains(ERROR_VALUE));
+        assertHasError(
+            comm,
+            "text",
+            "Non-unique value combination for [text, measmId]");
     }
 
     /**

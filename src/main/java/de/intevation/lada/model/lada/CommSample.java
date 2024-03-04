@@ -31,7 +31,7 @@ import de.intevation.lada.model.BaseModel;
 
 @Entity
 @Table(schema = SchemaName.NAME)
-@Unique(fields = {"sampleId", "text"},
+@Unique(fields = {"text", "sampleId"},
     groups = DatabaseConstraints.class, clazz = CommSample.class)
 @GroupSequence({ CommSample.class, DatabaseConstraints.class })
 public class CommSample extends BaseModel implements Serializable {

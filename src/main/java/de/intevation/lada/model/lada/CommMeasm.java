@@ -31,7 +31,7 @@ import de.intevation.lada.model.BaseModel;
 
 @Entity
 @Table(name = "comm_measm", schema = SchemaName.NAME)
-@Unique(fields = {"measmId", "text"},
+@Unique(fields = {"text", "measmId"},
     groups = DatabaseConstraints.class, clazz = CommMeasm.class)
 @GroupSequence({ CommMeasm.class, DatabaseConstraints.class })
 public class CommMeasm extends BaseModel implements Serializable {
