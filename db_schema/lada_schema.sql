@@ -309,7 +309,8 @@ CREATE TABLE comm_sample (
     meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
     date timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     text character varying(1024) NOT NULL CHECK (trim(both ' ' from text) <> ''),
-    sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE
+    sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE,
+    UNIQUE (sample_id, text)
 );
 
 
@@ -402,7 +403,8 @@ CREATE TABLE comm_measm (
     meas_facil_id character varying(5) NOT NULL REFERENCES master.meas_facil,
     date timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     text character varying(1024) NOT NULL CHECK (trim(both ' ' from text) <> ''),
-    measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE
+    measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE,
+    UNIQUE (measm_id, text)
 );
 
 
