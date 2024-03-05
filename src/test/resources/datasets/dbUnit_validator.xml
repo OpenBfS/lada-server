@@ -125,6 +125,18 @@
         short_text = "kurz"
         rei_report_text = "bericht"
     />
+    <master.site
+        id = "1001"
+        network_id = "06"
+        ext_id = "D_00193"
+        long_text = "Langer Text"
+        is_fuzzy = "true"
+        spat_ref_sys_id = "5"
+        coord_x_ext = "32487017"
+        coord_y_ext = "5519769"
+        geom = "SRID=4326;POINT(49.83021 8.81948)"
+        short_text = "kurz"
+    />
     <master.status_ord_mp id = "1" from_id = "1" to_id = "2" />
     <!--Geo data-->
     <geo.vg250_gem

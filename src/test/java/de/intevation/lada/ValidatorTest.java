@@ -873,6 +873,11 @@ public class ValidatorTest extends BaseTest {
         geolocatTest.geolocatDuplicateETypeRegulation();
     }
 
+    @Test
+    public void geolocatDuplicate() {
+        geolocatTest.geolocatDuplicate();
+    }
+
     /**
      * Test valid geolocat.
      */
@@ -887,6 +892,11 @@ public class ValidatorTest extends BaseTest {
     @Test
     public void geolocatMpgDuplicateETypeRegulation() {
         geolocatTest.geolocatMpgDuplicateETypeRegulation();
+    }
+
+    @Test
+    public void geolocatMpgDuplicate() {
+        geolocatTest.geolocatMpgDuplicate();
     }
 
     /**

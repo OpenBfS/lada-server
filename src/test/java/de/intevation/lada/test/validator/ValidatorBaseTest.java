@@ -59,4 +59,19 @@ public abstract class ValidatorBaseTest {
         MatcherAssert.assertThat(entity.getErrors().get(key),
             CoreMatchers.hasItem(val));
     }
+
+    /**
+     * Assert that the given entity has the warning with given key and value
+     * attached.
+     * @param entity Entity to check
+     * @param key Expected warning key
+     * @param val Expected warning value
+     */
+    protected void assertHasWarning(BaseModel entity, String key, String val) {
+        Assert.assertTrue("Expected warnings missing", entity.hasWarnings());
+        MatcherAssert.assertThat(entity.getWarnings().keySet(),
+            CoreMatchers.hasItem(key));
+        MatcherAssert.assertThat(entity.getWarnings().get(key),
+            CoreMatchers.hasItem(val));
+    }
 }

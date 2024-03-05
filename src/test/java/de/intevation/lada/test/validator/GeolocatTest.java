@@ -14,6 +14,7 @@ import org.junit.Assert;
 
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
+import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
 
 @Transactional
@@ -28,7 +29,8 @@ public class GeolocatTest extends ValidatorBaseTest {
     public static final int SAMPLE_WITHOUT_E_GEOLOCAT = 3000;
     public static final int MPG_WITH_E_GEOLOCAT = 999;
     public static final int MPG_WITHOUT_E_GEOLOCAT = 998;
-    public static final int EXISTITING_SITE_ID = 1000;
+    public static final int REFERENCED_SITE_ID = 1000;
+    public static final int EXISTING_SITE_ID = 1001;
 
     private static final String TYPE_REGULATION_E = "E";
 
@@ -44,7 +46,20 @@ public class GeolocatTest extends ValidatorBaseTest {
         Geolocat loc = new Geolocat();
         loc.setTypeRegulation(TYPE_REGULATION_E);
         loc.setSampleId(SAMPLE_WITH_E_GEOLOCAT);
-        loc.setSiteId(EXISTITING_SITE_ID);
+        loc.setSiteId(EXISTING_SITE_ID);
+
+        sampleVal.validate(loc);
+        assertHasWarning(
+            loc,
+            TYPE_REGULATION,
+            String.valueOf(StatusCodes.VALUE_AMBIGOUS));
+    }
+
+    public void geolocatDuplicate() {
+        Geolocat loc = new Geolocat();
+        loc.setTypeRegulation(TYPE_REGULATION_E);
+        loc.setSampleId(SAMPLE_WITH_E_GEOLOCAT);
+        loc.setSiteId(REFERENCED_SITE_ID);
 
         sampleVal.validate(loc);
         Assert.assertTrue(loc.hasErrors());
@@ -62,7 +77,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         Geolocat loc = new Geolocat();
         loc.setTypeRegulation(TYPE_REGULATION_E);
         loc.setSampleId(SAMPLE_WITHOUT_E_GEOLOCAT);
-        loc.setSiteId(EXISTITING_SITE_ID);
+        loc.setSiteId(EXISTING_SITE_ID);
 
         sampleVal.validate(loc);
         Assert.assertFalse(loc.hasErrors());
@@ -75,7 +90,20 @@ public class GeolocatTest extends ValidatorBaseTest {
         GeolocatMpg loc = new GeolocatMpg();
         loc.setTypeRegulation(TYPE_REGULATION_E);
         loc.setMpgId(MPG_WITH_E_GEOLOCAT);
-        loc.setSiteId(EXISTITING_SITE_ID);
+        loc.setSiteId(EXISTING_SITE_ID);
+
+        mpgVal.validate(loc);
+        assertHasWarning(
+            loc,
+            TYPE_REGULATION,
+            String.valueOf(StatusCodes.VALUE_AMBIGOUS));
+    }
+
+    public void geolocatMpgDuplicate() {
+        GeolocatMpg loc = new GeolocatMpg();
+        loc.setTypeRegulation(TYPE_REGULATION_E);
+        loc.setMpgId(MPG_WITH_E_GEOLOCAT);
+        loc.setSiteId(REFERENCED_SITE_ID);
 
         mpgVal.validate(loc);
         assertHasError(
@@ -91,7 +119,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         GeolocatMpg loc = new GeolocatMpg();
         loc.setTypeRegulation(TYPE_REGULATION_E);
         loc.setMpgId(MPG_WITHOUT_E_GEOLOCAT);
-        loc.setSiteId(EXISTITING_SITE_ID);
+        loc.setSiteId(EXISTING_SITE_ID);
         mpgVal.validate(loc);
         Assert.assertFalse(loc.hasErrors());
     }
