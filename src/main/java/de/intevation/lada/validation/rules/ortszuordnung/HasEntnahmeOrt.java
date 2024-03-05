@@ -28,23 +28,19 @@ public class HasEntnahmeOrt implements Rule {
 
     @Override
     public Violation execute(Object object) {
-        Integer id = null;
         if (object instanceof Geolocat) {
             Geolocat ort = (Geolocat) object;
             if (!"E".equals(ort.getTypeRegulation())) {
                 return null;
             }
-            id = ort.getSampleId();
-            QueryBuilder<Geolocat> builder =
-                repository.queryBuilder(Geolocat.class);
-
-            builder.and("sampleId", id);
+            QueryBuilder<Geolocat> builder = repository
+                .queryBuilder(Geolocat.class)
+                .and("sampleId", ort.getSampleId())
+                .and("typeRegulation", "E");
             List<Geolocat> orte = repository.filterPlain(
                 builder.getQuery());
             for (Geolocat o : orte) {
-                if ("E".equals(o.getTypeRegulation())
-                    && !o.getId().equals(ort.getId())
-                ) {
+                if (!o.getId().equals(ort.getId())) {
                     Violation violation = new Violation();
                     violation.addWarning(
                         "typeRegulation", StatusCodes.VALUE_AMBIGOUS);
@@ -56,17 +52,14 @@ public class HasEntnahmeOrt implements Rule {
             if (!"E".equals(ort.getTypeRegulation())) {
                 return null;
             }
-            id = ort.getMpgId();
-            QueryBuilder<GeolocatMpg> builder =
-                repository.queryBuilder(GeolocatMpg.class);
-
-            builder.and("mpgId", id);
+            QueryBuilder<GeolocatMpg> builder = repository
+                .queryBuilder(GeolocatMpg.class)
+                .and("mpgId", ort.getMpgId())
+                .and("typeRegulation", "E");
             List<GeolocatMpg> orte = repository.filterPlain(
                 builder.getQuery());
             for (GeolocatMpg o : orte) {
-                if ("E".equals(o.getTypeRegulation())
-                    && !o.getId().equals(ort.getId())
-                ) {
+                if (!o.getId().equals(ort.getId())) {
                     Violation violation = new Violation();
                     violation.addWarning(
                         "typeRegulation", StatusCodes.VALUE_AMBIGOUS);
