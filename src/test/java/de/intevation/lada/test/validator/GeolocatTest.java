@@ -10,18 +10,14 @@ package de.intevation.lada.test.validator;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
 
 @Transactional
-public class GeolocatTest {
-
+public class GeolocatTest extends ValidatorBaseTest {
 
     // Validation keys
     private static final String TYPE_REGULATION = "typeRegulation";
@@ -52,15 +48,11 @@ public class GeolocatTest {
 
         sampleVal.validate(loc);
         Assert.assertTrue(loc.hasErrors());
-        final String typeRegulationKey = "typeRegulation";
-        MatcherAssert.assertThat(
-            loc.getErrors().keySet(),
-            CoreMatchers.hasItem(typeRegulationKey));
-        MatcherAssert.assertThat(
-            loc.getErrors().get(typeRegulationKey),
-            CoreMatchers.hasItem(
-                "Non-unique value combination for "
-                + "[typeRegulation, sampleId, siteId]"));
+        assertHasError(
+            loc,
+            TYPE_REGULATION,
+            "Non-unique value combination for "
+                + "[typeRegulation, sampleId, siteId]");
     }
 
     /**
@@ -86,10 +78,10 @@ public class GeolocatTest {
         loc.setSiteId(EXISTITING_SITE_ID);
 
         mpgVal.validate(loc);
-        Assert.assertTrue(loc.hasWarnings());
-        Assert.assertTrue(loc.getWarnings().containsKey(TYPE_REGULATION));
-        Assert.assertTrue(loc.getWarnings().get(TYPE_REGULATION).contains(
-                String.valueOf(StatusCodes.VALUE_AMBIGOUS)));
+        assertHasError(
+            loc,
+            TYPE_REGULATION,
+            "Non-unique value combination for [typeRegulation, mpgId, siteId]");
     }
 
     /**
