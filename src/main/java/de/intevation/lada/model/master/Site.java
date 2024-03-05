@@ -139,7 +139,7 @@ public class Site extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = State.class)
     private Integer stateId;
 
-    private Boolean isFuzzy;
+    private boolean isFuzzy;
 
     @Size(max = 1)
     @NotEmptyNorWhitespace

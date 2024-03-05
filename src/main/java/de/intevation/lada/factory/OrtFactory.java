@@ -172,8 +172,7 @@ public class OrtFactory {
         boolean hasKoord = false;
         boolean hasGem = false;
         boolean hasStaat = false;
-        //set default value for attribute "unscharf"
-        ort.setIsFuzzy(false);
+
         if (ort.getSpatRefSysId() != null
             && ort.getCoordXExt() != null
             && ort.getCoordYExt() != null
