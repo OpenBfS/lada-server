@@ -30,6 +30,7 @@ import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.TypeRegulation;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
+import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 
