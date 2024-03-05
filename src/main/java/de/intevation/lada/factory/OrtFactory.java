@@ -11,13 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.inject.Inject;
-import jakarta.persistence.Query;
-
-import org.jboss.logging.Logger;
+import jakarta.persistence.NoResultException;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.master.AdminUnit;
@@ -39,37 +37,15 @@ public class OrtFactory {
     private static final int ORTTYP5 = 5; // Staat
 
     @Inject
-    private Logger logger;
-
-    @Inject
     private Repository repository;
 
-    private List<ReportItem> errors;
+    private List<ReportItem> errors = new ArrayList<>();
 
     /**
      * Transform the external coordinates to the geom representation.
      * @param ort the ort
      */
     public void transformCoordinates(Site ort) {
-        if (errors == null) {
-            errors = new ArrayList<>();
-        }
-        if (ort.getSpatRefSysId() == null
-            || ort.getCoordXExt() == null
-            || ort.getCoordXExt().equals("")
-            || ort.getCoordYExt() == null
-            || ort.getCoordYExt().equals("")
-        ) {
-            /* TODO: The checked conditions are mostly also checked in KdaUtil.
-             * Do we really need a different StatusCode here? */
-            ReportItem err = new ReportItem();
-            err.setCode(StatusCodes.IMP_INVALID_VALUE);
-            err.setKey("coordinates");
-            err.setValue(ort.getSpatRefSysId()
-                + " " + ort.getCoordXExt() + " " + ort.getCoordYExt());
-            errors.add(err);
-            return;
-        }
         Integer kda = ort.getSpatRefSysId();
         String xCoord = ort.getCoordXExt();
         String yCoord = ort.getCoordYExt();
@@ -80,17 +56,16 @@ public class OrtFactory {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.GEO_NOT_MATCHING);
             err.setKey("kdaId");
-            err.setValue(ort.getSpatRefSysId()
-                + " " + ort.getCoordXExt() + " " + ort.getCoordYExt());
+            err.setValue(kda + " " + xCoord + " " + yCoord);
             errors.add(err);
             return;
         }
-        ort.setGeom(generateGeom(
+        ort.setGeom(new GeometryFactory(new PrecisionModel(), EPSG4326)
+            .createPoint(new Coordinate(
                 Double.parseDouble(coords.getX()),
-                Double.parseDouble(coords.getY())));
+                Double.parseDouble(coords.getY()))));
         return;
     }
-
 
     /**
      * Use given attribute to try to add other attributes.
@@ -104,11 +79,7 @@ public class OrtFactory {
      * @return The resulting ort.
      */
     public Site completeOrt(Site ort) {
-        if (errors == null) {
-            errors = new ArrayList<ReportItem>();
-        } else {
-            errors.clear();
-        }
+        errors.clear();
 
         QueryBuilder<Site> builder = repository.queryBuilder(Site.class)
             .and("networkId", ort.getNetworkId());
@@ -117,47 +88,39 @@ public class OrtFactory {
             && ort.getCoordXExt() != null
             && ort.getCoordYExt() != null
         ) {
-            builder.and("spatRefSysId", ort.getSpatRefSysId());
-            builder.and("coordXExt", ort.getCoordXExt());
-            builder.and("coordYExt", ort.getCoordYExt());
-            List<Site> orte =
-                repository.filterPlain(builder.getQuery());
-            if (orte != null && !orte.isEmpty()) {
+            builder.and("spatRefSysId", ort.getSpatRefSysId())
+                .and("coordXExt", ort.getCoordXExt())
+                .and("coordYExt", ort.getCoordYExt());
+            List<Site> orte = repository.filterPlain(builder.getQuery());
+            if (!orte.isEmpty()) {
                 return orte.get(0);
             }
         } else if (ort.getAdminUnitId() != null) {
             builder.and("adminUnitId", ort.getAdminUnitId());
-            List<Site> orte =
-                repository.filterPlain(builder.getQuery());
-            if (orte != null && !orte.isEmpty()) {
+            List<Site> orte = repository.filterPlain(builder.getQuery());
+            if (!orte.isEmpty()) {
                 if (orte.size() == 1) {
                     return orte.get(0);
                 } else {
-                    //get verwaltungseinheiten
-                    AdminUnit v = repository.entityManager().find(
+                    AdminUnit v = repository.getByIdPlain(
                         AdminUnit.class, ort.getAdminUnitId());
-                    if (v != null) {
-                        for (Site oElem : orte) {
-                            //Todo: Check for different kda-types
-                            if (oElem.getCoordXExt().equals(
-                                    String.valueOf(v.getGeomCenter().getX()))
+                    for (Site oElem : orte) {
+                        //Todo: Check for different kda-types
+                        if (oElem.getCoordXExt().equals(
+                                String.valueOf(v.getGeomCenter().getX()))
                             && oElem.getCoordYExt().equals(
-                                    String.valueOf(v.getGeomCenter().getY()))
-                            ) {
-                                return oElem;
-                            }
+                                String.valueOf(v.getGeomCenter().getY()))
+                        ) {
+                            return oElem;
                         }
-                    } else {
-                        logger.debug("1. we need an else here ...");
                     }
                 }
             }
         } else  if (ort.getStateId() != null) {
-            builder.and("stateId", ort.getStateId());
-            builder.and("siteClassId", ORTTYP5);
-            List<Site> orte =
-                repository.filterPlain(builder.getQuery());
-            if (orte != null && !orte.isEmpty()) {
+            builder.and("stateId", ort.getStateId())
+                .and("siteClassId", ORTTYP5);
+            List<Site> orte = repository.filterPlain(builder.getQuery());
+            if (!orte.isEmpty()) {
                 return orte.get(0);
             }
         }
@@ -166,9 +129,6 @@ public class OrtFactory {
     }
 
     private Site createOrt(Site ort) {
-        if (errors == null) {
-            errors = new ArrayList<>();
-        }
         boolean hasKoord = false;
         boolean hasGem = false;
         boolean hasStaat = false;
@@ -180,14 +140,27 @@ public class OrtFactory {
             transformCoordinates(ort);
             hasKoord = true;
         }
-        if (ort.getAdminUnitId() == null && hasKoord) {
-            findVerwaltungseinheit(ort);
+        if (ort.getAdminUnitId() == null && hasKoord && ort.getGeom() != null) {
+            try {
+                ort.setAdminUnitId((String) repository.entityManager()
+                    .createNativeQuery("SELECT vg.munic_id "
+                        + "FROM master.admin_border_view vg "
+                        + "WHERE is_munic "
+                        + "AND public.st_contains(vg.shape, :geom) "
+                        + "FETCH FIRST ROW ONLY",
+                        String.class)
+                    .setParameter("geom", ort.getGeom())
+                    .getSingleResult());
+                ort.setStateId(0);
+            } catch (NoResultException nre) {
+                // Nothing to do
+            }
         }
         if (ort.getAdminUnitId() != null) {
             if (ort.getStateId() == null) {
                 ort.setStateId(0);
             }
-            AdminUnit v = repository.entityManager().find(
+            AdminUnit v = repository.getByIdPlain(
                 AdminUnit.class, ort.getAdminUnitId());
             //Ort exists - check for OrtId
             QueryBuilder<Site> builderExists =
@@ -196,14 +169,7 @@ public class OrtFactory {
                 .andLike("extId", "%" + ort.getAdminUnitId());
             List<Site> ortExists = repository.filterPlain(
                 builderExists.getQuery());
-            if (v == null) {
-                ReportItem err = new ReportItem();
-                err.setCode(StatusCodes.IMP_INVALID_VALUE);
-                err.setKey("gem_id");
-                err.setValue(ort.getAdminUnitId());
-                errors.add(err);
-                return null;
-            } else if (ortExists.isEmpty()) {
+            if (ortExists.isEmpty()) {
                 if (!hasKoord) {
                     if (ort.getSpatRefSysId() == null) {
                         ort.setSpatRefSysId(KdaUtil.KDA_GD);
@@ -223,57 +189,56 @@ public class OrtFactory {
                         }
                     }
                     ort.setSiteClassId(ORTTYP4);
-                    //set ortId
+
+                    String prefix = null;
                     if (v.getIsMunic()) {
-                        ort.setExtId("GEM_" + ort.getAdminUnitId());
+                        prefix = "GEM";
                     } else if (v.getIsRuralDist()) {
-                       ort.setExtId("LK_" + ort.getAdminUnitId());
+                        prefix = "LK";
                     } else if (v.getIsGovDist()) {
-                        ort.setExtId("RB_" + ort.getAdminUnitId());
+                        prefix = "RB";
                     } else if (v.getIsState()) {
-                        ort.setExtId("BL_" + ort.getAdminUnitId());
+                        prefix = "BL";
+                    }
+                    if (prefix != null) {
+                        ort.setExtId(prefix + "_" + ort.getAdminUnitId());
                     }
                 }
-                if (ort.getShortText() == null
-                    || ort.getShortText().equals("")) {
+                if (ort.getShortText() == null) {
                     ort.setShortText(ort.getExtId());
                 }
-                if (ort.getLongText() == null
-                    || ort.getLongText().equals("")) {
+                if (ort.getLongText() == null) {
                     ort.setLongText(v.getName());
                 }
-                if (ort.getReiReportText() == null
-                    || ort.getReiReportText().equals("")
-                ) {
+                if (ort.getReiReportText() == null) {
                     ort.setReiReportText(v.getName());
                 }
                 transformCoordinates(ort);
 
                 hasGem = true;
-            } else if (ortExists.size() > 0 && !hasKoord) {
+            } else if (!hasKoord) {
                 return ortExists.get(0);
-            } else {
-                return ort;
             }
+            return ort;
         }
         if (ort.getStateId() != null
             && !hasKoord
             && !hasGem
         ) {
-            State staat =
-                repository.entityManager().find(
-                    State.class, ort.getStateId());
+            State staat = repository.getByIdPlain(
+                State.class, ort.getStateId());
             ort.setSpatRefSysId(staat.getSpatRefSysId());
             ort.setCoordXExt(staat.getCoordXExt());
             ort.setCoordYExt(staat.getCoordYExt());
             ort.setLongText(staat.getCtry());
             ort.setSiteClassId(ORTTYP5);
+            final String prefix = "STAAT_";
             if (staat.getIso3166() != null) {
-                ort.setExtId("STAAT_" + staat.getIso3166());
-                ort.setShortText("STAAT_" + staat.getIso3166());
+                ort.setExtId(prefix + staat.getIso3166());
+                ort.setShortText(prefix + staat.getIso3166());
             } else {
-                ort.setExtId("STAAT_" + staat.getId());
-                ort.setShortText("STAAT_" + staat.getId());
+                ort.setExtId(prefix + staat.getId());
+                ort.setShortText(prefix + staat.getId());
             }
             ort.setReiReportText(staat.getCtry());
             transformCoordinates(ort);
@@ -289,39 +254,6 @@ public class OrtFactory {
         return ort;
     }
 
-    /**
-     * Use the geom of an ort object to determine the verwaltungseinheit.
-     * If verwaltungseinheit was found the gemId is used as reference in the ort
-     * object.
-     *
-     * @param ort   The ort object
-     */
-    public void findVerwaltungseinheit(Site ort) {
-        if (ort.getGeom() == null) {
-            return;
-        }
-        Query q = repository.entityManager()
-            .createNativeQuery("SELECT vg.munic_id "
-                + "FROM master.admin_border_view vg "
-                + "WHERE is_munic = TRUE "
-                + "AND public.st_contains(vg.shape, :geom) = TRUE");
-        q.setParameter("geom", ort.getGeom());
-        List<?> ret = q.getResultList();
-        if (!ret.isEmpty()) {
-            ort.setAdminUnitId(ret.get(0).toString());
-            ort.setStateId(0);
-        }
-        return;
-    }
-
-    private Point generateGeom(Double x, Double y) {
-        GeometryFactory geomFactory = new GeometryFactory();
-        Coordinate coord = new Coordinate(x, y);
-        Point geom = geomFactory.createPoint(coord);
-        geom.setSRID(EPSG4326);
-        return geom;
-    }
-
     public List<ReportItem> getErrors() {
         return errors;
     }
@@ -331,6 +263,6 @@ public class OrtFactory {
      * @return True if there are errors
      */
     public boolean hasErrors() {
-        return !(errors == null) && !errors.isEmpty();
+        return !errors.isEmpty();
     }
 }
