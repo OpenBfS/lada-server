@@ -12,6 +12,7 @@ import java.util.Date;
 
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,6 +31,8 @@ import de.intevation.lada.model.BaseModel;
 
 @Entity
 @Table(name = "comm_measm", schema = SchemaName.NAME)
+@Unique(fields = {"text", "measmId"},
+    groups = DatabaseConstraints.class, clazz = CommMeasm.class)
 @GroupSequence({ CommMeasm.class, DatabaseConstraints.class })
 public class CommMeasm extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;

@@ -203,8 +203,7 @@ SELECT setval(pg_get_serial_sequence('measm', 'id'),
 ALTER TABLE comm_measm DISABLE TRIGGER ALL;
 
 COPY comm_measm (id, meas_facil_id, date, text, measm_id) FROM stdin;
-481	12020	2012-07-12 06:18:00	Messung FM\nFM/TM lt Stammdaten	195
-482	12020	2012-07-12 09:32:00	Messung FM\nFM/TM lt Stammdaten	195
+481	12020	2012-07-12 06:18:00	Messung FM\nFM/TM lt Stammdaten	194
 \.
 
 
@@ -232,7 +231,6 @@ COPY comm_sample (id, meas_facil_id, date, text, sample_id) FROM stdin;
 379	06010	2012-01-18 11:44:00	Wolfsbarschfilet	354
 413	11010	2012-06-18 06:52:49	Rehkeule	311
 444	12020	2012-07-12 06:18:00	FM/TM lt. Stammdaten          /für Grüngetreide	406
-455	12020	2012-07-12 09:32:00	FM/TM lt. Stammdaten          /für Grüngetreide	406
 \.
 
 

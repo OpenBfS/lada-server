@@ -10,6 +10,7 @@ package de.intevation.lada;
 import java.net.URL;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -49,25 +50,24 @@ public class UniversalServiceTest extends BaseTest {
         this.testDatasetName = "datasets/dbUnit_query.xml";
     }
 
-    private JsonObject requestJson = Json.createObjectBuilder()
-        .add("columns", Json.createArrayBuilder()
-            .add(Json.createObjectBuilder()
-                .add("colIndex", 0)
-                .add("filterVal", "")
-                .add("isFilterActive", false)
-                .add("isFilterNull", false)
-                .add("isFilterNegate", false)
-                .add("isFilterRegex", false)
-                .add("gridColMpId", 1))
-            .add(Json.createObjectBuilder()
-                .add("colIndex", 1)
-                .add("filterVal", "")
-                .add("isFilterActive", false)
-                .add("isFilterNull", false)
-                .add("isFilterNegate", false)
-                .add("isFilterRegex", false)
-                .add("gridColMpId", 2))
-        ).build();
+    private JsonArray requestJson = Json.createArrayBuilder()
+        .add(Json.createObjectBuilder()
+            .add("colIndex", 0)
+            .add("filterVal", "")
+            .add("isFilterActive", false)
+            .add("isFilterNull", false)
+            .add("isFilterNegate", false)
+            .add("isFilterRegex", false)
+            .add("gridColMpId", 1))
+        .add(Json.createObjectBuilder()
+            .add("colIndex", 1)
+            .add("filterVal", "")
+            .add("isFilterActive", false)
+            .add("isFilterNull", false)
+            .add("isFilterNegate", false)
+            .add("isFilterRegex", false)
+            .add("gridColMpId", 2))
+        .build();
 
     // Expected statement according to master.base_query.sql
     // in dbUnit_query.json
@@ -79,25 +79,24 @@ public class UniversalServiceTest extends BaseTest {
     // A 'main_sample_id' from lada.sample in dbUnit_query.json
     private final String filterValue = "120510001";
 
-    private JsonObject filteredRequestJson = Json.createObjectBuilder()
-        .add("columns", Json.createArrayBuilder()
-            .add(Json.createObjectBuilder()
-                .add("colIndex", 0)
-                .add("filterVal", filterValue)
-                .add("isFilterActive", true)
-                .add("isFilterNull", false)
-                .add("isFilterNegate", false)
-                .add("isFilterRegex", false)
-                .add("gridColMpId", 1))
-            .add(Json.createObjectBuilder()
-                .add("colIndex", 1)
-                .add("filterVal", "")
-                .add("isFilterActive", false)
-                .add("isFilterNull", false)
-                .add("isFilterNegate", false)
-                .add("isFilterRegex", false)
-                .add("gridColMpId", 2))
-        ).build();
+    private JsonArray filteredRequestJson = Json.createArrayBuilder()
+        .add(Json.createObjectBuilder()
+            .add("colIndex", 0)
+            .add("filterVal", filterValue)
+            .add("isFilterActive", true)
+            .add("isFilterNull", false)
+            .add("isFilterNegate", false)
+            .add("isFilterRegex", false)
+            .add("gridColMpId", 1))
+        .add(Json.createObjectBuilder()
+            .add("colIndex", 1)
+            .add("filterVal", "")
+            .add("isFilterActive", false)
+            .add("isFilterNull", false)
+            .add("isFilterNegate", false)
+            .add("isFilterRegex", false)
+            .add("gridColMpId", 2))
+        .build();
 
     /**
      * Test fetching all data returned by a query.
@@ -240,25 +239,24 @@ public class UniversalServiceTest extends BaseTest {
     @Test
     @RunAsClient
     public final void testGetEmpty(@ArquillianResource URL baseUrl) {
-        JsonObject requestEmpty = Json.createObjectBuilder()
-            .add("columns", Json.createArrayBuilder()
-                .add(Json.createObjectBuilder()
-                    .add("colIndex", 0)
-                    .add("filterVal", "not existing value")
-                    .add("isFilterActive", true)
-                    .add("isFilterNull", false)
-                    .add("isFilterNegate", false)
-                    .add("isFilterRegex", false)
-                    .add("gridColMpId", 1))
-                .add(Json.createObjectBuilder()
-                    .add("colIndex", 1)
-                    .add("filterVal", "")
-                    .add("isFilterActive", false)
-                    .add("isFilterNull", false)
-                    .add("isFilterNegate", false)
-                    .add("isFilterRegex", false)
-                    .add("gridColMpId", 2))
-        ).build();
+        JsonArray requestEmpty = Json.createArrayBuilder()
+            .add(Json.createObjectBuilder()
+                .add("colIndex", 0)
+                .add("filterVal", "not existing value")
+                .add("isFilterActive", true)
+                .add("isFilterNull", false)
+                .add("isFilterNegate", false)
+                .add("isFilterRegex", false)
+                .add("gridColMpId", 1))
+            .add(Json.createObjectBuilder()
+                .add("colIndex", 1)
+                .add("filterVal", "")
+                .add("isFilterActive", false)
+                .add("isFilterNull", false)
+                .add("isFilterNegate", false)
+                .add("isFilterRegex", false)
+                .add("gridColMpId", 2))
+            .build();
 
         Response response = client.target(
             baseUrl + "rest/universal")
@@ -286,17 +284,16 @@ public class UniversalServiceTest extends BaseTest {
     @Test
     @RunAsClient
     public final void testGetSingleColumn(@ArquillianResource URL baseUrl) {
-        JsonObject request = Json.createObjectBuilder()
-            .add("columns", Json.createArrayBuilder()
-                .add(Json.createObjectBuilder()
-                    .add("colIndex", 0)
-                    .add("filterVal", "")
-                    .add("isFilterActive", false)
-                    .add("isFilterNull", false)
-                    .add("isFilterNegate", false)
-                    .add("isFilterRegex", false)
-                    .add("gridColMpId", 3))
-        ).build();
+        JsonArray request = Json.createArrayBuilder()
+            .add(Json.createObjectBuilder()
+                .add("colIndex", 0)
+                .add("filterVal", "")
+                .add("isFilterActive", false)
+                .add("isFilterNull", false)
+                .add("isFilterNegate", false)
+                .add("isFilterRegex", false)
+                .add("gridColMpId", 3))
+            .build();
 
         Response response = client.target(
             baseUrl + "rest/universal")

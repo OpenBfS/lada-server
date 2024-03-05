@@ -16,7 +16,8 @@ import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response.Status;
-import de.intevation.lada.model.QueryColumns;
+import jakarta.validation.constraints.NotEmpty;
+
 import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.query.QueryTools;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -68,27 +69,14 @@ public class SqlService extends LadaService {
      */
     @POST
     public Response execute(
-        QueryColumns columns
+        @NotEmpty List<GridColConf> gridColumnValues
     ) {
-        // There is nothing to authorize and it is ensured
-        // that a user is authenticated.
-        List<GridColConf> gridColumnValues = columns.getColumns();
-
-        if (gridColumnValues == null
-            || gridColumnValues.isEmpty()) {
-            //TODO Error code if no columns are given
-            return new Response(false, StatusCodes.NOT_EXISTING, null);
-        }
-
         try {
             QueryTools queryTools =
                 new QueryTools(repository, gridColumnValues);
-            String sql = queryTools.getSql();
-            if (sql == null) {
-                return new Response(true, StatusCodes.OK, null);
-            }
-            String statement =
-                prepareStatement(sql, queryTools.getFilterValues());
+            String statement = prepareStatement(
+                queryTools.getSql(),
+                queryTools.getFilterValues());
             return new Response(true, StatusCodes.OK, statement);
         } catch (IllegalArgumentException iae) {
             throw new BadRequestException(

@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.test.validator;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
 import de.intevation.lada.model.BaseModel;
@@ -41,5 +43,20 @@ public abstract class ValidatorBaseTest {
      */
     protected void assertHasErrors(BaseModel entity) {
         Assert.assertTrue("Expected errors missing", entity.hasErrors());
+    }
+
+    /**
+     * Assert that the given entity has the error with given key and value
+     * attached.
+     * @param entity Entity to check
+     * @param key Expected error key
+     * @param val Expected error value
+     */
+    protected void assertHasError(BaseModel entity, String key, String val) {
+        assertHasErrors(entity);
+        MatcherAssert.assertThat(entity.getErrors().keySet(),
+            CoreMatchers.hasItem(key));
+        MatcherAssert.assertThat(entity.getErrors().get(key),
+            CoreMatchers.hasItem(val));
     }
 }

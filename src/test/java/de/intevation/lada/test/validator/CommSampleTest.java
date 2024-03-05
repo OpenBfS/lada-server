@@ -10,10 +10,7 @@ package de.intevation.lada.test.validator;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
-import org.junit.Assert;
-
 import de.intevation.lada.model.lada.CommSample;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
 
 /**
@@ -21,9 +18,6 @@ import de.intevation.lada.validation.Validator;
  */
 @Transactional
 public class CommSampleTest extends ValidatorBaseTest {
-
-    //Validation keys
-    private static final String TEXT = "text";
 
     //Other constants
     private static final String COMMENT_TEXT_EXISTING = "Testkommentar";
@@ -44,10 +38,10 @@ public class CommSampleTest extends ValidatorBaseTest {
         comm.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
 
         validator.validate(comm);
-        Assert.assertTrue(comm.hasErrors());
-        Assert.assertTrue(comm.getErrors().containsKey(TEXT));
-        Assert.assertTrue(comm.getErrors()
-            .get(TEXT).contains(String.valueOf(StatusCodes.VAL_EXISTS)));
+        assertHasError(
+            comm,
+            "text",
+            "Non-unique value combination for [text, sampleId]");
     }
 
     /**
