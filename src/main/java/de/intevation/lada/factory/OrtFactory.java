@@ -55,7 +55,7 @@ public class OrtFactory {
         if (coords == null) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.GEO_NOT_MATCHING);
-            err.setKey("kdaId");
+            err.setKey("spatRefSysId");
             err.setValue(kda + " " + xCoord + " " + yCoord);
             errors.add(err);
             return;
