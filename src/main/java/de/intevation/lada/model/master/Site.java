@@ -42,6 +42,7 @@ import de.intevation.lada.validation.constraints.CanChangeCoordinates;
 import de.intevation.lada.validation.constraints.HasCoordsOrAdminUnitOrState;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
+import de.intevation.lada.validation.constraints.SupportedSpatRefSysId;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
@@ -151,11 +152,8 @@ public class Site extends BaseModel implements Serializable {
     @NotEmptyNorWhitespace
     private String reiCompetence;
 
-
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = SpatRefSys.class)
+    @SupportedSpatRefSysId
     private Integer spatRefSysId;
-
 
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = ReiAgGr.class)

@@ -9,7 +9,6 @@ package de.intevation.lada.rest;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.GET;
@@ -22,8 +21,7 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.SpatRefSys;
-import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
-import de.intevation.lada.validation.groups.DatabaseConstraints;
+import de.intevation.lada.validation.constraints.SupportedSpatRefSysId;
 
 
 /**
@@ -42,17 +40,13 @@ public class SpatRefSysService extends LadaService {
     /**
      * Expected format for the payload in POST request to recalculate().
      */
-    @GroupSequence({ SpatRefSysService.PostData.class,
-                DatabaseConstraints.class })
     public static class PostData {
         @NotNull
-        @IsValidPrimaryKey(
-            groups = DatabaseConstraints.class, clazz = SpatRefSys.class)
+        @SupportedSpatRefSysId
         private Integer from;
 
         @NotNull
-        @IsValidPrimaryKey(
-            groups = DatabaseConstraints.class, clazz = SpatRefSys.class)
+        @SupportedSpatRefSysId
         private Integer to;
 
         @NotBlank
@@ -106,7 +100,10 @@ public class SpatRefSysService extends LadaService {
         @Valid PostData object
     ) {
         KdaUtil.Result result = new KdaUtil().transform(
-            object.from, object.to, object.x, object.y);
+            KdaUtil.KDAS.get(object.from),
+            KdaUtil.KDAS.get(object.to),
+            object.x,
+            object.y);
         if (result == null) {
             return new Response(false, StatusCodes.GEO_NOT_MATCHING, null);
         }

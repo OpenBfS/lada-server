@@ -51,7 +51,7 @@ public class OrtFactory {
         String yCoord = ort.getCoordYExt();
 
         KdaUtil.Result coords = new KdaUtil().transform(
-            kda, KdaUtil.KDA_GD, xCoord, yCoord);
+            KdaUtil.KDAS.get(kda), KdaUtil.KDA.GD, xCoord, yCoord);
         if (coords == null) {
             ReportItem err = new ReportItem();
             err.setCode(StatusCodes.GEO_NOT_MATCHING);
@@ -174,8 +174,8 @@ public class OrtFactory {
                             String.valueOf(v.getGeomCenter().getX()));
                     } else {
                         KdaUtil.Result coords = new KdaUtil().transform(
-                            KdaUtil.KDA_GD,
-                            ort.getSpatRefSysId(),
+                            KdaUtil.KDA.GD,
+                            KdaUtil.KDAS.get(ort.getSpatRefSysId()),
                             String.valueOf(v.getGeomCenter().getX()),
                             String.valueOf(v.getGeomCenter().getY()));
                         if (coords != null) {

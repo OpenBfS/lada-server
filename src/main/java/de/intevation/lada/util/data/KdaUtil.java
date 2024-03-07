@@ -10,6 +10,7 @@ package de.intevation.lada.util.data;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,23 +29,42 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class KdaUtil {
 
-    /* Represents coordinates in Gauß-Krüger CRS */
-    public static final int KDA_GK = 1;
+    /**
+     * Coordinate reference systems supported for transformation.
+     */
+    public enum KDA {
+        /* Represents coordinates in Gauß-Krüger CRS */
+        GK,
 
-    /* Represents geodetic coordinates in sexagesimal notation */
-    public static final int KDA_GS = 2;
+        /* Represents geodetic coordinates in sexagesimal notation */
+        GS,
 
-    /* Represents geodetic coordinates in decimal notation */
+        /* Represents geodetic coordinates in decimal notation */
+        GD,
+
+        /* Represents coordinates in UTM CRS with WGS84 datum */
+        UTM_WGS84,
+
+        /* Represents coordinates in UTM CRS with ETRS89 datum */
+        UTM_ETRS89,
+
+        /* Represents coordinates in UTM CRS with ED50 datum
+         * (Hayford ellipsoid) */
+        UTM_ED50;
+    };
+
+    // Known database ID of KDA.GD
     public static final int KDA_GD = 4;
 
-    /* Represents coordinates in UTM CRS with WGS84 datum */
-    public static final int KDA_UTM_WGS84 = 5;
-
-    /* Represents coordinates in UTM CRS with ETRS89 datum */
-    public static final int KDA_UTM_ETRS89 = 6;
-
-    /* Represents coordinates in UTM CRS with ED50 datum (Hayford ellipsoid) */
-    public static final int KDA_UTM_ED50 = 8;
+    // Map enum constants to known database IDs
+    public static final Map<Integer, KDA> KDAS = Map.of(
+        1,      KDA.GK,
+        2,      KDA.GS,
+        KDA_GD, KDA.GD,
+        5,      KDA.UTM_WGS84,
+        6,      KDA.UTM_ETRS89,
+        8,      KDA.UTM_ED50
+    );
 
     /* Expected format of projected input coordinates */
     private static final Pattern X_GK = Pattern.compile(
@@ -134,20 +154,21 @@ public class KdaUtil {
      * @return Result with transformed coordinates
      */
     public Result transform(
-        int kdaFrom, int kdaTo, String x, String y
+        KDA kdaFrom, KDA kdaTo, String x, String y
     ) {
         x = x.replace(',', '.');
         y = y.replace(',', '.');
         Transform t;
         try {
             switch (kdaFrom) {
-                case KDA_GK: t = new Transform1(x, y); break;
-                case KDA_GS: t = this.new Transform2(x, y); break;
-                case KDA_GD: t = this.new Transform4(x, y); break;
-                case KDA_UTM_WGS84: t = this.new Transform5(x, y); break;
-                case KDA_UTM_ETRS89: t = this.new Transform6(x, y); break;
-                case KDA_UTM_ED50: t = this.new Transform8(x, y); break;
-                default: return null;
+                case GK: t = new Transform1(x, y); break;
+                case GS: t = this.new Transform2(x, y); break;
+                case GD: t = this.new Transform4(x, y); break;
+                case UTM_WGS84: t = this.new Transform5(x, y); break;
+                case UTM_ETRS89: t = this.new Transform6(x, y); break;
+                case UTM_ED50: t = this.new Transform8(x, y); break;
+                default: throw new IllegalArgumentException(
+                    "Unsupported spatial reference system");
             }
         } catch (ValidationException | FactoryException fe) {
             return null;
@@ -160,7 +181,7 @@ public class KdaUtil {
      */
     private interface Transform {
         void isInputValid() throws ValidationException;
-        Result transform(int to);
+        Result transform(KDA to);
         Result transformTo1();
         Result transformTo2();
         Result transformTo4();
@@ -191,15 +212,16 @@ public class KdaUtil {
             isInputValid();
         }
 
-        public Result transform(int to) {
+        public Result transform(KDA to) {
             switch (to) {
-                case KDA_GK: return transformTo1();
-                case KDA_GS: return transformTo2();
-                case KDA_GD: return transformTo4();
-                case KDA_UTM_WGS84: return transformTo5();
-                case KDA_UTM_ETRS89: return transformTo6();
-                case KDA_UTM_ED50: return transformTo8();
-                default: return null;
+                case GK: return transformTo1();
+                case GS: return transformTo2();
+                case GD: return transformTo4();
+                case UTM_WGS84: return transformTo5();
+                case UTM_ETRS89: return transformTo6();
+                case UTM_ED50: return transformTo8();
+                default: throw new IllegalArgumentException(
+                    "Unsupported spatial reference system");
             }
         }
     }

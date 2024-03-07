@@ -42,12 +42,12 @@ public class KdaUtilTest {
     /* Tolerance in meter for coordinate comparison */
     private static final double EPSILON = 1.05;
 
-    /* Expected coordinates for KdaUtil.KDA_* (except KdaUtil.KDA_GS)
+    /* Expected coordinates for KdaUtil.KDA.* (except KdaUtil.KDA.GS)
      * retrieved with PostGIS (2.5.5 with Proj 4.9.3) using
      * SELECT ST_AsText(ST_Transform(ST_SetSRID(
      *     'POINT(7.0998138888889 50.733991666667)'::geometry, 4326), <CRS>))
      */
-    private static final Map<Integer, Map<String, String>> COORDS = Map.of(
+    private static final Map<KdaUtil.KDA, Map<String, String>> COORDS = Map.of(
         // 1: CRS = 31466
         /*
          * Before transformation, put datum shift grid from
@@ -57,7 +57,7 @@ public class KdaUtilTest {
          *     SET proj4text = proj4text || ' +nadgrids=BETA2007.gsb'
          *     WHERE srid = 31466
          */
-        KdaUtil.KDA_GK,
+        KdaUtil.KDA.GK,
         Map.of("x", "2577688", "y", "5622632"),
         //Map.of("x", "2577687.65820815", "y", "5622631.72513064"),
 
@@ -66,43 +66,41 @@ public class KdaUtilTest {
         //     'POINT(7.0998138888889 50.733991666667)'::geometry, 4326))
         // with non-digit characters removed and leading zeros complemented
         // in the resulting 50°44'2.370"N 7°5'59.330"E
-        KdaUtil.KDA_GS,
+        KdaUtil.KDA.GS,
         Map.of("x", "70559.330", "y", "504402.370"),
 
         // 4: CRS = 4326
-        KdaUtil.KDA_GD,
+        KdaUtil.KDA.GD,
         Map.of("x", "7.0998138888889", "y", "50.733991666667"),
 
         // 5: CRS = 32632, zone prepended to "x"
-        KdaUtil.KDA_UTM_WGS84,
+        KdaUtil.KDA.UTM_WGS84,
         Map.of("x", "32365909", "y", "5621966"),
         //Map.of("x", "32365908.607704498", "y", "5621966.21754899"),
 
         // 6: CRS = 25832, zone prepended to "x"
-        KdaUtil.KDA_UTM_ETRS89,
+        KdaUtil.KDA.UTM_ETRS89,
         Map.of("x", "32365909", "y", "5621966"),
         //Map.of("x", "32365908.607703176", "y", "5621966.21742558"),
 
         // 8: CRS = 23032, zone prepended to "x"
-        KdaUtil.KDA_UTM_ED50,
+        KdaUtil.KDA.UTM_ED50,
         Map.of("x", "32365991", "y", "5622169")
         //Map.of("x", "32365990.950936107", "y", "5622168.57949754")
     );
-
-    private static final int NON_EXISTANT_KDA = 9999;
 
     private final String decimalPoint = ".", decimalComma = ",";
 
     private final String messageAssertNotNull = "Transformation result is null";
 
     /**
-     * @return All combinations of KdaUtil.KDA_* as input and output.
+     * @return All combinations of KdaUtil.KDA.* as input and output.
      */
     @Parameters(name = "from {0} to {1}")
     public static List<Object[]> fromToCombinations() {
         List<Object[]> combinations = new ArrayList<Object[]>();
-        for (Integer from : COORDS.keySet()) {
-            for (Integer to : COORDS.keySet()) {
+        for (KdaUtil.KDA from : COORDS.keySet()) {
+            for (KdaUtil.KDA to : COORDS.keySet()) {
                 combinations.add(new Object[]{from, to});
             }
         }
@@ -110,17 +108,17 @@ public class KdaUtilTest {
     }
 
     @Parameter(0)
-    public int fromKda;
+    public KdaUtil.KDA fromKda;
 
     @Parameter(1)
-    public int toKda;
+    public KdaUtil.KDA toKda;
 
     /**
      * Accuracy of coordinate transformations.
      */
     @Test
     public void transformTest() throws FactoryException {
-        if (fromKda == KdaUtil.KDA_GK || toKda == KdaUtil.KDA_GK) {
+        if (fromKda == KdaUtil.KDA.GK || toKda == KdaUtil.KDA.GK) {
             assumeTrue(
                 "Missing BETA2007.gsb datum shift grid in "
                 + "src/main/resources/org/geotools/referencing/"
@@ -143,10 +141,10 @@ public class KdaUtilTest {
             + " y=" + result.getY());
 
         // Expected coordinates
-        int compareWith = toKda;
-        if (compareWith == KdaUtil.KDA_GS) {
+        KdaUtil.KDA compareWith = toKda;
+        if (compareWith == KdaUtil.KDA.GS) {
             // result will be converted to decimal notation before comparison
-            compareWith = KdaUtil.KDA_GD;
+            compareWith = KdaUtil.KDA.GD;
         }
         double eX = Double.parseDouble(COORDS.get(compareWith).get("x"));
         double eY = Double.parseDouble(COORDS.get(compareWith).get("y"));
@@ -155,7 +153,7 @@ public class KdaUtilTest {
         // Transformation result coordinates
         double rX, rY;
         switch (toKda) {
-        case KdaUtil.KDA_GS:
+        case GS:
             result = kdaUtil.arcToDegree(
                 result.getX().replace(decimalComma, decimalPoint),
                 result.getY().replace(decimalComma, decimalPoint));
@@ -171,8 +169,8 @@ public class KdaUtilTest {
         // Distance between expected and result
         double d;
         switch (toKda) {
-        case KdaUtil.KDA_GS:
-        case KdaUtil.KDA_GD:
+        case GS:
+        case GD:
             GeodeticCalculator gc = new GeodeticCalculator(
                 DefaultGeographicCRS.WGS84);
             gc.setStartingGeographicPoint(eY, eX);
@@ -183,10 +181,10 @@ public class KdaUtilTest {
             d = Math.sqrt(
                 Math.pow(rX - eX, 2) + Math.pow(rY - eY, 2));
         }
-        // TODO: Better results also for KDA_UTM_ED50
+        // TODO: Better results also for KDA.UTM_ED50
         double epsilon = EPSILON
-            * (toKda == KdaUtil.KDA_UTM_ED50
-                || fromKda == KdaUtil.KDA_UTM_ED50
+            * (toKda == KdaUtil.KDA.UTM_ED50
+                || fromKda == KdaUtil.KDA.UTM_ED50
                 ? 5 : 1);
         Assert.assertTrue(
             String.format(
@@ -210,32 +208,6 @@ public class KdaUtilTest {
             COORDS.get(fromKda).get("y").replace(decimalPoint, decimalComma)
         );
         Assert.assertNotNull(messageAssertNotNull, result);
-    }
-
-    /**
-     * Invalid KDA of given coordinates.
-     */
-    @Test
-    public void invalidFromKdaTest() {
-        KdaUtil.Result result = new KdaUtil().transform(
-            NON_EXISTANT_KDA,
-            toKda,
-            COORDS.get(fromKda).get("x"),
-            COORDS.get(fromKda).get("y"));
-        Assert.assertNull(result);
-    }
-
-    /**
-     * Invalid KDA to transform into.
-     */
-    @Test
-    public void invalidToKdaTest() {
-        KdaUtil.Result result = new KdaUtil().transform(
-            fromKda,
-            NON_EXISTANT_KDA,
-            COORDS.get(fromKda).get("x"),
-            COORDS.get(fromKda).get("y"));
-        Assert.assertNull(result);
     }
 
     /**
@@ -266,11 +238,11 @@ public class KdaUtilTest {
         double invalidZone;
         final double invalidGKZone = 999, invalidUTMZone = 99;
         switch (fromKda) {
-        case KdaUtil.KDA_GS:
-        case KdaUtil.KDA_GD:
+        case GS:
+        case GD:
             // No zone number in input
             return;
-        case KdaUtil.KDA_GK:
+        case GK:
             invalidZone = invalidGKZone;
             break;
         default:
@@ -294,7 +266,7 @@ public class KdaUtilTest {
     @Test
     public void sexagesimalNegativeInputTest() {
         // Compare sexagesimal input with decimal geodetic output only
-        if (fromKda != KdaUtil.KDA_GS || toKda != KdaUtil.KDA_GD) {
+        if (fromKda != KdaUtil.KDA.GS || toKda != KdaUtil.KDA.GD) {
             return;
         }
         KdaUtil.Result result = new KdaUtil().transform(
@@ -314,11 +286,11 @@ public class KdaUtilTest {
     public void invalidXTest() {
         String x;
         switch (fromKda) {
-        case KdaUtil.KDA_GS:
+        case GS:
             // Valid longitude is between -180 and 180 degrees
             x = "-1810000.000";
             break;
-        case KdaUtil.KDA_GD:
+        case GD:
             // Valid longitude is between -180 and 180 degrees
             x = "-181";
             break;
@@ -342,11 +314,11 @@ public class KdaUtilTest {
     public void invalidYTest() {
         String y;
         switch (fromKda) {
-        case KdaUtil.KDA_GS:
+        case GS:
             // Valid latitude is between -90 and 90 degrees
             y = "990000.000";
             break;
-        case KdaUtil.KDA_GD:
+        case GD:
             // Valid latitude is between -90 and 90 degrees
             y = "99";
             break;

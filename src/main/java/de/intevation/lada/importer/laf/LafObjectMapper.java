@@ -1688,11 +1688,6 @@ public class LafObjectMapper {
         MeasFacil mst = repository.getByIdPlain(
             MeasFacil.class, probe.getMeasFacilId());
         o.setNetworkId(mst.getNetworkId());
-        o = ortFactory.completeOrt(o);
-        if (o == null || o.getGeom() == null) {
-            currentWarnings.addAll(ortFactory.getErrors());
-            return null;
-        }
         ortValidator.validate(o);
         for (Entry<String, Set<String>> warn
                  : o.getWarnings().entrySet()
@@ -1711,6 +1706,11 @@ public class LafObjectMapper {
                         new ReportItem("validation", err.getKey(), code));
                 }
             }
+            return null;
+        }
+        o = ortFactory.completeOrt(o);
+        if (o == null || o.getGeom() == null) {
+            currentWarnings.addAll(ortFactory.getErrors());
             return null;
         }
         if (o.getId() != null) {
