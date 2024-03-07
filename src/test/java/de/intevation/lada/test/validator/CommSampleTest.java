@@ -8,7 +8,8 @@
 package de.intevation.lada.test.validator;
 
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
+
+import org.junit.Test;
 
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.validation.Validator;
@@ -16,7 +17,6 @@ import de.intevation.lada.validation.Validator;
 /**
  * Test validation rules for CommSample objects.
  */
-@Transactional
 public class CommSampleTest extends ValidatorBaseTest {
 
     //Other constants
@@ -31,6 +31,7 @@ public class CommSampleTest extends ValidatorBaseTest {
     /**
      * Test commSample with existing text.
      */
+    @Test
     public void commentDuplicateText() {
         CommSample comm = new CommSample();
         comm.setSampleId(EXISTING_SAMPLE_ID);
@@ -47,6 +48,7 @@ public class CommSampleTest extends ValidatorBaseTest {
     /**
      * Test commSample with new text.
      */
+    @Test
     public void commentUniqueText() {
         CommSample comm = new CommSample();
         comm.setSampleId(EXISTING_SAMPLE_ID);

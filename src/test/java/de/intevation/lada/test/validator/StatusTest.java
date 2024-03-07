@@ -8,11 +8,11 @@
 package de.intevation.lada.test.validator;
 
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
+import org.junit.Test;
 
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.util.data.StatusCodes;
@@ -22,7 +22,6 @@ import de.intevation.lada.validation.Validator;
  * Test Status entities.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Transactional
 public class StatusTest extends ValidatorBaseTest {
 
     //Validator keys
@@ -37,7 +36,6 @@ public class StatusTest extends ValidatorBaseTest {
 
     private static final int EXISTING_MEASM_ID = 1200;
     private static final int EXISTING_MEASM_ID_VALID_REI_SAMPLE = 4200;
-    private static final int EXISTING_STATUS_MP_ID = 1;
     private static final int INVALID_STATUS_MP_ID = 42;
     private static final String EXISTING_MEAS_FACIL_ID = "06010";
 
@@ -47,6 +45,7 @@ public class StatusTest extends ValidatorBaseTest {
     /**
      * Test if status kombi is not existing.
      */
+    @Test
     public void checkKombiNegative() {
         StatusProt status = new StatusProt();
         status.setMeasmId(EXISTING_MEASM_ID);
@@ -67,11 +66,13 @@ public class StatusTest extends ValidatorBaseTest {
     /**
      * Test if status kombi is existing.
      */
+    @Test
     public void checkKombiPositive() {
         StatusProt status = new StatusProt();
+        status.setMeasmId(EXISTING_MEASM_ID);
         status.setStatusLev(ID1);
         status.setStatusVal(ID1);
-        status.setStatusMpId(EXISTING_STATUS_MP_ID);
+        status.setStatusMpId(2);
         status.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
         validator.validate(status);
         assertNoWarningsOrErrors(status);
@@ -80,6 +81,7 @@ public class StatusTest extends ValidatorBaseTest {
     /**
      * Test status with invalid order.
      */
+    @Test
     public void invalidStatusOrder() {
         StatusProt status = new StatusProt();
         status.setMeasmId(EXISTING_MEASM_ID);
@@ -96,6 +98,7 @@ public class StatusTest extends ValidatorBaseTest {
     /**
      * Test status with valid order.
      */
+    @Test
     public void validStatusOrder() {
         StatusProt status = new StatusProt();
         status.setMeasmId(EXISTING_MEASM_ID);
@@ -108,6 +111,7 @@ public class StatusTest extends ValidatorBaseTest {
     /**
      * Test setting status of measm connected to valid REI sample.
      */
+    @Test
     public void statusReiCompleteSample() {
         StatusProt status = new StatusProt();
         status.setMeasmId(EXISTING_MEASM_ID_VALID_REI_SAMPLE);

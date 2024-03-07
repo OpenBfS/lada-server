@@ -8,16 +8,15 @@
 package de.intevation.lada.test.validator;
 
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
 
-@Transactional
 public class GeolocatTest extends ValidatorBaseTest {
 
     // Validation keys
@@ -42,6 +41,7 @@ public class GeolocatTest extends ValidatorBaseTest {
     /**
      * Test geolocat with sample which already has a E-Type geolocat.
      */
+    @Test
     public void geolocatDuplicateETypeRegulation() {
         Geolocat loc = new Geolocat();
         loc.setTypeRegulation(TYPE_REGULATION_E);
@@ -55,6 +55,7 @@ public class GeolocatTest extends ValidatorBaseTest {
             String.valueOf(StatusCodes.VALUE_AMBIGOUS));
     }
 
+    @Test
     public void geolocatDuplicate() {
         Geolocat loc = new Geolocat();
         loc.setTypeRegulation(TYPE_REGULATION_E);
@@ -73,6 +74,7 @@ public class GeolocatTest extends ValidatorBaseTest {
     /**
      * Test valid geolocat.
      */
+    @Test
     public void validGeolocat() {
         Geolocat loc = new Geolocat();
         loc.setTypeRegulation(TYPE_REGULATION_E);
@@ -86,6 +88,7 @@ public class GeolocatTest extends ValidatorBaseTest {
     /**
      * Test geolocat with mpg which already has a E-Type geolocat.
      */
+    @Test
     public void geolocatMpgDuplicateETypeRegulation() {
         GeolocatMpg loc = new GeolocatMpg();
         loc.setTypeRegulation(TYPE_REGULATION_E);
@@ -99,6 +102,7 @@ public class GeolocatTest extends ValidatorBaseTest {
             String.valueOf(StatusCodes.VALUE_AMBIGOUS));
     }
 
+    @Test
     public void geolocatMpgDuplicate() {
         GeolocatMpg loc = new GeolocatMpg();
         loc.setTypeRegulation(TYPE_REGULATION_E);
@@ -115,6 +119,7 @@ public class GeolocatTest extends ValidatorBaseTest {
     /**
      * Test valid geolocatMpg.
      */
+    @Test
     public void validGeolocatMpg() {
         GeolocatMpg loc = new GeolocatMpg();
         loc.setTypeRegulation(TYPE_REGULATION_E);

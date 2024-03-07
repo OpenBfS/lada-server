@@ -14,11 +14,11 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
+import org.junit.Test;
 
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.StatusCodes;
@@ -29,7 +29,6 @@ import de.intevation.lada.validation.Validator;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Transactional
 public class ProbeTest extends ValidatorBaseTest {
 
     //Validation keys
@@ -101,6 +100,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test hauptprobennr.
      */
+    @Test
     public void validSample() {
         Sample sample = createMinimumValidSample();
         validator.validate(sample);
@@ -110,6 +110,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test REI sample with R type geolocat.
      */
+    @Test
     public void validReiSample() {
         Sample sample = createMinimumValidREISample();
         validator.validate(sample);
@@ -118,6 +119,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test no hauptprobennr.
      */
+    @Test
     public void hasNoHauptprobenNr() {
         Sample sample = createMinimumValidSample();
         sample.setMainSampleId(null);
@@ -134,6 +136,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test new existing hpnr.
      */
+    @Test
     public void existingHauptprobenNrNew() {
         Sample sample = createMinimumValidSample();
         sample.setId(null);
@@ -150,6 +153,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test new unique hpnr.
      */
+    @Test
     public void uniqueHauptprobenNrNew() {
         Sample sample = createMinimumValidSample();
         sample.setId(null);
@@ -168,6 +172,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test update unique hpnr.
      */
+    @Test
     public void uniqueHauptprobenNrUpdate() {
         Sample sample = createMinimumValidSample();
         sample.setId(SAMPLE_ID);
@@ -180,6 +185,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test update of existing hpnr..
      */
+    @Test
     public void existingHauptprobenNrUpdate() {
         Sample sample = createMinimumValidSample();
         sample.setId(SAMPLE_ID);
@@ -196,6 +202,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test entnahmeort.
      */
+    @Test
     public void hasEntnahmeOrt() {
         Sample sample = createMinimumValidSample();
         sample.setIsTest(false);
@@ -207,6 +214,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test no entnahmeort.
      */
+    @Test
     public void hasNoEntnahmeOrt() {
         Sample sample = createMinimumValidSample();
         sample.setId(ID710);
@@ -223,6 +231,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test probenahmebegin.
      */
+    @Test
     public void hasProbeentnahmeBegin() {
         Sample sample = createMinimumValidSample();
         sample.setSampleStartDate(new Timestamp(TS1));
@@ -236,6 +245,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test no probenahme begin.
      */
+    @Test
     public void hasNoProbeentnahmeBegin() {
         Sample sample = createMinimumValidSample();
         sample.setSampleStartDate(null);
@@ -252,6 +262,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test probenahme begin without end.
      */
+    @Test
     public void timeNoEndProbeentnahmeBegin() {
         Sample sample = createMinimumValidSample();
         sample.setSampleStartDate(new Timestamp(TS1));
@@ -266,6 +277,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test probenahme begin without begin.
      */
+    @Test
     public void timeNoBeginProbeentnahmeBegin() {
         Sample sample = createMinimumValidSample();
         sample.setSampleStartDate(null);
@@ -283,6 +295,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test probenahme begin after end.
      */
+    @Test
     public void timeBeginAfterEndProbeentnahmeBegin() {
         Sample sample = createMinimumValidSample();
         sample.setSampleStartDate(new Timestamp(TS2));
@@ -296,6 +309,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test probenahmebegin in future.
      */
+    @Test
     public void timeBeginFutureProbeentnahmeBegin() {
         Sample sample = createMinimumValidSample();
         sample.setSampleStartDate(new Timestamp(TS3));
@@ -309,6 +323,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test no umwelt.
      */
+    @Test
     public void hasNoUmwelt() {
         Sample sample = createMinimumValidSample();
         sample.setEnvMediumId(null);
@@ -324,6 +339,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test empty umwelt.
      */
+    @Test
     public void hasEmptyUmwelt() {
         Sample sample = createMinimumValidSample();
         sample.setEnvMediumId("");
@@ -336,6 +352,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test sampleMeth validation.
      */
+    @Test
     public void peBeginEqualsPeEnd() {
         Instant now = Instant.now();
         Sample sample = createMinimumValidSample();
@@ -349,6 +366,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test sampleMeth validation.
      */
+    @Test
     public void peBeginDoesNotEqualPeEnd() {
         Instant now = Instant.now();
         Instant yesterday = now.minus(1, ChronoUnit.DAYS);
@@ -368,6 +386,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test orig date is after sample start date.
      */
+    @Test
     public void origDateAfterSampleStartDate() {
         Instant now = Instant.now();
         Instant yesterday = now.minus(1, ChronoUnit.DAYS);
@@ -385,6 +404,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test orig date is before sample start date.
      */
+    @Test
     public void origDateBeforeSampleStartDate() {
         Instant now = Instant.now();
         Instant yesterday = now.minus(1, ChronoUnit.DAYS);
@@ -399,6 +419,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test sample without envDescripDisplay.
      */
+    @Test
     public void noEnvDescripDisplay() {
         Sample sample = createMinimumValidSample();
         sample.setEnvDescripDisplay(null);
@@ -414,6 +435,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test sample with envDescripDisplay S1 not set.
      */
+    @Test
     public void envDescripDisplayS1NotSet() {
         Sample sample = createMinimumValidREISample();
         sample.setEnvDescripDisplay("D: 00 00 00 00 00 00 00 00 00 00 00 00");
@@ -429,6 +451,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test sample with inval envDescripDisplay.
      */
+    @Test
     public void envDescripDisplayInvalidDisplayString() {
         Sample sample = createMinimumValidSample();
         sample.setEnvDescripDisplay("77 88 99 00");
@@ -444,6 +467,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test sample without matching envMediumId.
      */
+    @Test
     public void envDescripWithoutMatchingEnvMediumId() {
         Sample sample = createMinimumValidSample();
         sample.setEnvDescripDisplay(VALID_ENV_DESCRIP_DISPLAY_FOR_N71);
@@ -460,6 +484,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test sample with sampleEndDate.
      */
+    @Test
     public void hasSampleEndDate() {
         Instant now = Instant.now();
         Instant yesterday = now.minus(1, ChronoUnit.DAYS);
@@ -474,6 +499,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test sample without sample end date.
      */
+    @Test
     public void hasNoSampleEndDate() {
         Instant now = Instant.now();
         Sample sample = createMinimumValidREISample();
@@ -491,6 +517,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test sample without sample end date.
      */
+    @Test
     public void hasSampleEndDateBeforeBegin() {
         Instant now = Instant.now();
         Instant yesterday = now.minus(1, ChronoUnit.DAYS);
@@ -509,6 +536,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test REI sample with no R type geolocat.
      */
+    @Test
     public void hasNoRTypeGeolocat() {
         Sample sample = createMinimumValidSample();
         sample.setRegulationId(REGULATION_ID_REI);
@@ -524,6 +552,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test sample without REI regulation but REI fields.
      */
+    @Test
     public void sampleShouldNotHaveREIData() {
         Sample sample = createMinimumValidSample();
         sample.setReiAgGrId(EXAMPLE_REI_AG_GR_ID);
@@ -547,6 +576,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test sample with REI regulation but without REI fields.
      */
+    @Test
     public void sampleShouldHaveREIData() {
         Sample sample = createMinimumValidSample();
         sample.setRegulationId(REGULATION_ID_REI);
@@ -568,6 +598,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test REI sample without matching envMedium.
      */
+    @Test
     public void reiSampleWithoutMatchingEnvMedium() {
         Sample sample = createMinimumValidREISample();
         sample.setEnvMediumId(ENV_MEDIUM_L42);
@@ -583,6 +614,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test sample with sample specif but without matching env medium.
      */
+    @Test
     public void sampleSpecifMesValWithoutMatchingEnvMedium() {
         Sample sample = createMinimumValidSample();
         sample.setId(ID1000);
@@ -600,6 +632,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test sample with samplespecif with matching env medium.
      */
+    @Test
     public void sampleSpecifMesValWithMatchingEnvMedium() {
         Sample sample = createMinimumValidSample();
         sample.setId(ID1000);
@@ -610,6 +643,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test sample without a unique extId.
      */
+    @Test
     public void noUniqueExtId() {
         Sample sample = createMinimumValidSample();
         sample.setExtId("sample_ext_id");
@@ -626,6 +660,7 @@ public class ProbeTest extends ValidatorBaseTest {
     /**
      * Test sample with unique ext id.
      */
+    @Test
     public void uniqueExtId() {
         Sample sample = createMinimumValidSample();
         sample.setExtId("SomethingUnique");

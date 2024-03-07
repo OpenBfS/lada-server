@@ -8,7 +8,8 @@
 package de.intevation.lada.test.validator;
 
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
+
+import org.junit.Test;
 
 import de.intevation.lada.model.lada.CommMeasm;
 import de.intevation.lada.validation.Validator;
@@ -16,7 +17,6 @@ import de.intevation.lada.validation.Validator;
 /**
  * Test validation rules for CommMeasm objects.
  */
-@Transactional
 public class CommMeasmTest extends ValidatorBaseTest {
 
     private static final String MEAS_FACIL = "06010";
@@ -32,6 +32,7 @@ public class CommMeasmTest extends ValidatorBaseTest {
     /**
      * Test commMeasm with existing text.
      */
+    @Test
     public void commentDuplicateText() {
         CommMeasm comm = new CommMeasm();
         comm.setMeasmId(EXISTING_MEASM_ID);
@@ -48,6 +49,7 @@ public class CommMeasmTest extends ValidatorBaseTest {
     /**
      * Test commMeasm with new text.
      */
+    @Test
     public void commentUniqueText() {
         CommMeasm comm = new CommMeasm();
         comm.setMeasmId(EXISTING_MEASM_ID);

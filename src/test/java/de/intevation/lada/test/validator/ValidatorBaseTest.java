@@ -7,20 +7,48 @@
  */
 package de.intevation.lada.test.validator;
 
+import java.sql.SQLException;
+
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.transaction.api.annotation.Transactional;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.runner.RunWith;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.BaseModel;
 
 /**
  * Baseclass for ValidatorTests.
  */
-public abstract class ValidatorBaseTest {
+@RunWith(Arquillian.class)
+@Transactional
+public abstract class ValidatorBaseTest extends BaseTest {
     private static final String MSG_UNEXPECTED_VALIDATION_WARNINGS
         = "Unexpected validation warnings: ";
     private static final String MSG_UNEXPECTED_VALIDATION_ERRORS
         = "Unexpected validation errors: ";
+
+    /**
+     * Constructor.
+     * Sets test dataset.
+     */
+    public ValidatorBaseTest() {
+        this.testDatasetName = "datasets/dbUnit_validator.xml";
+    }
+
+    /**
+     * Set up validator tests.
+     * @throws SQLException
+     */
+    @Before
+    public void setupValidatorTests() throws SQLException {
+        //Refresh materialized views
+        String sql = "REFRESH MATERIALIZED VIEW master.admin_border_view;";
+        getConnection().getConnection().prepareStatement(sql).execute();
+    }
 
     /**
      * Assert that the given entities has no warnings or errors attached.

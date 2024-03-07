@@ -10,11 +10,11 @@ package de.intevation.lada.test.validator;
 import java.util.Set;
 
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
+import org.junit.Test;
 
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.master.SampleSpecif;
@@ -24,7 +24,6 @@ import de.intevation.lada.validation.Validator;
 /**
  * Test validation rules for Mpg objects.
  */
-@Transactional
 public class MpgTest extends ValidatorBaseTest {
 
     //Validation keys
@@ -63,6 +62,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg objects with valid start and end date below minimum value.
      */
+    @Test
     public void validStartEndDateBelowMin() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setValidStartDate(Mpg.DOY_MIN - 1);
@@ -75,6 +75,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg objects with valid start and end date above maximum value.
      */
+    @Test
     public void validStartEndDateAboveMax() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setValidStartDate(Mpg.DOY_MAX + 1);
@@ -97,6 +98,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg objects with proper valid start and end date.
      */
+    @Test
     public void validMpg() {
         Mpg mpg = createMinimumValidMpg();
         assertNoWarningsOrErrors(mpg);
@@ -105,6 +107,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with pdStartDate smaller than valid.
      */
+    @Test
     public void yearIntervalStartDateSmallerThanValid() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setSamplePd(Mpg.YEARLY);
@@ -119,6 +122,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with pdEndDate greater than valid end date.
      */
+    @Test
     public void yearIntervalStartDateGreaterThanValid() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setSamplePd(Mpg.YEARLY);
@@ -142,6 +146,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with pdEndDate smaller than valid start date.
      */
+    @Test
     public void yearIntervalEndDateSmallerThanValid() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setSamplePd(Mpg.YEARLY);
@@ -155,6 +160,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with pdEndDate greater than valid end date.
      */
+    @Test
     public void yearIntervalEndDateGreaterThanValid() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setSamplePd(Mpg.YEARLY);
@@ -178,6 +184,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with invalid sample pd offset.
      */
+    @Test
     public void yearIntervalInvalidSamplePdOffset() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setSamplePd(Mpg.YEARLY);
@@ -198,6 +205,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with year interval and valid dates.
      */
+    @Test
     public void yearValidInterval() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setSamplePd(Mpg.YEARLY);
@@ -213,6 +221,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with samplePdStartDate below lower limit.
      */
+    @Test
     public void samplePdStartDateBelowLimit() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setSamplePd(Mpg.MONTHLY);
@@ -232,6 +241,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with samplePdEndDate below lower limit.
      */
+    @Test
     public void samplePdEndDateBelowLimit() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setSamplePd(Mpg.MONTHLY);
@@ -251,6 +261,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with samplePdOffset below lower limit.
      */
+    @Test
     public void samplePdOffsetBelowLimit() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setSamplePd(Mpg.MONTHLY);
@@ -272,6 +283,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with invalid samplePd.
      */
+    @Test
     public void invalidSamplePd() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setSamplePd("X42");
@@ -288,6 +300,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with samplePdStartDate greater than interval max.
      */
+    @Test
     public void samplePdStartDateGreaterThanIntervalMax() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setSamplePd(Mpg.MONTHLY);
@@ -306,6 +319,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with samplePdEndDate greater than interval max.
      */
+    @Test
     public void samplePdEndDateGreaterThanIntervalMax() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setSamplePd(Mpg.MONTHLY);
@@ -325,6 +339,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with samplePdOffset greater than interval max.
      */
+    @Test
     public void samplePdOffsetGreaterThanIntervalMax() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setSamplePd(Mpg.MONTHLY);
@@ -345,6 +360,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with samplePdStart date greater than samplePdEnd.
      */
+    @Test
     public void samplePdStartGreaterThanEnd() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setSamplePd(Mpg.MONTHLY);
@@ -368,6 +384,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with invalid sampleSpecif.
      */
+    @Test
     public void sampleSpecifDoesNotExist() {
         SampleSpecif spec = new SampleSpecif();
         final String specId = "A99";
@@ -388,6 +405,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with sampleSpecif.
      */
+    @Test
     public void sampleSpecifDoesExist() {
         SampleSpecif spec = new SampleSpecif();
         spec.setId("A42");
@@ -402,6 +420,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg with invalid envDescripDisplay.
      */
+    @Test
     public void envDescripDisplayInvalidDisplayString() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setEnvMediumId("L42");
@@ -418,6 +437,7 @@ public class MpgTest extends ValidatorBaseTest {
     /**
      * Test mpg without matching envMediumId.
      */
+    @Test
     public void envDescripWithoutMatchingEnvMediumId() {
         Mpg mpg = createMinimumValidMpg();
         mpg.setEnvDescripDisplay(EXAMPLE_ENV_DESCRIP_FROM_SAMPLE_DATA);

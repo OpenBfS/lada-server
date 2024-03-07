@@ -8,13 +8,13 @@
 package de.intevation.lada.test.validator;
 
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 
 import java.util.ResourceBundle;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
+import org.junit.Test;
 
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.StatusCodes;
@@ -27,7 +27,6 @@ import org.locationtech.jts.geom.Point;
 /**
  * Test validation rules for Site objects.
  */
-@Transactional
 public class SiteTest extends ValidatorBaseTest {
     //Validator keys
     private static final String COORD_X_EXT = "coordXExt";
@@ -69,6 +68,7 @@ public class SiteTest extends ValidatorBaseTest {
      * Constructor.
      */
     public SiteTest() {
+        super();
         ResourceBundle validationMessages
             = ResourceBundle.getBundle("ValidationMessages");
         String uniquePattern = validationMessages.getString(
@@ -81,6 +81,7 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test site object with adminUnit without border view entry.
      */
+    @Test
     public void adminUnitWithoutAdminBorders() {
         GeometryFactory gf = new GeometryFactory();
         Point insideBorder = gf.createPoint(
@@ -101,6 +102,7 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test fuzzy site object close to the admin border.
      */
+    @Test
     public void fuzzySiteOutsiteAdminBorders() {
         GeometryFactory gf = new GeometryFactory();
         Point justOutsideBorder = gf.createPoint(new Coordinate(
@@ -118,6 +120,7 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test site object far outside to the admin border.
      */
+    @Test
     public void siteOutsiteAdminBorders() {
         GeometryFactory gf = new GeometryFactory();
         Point justOutsideBorder = gf.createPoint(new Coordinate(
@@ -141,6 +144,7 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test site inside admin borders.
      */
+    @Test
     public void siteInsideAdminBorders() {
         GeometryFactory gf = new GeometryFactory();
         Point insideBorder = gf.createPoint(
@@ -158,6 +162,7 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test site with duplicate extId.
      */
+    @Test
     public void duplicateExtId() {
         Site site = new Site();
         site.setNetworkId(EXISTING_NETWORK_ID);
@@ -174,6 +179,7 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test site with unique extId.
      */
+    @Test
     public void uniqueExtId() {
         Site site = new Site();
         site.setNetworkId(EXISTING_NETWORK_ID);
@@ -186,21 +192,22 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test site with a non existing site class.
      */
+    @Test
     public void siteClassDoesNotExist() {
         Site site = new Site();
         site.setSiteClassId(0);
         site.setNetworkId(EXISTING_NETWORK_ID);
 
-        validator.validate(site);
-        Assert.assertTrue(site.hasErrors());
-        Assert.assertTrue(site.getErrors().containsKey(SITE_CLASS_ID));
-        Assert.assertTrue(site.getErrors().get(SITE_CLASS_ID)
-            .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+        assertHasError(
+            validator.validate(site),
+            SITE_CLASS_ID,
+            "'0' is no valid primary key");
     }
 
     /**
      * Test site with valid site class.
      */
+    @Test
     public void siteClassDoesExist() {
         Site site = new Site();
         site.setSiteClassId(1);
@@ -213,6 +220,7 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test REI site with 3 character extId.
      */
+    @Test
     public void reiSiteExtIdTooShort() {
         Site site = new Site();
         site.setExtId(NUCL_FACIL_EXT_ID_SHORT);
@@ -230,6 +238,7 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test REI site without nucl facils.
      */
+    @Test
     public void reiSiteNoNuclFacils() {
         Site site = new Site();
         site.setExtId(EXAMPLE_EXT_ID);
@@ -248,6 +257,7 @@ public class SiteTest extends ValidatorBaseTest {
      * Test REI site which ext id points to NuclFacil that is not connected to
      * its nuclFacilGrId.
      */
+    @Test
     public void reiSiteNuclFacilWithoutMappingEntry() {
         Site site = new Site();
         site.setExtId(NUCL_FACIL_EXT_ID_UNMAPPED);
@@ -266,6 +276,7 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test rei site without nuclFacilGrId.
      */
+    @Test
     public void reiSiteWithoutNuclFacilGrId() {
         Site site = new Site();
         site.setExtId(EXAMPLE_EXT_ID);
@@ -283,6 +294,7 @@ public class SiteTest extends ValidatorBaseTest {
     /**
      * Test rei site.
      */
+    @Test
     public void reiSite() {
         Site site = new Site();
         site.setSiteClassId(SITE_CLASS_REI);

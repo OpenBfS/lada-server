@@ -8,10 +8,10 @@
 package de.intevation.lada.test.validator;
 
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
+import org.junit.Test;
 
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.validation.Validator;
@@ -20,7 +20,6 @@ import de.intevation.lada.validation.Validator;
 /**
  * Test validation rules for Tag objects.
  */
-@Transactional
 public class TagTest extends ValidatorBaseTest {
 
     private static final String MEAS_FACIL = "06010";
@@ -31,6 +30,7 @@ public class TagTest extends ValidatorBaseTest {
     /**
      * Test tag with matching Network and MeasFacil.
      */
+    @Test
     public void matchingNetworkMeasFacil() {
         Tag tag = createMinimumValidTag();
         tag.setMeasFacilId(MEAS_FACIL);
@@ -43,6 +43,7 @@ public class TagTest extends ValidatorBaseTest {
     /**
      * Test tag with not matching Network and MeasFacil.
      */
+    @Test
     public void notMatchingNetworkMeasFacil() {
         Tag tag = createMinimumValidTag();
         tag.setMeasFacilId(MEAS_FACIL);

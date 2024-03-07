@@ -14,11 +14,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
+import org.junit.Test;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.util.data.StatusCodes;
@@ -28,7 +28,6 @@ import de.intevation.lada.validation.Validator;
  * Test messung entities.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Transactional
 public class MessungTest extends ValidatorBaseTest {
 
     //Validation keys
@@ -61,6 +60,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test nebenproben nr.
      */
+    @Test
     public void hasNebenprobenNr() {
         Measm measm = createMinimalValidMeasm();
         measm.setMinSampleId("10R1");
@@ -71,6 +71,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test without nebenproben nr.
      */
+    @Test
     public void hasNoNebenprobenNr() {
         Measm measm = createMinimalValidMeasm();
         measm.setMinSampleId(null);
@@ -86,6 +87,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test empty nebenproben nr.
      */
+    @Test
     public void hasEmptyNebenprobenNr() {
         Measm measm = createMinimalValidMeasm();
         measm.setMinSampleId("");
@@ -107,6 +109,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test new existing nebenproben nr.
      */
+    @Test
     public void existingNebenprobenNrNew() {
         Measm messung = createMinimalValidMeasm();
         messung.setId(null);
@@ -125,6 +128,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test new unique nebenproben nr.
      */
+    @Test
     public void uniqueNebenprobenNrNew() {
         Measm messung = createMinimalValidMeasm();
         messung.setId(null);
@@ -136,6 +140,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test update unique nebenproben nr.
      */
+    @Test
     public void uniqueNebenprobenNrUpdate() {
         Measm messung = createMinimalValidMeasm();
         messung.setMinSampleId(MIN_SAMPLE_ID_00G2);
@@ -146,6 +151,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test update existing nebenproben nr.
      */
+    @Test
     public void existingNebenprobenNrUpdate() {
         Measm measm = createMinimalValidMeasm();
         measm.setMinSampleId(EXISTING_MIN_SAMPLE_ID);
@@ -157,6 +163,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test measm with start date in future.
      */
+    @Test
     public void measmStartDateInFuture() {
         Instant tomorrow = Instant.now().plus(1, ChronoUnit.DAYS);
         Measm measm = createMinimalValidMeasm();
@@ -176,6 +183,7 @@ public class MessungTest extends ValidatorBaseTest {
      * Test measm with start date before sampleStartDate.
      * @throws ParseException Thrown if date parsing fails
      */
+    @Test
     public void measmStartDateBeforeSampleStartDate() throws ParseException {
         Instant sampleStartDate = DB_UNIT_DATE_FORMAT
             .parse(EXISTING_SAMPLE_START_DATE).toInstant();
@@ -198,6 +206,7 @@ public class MessungTest extends ValidatorBaseTest {
      * Test measm with start date before sampleStartDate.
      * @throws ParseException Thrown if date parsing fails
      */
+    @Test
     public void measmStartDateAfterSampleStartDate() throws ParseException {
         Instant sampleStartDate = DB_UNIT_DATE_FORMAT
             .parse(EXISTING_SAMPLE_START_DATE).toInstant();
@@ -212,6 +221,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test measm without start date.
      */
+    @Test
     public void measmWithoutStartDate() {
         Measm measm = createMinimalValidMeasm();
         measm.setMeasmStartDate(null);
@@ -227,6 +237,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test measm without start date connected to a sample with regulation id 1.
      */
+    @Test
     public void measmWithoutStartDateRegulation161Sample() {
         Measm measm = createMinimalValidMeasm();
         measm.setSampleId(EXISTING_SAMPLE_ID_REGULATION_161);
@@ -244,6 +255,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test measm without a measPd.
      */
+    @Test
     public void measmWithoutMeasPD() {
         Measm measm = createMinimalValidMeasm();
         measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
@@ -262,6 +274,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test measm without a measPd connected to a sample with regulation id 1.
      */
+    @Test
     public void measmWithoutMeasPDRegulation161Sample() {
         Measm measm = createMinimalValidMeasm();
         measm.setSampleId(EXISTING_SAMPLE_ID_REGULATION_161);
@@ -280,6 +293,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test measm without a measPd connected to a continuous sample.
      */
+    @Test
     public void measmWithoutMeasPDRContSample() {
         Measm measm = createMinimalValidMeasm();
         measm.setMeasPd(null);
@@ -297,6 +311,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test measm with measPd.
      */
+    @Test
     public void measmWithMeasPd() {
         Measm measm = createMinimalValidMeasm();
         measm.setMeasPd(1);
@@ -307,6 +322,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test measm missing obligatory measds.
      */
+    @Test
     public void measmWithoutObligMeasd() {
         Measm measm = createMinimalValidMeasm();
         measm.setId(null);
@@ -323,6 +339,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test measm with all obligatory measds.
      */
+    @Test
     public void measmWithObligMeasd() {
         Measm measm = createMinimalValidMeasm();
 
@@ -333,6 +350,7 @@ public class MessungTest extends ValidatorBaseTest {
     /**
      * Test measm with invalid mmtId.
      */
+    @Test
     public void measmWithInvalidMmt() {
         Measm measm = createMinimalValidMeasm();
         final String invalidKey = "XX";
