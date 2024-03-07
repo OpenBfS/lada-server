@@ -39,6 +39,7 @@ import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.validation.constraints.CanChangeCoordinates;
+import de.intevation.lada.validation.constraints.HasCoordsOrAdminUnitOrState;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.Unique;
@@ -48,6 +49,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @EntityListeners(SiteListener.class)
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ Site.class, DatabaseConstraints.class })
+@HasCoordsOrAdminUnitOrState
 @Unique(fields = {"extId", "networkId"},
     groups = DatabaseConstraints.class, clazz = Site.class)
 @CanChangeCoordinates(groups = DatabaseConstraints.class)

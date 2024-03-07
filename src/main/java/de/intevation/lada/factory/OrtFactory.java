@@ -214,32 +214,24 @@ public class OrtFactory {
             }
             return ort;
         }
-        if (!hasKoord) {
-            if (ort.getStateId() != null) {
-                State staat = repository.getByIdPlain(
-                    State.class, ort.getStateId());
-                ort.setSpatRefSysId(staat.getSpatRefSysId());
-                ort.setCoordXExt(staat.getCoordXExt());
-                ort.setCoordYExt(staat.getCoordYExt());
-                ort.setLongText(staat.getCtry());
-                ort.setSiteClassId(ORTTYP5);
-                final String prefix = "STAAT_";
-                if (staat.getIso3166() != null) {
-                    ort.setExtId(prefix + staat.getIso3166());
-                    ort.setShortText(prefix + staat.getIso3166());
-                } else {
-                    ort.setExtId(prefix + staat.getId());
-                    ort.setShortText(prefix + staat.getId());
-                }
-                ort.setReiReportText(staat.getCtry());
-                transformCoordinates(ort);
-                return ort;
+        if (!hasKoord && ort.getStateId() != null) {
+            State staat = repository.getByIdPlain(
+                State.class, ort.getStateId());
+            ort.setSpatRefSysId(staat.getSpatRefSysId());
+            ort.setCoordXExt(staat.getCoordXExt());
+            ort.setCoordYExt(staat.getCoordYExt());
+            ort.setLongText(staat.getCtry());
+            ort.setSiteClassId(ORTTYP5);
+            final String prefix = "STAAT_";
+            if (staat.getIso3166() != null) {
+                ort.setExtId(prefix + staat.getIso3166());
+                ort.setShortText(prefix + staat.getIso3166());
+            } else {
+                ort.setExtId(prefix + staat.getId());
+                ort.setShortText(prefix + staat.getId());
             }
-            ReportItem err = new ReportItem();
-            err.setCode(StatusCodes.VALUE_AMBIGOUS);
-            err.setKey("ort");
-            err.setValue("");
-            errors.add(err);
+            ort.setReiReportText(staat.getCtry());
+            transformCoordinates(ort);
         }
         return ort;
     }

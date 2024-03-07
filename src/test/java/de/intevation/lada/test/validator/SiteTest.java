@@ -38,11 +38,11 @@ public class SiteTest extends ValidatorBaseTest {
     private static final String SITE_CLASS_ID = "siteClassId";
 
     //Other constants
+    private static final int SPAT_REF_SYS_ID = 5;
     private static final String INVALID_ADMIN_UNIT_ID = "420042";
     private static final String VALID_ADMIN_UNIT_ID = "11000000";
 
     private static final String EXAMPLE_EXT_ID = "1234";
-    private static final String EXISTING_NETWORK_ID = "06";
     private static final int SITE_CLASS_REI = 3;
 
     private static final String NUCL_FACIL_EXT_ID_UNMAPPED = "Othr";
@@ -86,10 +86,9 @@ public class SiteTest extends ValidatorBaseTest {
         GeometryFactory gf = new GeometryFactory();
         Point insideBorder = gf.createPoint(
                 new Coordinate(COORDINATE_INSIDE_X, COORDINATE_INSIDE_Y));
-        Site site = new Site();
+        Site site = createMinimalSite();
         site.setAdminUnitId(INVALID_ADMIN_UNIT_ID);
         site.setGeom(insideBorder);
-        site.setNetworkId(EXISTING_NETWORK_ID);
         site.setExtId(EXAMPLE_EXT_ID);
 
         validator.validate(site);
@@ -107,11 +106,10 @@ public class SiteTest extends ValidatorBaseTest {
         GeometryFactory gf = new GeometryFactory();
         Point justOutsideBorder = gf.createPoint(new Coordinate(
             COORDINATE_JUST_OUTSIDE_X, COORDINATE_JUST_OUTSIDE_Y));
-        Site site = new Site();
+        Site site = createMinimalSite();
         site.setAdminUnitId(VALID_ADMIN_UNIT_ID);
         site.setIsFuzzy(true);
         site.setGeom(justOutsideBorder);
-        site.setNetworkId(EXISTING_NETWORK_ID);
 
         validator.validate(site);
         assertNoWarningsOrErrors(site);
@@ -125,11 +123,10 @@ public class SiteTest extends ValidatorBaseTest {
         GeometryFactory gf = new GeometryFactory();
         Point justOutsideBorder = gf.createPoint(new Coordinate(
             COORDINATE_OUTSIDE_X, COORDINATE_OUTSIDE_Y));
-        Site site = new Site();
+        Site site = createMinimalSite();
         site.setAdminUnitId(VALID_ADMIN_UNIT_ID);
         site.setIsFuzzy(false);
         site.setGeom(justOutsideBorder);
-        site.setNetworkId(EXISTING_NETWORK_ID);
 
         validator.validate(site);
         Assert.assertTrue(site.hasWarnings());
@@ -149,11 +146,10 @@ public class SiteTest extends ValidatorBaseTest {
         GeometryFactory gf = new GeometryFactory();
         Point insideBorder = gf.createPoint(
                 new Coordinate(COORDINATE_INSIDE_X, COORDINATE_INSIDE_Y));
-        Site site = new Site();
+        Site site = createMinimalSite();
         site.setAdminUnitId(VALID_ADMIN_UNIT_ID);
         site.setIsFuzzy(false);
         site.setGeom(insideBorder);
-        site.setNetworkId(EXISTING_NETWORK_ID);
 
         validator.validate(site);
         assertNoWarningsOrErrors(site);
@@ -164,8 +160,7 @@ public class SiteTest extends ValidatorBaseTest {
      */
     @Test
     public void duplicateExtId() {
-        Site site = new Site();
-        site.setNetworkId(EXISTING_NETWORK_ID);
+        Site site = createMinimalSite();
         site.setExtId("D_00191");
 
         validator.validate(site);
@@ -181,8 +176,7 @@ public class SiteTest extends ValidatorBaseTest {
      */
     @Test
     public void uniqueExtId() {
-        Site site = new Site();
-        site.setNetworkId(EXISTING_NETWORK_ID);
+        Site site = createMinimalSite();
         site.setExtId("D_00192");
 
         validator.validate(site);
@@ -194,9 +188,8 @@ public class SiteTest extends ValidatorBaseTest {
      */
     @Test
     public void siteClassDoesNotExist() {
-        Site site = new Site();
+        Site site = createMinimalSite();
         site.setSiteClassId(0);
-        site.setNetworkId(EXISTING_NETWORK_ID);
 
         assertHasError(
             validator.validate(site),
@@ -209,9 +202,8 @@ public class SiteTest extends ValidatorBaseTest {
      */
     @Test
     public void siteClassDoesExist() {
-        Site site = new Site();
+        Site site = createMinimalSite();
         site.setSiteClassId(1);
-        site.setNetworkId(EXISTING_NETWORK_ID);
 
         validator.validate(site);
         assertNoWarningsOrErrors(site);
@@ -222,11 +214,10 @@ public class SiteTest extends ValidatorBaseTest {
      */
     @Test
     public void reiSiteExtIdTooShort() {
-        Site site = new Site();
+        Site site = createMinimalSite();
         site.setExtId(NUCL_FACIL_EXT_ID_SHORT);
         site.setSiteClassId(SITE_CLASS_REI);
         site.setNuclFacilGrId(NUCL_FACIL_GR_ID_MAPPED);
-        site.setNetworkId(EXISTING_NETWORK_ID);
 
         validator.validate(site);
         Assert.assertTrue(site.hasWarnings());
@@ -240,11 +231,10 @@ public class SiteTest extends ValidatorBaseTest {
      */
     @Test
     public void reiSiteNoNuclFacils() {
-        Site site = new Site();
+        Site site = createMinimalSite();
         site.setExtId(EXAMPLE_EXT_ID);
         site.setSiteClassId(SITE_CLASS_REI);
         site.setNuclFacilGrId(NUCL_FACIL_GR_ID_MAPPED);
-        site.setNetworkId(EXISTING_NETWORK_ID);
 
         validator.validate(site);
         Assert.assertTrue(site.hasWarnings());
@@ -259,11 +249,10 @@ public class SiteTest extends ValidatorBaseTest {
      */
     @Test
     public void reiSiteNuclFacilWithoutMappingEntry() {
-        Site site = new Site();
+        Site site = createMinimalSite();
         site.setExtId(NUCL_FACIL_EXT_ID_UNMAPPED);
         site.setNuclFacilGrId(NUCL_FACIL_GR_ID_MAPPED);
         site.setSiteClassId(SITE_CLASS_REI);
-        site.setNetworkId(EXISTING_NETWORK_ID);
 
         validator.validate(site);
         Assert.assertTrue(site.hasWarnings());
@@ -278,10 +267,9 @@ public class SiteTest extends ValidatorBaseTest {
      */
     @Test
     public void reiSiteWithoutNuclFacilGrId() {
-        Site site = new Site();
+        Site site = createMinimalSite();
         site.setExtId(EXAMPLE_EXT_ID);
         site.setSiteClassId(SITE_CLASS_REI);
-        site.setNetworkId(EXISTING_NETWORK_ID);
 
         validator.validate(site);
         Assert.assertTrue(site.hasWarnings());
@@ -296,14 +284,91 @@ public class SiteTest extends ValidatorBaseTest {
      */
     @Test
     public void reiSite() {
-        Site site = new Site();
+        Site site = createMinimalSite();
         site.setSiteClassId(SITE_CLASS_REI);
         site.setExtId(NUCL_FACIL_EXT_ID_MAPPED);
         site.setNuclFacilGrId(1);
-        site.setNetworkId(EXISTING_NETWORK_ID);
 
         validator.validate(site);
-        validator.validate(site);
         assertNoWarningsOrErrors(site);
+    }
+
+    @Test
+    public void noCoordsNorAdminUnitNorState() {
+        Site site = createMinimalSite();
+        site.setStateId(null);
+        assertHasCoordsOrAdminUnitOrState(validator.validate(site));
+    }
+
+    @Test
+    public void hasIncompleteCoordsNoSpatRefSys() {
+        Site site = createMinimalSite();
+        site.setStateId(null);
+        site.setCoordXExt("0");
+        site.setCoordYExt("0");
+
+        assertHasCoordsOrAdminUnitOrState(validator.validate(site));
+    }
+
+    @Test
+    public void hasIncompleteCoordsNoCoordX() {
+        Site site = createMinimalSite();
+        site.setStateId(null);
+        site.setSpatRefSysId(SPAT_REF_SYS_ID);
+        site.setCoordYExt("0");
+
+        assertHasCoordsOrAdminUnitOrState(validator.validate(site));
+    }
+
+    @Test
+    public void hasIncompleteCoordsNoCoordY() {
+        Site site = createMinimalSite();
+        site.setStateId(null);
+        site.setSpatRefSysId(SPAT_REF_SYS_ID);
+        site.setCoordXExt("0");
+
+        assertHasCoordsOrAdminUnitOrState(validator.validate(site));
+    }
+
+    private void assertHasCoordsOrAdminUnitOrState(Site site) {
+        final String msg =
+            "Either coordinates or adminUnitId or stateId must be given";
+        assertHasError(site, "coordinates", msg);
+        assertHasError(site, "adminUnitId", msg);
+        assertHasError(site, "stateId", msg);
+    }
+
+    @Test
+    public void hasCoords() {
+        Site site = createMinimalSite();
+        site.setStateId(null);
+        site.setSpatRefSysId(SPAT_REF_SYS_ID);
+        site.setCoordXExt("0");
+        site.setCoordYExt("0");
+
+        assertNoWarningsOrErrors(validator.validate(site));
+    }
+
+    @Test
+    public void hasAdminUnit() {
+        Site site = createMinimalSite();
+        site.setStateId(null);
+        site.setAdminUnitId(VALID_ADMIN_UNIT_ID);
+
+        assertNoWarningsOrErrors(validator.validate(site));
+    }
+
+    @Test
+    public void hasState() {
+        Site site = createMinimalSite();
+
+        assertNoWarningsOrErrors(validator.validate(site));
+    }
+
+    private Site createMinimalSite() {
+        Site site = new Site();
+        site.setNetworkId("06");
+        site.setStateId(0);
+        return site;
     }
 }
