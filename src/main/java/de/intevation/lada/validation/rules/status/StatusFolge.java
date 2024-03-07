@@ -11,8 +11,6 @@ import java.util.List;
 
 import jakarta.inject.Inject;
 
-import org.jboss.logging.Logger;
-
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.StatusOrdMp;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -30,8 +28,6 @@ import de.intevation.lada.validation.rules.Rule;
 @ValidationRule("Status")
 public class StatusFolge implements Rule {
 
-    @Inject Logger logger;
-
     @Inject
     private Repository repository;
 
@@ -40,10 +36,9 @@ public class StatusFolge implements Rule {
         StatusProt status = (StatusProt) object;
 
         // Get the previous status
-        QueryBuilder<StatusProt> lastFilter =
-            repository.queryBuilder(StatusProt.class);
-
-        lastFilter.and("measmId", status.getMeasmId());
+        QueryBuilder<StatusProt> lastFilter = repository
+            .queryBuilder(StatusProt.class)
+            .and("measmId", status.getMeasmId());
         lastFilter.orderBy("id", true);
         List<StatusProt> protos =
             repository.filterPlain(lastFilter.getQuery());
@@ -51,10 +46,10 @@ public class StatusFolge implements Rule {
             return null;
         }
         StatusProt last = protos.get(protos.size() - 1);
-        QueryBuilder<StatusOrdMp> folgeFilter =
-            repository.queryBuilder(StatusOrdMp.class);
-        folgeFilter.and("fromId", last.getStatusMpId());
-        folgeFilter.and("toId", status.getStatusMpId());
+        QueryBuilder<StatusOrdMp> folgeFilter = repository
+            .queryBuilder(StatusOrdMp.class)
+            .and("fromId", last.getStatusMpId())
+            .and("toId", status.getStatusMpId());
         List<StatusOrdMp> reihenfolge =
             repository.filterPlain(folgeFilter.getQuery());
         if (reihenfolge.isEmpty()) {
