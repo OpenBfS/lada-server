@@ -11,7 +11,6 @@ import java.util.List;
 
 import jakarta.inject.Inject;
 
-import org.jboss.logging.Logger;
 import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.model.master.AdminBorderView;
@@ -33,65 +32,41 @@ import de.intevation.lada.validation.rules.Rule;
 public class CoordinatesInVE implements Rule {
 
     @Inject
-    private Logger logger;
-
-    @Inject
     private Repository repository;
 
     @Override
     public Violation execute(Object object) {
         Site ort = (Site) object;
-        String gemId = "".equals(ort.getAdminUnitId())
-            ? null
-            : ort.getAdminUnitId();
+        String gemId = ort.getAdminUnitId();
+        Point p = ort.getGeom();
 
-        if (gemId != null && ort.getGeom() != null) {
+        if (gemId != null && p != null) {
+            Violation violation = new Violation();
+
+            final String municIdKey = "municId";
             QueryBuilder<AdminBorderView> vg = repository
                 .queryBuilder(AdminBorderView.class)
-                .and("municId", gemId);
+                .and(municIdKey, gemId);
             List<AdminBorderView> vgs = repository.filterPlain(vg.getQuery());
-            if (vgs == null || vgs.isEmpty()) {
-                Violation violation = new Violation();
+            if (vgs.isEmpty()) {
                 violation.addWarning(
-                    "municId", StatusCodes.GEO_COORD_UNCHECKED);
+                    municIdKey, StatusCodes.GEO_COORD_UNCHECKED);
                 return violation;
             }
 
-            Point p = ort.getGeom();
-            if (p == null) {
-                logger.error("geom is null. "
-                    + "Probably OrtFactory.transformCoordinates() has not "
-                    + "been called on this ort.");
+            AdminBorderView singlevg = vgs.get(0);
+            if (singlevg.getShape().contains(p) && !ort.getIsFuzzy()) {
+                return null;
             }
-            Boolean unscharf = ort.getIsFuzzy();
-            Violation violation = new Violation();
-            for (AdminBorderView singlevg : vgs) {
-                if (singlevg.getShape().contains(p)) {
-                    if (unscharf != null && !unscharf) {
-                        return null;
-                    } else {
-                        ort.setIsFuzzy(false);
-                        return null;
-                    }
-                } else {
-                    double dist = singlevg.getShape().distance(p);
-                    dist = dist * (3.1415926 / 180) * 6378137;
-                    if (dist < 1000) {
-                        ort.setIsFuzzy(true);
-                        return null;
-                    } else {
-                        ort.setIsFuzzy(false);
-                        violation.addWarning(
-                            "coordXExt", StatusCodes.GEO_POINT_OUTSIDE);
-                        violation.addWarning(
-                            "coordYExt", StatusCodes.GEO_POINT_OUTSIDE);
-                        return violation;
-                    }
-                }
+            double dist = singlevg.getShape().distance(p)
+                * (3.1415926 / 180) * 6378137;
+            if (dist < 1000) {
+                ort.setIsFuzzy(true);
+                return null;
             }
-
-            violation.addWarning("coordXExt", StatusCodes.GEO_NOT_MATCHING);
-            violation.addWarning("coordYExt", StatusCodes.GEO_NOT_MATCHING);
+            ort.setIsFuzzy(false);
+            violation.addWarning("coordXExt", StatusCodes.GEO_POINT_OUTSIDE);
+            violation.addWarning("coordYExt", StatusCodes.GEO_POINT_OUTSIDE);
             return violation;
         }
         return null;
