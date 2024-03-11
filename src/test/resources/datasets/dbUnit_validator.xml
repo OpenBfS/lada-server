@@ -136,6 +136,7 @@
         coord_y_ext = "5519769"
         geom = "SRID=4326;POINT(49.83021 8.81948)"
         short_text = "kurz"
+        site_class_id = "1"
     />
     <master.status_ord_mp id = "1" from_id = "1" to_id = "2" />
     <!--Geo data-->

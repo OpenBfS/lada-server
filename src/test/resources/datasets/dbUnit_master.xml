@@ -153,6 +153,7 @@
         coord_y_ext = "5519769"
         geom = "SRID=4326;POINT(49.83021 8.81948)"
         short_text = "kurz"
+        site_class_id = "1"
     />
     <master.site
         id = "1003"
@@ -166,6 +167,7 @@
         coord_y_ext = "5519769"
         geom = "SRID=4326;POINT(49.83021 8.81948)"
         short_text = "kurz"
+        site_class_id = "1"
     />
     <!-- Env descrip data-->
     <master.env_descrip

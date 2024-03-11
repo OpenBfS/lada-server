@@ -203,7 +203,6 @@ public class SiteTest extends ValidatorBaseTest {
     @Test
     public void siteClassDoesExist() {
         Site site = createMinimalSite();
-        site.setSiteClassId(1);
 
         validator.validate(site);
         assertNoWarningsOrErrors(site);
@@ -369,6 +368,7 @@ public class SiteTest extends ValidatorBaseTest {
         Site site = new Site();
         site.setNetworkId("06");
         site.setStateId(0);
+        site.setSiteClassId(1);
         return site;
     }
 }
