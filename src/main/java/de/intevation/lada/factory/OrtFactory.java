@@ -127,6 +127,18 @@ public class OrtFactory {
                 return orte.get(0);
             }
         }
+        //Ort exists - check for OrtId
+        if (ort.getAdminUnitId() != null && !hasKoord) {
+            QueryBuilder<Site> builderExists =
+                repository.queryBuilder(Site.class)
+                .and("networkId", ort.getNetworkId())
+                .andLike("extId", "%" + ort.getAdminUnitId());
+            List<Site> ortExists = repository.filterPlain(
+                builderExists.getQuery());
+            if (!ortExists.isEmpty()) {
+                return ortExists.get(0);
+            }
+        }
 
         // Try setting geometry from coordinates
         if (hasKoord) {
@@ -155,63 +167,52 @@ public class OrtFactory {
             // of the state with database ID 0
             ort.setStateId(0);
 
-            //Ort exists - check for OrtId
-            QueryBuilder<Site> builderExists =
-                repository.queryBuilder(Site.class)
-                .and("networkId", ort.getNetworkId())
-                .andLike("extId", "%" + ort.getAdminUnitId());
-            List<Site> ortExists = repository.filterPlain(
-                builderExists.getQuery());
-            if (ortExists.isEmpty()) {
-                AdminUnit v = repository.getByIdPlain(
-                    AdminUnit.class, ort.getAdminUnitId());
-                if (!hasKoord) {
-                    if (ort.getSpatRefSysId() == null) {
-                        ort.setSpatRefSysId(KdaUtil.KDA_GD);
-                        ort.setCoordYExt(
-                            String.valueOf(v.getGeomCenter().getY()));
-                        ort.setCoordXExt(
-                            String.valueOf(v.getGeomCenter().getX()));
-                    } else {
-                        KdaUtil.Result coords = new KdaUtil().transform(
-                            KdaUtil.KDA.GD,
-                            KdaUtil.KDAS.get(ort.getSpatRefSysId()),
-                            String.valueOf(v.getGeomCenter().getX()),
-                            String.valueOf(v.getGeomCenter().getY()));
-                        if (coords != null) {
-                            ort.setCoordYExt(coords.getY());
-                            ort.setCoordXExt(coords.getX());
-                        }
+            AdminUnit v = repository.getByIdPlain(
+                AdminUnit.class, ort.getAdminUnitId());
+            if (!hasKoord) {
+                if (ort.getSpatRefSysId() == null) {
+                    ort.setSpatRefSysId(KdaUtil.KDA_GD);
+                    ort.setCoordYExt(
+                        String.valueOf(v.getGeomCenter().getY()));
+                    ort.setCoordXExt(
+                        String.valueOf(v.getGeomCenter().getX()));
+                } else {
+                    KdaUtil.Result coords = new KdaUtil().transform(
+                        KdaUtil.KDA.GD,
+                        KdaUtil.KDAS.get(ort.getSpatRefSysId()),
+                        String.valueOf(v.getGeomCenter().getX()),
+                        String.valueOf(v.getGeomCenter().getY()));
+                    if (coords != null) {
+                        ort.setCoordYExt(coords.getY());
+                        ort.setCoordXExt(coords.getX());
                     }
-                    ort.setSiteClassId(ORTTYP4);
+                }
+                ort.setSiteClassId(ORTTYP4);
 
-                    String prefix = null;
-                    if (v.getIsMunic()) {
-                        prefix = "GEM";
-                    } else if (v.getIsRuralDist()) {
-                        prefix = "LK";
-                    } else if (v.getIsGovDist()) {
-                        prefix = "RB";
-                    } else if (v.getIsState()) {
-                        prefix = "BL";
-                    }
-                    if (prefix != null) {
-                        ort.setExtId(prefix + "_" + ort.getAdminUnitId());
-                    }
+                String prefix = null;
+                if (v.getIsMunic()) {
+                    prefix = "GEM";
+                } else if (v.getIsRuralDist()) {
+                    prefix = "LK";
+                } else if (v.getIsGovDist()) {
+                    prefix = "RB";
+                } else if (v.getIsState()) {
+                    prefix = "BL";
                 }
-                if (ort.getShortText() == null) {
-                    ort.setShortText(ort.getExtId());
+                if (prefix != null) {
+                    ort.setExtId(prefix + "_" + ort.getAdminUnitId());
                 }
-                if (ort.getLongText() == null) {
-                    ort.setLongText(v.getName());
-                }
-                if (ort.getReiReportText() == null) {
-                    ort.setReiReportText(v.getName());
-                }
-                transformCoordinates(ort);
-            } else if (!hasKoord) {
-                return ortExists.get(0);
             }
+            if (ort.getShortText() == null) {
+                ort.setShortText(ort.getExtId());
+            }
+            if (ort.getLongText() == null) {
+                ort.setLongText(v.getName());
+            }
+            if (ort.getReiReportText() == null) {
+                ort.setReiReportText(v.getName());
+            }
+            transformCoordinates(ort);
             return ort;
         }
         if (!hasKoord && ort.getStateId() != null) {
