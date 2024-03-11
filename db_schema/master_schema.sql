@@ -722,7 +722,8 @@ CREATE TABLE site (
 CREATE INDEX site_network_id_idx ON master.site USING btree (network_id);
 
 CREATE TRIGGER last_mod_site BEFORE UPDATE ON site FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
-CREATE TRIGGER set_site_id_site BEFORE INSERT ON site FOR EACH ROW EXECUTE PROCEDURE set_site_id();
+CREATE TRIGGER set_site_id_site BEFORE INSERT OR UPDATE ON site
+    FOR EACH ROW EXECUTE PROCEDURE set_site_id();
 
 CREATE TABLE type_regulation (
     id character(1) PRIMARY KEY CHECK (trim(both ' ' from id) <> ''),

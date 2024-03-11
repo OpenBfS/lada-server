@@ -45,7 +45,7 @@ public class OrtFactory {
      * Transform the external coordinates to the geom representation.
      * @param ort the ort
      */
-    public void transformCoordinates(Site ort) {
+    private void transformCoordinates(Site ort) {
         Integer kda = ort.getSpatRefSysId();
         String xCoord = ort.getCoordXExt();
         String yCoord = ort.getCoordYExt();
@@ -68,19 +68,13 @@ public class OrtFactory {
     }
 
     /**
-     * Use given attribute to try to add other attributes.
-     * To set futher attributes at least one of the following attribute set
-     * need to be present:
-     * - kda, x, y
-     * - gemId
-     * - staat
+     * Search for exisiting Site entity matching either by coordinates,
+     * adminUnit or state.
      *
-     * @param ort The incomplete ort
-     * @return The resulting ort.
+     * @param ort The possibly incomplete Site object
+     * @return The matching existing Site object or null if no match was found.
      */
-    public Site completeOrt(Site ort) {
-        errors.clear();
-
+    public Site findExistingSite(Site ort) {
         boolean hasKoord = false;
 
         // Search for matching existing site and return it
@@ -139,9 +133,30 @@ public class OrtFactory {
                 return ortExists.get(0);
             }
         }
+        return null;
+    }
+
+    /**
+     * Use given attributes to try to add other attributes.
+     * To set futher attributes, at least one of the following attribute sets
+     * needs to be present:
+     * - spatRefSysId, coordXExt, coordYExt
+     * - adminUnitId
+     * - stateId
+     *
+     * @param ort The possibly incomplete Site object
+     */
+    public void completeSite(Site ort) {
+        errors.clear();
+
+        boolean hasKoord = false;
 
         // Try setting geometry from coordinates
-        if (hasKoord) {
+        if (ort.getSpatRefSysId() != null
+            && ort.getCoordXExt() != null
+            && ort.getCoordYExt() != null
+        ) {
+            hasKoord = true;
             transformCoordinates(ort);
         }
 
@@ -213,7 +228,7 @@ public class OrtFactory {
                 ort.setReiReportText(v.getName());
             }
             transformCoordinates(ort);
-            return ort;
+            return;
         }
         if (!hasKoord && ort.getStateId() != null) {
             State staat = repository.getByIdPlain(
@@ -234,7 +249,7 @@ public class OrtFactory {
             ort.setReiReportText(staat.getCtry());
             transformCoordinates(ort);
         }
-        return ort;
+        return;
     }
 
     public List<ReportItem> getErrors() {

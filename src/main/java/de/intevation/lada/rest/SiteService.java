@@ -183,7 +183,12 @@ public class SiteService extends LadaService {
             RequestMethod.POST,
             Site.class);
 
-        ort = ortFactory.completeOrt(ort);
+        Site existing = ortFactory.findExistingSite(ort);
+        if (existing != null) {
+            ort = existing;
+        } else {
+            ortFactory.completeSite(ort);
+        }
         if (ortFactory.hasErrors()) {
             Violation factoryErrs = new Violation();
             for (ReportItem err : ortFactory.getErrors()) {
@@ -218,7 +223,7 @@ public class SiteService extends LadaService {
             RequestMethod.PUT,
             Site.class);
 
-        ortFactory.transformCoordinates(ort);
+        ortFactory.completeSite(ort);
         if (ortFactory.hasErrors()) {
             Violation factoryErrs = new Violation();
             for (ReportItem err : ortFactory.getErrors()) {

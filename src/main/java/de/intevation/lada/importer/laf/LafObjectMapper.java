@@ -1708,13 +1708,14 @@ public class LafObjectMapper {
             }
             return null;
         }
-        o = ortFactory.completeOrt(o);
-        if (o == null || o.getGeom() == null) {
+        Site existing = ortFactory.findExistingSite(o);
+        if (existing != null) {
+            return existing;
+        }
+        ortFactory.completeSite(o);
+        if (o.getGeom() == null) {
             currentWarnings.addAll(ortFactory.getErrors());
             return null;
-        }
-        if (o.getId() != null) {
-            return o;
         }
         repository.create(o);
         return o;
