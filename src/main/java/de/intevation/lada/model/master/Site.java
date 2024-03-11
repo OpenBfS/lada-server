@@ -29,6 +29,7 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import org.hibernate.annotations.JdbcTypeCode;
@@ -123,11 +124,10 @@ public class Site extends BaseModel implements Serializable {
     @NotEmptyNorWhitespace
     private String extId;
 
-
+    @NotNull
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = SiteClass.class)
     private Integer siteClassId;
-
 
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Poi.class)
@@ -136,7 +136,6 @@ public class Site extends BaseModel implements Serializable {
     @Size(max = 2)
     @NotEmptyNorWhitespace
     private String reiSector;
-
 
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = State.class)

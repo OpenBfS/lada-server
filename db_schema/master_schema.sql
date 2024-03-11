@@ -700,7 +700,7 @@ CREATE TABLE site (
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     geom public.geometry(Point,4326) NOT NULL,
     shape public.geometry(MultiPolygon,4326),
-    site_class_id smallint REFERENCES site_class,
+    site_class_id smallint NOT NULL REFERENCES site_class,
     short_text character varying(20) NOT NULL CHECK (trim(both ' ' from short_text) <> ''),
     rei_report_text character varying(70) CHECK (trim(both ' ' from rei_report_text) <> ''),
     rei_zone character varying(1) CHECK (trim(both ' ' from rei_zone) <> ''),
