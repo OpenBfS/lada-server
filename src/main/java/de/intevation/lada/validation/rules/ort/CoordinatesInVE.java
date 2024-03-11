@@ -64,7 +64,6 @@ public class CoordinatesInVE implements Rule {
                 ort.setIsFuzzy(true);
                 return null;
             }
-            ort.setIsFuzzy(false);
             violation.addWarning("coordXExt", StatusCodes.GEO_POINT_OUTSIDE);
             violation.addWarning("coordYExt", StatusCodes.GEO_POINT_OUTSIDE);
             return violation;
