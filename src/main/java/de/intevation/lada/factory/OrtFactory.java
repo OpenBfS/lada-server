@@ -145,16 +145,16 @@ public class OrtFactory {
                         String.class)
                     .setParameter("geom", ort.getGeom())
                     .getSingleResult());
-                ort.setStateId(0);
             } catch (NoResultException nre) {
                 // Nothing to do
             }
         }
 
         if (ort.getAdminUnitId() != null) {
-            if (ort.getStateId() == null) {
-                ort.setStateId(0);
-            }
+            // An adminUnitId can only ever reference an administrative unit
+            // of the state with database ID 0
+            ort.setStateId(0);
+
             //Ort exists - check for OrtId
             QueryBuilder<Site> builderExists =
                 repository.queryBuilder(Site.class)
