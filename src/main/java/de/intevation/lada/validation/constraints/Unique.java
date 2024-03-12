@@ -20,8 +20,8 @@ import jakarta.validation.Payload;
 
 
 /**
- * Check if combination of values for given fields is unique for all
- * entities of the given class.
+ * Check if combination of values for given fields is unique for either all
+ * entities of the given class or a subset defined by a given predicate.
  */
 @Target({ TYPE })
 @Retention(RUNTIME)
@@ -48,8 +48,18 @@ public @interface Unique {
      * Names of the fields of the annotated entity class, which are expected
      * to form a unique combination, if compared with all other persistent
      * entities of the same class.
-     *
-     * Validation messages will be reported for the first field.
      */
     String[] fields();
+
+    /**
+     * Conditional SQL expression that can be used in the WHERE clause
+     * of a SELECT statement querying entities of the given class.
+     */
+    String predicate() default "";
+
+    /**
+     * Name of the property node ConstraintViolation will be associated to.
+     * Defaults to the first entry of fields.
+     */
+    String propertyNodeName() default "";
 }

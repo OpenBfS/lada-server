@@ -14,7 +14,6 @@ import org.junit.Test;
 
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
 
 public class GeolocatTest extends ValidatorBaseTest {
@@ -49,10 +48,10 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setSiteId(EXISTING_SITE_ID);
 
         sampleVal.validate(loc);
-        assertHasWarning(
+        assertHasError(
             loc,
             TYPE_REGULATION,
-            String.valueOf(StatusCodes.VALUE_AMBIGOUS));
+            "Geolocation with typeRegulation \"E\" must be unique");
     }
 
     @Test
@@ -96,10 +95,10 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setSiteId(EXISTING_SITE_ID);
 
         mpgVal.validate(loc);
-        assertHasWarning(
+        assertHasError(
             loc,
             TYPE_REGULATION,
-            String.valueOf(StatusCodes.VALUE_AMBIGOUS));
+            "Geolocation with typeRegulation \"E\" must be unique");
     }
 
     @Test

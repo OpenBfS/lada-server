@@ -39,6 +39,10 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @GroupSequence({ GeolocatMpg.class, DatabaseConstraints.class })
 @Unique(fields = {"typeRegulation", "mpgId", "siteId"},
     groups = DatabaseConstraints.class, clazz = GeolocatMpg.class)
+@Unique(fields = {"mpgId"}, predicate = "type_regulation = 'E'",
+    propertyNodeName = "typeRegulation",
+    message = "{de.intevation.lada.validation.GeolocatUniqueTypeRegulationE}",
+    groups = DatabaseConstraints.class, clazz = GeolocatMpg.class)
 public class GeolocatMpg extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

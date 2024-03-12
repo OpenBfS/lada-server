@@ -41,6 +41,10 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @GroupSequence({ Geolocat.class, DatabaseConstraints.class })
 @Unique(fields = {"typeRegulation", "sampleId", "siteId"},
     groups = DatabaseConstraints.class, clazz = Geolocat.class)
+@Unique(fields = {"sampleId"}, predicate = "type_regulation = 'E'",
+    propertyNodeName = "typeRegulation",
+    message = "{de.intevation.lada.validation.GeolocatUniqueTypeRegulationE}",
+    groups = DatabaseConstraints.class, clazz = Geolocat.class)
 public class Geolocat extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

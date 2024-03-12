@@ -13,7 +13,9 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.enterprise.inject.spi.CDI;
@@ -47,6 +49,9 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
     private String tableName;
     private String whereClause;
 
+    private String message;
+    private String propertyNodeName;
+
     @Override
     public void initialize(Unique constraintAnnotation) {
         this.fields = constraintAnnotation.fields();
@@ -79,18 +84,27 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
             // WHERE clause for EXISTS_QUERY_TEMPLATE restricting query result
             // to entries distinct from current entity but with the same
             // value combination for fields making up the UNIQUE constraint
-            String[] whereClauseParams = new String[fields.length + 1];
+            // respectively partial UNIQUE constraint, if predicate is given.
+            List<String> whereClauseParams = new ArrayList<>();
             for (int i = 0; i < fields.length; i++) {
-                whereClauseParams[i] = NamingStrategy.camelToSnake(fields[i])
-                    + "=:" + fields[i];
+                whereClauseParams.add(NamingStrategy.camelToSnake(fields[i])
+                    + "=:" + fields[i]);
             }
-            whereClauseParams[fields.length] =
+            whereClauseParams.add(
                 NamingStrategy.camelToSnake(idField)
-                + " IS DISTINCT FROM :" + idField;
+                + " IS DISTINCT FROM :" + idField);
+            String predicate = constraintAnnotation.predicate();
+            if (!predicate.isEmpty()) {
+                whereClauseParams.add(predicate);
+            }
             this.whereClause = String.join(" AND ", whereClauseParams);
         } catch (IntrospectionException e) {
             throw new RuntimeException(e);
         }
+
+        this.message = constraintAnnotation.message();
+        String nodeName = constraintAnnotation.propertyNodeName();
+        this.propertyNodeName = nodeName.isEmpty() ? this.fields[0] : nodeName;
     }
 
     @Override
@@ -118,8 +132,8 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
             boolean isValid = !(Boolean) exists.getSingleResult();
             if (!isValid) {
                 ctx.disableDefaultConstraintViolation();
-                ctx.buildConstraintViolationWithTemplate(Unique.MSG)
-                    .addPropertyNode(fields[0])
+                ctx.buildConstraintViolationWithTemplate(this.message)
+                    .addPropertyNode(this.propertyNodeName)
                     .addConstraintViolation();
             }
             return isValid;
