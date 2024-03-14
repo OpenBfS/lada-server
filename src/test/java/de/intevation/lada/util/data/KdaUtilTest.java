@@ -22,7 +22,6 @@ import org.geotools.referencing.GeodeticCalculator;
 import org.opengis.referencing.FactoryException;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -33,7 +32,6 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit tests for KdaUtil.
  */
 
-@Ignore
 @RunWith(Parameterized.class)
 public class KdaUtilTest {
 
@@ -188,10 +186,11 @@ public class KdaUtilTest {
                 ? 5 : 1);
         Assert.assertTrue(
             String.format(
-                "from %d to %d: "
+                "from %s to %s: "
                 + "Distance %.2f m between result POINT(%.10g %.10g) and "
                 + "expected POINT(%.10g %.10g) > %.2f m",
-                fromKda, toKda, d, rX, rY, eX, eY, epsilon),
+                fromKda.toString(), toKda.toString(),
+                d, rX, rY, eX, eY, epsilon),
             d <= epsilon
         );
     }
