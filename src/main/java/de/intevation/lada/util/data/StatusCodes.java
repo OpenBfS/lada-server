@@ -8,8 +8,6 @@
 
 package de.intevation.lada.util.data;
 
-//import jdk.javadoc.internal.doclets.formats.html.resources.standard;
-
 public class StatusCodes {
     private StatusCodes() { };
     public static final int OK = 200;
