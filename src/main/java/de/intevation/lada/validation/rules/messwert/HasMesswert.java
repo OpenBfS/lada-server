@@ -35,5 +35,6 @@ public class HasMesswert implements Rule {
             violation.addWarning("measVal", StatusCodes.VAL_MEASURE);
             return violation;
         }
-        return null;    }
+        return null;
+    }
 }

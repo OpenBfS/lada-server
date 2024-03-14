@@ -37,13 +37,15 @@ public class Deskriptor implements Rule {
         Sample probe = (Sample) object;
         if (probe.getEnvDescripDisplay() == null) {
             Violation violation = new Violation();
-            violation.addWarning("envDescripDisplay", StatusCodes.VALUE_MISSING);
+            violation.addWarning(
+                "envDescripDisplay", StatusCodes.VALUE_MISSING);
             return violation;
         }
         String[] mediaDesk = probe.getEnvDescripDisplay().split(" ");
         if (mediaDesk.length <= 1) {
             Violation violation = new Violation();
-            violation.addWarning("envDescripDisplay", StatusCodes.VALUE_MISSING);
+            violation.addWarning(
+                "envDescripDisplay", StatusCodes.VALUE_MISSING);
             return violation;
         }
         if (mediaDesk.length >= 1
@@ -53,7 +55,8 @@ public class Deskriptor implements Rule {
             || mediaDesk[2].equals("00"))
         ) {
             Violation violation = new Violation();
-            violation.addWarning("envDescripDisplay", StatusCodes.VAL_S1_NOTSET);
+            violation.addWarning(
+                "envDescripDisplay", StatusCodes.VAL_S1_NOTSET);
             return violation;
         }
 

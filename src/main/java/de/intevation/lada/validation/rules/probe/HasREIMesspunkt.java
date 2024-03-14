@@ -38,18 +38,16 @@ public class HasREIMesspunkt implements Rule {
         Integer id = probe.getId();
         if (probe.getReiAgGrId() != null
             || Integer.valueOf(4).equals(probe.getRegulationId())) {
-            QueryBuilder<Geolocat> builder =
-                repository.queryBuilder(Geolocat.class);
-            builder.and("sampleId", id);
+            QueryBuilder<Geolocat> builder = repository
+                .queryBuilder(Geolocat.class)
+                .and("sampleId", id)
+                .and("typeRegulation", "R");
             List<Geolocat> orte = repository.filterPlain(builder.getQuery());
-            for (Geolocat ort: orte) {
-                if ("R".equals(ort.getTypeRegulation())) {
-                    return null;
-                }
+            if (orte.isEmpty()) {
+                Violation violation = new Violation();
+                violation.addWarning("REIMesspunkt", StatusCodes.VALUE_MISSING);
+                return violation;
             }
-            Violation violation = new Violation();
-            violation.addWarning("REIMesspunkt", StatusCodes.VALUE_MISSING);
-            return violation;
        }
        return null;
     }

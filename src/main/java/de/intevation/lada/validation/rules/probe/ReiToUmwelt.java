@@ -38,27 +38,23 @@ public class ReiToUmwelt implements Rule {
         if (probe.getRegulationId() != null
             && probe.getRegulationId() != 3
             && probe.getRegulationId() != 4
+            || probe.getEnvMediumId() == null
+            || probe.getReiAgGrId() == null
         ) {
             return null;
         }
-        if (probe.getEnvMediumId() == null) {
-            return null;
-        }
-        if (probe.getReiAgGrId() == null) {
-            return null;
-        }
-        QueryBuilder<ReiAgGrEnvMediumMp> builder =
-            repository.queryBuilder(ReiAgGrEnvMediumMp.class);
-        builder.and("reiAgGrId", probe.getReiAgGrId());
+        QueryBuilder<ReiAgGrEnvMediumMp> builder = repository
+            .queryBuilder(ReiAgGrEnvMediumMp.class)
+            .and("reiAgGrId", probe.getReiAgGrId())
+            .and("envMediumId", probe.getEnvMediumId());
         List<ReiAgGrEnvMediumMp> zuord =
             repository.filterPlain(builder.getQuery());
-        for (ReiAgGrEnvMediumMp entry : zuord) {
-            if (entry.getEnvMediumId().equals(probe.getEnvMediumId())) {
-                return null;
-            }
+        if (zuord.isEmpty()) {
+            Violation violation = new Violation();
+            violation.addWarning(
+                "envMediumId", StatusCodes.VAL_UWB_NOT_MATCHING_REI);
+            return violation;
         }
-        Violation violation = new Violation();
-        violation.addWarning("envMediumId", StatusCodes.VAL_UWB_NOT_MATCHING_REI);
-        return violation;
+        return null;
     }
 }
