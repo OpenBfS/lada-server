@@ -267,13 +267,7 @@ public class StatusProtService extends LadaService {
             if (newStatusWert != 7
                 && (violationCollection.hasErrors()
                     || violationCollection.hasWarnings())
-            ) {
-                status.setErrors(violationCollection.getErrors());
-                status.setWarnings(violationCollection.getWarnings());
-                status.setNotifications(
-                    violationCollection.getNotifications());
-                return new Response(false, StatusCodes.ERROR_MERGING, status);
-            } else if (newStatusWert == 7
+                || newStatusWert == 7
                 && (probe.hasErrors() || probe.hasWarnings())
             ) {
                 status.setErrors(violationCollection.getErrors());
