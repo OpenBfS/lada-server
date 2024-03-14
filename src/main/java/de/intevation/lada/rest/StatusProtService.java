@@ -155,9 +155,8 @@ public class StatusProtService extends LadaService {
 
         StatusProt oldStatus = repository.getByIdPlain(
             StatusProt.class, messung.getStatus());
-        StatusMp newKombi =
-            repository.getByIdPlain(
-                StatusMp.class, status.getStatusMpId());
+        StatusMp newKombi = repository.getByIdPlain(
+            StatusMp.class, status.getStatusMpId());
 
         // Check if the user is allowed to change to the requested
         // status_kombi
@@ -178,12 +177,11 @@ public class StatusProtService extends LadaService {
                 return authorization.filter(
                     resetStatus(status, oldStatus, messung),
                     StatusProt.class);
-                }
+            }
             // 2. user wants to set new status
             return setNewStatus(status, newKombi, messung);
-            } else {
-            throw new ForbiddenException();
-            }
+        }
+        throw new ForbiddenException();
     }
 
     private Response setNewStatus(
@@ -217,40 +215,32 @@ public class StatusProtService extends LadaService {
                 .and("measmId", messung.getId());
             List<MeasVal> messwerte = repository.filterPlain(
                 builder.getQuery());
-            boolean hasValidMesswerte = false;
             if (!messwerte.isEmpty()) {
+                boolean hasValidMesswerte = false;
                 for (MeasVal messwert: messwerte) {
-                    boolean hasNoMesswert = false;
-
-                    if (messwert.getMeasVal() == null
-                        && messwert.getLessThanLOD() == null
+                    if (newStatusWert == 7
+                        && !(messwert.getMeasVal() == null
+                            && messwert.getLessThanLOD() == null)
                     ) {
-                        hasNoMesswert = true;
-                    }
-                    if (newStatusWert == 7 && !hasNoMesswert) {
                         hasValidMesswerte = true;
-                        Violation error = new Violation();
-                        error.addError("status", StatusCodes.STATUS_RO);
-                        violationCollection.addErrors(error.getErrors());
+                        violationCollection.addError(
+                            "status", StatusCodes.STATUS_RO);
                     }
 
                     messwertValidator.validate(messwert);
-                    if (messwert.hasErrors() || messwert.hasWarnings()) {
-                        violationCollection.addErrors(messwert.getErrors());
-                        violationCollection.addWarnings(messwert.getWarnings());
-                    }
+                    violationCollection.addErrors(messwert.getErrors());
+                    violationCollection.addWarnings(messwert.getWarnings());
                     violationCollection.addNotifications(
                         messwert.getNotifications());
                 }
-            } else if (newStatusWert != 7) {
-                Violation error = new Violation();
-                error.addError("measVal", StatusCodes.VALUE_MISSING);
-                violationCollection.addErrors(error.getErrors());
-            }
-            if (newStatusWert == 7 && !hasValidMesswerte) {
-                for (int i = 0; i < messwerte.size(); i++) {
-                    repository.delete(messwerte.get(i));
+                if (newStatusWert == 7 && !hasValidMesswerte) {
+                    for (MeasVal measVal: messwerte) {
+                        repository.delete(measVal);
+                    }
                 }
+            } else if (newStatusWert != 7) {
+                violationCollection.addError(
+                    "measVal", StatusCodes.VALUE_MISSING);
             }
 
             // validate orte
@@ -295,9 +285,9 @@ public class StatusProtService extends LadaService {
         }
         //Set datum to null to use database timestamp
         status.setDate(null);
-        if (violationCollection != null) {
-            status.setNotifications(violationCollection.getNotifications());
-        }
+
+        status.setNotifications(violationCollection.getNotifications());
+
         //NOTE: The referenced messung status field is updated by a DB trigger
         return authorization.filter(
             repository.create(status),
@@ -310,9 +300,8 @@ public class StatusProtService extends LadaService {
         Measm messung
     ) {
         // Create a new Status with value = 8.
-        StatusMp oldKombi =
-            repository.getByIdPlain(
-                StatusMp.class, oldStatus.getStatusMpId());
+        StatusMp oldKombi = repository.getByIdPlain(
+            StatusMp.class, oldStatus.getStatusMpId());
 
         StatusMp newKombi = (StatusMp) repository.entityManager()
             .createNativeQuery("SELECT * FROM master.status_mp "
@@ -329,7 +318,6 @@ public class StatusProtService extends LadaService {
 
         repository.create(statusNew);
 
-        Response retValue;
         StatusMp kombi = repository.getByIdPlain(
             StatusMp.class,
             oldStatus.getStatusMpId()
@@ -341,37 +329,30 @@ public class StatusProtService extends LadaService {
             nV.setMeasmId(newStatus.getMeasmId());
             nV.setStatusMpId(1);
             nV.setText(null);
-            retValue = repository.create(nV);
-        } else {
-            QueryBuilder<StatusProt> lastFilter =
-                repository.queryBuilder(StatusProt.class);
-            lastFilter.and("measmId", newStatus.getMeasmId());
-            lastFilter.orderBy("date", true);
-            List<StatusProt> proto =
-                repository.filterPlain(lastFilter.getQuery());
-            // Find a status that has "status_stufe" = "old status_stufe - 1"
-            int ndx = -1;
-            for (int i = proto.size() - 1; i >= 0; i--) {
-                int curKom = proto.get(i).getStatusMpId();
-                StatusMp sk =
-                    repository.getByIdPlain(
-                        StatusMp.class, curKom);
-                if (sk.getStatusLev().getId()
-                    < kombi.getStatusLev().getId()
-                ) {
-                    ndx = i;
-                    break;
-                }
-            }
-            StatusProt copy = new StatusProt();
-            StatusProt orig = proto.get(ndx);
-            copy.setDate(new Timestamp(new Date().getTime()));
-            copy.setMeasFacilId(orig.getMeasFacilId());
-            copy.setMeasmId(orig.getMeasmId());
-            copy.setStatusMpId(orig.getStatusMpId());
-            copy.setText(null);
-            retValue = repository.create(copy);
+            return repository.create(nV);
         }
-        return retValue;
+        QueryBuilder<StatusProt> lastFilter = repository
+            .queryBuilder(StatusProt.class)
+            .and("measmId", newStatus.getMeasmId());
+        lastFilter.orderBy("date", true);
+        List<StatusProt> proto = repository.filterPlain(lastFilter.getQuery());
+        // Find a status that has "status_stufe" = "old status_stufe - 1"
+        int ndx = -1;
+        for (int i = proto.size() - 1; i >= 0; i--) {
+            int curKom = proto.get(i).getStatusMpId();
+            StatusMp sk = repository.getByIdPlain(StatusMp.class, curKom);
+            if (sk.getStatusLev().getId() < kombi.getStatusLev().getId()) {
+                ndx = i;
+                break;
+            }
+        }
+        StatusProt copy = new StatusProt();
+        StatusProt orig = proto.get(ndx);
+        copy.setDate(new Timestamp(new Date().getTime()));
+        copy.setMeasFacilId(orig.getMeasFacilId());
+        copy.setMeasmId(orig.getMeasmId());
+        copy.setStatusMpId(orig.getStatusMpId());
+        copy.setText(null);
+        return repository.create(copy);
     }
 }
