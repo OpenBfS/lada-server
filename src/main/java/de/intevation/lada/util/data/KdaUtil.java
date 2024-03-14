@@ -151,11 +151,15 @@ public class KdaUtil {
      * @param kdaTo KDA to be transformed to
      * @param x Easting or longitude
      * @param y Northing or latitude
-     * @return Result with transformed coordinates
+     * @return Result with transformed coordinates or null if coordinates are
+     *         null
      */
     public Result transform(
         KDA kdaFrom, KDA kdaTo, String x, String y
     ) {
+        if (x == null || y == null) {
+            return null;
+        }
         x = x.replace(',', '.');
         y = y.replace(',', '.');
         Transform t;
