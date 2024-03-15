@@ -14,15 +14,19 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.locationtech.jts.geom.Coordinate;
-
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
+import org.locationtech.jts.geom.Coordinate;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
+import de.intevation.lada.validation.constraints.ValidCoordinates;
+import jakarta.validation.Validation;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 /**
  * Utilities for coordinate transformations.
  *
@@ -53,6 +57,18 @@ public class KdaUtil {
         UTM_ED50;
     };
 
+    /**
+     * Record storing coordinates and spatRefSys.
+     * @param x X Coordinate
+     * @param y Y Coordinate
+     * @param spatRefSys SpatRefSys used
+     */
+    @ValidCoordinates
+    public record TransformationInput(
+        @NotBlank String x,
+        @NotBlank String y,
+        @NotNull KDA spatRefSys) { };
+
     // Known database ID of KDA.GD
     public static final int KDA_GD = 4;
 
@@ -67,23 +83,23 @@ public class KdaUtil {
     );
 
     /* Expected format of projected input coordinates */
-    private static final Pattern X_GK = Pattern.compile(
+    public static final Pattern X_GK = Pattern.compile(
         "\\d{7,9}(\\.\\d*)?");
-    private static final Pattern X_UTM = Pattern.compile(
+    public static final Pattern X_UTM = Pattern.compile(
         "\\d{7,8}(\\.\\d*)?");
-    private static final Pattern Y = Pattern.compile(
+    public static final Pattern Y = Pattern.compile(
         "(\\+|-)?\\d{1,7}(\\.\\d*)?");
 
     /* Expected format of sexagesimal input coordinates */
     // with decimal separator
-    private static final Pattern LON_DEC = Pattern.compile(
+    public static final Pattern LON_DEC = Pattern.compile(
         "([+|\\-|W|E]?)(\\d{1,3})(\\d{2})(\\d{2})\\.(\\d{1,5})([W|E]?)");
-    private static final Pattern LAT_DEC = Pattern.compile(
+    public static final Pattern LAT_DEC = Pattern.compile(
         "([+|\\-|N|S]?)(\\d{1,2})(\\d{2})(\\d{2})\\.(\\d{1,5})([N|S]?)");
     // Without decimal separator, can include leading zeros
-    private static final Pattern LON = Pattern.compile(
+    public static final Pattern LON = Pattern.compile(
         "([+|\\-|W|E]?)(\\d{3})(\\d{0,2})(\\d{0,2})([W|E]?)");
-    private static final Pattern LAT = Pattern.compile(
+    public static final Pattern LAT = Pattern.compile(
         "([+|\\-|N|S]?)(\\d{2})(\\d{0,2})(\\d{0,2})([N|S]?)");
 
     /*
@@ -111,7 +127,7 @@ public class KdaUtil {
     /*
      * Maximum allowed values for longitude and latitude
      */
-    private static final double MAX_LON = 180, MAX_LAT = 90;
+    public static final double MAX_LON = 180, MAX_LAT = 90;
 
     /**
      * Representation of transformation result.
@@ -162,18 +178,17 @@ public class KdaUtil {
         }
         x = x.replace(',', '.');
         y = y.replace(',', '.');
+
         Transform t;
         try {
-            switch (kdaFrom) {
-                case GK: t = new Transform1(x, y); break;
-                case GS: t = this.new Transform2(x, y); break;
-                case GD: t = this.new Transform4(x, y); break;
-                case UTM_WGS84: t = this.new Transform5(x, y); break;
-                case UTM_ETRS89: t = this.new Transform6(x, y); break;
-                case UTM_ED50: t = this.new Transform8(x, y); break;
-                default: throw new IllegalArgumentException(
-                    "Unsupported spatial reference system");
-            }
+            t = switch (kdaFrom) {
+                case GK -> new Transform1(x, y);
+                case GS -> this.new Transform2(x, y);
+                case GD -> this.new Transform4(x, y);
+                case UTM_WGS84 -> this.new Transform5(x, y);
+                case UTM_ETRS89 -> this.new Transform6(x, y);
+                case UTM_ED50 -> this.new Transform8(x, y);
+            };
         } catch (ValidationException | FactoryException fe) {
             return null;
         }
@@ -184,7 +199,6 @@ public class KdaUtil {
      * Defines the methods to be implemented for coordinate transformation.
      */
     private interface Transform {
-        void isInputValid() throws ValidationException;
         Result transform(KDA to);
         Result transformTo1();
         Result transformTo2();
@@ -210,10 +224,16 @@ public class KdaUtil {
         // CRS of input coordinates
         protected CoordinateReferenceSystem crs;
 
-        AbstractTransform(String x, String y) throws ValidationException {
-            this.x = x;
-            this.y = y;
-            isInputValid();
+        AbstractTransform(TransformationInput coords)
+                throws ValidationException {
+            //Validate input programatically as CDI may not be available
+            ValidatorFactory factory
+                = Validation.buildDefaultValidatorFactory();
+            if (!factory.getValidator().validate(coords).isEmpty()) {
+                throw new ValidationException();
+            }
+            this.x = coords.x();
+            this.y = coords.y();
         }
 
         public Result transform(KDA to) {
@@ -238,16 +258,9 @@ public class KdaUtil {
         Transform1(
             String x,
             String y
-        ) throws ValidationException, FactoryException {
-            super(x, y);
+        ) throws FactoryException, ValidationException {
+            super(new TransformationInput(x, y, KDA.GK));
             this.crs = getCRSForGK(x);
-        }
-
-        @Override
-        public void isInputValid() throws ValidationException {
-            if (!(X_GK.matcher(x).matches() && Y.matcher(y).matches())) {
-                throw new ValidationException();
-            }
         }
 
         @Override
@@ -353,33 +366,7 @@ public class KdaUtil {
     private class Transform2 extends AbstractTransform {
 
         Transform2(String x, String y) throws ValidationException {
-            super(x, y);
-        }
-
-        @Override
-        public void isInputValid() throws ValidationException {
-            if (!(LON_DEC.matcher(x).matches()
-                    && LAT_DEC.matcher(y).matches()
-                    || LON.matcher(x).matches()
-                    && LAT.matcher(y).matches())) {
-                throw new ValidationException();
-            }
-
-            Result decimal = arcToDegree(x, y);
-            if (decimal == null) {
-                throw new ValidationException();
-            }
-            try {
-                double dX = Double.parseDouble(decimal.getX());
-                double dY = Double.parseDouble(decimal.getY());
-                if (dX < -MAX_LON || dX > MAX_LON
-                    || dY < -MAX_LAT || dY > MAX_LAT
-                ) {
-                    throw new ValidationException();
-                }
-            } catch (NumberFormatException nfe) {
-                throw new ValidationException();
-            }
+            super(new TransformationInput(x, y, KDA.GS));
         }
 
         @Override
@@ -500,21 +487,7 @@ public class KdaUtil {
     private class Transform4 extends AbstractTransform {
 
         Transform4(String x, String y) throws ValidationException {
-            super(x, y);
-        }
-
-        @Override
-        public void isInputValid() throws ValidationException {
-            try {
-                double dX = Double.parseDouble(x), dY = Double.parseDouble(y);
-                if (dX < -MAX_LON || dX > MAX_LON
-                    || dY < -MAX_LAT || dY > MAX_LAT
-                ) {
-                    throw new ValidationException();
-                }
-            } catch (NumberFormatException nfe) {
-                throw new ValidationException();
-            }
+            super(new TransformationInput(x, y, KDA.GD));
         }
 
         @Override
@@ -601,16 +574,9 @@ public class KdaUtil {
         Transform5(
             String x,
             String y
-        ) throws ValidationException, FactoryException {
-            super(x, y);
+        ) throws FactoryException, ValidationException {
+            super(new TransformationInput(x, y, KDA.UTM_WGS84));
             this.crs = getCRSForWgsUtm(x);
-        }
-
-        @Override
-        public void isInputValid() throws ValidationException {
-            if (!(X_UTM.matcher(x).matches() && Y.matcher(y).matches())) {
-                throw new ValidationException();
-            }
         }
 
         @Override
@@ -718,16 +684,9 @@ public class KdaUtil {
         Transform6(
             String x,
             String y
-        ) throws ValidationException, FactoryException {
-            super(x, y);
+        ) throws FactoryException, ValidationException {
+            super(new TransformationInput(x, y, KDA.UTM_ETRS89));
             this.crs = getCRSForEtrs89(x);
-        }
-
-        @Override
-        public void isInputValid() throws ValidationException {
-            if (!(X_UTM.matcher(x).matches() && Y.matcher(y).matches())) {
-                throw new ValidationException();
-            }
         }
 
         @Override
@@ -835,16 +794,9 @@ public class KdaUtil {
         Transform8(
             String x,
             String y
-        ) throws ValidationException, FactoryException {
-            super(x, y);
+        ) throws FactoryException, ValidationException {
+            super(new TransformationInput(x, y, KDA.UTM_ED50));
             this.crs = getCRSForEd50Utm(x);
-        }
-
-        @Override
-        public void isInputValid() throws ValidationException {
-            if (!(X_UTM.matcher(x).matches() && Y.matcher(y).matches())) {
-                throw new ValidationException();
-            }
         }
 
         @Override
@@ -1042,7 +994,7 @@ public class KdaUtil {
      * @param y Latitude in sexagesimal notation.
      * @return Result with coordinates in decimal notation.
      */
-    protected Result arcToDegree(String x, String y) {
+    public Result arcToDegree(String x, String y) {
         int xDegree = 0;
         int xMin = 0;
         int yDegree = 0;

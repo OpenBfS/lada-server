@@ -246,6 +246,9 @@
                         <ignoredUnusedDeclaredDependency>
                             org.jboss.logmanager:jboss-logmanager
                         </ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>
+                            org.glassfish.expressly:expressly
+                        </ignoredUnusedDeclaredDependency>
                     </ignoredUnusedDeclaredDependencies>
                 </configuration>
             </plugin>
@@ -496,6 +499,13 @@
             <groupId>org.jboss.logmanager</groupId>
             <artifactId>jboss-logmanager</artifactId>
             <version>3.0.2.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <!--JEL implementation for Validation outside of a container environment-->
+        <dependency>
+            <groupId>org.glassfish.expressly</groupId>
+            <artifactId>expressly</artifactId>
+            <version>5.0.0</version>
             <scope>test</scope>
         </dependency>
         <!--Additional arquillian extensions-->

@@ -22,6 +22,7 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.SpatRefSys;
 import de.intevation.lada.validation.constraints.SupportedSpatRefSysId;
+import de.intevation.lada.validation.constraints.ValidCoordinates;
 
 
 /**
@@ -39,38 +40,27 @@ public class SpatRefSysService extends LadaService {
 
     /**
      * Expected format for the payload in POST request to recalculate().
+     * @param from SpatRefSysId to transform from
+     * @param to SpatRefSysId to transform to
+     * @param x X coordinate
+     * @param y Y coordinate
      */
-    public static class PostData {
+    @ValidCoordinates
+    public record PostData(
         @NotNull
         @SupportedSpatRefSysId
-        private Integer from;
+        Integer from,
 
         @NotNull
         @SupportedSpatRefSysId
-        private Integer to;
+        Integer to,
 
         @NotBlank
-        private String x;
+        String x,
 
         @NotBlank
-        private String y;
-
-        public void setFrom(int from) {
-            this.from = from;
-        }
-
-        public void setTo(int to) {
-            this.to = to;
-        }
-
-        public void setX(String x) {
-            this.x = x;
-        }
-
-        public void setY(String y) {
-            this.y = y;
-        }
-    }
+        String y
+    ) { }
 
     /**
      * Get all SpatRefSys objects.
