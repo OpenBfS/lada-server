@@ -22,7 +22,8 @@ import de.intevation.lada.util.data.Repository;
 
 /**
  * Validation rule for probe.
- * Validates if the probe has a valid "probenzusatzwert" for the chosen "umwelt bereich".
+ * Validates if the probe has valid "Probenzusatzwert" objects for the chosen
+ * "Umweltbereich".
  *
  * @author <a href="mailto:jbuermeyer@bfs.de">Jonas Buermeyer</a>
  */
@@ -35,11 +36,7 @@ public class UmweltToProbezusatz implements Rule {
     @Override
     public Violation execute(Object object) {
         Sample probe = (Sample) object;
-        if (probe.getEnvMediumId() == null
-            || probe.getEnvMediumId().equals("")
-        ) {
-            return null;
-        } else {
+        if (probe.getEnvMediumId() != null) {
             String umwId = probe.getEnvMediumId();
             QueryBuilder<EnvSpecifMp> builderUmwZus = repository
                 .queryBuilder(EnvSpecifMp.class)
@@ -50,20 +47,20 @@ public class UmweltToProbezusatz implements Rule {
             QueryBuilder<SampleSpecifMeasVal> builderZusatz = repository
                 .queryBuilder(SampleSpecifMeasVal.class)
                 .and("sampleId", probe.getId());
-            List <SampleSpecifMeasVal> zusWert = repository.filterPlain(
+            List<SampleSpecifMeasVal> zusWert = repository.filterPlain(
                 builderZusatz.getQuery());
+            Violation violation = new Violation();
             for (SampleSpecifMeasVal zusW: zusWert) {
-                Boolean zusWertFound = umwZus.stream().anyMatch(
+                boolean zusWertFound = umwZus.stream().anyMatch(
                     u -> u.getSampleSpecifId().equals(
                         zusW.getSampleSpecifId()));
-                if (zusWertFound) {
-                    return null;
-                } else {
-                    Violation violation = new Violation();
+                if (!zusWertFound) {
                     violation.addWarning(
                         "sampleSpecifMeasVals", StatusCodes.VAL_PZW);
-                    return violation;
                 }
+            }
+            if (violation.hasWarnings()) {
+                return violation;
             }
         }
         return null;
