@@ -77,18 +77,21 @@ public class ProbeTest extends ServiceTest {
         final String warningsKey = "warnings";
         final String expectedWarningKey = "geolocats";
 
+        // Assert that GET receives validation warnings in response
         MatcherAssert.assertThat(
             getById("rest/sample/1000", expectedById)
                 .getJsonObject(dataKey).getJsonObject(warningsKey).keySet(),
             CoreMatchers.hasItem(expectedWarningKey));
 
         JsonObject created = create("rest/sample", create);
+        // Assert that POST receives validation warnings in response
         MatcherAssert.assertThat(
             created.getJsonObject(dataKey).getJsonObject(warningsKey).keySet(),
             CoreMatchers.hasItem(expectedWarningKey));
 
         final String updateFieldKey = "mainSampleId";
         final String newValue = "130510002";
+        // Assert that PUT receives validation warnings in response
         MatcherAssert.assertThat(
             update("rest/sample/1000", updateFieldKey, "120510002", newValue)
                 .getJsonObject(dataKey).getJsonObject(warningsKey).keySet(),
