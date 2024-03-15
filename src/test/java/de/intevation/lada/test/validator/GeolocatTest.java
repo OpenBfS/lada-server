@@ -31,6 +31,7 @@ public class GeolocatTest extends ValidatorBaseTest {
     public static final int EXISTING_SITE_ID = 1001;
 
     private static final String TYPE_REGULATION_E = "E";
+    private static final String TYPE_REGULATION_U = "U";
 
     @Inject
     private Validator<Geolocat> sampleVal;
@@ -85,6 +86,20 @@ public class GeolocatTest extends ValidatorBaseTest {
     }
 
     /**
+     * Ensure that a geolocat of type "U" can be added if
+     * one of type "E" is present.
+     */
+    @Test
+    public void canAddUTypeGeolocat() {
+        Geolocat loc = new Geolocat();
+        loc.setTypeRegulation(TYPE_REGULATION_U);
+        loc.setSampleId(SAMPLE_WITH_E_GEOLOCAT);
+        loc.setSiteId(EXISTING_SITE_ID);
+
+        assertNoWarningsOrErrors(sampleVal.validate(loc));
+    }
+
+    /**
      * Test geolocat with mpg which already has a E-Type geolocat.
      */
     @Test
@@ -126,5 +141,19 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setSiteId(EXISTING_SITE_ID);
         mpgVal.validate(loc);
         Assert.assertFalse(loc.hasErrors());
+    }
+
+    /**
+     * Ensure that a geolocat of type "U" can be added if
+     * one of type "E" is present.
+     */
+    @Test
+    public void canAddUTypeGeolocatMpg() {
+        GeolocatMpg loc = new GeolocatMpg();
+        loc.setTypeRegulation(TYPE_REGULATION_U);
+        loc.setMpgId(MPG_WITH_E_GEOLOCAT);
+        loc.setSiteId(EXISTING_SITE_ID);
+
+        assertNoWarningsOrErrors(mpgVal.validate(loc));
     }
 }

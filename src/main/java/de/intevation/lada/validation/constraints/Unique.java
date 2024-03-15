@@ -52,10 +52,16 @@ public @interface Unique {
     String[] fields();
 
     /**
-     * Conditional SQL expression that can be used in the WHERE clause
-     * of a SELECT statement querying entities of the given class.
+     * Optional name of a String-typed field that can be used to restrict
+     * checked entities of the given class to those for which this fields
+     * value equals the given predicateValue.
      */
-    String predicate() default "";
+    String predicateField() default "";
+
+    /**
+     * The value to be used with predicateField.
+     */
+    String predicateValue() default "";
 
     /**
      * Name of the property node ConstraintViolation will be associated to.
