@@ -30,6 +30,7 @@ public class StatusTest extends ServiceTest {
     private JsonObject expectedById;
     private JsonObject create;
     private JsonObject reset;
+    private JsonObject undeliverable;
 
     @Override
     public void init(
@@ -58,6 +59,7 @@ public class StatusTest extends ServiceTest {
         create = readJsonResource("/datasets/status.json");
         Assert.assertNotNull(create);
         reset = readJsonResource("/datasets/status-reset.json");
+        undeliverable = readJsonResource("/datasets/status-undeliverable.json");
     }
 
     /**
@@ -68,6 +70,21 @@ public class StatusTest extends ServiceTest {
         getById("rest/statusprot/1000", expectedById);
         create("rest/statusprot", create);
         create("rest/statusprot", reset);
+
+        // Assert that measVals are deleted if status is set
+        // to "nicht lieferbar"
+        int measmId = undeliverable.getInt("measmId");
+        Assert.assertTrue(
+            "Test data must provide measVals for deletion",
+            hasMeasVals(measmId));
+        create("rest/statusprot", undeliverable);
+        Assert.assertFalse(
+            "measVals should have been deleted",
+            hasMeasVals(measmId));
     }
 
+    private boolean hasMeasVals(int measmId) {
+        return !get("rest/measval?measmId=" + measmId)
+            .getJsonArray("data").isEmpty();
+    }
 }

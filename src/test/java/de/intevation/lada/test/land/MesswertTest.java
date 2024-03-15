@@ -73,7 +73,7 @@ public class MesswertTest extends ServiceTest {
     }
 
     /**
-     * Test messwert normalization
+     * Test messwert normalization.
      */
     private void normalize(JsonObject oldValue) {
         Response normalized = client.target(

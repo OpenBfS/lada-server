@@ -30,8 +30,8 @@
         name = "TestQuery"
         base_query_id = "1999"
     />
-    <master.type_regulation id = "X" name = "TestX"/>
-    <master.type_regulation id = "Y" name = "TestY"/>
+    <master.type_regulation id = "E" name = "TestE"/>
+    <master.type_regulation id = "U" name = "TestU"/>
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
     <master.regulation id = "2" name = "reg-2"/>
     <master.regulation id = "9" name = "reg-9"/>
@@ -49,6 +49,7 @@
     <master.measd id = "57" name = "Mangan" />
     <master.mmt id = "A3" />
     <master.mmt id = "B3" />
+    <master.status_ord_mp id = "1" from_id = "1" to_id = "5" />
     <master.sample_specif
         id = "A74"
         name = "Volumenstrom"
@@ -80,7 +81,7 @@
         descr = "test"
         short_text = "test"
     />
-    <master.spat_ref_sys id = "5" />
+    <master.spat_ref_sys id = "4" />
     <master.site_class id = "1" />
     <master.state
         id = "0"
@@ -96,11 +97,10 @@
         ext_id = "D_00191"
         long_text = "Langer Text"
         state_id = "0"
-        admin_unit_id = "11000000"
         is_fuzzy = "true"
-        spat_ref_sys_id = "5"
-        coord_x_ext = "32487017"
-        coord_y_ext = "5519769"
+        spat_ref_sys_id = "4"
+        coord_x_ext = "49.83021"
+        coord_y_ext = "8.81948"
         last_mod = "2015-03-01 12:00:00"
         geom = "SRID=4326;POINT(49.83021 8.81948)"
         site_class_id = "1"
@@ -138,7 +138,7 @@
     />
     <lada.geolocat_mpg
         id = "1000"
-        type_regulation = "X"
+        type_regulation = "U"
         mpg_id = "999"
         site_id = "1000"
         add_site_text = "Test"
@@ -150,7 +150,7 @@
         regulation_id = "9"
         last_mod = "2012-05-05 11:12:00"
         env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
-        env_descrip_display = "D: 59 04 01 00 05 05 01 02 00 00 00 00"
+        env_descrip_display = "D: 00 00 00 00 00 00 00 00 00 00 00 00"
         meas_facil_id = "06010"
         appr_lab_id = "06010"
         sample_start_date = "2012-05-03 13:07:00"
@@ -164,6 +164,7 @@
         tree_mod = "2012-05-08 10:00:00"
         mpg_id = "999"
     />
+
     <!-- sample data -->
     <lada.sample
         id = "1000"
@@ -217,7 +218,7 @@
     />
     <lada.geolocat
         id = "1000"
-        type_regulation = "X"
+        type_regulation = "U"
         sample_id = "1000"
         site_id = "1000"
         add_site_text = "Test"
@@ -247,6 +248,35 @@
         text = "Testkommentar"
         measm_id = "1200"
     />
+
+    <!-- for setting status undeliverable with deletion of measVals -->
+    <lada.geolocat
+        id = "1001"
+        type_regulation = "E"
+        sample_id = "999"
+        site_id = "1000"
+        add_site_text = "Test"
+    />
+    <lada.measm
+        id = "1201"
+        sample_id = "999"
+        min_sample_id = "T100"
+        ext_id = "453"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        measm_start_date = "2012-05-06 14:00:00"
+        is_completed = "false"
+        is_scheduled = "true"
+    />
+    <lada.meas_val
+        id = "10001"
+        measm_id = "1201"
+        measd_id = "56"
+        error = "3.3"
+        detect_lim = "2.4"
+        meas_unit_id = "207"
+    />
+
     <!--Pep gen data-->
     <lada.mpg
         id = "1000"
