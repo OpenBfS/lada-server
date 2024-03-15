@@ -11,7 +11,6 @@ import java.net.URL;
 import java.util.Arrays;
 
 import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import jakarta.ws.rs.client.Client;
 
@@ -41,14 +40,13 @@ public class OrtszuordnungTest extends ServiceTest {
             "lastMod"
         });
 
-        JsonObject messung =
+        expectedById = convertObject(
             readXmlResource("datasets/dbUnit_lada.xml", Geolocat.class)
-            .getJsonObject(0);
-        JsonObjectBuilder builder = convertObject(messung);
-        builder.add("parentModified", TS1);
-        builder.add("readonly", JsonValue.FALSE);
-        builder.add("owner", JsonValue.TRUE);
-        expectedById = builder.build();
+                .getJsonObject(0))
+            .add("parentModified", TS1)
+            .add("readonly", JsonValue.FALSE)
+            .add("owner", JsonValue.TRUE)
+            .build();
         Assert.assertNotNull(expectedById);
 
         // Load probe object to test POST request
