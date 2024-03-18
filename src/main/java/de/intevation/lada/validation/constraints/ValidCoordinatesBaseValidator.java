@@ -11,6 +11,7 @@ import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.KdaUtil.KDA;
 import de.intevation.lada.util.data.KdaUtil.Result;
 import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public abstract class ValidCoordinatesBaseValidator<T>
         implements ConstraintValidator<ValidCoordinates, T> {
@@ -20,13 +21,15 @@ public abstract class ValidCoordinatesBaseValidator<T>
      * @param x X coordinate
      * @param y y coordinate
      * @param kda Reference system to use
+     * @param ctx Validator context
      * @return True if valid, else false
      */
-    protected boolean isValid(String x, String y, KDA kda) {
-        if (x == null && y == null) {
+    protected boolean isValid(String x, String y, KDA kda,
+            ConstraintValidatorContext ctx) {
+        if (x == null || y == null) {
             return true;
         }
-        return switch (kda) {
+        boolean valid = switch (kda) {
             case GK -> validateGkCoordinates(x, y);
             case GS -> validateGsCoordinates(x, y);
             case GD -> validateGdCoordinates(x, y);
@@ -34,6 +37,16 @@ public abstract class ValidCoordinatesBaseValidator<T>
                 -> validateUtmCoordinates(x, y);
             default -> false;
         };
+        if (!valid) {
+            ctx.disableDefaultConstraintViolation();
+            ctx.buildConstraintViolationWithTemplate(ValidCoordinates.MSG)
+                .addPropertyNode("coordXExt")
+                .addConstraintViolation();
+            ctx.buildConstraintViolationWithTemplate(ValidCoordinates.MSG)
+                .addPropertyNode("coordYExt")
+                .addConstraintViolation();
+        }
+        return valid;
     }
 
     private boolean validateGkCoordinates(String x, String y) {

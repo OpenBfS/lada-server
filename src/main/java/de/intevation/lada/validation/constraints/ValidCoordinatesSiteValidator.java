@@ -7,19 +7,19 @@
  */
 package de.intevation.lada.validation.constraints;
 
-import de.intevation.lada.rest.SpatRefSysService.PostData;
+import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.KdaUtil;
 import jakarta.validation.ConstraintValidatorContext;
 
-/**
- * Validate the coordinates in the given POST data.
- */
-public class ValidCoordinatesPostDataValidator
-        extends ValidCoordinatesBaseValidator<PostData>{
+public class ValidCoordinatesSiteValidator
+    extends ValidCoordinatesBaseValidator<Site>{
+
     @Override
-    public boolean isValid(
-        PostData value, ConstraintValidatorContext context) {
-        return isValid(value.x(), value.y(),
-            KdaUtil.KDAS.get(value.from()), context);
+    public boolean isValid(Site value, ConstraintValidatorContext context) {
+        Integer spatRefSysId = value.getSpatRefSysId();
+        return
+            spatRefSysId == null
+            || isValid(value.getCoordXExt(), value.getCoordYExt(),
+                KdaUtil.KDAS.get(spatRefSysId), context);
     }
 }

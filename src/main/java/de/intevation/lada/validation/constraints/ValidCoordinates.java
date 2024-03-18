@@ -24,7 +24,7 @@ import jakarta.validation.Payload;
 @Target({ TYPE, PARAMETER})
 @Retention(RUNTIME)
 @Constraint(validatedBy = {
-    ValidCoordinatesTransformationInputValidator.class,
+    ValidCoordinatesSiteValidator.class,
     ValidCoordinatesPostDataValidator.class })
 @Documented
 public @interface ValidCoordinates {

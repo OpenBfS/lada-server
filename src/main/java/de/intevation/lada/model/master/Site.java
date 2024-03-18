@@ -45,6 +45,7 @@ import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.SupportedSpatRefSysId;
 import de.intevation.lada.validation.constraints.Unique;
+import de.intevation.lada.validation.constraints.ValidCoordinates;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 @Entity
@@ -52,6 +53,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ Site.class, DatabaseConstraints.class })
 @HasCoordsOrAdminUnitOrState
+@ValidCoordinates
 @Unique(fields = {"extId", "networkId"},
     groups = DatabaseConstraints.class, clazz = Site.class)
 @CanChangeCoordinates(groups = DatabaseConstraints.class)

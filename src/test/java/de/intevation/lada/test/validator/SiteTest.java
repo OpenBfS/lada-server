@@ -57,12 +57,26 @@ public class SiteTest extends ValidatorBaseTest {
     private static final double COORDINATE_INSIDE_Y = 52.409959;
     private static final double COORDINATE_INSIDE_X = 13.10257;
 
+    private static final String VALID_UTM_X = "12345678.1";
+    private static final String VALID_UTM_Y = "1234567.1";
+    private static final String INVALID_UTM_X = "123456789.1";
+    private static final String INVALID_UTM_Y = "12345.1";
+
+    private static final int SPAT_REF_SYS_ID_GK = 1;
+    private static final int SPAT_REF_SYS_ID_GS = 2;
+    private static final int SPAT_REF_SYS_ID_GD = 4;
+    private static final int SPAT_REF_SYS_ID_UTM_WGS_84 = 5;
+    private static final int SPAT_REF_SYS_ID_UTM_ETRS89 = 6;
+    private static final int SPAT_REF_SYS_ID_UTM_ED50 = 8;
+
     @Inject
     private Validator<Site> validator;
+
 
     //Expected validation messages
     private static final String UNIQUE_PLACEHOLDER = "{fields}";
     private final String valMessageUniqueExtId;
+    private final String valMessageCoords;
 
     /**
      * Constructor.
@@ -75,6 +89,9 @@ public class SiteTest extends ValidatorBaseTest {
             "de.intevation.lada.validation.constraints.Unique.message");
         valMessageUniqueExtId = uniquePattern
             .replace(UNIQUE_PLACEHOLDER, "[extId, networkId]");
+        valMessageCoords = validationMessages.getString(
+            "de.intevation.lada.validation.constraints.ValidCoordinates."
+            + "message");
 
     }
 
@@ -342,8 +359,8 @@ public class SiteTest extends ValidatorBaseTest {
         Site site = createMinimalSite();
         site.setStateId(null);
         site.setSpatRefSysId(SPAT_REF_SYS_ID);
-        site.setCoordXExt("0");
-        site.setCoordYExt("0");
+        site.setCoordXExt("5650300.787");
+        site.setCoordYExt("570168.862");
 
         assertNoWarningsOrErrors(validator.validate(site));
     }
@@ -364,11 +381,180 @@ public class SiteTest extends ValidatorBaseTest {
         assertNoWarningsOrErrors(validator.validate(site));
     }
 
+    /**
+     * Test valid GK Coords.
+     */
+    @Test
+    public void validGKCoordinates() {
+        Site site = createMinimalSite();
+        site.setCoordXExt("3570272.656");
+        site.setCoordYExt("5652121.859");
+        site.setSpatRefSysId(SPAT_REF_SYS_ID_GK);
+        validator.validate(site);
+        assertNoWarningsOrErrors(site);
+    }
+
+    /**
+     * Test invalid GK Coords.
+     */
+    @Test
+    public void invalidGKCoordinates() {
+        Site site = createMinimalSite();
+        site.setCoordXExt("1234567891.656");
+        site.setCoordYExt("12345.859");
+        site.setSpatRefSysId(SPAT_REF_SYS_ID_GK);
+        validator.validate(site);
+        assertCoordErrors(site);
+    }
+
+    /**
+     * Test valid sexagesimal Coordinates with decimal separator.
+     */
+    @Test
+    public void validGSCoordinatesDec() {
+        Site site = createMinimalSite();
+        site.setCoordXExt("102811.8956E");
+        site.setCoordYExt("51612.6792N");
+        site.setSpatRefSysId(SPAT_REF_SYS_ID_GS);
+        validator.validate(site);
+        assertNoWarningsOrErrors(site);
+    }
+
+    /**
+     * Test invalid sexagesimal coordinates with decimal separator.
+     */
+    @Test
+    public void invalidGSCordinatesDec() {
+        Site site = createMinimalSite();
+        site.setCoordXExt("51.511111X");
+        site.setCoordYExt("51.511111Y");
+        site.setSpatRefSysId(SPAT_REF_SYS_ID_GS);
+        validator.validate(site);
+        assertCoordErrors(site);
+    }
+
+    /**
+     * Test valid sexagesimal Coordinates without decimal separator.
+     */
+    @Test
+    public void validGSCoordinatesWithoutDec() {
+        Site site = createMinimalSite();
+        site.setCoordXExt("1231212E");
+        site.setCoordYExt("121212N");
+        site.setSpatRefSysId(SPAT_REF_SYS_ID_GS);
+        validator.validate(site);
+        assertNoWarningsOrErrors(site);
+    }
+
+    /**
+     * Test invalid sexagesimal Coordinates without decimal separator.
+     */
+    @Test
+    public void invalidGSCoordinatesWithoutDec() {
+        Site site = createMinimalSite();
+        site.setCoordXExt("12312123X");
+        site.setCoordYExt("1212123Y");
+        site.setSpatRefSysId(SPAT_REF_SYS_ID_GS);
+        validator.validate(site);
+        assertCoordErrors(site);
+    }
+
+    /**
+     * Test valid GD coords.
+     */
+    @Test
+    public void validGDCoordinates() {
+        Site site = createMinimalSite();
+        site.setCoordXExt("51.1111");
+        site.setCoordYExt("10.1111");
+        site.setSpatRefSysId(SPAT_REF_SYS_ID_GD);
+        validator.validate(site);
+        assertNoWarningsOrErrors(site);
+    }
+
+    /**
+     * Test invalid gd coords.
+     */
+    @Test
+    public void invalidGDCoordinates() {
+        Site site = createMinimalSite();
+        site.setCoordXExt("-181");
+        site.setCoordYExt("99");
+        site.setSpatRefSysId(SPAT_REF_SYS_ID_GD);
+        validator.validate(site);
+        assertCoordErrors(site);
+    }
+
+    /**
+     * Test valid UTM WGS84 coordinates.
+     */
+    public void validUtmWgs84() {
+        testValidUtmCoordinates(SPAT_REF_SYS_ID_UTM_WGS_84);
+    }
+
+    /**
+     * Test invalid UTM WGS84 coordinates.
+     */
+    public void invalidUtmWgs84() {
+        testInvalidUtmCoordinates(SPAT_REF_SYS_ID_UTM_WGS_84);
+    }
+
+    /**
+     * Test valid UTM ETRS89 coordinates.
+     */
+    public void validUtmEtrs89() {
+        testValidUtmCoordinates(SPAT_REF_SYS_ID_UTM_ETRS89);
+    }
+
+    /**
+     * Test invalid UTM ETRS89 coordinates.
+     */
+    public void invalidEtrs89() {
+        testInvalidUtmCoordinates(SPAT_REF_SYS_ID_UTM_ETRS89);
+    }
+
+    /**
+     * Test valid UTM ED50 coordinates.
+     */
+    public void validUtmEd50() {
+        testValidUtmCoordinates(SPAT_REF_SYS_ID_UTM_ED50);
+    }
+
+    /**
+     * Test invalid UTM ED50 coordinates.
+     */
+    public void invalidUtmEd50() {
+        testInvalidUtmCoordinates(SPAT_REF_SYS_ID_UTM_ED50);
+    }
+
+    private void testValidUtmCoordinates(int spatRefSysId) {
+        Site site = createMinimalSite();
+        site.setCoordXExt(VALID_UTM_X);
+        site.setCoordYExt(VALID_UTM_Y);
+        site.setSpatRefSysId(spatRefSysId);
+        validator.validate(site);
+        assertNoWarningsOrErrors(site);
+    }
+
+    private void testInvalidUtmCoordinates(int spatRefSysId) {
+        Site site = createMinimalSite();
+        site.setCoordXExt(INVALID_UTM_X);
+        site.setCoordYExt(INVALID_UTM_Y);
+        site.setSpatRefSysId(spatRefSysId);
+        validator.validate(site);
+        assertCoordErrors(site);
+    }
+
     private Site createMinimalSite() {
         Site site = new Site();
         site.setNetworkId("06");
         site.setStateId(0);
         site.setSiteClassId(1);
         return site;
+    }
+
+    private void assertCoordErrors(Site site) {
+        assertHasError(site, COORD_X_EXT, valMessageCoords);
+        assertHasError(site, COORD_Y_EXT, valMessageCoords);
     }
 }

@@ -97,7 +97,13 @@
         is_rural_dist = "true"
         is_gov_dist = "false"
     />
+
+    <master.spat_ref_sys id = "1" />
+    <master.spat_ref_sys id = "2" />
+    <master.spat_ref_sys id = "4" />
     <master.spat_ref_sys id = "5" />
+    <master.spat_ref_sys id = "6" />
+    <master.spat_ref_sys id = "8" />
     <master.site_class id = "1" />
     <master.site_class id = "3" />
     <master.state

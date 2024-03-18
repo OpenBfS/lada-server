@@ -22,11 +22,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
-import de.intevation.lada.validation.constraints.ValidCoordinates;
-import jakarta.validation.Validation;
-import jakarta.validation.ValidatorFactory;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 /**
  * Utilities for coordinate transformations.
  *
@@ -56,18 +51,6 @@ public class KdaUtil {
          * (Hayford ellipsoid) */
         UTM_ED50;
     };
-
-    /**
-     * Record storing coordinates and spatRefSys.
-     * @param x X Coordinate
-     * @param y Y Coordinate
-     * @param spatRefSys SpatRefSys used
-     */
-    @ValidCoordinates
-    public record TransformationInput(
-        @NotBlank String x,
-        @NotBlank String y,
-        @NotNull KDA spatRefSys) { };
 
     // Known database ID of KDA.GD
     public static final int KDA_GD = 4;
@@ -189,7 +172,7 @@ public class KdaUtil {
                 case UTM_ETRS89 -> this.new Transform6(x, y);
                 case UTM_ED50 -> this.new Transform8(x, y);
             };
-        } catch (ValidationException | FactoryException fe) {
+        } catch (FactoryException fe) {
             return null;
         }
         return t.transform(kdaTo);
@@ -209,11 +192,6 @@ public class KdaUtil {
     }
 
     /**
-     * Exception to be thrown on invalid coordinate input.
-     */
-    private class ValidationException extends Exception { };
-
-    /**
      * Delegates to a class per input KDA.
      */
     private abstract class AbstractTransform implements Transform {
@@ -224,16 +202,9 @@ public class KdaUtil {
         // CRS of input coordinates
         protected CoordinateReferenceSystem crs;
 
-        AbstractTransform(TransformationInput coords)
-                throws ValidationException {
-            //Validate input programatically as CDI may not be available
-            ValidatorFactory factory
-                = Validation.buildDefaultValidatorFactory();
-            if (!factory.getValidator().validate(coords).isEmpty()) {
-                throw new ValidationException();
-            }
-            this.x = coords.x();
-            this.y = coords.y();
+        AbstractTransform(String x, String y) {
+            this.x = x;
+            this.y = y;
         }
 
         public Result transform(KDA to) {
@@ -258,8 +229,8 @@ public class KdaUtil {
         Transform1(
             String x,
             String y
-        ) throws FactoryException, ValidationException {
-            super(new TransformationInput(x, y, KDA.GK));
+        ) throws FactoryException {
+            super(x, y);
             this.crs = getCRSForGK(x);
         }
 
@@ -365,8 +336,8 @@ public class KdaUtil {
      */
     private class Transform2 extends AbstractTransform {
 
-        Transform2(String x, String y) throws ValidationException {
-            super(new TransformationInput(x, y, KDA.GS));
+        Transform2(String x, String y) {
+            super(x, y);
         }
 
         @Override
@@ -486,8 +457,8 @@ public class KdaUtil {
      */
     private class Transform4 extends AbstractTransform {
 
-        Transform4(String x, String y) throws ValidationException {
-            super(new TransformationInput(x, y, KDA.GD));
+        Transform4(String x, String y) {
+            super(x, y);
         }
 
         @Override
@@ -574,8 +545,8 @@ public class KdaUtil {
         Transform5(
             String x,
             String y
-        ) throws FactoryException, ValidationException {
-            super(new TransformationInput(x, y, KDA.UTM_WGS84));
+        ) throws FactoryException {
+            super(x, y);
             this.crs = getCRSForWgsUtm(x);
         }
 
@@ -684,8 +655,8 @@ public class KdaUtil {
         Transform6(
             String x,
             String y
-        ) throws FactoryException, ValidationException {
-            super(new TransformationInput(x, y, KDA.UTM_ETRS89));
+        ) throws FactoryException {
+            super(x, y);
             this.crs = getCRSForEtrs89(x);
         }
 
@@ -794,8 +765,8 @@ public class KdaUtil {
         Transform8(
             String x,
             String y
-        ) throws FactoryException, ValidationException {
-            super(new TransformationInput(x, y, KDA.UTM_ED50));
+        ) throws FactoryException {
+            super(x, y);
             this.crs = getCRSForEd50Utm(x);
         }
 
