@@ -18,6 +18,7 @@ import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.Coordinate;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -150,15 +151,14 @@ public class KdaUtil {
      * @param kdaTo KDA to be transformed to
      * @param x Easting or longitude
      * @param y Northing or latitude
+     * @throws RuntimeException Thrown if transformation fails with an
+     *                          Exception
      * @return Result with transformed coordinates or null if coordinates are
      *         null
      */
     public Result transform(
         KDA kdaFrom, KDA kdaTo, String x, String y
     ) {
-        if (x == null || y == null) {
-            return null;
-        }
         x = x.replace(',', '.');
         y = y.replace(',', '.');
 
@@ -172,23 +172,30 @@ public class KdaUtil {
                 case UTM_ETRS89 -> this.new Transform6(x, y);
                 case UTM_ED50 -> this.new Transform8(x, y);
             };
-        } catch (FactoryException fe) {
-            return null;
+            return t.transform(kdaTo);
+        } catch (FactoryException | TransformException e) {
+            throw new RuntimeException("Invalid transformation input", e);
         }
-        return t.transform(kdaTo);
     }
 
     /**
      * Defines the methods to be implemented for coordinate transformation.
      */
     private interface Transform {
-        Result transform(KDA to);
-        Result transformTo1();
-        Result transformTo2();
-        Result transformTo4();
-        Result transformTo5();
-        Result transformTo6();
-        Result transformTo8();
+        Result transform(KDA to) throws NoSuchAuthorityCodeException,
+            TransformException, FactoryException;
+        Result transformTo1() throws NoSuchAuthorityCodeException,
+            TransformException, FactoryException;
+        Result transformTo2() throws NoSuchAuthorityCodeException,
+            TransformException, FactoryException;
+        Result transformTo4() throws NoSuchAuthorityCodeException,
+            TransformException, FactoryException;
+        Result transformTo5() throws NoSuchAuthorityCodeException,
+            TransformException, FactoryException;
+        Result transformTo6() throws NoSuchAuthorityCodeException,
+            TransformException, FactoryException;
+        Result transformTo8() throws NoSuchAuthorityCodeException,
+            TransformException, FactoryException;
     }
 
     /**
@@ -207,7 +214,8 @@ public class KdaUtil {
             this.y = y;
         }
 
-        public Result transform(KDA to) {
+        public Result transform(KDA to)
+                throws FactoryException, TransformException {
             switch (to) {
                 case GK: return transformTo1();
                 case GS: return transformTo2();
@@ -240,7 +248,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo2() {
+        public Result transformTo2() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             Result degrees = jtsTransform(crs, "EPSG:4326", y, x);
             if (degrees == null) {
                 return null;
@@ -249,7 +258,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo4() {
+        public Result transformTo4() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             Result coords = jtsTransform(crs, "EPSG:4326", y, x);
             if (coords == null) {
                 return null;
@@ -266,7 +276,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo5() {
+        public Result transformTo5() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             Result degrees = jtsTransform(crs, "EPSG:4326", y, x);
             String epsgWGS = getWgsUtmEpsg(
                 Double.parseDouble(degrees.getY()),
@@ -289,7 +300,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo6() {
+        public Result transformTo6() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             Result degrees = jtsTransform(crs, "EPSG:4326", y, x);
             // TODO: explain why x and y are interchanged here
             String epsgEtrs = getEtrsEpsg(
@@ -313,7 +325,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo8() {
+        public Result transformTo8() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             Result degrees = jtsTransform(crs, "EPSG:4326", y, x);
             String epsgEd50 = getEpsgForEd50UtmFromDegree(
                 degrees.getY());
@@ -341,7 +354,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo1() {
+        public Result transformTo1() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             Result degrees = arcToDegree(x, y);
             if (degrees == null) {
                 return null;
@@ -376,7 +390,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo5() {
+        public Result transformTo5() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             Result degrees = arcToDegree(x, y);
             if (degrees == null) {
                 return null;
@@ -402,11 +417,9 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo6() {
+        public Result transformTo6() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             Result degrees = arcToDegree(x, y);
-            if (degrees == null) {
-                return null;
-            }
             String epsgEtrs = getEtrsEpsg(
                 Double.parseDouble(degrees.getX()),
                 Double.parseDouble(degrees.getY()));
@@ -414,9 +427,6 @@ public class KdaUtil {
                 epsgEtrs,
                 degrees.getY(),
                 degrees.getX());
-            if (coords == null) {
-                return null;
-            }
             coords.setX(epsgEtrs.substring(
                 epsgEtrs.length() - 2,
                 epsgEtrs.length()) + coords.getX());
@@ -428,20 +438,15 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo8() {
+        public Result transformTo8() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             Result degrees = arcToDegree(x, y);
-            if (degrees == null) {
-                return null;
-            }
             String epsgEd50 = getEpsgForEd50UtmFromDegree(
                 degrees.getX());
             Result coords = jtsTransform("EPSG:4326",
                 epsgEd50,
                 degrees.getY(),
                 degrees.getX());
-            if (coords == null) {
-                return null;
-            }
             String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
             String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             String zone = epsgEd50.substring(
@@ -462,7 +467,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo1() {
+        public Result transformTo1() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             String epsgGk = getGkEpsg(Double.valueOf(x), Double.valueOf(y));
             Result coords = jtsTransform("EPSG:4326", epsgGk, y, x);
             if (coords == null) {
@@ -486,7 +492,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo5() {
+        public Result transformTo5() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             String epsgWgs = getWgsUtmEpsg(
                 Double.valueOf(x), Double.valueOf(y));
             Result coords = jtsTransform("EPSG:4326", epsgWgs, y, x);
@@ -504,7 +511,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo6() {
+        public Result transformTo6() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             String epsgEtrs = getEtrsEpsg(
                 Double.valueOf(x), Double.valueOf(y));
             Result coords = jtsTransform("EPSG:4326", epsgEtrs, y, x);
@@ -522,7 +530,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo8() {
+        public Result transformTo8() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             String epsgEd50 = getEpsgForEd50UtmFromDegree(x);
             Result coords = jtsTransform("EPSG:4326", epsgEd50, y, x);
             if (coords == null) {
@@ -551,7 +560,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo1() {
+        public Result transformTo1() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(crs, "EPSG:4326", x, y);
             if (degrees == null) {
@@ -572,7 +582,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo2() {
+        public Result transformTo2() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(crs, "EPSG:4326", x, y);
             Result coords = degreeToArc(degrees.getY(), degrees.getX());
@@ -580,7 +591,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo4() {
+        public Result transformTo4() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result coords = jtsTransform(crs, "EPSG:4326", x, y);
             if (coords == null) {
@@ -605,7 +617,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo6() {
+        public Result transformTo6() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(crs, "EPSG:4326", x, y);
             if (degrees == null) {
@@ -625,7 +638,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo8() {
+        public Result transformTo8() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result coords4326 = jtsTransform(crs, "EPSG:4326", x, y);
             if (coords4326 == null) {
@@ -661,7 +675,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo1() {
+        public Result transformTo1() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(crs, "EPSG:4326", x, y);
             if (degrees == null) {
@@ -682,7 +697,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo2() {
+        public Result transformTo2() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(crs, "EPSG:4326", x, y);
             Result coords = degreeToArc(degrees.getY(), degrees.getX());
@@ -690,7 +706,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo4() {
+        public Result transformTo4() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result coords = jtsTransform(crs, "EPSG:4326", x, y);
             if (coords == null) {
@@ -710,7 +727,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo5() {
+        public Result transformTo5() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(crs, "EPSG:4326", x, y);
             if (degrees == null) {
@@ -735,7 +753,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo8() {
+        public Result transformTo8() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result coords4326 = jtsTransform(crs, "EPSG:4326", x, y);
             if (coords4326 == null) {
@@ -771,7 +790,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo1() {
+        public Result transformTo1() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(crs, "EPSG:4326", x, y);
             if (degrees == null) {
@@ -792,7 +812,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo2() {
+        public Result transformTo2() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(crs, "EPSG:4326", x, y);
             Result coords = degreeToArc(degrees.getY(), degrees.getX());
@@ -800,7 +821,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo4() {
+        public Result transformTo4() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result coords = jtsTransform(crs, "EPSG:4326", x, y);
             if (coords == null) {
@@ -820,7 +842,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo5() {
+        public Result transformTo5() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             String x1 = x.substring(2, x.length());
             Result coords4326 = jtsTransform(crs, "EPSG:4326", x1, y);
             if (coords4326 == null) {
@@ -842,7 +865,8 @@ public class KdaUtil {
         }
 
         @Override
-        public Result transformTo6() {
+        public Result transformTo6() throws NoSuchAuthorityCodeException,
+                TransformException, FactoryException {
             String x1 = x.substring(2, x.length());
             Result coords4326 = jtsTransform(crs, "EPSG:4326", x1, y);
             if (coords4326 == null) {
@@ -875,50 +899,55 @@ public class KdaUtil {
     /**
      * Transform given coordinates from epsgFrom to epsgTo.
      * Returns null in case a given EPSG code is invalid.
+     * @throws TransformException Thrown if transformations fails
+     * @throws FactoryException Thrown if no transformation could be found
+     * @throws NoSuchAuthorityCodeException Thrown if epsg code is unknown
      */
     private Result jtsTransform(
         String epsgFrom,
         String epsgTo,
         String x,
         String y
-    ) {
-        CoordinateReferenceSystem src;
-        try {
-            src = CRS.decode(epsgFrom);
-        } catch (FactoryException fe) {
-            return null;
-        }
+    ) throws NoSuchAuthorityCodeException, TransformException, FactoryException {
+        CoordinateReferenceSystem src = CRS.decode(epsgFrom);
         return jtsTransform(src, epsgTo, x, y);
     }
 
     /**
      * Transform given coordinates from CRS to epsgTo.
      * Returns null in case the given EPSG code is invalid.
+     * @throws TransformException Thrown if transformations fails
+     * @throws FactoryException Thrown if no transformation could be found
+     * @throws NoSuchAuthorityCodeException Thrown if epsg code is unknown
      */
     private Result jtsTransform(
         CoordinateReferenceSystem src,
         String epsgTo,
         String x,
         String y
-    ) {
-        try {
-            CoordinateReferenceSystem target = CRS.decode(epsgTo);
+    ) throws TransformException, NoSuchAuthorityCodeException,
+            FactoryException {
+        CoordinateReferenceSystem target = CRS.decode(epsgTo);
 
-            MathTransform transform = CRS.findMathTransform(src, target);
-            Coordinate srcCoord = new Coordinate();
-            srcCoord.y = Double.valueOf(y);
-            srcCoord.x = Double.valueOf(x);
-            Coordinate targetCoord = new Coordinate();
-            JTS.transform(srcCoord, targetCoord, transform);
-            return new Result(
-                String.valueOf(targetCoord.x),
-                String.valueOf(targetCoord.y));
-        } catch (FactoryException | TransformException e) {
-            return null;
-        }
+        MathTransform transform = CRS.findMathTransform(src, target);
+        Coordinate srcCoord = new Coordinate();
+        srcCoord.y = Double.valueOf(y);
+        srcCoord.x = Double.valueOf(x);
+        Coordinate targetCoord = new Coordinate();
+        JTS.transform(srcCoord, targetCoord, transform);
+        return new Result(
+            String.valueOf(targetCoord.x),
+            String.valueOf(targetCoord.y));
     }
 
     private Result degreeToArc(String x, String y) {
+        //Check if input is parsable and in range
+        double xDouble = Double.parseDouble(x);
+        double yDouble = Double.parseDouble(y);
+        if (Math.abs(xDouble) > MAX_LON || Math.abs(yDouble) > MAX_LAT) {
+            throw new IllegalArgumentException(
+                String.format("Invalid coordinates: %d - %d", xDouble, yDouble));
+        }
         String[] xParts = x.split("\\.");
         String[] yParts = y.split("\\.");
 
@@ -926,15 +955,11 @@ public class KdaUtil {
         final double secondsPerDegree = 3600;
         double wsX = 0;
         double wsY = 0;
-        try {
-            if (xParts.length == 2) {
-                wsX = Double.parseDouble("0." + xParts[1]) * secondsPerDegree;
-            }
-            if (yParts.length == 2) {
-                wsY = Double.parseDouble("0." + yParts[1]) * secondsPerDegree;
-            }
-        } catch (NumberFormatException nfe) {
-            return null;
+        if (xParts.length == 2) {
+            wsX = Double.parseDouble("0." + xParts[1]) * secondsPerDegree;
+        }
+        if (yParts.length == 2) {
+            wsY = Double.parseDouble("0." + yParts[1]) * secondsPerDegree;
         }
 
         // Append arc minutes and seconds as MMSS.sssss to degrees
@@ -976,47 +1001,43 @@ public class KdaUtil {
         String xSuffix = "";
         String yPrefix = "";
         String ySuffix = "";
-        try {
-            if (x.contains(".")) {
-                Matcher m = LON_DEC.matcher(x);
-                m.matches();
-                xPrefix = m.group(1);
-                xDegree = Integer.valueOf(m.group(2));
-                xMin = Integer.valueOf(m.group(3));
-                xSec = Double.valueOf(m.group(4) + "." + m.group(5));
-                xSuffix = m.group(6);
-            } else {
-                Matcher m = LON.matcher(x);
-                m.matches();
-                xPrefix = m.group(1);
-                xDegree = Integer.valueOf(m.group(2));
-                xMin = Integer.valueOf(
-                    !m.group(3).isEmpty() ? m.group(3) : "0");
-                xSec = Double.valueOf(
-                    !m.group(4).isEmpty() ? m.group(4) : "0.0");
-                xSuffix = m.group(5);
-            }
-            if (y.contains(".")) {
-                Matcher m = LAT_DEC.matcher(y);
-                m.matches();
-                yPrefix = m.group(1);
-                yDegree = Integer.valueOf(m.group(2));
-                yMin = Integer.valueOf(m.group(3));
-                ySec = Double.valueOf(m.group(4) + "." + m.group(5));
-                ySuffix = m.group(6);
-            } else {
-                Matcher m = LAT.matcher(y);
-                m.matches();
-                yPrefix = m.group(1);
-                yDegree = Integer.valueOf(m.group(2));
-                yMin = Integer.valueOf(
-                    !m.group(3).isEmpty() ? m.group(3) : "0");
-                ySec = Double.valueOf(
-                    !m.group(4).isEmpty() ? m.group(4) : "0.0");
-                ySuffix = m.group(5);
-            }
-        } catch (IllegalStateException e) {
-            return null;
+        if (x.contains(".")) {
+            Matcher m = LON_DEC.matcher(x);
+            m.matches();
+            xPrefix = m.group(1);
+            xDegree = Integer.valueOf(m.group(2));
+            xMin = Integer.valueOf(m.group(3));
+            xSec = Double.valueOf(m.group(4) + "." + m.group(5));
+            xSuffix = m.group(6);
+        } else {
+            Matcher m = LON.matcher(x);
+            m.matches();
+            xPrefix = m.group(1);
+            xDegree = Integer.valueOf(m.group(2));
+            xMin = Integer.valueOf(
+                !m.group(3).isEmpty() ? m.group(3) : "0");
+            xSec = Double.valueOf(
+                !m.group(4).isEmpty() ? m.group(4) : "0.0");
+            xSuffix = m.group(5);
+        }
+        if (y.contains(".")) {
+            Matcher m = LAT_DEC.matcher(y);
+            m.matches();
+            yPrefix = m.group(1);
+            yDegree = Integer.valueOf(m.group(2));
+            yMin = Integer.valueOf(m.group(3));
+            ySec = Double.valueOf(m.group(4) + "." + m.group(5));
+            ySuffix = m.group(6);
+        } else {
+            Matcher m = LAT.matcher(y);
+            m.matches();
+            yPrefix = m.group(1);
+            yDegree = Integer.valueOf(m.group(2));
+            yMin = Integer.valueOf(
+                !m.group(3).isEmpty() ? m.group(3) : "0");
+            ySec = Double.valueOf(
+                !m.group(4).isEmpty() ? m.group(4) : "0.0");
+            ySuffix = m.group(5);
         }
 
         double ddX = xDegree + ((xMin / 60d) + (xSec / 3600d));
@@ -1031,6 +1052,10 @@ public class KdaUtil {
             || (ySuffix != null && (ySuffix.equals("S")))
         ) {
             ddY = ddY * -1;
+        }
+        if (Math.abs(ddX) > MAX_LON || Math.abs(ddY) > MAX_LAT) {
+            throw new IllegalArgumentException(
+                String.format("Invalid coordinates: %d - %d", ddX, ddY));
         }
         return new Result(String.valueOf(ddX), String.valueOf(ddY));
     }
@@ -1071,12 +1096,7 @@ public class KdaUtil {
     }
 
     private String getEpsgForWgsUtmFromDegree(String x) {
-        Double xCoord;
-        try {
-            xCoord = Double.valueOf(x);
-        } catch (NumberFormatException nfe) {
-            return "";
-        }
+        Double xCoord = Double.valueOf(x);
         String zone;
         if (xCoord < -12 && xCoord > -18) {
             zone = "28";
@@ -1131,12 +1151,7 @@ public class KdaUtil {
     }
 
     private String getEpsgForEd50UtmFromDegree(String x) {
-        Double xCoord;
-        try {
-            xCoord = Double.valueOf(x);
-        } catch (NumberFormatException nfe) {
-            return "";
-        }
+        Double xCoord = Double.valueOf(x);
         String zone;
         if (xCoord <= -12 && xCoord > -18) {
             zone = "28";
@@ -1179,7 +1194,8 @@ public class KdaUtil {
     private String getEtrsEpsg(double lon, double lat) {
         if (lat < 0) {
             // No CRS with ETRS89 available for the southern hemisphere
-            return "";
+            throw new RuntimeException(
+                String.format("Invalid negative latitude: %d", lat));
         }
         return EPSG_UTM_ETRS89_PREFIX + getUTMZone(lon);
     }
@@ -1188,6 +1204,10 @@ public class KdaUtil {
      * Get UTM zone for given longitude
      */
     private static int getUTMZone(double lon) {
+        if (Math.abs(lon) > MAX_LON) {
+            throw new IllegalArgumentException(
+                String.format("Invalid lon value %d", lon));
+        }
         return (int) Math.floor((lon + MAX_LON) / 6) + 1;
     }
 

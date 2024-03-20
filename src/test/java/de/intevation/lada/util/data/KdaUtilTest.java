@@ -210,26 +210,6 @@ public class KdaUtilTest {
     }
 
     /**
-     * Invalid null input.
-     */
-    @Test
-    public void nullInputTest() {
-        KdaUtil.Result result = new KdaUtil().transform(
-            fromKda, toKda, null, null);
-        Assert.assertNull(result);
-    }
-
-    /**
-     * Invalid string input.
-     */
-    @Test
-    public void invalidStringTest() {
-        KdaUtil.Result result = new KdaUtil().transform(
-            fromKda, toKda, "", "");
-        Assert.assertNull(result);
-    }
-
-    /**
      * Invalid zone numbers.
      */
     @Test
@@ -248,15 +228,17 @@ public class KdaUtilTest {
             invalidZone = invalidUTMZone;
         }
         String x = COORDS.get(fromKda).get("x");
-        x = new DecimalFormat(KdaUtil.EASTING_PATTERN).format(
+        String formattedX = new DecimalFormat(KdaUtil.EASTING_PATTERN).format(
             invalidZone * KdaUtil.ZONE_PREFIX_MULTIPLIER
             + Double.parseDouble(x) % KdaUtil.ZONE_PREFIX_MULTIPLIER);
-        KdaUtil.Result result = new KdaUtil().transform(
+        Assert.assertThrows(RuntimeException.class,
+        () -> {
+            new KdaUtil().transform(
             fromKda,
             toKda,
-            x,
+            formattedX,
             COORDS.get(fromKda).get("y"));
-        Assert.assertNull(result);
+        });
     }
 
     /**
@@ -280,6 +262,8 @@ public class KdaUtilTest {
 
     /**
      * Out of range longitude/easting.
+     *
+     * Transformation functions are expected to throw a RuntimeException
      */
     @Test
     public void invalidXTest() {
@@ -298,16 +282,22 @@ public class KdaUtilTest {
                 // Negative easting is invalid
                 -Double.parseDouble(COORDS.get(fromKda).get("x")));
         }
-        KdaUtil.Result result = new KdaUtil().transform(
-            fromKda,
-            toKda,
-            x,
-            COORDS.get(fromKda).get("y"));
-        Assert.assertNull(result);
+        if (fromKda != toKda) {
+            Assert.assertThrows(RuntimeException.class,
+            () -> {
+                new KdaUtil().transform(
+                    fromKda,
+                    toKda,
+                    x,
+                    COORDS.get(fromKda).get("y"));
+            });
+        }
     }
 
     /**
      * Out of range latitude/northing.
+     *
+     * Transformation functions are expected to throw a RuntimeException
      */
     @Test
     public void invalidYTest() {
@@ -326,11 +316,14 @@ public class KdaUtilTest {
             final double invalidN = 1e7;
             y = new DecimalFormat(KdaUtil.NORTHING_PATTERN).format(invalidN);
         }
-        KdaUtil.Result result = new KdaUtil().transform(
-            fromKda,
-            toKda,
-            COORDS.get(fromKda).get("x"),
-            y);
-        Assert.assertNull(result);
+        if (fromKda != toKda) {
+            Assert.assertThrows(RuntimeException.class, () -> {
+                new KdaUtil().transform(
+                fromKda,
+                toKda,
+                COORDS.get(fromKda).get("x"),
+                y);
+            });
+        }
     }
 }
