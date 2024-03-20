@@ -153,8 +153,7 @@ public class KdaUtil {
      * @param y Northing or latitude
      * @throws RuntimeException Thrown if transformation fails with an
      *                          Exception
-     * @return Result with transformed coordinates or null if coordinates are
-     *         null
+     * @return Result with transformed coordinates
      */
     public Result transform(
         KDA kdaFrom, KDA kdaTo, String x, String y
@@ -251,9 +250,6 @@ public class KdaUtil {
         public Result transformTo2() throws NoSuchAuthorityCodeException,
                 TransformException, FactoryException {
             Result degrees = jtsTransform(crs, "EPSG:4326", y, x);
-            if (degrees == null) {
-                return null;
-            }
             return degreeToArc(degrees.getY(), degrees.getX());
         }
 
@@ -261,9 +257,6 @@ public class KdaUtil {
         public Result transformTo4() throws NoSuchAuthorityCodeException,
                 TransformException, FactoryException {
             Result coords = jtsTransform(crs, "EPSG:4326", y, x);
-            if (coords == null) {
-                return null;
-            }
             String coordX = coords.getX();
             String coordY = coords.getY();
             int maxLenX = coordX.length() - coordX.indexOf(".");
@@ -286,9 +279,6 @@ public class KdaUtil {
                 epsgWGS,
                 y,
                 x);
-            if (coords == null) {
-                return null;
-            }
             coords.setX(epsgWGS.substring(
                 epsgWGS.length() - 2,
                 epsgWGS.length()) + coords.getX());
@@ -311,9 +301,6 @@ public class KdaUtil {
                 epsgEtrs,
                 y,
                 x);
-            if (coords == null) {
-                return null;
-            }
             coords.setX(epsgEtrs.substring(
                 epsgEtrs.length() - 2,
                 epsgEtrs.length()) + coords.getX());
@@ -331,9 +318,6 @@ public class KdaUtil {
             String epsgEd50 = getEpsgForEd50UtmFromDegree(
                 degrees.getY());
             Result coords = jtsTransform(crs, epsgEd50, y, x);
-            if (coords == null) {
-                return null;
-            }
             String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
             String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             String zone = epsgEd50.substring(
@@ -357,9 +341,6 @@ public class KdaUtil {
         public Result transformTo1() throws NoSuchAuthorityCodeException,
                 TransformException, FactoryException {
             Result degrees = arcToDegree(x, y);
-            if (degrees == null) {
-                return null;
-            }
             String epsgGk = getGkEpsg(
                 Double.parseDouble(degrees.getX()),
                 Double.parseDouble(degrees.getY()));
@@ -369,9 +350,6 @@ public class KdaUtil {
                 epsgGk,
                 degrees.getY(),
                 degrees.getX());
-            if (coords == null) {
-                return null;
-            }
             String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
             String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             coords.setX(coordY);
@@ -393,9 +371,6 @@ public class KdaUtil {
         public Result transformTo5() throws NoSuchAuthorityCodeException,
                 TransformException, FactoryException {
             Result degrees = arcToDegree(x, y);
-            if (degrees == null) {
-                return null;
-            }
             String epsgWgs = getWgsUtmEpsg(
                 Double.parseDouble(degrees.getX()),
                 Double.parseDouble(degrees.getY()));
@@ -403,9 +378,6 @@ public class KdaUtil {
                 epsgWgs,
                 degrees.getY(),
                 degrees.getX());
-            if (coords == null) {
-                return null;
-            }
             coords.setX(epsgWgs.substring(
                 epsgWgs.length() - 2,
                 epsgWgs.length()) + coords.getX());
@@ -471,9 +443,6 @@ public class KdaUtil {
                 TransformException, FactoryException {
             String epsgGk = getGkEpsg(Double.valueOf(x), Double.valueOf(y));
             Result coords = jtsTransform("EPSG:4326", epsgGk, y, x);
-            if (coords == null) {
-                return null;
-            }
             String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
             String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             coords.setX(coordY);
@@ -497,9 +466,6 @@ public class KdaUtil {
             String epsgWgs = getWgsUtmEpsg(
                 Double.valueOf(x), Double.valueOf(y));
             Result coords = jtsTransform("EPSG:4326", epsgWgs, y, x);
-            if (coords == null) {
-                return null;
-            }
             coords.setX(epsgWgs.substring(
                 epsgWgs.length() - 2,
                 epsgWgs.length()) + coords.getX());
@@ -516,9 +482,6 @@ public class KdaUtil {
             String epsgEtrs = getEtrsEpsg(
                 Double.valueOf(x), Double.valueOf(y));
             Result coords = jtsTransform("EPSG:4326", epsgEtrs, y, x);
-            if (coords == null) {
-                return null;
-            }
             coords.setX(epsgEtrs.substring(
                 epsgEtrs.length() - 2,
                 epsgEtrs.length()) + coords.getX());
@@ -534,9 +497,6 @@ public class KdaUtil {
                 TransformException, FactoryException {
             String epsgEd50 = getEpsgForEd50UtmFromDegree(x);
             Result coords = jtsTransform("EPSG:4326", epsgEd50, y, x);
-            if (coords == null) {
-                return null;
-            }
             String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
             String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             String zone = epsgEd50.substring(
@@ -564,16 +524,10 @@ public class KdaUtil {
                 TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(crs, "EPSG:4326", x, y);
-            if (degrees == null) {
-                return null;
-            }
             String epsgGk = getGkEpsg(
                 Double.parseDouble(degrees.getY()),
                 Double.parseDouble(degrees.getX()));
             Result coords = jtsTransform(crs, epsgGk, x, y);
-            if (coords == null) {
-                return null;
-            }
             String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
             String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             coords.setX(coordY);
@@ -595,9 +549,6 @@ public class KdaUtil {
                 TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result coords = jtsTransform(crs, "EPSG:4326", x, y);
-            if (coords == null) {
-                return null;
-            }
             String coordX = coords.getX();
             String coordY = coords.getY();
             int maxLenX = coordX.length() - coordX.indexOf(".");
@@ -621,16 +572,10 @@ public class KdaUtil {
                 TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(crs, "EPSG:4326", x, y);
-            if (degrees == null) {
-                return null;
-            }
             String epsgEtrs = getEtrsEpsg(
                 Double.parseDouble(degrees.getY()),
                 Double.parseDouble(degrees.getX()));
             Result response = jtsTransform(crs, epsgEtrs, x, y);
-            if (response == null) {
-                return response;
-            }
 
             // Format output
             formatUTM(response, getUTMZone(Double.parseDouble(degrees.getY())));
@@ -642,15 +587,9 @@ public class KdaUtil {
                 TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result coords4326 = jtsTransform(crs, "EPSG:4326", x, y);
-            if (coords4326 == null) {
-                return null;
-            }
             String epsgEd50 =
                 getEpsgForEd50UtmFromDegree(coords4326.getY());
             Result coords = jtsTransform(crs, epsgEd50, x, y);
-            if (coords == null) {
-                return null;
-            }
             String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
             String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             String zone = epsgEd50.substring(
@@ -679,16 +618,10 @@ public class KdaUtil {
                 TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(crs, "EPSG:4326", x, y);
-            if (degrees == null) {
-                return null;
-            }
             String epsgGk = getGkEpsg(
                 Double.parseDouble(degrees.getY()),
                 Double.parseDouble(degrees.getX()));
             Result coords = jtsTransform(crs, epsgGk, x, y);
-            if (coords == null) {
-                return null;
-            }
             String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
             String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             coords.setX(coordY);
@@ -710,9 +643,6 @@ public class KdaUtil {
                 TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result coords = jtsTransform(crs, "EPSG:4326", x, y);
-            if (coords == null) {
-                return null;
-            }
             String coordX = coords.getX();
             String coordY = coords.getY();
             int maxLenX = coordX.length() - coordX.indexOf(".");
@@ -731,16 +661,10 @@ public class KdaUtil {
                 TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(crs, "EPSG:4326", x, y);
-            if (degrees == null) {
-                return null;
-            }
             String epsgWgs = getWgsUtmEpsg(
                 Double.parseDouble(degrees.getY()),
                 Double.parseDouble(degrees.getX()));
             Result response = jtsTransform(crs, epsgWgs, x, y);
-            if (response == null) {
-                return null;
-            }
 
             // Format output
             formatUTM(response, getUTMZone(Double.parseDouble(degrees.getY())));
@@ -757,15 +681,9 @@ public class KdaUtil {
                 TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result coords4326 = jtsTransform(crs, "EPSG:4326", x, y);
-            if (coords4326 == null) {
-                return null;
-            }
             String epsgEd50 = getEpsgForEd50UtmFromDegree(
                 coords4326.getY());
             Result coords = jtsTransform(crs, epsgEd50, x, y);
-            if (coords == null) {
-                return null;
-            }
             String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
             String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             String zone = epsgEd50.substring(
@@ -794,16 +712,10 @@ public class KdaUtil {
                 TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result degrees = jtsTransform(crs, "EPSG:4326", x, y);
-            if (degrees == null) {
-                return null;
-            }
             String epsgGk = getGkEpsg(
                 Double.parseDouble(degrees.getY()),
                 Double.parseDouble(degrees.getX()));
             Result coords = jtsTransform(crs, epsgGk, x, y);
-            if (coords == null) {
-                return null;
-            }
             String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
             String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             coords.setX(coordY);
@@ -825,9 +737,6 @@ public class KdaUtil {
                 TransformException, FactoryException {
             x = x.substring(2, x.length());
             Result coords = jtsTransform(crs, "EPSG:4326", x, y);
-            if (coords == null) {
-                return null;
-            }
             String coordX = coords.getX();
             String coordY = coords.getY();
             int maxLenX = coordX.length() - coordX.indexOf(".");
@@ -846,15 +755,9 @@ public class KdaUtil {
                 TransformException, FactoryException {
             String x1 = x.substring(2, x.length());
             Result coords4326 = jtsTransform(crs, "EPSG:4326", x1, y);
-            if (coords4326 == null) {
-                return null;
-            }
             String epsgWgs = getEpsgForWgsUtmFromDegree(
                 coords4326.getY());
             Result coords = jtsTransform(crs, epsgWgs, x1, y);
-            if (coords == null) {
-                return null;
-            }
             String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
             String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             String zone = epsgWgs.substring(
@@ -869,17 +772,11 @@ public class KdaUtil {
                 TransformException, FactoryException {
             String x1 = x.substring(2, x.length());
             Result coords4326 = jtsTransform(crs, "EPSG:4326", x1, y);
-            if (coords4326 == null) {
-                return null;
-            }
             // TODO: explain why x and y are interchanged here
             String epsgEtrs = getEtrsEpsg(
                 Double.parseDouble(coords4326.getY()),
                 Double.parseDouble(coords4326.getX()));
             Result coords = jtsTransform(crs, epsgEtrs, x1, y);
-            if (coords == null) {
-                return null;
-            }
             String coordX = String.valueOf(Math.round(Double.valueOf(coords.getX())));
             String coordY = String.valueOf(Math.round(Double.valueOf(coords.getY())));
             String zone = epsgEtrs.substring(
