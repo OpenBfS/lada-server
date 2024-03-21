@@ -16,6 +16,9 @@ public class ValidCoordinatesSiteValidator
 
     @Override
     public boolean isValid(Site value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return true;
+        }
         Integer spatRefSysId = value.getSpatRefSysId();
         return
             spatRefSysId == null
