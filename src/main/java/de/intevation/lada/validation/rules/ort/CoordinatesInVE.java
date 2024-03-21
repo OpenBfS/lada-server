@@ -55,13 +55,13 @@ public class CoordinatesInVE implements Rule {
             }
 
             AdminBorderView singlevg = vgs.get(0);
-            if (singlevg.getShape().contains(p) && !ort.getIsFuzzy()) {
+            if (singlevg.getShape().contains(p)) {
                 return null;
             }
-            double dist = singlevg.getShape().distance(p)
-                * (3.1415926 / 180) * 6378137;
-            if (dist < 1000) {
-                ort.setIsFuzzy(true);
+            if (ort.getIsFuzzy()
+                && singlevg.getShape().distance(p) * (3.1415926 / 180) * 6378137
+                < 1000
+            ) {
                 return null;
             }
             violation.addWarning("coordXExt", StatusCodes.GEO_POINT_OUTSIDE);
