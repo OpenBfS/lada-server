@@ -883,13 +883,13 @@ public class LafObjectMapper {
             return null;
         }
 
-        // TODO: Why does the following duplicate a validation rule?
+        // Duplicates validation rule because the rule generates an error
+        // and it should only be a notification here
         QueryBuilder<CommSample> kommentarBuilder = repository
             .queryBuilder(CommSample.class)
             .and("sampleId", probe.getId());
         List<CommSample> kommentarExist = repository.filterPlain(
             kommentarBuilder.getQuery());
-
         // TODO: Should be the job of EXISTS and a WHERE-clause in database
         if (kommentarExist.stream().anyMatch(
                 elem -> elem.getText().trim().replace(" ", "").toUpperCase()
@@ -1148,13 +1148,13 @@ public class LafObjectMapper {
                     Instant.now().atZone(ZoneOffset.UTC).toInstant()));
         }
 
-        // TODO: Why does the following duplicate a validation rule?
+        // Duplicates validation rule because the rule generates an error
+        // and it should only be a notification here
         QueryBuilder<CommMeasm> kommentarBuilder = repository
             .queryBuilder(CommMeasm.class)
             .and("measmId", messungsId);
         List<CommMeasm> kommentarExist = repository.filterPlain(
             kommentarBuilder.getQuery());
-
         // TODO: Should be the job of EXISTS and a WHERE-clause in database
         if (kommentarExist.stream().anyMatch(
                 elem -> elem.getText().trim().replace(" ", "").toUpperCase()
