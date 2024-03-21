@@ -35,7 +35,6 @@ import jakarta.ws.rs.QueryParam;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.factory.OrtFactory;
-import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -45,7 +44,7 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
+
 
 /**
  * REST service for Site objects.
@@ -189,14 +188,6 @@ public class SiteService extends LadaService {
         } else {
             ortFactory.completeSite(ort);
         }
-        if (ortFactory.hasErrors()) {
-            Violation factoryErrs = new Violation();
-            for (ReportItem err : ortFactory.getErrors()) {
-                factoryErrs.addError(err.getKey(), err.getCode());
-            }
-            ort.setErrors(factoryErrs.getErrors());
-            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-        }
 
         validator.validate(ort);
 
@@ -224,16 +215,6 @@ public class SiteService extends LadaService {
             Site.class);
 
         ortFactory.completeSite(ort);
-        if (ortFactory.hasErrors()) {
-            Violation factoryErrs = new Violation();
-            for (ReportItem err : ortFactory.getErrors()) {
-                factoryErrs.addError(err.getKey(), err.getCode());
-            }
-            ort.setErrors(factoryErrs.getErrors());
-            return new Response(false, StatusCodes.ERROR_VALIDATION, ort);
-        }
-
-        validator.validate(ort);
 
         Response response = repository.update(ort);
         validator.validate(response.getData());
