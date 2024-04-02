@@ -50,12 +50,12 @@ public class SiteTest extends ValidatorBaseTest {
     private static final String NUCL_FACIL_EXT_ID_MAPPED = "A1234";
     private static final int NUCL_FACIL_GR_ID_MAPPED = 1;
 
-    private static final double COORDINATE_OUTSIDE_Y = 48.1579;
-    private static final double COORDINATE_OUTSIDE_X = 11.535333;
-    private static final double COORDINATE_JUST_OUTSIDE_Y = 52.401365;
-    private static final double COORDINATE_JUST_OUTSIDE_X = 13.108697;
-    private static final double COORDINATE_INSIDE_Y = 52.409959;
-    private static final double COORDINATE_INSIDE_X = 13.10257;
+    private static final double COORDINATE_OUTSIDE_Y = 48.0;
+    private static final double COORDINATE_OUTSIDE_X = 11.0;
+    private static final double COORDINATE_JUST_OUTSIDE_Y = 52.399;
+    private static final double COORDINATE_JUST_OUTSIDE_X = 13.099;
+    private static final double COORDINATE_INSIDE_Y = 52.5;
+    private static final double COORDINATE_INSIDE_X = 13.4;
 
     private static final String VALID_UTM_X = "12345678.1";
     private static final String VALID_UTM_Y = "1234567.1";
@@ -119,7 +119,7 @@ public class SiteTest extends ValidatorBaseTest {
      * Test fuzzy site object close to the admin border.
      */
     @Test
-    public void fuzzySiteOutsiteAdminBorders() {
+    public void fuzzySiteCloseToAdminBorders() {
         GeometryFactory gf = new GeometryFactory();
         Point justOutsideBorder = gf.createPoint(new Coordinate(
             COORDINATE_JUST_OUTSIDE_X, COORDINATE_JUST_OUTSIDE_Y));
@@ -133,26 +133,43 @@ public class SiteTest extends ValidatorBaseTest {
     }
 
     /**
+     * Test fuzzy site object far off from admin border.
+     */
+    @Test
+    public void fuzzySiteFarFromAdminBorders() {
+        GeometryFactory gf = new GeometryFactory();
+        Point outsideBorder = gf.createPoint(new Coordinate(
+            COORDINATE_OUTSIDE_X, COORDINATE_OUTSIDE_Y));
+        Site site = createMinimalSite();
+        site.setAdminUnitId(VALID_ADMIN_UNIT_ID);
+        site.setIsFuzzy(true);
+        site.setGeom(outsideBorder);
+
+        validator.validate(site);
+        assertHasWarning(
+            site, COORD_X_EXT, String.valueOf(StatusCodes.GEO_POINT_OUTSIDE));
+        assertHasWarning(
+            site, COORD_Y_EXT, String.valueOf(StatusCodes.GEO_POINT_OUTSIDE));
+    }
+
+    /**
      * Test site object far outside to the admin border.
      */
     @Test
     public void siteOutsiteAdminBorders() {
         GeometryFactory gf = new GeometryFactory();
         Point justOutsideBorder = gf.createPoint(new Coordinate(
-            COORDINATE_OUTSIDE_X, COORDINATE_OUTSIDE_Y));
+            COORDINATE_JUST_OUTSIDE_X, COORDINATE_JUST_OUTSIDE_Y));
         Site site = createMinimalSite();
         site.setAdminUnitId(VALID_ADMIN_UNIT_ID);
         site.setIsFuzzy(false);
         site.setGeom(justOutsideBorder);
 
         validator.validate(site);
-        Assert.assertTrue(site.hasWarnings());
-        Assert.assertTrue(site.getWarnings().containsKey(COORD_X_EXT));
-        Assert.assertTrue(site.getWarnings().get(COORD_X_EXT).contains(
-                String.valueOf(StatusCodes.GEO_POINT_OUTSIDE)));
-        Assert.assertTrue(site.getWarnings().containsKey(COORD_Y_EXT));
-        Assert.assertTrue(site.getWarnings().get(COORD_Y_EXT).contains(
-                String.valueOf(StatusCodes.GEO_POINT_OUTSIDE)));
+        assertHasWarning(
+            site, COORD_X_EXT, String.valueOf(StatusCodes.GEO_POINT_OUTSIDE));
+        assertHasWarning(
+            site, COORD_Y_EXT, String.valueOf(StatusCodes.GEO_POINT_OUTSIDE));
     }
 
     /**
@@ -166,6 +183,23 @@ public class SiteTest extends ValidatorBaseTest {
         Site site = createMinimalSite();
         site.setAdminUnitId(VALID_ADMIN_UNIT_ID);
         site.setIsFuzzy(false);
+        site.setGeom(insideBorder);
+
+        validator.validate(site);
+        assertNoWarningsOrErrors(site);
+    }
+
+    /**
+     * Test fuzzy site inside admin borders.
+     */
+    @Test
+    public void fuzzySiteInsideAdminBorders() {
+        GeometryFactory gf = new GeometryFactory();
+        Point insideBorder = gf.createPoint(
+                new Coordinate(COORDINATE_INSIDE_X, COORDINATE_INSIDE_Y));
+        Site site = createMinimalSite();
+        site.setAdminUnitId(VALID_ADMIN_UNIT_ID);
+        site.setIsFuzzy(true);
         site.setGeom(insideBorder);
 
         validator.validate(site);

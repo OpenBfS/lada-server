@@ -55,38 +55,21 @@ public abstract class ValidCoordinatesBaseValidator<T>
     }
 
     private boolean validateGsCoordinates(String x, String y) {
-        KdaUtil kdaUtil = new KdaUtil();
         if (!(KdaUtil.LON_DEC.matcher(x).matches()
                 && KdaUtil.LAT_DEC.matcher(y).matches()
                 || KdaUtil.LON.matcher(x).matches()
                 && KdaUtil.LAT.matcher(y).matches())) {
             return false;
         }
-        Result decimal = kdaUtil.arcToDegree(x, y);
-        if (decimal == null) {
-            return false;
-        }
-        double dX;
-        double dY;
-        try {
-            dX = Double.parseDouble(decimal.getX());
-            dY = Double.parseDouble(decimal.getY());
-        } catch (NumberFormatException nfe) {
-            return false;
-        }
-        if (dX < -KdaUtil.MAX_LON || dX > KdaUtil.MAX_LON
-            || dY < -KdaUtil.MAX_LAT || dY > KdaUtil.MAX_LAT
-        ) {
-            return false;
-        }
-        return true;
+        Result decimal = KdaUtil.arcToDegree(x, y);
+        return validateGdCoordinates(decimal.getX(), decimal.getY());
     }
 
     private boolean validateGdCoordinates(String x, String y) {
         try {
             double dX = Double.parseDouble(x), dY = Double.parseDouble(y);
-            if (dX < -KdaUtil.MAX_LON || dX > KdaUtil.MAX_LON
-                || dY < -KdaUtil.MAX_LAT || dY > KdaUtil.MAX_LAT
+            if (Math.abs(dX) > KdaUtil.MAX_LON
+                || Math.abs(dY) > KdaUtil.MAX_LAT
             ) {
                 return false;
             }

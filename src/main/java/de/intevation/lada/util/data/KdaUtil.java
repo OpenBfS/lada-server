@@ -116,7 +116,7 @@ public class KdaUtil {
     /**
      * Representation of transformation result.
      */
-    public class Result {
+    public static class Result {
         // Easting or longitude
         private String x;
 
@@ -887,7 +887,7 @@ public class KdaUtil {
      * @param y Latitude in sexagesimal notation.
      * @return Result with coordinates in decimal notation.
      */
-    public Result arcToDegree(String x, String y) {
+    public static Result arcToDegree(String x, String y) {
         int xDegree = 0;
         int xMin = 0;
         int yDegree = 0;

@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.factory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.inject.Inject;
@@ -17,14 +16,13 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
 
-import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.State;
 import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
+
 
 /**
  * Class to create, transform and complete ort objects.
@@ -39,8 +37,6 @@ public class OrtFactory {
     @Inject
     private Repository repository;
 
-    private List<ReportItem> errors = new ArrayList<>();
-
     /**
      * Transform the external coordinates to the geom representation.
      * @param ort the ort
@@ -52,14 +48,6 @@ public class OrtFactory {
 
         KdaUtil.Result coords = new KdaUtil().transform(
             KdaUtil.KDAS.get(kda), KdaUtil.KDA.GD, xCoord, yCoord);
-        if (coords == null) {
-            ReportItem err = new ReportItem();
-            err.setCode(StatusCodes.GEO_NOT_MATCHING);
-            err.setKey("spatRefSysId");
-            err.setValue(kda + " " + xCoord + " " + yCoord);
-            errors.add(err);
-            return;
-        }
         ort.setGeom(new GeometryFactory(new PrecisionModel(), EPSG4326)
             .createPoint(new Coordinate(
                 Double.parseDouble(coords.getX()),
@@ -147,8 +135,6 @@ public class OrtFactory {
      * @param ort The possibly incomplete Site object
      */
     public void completeSite(Site ort) {
-        errors.clear();
-
         boolean hasKoord = false;
 
         // Try setting geometry from coordinates
@@ -250,17 +236,5 @@ public class OrtFactory {
             transformCoordinates(ort);
         }
         return;
-    }
-
-    public List<ReportItem> getErrors() {
-        return errors;
-    }
-
-    /**
-     * Check if the factory has any errors.
-     * @return True if there are errors
-     */
-    public boolean hasErrors() {
-        return !errors.isEmpty();
     }
 }

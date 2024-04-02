@@ -1713,10 +1713,6 @@ public class LafObjectMapper {
             return existing;
         }
         ortFactory.completeSite(o);
-        if (o.getGeom() == null) {
-            currentWarnings.addAll(ortFactory.getErrors());
-            return null;
-        }
         repository.create(o);
         return o;
     }

@@ -29,12 +29,14 @@ import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
+import de.intevation.lada.validation.constraints.ValidDependencies;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
 
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ StatusProt.class, DatabaseConstraints.class })
+@ValidDependencies(groups = DatabaseConstraints.class)
 public class StatusProt extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

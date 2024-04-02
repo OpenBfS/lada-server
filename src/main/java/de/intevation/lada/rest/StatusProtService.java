@@ -24,12 +24,9 @@ import jakarta.ws.rs.QueryParam;
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
-import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.StatusProt;
-import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -40,7 +37,7 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
+
 
 /**
  * REST service for StatusProt objects.
@@ -72,18 +69,6 @@ public class StatusProtService extends LadaService {
 
     @Inject
     private Validator<StatusProt> validator;
-
-    @Inject
-    private Validator<MeasVal> messwertValidator;
-
-    @Inject
-    private Validator<Measm> messungValidator;
-
-    @Inject
-    private Validator<Sample> probeValidator;
-
-    @Inject
-    private Validator<Site> ortValidator;
 
     /**
      * Get StatusProt objects.
@@ -189,102 +174,30 @@ public class StatusProtService extends LadaService {
         StatusMp newKombi,
         Measm messung
     ) {
-        Violation violationCollection = new Violation();
-        int newStatusWert = newKombi.getStatusVal().getId();
-        if (newStatusWert == 1
-            || newStatusWert == 2
-            || newStatusWert == 7
-        ) {
-            Sample probe = repository.getByIdPlain(
-                Sample.class, messung.getSampleId());
-            // init violation_collection with probe validation
-            probeValidator.validate(probe);
-            violationCollection.addErrors(probe.getErrors());
-            violationCollection.addWarnings(probe.getWarnings());
-            violationCollection.addNotifications(probe.getNotifications());
-
-            //validate messung object
-            messungValidator.validate(messung);
-            violationCollection.addErrors(messung.getErrors());
-            violationCollection.addWarnings(messung.getWarnings());
-            violationCollection.addNotifications(messung.getNotifications());
-
-            //validate messwert objects
-            QueryBuilder<MeasVal> builder = repository
+        boolean hasValidMesswerte = repository.filterPlain(repository
                 .queryBuilder(MeasVal.class)
-                .and("measmId", messung.getId());
-            List<MeasVal> messwerte = repository.filterPlain(
-                builder.getQuery());
-            if (!messwerte.isEmpty()) {
-                boolean hasValidMesswerte = false;
-                for (MeasVal messwert: messwerte) {
-                    if (newStatusWert == 7
-                        && !(messwert.getMeasVal() == null
-                            && messwert.getLessThanLOD() == null)
-                    ) {
-                        hasValidMesswerte = true;
-                        violationCollection.addError(
-                            "status", StatusCodes.STATUS_RO);
-                    }
-
-                    messwertValidator.validate(messwert);
-                    violationCollection.addErrors(messwert.getErrors());
-                    violationCollection.addWarnings(messwert.getWarnings());
-                    violationCollection.addNotifications(
-                        messwert.getNotifications());
-                }
-                if (newStatusWert == 7 && !hasValidMesswerte) {
-                    for (MeasVal measVal: messwerte) {
-                        repository.delete(measVal);
-                    }
-                }
-            } else if (newStatusWert != 7) {
-                violationCollection.addError(
-                    "measVal", StatusCodes.VALUE_MISSING);
-            }
-
-            // validate orte
-            QueryBuilder<Geolocat> ortBuilder = repository
-                .queryBuilder(Geolocat.class)
-                .and("sampleId", probe.getId());
-            List<Geolocat> assignedOrte = repository.filterPlain(
-                ortBuilder.getQuery());
-
-            for (Geolocat o : assignedOrte) {
-                Site site = repository.getByIdPlain(Site.class, o.getSiteId());
-                ortValidator.validate(site);
-                violationCollection.addErrors(site.getErrors());
-                violationCollection.addWarnings(site.getWarnings());
-                violationCollection.addNotifications(site.getNotifications());
-            }
-
-            // validate statusobject
-            validator.validate(status);
-            violationCollection.addErrors(status.getErrors());
-            violationCollection.addWarnings(status.getWarnings());
-            violationCollection.addNotifications(status.getNotifications());
-
-            if (newStatusWert != 7
-                && (violationCollection.hasErrors()
-                    || violationCollection.hasWarnings())
-                || newStatusWert == 7
-                && (probe.hasErrors() || probe.hasWarnings())
-            ) {
-                status.setErrors(violationCollection.getErrors());
-                status.setWarnings(violationCollection.getWarnings());
-                status.setNotifications(
-                    violationCollection.getNotifications());
-                return new Response(false, StatusCodes.ERROR_MERGING, status);
+                .and("measVal", null)
+                .and("lessThanLOD", null)
+                .not()
+                .and("measmId", messung.getId())
+                .getQuery()
+            ).isEmpty();
+        if (newKombi.getStatusVal().getId() == 7 && !hasValidMesswerte) {
+            List<MeasVal> messwerte = repository.filterPlain(repository
+                .queryBuilder(MeasVal.class)
+                .and("measmId", messung.getId())
+                .getQuery());
+            for (MeasVal measVal : messwerte) {
+                repository.delete(measVal);
             }
         }
+
         //Set datum to null to use database timestamp
         status.setDate(null);
 
-        status.setNotifications(violationCollection.getNotifications());
-
         //NOTE: The referenced messung status field is updated by a DB trigger
         return authorization.filter(
-            repository.create(status),
+            repository.create(validator.validate(status)),
             StatusProt.class);
     }
 

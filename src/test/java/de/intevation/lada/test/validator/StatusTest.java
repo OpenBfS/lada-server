@@ -30,29 +30,31 @@ public class StatusTest extends ValidatorBaseTest {
 
     //Other constants
     private static final int ID1 = 1;
-    private static final int ID2 = 2;
     private static final int ID3 = 3;
     private static final int ID7 = 7;
 
-    private static final int EXISTING_MEASM_ID = 1200;
-    private static final int EXISTING_MEASM_ID_VALID_REI_SAMPLE = 4200;
     private static final int INVALID_STATUS_MP_ID = 42;
-    private static final String EXISTING_MEAS_FACIL_ID = "06010";
 
     @Inject
     private Validator<StatusProt> validator;
+
+    /**
+     * Constructor.
+     * Sets test dataset.
+     */
+    public StatusTest() {
+        this.testDatasetName = "datasets/dbUnit_status_validator.xml";
+    }
 
     /**
      * Test if status kombi is not existing.
      */
     @Test
     public void checkKombiNegative() {
-        StatusProt status = new StatusProt();
-        status.setMeasmId(EXISTING_MEASM_ID);
-        status.setStatusLev(ID2);
+        StatusProt status = minimalStatusProt();
+        status.setStatusLev(2);
         status.setStatusVal(ID7);
         status.setStatusMpId(INVALID_STATUS_MP_ID);
-        status.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
         validator.validate(status);
         Assert.assertTrue(status.hasErrors());
         MatcherAssert.assertThat(status.getErrors().keySet(),
@@ -68,12 +70,10 @@ public class StatusTest extends ValidatorBaseTest {
      */
     @Test
     public void checkKombiPositive() {
-        StatusProt status = new StatusProt();
-        status.setMeasmId(EXISTING_MEASM_ID);
+        StatusProt status = minimalStatusProt();
         status.setStatusLev(ID1);
         status.setStatusVal(ID1);
-        status.setStatusMpId(2);
-        status.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
+
         validator.validate(status);
         assertNoWarningsOrErrors(status);
     }
@@ -83,10 +83,8 @@ public class StatusTest extends ValidatorBaseTest {
      */
     @Test
     public void invalidStatusOrder() {
-        StatusProt status = new StatusProt();
-        status.setMeasmId(EXISTING_MEASM_ID);
+        StatusProt status = minimalStatusProt();
         status.setStatusMpId(ID3);
-        status.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
         validator.validate(status);
         Assert.assertTrue(status.hasErrors());
         Assert.assertTrue(status.getErrors().containsKey(STATUS));
@@ -96,28 +94,56 @@ public class StatusTest extends ValidatorBaseTest {
     }
 
     /**
-     * Test status with valid order.
+     * Test status with valid order and dependencies.
      */
     @Test
-    public void validStatusOrder() {
-        StatusProt status = new StatusProt();
-        status.setMeasmId(EXISTING_MEASM_ID);
-        status.setStatusMpId(ID2);
-        status.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
+    public void validStatus() {
+        StatusProt status = minimalStatusProt();
+
         validator.validate(status);
         assertNoWarningsOrErrors(status);
     }
 
     /**
-     * Test setting status of measm connected to valid REI sample.
+     * Test status of measm connected to valid REI sample.
      */
     @Test
     public void statusReiCompleteSample() {
-        StatusProt status = new StatusProt();
-        status.setMeasmId(EXISTING_MEASM_ID_VALID_REI_SAMPLE);
-        status.setStatusMpId(ID2);
-        status.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
+        StatusProt status = minimalStatusProt();
+        final int existingMeasmIdValidReiSample = 4200;
+        status.setMeasmId(existingMeasmIdValidReiSample);
+
         validator.validate(status);
         assertNoWarningsOrErrors(status);
+    }
+
+    /**
+     * Test status of measm with error, warning and notification at measm.
+     */
+    @Test
+    public void measmWithMessages() {
+        StatusProt status = minimalStatusProt();
+        final int invalidMeasmId = 1201;
+        status.setMeasmId(invalidMeasmId);
+        assertHasError(
+            validator.validate(status),
+            "status",
+            "Operation not possible due to constraint violations\n"
+            + "Errors:\n"
+            + "- measVal: [631]\n"
+            + "Warnings:\n"
+            + "- measmStartDate: [631]\n"
+            + "Notifications:\n"
+            + "- minSampleId: [631]"
+        );
+    }
+
+    private StatusProt minimalStatusProt() {
+        StatusProt status = new StatusProt();
+        final int existingMeasmId = 1200;
+        status.setMeasmId(existingMeasmId);
+        status.setMeasFacilId("06010");
+        status.setStatusMpId(2);
+        return status;
     }
 }
