@@ -213,6 +213,7 @@ UPDATE sampler SET phone_mobile = NULL WHERE phone_mobile = '';
 UPDATE sampler SET email = NULL WHERE email = '';
 UPDATE sampler SET route_planning = NULL WHERE route_planning = '';
 UPDATE sampler SET type = NULL WHERE type = '';
+UPDATE sampler SET zip=NULL WHERE zip='';
 ALTER TABLE sampler
     ADD CHECK (ext_id <> ''),
     ADD CHECK (editor <> ''),
@@ -300,6 +301,7 @@ ALTER TABLE mpg
     ADD CHECK (comm_sample <> ''),
     ADD CHECK (sample_quant <> '');
 
+UPDATE sample SET ext_id=DEFAULT WHERE ext_id='';
 UPDATE sample SET main_sample_id = NULL WHERE main_sample_id = '';
 UPDATE sample SET env_descrip_name = NULL WHERE env_descrip_name = '';
 ALTER TABLE sample
