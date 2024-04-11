@@ -14,8 +14,6 @@ import jakarta.persistence.PersistenceException;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.model.lada.CommMeasm;
-import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
@@ -178,76 +176,6 @@ public class ObjectMerger {
             found.get(0).setError(zusatzwerte.get(i).getError());
             found.get(0).setMeasVal(zusatzwerte.get(i).getMeasVal());
             repository.update(found.get(0));
-            builder = builder.getEmptyBuilder();
-        }
-        return this;
-    }
-
-    /**
-     * Merge kommentare.
-     * @param target the resulting object
-     * @param kommentare the source object
-     * @return the merge instance
-     */
-    public ObjectMerger mergeKommentare(
-        Sample target,
-        List<CommSample> kommentare
-    ) {
-        for (int i = 0; i < kommentare.size(); i++) {
-            //TODO: QueryBuilder instance can not be reused here
-            //This may be a hibernate 6 bug, see:
-            //https://hibernate.atlassian.net/browse/HHH-15951
-            QueryBuilder<CommSample> builder =
-                repository.queryBuilder(CommSample.class);
-            builder.and("sampleId", target.getId());
-            builder.and("measFacilId", kommentare.get(i).getMeasFacilId());
-            builder.and("date", kommentare.get(i).getDate());
-            List<CommSample> found =
-                repository.filterPlain(builder.getQuery());
-            if (found.isEmpty()) {
-                repository.create(kommentare.get(i));
-                continue;
-            } else if (found.size() > 1) {
-                // something is wrong (probeId and mstId and datum should
-                // be unique).
-                // Continue and skip this kommentar.
-                continue;
-            }
-            builder = builder.getEmptyBuilder();
-        }
-        return this;
-    }
-
-    /**
-     * Merge messung kommentare.
-     * @param target the resulting object
-     * @param kommentare the source object
-     * @return the merger instance
-     */
-    public ObjectMerger mergeMessungKommentare(
-        Measm target,
-        List<CommMeasm> kommentare
-    ) {
-        for (int i = 0; i < kommentare.size(); i++) {
-            //TODO: QueryBuilder instance can not be reused here
-            //This may be a hibernate 6 bug, see:
-            //https://hibernate.atlassian.net/browse/HHH-15951
-            QueryBuilder<CommMeasm> builder =
-                repository.queryBuilder(CommMeasm.class);
-            builder.and("measmId", target.getId());
-            builder.and("measFacilId", kommentare.get(i).getMeasFacilId());
-            builder.and("date", kommentare.get(i).getDate());
-            List<CommMeasm> found =
-                repository.filterPlain(builder.getQuery());
-            if (found.isEmpty()) {
-                repository.create(kommentare.get(i));
-                continue;
-            } else if (found.size() > 1) {
-                // something is wrong (probeId and mstId and datum should
-                // be unique).
-                // Continue and skip this zusatzwert.
-                continue;
-            }
             builder = builder.getEmptyBuilder();
         }
         return this;

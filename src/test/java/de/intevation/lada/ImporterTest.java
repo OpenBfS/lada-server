@@ -51,8 +51,6 @@ import de.intevation.lada.importer.Identified;
 import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.IdentifierConfig;
 import de.intevation.lada.importer.ObjectMerger;
-import de.intevation.lada.model.lada.CommMeasm;
-import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
@@ -419,75 +417,6 @@ public class ImporterTest extends BaseTest {
             "datasets/dbUnit_import_merge_match_zusatzwert.xml",
             "lada.sample_specif_meas_val",
             new String[]{"id", "last_mod", "tree_mod"});
-    }
-
-    /**
-     * Merge probekommentar object.
-     * @throws Exception that can occur during the test
-     */
-    @Test
-    public final void mergeProbeKommentar() throws Exception {
-        transaction.begin();
-        Sample probe = repository.getByIdPlain(Sample.class, PID1000);
-        List<CommSample> kommentare = new ArrayList<CommSample>();
-        CommSample komm1 = new CommSample();
-        komm1.setSampleId(PID1000);
-        komm1.setDate(Timestamp.valueOf("2012-05-08 12:00:00"));
-        komm1.setMeasFacilId(mstId);
-        komm1.setText("Testtext2");
-
-        CommSample komm2 = new CommSample();
-        komm2.setSampleId(PID1000);
-        komm2.setDate(Timestamp.valueOf("2012-04-08 12:00:00"));
-        komm2.setMeasFacilId(mstId);
-        komm2.setText("Testtext3");
-
-        kommentare.add(komm1);
-        kommentare.add(komm2);
-
-        merger.mergeKommentare(probe, kommentare);
-        Assert.assertEquals(2, kommentare.size());
-        transaction.commit();
-
-        shouldMatchDataSet(
-            "datasets/dbUnit_import_merge_match_kommentar.xml",
-            "lada.comm_sample",
-            new String[]{"id"});
-    }
-
-    /**
-     * Merge messungkommentar object.
-     * @throws Exception that can occur during the test.
-     */
-    @Test
-    public final void mergeMessungKommentar() throws Exception {
-        transaction.begin();
-        Measm messung =
-            repository.getByIdPlain(Measm.class, MID1200);
-        List<CommMeasm> kommentare = new ArrayList<CommMeasm>();
-        CommMeasm komm1 = new CommMeasm();
-        komm1.setMeasmId(MID1200);
-        komm1.setDate(Timestamp.valueOf("2012-05-08 12:00:00"));
-        komm1.setMeasFacilId(mstId);
-        komm1.setText("Testtext2");
-
-        CommMeasm komm2 = new CommMeasm();
-        komm2.setMeasmId(MID1200);
-        komm2.setDate(Timestamp.valueOf("2012-03-08 12:00:00"));
-        komm2.setMeasFacilId(mstId);
-        komm2.setText("Testtext3");
-
-        kommentare.add(komm1);
-        kommentare.add(komm2);
-
-        merger.mergeMessungKommentare(messung, kommentare);
-        Assert.assertEquals(2, kommentare.size());
-        transaction.commit();
-
-        shouldMatchDataSet(
-            "datasets/dbUnit_import_merge_match_kommentarm.xml",
-            "lada.comm_measm",
-            new String[]{"id"});
     }
 
     /**

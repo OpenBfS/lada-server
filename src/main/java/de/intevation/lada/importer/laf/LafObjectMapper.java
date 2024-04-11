@@ -380,15 +380,9 @@ public class LafObjectMapper {
         if (newProbe != null) {
             if (!oldProbeIsReadonly) {
                 // Create kommentar objects
-                List<CommSample> kommentare = new ArrayList<>();
                 for (Map<String, String> commRaw: object.getKommentare()) {
-                    CommSample tmp = createProbeKommentar(commRaw, newProbe);
-                    if (tmp != null) {
-                        kommentare.add(tmp);
-                    }
+                    createProbeKommentar(commRaw, newProbe);
                 }
-                // Persist kommentar objects
-                merger.mergeKommentare(newProbe, kommentare);
 
                 // Create zusatzwert objects
                 List<SampleSpecifMeasVal> zusatzwerte = new ArrayList<>();
@@ -764,15 +758,9 @@ public class LafObjectMapper {
         }
 
         // Add commMeasms
-        List<CommMeasm> kommentare = new ArrayList<CommMeasm>();
         for (Map<String, String> commRaw: object.getKommentare()) {
-            CommMeasm tmp = createMessungKommentar(
-                commRaw, newMessung.getId(), probe);
-            if (tmp != null) {
-                kommentare.add(tmp);
-            }
+            createMessungKommentar(commRaw, newMessung.getId(), probe);
         }
-        merger.mergeMessungKommentare(newMessung, kommentare);
 
         // Add measVals
         List<MeasVal> messwerte = new ArrayList<MeasVal>();
@@ -870,7 +858,7 @@ public class LafObjectMapper {
         }
     }
 
-    private CommSample createProbeKommentar(
+    private void createProbeKommentar(
         Map<String, String> attributes,
         Sample probe
     ) {
@@ -880,7 +868,7 @@ public class LafObjectMapper {
             currentWarnings.add(
                 new ReportItem(
                     "PROBENKOMMENTAR", "Text", StatusCodes.VALUE_MISSING));
-            return null;
+            return;
         }
 
         // Duplicates validation rule because the rule generates an error
@@ -901,8 +889,9 @@ public class LafObjectMapper {
                     "PROBENKOMMENTAR",
                     attributes.get("TEXT"),
                     StatusCodes.IMP_DUPLICATE));
-            return null;
+            return;
         }
+
         CommSample kommentar = new CommSample();
         kommentar.setSampleId(probe.getId());
         kommentar.setText(attributes.get("TEXT"));
@@ -925,7 +914,7 @@ public class LafObjectMapper {
                     userInfo.getName(),
                     "Kommentar: " + kommentar.getMeasFacilId(),
                     StatusCodes.NOT_ALLOWED));
-            return null;
+            return;
         }
 
         commentPValidator.validate(kommentar);
@@ -944,10 +933,10 @@ public class LafObjectMapper {
                     });
                 });
             }
-            return null;
+            return;
         }
 
-        return kommentar;
+        repository.create(kommentar);
     }
 
     private SampleSpecifMeasVal createZusatzwert(
@@ -1120,7 +1109,7 @@ public class LafObjectMapper {
         return messwert;
     }
 
-    private CommMeasm createMessungKommentar(
+    private void createMessungKommentar(
         Map<String, String> attributes,
         int messungsId,
         Sample probe
@@ -1130,7 +1119,7 @@ public class LafObjectMapper {
         if (attributes.get("TEXT").equals("")) {
             currentWarnings.add(
                 new ReportItem("KOMMENTAR", "Text", StatusCodes.VALUE_MISSING));
-            return null;
+            return;
         }
         CommMeasm kommentar = new CommMeasm();
         kommentar.setMeasmId(messungsId);
@@ -1166,8 +1155,9 @@ public class LafObjectMapper {
                     "MESSUNGKOMMENTAR",
                     attributes.get("TEXT"),
                     StatusCodes.IMP_DUPLICATE));
-            return null;
+            return;
         }
+
         kommentar.setText(attributes.get("TEXT"));
         if (!userInfo.getMessstellen().contains(kommentar.getMeasFacilId())) {
             currentWarnings.add(
@@ -1175,7 +1165,7 @@ public class LafObjectMapper {
                     userInfo.getName(),
                     "Messungs Kommentar: " + kommentar.getMeasFacilId(),
                     StatusCodes.NOT_ALLOWED));
-            return null;
+            return;
         }
 
         commentMValidator.validate(kommentar);
@@ -1195,10 +1185,9 @@ public class LafObjectMapper {
                     });
                 });
             }
-            return null;
+            return;
         }
-
-        return kommentar;
+        repository.create(kommentar);
     }
 
     private void createStatusProtokoll(
