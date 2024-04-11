@@ -14,8 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.inject.Inject;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 
@@ -27,12 +26,10 @@ import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
-import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
 
-import org.jboss.logging.Logger;
 
 /**
  * REST service to export probe objects and the child objects associated with
@@ -49,10 +46,8 @@ import org.jboss.logging.Logger;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("export")
+@Path("export/json")
 public class JsonExportService extends LadaService {
-
-    @Inject private Logger logger;
 
     /**
      * The exporter.
@@ -72,48 +67,46 @@ public class JsonExportService extends LadaService {
     /**
      * Export Sample objects.
      *
-     * The service takes JSON formatted  POST data containing probe ids and
+     * The service takes JSON formatted POST data containing sample IDs and
      * exports the Sample objects filtered by these ids.
      *
-     * @param proben    JSON formatted string with an array of probe ids.
+     * @param ids List of sample IDs.
      * @return The JSON to export.
      */
     @POST
-    @Path("json")
-    public String download(
-        JsonObject params
+    @Path("samples")
+    public String downloadSamples(
+        @NotEmpty List<Integer> ids
     ) {
-        UserInfo userInfo = authorization.getInfo();
-        JsonArray array = params.getJsonArray("proben");
-        InputStream exported = null;
-        if (array != null && array.size() > 0) {
-            List<Integer> probeIds = new ArrayList<Integer>();
-            for (int i = 0; i < array.size(); i++) {
-                Integer probeId = array.getInt(i);
-                probeIds.add(probeId);
-            }
-            exported = exporter.exportProben(
-                                    probeIds,
-                                    new ArrayList<Integer>(),
-                                    StandardCharsets.UTF_8,
-                                    userInfo);
-        } else {
-            array = params.getJsonArray("messungen");
-            if (array != null && array.size() > 0) {
-                List<Integer> messungsIds = new ArrayList<Integer>();
-                for (int i = 0; i < array.size(); i++) {
-                    Integer messungsId = array.getInt(i);
-                    messungsIds.add(messungsId);
-                }
-                exported = exporter.exportMessungen(
-                                    new ArrayList<Integer>(),
-                                    messungsIds,
-                                    StandardCharsets.UTF_8,
-                                    userInfo);
-            } else {
-                logger.debug("nothing selected to export");
-            }
-        }
+        return createResultString(exporter.exportProben(
+                ids,
+                new ArrayList<Integer>(),
+                StandardCharsets.UTF_8,
+                authorization.getInfo()));
+    }
+
+    /**
+     * Export Measm objects.
+     *
+     * The service takes JSON formatted POST data containing Measm IDs and
+     * exports the Measm objects filtered by these ids.
+     *
+     * @param ids List of Measm IDs.
+     * @return The JSON to export.
+     */
+    @POST
+    @Path("measms")
+    public String downloadMeasms(
+        @NotEmpty List<Integer> ids
+    ) {
+        return createResultString(exporter.exportMessungen(
+                new ArrayList<Integer>(),
+                ids,
+                StandardCharsets.UTF_8,
+                authorization.getInfo()));
+    }
+
+    private String createResultString(InputStream exported) {
         if (exported == null) {
             return new Response(
                 false, StatusCodes.NOT_EXISTING, null).toString();
