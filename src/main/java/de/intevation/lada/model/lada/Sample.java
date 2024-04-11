@@ -69,7 +69,7 @@ public class Sample extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = OprMode.class)
     private Integer oprModeId;
 
-    @NotNull(groups = Warnings.class)
+    @NotNull
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Regulation.class)
     private Integer regulationId;
@@ -128,7 +128,7 @@ public class Sample extends BaseModel implements Serializable {
     @Temporal(TIMESTAMP)
     private Date sampleEndDate;
 
-    @NotNull(groups = Warnings.class)
+    @NotNull
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = SampleMeth.class)
     private Integer sampleMethId;
