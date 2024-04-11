@@ -11,7 +11,6 @@ package de.intevation.lada.util.data;
 public class StatusCodes {
     private StatusCodes() { };
     public static final int OK = 200;
-    public static final int NOT_EXISTING = 600;
     public static final int PRESENT = 601;
     public static final int NOT_A_COMMENT = 607;
     public static final int ERROR_DB_CONNECTION = 603;

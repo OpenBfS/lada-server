@@ -15,6 +15,8 @@ import java.util.List;
 
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 
@@ -26,8 +28,6 @@ import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.rest.LadaService;
 
 
@@ -48,6 +48,8 @@ import de.intevation.lada.rest.LadaService;
  */
 @Path("export/json")
 public class JsonExportService extends LadaService {
+
+    private static final String ERROR_MSG = "Failed exporting JSON data";
 
     /**
      * The exporter.
@@ -108,14 +110,17 @@ public class JsonExportService extends LadaService {
 
     private String createResultString(InputStream exported) {
         if (exported == null) {
-            return new Response(
-                false, StatusCodes.NOT_EXISTING, null).toString();
+            throw new InternalServerErrorException(
+                Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(ERROR_MSG).build());
         }
         try {
             return IOUtils.toString(exported, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            return new Response(
-                false, StatusCodes.NOT_EXISTING, null).toString();
+            throw new InternalServerErrorException(
+                Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(ERROR_MSG).build(),
+                e);
         }
     }
 }
