@@ -9,14 +9,10 @@ package de.intevation.lada.data;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +29,6 @@ import jakarta.ws.rs.core.MediaType;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.importer.laf.LafImporter;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.MeasFacil;
@@ -74,181 +69,7 @@ public class LafImportService extends LadaService {
     private Authorization authorization;
 
     @Inject
-    ImportJobManager importJobManager;
-
-    @Inject
     private TagUtil tagUtil;
-
-    /**
-     * Represents the expected JSON input for file upload.
-     */
-    private static class UploadJson {
-        private String encoding;
-        private Map<String, String> files;
-
-        String getEncoding() {
-            return this.encoding;
-        }
-
-        void setEncoding(String encoding) {
-            this.encoding = encoding;
-        }
-
-        Map<String, String> getFiles() {
-            return this.files;
-        }
-
-        void setFiles(Map<String, String> files) {
-            this.files = files;
-        }
-    }
-
-    /**
-     * Import a given list of files, generate a tag and set it to all
-     * imported records.
-     * Expected input format:
-     * <pre>
-     * <code>
-     * {
-     *   "encoding": "UTF-8",
-     *   "files": {
-     *     "firstFileName.laf": "base64 encoded content",
-     *     "secondFilename.laf": "base64 encoded content",
-     *     //...
-     *   }
-     * }
-     * </code>
-     * </pre>
-     */
-    @POST
-    @Path("laf/list")
-    public Response multiUpload(
-        UploadJson jsonInput,
-        @Context HttpServletRequest request
-    ) {
-        UserInfo userInfo = authorization.getInfo();
-        Charset charset;
-        try {
-            charset = Charset.forName(jsonInput.getEncoding());
-        } catch (IllegalArgumentException e) {
-            return new Response(
-                false,
-                StatusCodes.IMP_INVALID_VALUE,
-                "No valid encoding name given");
-        }
-
-        //Contains: fileName: fileContent as String
-        Map<String, String> files = new HashMap<String, String>();
-        //Ids of alle imported probe records
-        List<Integer> importedProbeids = new ArrayList<Integer>();
-        //Contains a response data object for every import
-        Map<String, Map<String, Object>> importResponseData =
-            new HashMap<String, Map<String, Object>>();
-
-        String mstId = request.getHeader("X-LADA-MST");
-        if (mstId == null) {
-            return new Response(
-                false,
-                StatusCodes.NOT_ALLOWED,
-                "Missing header for messtelle.");
-        }
-        MeasFacil mst;
-        try {
-            mst = repository.getByIdPlain(MeasFacil.class, mstId);
-        } catch (NotFoundException nfe) {
-            return new Response(
-                false,
-                StatusCodes.NOT_ALLOWED,
-                "Wrong header for messtelle.");
-        }
-
-        if (jsonInput.getFiles() == null) {
-            return new Response(
-                false,
-                StatusCodes.IMP_INVALID_VALUE,
-                "No import files given");
-        }
-        try {
-            for (Map.Entry<String, String> e: jsonInput.getFiles().entrySet()) {
-                ByteBuffer decodedBytes = ByteBuffer.wrap(
-                    Base64.getDecoder().decode(e.getValue()));
-                String decodedContent = new String(
-                    new StringBuffer(charset.newDecoder()
-                        .decode(decodedBytes)));
-                if (charset.equals(StandardCharsets.UTF_8)) {
-                    // Remove byte order mark if present
-                    decodedContent = decodedContent.replaceFirst("^\uFEFF", "");
-                }
-                files.put(e.getKey(), decodedContent);
-            }
-        } catch (IllegalArgumentException iae) {
-            return new Response(
-                false,
-                StatusCodes.IMP_INVALID_VALUE,
-                "File content not in valid Base64 scheme");
-        } catch (CharacterCodingException cce) {
-            return new Response(
-                false,
-                StatusCodes.IMP_INVALID_VALUE,
-                "File content not in valid " + charset.name());
-        }
-
-        //Import each file
-        files.forEach((fileName, content) -> {
-            logLAFFile(mstId, content, charset);
-
-            List<ImportConf> config = new ArrayList<ImportConf>();
-            if (!"".equals(mstId)) {
-                QueryBuilder<ImportConf> builder = repository
-                    .queryBuilder(ImportConf.class)
-                    .and("measFacilId", mstId);
-                config = repository.filterPlain(builder.getQuery());
-            }
-
-            importer.doImport(
-                content, userInfo, mstId, config, request.getLocale());
-
-            Map<String, Object> fileResponseData =
-                new HashMap<String, Object>();
-            if (!importer.getErrors().isEmpty()) {
-                fileResponseData.put("errors", importer.getErrors());
-            }
-            if (!importer.getWarnings().isEmpty()) {
-                fileResponseData.put("warnings", importer.getWarnings());
-            }
-            if (!importer.getNotifications().isEmpty()) {
-                fileResponseData.put(
-                    "notifications", importer.getNotifications());
-            }
-            if (importer.getErrors().values().stream().anyMatch(
-                    elem -> elem.stream().anyMatch(
-                        ele -> (ele.getKey().equals("validation#probe")
-                            || ele.getKey().equals("Parser"))))) {
-                fileResponseData.put("success", false);
-            } else {
-                fileResponseData.put("success", true);
-            }
-            fileResponseData.put(
-                "probeIds", ((LafImporter) importer).getImportedIds());
-            importResponseData.put(fileName, fileResponseData);
-            importedProbeids.addAll(((LafImporter) importer).getImportedIds());
-        });
-
-        boolean success = true;
-        // If import created at least a new record
-        if (importedProbeids.size() > 0) {
-            success = true;
-            //Generate a tag for the imported probe records
-            Tag newTag = tagUtil.generateTag("IMP", mst.getNetworkId());
-            tagUtil.setTagsByProbeIds(importedProbeids, newTag.getId());
-
-            //Put new tag in import response
-            importResponseData.forEach((file, responseData) -> {
-                responseData.put("tag", newTag.getName());
-            });
-        }
-        return new Response(success, StatusCodes.OK, importResponseData);
-    }
 
     /**
      * Import a LAF formatted file.
