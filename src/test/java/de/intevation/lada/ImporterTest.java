@@ -471,16 +471,13 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .header("X-LADA-MST", mstId)
             .post(Entity.entity(laf, MediaType.TEXT_PLAIN));
-        JsonObject importResponseObject = parseResponse(importResponse);
+        JsonObject importResponseObject = parseSimpleResponse(importResponse);
 
         /* Check if a Sample object has been imported */
-        assertContains(importResponseObject, dataKey);
-        JsonObject data = importResponseObject.getJsonObject(dataKey);
-
         final String probeIdsKey = "probeIds";
-        assertContains(data, probeIdsKey);
+        assertContains(importResponseObject, probeIdsKey);
         Assert.assertEquals(1,
-            data.getJsonArray(probeIdsKey).size());
+            importResponseObject.getJsonArray(probeIdsKey).size());
     }
 
     /**

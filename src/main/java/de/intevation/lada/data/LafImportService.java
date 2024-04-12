@@ -21,7 +21,6 @@ import java.util.Map;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Context;
@@ -40,8 +39,6 @@ import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.TagUtil;
-import de.intevation.lada.util.rest.Response;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.rest.LadaService;
 
 /**
@@ -81,21 +78,13 @@ public class LafImportService extends LadaService {
     @POST
     @Path("laf")
     @Consumes(MediaType.TEXT_PLAIN)
-    public Response upload(
+    public Map<String, Object> upload(
         String content,
         @Context HttpServletRequest request
     ) {
         UserInfo userInfo = authorization.getInfo();
         String mstId = request.getHeader("X-LADA-MST");
-        MeasFacil mst;
-        try {
-            mst = repository.getByIdPlain(MeasFacil.class, mstId);
-        } catch (NotFoundException nfe) {
-            return new Response(
-                false,
-                StatusCodes.NOT_ALLOWED,
-                "Wrong header for messtelle.");
-        }
+        MeasFacil mst = repository.getByIdPlain(MeasFacil.class, mstId);
 
         /** Preparation for Client-Update: "Vorbelegung Messstelle" will
          * become mandatory!
@@ -150,7 +139,7 @@ public class LafImportService extends LadaService {
             respData.put("tag", newTag.getName());
         }
 
-        return new Response(success, StatusCodes.OK, respData);
+        return respData;
     }
 
     /**
