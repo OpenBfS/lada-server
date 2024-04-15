@@ -94,9 +94,6 @@ public class SpatRefSysService extends LadaService {
             KdaUtil.KDAS.get(object.to),
             object.x,
             object.y);
-        if (result == null) {
-            return new Response(false, StatusCodes.GEO_NOT_MATCHING, null);
-        }
         return new Response(true, StatusCodes.OK, result);
     }
 }
