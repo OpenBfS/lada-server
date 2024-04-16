@@ -49,7 +49,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setSiteId(EXISTING_SITE_ID);
 
         sampleVal.validate(loc);
-        assertHasError(
+        assertHasErrors(
             loc,
             TYPE_REGULATION,
             "Geolocation with typeRegulation \"E\" must be unique");
@@ -64,7 +64,7 @@ public class GeolocatTest extends ValidatorBaseTest {
 
         sampleVal.validate(loc);
         Assert.assertTrue(loc.hasErrors());
-        assertHasError(
+        assertHasErrors(
             loc,
             TYPE_REGULATION,
             "Non-unique value combination for "
@@ -110,7 +110,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setSiteId(EXISTING_SITE_ID);
 
         mpgVal.validate(loc);
-        assertHasError(
+        assertHasErrors(
             loc,
             TYPE_REGULATION,
             "Geolocation with typeRegulation \"E\" must be unique");
@@ -124,7 +124,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setSiteId(REFERENCED_SITE_ID);
 
         mpgVal.validate(loc);
-        assertHasError(
+        assertHasErrors(
             loc,
             TYPE_REGULATION,
             "Non-unique value combination for [typeRegulation, mpgId, siteId]");

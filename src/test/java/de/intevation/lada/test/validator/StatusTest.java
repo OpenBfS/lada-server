@@ -125,7 +125,7 @@ public class StatusTest extends ValidatorBaseTest {
         StatusProt status = minimalStatusProt();
         final int invalidMeasmId = 1201;
         status.setMeasmId(invalidMeasmId);
-        assertHasError(
+        assertHasErrors(
             validator.validate(status),
             "status",
             "Operation not possible due to constraint violations\n"

@@ -22,6 +22,7 @@ import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
+import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.test.ServiceTest;
 
@@ -105,6 +106,7 @@ public class ProbeTest extends ServiceTest {
             Status.BAD_REQUEST);
 
         // Test localized validation during sample creation
+        // Errors
         Map<Locale, String> msgs = Map.of(
             Locale.GERMAN, "Größe muss zwischen 0 und 3 sein",
             Locale.US, "size must be between 0 and 3");
@@ -129,6 +131,29 @@ public class ProbeTest extends ServiceTest {
                         msgs.get(language), obj.getString("message"));
                 }
             });
+        }
+        // Warnings
+        Map<Locale, String> wrngs = Map.of(
+            Locale.GERMAN, "darf nicht null sein",
+            Locale.US, "must not be null");
+        final String measFacilId = "06010";
+        JsonObject wrngPayload = Json.createObjectBuilder()
+            .add("measFacilId", measFacilId)
+            .add("apprLabId", measFacilId)
+            .add("regulationId", 2)
+            .add("sampleMethId", 1)
+            .add("isTest", false)
+            .add("oprModeId", 1)
+            .build();
+        for (Locale language: wrngs.keySet()) {
+            JsonObject response = create(
+                "rest/sample", wrngPayload, language, Status.OK);
+            final String wrngsKey = "warnings";
+            BaseTest.assertContains(response, wrngsKey);
+            String violation = response.getJsonObject(wrngsKey)
+                .getJsonArray("sampleStartDate")
+                .getString(0);
+            Assert.assertEquals(wrngs.get(language), violation);
         }
 
         getAuditTrail(

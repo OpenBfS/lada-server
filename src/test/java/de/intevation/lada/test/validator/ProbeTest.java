@@ -79,6 +79,7 @@ public class ProbeTest extends ValidatorBaseTest {
     private Validator<Sample> validator;
 
     //Expected validation messages
+    private static final String MSG_NOT_NULL = "must not be null";
     private static final String UNIQUE_PLACEHOLDER = "{fields}";
     private final String valMessageUniqueMainSampleIdMeasFacilId;
     private final String valMessageUniqueExtId;
@@ -250,13 +251,10 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidSample();
         sample.setSampleStartDate(null);
 
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasWarnings());
-        Assert.assertTrue(
-            sample.getWarnings().containsKey(SAMPLE_START_DATE));
-        Assert.assertTrue(
-            sample.getWarnings().get(SAMPLE_START_DATE).contains(
-                String.valueOf(StatusCodes.VALUE_MISSING)));
+        assertHasWarnings(
+            validator.validate(sample),
+            SAMPLE_START_DATE,
+            MSG_NOT_NULL);
     }
 
     /**
@@ -284,12 +282,11 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setSampleEndDate(new Timestamp(TS1));
 
         validator.validate(sample);
-        Assert.assertTrue(
-            sample.getWarnings().get(SAMPLE_START_DATE).contains(
-                String.valueOf(StatusCodes.VALUE_MISSING)));
-        Assert.assertTrue(
-            sample.getWarnings().get(SAMPLE_START_DATE).contains(
-                String.valueOf(StatusCodes.DATE_BEGIN_AFTER_END)));
+        assertHasWarnings(
+            sample,
+            SAMPLE_START_DATE,
+            MSG_NOT_NULL,
+            String.valueOf(StatusCodes.DATE_BEGIN_AFTER_END));
     }
 
     /**

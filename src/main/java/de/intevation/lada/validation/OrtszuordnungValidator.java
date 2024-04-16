@@ -10,6 +10,7 @@ package de.intevation.lada.validation;
 import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -25,6 +26,11 @@ import de.intevation.lada.validation.rules.Rule;
  */
 @Dependent
 public class OrtszuordnungValidator extends Validator<Geolocat> {
+
+    @Inject
+    OrtszuordnungValidator(HttpServletRequest request) {
+        super(request);
+    }
 
     @Inject
     @ValidationRule("Ortszuordnung")

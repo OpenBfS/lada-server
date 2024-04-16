@@ -12,6 +12,7 @@ import java.util.Set;
 
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 
@@ -31,8 +32,15 @@ import de.intevation.lada.validation.groups.Warnings;
  */
 public abstract class Validator<T extends BaseModel> {
 
-    @Inject
     private jakarta.validation.Validator beanValidator;
+
+    @Inject
+    Validator(HttpServletRequest request) {
+        Locale locale = request != null
+            ? request.getLocale()
+            : Locale.getDefault();
+        this.setLocale(locale);
+    }
 
     /**
      * @param locale Set locale for message localization.

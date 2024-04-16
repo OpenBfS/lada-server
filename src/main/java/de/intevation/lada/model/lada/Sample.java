@@ -122,6 +122,7 @@ public class Sample extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = Sampler.class)
     private Integer samplerId;
 
+    @NotNull(groups = Warnings.class)
     @Temporal(TIMESTAMP)
     private Date sampleStartDate;
 

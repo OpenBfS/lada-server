@@ -39,7 +39,7 @@ public class CommSampleTest extends ValidatorBaseTest {
         comm.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
 
         validator.validate(comm);
-        assertHasError(
+        assertHasErrors(
             comm,
             "text",
             "Non-unique value combination for [text, sampleId]");

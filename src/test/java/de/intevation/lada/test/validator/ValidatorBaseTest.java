@@ -78,14 +78,16 @@ public abstract class ValidatorBaseTest extends BaseTest {
      * attached.
      * @param entity Entity to check
      * @param key Expected error key
-     * @param val Expected error value
+     * @param val Expected error values
      */
-    protected void assertHasError(BaseModel entity, String key, String val) {
+    protected void assertHasErrors(
+        BaseModel entity, String key, String... val
+    ) {
         assertHasErrors(entity);
         MatcherAssert.assertThat(entity.getErrors().keySet(),
             CoreMatchers.hasItem(key));
         MatcherAssert.assertThat(entity.getErrors().get(key),
-            CoreMatchers.hasItem(val));
+            CoreMatchers.hasItems(val));
     }
 
     /**
@@ -93,13 +95,15 @@ public abstract class ValidatorBaseTest extends BaseTest {
      * attached.
      * @param entity Entity to check
      * @param key Expected warning key
-     * @param val Expected warning value
+     * @param val Expected warning values
      */
-    protected void assertHasWarning(BaseModel entity, String key, String val) {
+    protected void assertHasWarnings(
+        BaseModel entity, String key, String... val
+    ) {
         Assert.assertTrue("Expected warnings missing", entity.hasWarnings());
         MatcherAssert.assertThat(entity.getWarnings().keySet(),
             CoreMatchers.hasItem(key));
         MatcherAssert.assertThat(entity.getWarnings().get(key),
-            CoreMatchers.hasItem(val));
+            CoreMatchers.hasItems(val));
     }
 }

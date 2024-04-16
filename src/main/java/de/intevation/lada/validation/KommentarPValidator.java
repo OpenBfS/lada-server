@@ -10,6 +10,7 @@ package de.intevation.lada.validation;
 import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.validation.annotation.ValidationRule;
@@ -24,6 +25,11 @@ import de.intevation.lada.validation.rules.Rule;
  */
 @Dependent
 public class KommentarPValidator extends Validator<CommSample> {
+
+    @Inject
+    KommentarPValidator(HttpServletRequest request) {
+        super(request);
+    }
 
     @Inject
     @ValidationRule("KommentarP")

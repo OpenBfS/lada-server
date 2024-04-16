@@ -72,7 +72,7 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
         val.setError(0.0f);
 
-        assertHasWarning(
+        assertHasWarnings(
             validator.validate(val),
             ERROR,
             String.valueOf(StatusCodes.VALUE_MISSING));
@@ -88,7 +88,7 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setError(0.0f);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        assertHasWarning(
+        assertHasWarnings(
             validator.validate(val),
             ERROR,
             String.valueOf(StatusCodes.VAL_UNCERT));

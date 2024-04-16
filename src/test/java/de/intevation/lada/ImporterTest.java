@@ -496,7 +496,7 @@ public class ImporterTest extends BaseTest {
         JsonObject expectedWarning = Json.createObjectBuilder()
             .add("key", "validation#probe")
             .add("value", "sampleStartDate")
-            .add("code", String.valueOf(StatusCodes.VALUE_MISSING))
+            .add("code", "must not be null")
             .build();
         MatcherAssert.assertThat(
             report.getJsonObject("warnings").getJsonArray(lafSampleId),

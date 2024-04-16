@@ -146,9 +146,9 @@ public class SiteTest extends ValidatorBaseTest {
         site.setGeom(outsideBorder);
 
         validator.validate(site);
-        assertHasWarning(
+        assertHasWarnings(
             site, COORD_X_EXT, String.valueOf(StatusCodes.GEO_POINT_OUTSIDE));
-        assertHasWarning(
+        assertHasWarnings(
             site, COORD_Y_EXT, String.valueOf(StatusCodes.GEO_POINT_OUTSIDE));
     }
 
@@ -166,9 +166,9 @@ public class SiteTest extends ValidatorBaseTest {
         site.setGeom(justOutsideBorder);
 
         validator.validate(site);
-        assertHasWarning(
+        assertHasWarnings(
             site, COORD_X_EXT, String.valueOf(StatusCodes.GEO_POINT_OUTSIDE));
-        assertHasWarning(
+        assertHasWarnings(
             site, COORD_Y_EXT, String.valueOf(StatusCodes.GEO_POINT_OUTSIDE));
     }
 
@@ -242,7 +242,7 @@ public class SiteTest extends ValidatorBaseTest {
         Site site = createMinimalSite();
         site.setSiteClassId(0);
 
-        assertHasError(
+        assertHasErrors(
             validator.validate(site),
             SITE_CLASS_ID,
             "'0' is no valid primary key");
@@ -383,9 +383,9 @@ public class SiteTest extends ValidatorBaseTest {
     private void assertHasCoordsOrAdminUnitOrState(Site site) {
         final String msg =
             "Either coordinates or adminUnitId or stateId must be given";
-        assertHasError(site, "coordinates", msg);
-        assertHasError(site, "adminUnitId", msg);
-        assertHasError(site, "stateId", msg);
+        assertHasErrors(site, "coordinates", msg);
+        assertHasErrors(site, "adminUnitId", msg);
+        assertHasErrors(site, "stateId", msg);
     }
 
     @Test
@@ -588,7 +588,7 @@ public class SiteTest extends ValidatorBaseTest {
     }
 
     private void assertCoordErrors(Site site) {
-        assertHasError(site, COORD_X_EXT, valMessageCoords);
-        assertHasError(site, COORD_Y_EXT, valMessageCoords);
+        assertHasErrors(site, COORD_X_EXT, valMessageCoords);
+        assertHasErrors(site, COORD_Y_EXT, valMessageCoords);
     }
 }
