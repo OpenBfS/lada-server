@@ -46,7 +46,7 @@ public class MessungIdentifier implements Identifier {
             builder.and("sampleId", messung.getSampleId());
             builder.and("minSampleId", messung.getMinSampleId());
             List<Measm> messungen =
-                repository.filterPlain(builder.getQuery());
+                repository.filter(builder.getQuery());
             if (messungen.size() > 1) {
                 // Should never happen. DB has unique constraint for
                 // "nebenprobenNr"
@@ -60,7 +60,7 @@ public class MessungIdentifier implements Identifier {
                 builder.and("sampleId", messung.getSampleId());
                 builder.and("mmtId", messung.getMmtId());
                 messungen =
-                    repository.filterPlain(builder.getQuery());
+                    repository.filter(builder.getQuery());
                 if (messungen.isEmpty()) {
                     return Identified.NEW;
                 }
@@ -80,7 +80,7 @@ public class MessungIdentifier implements Identifier {
             builder.and("sampleId", messung.getSampleId());
             builder.and("extId", messung.getExtId());
             List<Measm> messungen =
-                repository.filterPlain(builder.getQuery());
+                repository.filter(builder.getQuery());
             if (messungen.size() > 1) {
                 // Should never happen. DB has unique constraint for
                 // "externeMessungsId"
@@ -95,7 +95,7 @@ public class MessungIdentifier implements Identifier {
             builder.and("sampleId", messung.getSampleId());
             builder.and("mmtId", messung.getMmtId());
             List<Measm> messungen =
-                repository.filterPlain(builder.getQuery());
+                repository.filter(builder.getQuery());
             if (messungen.isEmpty()) {
                 return Identified.NEW;
             }

@@ -35,9 +35,8 @@ import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
+
 
 /**
  * REST service for universal objects.
@@ -64,6 +63,24 @@ public class UniversalService extends LadaService {
     @Inject
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
+
+    public static class Response {
+        private List<Map<String, Object>> data;
+        private int totalCount;
+
+        private Response(List<Map<String, Object>> data, int totalCount) {
+            this.data = data;
+            this.totalCount = totalCount;
+        }
+
+        public List<Map<String, Object>> getData() {
+            return this.data;
+        }
+
+        public int getTotalCount() {
+            return this.totalCount;
+        }
+    }
 
     /**
      * Execute query, using the given result columns.
@@ -112,7 +129,7 @@ public class UniversalService extends LadaService {
         hierarchy.put("messungId",   Measm.class);
         int resultNdx = hierarchy.size();
         for (GridColConf columnValue : gridColumnValues) {
-            GridColMp gridColumn = repository.getByIdPlain(
+            GridColMp gridColumn = repository.getById(
                 GridColMp.class,
                 columnValue.getGridColMpId()
             );
@@ -156,12 +173,12 @@ public class UniversalService extends LadaService {
                 if (doAuthorize) {
                     if (idToAuthorize != null) {
                         if (authorizationColumnType == DatasetCreator.class) {
-                            DatasetCreator de = repository.getByIdPlain(
+                            DatasetCreator de = repository.getById(
                                 DatasetCreator.class, idToAuthorize);
                             idToAuthorize = de.getNetworkId();
                         }
                         if (authorizationColumnType == MpgCateg.class) {
-                            MpgCateg mk = repository.getByIdPlain(
+                            MpgCateg mk = repository.getById(
                                 MpgCateg.class, idToAuthorize);
                             idToAuthorize = mk.getNetworkId();
                         }
@@ -179,7 +196,7 @@ public class UniversalService extends LadaService {
                 row.put("readonly", readonly);
             }
 
-            return new Response(true, StatusCodes.OK, result, size);
+            return new Response(result, size);
         } catch (IllegalArgumentException iae) {
             throw new BadRequestException(
                 jakarta.ws.rs.core.Response

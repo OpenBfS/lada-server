@@ -36,7 +36,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
     ) {
         Measm messung = (Measm) data;
         Sample probe =
-            repository.getByIdPlain(
+            repository.getById(
                 Sample.class, messung.getSampleId());
         if (method == RequestMethod.PUT
             || method == RequestMethod.DELETE) {
@@ -48,11 +48,11 @@ public class MessungAuthorizer extends BaseAuthorizer {
             return getAuthorization(userInfo, probe)
                 ? null : I18N_KEY_FORBIDDEN;
         }
-        StatusProt status = repository.getByIdPlain(
+        StatusProt status = repository.getById(
             StatusProt.class,
             messung.getStatus()
         );
-        StatusMp kombi = repository.getByIdPlain(
+        StatusMp kombi = repository.getById(
             StatusMp.class,
             status.getStatusMpId()
         );
@@ -69,7 +69,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         Measm messung;
-        messung = repository.getByIdPlain(Measm.class, id);
+        messung = repository.getById(Measm.class, id);
         return isAuthorized(messung, method, userInfo, clazz);
     }
 
@@ -94,11 +94,9 @@ public class MessungAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Measm messung
     ) {
-        Sample probe = repository.getByIdPlain(
-            Sample.class, messung.getSampleId());
-        MeasFacil mst =
-            repository.getByIdPlain(
-                MeasFacil.class, probe.getMeasFacilId());
+        Sample probe = repository.getById(Sample.class, messung.getSampleId());
+        MeasFacil mst = repository.getById(
+            MeasFacil.class, probe.getMeasFacilId());
 
         if (userInfo.belongsTo(probe.getMeasFacilId(), probe.getApprLabId())) {
             messung.setOwner(true);
@@ -120,11 +118,11 @@ public class MessungAuthorizer extends BaseAuthorizer {
             return;
         }
 
-        StatusProt status = repository.getByIdPlain(
+        StatusProt status = repository.getById(
             StatusProt.class,
             messung.getStatus()
         );
-        StatusMp kombi = repository.getByIdPlain(
+        StatusMp kombi = repository.getById(
             StatusMp.class, status.getStatusMpId());
         int stufe = kombi.getStatusLev().getId();
         int wert  = kombi.getStatusVal().getId();
@@ -168,7 +166,7 @@ public class MessungAuthorizer extends BaseAuthorizer {
                 repository.queryBuilder(AuthCoordOfcEnvMediumMp.class);
             lstFilter.or("measFacilId", userInfo.getMessstellen());
             List<AuthCoordOfcEnvMediumMp> lsts =
-                repository.filterPlain(lstFilter.getQuery());
+                repository.filter(lstFilter.getQuery());
             for (int i = 0; i < lsts.size(); i++) {
                 if (lsts.get(i).getEnvMediumId().equals(probe.getEnvMediumId())) {
                     messung.setStatusEditLst(true);

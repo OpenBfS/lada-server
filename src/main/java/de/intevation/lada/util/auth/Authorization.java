@@ -7,9 +7,11 @@
  */
 package de.intevation.lada.util.auth;
 
+import java.util.List;
+
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
+
 
 /**
  * Interface for authorization in the lada application.
@@ -19,8 +21,15 @@ import de.intevation.lada.util.rest.Response;
 public interface Authorization {
     UserInfo getInfo();
 
-    <T extends BaseModel> Response filter(
-        Response data, Class<T> clazz);
+    default <T extends BaseModel> List<T> filter(List<T> data, Class<T> clazz) {
+        for (T object: data) {
+            filter(object, clazz);
+        }
+        return data;
+    }
+
+    <T extends BaseModel> T filter(
+        T data, Class<T> clazz);
 
     <T> void authorize(
         Object data,

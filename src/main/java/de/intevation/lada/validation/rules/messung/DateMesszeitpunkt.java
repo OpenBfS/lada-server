@@ -36,7 +36,7 @@ public class DateMesszeitpunkt implements Rule {
     public Violation execute(Object object) {
         Measm messung = (Measm) object;
 
-        Sample probe = repository.getByIdPlain(
+        Sample probe = repository.getById(
             Sample.class, messung.getSampleId());
 
         if (messung.getMeasmStartDate() == null) {

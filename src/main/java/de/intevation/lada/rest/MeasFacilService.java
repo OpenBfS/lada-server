@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -16,7 +18,6 @@ import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.MeasFacil;
 
 /**
@@ -43,10 +44,10 @@ public class MeasFacilService extends LadaService {
     /**
      * Get all MeasFacil objects.
      *
-     * @return Response object containing all MeasFacil objects.
+     * @return all MeasFacil objects.
      */
     @GET
-    public Response get() {
+    public List<MeasFacil> get() {
         return repository.getAll(MeasFacil.class);
     }
 
@@ -54,11 +55,11 @@ public class MeasFacilService extends LadaService {
      * Get a single MeasFacil object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single MeasFacil.
+     * @return a single MeasFacil.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public MeasFacil getById(
         @PathParam("id") String id
     ) {
         return repository.getById(MeasFacil.class, id);

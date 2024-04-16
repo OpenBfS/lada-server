@@ -20,8 +20,6 @@ import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 
 import org.jboss.logging.Logger;
 
@@ -79,10 +77,10 @@ public class UserService extends LadaService {
      * </code>
      * </pre>
      *
-     * @return Response object containing login data.
+     * @return login data.
      */
     @GET
-    public Response get() {
+    public Map<String, Object> get() {
         UserInfo userInfo = authorization.getInfo();
         Map<String, Object> response = new HashMap<String, Object>();
         response.put("username", userInfo.getName());
@@ -98,9 +96,10 @@ public class UserService extends LadaService {
                     nb -> userInfo.getFunktionenForNetzbetreiber(nb))));
         response.put("userId", userInfo.getUserId());
         logger.debug(
-            userInfo.getName() + " - " +
-            userInfo.getAuth().stream().map(a -> a.getLdapGr()).collect(Collectors.toSet())
+            userInfo.getName() + " - "
+            + userInfo.getAuth().stream().map(
+                a -> a.getLdapGr()).collect(Collectors.toSet())
         );
-        return new Response(true, StatusCodes.OK, response);
+        return response;
     }
 }

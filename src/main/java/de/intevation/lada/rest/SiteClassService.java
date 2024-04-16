@@ -7,13 +7,14 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.SiteClass;
 
 /**
@@ -33,10 +34,10 @@ public class SiteClassService extends LadaService {
     /**
      * Get all SiteClass objects.
      *
-     * @return Response object containing all SiteClass objects.
+     * @return all SiteClass objects.
      */
     @GET
-    public Response get() {
+    public List<SiteClass> get() {
         return repository.getAll(SiteClass.class);
     }
 
@@ -44,11 +45,11 @@ public class SiteClassService extends LadaService {
      * Get a single SiteClass object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single SiteClass.
+     * @return a single SiteClass.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public SiteClass getById(
         @PathParam("id") Integer id
     ) {
         return repository.getById(SiteClass.class, id);

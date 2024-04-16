@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.DELETE;
@@ -21,7 +23,6 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.MunicDiv;
 
 /**
@@ -44,10 +45,10 @@ public class MunicDivService extends LadaService {
     /**
      * Get all MunicDiv objects.
      *
-     * @return Response containing requested objects.
+     * @return requested objects.
      */
     @GET
-    public Response get() {
+    public List<MunicDiv> get() {
         return authorization.filter(
             repository.getAll(MunicDiv.class), MunicDiv.class);
     }
@@ -56,11 +57,11 @@ public class MunicDivService extends LadaService {
      * Get a single object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single object.
+     * @return a single object.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public MunicDiv getById(
         @PathParam("id") Integer id
     ) {
         return authorization.filter(
@@ -68,7 +69,7 @@ public class MunicDivService extends LadaService {
     }
 
     @POST
-    public Response create(
+    public MunicDiv create(
         @Valid MunicDiv gemUntergliederung
     ) {
         authorization.authorize(
@@ -80,7 +81,7 @@ public class MunicDivService extends LadaService {
 
     @PUT
     @Path("{id}")
-    public Response update(
+    public MunicDiv update(
         @PathParam("id") Integer id,
         @Valid MunicDiv gemUntergliederung
     ) {
@@ -93,15 +94,15 @@ public class MunicDivService extends LadaService {
 
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
-        MunicDiv gemUntergliederung = repository.getByIdPlain(
+        MunicDiv gemUntergliederung = repository.getById(
             MunicDiv.class, id);
         authorization.authorize(
             gemUntergliederung,
             RequestMethod.DELETE,
             MunicDiv.class);
-        return repository.delete(gemUntergliederung);
+        repository.delete(gemUntergliederung);
     }
 }

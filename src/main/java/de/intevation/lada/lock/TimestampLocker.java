@@ -56,7 +56,7 @@ public class TimestampLocker implements ObjectLocker {
     private boolean checkIsLocked(Object o) {
         if (o instanceof Sample) {
             Sample newProbe = (Sample) o;
-            Sample oldProbe = repository.getByIdPlain(
+            Sample oldProbe = repository.getById(
                 Sample.class, newProbe.getId());
             return oldProbe.getTreeMod().getTime()
                 > newProbe.getTreeMod().getTime();
@@ -66,13 +66,13 @@ public class TimestampLocker implements ObjectLocker {
                     Method m = o.getClass().getMethod("getSampleId");
                     Integer id = (Integer) m.invoke(o);
                     Sample probe =
-                        repository.getByIdPlain(Sample.class, id);
+                        repository.getById(Sample.class, id);
                     return isNewer(o, probe.getTreeMod());
                 } catch (NoSuchMethodException e) {
                     Method m = o.getClass().getMethod("getMeasmId");
                     Integer id = (Integer) m.invoke(o);
                     Measm messung =
-                        repository.getByIdPlain(Measm.class, id);
+                        repository.getById(Measm.class, id);
                     return isNewer(o, messung.getTreeMod());
                 }
             } catch (NoSuchMethodException

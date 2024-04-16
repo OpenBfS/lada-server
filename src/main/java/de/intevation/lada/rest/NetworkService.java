@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.GET;
@@ -18,7 +20,6 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.Network;
 
 /**
@@ -45,10 +46,10 @@ public class NetworkService extends LadaService {
     /**
      * Get all Network objects.
      *
-     * @return Response object containing all NetzBetreiber objects.
+     * @return all NetzBetreiber objects.
      */
     @GET
-    public Response get() {
+    public List<Network> get() {
         return repository.getAll(Network.class);
     }
 
@@ -56,11 +57,11 @@ public class NetworkService extends LadaService {
      * Get a single Network object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Network.
+     * @return a single Network.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public Network getById(
         @PathParam("id") String id
     ) {
         UserInfo userInfo = authorization.getInfo();

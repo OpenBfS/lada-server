@@ -47,7 +47,7 @@ public class ProbeIdentifier implements Identifier {
             builder.and("measFacilId", probe.getMeasFacilId());
             builder.and("mainSampleId", probe.getMainSampleId());
             List<Sample> proben =
-                repository.filterPlain(builder.getQuery());
+                repository.filter(builder.getQuery());
             if (proben.size() > 1) {
                 // Should never happen. DB has unique constraint for
                 // "mainSampleId"
@@ -64,7 +64,7 @@ public class ProbeIdentifier implements Identifier {
         ) {
             builder.and("extId", probe.getExtId());
             List<Sample> proben =
-                repository.filterPlain(builder.getQuery());
+                repository.filter(builder.getQuery());
             if (proben.size() > 1) {
                 // Should never happen. DB has unique constraint for
                 // "sampleExtId"
@@ -78,7 +78,7 @@ public class ProbeIdentifier implements Identifier {
         } else {
             builder.and("extId", probe.getExtId());
             List<Sample> proben =
-                repository.filterPlain(builder.getQuery());
+                repository.filter(builder.getQuery());
             if (proben.size() > 1) {
                 // Should never happen. DB has unique constraint for
                 // "sampleExtId"

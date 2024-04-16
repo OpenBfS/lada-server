@@ -53,7 +53,7 @@ public class HasOneUrsprungsOrt implements Rule {
             .queryBuilder(Geolocat.class)
             .and("sampleId", id)
             .andIn("typeRegulation", zuordTypeFilter);
-        List<Geolocat> orte = repository.filterPlain(builder.getQuery());
+        List<Geolocat> orte = repository.filter(builder.getQuery());
         if (orte.size() > 1) {
             Violation violation = new Violation();
             violation.addWarning("geolocats", StatusCodes.ORT_SINGLE_UORT);

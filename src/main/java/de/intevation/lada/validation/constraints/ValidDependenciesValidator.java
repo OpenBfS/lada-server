@@ -91,7 +91,7 @@ public class ValidDependenciesValidator
             || newStatusWert == 7
         ) {
             Violation violationCollection = new Violation();
-            Sample probe = repository.getByIdPlain(
+            Sample probe = repository.getById(
                 Sample.class, messung.getSampleId());
 
             // init violation_collection with probe validation
@@ -110,7 +110,7 @@ public class ValidDependenciesValidator
             QueryBuilder<MeasVal> builder = repository
                 .queryBuilder(MeasVal.class)
                 .and("measmId", messung.getId());
-            List<MeasVal> messwerte = repository.filterPlain(
+            List<MeasVal> messwerte = repository.filter(
                 builder.getQuery());
             if (!messwerte.isEmpty()) {
                 for (MeasVal messwert: messwerte) {
@@ -137,10 +137,10 @@ public class ValidDependenciesValidator
             QueryBuilder<Geolocat> ortBuilder = repository
                 .queryBuilder(Geolocat.class)
                 .and("sampleId", probe.getId());
-            List<Geolocat> assignedOrte = repository.filterPlain(
+            List<Geolocat> assignedOrte = repository.filter(
                 ortBuilder.getQuery());
             for (Geolocat o : assignedOrte) {
-                Site site = repository.getByIdPlain(Site.class, o.getSiteId());
+                Site site = repository.getById(Site.class, o.getSiteId());
                 ortValidator.validate(site);
                 violationCollection.addErrors(site.getErrors());
                 violationCollection.addWarnings(site.getWarnings());

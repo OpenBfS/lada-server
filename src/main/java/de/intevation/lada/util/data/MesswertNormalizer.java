@@ -36,14 +36,14 @@ public class MesswertNormalizer {
         Integer mehIdTo,
         Integer mehIdFrom
     ) {
-        MeasUnit fromUnit = repository.getByIdPlain(
+        MeasUnit fromUnit = repository.getById(
                 MeasUnit.class, mehIdFrom);
 
         QueryBuilder<UnitConvers> builder =
             repository.queryBuilder(UnitConvers.class);
         builder.and("toUnitId", mehIdTo);
         builder.and("fromUnit", fromUnit);
-        return repository.filterPlain(builder.getQuery());
+        return repository.filter(builder.getQuery());
     }
 
     /**
@@ -61,7 +61,7 @@ public class MesswertNormalizer {
             return messwerte;
         }
         EnvMedium umwelt =
-            repository.getByIdPlain(EnvMedium.class, umwId);
+            repository.getById(EnvMedium.class, umwId);
         Integer mehIdToConvertTo = umwelt.getUnit1();
         Integer secMehIdToConvertTo = umwelt.getUnit2();
 

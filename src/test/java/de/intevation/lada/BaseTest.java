@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 import jakarta.json.Json;
 import jakarta.json.JsonException;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonValue;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.Response;
@@ -194,58 +196,15 @@ public class BaseTest {
      * Utility method to parse JSON in a Response object.
      *
      * Asserts that the response has HTTP status code 200 and a parseable
-     * JSON body corresponding to a de.intevation.lada.util.rest.Response.
-     *
-     * @param response The response to be parsed.
-     * @return Parsed JsonObject or null in case of failure
-     */
-    public static JsonObject parseResponse(
-        Response response
-    ) {
-        return parseResponse(response, Response.Status.OK);
-    }
-
-    /**
-     * Utility method to check status and parse JSON in a Response object
-     * corresponding to a de.intevation.lada.util.rest.Response.
-     *
-     * @param response The response to be parsed.
-     * @param expectedStatus Expected HTTP status code
-     * @return Parsed JsonObject or null in case of (expected) failure
-     */
-    public static JsonObject parseResponse(
-        Response response,
-        Response.Status expectedStatus
-    ) {
-        JsonObject content = parseSimpleResponse(
-            response, expectedStatus);
-
-        /* Verify the response*/
-        if (Response.Status.OK.equals(expectedStatus)) {
-            final String successKey = "success", messageKey = "message";
-            assertContains(content, successKey);
-            Assert.assertTrue("Unsuccessful response object:\n" + content,
-                content.getBoolean(successKey));
-            assertContains(content, messageKey);
-            Assert.assertEquals("200", content.getString(messageKey));
-        }
-
-        return content;
-    }
-
-    /**
-     * Utility method to parse JSON in a Response object.
-     *
-     * Asserts that the response has HTTP status code 200 and a parseable
      * JSON body.
      *
      * @param response The response to be parsed.
-     * @return Parsed JsonObject or null in case of (expected) failure
+     * @return Parsed JSON
      */
-    public static JsonObject parseSimpleResponse(
+    public static JsonValue parseResponse(
         Response response
     ) {
-        return parseSimpleResponse(response, Response.Status.OK);
+        return parseResponse(response, Response.Status.OK);
     }
 
     /**
@@ -253,9 +212,45 @@ public class BaseTest {
      *
      * @param response The response to be parsed.
      * @param expectedStatus Expected HTTP status code
-     * @return Parsed JsonObject or null in case of (expected) failure
+     * @return Parsed JSON
      */
-    public static JsonObject parseSimpleResponse(
+    public static JsonValue parseResponse(
+        Response response,
+        Response.Status expectedStatus
+    ) {
+        String responseBody = assertResponseStatus(response, expectedStatus);
+        if (responseBody != null && !responseBody.isEmpty()) {
+            try (JsonReader reader = Json.createReader(
+                    new StringReader(responseBody))) {
+                return reader.readValue();
+            } catch (JsonException je) {
+                // Non-JSON response body
+                return null;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Utility method to check status of a Response object.
+     *
+     * @param response The response to be parsed.
+     * @return Response body
+     */
+    public static String assertResponseOK(
+        Response response
+    ) {
+        return assertResponseStatus(response, Response.Status.OK);
+    }
+
+    /**
+     * Utility method to check status of a Response object.
+     *
+     * @param response The response to be parsed.
+     * @param expectedStatus Expected HTTP status code
+     * @return Response body
+     */
+    public static String assertResponseStatus(
         Response response,
         Response.Status expectedStatus
     ) {
@@ -264,18 +259,7 @@ public class BaseTest {
             "Unexpected status code with response\n" + responseBody + "\n",
             expectedStatus.getStatusCode(),
             response.getStatus());
-
-        if (!responseBody.isEmpty()) {
-            try {
-                JsonObject content = Json.createReader(
-                    new StringReader(responseBody)).readObject();
-                return content;
-            } catch (JsonException je) {
-                // Non-JSON response body
-                return null;
-            }
-        }
-        return null;
+        return responseBody;
     }
 
     /**

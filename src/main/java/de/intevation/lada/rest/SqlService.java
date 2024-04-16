@@ -24,8 +24,7 @@ import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
+
 
 /**
  * REST service to get the sql statement for a query.
@@ -68,16 +67,14 @@ public class SqlService extends LadaService {
      * @throws BadRequestException
      */
     @POST
-    public Response execute(
+    public String execute(
         @NotEmpty List<GridColConf> gridColumnValues
     ) {
         try {
             QueryTools queryTools =
                 new QueryTools(repository, gridColumnValues);
-            String statement = prepareStatement(
-                queryTools.getSql(),
-                queryTools.getFilterValues());
-            return new Response(true, StatusCodes.OK, statement);
+            return prepareStatement(
+                queryTools.getSql(), queryTools.getFilterValues());
         } catch (IllegalArgumentException iae) {
             throw new BadRequestException(
                 jakarta.ws.rs.core.Response

@@ -67,7 +67,7 @@ public class QueryTools {
 
         for (GridColConf columnValue : customColumns) {
             if (columnValue.getGridColMp() == null) {
-                GridColMp gridColumn = repository.getByIdPlain(
+                GridColMp gridColumn = repository.getById(
                     GridColMp.class, columnValue.getGridColMpId());
                 columnValue.setGridColMp(gridColumn);
             }
@@ -76,7 +76,7 @@ public class QueryTools {
 
         this.sql = prepareSql(
             customColumns,
-            repository.getByIdPlain(
+            repository.getById(
                 BaseQuery.class,
                 customColumns.get(0).getGridColMp().getBaseQueryId()
             ).getSql());
@@ -381,7 +381,7 @@ public class QueryTools {
                     String param = filter.getParam();
                     for (int i = 0; i < tagNumber; i++) {
                         String tag =
-                            repository.getByIdPlain(
+                            repository.getById(
                                 Tag.class,
                                 Integer.parseInt(tagIds[i])
                             ).getName();

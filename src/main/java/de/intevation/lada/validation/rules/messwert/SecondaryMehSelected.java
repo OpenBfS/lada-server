@@ -44,7 +44,7 @@ public class SecondaryMehSelected implements Rule {
         if (messwert.getMeasmId() != null) {
             Measm measm = messwert.getMeasm() != null
                 ? messwert.getMeasm()
-                : repository.getByIdPlain(Measm.class, messwert.getMeasmId());
+                : repository.getById(Measm.class, messwert.getMeasmId());
             umwelt = measm.getSample().getEnvMedium();
         }
 
@@ -64,10 +64,10 @@ public class SecondaryMehSelected implements Rule {
             /*Check if the messwert is convertable into the secondary unit but
             not into the primary */
             MeasUnit meh =
-                repository.getByIdPlain(
+                repository.getById(
                     MeasUnit.class, mehId);
             MeasUnit secMeh =
-                repository.getByIdPlain(
+                repository.getById(
                     MeasUnit.class, secMehId);
             AtomicBoolean primary = new AtomicBoolean(false);
             meh.getUnitConversTo().forEach(umrechnung -> {

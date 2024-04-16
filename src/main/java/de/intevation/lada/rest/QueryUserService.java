@@ -36,8 +36,6 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.QueryMeasFacilMp;
 import de.intevation.lada.model.master.QueryUser;
@@ -69,7 +67,7 @@ public class QueryUserService extends LadaService {
      *         messstelle or owned by the default user.
      */
     @GET
-    public Response getQueries() {
+    public List<QueryUser> getQueries() {
         UserInfo userInfo = authorization.getInfo();
         EntityManager em = repository.entityManager();
         CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -90,7 +88,7 @@ public class QueryUserService extends LadaService {
         criteriaQuery.where(filter);
 
         List<QueryUser> queries =
-            repository.filterPlain(criteriaQuery);
+            repository.filter(criteriaQuery);
         for (QueryUser query: queries) {
             if (query.getMessStelles() != null
                 && query.getMessStelles().size() > 0
@@ -103,14 +101,14 @@ public class QueryUserService extends LadaService {
                     mstIds.toArray(new String[mstIds.size()]));
             }
         }
-        return new Response(true, StatusCodes.OK, queries);
+        return queries;
     }
 
     /**
      * Create a new query_user object in the database.
      */
     @POST
-    public Response create(
+    public QueryUser create(
         @Valid QueryUser query
     ) {
         UserInfo userInfo = authorization.getInfo();
@@ -135,11 +133,11 @@ public class QueryUserService extends LadaService {
      * Update an existing query_user object in the database.
      *
      * @param query The query to be updated
-     * @return Response with updated query
+     * @return Updated query
      */
     @PUT
     @Path("{id}")
-    public Response update(
+    public QueryUser update(
         @Valid QueryUser query
     ) {
         UserInfo userInfo = authorization.getInfo();
@@ -155,7 +153,7 @@ public class QueryUserService extends LadaService {
             .queryBuilder(QueryMeasFacilMp.class)
             .and("queryUser", query);
         List<QueryMeasFacilMp> qms =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
         List<QueryMeasFacilMp> delete = new ArrayList<>();
         List<String> create = new ArrayList<>();
         for (String mst : query.getMessStellesIds()) {
@@ -181,7 +179,7 @@ public class QueryUserService extends LadaService {
             }
         }
         List<QueryMeasFacilMp> dbMesstelles =
-            repository.getByIdPlain(
+            repository.getById(
                 QueryUser.class, query.getId()).getMessStelles();
         query.setMessStelles(dbMesstelles);
 
@@ -209,14 +207,15 @@ public class QueryUserService extends LadaService {
 
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
         UserInfo userInfo = authorization.getInfo();
-        QueryUser query = repository.getByIdPlain(QueryUser.class, id);
+        QueryUser query = repository.getById(QueryUser.class, id);
         // TODO: Move to authorization
         if (query.getLadaUserId().equals(userInfo.getUserId())) {
-            return repository.delete(query);
+            repository.delete(query);
+            return;
         }
         throw new ForbiddenException();
     }

@@ -46,7 +46,7 @@ public class SamplerAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        return isAuthorized(repository.getByIdPlain(
+        return isAuthorized(repository.getById(
                 Sampler.class, id), method, userInfo, clazz);
     }
 }

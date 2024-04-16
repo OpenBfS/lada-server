@@ -70,6 +70,6 @@ public class KommentarPTest extends ServiceTest {
             "text", "Testkommentar",
             "Testkommentar geändert");
         delete(
-            "rest/commsample/" + created.getJsonObject("data").get("id"));
+            "rest/commsample/" + created.get("id"));
     }
 }

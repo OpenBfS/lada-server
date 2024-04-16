@@ -81,6 +81,6 @@ public class MessungTest extends ServiceTest {
             "rest/audit/messung/1200",
             updateFieldKey,
             updateFieldValue);
-        delete("rest/measm/" + created.getJsonObject("data").get("id"));
+        delete("rest/measm/" + created.get("id"));
     }
 }

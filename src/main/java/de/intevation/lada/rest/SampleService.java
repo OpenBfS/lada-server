@@ -37,7 +37,6 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.Validator;
 
@@ -124,16 +123,16 @@ public class SampleService extends LadaService {
      * Get a single Sample object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Sample.
+     * @return a single Sample.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public Sample getById(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(Sample.class, id);
-        validator.validate(response.getData());
-        return this.authorization.filter(response, Sample.class);
+        return this.authorization.filter(
+            validator.validate(repository.getById(Sample.class, id)),
+            Sample.class);
     }
 
     /**
@@ -142,10 +141,10 @@ public class SampleService extends LadaService {
      * The new object is embedded in the post data as JSON formatted string.
      * <p>
      *
-     * @return Response object containing the new probe object.
+     * @return the new probe object.
      */
     @POST
-    public Response create(
+    public Sample create(
         @Valid Sample probe
     ) {
         authorization.authorize(
@@ -188,11 +187,11 @@ public class SampleService extends LadaService {
      * </code>
      * </pre>
      *
-     * @return Response object containing the new probe objects.
+     * @return the new probe objects.
      */
     @POST
     @Path("messprogramm")
-    public Response createFromMessprogramm(
+    public Map<String, Object> createFromMessprogramm(
         @Valid PostData object
     ) {
         Map<String, Object> responseData = new HashMap<String, Object>();
@@ -201,7 +200,7 @@ public class SampleService extends LadaService {
 
         object.ids.forEach(id -> {
             HashMap<String, Object> data = new HashMap<String, Object>();
-            Mpg messprogramm = repository.getByIdPlain(
+            Mpg messprogramm = repository.getById(
                 Mpg.class, id);
 
             if (!object.dryrun) {
@@ -258,7 +257,7 @@ public class SampleService extends LadaService {
             tagUtil.setTagsByProbeIds(generatedProbeIds, newTag.getId());
             responseData.put("tag", newTag.getName());
         }
-        return new Response(true, StatusCodes.OK, responseData);
+        return responseData;
     }
 
     /**
@@ -266,11 +265,11 @@ public class SampleService extends LadaService {
      * <p>
      * The object to update should come as JSON formatted string.
      *
-     * @return Response object containing the updated Sample object.
+     * @return the updated Sample object.
      */
     @PUT
     @Path("{id}")
-    public Response update(
+    public Sample update(
         @PathParam("id") Integer id,
         @Valid Sample probe
     ) {
@@ -294,10 +293,8 @@ public class SampleService extends LadaService {
         }
         probe = factory.findMedia(probe);
 
-        Response response = repository.update(probe);
-        validator.validate(response.getData());
         return authorization.filter(
-            response,
+            validator.validate(repository.update(probe)),
             Sample.class);
     }
 
@@ -305,18 +302,17 @@ public class SampleService extends LadaService {
      * Delete an existing Sample object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object.
      */
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
-        Sample probeObj = repository.getByIdPlain(Sample.class, id);
+        Sample probeObj = repository.getById(Sample.class, id);
         authorization.authorize(
             probeObj,
             RequestMethod.DELETE,
             Sample.class);
-        return repository.delete(probeObj);
+        repository.delete(probeObj);
     }
 }

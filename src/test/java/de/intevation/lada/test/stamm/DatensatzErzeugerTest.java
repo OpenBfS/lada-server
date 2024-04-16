@@ -64,10 +64,8 @@ public class DatensatzErzeugerTest extends ServiceTest {
             "descr",
             "Testbezeichnung",
             "geändert");
-        create(
+        JsonObject created = create(
             "rest/datasetcreator", create);
-/*        delete("datensatzerzeuger",
-            "rest/datensatzerzeuger/"
-            + created.getJsonObject("data").get("id"));*/
+        delete("rest/datasetcreator/" + created.get("id"));
     }
 }

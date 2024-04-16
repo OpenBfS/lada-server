@@ -32,8 +32,6 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.model.master.GridColMp;
 import de.intevation.lada.model.master.MeasFacil;
@@ -62,7 +60,7 @@ public class GridColConfService extends LadaService {
      * @return GridColConf objects referencing the given query ID.
      */
     @GET
-    public Response getQueries(
+    public List<GridColConf> getQueries(
         @QueryParam("queryUser") @NotNull Integer queryUser
     ) {
         UserInfo userInfo = authorization.getInfo();
@@ -89,22 +87,22 @@ public class GridColConfService extends LadaService {
         filter = builder.and(filter, userFilter);
         criteriaQuery.where(filter).distinct(true);
         List<GridColConf> queries =
-            repository.filterPlain(criteriaQuery);
+            repository.filter(criteriaQuery);
 
         for (GridColConf gcv : queries) {
             gcv.setGridColMpId(gcv.getGridColMp().getId());
             gcv.setQueryUserId(gcv.getQueryUser().getId());
         }
 
-        return new Response(true, StatusCodes.OK, queries);
+        return queries;
     }
 
     /**
      * Creates a new GridColConf in the database.
-     * @return Response containing the created record.
+     * @return the created record.
      */
     @POST
-    public Response create(
+    public GridColConf create(
         @Valid GridColConf gridColumnValue
     ) {
         UserInfo userInfo = authorization.getInfo();
@@ -120,7 +118,7 @@ public class GridColConfService extends LadaService {
             gridColumn.setId(gridColumnValue.getGridColMpId());
             gridColumnValue.setGridColMp(gridColumn);
 
-            QueryUser queryUser = repository.getByIdPlain(
+            QueryUser queryUser = repository.getById(
                 QueryUser.class, gridColumnValue.getQueryUserId());
             gridColumnValue.setQueryUser(queryUser);
 
@@ -130,11 +128,11 @@ public class GridColConfService extends LadaService {
 
     /**
      * Update an existing GridColConf in the database.
-     * @return Response containing the updated record.
+     * @return the updated record.
      */
     @PUT
     @Path("{id}")
-    public Response update(
+    public GridColConf update(
         @Valid GridColConf gridColumnValue
     ) {
         // TODO: Really authorize with an Authorizer implementation.
@@ -144,9 +142,9 @@ public class GridColConfService extends LadaService {
         if (!userInfo.getUserId().equals(gridColumnValue.getLadaUserId())) {
             throw new ForbiddenException();
         } else {
-            GridColMp gridColumn = repository.getByIdPlain(
+            GridColMp gridColumn = repository.getById(
                 GridColMp.class, gridColumnValue.getGridColMpId());
-            QueryUser queryUser = repository.getByIdPlain(
+            QueryUser queryUser = repository.getById(
                 QueryUser.class, gridColumnValue.getQueryUserId());
             gridColumnValue.setGridColMp(gridColumn);
             gridColumnValue.setQueryUser(queryUser);
@@ -158,19 +156,19 @@ public class GridColConfService extends LadaService {
     /**
      * Delete the given GridColConf.
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response containing the deleted record.
      */
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
         UserInfo userInfo = authorization.getInfo();
-        GridColConf gridColumnValue = repository.getByIdPlain(
+        GridColConf gridColumnValue = repository.getById(
             GridColConf.class, id);
         // TODO: Move to authorization
         if (gridColumnValue.getLadaUserId().equals(userInfo.getUserId())) {
-            return repository.delete(gridColumnValue);
+            repository.delete(gridColumnValue);
+            return;
         }
         throw new ForbiddenException();
     }

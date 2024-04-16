@@ -60,6 +60,6 @@ public class MunicDivTest extends ServiceTest {
             "Testname",
             "UpdatedName");
         JsonObject created = create("rest/municdiv", create);
-        delete("rest/municdiv/" + created.getJsonObject("data").get("id"));
+        delete("rest/municdiv/" + created.get("id"));
     }
 }

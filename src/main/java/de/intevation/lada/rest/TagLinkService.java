@@ -26,7 +26,6 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 
 
 /**
@@ -49,6 +48,30 @@ public class TagLinkService extends LadaService {
         + "WHERE tag_id=:%s"
         + " AND %s=:%s)";
 
+    public static class Response {
+        private boolean success;
+        private String message;
+        private TagLink data;
+
+        private Response(boolean success, int code, TagLink data) {
+            this.success = success;
+            this.message = Integer.toString(code);
+            this.data = data;
+        }
+
+        public boolean getSuccess() {
+            return this.success;
+        }
+
+        public String getMessage() {
+            return this.message;
+        }
+
+        public TagLink getData() {
+            return this.data;
+        }
+    }
+
     /**
      * Create new references between tags and Sample or Measm objects.
      *
@@ -56,7 +79,7 @@ public class TagLinkService extends LadaService {
      * @return Response with list of Response objects for each reference.
      */
     @POST
-    public Response createTagReference(
+    public List<Response> createTagReference(
         @Valid List<TagLink> tagLinks
     ) {
         //Create Response
@@ -89,7 +112,7 @@ public class TagLinkService extends LadaService {
             }
 
             //Extend tag expiring time
-            Tag tag = repository.getByIdPlain(Tag.class, tagId);
+            Tag tag = repository.getById(Tag.class, tagId);
             if (Tag.TAG_TYPE_MST.equals(tag.getTagType())) {
                 Timestamp defaultExpiration =
                     TagUtil.getMstTagDefaultExpiration();
@@ -100,10 +123,11 @@ public class TagLinkService extends LadaService {
                 }
             }
 
-            responseList.add(repository.create(zuordnung));
+            responseList.add(new Response(
+                    true, StatusCodes.OK, repository.create(zuordnung)));
         }
 
-        return new Response(true, StatusCodes.OK, responseList);
+        return responseList;
     }
 
     /**
@@ -115,7 +139,7 @@ public class TagLinkService extends LadaService {
      */
     @POST
     @Path("delete")
-    public Response deleteTagReference(
+    public List<Response> deleteTagReference(
         @Valid List<TagLink> tagLinks
     ) {
         List<Response> responseList = new ArrayList<>();
@@ -139,16 +163,16 @@ public class TagLinkService extends LadaService {
             }
 
             // Delete existing entity
-            responseList.add(
-                repository.delete(
-                    repository.getSinglePlain(
-                        repository.queryBuilder(TagLink.class)
-                        .and("tagId", zuordnung.getTagId())
-                        .and("sampleId", zuordnung.getSampleId())
-                        .and("measmId", zuordnung.getMeasmId())
-                        .getQuery())));
+            repository.delete(
+                repository.getSingle(repository
+                    .queryBuilder(TagLink.class)
+                    .and("tagId", zuordnung.getTagId())
+                    .and("sampleId", zuordnung.getSampleId())
+                    .and("measmId", zuordnung.getMeasmId())
+                    .getQuery()));
+            responseList.add(new Response(true, StatusCodes.OK, zuordnung));
         }
-        return new Response(true, StatusCodes.OK, responseList);
+        return responseList;
     }
 
     private Boolean isExisting(TagLink zuordnung) {

@@ -33,11 +33,10 @@ public class MessprogrammIdAuthorizer extends BaseAuthorizer {
         try {
             Method m = clazz.getMethod("getMpgId");
             Integer id = (Integer) m.invoke(data);
-            Mpg messprogramm =
-                repository.getByIdPlain(Mpg.class, id);
+            Mpg messprogramm = repository.getById(Mpg.class, id);
             String mstId = messprogramm.getMeasFacilId();
             if (mstId != null) {
-                MeasFacil mst = repository.getByIdPlain(
+                MeasFacil mst = repository.getById(
                     MeasFacil.class, mstId);
                 if (userInfo.getFunktionenForNetzbetreiber(
                         mst.getNetworkId()).contains(4)
@@ -74,12 +73,11 @@ public class MessprogrammIdAuthorizer extends BaseAuthorizer {
         try {
             Method getMessprogrammId = clazz.getMethod("getMpgId");
             Integer id = (Integer) getMessprogrammId.invoke(data);
-            Mpg messprogramm = repository.getByIdPlain(
-                Mpg.class, id);
+            Mpg messprogramm = repository.getById(Mpg.class, id);
             String mstId = messprogramm.getMeasFacilId();
             boolean owner = false;
             if (mstId != null) {
-                MeasFacil mst = repository.getByIdPlain(
+                MeasFacil mst = repository.getById(
                     MeasFacil.class, mstId);
                 if (userInfo.getFunktionenForNetzbetreiber(
                         mst.getNetworkId()).contains(4)

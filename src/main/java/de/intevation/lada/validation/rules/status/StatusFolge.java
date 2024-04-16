@@ -41,7 +41,7 @@ public class StatusFolge implements Rule {
             .and("measmId", status.getMeasmId());
         lastFilter.orderBy("id", true);
         List<StatusProt> protos =
-            repository.filterPlain(lastFilter.getQuery());
+            repository.filter(lastFilter.getQuery());
         if (protos.isEmpty()) {
             return null;
         }
@@ -51,7 +51,7 @@ public class StatusFolge implements Rule {
             .and("fromId", last.getStatusMpId())
             .and("toId", status.getStatusMpId());
         List<StatusOrdMp> reihenfolge =
-            repository.filterPlain(folgeFilter.getQuery());
+            repository.filter(folgeFilter.getQuery());
         if (reihenfolge.isEmpty()) {
             Violation violation = new Violation();
             violation.addError("status", StatusCodes.VALUE_NOT_MATCHING);

@@ -84,7 +84,7 @@ public class LafImportService extends LadaService {
     ) {
         UserInfo userInfo = authorization.getInfo();
         String mstId = request.getHeader("X-LADA-MST");
-        MeasFacil mst = repository.getByIdPlain(MeasFacil.class, mstId);
+        MeasFacil mst = repository.getById(MeasFacil.class, mstId);
 
         /** Preparation for Client-Update: "Vorbelegung Messstelle" will
          * become mandatory!
@@ -105,7 +105,7 @@ public class LafImportService extends LadaService {
             QueryBuilder<ImportConf> builder =
                 repository.queryBuilder(ImportConf.class);
             builder.and("measFacilId", mstId);
-            config = (List<ImportConf>) repository.filterPlain(
+            config = (List<ImportConf>) repository.filter(
                 builder.getQuery());
         }
         importer.doImport(

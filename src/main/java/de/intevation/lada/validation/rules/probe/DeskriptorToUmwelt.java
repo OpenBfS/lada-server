@@ -76,7 +76,7 @@ public class DeskriptorToUmwelt implements Rule {
             }
             builder.and("levVal", mediaDesk[i])
                 .and("lev", i - 1);
-            List<EnvDescrip> data = repository.filterPlain(builder.getQuery());
+            List<EnvDescrip> data = repository.filter(builder.getQuery());
 
             if (data.isEmpty()) {
                 String deskript = "";
@@ -129,7 +129,7 @@ public class DeskriptorToUmwelt implements Rule {
                 }
             }
         }
-        List<EnvDescripEnvMediumMp> data = repository.filterPlain(
+        List<EnvDescripEnvMediumMp> data = repository.filter(
             builder.getQuery());
         if (data.isEmpty()) {
             Violation violation = new Violation();

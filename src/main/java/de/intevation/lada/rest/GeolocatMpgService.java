@@ -29,9 +29,7 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 
 /**
@@ -71,44 +69,37 @@ public class GeolocatMpgService extends LadaService {
      * @param mpgId The requested objects will be filtered
      * using a URL parameter named mpgId.
      *
-     * @return Response containing requested objects.
+     * @return requested objects.
      */
     @GET
-    public Response get(
+    public List<GeolocatMpg> get(
         @QueryParam("mpgId") @NotNull Integer mpgId
     ) {
         QueryBuilder<GeolocatMpg> builder = repository
             .queryBuilder(GeolocatMpg.class)
             .and("mpgId", mpgId);
-        Response r = authorization.filter(
+        List<GeolocatMpg> ortszuordnungs = authorization.filter(
             repository.filter(builder.getQuery()),
             GeolocatMpg.class);
-        if (r.getSuccess()) {
-            @SuppressWarnings("unchecked")
-            List<GeolocatMpg> ortszuordnungs = (List<GeolocatMpg>) r.getData();
-            for (GeolocatMpg otz: ortszuordnungs) {
-                validator.validate(otz);
-            }
-            return new Response(true, StatusCodes.OK, ortszuordnungs);
+        for (GeolocatMpg otz: ortszuordnungs) {
+            validator.validate(otz);
         }
-        return r;
+        return ortszuordnungs;
     }
 
     /**
      * Get single object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object
+     * @return GeolocatMpg object
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public GeolocatMpg getById(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(GeolocatMpg.class, id);
-        validator.validate(response.getData());
         return authorization.filter(
-            response,
+            validator.validate(repository.getById(GeolocatMpg.class, id)),
             GeolocatMpg.class);
     }
 
@@ -118,7 +109,7 @@ public class GeolocatMpgService extends LadaService {
      * @return A response object containing the created Ort.
      */
     @POST
-    public Response create(
+    public GeolocatMpg create(
         @Valid GeolocatMpg ort
     ) {
         authorization.authorize(
@@ -134,11 +125,11 @@ public class GeolocatMpgService extends LadaService {
     /**
      * Update an existing GeolocatMpg object.
      *
-     * @return Response object containing the updated GeolocatMpg object.
+     * @return the updated GeolocatMpg object.
      */
     @PUT
     @Path("{id}")
-    public Response update(
+    public GeolocatMpg update(
         @PathParam("id") Integer id,
         @Valid GeolocatMpg ort
     ) {
@@ -147,10 +138,8 @@ public class GeolocatMpgService extends LadaService {
             RequestMethod.PUT,
             GeolocatMpg.class);
 
-        Response response = repository.update(ort);
-        validator.validate(response.getData());
         return authorization.filter(
-            response,
+            validator.validate(repository.update(ort)),
             GeolocatMpg.class);
     }
 
@@ -158,20 +147,19 @@ public class GeolocatMpgService extends LadaService {
      * Delete object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object.
      */
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
-        GeolocatMpg ortObj = repository.getByIdPlain(
+        GeolocatMpg ortObj = repository.getById(
             GeolocatMpg.class, id);
         authorization.authorize(
             ortObj,
             RequestMethod.PUT,
             GeolocatMpg.class);
 
-        return repository.delete(ortObj);
+        repository.delete(ortObj);
     }
 }

@@ -113,7 +113,7 @@ public class UniversalServiceTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.entity(this.requestJson.toString(),
                     MediaType.APPLICATION_JSON));
-        JsonObject responseJson = parseResponse(response);
+        JsonObject responseJson = parseResponse(response).asJsonObject();
 
         assertContains(responseJson, totalCountKey);
         Assert.assertEquals(
@@ -140,7 +140,7 @@ public class UniversalServiceTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.entity(this.requestJson.toString(),
                     MediaType.APPLICATION_JSON));
-        JsonObject responseJson = parseResponse(response);
+        JsonObject responseJson = parseResponse(response).asJsonObject();
 
         assertContains(responseJson, totalCountKey);
         Assert.assertEquals(
@@ -166,12 +166,11 @@ public class UniversalServiceTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.entity(this.requestJson.toString(),
                     MediaType.APPLICATION_JSON));
-        JsonObject responseJson = parseResponse(response);
+        String responseBody = assertResponseOK(response);
 
-        assertContains(responseJson, dataKey);
         Assert.assertEquals(
             String.format(this.sqlTemplate, "", ""),
-            responseJson.getString(dataKey));
+            responseBody);
     }
 
     /**
@@ -189,7 +188,7 @@ public class UniversalServiceTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.entity(this.filteredRequestJson.toString(),
                     MediaType.APPLICATION_JSON));
-        JsonObject responseJson = parseResponse(response);
+        JsonObject responseJson = parseResponse(response).asJsonObject();
 
         assertContains(responseJson, totalCountKey);
 
@@ -219,16 +218,15 @@ public class UniversalServiceTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.entity(this.filteredRequestJson.toString(),
                     MediaType.APPLICATION_JSON));
-        JsonObject responseJson = parseResponse(response);
+        String responseBody = assertResponseOK(response);
 
-        assertContains(responseJson, dataKey);
         Assert.assertEquals(
             String.format(
                 this.sqlTemplate,
                 // Corresponds to stamm.filter.sql in dbUnit_probe_query.json
                 " WHERE main_sample_id ~ $1",
                 "('^" + filterValue + ".*$')"),
-            responseJson.getString(dataKey));
+            responseBody);
     }
 
     /**
@@ -265,7 +263,7 @@ public class UniversalServiceTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.entity(requestEmpty.toString(),
                     MediaType.APPLICATION_JSON));
-        JsonObject responseJson = parseResponse(response);
+        JsonObject responseJson = parseResponse(response).asJsonObject();
 
         assertContains(responseJson, totalCountKey);
 
@@ -302,7 +300,7 @@ public class UniversalServiceTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.entity(request.toString(),
                     MediaType.APPLICATION_JSON));
-        JsonObject responseJson = parseResponse(response);
+        JsonObject responseJson = parseResponse(response).asJsonObject();
 
         // single-column query should result in JSON objects with
         // key-value pairs representing "readonly" flag and a single data column

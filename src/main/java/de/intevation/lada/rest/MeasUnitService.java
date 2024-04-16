@@ -17,8 +17,6 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.MeasUnit;
 import de.intevation.lada.model.master.UnitConvers;
 
@@ -49,10 +47,10 @@ public class MeasUnitService extends LadaService {
      * Records convertable into the secondary MeasUnit (secMeasUnitId) will have
      * the attribute 'primary' set to false.
      *
-     * @return Response containing requested objects.
+     * @return requested objects.
      */
     @GET
-    public Response get(
+    public List<MeasUnit> get(
         @QueryParam("measUnitId") Integer measUnitId,
         @QueryParam("secMeasUnitId") Integer secMeasUnitId
     ) {
@@ -60,10 +58,10 @@ public class MeasUnitService extends LadaService {
             return repository.getAll(MeasUnit.class);
         }
 
-        MeasUnit meh = repository.getByIdPlain(MeasUnit.class, measUnitId);
+        MeasUnit meh = repository.getById(MeasUnit.class, measUnitId);
         MeasUnit secMeh = null;
         if (secMeasUnitId != null) {
-            secMeh = repository.getByIdPlain(MeasUnit.class, secMeasUnitId);
+            secMeh = repository.getById(MeasUnit.class, secMeasUnitId);
         }
         List<MeasUnit> einheits =
             new ArrayList<MeasUnit>(
@@ -92,18 +90,18 @@ public class MeasUnitService extends LadaService {
                 }
             });
         }
-        return new Response(true, StatusCodes.OK, einheits);
+        return einheits;
     }
 
     /**
      * Get a single MeasUnit object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single MeasUnit.
+     * @return a single MeasUnit.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public MeasUnit getById(
         @PathParam("id") Integer id
     ) {
         return repository.getById(MeasUnit.class, id);

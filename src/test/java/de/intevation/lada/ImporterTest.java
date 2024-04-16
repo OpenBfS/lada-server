@@ -106,8 +106,6 @@ public class ImporterTest extends BaseTest {
         + "MESSWERT \"%s\" 72.177002 \"%s\" 4.4\n"
         + "%%ENDE%%\n";
 
-    final String dataKey = "data";
-
     @PersistenceContext
     EntityManager em;
 
@@ -342,7 +340,7 @@ public class ImporterTest extends BaseTest {
         probe.setSchedStartDate(Timestamp.valueOf("2013-05-01 16:00:00"));
         probe.setSchedEndDate(Timestamp.valueOf("2013-05-05 16:00:00"));
         probe.setSampleStartDate(Timestamp.valueOf("2012-05-03 13:07:00"));
-        Sample dbProbe = repository.getByIdPlain(Sample.class, PID1000);
+        Sample dbProbe = repository.getById(Sample.class, PID1000);
         merger.merge(dbProbe, probe);
         transaction.commit();
 
@@ -365,7 +363,7 @@ public class ImporterTest extends BaseTest {
         messung.setMmtId("A3");
         messung.setMeasmStartDate(Timestamp.valueOf("2012-05-06 14:00:00"));
         Measm dbMessung =
-            repository.getByIdPlain(Measm.class, MID1200);
+            repository.getById(Measm.class, MID1200);
         merger.mergeMessung(dbMessung, messung);
         transaction.commit();
 
@@ -385,7 +383,7 @@ public class ImporterTest extends BaseTest {
     @Ignore
     public final void mergeZusatzwert() throws Exception {
         transaction.begin();
-        Sample probe = repository.getByIdPlain(Sample.class, PID1000);
+        Sample probe = repository.getById(Sample.class, PID1000);
         List<SampleSpecifMeasVal> zusatzwerte = new ArrayList<SampleSpecifMeasVal>();
         SampleSpecifMeasVal wert1 = new SampleSpecifMeasVal();
         wert1.setSampleId(PID1000);
@@ -427,7 +425,7 @@ public class ImporterTest extends BaseTest {
     public final void mergeMesswerte() throws Exception {
         transaction.begin();
         Measm messung =
-            repository.getByIdPlain(Measm.class, MID1200);
+            repository.getById(Measm.class, MID1200);
         List<MeasVal> messwerte = new ArrayList<MeasVal>();
         MeasVal wert1 = new MeasVal();
         wert1.setMeasmId(MID1200);
@@ -441,7 +439,7 @@ public class ImporterTest extends BaseTest {
             repository.queryBuilder(MeasVal.class);
         builder.and("measmId", messung.getId());
         List<MeasVal> dbWerte =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
         Assert.assertEquals(1, dbWerte.size());
         transaction.commit();
 
@@ -471,7 +469,8 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .header("X-LADA-MST", mstId)
             .post(Entity.entity(laf, MediaType.TEXT_PLAIN));
-        JsonObject importResponseObject = parseSimpleResponse(importResponse);
+        JsonObject importResponseObject =
+            parseResponse(importResponse).asJsonObject();
 
         /* Check if a Sample object has been imported */
         final String probeIdsKey = "probeIds";
@@ -723,7 +722,8 @@ public class ImporterTest extends BaseTest {
             .acceptLanguage(locale)
             .post(Entity.entity(requestJson.toString(),
                     MediaType.APPLICATION_JSON));
-        JsonObject importCreatedObject = parseSimpleResponse(importCreated);
+        JsonObject importCreatedObject =
+            parseResponse(importCreated).asJsonObject();
 
         final String refIdKey = "refId";
         assertContains(importCreatedObject, refIdKey);
@@ -740,7 +740,8 @@ public class ImporterTest extends BaseTest {
         final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
         final int waitASecond = 1000;
         do {
-            importStatusObject = parseSimpleResponse(statusRequest.get());
+            importStatusObject =
+                parseResponse(statusRequest.get()).asJsonObject();
 
             final String doneKey = "done";
             assertContains(importStatusObject, doneKey);
@@ -765,7 +766,7 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject report = parseSimpleResponse(reportResponse);
+        JsonObject report = parseResponse(reportResponse).asJsonObject();
 
         assertContains(report, fileName);
         JsonObject fileReport = report.getJsonObject(fileName);
@@ -792,8 +793,8 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject importedSample = parseResponse(
-            importedSampleResponse).getJsonObject(dataKey);
+        JsonObject importedSample =
+            parseResponse(importedSampleResponse).asJsonObject();
         Assert.assertEquals(lafSampleId, importedSample.getString("extId"));
         Assert.assertEquals(mstId, importedSample.getString("measFacilId"));
         Assert.assertEquals(1, importedSample.getInt("regulationId"));
@@ -805,8 +806,7 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
         JsonArray importedSampleSpecifMeasVals =
-            parseResponse(importedSampleSpecifMeasValResponse)
-            .getJsonArray(dataKey);
+            parseResponse(importedSampleSpecifMeasValResponse).asJsonArray();
         Assert.assertEquals(1, importedSampleSpecifMeasVals.size());
         JsonObject importedSampleSpecifMeasVal =
             importedSampleSpecifMeasVals.getJsonObject(0);
@@ -820,8 +820,7 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        final int measmId = parseResponse(importedMeasmResponse)
-            .getJsonArray(dataKey)
+        final int measmId = parseResponse(importedMeasmResponse).asJsonArray()
             .getJsonObject(0)
             .getInt("id");
 
@@ -831,9 +830,8 @@ public class ImporterTest extends BaseTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject importedMeasVal =
-            parseResponse(importedMeasValResponse)
-            .getJsonArray(dataKey)
+        JsonObject importedMeasVal = parseResponse(importedMeasValResponse)
+            .asJsonArray()
             .getJsonObject(0);
         Assert.assertEquals(1, importedMeasVal.getInt("measdId"));
         Assert.assertEquals(1, importedMeasVal.getInt("measUnitId"));

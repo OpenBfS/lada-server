@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -25,7 +27,6 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 
 /**
@@ -59,10 +60,10 @@ public class CommSampleService extends LadaService {
      * @param sampleId The requested objects will be filtered
      * using an URL parameter named sampleId.
      *
-     * @return Response object containing requested objects.
+     * @return requested objects.
      */
     @GET
-    public Response get(
+    public List<CommSample> get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
         QueryBuilder<CommSample> builder =
@@ -77,11 +78,11 @@ public class CommSampleService extends LadaService {
      * Get a single CommSample object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single CommSample.
+     * @return a single CommSample.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public CommSample getById(
         @PathParam("id") Integer id
     ) {
         return authorization.filter(
@@ -92,10 +93,10 @@ public class CommSampleService extends LadaService {
     /**
      * Create a new CommSample object.
      *
-     * @return Response object containing the new CommSample.
+     * @return the new CommSample.
      */
     @POST
-    public Response create(
+    public CommSample create(
         @Valid CommSample kommentar
     ) {
         authorization.authorize(
@@ -110,11 +111,11 @@ public class CommSampleService extends LadaService {
     /**
      * Update an existing CommSample object.
      *
-     * @return Response object containing the updated CommSample object.
+     * @return the updated CommSample object.
      */
     @PUT
     @Path("{id}")
-    public Response update(
+    public CommSample update(
         @PathParam("id") Integer id,
         @Valid CommSample kommentar
     ) {
@@ -131,18 +132,17 @@ public class CommSampleService extends LadaService {
      * Delete an existing CommSample by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object.
      */
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
-        CommSample kommentarObj = repository.getByIdPlain(CommSample.class, id);
+        CommSample kommentarObj = repository.getById(CommSample.class, id);
         authorization.authorize(
             kommentarObj,
             RequestMethod.DELETE,
             CommSample.class);
-        return repository.delete(kommentarObj);
+        repository.delete(kommentarObj);
     }
 }

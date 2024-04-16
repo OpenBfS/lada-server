@@ -27,8 +27,6 @@ public class TagTest extends ServiceTest {
 
     private final String tagUrl = "rest/tag/";
 
-    private final String dataKey = "data";
-
     private final String tagNameAttribute = "name";
 
     @Override
@@ -75,7 +73,7 @@ public class TagTest extends ServiceTest {
         JsonObject tagToTest = createTagJson(
             Tag.TAG_TYPE_MST, "mstTagPromoted");
         JsonObject createResponse = create(tagUrl, tagToTest);
-        long createdId = createResponse.getJsonObject(dataKey).getInt("id");
+        long createdId = createResponse.getInt("id");
         update(tagUrl + createdId, "tagType", "mst", "global");
     }
 
@@ -85,12 +83,10 @@ public class TagTest extends ServiceTest {
      */
     private void testTagCRUD(JsonObject tagToTest) {
         JsonObject createResponse = create(tagUrl, tagToTest);
-        long createdId = createResponse.getJsonObject(dataKey).getInt("id");
-        String createdTyp = createResponse
-            .getJsonObject(dataKey).getString("tagType");
+        long createdId = createResponse.getInt("id");
+        String createdTyp = createResponse.getString("tagType");
         if (createdTyp.equals("mst") || createdTyp.equals("auto")) {
-            String createdGueltigBis = createResponse.getJsonObject(dataKey)
-                .getString("valUntil");
+            String createdGueltigBis = createResponse.getString("valUntil");
             long diff = getDaysFromNow(createdGueltigBis);
             Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diff);
         }
@@ -99,10 +95,8 @@ public class TagTest extends ServiceTest {
             tagNameAttribute,
             tagToTest.getString(tagNameAttribute),
             tagUpdated);
-        JsonObject getResponse = get(tagUrl);
-        Assert.assertFalse(getResponse.getJsonArray(dataKey).isEmpty());
-        getById(tagUrl + createdId,
-            updateResponse.getJsonObject(dataKey));
+        Assert.assertFalse(get(tagUrl).asJsonArray().isEmpty());
+        getById(tagUrl + createdId, updateResponse);
         delete(tagUrl + createdId);
     }
 

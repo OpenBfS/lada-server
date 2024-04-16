@@ -12,8 +12,7 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 
 import de.intevation.lada.i18n.I18n;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
+
 
 /**
  * REST service returning the server version.
@@ -31,11 +30,10 @@ public class VersionService extends LadaService {
      * <p>
      * Example: http://example.com/version
      *
-     * @return Response object containing version.
+     * @return version.
      */
     @GET
-    public Response get() {
-        return new Response(true, StatusCodes.OK,
-            i18n.getString("version"));
+    public String get() {
+        return i18n.getString("version");
     }
 }

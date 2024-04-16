@@ -389,13 +389,13 @@ public class ProbeFactory {
         QueryBuilder<MpgMmtMp> builder = repository
             .queryBuilder(MpgMmtMp.class)
             .and("mpgId", messprogramm.getId());
-        List<MpgMmtMp> mmts = repository.filterPlain(builder.getQuery());
+        List<MpgMmtMp> mmts = repository.filter(builder.getQuery());
 
         QueryBuilder<GeolocatMpg> builderOrt = repository
             .queryBuilder(GeolocatMpg.class)
             .and("mpgId", messprogramm.getId());
         List<GeolocatMpg> orte =
-            repository.filterPlain(builderOrt.getQuery());
+            repository.filter(builderOrt.getQuery());
 
         // Prepare data for informative transient attributes
         List<String> messungProtocol = new ArrayList<>();
@@ -406,7 +406,7 @@ public class ProbeFactory {
         String gemId = "";
         for (GeolocatMpg ort : orte) {
             if ("E".equals(ort.getTypeRegulation())) {
-                gemId = repository.getByIdPlain(
+                gemId = repository.getById(
                     Site.class, ort.getSiteId()).getAdminUnitId();
             }
         }
@@ -417,7 +417,7 @@ public class ProbeFactory {
             .and("mpgId", messprogramm.getId())
             .and("schedStartDate", startDate)
             .and("schedEndDate", endDate);
-        List<Sample> proben = repository.filterPlain(builderProbe.getQuery());
+        List<Sample> proben = repository.filter(builderProbe.getQuery());
 
         // Add informative transient attributes to existing entity
         if (!proben.isEmpty()) {
@@ -506,7 +506,7 @@ public class ProbeFactory {
         }
         // Reolad the probe to have the old id
         if (!dryrun) {
-            probe = repository.getByIdPlain(Sample.class, probe.getId());
+            probe = repository.getById(Sample.class, probe.getId());
         }
         return probe;
     }
@@ -613,7 +613,7 @@ public class ProbeFactory {
             }
             builder.and("levVal", mediaDesk[i]);
             builder.and("lev", i - 1);
-            List<EnvDescrip> data = repository.filterPlain(builder.getQuery());
+            List<EnvDescrip> data = repository.filter(builder.getQuery());
             if (data.isEmpty()) {
                 return null;
             }
@@ -655,7 +655,7 @@ public class ProbeFactory {
             }
         }
         List<EnvDescripEnvMediumMp> data
-            = repository.filterPlain(builder.getQuery());
+            = repository.filter(builder.getQuery());
         if (data.isEmpty()) {
             return null;
         }
@@ -825,7 +825,7 @@ public class ProbeFactory {
         QueryBuilder<EnvDescripEnvMediumMp> builder =
             repository.queryBuilder(EnvDescripEnvMediumMp.class);
         builder.and("envMediumId", umwId);
-        List<EnvDescripEnvMediumMp> data = repository.filterPlain(builder.getQuery());
+        List<EnvDescripEnvMediumMp> data = repository.filter(builder.getQuery());
         if (data.isEmpty()) {
             logger.debug("getInitialMediaDesk - media_desk : D: 00 00 00 00 00 00 00 00 00 00 00 00");
             return "D: 00 00 00 00 00 00 00 00 00 00 00 00";
@@ -884,73 +884,73 @@ public class ProbeFactory {
             if (s00 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(EnvDescrip.class, s00);
+                d = repository.getById(EnvDescrip.class, s00);
                 mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s01 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(EnvDescrip.class, s01);
+                d = repository.getById(EnvDescrip.class, s01);
                 mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s02 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(EnvDescrip.class, s02);
+                d = repository.getById(EnvDescrip.class, s02);
                 mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s03 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(EnvDescrip.class, s03);
+                d = repository.getById(EnvDescrip.class, s03);
                 mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s04 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(EnvDescrip.class, s04);
+                d = repository.getById(EnvDescrip.class, s04);
                 mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s05 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(EnvDescrip.class, s05);
+                d = repository.getById(EnvDescrip.class, s05);
                 mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s06 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(EnvDescrip.class, s06);
+                d = repository.getById(EnvDescrip.class, s06);
                 mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s07 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(EnvDescrip.class, s07);
+                d = repository.getById(EnvDescrip.class, s07);
                 mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s08 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(EnvDescrip.class, s08);
+                d = repository.getById(EnvDescrip.class, s08);
                 mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s09 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(EnvDescrip.class, s09);
+                d = repository.getById(EnvDescrip.class, s09);
                 mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s10 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(EnvDescrip.class, s10);
+                d = repository.getById(EnvDescrip.class, s10);
                 mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             if (s11 == null) {
                 mediaDesk = mediaDesk + " 00";
             } else {
-                d = repository.getByIdPlain(EnvDescrip.class, s11);
+                d = repository.getById(EnvDescrip.class, s11);
                 mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
             }
             logger.debug("getInitialMediaDesk - umw_desk: " + mediaDesk);

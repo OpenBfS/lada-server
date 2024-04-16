@@ -40,9 +40,7 @@ import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 
 
@@ -77,6 +75,24 @@ public class SiteService extends LadaService {
 
     @Inject
     private Validator<Site> validator;
+
+    public static class Response {
+        private List<Site> data;
+        private int totalCount;
+
+        private Response(List<Site> data, int totalCount) {
+            this.data = data;
+            this.totalCount = totalCount;
+        }
+
+        public List<Site> getData() {
+            return this.data;
+        }
+
+        public int getTotalCount() {
+            return this.totalCount;
+        }
+    }
 
     /**
      * Get Site objects.
@@ -148,24 +164,23 @@ public class SiteService extends LadaService {
 
         int size = Math.toIntExact((Long) countQuery.getSingleResult());
 
-        return authorization.filter(
-            new Response(true, StatusCodes.OK, orte, size), Site.class);
+        return new Response(authorization.filter(orte, Site.class), size);
     }
 
     /**
      * Get a single Site object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Site.
+     * @return a single Site.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public Site getById(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(Site.class, id);
-        validator.validate(response.getData());
-        return authorization.filter(response, Site.class);
+        return authorization.filter(
+            validator.validate(repository.getById(Site.class, id)),
+            Site.class);
     }
 
     /**
@@ -174,7 +189,7 @@ public class SiteService extends LadaService {
      * @return A response object containing the created Site.
      */
     @POST
-    public Response create(
+    public Site create(
         @Valid Site ort
     ) {
         authorization.authorize(
@@ -190,22 +205,20 @@ public class SiteService extends LadaService {
         }
 
         validator.validate(ort);
-
-        Response response = new Response(true, StatusCodes.OK, ort);
         if (ort.getId() == null) {
-            response = repository.create(ort);
+            repository.create(ort);
         }
-        return response;
+        return ort;
     }
 
     /**
      * Update an existing Site object.
      *
-     * @return Response object containing the updated Site object.
+     * @return The updated Site object.
      */
     @PUT
     @Path("{id}")
-    public Response update(
+    public Site update(
         @PathParam("id") Integer id,
         @Valid Site ort
     ) {
@@ -216,28 +229,25 @@ public class SiteService extends LadaService {
 
         ortFactory.completeSite(ort);
 
-        Response response = repository.update(ort);
-        validator.validate(response.getData());
-        return response;
+        return validator.validate(repository.update(ort));
     }
 
     /**
      * Delete an existing Site object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object.
      */
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
-        Site ort = repository.getByIdPlain(Site.class, id);
+        Site ort = repository.getById(Site.class, id);
         authorization.authorize(
             ort,
             RequestMethod.DELETE,
             Site.class);
-        return repository.delete(ort);
+        repository.delete(ort);
     }
 
     /**
@@ -255,7 +265,7 @@ public class SiteService extends LadaService {
             @PathParam("id") Integer id,
             @PathParam("type") @Pattern(regexp = "img|map") String type
     ) {
-        Site site = repository.getByIdPlain(Site.class, id);
+        Site site = repository.getById(Site.class, id);
         return type.equals("map") ? site.getMap() : site.getImg();
     }
 
@@ -278,7 +288,7 @@ public class SiteService extends LadaService {
             @Context HttpServletRequest request,
             @NotBlank String dataUrl
     ) throws IOException {
-        Site site = repository.getByIdPlain(Site.class, id);
+        Site site = repository.getById(Site.class, id);
         authorization.authorize(
                 site,
                 RequestMethod.PUT,
@@ -314,7 +324,7 @@ public class SiteService extends LadaService {
             @PathParam("id") Integer id,
             @PathParam("type") @Pattern(regexp = "img|map") String type
     ) {
-        Site site = repository.getByIdPlain(Site.class, id);
+        Site site = repository.getById(Site.class, id);
         authorization.authorize(
                 site,
                 RequestMethod.PUT,

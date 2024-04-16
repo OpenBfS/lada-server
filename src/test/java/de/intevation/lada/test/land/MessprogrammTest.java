@@ -91,7 +91,7 @@ public class MessprogrammTest extends ServiceTest {
         //Check if referencing probe still has an mpgId
         getById("rest/sample/999", expectedSample);
         JsonObject created = create("rest/mpg", create);
-        final int createdId = created.getJsonObject("data").getInt("id");
+        final int createdId = created.getInt("id");
 
         // Test setting active status
         final JsonObject setActive = Json.createObjectBuilder()

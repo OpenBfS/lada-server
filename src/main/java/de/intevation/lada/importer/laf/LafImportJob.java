@@ -159,7 +159,7 @@ public class LafImportJob extends Job {
                 QueryBuilder<ImportConf> builder =
                     repository.queryBuilder(ImportConf.class);
                 builder.and("measFacilId", mstId);
-                config = repository.filterPlain(builder.getQuery());
+                config = repository.filter(builder.getQuery());
             }
             importer.doImport(content, userInfo, mstId, config, locale);
 

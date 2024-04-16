@@ -7,13 +7,14 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.Poi;
 
 /**
@@ -33,10 +34,10 @@ public class PoiService extends LadaService {
     /**
      * Get all Poi objects.
      *
-     * @return Response object containing all Poi objects.
+     * @return all Poi objects.
      */
     @GET
-    public Response get() {
+    public List<Poi> get() {
         return repository.getAll(Poi.class);
     }
 
@@ -44,11 +45,11 @@ public class PoiService extends LadaService {
      * Get a single Poi object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Poi.
+     * @return a single Poi.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public Poi getById(
         @PathParam("id") String id
     ) {
         return repository.getById(Poi.class, id);

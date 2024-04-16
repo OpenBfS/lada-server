@@ -63,6 +63,6 @@ public class MessprogrammMmtTest extends ServiceTest {
         get(url + "?mpgId=1000");
         update(url + id, "mmtId", "A3", "B3");
         JsonObject created = create(url, create);
-        delete(url + created.getJsonObject("data").get("id"));
+        delete(url + created.get("id"));
     }
 }

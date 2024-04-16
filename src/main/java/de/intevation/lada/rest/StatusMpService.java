@@ -20,8 +20,7 @@ import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
+
 
 /**
  * REST service for StatusMp objects.
@@ -44,10 +43,10 @@ public class StatusMpService extends LadaService {
     /**
      * Get all StatusMp objects.
      *
-     * @return Response object containing all StatusMp objects.
+     * @return all StatusMp objects.
      */
     @GET
-    public Response get() {
+    public List<StatusMp> get() {
         return repository.getAll(StatusMp.class);
     }
 
@@ -55,11 +54,11 @@ public class StatusMpService extends LadaService {
      * Get a single StatusMp object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object
+     * @return StatusMp object
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public StatusMp getById(
         @PathParam("id") Integer id
     ) {
         return repository.getById(StatusMp.class, id);
@@ -73,13 +72,11 @@ public class StatusMpService extends LadaService {
      */
     @POST
     @Path("getbyids")
-    public Response getById(
+    @SuppressWarnings("unchecked")
+    public List<StatusMp> getById(
         List<Integer> measmIds
     ) {
-        return new Response(
-            true,
-            StatusCodes.OK,
-            repository.entityManager().createNativeQuery(
+        return repository.entityManager().createNativeQuery(
                 "SELECT * FROM master.status_mp "
                 + "WHERE id IN(SELECT to_id FROM master.status_ord_mp "
                 + "  JOIN lada.status_prot ON from_id = status_mp_id"
@@ -89,6 +86,6 @@ public class StatusMpService extends LadaService {
                 StatusMp.class)
             .setParameter("measmIds", measmIds)
             .setParameter("levIds", authorization.getInfo().getFunktionen())
-            .getResultList());
+            .getResultList();
     }
 }

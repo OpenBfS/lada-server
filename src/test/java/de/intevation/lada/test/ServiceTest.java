@@ -282,9 +282,9 @@ public class ServiceTest {
     /**
      * Base for all GET requests expecting success.
      * @param parameter the url parameter used in the request.
-     * @return the json object returned by the serive.
+     * @return the JSON returned by the service
      */
-    public JsonObject get(String parameter) {
+    public JsonValue get(String parameter) {
         return get(parameter, Response.Status.OK);
     }
 
@@ -292,9 +292,9 @@ public class ServiceTest {
      * Base for all GET requests.
      * @param parameter the url parameter used in the request.
      * @param expectedStatus Expected HTTP status code
-     * @return the json object returned by the serive.
+     * @return the JSON returned by the service.
      */
-    public JsonObject get(
+    public JsonValue get(
         String parameter, Response.Status expectedStatus
     ) {
         WebTarget target = client.target(baseUrl + parameter);
@@ -303,14 +303,7 @@ public class ServiceTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
             .get();
-        JsonObject content = BaseTest.parseResponse(
-            response, expectedStatus);
-
-        if (Response.Status.OK.equals(expectedStatus)) {
-            Assert.assertNotNull(content.getJsonArray("data"));
-        }
-
-        return content;
+        return BaseTest.parseResponse(response, expectedStatus);
     }
 
     /**
@@ -330,10 +323,8 @@ public class ServiceTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
             .get();
-        JsonObject content = BaseTest.parseResponse(response);
         /* Verify the response*/
-        Assert.assertFalse(content.getJsonObject("data").isEmpty());
-        JsonObject object = content.getJsonObject("data");
+        JsonObject object = BaseTest.parseResponse(response).asJsonObject();
         for (Entry<String, JsonValue> entry : expected.entrySet()) {
             if (entry.getKey().equals("parentModified")
                 || entry.getKey().equals("treeMod")
@@ -346,7 +337,7 @@ public class ServiceTest {
                 entry.getValue(),
                 object.get(key));
         }
-        return content;
+        return object;
     }
 
     /**
@@ -383,39 +374,7 @@ public class ServiceTest {
             .accept(MediaType.APPLICATION_JSON)
             .acceptLanguage(acceptLanguage)
             .post(Entity.entity(create.toString(), MediaType.APPLICATION_JSON));
-        JsonObject content = BaseTest.parseResponse(response, expectedStatus);
-
-        return content;
-    }
-
-    /**
-     * Test service using a list of input objects.
-     * @param parameter the parameters used in the request.
-     * @param payload the objects embedded in POST body.
-     * @return The resulting json object.
-     *
-     */
-    public JsonObject bulkOperation(
-        String parameter, JsonArray payload
-    ) {
-        WebTarget target = client.target(baseUrl + parameter);
-        /* Send a post request containing a new object*/
-        Response response = target.request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .accept(MediaType.APPLICATION_JSON)
-            .post(Entity.entity(
-                    payload.toString(), MediaType.APPLICATION_JSON));
-        JsonObject content = BaseTest.parseResponse(response);
-        //Check each result
-        content.getJsonArray("data").forEach(object -> {
-            JsonObject responseObj = (JsonObject) object;
-            Assert.assertTrue(
-                "Unsuccessful response list element:\n" + responseObj,
-                responseObj.getBoolean("success"));
-            Assert.assertEquals("200", responseObj.getString("message"));
-        });
-        return content;
+        return BaseTest.parseResponse(response, expectedStatus).asJsonObject();
     }
 
     /**
@@ -458,14 +417,13 @@ public class ServiceTest {
         Response.Status expectedStatus
     ) {
         /* Request object corresponding to id in URL */
-        final String objKey = "data";
         WebTarget target = client.target(baseUrl + parameter);
         Response response = target.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
         JsonObject oldObject = BaseTest.parseResponse(
-            response).getJsonObject(objKey);
+            response).asJsonObject();
 
         BaseTest.assertContains(oldObject, updateAttribute);
         Assert.assertEquals(
@@ -494,20 +452,19 @@ public class ServiceTest {
 
         /* Verify the response*/
         JsonObject updatedObject = BaseTest.parseResponse(
-            updated, expectedStatus);
+            updated, expectedStatus).asJsonObject();
         if (!Response.Status.OK.equals(expectedStatus)) {
             return updatedObject;
         }
 
         Assert.assertEquals(newValue,
-            updatedObject.getJsonObject("data").getString(updateAttribute));
+            updatedObject.getString(updateAttribute));
 
         final String modTimeKey = "letzteAenderung";
         if (oldObject.containsKey(modTimeKey)) {
             Assert.assertTrue(
                 "Object modification timestamp did not increase",
-                Long.parseLong(
-                    updatedObject.getJsonObject(objKey).getString(modTimeKey))
+                Long.parseLong(updatedObject.getString(modTimeKey))
                 > Long.parseLong(oldObject.getString(modTimeKey))
             );
         }
@@ -518,19 +475,17 @@ public class ServiceTest {
     /**
      * Test the DELETE Service.
      * @param parameter the parameters used in the request.
-     * @return The resulting json object.
      */
-    public JsonObject delete(String parameter) {
-        return delete(parameter, Response.Status.OK);
+    public void delete(String parameter) {
+        delete(parameter, Response.Status.NO_CONTENT);
     }
 
     /**
      * Test the DELETE Service.
      * @param parameter the parameters used in the request.
      * @param expectedStatus Expected HTTP status code
-     * @return The resulting json object.
      */
-    public JsonObject delete(String parameter, Response.Status expectedStatus) {
+    public void delete(String parameter, Response.Status expectedStatus) {
         WebTarget target =
             client.target(baseUrl + parameter);
         /* Delete object with ID given in URL */
@@ -538,9 +493,7 @@ public class ServiceTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .delete();
-        JsonObject content = BaseTest.parseResponse(response, expectedStatus);
-
-        return content;
+        BaseTest.parseResponse(response, expectedStatus);
     }
 
     /**
@@ -561,8 +514,7 @@ public class ServiceTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject data = BaseTest.parseResponse(response)
-            .getJsonObject("data");
+        JsonObject data = BaseTest.parseResponse(response).asJsonObject();
 
         final String auditKey = "audit";
         BaseTest.assertContains(data, auditKey);
@@ -571,7 +523,6 @@ public class ServiceTest {
             "Missing audit entry for field '" + updateFieldKey
             + "' changed to value '" + newValue + "'",
             hasAuditedUpdate(audit, updateFieldKey, newValue));
-
     }
 
     private boolean hasAuditedUpdate(

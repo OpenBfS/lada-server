@@ -47,7 +47,7 @@ public class CoordinatesInVE implements Rule {
             QueryBuilder<AdminBorderView> vg = repository
                 .queryBuilder(AdminBorderView.class)
                 .and(municIdKey, gemId);
-            List<AdminBorderView> vgs = repository.filterPlain(vg.getQuery());
+            List<AdminBorderView> vgs = repository.filter(vg.getQuery());
             if (vgs.isEmpty()) {
                 violation.addWarning(
                     municIdKey, StatusCodes.GEO_COORD_UNCHECKED);

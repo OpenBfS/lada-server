@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -18,8 +20,6 @@ import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.SpatRefSys;
 import de.intevation.lada.validation.constraints.SupportedSpatRefSysId;
 import de.intevation.lada.validation.constraints.ValidCoordinates;
@@ -64,10 +64,10 @@ public class SpatRefSysService extends LadaService {
 
     /**
      * Get all SpatRefSys objects.
-     * @return Response object containing all SpatRefSys objects.
+     * @return all SpatRefSys objects.
      */
     @GET
-    public Response get() {
+    public List<SpatRefSys> get() {
         return repository.getAll(SpatRefSys.class);
     }
 
@@ -75,25 +75,24 @@ public class SpatRefSysService extends LadaService {
      * Get a single SpatRefSys object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single SpatRefSys.
+     * @return a single SpatRefSys.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public SpatRefSys getById(
         @PathParam("id") Integer id
     ) {
         return repository.getById(SpatRefSys.class, id);
     }
 
     @POST
-    public Response recalculate(
+    public KdaUtil.Result recalculate(
         @Valid PostData object
     ) {
-        KdaUtil.Result result = new KdaUtil().transform(
+        return new KdaUtil().transform(
             KdaUtil.KDAS.get(object.from),
             KdaUtil.KDAS.get(object.to),
             object.x,
             object.y);
-        return new Response(true, StatusCodes.OK, result);
     }
 }

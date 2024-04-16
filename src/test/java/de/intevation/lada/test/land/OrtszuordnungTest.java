@@ -67,6 +67,6 @@ public class OrtszuordnungTest extends ServiceTest {
             "addSiteText",
             "Test",
             "Test geändert");
-        delete("rest/geolocat/" + created.getJsonObject("data").get("id"));
+        delete("rest/geolocat/" + created.get("id"));
     }
 }

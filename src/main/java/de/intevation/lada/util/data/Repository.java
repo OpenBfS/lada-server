@@ -22,8 +22,6 @@ import jakarta.ws.rs.NotFoundException;
 
 import org.jboss.logging.Logger;
 
-import de.intevation.lada.util.rest.Response;
-
 
 /**
  * Provides various methods for database access.
@@ -53,11 +51,11 @@ public class Repository {
      * Create and persist a new object in the database.
      *
      * @param object The new object.
+     * @param <T> Type of object.
      *
-     * @return Response object containing the new object, potentially
-     *         modified by the database.
+     * @return The new object, potentially modified by the database.
      */
-    public Response create(Object object) {
+    public <T> T create(T object) {
         em.persist(object);
         em.flush();
         /* Refreshing the object is necessary because some objects use
@@ -65,78 +63,36 @@ public class Repository {
            to the DB to take advantage of DB DEFAULT values, or triggers
            modify the object during INSERT. */
         em.refresh(object);
-        return new Response(true, StatusCodes.OK, object);
+        return object;
     }
 
     /**
      * Update an existing object in the database.
      *
      * @param object The object.
+     * @param <T> Type of object.
      *
-     * @return Response object containing the upadted object.
+     * @return The updated object.
      */
-    public Response update(Object object) {
-        Object managedObject = em.merge(object);
+    public <T> T update(T object) {
+        T managedObject = em.merge(object);
         /* Flushing and refreshing is necessary because e.g. triggers can modify
            the object in the database during UPDATE. */
         em.flush();
         em.refresh(managedObject);
-        return new Response(true, StatusCodes.OK, managedObject);
+        return managedObject;
     }
 
     /**
      * Delete an object from the database.
      *
      * @param object The object.
-     *
-     * @return Response object.
      */
-    public Response delete(Object object) {
+    public void delete(Object object) {
         em.remove(
             em.contains(object)
             ? object : em.merge(object));
         em.flush();
-        return new Response(true, StatusCodes.OK, object);
-    }
-
-    /**
-     * Get objects from database using the given filter.
-     *
-     * @param <T> The type of the objects.
-     * @param filter Filter used to request objects.
-     *
-     * @return Response object containing the filtered list of objects.
-     */
-    public <T> Response filter(CriteriaQuery<T> filter) {
-        List<T> result = filterPlain(filter);
-        return new Response(true, StatusCodes.OK, result);
-    }
-
-    /**
-     * Get all objects.
-     *
-     * @param <T> The type of the objects.
-     * @param clazz The type of the objects.
-     *
-     * @return Response object containg all requested objects.
-     */
-    public <T> Response getAll(Class<T> clazz) {
-        List<T> result = getAllPlain(clazz);
-        return new Response(true, StatusCodes.OK, result);
-    }
-
-    /**
-     * Get an object by its id.
-     *
-     * @param <T> The type of the objects.
-     * @param clazz The type of the object.
-     * @param id The id of the object.
-     *
-     * @return Response object containg the requested object.
-     * @throws NotFoundException if no entity with given ID exists
-     */
-    public <T> Response getById(Class<T> clazz, Object id) {
-        return new Response(true, StatusCodes.OK, getByIdPlain(clazz, id));
     }
 
     /**
@@ -177,7 +133,7 @@ public class Repository {
      *
      * @return List<T> with the requested objects.
      */
-    public <T> List<T> filterPlain(CriteriaQuery<T> filter) {
+    public <T> List<T> filter(CriteriaQuery<T> filter) {
         return em.createQuery(filter).getResultList();
     }
 
@@ -195,7 +151,7 @@ public class Repository {
      * @throws NoResultException if there is no result
      * @throws NonUniqueResultException if more than one result
      */
-    public <T> T getSinglePlain(
+    public <T> T getSingle(
         CriteriaQuery<T> filter
     ) throws NoResultException, NonUniqueResultException {
         return (T) em.createQuery(filter).getSingleResult();
@@ -209,7 +165,7 @@ public class Repository {
      *
      * @return List<T> with the objects of the requested type.
      */
-    public <T> List<T> getAllPlain(Class<T> clazz) {
+    public <T> List<T> getAll(Class<T> clazz) {
         QueryBuilder<T> builder = queryBuilder(clazz);
         return em.createQuery(builder.getQuery()).getResultList();
     }
@@ -224,7 +180,7 @@ public class Repository {
      * @return The requested object or null if not found.
      * @throws NotFoundException if no entity with given ID exists
      */
-    public <T> T getByIdPlain(Class<T> clazz, Object id) {
+    public <T> T getById(Class<T> clazz, Object id) {
         T item = em.find(clazz, id);
         if (item == null) {
             throw new NotFoundException();

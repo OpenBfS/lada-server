@@ -41,13 +41,13 @@ public class UmweltToProbezusatz implements Rule {
             QueryBuilder<EnvSpecifMp> builderUmwZus = repository
                 .queryBuilder(EnvSpecifMp.class)
                 .and("envMediumId", umwId);
-            List <EnvSpecifMp> umwZus = repository.filterPlain(
+            List <EnvSpecifMp> umwZus = repository.filter(
                 builderUmwZus.getQuery());
 
             QueryBuilder<SampleSpecifMeasVal> builderZusatz = repository
                 .queryBuilder(SampleSpecifMeasVal.class)
                 .and("sampleId", probe.getId());
-            List<SampleSpecifMeasVal> zusWert = repository.filterPlain(
+            List<SampleSpecifMeasVal> zusWert = repository.filter(
                 builderZusatz.getQuery());
             Violation violation = new Violation();
             for (SampleSpecifMeasVal zusW: zusWert) {

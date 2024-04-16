@@ -7,13 +7,14 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.TypeRegulation;
 
 /**
@@ -33,10 +34,10 @@ public class TypeRegulationService extends LadaService {
     /**
      * Get all TypeRegulation objects.
      *
-     * @return Response object containing all TypeRegulation objects.
+     * @return all TypeRegulation objects.
      */
     @GET
-    public Response get() {
+    public List<TypeRegulation> get() {
         return repository.getAll(TypeRegulation.class);
     }
 
@@ -44,11 +45,11 @@ public class TypeRegulationService extends LadaService {
      * Get a single TypeRegulation object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single TypeRegulation.
+     * @return a single TypeRegulation.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public TypeRegulation getById(
         @PathParam("id") String id
     ) {
         return repository.getById(TypeRegulation.class, id);

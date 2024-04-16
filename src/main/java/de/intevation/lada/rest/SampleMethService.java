@@ -7,13 +7,14 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.SampleMeth;
 
 /**
@@ -33,10 +34,10 @@ public class SampleMethService extends LadaService {
     /**
      * Get all SampleMeth objects.
      *
-     * @return Response object containing all SampleMeth objects.
+     * @return all SampleMeth objects.
      */
     @GET
-    public Response get() {
+    public List<SampleMeth> get() {
         return repository.getAll(SampleMeth.class);
     }
 
@@ -44,11 +45,11 @@ public class SampleMethService extends LadaService {
      * Get a single SampleMeth object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single SampleMeth.
+     * @return a single SampleMeth.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public SampleMeth getById(
         @PathParam("id") Integer id
     ) {
         return repository.getById(SampleMeth.class, id);

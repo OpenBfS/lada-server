@@ -236,14 +236,14 @@ public class JsonExporter implements Exporter {
             builder.or("id", id);
         }
         List<Measm> messungen =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
         if (messungen.isEmpty()) {
             return null;
         }
         final ObjectMapper mapper = createObjectMapper();
         ArrayNode json = mapper.createArrayNode();
         for (Measm m : messungen) {
-            Sample p = repository.getByIdPlain(
+            Sample p = repository.getById(
                 Sample.class,
                 m.getSampleId()
             );
@@ -253,7 +253,7 @@ public class JsonExporter implements Exporter {
                 addProbeninfo(jsProbe);
                 tmp = mapper.writeValueAsString(m);
                 JsonNode jsMessung = mapper.readTree(tmp);
-                Mmt mmt = repository.getByIdPlain(
+                Mmt mmt = repository.getById(
                     Mmt.class,
                     m.getMmtId()
                 );
@@ -293,7 +293,7 @@ public class JsonExporter implements Exporter {
             builder.or("id", id);
         }
         List<Sample> proben =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(proben);
@@ -316,15 +316,15 @@ public class JsonExporter implements Exporter {
 
     private void addProbeninfo(JsonNode node) {
         ObjectNode probe = (ObjectNode) node;
-        SampleMeth art = repository.getByIdPlain(
+        SampleMeth art = repository.getById(
             SampleMeth.class,
             probe.get("sampleMethId").asInt()
         );
-        Regulation datenbasis = repository.getByIdPlain(
+        Regulation datenbasis = repository.getById(
             Regulation.class,
             probe.get("regulationId").asInt()
         );
-        EnvMedium umw = repository.getByIdPlain(
+        EnvMedium umw = repository.getById(
             EnvMedium.class,
             probe.get("envMediumId").asText()
         );
@@ -334,14 +334,14 @@ public class JsonExporter implements Exporter {
             datenbasis == null ? "" : datenbasis.getName());
         probe.put("envMediumName", umw == null ? "" : umw.getName());
         if (probe.get("oprModeId").asInt() != 0) {
-            OprMode ba = repository.getByIdPlain(
+            OprMode ba = repository.getById(
                 OprMode.class,
                 probe.get("oprModeId").asInt()
             );
             probe.put("oprModeName", ba.getName());
         }
         if (probe.get("mpgCategId").asInt() != 0) {
-            MpgCateg mpl = repository.getByIdPlain(
+            MpgCateg mpl = repository.getById(
                 MpgCateg.class,
                 probe.get("mpgCategId").asInt()
             );
@@ -349,7 +349,7 @@ public class JsonExporter implements Exporter {
             probe.put("mpgCategName", mpl.getName());
         }
         if (probe.get("samplerId").asInt() != 0) {
-            Sampler probenehmer = repository.getByIdPlain(
+            Sampler probenehmer = repository.getById(
                 Sampler.class,
                 probe.get("samplerId").asInt()
             );
@@ -360,7 +360,7 @@ public class JsonExporter implements Exporter {
                 "samplerShortText", probenehmer.getShortText());
         }
         if (probe.get("reiAgGrId").asInt() != 0) {
-            ReiAgGr reiAgGr = repository.getByIdPlain(
+            ReiAgGr reiAgGr = repository.getById(
                 ReiAgGr.class,
                 probe.get("reiAgGrId").asInt()
             );
@@ -370,11 +370,11 @@ public class JsonExporter implements Exporter {
     }
 
     private void addMessstelle(JsonNode node) {
-        MeasFacil messstelle = repository.getByIdPlain(
+        MeasFacil messstelle = repository.getById(
             MeasFacil.class,
             node.get("measFacilId").asText()
         );
-        MeasFacil laborMessstelle = repository.getByIdPlain(
+        MeasFacil laborMessstelle = repository.getById(
             MeasFacil.class,
             node.get("apprLabId").asText()
         );
@@ -396,13 +396,13 @@ public class JsonExporter implements Exporter {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
         builder.and("sampleId", probe.get("id").asInt());
         List<Measm> messungen =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(messungen);
             JsonNode nodes = mapper.readTree(tmp);
             for (int i = 0; i < nodes.size(); i++) {
-                Mmt mmt = repository.getByIdPlain(
+                Mmt mmt = repository.getById(
                     Mmt.class,
                     nodes.get(i).get("mmtId").asText()
                 );
@@ -424,13 +424,13 @@ public class JsonExporter implements Exporter {
             repository.queryBuilder(CommSample.class);
         builder.and("sampleId", probe.get("id").asInt());
         List<CommSample> kommentare =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(kommentare);
             JsonNode nodes = mapper.readTree(tmp);
             for (int i = 0; i < nodes.size(); i++) {
-                MeasFacil mst = repository.getByIdPlain(
+                MeasFacil mst = repository.getById(
                     MeasFacil.class,
                     nodes.get(i).get("measFacilId").asText()
                 );
@@ -450,13 +450,13 @@ public class JsonExporter implements Exporter {
             repository.queryBuilder(SampleSpecifMeasVal.class);
         builder.and("sampleId", probe.get("id").asInt());
         List<SampleSpecifMeasVal> zusatzwerte =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(zusatzwerte);
             JsonNode nodes = mapper.readTree(tmp);
             for (int i = 0; i < nodes.size(); i++) {
-                SampleSpecif pz = repository.getByIdPlain(
+                SampleSpecif pz = repository.getById(
                     SampleSpecif.class,
                     nodes.get(i).get("sampleSpecifId").asText()
                 );
@@ -464,7 +464,7 @@ public class JsonExporter implements Exporter {
                     "sampleSpecifName", pz.getName());
                 Integer mehId = pz.getMeasUnitId();
                 if (mehId != null) {
-                MeasUnit meh = repository.getByIdPlain(
+                MeasUnit meh = repository.getById(
                     MeasUnit.class, mehId);
                 ((ObjectNode) nodes.get(i)).put(
                     "unit", meh.getUnitSymbol());
@@ -502,7 +502,7 @@ public class JsonExporter implements Exporter {
                     builder.and("predId", vorgaenger);
                 }
                 List<EnvDescrip> found =
-                    repository.filterPlain(builder.getQuery());
+                    repository.filter(builder.getQuery());
                 if (!found.isEmpty()) {
                     beschreibung = found.get(0).getName();
                     if ((isZebs && i < ZEBS_COUNTER)
@@ -534,19 +534,19 @@ public class JsonExporter implements Exporter {
             repository.queryBuilder(MeasVal.class);
         builder.and("measmId", node.get("id").asInt());
         List<MeasVal> messwerte =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(messwerte);
             JsonNode nodes = mapper.readTree(tmp);
             for (int i = 0; i < nodes.size(); i++) {
-                MeasUnit meh = repository.getByIdPlain(
+                MeasUnit meh = repository.getById(
                     MeasUnit.class,
                     nodes.get(i).get("measUnitId").asInt()
                 );
                 ((ObjectNode) nodes.get(i)).put("unit",
                     meh == null ? "" : meh.getUnitSymbol());
-                Measd mg = repository.getByIdPlain(
+                Measd mg = repository.getById(
                     Measd.class,
                     nodes.get(i).get("measdId").asInt()
                 );
@@ -565,13 +565,13 @@ public class JsonExporter implements Exporter {
             repository.queryBuilder(CommMeasm.class);
         builder.and("measmId", node.get("id").asInt());
         List<CommMeasm> kommentare =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(kommentare);
             JsonNode nodes = mapper.readTree(tmp);
             for (int i = 0; i < nodes.size(); i++) {
-                MeasFacil mst = repository.getByIdPlain(
+                MeasFacil mst = repository.getById(
                     MeasFacil.class,
                     nodes.get(i).get("measFacilId").asText()
                 );
@@ -591,13 +591,13 @@ public class JsonExporter implements Exporter {
             repository.queryBuilder(StatusProt.class);
         builder.and("measmId", node.get("id").asInt());
         List<StatusProt> status =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(status);
             JsonNode nodes = mapper.readTree(tmp);
             for (int i = 0; i < nodes.size(); i++) {
-                StatusMp kombi = repository.getByIdPlain(
+                StatusMp kombi = repository.getById(
                     StatusMp.class,
                     nodes.get(i).get("statusMpId").asInt()
                 );
@@ -607,7 +607,7 @@ public class JsonExporter implements Exporter {
                 ((ObjectNode) nodes.get(i)).put(
                     "statusVal",
                     kombi.getStatusVal().getVal());
-                MeasFacil mst = repository.getByIdPlain(
+                MeasFacil mst = repository.getById(
                     MeasFacil.class,
                     nodes.get(i).get("measFacilId").asText()
                 );
@@ -627,7 +627,7 @@ public class JsonExporter implements Exporter {
             repository.queryBuilder(Geolocat.class);
         builder.and("sampleId", node.get("id").asInt());
         List<Geolocat> ortszuordnung =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
         try {
             String tmp = mapper.writeValueAsString(ortszuordnung);
@@ -643,7 +643,7 @@ public class JsonExporter implements Exporter {
     }
 
     private void addOrt(JsonNode node) {
-        Site ort = repository.getByIdPlain(
+        Site ort = repository.getById(
                 Site.class, node.get("siteId").asInt());
         Jsonb ortJsonb = JsonbBuilder.create();
         String tmp = ortJsonb.toJson(ort);
@@ -653,7 +653,7 @@ public class JsonExporter implements Exporter {
 
             final String gemIdKey = "adminUnitId";
             if (oNode.hasNonNull(gemIdKey)) {
-                AdminUnit ve = repository.getByIdPlain(
+                AdminUnit ve = repository.getById(
                     AdminUnit.class,
                     oNode.get(gemIdKey).asText()
                 );
@@ -663,7 +663,7 @@ public class JsonExporter implements Exporter {
 
             final String staatIdKey = "stateId";
             if (oNode.hasNonNull(staatIdKey)) {
-                State staat = repository.getByIdPlain(
+                State staat = repository.getById(
                     State.class,
                     oNode.get(staatIdKey).asInt()
                 );

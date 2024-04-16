@@ -94,7 +94,7 @@ public class AsyncImportService extends LadaService {
         }
         MeasFacil mst;
         try {
-            mst = repository.getByIdPlain(MeasFacil.class, mstId);
+            mst = repository.getById(MeasFacil.class, mstId);
         } catch (NotFoundException nfe) {
             errBuilder.add("data", "Wrong header for messtelle.");
             return Response.ok(errBuilder.build().toString()).build();

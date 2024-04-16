@@ -10,8 +10,11 @@ package de.intevation.lada.test.stamm;
 import java.net.URL;
 
 import jakarta.json.Json;
-import jakarta.json.JsonObject;
+import jakarta.json.JsonArray;
 import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
@@ -50,13 +53,18 @@ public class StatusMpTest extends ServiceTest {
         );
 
         final int measmId = 1801;
-        // Nothing created here, but the method just issues a POST request
-        final JsonObject reachable = create(URL + "getbyids",
-            Json.createArrayBuilder().add(measmId).build());
-        final String dataKey = "data";
-        BaseTest.assertContains(reachable, dataKey);
+        Response response = client.target(baseUrl + URL + "getbyids")
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .accept(MediaType.APPLICATION_JSON)
+            .post(Entity.entity(
+                    Json.createArrayBuilder().add(measmId).build().toString(),
+                    MediaType.APPLICATION_JSON));
+        final JsonArray reachable =
+            BaseTest.parseResponse(response).asJsonArray();
         MatcherAssert.assertThat(
-            reachable.getJsonArray(dataKey),
+            reachable,
             CoreMatchers.hasItems(
                 Json.createObjectBuilder()
                 .add("id", 2)

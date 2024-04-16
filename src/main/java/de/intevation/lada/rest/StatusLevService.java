@@ -7,13 +7,14 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.StatusLev;
 
 /**
@@ -33,10 +34,10 @@ public class StatusLevService extends LadaService {
     /**
      * Get all StatusLev objects.
      *
-     * @return Response object containing all StatusLev objects.
+     * @return all StatusLev objects.
      */
     @GET
-    public Response get() {
+    public List<StatusLev> get() {
         return repository.getAll(StatusLev.class);
     }
 
@@ -44,11 +45,11 @@ public class StatusLevService extends LadaService {
      * Get a single StatusLev object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single StatusLev.
+     * @return a single StatusLev.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public StatusLev getById(
         @PathParam("id") Integer id
     ) {
         return repository.getById(StatusLev.class, id);

@@ -120,7 +120,7 @@ implements Creator {
      * @return LAF conform string.
      */
     private String probeToLAF(Integer probeId, List<Integer> messungen) {
-        Sample aProbe = repository.getByIdPlain(Sample.class, probeId);
+        Sample aProbe = repository.getById(Sample.class, probeId);
         String lafProbe = writeAttributes(aProbe, messungen);
         return lafProbe;
     }
@@ -135,24 +135,24 @@ implements Creator {
         QueryBuilder<CommSample> kommBuilder = repository
             .queryBuilder(CommSample.class)
             .and("sampleId", probe.getId());
-        List<CommSample> kommentare = repository.filterPlain(
+        List<CommSample> kommentare = repository.filter(
             kommBuilder.getQuery());
 
         String probenart = null;
         if (probe.getSampleMethId() != null) {
-            probenart = repository.getByIdPlain(
+            probenart = repository.getById(
                 SampleMeth.class, probe.getSampleMethId()).getExtId();
         }
 
         MeasFacil messstelle =
-            repository.getByIdPlain(
+            repository.getById(
                 MeasFacil.class, probe.getMeasFacilId());
 
         QueryBuilder<SampleSpecifMeasVal> zusatzBuilder = repository
             .queryBuilder(SampleSpecifMeasVal.class)
             .and("sampleId", probe.getId());
         List<SampleSpecifMeasVal> zusatzwerte =
-            repository.filterPlain(zusatzBuilder.getQuery());
+            repository.filter(zusatzBuilder.getQuery());
 
         String laf = "";
         laf += lafLine("PROBE_ID", probe.getExtId(), CN);
@@ -232,22 +232,22 @@ implements Creator {
             ? lafLine("TESTDATEN", "1")
             : lafLine("TESTDATEN", "0");
         if (probe.getDatasetCreatorId() != null) {
-            DatasetCreator erz = repository.getByIdPlain(
+            DatasetCreator erz = repository.getById(
                 DatasetCreator.class, probe.getDatasetCreatorId());
             laf += lafLine("ERZEUGER", erz.getExtId(), CN);
         }
         if (probe.getMpgCategId() != null) {
-            MpgCateg mpkat = repository.getByIdPlain(
+            MpgCateg mpkat = repository.getById(
                 MpgCateg.class, probe.getMpgCategId());
             laf += lafLine("MESSPROGRAMM_LAND", mpkat.getExtId(), CN);
         }
         if (probe.getSamplerId() != null) {
-            Sampler prn = repository.getByIdPlain(
+            Sampler prn = repository.getById(
                 Sampler.class, probe.getSamplerId());
             laf += lafLine("PROBENAHMEINSTITUTION", prn.getExtId(), CN);
         }
         if (probe.getReiAgGrId() != null) {
-            ReiAgGr rpg = repository.getByIdPlain(
+            ReiAgGr rpg = repository.getById(
                 ReiAgGr.class,
                 probe.getReiAgGrId());
             laf += lafLine(
@@ -272,7 +272,7 @@ implements Creator {
      * @return Single LAF line.
      */
     private String writeZusatzwert(SampleSpecifMeasVal zw) {
-        SampleSpecif zusatz = repository.getByIdPlain(
+        SampleSpecif zusatz = repository.getById(
             SampleSpecif.class, zw.getSampleSpecifId());
 
         String value = "\"" + zusatz.getId() + "\"";
@@ -296,7 +296,7 @@ implements Creator {
         QueryBuilder<Geolocat> builder = repository
             .queryBuilder(Geolocat.class)
             .and("sampleId", probe.getId());
-        List<Geolocat> orte = repository.filterPlain(builder.getQuery());
+        List<Geolocat> orte = repository.filter(builder.getQuery());
 
         String laf = "";
         for (Geolocat o : orte) {
@@ -334,7 +334,7 @@ implements Creator {
         QueryBuilder<Site> oBuilder = repository
             .queryBuilder(Site.class)
             .and("id", o.getSiteId());
-        Site sOrt = repository.getSinglePlain(oBuilder.getQuery());
+        Site sOrt = repository.getSingle(oBuilder.getQuery());
 
         if (sOrt.getStateId() != null) {
             laf += lafLine(typePrefix + "HERKUNFTSLAND_S",
@@ -349,7 +349,7 @@ implements Creator {
         }
 
         if (sOrt.getMunicDivId() != null) {
-            MunicDiv gu = repository.getByIdPlain(
+            MunicDiv gu = repository.getById(
                 MunicDiv.class, sOrt.getMunicDivId());
             laf += lafLine(typePrefix + "ORTS_ZUSATZKENNZAHL",
                 gu.getSiteId(), CN);
@@ -369,7 +369,7 @@ implements Creator {
         } else if ("U_".equals(typePrefix)
             && "R".equals(o.getTypeRegulation())
         ) {
-            Sample s = repository.getByIdPlain(Sample.class, o.getSampleId());
+            Sample s = repository.getById(Sample.class, o.getSampleId());
             if (s.getRegulationId() == DATENBASIS4) {
                 laf += lafLine(
                     typePrefix + "ORTS_ZUSATZCODE",
@@ -420,7 +420,7 @@ implements Creator {
         } else {
             builder.andIn("id", messungen);
         }
-        List<Measm> mess = repository.filterPlain(
+        List<Measm> mess = repository.filter(
             builder.getQuery());
 
         String laf = "";
@@ -429,12 +429,12 @@ implements Creator {
             QueryBuilder<MeasVal> wertBuilder = repository
                 .queryBuilder(MeasVal.class)
                 .and("measmId", m.getId());
-            List<MeasVal> werte = repository.filterPlain(
+            List<MeasVal> werte = repository.filter(
                 wertBuilder.getQuery());
             QueryBuilder<CommMeasm> kommBuilder = repository
                 .queryBuilder(CommMeasm.class)
                 .and("measmId", m.getId());
-            List<CommMeasm> kommentare = repository.filterPlain(
+            List<CommMeasm> kommentare = repository.filter(
                 kommBuilder.getQuery());
             laf += lafLine("MESSUNGS_ID", m.getExtId().toString());
             laf += m.getMinSampleId() == null
@@ -485,12 +485,12 @@ implements Creator {
         repository.queryBuilder(StatusProt.class);
             builder.and("measmId", messung.getId());
         builder.orderBy("id", false);
-        List<StatusProt> statusHistory = repository.filterPlain(
+        List<StatusProt> statusHistory = repository.filter(
                 builder.getQuery());
         Integer stufe = 4;
         Integer st, w;
         for (StatusProt statusEntry : statusHistory) {
-            StatusMp stKombi = repository.getByIdPlain(
+            StatusMp stKombi = repository.getById(
                 StatusMp.class,
                 statusEntry.getStatusMpId()
             );
@@ -532,14 +532,14 @@ implements Creator {
      */
     private String writeMesswert(MeasVal mw) {
         String tag = "MESSWERT";
-        String value = "\"" + repository.getByIdPlain(
+        String value = "\"" + repository.getById(
             Measd.class, mw.getMeasdId()).getName() + "\"";
         value += " ";
         value += mw.getLessThanLOD() == null ? " " : mw.getLessThanLOD();
         value += mw.getLessThanLOD() == null
             ? mw.getMeasVal() : mw.getDetectLim();
 
-        value += " \"" + repository.getByIdPlain(
+        value += " \"" + repository.getById(
             MeasUnit.class, mw.getMeasUnitId()).getUnitSymbol() + "\"";
         value += mw.getError() == null ? " 0.0" : " " + mw.getError();
         if (mw.getIsThreshold() == null

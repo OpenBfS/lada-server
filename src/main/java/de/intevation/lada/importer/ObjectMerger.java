@@ -158,7 +158,7 @@ public class ObjectMerger {
             builder.and("sampleId", target.getId());
             builder.and("sampleSpecifId", zusatzwerte.get(i).getSampleSpecifId());
             List<SampleSpecifMeasVal> found =
-                repository.filterPlain(builder.getQuery());
+                repository.filter(builder.getQuery());
             if (found.isEmpty()) {
                 repository.create(zusatzwerte.get(i));
                 continue;
@@ -195,7 +195,7 @@ public class ObjectMerger {
             repository.queryBuilder(MeasVal.class);
         builder.and("measmId", target.getId());
         List<MeasVal> found =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
         if (found.isEmpty()) {
             for (int i = 0; i < messwerte.size(); i++) {
                 repository.create(messwerte.get(i));
@@ -237,7 +237,7 @@ public class ObjectMerger {
         builder.and("sampleId", probeId);
         builder.and("typeRegulation", "E");
         List<Geolocat> found =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
         if (found.isEmpty()) {
             repository.create(ort);
             return this;
@@ -277,7 +277,7 @@ public class ObjectMerger {
             builder.and("typeRegulation", "U");
             builder.and("siteId", orte.get(i).getSiteId());
             List<Geolocat> found =
-                repository.filterPlain(builder.getQuery());
+                repository.filter(builder.getQuery());
             if (found.isEmpty()) {
                 repository.create(orte.get(i));
             }

@@ -65,7 +65,7 @@ public class LafExporter implements Exporter {
             laf += creator.createProbe(probeId);
         }
         for (Integer messungId: messungen) {
-            Measm m = repository.getByIdPlain(
+            Measm m = repository.getById(
                 Measm.class, messungId);
             List<Integer> mList = new ArrayList<>();
             mList.add(messungId);

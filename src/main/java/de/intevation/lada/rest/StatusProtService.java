@@ -34,8 +34,6 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 
 
@@ -76,41 +74,38 @@ public class StatusProtService extends LadaService {
      * @param measmId The requested objects have to be filtered
      * using an URL parameter named measmId.
      *
-     * @return Response containing requested objects.
+     * @return requested objects.
      * Status-Code 699 if parameter is missing.
      */
     @GET
-    public Response get(
+    public List<StatusProt> get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
         QueryBuilder<StatusProt> builder = repository
             .queryBuilder(StatusProt.class)
             .and("measmId", measmId);
-        Response r = authorization.filter(
+        List<StatusProt> status = authorization.filter(
             repository.filter(builder.getQuery()),
             StatusProt.class);
-        @SuppressWarnings("unchecked")
-        List<StatusProt> status = (List<StatusProt>) r.getData();
         for (StatusProt s: status) {
             validator.validate(s);
         }
-        return new Response(true, StatusCodes.OK, status);
+        return status;
     }
 
     /**
      * Get a single StatusProt object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single StatusProt.
+     * @return a single StatusProt.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public StatusProt getById(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(StatusProt.class, id);
         return authorization.filter(
-            response,
+            repository.getById(StatusProt.class, id),
             StatusProt.class);
     }
 
@@ -120,27 +115,24 @@ public class StatusProtService extends LadaService {
      * @return A response object containing the created StatusProt.
      */
     @POST
-    public Response create(
+    public StatusProt create(
         @Valid StatusProt status
     ) {
         UserInfo userInfo = authorization.getInfo();
-        Measm messung = repository.getByIdPlain(
+        Measm messung = repository.getById(
             Measm.class, status.getMeasmId());
         lock.isLocked(messung);
 
         // Is user authorized to edit status at all?
         // TODO: Move to authorization
-        Response r = authorization.filter(
-            new Response(true, StatusCodes.OK, messung),
-            Measm.class);
-        Measm filteredMessung = (Measm) r.getData();
+        Measm filteredMessung = authorization.filter(messung, Measm.class);
         if (!filteredMessung.getStatusEdit()) {
             throw new ForbiddenException();
         }
 
-        StatusProt oldStatus = repository.getByIdPlain(
+        StatusProt oldStatus = repository.getById(
             StatusProt.class, messung.getStatus());
-        StatusMp newKombi = repository.getByIdPlain(
+        StatusMp newKombi = repository.getById(
             StatusMp.class, status.getStatusMpId());
 
         // Check if the user is allowed to change to the requested
@@ -169,12 +161,12 @@ public class StatusProtService extends LadaService {
         throw new ForbiddenException();
     }
 
-    private Response setNewStatus(
+    private StatusProt setNewStatus(
         StatusProt status,
         StatusMp newKombi,
         Measm messung
     ) {
-        boolean hasValidMesswerte = repository.filterPlain(repository
+        boolean hasValidMesswerte = repository.filter(repository
                 .queryBuilder(MeasVal.class)
                 .and("measVal", null)
                 .and("lessThanLOD", null)
@@ -183,7 +175,7 @@ public class StatusProtService extends LadaService {
                 .getQuery()
             ).isEmpty();
         if (newKombi.getStatusVal().getId() == 7 && !hasValidMesswerte) {
-            List<MeasVal> messwerte = repository.filterPlain(repository
+            List<MeasVal> messwerte = repository.filter(repository
                 .queryBuilder(MeasVal.class)
                 .and("measmId", messung.getId())
                 .getQuery());
@@ -201,13 +193,13 @@ public class StatusProtService extends LadaService {
             StatusProt.class);
     }
 
-    private Response resetStatus(
+    private StatusProt resetStatus(
         StatusProt newStatus,
         StatusProt oldStatus,
         Measm messung
     ) {
         // Create a new Status with value = 8.
-        StatusMp oldKombi = repository.getByIdPlain(
+        StatusMp oldKombi = repository.getById(
             StatusMp.class, oldStatus.getStatusMpId());
 
         StatusMp newKombi = (StatusMp) repository.entityManager()
@@ -225,7 +217,7 @@ public class StatusProtService extends LadaService {
 
         repository.create(statusNew);
 
-        StatusMp kombi = repository.getByIdPlain(
+        StatusMp kombi = repository.getById(
             StatusMp.class,
             oldStatus.getStatusMpId()
         );
@@ -242,12 +234,12 @@ public class StatusProtService extends LadaService {
             .queryBuilder(StatusProt.class)
             .and("measmId", newStatus.getMeasmId());
         lastFilter.orderBy("date", true);
-        List<StatusProt> proto = repository.filterPlain(lastFilter.getQuery());
+        List<StatusProt> proto = repository.filter(lastFilter.getQuery());
         // Find a status that has "status_stufe" = "old status_stufe - 1"
         int ndx = -1;
         for (int i = proto.size() - 1; i >= 0; i--) {
             int curKom = proto.get(i).getStatusMpId();
-            StatusMp sk = repository.getByIdPlain(StatusMp.class, curKom);
+            StatusMp sk = repository.getById(StatusMp.class, curKom);
             if (sk.getStatusLev().getId() < kombi.getStatusLev().getId()) {
                 ndx = i;
                 break;

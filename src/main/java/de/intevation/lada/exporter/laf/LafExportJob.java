@@ -76,7 +76,7 @@ public class LafExportJob extends ExportJob {
             QueryBuilder<Sample> pBuilder = repository.queryBuilder(
                 Sample.class);
             pBuilder.andIn("id", probeIds);
-            List<Sample> pObjects = repository.filterPlain(
+            List<Sample> pObjects = repository.filter(
                 pBuilder.getQuery());
             for (Sample p : pObjects) {
                 pIds.add(p.getId());
@@ -88,7 +88,7 @@ public class LafExportJob extends ExportJob {
             QueryBuilder<Measm> mBuilder = repository.queryBuilder(
                 Measm.class);
             mBuilder.andIn("id", messungIds);
-            List<Measm> mObjects = repository.filterPlain(
+            List<Measm> mObjects = repository.filter(
                 mBuilder.getQuery());
             for (Measm m : mObjects) {
                 mIds.add(m.getId());

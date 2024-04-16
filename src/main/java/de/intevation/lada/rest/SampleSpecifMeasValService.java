@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -28,7 +30,6 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 
 /**
  * REST service for SampleSpecifMeasVal objects.
@@ -64,10 +65,10 @@ public class SampleSpecifMeasValService extends LadaService {
      * @param sampleId The requested objects will be filtered using
      * a URL parameter named sampleId.
      *
-     * @return Response containing requested objects.
+     * @return requested objects.
      */
     @GET
-    public Response get(
+    public List<SampleSpecifMeasVal> get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
         QueryBuilder<SampleSpecifMeasVal> builder =
@@ -82,11 +83,11 @@ public class SampleSpecifMeasValService extends LadaService {
      * Get a SampleSpecifMeasVal object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single SampleSpecifMeasVal.
+     * @return a single SampleSpecifMeasVal.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public SampleSpecifMeasVal getById(
         @PathParam("id") Integer id
     ) {
         return authorization.filter(
@@ -100,7 +101,7 @@ public class SampleSpecifMeasValService extends LadaService {
      * @return A response object containing the created SampleSpecifMeasVal.
      */
     @POST
-    public Response create(
+    public SampleSpecifMeasVal create(
         @Valid SampleSpecifMeasVal zusatzwert
     ) {
         authorization.authorize(
@@ -117,11 +118,11 @@ public class SampleSpecifMeasValService extends LadaService {
     /**
      * Update an existing SampleSpecifMeasVal object.
      *
-     * @return Response object containing the updated SampleSpecifMeasVal object.
+     * @return the updated SampleSpecifMeasVal object.
      */
     @PUT
     @Path("{id}")
-    public Response update(
+    public SampleSpecifMeasVal update(
         @PathParam("id") Integer id,
         @Valid SampleSpecifMeasVal zusatzwert
     ) {
@@ -140,14 +141,13 @@ public class SampleSpecifMeasValService extends LadaService {
      * Delete an existing SampleSpecifMeasVal object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object.
      */
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
-        SampleSpecifMeasVal obj = repository.getByIdPlain(
+        SampleSpecifMeasVal obj = repository.getById(
             SampleSpecifMeasVal.class, id);
         authorization.authorize(
             obj,
@@ -155,6 +155,6 @@ public class SampleSpecifMeasValService extends LadaService {
             SampleSpecifMeasVal.class);
         lock.isLocked(obj);
         /* Delete the object*/
-        return repository.delete(obj);
+        repository.delete(obj);
     }
 }

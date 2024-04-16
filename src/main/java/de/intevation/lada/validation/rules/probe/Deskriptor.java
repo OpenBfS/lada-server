@@ -85,7 +85,7 @@ public class Deskriptor implements Rule {
             }
             builder.and("levVal", mediaDesk[i])
                 .and("lev", i - 1);
-            List<EnvDescrip> data = repository.filterPlain(builder.getQuery());
+            List<EnvDescrip> data = repository.filter(builder.getQuery());
             if (data.isEmpty()) {
                 Violation violation = new Violation();
                 violation.addWarning("envDescripDisplay", StatusCodes.VAL_DESK);

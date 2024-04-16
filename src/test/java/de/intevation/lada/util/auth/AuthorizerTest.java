@@ -46,7 +46,6 @@ import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 
 import jakarta.inject.Inject;
 
@@ -110,7 +109,7 @@ public class AuthorizerTest extends BaseTest {
             new UserInfo(
                 testUser,
                 userId,
-                List.of(repository.getByIdPlain(Auth.class, 1))),
+                List.of(repository.getById(Auth.class, 1))),
             repository);
     }
 
@@ -324,14 +323,13 @@ public class AuthorizerTest extends BaseTest {
          */
         @Test
         @Ignore // TODO: Fix behavior of authorization
+        @SuppressWarnings("unchecked")
         public void testFilter() throws
                 IllegalAccessException, IllegalArgumentException,
                 InvocationTargetException, NoSuchMethodException,
                 SecurityException {
-            Response response = new Response(true, 0, testObject);
-            Object filtered = authorization
-                .filter(response, testObject.getClass())
-                .getData();
+            BaseModel filtered = authorization
+                .filter(testObject, (Class<BaseModel>) testObject.getClass());
             assertEquals(expectedReadonly,
                 filtered.getClass()
                 .getMethod(IS_READONLY).invoke(filtered));
@@ -390,16 +388,16 @@ public class AuthorizerTest extends BaseTest {
 
     private static Map<Object, TestConfig> createMeasmTestData() {
         //Test editable measm without status
-        Measm noStatus = repository.getByIdPlain(
+        Measm noStatus = repository.getById(
             Measm.class, MEASM_ID_NO_STATUS);
         //Test measm with editable status
-        Measm editableStatus = repository.getByIdPlain(
+        Measm editableStatus = repository.getById(
             Measm.class, MEASM_ID_STATUS_EDITABLE);
         //Test measm locked by status
-        Measm lockedByStatus = repository.getByIdPlain(
+        Measm lockedByStatus = repository.getById(
             Measm.class, MEASM_ID_STATUS_LOCKED);
         //Test measm locked by connected sample
-        Measm lockedBySample = repository.getByIdPlain(
+        Measm lockedBySample = repository.getById(
             Measm.class, MEASM_ID_LOCKED_BY_SAMPLE);
 
         return Map.of(
@@ -485,7 +483,7 @@ public class AuthorizerTest extends BaseTest {
         Sample unauthorized = new Sample();
         unauthorized.setMeasFacilId(MEAS_FACIL_ID_01010);
         //Test sample locked by measm status
-        Sample statusLocked = repository.getByIdPlain(
+        Sample statusLocked = repository.getById(
             Sample.class, SAMPLE_ID_LOCKED_BY_STATUS);
 
         return Map.of(

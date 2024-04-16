@@ -18,7 +18,6 @@ import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.EnvDescrip;
 
 /**
@@ -45,10 +44,10 @@ public class EnvDescripService extends LadaService {
      * @param lev The layer of the requested EnvDescrip
      * @param predIds The parents of the requested EnvDescrip, each given
      * using an URL parameter named "predId".
-     * @return Response object containing the EnvDescrip objects.
+     * @return the EnvDescrip objects.
      */
     @GET
-    public Response get(
+    public List<EnvDescrip> get(
         @QueryParam("lev") @NotNull Integer lev,
         @QueryParam("predId") List<Integer> predIds
     ) {
@@ -66,11 +65,11 @@ public class EnvDescripService extends LadaService {
      * Get a single EnvDescrip object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single EnvDescrip.
+     * @return a single EnvDescrip.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public EnvDescrip getById(
         @PathParam("id") Integer id
     ) {
         return repository.getById(EnvDescrip.class, id);

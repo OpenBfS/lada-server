@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -26,7 +28,6 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 
 /**
@@ -59,15 +60,15 @@ public class CommMeasmService extends LadaService {
      * @param measmId The requested objects have to be filtered
      * using an URL parameter named measmId.
      *
-     * @return Response object containing filtered CommMeasm objects.
+     * @return filtered CommMeasm objects.
      * Status-Code 699 if requested objects are
      * not authorized.
      */
     @GET
-    public Response get(
+    public List<CommMeasm> get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
-        Measm messung = repository.getByIdPlain(Measm.class, measmId);
+        Measm messung = repository.getById(Measm.class, measmId);
         authorization.authorize(
                 messung, RequestMethod.GET, Measm.class);
 
@@ -83,31 +84,29 @@ public class CommMeasmService extends LadaService {
      * Get a single CommMeasm object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single CommMeasm.
+     * @return a single CommMeasm.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public CommMeasm getById(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(CommMeasm.class, id);
-        CommMeasm kommentar = (CommMeasm) response.getData();
-        Measm messung = repository.getByIdPlain(
-            Measm.class, kommentar.getMeasmId());
+        CommMeasm comment = repository.getById(CommMeasm.class, id);
+        // TODO: Fix authorization of CommMeasm itself
+        // instead of authorizing indirectly?
+        Measm messung = repository.getById(Measm.class, comment.getMeasmId());
         authorization.authorize(
             messung, RequestMethod.GET, Measm.class);
 
-        return authorization.filter(
-            response,
-            CommMeasm.class);
+        return authorization.filter(comment, CommMeasm.class);
     }
 
     /**
      * Create a CommMeasm object.
-     * @return A response object containing the created CommMeasm.
+     * @return A response containing the created CommMeasm.
      */
     @POST
-    public Response create(
+    public CommMeasm create(
         @Valid CommMeasm kommentar
     ) {
         authorization.authorize(
@@ -122,11 +121,11 @@ public class CommMeasmService extends LadaService {
     /**
      * Update an existing CommMeasm object.
      *
-     * @return Response object containing the updated CommMeasm object.
+     * @return the updated CommMeasm object.
      */
     @PUT
     @Path("{id}")
-    public Response update(
+    public CommMeasm update(
         @PathParam("id") Integer id,
         @Valid CommMeasm kommentar
     ) {
@@ -143,18 +142,17 @@ public class CommMeasmService extends LadaService {
      * Delete an existing CommMeasm object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object.
      */
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
-        CommMeasm kommentarObj = repository.getByIdPlain(CommMeasm.class, id);
+        CommMeasm kommentarObj = repository.getById(CommMeasm.class, id);
         authorization.authorize(
             kommentarObj,
             RequestMethod.DELETE,
             CommMeasm.class);
-        return repository.delete(kommentarObj);
+        repository.delete(kommentarObj);
     }
 }

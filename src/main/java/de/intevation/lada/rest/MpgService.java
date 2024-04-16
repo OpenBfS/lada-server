@@ -31,7 +31,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.Validator;
 
@@ -95,18 +94,15 @@ public class MpgService extends LadaService {
      * Get a Mpg object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Mpg.
+     * @return a single Mpg.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public Mpg getById(
         @PathParam("id") Integer id
     ) {
-        Response response =
-            authorization.filter(
-                repository.getById(Mpg.class, id),
-                Mpg.class);
-        return response;
+        return authorization.filter(
+            repository.getById(Mpg.class, id), Mpg.class);
     }
 
     /**
@@ -115,7 +111,7 @@ public class MpgService extends LadaService {
      * @return A response object containing the created Mpg.
      */
     @POST
-    public Response create(
+    public Mpg create(
         @Valid Mpg messprogramm
     ) {
         authorization.authorize(
@@ -146,11 +142,11 @@ public class MpgService extends LadaService {
     /**
      * Update an existing Mpg object.
      *
-     * @return Response object containing the updated Mpg object.
+     * @return the updated Mpg object.
      */
     @PUT
     @Path("{id}")
-    public Response update(
+    public Mpg update(
         @PathParam("id") Integer id,
         @Valid Mpg messprogramm
     ) {
@@ -185,18 +181,18 @@ public class MpgService extends LadaService {
      * operation.
      *
      * @param data Object representing active status and list of IDs
-     * @return Response object containing the success status of the operation
+     * @return the success status of the operation
      * per Mpg.
      */
     @PUT
     @Path("active")
-    public Response setActive(
+    public List<Map<String, Integer>> setActive(
         @Valid SetActive data
     ) {
         QueryBuilder<Mpg> builder = repository.queryBuilder(Mpg.class)
             .orIn("id", data.getIds());
         List<Mpg> messprogramme =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
 
         List<Map<String, Integer>> result = new ArrayList<>();
         for (Mpg m : messprogramme) {
@@ -215,28 +211,25 @@ public class MpgService extends LadaService {
             result.add(mpResult);
         }
 
-        return new Response(true, StatusCodes.OK, result);
+        return result;
     }
 
     /**
      * Delete an existing Mpg object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object.
      */
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
-        Mpg messprogrammObj = repository.getByIdPlain(
+        Mpg messprogrammObj = repository.getById(
             Mpg.class, id);
         authorization.authorize(
             messprogrammObj,
             RequestMethod.DELETE,
             Mpg.class);
-        /* Delete the messprogramm object*/
-        Response response = repository.delete(messprogrammObj);
-        return response;
+        repository.delete(messprogrammObj);
     }
 }

@@ -7,13 +7,14 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.EnvSpecifMp;
 
 
@@ -34,10 +35,10 @@ public class EnvSpecifMpService extends LadaService {
     /**
      * Get all EnvSpecifMp objects.
      *
-     * @return Response containing requested objects.
+     * @return requested objects.
      */
     @GET
-    public Response get() {
+    public List<EnvSpecifMp> get() {
         return repository.getAll(EnvSpecifMp.class);
     }
 
@@ -45,11 +46,11 @@ public class EnvSpecifMpService extends LadaService {
      * Get a single EnvSpecifMp object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object
+     * @return EnvSpecifMp object
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public EnvSpecifMp getById(
         @PathParam("id") Integer id
     ) {
         return repository.getById(EnvSpecifMp.class, id);

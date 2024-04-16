@@ -22,7 +22,6 @@ import jakarta.json.JsonException;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
 
 import org.junit.Assert;
@@ -502,9 +501,8 @@ public class PepGenerationTest extends ServiceTest {
         JsonObject entity = generateFromMpIds(idParam, TS2, TS1);
 
         //Request should have failed with message 699
-        JsonObject data = entity.getJsonObject("data");
         JsonObject mpData =
-            data.getJsonObject("proben").getJsonObject(Integer.toString(mpId));
+            entity.getJsonObject("proben").getJsonObject(Integer.toString(mpId));
 
         Assert.assertTrue(mpData.get("data") == JsonValue.NULL);
         Assert.assertFalse(mpData.getBoolean("success"));
@@ -522,9 +520,8 @@ public class PepGenerationTest extends ServiceTest {
         JsonObject entity = generateFromMpIds(idParam, TS1, TS2);
 
         //Request should have failed with message 699
-        JsonObject data = entity.getJsonObject("data");
         JsonObject mpData =
-            data.getJsonObject("proben").getJsonObject(Integer.toString(mpId));
+            entity.getJsonObject("proben").getJsonObject(Integer.toString(mpId));
 
         Assert.assertTrue(mpData.get("data") == JsonValue.NULL);
         Assert.assertFalse(mpData.getBoolean("success"));
@@ -541,21 +538,19 @@ public class PepGenerationTest extends ServiceTest {
         // 02/12/2020 @ 12:00am (UTC)
         String end = TS4;
         JsonObject entity = generateFromMpIds(idParam, start, end);
-        JsonObject data = entity.getJsonObject("data");
-        JsonArray proben = data.getJsonObject("proben")
+        JsonArray proben = entity.getJsonObject("proben")
             .getJsonObject("1020").getJsonArray("data");
 
         proben.forEach((probe) -> {
             JsonObject probeObject = (JsonObject) probe;
             Integer probeId = probeObject.getInt("id");
-            WebTarget target = client.target(
-                baseUrl + "rest/zusatzwert?probeId=" + probeId);
-            Response response = target.request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .get();
-            JsonObject responseJson = BaseTest.parseResponse(response);
-            JsonArray zwData = responseJson.getJsonArray("data");
+            Response response = client.target(
+                baseUrl + "rest/zusatzwert?probeId=" + probeId)
+                .request()
+                .header("X-SHIB-user", BaseTest.testUser)
+                .header("X-SHIB-roles", BaseTest.testRoles)
+                .get();
+            JsonArray zwData = BaseTest.parseResponse(response).asJsonArray();
             Assert.assertTrue(zwData.size() > 0);
         });
     }
@@ -565,8 +560,7 @@ public class PepGenerationTest extends ServiceTest {
      * @param content Entity to check
      */
     private void checkGeneratedTag(JsonObject content) {
-        JsonObject data = content.getJsonObject("data");
-        String tag = data.getString("tag");
+        String tag = content.getString("tag");
 
         String date = LocalDateTime.now().format(
                 DateTimeFormatter.ofPattern("yyyyMMdd"));
@@ -588,7 +582,7 @@ public class PepGenerationTest extends ServiceTest {
         int mpId
     ) {
         //Get data for given messprogramm
-        JsonObject mpData = content.getJsonObject("data")
+        JsonObject mpData = content
             .getJsonObject("proben").getJsonObject(String.valueOf(mpId));
         Assert.assertNotNull(mpData);
 
@@ -608,8 +602,6 @@ public class PepGenerationTest extends ServiceTest {
     private JsonObject generateFromMpIds(
         List<Integer> ids, String start, String end
     ) {
-
-        WebTarget target = client.target(baseUrl + "rest/sample/messprogramm");
         JsonArrayBuilder idArrayBuilder = Json.createArrayBuilder();
         ids.forEach(item -> {
             idArrayBuilder.add(item);
@@ -619,19 +611,19 @@ public class PepGenerationTest extends ServiceTest {
             .add("end", end)
             .add("ids", idArrayBuilder.build()).build();
 
-        Response response = target.request()
+        Response response = client.target(baseUrl + "rest/sample/messprogramm")
+            .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.json(payload.toString()));
 
-        JsonObject content = BaseTest.parseResponse(response);
-        JsonObject data = content.getJsonObject("data");
+        JsonObject data = BaseTest.parseResponse(response).asJsonObject();
 
         //If a tag was applied, increase serial number
         if (data.containsKey("tag") && data.getString("tag") != null) {
             expectedTagSerNo++;
         }
-        return content;
+        return data;
     }
 
     /**
@@ -671,8 +663,7 @@ public class PepGenerationTest extends ServiceTest {
         int index) {
         JsonObject result = null;
         try {
-            JsonObject data = content.getJsonObject("data");
-            JsonArray proben = data.getJsonObject("proben")
+            JsonArray proben = content.getJsonObject("proben")
                     .getJsonObject(mpId.toString()).getJsonArray("data");
             result = proben.getJsonObject(index);
         } catch (JsonException je) {

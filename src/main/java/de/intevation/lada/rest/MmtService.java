@@ -7,13 +7,14 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.Mmt;
 
 /**
@@ -33,10 +34,10 @@ public class MmtService extends LadaService {
     /**
      * Get all Mmt objects.
      *
-     * @return Response object containing all Mmt objects.
+     * @return all Mmt objects.
      */
     @GET
-    public Response get() {
+    public List<Mmt> get() {
         return repository.getAll(Mmt.class);
     }
 
@@ -44,11 +45,11 @@ public class MmtService extends LadaService {
      * Get a single Mmt object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Mmt.
+     * @return a single Mmt.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public Mmt getById(
         @PathParam("id") String id
     ) {
         return repository.getById(Mmt.class, id);

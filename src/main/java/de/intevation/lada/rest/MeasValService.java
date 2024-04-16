@@ -36,9 +36,7 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.MesswertNormalizer;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 
 /**
@@ -84,16 +82,14 @@ public class MeasValService extends LadaService {
      * @param measmId The requested objects have to be filtered
      * using an URL parameter named measmId.
      *
-     * @return Response object containing filtered Messwert objects.
-     * Status-Code 699 if parameter is missing or requested objects are
-     * not authorized.
+     * @return Filtered Messwert objects.
      */
     @GET
     @SuppressWarnings("unchecked")
-    public Response get(
+    public List<MeasVal> get(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
-        Measm messung = repository.getByIdPlain(Measm.class, measmId);
+        Measm messung = repository.getById(Measm.class, measmId);
         authorization.authorize(
                 messung,
                 RequestMethod.GET,
@@ -102,10 +98,10 @@ public class MeasValService extends LadaService {
         QueryBuilder<MeasVal> builder = repository
             .queryBuilder(MeasVal.class)
             .and("measmId", measmId);
-        Response r = authorization.filter(
+        List<MeasVal> r = authorization.filter(
             repository.filter(builder.getQuery()),
             MeasVal.class);
-        for (MeasVal messwert: (List<MeasVal>) r.getData()) {
+        for (MeasVal messwert: r) {
             validator.validate(messwert);
         }
         return r;
@@ -115,24 +111,22 @@ public class MeasValService extends LadaService {
      * Get a MeasVal object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single MeasVal.
+     * @return a single MeasVal.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public MeasVal getById(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(MeasVal.class, id);
-        MeasVal messwert = (MeasVal) response.getData();
-        Measm messung = repository.getByIdPlain(
+        MeasVal messwert = repository.getById(MeasVal.class, id);
+        Measm messung = repository.getById(
             Measm.class, messwert.getMeasmId());
         authorization.authorize(
             messung,
             RequestMethod.GET,
             Measm.class);
-        validator.validate(messwert);
         return authorization.filter(
-            response,
+            validator.validate(messwert),
             MeasVal.class);
     }
 
@@ -142,7 +136,7 @@ public class MeasValService extends LadaService {
      * @return A response object containing the created MeasVal.
      */
     @POST
-    public Response create(
+    public MeasVal create(
         @Valid MeasVal messwert
     ) {
         authorization.authorize(
@@ -158,11 +152,11 @@ public class MeasValService extends LadaService {
     /**
      * Update an existing MeasVal object.
      *
-     * @return Response object containing the updated MeasVal object.
+     * @return the updated MeasVal object.
      */
     @PUT
     @Path("{id}")
-    public Response update(
+    public MeasVal update(
         @PathParam("id") Integer id,
         @Valid MeasVal messwert
     ) {
@@ -172,47 +166,42 @@ public class MeasValService extends LadaService {
                 MeasVal.class);
         lock.isLocked(messwert);
 
-        Response response = repository.update(messwert);
-        validator.validate(response.getData());
         return authorization.filter(
-            response,
+            validator.validate(repository.update(messwert)),
             MeasVal.class);
     }
 
     /**
      * Normalise all MeasVal objects connected to the given Messung.
      * @param measmId The measm ID needs to be given as URL parameter 'measmId'.
-     * @return Response object containing the updated MeasVal objects.
+     * @return the updated MeasVal objects.
      */
     @PUT
     @Path("normalize")
-    public Response normalize(
+    public List<MeasVal> normalize(
         @QueryParam("measmId") @NotNull Integer measmId
     ) {
         //Load messung, probe and umwelt to get MessEinheit to convert to
-        Measm messung = repository.getByIdPlain(Measm.class, measmId);
+        Measm messung = repository.getById(Measm.class, measmId);
         authorization.authorize(
             messung,
             RequestMethod.PUT,
             Measm.class);
 
-        Sample probe =
-            repository.getByIdPlain(
-                Sample.class, messung.getSampleId());
+        Sample probe = repository.getById(Sample.class, messung.getSampleId());
         if (probe.getEnvMediumId() == null) {
             throw new ClientErrorException(jakarta.ws.rs.core.Response
                 .status(Status.CONFLICT)
                 .entity(i18n.getString("op_not_possible")).build());
         }
-        EnvMedium umwelt =
-            repository.getByIdPlain(
-                EnvMedium.class, probe.getEnvMediumId());
+        EnvMedium umwelt = repository.getById(
+            EnvMedium.class, probe.getEnvMediumId());
         //Get all Messwert objects to convert
         QueryBuilder<MeasVal> messwertBuilder =
             repository.queryBuilder(MeasVal.class);
         messwertBuilder.and("measmId", measmId);
         List<MeasVal> messwerte = messwertNormalizer.normalizeMesswerte(
-            repository.filterPlain(messwertBuilder.getQuery()),
+            repository.filter(messwertBuilder.getQuery()),
             umwelt.getId());
 
         for (MeasVal messwert: messwerte) {
@@ -222,33 +211,29 @@ public class MeasValService extends LadaService {
                 MeasVal.class);
             lock.isLocked(messwert);
 
-            Response response = repository.update(messwert);
-            validator.validate(response.getData());
             authorization.filter(
-                response,
+                validator.validate(repository.update(messwert)),
                 MeasVal.class);
         }
-        return new Response(true, StatusCodes.OK, messwerte);
+        return messwerte;
     }
 
     /**
      * Delete an existing MeasVal object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object.
      */
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
-        MeasVal messwertObj = repository.getByIdPlain(MeasVal.class, id);
+        MeasVal messwertObj = repository.getById(MeasVal.class, id);
         authorization.authorize(
             messwertObj,
             RequestMethod.DELETE,
             MeasVal.class);
         lock.isLocked(messwertObj);
-        /* Delete the messwert object*/
-        return repository.delete(messwertObj);
+        repository.delete(messwertObj);
     }
 }

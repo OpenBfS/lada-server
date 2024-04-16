@@ -85,6 +85,6 @@ public class StatusTest extends ServiceTest {
 
     private boolean hasMeasVals(int measmId) {
         return !get("rest/measval?measmId=" + measmId)
-            .getJsonArray("data").isEmpty();
+            .asJsonArray().isEmpty();
     }
 }

@@ -80,7 +80,7 @@ public class CsvExporter implements Exporter {
 
     private String getStatusStringByid(Integer id) {
         StatusMp kombi =
-            repository.getByIdPlain(StatusMp.class, id);
+            repository.getById(StatusMp.class, id);
         StatusLev stufe = kombi.getStatusLev();
         StatusVal wert = kombi.getStatusVal();
 
@@ -113,7 +113,7 @@ public class CsvExporter implements Exporter {
                 .and("baseQueryId", qId);
             try {
                 GridColMp column =
-                    repository.getSinglePlain(builder.getQuery());
+                    repository.getSingle(builder.getQuery());
                 name = column.getGridCol();
             } catch (NoResultException e) {
                 name = subDataColumnNames != null

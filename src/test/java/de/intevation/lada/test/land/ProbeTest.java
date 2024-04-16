@@ -73,20 +73,19 @@ public class ProbeTest extends ServiceTest {
     public final void execute() {
         get("rest/sample", Status.METHOD_NOT_ALLOWED);
 
-        final String dataKey = "data";
         final String warningsKey = "warnings";
         final String expectedWarningKey = "geolocats";
 
         // Assert that GET receives validation warnings in response
         MatcherAssert.assertThat(
             getById("rest/sample/1000", expectedById)
-                .getJsonObject(dataKey).getJsonObject(warningsKey).keySet(),
+                .getJsonObject(warningsKey).keySet(),
             CoreMatchers.hasItem(expectedWarningKey));
 
         JsonObject created = create("rest/sample", create);
         // Assert that POST receives validation warnings in response
         MatcherAssert.assertThat(
-            created.getJsonObject(dataKey).getJsonObject(warningsKey).keySet(),
+            created.getJsonObject(warningsKey).keySet(),
             CoreMatchers.hasItem(expectedWarningKey));
 
         final String updateFieldKey = "mainSampleId";
@@ -94,7 +93,7 @@ public class ProbeTest extends ServiceTest {
         // Assert that PUT receives validation warnings in response
         MatcherAssert.assertThat(
             update("rest/sample/1000", updateFieldKey, "120510002", newValue)
-                .getJsonObject(dataKey).getJsonObject(warningsKey).keySet(),
+                .getJsonObject(warningsKey).keySet(),
             CoreMatchers.hasItem(expectedWarningKey));
 
         // Ensure invalid envDescripDisplay is rejected
@@ -136,6 +135,6 @@ public class ProbeTest extends ServiceTest {
             "rest/audit/probe/1000",
             updateFieldKey,
             newValue);
-        delete("rest/sample/" + created.getJsonObject("data").get("id"));
+        delete("rest/sample/" + created.get("id"));
     }
 }

@@ -69,7 +69,7 @@ public class MesswertTest extends ServiceTest {
         normalize(expectedById);
         JsonObject created = create("rest/measval", create);
         update("rest/measval/10000", "lessThanLOD", "<", ">");
-        delete("rest/measval/" + created.getJsonObject("data").get("id"));
+        delete("rest/measval/" + created.get("id"));
     }
 
     /**
@@ -82,11 +82,10 @@ public class MesswertTest extends ServiceTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .put(null);
-        JsonObject normalizedObject = BaseTest.parseResponse(normalized);
 
         // The following makes assumptions about the first entry only
-        JsonObject normalizedMesswert =
-            normalizedObject.getJsonArray("data").getJsonObject(0);
+        JsonObject normalizedMesswert = BaseTest.parseResponse(normalized)
+            .asJsonArray().getJsonObject(0);
 
         /* Verify normalized unit */
         final String unitK = "measUnitId";

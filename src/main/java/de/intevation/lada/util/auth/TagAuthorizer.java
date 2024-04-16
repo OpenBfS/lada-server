@@ -63,7 +63,7 @@ public class TagAuthorizer extends BaseAuthorizer {
     @Override
     public <T> boolean isAuthorizedById(Object id, RequestMethod method,
         UserInfo userInfo, Class<T> clazz) {
-        Tag tag = repository.getByIdPlain(Tag.class, id);
+        Tag tag = repository.getById(Tag.class, id);
         return isAuthorized(tag, method, userInfo, clazz);
     }
 

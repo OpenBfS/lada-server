@@ -55,7 +55,7 @@ public class TimestampTest extends ServiceTest {
             JsonObject created = create("rest/sample", create);
             Assert.assertEquals(
                 expectedOutput,
-                created.getJsonObject("data").getString(sampleStartDateKey));
+                created.getString(sampleStartDateKey));
         }
     }
 }

@@ -32,7 +32,7 @@ public class HasMessbeginn implements Rule {
     public Violation execute(Object object) {
         Measm messung = (Measm) object;
         Sample probe =
-            repository.getByIdPlain(Sample.class, messung.getSampleId());
+            repository.getById(Sample.class, messung.getSampleId());
 
         if (messung.getMeasmStartDate() == null
             && probe != null

@@ -77,12 +77,9 @@ public class KoordinatenartTest extends ServiceTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.entity(
                     requestJson.toString(), MediaType.APPLICATION_JSON));
-        JsonObject content = BaseTest.parseResponse(response);
 
         /* Verify the response*/
-        final String dataKey = "data";
-        BaseTest.assertContains(content, dataKey);
-        JsonObject data = content.getJsonObject(dataKey);
+        JsonObject data = BaseTest.parseResponse(response).asJsonObject();
         BaseTest.assertContains(data, xKey);
         BaseTest.assertContains(data, yKey);
         Assert.assertEquals(coord, data.getString(xKey));

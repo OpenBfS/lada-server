@@ -36,7 +36,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         if (data instanceof Mpg) {
             messprogramm = (Mpg) data;
         } else if (data instanceof MpgMmtMp) {
-            messprogramm = repository.getByIdPlain(
+            messprogramm = repository.getById(
                 Mpg.class,
                 ((MpgMmtMp) data).getMpgId()
             );
@@ -44,7 +44,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
             return I18N_KEY_FORBIDDEN;
         }
 
-        MeasFacil mst = repository.getByIdPlain(
+        MeasFacil mst = repository.getById(
             MeasFacil.class, messprogramm.getMeasFacilId());
         if (!userInfo.getFunktionenForNetzbetreiber(
                 mst.getNetworkId()).contains(4)) {
@@ -66,7 +66,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         Mpg mp =
-            repository.getByIdPlain(Mpg.class, id);
+            repository.getById(Mpg.class, id);
         return isAuthorized(mp, method, userInfo, Mpg.class);
     }
 
@@ -92,7 +92,7 @@ public class MessprogrammAuthorizer extends BaseAuthorizer {
         Mpg messprogramm
     ) {
         MeasFacil mst =
-            repository.getByIdPlain(
+            repository.getById(
                 MeasFacil.class, messprogramm.getMeasFacilId());
         messprogramm.setReadonly(
             !userInfo.getFunktionenForNetzbetreiber(

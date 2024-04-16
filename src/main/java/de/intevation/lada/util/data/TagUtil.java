@@ -67,7 +67,7 @@ public class TagUtil {
         Order nameOrder = builder.asc(tagRoot.get("name"));
         criteriaQuery.where(nameFilter);
         criteriaQuery.orderBy(nameOrder);
-        List<Tag> tags = repository.filterPlain(criteriaQuery);
+        List<Tag> tags = repository.filter(criteriaQuery);
 
         Integer serNumber = 1;
         //If tags were found, find next serial number
@@ -117,10 +117,10 @@ public class TagUtil {
         // instead of fetching them from the database again, whenever possible.
 
         //Get given probe and messung records
-        List<Sample> probes = repository.filterPlain(
+        List<Sample> probes = repository.filter(
             repository.queryBuilder(Sample.class).andIn("id", probeIds)
             .getQuery());
-        List<Measm> messungs = repository.filterPlain(
+        List<Measm> messungs = repository.filter(
             repository.queryBuilder(Measm.class).andIn("sampleId", probeIds)
             .getQuery());
 

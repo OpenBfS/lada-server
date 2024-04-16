@@ -34,10 +34,8 @@ import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 
 /**
  * REST-Service for tags.
@@ -56,11 +54,11 @@ public class TagService extends LadaService {
     /**
      * Get a single tag by id.
      * @param id Tag id
-     * @return Response containing the tag
+     * @return the tag
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public Tag getById(
         @PathParam("id") String id
     ) {
         return authorization.filter(
@@ -75,10 +73,10 @@ public class TagService extends LadaService {
      * @param measmIds filter by IDs of Measm objects.
      * Ignored if sampleIds is given.
      *
-     * @return Response with list of Tag objects.
+     * @return List of Tag objects.
      */
     @GET
-    public Response get(
+    public List<Tag> get(
         @QueryParam("sampleId") Set<Integer> sampleIds,
         @QueryParam("measmId") Set<Integer> measmIds
     ) {
@@ -99,19 +97,18 @@ public class TagService extends LadaService {
                 ? measmIds.iterator() : sampleIds.iterator();
             Predicate idFilter = builder.equal(
                 joinTagZuordnung.get(filterBy), filterIds.next());
-            result = repository.filterPlain(criteriaQuery.where(idFilter));
+            result = repository.filter(criteriaQuery.where(idFilter));
             while (!result.isEmpty() && filterIds.hasNext()) {
                 idFilter = builder.equal(
                     joinTagZuordnung.get(filterBy), filterIds.next());
                 result.retainAll(
-                    repository.filterPlain(criteriaQuery.where(idFilter)));
+                    repository.filter(criteriaQuery.where(idFilter)));
             }
         } else {
-            result = repository.getAllPlain(Tag.class);
+            result = repository.getAll(Tag.class);
         }
 
-        return authorization.filter(
-            new Response(true, StatusCodes.OK, result), Tag.class);
+        return authorization.filter(result, Tag.class);
     }
 
     /**
@@ -119,15 +116,15 @@ public class TagService extends LadaService {
      *
      * @param tag Tag to update using payload like
      * @param id Tag id
-     * @return Response object containing the updated tag object
+     * @return the updated tag object
      */
     @PUT
     @Path("{id}")
-    public Response update(
+    public Tag update(
         @PathParam("id") String id,
         @Valid Tag tag
     ) {
-        Tag origTag = repository.getByIdPlain(Tag.class, tag.getId());
+        Tag origTag = repository.getById(Tag.class, tag.getId());
         authorization.authorize(
                 origTag, RequestMethod.PUT, Tag.class);
 
@@ -136,7 +133,7 @@ public class TagService extends LadaService {
         Date gueltigBis = tag.getValUntil();
 
         if (tag.getMeasFacilId() != null) {
-            MeasFacil mst = repository.getByIdPlain(
+            MeasFacil mst = repository.getById(
                 MeasFacil.class, tag.getMeasFacilId());
             if (tag.getNetworkId() == null) {
                 tag.setNetworkId(mst.getNetworkId());
@@ -169,9 +166,8 @@ public class TagService extends LadaService {
             }
         }
 
-        Response response = repository.update(tag);
         return authorization.filter(
-            response,
+            repository.update(tag),
             Tag.class);
     }
 
@@ -179,10 +175,10 @@ public class TagService extends LadaService {
      * Creates a new tag.
      *
      * @param tag Tag to create.
-     * @return Response object
+     * @return Created Tag object
      */
     @POST
-    public Response create(
+    public Tag create(
         @Valid Tag tag
     ) {
         authorization.authorize(
@@ -191,7 +187,7 @@ public class TagService extends LadaService {
         tag.setLadaUserId(authorization.getInfo().getUserId());
 
         if (tag.getMeasFacilId() != null) {
-            MeasFacil mst = repository.getByIdPlain(
+            MeasFacil mst = repository.getById(
                 MeasFacil.class, tag.getMeasFacilId());
             if (tag.getNetworkId() == null) {
                 tag.setNetworkId(mst.getNetworkId());
@@ -209,16 +205,15 @@ public class TagService extends LadaService {
     /**
      * Delete a tag.
      * @param id Tag id
-     * @return Response object
      */
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
-        Tag tag = repository.getByIdPlain(Tag.class, id);
+        Tag tag = repository.getById(Tag.class, id);
         authorization.authorize(
             tag, RequestMethod.DELETE, Tag.class);
-        return repository.delete(tag);
+        repository.delete(tag);
     }
 }

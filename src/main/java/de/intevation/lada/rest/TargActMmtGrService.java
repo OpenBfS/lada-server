@@ -7,12 +7,13 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.TargActMmtGr;
 
 /**
@@ -32,10 +33,10 @@ public class TargActMmtGrService extends LadaService {
     /**
      * Get all TargActMmtGr objects.
      *
-     * @return Response object containing all TargActMmtGr objects.
+     * @return all TargActMmtGr objects.
      */
     @GET
-    public Response get() {
+    public List<TargActMmtGr> get() {
         return repository.getAll(TargActMmtGr.class);
     }
 }

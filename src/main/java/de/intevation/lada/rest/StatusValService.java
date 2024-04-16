@@ -25,7 +25,6 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
 
 /**
  * REST service for StatusVal objects.
@@ -50,10 +49,10 @@ public class StatusValService extends LadaService {
      * Get StatusVal objects.
      *
      * @param measmId URL parameter to filter using measmId
-     * @return Response object containing all StatusVal objects.
+     * @return all StatusVal objects.
      */
     @GET
-    public Response get(
+    public List<StatusVal> get(
         @QueryParam("measmId") Integer measmId
     ) {
         if (measmId == null) {
@@ -66,11 +65,11 @@ public class StatusValService extends LadaService {
      * Get a single StatusVal object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single StatusVal.
+     * @return a single StatusVal.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public StatusVal getById(
         @PathParam("id") Integer id
     ) {
         return repository.getById(StatusVal.class, id);
@@ -83,12 +82,12 @@ public class StatusValService extends LadaService {
      * @param messungsId Id of a Messung instance
      * @return Possible status values for given Messung
      */
-    private Response getReachable(Integer messungsId) {
-        Measm messung = repository.getByIdPlain(Measm.class, messungsId);
+    private List<StatusVal> getReachable(Integer messungsId) {
+        Measm messung = repository.getById(Measm.class, messungsId);
 
-        StatusProt status = repository.getByIdPlain(
+        StatusProt status = repository.getById(
             StatusProt.class, messung.getStatus());
-        StatusMp kombi = repository.getByIdPlain(
+        StatusMp kombi = repository.getById(
             StatusMp.class, status.getStatusMpId());
 
         QueryBuilder<StatusAccessMpView> errFilter = repository
@@ -96,7 +95,7 @@ public class StatusValService extends LadaService {
             .andIn("statusLevId", authorization.getInfo().getFunktionen())
             .and("curLevId", kombi.getStatusLev().getId())
             .and("curValId", kombi.getStatusVal().getId());
-        List<StatusAccessMpView> erreichbare = repository.filterPlain(
+        List<StatusAccessMpView> erreichbare = repository.filter(
             errFilter.getQuery());
 
         QueryBuilder<StatusVal> werteFilter =

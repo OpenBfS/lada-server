@@ -51,9 +51,8 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Measm messung =
-            repository.getByIdPlain(Measm.class, id);
-        Sample probe = repository.getByIdPlain(
+        Measm messung = repository.getById(Measm.class, id);
+        Sample probe = repository.getById(
             Sample.class, messung.getSampleId());
         if (messung.getStatus() == null) {
             return false;
@@ -73,15 +72,15 @@ public class MessungIdAuthorizer extends BaseAuthorizer {
         try {
             Method getMessungsId = clazz.getMethod("getMeasmId");
             Integer id = (Integer) getMessungsId.invoke(data);
-            Measm messung = repository.getByIdPlain(
+            Measm messung = repository.getById(
                 Measm.class, id);
-            Sample probe = repository.getByIdPlain(
+            Sample probe = repository.getById(
                 Sample.class, messung.getSampleId());
 
             boolean readOnly = true;
             boolean owner = false;
             MeasFacil mst =
-                repository.getByIdPlain(
+                repository.getById(
                     MeasFacil.class, probe.getMeasFacilId());
             if (!userInfo.getNetzbetreiber().contains(
                     mst.getNetworkId())) {

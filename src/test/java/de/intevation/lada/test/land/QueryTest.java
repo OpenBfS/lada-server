@@ -30,7 +30,6 @@ import jakarta.ws.rs.core.Response;
 public class QueryTest extends ServiceTest {
 
     private static final String KEY_ID = "id";
-    private static final String KEY_DATA = "data";
     private JsonObject createPayload;
     private JsonObject updatePayload;
     private static final String URL = "rest/queryuser/";
@@ -57,8 +56,7 @@ public class QueryTest extends ServiceTest {
         get(URL);
 
         JsonObject created = create(URL, createPayload);
-        int createdId = created
-            .getJsonObject(KEY_DATA).getInt(KEY_ID);
+        int createdId = created.getInt(KEY_ID);
 
         //Update test cannot use ServiceTest functions as there is no
         //GetById interface
@@ -71,7 +69,7 @@ public class QueryTest extends ServiceTest {
                 updatePayload.toString(), MediaType.APPLICATION_JSON));
         JsonObject updatedContent = BaseTest
             .parseResponse(updated)
-            .getJsonObject(KEY_DATA);
+            .asJsonObject();
         updatedContent.forEach((key, value) ->
             assertEquals(updatePayload.get(key), value));
 

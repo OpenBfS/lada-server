@@ -8,6 +8,7 @@
 package de.intevation.lada.rest;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import jakarta.inject.Inject;
@@ -30,7 +31,6 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 
 /**
@@ -63,10 +63,10 @@ public class MpgMmtMpService extends LadaService {
      * @param mpgId The requested objects will be filtered
      * using a URL parameter named mpgId.
      *
-     * @return Response containing requested objects.
+     * @return requested objects.
      */
     @GET
-    public Response get(
+    public List<MpgMmtMp> get(
         @QueryParam("mpgId") @NotNull Integer mpgId
     ) {
         QueryBuilder<MpgMmtMp> builder =
@@ -81,11 +81,11 @@ public class MpgMmtMpService extends LadaService {
      * Get a MpgMmtMp object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single MpgMmtMp.
+     * @return a single MpgMmtMp.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public MpgMmtMp getById(
         @PathParam("id") Integer id
     ) {
         return authorization.filter(
@@ -98,7 +98,7 @@ public class MpgMmtMpService extends LadaService {
      * @return A response object containing the created MpgMmtMp.
      */
     @POST
-    public Response create(
+    public MpgMmtMp create(
         @Valid MpgMmtMp messprogrammmmt
     ) {
         authorization.authorize(
@@ -115,11 +115,11 @@ public class MpgMmtMpService extends LadaService {
     /**
      * Update an existing MpgMmtMp object.
      *
-     * @return Response object containing the updated MpgMmtMp object.
+     * @return the updated MpgMmtMp object.
      */
     @PUT
     @Path("{id}")
-    public Response update(
+    public MpgMmtMp update(
         @PathParam("id") Integer id,
         @Valid MpgMmtMp messprogrammmmt
     ) {
@@ -140,21 +140,19 @@ public class MpgMmtMpService extends LadaService {
      * Delete an existing MessprogrammMmt object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object.
      */
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
-        MpgMmtMp messprogrammmmtObj = repository.getByIdPlain(
+        MpgMmtMp messprogrammmmtObj = repository.getById(
             MpgMmtMp.class, id);
         authorization.authorize(
                 messprogrammmmtObj,
                 RequestMethod.DELETE,
                 Mpg.class);
-        /* Delete the messprogrammmmt object*/
-        return repository.delete(messprogrammmmtObj);
+        repository.delete(messprogrammmmtObj);
     }
 
     /**
@@ -163,7 +161,7 @@ public class MpgMmtMpService extends LadaService {
     private void setMessgroesseObjects(MpgMmtMp mm) {
         Set<Measd> mos = new HashSet<>();
         for (Integer mId: mm.getMeasds()) {
-            Measd m = repository.getByIdPlain(Measd.class, mId);
+            Measd m = repository.getById(Measd.class, mId);
             if (m != null) {
                 mos.add(m);
             }

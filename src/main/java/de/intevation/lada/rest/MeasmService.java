@@ -29,9 +29,7 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 
 /**
@@ -69,19 +67,17 @@ public class MeasmService extends LadaService {
      * Get Measm objects.
      *
      * @param sampleId URL parameter sampleId to use as filter (required).
-     * @return Response containing requested objects.
+     * @return requested objects.
      */
     @GET
-    public Response get(
+    public List<Measm> get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class)
             .and("sampleId", sampleId);
-        Response r = authorization.filter(
+        List<Measm> messungs = authorization.filter(
             repository.filter(builder.getQuery()),
             Measm.class);
-        @SuppressWarnings("unchecked")
-        List<Measm> messungs = (List<Measm>) r.getData();
         for (Measm messung: messungs) {
             // TODO: Should have been set by authorization.filter() already,
             // but that's unfortunately not the same as authorizing PUT.
@@ -92,24 +88,22 @@ public class MeasmService extends LadaService {
                     Measm.class));
             validator.validate(messung);
         }
-        return new Response(true, StatusCodes.OK, messungs);
+        return messungs;
     }
 
     /**
      * Get a Measm object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Measm.
+     * @return a single Measm.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public Measm getById(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(Measm.class, id);
-        validator.validate(response.getData());
         return authorization.filter(
-            response,
+            validator.validate(repository.getById(Measm.class, id)),
             Measm.class);
     }
 
@@ -119,7 +113,7 @@ public class MeasmService extends LadaService {
      * @return A response object containing the created Measm.
      */
     @POST
-    public Response create(
+    public Measm create(
         @Valid Measm messung
     ) {
         authorization.authorize(
@@ -135,11 +129,11 @@ public class MeasmService extends LadaService {
     /**
      * Update an existing Measm object.
      *
-     * @return Response object containing the updated Measm object.
+     * @return the updated Measm object.
      */
     @PUT
     @Path("{id}")
-    public Response update(
+    public Measm update(
         @PathParam("id") Integer id,
         @Valid Measm messung
     ) {
@@ -149,10 +143,8 @@ public class MeasmService extends LadaService {
             Measm.class);
         lock.isLocked(messung);
 
-        Response response = repository.update(messung);
-        validator.validate(response.getData());
         return authorization.filter(
-            response,
+            validator.validate(repository.update(messung)),
             Measm.class);
     }
 
@@ -160,21 +152,19 @@ public class MeasmService extends LadaService {
      * Delete an existing Measm object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object.
      */
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
-        Measm messungObj = repository.getByIdPlain(Measm.class, id);
+        Measm messungObj = repository.getById(Measm.class, id);
         authorization.authorize(
             messungObj,
             RequestMethod.DELETE,
             Measm.class);
         lock.isLocked(messungObj);
 
-        /* Delete the messung object*/
-        return repository.delete(messungObj);
+        repository.delete(messungObj);
     }
 }

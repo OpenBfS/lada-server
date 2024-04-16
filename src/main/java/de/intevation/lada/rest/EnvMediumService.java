@@ -18,8 +18,6 @@ import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.ReiAgGrEnvMediumMp;
 
@@ -42,10 +40,10 @@ public class EnvMediumService extends LadaService {
      *
      * @param reiAgGrId URL parameter "reiAgGrId" to filter
      * using reiAgGrId.
-     * @return Response containing requested objects.
+     * @return requested objects.
      */
     @GET
-    public Response get(
+    public List<EnvMedium> get(
         @QueryParam("reiAgGrId") Integer reiAgGrId
     ) {
         if (reiAgGrId == null) {
@@ -55,9 +53,9 @@ public class EnvMediumService extends LadaService {
             repository.queryBuilder(ReiAgGrEnvMediumMp.class);
         builder.and("reiAgGrId", reiAgGrId);
         List<ReiAgGrEnvMediumMp> zuord =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
         if (zuord.isEmpty()) {
-            return new Response(true, StatusCodes.OK, null);
+            return null;
         }
         QueryBuilder<EnvMedium> builder1 =
             repository.queryBuilder(EnvMedium.class);
@@ -73,11 +71,11 @@ public class EnvMediumService extends LadaService {
      * Get a single EnvMedium object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single EnvMedium.
+     * @return a single EnvMedium.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public EnvMedium getById(
         @PathParam("id") String id
     ) {
         return repository.getById(EnvMedium.class, id);

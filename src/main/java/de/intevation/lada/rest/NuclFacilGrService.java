@@ -18,8 +18,6 @@ import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.NuclFacilGr;
 import de.intevation.lada.model.master.NuclFacilGrMp;
 
@@ -41,10 +39,10 @@ public class NuclFacilGrService extends LadaService {
      * Get NuclFacilGr objects.
      *
      * @param nuclFacilId URL parameter to filter by nuclFacilId
-     * @return Response containing the requested objects.
+     * @return the requested objects.
      */
     @GET
-    public Response get(
+    public List<NuclFacilGr> get(
         @QueryParam("nuclFacilId") Integer nuclFacilId
     ) {
         if (nuclFacilId == null) {
@@ -54,9 +52,9 @@ public class NuclFacilGrService extends LadaService {
             repository.queryBuilder(NuclFacilGrMp.class);
         builder.and("nuclFacilId", nuclFacilId);
         List<NuclFacilGrMp> zuord =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
         if (zuord.isEmpty()) {
-            return new Response(true, StatusCodes.OK, null);
+            return null;
         }
         QueryBuilder<NuclFacilGr> builder1 =
             repository.queryBuilder(NuclFacilGr.class);
@@ -72,11 +70,11 @@ public class NuclFacilGrService extends LadaService {
      * Get a single NuclFacilGr object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single NuclFacilGr.
+     * @return a single NuclFacilGr.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public NuclFacilGr getById(
         @PathParam("id") Integer id
     ) {
         return repository.getById(NuclFacilGr.class, id);

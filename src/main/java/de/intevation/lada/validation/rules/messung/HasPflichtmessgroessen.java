@@ -38,7 +38,7 @@ public class HasPflichtmessgroessen implements Rule {
     @Override
     public Violation execute(Object object) {
         Measm messung = (Measm) object;
-        Sample probe = repository.getByIdPlain(
+        Sample probe = repository.getById(
             Sample.class, messung.getSampleId());
 
         QueryBuilder<ObligMeasdMp> builder = repository
@@ -46,7 +46,7 @@ public class HasPflichtmessgroessen implements Rule {
             .and("mmtId", messung.getMmtId())
             .and("envMediumId", probe.getEnvMediumId())
             .and("regulationId", probe.getRegulationId());
-        List<ObligMeasdMp> pflicht = repository.filterPlain(builder.getQuery());
+        List<ObligMeasdMp> pflicht = repository.filter(builder.getQuery());
 
         if (pflicht.isEmpty()) {
             QueryBuilder<ObligMeasdMp> builderGrp = repository
@@ -58,7 +58,7 @@ public class HasPflichtmessgroessen implements Rule {
                     : probe.getEnvMediumId().substring(0, 1))
                 .and("regulationId", probe.getRegulationId());
             List<ObligMeasdMp> pflichtGrp =
-                repository.filterPlain(builderGrp.getQuery());
+                repository.filter(builderGrp.getQuery());
             pflicht.addAll(pflichtGrp);
 
             QueryBuilder<ObligMeasdMp> builderGrpS2 = repository
@@ -70,7 +70,7 @@ public class HasPflichtmessgroessen implements Rule {
                         ? null : probe.getEnvMediumId().substring(0, 2))
                 .and("regulationId", probe.getRegulationId());
             List<ObligMeasdMp> pflichtGrpS2 =
-                repository.filterPlain(builderGrpS2.getQuery());
+                repository.filter(builderGrpS2.getQuery());
             pflicht.addAll(pflichtGrpS2);
         }
 
@@ -78,7 +78,7 @@ public class HasPflichtmessgroessen implements Rule {
             .queryBuilder(MeasVal.class)
             .and("measmId", messung.getId());
         List<MeasVal> messwerte =
-            repository.filterPlain(wertBuilder.getQuery());
+            repository.filter(wertBuilder.getQuery());
         Violation violation = new Violation();
         List<ObligMeasdMp> tmp = new ArrayList<ObligMeasdMp>();
         for (MeasVal wert : messwerte) {

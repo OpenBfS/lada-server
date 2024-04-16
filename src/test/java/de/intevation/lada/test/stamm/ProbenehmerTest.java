@@ -66,6 +66,6 @@ public class ProbenehmerTest extends ServiceTest {
             "Testbezeichnung",
             "geändert");
         JsonObject created = create("rest/sampler", create);
-        delete("rest/sampler/" + created.getJsonObject("data").get("id"));
+        delete("rest/sampler/" + created.get("id"));
     }
 }

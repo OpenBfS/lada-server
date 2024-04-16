@@ -30,7 +30,6 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.validation.Validator;
 
 /**
@@ -70,20 +69,19 @@ public class GeolocatService extends LadaService {
      * @param sampleId The requested objects can be filtered using
      * a URL parameter named sampleId.
      *
-     * @return Response containing requested objects.
+     * @return requested objects.
      */
     @GET
-    @SuppressWarnings("unchecked")
-    public Response get(
+    public List<Geolocat> get(
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
         QueryBuilder<Geolocat> builder = repository
             .queryBuilder(Geolocat.class)
             .and("sampleId", sampleId);
-        Response r = authorization.filter(
+        List<Geolocat> r = authorization.filter(
             repository.filter(builder.getQuery()),
             Geolocat.class);
-        for (Geolocat otz: (List<Geolocat>) r.getData()) {
+        for (Geolocat otz: r) {
             validator.validate(otz);
         }
         return r;
@@ -93,17 +91,15 @@ public class GeolocatService extends LadaService {
      * Get a Geolocat object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single Geolocat.
+     * @return a single Geolocat.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public Geolocat getById(
         @PathParam("id") Integer id
     ) {
-        Response response = repository.getById(Geolocat.class, id);
-        validator.validate(response.getData());
         return authorization.filter(
-            response,
+            validator.validate(repository.getById(Geolocat.class, id)),
             Geolocat.class);
     }
 
@@ -113,7 +109,7 @@ public class GeolocatService extends LadaService {
      * @return A response object containing the created Ort.
      */
     @POST
-    public Response create(
+    public Geolocat create(
         @Valid Geolocat ort
     ) {
         authorization.authorize(
@@ -129,11 +125,11 @@ public class GeolocatService extends LadaService {
     /**
      * Update an existing Geolocat object.
      *
-     * @return Response object containing the updated Geolocat object.
+     * @return the updated Geolocat object.
      */
     @PUT
     @Path("{id}")
-    public Response update(
+    public Geolocat update(
         @PathParam("id") Integer id,
         @Valid Geolocat ort
     ) {
@@ -142,10 +138,8 @@ public class GeolocatService extends LadaService {
                 RequestMethod.PUT,
                 Geolocat.class);
         lock.isLocked(ort);
-        Response response = repository.update(ort);
-        validator.validate(response.getData());
         return authorization.filter(
-            response,
+            validator.validate(repository.update(ort)),
             Geolocat.class);
     }
 
@@ -153,20 +147,19 @@ public class GeolocatService extends LadaService {
      * Delete an existing Geolocat object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object.
      */
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
-        Geolocat ortObj = repository.getByIdPlain(Geolocat.class, id);
+        Geolocat ortObj = repository.getById(Geolocat.class, id);
         authorization.authorize(
             ortObj,
             RequestMethod.PUT,
             Geolocat.class);
         lock.isLocked(ortObj);
 
-        return repository.delete(ortObj);
+        repository.delete(ortObj);
     }
 }

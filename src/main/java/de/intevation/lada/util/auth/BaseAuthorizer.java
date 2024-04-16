@@ -53,17 +53,17 @@ public abstract class BaseAuthorizer implements Authorizer {
         QueryBuilder<Measm> builder = repository
             .queryBuilder(Measm.class)
             .and("sampleId", probeId);
-        List<Measm> messungen = repository.filterPlain(builder.getQuery());
+        List<Measm> messungen = repository.filter(builder.getQuery());
         for (int i = 0; i < messungen.size(); i++) {
             if (messungen.get(i).getStatus() == null) {
                 continue;
             }
             StatusProt status =
-                repository.getByIdPlain(
+                repository.getById(
                     StatusProt.class,
                     messungen.get(i).getStatus()
                 );
-            StatusMp kombi = repository.getByIdPlain(
+            StatusMp kombi = repository.getById(
                 StatusMp.class, status.getStatusMpId());
             if (kombi.getStatusVal().getId() != 0
                 && kombi.getStatusVal().getId() != 4
@@ -77,13 +77,13 @@ public abstract class BaseAuthorizer implements Authorizer {
     @Override
     public boolean isMessungReadOnly(Integer messungsId) {
         Measm messung =
-            repository.getByIdPlain(Measm.class, messungsId);
+            repository.getById(Measm.class, messungsId);
         if (messung.getStatus() == null) {
             return false;
         }
-        StatusProt status = repository.getByIdPlain(
+        StatusProt status = repository.getById(
             StatusProt.class, messung.getStatus());
-        StatusMp kombi = repository.getByIdPlain(
+        StatusMp kombi = repository.getById(
             StatusMp.class, status.getStatusMpId());
         return (kombi.getStatusVal().getId() != 0
                 && kombi.getStatusVal().getId() != 4);

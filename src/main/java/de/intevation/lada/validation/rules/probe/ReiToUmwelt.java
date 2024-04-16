@@ -48,7 +48,7 @@ public class ReiToUmwelt implements Rule {
             .and("reiAgGrId", probe.getReiAgGrId())
             .and("envMediumId", probe.getEnvMediumId());
         List<ReiAgGrEnvMediumMp> zuord =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
         if (zuord.isEmpty()) {
             Violation violation = new Violation();
             violation.addWarning(

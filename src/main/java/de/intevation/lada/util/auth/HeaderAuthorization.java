@@ -44,9 +44,8 @@ import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
+
 
 /**
  * Authorize a user via HttpServletRequest attributes.
@@ -80,7 +79,7 @@ public class HeaderAuthorization implements Authorization {
             .replace("[", "").replace("]", "").replace(" ", "").split(",");
         QueryBuilder<Auth> authBuilder = repository.queryBuilder(Auth.class);
         authBuilder.andIn("ldapGr", Arrays.asList(mst));
-        List<Auth> auth = repository.filterPlain(authBuilder.getQuery());
+        List<Auth> auth = repository.filter(authBuilder.getQuery());
 
         // The user's ID
         QueryBuilder<LadaUser> uIdBuilder =
@@ -88,11 +87,11 @@ public class HeaderAuthorization implements Authorization {
         uIdBuilder.and("name", name);
         LadaUser user;
         try {
-            user = repository.getSinglePlain(uIdBuilder.getQuery());
+            user = repository.getSingle(uIdBuilder.getQuery());
         } catch (NoResultException e) {
             LadaUser newUser = new LadaUser();
             newUser.setName(name);
-            user = (LadaUser) repository.create(newUser).getData();
+            user = repository.create(newUser);
         }
 
         this.userInfo = new UserInfo(name, user.getId(), auth);
@@ -176,21 +175,11 @@ public class HeaderAuthorization implements Authorization {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends BaseModel> Response filter(
-        Response data,
+    public <T extends BaseModel> T filter(
+        T data,
         Class<T> clazz
     ) {
-        Authorizer authorizer = authorizers.get(clazz);
-        if (authorizer == null) {
-            return new Response(false, StatusCodes.NOT_ALLOWED, null);
-        }
-        if (data.getData() instanceof List<?>) {
-            authorizer.setAuthAttrs(
-                (List<BaseModel>) data.getData(), userInfo, clazz);
-        } else {
-            authorizer.setAuthAttrs(
-                (BaseModel) data.getData(), userInfo, clazz);
-        }
+        authorizers.get(clazz).setAuthAttrs(data, userInfo, clazz);
         return data;
     }
 

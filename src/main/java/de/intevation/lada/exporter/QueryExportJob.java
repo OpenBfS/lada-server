@@ -109,7 +109,7 @@ public abstract class QueryExportJob extends ExportJob {
             repository.queryBuilder(FilterType.class);
         builder.and("type", "genericid");
         FilterType filterType =
-            repository.filterPlain(builder.getQuery()).get(0);
+            repository.filter(builder.getQuery()).get(0);
 
         //Create filter object
         Filter filter = new Filter();
@@ -182,10 +182,10 @@ public abstract class QueryExportJob extends ExportJob {
                 switch (subDataColumn) {
                 case "statusKombi":
                     StatusProt prot =
-                        repository.getByIdPlain(
+                        repository.getById(
                             StatusProt.class, measm.getStatus());
                     StatusMp mp =
-                        repository.getByIdPlain(
+                        repository.getById(
                             StatusMp.class, prot.getStatusMpId());
                     StatusLev lev = mp.getStatusLev();
                     StatusVal val = mp.getStatusVal();
@@ -197,7 +197,7 @@ public abstract class QueryExportJob extends ExportJob {
                         .queryBuilder(MeasVal.class)
                         .and("measmId", measm.getId());
                     // TODO: A nice example of ORM-induced database misuse:
-                    fieldValue = repository.filterPlain(builder.getQuery())
+                    fieldValue = repository.filter(builder.getQuery())
                         .size();
                     break;
                 default:
@@ -219,12 +219,12 @@ public abstract class QueryExportJob extends ExportJob {
                 Object fieldValue = null;
                 switch (subDataColumn) {
                 case "measUnitId":
-                    fieldValue = repository.getByIdPlain(
+                    fieldValue = repository.getById(
                         MeasUnit.class, measVal.getMeasUnitId())
                         .getUnitSymbol();
                     break;
                 case "measdId":
-                    fieldValue = repository.getByIdPlain(
+                    fieldValue = repository.getById(
                         Measd.class, measVal.getMeasdId()).getName();
                     break;
                 default:
@@ -263,14 +263,14 @@ public abstract class QueryExportJob extends ExportJob {
                     .andIn("sampleId", idMap.keySet());
                 return mergeMessungData(
                     idMap,
-                    repository.filterPlain(messungBuilder.getQuery()));
+                    repository.filter(messungBuilder.getQuery()));
             case "messungId":
                 QueryBuilder<MeasVal> messwertBuilder = repository
                     .queryBuilder(MeasVal.class)
                     .andIn("measmId", idMap.keySet());
                 return mergeMesswertData(
                     idMap,
-                    repository.filterPlain(messwertBuilder.getQuery()));
+                    repository.filter(messwertBuilder.getQuery()));
             default:
                 throw new IllegalArgumentException(
                     String.format("Unknown idType: %s", this.idType));
@@ -365,7 +365,7 @@ public abstract class QueryExportJob extends ExportJob {
                 columnObj.getBoolean("isFilterNegate"));
             columnValue.setIsFilterRegex(
                 columnObj.getBoolean("isFilterRegex"));
-            GridColMp gridColumn = repository.getByIdPlain(
+            GridColMp gridColumn = repository.getById(
                 GridColMp.class, columnValue.getGridColMpId());
 
             columnValue.setGridColMp(gridColumn);
@@ -435,7 +435,7 @@ public abstract class QueryExportJob extends ExportJob {
         }
 
         //Get query id
-        GridColMp gridColumn = repository.getByIdPlain(
+        GridColMp gridColumn = repository.getById(
             GridColMp.class,
             Integer.valueOf(columns.get(0).getGridColMpId())
         );

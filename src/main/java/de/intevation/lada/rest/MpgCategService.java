@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.DELETE;
@@ -21,7 +23,6 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.MpgCateg;
 
 /**
@@ -45,10 +46,10 @@ public class MpgCategService extends LadaService {
     /**
      * Get all MpgCateg objects.
      *
-     * @return Response containing requested objects.
+     * @return requested objects.
      */
     @GET
-    public Response get() {
+    public List<MpgCateg> get() {
         return authorization.filter(
             repository.getAll(MpgCateg.class), MpgCateg.class);
     }
@@ -57,11 +58,11 @@ public class MpgCategService extends LadaService {
      * Get a single object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single object.
+     * @return a single object.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public MpgCateg getById(
         @PathParam("id") Integer id
     ) {
         return authorization.filter(
@@ -69,7 +70,7 @@ public class MpgCategService extends LadaService {
     }
 
     @POST
-    public Response create(
+    public MpgCateg create(
         @Valid MpgCateg kategorie
     ) {
         authorization.authorize(
@@ -81,7 +82,7 @@ public class MpgCategService extends LadaService {
 
     @PUT
     @Path("{id}")
-    public Response update(
+    public MpgCateg update(
         @PathParam("id") Integer id,
         @Valid MpgCateg kategorie
     ) {
@@ -94,15 +95,15 @@ public class MpgCategService extends LadaService {
 
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
-        MpgCateg kategorie = repository.getByIdPlain(
+        MpgCateg kategorie = repository.getById(
             MpgCateg.class, id);
         authorization.authorize(
                 kategorie,
                 RequestMethod.DELETE,
                 MpgCateg.class);
-        return repository.delete(kategorie);
+        repository.delete(kategorie);
     }
 }

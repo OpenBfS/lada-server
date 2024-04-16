@@ -64,6 +64,6 @@ public class MessprogrammKategorieTest extends ServiceTest {
             "Testbezeichnung",
             "geändert");
         JsonObject created = create("rest/mpgcateg", create);
-        delete("rest/mpgcateg/" + created.getJsonObject("data").get("id"));
+        delete("rest/mpgcateg/" + created.get("id"));
     }
 }

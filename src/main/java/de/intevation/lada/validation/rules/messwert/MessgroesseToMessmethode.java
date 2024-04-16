@@ -36,14 +36,14 @@ public class MessgroesseToMessmethode implements Rule {
     @Override
     public Violation execute(Object object) {
         MeasVal messwert = (MeasVal) object;
-        Measm messung = repository.getByIdPlain(
+        Measm messung = repository.getById(
                 Measm.class, messwert.getMeasmId());
 
         QueryBuilder<MmtMeasdView> mmtBuilder =
             repository.queryBuilder(MmtMeasdView.class)
                 .and("mmtId", messung.getMmtId());
         List<MmtMeasdView> mmtMs =
-            repository.filterPlain(mmtBuilder.getQuery());
+            repository.filter(mmtBuilder.getQuery());
 
         Violation violation = new Violation();
         boolean hit = false;

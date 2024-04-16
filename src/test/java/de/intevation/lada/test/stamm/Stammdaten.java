@@ -283,9 +283,8 @@ public class Stammdaten extends ServiceTest {
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .get();
-        JsonObject content = BaseTest.parseResponse(response);
+        JsonObject content = BaseTest.parseResponse(response).asJsonObject();
         /* Verify the response*/
-        MatcherAssert.assertThat(content.getJsonObject("data").keySet(),
-            matchers.get(type));
+        MatcherAssert.assertThat(content.keySet(), matchers.get(type));
     }
 }

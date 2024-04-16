@@ -51,7 +51,7 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         Sample probe =
-            repository.getByIdPlain(Sample.class, id);
+            repository.getById(Sample.class, id);
         return !isProbeReadOnly((Integer) id)
             && getAuthorization(userInfo, probe);
     }
@@ -68,12 +68,12 @@ public class ProbeIdAuthorizer extends BaseAuthorizer {
         try {
             Method getProbeId = clazz.getMethod("getSampleId");
             Integer id = (Integer) getProbeId.invoke(data);
-            Sample probe = repository.getByIdPlain(Sample.class, id);
+            Sample probe = repository.getById(Sample.class, id);
 
             boolean readOnly = true;
             boolean owner = false;
             MeasFacil mst =
-                repository.getByIdPlain(
+                repository.getById(
                     MeasFacil.class, probe.getMeasFacilId());
             if (!userInfo.getNetzbetreiber().contains(
                     mst.getNetworkId())) {

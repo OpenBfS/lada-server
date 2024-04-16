@@ -67,6 +67,6 @@ public class GeolocatMpgTest extends ServiceTest {
             "Test",
             "Test geändert");
         delete(
-            "rest/geolocatmpg/" + created.getJsonObject("data").get("id"));
+            "rest/geolocatmpg/" + created.get("id"));
     }
 }

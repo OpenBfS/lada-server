@@ -51,6 +51,6 @@ public class SiteAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         return isAuthorized(
-            repository.getByIdPlain(Site.class, id), method, userInfo, clazz);
+            repository.getById(Site.class, id), method, userInfo, clazz);
     }
 }

@@ -41,8 +41,7 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
+
 
 /**
  * REST service for AuditTrail.
@@ -158,14 +157,14 @@ public class AuditTrailService extends LadaService {
      * Service to generate audit trail for sample objects.
      *
      * @param pId ID of sample given in URL path.
-     * @return Response with audit trail data for requested sample.
+     * @return Audit trail data for requested sample.
      */
     @GET
     @Path("probe/{id}")
-    public Response getProbe(
+    public AuditResponseData getProbe(
         @PathParam("id") Integer pId
     ) {
-        Sample probe = repository.getByIdPlain(Sample.class, pId);
+        Sample probe = repository.getById(Sample.class, pId);
 
         UserInfo userInfo = authorization.getInfo();
 
@@ -175,7 +174,7 @@ public class AuditTrailService extends LadaService {
             .and("sampleId", pId);
         List<Integer> ortIds = new LinkedList<Integer>();
         for (Geolocat zuordnung
-            : repository.filterPlain(refBuilder.getQuery())
+            : repository.filter(refBuilder.getQuery())
         ) {
             ortIds.add(zuordnung.getSiteId());
         }
@@ -191,7 +190,7 @@ public class AuditTrailService extends LadaService {
         }
         builder.orderBy("tstamp", true);
         List<AuditTrailSampleView> audit =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
 
         AuditResponseData auditResponseData = new AuditResponseData();
         List<AuditEntry> entries = new ArrayList<>();
@@ -209,7 +208,7 @@ public class AuditTrailService extends LadaService {
                 Measm messung = repository.entityManager().find(
                     Measm.class, a.getMeasmId());
                 if (messung != null) {
-                    StatusProt status = repository.getByIdPlain(
+                    StatusProt status = repository.getById(
                         StatusProt.class, messung.getStatus());
                     if (status.getStatusMpId() == 1
                         && !userInfo.getMessstellen().contains(
@@ -224,10 +223,7 @@ public class AuditTrailService extends LadaService {
             entries.add(createEntry(a));
         }
         auditResponseData.setAudit(entries);
-        return new Response(
-            true,
-            StatusCodes.OK,
-            auditResponseData);
+        return auditResponseData;
     }
 
     /**
@@ -266,7 +262,7 @@ public class AuditTrailService extends LadaService {
             node.setIdentifier(value);
             break;
         case "measm":
-            Measm m = repository.getByIdPlain(
+            Measm m = repository.getById(
                 Measm.class, audit.getObjectId());
             node.setIdentifier(getIdentifier(m));
             break;
@@ -275,7 +271,7 @@ public class AuditTrailService extends LadaService {
         }
 
         if (audit.getMeasmId() != null) {
-            Measm m = repository.getByIdPlain(
+            Measm m = repository.getById(
                 Measm.class, audit.getMeasmId());
             AuditEntryIdentifier identifier = new AuditEntryIdentifier();
             identifier.setMeasm(getIdentifier(m));
@@ -306,19 +302,19 @@ public class AuditTrailService extends LadaService {
      * Service to generate audit trail for measm objects.
      *
      * @param mId ID of measm given in URL path.
-     * @return Response with audit trail data for requested measm.
+     * @return Audit trail data for requested measm.
      */
     @GET
     @Path("messung/{id}")
-    public Response getMessung(
+    public AuditResponseData getMessung(
         @PathParam("id") Integer mId
     ) {
-        Measm messung = repository.getByIdPlain(Measm.class, mId);
+        Measm messung = repository.getById(Measm.class, mId);
 
         StatusProt status =
-            repository.getByIdPlain(StatusProt.class, messung.getStatus());
+            repository.getById(StatusProt.class, messung.getStatus());
         Sample probe =
-            repository.getByIdPlain(Sample.class, messung.getSampleId());
+            repository.getById(Sample.class, messung.getSampleId());
         UserInfo userInfo = authorization.getInfo();
         QueryBuilder<AuditTrailMeasmView> builder = repository
             .queryBuilder(AuditTrailMeasmView.class)
@@ -327,7 +323,7 @@ public class AuditTrailService extends LadaService {
             .or("measmId", mId);
         builder.orderBy("tstamp", true);
         List<AuditTrailMeasmView> audit =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
 
         AuditResponseData auditData = new AuditResponseData();
         List<AuditEntry> entries = new ArrayList<>();
@@ -346,10 +342,7 @@ public class AuditTrailService extends LadaService {
             entries.add(createEntry(a));
         }
         auditData.setAudit(entries);
-        return new Response(
-            true,
-            StatusCodes.OK,
-            auditData);
+        return auditData;
     }
 
     /**
@@ -391,10 +384,10 @@ public class AuditTrailService extends LadaService {
      */
     @GET
     @Path("/messprogramm/{id}")
-    public Response getMessprogramm(
+    public AuditResponseData getMessprogramm(
         @PathParam("id") Integer mpgId
     ) {
-        Mpg messprogramm = repository.getByIdPlain(Mpg.class, mpgId);
+        Mpg messprogramm = repository.getById(Mpg.class, mpgId);
 
         QueryBuilder<AuditTrailMpgView> builder =
             repository.queryBuilder(AuditTrailMpgView.class);
@@ -403,7 +396,7 @@ public class AuditTrailService extends LadaService {
         builder.or("mpgId", mpgId);
         builder.orderBy("tstamp", true);
         List<AuditTrailMpgView> audit =
-            repository.filterPlain(builder.getQuery());
+            repository.filter(builder.getQuery());
 
         // Create an empty JsonObject
         AuditResponseData auditData = new AuditResponseData();
@@ -414,10 +407,7 @@ public class AuditTrailService extends LadaService {
             entries.add(createEntry(a));
         }
         auditData.setAudit(entries);
-        return new Response(
-            true,
-            StatusCodes.OK,
-            auditData);
+        return auditData;
     }
 
     private AuditEntry createEntry(AuditTrailMpgView audit) {

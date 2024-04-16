@@ -43,13 +43,13 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
         case POST:
         case DELETE:
             TagLink zuordnung = (TagLink) data;
-            Tag tag = repository.getByIdPlain(Tag.class, zuordnung.getTagId());
+            Tag tag = repository.getById(Tag.class, zuordnung.getTagId());
 
             switch (tag.getTagType()) {
             case Tag.TAG_TYPE_GLOBAL:
                 if (zuordnung.getMeasmId() != null) {
                     return messungAuthorizer.isAuthorizedReason(
-                        repository.getByIdPlain(
+                        repository.getById(
                             Measm.class, zuordnung.getMeasmId()),
                         RequestMethod.PUT,
                         userInfo,
@@ -58,7 +58,7 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
                 }
                 if (zuordnung.getSampleId() != null) {
                     return probeAuthorizer.isAuthorizedReason(
-                        repository.getByIdPlain(
+                        repository.getById(
                             Sample.class, zuordnung.getSampleId()),
                         RequestMethod.PUT,
                         userInfo,
@@ -88,7 +88,7 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        TagLink zuordnung = repository.getByIdPlain(
+        TagLink zuordnung = repository.getById(
             TagLink.class, id);
         return isAuthorized(zuordnung, method, userInfo, clazz);
     }

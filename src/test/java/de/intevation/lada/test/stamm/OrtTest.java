@@ -126,7 +126,7 @@ public class OrtTest extends ServiceTest {
         get("rest/site");
 
         //Test search interface
-        JsonObject result = get("rest/site?search=Text");
+        JsonObject result = get("rest/site?search=Text").asJsonObject();
         // "Text" appears in extId, longText, shortText and adminUnit.name,
         // each in one object
         final int expectedSize = 4;
@@ -134,8 +134,7 @@ public class OrtTest extends ServiceTest {
 
         final String existingSitePath = "rest/site/1000";
         getById(existingSitePath, expectedById);
-        int createdId = create("rest/site", create)
-            .getJsonObject("data").getInt("id");
+        int createdId = create("rest/site", create).getInt("id");
 
         /*Test creation of site objects without an admin unit
           which should be completed by the server*/

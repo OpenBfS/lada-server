@@ -18,7 +18,6 @@ import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.SampleSpecif;
 
 /**
@@ -40,10 +39,10 @@ public class SampleSpecifService extends LadaService {
      *
      * @param envMediumId URL parameter to filter using envMediumId.
      * Might be null (i.e. not given at all) but not an empty string.
-     * @return Response containing requested objects.
+     * @return requested objects.
      */
     @GET
-    public Response get(
+    public List<SampleSpecif> get(
         @QueryParam("envMediumId") @Pattern(regexp = ".+") String envMediumId
     ) {
         if (envMediumId != null) {
@@ -72,11 +71,11 @@ public class SampleSpecifService extends LadaService {
      * Get a single SampleSpecif object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single SampleSpecif.
+     * @return a single SampleSpecif.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public SampleSpecif getById(
         @PathParam("id") String id
     ) {
         return repository.getById(SampleSpecif.class, id);

@@ -19,8 +19,6 @@ import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.ReiAgGr;
 import de.intevation.lada.model.master.ReiAgGrEnvMediumMp;
 import de.intevation.lada.model.master.ReiAgGrMp;
@@ -46,10 +44,10 @@ public class ReiAgGrService extends LadaService {
      * using reiAgId
      * @param envMediumId URL parameter to filter using envMediumId. Might be null
      * (i.e. not given at all) but not an empty string.
-     * @return Response object containing all ReiAgGr objects.
+     * @return all ReiAgGr objects.
      */
     @GET
-    public Response get(
+    public List<ReiAgGr> get(
         @QueryParam("reiAgId") Integer reiAgId,
         @QueryParam("envMediumId") @Pattern(regexp = ".+") String envMediumId
     ) {
@@ -62,9 +60,9 @@ public class ReiAgGrService extends LadaService {
                 repository.queryBuilder(ReiAgGrMp.class);
             builder.and("reiAgId", reiAgId);
             List<ReiAgGrMp> zuord =
-                repository.filterPlain(builder.getQuery());
+                repository.filter(builder.getQuery());
             if (zuord.isEmpty()) {
-                return new Response(true, StatusCodes.OK, null);
+                return null;
             }
             QueryBuilder<ReiAgGr> builder1 =
                 repository.queryBuilder(ReiAgGr.class);
@@ -73,15 +71,15 @@ public class ReiAgGrService extends LadaService {
                 ids.add(zuord.get(i).getReiAgGrId());
             }
             builder1.orIn("id", ids);
-            list = repository.filterPlain(builder1.getQuery());
+            list = repository.filter(builder1.getQuery());
         } else if (envMediumId != null) {
             QueryBuilder<ReiAgGrEnvMediumMp> builder =
                 repository.queryBuilder(ReiAgGrEnvMediumMp.class);
             builder.and("envMediumId", envMediumId);
             List<ReiAgGrEnvMediumMp> zuord =
-                repository.filterPlain(builder.getQuery());
+                repository.filter(builder.getQuery());
             if (zuord.isEmpty()) {
-                return new Response(true, StatusCodes.OK, null);
+                return null;
             }
             QueryBuilder<ReiAgGr> builder1 =
                 repository.queryBuilder(ReiAgGr.class);
@@ -90,21 +88,21 @@ public class ReiAgGrService extends LadaService {
                 ids.add(zuord.get(i).getReiAgGrId());
             }
             builder1.orIn("id", ids);
-            list = repository.filterPlain(builder1.getQuery());
+            list = repository.filter(builder1.getQuery());
         }
 
-        return new Response(true, StatusCodes.OK, list);
+        return list;
     }
 
     /**
      * Get a single ReiAgGr object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object containing a single ReiAgGr.
+     * @return a single ReiAgGr.
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public ReiAgGr getById(
         @PathParam("id") Integer id
     ) {
         return repository.getById(ReiAgGr.class, id);

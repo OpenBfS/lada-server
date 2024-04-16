@@ -389,8 +389,8 @@ public class ExporterTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.entity(requestJson.toString(),
                     MediaType.APPLICATION_JSON));
-        JsonObject exportCreatedObject = parseSimpleResponse(
-            exportCreated);
+        JsonObject exportCreatedObject =
+            parseResponse(exportCreated).asJsonObject();
 
         final String refIdKey = "refId";
         assertContains(exportCreatedObject, refIdKey);
@@ -407,7 +407,8 @@ public class ExporterTest extends BaseTest {
         final Instant waitUntil = Instant.now().plus(Duration.ofMinutes(1));
         final int waitASecond = 1000;
         do {
-            exportStatusObject = parseSimpleResponse(statusRequest.get());
+            exportStatusObject =
+                parseResponse(statusRequest.get()).asJsonObject();
 
             final String doneKey = "done";
             assertContains(exportStatusObject, doneKey);

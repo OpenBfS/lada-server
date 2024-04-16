@@ -76,18 +76,18 @@ public class OrtFactory {
             builder.and("spatRefSysId", ort.getSpatRefSysId())
                 .and("coordXExt", ort.getCoordXExt())
                 .and("coordYExt", ort.getCoordYExt());
-            List<Site> orte = repository.filterPlain(builder.getQuery());
+            List<Site> orte = repository.filter(builder.getQuery());
             if (!orte.isEmpty()) {
                 return orte.get(0);
             }
         } else if (ort.getAdminUnitId() != null) {
             builder.and("adminUnitId", ort.getAdminUnitId());
-            List<Site> orte = repository.filterPlain(builder.getQuery());
+            List<Site> orte = repository.filter(builder.getQuery());
             if (!orte.isEmpty()) {
                 if (orte.size() == 1) {
                     return orte.get(0);
                 } else {
-                    AdminUnit v = repository.getByIdPlain(
+                    AdminUnit v = repository.getById(
                         AdminUnit.class, ort.getAdminUnitId());
                     for (Site oElem : orte) {
                         //Todo: Check for different kda-types
@@ -104,7 +104,7 @@ public class OrtFactory {
         } else  if (ort.getStateId() != null) {
             builder.and("stateId", ort.getStateId())
                 .and("siteClassId", ORTTYP5);
-            List<Site> orte = repository.filterPlain(builder.getQuery());
+            List<Site> orte = repository.filter(builder.getQuery());
             if (!orte.isEmpty()) {
                 return orte.get(0);
             }
@@ -115,7 +115,7 @@ public class OrtFactory {
                 repository.queryBuilder(Site.class)
                 .and("networkId", ort.getNetworkId())
                 .andLike("extId", "%" + ort.getAdminUnitId());
-            List<Site> ortExists = repository.filterPlain(
+            List<Site> ortExists = repository.filter(
                 builderExists.getQuery());
             if (!ortExists.isEmpty()) {
                 return ortExists.get(0);
@@ -168,7 +168,7 @@ public class OrtFactory {
             // of the state with database ID 0
             ort.setStateId(0);
 
-            AdminUnit v = repository.getByIdPlain(
+            AdminUnit v = repository.getById(
                 AdminUnit.class, ort.getAdminUnitId());
             if (!hasKoord) {
                 if (ort.getSpatRefSysId() == null) {
@@ -217,7 +217,7 @@ public class OrtFactory {
             return;
         }
         if (!hasKoord && ort.getStateId() != null) {
-            State staat = repository.getByIdPlain(
+            State staat = repository.getById(
                 State.class, ort.getStateId());
             ort.setSpatRefSysId(staat.getSpatRefSysId());
             ort.setCoordXExt(staat.getCoordXExt());

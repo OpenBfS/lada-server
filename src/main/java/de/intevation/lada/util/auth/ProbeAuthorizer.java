@@ -45,7 +45,7 @@ public class ProbeAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        Sample probe = repository.getByIdPlain(Sample.class, id);
+        Sample probe = repository.getById(Sample.class, id);
         return isAuthorized(probe, method, userInfo, clazz);
     }
 
@@ -68,7 +68,7 @@ public class ProbeAuthorizer extends BaseAuthorizer {
      */
     private void setAuthData(UserInfo userInfo, Sample probe) {
         MeasFacil mst =
-            repository.getByIdPlain(
+            repository.getById(
                 MeasFacil.class, probe.getMeasFacilId());
         if (!userInfo.getNetzbetreiber().contains(mst.getNetworkId())) {
             probe.setOwner(false);

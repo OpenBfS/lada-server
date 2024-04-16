@@ -16,7 +16,6 @@ import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.Auth;
 
 /**
@@ -34,10 +33,10 @@ public class AuthService extends LadaService {
      * @param networkIds Multiple URL parameters "networkId"
      * can be given to filter the result.
      *
-     * @return Response containing requested objects.
+     * @return requested objects.
      */
     @GET
-    public Response get(
+    public List<Auth> get(
         @QueryParam("networkId") List<String> networkIds
     ) {
         QueryBuilder<Auth> mstMlQuery = repository.queryBuilder(Auth.class);

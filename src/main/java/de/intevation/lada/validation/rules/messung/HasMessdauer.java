@@ -32,7 +32,7 @@ public class HasMessdauer implements Rule {
     public Violation execute(Object object) {
         Measm messung = (Measm) object;
         Sample probe =
-            repository.getByIdPlain(Sample.class, messung.getSampleId());
+            repository.getById(Sample.class, messung.getSampleId());
 
         if (messung.getMeasPd() == null) {
             //Exception for continous samples or Datenbasis = §161

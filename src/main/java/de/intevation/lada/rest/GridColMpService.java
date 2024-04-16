@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.GET;
@@ -18,7 +20,6 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.GridColMp;
 
 /**
@@ -40,7 +41,7 @@ public class GridColMpService extends LadaService {
      * @return All GridColMp objects referencing the given query.
      */
     @GET
-    public Response getQueries(
+    public List<GridColMp> getQueries(
         @QueryParam("baseQueryId") @NotNull Integer baseQuery
     ) {
 

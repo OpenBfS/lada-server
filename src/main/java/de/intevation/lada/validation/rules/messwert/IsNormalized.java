@@ -46,7 +46,7 @@ public class IsNormalized implements Rule {
         if (messwert.getMeasmId() != null) {
             Measm measm = messwert.getMeasm() != null
                 ? messwert.getMeasm()
-                : repository.getByIdPlain(Measm.class, messwert.getMeasmId());
+                : repository.getById(Measm.class, messwert.getMeasmId());
             umwelt = measm.getSample().getEnvMedium();
         }
 
@@ -64,7 +64,7 @@ public class IsNormalized implements Rule {
             // Check if the messwert mehId can be converted to primary or
             // secondary meh
             Boolean convert = false;
-            MeasUnit fromUnit = repository.getByIdPlain(
+            MeasUnit fromUnit = repository.getById(
                     MeasUnit.class, messwert.getMeasUnitId());
             if (mehId != null && !mehId.equals(messwert.getMeasUnitId())) {
                 QueryBuilder<UnitConvers> builder =
@@ -72,7 +72,7 @@ public class IsNormalized implements Rule {
                 builder.and("toUnitId", mehId);
                 builder.and("fromUnit", fromUnit);
                 List<UnitConvers> result = repository
-                    .filterPlain(builder.getQuery());
+                    .filter(builder.getQuery());
                 convert = result.size() > 0;
             } else if (secMehId != null
                 && !secMehId.equals(messwert.getMeasUnitId())
@@ -81,7 +81,7 @@ public class IsNormalized implements Rule {
                 repository.queryBuilder(UnitConvers.class);
                 builder.and("toUnitId", secMehId);
                 builder.and("fromUnit", fromUnit);
-                List<UnitConvers> result = repository.filterPlain(
+                List<UnitConvers> result = repository.filter(
                     builder.getQuery());
                 convert = result.size() > 0;
             }

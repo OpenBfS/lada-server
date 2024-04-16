@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.rest;
 
+import java.util.List;
+
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.DELETE;
@@ -21,7 +23,6 @@ import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.util.rest.Response;
 import de.intevation.lada.model.master.DatasetCreator;
 
 /**
@@ -48,10 +49,10 @@ public class DatasetCreatorService extends LadaService {
     /**
      * Get all DatasetCreator objects.
      *
-     * @return Response containing requested objects.
+     * @return requested objects.
      */
     @GET
-    public Response get() {
+    public List<DatasetCreator> get() {
         return authorization.filter(
             repository.getAll(DatasetCreator.class), DatasetCreator.class);
     }
@@ -60,11 +61,11 @@ public class DatasetCreatorService extends LadaService {
      * Get a single object by id.
      *
      * @param id The id is appended to the URL as a path parameter.
-     * @return Response object
+     * @return DatasetCreator object
      */
     @GET
     @Path("{id}")
-    public Response getById(
+    public DatasetCreator getById(
         @PathParam("id") Integer id
     ) {
         return authorization.filter(repository.getById(
@@ -72,7 +73,7 @@ public class DatasetCreatorService extends LadaService {
     }
 
     @POST
-    public Response create(
+    public DatasetCreator create(
         @Valid DatasetCreator datensatzerzeuger
     ) {
         authorization.authorize(
@@ -84,7 +85,7 @@ public class DatasetCreatorService extends LadaService {
 
     @PUT
     @Path("{id}")
-    public Response update(
+    public DatasetCreator update(
         @PathParam("id") Integer id,
         @Valid DatasetCreator datensatzerzeuger
     ) {
@@ -97,15 +98,15 @@ public class DatasetCreatorService extends LadaService {
 
     @DELETE
     @Path("{id}")
-    public Response delete(
+    public void delete(
         @PathParam("id") Integer id
     ) {
-        DatasetCreator datensatzerzeuger = repository.getByIdPlain(
+        DatasetCreator datensatzerzeuger = repository.getById(
             DatasetCreator.class, id);
         authorization.authorize(
             datensatzerzeuger,
             RequestMethod.DELETE,
             DatasetCreator.class);
-        return repository.delete(datensatzerzeuger);
+        repository.delete(datensatzerzeuger);
     }
 }
