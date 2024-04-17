@@ -20,6 +20,7 @@ import org.hibernate.validator.HibernateValidator;
 
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.validation.rules.Rule;
+import de.intevation.lada.validation.groups.Notifications;
 import de.intevation.lada.validation.groups.Warnings;
 
 
@@ -92,6 +93,14 @@ public abstract class Validator<T extends BaseModel> {
             beanValidator.validate(object, Warnings.class);
         for (ConstraintViolation<T> violation: beanViolationWarnings) {
             object.addWarning(
+                violation.getPropertyPath().toString(),
+                violation.getMessage());
+        }
+
+        Set<ConstraintViolation<T>> beanViolationNotifications =
+            beanValidator.validate(object, Notifications.class);
+        for (ConstraintViolation<T> violation: beanViolationNotifications) {
+            object.addNotification(
                 violation.getPropertyPath().toString(),
                 violation.getMessage());
         }

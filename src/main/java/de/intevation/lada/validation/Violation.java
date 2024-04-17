@@ -23,7 +23,7 @@ public class Violation {
 
     private Map<String, Set<String>> errors;
 
-    private Map<String, Set<Integer>>notifications;
+    private Map<String, Set<String>>notifications;
 
     public Violation() {
         this.warnings = new HashMap<>();
@@ -39,8 +39,8 @@ public class Violation {
         return this.errors;
     }
 
-    public Map<String, Set<Integer>> getNotifications() {
-      return this.notifications;
+    public Map<String, Set<String>> getNotifications() {
+        return this.notifications;
     }
 
     public void addWarning(String key, String value) {
@@ -65,11 +65,15 @@ public class Violation {
         addError(key, value.toString());
     }
 
-    public void addNotification(String key, Integer value) {
+    public void addNotification(String key, String value) {
         if (!this.notifications.containsKey(key)) {
-            this.notifications.put(key, new HashSet<Integer>());
+            this.notifications.put(key, new HashSet<String>());
         }
         this.notifications.get(key).add(value);
+    }
+
+    public void addNotification(String key, Integer value) {
+        addNotification(key, value.toString());
     }
 
     public void addWarnings(Map<String, Set<String>> w) {
@@ -92,7 +96,7 @@ public class Violation {
         }
     }
 
-    public void addNotifications(Map<String, Set<Integer>> n) {
+    public void addNotifications(Map<String, Set<String>> n) {
         for (String key: n.keySet()) {
             if (this.notifications.containsKey(key)) {
                 this.notifications.get(key).addAll(n.get(key));

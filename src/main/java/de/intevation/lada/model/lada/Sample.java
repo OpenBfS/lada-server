@@ -45,6 +45,7 @@ import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.Unique;
+import de.intevation.lada.validation.groups.Notifications;
 import de.intevation.lada.validation.groups.Warnings;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 
@@ -79,6 +80,7 @@ public class Sample extends BaseModel implements Serializable {
     private Integer datasetCreatorId;
 
     @NotEmptyNorWhitespace
+    @NotBlank(groups = Notifications.class)
     private String mainSampleId;
 
     @NotEmptyNorWhitespace

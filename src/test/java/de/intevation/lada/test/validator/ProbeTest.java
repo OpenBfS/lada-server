@@ -80,6 +80,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
     //Expected validation messages
     private static final String MSG_NOT_NULL = "must not be null";
+    private static final String MSG_NOT_BLANK = "must not be blank";
     private static final String UNIQUE_PLACEHOLDER = "{fields}";
     private final String valMessageUniqueMainSampleIdMeasFacilId;
     private final String valMessageUniqueExtId;
@@ -125,13 +126,10 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidSample();
         sample.setMainSampleId(null);
 
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasNotifications());
-        Assert.assertTrue(sample.getNotifications()
-            .containsKey(MAIN_SAMPLE_ID));
-        Assert.assertTrue(
-            sample.getNotifications().get(MAIN_SAMPLE_ID).contains(
-                StatusCodes.VALUE_MISSING));
+        assertHasNotifications(
+            validator.validate(sample),
+            MAIN_SAMPLE_ID,
+            MSG_NOT_BLANK);
     }
 
     /**
@@ -330,7 +328,7 @@ public class ProbeTest extends ValidatorBaseTest {
         Assert.assertTrue(sample.getWarnings().containsKey(ENV_MEDIUM_ID));
         MatcherAssert.assertThat(
             sample.getWarnings().get(ENV_MEDIUM_ID),
-            CoreMatchers.hasItem("must not be blank"));
+            CoreMatchers.hasItem(MSG_NOT_BLANK));
     }
 
     /**

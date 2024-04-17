@@ -106,4 +106,22 @@ public abstract class ValidatorBaseTest extends BaseTest {
         MatcherAssert.assertThat(entity.getWarnings().get(key),
             CoreMatchers.hasItems(val));
     }
+
+    /**
+     * Assert that the given entity has the notification with given key and
+     * value attached.
+     * @param entity Entity to check
+     * @param key Expected notification key
+     * @param val Expected notification values
+     */
+    protected void assertHasNotifications(
+        BaseModel entity, String key, String... val
+    ) {
+        Assert.assertTrue(
+            "Expected notifications missing", entity.hasNotifications());
+        MatcherAssert.assertThat(entity.getNotifications().keySet(),
+            CoreMatchers.hasItem(key));
+        MatcherAssert.assertThat(entity.getNotifications().get(key),
+            CoreMatchers.hasItems(val));
+    }
 }

@@ -340,10 +340,10 @@ public class LafObjectMapper {
                                     "validation#probe", warn.getKey(), code));
                         }
                     }
-                    for (Entry<String, Set<Integer>> notes
+                    for (Entry<String, Set<String>> notes
                              : probe.getNotifications().entrySet()
                     ) {
-                        for (Integer code :notes.getValue()) {
+                        for (String code :notes.getValue()) {
                             currentNotifications.add(
                                 new ReportItem(
                                     "validation#probe", notes.getKey(), code));
@@ -617,10 +617,10 @@ public class LafObjectMapper {
                             "validation#probe", warn.getKey(), code));
                 }
             }
-            for (Entry<String, Set<Integer>> notes
+            for (Entry<String, Set<String>> notes
                      : newProbe.getNotifications().entrySet()
             ) {
-                for (Integer code: notes.getValue()) {
+                for (String code: notes.getValue()) {
                     currentNotifications.add(new ReportItem(
                             "validation#probe", notes.getKey(), code));
                 }
@@ -808,10 +808,10 @@ public class LafObjectMapper {
                     new ReportItem("validation#messung", warn.getKey(), code));
             }
         }
-        for (Entry<String, Set<Integer>> notes
+        for (Entry<String, Set<String>> notes
                  : newMessung.getNotifications().entrySet()
         ) {
-            for (Integer code : notes.getValue()) {
+            for (String code : notes.getValue()) {
                 currentNotifications.add(
                     new ReportItem("validation#messung", notes.getKey(), code));
             }

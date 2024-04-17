@@ -75,13 +75,10 @@ public class MessungTest extends ValidatorBaseTest {
     public void hasNoNebenprobenNr() {
         Measm measm = createMinimalValidMeasm();
         measm.setMinSampleId(null);
-        validator.validate(measm);
-        Assert.assertTrue(measm.hasNotifications());
-        MatcherAssert.assertThat(measm.getNotifications().keySet(),
-            CoreMatchers.hasItem(MIN_SAMPLE_ID));
-        MatcherAssert.assertThat(
-            measm.getNotifications().get(MIN_SAMPLE_ID),
-            CoreMatchers.hasItem(StatusCodes.VALUE_MISSING));
+        assertHasNotifications(
+            validator.validate(measm),
+            MIN_SAMPLE_ID,
+            String.valueOf(StatusCodes.VALUE_MISSING));
     }
 
     /**
@@ -243,13 +240,10 @@ public class MessungTest extends ValidatorBaseTest {
         measm.setSampleId(EXISTING_SAMPLE_ID_REGULATION_161);
         measm.setMeasmStartDate(null);
 
-        validator.validate(measm);
-        Assert.assertTrue(measm.hasNotifications());
-        Assert.assertTrue(measm.getNotifications()
-            .containsKey(MEASM_START_DATE));
-        Assert.assertTrue(
-            measm.getNotifications().get(MEASM_START_DATE).contains(
-                StatusCodes.VALUE_MISSING));
+        assertHasNotifications(
+            validator.validate(measm),
+            MEASM_START_DATE,
+            String.valueOf(StatusCodes.VALUE_MISSING));
     }
 
     /**
@@ -281,13 +275,10 @@ public class MessungTest extends ValidatorBaseTest {
         measm.setMeasPd(null);
         measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
 
-        validator.validate(measm);
-        Assert.assertTrue(measm.hasNotifications());
-        Assert.assertTrue(measm.getNotifications()
-            .containsKey(MEAS_PD));
-        Assert.assertTrue(
-            measm.getNotifications().get(MEAS_PD).contains(
-                StatusCodes.VALUE_MISSING));
+        assertHasNotifications(
+            validator.validate(measm),
+            MEAS_PD,
+            String.valueOf(StatusCodes.VALUE_MISSING));
     }
 
     /**
@@ -299,13 +290,10 @@ public class MessungTest extends ValidatorBaseTest {
         measm.setMeasPd(null);
         measm.setSampleId(EXISTING_SAMPLE_ID_SAMPLE_METH_CONT);
 
-        validator.validate(measm);
-        Assert.assertTrue(measm.hasNotifications());
-        Assert.assertTrue(measm.getNotifications()
-            .containsKey(MEAS_PD));
-        Assert.assertTrue(
-            measm.getNotifications().get(MEAS_PD).contains(
-                StatusCodes.VALUE_MISSING));
+        assertHasNotifications(
+            validator.validate(measm),
+            MEAS_PD,
+            String.valueOf(StatusCodes.VALUE_MISSING));
     }
 
     /**
@@ -327,13 +315,10 @@ public class MessungTest extends ValidatorBaseTest {
         Measm measm = createMinimalValidMeasm();
         measm.setId(null);
 
-        validator.validate(measm);
-        String notficationKey = MEASD_ID;
-        Assert.assertTrue(measm.hasNotifications());
-        Assert.assertTrue(measm.getNotifications()
-            .containsKey(notficationKey));
-        Assert.assertTrue(measm.getNotifications()
-            .get(notficationKey).contains(StatusCodes.VAL_OBL_MEASURE));
+        assertHasNotifications(
+            validator.validate(measm),
+            MEASD_ID,
+            String.valueOf(StatusCodes.VAL_OBL_MEASURE));
     }
 
     /**

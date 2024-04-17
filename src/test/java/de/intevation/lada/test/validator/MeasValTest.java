@@ -195,11 +195,10 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasVal(0.0d);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        validator.validate(val);
-        Assert.assertTrue(val.hasNotifications());
-        Assert.assertTrue(val.getNotifications().containsKey(MEAS_VAL));
-        Assert.assertTrue(val.getNotifications()
-            .get(MEAS_VAL).contains(StatusCodes.VAL_ZERO));
+        assertHasNotifications(
+            validator.validate(val),
+            MEAS_VAL,
+            String.valueOf(StatusCodes.VAL_ZERO));
     }
 
     /**
@@ -368,11 +367,10 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_SECONDARY_UNIT);
 
-        validator.validate(val);
-        Assert.assertTrue(val.hasNotifications());
-        Assert.assertTrue(val.getNotifications().containsKey(UNIT_ID));
-        Assert.assertTrue(val.getNotifications()
-            .get(UNIT_ID).contains(StatusCodes.VAL_SEC_UNIT));
+        assertHasNotifications(
+            validator.validate(val),
+            UNIT_ID,
+            String.valueOf(StatusCodes.VAL_SEC_UNIT));
     }
 
     /**
@@ -386,11 +384,10 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_UNIT_CONVERTABLE_TO_SECONDARY);
 
-        validator.validate(val);
-        Assert.assertTrue(val.hasNotifications());
-        Assert.assertTrue(val.getNotifications().containsKey(UNIT_ID));
-        Assert.assertTrue(val.getNotifications()
-            .get(UNIT_ID).contains(StatusCodes.VAL_SEC_UNIT));
+        assertHasNotifications(
+            validator.validate(val),
+            UNIT_ID,
+            String.valueOf(StatusCodes.VAL_SEC_UNIT));
     }
 
     /**

@@ -20,7 +20,7 @@ import jakarta.json.bind.annotation.JsonbTransient;
 public abstract class BaseModel {
     private Map<String, Set<String>> errors = new HashMap<>();
     private Map<String, Set<String>> warnings = new HashMap<>();
-    private Map<String, Set<Integer>> notifications = new HashMap<>();
+    private Map<String, Set<String>> notifications = new HashMap<>();
 
     private boolean readonly;
 
@@ -42,13 +42,13 @@ public abstract class BaseModel {
         this.warnings = warnings;
     }
 
-    public Map<String, Set<Integer>> getNotifications() {
+    public Map<String, Set<String>> getNotifications() {
         return this.notifications;
     }
 
     @JsonbTransient
     public void setNotifications(
-        Map<String, Set<Integer>> notifications
+        Map<String, Set<String>> notifications
     ) {
         this.notifications = notifications;
     }
@@ -88,7 +88,7 @@ public abstract class BaseModel {
      *
      * @param n Notifications to add
      */
-    public void addNotifications(Map<String, Set<Integer>> n) {
+    public void addNotifications(Map<String, Set<String>> n) {
         for (String key: n.keySet()) {
             if (this.notifications.containsKey(key)) {
                 this.notifications.get(key).addAll(n.get(key));
@@ -122,6 +122,19 @@ public abstract class BaseModel {
             this.warnings.put(key, new HashSet<String>());
         }
         this.warnings.get(key).add(value);
+    }
+
+    /**
+     * Add given validation notification to this object's notifications.
+     *
+     * @param key Key of notification to add
+     * @param value Message of notification to add
+     */
+    public void addNotification(String key, String value) {
+        if (!this.notifications.containsKey(key)) {
+            this.notifications.put(key, new HashSet<String>());
+        }
+        this.notifications.get(key).add(value);
     }
 
     /**
