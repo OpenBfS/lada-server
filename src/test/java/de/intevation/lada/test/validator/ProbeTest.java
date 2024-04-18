@@ -388,11 +388,10 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setSampleStartDate(Date.from(yesterday));
         sample.setOrigDate(Date.from(now));
 
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasWarnings());
-        Assert.assertTrue(sample.getWarnings().containsKey(ORIG_DATE));
-        Assert.assertTrue(sample.getWarnings().get(ORIG_DATE).contains(
-                String.valueOf(StatusCodes.URSPR_DATE_BEFORE_BEGIN)));
+        assertHasWarnings(
+            validator.validate(sample),
+            ORIG_DATE,
+            "Time of origin must be before or equal to sampling time");
     }
 
     /**

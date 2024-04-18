@@ -44,7 +44,6 @@ public class StatusCodes {
     public static final int ORT_REIMP_TOO_LONG = 658;
     public static final int DATE_IN_FUTURE = 661;
     public static final int DATE_BEGIN_AFTER_END = 662;
-    public static final int URSPR_DATE_BEFORE_BEGIN = 663;
     public static final int IMP_PARSER_ERROR = 670;
     public static final int IMP_PRESENT = 671;
     public static final int IMP_DUPLICATE = 672;
