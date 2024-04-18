@@ -32,17 +32,15 @@ public class CheckProbeart implements Rule {
         Date end = probe.getSampleEndDate();
         Date begin = probe.getSampleStartDate();
         if (probe.getSampleMethId() != null
-            && !DATENBASIS_161.equals(probe.getRegulationId())) {
-          if (begin != null && end != null
-              && !begin.equals(end)
-              && PROBENART_INDIVIDUAL.equals(probe.getSampleMethId())) {
+            && !DATENBASIS_161.equals(probe.getRegulationId())
+            && begin != null && end != null && !begin.equals(end)
+            && PROBENART_INDIVIDUAL.equals(probe.getSampleMethId())
+        ) {
             Violation violation = new Violation();
-            violation.addWarning("sampleMethId", StatusCodes.VAL_SINGLE_DATE);
+            violation.addWarning(
+                "sampleMethId", StatusCodes.VAL_SINGLE_DATE);
             return violation;
-          }
-        } else {
-            return null;
-          }
+        }
         return null;
     }
 }
