@@ -10,7 +10,6 @@ package de.intevation.lada.util.data;
 import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.NonUniqueResultException;
@@ -19,8 +18,6 @@ import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
-
-import org.jboss.logging.Logger;
 
 
 /**
@@ -40,9 +37,6 @@ import org.jboss.logging.Logger;
         NoResultException.class,
         NonUniqueResultException.class})
 public class Repository {
-
-    @Inject
-    private Logger logger;
 
     @PersistenceContext
     EntityManager em;
