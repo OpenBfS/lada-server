@@ -5,30 +5,35 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.validation.rules.probe;
+package de.intevation.lada.validation.constraints;
 
 import java.util.Date;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationRule;
-import de.intevation.lada.validation.rules.Rule;
+
 
 /**
- * Validation rule for probe.
- * Validates if the "probeart" matches date values.
- *
+ * Validation rule for sample.
+ * Validates if the sampleMeth matches date values.
  */
-@ValidationRule("Sample")
-public class CheckProbeart implements Rule {
+public class DatesVsSampleMethValidator
+    implements ConstraintValidator<DatesVsSampleMeth, Sample> {
 
     private static final Integer DATENBASIS_161 = 1;
     private static final Integer PROBENART_INDIVIDUAL = 1;
 
+    private String message;
+
     @Override
-    public Violation execute(Object object) {
-        Sample probe = (Sample) object;
+    public void initialize(DatesVsSampleMeth constraintAnnotation) {
+        this.message = constraintAnnotation.message();
+    }
+
+    @Override
+    public boolean isValid(Sample probe, ConstraintValidatorContext ctx) {
         Date end = probe.getSampleEndDate();
         Date begin = probe.getSampleStartDate();
         if (probe.getSampleMethId() != null
@@ -36,11 +41,12 @@ public class CheckProbeart implements Rule {
             && begin != null && end != null && !begin.equals(end)
             && PROBENART_INDIVIDUAL.equals(probe.getSampleMethId())
         ) {
-            Violation violation = new Violation();
-            violation.addWarning(
-                "sampleMethId", StatusCodes.VAL_SINGLE_DATE);
-            return violation;
+            ctx.disableDefaultConstraintViolation();
+            ctx.buildConstraintViolationWithTemplate(this.message)
+                .addPropertyNode("sampleMethId")
+                .addConstraintViolation();
+            return false;
         }
-        return null;
+        return true;
     }
 }

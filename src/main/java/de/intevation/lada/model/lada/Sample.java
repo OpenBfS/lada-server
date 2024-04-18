@@ -42,6 +42,7 @@ import de.intevation.lada.model.master.Regulation;
 import de.intevation.lada.model.master.ReiAgGr;
 import de.intevation.lada.model.master.SampleMeth;
 import de.intevation.lada.model.master.Sampler;
+import de.intevation.lada.validation.constraints.DatesVsSampleMeth;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.Unique;
@@ -58,6 +59,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
     groups = DatabaseConstraints.class, clazz = Sample.class)
 @Unique(fields = {"extId"},
     groups = DatabaseConstraints.class, clazz = Sample.class)
+@DatesVsSampleMeth(groups = Warnings.class)
 public class Sample extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

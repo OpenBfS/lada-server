@@ -371,11 +371,10 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setSampleStartDate(Date.from(yesterday));
         sample.setSampleEndDate(Date.from(now));
 
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasWarnings());
-        Assert.assertTrue(sample.getWarnings().containsKey(SAMPLE_METH_ID));
-        Assert.assertTrue(sample.getWarnings().get(SAMPLE_METH_ID).contains(
-                String.valueOf(StatusCodes.VAL_SINGLE_DATE)));
+        assertHasWarnings(
+            validator.validate(sample),
+            SAMPLE_METH_ID,
+            "Individual sample expects sample start date = sample end date");
     }
 
     /**
