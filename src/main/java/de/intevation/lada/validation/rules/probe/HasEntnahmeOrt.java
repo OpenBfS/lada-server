@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.validation.rules.probe;
 
-import java.util.Arrays;
 import java.util.List;
 
 import jakarta.inject.Inject;
@@ -30,6 +29,11 @@ import de.intevation.lada.validation.rules.Rule;
 @ValidationRule("Sample")
 public class HasEntnahmeOrt implements Rule {
 
+    private static final int REG_REI_I = 4;
+    private static final int REG_REI_X = 3;
+    private static final String TYPE_REG_E = "E";
+    private static final String TYPE_REG_R = "R";
+
     @Inject
     private Repository repository;
 
@@ -42,16 +46,19 @@ public class HasEntnahmeOrt implements Rule {
             violation.addWarning("geolocats", StatusCodes.VALUE_MISSING);
             return violation;
         }
+
+        final int regulation = probe.getRegulationId();
         if (probe.getReiAgGrId() != null
-            || Integer.valueOf(3).equals(probe.getRegulationId())
-            || Integer.valueOf(4).equals(probe.getRegulationId())) {
-                return null;
+            || regulation == REG_REI_X
+            || regulation == REG_REI_I
+        ) {
+            return null;
         }
-        List<String> zuordTypeFilter = Arrays.asList("E", "R");
+
         QueryBuilder<Geolocat> builder = repository
             .queryBuilder(Geolocat.class)
             .and("sampleId", id)
-            .andIn("typeRegulation", zuordTypeFilter);
+            .andIn("typeRegulation", List.of(TYPE_REG_E, TYPE_REG_R));
         List<Geolocat> orte = repository.filter(builder.getQuery());
 
         if (orte.size() > 1) {
@@ -59,17 +66,17 @@ public class HasEntnahmeOrt implements Rule {
             violation.addWarning("geolocats", StatusCodes.VALUE_AMBIGOUS);
             return violation;
         }
-
-        for (Geolocat ort: orte) {
-            if (("E".equals(ort.getTypeRegulation())
-                    || "R".equals(ort.getTypeRegulation())
-                    && probe.getRegulationId() != 4)
-                    || "R".equals(ort.getTypeRegulation())
-                && probe.getRegulationId() == 4
+        // Continues only if there is at most one geolocat
+        if (!orte.isEmpty()) {
+            final String typeReg = orte.get(0).getTypeRegulation();
+            if ((TYPE_REG_E.equals(typeReg)
+                    || TYPE_REG_R.equals(typeReg) && regulation != REG_REI_I)
+                || TYPE_REG_R.equals(typeReg) && regulation == REG_REI_I
             ) {
                 return null;
             }
         }
+
         Violation violation = new Violation();
         violation.addWarning("geolocats", StatusCodes.VALUE_MISSING);
         return violation;
