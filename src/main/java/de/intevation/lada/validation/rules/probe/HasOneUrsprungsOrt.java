@@ -38,14 +38,10 @@ public class HasOneUrsprungsOrt implements Rule {
     public Violation execute(Object object) {
         Sample probe = (Sample) object;
         Integer id = probe.getId();
-        if (id == null) {
-            Violation violation = new Violation();
-            violation.addWarning("geolocats", StatusCodes.VALUE_MISSING);
-            return violation;
-        }
 
         final int regulation = probe.getRegulationId();
-        if (probe.getReiAgGrId() != null
+        if (id == null
+            || probe.getReiAgGrId() != null
             || regulation == REG_REI_X
             || regulation == REG_REI_I
         ) {
