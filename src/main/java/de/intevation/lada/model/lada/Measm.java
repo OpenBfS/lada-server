@@ -33,6 +33,7 @@ import org.hibernate.annotations.DynamicInsert;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Mmt;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.MeasuringAfterSampling;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
@@ -50,6 +51,7 @@ import de.intevation.lada.validation.groups.Warnings;
     clazz = Measm.class, fields = { "minSampleId", "sampleId" })
 @Unique(groups = DatabaseConstraints.class,
     clazz = Measm.class, fields = { "extId", "sampleId" })
+@MeasuringAfterSampling(groups = Warnings.class)
 public class Measm extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

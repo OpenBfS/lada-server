@@ -185,14 +185,11 @@ public class MessungTest extends ValidatorBaseTest {
         Measm measm = createMinimalValidMeasm();
         measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
         measm.setMeasmStartDate(Date.from(measmStartDate));
-        String warnKey = MEASM_START_DATE;
-        validator.validate(measm);
-        Assert.assertTrue(measm.hasWarnings());
-        Assert.assertTrue(measm.getWarnings()
-            .containsKey(warnKey));
-        Assert.assertTrue(
-            measm.getWarnings().get(warnKey).contains(
-                String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
+
+        assertHasWarnings(
+            validator.validate(measm),
+            MEASM_START_DATE,
+            "Values do not match");
     }
 
     /**
