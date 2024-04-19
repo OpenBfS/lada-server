@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.validation.rules.probe;
 
-import java.util.Arrays;
 import java.util.List;
 
 import jakarta.inject.Inject;
@@ -29,6 +28,9 @@ import de.intevation.lada.validation.rules.Rule;
 @ValidationRule("Sample")
 public class HasOneUrsprungsOrt implements Rule {
 
+    private static final int REG_REI_I = 4;
+    private static final int REG_REI_X = 3;
+
     @Inject
     private Repository repository;
 
@@ -41,18 +43,19 @@ public class HasOneUrsprungsOrt implements Rule {
             violation.addWarning("geolocats", StatusCodes.VALUE_MISSING);
             return violation;
         }
-        if (probe.getReiAgGrId() != null
-            || Integer.valueOf(3).equals(probe.getRegulationId())
-            || Integer.valueOf(4).equals(probe.getRegulationId())) {
-                return null;
-        }
 
-        List<String> zuordTypeFilter = Arrays.asList("U", "R");
+        final int regulation = probe.getRegulationId();
+        if (probe.getReiAgGrId() != null
+            || regulation == REG_REI_X
+            || regulation == REG_REI_I
+        ) {
+            return null;
+        }
 
         QueryBuilder<Geolocat> builder = repository
             .queryBuilder(Geolocat.class)
             .and("sampleId", id)
-            .andIn("typeRegulation", zuordTypeFilter);
+            .andIn("typeRegulation", List.of("U", "R"));
         List<Geolocat> orte = repository.filter(builder.getQuery());
         if (orte.size() > 1) {
             Violation violation = new Violation();

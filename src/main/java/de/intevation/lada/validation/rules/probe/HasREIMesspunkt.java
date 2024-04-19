@@ -29,18 +29,20 @@ import de.intevation.lada.validation.rules.Rule;
 @ValidationRule("Sample")
 public class HasREIMesspunkt implements Rule {
 
+    private static final int REG_REI_I = 4;
+
     @Inject
     private Repository repository;
 
     @Override
     public Violation execute(Object object) {
         Sample probe = (Sample) object;
-        Integer id = probe.getId();
-        if (probe.getReiAgGrId() != null
-            || Integer.valueOf(4).equals(probe.getRegulationId())) {
+
+        final int regulation = probe.getRegulationId();
+        if (probe.getReiAgGrId() != null || regulation == REG_REI_I) {
             QueryBuilder<Geolocat> builder = repository
                 .queryBuilder(Geolocat.class)
-                .and("sampleId", id)
+                .and("sampleId", probe.getId())
                 .and("typeRegulation", "R");
             List<Geolocat> orte = repository.filter(builder.getQuery());
             if (orte.isEmpty()) {
