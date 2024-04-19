@@ -25,6 +25,7 @@ import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
 import org.hibernate.annotations.DynamicInsert;
@@ -69,6 +70,7 @@ public class Measm extends BaseModel implements Serializable {
     private Integer measPd;
 
     @Temporal(TIMESTAMP)
+    @PastOrPresent(groups = Warnings.class)
     private Date measmStartDate;
 
     @NotBlank

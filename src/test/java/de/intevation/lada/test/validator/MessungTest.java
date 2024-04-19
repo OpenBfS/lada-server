@@ -166,14 +166,10 @@ public class MessungTest extends ValidatorBaseTest {
         Measm measm = createMinimalValidMeasm();
         measm.setMeasmStartDate(Date.from(tomorrow));
 
-
-        validator.validate(measm);
-        Assert.assertTrue(measm.hasWarnings());
-        Assert.assertTrue(measm.getWarnings()
-            .containsKey(MEASM_START_DATE));
-        Assert.assertTrue(
-            measm.getWarnings().get(MEASM_START_DATE).contains(
-                String.valueOf(StatusCodes.DATE_IN_FUTURE)));
+        assertHasWarnings(
+            validator.validate(measm),
+            MEASM_START_DATE,
+            "must be a date in the past or in the present");
     }
 
     /**

@@ -309,10 +309,10 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidSample();
         sample.setSampleStartDate(new Timestamp(TS3));
 
-        validator.validate(sample);
-        Assert.assertTrue(
-            sample.getWarnings().get(SAMPLE_START_DATE).contains(
-                String.valueOf(StatusCodes.DATE_IN_FUTURE)));
+        assertHasWarnings(
+            validator.validate(sample),
+            SAMPLE_START_DATE,
+            "must be a date in the past or in the present");
     }
 
     /**

@@ -39,12 +39,6 @@ public class TimeProbeentnahmeBegin implements Rule {
                 "sampleStartDate", StatusCodes.DATE_BEGIN_AFTER_END);
             return violation;
         }
-        if (begin.after(new Date())) {
-            Violation violation = new Violation();
-            violation.addWarning(
-                "sampleStartDate", StatusCodes.DATE_IN_FUTURE);
-            return violation;
-        }
         if (end != null && begin.after(end)) {
             Violation violation = new Violation();
             violation.addWarning(

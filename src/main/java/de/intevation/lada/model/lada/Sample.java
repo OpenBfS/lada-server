@@ -26,6 +26,7 @@ import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -129,6 +130,7 @@ public class Sample extends BaseModel implements Serializable {
     private Integer samplerId;
 
     @NotNull(groups = Warnings.class)
+    @PastOrPresent(groups = Warnings.class)
     @Temporal(TIMESTAMP)
     private Date sampleStartDate;
 
