@@ -79,7 +79,6 @@ public class HasPflichtmessgroessen implements Rule {
             .and("measmId", messung.getId());
         List<MeasVal> messwerte =
             repository.filter(wertBuilder.getQuery());
-        Violation violation = new Violation();
         List<ObligMeasdMp> tmp = new ArrayList<ObligMeasdMp>();
         for (MeasVal wert : messwerte) {
             for (ObligMeasdMp p : pflicht) {
@@ -91,10 +90,12 @@ public class HasPflichtmessgroessen implements Rule {
         pflicht.removeAll(tmp);
 
         if (!pflicht.isEmpty()) {
+            Violation violation = new Violation();
             violation.addNotification(
                 "measdId",
                 StatusCodes.VAL_OBL_MEASURE);
+            return violation;
         }
-        return violation.hasNotifications() ? violation : null;
+        return null;
     }
 }
