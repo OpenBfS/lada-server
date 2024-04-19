@@ -37,6 +37,7 @@ import de.intevation.lada.validation.constraints.MeasuringAfterSampling;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
+import de.intevation.lada.validation.groups.Notifications;
 import de.intevation.lada.validation.groups.Warnings;
 
 
@@ -82,6 +83,7 @@ public class Measm extends BaseModel implements Serializable {
 
     @Size(max = 4)
     @NotEmptyNorWhitespace
+    @NotBlank(groups = Notifications.class)
     private String minSampleId;
 
     @NotNull
