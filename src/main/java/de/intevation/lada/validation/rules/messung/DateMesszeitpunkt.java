@@ -7,6 +7,8 @@
  */
 package de.intevation.lada.validation.rules.messung;
 
+import java.util.Date;
+
 import jakarta.inject.Inject;
 
 import de.intevation.lada.model.lada.Measm;
@@ -37,20 +39,13 @@ public class DateMesszeitpunkt implements Rule {
         Sample probe = repository.getById(
             Sample.class, messung.getSampleId());
 
-        if (messung.getMeasmStartDate() == null) {
-            return null;
-        }
+        Date measmStartDate = messung.getMeasmStartDate();
+        Date sampleStartDate = probe.getSampleStartDate();
+        Date sampleEndDate = probe.getSampleEndDate();
 
-        if (probe.getSampleStartDate() == null
-            && probe.getSampleEndDate() == null) {
-            return null;
-        }
-
-        if ((probe.getSampleStartDate() != null
-            && probe.getSampleStartDate().after(messung.getMeasmStartDate())
-            || (probe.getSampleEndDate() != null
-            && probe.getSampleEndDate().after(messung.getMeasmStartDate()))
-            )
+        if (measmStartDate != null && (
+                sampleStartDate != null && sampleStartDate.after(measmStartDate)
+                || sampleEndDate != null && sampleEndDate.after(measmStartDate))
         ) {
             Violation violation = new Violation();
             violation.addWarning(
