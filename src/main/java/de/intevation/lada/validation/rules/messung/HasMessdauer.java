@@ -31,10 +31,12 @@ public class HasMessdauer implements Rule {
     @Override
     public Violation execute(Object object) {
         Measm messung = (Measm) object;
-        Sample probe =
-            repository.getById(Sample.class, messung.getSampleId());
 
         if (messung.getMeasPd() == null) {
+            Sample probe =
+                repository.getById(Sample.class, messung.getSampleId());
+            Violation violation = new Violation();
+            String msgKey = "measPd";
             //Exception for continous samples or Datenbasis = §161
             if (probe != null
                 && (probe.getSampleMethId() != null
@@ -42,18 +44,11 @@ public class HasMessdauer implements Rule {
                     || probe.getRegulationId() != null
                     && probe.getRegulationId() == 1)
             ) {
-                Violation violation = new Violation();
-                violation.addNotification(
-                    "measPd", StatusCodes.VALUE_MISSING);
-                return violation;
-
-            } else {
-                Violation violation = new Violation();
-                violation.addWarning(
-                    "measPd",
-                    StatusCodes.VALUE_MISSING);
+                violation.addNotification(msgKey, StatusCodes.VALUE_MISSING);
                 return violation;
             }
+            violation.addWarning(msgKey, StatusCodes.VALUE_MISSING);
+            return violation;
         }
         return null;
     }
