@@ -30,16 +30,7 @@ public class TimeProbeentnahmeBegin implements Rule {
         Sample probe = (Sample) object;
         Date begin = probe.getSampleStartDate();
         Date end = probe.getSampleEndDate();
-        if (begin == null) {
-            if (end == null) {
-                return null;
-            }
-            Violation violation = new Violation();
-            violation.addWarning(
-                "sampleStartDate", StatusCodes.DATE_BEGIN_AFTER_END);
-            return violation;
-        }
-        if (end != null && begin.after(end)) {
+        if (begin != null && end != null && begin.after(end)) {
             Violation violation = new Violation();
             violation.addWarning(
                 "sampleStartDate", StatusCodes.DATE_BEGIN_AFTER_END);

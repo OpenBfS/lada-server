@@ -271,23 +271,6 @@ public class ProbeTest extends ValidatorBaseTest {
     }
 
     /**
-     * Test probenahme begin without begin.
-     */
-    @Test
-    public void timeNoBeginProbeentnahmeBegin() {
-        Sample sample = createMinimumValidSample();
-        sample.setSampleStartDate(null);
-        sample.setSampleEndDate(new Timestamp(TS1));
-
-        validator.validate(sample);
-        assertHasWarnings(
-            sample,
-            SAMPLE_START_DATE,
-            MSG_NOT_NULL,
-            String.valueOf(StatusCodes.DATE_BEGIN_AFTER_END));
-    }
-
-    /**
      * Test probenahme begin after end.
      */
     @Test
