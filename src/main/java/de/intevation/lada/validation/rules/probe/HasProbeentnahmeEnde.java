@@ -33,7 +33,7 @@ public class HasProbeentnahmeEnde implements Rule {
             && (regulation == 4 && sampleMeth == 9 && ende == null
                 || regulation != 4
                 && (sampleMeth == 9 || sampleMeth == 3)
-                && (ende == null || begin == null || ende.before(begin)))
+                && (ende == null || begin != null && ende.before(begin)))
         ) {
             Violation violation = new Violation();
             violation.addWarning(
@@ -42,5 +42,4 @@ public class HasProbeentnahmeEnde implements Rule {
         }
         return null;
     }
-
 }
