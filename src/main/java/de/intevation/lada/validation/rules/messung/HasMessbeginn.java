@@ -31,25 +31,22 @@ public class HasMessbeginn implements Rule {
     @Override
     public Violation execute(Object object) {
         Measm messung = (Measm) object;
-        Sample probe =
-            repository.getById(Sample.class, messung.getSampleId());
 
-        if (messung.getMeasmStartDate() == null
-            && probe != null
-            && probe.getRegulationId() != null
-            && probe.getRegulationId() != 1
-        ) {
+        if (messung.getMeasmStartDate() == null) {
+            Sample probe =
+                repository.getById(Sample.class, messung.getSampleId());
             Violation violation = new Violation();
-            violation.addWarning("measmStartDate", StatusCodes.VALUE_MISSING);
+            String msgKey = "measmStartDate";
+            if (probe != null
+                && probe.getRegulationId() != null
+                && probe.getRegulationId() != 1
+            ) {
+                violation.addWarning(msgKey, StatusCodes.VALUE_MISSING);
+                return violation;
+            }
+            violation.addNotification(msgKey, StatusCodes.VALUE_MISSING);
             return violation;
-        } else if (messung.getMeasmStartDate() == null) {
-            Violation violation = new Violation();
-            violation.addNotification(
-                "measmStartDate", StatusCodes.VALUE_MISSING);
-            return violation;
-        } else {
-            return null;
         }
+        return null;
     }
-
 }
