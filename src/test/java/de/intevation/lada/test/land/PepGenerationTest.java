@@ -28,6 +28,8 @@ import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.test.ServiceTest;
+import de.intevation.lada.util.data.StatusCodes;
+
 
 /**
  * Class containing methods used for testing the generation of probe records
@@ -45,7 +47,6 @@ public class PepGenerationTest extends ServiceTest {
     private static final int ID1007 = 1007;
     private static final int ID1008 = 1008;
     private static final int ID1009 = 1009;
-    private static final int ID1010 = 1010;
     private static final int ID1012 = 1012;
     private static final int ID1013 = 1013;
     private static final int ID1014 = 1014;
@@ -57,8 +58,6 @@ public class PepGenerationTest extends ServiceTest {
     private static final int ID1100 = 1100;
     private static final int ID1103 = 1103;
     private static final int ID1020 = 1020;
-
-    private static final int A699 = 699;
 
     private static final int C4 = 4;
     private static final int C5 = 5;
@@ -133,7 +132,6 @@ public class PepGenerationTest extends ServiceTest {
         testPartialIntevals();
         testGenerationFromIdList();
         testGenerationRejectUnauthorized();
-        testGenerationRejectInvalidParams();
         testZusatzwertgeneration();
     }
 
@@ -506,26 +504,7 @@ public class PepGenerationTest extends ServiceTest {
 
         Assert.assertTrue(mpData.get("data") == JsonValue.NULL);
         Assert.assertFalse(mpData.getBoolean("success"));
-        Assert.assertEquals(A699, mpData.getInt("message"));
-    }
-
-    /**
-     * Test if server rejects a request containing invalid params.
-     */
-    private void testGenerationRejectInvalidParams() {
-        int mpId = ID1010;
-        List<Integer> idParam = new ArrayList<Integer>();
-        idParam.add(mpId);
-
-        JsonObject entity = generateFromMpIds(idParam, TS1, TS2);
-
-        //Request should have failed with message 699
-        JsonObject mpData =
-            entity.getJsonObject("proben").getJsonObject(Integer.toString(mpId));
-
-        Assert.assertTrue(mpData.get("data") == JsonValue.NULL);
-        Assert.assertFalse(mpData.getBoolean("success"));
-        Assert.assertEquals(A699, mpData.getInt("message"));
+        Assert.assertEquals(StatusCodes.NOT_ALLOWED, mpData.getInt("message"));
     }
 
     private void testZusatzwertgeneration() {

@@ -38,7 +38,9 @@ import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
+import de.intevation.lada.validation.constraints.BeginBeforeEnd;
 import de.intevation.lada.validation.Validator;
+
 
 /**
  * REST service for Sample objects.
@@ -92,6 +94,7 @@ public class SampleService extends LadaService {
     /**
      * Expected format for payload in POST request to createFromMessprogramm().
      */
+    @BeginBeforeEnd
     public static class PostData {
         @NotNull
         private List<@NotNull @IsValidPrimaryKey(
@@ -99,7 +102,10 @@ public class SampleService extends LadaService {
 
         private boolean dryrun;
 
+        @NotNull
         private Calendar start;
+
+        @NotNull
         private Calendar end;
 
         public void setIds(List<Integer> ids) {
@@ -110,10 +116,16 @@ public class SampleService extends LadaService {
             this.dryrun = dryrun;
         }
 
+        public Calendar getStart() {
+            return this.start;
+        }
         public void setStart(Calendar start) {
             this.start = start;
         }
 
+        public Calendar getEnd() {
+            return this.end;
+        }
         public void setEnd(Calendar end) {
             this.end = end;
         }
@@ -221,13 +233,6 @@ public class SampleService extends LadaService {
                 }
             }
 
-            if (object.start.after(object.end)) {
-                data.put("success", false);
-                data.put("message", StatusCodes.DATE_BEGIN_AFTER_END);
-                data.put("data", null);
-                probenData.put(messprogramm.getId().toString(), data);
-                return;
-            }
             List<Sample> proben = factory.create(
                 messprogramm,
                 object.start,

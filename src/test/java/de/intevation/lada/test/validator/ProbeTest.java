@@ -278,10 +278,11 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidSample();
         sample.setSampleStartDate(new Timestamp(TS2));
         sample.setSampleEndDate(new Timestamp(TS1));
-        validator.validate(sample);
-        Assert.assertTrue(
-            sample.getWarnings().get(SAMPLE_START_DATE).contains(
-                String.valueOf(StatusCodes.DATE_BEGIN_AFTER_END)));
+
+        assertHasWarnings(
+            validator.validate(sample),
+            SAMPLE_START_DATE,
+            "Begin must be before end");
     }
 
     /**

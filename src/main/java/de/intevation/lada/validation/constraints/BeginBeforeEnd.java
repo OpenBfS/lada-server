@@ -24,7 +24,10 @@ import jakarta.validation.Payload;
  */
 @Target({ TYPE })
 @Retention(RUNTIME)
-@Constraint(validatedBy = { BeginBeforeEndMpgValidator.class })
+@Constraint(validatedBy = {
+        BeginBeforeEndMpgValidator.class,
+        BeginBeforeEndSampleValidator.class,
+        BeginBeforeEndSampleServicePostDataValidator.class })
 @Documented
 public @interface BeginBeforeEnd {
 
