@@ -157,10 +157,7 @@ public class SiteService extends LadaService {
         }
 
         @SuppressWarnings("unchecked")
-        List<Site> orte = siteQuery.getResultList();
-        for (Site o : orte) {
-            validator.validate(o);
-        }
+        List<Site> orte = validator.validate(siteQuery.getResultList());
 
         int size = Math.toIntExact((Long) countQuery.getSingleResult());
 

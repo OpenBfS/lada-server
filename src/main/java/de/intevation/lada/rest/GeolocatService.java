@@ -81,10 +81,7 @@ public class GeolocatService extends LadaService {
         List<Geolocat> r = authorization.filter(
             repository.filter(builder.getQuery()),
             Geolocat.class);
-        for (Geolocat otz: r) {
-            validator.validate(otz);
-        }
-        return r;
+        return validator.validate(r);
     }
 
     /**

@@ -81,10 +81,7 @@ public class GeolocatMpgService extends LadaService {
         List<GeolocatMpg> ortszuordnungs = authorization.filter(
             repository.filter(builder.getQuery()),
             GeolocatMpg.class);
-        for (GeolocatMpg otz: ortszuordnungs) {
-            validator.validate(otz);
-        }
-        return ortszuordnungs;
+        return validator.validate(ortszuordnungs);
     }
 
     /**

@@ -87,10 +87,7 @@ public class StatusProtService extends LadaService {
         List<StatusProt> status = authorization.filter(
             repository.filter(builder.getQuery()),
             StatusProt.class);
-        for (StatusProt s: status) {
-            validator.validate(s);
-        }
-        return status;
+        return validator.validate(status);
     }
 
     /**

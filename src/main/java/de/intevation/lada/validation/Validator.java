@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.validation;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -64,6 +65,19 @@ public abstract class Validator<T extends BaseModel> {
      * @return The validated object
      */
     public abstract T validate(Object object);
+
+    /**
+     * Validates objects in given list.
+     *
+     * @param objects The objects to be validated
+     * @return The validated objects
+     */
+    public List<T> validate(List<T> objects) {
+        for (Object object: objects) {
+            validate(object);
+        }
+        return objects;
+    }
 
     /**
      * Validate objects of type T with Bean Validation constraints and

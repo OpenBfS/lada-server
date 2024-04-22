@@ -101,10 +101,7 @@ public class MeasValService extends LadaService {
         List<MeasVal> r = authorization.filter(
             repository.filter(builder.getQuery()),
             MeasVal.class);
-        for (MeasVal messwert: r) {
-            validator.validate(messwert);
-        }
-        return r;
+        return validator.validate(r);
     }
 
     /**
