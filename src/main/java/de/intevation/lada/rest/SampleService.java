@@ -39,7 +39,6 @@ import de.intevation.lada.util.data.TagUtil;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.BeginBeforeEnd;
-import de.intevation.lada.validation.Validator;
 
 
 /**
@@ -74,12 +73,6 @@ public class SampleService extends LadaService {
     @Inject
     @LockConfig(type = LockType.TIMESTAMP)
     private ObjectLocker lock;
-
-    /**
-     * The validator used for Sample objects.
-     */
-    @Inject
-    private Validator<Sample> validator;
 
     /**
      * The factory to create Sample objects.
@@ -143,7 +136,7 @@ public class SampleService extends LadaService {
         @PathParam("id") Integer id
     ) {
         return this.authorization.filter(
-            validator.validate(repository.getById(Sample.class, id)),
+            repository.getById(Sample.class, id),
             Sample.class);
     }
 
@@ -163,7 +156,6 @@ public class SampleService extends LadaService {
                 probe,
                 RequestMethod.POST,
                 Sample.class);
-        validator.validate(probe);
         if (probe.getEnvMediumId() == null
             || "".equals(probe.getEnvMediumId())
         ) {
@@ -299,7 +291,7 @@ public class SampleService extends LadaService {
         probe = factory.findMedia(probe);
 
         return authorization.filter(
-            validator.validate(repository.update(probe)),
+            repository.update(probe),
             Sample.class);
     }
 

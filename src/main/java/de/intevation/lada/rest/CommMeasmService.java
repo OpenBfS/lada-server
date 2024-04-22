@@ -28,7 +28,6 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.validation.Validator;
 
 /**
  * REST service for CommMeasm objects.
@@ -50,9 +49,6 @@ public class CommMeasmService extends LadaService {
     @Inject
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
-
-    @Inject
-    private Validator<CommMeasm> validator;
 
     /**
      * Get CommMeasm objects.
@@ -113,7 +109,6 @@ public class CommMeasmService extends LadaService {
             kommentar,
             RequestMethod.POST,
             CommMeasm.class);
-        validator.validate(kommentar);
         return authorization.filter(
             repository.create(kommentar), CommMeasm.class);
     }
@@ -133,7 +128,6 @@ public class CommMeasmService extends LadaService {
                 kommentar,
                 RequestMethod.PUT,
                 CommMeasm.class);
-        validator.validate(kommentar);
         return authorization.filter(
             repository.update(kommentar), CommMeasm.class);
     }

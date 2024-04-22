@@ -30,7 +30,6 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.validation.Validator;
 
 /**
  * REST service for Geolocat objects.
@@ -60,9 +59,6 @@ public class GeolocatService extends LadaService {
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
 
-    @Inject
-    private Validator<Geolocat> validator;
-
     /**
      * Get Geolocat objects.
      *
@@ -78,10 +74,9 @@ public class GeolocatService extends LadaService {
         QueryBuilder<Geolocat> builder = repository
             .queryBuilder(Geolocat.class)
             .and("sampleId", sampleId);
-        List<Geolocat> r = authorization.filter(
+        return authorization.filter(
             repository.filter(builder.getQuery()),
             Geolocat.class);
-        return validator.validate(r);
     }
 
     /**
@@ -96,7 +91,7 @@ public class GeolocatService extends LadaService {
         @PathParam("id") Integer id
     ) {
         return authorization.filter(
-            validator.validate(repository.getById(Geolocat.class, id)),
+            repository.getById(Geolocat.class, id),
             Geolocat.class);
     }
 
@@ -113,7 +108,6 @@ public class GeolocatService extends LadaService {
             ort,
             RequestMethod.POST,
             Geolocat.class);
-        validator.validate(ort);
         return authorization.filter(
             repository.create(ort),
             Geolocat.class);
@@ -136,7 +130,7 @@ public class GeolocatService extends LadaService {
                 Geolocat.class);
         lock.isLocked(ort);
         return authorization.filter(
-            validator.validate(repository.update(ort)),
+            repository.update(ort),
             Geolocat.class);
     }
 

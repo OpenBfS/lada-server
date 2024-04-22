@@ -30,7 +30,6 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.validation.Validator;
 
 /**
  * REST service for GeolocatMpg objects.
@@ -60,9 +59,6 @@ public class GeolocatMpgService extends LadaService {
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
 
-    @Inject
-    private Validator<GeolocatMpg> validator;
-
     /**
      * Get GeolocatMpg objects.
      *
@@ -78,10 +74,9 @@ public class GeolocatMpgService extends LadaService {
         QueryBuilder<GeolocatMpg> builder = repository
             .queryBuilder(GeolocatMpg.class)
             .and("mpgId", mpgId);
-        List<GeolocatMpg> ortszuordnungs = authorization.filter(
+        return authorization.filter(
             repository.filter(builder.getQuery()),
             GeolocatMpg.class);
-        return validator.validate(ortszuordnungs);
     }
 
     /**
@@ -96,7 +91,7 @@ public class GeolocatMpgService extends LadaService {
         @PathParam("id") Integer id
     ) {
         return authorization.filter(
-            validator.validate(repository.getById(GeolocatMpg.class, id)),
+            repository.getById(GeolocatMpg.class, id),
             GeolocatMpg.class);
     }
 
@@ -113,7 +108,6 @@ public class GeolocatMpgService extends LadaService {
             ort,
             RequestMethod.POST,
             GeolocatMpg.class);
-        validator.validate(ort);
         return authorization.filter(
             repository.create(ort),
             GeolocatMpg.class);
@@ -136,7 +130,7 @@ public class GeolocatMpgService extends LadaService {
             GeolocatMpg.class);
 
         return authorization.filter(
-            validator.validate(repository.update(ort)),
+            repository.update(ort),
             GeolocatMpg.class);
     }
 

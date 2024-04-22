@@ -34,7 +34,6 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.validation.Validator;
 
 
 /**
@@ -65,9 +64,6 @@ public class StatusProtService extends LadaService {
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
 
-    @Inject
-    private Validator<StatusProt> validator;
-
     /**
      * Get StatusProt objects.
      *
@@ -84,10 +80,9 @@ public class StatusProtService extends LadaService {
         QueryBuilder<StatusProt> builder = repository
             .queryBuilder(StatusProt.class)
             .and("measmId", measmId);
-        List<StatusProt> status = authorization.filter(
+        return authorization.filter(
             repository.filter(builder.getQuery()),
             StatusProt.class);
-        return validator.validate(status);
     }
 
     /**
@@ -186,7 +181,7 @@ public class StatusProtService extends LadaService {
 
         //NOTE: The referenced messung status field is updated by a DB trigger
         return authorization.filter(
-            repository.create(validator.validate(status)),
+            repository.create(status),
             StatusProt.class);
     }
 

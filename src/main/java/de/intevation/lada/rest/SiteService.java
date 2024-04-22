@@ -176,7 +176,7 @@ public class SiteService extends LadaService {
         @PathParam("id") Integer id
     ) {
         return authorization.filter(
-            validator.validate(repository.getById(Site.class, id)),
+            repository.getById(Site.class, id),
             Site.class);
     }
 
@@ -201,7 +201,6 @@ public class SiteService extends LadaService {
             ortFactory.completeSite(ort);
         }
 
-        validator.validate(ort);
         if (ort.getId() == null) {
             repository.create(ort);
         }
@@ -226,7 +225,7 @@ public class SiteService extends LadaService {
 
         ortFactory.completeSite(ort);
 
-        return validator.validate(repository.update(ort));
+        return repository.update(ort);
     }
 
     /**

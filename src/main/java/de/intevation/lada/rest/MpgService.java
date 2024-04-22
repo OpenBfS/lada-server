@@ -32,7 +32,6 @@ import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.rest.RequestMethod;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
-import de.intevation.lada.validation.Validator;
 
 /**
  * REST service for Mpg objects.
@@ -54,12 +53,6 @@ public class MpgService extends LadaService {
     @Inject
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
-
-    /**
-     * The validator used for Mpg objects.
-     */
-    @Inject
-    private Validator<Mpg> validator;
 
     @Inject
     private ProbeFactory factory;
@@ -119,8 +112,6 @@ public class MpgService extends LadaService {
             RequestMethod.POST,
             Mpg.class);
 
-        validator.validate(messprogramm);
-
         if (messprogramm.getEnvMediumId() == null
             || messprogramm.getEnvMediumId().length() == 0
         ) {
@@ -154,8 +145,6 @@ public class MpgService extends LadaService {
             messprogramm,
             RequestMethod.PUT,
             Mpg.class);
-
-        validator.validate(messprogramm);
 
         if ((messprogramm.getEnvMediumId() == null
                 || messprogramm.getEnvMediumId().equals(""))

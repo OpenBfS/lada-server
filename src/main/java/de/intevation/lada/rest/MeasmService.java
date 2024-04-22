@@ -30,7 +30,6 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.validation.Validator;
 
 /**
  * REST service for Measm objects.
@@ -60,9 +59,6 @@ public class MeasmService extends LadaService {
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
 
-    @Inject
-    private Validator<Measm> validator;
-
     /**
      * Get Measm objects.
      *
@@ -86,7 +82,6 @@ public class MeasmService extends LadaService {
                     messung,
                     RequestMethod.PUT,
                     Measm.class));
-            validator.validate(messung);
         }
         return messungs;
     }
@@ -103,7 +98,7 @@ public class MeasmService extends LadaService {
         @PathParam("id") Integer id
     ) {
         return authorization.filter(
-            validator.validate(repository.getById(Measm.class, id)),
+            repository.getById(Measm.class, id),
             Measm.class);
     }
 
@@ -120,7 +115,6 @@ public class MeasmService extends LadaService {
             messung,
             RequestMethod.POST,
             Measm.class);
-        validator.validate(messung);
         return authorization.filter(
             repository.create(messung),
             Measm.class);
@@ -144,7 +138,7 @@ public class MeasmService extends LadaService {
         lock.isLocked(messung);
 
         return authorization.filter(
-            validator.validate(repository.update(messung)),
+            repository.update(messung),
             Measm.class);
     }
 

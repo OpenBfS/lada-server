@@ -16,6 +16,8 @@ import jakarta.json.JsonValue;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.Response;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 
 import de.intevation.lada.BaseTest;
@@ -64,7 +66,15 @@ public class MesswertTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("rest/measval?measmId=1200");
+        // Assert that GET receives warnings in items of response array
+        final String warningsKey = "warnings";
+        final String[] expectedWarningKeys = {
+            "measUnitId", "measdId", "error" };
+        MatcherAssert.assertThat(
+            get("rest/measval?measmId=1200").asJsonArray().get(0).asJsonObject()
+                .getJsonObject(warningsKey).keySet(),
+            CoreMatchers.hasItems(expectedWarningKeys));
+
         getById("rest/measval/10000", expectedById);
         normalize(expectedById);
         JsonObject created = create("rest/measval", create);
@@ -102,6 +112,5 @@ public class MesswertTest extends ServiceTest {
             oldValue.getJsonNumber(valueK).doubleValue() * valueFactor,
             normalizedMesswert.getJsonNumber(valueK).doubleValue(),
             epsilon);
-
     }
 }

@@ -37,7 +37,6 @@ import de.intevation.lada.util.data.MesswertNormalizer;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.validation.Validator;
 
 /**
  * REST service for MeasVal objects.
@@ -68,9 +67,6 @@ public class MeasValService extends LadaService {
     private Authorization authorization;
 
     @Inject
-    private Validator<MeasVal> validator;
-
-    @Inject
     private MesswertNormalizer messwertNormalizer;
 
     @Inject
@@ -98,10 +94,9 @@ public class MeasValService extends LadaService {
         QueryBuilder<MeasVal> builder = repository
             .queryBuilder(MeasVal.class)
             .and("measmId", measmId);
-        List<MeasVal> r = authorization.filter(
+        return authorization.filter(
             repository.filter(builder.getQuery()),
             MeasVal.class);
-        return validator.validate(r);
     }
 
     /**
@@ -123,7 +118,7 @@ public class MeasValService extends LadaService {
             RequestMethod.GET,
             Measm.class);
         return authorization.filter(
-            validator.validate(messwert),
+            messwert,
             MeasVal.class);
     }
 
@@ -140,7 +135,6 @@ public class MeasValService extends LadaService {
                 messwert,
                 RequestMethod.POST,
                 MeasVal.class);
-        validator.validate(messwert);
         return authorization.filter(
             repository.create(messwert),
             MeasVal.class);
@@ -164,7 +158,7 @@ public class MeasValService extends LadaService {
         lock.isLocked(messwert);
 
         return authorization.filter(
-            validator.validate(repository.update(messwert)),
+            repository.update(messwert),
             MeasVal.class);
     }
 
@@ -209,7 +203,7 @@ public class MeasValService extends LadaService {
             lock.isLocked(messwert);
 
             authorization.filter(
-                validator.validate(repository.update(messwert)),
+                repository.update(messwert),
                 MeasVal.class);
         }
         return messwerte;

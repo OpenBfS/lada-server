@@ -31,7 +31,6 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
-import de.intevation.lada.validation.Validator;
 
 /**
  * REST service for MpgMmtMp objects.
@@ -53,9 +52,6 @@ public class MpgMmtMpService extends LadaService {
     @Inject
     @AuthorizationConfig(type = AuthorizationType.HEADER)
     private Authorization authorization;
-
-    @Inject
-    private Validator<MpgMmtMp> validator;
 
     /**
      * Get MpgMmtMp objects.
@@ -105,7 +101,6 @@ public class MpgMmtMpService extends LadaService {
                 messprogrammmmt,
                 RequestMethod.POST,
                 MpgMmtMp.class);
-        validator.validate(messprogrammmmt);
         setMessgroesseObjects(messprogrammmmt);
         return authorization.filter(
             repository.create(messprogrammmmt),
@@ -128,7 +123,6 @@ public class MpgMmtMpService extends LadaService {
                 RequestMethod.PUT,
                 MpgMmtMp.class);
 
-        validator.validate(messprogrammmmt);
         setMessgroesseObjects(messprogrammmmt);
 
         return authorization.filter(
