@@ -59,11 +59,10 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        validator.validate(val);
-        Assert.assertTrue(val.hasWarnings());
-        Assert.assertTrue(val.getWarnings().containsKey(ERROR));
-        Assert.assertTrue(val.getWarnings().get(ERROR).contains(
-                String.valueOf(StatusCodes.VALUE_MISSING)));
+        assertHasWarnings(
+            validator.validate(val),
+            ERROR,
+            VALUE_MISSING);
     }
 
     @Test
@@ -77,7 +76,7 @@ public class MeasValTest extends ValidatorBaseTest {
         assertHasWarnings(
             validator.validate(val),
             ERROR,
-            String.valueOf(StatusCodes.VALUE_MISSING));
+            VALUE_MISSING);
     }
 
     @Test
@@ -93,7 +92,7 @@ public class MeasValTest extends ValidatorBaseTest {
         assertHasWarnings(
             validator.validate(val),
             ERROR,
-            String.valueOf(StatusCodes.VAL_UNCERT));
+            "Uncertainty not allowed if < LOD");
     }
 
     /**

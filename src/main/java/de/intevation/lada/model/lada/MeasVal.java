@@ -30,7 +30,9 @@ import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.MeasUnit;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.validation.constraints.HasDetectLim;
+import de.intevation.lada.validation.constraints.HasErrorOrLessThanLOD;
 import de.intevation.lada.validation.constraints.HasMeasValOrLessThanLOD;
+import de.intevation.lada.validation.constraints.HasNotErrorAndLessThanLOD;
 import de.intevation.lada.validation.constraints.HasNotMeasValAndLessThanLOD;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
@@ -47,6 +49,8 @@ import de.intevation.lada.validation.groups.Warnings;
 @HasDetectLim
 @HasMeasValOrLessThanLOD(groups = Warnings.class)
 @HasNotMeasValAndLessThanLOD(groups = Warnings.class)
+@HasErrorOrLessThanLOD(groups = Warnings.class)
+@HasNotErrorAndLessThanLOD(groups = Warnings.class)
 public class MeasVal extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
