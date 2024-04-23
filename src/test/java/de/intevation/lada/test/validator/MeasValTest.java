@@ -329,13 +329,11 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(UNMATCHED_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
-        validator.validate(val);
-        String warningKey = MEASD_ID;
-        Assert.assertTrue(val.hasWarnings());
-        Assert.assertTrue(val.getWarnings()
-            .containsKey(warningKey));
-        Assert.assertTrue(val.getWarnings().get(warningKey).contains(
-                String.valueOf(StatusCodes.VAL_MESSGROESSE_NOT_MATCHING_MMT)));
+
+        assertHasWarnings(
+            validator.validate(val),
+            MEASD_ID,
+            "Measurand does not match measuring method");
     }
 
     /**
