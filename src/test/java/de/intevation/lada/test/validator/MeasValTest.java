@@ -44,6 +44,8 @@ public class MeasValTest extends ValidatorBaseTest {
 
     private static final float ERROR_GT_ZERO = 0.5f;
 
+    private static final String VALUE_MISSING = "A value must be provided";
+
     @Inject
     Validator<MeasVal> validator;
 
@@ -122,11 +124,10 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasVal(null);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        validator.validate(val);
-        Assert.assertTrue(val.hasWarnings());
-        Assert.assertTrue(val.getWarnings().containsKey(MEAS_VAL));
-        Assert.assertTrue(val.getWarnings().get(MEAS_VAL).contains(
-                String.valueOf(StatusCodes.VALUE_MISSING)));
+        assertHasWarnings(
+            validator.validate(val),
+            MEAS_VAL,
+            VALUE_MISSING);
     }
 
     /**
@@ -142,12 +143,10 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasVal(1.0d);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        validator.validate(val);
-        Assert.assertTrue(val.hasWarnings());
-        MatcherAssert.assertThat(val.getWarnings().keySet(),
-            CoreMatchers.hasItem(MEAS_VAL));
-        MatcherAssert.assertThat(val.getWarnings().get(MEAS_VAL),
-            CoreMatchers.hasItem(String.valueOf(StatusCodes.VAL_MEASURE)));
+        assertHasWarnings(
+            validator.validate(val),
+            MEAS_VAL,
+            "Measured value not allowed if < LOD");
     }
 
     /**
@@ -213,12 +212,10 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setDetectLim(null);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
-        validator.validate(val);
-        Assert.assertTrue(val.hasErrors());
-        MatcherAssert.assertThat(val.getErrors().keySet(),
-            CoreMatchers.hasItem(DETECT_LIM));
-        MatcherAssert.assertThat(val.getErrors().get(DETECT_LIM),
-            CoreMatchers.hasItem("A value must be provided"));
+        assertHasErrors(
+            validator.validate(val),
+            DETECT_LIM,
+            VALUE_MISSING);
     }
 
     /**

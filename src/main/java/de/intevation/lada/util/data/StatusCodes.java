@@ -20,7 +20,6 @@ public class StatusCodes {
     public static final int VALUE_MISSING = 631;
     public static final int VALUE_NOT_MATCHING = 632;
     public static final int VAL_DESK = 633;
-    public static final int VAL_MEASURE = 634;
     public static final int VAL_UNCERT = 635;
     public static final int VAL_SEC_UNIT = 636;
     public static final int VAL_S1_NOTSET = 637;
