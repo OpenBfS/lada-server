@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.validation.rules.messwert;
 
-import java.util.List;
-
 import jakarta.inject.Inject;
 
 import de.intevation.lada.model.lada.MeasVal;
@@ -37,28 +35,18 @@ public class MessgroesseToMessmethode implements Rule {
     public Violation execute(Object object) {
         MeasVal messwert = (MeasVal) object;
         Measm messung = repository.getById(
-                Measm.class, messwert.getMeasmId());
+            Measm.class, messwert.getMeasmId());
 
-        QueryBuilder<MmtMeasdView> mmtBuilder =
-            repository.queryBuilder(MmtMeasdView.class)
-                .and("mmtId", messung.getMmtId());
-        List<MmtMeasdView> mmtMs =
-            repository.filter(mmtBuilder.getQuery());
-
-        Violation violation = new Violation();
-        boolean hit = false;
-        for (MmtMeasdView mmtM: mmtMs) {
-            if (messwert.getMeasdId().equals(
-                    mmtM.getMeasdId())) {
-                hit = true;
-            }
-        }
-        if (!hit) {
+        final String measdIdKey = "measdId";
+        QueryBuilder<MmtMeasdView> mmtBuilder = repository
+            .queryBuilder(MmtMeasdView.class)
+            .and("mmtId", messung.getMmtId())
+            .and(measdIdKey, messwert.getMeasdId());
+        if (repository.filter(mmtBuilder.getQuery()).isEmpty()) {
+            Violation violation = new Violation();
             violation.addWarning(
-                "measdId",
+                measdIdKey,
                 StatusCodes.VAL_MESSGROESSE_NOT_MATCHING_MMT);
-        }
-        if (violation.hasWarnings()) {
             return violation;
         }
         return null;
