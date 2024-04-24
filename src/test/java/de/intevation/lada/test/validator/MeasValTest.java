@@ -45,6 +45,7 @@ public class MeasValTest extends ValidatorBaseTest {
     private static final float ERROR_GT_ZERO = 0.5f;
 
     private static final String VALUE_MISSING = "A value must be provided";
+    private static final String VAL_SEC_UNIT = "Secondary unit selected";
 
     @Inject
     Validator<MeasVal> validator;
@@ -364,7 +365,7 @@ public class MeasValTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(val),
             UNIT_ID,
-            String.valueOf(StatusCodes.VAL_SEC_UNIT));
+            VAL_SEC_UNIT);
     }
 
     /**
@@ -381,7 +382,7 @@ public class MeasValTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(val),
             UNIT_ID,
-            String.valueOf(StatusCodes.VAL_SEC_UNIT));
+            VAL_SEC_UNIT);
     }
 
     /**

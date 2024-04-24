@@ -5,9 +5,12 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.validation.rules.messwert;
+package de.intevation.lada.validation.constraints;
 
-import jakarta.inject.Inject;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
@@ -15,71 +18,73 @@ import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.UnitConvers;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationRule;
-import de.intevation.lada.validation.rules.Rule;
+
 
 /**
- * Validation rule for messwert.
- * Validates if the "messeinheit" is the secondary "messeinheit" of to
- * umweltbereich connected to this messwert
+ * Validation rule for MeasVal.
+ * Validates if the measuring unit is the primary unit of the environmental
+ * medium or is convertible into it.
  */
-@ValidationRule("Messwert")
-public class SecondaryMehSelected implements Rule {
+public class IsMeasdPrimaryOrConvertibleToValidator
+    implements ConstraintValidator<IsMeasdPrimaryOrConvertibleTo, MeasVal> {
 
-    /**
-     * The data repository granting read access.
-     */
-    @Inject
-    private Repository repository;
+    private String message;
 
     @Override
-    public Violation execute(Object object) {
-        MeasVal messwert = (MeasVal) object;
+    public void initialize(IsMeasdPrimaryOrConvertibleTo constraintAnnotation) {
+        this.message = constraintAnnotation.message();
+    }
 
+    @Transactional
+    @Override
+    public boolean isValid(MeasVal messwert, ConstraintValidatorContext ctx) {
         if (messwert == null || messwert.getMeasmId() == null) {
-            return null;
+            return true;
         }
+
+        Repository repository = CDI.current().getBeanContainer()
+            .createInstance().select(Repository.class).get();
         Measm measm = repository.getById(Measm.class, messwert.getMeasmId());
         if (measm == null) {
-            return null;
+            return true;
         }
         EnvMedium umwelt = measm.getSample().getEnvMedium();
         if (umwelt == null) {
-            return null;
+            return true;
         }
         Integer secMehId = umwelt.getUnit2();
         if (secMehId == null) {
-            return null;
+            return true;
         }
 
-        Violation violation = new Violation();
-        violation.addNotification(
-            "measUnitId", StatusCodes.VAL_SEC_UNIT);
+        ctx.disableDefaultConstraintViolation();
+        ctx.buildConstraintViolationWithTemplate(this.message)
+            .addPropertyNode("measUnitId")
+            .addConstraintViolation();
 
         // Check if secondary unit is selected
         if (secMehId.equals(messwert.getMeasUnitId())) {
-            return violation;
+            return false;
         }
 
         // Check if the measVal is convertable into the primary unit
+        final String fromUnitKey = "fromUnitId", toUnitKey = "toUnitId";
         QueryBuilder<UnitConvers> primaryBuilder = repository
             .queryBuilder(UnitConvers.class)
-            .and("fromUnitId", messwert.getMeasUnitId())
-            .and("toUnitId", umwelt.getUnit1());
+            .and(fromUnitKey, messwert.getMeasUnitId())
+            .and(toUnitKey, umwelt.getUnit1());
         if (!repository.filter(primaryBuilder.getQuery()).isEmpty()) {
-            return null;
+            return true;
         }
 
         // Check if the measVal is convertable into the secondary unit
         QueryBuilder<UnitConvers> secondaryBuilder = repository
             .queryBuilder(UnitConvers.class)
-            .and("fromUnitId", messwert.getMeasUnitId())
-            .and("toUnitId", secMehId);
+            .and(fromUnitKey, messwert.getMeasUnitId())
+            .and(toUnitKey, secMehId);
         if (!repository.filter(secondaryBuilder.getQuery()).isEmpty()) {
-            return violation;
+            return false;
         }
-        return null;
+        return true;
     }
 }
