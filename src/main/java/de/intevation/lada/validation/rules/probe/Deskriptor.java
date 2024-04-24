@@ -41,15 +41,15 @@ public class Deskriptor implements Rule {
                 "envDescripDisplay", StatusCodes.VALUE_MISSING);
             return violation;
         }
+
         String[] mediaDesk = probe.getEnvDescripDisplay().split(" ");
-        if (mediaDesk.length <= 1) {
-            Violation violation = new Violation();
-            violation.addWarning(
-                "envDescripDisplay", StatusCodes.VALUE_MISSING);
-            return violation;
+        // leave it up to Pattern constraint to ensure a valid mediaDesk string.
+        // Just avoid IndexOutOfBoundsException here
+        if (mediaDesk.length < 3) {
+            return null;
         }
-        if (mediaDesk.length >= 1
-            && probe.getRegulationId() != null
+
+        if (probe.getRegulationId() != null
             && probe.getRegulationId() == 4
             && (mediaDesk[1].equals("00")
             || mediaDesk[2].equals("00"))
