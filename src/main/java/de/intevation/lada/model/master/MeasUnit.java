@@ -36,8 +36,7 @@ public class MeasUnit implements Serializable {
     private String unitSymbol;
 
     /**
-     * Get all MasseinheitUmrechnungs for units that can be converted into
-     * this one.
+     * Unit conversions for units that can be converted into this one.
      */
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "to_unit_id")

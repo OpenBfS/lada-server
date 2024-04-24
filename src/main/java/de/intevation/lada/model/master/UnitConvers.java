@@ -27,6 +27,9 @@ public class UnitConvers implements Serializable {
     @Id
     private Integer id;
 
+    @Column(insertable = false, updatable = false)
+    private Integer fromUnitId;
+
     @ManyToOne(fetch = FetchType.EAGER)
     private MeasUnit fromUnit;
 
@@ -38,12 +41,12 @@ public class UnitConvers implements Serializable {
     @Temporal(TIMESTAMP)
     private Date lastMod;
 
-    public UnitConvers() {
-
-    }
-
     public Integer getId() {
         return this.id;
+    }
+
+    public Integer getFromUnitId() {
+        return this.fromUnitId;
     }
 
     public MeasUnit getFromUnit() {

@@ -7,14 +7,13 @@
  */
 package de.intevation.lada.validation.rules.messwert;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import jakarta.inject.Inject;
 
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.master.EnvMedium;
-import de.intevation.lada.model.master.MeasUnit;
+import de.intevation.lada.model.master.UnitConvers;
+import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
@@ -38,57 +37,49 @@ public class SecondaryMehSelected implements Rule {
     @Override
     public Violation execute(Object object) {
         MeasVal messwert = (MeasVal) object;
-        EnvMedium umwelt = null;
+
+        if (messwert == null || messwert.getMeasmId() == null) {
+            return null;
+        }
+        Measm measm = repository.getById(Measm.class, messwert.getMeasmId());
+        if (measm == null) {
+            return null;
+        }
+        EnvMedium umwelt = measm.getSample().getEnvMedium();
+        if (umwelt == null) {
+            return null;
+        }
+        Integer secMehId = umwelt.getUnit2();
+        if (secMehId == null) {
+            return null;
+        }
+
         Violation violation = new Violation();
+        violation.addNotification(
+            "measUnitId", StatusCodes.VAL_SEC_UNIT);
 
-        if (messwert.getMeasmId() != null) {
-            Measm measm = messwert.getMeasm() != null
-                ? messwert.getMeasm()
-                : repository.getById(Measm.class, messwert.getMeasmId());
-            umwelt = measm.getSample().getEnvMedium();
+        // Check if secondary unit is selected
+        if (secMehId.equals(messwert.getMeasUnitId())) {
+            return violation;
         }
 
-        // If umwelt record is present
-        if (umwelt != null) {
-            Integer mehId = umwelt.getUnit1();
-            Integer secMehId = umwelt.getUnit2();
-            //If secondary meh is set
-            if (secMehId == null) {
-                return null;
-            }
-            //Check if the messwert is the secondary mehId
-            if (secMehId.equals(messwert.getMeasUnitId())) {
-                violation.addNotification("measUnitId", StatusCodes.VAL_SEC_UNIT);
-                return violation;
-            }
-            /*Check if the messwert is convertable into the secondary unit but
-            not into the primary */
-            MeasUnit meh =
-                repository.getById(
-                    MeasUnit.class, mehId);
-            MeasUnit secMeh =
-                repository.getById(
-                    MeasUnit.class, secMehId);
-            AtomicBoolean primary = new AtomicBoolean(false);
-            meh.getUnitConversTo().forEach(umrechnung -> {
-                if (umrechnung.getFromUnit().getId()
-                    .equals(messwert.getMeasUnitId())
-                ) {
-                    primary.set(true);
-                }
-            });
-            if (primary.get()) {
-                return null;
-            }
-            secMeh.getUnitConversTo().forEach(secUmrechnung -> {
-                if (secUmrechnung.getFromUnit().getId()
-                    .equals(messwert.getMeasUnitId())
-                ) {
-                    violation.addNotification(
-                        "measUnitId", StatusCodes.VAL_SEC_UNIT);
-                }
-            });
+        // Check if the measVal is convertable into the primary unit
+        QueryBuilder<UnitConvers> primaryBuilder = repository
+            .queryBuilder(UnitConvers.class)
+            .and("fromUnitId", messwert.getMeasUnitId())
+            .and("toUnitId", umwelt.getUnit1());
+        if (!repository.filter(primaryBuilder.getQuery()).isEmpty()) {
+            return null;
         }
-        return violation;
+
+        // Check if the measVal is convertable into the secondary unit
+        QueryBuilder<UnitConvers> secondaryBuilder = repository
+            .queryBuilder(UnitConvers.class)
+            .and("fromUnitId", messwert.getMeasUnitId())
+            .and("toUnitId", secMehId);
+        if (!repository.filter(secondaryBuilder.getQuery()).isEmpty()) {
+            return violation;
+        }
+        return null;
     }
 }
