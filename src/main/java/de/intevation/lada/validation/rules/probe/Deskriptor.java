@@ -35,11 +35,8 @@ public class Deskriptor implements Rule {
     @Override
     public Violation execute(Object object) {
         Sample probe = (Sample) object;
-        if (probe.getEnvDescripDisplay() == null) {
-            Violation violation = new Violation();
-            violation.addWarning(
-                "envDescripDisplay", StatusCodes.VALUE_MISSING);
-            return violation;
+        if (probe == null || probe.getEnvDescripDisplay() == null) {
+            return null;
         }
 
         String[] mediaDesk = probe.getEnvDescripDisplay().split(" ");

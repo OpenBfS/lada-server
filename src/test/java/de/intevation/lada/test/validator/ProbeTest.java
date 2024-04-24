@@ -401,12 +401,10 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidSample();
         sample.setEnvDescripDisplay(null);
 
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasWarnings());
-        Assert.assertTrue(sample.getWarnings()
-            .containsKey(ENV_DESCRIP_DISPLAY));
-        Assert.assertTrue(sample.getWarnings().get(ENV_DESCRIP_DISPLAY)
-            .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
+        assertHasWarnings(
+            validator.validate(sample),
+            ENV_DESCRIP_DISPLAY,
+            MSG_NOT_BLANK);
     }
 
     /**

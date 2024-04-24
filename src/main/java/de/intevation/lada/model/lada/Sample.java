@@ -109,6 +109,7 @@ public class Sample extends BaseModel implements Serializable {
     private String envDescripName;
 
     @Pattern(regexp = "D:( [0-9][0-9]){12}")
+    @NotBlank(groups = Warnings.class)
     private String envDescripDisplay;
 
     private Long midSampleDate;
