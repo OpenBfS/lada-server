@@ -546,18 +546,9 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setNuclFacilGrId(EXAMPLE_NUCL_FACIL_ID);
 
         validator.validate(sample);
-        Assert.assertTrue(sample.hasWarnings());
-        MatcherAssert.assertThat(
-            sample.getWarnings().keySet(),
-            CoreMatchers.hasItems(REI_AG_GR_ID, NUCL_FACIL_GR_ID));
-        MatcherAssert.assertThat(
-            sample.getWarnings().get(REI_AG_GR_ID),
-            CoreMatchers.hasItem(
-                String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
-        MatcherAssert.assertThat(
-            sample.getWarnings().get(NUCL_FACIL_GR_ID),
-            CoreMatchers.hasItem(
-                String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
+        final String expectedMsg = "Values do not match";
+        assertHasWarnings(sample, REI_AG_GR_ID, expectedMsg);
+        assertHasWarnings(sample, NUCL_FACIL_GR_ID, expectedMsg);
     }
 
     /**
@@ -569,17 +560,9 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setRegulationId(REGULATION_ID_REI);
 
         validator.validate(sample);
-        Assert.assertTrue(sample.hasWarnings());
-        boolean hasBothWarningKeys =
-            sample.getWarnings().containsKey(REI_AG_GR_ID)
-            && sample.getWarnings().containsKey(NUCL_FACIL_GR_ID);
-        Assert.assertTrue(hasBothWarningKeys);
-        boolean hasCorrectWarningValues =
-            sample.getWarnings().get(REI_AG_GR_ID).contains(
-                String.valueOf(StatusCodes.VALUE_MISSING))
-            && sample.getWarnings().get(NUCL_FACIL_GR_ID).contains(
-                String.valueOf(StatusCodes.VALUE_MISSING));
-        Assert.assertTrue(hasCorrectWarningValues);
+        final String expectedMsg = "A value must be provided";
+        assertHasWarnings(sample, REI_AG_GR_ID, expectedMsg);
+        assertHasWarnings(sample, NUCL_FACIL_GR_ID, expectedMsg);
     }
 
     /**
