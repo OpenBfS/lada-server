@@ -27,7 +27,6 @@ public class StatusCodes {
     public static final int VAL_UNIT_NORMALIZE = 645;
     public static final int VAL_UNIT_UMW = 644;
     public static final int VAL_EXISTS = 646;
-    public static final int VAL_UWB_NOT_MATCHING_REI = 647;
     public static final int VAL_ZERO = 648;
     public static final int VAL_PZW = 649;
     public static final int GEO_COORD_UNCHECKED = 650;

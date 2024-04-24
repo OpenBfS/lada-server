@@ -47,6 +47,7 @@ import de.intevation.lada.validation.constraints.BeginBeforeEnd;
 import de.intevation.lada.validation.constraints.DatesVsSampleMeth;
 import de.intevation.lada.validation.constraints.EnvDescripDisplay;
 import de.intevation.lada.validation.constraints.EnvDescripDisplayFirstPartsSet;
+import de.intevation.lada.validation.constraints.EnvMediumForReiAgGr;
 import de.intevation.lada.validation.constraints.IsReiComplete;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
@@ -72,6 +73,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @EnvDescripDisplayFirstPartsSet(groups = Warnings.class)
 @IsReiComplete(groups = Warnings.class)
 @NoUnnecessaryReiAttributes(groups = Warnings.class)
+@EnvMediumForReiAgGr(groups = Warnings.class)
 public class Sample extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

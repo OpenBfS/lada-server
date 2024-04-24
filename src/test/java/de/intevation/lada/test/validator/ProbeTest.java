@@ -573,12 +573,10 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidREISample();
         sample.setEnvMediumId(ENV_MEDIUM_L42);
 
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasWarnings());
-        Assert.assertTrue(sample.getWarnings()
-            .containsKey(ENV_MEDIUM_ID));
-        Assert.assertTrue(sample.getWarnings().get(ENV_MEDIUM_ID)
-            .contains(String.valueOf(StatusCodes.VAL_UWB_NOT_MATCHING_REI)));
+        assertHasWarnings(
+            validator.validate(sample),
+            ENV_MEDIUM_ID,
+            "Environmental medium does not match ReiAgGr");
     }
 
     /**
