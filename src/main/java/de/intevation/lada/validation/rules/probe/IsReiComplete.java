@@ -22,16 +22,19 @@ import de.intevation.lada.validation.rules.Rule;
 @ValidationRule("Sample")
 public class IsReiComplete implements Rule {
 
+    private static final int REG_REI_I = 4;
+    private static final int REG_REI_X = 3;
+
     @Override
     public Violation execute(Object object) {
         Sample probe = (Sample) object;
-        Violation violation = new Violation();
-        if (probe.getRegulationId() == null) {
+        if (probe == null || probe.getRegulationId() == null) {
             return null;
         }
-        if (probe.getRegulationId() != 3
-            && probe.getRegulationId() != 4
-        ) {
+
+        final int regulation = probe.getRegulationId();
+        Violation violation = new Violation();
+        if (regulation != REG_REI_X && regulation != REG_REI_I) {
             if (probe.getReiAgGrId() != null) {
                 violation.addWarning(
                     "reiAgGrId", StatusCodes.VALUE_NOT_MATCHING);
