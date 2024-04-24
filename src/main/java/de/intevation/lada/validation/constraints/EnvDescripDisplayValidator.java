@@ -5,57 +5,53 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.validation.rules.probe;
+package de.intevation.lada.validation.constraints;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
-import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationRule;
-import de.intevation.lada.validation.rules.Rule;
+
 
 /**
- * Validation rule for probe.
- * Validates if the probe has a valid deskriptor string.
+ * Validates if the given string contains valid parts.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationRule("Sample")
-public class Deskriptor implements Rule {
+public class EnvDescripDisplayValidator
+    implements ConstraintValidator<EnvDescripDisplay, String> {
 
-    @Inject
-    private Repository repository;
+    private String message;
 
     @Override
-    public Violation execute(Object object) {
-        Sample probe = (Sample) object;
-        if (probe == null || probe.getEnvDescripDisplay() == null) {
-            return null;
+    public void initialize(EnvDescripDisplay constraintAnnotation) {
+        this.message = constraintAnnotation.message();
+    }
+
+    @Override
+    @Transactional
+    public boolean isValid(
+        String envDescripDisplay, ConstraintValidatorContext ctx
+    ) {
+        if (envDescripDisplay == null) {
+            return true;
         }
 
-        String[] mediaDesk = probe.getEnvDescripDisplay().split(" ");
-        // leave it up to Pattern constraint to ensure a valid mediaDesk string.
+        String[] mediaDesk = envDescripDisplay.split(" ");
+        // leave it up to Pattern constraint to ensure a valid string.
         // Just avoid IndexOutOfBoundsException here
-        if (mediaDesk.length < 3) {
-            return null;
+        if (mediaDesk.length < 2) {
+            return true;
         }
 
-        if (probe.getRegulationId() != null
-            && probe.getRegulationId() == 4
-            && (mediaDesk[1].equals("00")
-            || mediaDesk[2].equals("00"))
-        ) {
-            Violation violation = new Violation();
-            violation.addWarning(
-                "envDescripDisplay", StatusCodes.VAL_S1_NOTSET);
-            return violation;
-        }
+        Repository repository = CDI.current().getBeanContainer()
+            .createInstance().select(Repository.class).get();
 
         boolean zebs = false;
         Integer parent = null;
@@ -84,15 +80,13 @@ public class Deskriptor implements Rule {
                 .and("lev", i - 1);
             List<EnvDescrip> data = repository.filter(builder.getQuery());
             if (data.isEmpty()) {
-                Violation violation = new Violation();
-                violation.addWarning("envDescripDisplay", StatusCodes.VAL_DESK);
-                return violation;
+                return false;
             }
             hdParent = data.get(0).getId();
             if (i == 2) {
                 ndParent = data.get(0).getId();
             }
         }
-        return null;
+        return true;
     }
 }

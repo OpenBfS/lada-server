@@ -415,16 +415,14 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidREISample();
         sample.setEnvDescripDisplay("D: 00 00 00 00 00 00 00 00 00 00 00 00");
 
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasWarnings());
-        Assert.assertTrue(sample.getWarnings()
-            .containsKey(ENV_DESCRIP_DISPLAY));
-        Assert.assertTrue(sample.getWarnings().get(ENV_DESCRIP_DISPLAY)
-            .contains(String.valueOf(StatusCodes.VAL_S1_NOTSET)));
+        assertHasWarnings(
+            validator.validate(sample),
+            ENV_DESCRIP_DISPLAY,
+            "At least S1 must be set");
     }
 
     /**
-     * Test sample with inval envDescripDisplay.
+     * Test sample with invalid envDescripDisplay.
      */
     @Test
     public void envDescripDisplayInvalidDisplayString() {
@@ -437,6 +435,20 @@ public class ProbeTest extends ValidatorBaseTest {
             CoreMatchers.hasItem(ENV_DESCRIP_DISPLAY));
         MatcherAssert.assertThat(sample.getErrors().get(ENV_DESCRIP_DISPLAY),
             CoreMatchers.hasItem("must match \"D:( [0-9][0-9]){12}\""));
+    }
+
+    /**
+     * Test sample with invalid parts of envDescripDisplay.
+     */
+    @Test
+    public void envDescripDisplayInvalidParts() {
+        Sample sample = createMinimumValidSample();
+        sample.setEnvDescripDisplay("D: 77 88 99 00 77 88 99 00 77 88 99 00");
+
+        assertHasWarnings(
+            validator.validate(sample),
+            ENV_DESCRIP_DISPLAY,
+            "Invalid descriptor combination");
     }
 
     /**
