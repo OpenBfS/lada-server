@@ -1,4 +1,4 @@
-/* Copyright (C) 2013 by Bundesamt fuer Strahlenschutz
+/* Copyright (C) 2022 by Bundesamt fuer Strahlenschutz
  * Software engineering by Intevation GmbH
  *
  * This file is Free Software under the GNU GPL (v>=3)
@@ -36,11 +36,13 @@ public class UmweltToProbezusatz implements Rule {
     @Override
     public Violation execute(Object object) {
         Sample probe = (Sample) object;
-        if (probe.getEnvMediumId() != null) {
-            String umwId = probe.getEnvMediumId();
+        if (probe != null
+            && probe.getEnvMediumId() != null
+            && probe.getId() != null
+        ) {
             QueryBuilder<EnvSpecifMp> builderUmwZus = repository
                 .queryBuilder(EnvSpecifMp.class)
-                .and("envMediumId", umwId);
+                .and("envMediumId", probe.getEnvMediumId());
             List <EnvSpecifMp> umwZus = repository.filter(
                 builderUmwZus.getQuery());
 
