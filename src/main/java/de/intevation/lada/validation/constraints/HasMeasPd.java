@@ -22,7 +22,7 @@ import de.intevation.lada.util.data.Repository;
  *
  * @author <a href="mailto:jbuermeyer@bfs.de">Jonas Buermeyer</a>
  */
-public abstract class HasMeasPd {
+abstract class HasMeasPd {
     /**
      * Validates if measPd is given.
      * @param messung Measm to be validated
@@ -34,7 +34,7 @@ public abstract class HasMeasPd {
      * @return false if messung does not pass the constraint
      */
     @Transactional
-    public boolean isValid(
+    boolean isValid(
         Measm messung,
         boolean sampleMeth9OrRegulation1,
         ConstraintValidatorContext ctx,
