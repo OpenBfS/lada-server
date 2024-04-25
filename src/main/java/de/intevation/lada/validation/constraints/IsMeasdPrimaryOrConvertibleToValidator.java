@@ -44,7 +44,8 @@ public class IsMeasdPrimaryOrConvertibleToValidator
 
         Repository repository = CDI.current().getBeanContainer()
             .createInstance().select(Repository.class).get();
-        Measm measm = repository.getById(Measm.class, messwert.getMeasmId());
+        Measm measm = repository.entityManager().find(
+            Measm.class, messwert.getMeasmId());
         if (measm == null) {
             return true;
         }

@@ -44,7 +44,7 @@ public class MeasdMatchesMmtValidator
 
         Repository repository = CDI.current().getBeanContainer()
             .createInstance().select(Repository.class).get();
-        Measm messung = repository.getById(
+        Measm messung = repository.entityManager().find(
             Measm.class, messwert.getMeasmId());
         if (messung == null) {
             return true;
