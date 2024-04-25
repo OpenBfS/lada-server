@@ -32,6 +32,8 @@ import org.hibernate.annotations.DynamicInsert;
 
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.Mmt;
+import de.intevation.lada.validation.constraints.HasMeasmStartDateRegulation1;
+import de.intevation.lada.validation.constraints.HasMeasmStartDateRegulationNot1;
 import de.intevation.lada.validation.constraints.HasMeasPdNotSampleMeth9OrRegulation1;
 import de.intevation.lada.validation.constraints.HasMeasPdSampleMeth9OrRegulation1;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
@@ -57,6 +59,8 @@ import de.intevation.lada.validation.groups.Warnings;
 @MeasuringAfterSampling(groups = Warnings.class)
 @HasMeasPdNotSampleMeth9OrRegulation1(groups = Warnings.class)
 @HasMeasPdSampleMeth9OrRegulation1(groups = Notifications.class)
+@HasMeasmStartDateRegulation1(groups = Warnings.class)
+@HasMeasmStartDateRegulationNot1(groups = Notifications.class)
 public class Measm extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

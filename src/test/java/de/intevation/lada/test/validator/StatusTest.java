@@ -132,7 +132,7 @@ public class StatusTest extends ValidatorBaseTest {
             + "Errors:\n"
             + "- measVal: [631]\n"
             + "Warnings:\n"
-            + "- measmStartDate: [631]\n"
+            + "- measmStartDate: [A value must be provided]\n"
             + "Notifications:\n"
             + "- minSampleId: [must not be blank]"
         );

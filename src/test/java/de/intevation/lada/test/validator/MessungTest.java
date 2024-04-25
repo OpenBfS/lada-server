@@ -217,13 +217,10 @@ public class MessungTest extends ValidatorBaseTest {
     public void measmWithoutStartDate() {
         Measm measm = createMinimalValidMeasm();
         measm.setMeasmStartDate(null);
-        validator.validate(measm);
-        Assert.assertTrue(measm.hasWarnings());
-        Assert.assertTrue(measm.getWarnings()
-            .containsKey(MEASM_START_DATE));
-        Assert.assertTrue(
-            measm.getWarnings().get(MEASM_START_DATE).contains(
-                String.valueOf(StatusCodes.VALUE_MISSING)));
+        assertHasWarnings(
+            validator.validate(measm),
+            MEASM_START_DATE,
+            MSG_VALUE_MISSING);
     }
 
     /**
@@ -238,7 +235,7 @@ public class MessungTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(measm),
             MEASM_START_DATE,
-            String.valueOf(StatusCodes.VALUE_MISSING));
+            MSG_VALUE_MISSING);
     }
 
     /**
