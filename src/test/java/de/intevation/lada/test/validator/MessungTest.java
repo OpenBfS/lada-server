@@ -54,6 +54,8 @@ public class MessungTest extends ValidatorBaseTest {
     private static final String NEW_MIN_SAMPLE_ID = "42AB";
     private static final String MIN_SAMPLE_ID_00G2 = "00G2";
 
+    private static final String MSG_VALUE_MISSING = "A value must be provided";
+
     @Inject
     private Validator<Measm> validator;
 
@@ -248,14 +250,10 @@ public class MessungTest extends ValidatorBaseTest {
         measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
         measm.setMeasPd(null);
 
-        validator.validate(measm);
-        String warnKey = MEAS_PD;
-        Assert.assertTrue(measm.hasWarnings());
-        Assert.assertTrue(measm.getWarnings()
-            .containsKey(warnKey));
-        Assert.assertTrue(
-            measm.getWarnings().get(warnKey).contains(
-                String.valueOf(StatusCodes.VALUE_MISSING)));
+        assertHasWarnings(
+            validator.validate(measm),
+            MEAS_PD,
+            MSG_VALUE_MISSING);
     }
 
     /**
@@ -271,7 +269,7 @@ public class MessungTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(measm),
             MEAS_PD,
-            String.valueOf(StatusCodes.VALUE_MISSING));
+            MSG_VALUE_MISSING);
     }
 
     /**
@@ -286,7 +284,7 @@ public class MessungTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(measm),
             MEAS_PD,
-            String.valueOf(StatusCodes.VALUE_MISSING));
+            MSG_VALUE_MISSING);
     }
 
     /**
