@@ -38,46 +38,49 @@ public class HasPflichtmessgroessen implements Rule {
     @Override
     public Violation execute(Object object) {
         Measm messung = (Measm) object;
+        if (messung == null || messung.getSampleId() == null) {
+            return null;
+        }
         Sample probe = repository.getById(
             Sample.class, messung.getSampleId());
 
+        final Integer regulationId = probe.getRegulationId();
+        final String mmtId = messung.getMmtId();
+        final String envMediumId = probe.getEnvMediumId();
+        if (regulationId == null || mmtId == null || envMediumId == null) {
+            return null;
+        }
+
+        final String mmtIdKey = "mmtId",
+            envMediumIdKey = "envMediumId",
+            regulationIdKey = "regulationId";
         // Match by complete envMediumId
         QueryBuilder<ObligMeasdMp> builder = repository
             .queryBuilder(ObligMeasdMp.class)
-            .and("mmtId", messung.getMmtId())
-            .and("envMediumId", probe.getEnvMediumId())
-            .and("regulationId", probe.getRegulationId());
+            .and(mmtIdKey, mmtId)
+            .and(envMediumIdKey, envMediumId)
+            .and(regulationIdKey, regulationId);
         List<ObligMeasdMp> pflicht = repository.filter(builder.getQuery());
 
         // If matching by complete envMediumId does not find anything,
         // match by first character of envMediumId
-        if (pflicht.isEmpty()) {
+        if (pflicht.isEmpty() && !envMediumId.isEmpty()) {
             QueryBuilder<ObligMeasdMp> builderGrp = repository
                 .queryBuilder(ObligMeasdMp.class)
-                .and("mmtId", messung.getMmtId())
-                .and("envMediumId",
-                    probe.getEnvMediumId() == null
-                    ? null
-                    : probe.getEnvMediumId().substring(0, 1))
-                .and("regulationId", probe.getRegulationId());
-            List<ObligMeasdMp> pflichtGrp =
-                repository.filter(builderGrp.getQuery());
-            pflicht.addAll(pflichtGrp);
+                .and(mmtIdKey, mmtId)
+                .and(envMediumIdKey, envMediumId.substring(0, 1))
+                .and(regulationIdKey, regulationId);
+            pflicht = repository.filter(builderGrp.getQuery());
         }
 
         // If still nothing found, match by first two characters of envMediumId
-        if (pflicht.isEmpty()) {
+        if (pflicht.isEmpty() && envMediumId.length() > 1) {
             QueryBuilder<ObligMeasdMp> builderGrpS2 = repository
                 .queryBuilder(ObligMeasdMp.class)
-                .and("mmtId", messung.getMmtId())
-                .and("envMediumId",
-                    probe.getEnvMediumId() == null
-                    ? null : probe.getEnvMediumId().length() > 1
-                        ? probe.getEnvMediumId().substring(0, 2) : null)
-                .and("regulationId", probe.getRegulationId());
-            List<ObligMeasdMp> pflichtGrpS2 =
-                repository.filter(builderGrpS2.getQuery());
-            pflicht.addAll(pflichtGrpS2);
+                .and(mmtIdKey, mmtId)
+                .and(envMediumIdKey, envMediumId.substring(0, 2))
+                .and(regulationIdKey, regulationId);
+            pflicht = repository.filter(builderGrpS2.getQuery());
         }
 
         QueryBuilder<MeasVal> wertBuilder = repository
@@ -98,7 +101,7 @@ public class HasPflichtmessgroessen implements Rule {
         if (!pflicht.isEmpty()) {
             Violation violation = new Violation();
             violation.addNotification(
-                "mmtId",
+                mmtIdKey,
                 StatusCodes.VAL_OBL_MEASURE);
             return violation;
         }
