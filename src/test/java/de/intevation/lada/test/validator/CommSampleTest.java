@@ -56,6 +56,6 @@ public class CommSampleTest extends ValidatorBaseTest {
         comm.setMeasFacilId(EXISTING_MEAS_FACIL_ID);
 
         validator.validate(comm);
-        assertNoWarningsOrErrors(comm);
+        assertNoMessages(comm);
     }
 }

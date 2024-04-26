@@ -57,6 +57,6 @@ public class CommMeasmTest extends ValidatorBaseTest {
         comm.setMeasFacilId(MEAS_FACIL);
 
         validator.validate(comm);
-        assertNoWarningsOrErrors(comm);
+        assertNoMessages(comm);
     }
 }

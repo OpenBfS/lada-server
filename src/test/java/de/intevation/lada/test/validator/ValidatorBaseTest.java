@@ -26,10 +26,6 @@ import de.intevation.lada.model.BaseModel;
 @RunWith(Arquillian.class)
 @Transactional
 public abstract class ValidatorBaseTest extends BaseTest {
-    private static final String MSG_UNEXPECTED_VALIDATION_WARNINGS
-        = "Unexpected validation warnings: ";
-    private static final String MSG_UNEXPECTED_VALIDATION_ERRORS
-        = "Unexpected validation errors: ";
 
     /**
      * Constructor.
@@ -51,18 +47,22 @@ public abstract class ValidatorBaseTest extends BaseTest {
     }
 
     /**
-     * Assert that the given entities has no warnings or errors attached.
+     * Assert that the given entity has no validation messages attached.
      * @param entity Entity to check
      */
-    protected void assertNoWarningsOrErrors(BaseModel entity) {
+    protected void assertNoMessages(BaseModel entity) {
         Assert.assertFalse(
-            MSG_UNEXPECTED_VALIDATION_ERRORS
+            "Unexpected validation errors: "
                 + entity.getErrors(),
             entity.hasErrors());
         Assert.assertFalse(
-            MSG_UNEXPECTED_VALIDATION_WARNINGS
+            "Unexpected validation warnings: "
                 + entity.getWarnings(),
             entity.hasWarnings());
+        Assert.assertFalse(
+            "Unexpected validation notifications: "
+                + entity.getNotifications(),
+            entity.hasNotifications());
     }
 
     /**

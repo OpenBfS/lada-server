@@ -75,7 +75,7 @@ public class StatusTest extends ValidatorBaseTest {
         status.setStatusVal(ID1);
 
         validator.validate(status);
-        assertNoWarningsOrErrors(status);
+        assertNoMessages(status);
     }
 
     /**
@@ -101,7 +101,7 @@ public class StatusTest extends ValidatorBaseTest {
         StatusProt status = minimalStatusProt();
 
         validator.validate(status);
-        assertNoWarningsOrErrors(status);
+        assertNoMessages(status);
     }
 
     /**
@@ -114,7 +114,7 @@ public class StatusTest extends ValidatorBaseTest {
         status.setMeasmId(existingMeasmIdValidReiSample);
 
         validator.validate(status);
-        assertNoWarningsOrErrors(status);
+        assertNoMessages(status);
     }
 
     /**

@@ -101,7 +101,7 @@ public class MpgTest extends ValidatorBaseTest {
     @Test
     public void validMpg() {
         Mpg mpg = createMinimumValidMpg();
-        assertNoWarningsOrErrors(mpg);
+        assertNoMessages(mpg);
     }
 
     /**
@@ -215,7 +215,7 @@ public class MpgTest extends ValidatorBaseTest {
         mpg.setSamplePdEndDate(PD_3);
         mpg.setSamplePdOffset(Mpg.DOY_MAX - 1);
         validator.validate(mpg);
-        assertNoWarningsOrErrors(mpg);
+        assertNoMessages(mpg);
     }
 
     /**
@@ -414,7 +414,7 @@ public class MpgTest extends ValidatorBaseTest {
         Mpg mpg = createMinimumValidMpg();
         mpg.setSampleSpecifs(Set.of(spec));
         validator.validate(mpg);
-        assertNoWarningsOrErrors(mpg);
+        assertNoMessages(mpg);
     }
 
     /**

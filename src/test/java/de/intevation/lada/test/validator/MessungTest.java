@@ -65,7 +65,7 @@ public class MessungTest extends ValidatorBaseTest {
      */
     @Test
     public void isValid() {
-        assertNoWarningsOrErrors(validator.validate(createMinimalValidMeasm()));
+        assertNoMessages(validator.validate(createMinimalValidMeasm()));
     }
 
     /**

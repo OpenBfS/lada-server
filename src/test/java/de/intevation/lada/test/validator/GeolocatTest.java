@@ -96,7 +96,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setSampleId(SAMPLE_WITH_E_GEOLOCAT);
         loc.setSiteId(EXISTING_SITE_ID);
 
-        assertNoWarningsOrErrors(sampleVal.validate(loc));
+        assertNoMessages(sampleVal.validate(loc));
     }
 
     /**
@@ -154,6 +154,6 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setMpgId(MPG_WITH_E_GEOLOCAT);
         loc.setSiteId(EXISTING_SITE_ID);
 
-        assertNoWarningsOrErrors(mpgVal.validate(loc));
+        assertNoMessages(mpgVal.validate(loc));
     }
 }

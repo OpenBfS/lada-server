@@ -129,7 +129,7 @@ public class SiteTest extends ValidatorBaseTest {
         site.setGeom(justOutsideBorder);
 
         validator.validate(site);
-        assertNoWarningsOrErrors(site);
+        assertNoMessages(site);
     }
 
     /**
@@ -186,7 +186,7 @@ public class SiteTest extends ValidatorBaseTest {
         site.setGeom(insideBorder);
 
         validator.validate(site);
-        assertNoWarningsOrErrors(site);
+        assertNoMessages(site);
     }
 
     /**
@@ -203,7 +203,7 @@ public class SiteTest extends ValidatorBaseTest {
         site.setGeom(insideBorder);
 
         validator.validate(site);
-        assertNoWarningsOrErrors(site);
+        assertNoMessages(site);
     }
 
     /**
@@ -231,7 +231,7 @@ public class SiteTest extends ValidatorBaseTest {
         site.setExtId("D_00192");
 
         validator.validate(site);
-        assertNoWarningsOrErrors(site);
+        assertNoMessages(site);
     }
 
     /**
@@ -256,7 +256,7 @@ public class SiteTest extends ValidatorBaseTest {
         Site site = createMinimalSite();
 
         validator.validate(site);
-        assertNoWarningsOrErrors(site);
+        assertNoMessages(site);
     }
 
     /**
@@ -340,7 +340,7 @@ public class SiteTest extends ValidatorBaseTest {
         site.setNuclFacilGrId(1);
 
         validator.validate(site);
-        assertNoWarningsOrErrors(site);
+        assertNoMessages(site);
     }
 
     @Test
@@ -396,7 +396,7 @@ public class SiteTest extends ValidatorBaseTest {
         site.setCoordXExt("5650300.787");
         site.setCoordYExt("570168.862");
 
-        assertNoWarningsOrErrors(validator.validate(site));
+        assertNoMessages(validator.validate(site));
     }
 
     @Test
@@ -405,14 +405,14 @@ public class SiteTest extends ValidatorBaseTest {
         site.setStateId(null);
         site.setAdminUnitId(VALID_ADMIN_UNIT_ID);
 
-        assertNoWarningsOrErrors(validator.validate(site));
+        assertNoMessages(validator.validate(site));
     }
 
     @Test
     public void hasState() {
         Site site = createMinimalSite();
 
-        assertNoWarningsOrErrors(validator.validate(site));
+        assertNoMessages(validator.validate(site));
     }
 
     /**
@@ -425,7 +425,7 @@ public class SiteTest extends ValidatorBaseTest {
         site.setCoordYExt("5652121.859");
         site.setSpatRefSysId(SPAT_REF_SYS_ID_GK);
         validator.validate(site);
-        assertNoWarningsOrErrors(site);
+        assertNoMessages(site);
     }
 
     /**
@@ -451,7 +451,7 @@ public class SiteTest extends ValidatorBaseTest {
         site.setCoordYExt("51612.6792N");
         site.setSpatRefSysId(SPAT_REF_SYS_ID_GS);
         validator.validate(site);
-        assertNoWarningsOrErrors(site);
+        assertNoMessages(site);
     }
 
     /**
@@ -477,7 +477,7 @@ public class SiteTest extends ValidatorBaseTest {
         site.setCoordYExt("121212N");
         site.setSpatRefSysId(SPAT_REF_SYS_ID_GS);
         validator.validate(site);
-        assertNoWarningsOrErrors(site);
+        assertNoMessages(site);
     }
 
     /**
@@ -503,7 +503,7 @@ public class SiteTest extends ValidatorBaseTest {
         site.setCoordYExt("10.1111");
         site.setSpatRefSysId(SPAT_REF_SYS_ID_GD);
         validator.validate(site);
-        assertNoWarningsOrErrors(site);
+        assertNoMessages(site);
     }
 
     /**
@@ -567,7 +567,7 @@ public class SiteTest extends ValidatorBaseTest {
         site.setCoordYExt(VALID_UTM_Y);
         site.setSpatRefSysId(spatRefSysId);
         validator.validate(site);
-        assertNoWarningsOrErrors(site);
+        assertNoMessages(site);
     }
 
     private void testInvalidUtmCoordinates(int spatRefSysId) {

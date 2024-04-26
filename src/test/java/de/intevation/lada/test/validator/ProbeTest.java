@@ -106,7 +106,7 @@ public class ProbeTest extends ValidatorBaseTest {
     public void validSample() {
         Sample sample = createMinimumValidSample();
         validator.validate(sample);
-        assertNoWarningsOrErrors(sample);
+        assertNoMessages(sample);
     }
 
     /**
@@ -116,7 +116,7 @@ public class ProbeTest extends ValidatorBaseTest {
     public void validReiSample() {
         Sample sample = createMinimumValidREISample();
         validator.validate(sample);
-        assertNoWarningsOrErrors(sample);
+        assertNoMessages(sample);
     }
     /**
      * Test no hauptprobennr.
@@ -178,7 +178,7 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setMainSampleId(NEW_MAIN_SAMPLE_ID);
 
         validator.validate(sample);
-        assertNoWarningsOrErrors(sample);
+        assertNoMessages(sample);
     }
 
     /**
@@ -207,7 +207,7 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setIsTest(false);
 
         validator.validate(sample);
-        assertNoWarningsOrErrors(sample);
+        assertNoMessages(sample);
     }
 
     /**
@@ -238,7 +238,7 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setIsTest(false);
 
         validator.validate(sample);
-        assertNoWarningsOrErrors(sample);
+        assertNoMessages(sample);
     }
 
     /**
@@ -339,7 +339,7 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setSampleEndDate(Date.from(now));
 
         validator.validate(sample);
-        assertNoWarningsOrErrors(sample);
+        assertNoMessages(sample);
     }
 
     /**
@@ -390,7 +390,7 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setOrigDate(Date.from(yesterday));
 
         validator.validate(sample);
-        assertNoWarningsOrErrors(sample);
+        assertNoMessages(sample);
     }
 
     /**
@@ -480,7 +480,7 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setSampleEndDate(Date.from(now));
 
         validator.validate(sample);
-        assertNoWarningsOrErrors(sample);
+        assertNoMessages(sample);
     }
 
     /**
@@ -605,7 +605,7 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidSample();
         sample.setId(ID1000);
         validator.validate(sample);
-        assertNoWarningsOrErrors(sample);
+        assertNoMessages(sample);
     }
 
     /**
@@ -634,7 +634,7 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setExtId("SomethingUnique");
 
         validator.validate(sample);
-        assertNoWarningsOrErrors(sample);
+        assertNoMessages(sample);
     }
 
     /**
@@ -644,6 +644,7 @@ public class ProbeTest extends ValidatorBaseTest {
     private Sample createMinimumValidSample() {
         Sample sample = new Sample();
         sample.setId(SAMPLE_ID);
+        sample.setMainSampleId("test");
         sample.setApprLabId(EXISTING_APPR_LAB_ID);
         sample.setMeasFacilId(MST_06010);
         sample.setOprModeId(EXISTING_OPR_MODE);

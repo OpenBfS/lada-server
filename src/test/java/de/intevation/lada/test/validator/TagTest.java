@@ -37,7 +37,7 @@ public class TagTest extends ValidatorBaseTest {
         tag.setNetworkId("06");
 
         validator.validate(tag);
-        assertNoWarningsOrErrors(tag);
+        assertNoMessages(tag);
     }
 
     /**

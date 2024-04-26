@@ -109,7 +109,7 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
-        assertNoWarningsOrErrors(val);
+        assertNoMessages(val);
     }
 
     /**
@@ -163,7 +163,7 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
-        assertNoWarningsOrErrors(val);
+        assertNoMessages(val);
     }
 
     /**
@@ -180,7 +180,7 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
-        assertNoWarningsOrErrors(val);
+        assertNoMessages(val);
     }
 
     /**
@@ -231,7 +231,7 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_PRIMARY_UNIT);
 
         validator.validate(val);
-        assertNoWarningsOrErrors(val);
+        assertNoMessages(val);
     }
 
     /**
@@ -247,7 +247,7 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasVal(1.0d);
 
         validator.validate(val);
-        assertNoWarningsOrErrors(val);
+        assertNoMessages(val);
     }
 
     /**
@@ -262,8 +262,10 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setError(ERROR_GT_ZERO);
         val.setMeasVal(1.0d);
 
-        validator.validate(val);
-        assertNoWarningsOrErrors(val);
+        assertHasNotifications(
+            validator.validate(val),
+            UNIT_ID,
+            VAL_SEC_UNIT);
     }
 
     /**
@@ -349,7 +351,7 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setError(ERROR_GT_ZERO);
         val.setMeasVal(1.0d);
         validator.validate(val);
-        assertNoWarningsOrErrors(val);
+        assertNoMessages(val);
     }
 
     /**
