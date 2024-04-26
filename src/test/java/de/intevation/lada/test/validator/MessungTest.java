@@ -35,6 +35,7 @@ public class MessungTest extends ValidatorBaseTest {
     private static final String MEASD_ID = "measdId";
     private static final String MEASM_START_DATE = "measmStartDate";
     private static final String MIN_SAMPLE_ID = "minSampleId";
+    private static final String MMT_ID_KEY = "mmtId";
 
     //ID constants from test dataset
     private static final int EXISTING_SAMPLE_ID = 1000;
@@ -305,7 +306,7 @@ public class MessungTest extends ValidatorBaseTest {
 
         assertHasNotifications(
             validator.validate(measm),
-            MEASD_ID,
+            MMT_ID_KEY,
             String.valueOf(StatusCodes.VAL_OBL_MEASURE));
     }
 
@@ -330,12 +331,11 @@ public class MessungTest extends ValidatorBaseTest {
         measm.setMmtId(invalidKey);
 
         validator.validate(measm);
-        final String mmtIdKey = "mmtId";
         MatcherAssert.assertThat(
             measm.getErrors().keySet(),
-            CoreMatchers.hasItem(mmtIdKey));
+            CoreMatchers.hasItem(MMT_ID_KEY));
         MatcherAssert.assertThat(
-            measm.getErrors().get(mmtIdKey),
+            measm.getErrors().get(MMT_ID_KEY),
             CoreMatchers.hasItem(
                 "'" + invalidKey + "' is no valid primary key"));
     }
