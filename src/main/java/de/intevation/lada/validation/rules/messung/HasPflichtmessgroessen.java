@@ -41,6 +41,7 @@ public class HasPflichtmessgroessen implements Rule {
         Sample probe = repository.getById(
             Sample.class, messung.getSampleId());
 
+        // Match by complete envMediumId
         QueryBuilder<ObligMeasdMp> builder = repository
             .queryBuilder(ObligMeasdMp.class)
             .and("mmtId", messung.getMmtId())
@@ -48,6 +49,8 @@ public class HasPflichtmessgroessen implements Rule {
             .and("regulationId", probe.getRegulationId());
         List<ObligMeasdMp> pflicht = repository.filter(builder.getQuery());
 
+        // If matching by complete envMediumId does not find anything,
+        // match by first character of envMediumId
         if (pflicht.isEmpty()) {
             QueryBuilder<ObligMeasdMp> builderGrp = repository
                 .queryBuilder(ObligMeasdMp.class)
@@ -60,7 +63,10 @@ public class HasPflichtmessgroessen implements Rule {
             List<ObligMeasdMp> pflichtGrp =
                 repository.filter(builderGrp.getQuery());
             pflicht.addAll(pflichtGrp);
+        }
 
+        // If still nothing found, match by first two characters of envMediumId
+        if (pflicht.isEmpty()) {
             QueryBuilder<ObligMeasdMp> builderGrpS2 = repository
                 .queryBuilder(ObligMeasdMp.class)
                 .and("mmtId", messung.getMmtId())
