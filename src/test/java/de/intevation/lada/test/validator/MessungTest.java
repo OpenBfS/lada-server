@@ -270,9 +270,51 @@ public class MessungTest extends ValidatorBaseTest {
      * Test measm missing obligatory measds.
      */
     @Test
-    public void measmWithoutObligMeasd() {
+    public void measmWithoutMeasVals() {
         Measm measm = createMinimalValidMeasm();
         measm.setId(null);
+
+        assertHasNotifications(
+            validator.validate(measm),
+            MMT_ID_KEY,
+            String.valueOf(StatusCodes.VAL_OBL_MEASURE));
+    }
+
+    /**
+     * Test measm missing obligatory measd.
+     */
+    @Test
+    public void measmWithoutObligMeasd() {
+        Measm measm = createMinimalValidMeasm();
+        measm.setMmtId("A4");
+
+        assertHasNotifications(
+            validator.validate(measm),
+            MMT_ID_KEY,
+            String.valueOf(StatusCodes.VAL_OBL_MEASURE));
+    }
+
+    /**
+     * Test measm missing obligatory measd due to partly matching envMediumId.
+     */
+    @Test
+    public void measmWithoutObligMeasdEnvMediumL6() {
+        Measm measm = createMinimalValidMeasm();
+        measm.setMmtId("A5");
+
+        assertHasNotifications(
+            validator.validate(measm),
+            MMT_ID_KEY,
+            String.valueOf(StatusCodes.VAL_OBL_MEASURE));
+    }
+
+    /**
+     * Test measm missing obligatory measd due to partly matching envMediumId.
+     */
+    @Test
+    public void measmWithoutObligMeasdEnvMediumL() {
+        Measm measm = createMinimalValidMeasm();
+        measm.setMmtId("A6");
 
         assertHasNotifications(
             validator.validate(measm),

@@ -72,8 +72,8 @@ public class HasPflichtmessgroessen implements Rule {
                 .and("mmtId", messung.getMmtId())
                 .and("envMediumId",
                     probe.getEnvMediumId() == null
-                    ? null : probe.getEnvMediumId().length() >= 1
-                        ? null : probe.getEnvMediumId().substring(0, 2))
+                    ? null : probe.getEnvMediumId().length() > 1
+                        ? probe.getEnvMediumId().substring(0, 2) : null)
                 .and("regulationId", probe.getRegulationId());
             List<ObligMeasdMp> pflichtGrpS2 =
                 repository.filter(builderGrpS2.getQuery());

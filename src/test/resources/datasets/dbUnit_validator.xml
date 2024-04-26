@@ -21,7 +21,9 @@
     <master.meas_unit id = "211" />
     <master.unit_convers id = "209" from_unit_id = "209" to_unit_id = "207" factor = "1.0"/>
     <master.unit_convers id = "210" from_unit_id = "210" to_unit_id = "208" factor = "1.0"/>
-    <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "207" unit_2 = "208"/>
+    <master.env_medium id = "L" name = "Luft"/>
+    <master.env_medium id = "L6" name = "Spurenmessung Luft"/>
+    <master.env_medium id = "L61" name = "Aerosole" unit_1 = "207" unit_2 = "208"/>
     <master.env_medium id = "L42" name = "Example env Medium" unit_1 = "207"/>
     <master.env_medium id = "L54" name = "Example env 2" unit_1 = "207"/>
     <master.env_medium id = "N71" name = "Reinwasser aus geschützten Rohwasservorkommen"/>
@@ -41,6 +43,8 @@
     />
     <master.mmt id = "A3" />
     <master.mmt id = "A4" />
+    <master.mmt id = "A5" />
+    <master.mmt id = "A6" />
     <master.measd id = "56" name = "Mangan" />
     <master.measd id = "57" name = "Other" />
     <master.measd id = "58" name = "Unmatched" />
@@ -53,7 +57,28 @@
         mmt_id = "A3"
         measd_id = "56"
         regulation_id = "9"
+        env_medium_id = "L61"
+    />
+    <master.oblig_measd_mp
+        id = "2"
+        mmt_id = "A4"
+        measd_id = "57"
+        regulation_id = "9"
+        env_medium_id = "L61"
+    />
+    <master.oblig_measd_mp
+        id = "3"
+        mmt_id = "A5"
+        measd_id = "57"
+        regulation_id = "9"
         env_medium_id = "L6"
+    />
+    <master.oblig_measd_mp
+        id = "4"
+        mmt_id = "A6"
+        measd_id = "57"
+        regulation_id = "9"
+        env_medium_id = "L"
     />
     <master.sample_specif
         id = "A74"
@@ -65,7 +90,7 @@
         name = "Other"
         ext_id = "OTH"
     />
-    <master.env_specif_mp id = "1" sample_specif_id = "A74" env_medium_id = "L6" />
+    <master.env_specif_mp id = "1" sample_specif_id = "A74" env_medium_id = "L61" />
     <master.env_specif_mp id = "2" sample_specif_id = "A42" env_medium_id = "L42" />
     <master.env_specif_mp id = "3" sample_specif_id = "A74" env_medium_id = "N71" />
 
@@ -201,7 +226,7 @@
         sample_start_date = "2012-05-03 13:07:00"
         sample_meth_id = "1"
         is_test = "false"
-        env_medium_id = "L6"
+        env_medium_id = "L61"
         main_sample_id = "250011111"
         sampler_id = "726"
         sched_start_date = "2012-05-01 16:00:00"
@@ -240,7 +265,7 @@
         sample_start_date = "2012-05-03 13:07:00"
         sample_meth_id = "1"
         is_test = "false"
-        env_medium_id = "L6"
+        env_medium_id = "L61"
         main_sample_id = "120510002"
         sampler_id = "726"
         sched_start_date = "2012-05-01 16:00:00"
@@ -338,7 +363,7 @@
         sample_start_date = "2012-05-03 13:07:00"
         sample_meth_id = "9"
         is_test = "false"
-        env_medium_id = "L6"
+        env_medium_id = "L61"
         main_sample_id = "9911554466"
         sampler_id = "726"
         sched_start_date = "2012-05-01 16:00:00"
@@ -358,7 +383,7 @@
         sample_start_date = "2012-05-03 13:07:00"
         sample_meth_id = "3"
         is_test = "false"
-        env_medium_id = "L6"
+        env_medium_id = "L61"
         main_sample_id = "112233445566"
         sampler_id = "726"
         sched_start_date = "2012-05-01 16:00:00"
@@ -398,7 +423,7 @@
         sample_start_date = "2012-05-03 13:07:00"
         sample_meth_id = "1"
         is_test = "false"
-        env_medium_id = "L6"
+        env_medium_id = "L61"
         main_sample_id = "1B4000"
         sampler_id = "726"
         sched_start_date = "2012-05-01 16:00:00"
@@ -441,7 +466,7 @@
         sample_start_date = "2012-05-03 13:07:00"
         sample_meth_id = "1"
         is_test = "false"
-        env_medium_id = "L6"
+        env_medium_id = "L61"
         main_sample_id = "1A5000"
         sampler_id = "726"
         sched_start_date = "2012-05-01 16:00:00"
@@ -471,7 +496,7 @@
         regulation_id = "1"
         admin_unit_id = "11000000"
         env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
-        env_medium_id = "L6"
+        env_medium_id = "L61"
         sample_meth_id = "1"
         sample_pd = "M"
         sample_pd_start_date = "1"
@@ -489,7 +514,7 @@
         regulation_id = "1"
         admin_unit_id = "11000000"
         env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
-        env_medium_id = "L6"
+        env_medium_id = "L61"
         sample_meth_id = "1"
         sample_pd = "M"
         sample_pd_start_date = "1"
