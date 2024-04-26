@@ -92,7 +92,7 @@ public class HasPflichtmessgroessen implements Rule {
         if (!pflicht.isEmpty()) {
             Violation violation = new Violation();
             violation.addNotification(
-                "measdId",
+                "mmtId",
                 StatusCodes.VAL_OBL_MEASURE);
             return violation;
         }
