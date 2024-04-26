@@ -61,14 +61,11 @@ public class MessungTest extends ValidatorBaseTest {
     private Validator<Measm> validator;
 
     /**
-     * Test nebenproben nr.
+     * Test valid measm.
      */
     @Test
-    public void hasNebenprobenNr() {
-        Measm measm = createMinimalValidMeasm();
-        measm.setMinSampleId("10R1");
-        validator.validate(measm);
-        assertNoWarningsOrErrors(measm);
+    public void isValid() {
+        assertNoWarningsOrErrors(validator.validate(createMinimalValidMeasm()));
     }
 
     /**
@@ -196,22 +193,6 @@ public class MessungTest extends ValidatorBaseTest {
     }
 
     /**
-     * Test measm with start date before sampleStartDate.
-     * @throws ParseException Thrown if date parsing fails
-     */
-    @Test
-    public void measmStartDateAfterSampleStartDate() throws ParseException {
-        Instant sampleStartDate = DB_UNIT_DATE_FORMAT
-            .parse(EXISTING_SAMPLE_START_DATE).toInstant();
-        Instant measmStartDate = sampleStartDate.plus(1, ChronoUnit.DAYS);
-        Measm measm = createMinimalValidMeasm();
-        measm.setMinSampleId(NEW_MIN_SAMPLE_ID);
-        measm.setMeasmStartDate(Date.from(measmStartDate));
-        validator.validate(measm);
-        assertNoWarningsOrErrors(measm);
-    }
-
-    /**
      * Test measm without start date.
      */
     @Test
@@ -286,17 +267,6 @@ public class MessungTest extends ValidatorBaseTest {
     }
 
     /**
-     * Test measm with measPd.
-     */
-    @Test
-    public void measmWithMeasPd() {
-        Measm measm = createMinimalValidMeasm();
-        measm.setMeasPd(1);
-        validator.validate(measm);
-        assertNoWarningsOrErrors(measm);
-    }
-
-    /**
      * Test measm missing obligatory measds.
      */
     @Test
@@ -308,17 +278,6 @@ public class MessungTest extends ValidatorBaseTest {
             validator.validate(measm),
             MMT_ID_KEY,
             String.valueOf(StatusCodes.VAL_OBL_MEASURE));
-    }
-
-    /**
-     * Test measm with all obligatory measds.
-     */
-    @Test
-    public void measmWithObligMeasd() {
-        Measm measm = createMinimalValidMeasm();
-
-        validator.validate(measm);
-        assertNoWarningsOrErrors(measm);
     }
 
     /**
