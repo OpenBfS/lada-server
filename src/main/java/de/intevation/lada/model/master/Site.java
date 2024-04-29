@@ -41,12 +41,15 @@ import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.validation.constraints.CanChangeCoordinates;
 import de.intevation.lada.validation.constraints.HasCoordsOrAdminUnitOrState;
+import de.intevation.lada.validation.constraints.IsAdminBorderKey;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.SupportedSpatRefSysId;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.constraints.ValidCoordinates;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
+import de.intevation.lada.validation.groups.Warnings;
+
 
 @Entity
 @EntityListeners(SiteListener.class)
@@ -81,6 +84,7 @@ public class Site extends BaseModel implements Serializable {
 
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = AdminUnit.class)
+    @IsAdminBorderKey(groups = Warnings.class)
     private String adminUnitId;
 
 

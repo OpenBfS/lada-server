@@ -49,9 +49,7 @@ public class CoordinatesInVE implements Rule {
                 .and(municIdKey, gemId);
             List<AdminBorderView> vgs = repository.filter(vg.getQuery());
             if (vgs.isEmpty()) {
-                violation.addWarning(
-                    municIdKey, StatusCodes.GEO_COORD_UNCHECKED);
-                return violation;
+                return null;
             }
 
             AdminBorderView singlevg = vgs.get(0);

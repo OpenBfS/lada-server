@@ -32,7 +32,7 @@ public class SiteTest extends ValidatorBaseTest {
     private static final String COORD_X_EXT = "coordXExt";
     private static final String COORD_Y_EXT = "coordYExt";
     private static final String EXT_ID = "extId";
-    private static final String MUNIC_ID = "municId";
+    private static final String ADMIN_UNIT_ID = "adminUnitId";
     private static final String KTA_GRUPPE_ID = "nuclFacilGrId";
     private static final String REI_NUCL_FACIL_GR_ID = "reiNuclFacilGrId";
     private static final String SITE_CLASS_ID = "siteClassId";
@@ -108,11 +108,10 @@ public class SiteTest extends ValidatorBaseTest {
         site.setGeom(insideBorder);
         site.setExtId(EXAMPLE_EXT_ID);
 
-        validator.validate(site);
-        Assert.assertTrue(site.hasWarnings());
-        Assert.assertTrue(site.getWarnings().containsKey(MUNIC_ID));
-        Assert.assertTrue(site.getWarnings().get(MUNIC_ID).contains(
-                String.valueOf(StatusCodes.GEO_COORD_UNCHECKED)));
+        assertHasWarnings(
+            validator.validate(site),
+            ADMIN_UNIT_ID,
+            "No border of administrative unit found. Coordinates unchecked");
     }
 
     /**
@@ -384,7 +383,7 @@ public class SiteTest extends ValidatorBaseTest {
         final String msg =
             "Either coordinates or adminUnitId or stateId must be given";
         assertHasErrors(site, "coordinates", msg);
-        assertHasErrors(site, "adminUnitId", msg);
+        assertHasErrors(site, ADMIN_UNIT_ID, msg);
         assertHasErrors(site, "stateId", msg);
     }
 

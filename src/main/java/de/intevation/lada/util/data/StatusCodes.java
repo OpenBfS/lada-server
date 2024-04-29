@@ -28,7 +28,6 @@ public class StatusCodes {
     public static final int VAL_EXISTS = 646;
     public static final int VAL_ZERO = 648;
     public static final int VAL_PZW = 649;
-    public static final int GEO_COORD_UNCHECKED = 650;
     public static final int GEO_POINT_OUTSIDE = 651;
     public static final int STATUS_RO = 654;
     public static final int ORT_SINGLE_UORT = 655;
