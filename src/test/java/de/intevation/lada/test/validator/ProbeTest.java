@@ -493,31 +493,10 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setSampleStartDate(Date.from(now));
         sample.setSampleEndDate(null);
 
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasWarnings());
-        Assert.assertTrue(sample.getWarnings()
-            .containsKey(SAMPLE_END_DATE));
-        Assert.assertTrue(sample.getWarnings().get(SAMPLE_END_DATE)
-            .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
-    }
-
-    /**
-     * Test sample without sample end date.
-     */
-    @Test
-    public void hasSampleEndDateBeforeBegin() {
-        Instant now = Instant.now();
-        Instant yesterday = now.minus(1, ChronoUnit.DAYS);
-        Sample sample = createMinimumValidSample();
-        sample.setSampleStartDate(Date.from(now));
-        sample.setSampleEndDate(Date.from(yesterday));
-
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasWarnings());
-        Assert.assertTrue(sample.getWarnings()
-            .containsKey(SAMPLE_END_DATE));
-        Assert.assertTrue(sample.getWarnings().get(SAMPLE_END_DATE)
-            .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
+        assertHasWarnings(
+            validator.validate(sample),
+            SAMPLE_END_DATE,
+            String.valueOf(StatusCodes.VALUE_MISSING));
     }
 
     /**

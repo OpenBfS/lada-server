@@ -28,12 +28,11 @@ public class HasProbeentnahmeEnde implements Rule {
         Integer regulation = probe.getRegulationId();
         Integer sampleMeth = probe.getSampleMethId();
         Date ende = probe.getSampleEndDate();
-        Date begin = probe.getSampleStartDate();
         if (regulation != null && sampleMeth != null
             && (regulation == 4 && sampleMeth == 9 && ende == null
                 || regulation != 4
                 && (sampleMeth == 9 || sampleMeth == 3)
-                && (ende == null || begin != null && ende.before(begin)))
+                && ende == null)
         ) {
             Violation violation = new Violation();
             violation.addWarning(
