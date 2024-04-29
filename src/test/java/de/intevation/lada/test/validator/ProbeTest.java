@@ -264,10 +264,27 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setSampleStartDate(new Timestamp(TS1));
         sample.setSampleEndDate(null);
 
-        validator.validate(sample);
-        Assert.assertTrue(
-            sample.getWarnings().get(SAMPLE_END_DATE).contains(
-                String.valueOf(StatusCodes.VALUE_MISSING)));
+        assertHasWarnings(
+            validator.validate(sample),
+            SAMPLE_END_DATE,
+            String.valueOf(StatusCodes.VALUE_MISSING));
+    }
+
+    /**
+     * Test probenahme begin without end.
+     */
+    @Test
+    public void timeNoEndProbeentnahmeBeginSampleMethS() {
+        Sample sample = createMinimumValidSample();
+        final Integer sampleMethIdS = 3;
+        sample.setSampleMethId(sampleMethIdS);
+        sample.setSampleStartDate(new Timestamp(TS1));
+        sample.setSampleEndDate(null);
+
+        assertHasWarnings(
+            validator.validate(sample),
+            SAMPLE_END_DATE,
+            String.valueOf(StatusCodes.VALUE_MISSING));
     }
 
     /**
@@ -484,7 +501,7 @@ public class ProbeTest extends ValidatorBaseTest {
     }
 
     /**
-     * Test sample without sample end date.
+     * Test REI sample without sample end date.
      */
     @Test
     public void hasNoSampleEndDate() {

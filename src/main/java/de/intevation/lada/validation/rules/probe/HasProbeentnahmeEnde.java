@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.validation.rules.probe;
 
-import java.util.Date;
-
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
@@ -22,17 +20,18 @@ import de.intevation.lada.validation.rules.Rule;
 @ValidationRule("Sample")
 public class HasProbeentnahmeEnde implements Rule {
 
+    private static final Integer SAMPLE_METH_X = 9;
+    private static final Integer SAMPLE_METH_S = 3;
+    private static final Integer REG_REI_I = 4;
+
     @Override
     public Violation execute(Object object) {
         Sample probe = (Sample) object;
-        Integer regulation = probe.getRegulationId();
         Integer sampleMeth = probe.getSampleMethId();
-        Date ende = probe.getSampleEndDate();
-        if (regulation != null && sampleMeth != null
-            && (regulation == 4 && sampleMeth == 9 && ende == null
-                || regulation != 4
-                && (sampleMeth == 9 || sampleMeth == 3)
-                && ende == null)
+        if (probe.getSampleEndDate() == null
+            && (SAMPLE_METH_X.equals(sampleMeth)
+                || !REG_REI_I.equals(probe.getRegulationId())
+                && SAMPLE_METH_S.equals(sampleMeth))
         ) {
             Violation violation = new Violation();
             violation.addWarning(
