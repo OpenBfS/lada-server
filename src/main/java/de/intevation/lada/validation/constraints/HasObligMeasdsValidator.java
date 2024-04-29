@@ -46,6 +46,19 @@ public class HasObligMeasdsValidator
             return true;
         }
 
+        final String mmtIdKey = "mmtId",
+            envMediumIdKey = "envMediumId",
+            regulationIdKey = "regulationId";
+
+        ctx.disableDefaultConstraintViolation();
+        ctx.buildConstraintViolationWithTemplate(this.message)
+            .addPropertyNode(mmtIdKey)
+            .addConstraintViolation();
+        // Short path if no measVals can be referenced
+        if (messung.getId() == null) {
+            return false;
+        }
+
         Repository repository = CDI.current().getBeanContainer()
             .createInstance().select(Repository.class).get();
         Sample probe = repository.entityManager().find(
@@ -61,9 +74,6 @@ public class HasObligMeasdsValidator
             return true;
         }
 
-        final String mmtIdKey = "mmtId",
-            envMediumIdKey = "envMediumId",
-            regulationIdKey = "regulationId";
         // Match by complete envMediumId
         QueryBuilder<ObligMeasdMp> builder = repository
             .queryBuilder(ObligMeasdMp.class)
@@ -109,10 +119,6 @@ public class HasObligMeasdsValidator
         pflicht.removeAll(tmp);
 
         if (!pflicht.isEmpty()) {
-            ctx.disableDefaultConstraintViolation();
-            ctx.buildConstraintViolationWithTemplate(this.message)
-                .addPropertyNode(mmtIdKey)
-                .addConstraintViolation();
             return false;
         }
         return true;
