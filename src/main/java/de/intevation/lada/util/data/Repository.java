@@ -132,6 +132,27 @@ public class Repository {
     }
 
     /**
+     * Get objects from database using the given filter.
+     *
+     * @param <T> The type of the objects.
+     * @param filter Filter used to request objects.
+     * @param firstResult The position of the first result to retrieve.
+     * @param maxResults The maximum number of results to retrieve.
+     *
+     * @return List<T> with the requested objects.
+     */
+    public <T> List<T> filter(
+        CriteriaQuery<T> filter,
+        int firstResult,
+        int maxResults
+    ) {
+        return em.createQuery(filter)
+            .setFirstResult(firstResult)
+            .setMaxResults(maxResults)
+            .getResultList();
+    }
+
+    /**
      * Get a single object from database using the given filter.
      *
      * The filter has to select a single entry,

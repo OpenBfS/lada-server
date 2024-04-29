@@ -317,13 +317,17 @@ public class QueryBuilder<T> {
      *
      * @param id    The column name.
      * @param asc   Ascending(true), Descending(false).
+     * @return The current Querybuilder.
      */
-    public void orderBy(String id, boolean asc) {
+    public QueryBuilder<T> orderBy(String id, boolean asc) {
+        Order order;
         if (asc) {
-            this.query.orderBy(this.builder.asc(this.root.get(id)));
+            order = this.builder.asc(this.root.get(id));
         } else {
-            this.query.orderBy(this.builder.desc(this.root.get(id)));
+            order = this.builder.desc(this.root.get(id));
         }
+        this.query.orderBy(order);
+        return this;
     }
 
     /**

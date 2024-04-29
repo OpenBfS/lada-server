@@ -38,14 +38,14 @@ public class StatusFolge implements Rule {
         // Get the previous status
         QueryBuilder<StatusProt> lastFilter = repository
             .queryBuilder(StatusProt.class)
-            .and("measmId", status.getMeasmId());
-        lastFilter.orderBy("id", true);
+            .and("measmId", status.getMeasmId())
+            .orderBy("id", false);
         List<StatusProt> protos =
-            repository.filter(lastFilter.getQuery());
+            repository.filter(lastFilter.getQuery(), 1, 1);
         if (protos.isEmpty()) {
             return null;
         }
-        StatusProt last = protos.get(protos.size() - 1);
+        StatusProt last = protos.get(0);
         QueryBuilder<StatusOrdMp> folgeFilter = repository
             .queryBuilder(StatusOrdMp.class)
             .and("fromId", last.getStatusMpId())
