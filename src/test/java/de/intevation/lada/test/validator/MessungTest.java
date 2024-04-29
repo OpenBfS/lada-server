@@ -21,8 +21,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
+
 
 /**
  * Test messung entities.
@@ -56,6 +56,8 @@ public class MessungTest extends ValidatorBaseTest {
     private static final String MIN_SAMPLE_ID_00G2 = "00G2";
 
     private static final String MSG_VALUE_MISSING = "A value must be provided";
+    private static final String MSG_VAL_OBL_MEASURE =
+        "Obligatory measurand missing";
 
     @Inject
     private Validator<Measm> validator;
@@ -277,7 +279,7 @@ public class MessungTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(measm),
             MMT_ID_KEY,
-            String.valueOf(StatusCodes.VAL_OBL_MEASURE));
+            MSG_VAL_OBL_MEASURE);
     }
 
     /**
@@ -291,7 +293,7 @@ public class MessungTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(measm),
             MMT_ID_KEY,
-            String.valueOf(StatusCodes.VAL_OBL_MEASURE));
+            MSG_VAL_OBL_MEASURE);
     }
 
     /**
@@ -305,7 +307,7 @@ public class MessungTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(measm),
             MMT_ID_KEY,
-            String.valueOf(StatusCodes.VAL_OBL_MEASURE));
+            MSG_VAL_OBL_MEASURE);
     }
 
     /**
@@ -319,7 +321,7 @@ public class MessungTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(measm),
             MMT_ID_KEY,
-            String.valueOf(StatusCodes.VAL_OBL_MEASURE));
+            MSG_VAL_OBL_MEASURE);
     }
 
     /**

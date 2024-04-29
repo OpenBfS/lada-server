@@ -36,6 +36,7 @@ import de.intevation.lada.validation.constraints.HasMeasmStartDateRegulation1;
 import de.intevation.lada.validation.constraints.HasMeasmStartDateRegulationNot1;
 import de.intevation.lada.validation.constraints.HasMeasPdNotSampleMeth9OrRegulation1;
 import de.intevation.lada.validation.constraints.HasMeasPdSampleMeth9OrRegulation1;
+import de.intevation.lada.validation.constraints.HasObligMeasds;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.MeasuringAfterSampling;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
@@ -61,6 +62,7 @@ import de.intevation.lada.validation.groups.Warnings;
 @HasMeasPdSampleMeth9OrRegulation1(groups = Notifications.class)
 @HasMeasmStartDateRegulation1(groups = Warnings.class)
 @HasMeasmStartDateRegulationNot1(groups = Notifications.class)
+@HasObligMeasds(groups = Notifications.class)
 public class Measm extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

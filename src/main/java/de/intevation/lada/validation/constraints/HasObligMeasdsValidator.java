@@ -5,12 +5,15 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.validation.rules.messung;
+package de.intevation.lada.validation.constraints;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.inject.Inject;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
@@ -18,37 +21,44 @@ import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.ObligMeasdMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationRule;
-import de.intevation.lada.validation.rules.Rule;
+
 
 /**
- * Validation rule for messungen.
- * Validates if the messung has all "pflichtmessgroessen".
+ * Validation rule for Measm.
+ * Validates if the Measm has measVals for all obligatory measurands.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationRule("Messung")
-public class HasPflichtmessgroessen implements Rule {
+public class HasObligMeasdsValidator
+    implements ConstraintValidator<HasObligMeasds, Measm> {
 
-    @Inject
-    private Repository repository;
+    private String message;
 
     @Override
-    public Violation execute(Object object) {
-        Measm messung = (Measm) object;
+    public void initialize(HasObligMeasds constraintAnnotation) {
+        this.message = constraintAnnotation.message();
+    }
+
+    @Transactional
+    @Override
+    public boolean isValid(Measm messung, ConstraintValidatorContext ctx) {
         if (messung == null || messung.getSampleId() == null) {
-            return null;
+            return true;
         }
-        Sample probe = repository.getById(
+
+        Repository repository = CDI.current().getBeanContainer()
+            .createInstance().select(Repository.class).get();
+        Sample probe = repository.entityManager().find(
             Sample.class, messung.getSampleId());
+        if (probe == null) {
+            return true;
+        }
 
         final Integer regulationId = probe.getRegulationId();
         final String mmtId = messung.getMmtId();
         final String envMediumId = probe.getEnvMediumId();
         if (regulationId == null || mmtId == null || envMediumId == null) {
-            return null;
+            return true;
         }
 
         final String mmtIdKey = "mmtId",
@@ -99,12 +109,12 @@ public class HasPflichtmessgroessen implements Rule {
         pflicht.removeAll(tmp);
 
         if (!pflicht.isEmpty()) {
-            Violation violation = new Violation();
-            violation.addNotification(
-                mmtIdKey,
-                StatusCodes.VAL_OBL_MEASURE);
-            return violation;
+            ctx.disableDefaultConstraintViolation();
+            ctx.buildConstraintViolationWithTemplate(this.message)
+                .addPropertyNode(mmtIdKey)
+                .addConstraintViolation();
+            return false;
         }
-        return null;
+        return true;
     }
 }
