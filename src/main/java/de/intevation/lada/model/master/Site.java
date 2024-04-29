@@ -40,6 +40,7 @@ import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.validation.constraints.CanChangeCoordinates;
+import de.intevation.lada.validation.constraints.CoordinatesInAdminBorder;
 import de.intevation.lada.validation.constraints.HasCoordsOrAdminUnitOrState;
 import de.intevation.lada.validation.constraints.IsAdminBorderKey;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
@@ -60,6 +61,7 @@ import de.intevation.lada.validation.groups.Warnings;
 @Unique(fields = {"extId", "networkId"},
     groups = DatabaseConstraints.class, clazz = Site.class)
 @CanChangeCoordinates(groups = DatabaseConstraints.class)
+@CoordinatesInAdminBorder(groups = Warnings.class)
 public class Site extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

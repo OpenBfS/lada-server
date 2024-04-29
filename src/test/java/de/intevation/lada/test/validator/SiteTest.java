@@ -72,8 +72,9 @@ public class SiteTest extends ValidatorBaseTest {
     @Inject
     private Validator<Site> validator;
 
-
     //Expected validation messages
+    private static final String GEO_POINT_OUTSIDE =
+        "Coordintes outside of border of administrative unit";
     private static final String UNIQUE_PLACEHOLDER = "{fields}";
     private final String valMessageUniqueExtId;
     private final String valMessageCoords;
@@ -145,10 +146,8 @@ public class SiteTest extends ValidatorBaseTest {
         site.setGeom(outsideBorder);
 
         validator.validate(site);
-        assertHasWarnings(
-            site, COORD_X_EXT, String.valueOf(StatusCodes.GEO_POINT_OUTSIDE));
-        assertHasWarnings(
-            site, COORD_Y_EXT, String.valueOf(StatusCodes.GEO_POINT_OUTSIDE));
+        assertHasWarnings(site, COORD_X_EXT, GEO_POINT_OUTSIDE);
+        assertHasWarnings(site, COORD_Y_EXT, GEO_POINT_OUTSIDE);
     }
 
     /**
@@ -165,10 +164,8 @@ public class SiteTest extends ValidatorBaseTest {
         site.setGeom(justOutsideBorder);
 
         validator.validate(site);
-        assertHasWarnings(
-            site, COORD_X_EXT, String.valueOf(StatusCodes.GEO_POINT_OUTSIDE));
-        assertHasWarnings(
-            site, COORD_Y_EXT, String.valueOf(StatusCodes.GEO_POINT_OUTSIDE));
+        assertHasWarnings(site, COORD_X_EXT, GEO_POINT_OUTSIDE);
+        assertHasWarnings(site, COORD_Y_EXT, GEO_POINT_OUTSIDE);
     }
 
     /**
