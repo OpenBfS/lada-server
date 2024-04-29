@@ -25,6 +25,8 @@ import de.intevation.lada.validation.rules.Rule;
 @ValidationRule("Ort")
 public class ValidREIMesspunkt implements Rule {
 
+    private static final Integer SITE_CLASS_REI = 3;
+
     @Inject
     private Repository repository;
 
@@ -32,11 +34,7 @@ public class ValidREIMesspunkt implements Rule {
     public Violation execute(Object object) {
         Site ort = (Site) object;
 
-        Violation violation = new Violation();
-        if (ort == null
-            || ort.getSiteClassId() == null
-            || ort.getSiteClassId() != 3
-        ) {
+        if (ort == null || !SITE_CLASS_REI.equals(ort.getSiteClassId())) {
             return null;
         }
 
@@ -47,6 +45,8 @@ public class ValidREIMesspunkt implements Rule {
                 .and(nuclFacilGrIdKey, ort.getNuclFacilGrId());
             List<NuclFacilGrMp> ktas = repository.filter(
                 builder.getQuery());
+
+            Violation violation = new Violation();
 
             //Compare first 4 characters of Ort ID to stored KTAs
             if (ort.getExtId() == null
@@ -87,11 +87,9 @@ public class ValidREIMesspunkt implements Rule {
                     }
                 }
             }
-        } else {
-            violation.addWarning(nuclFacilGrIdKey, StatusCodes.VALUE_MISSING);
-        }
-        if (violation.hasErrors() || violation.hasWarnings()) {
-            return violation;
+            if (violation.hasWarnings()) {
+                return violation;
+            }
         }
         return null;
     }

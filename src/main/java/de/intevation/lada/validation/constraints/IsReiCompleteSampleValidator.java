@@ -17,7 +17,7 @@ import de.intevation.lada.model.lada.Sample;
  * Validation rule for sample.
  * Validates if the sample has valid REI attributes.
  */
-public class IsReiCompleteValidator
+public class IsReiCompleteSampleValidator
     implements ConstraintValidator<IsReiComplete, Sample> {
 
     private static final int REG_REI_I = 4;

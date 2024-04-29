@@ -33,7 +33,6 @@ public class SiteTest extends ValidatorBaseTest {
     private static final String COORD_Y_EXT = "coordYExt";
     private static final String EXT_ID = "extId";
     private static final String ADMIN_UNIT_ID = "adminUnitId";
-    private static final String KTA_GRUPPE_ID = "nuclFacilGrId";
     private static final String REI_NUCL_FACIL_GR_ID = "reiNuclFacilGrId";
     private static final String SITE_CLASS_ID = "siteClassId";
 
@@ -75,6 +74,7 @@ public class SiteTest extends ValidatorBaseTest {
     //Expected validation messages
     private static final String GEO_POINT_OUTSIDE =
         "Coordintes outside of border of administrative unit";
+    private static final String VALUE_MISSING = "A value must be provided";
     private static final String UNIQUE_PLACEHOLDER = "{fields}";
     private final String valMessageUniqueExtId;
     private final String valMessageCoords;
@@ -317,12 +317,10 @@ public class SiteTest extends ValidatorBaseTest {
         site.setExtId(EXAMPLE_EXT_ID);
         site.setSiteClassId(SITE_CLASS_REI);
 
-        validator.validate(site);
-        Assert.assertTrue(site.hasWarnings());
-        Assert.assertTrue(site.getWarnings()
-            .containsKey(KTA_GRUPPE_ID));
-        Assert.assertTrue(site.getWarnings().get(KTA_GRUPPE_ID)
-            .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
+        assertHasWarnings(
+            validator.validate(site),
+            "nuclFacilGrId",
+            VALUE_MISSING);
     }
 
     /**

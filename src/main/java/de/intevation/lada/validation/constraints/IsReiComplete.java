@@ -19,12 +19,12 @@ import jakarta.validation.Payload;
 
 
 /**
- * Validation rule for sample.
- * Validates if the sample has valid REI attributes.
+ * Validates if the value has all necessary REI attributes.
  */
 @Target({ TYPE })
 @Retention(RUNTIME)
-@Constraint(validatedBy = { IsReiCompleteValidator.class })
+@Constraint(validatedBy = { IsReiCompleteSampleValidator.class,
+        IsReiCompleteSiteValidator.class })
 @Documented
 public @interface IsReiComplete {
 
