@@ -156,17 +156,8 @@ public class SampleService extends LadaService {
                 probe,
                 RequestMethod.POST,
                 Sample.class);
-        if (probe.getEnvMediumId() == null) {
-            factory.findUmweltId(probe);
-        } else {
-            if (probe.getEnvDescripDisplay() == null
-                || "D: 00 00 00 00 00 00 00 00 00 00 00 00".equals(
-                    probe.getEnvDescripDisplay())
-            ) {
-                factory.getInitialMediaDesk(probe);
-            }
-        }
-        factory.findMedia(probe);
+
+        setEnvAttrs(probe);
 
         return authorization.filter(
             repository.create(probe),
@@ -272,17 +263,8 @@ public class SampleService extends LadaService {
             RequestMethod.PUT,
             Sample.class);
         lock.isLocked(probe);
-        if (probe.getEnvMediumId() == null) {
-            factory.findUmweltId(probe);
-        } else {
-            if (probe.getEnvDescripDisplay() == null
-                || "D: 00 00 00 00 00 00 00 00 00 00 00 00".equals(
-                    probe.getEnvDescripDisplay())
-            ) {
-                factory.getInitialMediaDesk(probe);
-            }
-        }
-        factory.findMedia(probe);
+
+        setEnvAttrs(probe);
 
         return authorization.filter(
             repository.update(probe),
@@ -305,5 +287,19 @@ public class SampleService extends LadaService {
             RequestMethod.DELETE,
             Sample.class);
         repository.delete(probeObj);
+    }
+
+    private void setEnvAttrs(Sample probe) {
+        if (probe.getEnvMediumId() == null) {
+            factory.findUmweltId(probe);
+        } else {
+            if (probe.getEnvDescripDisplay() == null
+                || "D: 00 00 00 00 00 00 00 00 00 00 00 00".equals(
+                    probe.getEnvDescripDisplay())
+            ) {
+                factory.getInitialMediaDesk(probe);
+            }
+        }
+        factory.findMedia(probe);
     }
 }

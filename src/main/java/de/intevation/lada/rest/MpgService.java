@@ -112,13 +112,7 @@ public class MpgService extends LadaService {
             RequestMethod.POST,
             Mpg.class);
 
-        if (messprogramm.getEnvMediumId() == null) {
-            factory.findUmweltId(messprogramm);
-        } else if (messprogramm.getEnvMediumId() != null
-            && messprogramm.getEnvDescripDisplay() == null
-        ) {
-            factory.getInitialMediaDesk(messprogramm);
-        }
+        setEnvAttrs(messprogramm);
 
         /* Persist the new messprogramm object*/
         return authorization.filter(
@@ -142,13 +136,7 @@ public class MpgService extends LadaService {
             RequestMethod.PUT,
             Mpg.class);
 
-        if (messprogramm.getEnvMediumId() == null) {
-            factory.findUmweltId(messprogramm);
-        } else if (messprogramm.getEnvMediumId() != null
-            && messprogramm.getEnvDescripDisplay() == null
-        ) {
-            factory.getInitialMediaDesk(messprogramm);
-        }
+        setEnvAttrs(messprogramm);
 
         return authorization.filter(
             repository.update(messprogramm),
@@ -210,5 +198,15 @@ public class MpgService extends LadaService {
             RequestMethod.DELETE,
             Mpg.class);
         repository.delete(messprogrammObj);
+    }
+
+    private void setEnvAttrs(Mpg messprogramm) {
+        if (messprogramm.getEnvMediumId() == null) {
+            factory.findUmweltId(messprogramm);
+        } else if (messprogramm.getEnvMediumId() != null
+            && messprogramm.getEnvDescripDisplay() == null
+        ) {
+            factory.getInitialMediaDesk(messprogramm);
+        }
     }
 }
