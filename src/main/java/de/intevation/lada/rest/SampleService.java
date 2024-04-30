@@ -157,16 +157,16 @@ public class SampleService extends LadaService {
                 RequestMethod.POST,
                 Sample.class);
         if (probe.getEnvMediumId() == null) {
-            probe = factory.findUmweltId(probe);
+            factory.findUmweltId(probe);
         } else {
             if (probe.getEnvDescripDisplay() == null
                 || "D: 00 00 00 00 00 00 00 00 00 00 00 00".equals(
                     probe.getEnvDescripDisplay())
             ) {
-                probe = factory.getInitialMediaDesk(probe);
+                factory.getInitialMediaDesk(probe);
             }
         }
-        probe = factory.findMedia(probe);
+        factory.findMedia(probe);
 
         return authorization.filter(
             repository.create(probe),
@@ -282,7 +282,7 @@ public class SampleService extends LadaService {
                 factory.getInitialMediaDesk(probe);
             }
         }
-        probe = factory.findMedia(probe);
+        factory.findMedia(probe);
 
         return authorization.filter(
             repository.update(probe),

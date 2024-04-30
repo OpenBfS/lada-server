@@ -432,7 +432,7 @@ public class ProbeFactory {
         probe.setOprModeId(messprogramm.getOprModeId());
         probe.setRegulationId(messprogramm.getRegulationId());
         probe.setEnvDescripDisplay(messprogramm.getEnvDescripDisplay());
-        probe = findMedia(probe);
+        findMedia(probe);
         probe.setMeasFacilId(messprogramm.getMeasFacilId());
         probe.setApprLabId(messprogramm.getApprLabId());
         probe.setSampleMethId(messprogramm.getSampleMethId());
@@ -519,32 +519,27 @@ public class ProbeFactory {
     }
 
     /**
-     * Search for the umwelt id using the 'deskriptor'.
+     * Set envMediumId using envDescripDisplay.
      *
      * @param   probe   The probe object.
-     *
-     * @return The updated probe object.
      */
-    public Sample findUmweltId(Sample probe) {
+    public void findUmweltId(Sample probe) {
         String mediaDesk = probe.getEnvDescripDisplay();
         if (mediaDesk != null) {
             String[] mediaDeskParts = mediaDesk.split(" ");
             if (mediaDeskParts.length <= 1) {
-                return probe;
+                return;
             }
             probe.setEnvMediumId(findUmwelt(mediaDeskParts));
         }
-        return probe;
     }
 
     /**
      * Search for the media description using the 'deskriptor'.
      *
      * @param   probe   The probe object
-     *
-     * @return The updated probe object.
      */
-    public Sample findMedia(Sample probe) {
+    public void findMedia(Sample probe) {
         String mediaDesk = probe.getEnvDescripDisplay();
         if (mediaDesk != null) {
             Object result = repository.queryFromString(
@@ -555,26 +550,22 @@ public class ProbeFactory {
                     .getSingleResult();
             probe.setEnvDescripName(result != null ? result.toString() : null);
         }
-        return probe;
     }
 
     /**
-     * Search for the umwelt id using the 'deskriptor'.
+     * Set envMediumId using envDescripDisplay.
      *
      * @param   messprogramm    The messprogramm
-     *
-     * @return The updated messprogramm.
      */
-    public Mpg findUmweltId(Mpg messprogramm) {
+    public void findUmweltId(Mpg messprogramm) {
         String mediaDesk = messprogramm.getEnvDescripDisplay();
         if (mediaDesk != null) {
             String[] mediaDeskParts = mediaDesk.split(" ");
             if (mediaDeskParts.length <= 1) {
-                return messprogramm;
+                return;
             }
             messprogramm.setEnvMediumId(findUmwelt(mediaDeskParts));
         }
-        return messprogramm;
     }
 
 
@@ -786,30 +777,24 @@ public class ProbeFactory {
      * Set the minimal 'deskriptor' acording to the umwelt.
      *
      * @param   probe    The probe
-     *
-     * @return The updated messprogramm.
      */
-    public Sample getInitialMediaDesk(Sample probe) {
+    public void getInitialMediaDesk(Sample probe) {
         String umweltId = probe.getEnvMediumId();
         if (umweltId != null) {
             probe.setEnvDescripDisplay(getInitialMediaDesk(umweltId));
         }
-        return probe;
     }
 
     /**
      * Set the minimal 'deskriptor' acording to the umwelt.
      *
      * @param   messprogramm    The messprogramm
-     *
-     * @return The updated messprogramm.
      */
-    public Mpg getInitialMediaDesk(Mpg messprogramm) {
+    public void getInitialMediaDesk(Mpg messprogramm) {
         String umweltId = messprogramm.getEnvMediumId();
         if (umweltId != null) {
             messprogramm.setEnvDescripDisplay(getInitialMediaDesk(umweltId));
         }
-        return messprogramm;
     }
 
     /**
