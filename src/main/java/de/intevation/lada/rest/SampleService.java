@@ -293,14 +293,12 @@ public class SampleService extends LadaService {
         if (probe.getEnvMediumId() == null) {
             probe.setEnvMediumId(
                 factory.findUmwelt(probe.getEnvDescripDisplay()));
-        } else {
-            if (probe.getEnvDescripDisplay() == null
-                || "D: 00 00 00 00 00 00 00 00 00 00 00 00".equals(
-                    probe.getEnvDescripDisplay())
-            ) {
-                probe.setEnvDescripDisplay(
-                    factory.getInitialMediaDesk(probe.getEnvMediumId()));
-            }
+        } else if (probe.getEnvDescripDisplay() == null
+            || "D: 00 00 00 00 00 00 00 00 00 00 00 00".equals(
+                probe.getEnvDescripDisplay())
+        ) {
+            probe.setEnvDescripDisplay(
+                factory.getInitialMediaDesk(probe.getEnvMediumId()));
         }
         factory.findMedia(probe);
     }
