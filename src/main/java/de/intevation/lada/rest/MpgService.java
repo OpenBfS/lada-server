@@ -142,9 +142,7 @@ public class MpgService extends LadaService {
             RequestMethod.PUT,
             Mpg.class);
 
-        if (messprogramm.getEnvMediumId() == null
-            && messprogramm.getEnvDescripDisplay() != null
-        ) {
+        if (messprogramm.getEnvMediumId() == null) {
             factory.findUmweltId(messprogramm);
         } else if (messprogramm.getEnvMediumId() != null
             && messprogramm.getEnvDescripDisplay() == null
