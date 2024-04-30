@@ -81,6 +81,7 @@ public class ProbeTest extends ValidatorBaseTest {
     //Expected validation messages
     private static final String MSG_NOT_NULL = "must not be null";
     private static final String MSG_NOT_BLANK = "must not be blank";
+    private static final String MSG_VALUE_MISSING = "A value must be provided";
     private static final String UNIQUE_PLACEHOLDER = "{fields}";
     private final String valMessageUniqueMainSampleIdMeasFacilId;
     private final String valMessageUniqueExtId;
@@ -267,7 +268,7 @@ public class ProbeTest extends ValidatorBaseTest {
         assertHasWarnings(
             validator.validate(sample),
             SAMPLE_END_DATE,
-            String.valueOf(StatusCodes.VALUE_MISSING));
+            MSG_VALUE_MISSING);
     }
 
     /**
@@ -284,7 +285,7 @@ public class ProbeTest extends ValidatorBaseTest {
         assertHasWarnings(
             validator.validate(sample),
             SAMPLE_END_DATE,
-            String.valueOf(StatusCodes.VALUE_MISSING));
+            MSG_VALUE_MISSING);
     }
 
     /**
@@ -513,7 +514,7 @@ public class ProbeTest extends ValidatorBaseTest {
         assertHasWarnings(
             validator.validate(sample),
             SAMPLE_END_DATE,
-            String.valueOf(StatusCodes.VALUE_MISSING));
+            MSG_VALUE_MISSING);
     }
 
     /**
@@ -556,9 +557,8 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setRegulationId(REGULATION_ID_REI);
 
         validator.validate(sample);
-        final String expectedMsg = "A value must be provided";
-        assertHasWarnings(sample, REI_AG_GR_ID, expectedMsg);
-        assertHasWarnings(sample, NUCL_FACIL_GR_ID, expectedMsg);
+        assertHasWarnings(sample, REI_AG_GR_ID, MSG_VALUE_MISSING);
+        assertHasWarnings(sample, NUCL_FACIL_GR_ID, MSG_VALUE_MISSING);
     }
 
     /**
