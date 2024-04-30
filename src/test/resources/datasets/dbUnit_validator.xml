@@ -234,15 +234,6 @@
         tree_mod = "2012-05-08 10:00:00"
         ext_id = "rei_sample"
     />
-    <lada.sample_specif_meas_val
-        id = "25000"
-        sample_id = "25000"
-        sample_specif_id = "A74"
-        meas_val = "1.8"
-        error = "0.2"
-        last_mod = "2012-05-08 12:00:00"
-        tree_mod = "2012-05-09 12:00:00"
-    />
     <lada.geolocat
         id = "25002"
         type_regulation = "R"
@@ -333,15 +324,6 @@
         site_id = "1000"
         add_site_text = "Test"
         last_mod = "2012-05-07 09:00:00"
-    />
-    <lada.sample_specif_meas_val
-        id = "1000"
-        sample_id = "1000"
-        sample_specif_id = "A74"
-        meas_val = "1.8"
-        error = "0.2"
-        last_mod = "2012-05-08 12:00:00"
-        tree_mod = "2012-05-09 12:00:00"
     />
     <lada.comm_measm
         id = "1000"

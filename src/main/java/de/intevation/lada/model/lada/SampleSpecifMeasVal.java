@@ -30,14 +30,18 @@ import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
+import de.intevation.lada.validation.constraints.SampleSpecifMatchesEnvMedium;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
+import de.intevation.lada.validation.groups.Warnings;
+
 
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ SampleSpecifMeasVal.class, DatabaseConstraints.class })
 @Unique(fields = {"sampleSpecifId", "sampleId"},
     groups = DatabaseConstraints.class, clazz = SampleSpecifMeasVal.class)
+@SampleSpecifMatchesEnvMedium(groups = Warnings.class)
 public class SampleSpecifMeasVal extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

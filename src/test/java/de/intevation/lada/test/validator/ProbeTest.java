@@ -43,8 +43,6 @@ public class ProbeTest extends ValidatorBaseTest {
     private static final String REI_AG_GR_ID = "reiAgGrId";
     private static final String SAMPLE_START_DATE = "sampleStartDate";
     private static final String SAMPLE_END_DATE = "sampleEndDate";
-    private static final String SAMPLE_SPECIF_MEAS_VAL
-        = "sampleSpecifMeasVals";
     private static final String SAMPLE_METH_ID = "sampleMethId";
 
     //Test data ids
@@ -573,24 +571,6 @@ public class ProbeTest extends ValidatorBaseTest {
             validator.validate(sample),
             ENV_MEDIUM_ID,
             "Environmental medium does not match ReiAgGr");
-    }
-
-    /**
-     * Test sample with sample specif but without matching env medium.
-     */
-    @Test
-    public void sampleSpecifMesValWithoutMatchingEnvMedium() {
-        Sample sample = createMinimumValidSample();
-        sample.setId(ID1000);
-        sample.setEnvMediumId(ENV_MEDIUM_L42);
-
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasWarnings());
-        Assert.assertTrue(sample.getWarnings()
-            .containsKey(SAMPLE_SPECIF_MEAS_VAL));
-        Assert.assertTrue(sample.getWarnings().get(SAMPLE_SPECIF_MEAS_VAL)
-            .contains(String.valueOf(StatusCodes.VAL_PZW)));
-
     }
 
     /**
