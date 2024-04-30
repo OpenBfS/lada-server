@@ -115,8 +115,7 @@ public class MpgService extends LadaService {
         if (messprogramm.getEnvMediumId() == null) {
             messprogramm = factory.findUmweltId(messprogramm);
         } else if (messprogramm.getEnvMediumId() != null
-            && (messprogramm.getEnvDescripDisplay() == null
-                || messprogramm.getEnvDescripDisplay().equals(""))
+            && messprogramm.getEnvDescripDisplay() == null
         ) {
             messprogramm = factory.getInitialMediaDesk(messprogramm);
         }
@@ -144,14 +143,12 @@ public class MpgService extends LadaService {
             Mpg.class);
 
         if (messprogramm.getEnvMediumId() == null
-            && !(messprogramm.getEnvDescripDisplay() == null
-                || messprogramm.getEnvDescripDisplay().equals(""))
+            && messprogramm.getEnvDescripDisplay() != null
         ) {
             messprogramm = factory.findUmweltId(messprogramm);
         } else if (messprogramm.getEnvMediumId() != null
-            && (messprogramm.getEnvDescripDisplay() == null
-                || messprogramm.getEnvDescripDisplay().equals(""))
-            ) {
+            && messprogramm.getEnvDescripDisplay() == null
+        ) {
             messprogramm = factory.getInitialMediaDesk(messprogramm);
         }
 

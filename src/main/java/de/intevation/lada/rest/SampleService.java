@@ -160,7 +160,6 @@ public class SampleService extends LadaService {
             probe = factory.findUmweltId(probe);
         } else {
             if (probe.getEnvDescripDisplay() == null
-                || probe.getEnvDescripDisplay().isEmpty()
                 || "D: 00 00 00 00 00 00 00 00 00 00 00 00".equals(
                     probe.getEnvDescripDisplay())
             ) {
@@ -277,7 +276,6 @@ public class SampleService extends LadaService {
             factory.findUmweltId(probe);
         } else {
             if (probe.getEnvDescripDisplay() == null
-                || probe.getEnvDescripDisplay().isEmpty()
                 || "D: 00 00 00 00 00 00 00 00 00 00 00 00".equals(
                     probe.getEnvDescripDisplay())
             ) {
