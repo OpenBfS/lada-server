@@ -202,11 +202,11 @@ public class MpgService extends LadaService {
 
     private void setEnvAttrs(Mpg messprogramm) {
         if (messprogramm.getEnvMediumId() == null) {
-            factory.findUmweltId(messprogramm);
-        } else if (messprogramm.getEnvMediumId() != null
-            && messprogramm.getEnvDescripDisplay() == null
-        ) {
-            factory.getInitialMediaDesk(messprogramm);
+            messprogramm.setEnvMediumId(
+                factory.findUmwelt(messprogramm.getEnvDescripDisplay()));
+        } else if (messprogramm.getEnvDescripDisplay() == null) {
+            messprogramm.setEnvDescripDisplay(
+                factory.getInitialMediaDesk(messprogramm.getEnvMediumId()));
         }
     }
 }

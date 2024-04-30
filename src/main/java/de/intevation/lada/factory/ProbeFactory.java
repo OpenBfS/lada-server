@@ -519,22 +519,6 @@ public class ProbeFactory {
     }
 
     /**
-     * Set envMediumId using envDescripDisplay.
-     *
-     * @param   probe   The probe object.
-     */
-    public void findUmweltId(Sample probe) {
-        String mediaDesk = probe.getEnvDescripDisplay();
-        if (mediaDesk != null) {
-            String[] mediaDeskParts = mediaDesk.split(" ");
-            if (mediaDeskParts.length <= 1) {
-                return;
-            }
-            probe.setEnvMediumId(findUmwelt(mediaDeskParts));
-        }
-    }
-
-    /**
      * Search for the media description using the 'deskriptor'.
      *
      * @param   probe   The probe object
@@ -553,30 +537,21 @@ public class ProbeFactory {
     }
 
     /**
-     * Set envMediumId using envDescripDisplay.
-     *
-     * @param   messprogramm    The messprogramm
-     */
-    public void findUmweltId(Mpg messprogramm) {
-        String mediaDesk = messprogramm.getEnvDescripDisplay();
-        if (mediaDesk != null) {
-            String[] mediaDeskParts = mediaDesk.split(" ");
-            if (mediaDeskParts.length <= 1) {
-                return;
-            }
-            messprogramm.setEnvMediumId(findUmwelt(mediaDeskParts));
-        }
-    }
-
-
-    /**
      * Find the umwelt id for a given deskriptor.
      *
-     * @param   mediaDesk   The deskriptor string
+     * @param envDescripDisplay   The deskriptor string
      *
-     * @return The umwelt id or an empty string.
+     * @return The umwelt id, an empty string or null.
      */
-    public String findUmwelt(String[] mediaDesk) {
+    public String findUmwelt(String envDescripDisplay) {
+        if (envDescripDisplay == null) {
+            return null;
+        }
+        String[] mediaDesk = envDescripDisplay.split(" ");
+        if (mediaDesk.length <= 1) {
+            return null;
+        }
+
         List<Integer> mediaIds = new ArrayList<Integer>();
         boolean zebs = false;
         Integer parent = null;
@@ -774,37 +749,16 @@ public class ProbeFactory {
     }
 
     /**
-     * Set the minimal 'deskriptor' acording to the umwelt.
-     *
-     * @param   probe    The probe
-     */
-    public void getInitialMediaDesk(Sample probe) {
-        String umweltId = probe.getEnvMediumId();
-        if (umweltId != null) {
-            probe.setEnvDescripDisplay(getInitialMediaDesk(umweltId));
-        }
-    }
-
-    /**
-     * Set the minimal 'deskriptor' acording to the umwelt.
-     *
-     * @param   messprogramm    The messprogramm
-     */
-    public void getInitialMediaDesk(Mpg messprogramm) {
-        String umweltId = messprogramm.getEnvMediumId();
-        if (umweltId != null) {
-            messprogramm.setEnvDescripDisplay(getInitialMediaDesk(umweltId));
-        }
-    }
-
-    /**
      * Find the minimal deskriptor string for the specified umwelt id.
      *
      * @param   umwId  The umwelt id.
      *
      * @return The deskriptor string.
      */
-    private String getInitialMediaDesk(String umwId) {
+    public String getInitialMediaDesk(String umwId) {
+        if (umwId == null) {
+            return null;
+        }
         logger.debug("getInitialMediaDesk - umw_id: " + umwId);
         String mediaDesk = "D:";
         QueryBuilder<EnvDescripEnvMediumMp> builder =
