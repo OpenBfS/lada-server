@@ -156,9 +156,7 @@ public class SampleService extends LadaService {
                 probe,
                 RequestMethod.POST,
                 Sample.class);
-        if (probe.getEnvMediumId() == null
-            || "".equals(probe.getEnvMediumId())
-        ) {
+        if (probe.getEnvMediumId() == null) {
             probe = factory.findUmweltId(probe);
         } else {
             if (probe.getEnvDescripDisplay() == null
@@ -275,9 +273,7 @@ public class SampleService extends LadaService {
             RequestMethod.PUT,
             Sample.class);
         lock.isLocked(probe);
-        if (probe.getEnvMediumId() == null
-            || probe.getEnvMediumId().isEmpty()
-        ) {
+        if (probe.getEnvMediumId() == null) {
             factory.findUmweltId(probe);
         } else {
             if (probe.getEnvDescripDisplay() == null
