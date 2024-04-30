@@ -5,35 +5,48 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.validation.rules.status;
+package de.intevation.lada.validation.constraints;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.StatusOrdMp;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationRule;
-import de.intevation.lada.validation.rules.Rule;
+
 
 /**
  * Validation rule for status.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationRule("Status")
-public class StatusFolge implements Rule {
+public class StatusOrderValidator
+    implements ConstraintValidator<StatusOrder, StatusProt> {
 
-    @Inject
-    private Repository repository;
+    private String message;
 
     @Override
-    public Violation execute(Object object) {
-        StatusProt status = (StatusProt) object;
+    public void initialize(StatusOrder constraintAnnotation) {
+        this.message = constraintAnnotation.message();
+    }
+
+    @Transactional
+    @Override
+    public boolean isValid(StatusProt status, ConstraintValidatorContext ctx) {
+        if (status == null
+            || status.getMeasmId() == null
+            || status.getStatusMpId() == null
+        ) {
+            return true;
+        }
+
+        Repository repository = CDI.current().getBeanContainer()
+            .createInstance().select(Repository.class).get();
 
         // Get the previous status
         QueryBuilder<StatusProt> lastFilter = repository
@@ -43,7 +56,7 @@ public class StatusFolge implements Rule {
         List<StatusProt> protos =
             repository.filter(lastFilter.getQuery(), 1, 1);
         if (protos.isEmpty()) {
-            return null;
+            return true;
         }
         StatusProt last = protos.get(0);
         QueryBuilder<StatusOrdMp> folgeFilter = repository
@@ -53,11 +66,12 @@ public class StatusFolge implements Rule {
         List<StatusOrdMp> reihenfolge =
             repository.filter(folgeFilter.getQuery());
         if (reihenfolge.isEmpty()) {
-            Violation violation = new Violation();
-            violation.addError("status", StatusCodes.VALUE_NOT_MATCHING);
-            return violation;
+            ctx.disableDefaultConstraintViolation();
+            ctx.buildConstraintViolationWithTemplate(this.message)
+                .addPropertyNode("statusMpId")
+                .addConstraintViolation();
+            return false;
         }
-
-        return null;
+        return true;
     }
 }

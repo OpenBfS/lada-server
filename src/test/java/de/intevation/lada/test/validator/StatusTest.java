@@ -15,7 +15,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.StatusProt;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
 
 /**
@@ -25,7 +24,6 @@ import de.intevation.lada.validation.Validator;
 public class StatusTest extends ValidatorBaseTest {
 
     //Validator keys
-    private static final String STATUS = "status";
     private static final String STATUS_MP_ID = "statusMpId";
 
     //Other constants
@@ -85,12 +83,11 @@ public class StatusTest extends ValidatorBaseTest {
     public void invalidStatusOrder() {
         StatusProt status = minimalStatusProt();
         status.setStatusMpId(ID3);
-        validator.validate(status);
-        Assert.assertTrue(status.hasErrors());
-        Assert.assertTrue(status.getErrors().containsKey(STATUS));
-        Assert.assertTrue(
-            status.getErrors().get(STATUS).contains(
-                String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
+
+        assertHasErrors(
+            validator.validate(status),
+            STATUS_MP_ID,
+            "Values do not match");
     }
 
     /**

@@ -49,7 +49,8 @@
     <master.measd id = "57" name = "Mangan" />
     <master.mmt id = "A3" />
     <master.mmt id = "B3" />
-    <master.status_ord_mp id = "1" from_id = "1" to_id = "5" />
+    <master.status_ord_mp id = "1" from_id = "1" to_id = "4" />
+    <master.status_ord_mp id = "2" from_id = "4" to_id = "14" />
     <master.sample_specif
         id = "A74"
         name = "Volumenstrom"
