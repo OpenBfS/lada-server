@@ -24,6 +24,7 @@ import static jakarta.persistence.TemporalType.TIMESTAMP;
 import jakarta.persistence.Transient;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 import de.intevation.lada.model.BaseModel;
@@ -86,6 +87,7 @@ public class MeasVal extends BaseModel implements Serializable {
         groups = DatabaseConstraints.class, clazz = Measm.class)
     private Integer measmId;
 
+    @Positive(groups = Notifications.class)
     private Double measVal;
 
     @Size(max = 1)

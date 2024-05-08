@@ -26,7 +26,6 @@ public class StatusCodes {
     public static final int VAL_UNIT_NORMALIZE = 645;
     public static final int VAL_UNIT_UMW = 644;
     public static final int VAL_EXISTS = 646;
-    public static final int VAL_ZERO = 648;
     public static final int STATUS_RO = 654;
     public static final int ORT_SINGLE_UORT = 655;
     public static final int ORT_REIMP_MISSING = 656;

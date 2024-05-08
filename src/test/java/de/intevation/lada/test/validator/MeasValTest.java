@@ -197,7 +197,7 @@ public class MeasValTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(val),
             MEAS_VAL,
-            String.valueOf(StatusCodes.VAL_ZERO));
+            "must be greater than 0");
     }
 
     /**
