@@ -435,7 +435,11 @@ public class ServiceTest {
         JsonObjectBuilder updateBuilder = Json.createObjectBuilder();
         oldObject.forEach((key, value) -> {
             if (key.equals(updateAttribute)) {
-                updateBuilder.add(updateAttribute, newValue);
+                if (newValue == null) {
+                    updateBuilder.addNull(updateAttribute);
+                } else {
+                    updateBuilder.add(updateAttribute, newValue);
+                }
             } else {
                 updateBuilder.add(key, value);
             }
@@ -457,8 +461,14 @@ public class ServiceTest {
             return updatedObject;
         }
 
-        Assert.assertEquals(newValue,
-            updatedObject.getString(updateAttribute));
+        if (newValue == null) {
+            Assert.assertTrue(
+                "Expected '" + updateAttribute + "' to be null",
+                updatedObject.isNull(updateAttribute));
+        } else {
+            Assert.assertEquals(newValue,
+                updatedObject.getString(updateAttribute));
+        }
 
         final String modTimeKey = "letzteAenderung";
         if (oldObject.containsKey(modTimeKey)) {
