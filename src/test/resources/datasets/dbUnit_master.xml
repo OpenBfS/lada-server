@@ -648,7 +648,7 @@
         tree_mod = "2012-05-09 12:00:00"
     />
     <master.tag
-        id = "101"
+        id = "1001"
         name = "probeTag"
         tag_type = "mst"
         meas_facil_id = "06010"
@@ -657,7 +657,7 @@
         lada_user_id = "2"
     />
     <master.tag
-        id = "102"
+        id = "1002"
         name = "messungTag"
         tag_type = "mst"
         meas_facil_id = "06010"
@@ -666,7 +666,7 @@
         lada_user_id = "2"
     />
     <master.tag
-        id = "103"
+        id = "1003"
         name = "assignedTag"
         tag_type = "mst"
         meas_facil_id = "06010"
@@ -676,7 +676,7 @@
     />
     <lada.tag_link
         sample_id = "1901"
-        tag_id = "103"
+        tag_id = "1003"
     />
     <!--Site class data-->
     <master.site_class

@@ -46,7 +46,7 @@ public class TagTest extends ServiceTest {
         testMstTag();
         testNetzbetreiberTag();
         promoteMstTag();
-        delete(tagUrl + "103"); // Delete tag with assignment
+        delete(tagUrl + "1003"); // Delete tag with assignment
     }
 
     /**
