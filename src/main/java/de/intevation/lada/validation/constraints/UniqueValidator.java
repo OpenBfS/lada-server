@@ -41,6 +41,7 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
 
     private String[] fields;
     private String predicateValue;
+    private boolean predicateIsNull;
 
     private Map<String, Method> fieldGetters = new HashMap<>();
     private Method predicateGetter;
@@ -59,6 +60,7 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
         this.fields = constraintAnnotation.fields();
         Class<?> clazz = constraintAnnotation.clazz();
         this.predicateValue = constraintAnnotation.predicateValue();
+        this.predicateIsNull = constraintAnnotation.predicateIsNull();
 
         try {
             // Getter methods for fields given in annotation
@@ -102,9 +104,14 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
                 NamingStrategy.camelToSnake(idField)
                 + " IS DISTINCT FROM :" + idField);
             if (!predicateField.isEmpty()) {
-                whereClauseParams.add(
-                    NamingStrategy.camelToSnake(predicateField)
-                    + "='" + this.predicateValue + "'");
+                final String predicateFieldName =
+                    NamingStrategy.camelToSnake(predicateField);
+                if (!this.predicateIsNull) {
+                    whereClauseParams.add(
+                        predicateFieldName + "='" + this.predicateValue + "'");
+                } else {
+                    whereClauseParams.add(predicateFieldName + " IS NULL");
+                }
             }
             this.whereClause = String.join(" AND ", whereClauseParams);
         } catch (IntrospectionException e) {
@@ -124,10 +131,16 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
         }
         try {
             // For partial constraint, only consider entities matching predicate
-            if (this.predicateGetter != null && !this.predicateValue.equals(
-                    this.predicateGetter.invoke(entity))
-            ) {
-                return true;
+            if (this.predicateGetter != null) {
+                String entityPredicateVal =
+                    (String) this.predicateGetter.invoke(entity);
+                if (this.predicateIsNull) {
+                    if (entityPredicateVal != null) {
+                        return true;
+                    }
+                } else if (!this.predicateValue.equals(entityPredicateVal)) {
+                    return true;
+                }
             }
 
             // Get instance programmatically because dependency injection

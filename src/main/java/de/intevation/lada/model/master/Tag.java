@@ -37,6 +37,9 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @GroupSequence({ Tag.class, DatabaseConstraints.class })
 @Unique(groups = DatabaseConstraints.class,
     clazz = Tag.class, fields = { "name", "networkId", "measFacilId" })
+@Unique(groups = DatabaseConstraints.class,
+    clazz = Tag.class, fields = { "name", "networkId" },
+    predicateField = "measFacilId", predicateIsNull = true)
 @NetworkMatchingMeasFacil(groups = DatabaseConstraints.class)
 public class Tag extends BaseModel {
 
@@ -62,11 +65,9 @@ public class Tag extends BaseModel {
         groups = DatabaseConstraints.class, clazz = MeasFacil.class)
     private String measFacilId;
 
-
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Network.class)
     private String networkId;
-
 
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = LadaUser.class)

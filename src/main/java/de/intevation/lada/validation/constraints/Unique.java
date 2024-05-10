@@ -64,6 +64,12 @@ public @interface Unique {
     String predicateValue() default "";
 
     /**
+     * If set to true, consider null as predicate value instead of
+     * predicateValue.
+     */
+    boolean predicateIsNull() default false;
+
+    /**
      * Name of the property node ConstraintViolation will be associated to.
      * Defaults to the first entry of fields.
      */

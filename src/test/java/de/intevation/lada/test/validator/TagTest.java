@@ -63,6 +63,20 @@ public class TagTest extends ValidatorBaseTest {
     }
 
     /**
+     * Non-unique network tag.
+     */
+    @Test
+    public void nonUniqueNetworkTag() {
+        Tag tag = createMinimumValidTag();
+        tag.setTagType("netz");
+        tag.setNetworkId("06");
+        assertHasErrors(
+            validator.validate(tag),
+            "name",
+            "Non-unique value combination for [name, networkId]");
+    }
+
+    /**
      * Create tag with a minimum set of fields to be validated.
      * @return Tag.
      */
