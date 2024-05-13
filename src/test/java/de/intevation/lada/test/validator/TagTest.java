@@ -9,8 +9,6 @@ package de.intevation.lada.test.validator;
 
 import jakarta.inject.Inject;
 
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import de.intevation.lada.model.master.Tag;
@@ -23,43 +21,49 @@ import de.intevation.lada.validation.Validator;
 public class TagTest extends ValidatorBaseTest {
 
     private static final String MEAS_FACIL = "06010";
+    private static final String NETWORK_ID = "06";
 
     @Inject
     private Validator<Tag> validator;
 
     /**
-     * Test tag with matching Network and MeasFacil.
+     * Test tag with Network and MeasFacil.
      */
     @Test
-    public void matchingNetworkMeasFacil() {
+    public void networkAndMeasFacil() {
         Tag tag = createMinimumValidTag();
         tag.setMeasFacilId(MEAS_FACIL);
-        tag.setNetworkId("06");
+        tag.setNetworkId(NETWORK_ID);
 
         validator.validate(tag);
-        assertNoMessages(tag);
+        final String msg = "Either networkId or measFacilId can be given";
+        assertHasErrors(tag, "networkId", msg);
+        assertHasErrors(tag, "measFacilId", msg);
     }
 
     /**
-     * Test tag with not matching Network and MeasFacil.
+     * New unique measFacil tag.
      */
     @Test
-    public void notMatchingNetworkMeasFacil() {
+    public void uniqueMeasFacilTag() {
         Tag tag = createMinimumValidTag();
         tag.setMeasFacilId(MEAS_FACIL);
-        tag.setNetworkId("07");
+        tag.setName("new");
+        assertNoMessages(validator.validate(tag));
+    }
 
-        validator.validate(tag);
-        assertHasErrors(tag);
-        final String measFacilIdKey = "measFacilId",
-            networkIdKey = "networkId",
-            expectedError = "Values not matching";
-        MatcherAssert.assertThat(tag.getErrors().keySet(),
-            CoreMatchers.hasItems(measFacilIdKey, networkIdKey));
-        MatcherAssert.assertThat(tag.getErrors().get(measFacilIdKey),
-            CoreMatchers.hasItem(expectedError));
-        MatcherAssert.assertThat(tag.getErrors().get(networkIdKey),
-            CoreMatchers.hasItem(expectedError));
+    /**
+     * Non-unique measFacil tag.
+     */
+    @Test
+    public void nonUniqueMeasFacilTag() {
+        Tag tag = createMinimumValidTag();
+        tag.setMeasFacilId(MEAS_FACIL);
+        tag.setName("mst");
+        assertHasErrors(
+            validator.validate(tag),
+            "name",
+            "Non-unique value combination for [name, measFacilId]");
     }
 
     /**
@@ -69,7 +73,7 @@ public class TagTest extends ValidatorBaseTest {
     public void nonUniqueNetworkTag() {
         Tag tag = createMinimumValidTag();
         tag.setTagType("netz");
-        tag.setNetworkId("06");
+        tag.setNetworkId(NETWORK_ID);
         assertHasErrors(
             validator.validate(tag),
             "name",

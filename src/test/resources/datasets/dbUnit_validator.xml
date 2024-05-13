@@ -530,4 +530,12 @@
         is_auto_tag = "false"
         created_at = "2024-05-10 15:43:00"
     />
+    <master.tag
+        id = "1002"
+        tag_type = "mst"
+        meas_facil_id = "06010"
+        name = "mst"
+        is_auto_tag = "false"
+        created_at = "2024-05-10 15:43:00"
+    />
 </dataset>

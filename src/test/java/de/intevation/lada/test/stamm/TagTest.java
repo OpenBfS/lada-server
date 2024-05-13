@@ -9,6 +9,7 @@ package de.intevation.lada.test.stamm;
 
 import java.net.URL;
 
+import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.ws.rs.client.Client;
@@ -23,8 +24,6 @@ import de.intevation.lada.test.ServiceTest;
  */
 public class TagTest extends ServiceTest {
 
-    private JsonObject create;
-
     private final String tagUrl = "rest/tag/";
 
     private final String tagNameAttribute = "name";
@@ -35,8 +34,6 @@ public class TagTest extends ServiceTest {
         URL baseUrl
     ) {
         super.init(c, baseUrl);
-        create = readJsonResource("/datasets/tag_create.json");
-        Assert.assertNotNull(create);
     }
 
     /**
@@ -101,9 +98,18 @@ public class TagTest extends ServiceTest {
     }
 
     private JsonObject createTagJson(String type, String tag) {
-        JsonObjectBuilder builder = convertObject(create);
-        builder.add("tagType", type);
-        builder.add("tag", tag);
+        JsonObjectBuilder builder = Json.createObjectBuilder()
+            .add("tagType", type)
+            .add("name", tag);
+        switch (type) {
+        case "mst":
+            builder.add("measFacilId", "06010");
+            break;
+        case "netz":
+            builder.add("networkId", "06");
+        default:
+            // Nothing to do for global tag
+        }
         return builder.build();
     }
 }

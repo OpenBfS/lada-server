@@ -28,7 +28,6 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.lada.TagLink;
-import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -132,14 +131,6 @@ public class TagService extends LadaService {
         String origTagTyp = origTag.getTagType();
         Date gueltigBis = tag.getValUntil();
 
-        if (tag.getMeasFacilId() != null) {
-            MeasFacil mst = repository.getById(
-                MeasFacil.class, tag.getMeasFacilId());
-            if (tag.getNetworkId() == null) {
-                tag.setNetworkId(mst.getNetworkId());
-            }
-        }
-
         if (!tagTyp.equals(origTagTyp)) {
             // User changed type but not gueltigBis
             switch (tagTyp) {
@@ -185,14 +176,6 @@ public class TagService extends LadaService {
             tag, RequestMethod.POST, Tag.class);
 
         tag.setLadaUserId(authorization.getInfo().getUserId());
-
-        if (tag.getMeasFacilId() != null) {
-            MeasFacil mst = repository.getById(
-                MeasFacil.class, tag.getMeasFacilId());
-            if (tag.getNetworkId() == null) {
-                tag.setNetworkId(mst.getNetworkId());
-            }
-        }
 
         if (tag.getValUntil() == null
             && Tag.TAG_TYPE_MST.equals(tag.getTagType())

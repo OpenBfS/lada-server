@@ -962,13 +962,15 @@ CREATE TABLE tag (
     tag_type TEXT REFERENCES tag_type NOT NULL,
     val_until TIMESTAMP without time zone,
     created_at TIMESTAMP without time zone NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-    UNIQUE(name, network_id, meas_facil_id)
+    CHECK(network_id IS NULL OR meas_facil_id IS NULL)
 );
 CREATE UNIQUE INDEX is_auto_tag_unique_idx ON master.tag (name) WHERE is_auto_tag;
 CREATE UNIQUE INDEX global_tag_unique_idx ON master.tag (name)
     WHERE network_id IS NULL AND meas_facil_id IS NULL;
 CREATE UNIQUE INDEX network_tag_unique_idx ON master.tag (name, network_id)
     WHERE meas_facil_id IS NULL;
+CREATE UNIQUE INDEX meas_facil_tag_unique_idx ON master.tag (name, meas_facil_id)
+    WHERE network_id IS NULL;
 
 CREATE TABLE master.convers_dm_fm(
   id serial PRIMARY KEY,
