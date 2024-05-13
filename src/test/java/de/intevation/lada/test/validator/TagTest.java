@@ -72,7 +72,6 @@ public class TagTest extends ValidatorBaseTest {
     @Test
     public void nonUniqueNetworkTag() {
         Tag tag = createMinimumValidTag();
-        tag.setTagType("netz");
         tag.setNetworkId(NETWORK_ID);
         assertHasErrors(
             validator.validate(tag),
@@ -86,7 +85,6 @@ public class TagTest extends ValidatorBaseTest {
     @Test
     public void uniqueGlobalTag() {
         Tag tag = createMinimumValidTag();
-        tag.setTagType("global");
         tag.setName("new");
         assertNoMessages(validator.validate(tag));
     }
@@ -97,7 +95,6 @@ public class TagTest extends ValidatorBaseTest {
     @Test
     public void nonUniqueGlobalTag() {
         Tag tag = createMinimumValidTag();
-        tag.setTagType("global");
         assertHasErrors(
             validator.validate(tag),
             "name",
@@ -111,7 +108,6 @@ public class TagTest extends ValidatorBaseTest {
     private Tag createMinimumValidTag() {
         Tag tag = new Tag();
         tag.setName("test");
-        tag.setTagType("mst");
         return tag;
     }
 }

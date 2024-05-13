@@ -11,7 +11,6 @@ import java.net.URL;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
@@ -27,6 +26,7 @@ public class TagTest extends ServiceTest {
     private final String tagUrl = "rest/tag/";
 
     private final String tagNameAttribute = "name";
+    private final String measFacilIdKey = "measFacilId";
 
     @Override
     public void init(
@@ -50,7 +50,10 @@ public class TagTest extends ServiceTest {
      * Test mst tags.
      */
     public void testMstTag() {
-        JsonObject tagToTest = createTagJson(Tag.TAG_TYPE_MST, "mstTag");
+        JsonObject tagToTest = Json.createObjectBuilder()
+            .add(measFacilIdKey, "06010")
+            .add(tagNameAttribute, "mstTag")
+            .build();
         testTagCRUD(tagToTest);
     }
 
@@ -58,8 +61,10 @@ public class TagTest extends ServiceTest {
      * Test netzbetreiber tags.
      */
     public void testNetzbetreiberTag() {
-        JsonObject tagToTest
-            = createTagJson(Tag.TAG_TYPE_NETZBETREIBER, "nbTag");
+        JsonObject tagToTest = Json.createObjectBuilder()
+            .add("networkId", "06")
+            .add(tagNameAttribute, "nbTag")
+            .build();
         testTagCRUD(tagToTest);
     }
 
@@ -67,11 +72,13 @@ public class TagTest extends ServiceTest {
      * Promote a mst tag to global.
      */
     public void promoteMstTag() {
-        JsonObject tagToTest = createTagJson(
-            Tag.TAG_TYPE_MST, "mstTagPromoted");
+        JsonObject tagToTest = Json.createObjectBuilder()
+            .add(measFacilIdKey, "06010")
+            .add(tagNameAttribute, "mstTagPromoted")
+            .build();
         JsonObject createResponse = create(tagUrl, tagToTest);
         long createdId = createResponse.getInt("id");
-        update(tagUrl + createdId, "tagType", "mst", "global");
+        update(tagUrl + createdId, measFacilIdKey, "06010", null);
     }
 
     /**
@@ -81,8 +88,7 @@ public class TagTest extends ServiceTest {
     private void testTagCRUD(JsonObject tagToTest) {
         JsonObject createResponse = create(tagUrl, tagToTest);
         long createdId = createResponse.getInt("id");
-        String createdTyp = createResponse.getString("tagType");
-        if (createdTyp.equals("mst") || createdTyp.equals("auto")) {
+        if (!createResponse.isNull(measFacilIdKey)) {
             String createdGueltigBis = createResponse.getString("valUntil");
             long diff = getDaysFromNow(createdGueltigBis);
             Assert.assertEquals(Tag.MST_TAG_EXPIRATION_TIME, diff);
@@ -95,21 +101,5 @@ public class TagTest extends ServiceTest {
         Assert.assertFalse(get(tagUrl).asJsonArray().isEmpty());
         getById(tagUrl + createdId, updateResponse);
         delete(tagUrl + createdId);
-    }
-
-    private JsonObject createTagJson(String type, String tag) {
-        JsonObjectBuilder builder = Json.createObjectBuilder()
-            .add("tagType", type)
-            .add("name", tag);
-        switch (type) {
-        case "mst":
-            builder.add("measFacilId", "06010");
-            break;
-        case "netz":
-            builder.add("networkId", "06");
-        default:
-            // Nothing to do for global tag
-        }
-        return builder.build();
     }
 }

@@ -92,7 +92,6 @@ public class TagUtil {
         Tag currentTag = new Tag();
         currentTag.setIsAutoTag(true);
         currentTag.setNetworkId(netzbetreiberId);
-        currentTag.setTagType(Tag.TAG_TYPE_NETZBETREIBER);
         currentTag.setName(prefix + "_" + today + "_" + serNumber);
 
         // Generated tags expire after 548 days

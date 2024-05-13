@@ -33,30 +33,29 @@ public class TagAuthorizer extends BaseAuthorizer {
         Class<T> clazz
     ) {
         Tag tag = (Tag) data;
-        switch (tag.getTagType()) {
+        if (tag.getNetworkId() != null) {
             // Netzbetreiber tags may only be edited by stamm users
-            case Tag.TAG_TYPE_NETZBETREIBER:
-                switch (method) {
-                case GET:
-                case POST:
-                    return userInfo.getNetzbetreiber().contains(
-                        tag.getNetworkId())
-                        ? null : I18N_KEY_FORBIDDEN;
-                case PUT:
-                case DELETE:
-                    return userInfo.getFunktionenForNetzbetreiber(
-                        tag.getNetworkId()).contains(4)
-                        ? null : I18N_KEY_FORBIDDEN;
-                default:
-                    return I18N_KEY_FORBIDDEN;
-                }
-            // Tags my only be edited by members of the referenced Messstelle
-            case Tag.TAG_TYPE_MST:
-                return userInfo.getMessstellen().contains(tag.getMeasFacilId())
+            switch (method) {
+            case GET:
+            case POST:
+                return userInfo.getNetzbetreiber().contains(
+                    tag.getNetworkId())
                     ? null : I18N_KEY_FORBIDDEN;
-            // Global tags (and anything unknown) can not be edited
+            case PUT:
+            case DELETE:
+                return userInfo.getFunktionenForNetzbetreiber(
+                    tag.getNetworkId()).contains(4)
+                    ? null : I18N_KEY_FORBIDDEN;
             default:
                 return I18N_KEY_FORBIDDEN;
+            }
+        } else if (tag.getMeasFacilId() != null) {
+            // Tags my only be edited by members of the referenced Messstelle
+            return userInfo.getMessstellen().contains(tag.getMeasFacilId())
+                ? null : I18N_KEY_FORBIDDEN;
+        } else {
+            // Global tags (and anything unknown) can not be edited
+            return I18N_KEY_FORBIDDEN;
         }
     }
 

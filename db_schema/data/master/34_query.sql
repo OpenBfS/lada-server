@@ -49,7 +49,7 @@ COPY master.base_query (id, sql) FROM stdin;
 60	SELECT network.id AS netzId,\n network.name AS netzbetreiber,\n network.idf_network_id AS netzIdf,\n network.is_fmn AS netzBmn\n FROM master.network
 61	SELECT sample_specif.id AS pzsId,\n sample_specif.ext_id AS pzsBez,\n sample_specif.name AS pzsBeschr,\n meas_unit.unit_symbol AS pzsEinhei\n, sample_specif.eudf_keyword AS pzsEud\n FROM master.sample_specif\n LEFT JOIN master.meas_unit ON (sample_specif.meas_unit_id = meas_unit.id)
 62	SELECT rei_ag_gr.id AS reiproggrpId,\n rei_ag_gr.name AS reiproggrp,\n rei_ag_gr.descr AS reiproggrpbeschr\n FROM master.rei_ag_gr
-63	SELECT tag.id AS tagId,\n tag.name,\n tag.meas_facil_id AS mstId,\n tag.network_id AS netzId,\n lada_user.name AS username,\n tag_type.tag_type as tagTyp,\n tag.val_until AS gueltigBis,\n tag.created_at AS createdAt,\n tag.is_auto_tag as autoTag\n FROM master.tag\n LEFT JOIN master.lada_user ON tag.lada_user_id = lada_user.id \n LEFT JOIN master.tag_type ON tag.tag_type = tag_type.id
+63	SELECT tag.id AS tagId,\n tag.name,\n tag.meas_facil_id AS mstId,\n tag.network_id AS netzId,\n lada_user.name AS username,\n tag_type.tag_type as tagTyp,\n tag.val_until AS gueltigBis,\n tag.created_at AS createdAt,\n tag.is_auto_tag as autoTag\n FROM master.tag\n LEFT JOIN master.lada_user ON tag.lada_user_id = lada_user.id \n LEFT JOIN master.tag_type ON CASE WHEN network_id IS NOT NULL THEN 'netz' WHEN meas_facil_id IS NOT NULL THEN 'mst' ELSE 'global' END = tag_type.id
 \.
 
 
@@ -235,7 +235,7 @@ COPY master.filter (id, sql, param, filter_type_id, name) FROM stdin;
 134	ortszuordnung_mp_uo.poi_id IN ( :uOzId)	uOzId	4	messprogramm_oz_id_uo
 135	tag.network_id IN ( :netzId )	netzId	4	tag_netzbetreiber
 136	tag.meas_facil_id IN ( :mstId )	mstId	4	tag_messstelle
-137	tag.tag_type IN ( :tagTyp )	tagTyp	4	tagTyp
+137	tag_type.id IN ( :tagTyp )	tagTyp	4	tagTyp
 138	tag.name ~ :tag	tag	0	tag_text
 139	tag.is_auto_tag = cast(:autoTag AS boolean)	autoTag	2	tag_auto_tag
 140	lada_user.name ~ :username	username	0	tag_username_text

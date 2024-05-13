@@ -520,22 +520,17 @@ public class AuthorizerTest extends BaseTest {
     private static Map<Object, TestConfig> createTagTestData() {
         //Test that global tags are never authorized
         Tag global = new Tag();
-        global.setTagType(Tag.TAG_TYPE_GLOBAL);
         //Test meas facil tag of own meas facil
         Tag authorizedMeasFacil = new Tag();
-        authorizedMeasFacil.setTagType(Tag.TAG_TYPE_MST);
         authorizedMeasFacil.setMeasFacilId(MEAS_FACIL_ID_06010);
         //Test meas facil tag of other meas facil
         Tag unauthorizedMeasFacil = new Tag();
-        unauthorizedMeasFacil.setTagType(Tag.TAG_TYPE_MST);
         unauthorizedMeasFacil.setMeasFacilId(MEAS_FACIL_ID_01010);
         //Test authorized network tag
         Tag authorizedNetwork = new Tag();
-        authorizedNetwork.setTagType(Tag.TAG_TYPE_NETZBETREIBER);
         authorizedNetwork.setNetworkId(NETWORK_ID_AUTHORIZED);
         //Test unauthorized network tag
         Tag unauthorizedNetwork = new Tag();
-        unauthorizedNetwork.setTagType(Tag.TAG_TYPE_NETZBETREIBER);
         unauthorizedNetwork.setNetworkId(NETWORK_ID_UNAUTHORIZED);
 
         return Map.of(

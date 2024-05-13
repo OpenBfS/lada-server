@@ -650,27 +650,21 @@
     <master.tag
         id = "1001"
         name = "probeTag"
-        tag_type = "mst"
         meas_facil_id = "06010"
-        network_id = "06"
         val_until = "2000-01-01 00:00:00.0"
         lada_user_id = "2"
     />
     <master.tag
         id = "1002"
         name = "messungTag"
-        tag_type = "mst"
         meas_facil_id = "06010"
-        network_id = "06"
         val_until = "2000-01-01 00:00:00.0"
         lada_user_id = "2"
     />
     <master.tag
         id = "1003"
         name = "assignedTag"
-        tag_type = "mst"
         meas_facil_id = "06010"
-        network_id = "06"
         val_until = "2000-01-01 00:00:00.0"
         lada_user_id = "2"
     />

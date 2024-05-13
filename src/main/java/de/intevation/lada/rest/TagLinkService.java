@@ -113,7 +113,7 @@ public class TagLinkService extends LadaService {
 
             //Extend tag expiring time
             Tag tag = repository.getById(Tag.class, tagId);
-            if (Tag.TAG_TYPE_MST.equals(tag.getTagType())) {
+            if (tag.getMeasFacilId() != null) {
                 Timestamp defaultExpiration =
                     TagUtil.getMstTagDefaultExpiration();
                 if (tag.getValUntil() == null

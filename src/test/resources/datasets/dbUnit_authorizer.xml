@@ -273,26 +273,20 @@
     <master.tag
         id = "101"
         name = "mstTag"
-        tag_type = "mst"
         meas_facil_id = "06010"
-        network_id = "06"
         val_until = "2000-01-01 00:00:00.0"
         lada_user_id = "2"
     />
     <master.tag
         id = "111"
         name = "mstTagUnAuth"
-        tag_type = "mst"
         meas_facil_id = "01010"
-        network_id = "06"
         val_until = "2000-01-01 00:00:00.0"
         lada_user_id = "2"
     />
     <master.tag
         id = "102"
         name = "network"
-        tag_type = "netz"
-        meas_facil_id = "06010"
         network_id = "06"
         val_until = "2000-01-01 00:00:00.0"
         lada_user_id = "2"
@@ -300,8 +294,6 @@
     <master.tag
         id = "112"
         name = "networkUnAuth"
-        tag_type = "netz"
-        meas_facil_id = "01010"
         network_id = "06"
         val_until = "2000-01-01 00:00:00.0"
         lada_user_id = "2"
@@ -309,9 +301,6 @@
     <master.tag
         id = "103"
         name = "global"
-        tag_type = "global"
-        meas_facil_id = "06010"
-        network_id = "06"
         val_until = "2000-01-01 00:00:00.0"
         lada_user_id = "2"
     />

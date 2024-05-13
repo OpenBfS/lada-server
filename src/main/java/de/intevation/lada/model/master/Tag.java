@@ -57,11 +57,6 @@ public class Tag extends BaseModel {
     // Default time after which auto tags expire in days
     public static final int GENERATED_EXPIRATION_TIME = 584;
 
-    // Tag type ids
-    public static final String TAG_TYPE_GLOBAL = "global";
-    public static final String TAG_TYPE_NETZBETREIBER = "netz";
-    public static final String TAG_TYPE_MST = "mst";
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -80,9 +75,6 @@ public class Tag extends BaseModel {
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = LadaUser.class)
     private Integer ladaUserId;
-
-    @NotBlank
-    private String tagType;
 
     @Temporal(TIMESTAMP)
     private Date valUntil;
@@ -170,13 +162,5 @@ public class Tag extends BaseModel {
 
     public void setLadaUserId(Integer ladaUserId) {
         this.ladaUserId = ladaUserId;
-    }
-
-    public String getTagType() {
-        return tagType;
-    }
-
-    public void setTagType(String tagType) {
-        this.tagType = tagType;
     }
 }

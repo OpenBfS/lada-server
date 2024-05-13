@@ -45,8 +45,7 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
             TagLink zuordnung = (TagLink) data;
             Tag tag = repository.getById(Tag.class, zuordnung.getTagId());
 
-            switch (tag.getTagType()) {
-            case Tag.TAG_TYPE_GLOBAL:
+            if (tag.getNetworkId() == null && tag.getMeasFacilId() == null) {
                 if (zuordnung.getMeasmId() != null) {
                     return messungAuthorizer.isAuthorizedReason(
                         repository.getById(
@@ -65,16 +64,14 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
                         Sample.class
                     );
                 }
-                // Should not happen because either Messung or Sample is assigned
+                // Should not happen because either Measm or Sample is assigned
                 return I18N_KEY_FORBIDDEN;
-            case Tag.TAG_TYPE_NETZBETREIBER:
+            } else if (tag.getNetworkId() != null) {
                 return userInfo.getNetzbetreiber().contains(tag.getNetworkId())
                     ? null : I18N_KEY_FORBIDDEN;
-            case Tag.TAG_TYPE_MST:
+            } else if (tag.getMeasFacilId() != null) {
                 return userInfo.getMessstellen().contains(tag.getMeasFacilId())
                     ? null : I18N_KEY_FORBIDDEN;
-            default:
-                throw new IllegalArgumentException("Unknown tag type");
             }
         default:
             return I18N_KEY_FORBIDDEN;

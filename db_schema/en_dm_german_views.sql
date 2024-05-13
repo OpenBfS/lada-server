@@ -894,7 +894,6 @@ CREATE VIEW stamm.tag AS SELECT
 	is_auto_tag AS auto_tag,
 	network_id AS netzbetreiber_id,
 	lada_user_id AS user_id,
-	tag_type as tag_typ,
 	val_until AS gueltig_bis,
 	created_at
 FROM master.tag;

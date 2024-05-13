@@ -7,7 +7,6 @@
  */
 package de.intevation.lada.rest;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -127,34 +126,14 @@ public class TagService extends LadaService {
         authorization.authorize(
                 origTag, RequestMethod.PUT, Tag.class);
 
-        String tagTyp = tag.getTagType();
-        String origTagTyp = origTag.getTagType();
-        Date gueltigBis = tag.getValUntil();
+        // Drop validity for network-tags
+        if (tag.getNetworkId() != null) {
+            tag.setValUntil(null);
+        }
 
-        if (!tagTyp.equals(origTagTyp)) {
-            // User changed type but not gueltigBis
-            switch (tagTyp) {
-            // Remove expiration timestamp for 'advanced' tags
-            case Tag.TAG_TYPE_GLOBAL:
-                tag.setValUntil(null);
-                break;
-            case Tag.TAG_TYPE_NETZBETREIBER:
-                if (!Tag.TAG_TYPE_GLOBAL.equals(origTagTyp)) {
-                    tag.setValUntil(null);
-                }
-                break;
-            case Tag.TAG_TYPE_MST:
-                // Set default expiration for tags downgraded to 'mst'
-                tag.setValUntil(TagUtil.getMstTagDefaultExpiration());
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown tag type");
-            }
-        } else {
-            // tagType messstelle never without gueltigBis
-            if (tagTyp.equals(Tag.TAG_TYPE_MST) && gueltigBis == null) {
-                tag.setValUntil(TagUtil.getMstTagDefaultExpiration());
-            }
+        // Set default validity for measFacil-tags
+        if (tag.getMeasFacilId() != null && tag.getValUntil() == null) {
+            tag.setValUntil(TagUtil.getMstTagDefaultExpiration());
         }
 
         return authorization.filter(
@@ -178,7 +157,7 @@ public class TagService extends LadaService {
         tag.setLadaUserId(authorization.getInfo().getUserId());
 
         if (tag.getValUntil() == null
-            && Tag.TAG_TYPE_MST.equals(tag.getTagType())
+            && tag.getMeasFacilId() != null
         ) {
             tag.setValUntil(TagUtil.getMstTagDefaultExpiration());
         }

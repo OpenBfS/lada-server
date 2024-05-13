@@ -959,12 +959,10 @@ CREATE TABLE tag (
     is_auto_tag boolean NOT NULL DEFAULT false,
     network_id varchar(2) REFERENCES network,
     lada_user_id INTEGER REFERENCES lada_user ON DELETE SET NULL,
-    tag_type TEXT REFERENCES tag_type NOT NULL,
     val_until TIMESTAMP without time zone,
     created_at TIMESTAMP without time zone NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
     CHECK(network_id IS NULL OR meas_facil_id IS NULL)
 );
-CREATE UNIQUE INDEX is_auto_tag_unique_idx ON master.tag (name) WHERE is_auto_tag;
 CREATE UNIQUE INDEX global_tag_unique_idx ON master.tag (name)
     WHERE network_id IS NULL AND meas_facil_id IS NULL;
 CREATE UNIQUE INDEX network_tag_unique_idx ON master.tag (name, network_id)
