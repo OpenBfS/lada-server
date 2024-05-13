@@ -77,6 +77,30 @@ public class TagTest extends ValidatorBaseTest {
     }
 
     /**
+     * New unique global tag.
+     */
+    @Test
+    public void uniqueGlobalTag() {
+        Tag tag = createMinimumValidTag();
+        tag.setTagType("global");
+        tag.setName("new");
+        assertNoMessages(validator.validate(tag));
+    }
+
+    /**
+     * Non-unique global tag.
+     */
+    @Test
+    public void nonUniqueGlobalTag() {
+        Tag tag = createMinimumValidTag();
+        tag.setTagType("global");
+        assertHasErrors(
+            validator.validate(tag),
+            "name",
+            "Non-unique name for global tag");
+    }
+
+    /**
      * Create tag with a minimum set of fields to be validated.
      * @return Tag.
      */

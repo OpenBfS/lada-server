@@ -40,7 +40,7 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @Unique(fields = {"typeRegulation", "mpgId", "siteId"},
     groups = DatabaseConstraints.class, clazz = GeolocatMpg.class)
 @Unique(fields = {"mpgId"},
-    predicateField = "typeRegulation", predicateValue = "E",
+    predicateFields = { "typeRegulation" }, predicateValues = { "E" },
     propertyNodeName = "typeRegulation",
     message = "{de.intevation.lada.validation.GeolocatUniqueTypeRegulationE}",
     groups = DatabaseConstraints.class, clazz = GeolocatMpg.class)

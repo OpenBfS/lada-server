@@ -523,4 +523,11 @@
         is_auto_tag = "false"
         created_at = "2024-05-10 15:43:00"
     />
+    <master.tag
+        id = "1001"
+        tag_type = "global"
+        name = "test"
+        is_auto_tag = "false"
+        created_at = "2024-05-10 15:43:00"
+    />
 </dataset>

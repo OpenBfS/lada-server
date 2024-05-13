@@ -38,8 +38,13 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @Unique(groups = DatabaseConstraints.class,
     clazz = Tag.class, fields = { "name", "networkId", "measFacilId" })
 @Unique(groups = DatabaseConstraints.class,
+    clazz = Tag.class, fields = { "name" },
+    predicateFields = { "networkId", "measFacilId" },
+    predicateIsNull = { true, true },
+    message = "{de.intevation.lada.validation.TagUniqueGlobal.message}")
+@Unique(groups = DatabaseConstraints.class,
     clazz = Tag.class, fields = { "name", "networkId" },
-    predicateField = "measFacilId", predicateIsNull = true)
+    predicateFields = { "measFacilId" }, predicateIsNull = { true })
 @NetworkMatchingMeasFacil(groups = DatabaseConstraints.class)
 public class Tag extends BaseModel {
 

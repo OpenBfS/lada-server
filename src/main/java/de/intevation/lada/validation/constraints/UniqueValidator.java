@@ -40,11 +40,12 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
         "SELECT EXISTS(SELECT 1 FROM %s WHERE %s)";
 
     private String[] fields;
-    private String predicateValue;
-    private boolean predicateIsNull;
+    private String[] predicateFields;
+    private String[] predicateValues;
+    private boolean[] predicateIsNull;
 
     private Map<String, Method> fieldGetters = new HashMap<>();
-    private Method predicateGetter;
+    private Map<String, Method> predicateGetters = new HashMap<>();
 
     private String idField;
     private Method idGetter;
@@ -59,7 +60,8 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
     public void initialize(Unique constraintAnnotation) {
         this.fields = constraintAnnotation.fields();
         Class<?> clazz = constraintAnnotation.clazz();
-        this.predicateValue = constraintAnnotation.predicateValue();
+        this.predicateFields = constraintAnnotation.predicateFields();
+        this.predicateValues = constraintAnnotation.predicateValues();
         this.predicateIsNull = constraintAnnotation.predicateIsNull();
 
         try {
@@ -69,10 +71,11 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
                     field,
                     new PropertyDescriptor(field, clazz).getReadMethod());
             }
-            String predicateField = constraintAnnotation.predicateField();
-            if (!predicateField.isEmpty()) {
-                this.predicateGetter = new PropertyDescriptor(
-                    predicateField, clazz).getReadMethod();
+
+            for (String field: this.predicateFields) {
+                this.predicateGetters.put(
+                    field,
+                    new PropertyDescriptor(field, clazz).getReadMethod());
             }
 
             // ID field of the annotated class
@@ -103,14 +106,17 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
             whereClauseParams.add(
                 NamingStrategy.camelToSnake(idField)
                 + " IS DISTINCT FROM :" + idField);
-            if (!predicateField.isEmpty()) {
+            for (int i = 0; i < this.predicateFields.length; i++) {
                 final String predicateFieldName =
-                    NamingStrategy.camelToSnake(predicateField);
-                if (!this.predicateIsNull) {
-                    whereClauseParams.add(
-                        predicateFieldName + "='" + this.predicateValue + "'");
-                } else {
+                    NamingStrategy.camelToSnake(this.predicateFields[i]);
+                if (this.predicateIsNull.length > i
+                    && this.predicateIsNull[i]
+                ) {
                     whereClauseParams.add(predicateFieldName + " IS NULL");
+                } else {
+                    whereClauseParams.add(
+                        predicateFieldName
+                        + "='" + this.predicateValues[i] + "'");
                 }
             }
             this.whereClause = String.join(" AND ", whereClauseParams);
@@ -131,14 +137,18 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
         }
         try {
             // For partial constraint, only consider entities matching predicate
-            if (this.predicateGetter != null) {
-                String entityPredicateVal =
-                    (String) this.predicateGetter.invoke(entity);
-                if (this.predicateIsNull) {
+            for (int i = 0; i < this.predicateFields.length; i++) {
+                String entityPredicateVal = (String) this.predicateGetters
+                    .get(this.predicateFields[i]).invoke(entity);
+                if (this.predicateIsNull.length > i
+                    && this.predicateIsNull[i]
+                ) {
                     if (entityPredicateVal != null) {
                         return true;
                     }
-                } else if (!this.predicateValue.equals(entityPredicateVal)) {
+                } else if (
+                    !this.predicateValues[i].equals(entityPredicateVal)
+                ) {
                     return true;
                 }
             }

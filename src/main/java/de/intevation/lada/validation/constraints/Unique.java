@@ -52,22 +52,23 @@ public @interface Unique {
     String[] fields();
 
     /**
-     * Optional name of a String-typed field that can be used to restrict
-     * checked entities of the given class to those for which this fields
-     * value equals the given predicateValue.
+     * Optional names of String-typed fields that can be used to restrict
+     * checked entities of the given class to those for which those fields
+     * values equal the given predicateValues.
      */
-    String predicateField() default "";
+    String[] predicateFields() default { };
 
     /**
-     * The value to be used with predicateField.
+     * The values to be used with predicateFields.
      */
-    String predicateValue() default "";
+    String[] predicateValues() default { };
 
     /**
-     * If set to true, consider null as predicate value instead of
-     * predicateValue.
+     * If an element is set to true, consider null as predicate value
+     * for the respective element of predicateFields instead of
+     * respective element of predicateValues.
      */
-    boolean predicateIsNull() default false;
+    boolean[] predicateIsNull() default { };
 
     /**
      * Name of the property node ConstraintViolation will be associated to.
