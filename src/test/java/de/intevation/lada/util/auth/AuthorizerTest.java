@@ -38,7 +38,8 @@ import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.TagLink;
+import de.intevation.lada.model.lada.TagLinkMeasm;
+import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Auth;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.Sampler;
@@ -550,19 +551,19 @@ public class AuthorizerTest extends BaseTest {
 
     private static Map<Object, TestConfig> createTagLinkTestData() {
         //Test global tag and authorized sample
-        TagLink authorizedSample = new TagLink();
+        TagLinkSample authorizedSample = new TagLinkSample();
         authorizedSample.setTagId(TAG_ID_GLOBAL);
         authorizedSample.setSampleId(SAMPLE_ID_AUTHORIZED);
         //Test global tag and authorized sample
-        TagLink unauthorizedSample = new TagLink();
+        TagLinkSample unauthorizedSample = new TagLinkSample();
         unauthorizedSample.setTagId(TAG_ID_GLOBAL);
         unauthorizedSample.setSampleId(SAMPLE_ID_UNAUTORIZED);
         //Test global tag and authorized measm
-        TagLink authorizedMeasm = new TagLink();
+        TagLinkMeasm authorizedMeasm = new TagLinkMeasm();
         authorizedMeasm.setTagId(TAG_ID_GLOBAL);
         authorizedMeasm.setMeasmId(MEASM_ID_NO_STATUS);
         //Test global tag and authorized measm
-        TagLink unauthorizedMeasm = new TagLink();
+        TagLinkMeasm unauthorizedMeasm = new TagLinkMeasm();
         unauthorizedMeasm.setTagId(TAG_ID_GLOBAL);
         unauthorizedMeasm.setMeasmId(MEASM_ID_STATUS_LOCKED);
 

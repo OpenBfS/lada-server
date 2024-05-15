@@ -2,7 +2,8 @@ SET search_path TO master;
 
 -- cleanup
 DELETE FROM auth;
-DELETE FROM lada.tag_link;
+DELETE FROM lada.tag_link_measm;
+DELETE FROM lada.tag_link_sample;
 DELETE FROM tag;
 DELETE FROM lada.geolocat;
 DELETE FROM lada.geolocat_mpg;

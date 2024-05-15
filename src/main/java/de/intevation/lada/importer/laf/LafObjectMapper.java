@@ -44,7 +44,8 @@ import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.StatusProt;
-import de.intevation.lada.model.lada.TagLink;
+import de.intevation.lada.model.lada.TagLinkMeasm;
+import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.EnvMedium;
@@ -1739,14 +1740,13 @@ public class LafObjectMapper {
             note.setValue(szenario);
             currentWarnings.add(note);
         } else {
-            TagLink tagZuord = new TagLink();
-
             if (object instanceof Sample) {
+                TagLinkSample tagZuord = new TagLinkSample();
                 Sample probe = (Sample) object;
-                QueryBuilder<TagLink> builderZuord = repository
-                    .queryBuilder(TagLink.class)
+                QueryBuilder<TagLinkSample> builderZuord = repository
+                    .queryBuilder(TagLinkSample.class)
                     .and("sampleId", probe.getId());
-                List<TagLink> globalTagZuord =
+                List<TagLinkSample> globalTagZuord =
                     repository.filter(builderZuord.getQuery());
                 if (globalTagZuord.stream().anyMatch(
                         z -> z.getTagId().equals(globalTag.get(0).getId()))) {
@@ -1761,11 +1761,12 @@ public class LafObjectMapper {
                     repository.create(tagZuord);
                 }
             } else if (object instanceof Measm) {
+                TagLinkMeasm tagZuord = new TagLinkMeasm();
                 Measm messung = (Measm) object;
-                QueryBuilder<TagLink> builderZuord = repository
-                    .queryBuilder(TagLink.class)
+                QueryBuilder<TagLinkMeasm> builderZuord = repository
+                    .queryBuilder(TagLinkMeasm.class)
                     .and("measmId", messung.getId());
-                List<TagLink> globalTagZuord =
+                List<TagLinkMeasm> globalTagZuord =
                     repository.filter(builderZuord.getQuery());
 
                 if (globalTagZuord.stream().anyMatch(

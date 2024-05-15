@@ -32,7 +32,8 @@ import de.intevation.lada.model.lada.MpgMmtMp;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.StatusProt;
-import de.intevation.lada.model.lada.TagLink;
+import de.intevation.lada.model.lada.TagLinkMeasm;
+import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Auth;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.LadaUser;
@@ -126,8 +127,10 @@ public class HeaderAuthorization implements Authorization {
             new MessprogrammIdAuthorizer(repository);
         TagAuthorizer tagAuthorizer =
             new TagAuthorizer(repository);
-        TagZuordnungAuthorizer tagZuordnungAuthorizer =
-            new TagZuordnungAuthorizer(repository);
+        TagLinkSampleAuthorizer tagZuordnungAuthorizer =
+            new TagLinkSampleAuthorizer(repository);
+        TagLinkMeasmAuthorizer tagLinkMeasmAuthorizer =
+            new TagLinkMeasmAuthorizer(repository);
         SiteAuthorizer siteAuthorizer =
             new SiteAuthorizer(repository);
         SamplerAuthorizer samplerAuthorizer =
@@ -151,7 +154,8 @@ public class HeaderAuthorization implements Authorization {
             Map.entry(MpgMmtMp.class, messprogrammAuthorizer),
             Map.entry(GeolocatMpg.class, mpIdAuthorizer),
             Map.entry(Tag.class, tagAuthorizer),
-            Map.entry(TagLink.class, tagZuordnungAuthorizer)
+            Map.entry(TagLinkMeasm.class, tagLinkMeasmAuthorizer),
+            Map.entry(TagLinkSample.class, tagZuordnungAuthorizer)
         );
     }
 

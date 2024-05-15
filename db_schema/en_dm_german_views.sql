@@ -314,13 +314,22 @@ CREATE VIEW land.status_protokoll AS SELECT
 	tree_mod AS tree_modified
 FROM lada.status_prot;
 
-CREATE VIEW land.tagzuordnung AS SELECT
+CREATE VIEW land.tagzuordnung AS
+SELECT
 	id,
 	sample_id AS probe_id,
 	tag_id,
 	date AS datum,
+	NULL AS messung_id
+FROM lada.tag_link_sample
+UNION ALL
+SELECT
+	id,
+	NULL AS probe_id,
+	tag_id,
+	date AS datum,
 	measm_id AS messung_id
-FROM lada.tag_link;
+FROM lada.tag_link_measm;
 
 CREATE VIEW land.zusatz_wert AS SELECT
 	id,

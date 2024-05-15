@@ -26,7 +26,8 @@ import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.NotBlank;
 
 import de.intevation.lada.model.BaseModel;
-import de.intevation.lada.model.lada.TagLink;
+import de.intevation.lada.model.lada.TagLinkMeasm;
+import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NetworkOrMeasFacil;
 import de.intevation.lada.validation.constraints.Unique;
@@ -86,7 +87,12 @@ public class Tag extends BaseModel {
     @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "tag_id", updatable = false)
     @JsonbTransient
-    private Set<TagLink> tagZuordnungs;
+    private Set<TagLinkMeasm> tagLinkMeasms;
+
+    @OneToMany(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "tag_id", updatable = false)
+    @JsonbTransient
+    private Set<TagLinkSample> tagLinkSamples;
 
     private boolean isAutoTag;
 
@@ -116,12 +122,20 @@ public class Tag extends BaseModel {
         this.measFacilId = measFacilId;
     }
 
-    public Set<TagLink> getTagZuordnungs() {
-        return this.tagZuordnungs;
+    public Set<TagLinkMeasm> getTagLinkMeasms() {
+        return tagLinkMeasms;
     }
 
-    public void setTagZuordnungs(Set<TagLink> tagZuordnungs) {
-        this.tagZuordnungs = tagZuordnungs;
+    public void setTagLinkMeasms(Set<TagLinkMeasm> tagLinkMeasms) {
+        this.tagLinkMeasms = tagLinkMeasms;
+    }
+
+    public Set<TagLinkSample> getTagLinkSamples() {
+        return tagLinkSamples;
+    }
+
+    public void setTagLinkSamples(Set<TagLinkSample> tagLinkSamples) {
+        this.tagLinkSamples = tagLinkSamples;
     }
 
     public boolean getIsAutoTag() {

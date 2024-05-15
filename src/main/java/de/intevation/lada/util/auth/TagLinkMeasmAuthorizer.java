@@ -1,4 +1,4 @@
-/* Copyright (C) 2022 by Bundesamt fuer Strahlenschutz
+/* Copyright (C) 2024 by Bundesamt fuer Strahlenschutz
  * Software engineering by Intevation GmbH
  *
  * This file is Free Software under the GNU GPL (v>=3)
@@ -10,8 +10,7 @@ package de.intevation.lada.util.auth;
 
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Measm;
-import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.TagLink;
+import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.rest.RequestMethod;
@@ -21,14 +20,12 @@ import de.intevation.lada.util.rest.RequestMethod;
  * Authorizer class for TagZuordnung objects.
  *
  */
-public class TagZuordnungAuthorizer extends BaseAuthorizer {
+public class TagLinkMeasmAuthorizer extends BaseAuthorizer {
 
-    ProbeAuthorizer probeAuthorizer;
     MessungAuthorizer messungAuthorizer;
 
-    public TagZuordnungAuthorizer(Repository repository) {
+    public TagLinkMeasmAuthorizer(Repository repository) {
         super(repository);
-        probeAuthorizer = new ProbeAuthorizer(repository);
         messungAuthorizer = new MessungAuthorizer(repository);
     }
 
@@ -42,30 +39,17 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
         switch (method) {
         case POST:
         case DELETE:
-            TagLink zuordnung = (TagLink) data;
+            TagLinkMeasm zuordnung = (TagLinkMeasm) data;
             Tag tag = repository.getById(Tag.class, zuordnung.getTagId());
 
             if (tag.getNetworkId() == null && tag.getMeasFacilId() == null) {
-                if (zuordnung.getMeasmId() != null) {
-                    return messungAuthorizer.isAuthorizedReason(
-                        repository.getById(
-                            Measm.class, zuordnung.getMeasmId()),
-                        RequestMethod.PUT,
-                        userInfo,
-                        Measm.class
-                    );
-                }
-                if (zuordnung.getSampleId() != null) {
-                    return probeAuthorizer.isAuthorizedReason(
-                        repository.getById(
-                            Sample.class, zuordnung.getSampleId()),
-                        RequestMethod.PUT,
-                        userInfo,
-                        Sample.class
-                    );
-                }
-                // Should not happen because either Measm or Sample is assigned
-                return I18N_KEY_FORBIDDEN;
+                return messungAuthorizer.isAuthorizedReason(
+                    repository.getById(
+                        Measm.class, zuordnung.getMeasmId()),
+                    RequestMethod.PUT,
+                    userInfo,
+                    Measm.class
+                );
             } else if (tag.getNetworkId() != null) {
                 return userInfo.getNetzbetreiber().contains(tag.getNetworkId())
                     ? null : I18N_KEY_FORBIDDEN;
@@ -85,8 +69,8 @@ public class TagZuordnungAuthorizer extends BaseAuthorizer {
         UserInfo userInfo,
         Class<T> clazz
     ) {
-        TagLink zuordnung = repository.getById(
-            TagLink.class, id);
+        TagLinkMeasm zuordnung = repository.getById(
+            TagLinkMeasm.class, id);
         return isAuthorized(zuordnung, method, userInfo, clazz);
     }
 

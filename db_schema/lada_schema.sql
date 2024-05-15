@@ -449,18 +449,28 @@ CREATE TRIGGER update_measm_after_status_prot_created AFTER INSERT ON status_pro
 ALTER TABLE ONLY measm
     ADD CONSTRAINT messung_status_protokoll_id_fkey FOREIGN KEY (status) REFERENCES status_prot(id);
 
-CREATE TABLE tag_link
+CREATE TABLE tag_link_measm
 (
     id serial PRIMARY KEY,
-    sample_id integer REFERENCES sample ON DELETE CASCADE,
-    measm_id integer REFERENCES measm ON DELETE CASCADE,
+    measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE,
     tag_id integer NOT NULL REFERENCES master.tag ON DELETE CASCADE,
     date timestamp without time zone
         NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-    CHECK(sample_id IS NOT NULL OR measm_id IS NOT NULL),
-    UNIQUE (sample_id, tag_id),
+    CHECK(measm_id IS NOT NULL),
     UNIQUE (measm_id, tag_id)
 );
+
+CREATE TABLE tag_link_sample
+(
+    id serial PRIMARY KEY,
+    sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE,
+    tag_id integer NOT NULL REFERENCES master.tag ON DELETE CASCADE,
+    date timestamp without time zone
+        NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
+    CHECK(sample_id IS NOT NULL),
+    UNIQUE (sample_id, tag_id)
+);
+
 --
 -- Name: measm_sample_id_idx; Type: INDEX; Schema: lada; Owner: -; Tablespace:
 --
@@ -522,8 +532,6 @@ CREATE INDEX sample_regulation_id_idx ON lada.sample USING btree (regulation_id)
 CREATE INDEX sample_rei_ag_gr_id_idx ON lada.sample USING btree (rei_ag_gr_id);
 CREATE INDEX sample_sample_start_date_idx ON lada.sample USING btree (sample_start_date);
 CREATE INDEX state_sample_mid_collect_period_id_ndx ON lada.sample USING btree (mid_coll_pd);
-CREATE INDEX tag_link_measm_id_idx ON lada.tag_link USING btree (measm_id ASC NULLS LAST) TABLESPACE pg_default;
-CREATE INDEX tag_link_sample_id_idx ON lada.tag_link USING btree (sample_id ASC NULLS LAST) TABLESPACE pg_default;
 CREATE INDEX measm_status_idx ON lada.measm USING btree (status ASC NULLS LAST) TABLESPACE pg_default;
 --CREATE INDEX audit_trail_object_id_idx ON lada.audit_trail USING btree (object_id ASC NULLS LAST) TABLESPACE pg_default;
 --CREATE INDEX audit_trail_table_name_idx ON lada.audit_trail USING btree (table_name COLLATE pg_catalog."default" ASC NULLS LAST) TABLESPACE pg_default;

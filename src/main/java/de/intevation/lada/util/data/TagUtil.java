@@ -25,7 +25,8 @@ import jakarta.persistence.criteria.Root;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.model.lada.TagLink;
+import de.intevation.lada.model.lada.TagLinkMeasm;
+import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Tag;
 
 
@@ -125,14 +126,14 @@ public class TagUtil {
 
         //Set tags
         probes.forEach(probe -> {
-            TagLink zuordnung = new TagLink();
+            TagLinkSample zuordnung = new TagLinkSample();
             zuordnung.setTagId(tagId);
             zuordnung.setSampleId(probe.getId());
             repository.create(zuordnung);
         });
 
         messungs.forEach(messung -> {
-            TagLink zuordnung = new TagLink();
+            TagLinkMeasm zuordnung = new TagLinkMeasm();
             zuordnung.setTagId(tagId);
             zuordnung.setMeasmId(messung.getId());
             repository.create(zuordnung);

@@ -668,7 +668,7 @@
         val_until = "2000-01-01 00:00:00.0"
         lada_user_id = "2"
     />
-    <lada.tag_link
+    <lada.tag_link_sample
         sample_id = "1901"
         tag_id = "1003"
     />

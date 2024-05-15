@@ -29,9 +29,11 @@ import de.intevation.lada.test.ServiceTest;
  * Test tagzuordnung entities.
  */
 public class TagZuordnungTest extends ServiceTest {
-    private final String tagUrl = "rest/tag/taglink/";
+    private final String tagUrlSample = "rest/tag/taglinksample/";
+    private final String tagUrlMeasm = "rest/tag/taglinkmeasm/";
 
-    private JsonArray create;
+    private JsonArray createSample;
+    private JsonArray createMeasm;
     private JsonArray create2;
 
     private final String data = "data";
@@ -42,8 +44,11 @@ public class TagZuordnungTest extends ServiceTest {
         URL baseUrl
     ) {
         super.init(c, baseUrl);
-        create = readJsonArrayResource("/datasets/tagzuordnung_create.json");
-        Assert.assertNotNull(create);
+        createSample = readJsonArrayResource(
+            "/datasets/tagzuordnung_create_sample.json");
+        createMeasm = readJsonArrayResource(
+            "/datasets/tagzuordnung_create_measm.json");
+        Assert.assertNotNull(createSample);
         create2 = readJsonArrayResource("/datasets/tagzuordnung_create2.json");
         Assert.assertNotNull(create2);
     }
@@ -60,12 +65,13 @@ public class TagZuordnungTest extends ServiceTest {
      */
     public void execute() {
         // test assigning tags
-        bulkOperation(tagUrl, create);
+        bulkOperation(tagUrlSample, createSample);
+        bulkOperation(tagUrlMeasm, createMeasm);
         // Should accept existing tag links
-        bulkOperation(tagUrl, create);
+        bulkOperation(tagUrlSample, createSample);
 
         JsonArray tagResponse = get("rest/tag/").asJsonArray();
-        List<Integer> tagIds = create.stream()
+        List<Integer> tagIds = createSample.stream()
             .map(zuord -> zuord.asJsonObject().getInt("tagId"))
             .collect(Collectors.toList());
         List<JsonValue> tags = tagResponse.stream()
@@ -91,7 +97,7 @@ public class TagZuordnungTest extends ServiceTest {
         tagResponse = get("rest/tag?sampleId=1901").asJsonArray();
         Assert.assertEquals(
             "Number of tags for given Sample ID:",
-            2, tagResponse.size());
+            3, tagResponse.size());
 
         tagResponse = get("rest/tag?measmId=1801").asJsonArray();
         Assert.assertEquals(
@@ -103,16 +109,16 @@ public class TagZuordnungTest extends ServiceTest {
             "Expected empty result filtering by tagged and un-tagged object",
             tagResponse.isEmpty());
 
-        bulkOperation(tagUrl, create2);
+        bulkOperation(tagUrlMeasm, create2);
         tagResponse = get("rest/tag?measmId=1801&measmId=1802").asJsonArray();
         Assert.assertEquals(
             "Number of tags for given Messung IDs:",
             1, tagResponse.size());
 
         // Test unassigning tags
-        bulkOperation(tagUrl + "delete", create);
+        bulkOperation(tagUrlSample + "delete", createSample);
         // Should accept existing tag links
-        bulkOperation(tagUrl + "delete", create);
+        bulkOperation(tagUrlSample + "delete", createSample);
     }
 
     private void bulkOperation(
