@@ -47,7 +47,7 @@ public class HasREIMesspunkt implements Rule {
             List<Geolocat> orte = repository.filter(builder.getQuery());
             if (orte.isEmpty()) {
                 Violation violation = new Violation();
-                violation.addWarning("REIMesspunkt", StatusCodes.VALUE_MISSING);
+                violation.addWarning("geolocats", StatusCodes.VALUE_MISSING);
                 return violation;
             }
        }
