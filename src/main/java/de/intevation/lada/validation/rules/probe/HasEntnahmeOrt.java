@@ -48,17 +48,16 @@ public class HasEntnahmeOrt implements Rule {
         }
 
         final int regulation = probe.getRegulationId();
-        if (probe.getReiAgGrId() != null
+        final List<String> expectedTypeRegs =
+            probe.getReiAgGrId() != null
             || regulation == REG_REI_X
             || regulation == REG_REI_I
-        ) {
-            return null;
-        }
-
+            ? List.of(TYPE_REG_R)
+            : List.of(TYPE_REG_E, TYPE_REG_R);
         QueryBuilder<Geolocat> builder = repository
             .queryBuilder(Geolocat.class)
             .and("sampleId", id)
-            .andIn("typeRegulation", List.of(TYPE_REG_E, TYPE_REG_R));
+            .andIn("typeRegulation", expectedTypeRegs);
         List<Geolocat> orte = repository.filter(builder.getQuery());
 
         if (orte.size() > 1) {
@@ -68,13 +67,7 @@ public class HasEntnahmeOrt implements Rule {
         }
         // Continues only if there is at most one geolocat
         if (!orte.isEmpty()) {
-            final String typeReg = orte.get(0).getTypeRegulation();
-            if ((TYPE_REG_E.equals(typeReg)
-                    || TYPE_REG_R.equals(typeReg) && regulation != REG_REI_I)
-                || TYPE_REG_R.equals(typeReg) && regulation == REG_REI_I
-            ) {
-                return null;
-            }
+            return null;
         }
 
         Violation violation = new Violation();
