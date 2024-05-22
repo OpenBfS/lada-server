@@ -9,12 +9,9 @@ package de.intevation.lada.validation.rules.messwert;
 
 import jakarta.inject.Inject;
 
-import java.util.List;
-
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.master.EnvMedium;
-import de.intevation.lada.model.master.MeasUnit;
 import de.intevation.lada.model.master.UnitConvers;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -40,62 +37,51 @@ public class IsNormalized implements Rule {
     @Override
     public Violation execute(Object object) {
         MeasVal messwert = (MeasVal) object;
-        EnvMedium umwelt = null;
-        Violation violation = new Violation();
 
-        if (messwert.getMeasmId() != null) {
-            Measm measm = messwert.getMeasm() != null
-                ? messwert.getMeasm()
-                : repository.getById(Measm.class, messwert.getMeasmId());
-            umwelt = measm.getSample().getEnvMedium();
+        if (messwert == null || messwert.getMeasmId() == null) {
+            return null;
         }
 
-        // If umwelt record is present
-        if (umwelt != null) {
-            Integer mehId = umwelt.getUnit1();
-            Integer secMehId = umwelt.getUnit2();
+        EnvMedium umwelt = repository
+            .getById(Measm.class, messwert.getMeasmId())
+            .getSample().getEnvMedium();
+        if (umwelt == null) {
+            return null;
+        }
 
-            //If  meh is not set
-            if (mehId == null && secMehId == null) {
-                return null;
-            }
+        Integer mehId = umwelt.getUnit1();
+        Integer secMehId = umwelt.getUnit2();
+        if (mehId == null && secMehId == null) {
+            return null;
+        }
 
-            // Check if the messwert mehId can be converted to primary or
-            // secondary meh
-            Boolean convert = false;
-            MeasUnit fromUnit = repository.getById(
-                    MeasUnit.class, messwert.getMeasUnitId());
-            if (mehId != null && !mehId.equals(messwert.getMeasUnitId())) {
-                QueryBuilder<UnitConvers> builder =
-                repository.queryBuilder(UnitConvers.class);
-                builder.and("toUnitId", mehId);
-                builder.and("fromUnit", fromUnit);
-                List<UnitConvers> result = repository
-                    .filter(builder.getQuery());
-                convert = result.size() > 0;
-            } else if (secMehId != null
-                && !secMehId.equals(messwert.getMeasUnitId())
-            ) {
-                QueryBuilder<UnitConvers> builder =
-                repository.queryBuilder(UnitConvers.class);
-                builder.and("toUnitId", secMehId);
-                builder.and("fromUnit", fromUnit);
-                List<UnitConvers> result = repository.filter(
-                    builder.getQuery());
-                convert = result.size() > 0;
-            }
+        // Check if measuring unit of measured value can be converted
+        // to primary or secondary measuring unit of envMedium
+        Boolean convert = false;
+        Integer fromUnit = messwert.getMeasUnitId();
+        if (mehId != null && !mehId.equals(fromUnit)) {
+            QueryBuilder<UnitConvers> builder = repository
+                .queryBuilder(UnitConvers.class)
+                .and("toUnitId", mehId)
+                .and("fromUnitId", fromUnit);
+            convert = !repository.filter(builder.getQuery()).isEmpty();
+        } else if (secMehId != null && !secMehId.equals(fromUnit)) {
+            QueryBuilder<UnitConvers> builder = repository
+                .queryBuilder(UnitConvers.class)
+                .and("toUnitId", secMehId)
+                .and("fromUnitId", fromUnit);
+            convert = !repository.filter(builder.getQuery()).isEmpty();
+        }
 
-            if (convert) {
-                violation.addWarning(
-                    "measUnitId", StatusCodes.VAL_UNIT_NORMALIZE);
-            } else if ((mehId != null
-                    && mehId.equals(messwert.getMeasUnitId()))
-                || (secMehId != null
-                    && secMehId.equals(messwert.getMeasUnitId()))) {
-                return null;
-            } else {
-                violation.addWarning("measUnitId", StatusCodes.VAL_UNIT_UMW);
-            }
+        Violation violation = new Violation();
+        if (convert) {
+            violation.addWarning("measUnitId", StatusCodes.VAL_UNIT_NORMALIZE);
+        } else if (mehId != null && mehId.equals(fromUnit)
+            || secMehId != null && secMehId.equals(fromUnit)
+        ) {
+            return null;
+        } else {
+            violation.addWarning("measUnitId", StatusCodes.VAL_UNIT_UMW);
         }
         return violation;
     }

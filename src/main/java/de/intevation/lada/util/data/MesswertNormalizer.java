@@ -13,7 +13,6 @@ import jakarta.inject.Inject;
 
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.master.EnvMedium;
-import de.intevation.lada.model.master.MeasUnit;
 import de.intevation.lada.model.master.UnitConvers;
 
 
@@ -36,13 +35,10 @@ public class MesswertNormalizer {
         Integer mehIdTo,
         Integer mehIdFrom
     ) {
-        MeasUnit fromUnit = repository.getById(
-                MeasUnit.class, mehIdFrom);
-
-        QueryBuilder<UnitConvers> builder =
-            repository.queryBuilder(UnitConvers.class);
-        builder.and("toUnitId", mehIdTo);
-        builder.and("fromUnit", fromUnit);
+        QueryBuilder<UnitConvers> builder = repository
+            .queryBuilder(UnitConvers.class)
+            .and("toUnitId", mehIdTo)
+            .and("fromUnitId", mehIdFrom);
         return repository.filter(builder.getQuery());
     }
 
