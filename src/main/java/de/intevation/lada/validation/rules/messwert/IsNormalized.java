@@ -57,8 +57,7 @@ public class IsNormalized implements Rule {
 
             //If  meh is not set
             if (mehId == null && secMehId == null) {
-                violation.addWarning("measUnitId", StatusCodes.VAL_UNIT_UMW);
-                return violation;
+                return null;
             }
 
             // Check if the messwert mehId can be converted to primary or
