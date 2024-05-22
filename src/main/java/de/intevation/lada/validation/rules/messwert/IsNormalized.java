@@ -55,10 +55,15 @@ public class IsNormalized implements Rule {
             return null;
         }
 
+        Integer fromUnit = messwert.getMeasUnitId();
+        if (mehId != null && mehId.equals(fromUnit)) {
+            // Unit of measured value is primary unit of envMedium
+            return null;
+        }
+
         // Check if measuring unit of measured value can be converted
         // to primary or secondary measuring unit of envMedium
         Boolean convert = false;
-        Integer fromUnit = messwert.getMeasUnitId();
         if (mehId != null && !mehId.equals(fromUnit)) {
             QueryBuilder<UnitConvers> builder = repository
                 .queryBuilder(UnitConvers.class)
@@ -76,9 +81,7 @@ public class IsNormalized implements Rule {
         Violation violation = new Violation();
         if (convert) {
             violation.addWarning("measUnitId", StatusCodes.VAL_UNIT_NORMALIZE);
-        } else if (mehId != null && mehId.equals(fromUnit)
-            || secMehId != null && secMehId.equals(fromUnit)
-        ) {
+        } else if (secMehId != null && secMehId.equals(fromUnit)) {
             return null;
         } else {
             violation.addWarning("measUnitId", StatusCodes.VAL_UNIT_UMW);

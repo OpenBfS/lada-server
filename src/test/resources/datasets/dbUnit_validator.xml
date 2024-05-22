@@ -19,6 +19,7 @@
     <master.meas_unit id = "209" />
     <master.meas_unit id = "210" />
     <master.meas_unit id = "211" />
+    <master.unit_convers id = "208" from_unit_id = "207" to_unit_id = "208" factor = "1.0"/>
     <master.unit_convers id = "209" from_unit_id = "209" to_unit_id = "207" factor = "1.0"/>
     <master.unit_convers id = "210" from_unit_id = "210" to_unit_id = "208" factor = "1.0"/>
     <master.env_medium id = "L" name = "Luft"/>

@@ -53,6 +53,13 @@ public class IsMeasdPrimaryOrConvertibleToValidator
         if (umwelt == null) {
             return true;
         }
+
+        Integer primaryUnit = umwelt.getUnit1();
+        Integer selectedUnit = messwert.getMeasUnitId();
+        if (primaryUnit != null && primaryUnit.equals(selectedUnit)) {
+            return true;
+        }
+
         Integer secMehId = umwelt.getUnit2();
         if (secMehId == null) {
             return true;
@@ -64,7 +71,7 @@ public class IsMeasdPrimaryOrConvertibleToValidator
             .addConstraintViolation();
 
         // Check if secondary unit is selected
-        if (secMehId.equals(messwert.getMeasUnitId())) {
+        if (secMehId.equals(selectedUnit)) {
             return false;
         }
 
@@ -72,7 +79,7 @@ public class IsMeasdPrimaryOrConvertibleToValidator
         final String fromUnitKey = "fromUnitId", toUnitKey = "toUnitId";
         QueryBuilder<UnitConvers> primaryBuilder = repository
             .queryBuilder(UnitConvers.class)
-            .and(fromUnitKey, messwert.getMeasUnitId())
+            .and(fromUnitKey, selectedUnit)
             .and(toUnitKey, umwelt.getUnit1());
         if (!repository.filter(primaryBuilder.getQuery()).isEmpty()) {
             return true;
@@ -81,7 +88,7 @@ public class IsMeasdPrimaryOrConvertibleToValidator
         // Check if the measVal is convertable into the secondary unit
         QueryBuilder<UnitConvers> secondaryBuilder = repository
             .queryBuilder(UnitConvers.class)
-            .and(fromUnitKey, messwert.getMeasUnitId())
+            .and(fromUnitKey, selectedUnit)
             .and(toUnitKey, secMehId);
         if (!repository.filter(secondaryBuilder.getQuery()).isEmpty()) {
             return false;
