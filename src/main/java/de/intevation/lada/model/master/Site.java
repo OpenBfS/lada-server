@@ -42,6 +42,7 @@ import de.intevation.lada.model.lada.GeolocatMpg;
 import de.intevation.lada.validation.constraints.CanChangeCoordinates;
 import de.intevation.lada.validation.constraints.CoordinatesInAdminBorder;
 import de.intevation.lada.validation.constraints.HasCoordsOrAdminUnitOrState;
+import de.intevation.lada.validation.constraints.HasValidReiSiteExtId;
 import de.intevation.lada.validation.constraints.IsAdminBorderKey;
 import de.intevation.lada.validation.constraints.IsReiComplete;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
@@ -64,6 +65,7 @@ import de.intevation.lada.validation.groups.Warnings;
 @CanChangeCoordinates(groups = DatabaseConstraints.class)
 @CoordinatesInAdminBorder(groups = Warnings.class)
 @IsReiComplete(groups = Warnings.class)
+@HasValidReiSiteExtId(groups = Warnings.class)
 public class Site extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

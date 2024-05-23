@@ -45,7 +45,6 @@ public class SiteTest extends ValidatorBaseTest {
     private static final int SITE_CLASS_REI = 3;
 
     private static final String NUCL_FACIL_EXT_ID_UNMAPPED = "Othr";
-    private static final String NUCL_FACIL_EXT_ID_SHORT = "123";
     private static final String NUCL_FACIL_EXT_ID_MAPPED = "A1234";
     private static final int NUCL_FACIL_GR_ID_MAPPED = 1;
 
@@ -256,20 +255,19 @@ public class SiteTest extends ValidatorBaseTest {
     }
 
     /**
-     * Test REI site with 3 character extId.
+     * Test REI site with less than four characters in extId.
      */
     @Test
     public void reiSiteExtIdTooShort() {
         Site site = createMinimalSite();
-        site.setExtId(NUCL_FACIL_EXT_ID_SHORT);
+        site.setExtId("xxx");
         site.setSiteClassId(SITE_CLASS_REI);
         site.setNuclFacilGrId(NUCL_FACIL_GR_ID_MAPPED);
 
-        validator.validate(site);
-        Assert.assertTrue(site.hasWarnings());
-        Assert.assertTrue(site.getWarnings().containsKey(EXT_ID));
-        Assert.assertTrue(site.getWarnings().get(EXT_ID)
-            .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+        assertHasWarnings(
+            validator.validate(site),
+            EXT_ID,
+            "At least four characters must be provided");
     }
 
     /**

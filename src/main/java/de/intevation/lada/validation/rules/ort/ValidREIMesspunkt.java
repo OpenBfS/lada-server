@@ -48,13 +48,11 @@ public class ValidREIMesspunkt implements Rule {
 
             Violation violation = new Violation();
 
-            //Compare first 4 characters of Ort ID to stored KTAs
-            if (ort.getExtId() == null
-                || ort.getExtId().length() < 4
-                || ktas.size() < 1
-            ) {
-                violation.addWarning(extIdKey, StatusCodes.VALUE_OUTSIDE_RANGE);
+            if (ort.getExtId() == null || ort.getExtId().length() < 4) {
+                // Leave validation of extId up to other rule
+                return null;
             } else {
+                //Compare first 4 characters of Ort ID to stored KTAs
                 String ktaOrtId = ort.getExtId().substring(0, 4);
                 QueryBuilder<NuclFacil> builderKtaList = repository
                     .queryBuilder(NuclFacil.class)
