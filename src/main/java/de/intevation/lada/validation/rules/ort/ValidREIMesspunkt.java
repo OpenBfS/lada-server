@@ -62,7 +62,7 @@ public class ValidREIMesspunkt implements Rule {
         for (NuclFacilGrMp kta : repository.filter(builder.getQuery())) {
             if (kta.getNuclFacilId() != ktaList.get(0).getId()) {
                 violation.addWarning(
-                    "reiNuclFacilGrId", StatusCodes.VALUE_NOT_MATCHING);
+                    "nuclFacilGrId", StatusCodes.VALUE_NOT_MATCHING);
             } else if (ort.getExtId().length() < 5
                 && kta.getNuclFacilId() == ktaList.get(0).getId()
             ) {

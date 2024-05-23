@@ -33,7 +33,6 @@ public class SiteTest extends ValidatorBaseTest {
     private static final String COORD_Y_EXT = "coordYExt";
     private static final String EXT_ID = "extId";
     private static final String ADMIN_UNIT_ID = "adminUnitId";
-    private static final String REI_NUCL_FACIL_GR_ID = "reiNuclFacilGrId";
     private static final String SITE_CLASS_ID = "siteClassId";
 
     //Other constants
@@ -298,12 +297,10 @@ public class SiteTest extends ValidatorBaseTest {
         site.setNuclFacilGrId(NUCL_FACIL_GR_ID_MAPPED);
         site.setSiteClassId(SITE_CLASS_REI);
 
-        validator.validate(site);
-        Assert.assertTrue(site.hasWarnings());
-        Assert.assertTrue(site.getWarnings()
-            .containsKey(REI_NUCL_FACIL_GR_ID));
-        Assert.assertTrue(site.getWarnings().get(REI_NUCL_FACIL_GR_ID)
-            .contains(String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
+        assertHasWarnings(
+            validator.validate(site),
+            "nuclFacilGrId",
+            String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
     }
 
     /**

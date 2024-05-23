@@ -236,8 +236,8 @@ public class Site extends BaseModel implements Serializable {
         return this.nuclFacilGrId;
     }
 
-    public void setNuclFacilGrId(Integer reiNuclFacilGrId) {
-        this.nuclFacilGrId = reiNuclFacilGrId;
+    public void setNuclFacilGrId(Integer nuclFacilGrId) {
+        this.nuclFacilGrId = nuclFacilGrId;
     }
 
     public String getReiReportText() {
