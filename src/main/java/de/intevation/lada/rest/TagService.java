@@ -122,9 +122,7 @@ public class TagService extends LadaService {
         @PathParam("id") String id,
         @Valid Tag tag
     ) {
-        Tag origTag = repository.getById(Tag.class, tag.getId());
-        authorization.authorize(
-                origTag, RequestMethod.PUT, Tag.class);
+        authorization.authorize(tag, RequestMethod.PUT, Tag.class);
 
         // Drop validity for network-tags
         if (tag.getNetworkId() != null) {
