@@ -18,8 +18,6 @@ SELECT pg_catalog.setval('filter_id_seq', (SELECT max(id) FROM filter), true);
 
 SELECT pg_catalog.setval('spat_ref_sys_id_seq', (SELECT max(id) FROM spat_ref_sys), true);
 
-SELECT pg_catalog.setval('nucl_facil_id_seq', (SELECT max(id) FROM nucl_facil), true);
-
 SELECT pg_catalog.setval('lada_user_id_seq', (SELECT max(id) FROM lada_user)+1, false);
 
 SELECT pg_catalog.setval('meas_unit_id_seq', (SELECT max(id) FROM meas_unit), true);

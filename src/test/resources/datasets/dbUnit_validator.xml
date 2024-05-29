@@ -29,11 +29,11 @@
     <master.env_medium id = "L54" name = "Example env 2" unit_1 = "207"/>
     <master.env_medium id = "N71" name = "Reinwasser aus geschützten Rohwasservorkommen"/>
     <master.rei_ag_gr id = "1" name = "rei_name" descr = "rei_descr" />
-    <master.nucl_facil id = "1" ext_id = "A123" name = "nucl_facil_name" />
-    <master.nucl_facil id = "2" ext_id = "Othr" name = "nucl_facil_name" />
-    <master.nucl_facil id = "3" ext_id = "123" name = "nucl_facil_name" />
+    <master.nucl_facil ext_id = "A123" name = "nucl_facil_name" />
+    <master.nucl_facil ext_id = "Othr" name = "nucl_facil_name" />
+    <master.nucl_facil ext_id = "123" name = "nucl_facil_name" />
     <master.nucl_facil_gr id = "1" ext_id = "GRA1" name = "nucl_facil_gr_name" />
-    <master.nucl_facil_gr_mp id = "1" nucl_facil_id = "1" nucl_facil_gr_id = "1" />
+    <master.nucl_facil_gr_mp id = "1" nucl_facil_ext_id = "A123" nucl_facil_gr_id = "1" />
     <master.rei_ag_gr_env_medium_mp id = "1" rei_ag_gr_id = "1" env_medium_id = "N71" />
     <master.sampler
         id = "726"

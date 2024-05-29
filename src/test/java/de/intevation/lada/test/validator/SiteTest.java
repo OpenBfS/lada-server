@@ -44,7 +44,6 @@ public class SiteTest extends ValidatorBaseTest {
     private static final int SITE_CLASS_REI = 3;
 
     private static final String NUCL_FACIL_EXT_ID_UNMAPPED = "Othr";
-    private static final String NUCL_FACIL_EXT_ID_MAPPED = "A1234";
     private static final int NUCL_FACIL_GR_ID_MAPPED = 1;
 
     private static final double COORDINATE_OUTSIDE_Y = 48.0;
@@ -325,7 +324,7 @@ public class SiteTest extends ValidatorBaseTest {
     public void reiSite() {
         Site site = createMinimalSite();
         site.setSiteClassId(SITE_CLASS_REI);
-        site.setExtId(NUCL_FACIL_EXT_ID_MAPPED);
+        site.setExtId("A1234");
         site.setNuclFacilGrId(1);
 
         validator.validate(site);

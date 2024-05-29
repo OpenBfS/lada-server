@@ -9,8 +9,6 @@ package de.intevation.lada.validation.rules.ort;
 
 import jakarta.inject.Inject;
 
-import java.util.List;
-
 import de.intevation.lada.model.master.NuclFacil;
 import de.intevation.lada.model.master.NuclFacilGrMp;
 import de.intevation.lada.model.master.Site;
@@ -47,11 +45,9 @@ public class ValidREIMesspunkt implements Rule {
         Violation violation = new Violation();
 
         //Compare first 4 characters of Ort ID to stored KTAs
-        QueryBuilder<NuclFacil> builderKtaList = repository
-            .queryBuilder(NuclFacil.class)
-            .and(extIdKey, ort.getExtId().substring(0, 4));
-        List<NuclFacil> ktaList = repository.filter(builderKtaList.getQuery());
-        if (ktaList.isEmpty()) {
+        String ktaId = ort.getExtId().substring(0, 4);
+        NuclFacil kta = repository.entityManager().find(NuclFacil.class, ktaId);
+        if (kta == null) {
             violation.addWarning(extIdKey, StatusCodes.ORT_ANLAGE_MISSING);
             return violation;
         }
@@ -59,17 +55,17 @@ public class ValidREIMesspunkt implements Rule {
         QueryBuilder<NuclFacilGrMp> builder = repository
             .queryBuilder(NuclFacilGrMp.class)
             .and(nuclFacilGrIdKey, ort.getNuclFacilGrId());
-        for (NuclFacilGrMp kta : repository.filter(builder.getQuery())) {
-            if (kta.getNuclFacilId() != ktaList.get(0).getId()) {
+        for (NuclFacilGrMp ktaGrMp : repository.filter(builder.getQuery())) {
+            if (!ktaId.equals(ktaGrMp.getNuclFacilExtId())) {
                 violation.addWarning(
                     "nuclFacilGrId", StatusCodes.VALUE_NOT_MATCHING);
             } else if (ort.getExtId().length() < 5
-                && kta.getNuclFacilId() == ktaList.get(0).getId()
+                && ktaId.equals(ktaGrMp.getNuclFacilExtId())
             ) {
                 violation.addWarning(
                     extIdKey, StatusCodes.ORT_REIMP_MISSING);
             } else if (ort.getExtId().length() > 12
-                && kta.getNuclFacilId() == ktaList.get(0).getId()
+                && ktaId.equals(ktaGrMp.getNuclFacilExtId())
             ) {
                 violation.addWarning(
                     extIdKey, StatusCodes.ORT_REIMP_TOO_LONG);
