@@ -59,16 +59,6 @@ public class ValidREIMesspunkt implements Rule {
             if (!ktaId.equals(ktaGrMp.getNuclFacilExtId())) {
                 violation.addWarning(
                     "nuclFacilGrId", StatusCodes.VALUE_NOT_MATCHING);
-            } else if (ort.getExtId().length() < 5
-                && ktaId.equals(ktaGrMp.getNuclFacilExtId())
-            ) {
-                violation.addWarning(
-                    extIdKey, StatusCodes.ORT_REIMP_MISSING);
-            } else if (ort.getExtId().length() > 12
-                && ktaId.equals(ktaGrMp.getNuclFacilExtId())
-            ) {
-                violation.addWarning(
-                    extIdKey, StatusCodes.ORT_REIMP_TOO_LONG);
             } else {
                 break;
             }

@@ -253,19 +253,19 @@ public class SiteTest extends ValidatorBaseTest {
     }
 
     /**
-     * Test REI site with less than four characters in extId.
+     * Test REI site with less than five characters in extId.
      */
     @Test
     public void reiSiteExtIdTooShort() {
         Site site = createMinimalSite();
-        site.setExtId("xxx");
+        site.setExtId("xxxx");
         site.setSiteClassId(SITE_CLASS_REI);
         site.setNuclFacilGrId(NUCL_FACIL_GR_ID_MAPPED);
 
         assertHasWarnings(
             validator.validate(site),
             EXT_ID,
-            "At least four characters must be provided");
+            "Must be between five and twelve characters long");
     }
 
     /**

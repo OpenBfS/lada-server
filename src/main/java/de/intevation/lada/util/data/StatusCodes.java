@@ -27,9 +27,7 @@ public class StatusCodes {
     public static final int VAL_EXISTS = 646;
     public static final int STATUS_RO = 654;
     public static final int ORT_SINGLE_UORT = 655;
-    public static final int ORT_REIMP_MISSING = 656;
     public static final int ORT_ANLAGE_MISSING = 657;
-    public static final int ORT_REIMP_TOO_LONG = 658;
     public static final int IMP_PARSER_ERROR = 670;
     public static final int IMP_PRESENT = 671;
     public static final int IMP_DUPLICATE = 672;

@@ -34,7 +34,8 @@ public class HasValidReiSiteExtIdValidator
         if (site != null
             && SITE_CLASS_REI.equals(site.getSiteClassId())
             && site.getExtId() != null
-            && site.getExtId().length() < 4
+            && (site.getExtId().length() < 5
+                || site.getExtId().length() > 12)
         ) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
