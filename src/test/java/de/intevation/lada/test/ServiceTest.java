@@ -385,7 +385,7 @@ public class ServiceTest {
      * @param newValue the new value to set.
      * @return The resulting json object.
      */
-    public JsonObject update(
+    public JsonValue update(
         String parameter,
         String updateAttribute,
         String oldValue,
@@ -409,7 +409,7 @@ public class ServiceTest {
      * @param expectedStatus Expected HTTP status code
      * @return The resulting json object.
      */
-    public JsonObject update(
+    public JsonValue update(
         String parameter,
         String updateAttribute,
         String oldValue,
@@ -448,19 +448,19 @@ public class ServiceTest {
 
         /* Send modified object via put request*/
         WebTarget putTarget = client.target(baseUrl + parameter);
-        Response updated = putTarget.request()
+        JsonValue updated = BaseTest.parseResponse(putTarget.request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
             .accept(MediaType.APPLICATION_JSON)
-            .put(Entity.entity(updatedEntity, MediaType.APPLICATION_JSON));
+            .put(Entity.entity(updatedEntity, MediaType.APPLICATION_JSON)),
+            expectedStatus);
 
         /* Verify the response*/
-        JsonObject updatedObject = BaseTest.parseResponse(
-            updated, expectedStatus).asJsonObject();
         if (!Response.Status.OK.equals(expectedStatus)) {
-            return updatedObject;
+            return updated;
         }
 
+        JsonObject updatedObject = updated.asJsonObject();
         if (newValue == null) {
             Assert.assertTrue(
                 "Expected '" + updateAttribute + "' to be null",
