@@ -56,21 +56,23 @@ public class IsNormalized implements Rule {
         }
 
         Integer fromUnit = messwert.getMeasUnitId();
-        if (mehId != null && mehId.equals(fromUnit)) {
-            // Unit of measured value is primary unit of envMedium
+        if (mehId != null && mehId.equals(fromUnit)
+            || secMehId != null && secMehId.equals(fromUnit)) {
+            // Unit of measured value is primary or secondary unit of envMedium
             return null;
         }
 
         // Check if measuring unit of measured value can be converted
         // to primary or secondary measuring unit of envMedium
-        Boolean convert = false;
+        boolean convert = false;
         if (mehId != null && !mehId.equals(fromUnit)) {
             QueryBuilder<UnitConvers> builder = repository
                 .queryBuilder(UnitConvers.class)
                 .and("toUnitId", mehId)
                 .and("fromUnitId", fromUnit);
             convert = !repository.filter(builder.getQuery()).isEmpty();
-        } else if (secMehId != null && !secMehId.equals(fromUnit)) {
+        }
+        if (!convert && secMehId != null && !secMehId.equals(fromUnit)) {
             QueryBuilder<UnitConvers> builder = repository
                 .queryBuilder(UnitConvers.class)
                 .and("toUnitId", secMehId)
@@ -79,13 +81,10 @@ public class IsNormalized implements Rule {
         }
 
         Violation violation = new Violation();
-        if (convert) {
-            violation.addWarning("measUnitId", StatusCodes.VAL_UNIT_NORMALIZE);
-        } else if (secMehId != null && secMehId.equals(fromUnit)) {
-            return null;
-        } else {
-            violation.addWarning("measUnitId", StatusCodes.VAL_UNIT_UMW);
-        }
+        violation.addWarning("measUnitId",
+            convert
+            ? StatusCodes.VAL_UNIT_NORMALIZE
+            : StatusCodes.VAL_UNIT_UMW);
         return violation;
     }
 }

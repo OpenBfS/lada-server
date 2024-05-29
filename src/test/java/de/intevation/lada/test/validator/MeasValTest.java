@@ -295,13 +295,11 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_UNIT_CONVERTABLE_TO_SECONDARY);
-        validator.validate(val);
-        String warningKey = UNIT_ID;
-        Assert.assertTrue(val.hasWarnings());
-        Assert.assertTrue(val.getWarnings()
-            .containsKey(warningKey));
-        Assert.assertTrue(val.getWarnings().get(warningKey).contains(
-                String.valueOf(StatusCodes.VAL_UNIT_UMW)));
+
+        assertHasWarnings(
+            validator.validate(val),
+            UNIT_ID,
+            String.valueOf(StatusCodes.VAL_UNIT_NORMALIZE));
     }
 
     /**
