@@ -9,8 +9,7 @@ CREATE TABLE tag_link_measm
     measm_id integer NOT NULL REFERENCES measm ON DELETE CASCADE,
     tag_id integer NOT NULL REFERENCES master.tag ON DELETE CASCADE,
     date timestamp without time zone
-        NOT NULL DEFAULT (now() AT TIME ZONE ''utc''),
-    CHECK(measm_id IS NOT NULL),
+        NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE (measm_id, tag_id)
 );
 CREATE TABLE tag_link_sample
@@ -19,8 +18,7 @@ CREATE TABLE tag_link_sample
     sample_id integer NOT NULL REFERENCES sample ON DELETE CASCADE,
     tag_id integer NOT NULL REFERENCES master.tag ON DELETE CASCADE,
     date timestamp without time zone
-        NOT NULL DEFAULT (now() AT TIME ZONE ''utc''),
-    CHECK(sample_id IS NOT NULL),
+        NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE (sample_id, tag_id)
 );
 
@@ -32,35 +30,15 @@ GRANT USAGE, SELECT ON SEQUENCE tag_link_measm_id_seq TO lada;
 GRANT USAGE, SELECT ON SEQUENCE tag_link_sample_id_seq TO lada;
 
 -- Migrate entries into new tables
-INSERT INTO tag_link_measm
-    (
-        tag_id,
-        measm_id,
-        date
-    )
-    SELECT
-        tl.tag_id,
-        tl.measm_id,
-        tl.date
-    FROM
-        tag_link tl
-    WHERE
-        tl.measm_id IS NOT NULL;
+INSERT INTO tag_link_measm (tag_id, measm_id, date)
+    SELECT tag_id, measm_id, date
+    FROM tag_link
+    WHERE measm_id IS NOT NULL;
 
-INSERT INTO tag_link_sample
-    (
-        tag_id,
-        sample_id,
-        date
-    )
-    SELECT
-        tl.tag_id,
-        tl.sample_id,
-        tl.date
-    FROM
-        tag_link tl
-    WHERE
-        tl.sample_id IS NOT NULL;
+INSERT INTO tag_link_sample (tag_id, sample_id, date)
+    SELECT tag_id, sample_id, date
+    FROM tag_link
+    WHERE sample_id IS NOT NULL;
 
 -- Update german view
 CREATE OR REPLACE VIEW land.tagzuordnung AS
@@ -109,5 +87,4 @@ UPDATE master.base_query
     SET sql = 'SELECT measm.id, sample.id AS probeId, sample.main_sample_id AS hpNr, measm.min_sample_id AS npNr, status_prot.date AS statusD, regulation.name AS dBasis, meas_facil.network_id AS netzId, CASE      WHEN sample.meas_facil_id = sample.appr_lab_id       THEN sample.meas_facil_id     ELSE sample.meas_facil_id || ''-'' || sample.appr_lab_id     END AS mstLaborId,  sample.env_medium_id AS umwId,   sample_meth.ext_id AS pArt,  sample.sample_start_date AS peBegin,   sample.sample_end_date AS peEnd,   site.admin_unit_id AS eGemId, admin_unit.name AS eGem, measd.name AS messgroesse, CASE WHEN (convers_dm_fm.conv_factor IS NOT NULL) OR (lada_meas_val.meas_unit_id = env_medium.unit_1)  THEN coalesce(lada_meas_val.less_than_lod, '' '') ELSE NULL END AS nwg, CASE WHEN convers_dm_fm.conv_factor IS NOT NULL THEN convers_dm_fm.conv_factor*lada_meas_val.meas_val WHEN lada_meas_val.meas_unit_id = env_medium.unit_1 THEN lada_meas_val.meas_val ELSE NULL END AS wert, CASE WHEN convers_dm_fm.conv_factor IS NOT NULL THEN convers_dm_fm.conv_factor*lada_meas_val.detect_lim WHEN lada_meas_val.meas_unit_id = env_medium.unit_1 THEN lada_meas_val.detect_lim ELSE NULL END AS nwgZuMesswert, CASE  WHEN (convers_dm_fm.conv_factor IS NOT NULL) OR (lada_meas_val.meas_unit_id = env_medium.unit_1)  THEN lada_meas_val.error  ELSE NULL END AS fehler, CASE  WHEN convers_dm_fm.conv_factor IS NOT NULL THEN mess_einheit_tm.unit_symbol WHEN lada_meas_val.meas_unit_id = env_medium.unit_1 THEN meas_unit.unit_symbol  ELSE NULL END AS einheit,  measm.mmt_id AS mmtId, sample.ext_id AS externeProbeId, measm.ext_id AS externeMessungsId, status_mp.id AS statusK, env_medium.name AS umw,   network.name AS netzbetreiber,   PUBLIC.ST_ASGEOJSON(site.geom) AS entnahmeGeom, nucl_facil_gr.ext_id AS anlage,   nucl_facil_gr.name AS anlagebeschr,   rei_ag_gr.name AS reiproggrp,   rei_ag_gr.descr AS reiproggrpbeschr,  sample.mpg_id AS mprId,   mpg_categ.ext_id AS mplCode,   mpg_categ.name AS mpl,   sample.is_test,   opr_mode.name AS messRegime,  CASE      WHEN sample.meas_facil_id = sample.appr_lab_id       THEN meas_facil.name     ELSE meas_facil.name || ''-'' || labormessstelle.name     END AS mstLabor,  measm.is_scheduled AS geplant, sample.sched_start_date AS sollBegin,   sample.sched_end_date AS sollEnd,   sampler.descr AS prnBezeichnung,   sampler.ext_id AS prnId,   sampler.short_text AS prnKurzBezeichnung,   mmt.name AS mmt, measm.measm_start_date AS messbeginn, measm.meas_pd AS messdauer, site.short_text AS ortKurztext,   site.long_text AS ortLangtext,  sample.env_descrip_display AS deskriptoren,   sample.env_descrip_name AS medium, geolocat.poi_id AS ozId,   poi.name AS oz,   admin_unit.rural_dist_id AS eKreisId,   admin_unit.state_id AS eBlId,   state.ctry AS eStaat,  CASE  WHEN convers_dm_fm.conv_factor IS NOT NULL THEN convers_dm_fm.conv_factor*coalesce(lada_meas_val.meas_val,lada_meas_val.detect_lim) WHEN lada_meas_val.meas_unit_id = env_medium.unit_1 THEN coalesce(lada_meas_val.meas_val,lada_meas_val.detect_lim) ELSE NULL END AS wertNwg, site.ext_id AS ortId,   staat_uo.ctry AS uStaat, ort_uo.ext_id AS uOrtId, sample.orig_date AS uZeit, array_to_string(tags.tags, '','', '''') AS tags, CASE  WHEN lada_meas_val.meas_unit_id = env_medium.unit_2 THEN CASE WHEN lada_meas_val.less_than_lod = ''<'' THEN lada_meas_val.less_than_lod || translate(to_char( lada_meas_val.detect_lim, ''0.99eeee''),''.'','','') || '' '' || meas_unit.unit_symbol ELSE translate(to_char(lada_meas_val.meas_val, ''0.99eeee''),''.'','','') || '' '' || meas_unit.unit_symbol  END ELSE '' '' END AS kombiSekMeh, CASE WHEN lada_meas_val.meas_unit_id = env_medium.unit_2 THEN true ELSE false END AS booleanSekMeh, convers_dm_fm.conv_factor AS faktorSekMeh, lada_meas_val.id AS messwertId, ortszuordnung_uo.poi_id AS uOzId,  ortszusatz_uo.name AS uOz FROM lada.sample LEFT JOIN master.meas_facil ON (sample.meas_facil_id = meas_facil.id) LEFT JOIN master.meas_facil AS labormessstelle ON (sample.appr_lab_id = labormessstelle.id) JOIN lada.measm ON sample.id = measm.sample_id JOIN lada.status_prot ON measm.status = status_prot.id JOIN master.status_mp ON status_prot.status_mp_id = status_mp.id JOIN master.status_val ON status_val.id = status_mp.status_val_id JOIN master.status_lev ON status_lev.id = status_mp.status_lev_id LEFT JOIN master.regulation ON (sample.regulation_id = regulation.id) LEFT JOIN master.sample_meth ON (sample.sample_meth_id = sample_meth.id) LEFT JOIN lada.geolocat ON (sample.id = geolocat.sample_id AND geolocat.type_regulation IN (''E'', ''R'')) LEFT JOIN master.site ON (geolocat.site_id = site.id) LEFT JOIN master.admin_unit ON (site.admin_unit_id = admin_unit.id) LEFT JOIN master.poi ON (geolocat.poi_id = poi.id) LEFT JOIN master.state ON (site.state_id = state.id) LEFT JOIN lada.geolocat AS ortszuordnung_uo ON (sample.id = ortszuordnung_uo.sample_id AND ortszuordnung_uo.type_regulation IN (''U'', ''R'')) LEFT JOIN master.site AS ort_uo ON (ortszuordnung_uo.site_id = ort_uo.id)  LEFT JOIN master.state AS staat_uo ON (ort_uo.state_id = staat_uo.id)  LEFT JOIN master.poi AS ortszusatz_uo ON (ortszuordnung_uo.poi_id = ortszusatz_uo.id) LEFT JOIN master.env_medium ON (sample.env_medium_id = env_medium.id) LEFT JOIN master.network ON (meas_facil.network_id = network.id) LEFT JOIN master.nucl_facil_gr ON (sample.nucl_facil_gr_id = nucl_facil_gr.id) LEFT JOIN master.rei_ag_gr ON (sample.rei_ag_gr_id = rei_ag_gr.id) LEFT JOIN master.mpg_categ ON (sample.mpg_categ_id = mpg_categ.id) LEFT JOIN master.opr_mode ON (sample.opr_mode_id = opr_mode.id) JOIN public.lada_meas_val ON (public.lada_meas_val.measm_id = measm.id) JOIN master.measd ON (measd.id = public.lada_meas_val.measd_id) LEFT JOIN master.meas_unit ON (meas_unit.id = public.lada_meas_val.meas_unit_id) LEFT JOIN master.sampler ON (sample.sampler_id = sampler.id) LEFT JOIN master.mmt ON (measm.mmt_id = mmt.id) LEFT JOIN  (   SELECT sample.id AS pid, measm.id AS mid, array_agg(tag.name) AS tags   FROM lada.sample   INNER JOIN lada.measm ON sample.id = measm.sample_id JOIN lada.tag_link_sample ON (sample.id = tag_link_sample.sample_id) JOIN lada.tag_link_measm ON (measm.id = tag_link_measm.measm_id) JOIN master.tag ON (tag_link_sample.tag_id = tag.id OR tag_link_measm.tag_id = tag.id)   GROUP BY sample.id, measm.id ) tags ON (sample.id = tags.pid AND measm.id = tags.mid) LEFT JOIN master.convers_dm_fm ON (lada_meas_val.meas_unit_id = convers_dm_fm.meas_unit_id AND sample.env_medium_id = convers_dm_fm.env_medium_id AND sample.env_descrip_display LIKE convers_dm_fm.env_descrip_pattern) LEFT JOIN master.meas_unit AS mess_einheit_tm ON (convers_dm_fm.to_meas_unit_id = mess_einheit_tm.id)'
     WHERE id = 43;
 
-
-DROP table tag_link;
+DROP TABLE tag_link;

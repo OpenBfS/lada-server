@@ -456,7 +456,6 @@ CREATE TABLE tag_link_measm
     tag_id integer NOT NULL REFERENCES master.tag ON DELETE CASCADE,
     date timestamp without time zone
         NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-    CHECK(measm_id IS NOT NULL),
     UNIQUE (measm_id, tag_id)
 );
 
@@ -467,7 +466,6 @@ CREATE TABLE tag_link_sample
     tag_id integer NOT NULL REFERENCES master.tag ON DELETE CASCADE,
     date timestamp without time zone
         NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-    CHECK(sample_id IS NOT NULL),
     UNIQUE (sample_id, tag_id)
 );
 
