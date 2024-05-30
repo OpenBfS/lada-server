@@ -5,9 +5,15 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.validation.rules.messwert;
+package de.intevation.lada.validation.constraints;
 
-import jakarta.inject.Inject;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
+import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
+import static org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel.BEAN_METHODS;
 
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
@@ -15,51 +21,57 @@ import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.UnitConvers;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationRule;
-import de.intevation.lada.validation.rules.Rule;
+
 
 /**
- * Validation rule for messwert.
- * Validates if the "messeinheit" is the secondary "messeinheit" of to
- * umweltbereich connected to this messwert
+ * Validation rule for MeasVal.
+ * Validates if the measuring unit fits the environmental medium of the sample.
  */
-@ValidationRule("Messwert")
-public class IsNormalized implements Rule {
+public class IsNormalizedValidator implements
+    ConstraintValidator<IsNormalized, MeasVal> {
 
-    /**
-     * The data repository granting read access.
-     */
-    @Inject
-    private Repository repository;
+    private String message;
 
     @Override
-    public Violation execute(Object object) {
-        MeasVal messwert = (MeasVal) object;
+    public void initialize(IsNormalized constraintAnnotation) {
+        this.message = constraintAnnotation.message();
+    }
 
+    @Transactional
+    @Override
+    public boolean isValid(
+        MeasVal messwert,
+        ConstraintValidatorContext ctx
+    ) {
         if (messwert == null || messwert.getMeasmId() == null) {
-            return null;
+            return true;
         }
 
-        EnvMedium umwelt = repository
-            .getById(Measm.class, messwert.getMeasmId())
-            .getSample().getEnvMedium();
+        Repository repository = CDI.current().getBeanContainer()
+            .createInstance().select(Repository.class).get();
+
+        Measm measm = repository.entityManager().find(
+            Measm.class, messwert.getMeasmId());
+        if (measm == null) {
+            return true;
+        }
+
+        EnvMedium umwelt = measm.getSample().getEnvMedium();
         if (umwelt == null) {
-            return null;
+            return true;
         }
 
         Integer mehId = umwelt.getUnit1();
         Integer secMehId = umwelt.getUnit2();
         if (mehId == null && secMehId == null) {
-            return null;
+            return true;
         }
 
         Integer fromUnit = messwert.getMeasUnitId();
         if (mehId != null && mehId.equals(fromUnit)
             || secMehId != null && secMehId.equals(fromUnit)) {
             // Unit of measured value is primary or secondary unit of envMedium
-            return null;
+            return true;
         }
 
         // Check if measuring unit of measured value can be converted
@@ -80,11 +92,15 @@ public class IsNormalized implements Rule {
             convert = !repository.filter(builder.getQuery()).isEmpty();
         }
 
-        Violation violation = new Violation();
-        violation.addWarning("measUnitId",
-            convert
-            ? StatusCodes.VAL_UNIT_NORMALIZE
-            : StatusCodes.VAL_UNIT_UMW);
-        return violation;
+        HibernateConstraintValidatorContext hibernateCtx = ctx.unwrap(
+            HibernateConstraintValidatorContext.class
+        );
+        hibernateCtx.disableDefaultConstraintViolation();
+        hibernateCtx.addExpressionVariable("convert", convert)
+            .buildConstraintViolationWithTemplate(this.message)
+            .enableExpressionLanguage(BEAN_METHODS)
+            .addPropertyNode("measUnitId")
+            .addConstraintViolation();
+        return false;
     }
 }
