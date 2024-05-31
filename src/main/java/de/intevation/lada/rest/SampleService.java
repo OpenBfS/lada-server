@@ -7,8 +7,9 @@
  */
 package de.intevation.lada.rest;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,10 +97,10 @@ public class SampleService extends LadaService {
         private boolean dryrun;
 
         @NotNull
-        private Calendar start;
+        private ZonedDateTime start;
 
         @NotNull
-        private Calendar end;
+        private ZonedDateTime end;
 
         public void setIds(List<Integer> ids) {
             this.ids = ids;
@@ -109,17 +110,17 @@ public class SampleService extends LadaService {
             this.dryrun = dryrun;
         }
 
-        public Calendar getStart() {
+        public ZonedDateTime getStart() {
             return this.start;
         }
-        public void setStart(Calendar start) {
+        public void setStart(ZonedDateTime start) {
             this.start = start;
         }
 
-        public Calendar getEnd() {
+        public ZonedDateTime getEnd() {
             return this.end;
         }
-        public void setEnd(Calendar end) {
+        public void setEnd(ZonedDateTime end) {
             this.end = end;
         }
     }
@@ -215,8 +216,8 @@ public class SampleService extends LadaService {
 
             List<Sample> proben = factory.create(
                 messprogramm,
-                object.start,
-                object.end,
+                GregorianCalendar.from(object.getStart()),
+                GregorianCalendar.from(object.getEnd()),
                 object.dryrun);
 
             for (Sample probe : proben) {
