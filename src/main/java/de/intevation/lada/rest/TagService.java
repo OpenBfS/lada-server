@@ -39,7 +39,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  * REST-Service for tags.
  */
 
-@Path("tag")
+@Path(LadaService.PATH_REST + "tag")
 public class TagService extends LadaService {
 
     @Inject

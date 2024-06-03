@@ -52,7 +52,7 @@ import de.intevation.lada.validation.constraints.BeginBeforeEnd;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("sample")
+@Path(LadaService.PATH_REST + "sample")
 public class SampleService extends LadaService {
 
     /**

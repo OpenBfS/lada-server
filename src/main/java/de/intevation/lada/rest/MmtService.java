@@ -22,7 +22,7 @@ import de.intevation.lada.model.master.Mmt;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("mmt")
+@Path(LadaService.PATH_REST + "mmt")
 public class MmtService extends LadaService {
 
     /**

@@ -66,7 +66,7 @@ import de.intevation.lada.util.data.Repository;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("audit")
+@Path(LadaService.PATH_REST + "audit")
 public class AuditTrailService extends LadaService {
 
     /**

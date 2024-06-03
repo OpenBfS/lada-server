@@ -31,7 +31,7 @@ import de.intevation.lada.util.data.Repository;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("sql")
+@Path(LadaService.PATH_REST + "sql")
 public class SqlService extends LadaService {
 
     /**

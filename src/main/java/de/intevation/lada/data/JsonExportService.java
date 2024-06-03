@@ -46,7 +46,7 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("export/json")
+@Path(LadaService.PATH_DATA + "export/json")
 public class JsonExportService extends LadaService {
 
     private static final String ERROR_MSG = "Failed exporting JSON data";

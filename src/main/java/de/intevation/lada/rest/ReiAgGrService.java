@@ -28,7 +28,7 @@ import de.intevation.lada.model.master.ReiAgGrMp;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("reiaggr")
+@Path(LadaService.PATH_REST + "reiaggr")
 public class ReiAgGrService extends LadaService {
 
     /**

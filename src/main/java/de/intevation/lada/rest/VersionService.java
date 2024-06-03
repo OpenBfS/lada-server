@@ -19,7 +19,7 @@ import de.intevation.lada.i18n.I18n;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("version")
+@Path(LadaService.PATH_REST + "version")
 public class VersionService extends LadaService {
 
     @Inject

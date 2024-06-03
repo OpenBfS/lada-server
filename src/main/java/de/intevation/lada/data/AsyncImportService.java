@@ -41,7 +41,7 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href = "mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("import/async")
+@Path(LadaService.PATH_DATA + "import/async")
 public class AsyncImportService extends LadaService {
 
     @Inject

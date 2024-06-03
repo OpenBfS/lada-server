@@ -37,7 +37,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("mpgmmtmp")
+@Path(LadaService.PATH_REST + "mpgmmtmp")
 public class MpgMmtMpService extends LadaService {
 
     /**

@@ -27,7 +27,7 @@ import de.intevation.lada.model.master.EnvDescrip;
  * A typical response holds information about the action performed and the data.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("envdescrip")
+@Path(LadaService.PATH_REST + "envdescrip")
 public class EnvDescripService extends LadaService {
 
     /**

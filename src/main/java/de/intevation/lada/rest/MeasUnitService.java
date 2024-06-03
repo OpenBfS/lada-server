@@ -25,7 +25,7 @@ import de.intevation.lada.model.master.UnitConvers;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("measunit")
+@Path(LadaService.PATH_REST + "measunit")
 public class MeasUnitService extends LadaService {
 
     /**

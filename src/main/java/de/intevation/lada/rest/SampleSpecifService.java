@@ -25,7 +25,7 @@ import de.intevation.lada.model.master.SampleSpecif;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("samplespecif")
+@Path(LadaService.PATH_REST + "samplespecif")
 public class SampleSpecifService extends LadaService {
 
     /**

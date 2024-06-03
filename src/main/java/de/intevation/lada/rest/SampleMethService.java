@@ -22,7 +22,7 @@ import de.intevation.lada.model.master.SampleMeth;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("samplemeth")
+@Path(LadaService.PATH_REST + "samplemeth")
 public class SampleMethService extends LadaService {
 
     /**

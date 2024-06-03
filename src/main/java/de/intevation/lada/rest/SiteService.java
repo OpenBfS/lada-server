@@ -49,7 +49,7 @@ import de.intevation.lada.validation.Validator;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("site")
+@Path(LadaService.PATH_REST + "site")
 public class SiteService extends LadaService {
 
     private static final String QUERY_TEMPLATE =

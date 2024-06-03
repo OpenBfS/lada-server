@@ -21,7 +21,7 @@ import de.intevation.lada.model.master.TargEnvGr;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("targenvgr")
+@Path(LadaService.PATH_REST + "targenvgr")
 public class TargEnvGrService extends LadaService {
 
     /**

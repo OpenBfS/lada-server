@@ -33,7 +33,7 @@ import de.intevation.lada.model.master.DatasetCreator;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("datasetcreator")
+@Path(LadaService.PATH_REST + "datasetcreator")
 public class DatasetCreatorService extends LadaService {
 
     /**
