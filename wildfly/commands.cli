@@ -12,5 +12,7 @@ data-source add --jndi-name=java:/jboss/lada-test --name=lada-test --connection-
 /subsystem=logging/logger=de.intevation.lada:add(level=DEBUG)
 /subsystem=logging/size-rotating-file-handler=laf:add(file={path=laf.log, relative-to="jboss.server.log.dir"}, formatter="%d{yyyyMMdd-HH:mm}: %-5p %c{1} - %m%n")
 /subsystem=logging/logger=import:add(handlers=[laf], level=DEBUG)
+/extension=org.wildfly.extension.microprofile.openapi-smallrye:add()
+/subsystem=microprofile-openapi-smallrye:add()
 run-batch
 stop-embedded-server
