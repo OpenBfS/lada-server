@@ -17,6 +17,7 @@ import java.util.Map;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -148,11 +149,12 @@ public class SampleService extends LadaService {
      * <p>
      *
      * @return the new probe object.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
     public Sample create(
         @Valid Sample probe
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
                 probe,
                 RequestMethod.POST,
@@ -181,12 +183,13 @@ public class SampleService extends LadaService {
      * </pre>
      *
      * @return the new probe objects.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
     @Path("messprogramm")
     public Map<String, Object> createFromMessprogramm(
         @Valid PostData object
-    ) {
+    ) throws BadRequestException {
         Map<String, Object> responseData = new HashMap<String, Object>();
         Map<String, Object> probenData = new HashMap<String, Object>();
         List<Integer> generatedProbeIds = new ArrayList<Integer>();
@@ -252,13 +255,14 @@ public class SampleService extends LadaService {
      * The object to update should come as JSON formatted string.
      *
      * @return the updated Sample object.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @PUT
     @Path("{id}")
     public Sample update(
         @PathParam("id") Integer id,
         @Valid Sample probe
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             probe,
             RequestMethod.PUT,
