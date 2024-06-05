@@ -8,7 +8,6 @@
 
 package de.intevation.lada.model.lada;
 
-import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
 import jakarta.persistence.Entity;
@@ -22,7 +21,7 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ TagLinkSample.class, DatabaseConstraints.class })
-public class TagLinkSample {
+public class TagLinkSample extends TagLink {
     public static final long serialVersionUID = 1L;
 
     @Id
@@ -33,11 +32,6 @@ public class TagLinkSample {
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Sample.class)
     private Integer sampleId;
-
-    @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = Tag.class)
-    private Integer tagId;
 
     public Integer getId() {
         return id;
@@ -53,13 +47,5 @@ public class TagLinkSample {
 
     public void setSampleId(Integer sampleId) {
         this.sampleId = sampleId;
-    }
-
-    public Integer getTagId() {
-        return tagId;
-    }
-
-    public void setTagId(Integer tagId) {
-        this.tagId = tagId;
     }
 }
