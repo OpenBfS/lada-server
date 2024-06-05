@@ -15,8 +15,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.MeasVal;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
+
 
 public class MeasValTest extends ValidatorBaseTest {
 
@@ -277,13 +277,11 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_UNIT_CONVERTABLE_TO_PRIMARY);
-        validator.validate(val);
-        String warningKey = UNIT_ID;
-        Assert.assertTrue(val.hasWarnings());
-        Assert.assertTrue(val.getWarnings()
-            .containsKey(warningKey));
-        Assert.assertTrue(val.getWarnings().get(warningKey).contains(
-                String.valueOf(StatusCodes.VAL_UNIT_NORMALIZE)));
+
+        assertHasWarnings(
+            validator.validate(val),
+            UNIT_ID,
+            "Please normalize values");
     }
 
     /**
@@ -295,13 +293,11 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(EXISTING_ENV_MEDIUM_UNIT_CONVERTABLE_TO_SECONDARY);
-        validator.validate(val);
-        String warningKey = UNIT_ID;
-        Assert.assertTrue(val.hasWarnings());
-        Assert.assertTrue(val.getWarnings()
-            .containsKey(warningKey));
-        Assert.assertTrue(val.getWarnings().get(warningKey).contains(
-                String.valueOf(StatusCodes.VAL_UNIT_UMW)));
+
+        assertHasWarnings(
+            validator.validate(val),
+            UNIT_ID,
+            "Please normalize values");
     }
 
     /**
@@ -314,13 +310,11 @@ public class MeasValTest extends ValidatorBaseTest {
         val.setMeasmId(EXISTING_MEASM_ID);
         val.setMeasdId(EXISTING_MEASD_ID);
         val.setMeasUnitId(UNIT_ID_NOT_CONVERTABLE);
-        validator.validate(val);
-        String warningKey = UNIT_ID;
-        Assert.assertTrue(val.hasWarnings());
-        Assert.assertTrue(val.getWarnings()
-            .containsKey(warningKey));
-        Assert.assertTrue(val.getWarnings().get(warningKey).contains(
-                String.valueOf(StatusCodes.VAL_UNIT_UMW)));
+
+        assertHasWarnings(
+            validator.validate(val),
+            UNIT_ID,
+            "Unit does not match environmental medium");
     }
 
     /**

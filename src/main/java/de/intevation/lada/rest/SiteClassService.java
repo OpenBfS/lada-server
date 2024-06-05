@@ -22,7 +22,7 @@ import de.intevation.lada.model.master.SiteClass;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("siteclass")
+@Path(LadaService.PATH_REST + "siteclass")
 public class SiteClassService extends LadaService {
 
     /**

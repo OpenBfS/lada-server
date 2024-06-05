@@ -26,13 +26,10 @@ public class NuclFacilGrMp implements Serializable {
 
     private Integer nuclFacilGrId;
 
-    private Integer nuclFacilId;
+    private String nuclFacilExtId;
 
     @Temporal(TIMESTAMP)
     private Date lastMod;
-
-    public NuclFacilGrMp() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -50,12 +47,12 @@ public class NuclFacilGrMp implements Serializable {
         this.nuclFacilGrId = nuclFacilGrId;
     }
 
-    public Integer getNuclFacilId() {
-        return this.nuclFacilId;
+    public String getNuclFacilExtId() {
+        return this.nuclFacilExtId;
     }
 
-    public void setNuclFacilId(Integer nuclFacilId) {
-        this.nuclFacilId = nuclFacilId;
+    public void setNuclFacilExtId(String nuclFacilExtId) {
+        this.nuclFacilExtId = nuclFacilExtId;
     }
 
     public Date getLastMod() {

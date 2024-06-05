@@ -1564,8 +1564,7 @@ public class LafObjectMapper {
         Sample probe
     ) {
         Site o = new Site();
-        // If laf contains coordinates, find a ort with matching coordinates or
-        // create one.
+
         if ((attributes.get(type + "KOORDINATEN_ART") != null
                 || attributes.get(type + "KOORDINATEN_ART_S") != null)
             && !attributes.get(type + "KOORDINATEN_X").equals("")
@@ -1606,8 +1605,7 @@ public class LafObjectMapper {
             o.setCoordXExt(attributes.get(type + "KOORDINATEN_X"));
             o.setCoordYExt(attributes.get(type + "KOORDINATEN_Y"));
         }
-        // If laf contains gemeinde attributes, find a ort with matching gemId
-        // or create one.
+
         if (attributes.get(type + "GEMEINDENAME") != null) {
             QueryBuilder<AdminUnit> builder = repository
                 .queryBuilder(AdminUnit.class)

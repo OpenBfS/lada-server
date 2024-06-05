@@ -27,7 +27,7 @@ import de.intevation.lada.util.data.Repository;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("statusmp")
+@Path(LadaService.PATH_REST + "statusmp")
 public class StatusMpService extends LadaService {
 
     /**

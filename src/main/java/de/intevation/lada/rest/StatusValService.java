@@ -32,7 +32,7 @@ import de.intevation.lada.util.data.Repository;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("statusval")
+@Path(LadaService.PATH_REST + "statusval")
 public class StatusValService extends LadaService {
 
     /**

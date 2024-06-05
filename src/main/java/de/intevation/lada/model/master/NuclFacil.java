@@ -22,11 +22,9 @@ import jakarta.persistence.Column;
 public class NuclFacil implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Id
-    private Integer id;
-
     private String name;
 
+    @Id
     private String extId;
 
     @Column(insertable = false)
@@ -34,14 +32,6 @@ public class NuclFacil implements Serializable {
     private Date lastMod;
 
     public NuclFacil() {
-    }
-
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getName() {

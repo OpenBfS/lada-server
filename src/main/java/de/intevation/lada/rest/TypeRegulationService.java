@@ -22,7 +22,7 @@ import de.intevation.lada.model.master.TypeRegulation;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("typeregulation")
+@Path(LadaService.PATH_REST + "typeregulation")
 public class TypeRegulationService extends LadaService {
 
     /**

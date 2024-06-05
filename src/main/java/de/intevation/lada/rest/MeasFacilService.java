@@ -25,7 +25,7 @@ import de.intevation.lada.model.master.MeasFacil;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("measfacil")
+@Path(LadaService.PATH_REST + "measfacil")
 public class MeasFacilService extends LadaService {
 
     /**

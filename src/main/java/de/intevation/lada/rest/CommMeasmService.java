@@ -34,7 +34,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("commmeasm")
+@Path(LadaService.PATH_REST + "commmeasm")
 public class CommMeasmService extends LadaService {
 
     /**

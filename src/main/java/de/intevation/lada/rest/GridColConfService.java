@@ -44,7 +44,7 @@ import de.intevation.lada.model.master.QueryUser;
  * The services produce data in the application/json media type.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("gridcolconf")
+@Path(LadaService.PATH_REST + "gridcolconf")
 public class GridColConfService extends LadaService {
 
     @Inject

@@ -36,7 +36,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("geolocat")
+@Path(LadaService.PATH_REST + "geolocat")
 public class GeolocatService extends LadaService {
 
     /**

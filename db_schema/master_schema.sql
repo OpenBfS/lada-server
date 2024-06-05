@@ -629,8 +629,7 @@ CREATE TABLE rei_ag_gr_env_medium_mp
 CREATE TRIGGER last_mod_rei_ag_gr_env_medium_mp BEFORE UPDATE ON master.rei_ag_gr_env_medium_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE nucl_facil (
-  id serial PRIMARY KEY,
-  ext_id character varying(7) CHECK (trim(both ' ' from ext_id) <> ''),
+  ext_id char(4) PRIMARY KEY CHECK (trim(both ' ' from ext_id) <> ''),
   name character varying(80) CHECK (trim(both ' ' from name) <> ''),
   last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
@@ -651,9 +650,9 @@ CREATE TABLE nucl_facil_gr_mp
 (
     id serial PRIMARY KEY,
     nucl_facil_gr_id integer NOT NULL REFERENCES nucl_facil_gr,
-    nucl_facil_id integer NOT NULL REFERENCES nucl_facil,
+    nucl_facil_ext_id char(4) NOT NULL REFERENCES nucl_facil,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
-    UNIQUE(nucl_facil_gr_id, nucl_facil_id)
+    UNIQUE(nucl_facil_gr_id, nucl_facil_ext_id)
 );
 CREATE TRIGGER last_mod_nucl_facil_gr_mp BEFORE UPDATE ON master.nucl_facil_gr_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 

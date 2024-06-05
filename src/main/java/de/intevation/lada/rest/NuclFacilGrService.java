@@ -26,7 +26,7 @@ import de.intevation.lada.model.master.NuclFacilGrMp;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("nuclfacilgr")
+@Path(LadaService.PATH_REST + "nuclfacilgr")
 public class NuclFacilGrService extends LadaService {
 
     /**

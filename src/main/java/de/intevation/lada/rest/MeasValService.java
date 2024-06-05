@@ -43,7 +43,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("measval")
+@Path(LadaService.PATH_REST + "measval")
 public class MeasValService extends LadaService {
 
     /**

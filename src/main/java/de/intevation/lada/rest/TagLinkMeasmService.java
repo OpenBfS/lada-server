@@ -10,7 +10,7 @@ package de.intevation.lada.rest;
 import de.intevation.lada.model.lada.TagLinkMeasm;
 import jakarta.ws.rs.Path;
 
-@Path("tag/taglinkmeasm")
+@Path(LadaService.PATH_REST + "tag/taglinkmeasm")
 public class TagLinkMeasmService extends TagLinkService<TagLinkMeasm> {
     @Override
     protected Boolean isExisting(TagLinkMeasm zuordnung) {

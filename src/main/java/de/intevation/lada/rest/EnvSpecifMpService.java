@@ -23,7 +23,7 @@ import de.intevation.lada.model.master.EnvSpecifMp;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("envspecifmp")
+@Path(LadaService.PATH_REST + "envspecifmp")
 public class EnvSpecifMpService extends LadaService {
 
     /**

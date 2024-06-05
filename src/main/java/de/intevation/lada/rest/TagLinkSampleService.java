@@ -10,7 +10,7 @@ package de.intevation.lada.rest;
 import de.intevation.lada.model.lada.TagLinkSample;
 import jakarta.ws.rs.Path;
 
-@Path("tag/taglinksample")
+@Path(LadaService.PATH_REST + "tag/taglinksample")
 public class TagLinkSampleService extends TagLinkService<TagLinkSample> {
 
     @Override

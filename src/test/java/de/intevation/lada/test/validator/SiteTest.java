@@ -33,7 +33,6 @@ public class SiteTest extends ValidatorBaseTest {
     private static final String COORD_Y_EXT = "coordYExt";
     private static final String EXT_ID = "extId";
     private static final String ADMIN_UNIT_ID = "adminUnitId";
-    private static final String REI_NUCL_FACIL_GR_ID = "reiNuclFacilGrId";
     private static final String SITE_CLASS_ID = "siteClassId";
 
     //Other constants
@@ -45,8 +44,6 @@ public class SiteTest extends ValidatorBaseTest {
     private static final int SITE_CLASS_REI = 3;
 
     private static final String NUCL_FACIL_EXT_ID_UNMAPPED = "Othr";
-    private static final String NUCL_FACIL_EXT_ID_SHORT = "123";
-    private static final String NUCL_FACIL_EXT_ID_MAPPED = "A1234";
     private static final int NUCL_FACIL_GR_ID_MAPPED = 1;
 
     private static final double COORDINATE_OUTSIDE_Y = 48.0;
@@ -256,20 +253,19 @@ public class SiteTest extends ValidatorBaseTest {
     }
 
     /**
-     * Test REI site with 3 character extId.
+     * Test REI site with less than five characters in extId.
      */
     @Test
     public void reiSiteExtIdTooShort() {
         Site site = createMinimalSite();
-        site.setExtId(NUCL_FACIL_EXT_ID_SHORT);
+        site.setExtId("xxxx");
         site.setSiteClassId(SITE_CLASS_REI);
         site.setNuclFacilGrId(NUCL_FACIL_GR_ID_MAPPED);
 
-        validator.validate(site);
-        Assert.assertTrue(site.hasWarnings());
-        Assert.assertTrue(site.getWarnings().containsKey(EXT_ID));
-        Assert.assertTrue(site.getWarnings().get(EXT_ID)
-            .contains(String.valueOf(StatusCodes.VALUE_OUTSIDE_RANGE)));
+        assertHasWarnings(
+            validator.validate(site),
+            EXT_ID,
+            "Must be between five and twelve characters long");
     }
 
     /**
@@ -300,12 +296,10 @@ public class SiteTest extends ValidatorBaseTest {
         site.setNuclFacilGrId(NUCL_FACIL_GR_ID_MAPPED);
         site.setSiteClassId(SITE_CLASS_REI);
 
-        validator.validate(site);
-        Assert.assertTrue(site.hasWarnings());
-        Assert.assertTrue(site.getWarnings()
-            .containsKey(REI_NUCL_FACIL_GR_ID));
-        Assert.assertTrue(site.getWarnings().get(REI_NUCL_FACIL_GR_ID)
-            .contains(String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
+        assertHasWarnings(
+            validator.validate(site),
+            "nuclFacilGrId",
+            String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
     }
 
     /**
@@ -330,7 +324,7 @@ public class SiteTest extends ValidatorBaseTest {
     public void reiSite() {
         Site site = createMinimalSite();
         site.setSiteClassId(SITE_CLASS_REI);
-        site.setExtId(NUCL_FACIL_EXT_ID_MAPPED);
+        site.setExtId("A1234");
         site.setNuclFacilGrId(1);
 
         validator.validate(site);

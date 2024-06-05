@@ -30,7 +30,7 @@ import de.intevation.lada.util.rest.RequestMethod;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("sampler")
+@Path(LadaService.PATH_REST + "sampler")
 public class SamplerService extends LadaService {
 
     /**

@@ -38,7 +38,7 @@ import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("mpg")
+@Path(LadaService.PATH_REST + "mpg")
 public class MpgService extends LadaService {
 
     /**

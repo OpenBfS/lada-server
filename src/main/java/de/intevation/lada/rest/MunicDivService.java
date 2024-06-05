@@ -29,7 +29,7 @@ import de.intevation.lada.model.master.MunicDiv;
  * REST service for MunicDiv objects.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("municdiv")
+@Path(LadaService.PATH_REST + "municdiv")
 public class MunicDivService extends LadaService {
 
     /**

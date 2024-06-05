@@ -7,8 +7,9 @@
  */
 package de.intevation.lada.rest;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import java.util.Map;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -51,7 +53,7 @@ import de.intevation.lada.validation.constraints.BeginBeforeEnd;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("sample")
+@Path(LadaService.PATH_REST + "sample")
 public class SampleService extends LadaService {
 
     /**
@@ -96,10 +98,10 @@ public class SampleService extends LadaService {
         private boolean dryrun;
 
         @NotNull
-        private Calendar start;
+        private ZonedDateTime start;
 
         @NotNull
-        private Calendar end;
+        private ZonedDateTime end;
 
         public void setIds(List<Integer> ids) {
             this.ids = ids;
@@ -109,17 +111,17 @@ public class SampleService extends LadaService {
             this.dryrun = dryrun;
         }
 
-        public Calendar getStart() {
+        public ZonedDateTime getStart() {
             return this.start;
         }
-        public void setStart(Calendar start) {
+        public void setStart(ZonedDateTime start) {
             this.start = start;
         }
 
-        public Calendar getEnd() {
+        public ZonedDateTime getEnd() {
             return this.end;
         }
-        public void setEnd(Calendar end) {
+        public void setEnd(ZonedDateTime end) {
             this.end = end;
         }
     }
@@ -147,11 +149,12 @@ public class SampleService extends LadaService {
      * <p>
      *
      * @return the new probe object.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
     public Sample create(
         @Valid Sample probe
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
                 probe,
                 RequestMethod.POST,
@@ -180,12 +183,13 @@ public class SampleService extends LadaService {
      * </pre>
      *
      * @return the new probe objects.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
     @Path("messprogramm")
     public Map<String, Object> createFromMessprogramm(
         @Valid PostData object
-    ) {
+    ) throws BadRequestException {
         Map<String, Object> responseData = new HashMap<String, Object>();
         Map<String, Object> probenData = new HashMap<String, Object>();
         List<Integer> generatedProbeIds = new ArrayList<Integer>();
@@ -215,8 +219,8 @@ public class SampleService extends LadaService {
 
             List<Sample> proben = factory.create(
                 messprogramm,
-                object.start,
-                object.end,
+                GregorianCalendar.from(object.getStart()),
+                GregorianCalendar.from(object.getEnd()),
                 object.dryrun);
 
             for (Sample probe : proben) {
@@ -251,13 +255,14 @@ public class SampleService extends LadaService {
      * The object to update should come as JSON formatted string.
      *
      * @return the updated Sample object.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @PUT
     @Path("{id}")
     public Sample update(
         @PathParam("id") Integer id,
         @Valid Sample probe
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             probe,
             RequestMethod.PUT,

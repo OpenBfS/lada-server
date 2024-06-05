@@ -25,68 +25,66 @@ SET search_path = master, pg_catalog;
 -- Data for Name: nucl_facil; Type: TABLE DATA; Schema: stammdaten; Owner: postgres
 --
 
-COPY nucl_facil (id, ext_id, name) FROM stdin;
-1	U01A	Helmholtz-Zentrum Geesthacht
-2	U01B	KKW Krümmel
-3	U01C	KKW Brunsbüttel
-4	U01D	KKW Brokdorf
-5	U01I	Interimslager Krümmel
-6	U01K	Standortzwischenlager Krümmel
-7	U01L	Standortzwischenlager Brunsbüttel
-8	U01M	Standortzwischenlager Brokdorf
-9	U03A	Standortzwischenlager Grohnde
-10	U03B	Brennelementefertigungsanl. Lingen
-11	U03C	Standortzwischenlager Unterweser
-12	U03E	KKW Emsland
-13	U03F	Forschungsbergwerk Asse
-14	U03G	KKW Grohnde
-15	U03K	Endlager Konrad
-16	U03L	KKW Lingen
-17	U03P	GNS - Werk Gorleben -
-18	U03S	KKW Stade
-19	U03U	KKW Unterweser
-20	U03Z	Standortzwischenlager Lingen
-21	U05B	Brennelement-Zwischenl. Ahaus
-22	U05F	Forschungszentrum Jülich
-23	U05G	AVR-Versuchskernkraftwerk Jülich
-24	U05K	KKW Würgassen
-25	U05T	Thorium-Hochtemp.reakt. Hamm-Uentrop
-26	U05U	Urananreicherungsanlage Gronau
-27	U06B	KKW Biblis und BE-Zwischenlager
-28	U07M	KKW Mülheim-Kärlich
-29	U07U	Uni Mainz
-30	U08H	DKFZ Heidelberg
-31	U08K	Karlsruher Institut für Technologie - Campus Nord
-32	U08M	Abraumhalde Menz.
-33	U08N	EnKK Neckarwestheim
-34	U08O	EnKK Obrigheim
-35	U08P	EnKK Philippsburg
-36	U08W	KKW Wyhl
-37	U09A	KKW Isar 1+2
-38	U09B	KKW Isar1
-39	U09C	KKW Isar2
-40	U09D	KKW Grafenrheinfeld
-41	U09E	KKW Gundremmingen Block B/C
-42	U09F	Versuchs-AKW Kahl a.M.
-43	U09G	Forschungsreaktor München
-44	U09H	Siemens Brennelementewerk Hanau, Standort Karlstein
-45	U09I	Siemens AG - AREVA NP GmbH, Standort Karlstein
-46	U09J	AREVA NP GmbH, Standort Erlangen
-47	U09K	Forschungsneutronenquelle Heinz Maier-Leibnitz
-48	U11B	Experimentierreakt. II Berlin
-49	U12R	KKW Rheinsberg
-50	U13A	KKW Lubmin/Greifswald
-51	U13B	Zwischenlager Nord
-52	U14R	Forschungszentrum Rossendorf
-53	U15M	nicht benutzen, jetzt UELM, Endlager für radioaktive Abfälle Morsleben (ERAM)
-54	UCHL	KTA Leibstadt mit Beznau und Villigen
-55	UELA	Endlager für radioaktive Abfälle Asse
-56	UELM	Endlager für radioaktive Abfälle Morsleben (ERAM)
-57	UFRC	KKW Cattenom
-58	UFRF	KKW Fessenheim
+COPY nucl_facil (ext_id, name) FROM stdin;
+U01A	Helmholtz-Zentrum Geesthacht
+U01B	KKW Krümmel
+U01C	KKW Brunsbüttel
+U01D	KKW Brokdorf
+U01I	Interimslager Krümmel
+U01K	Standortzwischenlager Krümmel
+U01L	Standortzwischenlager Brunsbüttel
+U01M	Standortzwischenlager Brokdorf
+U03A	Standortzwischenlager Grohnde
+U03B	Brennelementefertigungsanl. Lingen
+U03C	Standortzwischenlager Unterweser
+U03E	KKW Emsland
+U03F	Forschungsbergwerk Asse
+U03G	KKW Grohnde
+U03K	Endlager Konrad
+U03L	KKW Lingen
+U03P	GNS - Werk Gorleben -
+U03S	KKW Stade
+U03U	KKW Unterweser
+U03Z	Standortzwischenlager Lingen
+U05B	Brennelement-Zwischenl. Ahaus
+U05F	Forschungszentrum Jülich
+U05G	AVR-Versuchskernkraftwerk Jülich
+U05K	KKW Würgassen
+U05T	Thorium-Hochtemp.reakt. Hamm-Uentrop
+U05U	Urananreicherungsanlage Gronau
+U06B	KKW Biblis und BE-Zwischenlager
+U07M	KKW Mülheim-Kärlich
+U07U	Uni Mainz
+U08H	DKFZ Heidelberg
+U08K	Karlsruher Institut für Technologie - Campus Nord
+U08M	Abraumhalde Menz.
+U08N	EnKK Neckarwestheim
+U08O	EnKK Obrigheim
+U08P	EnKK Philippsburg
+U08W	KKW Wyhl
+U09A	KKW Isar 1+2
+U09B	KKW Isar1
+U09C	KKW Isar2
+U09D	KKW Grafenrheinfeld
+U09E	KKW Gundremmingen Block B/C
+U09F	Versuchs-AKW Kahl a.M.
+U09G	Forschungsreaktor München
+U09H	Siemens Brennelementewerk Hanau, Standort Karlstein
+U09I	Siemens AG - AREVA NP GmbH, Standort Karlstein
+U09J	AREVA NP GmbH, Standort Erlangen
+U09K	Forschungsneutronenquelle Heinz Maier-Leibnitz
+U11B	Experimentierreakt. II Berlin
+U12R	KKW Rheinsberg
+U13A	KKW Lubmin/Greifswald
+U13B	Zwischenlager Nord
+U14R	Forschungszentrum Rossendorf
+U15M	nicht benutzen, jetzt UELM, Endlager für radioaktive Abfälle Morsleben (ERAM)
+UCHL	KTA Leibstadt mit Beznau und Villigen
+UELA	Endlager für radioaktive Abfälle Asse
+UELM	Endlager für radioaktive Abfälle Morsleben (ERAM)
+UFRC	KKW Cattenom
+UFRF	KKW Fessenheim
 \.
-
-SELECT pg_catalog.setval('nucl_facil_id_seq', (SELECT max(id) FROM nucl_facil), true);
 
 
 COPY nucl_facil_gr (id, ext_id, name) FROM stdin;
@@ -161,81 +159,81 @@ COPY nucl_facil_gr (id, ext_id, name) FROM stdin;
 SELECT pg_catalog.setval('nucl_facil_gr_id_seq', (SELECT max(id) FROM nucl_facil_gr), true);
 
 
-COPY nucl_facil_gr_mp (id, nucl_facil_gr_id, nucl_facil_id) FROM stdin;
-1	1	1
-2	3	2
-3	5	3
-4	7	4
-5	9	5
-6	11	6
-7	12	7
-8	13	8
-9	14	9
-10	15	10
-11	16	11
-12	18	12
-13	19	13
-14	20	14
-15	21	15
-16	22	16
-17	23	17
-18	24	18
-19	25	19
-20	26	20
-21	27	21
-22	28	22
-23	29	23
-24	30	24
-25	31	25
-26	32	26
-27	33	27
-28	34	28
-29	35	29
-30	36	30
-31	37	31
-32	38	32
-33	39	33
-34	40	34
-35	41	35
-36	42	36
-37	43	37
-38	45	38
-39	46	39
-40	47	40
-41	48	41
-42	49	42
-43	50	43
-44	51	44
-45	52	45
-46	53	46
-47	54	47
-48	56	48
-49	57	49
-50	58	50
-51	59	51
-52	60	52
-53	61	53
-54	62	54
-55	63	55
-56	64	56
-57	65	57
-58	66	58
-59	2	1
-60	2	2
-61	4	2
-62	4	6
-63	6	3
-64	6	4
-65	8	4
-66	8	8
-67	10	5
-68	10	6
-69	17	11
-70	17	19
-71	44	37
-72	44	38
-73	55	43
-74	55	47
+COPY nucl_facil_gr_mp (id, nucl_facil_gr_id, nucl_facil_ext_id) FROM stdin;
+1	1	U01A
+2	3	U01B
+3	5	U01C
+4	7	U01D
+5	9	U01I
+6	11	U01K
+7	12	U01L
+8	13	U01M
+9	14	U03A
+10	15	U03B
+11	16	U03C
+12	18	U03E
+13	19	U03F
+14	20	U03G
+15	21	U03K
+16	22	U03L
+17	23	U03P
+18	24	U03S
+19	25	U03U
+20	26	U03Z
+21	27	U05B
+22	28	U05F
+23	29	U05G
+24	30	U05K
+25	31	U05T
+26	32	U05U
+27	33	U06B
+28	34	U07M
+29	35	U07U
+30	36	U08H
+31	37	U08K
+32	38	U08M
+33	39	U08N
+34	40	U08O
+35	41	U08P
+36	42	U08W
+37	43	U09A
+38	45	U09B
+39	46	U09C
+40	47	U09D
+41	48	U09E
+42	49	U09F
+43	50	U09G
+44	51	U09H
+45	52	U09I
+46	53	U09J
+47	54	U09K
+48	56	U11B
+49	57	U12R
+50	58	U13A
+51	59	U13B
+52	60	U14R
+53	61	U15M
+54	62	UCHL
+55	63	UELA
+56	64	UELM
+57	65	UFRC
+58	66	UFRF
+59	2	U01A
+60	2	U01B
+61	4	U01B
+62	4	U01K
+63	6	U01C
+64	6	U01D
+65	8	U01D
+66	8	U01M
+67	10	U01I
+68	10	U01K
+69	17	U03C
+70	17	U03U
+71	44	U09A
+72	44	U09B
+73	55	U09G
+74	55	U09K
 \.
 
 SELECT pg_catalog.setval('nucl_facil_gr_mp_id_seq', (SELECT max(id) FROM nucl_facil_gr_mp), true);

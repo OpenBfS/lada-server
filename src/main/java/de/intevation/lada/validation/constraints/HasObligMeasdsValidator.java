@@ -83,7 +83,17 @@ public class HasObligMeasdsValidator
         List<ObligMeasdMp> pflicht = repository.filter(builder.getQuery());
 
         // If matching by complete envMediumId does not find anything,
-        // match by first character of envMediumId
+        // match by first two characters of envMediumId
+        if (pflicht.isEmpty() && envMediumId.length() > 1) {
+            QueryBuilder<ObligMeasdMp> builderGrp = repository
+                .queryBuilder(ObligMeasdMp.class)
+                .and(mmtIdKey, mmtId)
+                .and(envMediumIdKey, envMediumId.substring(0, 2))
+                .and(regulationIdKey, regulationId);
+            pflicht = repository.filter(builderGrp.getQuery());
+        }
+
+        // If still nothing found, match by first character of envMediumId
         if (pflicht.isEmpty() && !envMediumId.isEmpty()) {
             QueryBuilder<ObligMeasdMp> builderGrp = repository
                 .queryBuilder(ObligMeasdMp.class)
@@ -91,16 +101,6 @@ public class HasObligMeasdsValidator
                 .and(envMediumIdKey, envMediumId.substring(0, 1))
                 .and(regulationIdKey, regulationId);
             pflicht = repository.filter(builderGrp.getQuery());
-        }
-
-        // If still nothing found, match by first two characters of envMediumId
-        if (pflicht.isEmpty() && envMediumId.length() > 1) {
-            QueryBuilder<ObligMeasdMp> builderGrpS2 = repository
-                .queryBuilder(ObligMeasdMp.class)
-                .and(mmtIdKey, mmtId)
-                .and(envMediumIdKey, envMediumId.substring(0, 2))
-                .and(regulationIdKey, regulationId);
-            pflicht = repository.filter(builderGrpS2.getQuery());
         }
 
         QueryBuilder<MeasVal> wertBuilder = repository

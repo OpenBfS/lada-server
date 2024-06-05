@@ -26,7 +26,7 @@ import de.intevation.lada.model.master.Measd;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("measd")
+@Path(LadaService.PATH_REST + "measd")
 public class MeasdService extends LadaService {
 
     /**

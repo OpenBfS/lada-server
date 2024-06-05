@@ -94,7 +94,7 @@ public class ProbeTest extends ServiceTest {
         // Assert that PUT receives validation warnings in response
         MatcherAssert.assertThat(
             update("rest/sample/1000", updateFieldKey, "120510002", newValue)
-                .getJsonObject(warningsKey).keySet(),
+                .asJsonObject().getJsonObject(warningsKey).keySet(),
             CoreMatchers.hasItem(expectedWarningKey));
 
         // Ensure invalid envDescripDisplay is rejected

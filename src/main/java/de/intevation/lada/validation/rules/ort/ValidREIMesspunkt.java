@@ -9,8 +9,6 @@ package de.intevation.lada.validation.rules.ort;
 
 import jakarta.inject.Inject;
 
-import java.util.List;
-
 import de.intevation.lada.model.master.NuclFacil;
 import de.intevation.lada.model.master.NuclFacilGrMp;
 import de.intevation.lada.model.master.Site;
@@ -34,62 +32,39 @@ public class ValidREIMesspunkt implements Rule {
     public Violation execute(Object object) {
         Site ort = (Site) object;
 
-        if (ort == null || !SITE_CLASS_REI.equals(ort.getSiteClassId())) {
+        if (ort == null
+            || !SITE_CLASS_REI.equals(ort.getSiteClassId())
+            || ort.getNuclFacilGrId() == null
+            // Leave validation of extId up to other rule
+            || ort.getExtId() == null || ort.getExtId().length() < 4
+        ) {
             return null;
         }
 
         final String nuclFacilGrIdKey = "nuclFacilGrId", extIdKey = "extId";
-        if (ort.getNuclFacilGrId() != null) {
-            QueryBuilder<NuclFacilGrMp> builder = repository
-                .queryBuilder(NuclFacilGrMp.class)
-                .and(nuclFacilGrIdKey, ort.getNuclFacilGrId());
-            List<NuclFacilGrMp> ktas = repository.filter(
-                builder.getQuery());
+        Violation violation = new Violation();
 
-            Violation violation = new Violation();
+        //Compare first 4 characters of Ort ID to stored KTAs
+        String ktaId = ort.getExtId().substring(0, 4);
+        NuclFacil kta = repository.entityManager().find(NuclFacil.class, ktaId);
+        if (kta == null) {
+            violation.addWarning(extIdKey, StatusCodes.ORT_ANLAGE_MISSING);
+            return violation;
+        }
 
-            //Compare first 4 characters of Ort ID to stored KTAs
-            if (ort.getExtId() == null
-                || ort.getExtId().length() < 4
-                || ktas.size() < 1
-            ) {
-                violation.addWarning(extIdKey, StatusCodes.VALUE_OUTSIDE_RANGE);
+        QueryBuilder<NuclFacilGrMp> builder = repository
+            .queryBuilder(NuclFacilGrMp.class)
+            .and(nuclFacilGrIdKey, ort.getNuclFacilGrId());
+        for (NuclFacilGrMp ktaGrMp : repository.filter(builder.getQuery())) {
+            if (!ktaId.equals(ktaGrMp.getNuclFacilExtId())) {
+                violation.addWarning(
+                    "nuclFacilGrId", StatusCodes.VALUE_NOT_MATCHING);
             } else {
-                String ktaOrtId = ort.getExtId().substring(0, 4);
-                QueryBuilder<NuclFacil> builderKtaList = repository
-                    .queryBuilder(NuclFacil.class)
-                    .and(extIdKey, ktaOrtId);
-                List<NuclFacil> ktaList = repository.filter(
-                    builderKtaList.getQuery());
-
-                if (ktaList.size() < 1) {
-                    violation.addWarning(
-                        extIdKey, StatusCodes.ORT_ANLAGE_MISSING);
-                    return violation;
-                }
-
-                for (NuclFacilGrMp kta : ktas) {
-                    if (kta.getNuclFacilId() != ktaList.get(0).getId()) {
-                        violation.addWarning(
-                            "reiNuclFacilGrId", StatusCodes.VALUE_NOT_MATCHING);
-                    } else if (ort.getExtId().length() < 5
-                        && kta.getNuclFacilId() == ktaList.get(0).getId()
-                    ) {
-                        violation.addWarning(
-                            extIdKey, StatusCodes.ORT_REIMP_MISSING);
-                    } else if (ort.getExtId().length() > 12
-                        && kta.getNuclFacilId() == ktaList.get(0).getId()
-                    ) {
-                        violation.addWarning(
-                            extIdKey, StatusCodes.ORT_REIMP_TOO_LONG);
-                    } else {
-                        break;
-                    }
-                }
+                break;
             }
-            if (violation.hasWarnings()) {
-                return violation;
-            }
+        }
+        if (violation.hasWarnings()) {
+            return violation;
         }
         return null;
     }

@@ -545,7 +545,6 @@ CREATE VIEW stamm.koordinaten_art AS SELECT
 FROM master.spat_ref_sys;
 
 CREATE VIEW stamm.kta AS SELECT
-	id,
 	ext_id AS code,
 	name AS bezeichnung,
 	last_mod AS letzte_aenderung
@@ -554,7 +553,7 @@ FROM master.nucl_facil;
 CREATE VIEW stamm.kta_grp_zuord AS SELECT
 	id,
 	nucl_facil_gr_id AS kta_grp_id,
-	nucl_facil_id AS kta_id,
+	nucl_facil_ext_id AS kta_id,
 	last_mod AS letzte_aenderung
 FROM master.nucl_facil_gr_mp;
 

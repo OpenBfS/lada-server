@@ -26,7 +26,7 @@ import de.intevation.lada.model.master.ReiAgGrEnvMediumMp;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("envmedium")
+@Path(LadaService.PATH_REST + "envmedium")
 public class EnvMediumService extends LadaService {
 
     /**

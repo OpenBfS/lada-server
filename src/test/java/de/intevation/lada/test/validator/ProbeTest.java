@@ -32,11 +32,10 @@ import de.intevation.lada.validation.Validator;
 public class ProbeTest extends ValidatorBaseTest {
 
     //Validation keys
-    private static final String ENTNAHME_ORT = "geolocats";
+    private static final String GEOLOCATS = "geolocats";
     private static final String ENV_DESCRIP_DISPLAY = "envDescripDisplay";
     private static final String ENV_MEDIUM_ID = "envMediumId";
     private static final String EXT_ID = "extId";
-    private static final String GEOLOCAT_R = "REIMesspunkt";
     private static final String MAIN_SAMPLE_ID = "mainSampleId";
     private static final String NUCL_FACIL_GR_ID = "nuclFacilGrId";
     private static final String ORIG_DATE = "origDate";
@@ -157,14 +156,10 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setId(null);
         sample.setMainSampleId(NEW_MAIN_SAMPLE_ID);
 
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasWarnings());
-        MatcherAssert.assertThat(
-            sample.getWarnings().keySet(),
-            CoreMatchers.hasItem(ENTNAHME_ORT));
-        MatcherAssert.assertThat(
-            sample.getWarnings().get(ENTNAHME_ORT),
-            CoreMatchers.hasItem(Integer.toString(StatusCodes.VALUE_MISSING)));
+        assertHasWarnings(
+            validator.validate(sample),
+            GEOLOCATS,
+            Integer.toString(StatusCodes.VALUE_MISSING));
     }
 
     /**
@@ -218,12 +213,10 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setId(ID710);
         sample.setIsTest(false);
 
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasWarnings());
-        Assert.assertTrue(sample.getWarnings().containsKey(ENTNAHME_ORT));
-        Assert.assertTrue(
-            sample.getWarnings().get(ENTNAHME_ORT).contains(
-                String.valueOf(StatusCodes.VALUE_MISSING)));
+        assertHasWarnings(
+            validator.validate(sample),
+            GEOLOCATS,
+            String.valueOf(StatusCodes.VALUE_MISSING));
     }
 
     /**
@@ -523,12 +516,10 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidSample();
         sample.setRegulationId(REGULATION_ID_REI);
 
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasWarnings());
-        Assert.assertTrue(sample.getWarnings()
-            .containsKey(GEOLOCAT_R));
-        Assert.assertTrue(sample.getWarnings().get(GEOLOCAT_R)
-            .contains(String.valueOf(StatusCodes.VALUE_MISSING)));
+        assertHasWarnings(
+            validator.validate(sample),
+            GEOLOCATS,
+            String.valueOf(StatusCodes.VALUE_MISSING));
     }
 
     /**

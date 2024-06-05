@@ -29,7 +29,7 @@ import de.intevation.lada.validation.constraints.ValidCoordinates;
  * REST service for SpatRefSys objects.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("spatrefsys")
+@Path(LadaService.PATH_REST + "spatrefsys")
 public class SpatRefSysService extends LadaService {
 
     /**

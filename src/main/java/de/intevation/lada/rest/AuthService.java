@@ -23,7 +23,7 @@ import de.intevation.lada.model.master.Auth;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("auth")
+@Path(LadaService.PATH_REST + "auth")
 public class AuthService extends LadaService {
 
     @Inject

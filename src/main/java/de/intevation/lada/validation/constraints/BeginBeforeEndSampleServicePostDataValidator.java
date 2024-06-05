@@ -7,7 +7,7 @@
  */
 package de.intevation.lada.validation.constraints;
 
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -38,14 +38,14 @@ public class BeginBeforeEndSampleServicePostDataValidator
             return true;
         }
 
-        Calendar begin = postData.getStart();
-        Calendar end = postData.getEnd();
+        ZonedDateTime begin = postData.getStart();
+        ZonedDateTime end = postData.getEnd();
 
         // Leave null checks up to field-level constraints
         if (begin == null || end == null) {
             return true;
         }
 
-        return !begin.after(end);
+        return !begin.isAfter(end);
     }
 }

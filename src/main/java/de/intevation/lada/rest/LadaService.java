@@ -36,6 +36,17 @@ import de.intevation.lada.validation.Validator;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public abstract class LadaService {
+
+    /**
+     * Path prefix for REST services.
+     */
+    public static final String PATH_REST = "rest/";
+
+    /**
+     * Path prefix for import and export services.
+     */
+    public static final String PATH_DATA = "data/";
+
     @Inject
     private Instance<Validator<?>> validators;
 

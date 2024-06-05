@@ -2,3 +2,4 @@ COPYING
 Dockerfile
 README.markdown
 target
+db_schema

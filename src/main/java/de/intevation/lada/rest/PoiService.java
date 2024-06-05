@@ -22,7 +22,7 @@ import de.intevation.lada.model.master.Poi;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("poi")
+@Path(LadaService.PATH_REST + "poi")
 public class PoiService extends LadaService {
 
     /**

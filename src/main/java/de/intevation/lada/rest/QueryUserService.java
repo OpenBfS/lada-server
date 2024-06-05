@@ -46,7 +46,7 @@ import de.intevation.lada.model.master.QueryUser;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("queryuser")
+@Path(LadaService.PATH_REST + "queryuser")
 public class QueryUserService extends LadaService {
 
     @Inject

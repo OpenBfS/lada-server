@@ -46,7 +46,7 @@ import de.intevation.lada.rest.LadaService;
  *
  * @author <a href = "mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("import")
+@Path(LadaService.PATH_DATA + "import")
 public class LafImportService extends LadaService {
 
     /**

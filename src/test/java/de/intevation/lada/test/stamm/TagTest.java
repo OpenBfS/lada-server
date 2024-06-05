@@ -12,6 +12,7 @@ import java.net.URL;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.junit.Assert;
 
@@ -78,7 +79,12 @@ public class TagTest extends ServiceTest {
             .build();
         JsonObject createResponse = create(tagUrl, tagToTest);
         long createdId = createResponse.getInt("id");
-        update(tagUrl + createdId, measFacilIdKey, "06010", null);
+        update(
+            tagUrl + createdId,
+            measFacilIdKey,
+            "06010",
+            null,
+            Status.FORBIDDEN);
     }
 
     /**
@@ -97,7 +103,7 @@ public class TagTest extends ServiceTest {
         JsonObject updateResponse = update(tagUrl + createdId,
             tagNameAttribute,
             tagToTest.getString(tagNameAttribute),
-            tagUpdated);
+            tagUpdated).asJsonObject();
         Assert.assertFalse(get(tagUrl).asJsonArray().isEmpty());
         getById(tagUrl + createdId, updateResponse);
         delete(tagUrl + createdId);

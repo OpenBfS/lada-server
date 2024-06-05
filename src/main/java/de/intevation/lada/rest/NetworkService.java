@@ -27,7 +27,7 @@ import de.intevation.lada.model.master.Network;
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@Path("network")
+@Path(LadaService.PATH_REST + "network")
 public class NetworkService extends LadaService {
 
     /**
