@@ -25,6 +25,8 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
+import org.eclipse.microprofile.openapi.annotations.Operation;
+
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
@@ -187,6 +189,8 @@ public class SampleService extends LadaService {
      */
     @POST
     @Path("messprogramm")
+    @Operation(description =
+        "Create samples from measuring programs given by IDs for given period")
     public Map<String, Object> createFromMessprogramm(
         @Valid PostData object
     ) throws BadRequestException {
