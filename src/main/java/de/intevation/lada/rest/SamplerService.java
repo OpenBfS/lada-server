@@ -11,6 +11,7 @@ import java.util.List;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -69,10 +70,16 @@ public class SamplerService extends LadaService {
             repository.getById(Sampler.class, id), Sampler.class);
     }
 
+    /**
+     * Create a sampler
+     * @param probenehmer Sampler to create
+     * @return Created sampler
+     * @throws BadRequestException if any constraint violations are detected.
+     */
     @POST
     public Sampler create(
         @Valid Sampler probenehmer
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             probenehmer,
             RequestMethod.POST,
@@ -80,12 +87,19 @@ public class SamplerService extends LadaService {
         return repository.create(probenehmer);
     }
 
+    /**
+     * Update a sampler
+     * @param id Sampler id
+     * @param probenehmer Sampler to update
+     * @return Updated sampler
+     * @throws BadRequestException if any constraint violations are detected.
+     */
     @PUT
     @Path("{id}")
     public Sampler update(
         @PathParam("id") Integer id,
         @Valid Sampler probenehmer
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             probenehmer,
             RequestMethod.PUT,

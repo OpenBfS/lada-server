@@ -11,6 +11,7 @@ import java.util.List;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -69,10 +70,16 @@ public class MpgCategService extends LadaService {
             repository.getById(MpgCateg.class, id), MpgCateg.class);
     }
 
+    /**
+     * Create a MpgCateg
+     * @param kategorie Object to create
+     * @return Created object
+     * @throws BadRequestException if any constraint violations are detected.
+     */
     @POST
     public MpgCateg create(
         @Valid MpgCateg kategorie
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             kategorie,
             RequestMethod.POST,
@@ -80,12 +87,20 @@ public class MpgCategService extends LadaService {
         return repository.create(kategorie);
     }
 
+
+    /**
+     * Update the given MpgCateg
+     * @param id Id
+     * @param kategorie Updated object
+     * @return Updated object
+     * @throws BadRequestException if any constraint violations are detected.
+     */
     @PUT
     @Path("{id}")
     public MpgCateg update(
         @PathParam("id") Integer id,
         @Valid MpgCateg kategorie
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             kategorie,
             RequestMethod.PUT,

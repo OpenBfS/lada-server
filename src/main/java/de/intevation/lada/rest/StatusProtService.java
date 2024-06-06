@@ -15,6 +15,7 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -105,11 +106,12 @@ public class StatusProtService extends LadaService {
      * Create a StatusProt object.
      *
      * @return A response object containing the created StatusProt.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
     public StatusProt create(
         @Valid StatusProt status
-    ) {
+    ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
         Measm messung = repository.getById(
             Measm.class, status.getMeasmId());

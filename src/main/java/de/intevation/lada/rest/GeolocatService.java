@@ -12,6 +12,7 @@ import java.util.List;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -99,11 +100,12 @@ public class GeolocatService extends LadaService {
      * Create a new Geolocat object.
      *
      * @return A response object containing the created Ort.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
     public Geolocat create(
         @Valid Geolocat ort
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             ort,
             RequestMethod.POST,
@@ -117,13 +119,14 @@ public class GeolocatService extends LadaService {
      * Update an existing Geolocat object.
      *
      * @return the updated Geolocat object.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @PUT
     @Path("{id}")
     public Geolocat update(
         @PathParam("id") Integer id,
         @Valid Geolocat ort
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
                 ort,
                 RequestMethod.PUT,

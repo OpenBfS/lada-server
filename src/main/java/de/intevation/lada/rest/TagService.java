@@ -18,6 +18,7 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -129,13 +130,14 @@ public class TagService extends LadaService {
      * @param tag Tag to update using payload like
      * @param id Tag id
      * @return the updated tag object
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @PUT
     @Path("{id}")
     public Tag update(
         @PathParam("id") String id,
         @Valid Tag tag
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(tag, RequestMethod.PUT, Tag.class);
 
         // Drop validity for network-tags
@@ -158,11 +160,12 @@ public class TagService extends LadaService {
      *
      * @param tag Tag to create.
      * @return Created Tag object
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
     public Tag create(
         @Valid Tag tag
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             tag, RequestMethod.POST, Tag.class);
 

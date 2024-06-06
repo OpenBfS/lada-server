@@ -10,6 +10,7 @@ package de.intevation.lada.rest;
 import jakarta.inject.Inject;
 import jakarta.persistence.Query;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 
@@ -94,11 +95,12 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
      * Create new tag measm references.
      * @param tagLinks List of new tag references
      * @return Result list.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
     public List<Response<T>> createTagReference(
         @Valid List<T> tagLinks
-    ) {
+    ) throws BadRequestException {
         //Create Response
         List<Response<T>> responseList = new ArrayList<>();
 
@@ -139,7 +141,7 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
     @Path("delete")
     public List<Response<T>> deleteTagReference(
         @Valid List<T> tagLinks
-    ) {
+    ) throws BadRequestException {
         List<Response<T>> responseList = new ArrayList<>();
 
         for (T tagLink: tagLinks) {

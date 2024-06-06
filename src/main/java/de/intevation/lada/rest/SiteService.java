@@ -18,6 +18,7 @@ import jakarta.persistence.Query;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.ForbiddenException;
@@ -184,11 +185,12 @@ public class SiteService extends LadaService {
      * Create a Site object.
      *
      * @return A response object containing the created Site.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
     public Site create(
         @Valid Site ort
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             ort,
             RequestMethod.POST,
@@ -211,13 +213,14 @@ public class SiteService extends LadaService {
      * Update an existing Site object.
      *
      * @return The updated Site object.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @PUT
     @Path("{id}")
     public Site update(
         @PathParam("id") Integer id,
         @Valid Site ort
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             ort,
             RequestMethod.PUT,

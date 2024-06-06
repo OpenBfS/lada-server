@@ -20,6 +20,7 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.GET;
@@ -106,11 +107,14 @@ public class QueryUserService extends LadaService {
 
     /**
      * Create a new query_user object in the database.
+     * @param Query object
+     * @return created query object
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
     public QueryUser create(
         @Valid QueryUser query
-    ) {
+    ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
         // TODO: Move to authorization
         if (query.getLadaUserId() != null
@@ -134,12 +138,13 @@ public class QueryUserService extends LadaService {
      *
      * @param query The query to be updated
      * @return Updated query
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @PUT
     @Path("{id}")
     public QueryUser update(
         @Valid QueryUser query
-    ) {
+    ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
         // TODO: Move to authorization
         if (query.getLadaUserId() != null

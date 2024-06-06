@@ -11,6 +11,7 @@ import java.util.List;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -72,10 +73,16 @@ public class DatasetCreatorService extends LadaService {
                 DatasetCreator.class, id), DatasetCreator.class);
     }
 
+    /**
+     * Create a dataset creator
+     * @param datensatzerzeuger Dataset creator to create
+     * @return Created dataset creator
+     * @throws BadRequestException if any constraint violations are detected.
+     */
     @POST
     public DatasetCreator create(
         @Valid DatasetCreator datensatzerzeuger
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             datensatzerzeuger,
             RequestMethod.POST,
@@ -83,12 +90,19 @@ public class DatasetCreatorService extends LadaService {
         return repository.create(datensatzerzeuger);
     }
 
+    /**
+     * Update a dateset creator
+     * @param id Object id
+     * @param datensatzerzeuger Dataset creator to update
+     * @return Created dataset creator
+     * @throws BadRequestException if any constraint violations are detected.
+     */
     @PUT
     @Path("{id}")
     public DatasetCreator update(
         @PathParam("id") Integer id,
         @Valid DatasetCreator datensatzerzeuger
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             datensatzerzeuger,
             RequestMethod.PUT,

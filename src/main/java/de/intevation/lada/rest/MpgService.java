@@ -15,6 +15,7 @@ import java.util.Map;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -102,11 +103,12 @@ public class MpgService extends LadaService {
      * Create a Mpg object.
      *
      * @return A response object containing the created Mpg.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
     public Mpg create(
         @Valid Mpg messprogramm
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             messprogramm,
             RequestMethod.POST,
@@ -124,13 +126,14 @@ public class MpgService extends LadaService {
      * Update an existing Mpg object.
      *
      * @return the updated Mpg object.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @PUT
     @Path("{id}")
     public Mpg update(
         @PathParam("id") Integer id,
         @Valid Mpg messprogramm
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             messprogramm,
             RequestMethod.PUT,
@@ -150,12 +153,13 @@ public class MpgService extends LadaService {
      * @param data Object representing active status and list of IDs
      * @return the success status of the operation
      * per Mpg.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @PUT
     @Path("active")
     public List<Map<String, Integer>> setActive(
         @Valid SetActive data
-    ) {
+    ) throws BadRequestException {
         QueryBuilder<Mpg> builder = repository.queryBuilder(Mpg.class)
             .orIn("id", data.getIds());
         List<Mpg> messprogramme =

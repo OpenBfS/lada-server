@@ -14,6 +14,7 @@ import java.util.Set;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -92,11 +93,12 @@ public class MpgMmtMpService extends LadaService {
     /**
      * Create a MpgMmtMp object.
      * @return A response object containing the created MpgMmtMp.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
     public MpgMmtMp create(
         @Valid MpgMmtMp messprogrammmmt
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
                 messprogrammmmt,
                 RequestMethod.POST,
@@ -111,13 +113,14 @@ public class MpgMmtMpService extends LadaService {
      * Update an existing MpgMmtMp object.
      *
      * @return the updated MpgMmtMp object.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @PUT
     @Path("{id}")
     public MpgMmtMp update(
         @PathParam("id") Integer id,
         @Valid MpgMmtMp messprogrammmmt
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
                 messprogrammmmt,
                 RequestMethod.PUT,

@@ -18,6 +18,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.GET;
@@ -100,11 +101,12 @@ public class GridColConfService extends LadaService {
     /**
      * Creates a new GridColConf in the database.
      * @return the created record.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
     public GridColConf create(
         @Valid GridColConf gridColumnValue
-    ) {
+    ) throws BadRequestException {
         UserInfo userInfo = authorization.getInfo();
 
         // TODO: Move to authorization
@@ -129,12 +131,13 @@ public class GridColConfService extends LadaService {
     /**
      * Update an existing GridColConf in the database.
      * @return the updated record.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @PUT
     @Path("{id}")
     public GridColConf update(
         @Valid GridColConf gridColumnValue
-    ) {
+    ) throws BadRequestException {
         // TODO: Really authorize with an Authorizer implementation.
         // Currently any object can be hijacked by passing it with
         // userId set to the users ID.

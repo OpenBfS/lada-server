@@ -12,6 +12,7 @@ import java.util.List;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -100,11 +101,12 @@ public class CommMeasmService extends LadaService {
     /**
      * Create a CommMeasm object.
      * @return A response containing the created CommMeasm.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
     public CommMeasm create(
         @Valid CommMeasm kommentar
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             kommentar,
             RequestMethod.POST,
@@ -117,13 +119,14 @@ public class CommMeasmService extends LadaService {
      * Update an existing CommMeasm object.
      *
      * @return the updated CommMeasm object.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @PUT
     @Path("{id}")
     public CommMeasm update(
         @PathParam("id") Integer id,
         @Valid CommMeasm kommentar
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
                 kommentar,
                 RequestMethod.PUT,

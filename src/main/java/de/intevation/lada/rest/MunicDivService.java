@@ -11,6 +11,7 @@ import java.util.List;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -68,10 +69,16 @@ public class MunicDivService extends LadaService {
             repository.getById(MunicDiv.class, id), MunicDiv.class);
     }
 
+    /**
+     * Create a MunicDiv
+     * @param gemUntergliederung Object to create
+     * @return Created object
+     * @throws BadRequestException if any constraint violations are detected.
+     */
     @POST
     public MunicDiv create(
         @Valid MunicDiv gemUntergliederung
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             gemUntergliederung,
             RequestMethod.POST,
@@ -79,12 +86,19 @@ public class MunicDivService extends LadaService {
         return repository.create(gemUntergliederung);
     }
 
+    /**
+     * Update the given MunicDiv
+     * @param id Object id
+     * @param gemUntergliederung Updated object
+     * @return Updated object
+     * @throws BadRequestException if any constraint violations are detected.
+     */
     @PUT
     @Path("{id}")
     public MunicDiv update(
         @PathParam("id") Integer id,
         @Valid MunicDiv gemUntergliederung
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
             gemUntergliederung,
             RequestMethod.PUT,

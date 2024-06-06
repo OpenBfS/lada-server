@@ -12,6 +12,7 @@ import java.util.List;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.DELETE;
@@ -126,11 +127,12 @@ public class MeasValService extends LadaService {
      * Create a MeasVal object.
      *
      * @return A response object containing the created MeasVal.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @POST
     public MeasVal create(
         @Valid MeasVal messwert
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
                 messwert,
                 RequestMethod.POST,
@@ -144,13 +146,14 @@ public class MeasValService extends LadaService {
      * Update an existing MeasVal object.
      *
      * @return the updated MeasVal object.
+     * @throws BadRequestException if any constraint violations are detected.
      */
     @PUT
     @Path("{id}")
     public MeasVal update(
         @PathParam("id") Integer id,
         @Valid MeasVal messwert
-    ) {
+    ) throws BadRequestException {
         authorization.authorize(
                 messwert,
                 RequestMethod.PUT,

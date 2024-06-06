@@ -13,6 +13,7 @@ import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -85,10 +86,16 @@ public class SpatRefSysService extends LadaService {
         return repository.getById(SpatRefSys.class, id);
     }
 
+    /**
+     * Recalculate the given coordinates
+     * @param object Inputdata
+     * @return Recalculated coordinates
+     * @throws BadRequestException if any constraint violations are detected.
+     */
     @POST
     public KdaUtil.Result recalculate(
         @Valid PostData object
-    ) {
+    ) throws BadRequestException {
         return new KdaUtil().transform(
             KdaUtil.KDAS.get(object.from),
             KdaUtil.KDAS.get(object.to),
