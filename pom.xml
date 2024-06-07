@@ -105,6 +105,11 @@
                             <artifactId>hibernate-validator-annotation-processor</artifactId>
                             <version>8.0.1.Final</version>
                         </path>
+                        <path>
+                            <groupId>org.hibernate.orm</groupId>
+                            <artifactId>hibernate-jpamodelgen</artifactId>
+                            <version>6.2.6.Final</version>
+                        </path>
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>

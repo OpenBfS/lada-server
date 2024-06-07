@@ -13,9 +13,11 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.UnitConvers;
+import de.intevation.lada.model.master.UnitConvers_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -67,7 +69,7 @@ public class IsMeasdPrimaryOrConvertibleToValidator
 
         ctx.disableDefaultConstraintViolation();
         ctx.buildConstraintViolationWithTemplate(this.message)
-            .addPropertyNode("measUnitId")
+            .addPropertyNode(MeasVal_.MEAS_UNIT_ID)
             .addConstraintViolation();
 
         // Check if secondary unit is selected
@@ -76,11 +78,10 @@ public class IsMeasdPrimaryOrConvertibleToValidator
         }
 
         // Check if the measVal is convertable into the primary unit
-        final String fromUnitKey = "fromUnitId", toUnitKey = "toUnitId";
         QueryBuilder<UnitConvers> primaryBuilder = repository
             .queryBuilder(UnitConvers.class)
-            .and(fromUnitKey, selectedUnit)
-            .and(toUnitKey, umwelt.getUnit1());
+            .and(UnitConvers_.FROM_UNIT_ID, selectedUnit)
+            .and(UnitConvers_.TO_UNIT_ID, umwelt.getUnit1());
         if (!repository.filter(primaryBuilder.getQuery()).isEmpty()) {
             return true;
         }
@@ -88,8 +89,8 @@ public class IsMeasdPrimaryOrConvertibleToValidator
         // Check if the measVal is convertable into the secondary unit
         QueryBuilder<UnitConvers> secondaryBuilder = repository
             .queryBuilder(UnitConvers.class)
-            .and(fromUnitKey, selectedUnit)
-            .and(toUnitKey, secMehId);
+            .and(UnitConvers_.FROM_UNIT_ID, selectedUnit)
+            .and(UnitConvers_.TO_UNIT_ID, secMehId);
         if (!repository.filter(secondaryBuilder.getQuery()).isEmpty()) {
             return false;
         }

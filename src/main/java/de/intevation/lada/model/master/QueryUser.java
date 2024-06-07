@@ -50,7 +50,7 @@ public class QueryUser implements Serializable {
 
     //bi-directional many-to-one association to QueryMessstelle
     @OneToMany(
-        mappedBy = "queryUser",
+        mappedBy = QueryMeasFacilMp_.QUERY_USER,
         fetch = FetchType.EAGER,
         cascade = CascadeType.ALL,
         orphanRemoval = true)

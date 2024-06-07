@@ -37,9 +37,10 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.QueryMeasFacilMp;
+import de.intevation.lada.model.master.QueryMeasFacilMp_;
 import de.intevation.lada.model.master.QueryUser;
+import de.intevation.lada.model.master.QueryUser_;
 
 
 /**
@@ -75,16 +76,21 @@ public class QueryUserService extends LadaService {
         CriteriaQuery<QueryUser> criteriaQuery =
             builder.createQuery(QueryUser.class);
         Root<QueryUser> root = criteriaQuery.from(QueryUser.class);
-        Join<MeasFacil, QueryUser> mess =
-            root.join("messStelles", JoinType.LEFT);
+        Join<QueryUser, QueryMeasFacilMp> mess =
+            root.join(QueryUser_.messStelles, JoinType.LEFT);
         Predicate filter =
-            builder.equal(root.get("ladaUserId"), userInfo.getUserId());
-        filter = builder.or(filter, root.get("ladaUserId").in(DEFAULT_USER_ID));
+            builder.equal(
+                root.get(QueryUser_.ladaUserId),
+                userInfo.getUserId());
+        filter = builder.or(filter, root.get(QueryUser_.ladaUserId)
+            .in(DEFAULT_USER_ID));
         if (userInfo.getMessstellen() != null
             && !userInfo.getMessstellen().isEmpty()
         ) {
             filter = builder.or(
-                filter, mess.get("measFacilId").in(userInfo.getMessstellen()));
+                filter,
+                mess.get(QueryMeasFacilMp_.measFacilId)
+                    .in(userInfo.getMessstellen()));
         }
         criteriaQuery.where(filter);
 
@@ -156,7 +162,7 @@ public class QueryUserService extends LadaService {
         query.setLadaUserId(userInfo.getUserId());
         QueryBuilder<QueryMeasFacilMp> builder = repository
             .queryBuilder(QueryMeasFacilMp.class)
-            .and("queryUser", query);
+            .and(QueryMeasFacilMp_.QUERY_USER, query);
         List<QueryMeasFacilMp> qms =
             repository.filter(builder.getQuery());
         List<QueryMeasFacilMp> delete = new ArrayList<>();
