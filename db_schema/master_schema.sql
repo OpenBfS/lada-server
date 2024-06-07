@@ -105,8 +105,8 @@ $$;
 
 
 CREATE OR REPLACE FUNCTION get_desk_description(
-	media_desk character varying,
-	stufe integer)
+    media_desk character varying,
+    stufe integer)
     RETURNS character varying
     LANGUAGE 'plpgsql'
     COST 100
@@ -187,8 +187,8 @@ $BODY$;
 
 
 CREATE OR REPLACE FUNCTION get_desk_imis2_id(
-	media_desk character varying,
-	stufe integer)
+    media_desk character varying,
+    stufe integer)
     RETURNS integer
     LANGUAGE 'plpgsql'
     COST 100
