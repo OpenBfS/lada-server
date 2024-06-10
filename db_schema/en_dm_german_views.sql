@@ -695,13 +695,6 @@ CREATE VIEW stamm.ort AS SELECT
 	munic_div_id AS gem_unt_id
 FROM master.site;
 
-CREATE VIEW stamm.ort_typ AS SELECT
-	id,
-	name AS ort_typ,
-	ext_id AS code,
-	last_mod AS letzte_aenderung
-FROM master.site_class;
-
 CREATE VIEW stamm.ortszuordnung_typ AS SELECT
 	id,
 	name AS ortstyp,

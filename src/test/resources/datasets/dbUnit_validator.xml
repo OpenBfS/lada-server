@@ -130,8 +130,6 @@
     <master.spat_ref_sys id = "5" />
     <master.spat_ref_sys id = "6" />
     <master.spat_ref_sys id = "8" />
-    <master.site_class id = "1" />
-    <master.site_class id = "3" />
     <master.state
         id = "0"
         ctry = "Deutschland"
@@ -153,7 +151,7 @@
         coord_y_ext = "5519769"
         last_mod = "2015-03-01 12:00:00"
         geom = "SRID=4326;POINT(49.83021 8.81948)"
-        site_class_id = "1"
+        site_class_id = "DYN"
         short_text = "kurz"
         rei_report_text = "bericht"
     />
@@ -168,7 +166,7 @@
         coord_y_ext = "5519769"
         geom = "SRID=4326;POINT(49.83021 8.81948)"
         short_text = "kurz"
-        site_class_id = "1"
+        site_class_id = "DYN"
     />
     <master.status_ord_mp id = "1" from_id = "1" to_id = "2" />
     <!--Geo data-->

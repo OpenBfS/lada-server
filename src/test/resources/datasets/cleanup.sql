@@ -8,7 +8,6 @@ DELETE FROM tag;
 DELETE FROM lada.geolocat;
 DELETE FROM lada.geolocat_mpg;
 DELETE FROM site;
-DELETE FROM site_class;
 DELETE FROM type_regulation;
 DELETE FROM poi;
 DELETE FROM lada.sample;

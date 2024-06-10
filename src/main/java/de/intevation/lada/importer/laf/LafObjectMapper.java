@@ -1457,7 +1457,7 @@ public class LafObjectMapper {
                             o = oE;
                         }
                     } else {
-                        o.setSiteClassId(1);
+                        o.setSiteClassId(Site.SiteClassId.DYN);
                         o.setNuclFacilGrId(ktaGrp.get(0).getId());
                         repository.update(o);
 
@@ -1497,7 +1497,7 @@ public class LafObjectMapper {
             if (o == null) {
                 return;
             }
-            o.setSiteClassId(3);
+            o.setSiteClassId(Site.SiteClassId.REI);
             repository.update(o);
             Geolocat ort = new Geolocat();
             ort.setSiteId(o.getId());

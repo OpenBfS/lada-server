@@ -658,13 +658,8 @@ CREATE TRIGGER last_mod_nucl_facil_gr_mp BEFORE UPDATE ON master.nucl_facil_gr_m
 
 -- Mappings for site
 
-CREATE TABLE site_class (
-    id smallint PRIMARY KEY,
-    name character varying(60) CHECK (trim(both ' ' from name) <> ''),
-    ext_id character varying(3) CHECK (trim(both ' ' from ext_id) <> ''),
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
-);
-CREATE TRIGGER last_mod_site_class BEFORE UPDATE ON master.site_class FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
+CREATE TYPE site_class AS ENUM ('DYN', 'GP', 'REI', 'VE', 'ST');
+CREATE CAST (varchar AS site_class) WITH INOUT AS ASSIGNMENT;
 
 CREATE TABLE poi (
     id character varying(7) PRIMARY KEY CHECK (trim(both ' ' from id) <> ''),
@@ -699,7 +694,7 @@ CREATE TABLE site (
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     geom public.geometry(Point,4326) NOT NULL,
     shape public.geometry(MultiPolygon,4326),
-    site_class_id smallint NOT NULL REFERENCES site_class,
+    site_class_id site_class NOT NULL,
     short_text character varying(20) NOT NULL CHECK (trim(both ' ' from short_text) <> ''),
     rei_report_text character varying(70) CHECK (trim(both ' ' from rei_report_text) <> ''),
     rei_zone character varying(1) CHECK (trim(both ' ' from rei_zone) <> ''),

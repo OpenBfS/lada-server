@@ -15,6 +15,8 @@ import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -68,6 +70,8 @@ import de.intevation.lada.validation.groups.Warnings;
 @HasValidReiSiteExtId(groups = Warnings.class)
 public class Site extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    public enum SiteClassId { DYN, GP, REI, VE, ST }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -137,9 +141,8 @@ public class Site extends BaseModel implements Serializable {
     private String extId;
 
     @NotNull
-    @IsValidPrimaryKey(
-        groups = DatabaseConstraints.class, clazz = SiteClass.class)
-    private Integer siteClassId;
+    @Enumerated(EnumType.STRING)
+    private SiteClassId siteClassId;
 
     @IsValidPrimaryKey(
         groups = DatabaseConstraints.class, clazz = Poi.class)
@@ -213,8 +216,6 @@ public class Site extends BaseModel implements Serializable {
     @Transient
     private Integer referenceCountMp;
 
-    public Site() {
-    }
 
     public Integer getId() {
         return this.id;
@@ -383,11 +384,11 @@ public class Site extends BaseModel implements Serializable {
         this.extId = extId;
     }
 
-    public Integer getSiteClassId() {
+    public SiteClassId getSiteClassId() {
         return this.siteClassId;
     }
 
-    public void setSiteClassId(Integer siteClassId) {
+    public void setSiteClassId(SiteClassId siteClassId) {
         this.siteClassId = siteClassId;
     }
 

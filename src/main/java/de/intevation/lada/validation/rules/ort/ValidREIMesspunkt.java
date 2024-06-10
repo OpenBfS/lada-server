@@ -23,8 +23,6 @@ import de.intevation.lada.validation.rules.Rule;
 @ValidationRule("Ort")
 public class ValidREIMesspunkt implements Rule {
 
-    private static final Integer SITE_CLASS_REI = 3;
-
     @Inject
     private Repository repository;
 
@@ -33,7 +31,7 @@ public class ValidREIMesspunkt implements Rule {
         Site ort = (Site) object;
 
         if (ort == null
-            || !SITE_CLASS_REI.equals(ort.getSiteClassId())
+            || !Site.SiteClassId.REI.equals(ort.getSiteClassId())
             || ort.getNuclFacilGrId() == null
             // Leave validation of extId up to other rule
             || ort.getExtId() == null || ort.getExtId().length() < 4

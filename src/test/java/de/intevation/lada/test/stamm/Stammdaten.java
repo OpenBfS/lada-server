@@ -159,14 +159,6 @@ public class Stammdaten extends ServiceTest {
                 "name"
             )
         );
-        matchers.put("siteclass",
-            Matchers.containsInAnyOrder(
-            "id",
-            "lastMod",
-            "name",
-            "extId"
-            )
-        );
         matchers.put("typeregulation",
             Matchers.containsInAnyOrder(
             "id",

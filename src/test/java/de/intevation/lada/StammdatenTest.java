@@ -449,28 +449,6 @@ public class StammdatenTest extends BaseTest {
     }
 
     /**
-     * Tests site class get all operation.
-     * @param baseUrl The server url used for the request.
-     */
-    @Test
-    @RunAsClient
-    public final void testSiteClassAll(@ArquillianResource URL baseUrl) {
-        stammdatenTest.init(this.client, baseUrl);
-        stammdatenTest.getAll("siteclass");
-    }
-
-    /**
-     * Tests site class get by id operation.
-     * @param baseUrl The server url used for the request.
-     */
-    @Test
-    @RunAsClient
-    public final void testSiteClassById(@ArquillianResource URL baseUrl) {
-        stammdatenTest.init(this.client, baseUrl);
-        stammdatenTest.getById("siteclass", ID101);
-    }
-
-    /**
      * Tests type regulation get all operation.
      * @param baseUrl The server url used for the request.
      */

@@ -20,8 +20,6 @@ import de.intevation.lada.model.master.Site;
 public class IsReiCompleteSiteValidator
     implements ConstraintValidator<IsReiComplete, Site> {
 
-    private static final Integer SITE_CLASS_REI = 3;
-
     private String message;
 
     @Override
@@ -32,7 +30,7 @@ public class IsReiCompleteSiteValidator
     @Override
     public boolean isValid(Site site, ConstraintValidatorContext ctx) {
         if (site != null
-            && SITE_CLASS_REI.equals(site.getSiteClassId())
+            && Site.SiteClassId.REI.equals(site.getSiteClassId())
             && site.getNuclFacilGrId() == null
         ) {
             ctx.disableDefaultConstraintViolation();

@@ -41,7 +41,6 @@ public class SiteTest extends ValidatorBaseTest {
     private static final String VALID_ADMIN_UNIT_ID = "11000000";
 
     private static final String EXAMPLE_EXT_ID = "1234";
-    private static final int SITE_CLASS_REI = 3;
 
     private static final String NUCL_FACIL_EXT_ID_UNMAPPED = "Othr";
     private static final int NUCL_FACIL_GR_ID_MAPPED = 1;
@@ -228,38 +227,13 @@ public class SiteTest extends ValidatorBaseTest {
     }
 
     /**
-     * Test site with a non existing site class.
-     */
-    @Test
-    public void siteClassDoesNotExist() {
-        Site site = createMinimalSite();
-        site.setSiteClassId(0);
-
-        assertHasErrors(
-            validator.validate(site),
-            SITE_CLASS_ID,
-            "'0' is no valid primary key");
-    }
-
-    /**
-     * Test site with valid site class.
-     */
-    @Test
-    public void siteClassDoesExist() {
-        Site site = createMinimalSite();
-
-        validator.validate(site);
-        assertNoMessages(site);
-    }
-
-    /**
      * Test REI site with less than five characters in extId.
      */
     @Test
     public void reiSiteExtIdTooShort() {
         Site site = createMinimalSite();
         site.setExtId("xxxx");
-        site.setSiteClassId(SITE_CLASS_REI);
+        site.setSiteClassId(Site.SiteClassId.REI);
         site.setNuclFacilGrId(NUCL_FACIL_GR_ID_MAPPED);
 
         assertHasWarnings(
@@ -275,14 +249,13 @@ public class SiteTest extends ValidatorBaseTest {
     public void reiSiteNoNuclFacils() {
         Site site = createMinimalSite();
         site.setExtId(EXAMPLE_EXT_ID);
-        site.setSiteClassId(SITE_CLASS_REI);
+        site.setSiteClassId(Site.SiteClassId.REI);
         site.setNuclFacilGrId(NUCL_FACIL_GR_ID_MAPPED);
 
-        validator.validate(site);
-        Assert.assertTrue(site.hasWarnings());
-        Assert.assertTrue(site.getWarnings().containsKey(EXT_ID));
-        Assert.assertTrue(site.getWarnings().get(EXT_ID)
-            .contains(String.valueOf(StatusCodes.ORT_ANLAGE_MISSING)));
+        assertHasWarnings(
+            validator.validate(site),
+            EXT_ID,
+            String.valueOf(StatusCodes.ORT_ANLAGE_MISSING));
     }
 
     /**
@@ -294,7 +267,7 @@ public class SiteTest extends ValidatorBaseTest {
         Site site = createMinimalSite();
         site.setExtId(NUCL_FACIL_EXT_ID_UNMAPPED);
         site.setNuclFacilGrId(NUCL_FACIL_GR_ID_MAPPED);
-        site.setSiteClassId(SITE_CLASS_REI);
+        site.setSiteClassId(Site.SiteClassId.REI);
 
         assertHasWarnings(
             validator.validate(site),
@@ -309,7 +282,7 @@ public class SiteTest extends ValidatorBaseTest {
     public void reiSiteWithoutNuclFacilGrId() {
         Site site = createMinimalSite();
         site.setExtId(EXAMPLE_EXT_ID);
-        site.setSiteClassId(SITE_CLASS_REI);
+        site.setSiteClassId(Site.SiteClassId.REI);
 
         assertHasWarnings(
             validator.validate(site),
@@ -323,7 +296,7 @@ public class SiteTest extends ValidatorBaseTest {
     @Test
     public void reiSite() {
         Site site = createMinimalSite();
-        site.setSiteClassId(SITE_CLASS_REI);
+        site.setSiteClassId(Site.SiteClassId.REI);
         site.setExtId("A1234");
         site.setNuclFacilGrId(1);
 
@@ -571,7 +544,7 @@ public class SiteTest extends ValidatorBaseTest {
         Site site = new Site();
         site.setNetworkId("06");
         site.setStateId(0);
-        site.setSiteClassId(1);
+        site.setSiteClassId(Site.SiteClassId.DYN);
         return site;
     }
 

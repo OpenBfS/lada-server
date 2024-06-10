@@ -64,7 +64,6 @@
     />
     <master.spat_ref_sys id = "4" />
     <master.spat_ref_sys id = "5" />
-    <master.site_class id = "1" />
     <master.regulation id = "2" />
     <master.sample_specif
         id = "A74"
@@ -137,7 +136,7 @@
         coord_y_ext = "5519769"
         last_mod = "2015-03-01 12:00:00"
         geom = "SRID=4326;POINT(49.83021 8.81948)"
-        site_class_id = "1"
+        site_class_id = "DYN"
         short_text = "kurz"
         rei_report_text = "bericht"
     />
@@ -153,7 +152,7 @@
         coord_y_ext = "5519769"
         geom = "SRID=4326;POINT(49.83021 8.81948)"
         short_text = "kurz"
-        site_class_id = "1"
+        site_class_id = "DYN"
     />
     <master.site
         id = "1003"
@@ -167,7 +166,7 @@
         coord_y_ext = "5519769"
         geom = "SRID=4326;POINT(49.83021 8.81948)"
         short_text = "kurz"
-        site_class_id = "1"
+        site_class_id = "DYN"
     />
     <!-- Env descrip data-->
     <master.env_descrip
@@ -672,17 +671,6 @@
         sample_id = "1901"
         tag_id = "1003"
     />
-    <!--Site class data-->
-    <master.site_class
-        id = "101"
-        ext_id = "123"
-        name = "name-101"
-    />
-    <master.site_class
-        id = "102"
-        ext_id = "123"
-        name = "name-102"
-    />
     <!--Type regulation data-->
     <master.type_regulation
         id = "A"
@@ -715,7 +703,7 @@
         coord_y_ext = "5519769"
         last_mod = "2015-03-01 12:00:00"
         geom = "SRID=4326;POINT(49.83021 8.81948)"
-        site_class_id = "1"
+        site_class_id = "DYN"
         short_text = "Text"
         rei_report_text = "bericht"
     />

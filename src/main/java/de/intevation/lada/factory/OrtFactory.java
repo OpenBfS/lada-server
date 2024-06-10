@@ -31,9 +31,6 @@ public class OrtFactory {
 
     private static final int EPSG4326 = 4326;
 
-    private static final int ORTTYP4 = 4; // Verwaltungseinheit
-    private static final int ORTTYP5 = 5; // Staat
-
     @Inject
     private Repository repository;
 
@@ -103,7 +100,7 @@ public class OrtFactory {
             }
         } else  if (ort.getStateId() != null) {
             builder.and("stateId", ort.getStateId())
-                .and("siteClassId", ORTTYP5);
+                .and("siteClassId", Site.SiteClassId.ST);
             List<Site> orte = repository.filter(builder.getQuery());
             if (!orte.isEmpty()) {
                 return orte.get(0);
@@ -188,7 +185,7 @@ public class OrtFactory {
                         ort.setCoordXExt(coords.getX());
                     }
                 }
-                ort.setSiteClassId(ORTTYP4);
+                ort.setSiteClassId(Site.SiteClassId.VE);
 
                 String prefix = null;
                 if (v.getIsMunic()) {
@@ -223,7 +220,7 @@ public class OrtFactory {
             ort.setCoordXExt(staat.getCoordXExt());
             ort.setCoordYExt(staat.getCoordYExt());
             ort.setLongText(staat.getCtry());
-            ort.setSiteClassId(ORTTYP5);
+            ort.setSiteClassId(Site.SiteClassId.ST);
             final String prefix = "STAAT_";
             if (staat.getIso3166() != null) {
                 ort.setExtId(prefix + staat.getIso3166());
@@ -235,6 +232,5 @@ public class OrtFactory {
             ort.setReiReportText(staat.getCtry());
             transformCoordinates(ort);
         }
-        return;
     }
 }
