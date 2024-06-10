@@ -232,5 +232,10 @@ public class OrtFactory {
             ort.setReiReportText(staat.getCtry());
             transformCoordinates(ort);
         }
+
+        // Default values
+        if (ort.getSiteClassId() == null) {
+            ort.setSiteClassId(Site.SiteClassId.DYN);
+        }
     }
 }
