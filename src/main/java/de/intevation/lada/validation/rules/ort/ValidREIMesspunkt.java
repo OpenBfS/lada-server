@@ -9,9 +9,10 @@ package de.intevation.lada.validation.rules.ort;
 
 import jakarta.inject.Inject;
 
-import de.intevation.lada.model.master.NuclFacil;
 import de.intevation.lada.model.master.NuclFacilGrMp;
+import de.intevation.lada.model.master.NuclFacilGrMp_;
 import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -22,6 +23,8 @@ import de.intevation.lada.validation.rules.Rule;
 
 @ValidationRule("Ort")
 public class ValidREIMesspunkt implements Rule {
+
+    private static final int NUCL_FACIL_EXT_ID_LENGTH = 4;
 
     @Inject
     private Repository repository;
@@ -34,34 +37,28 @@ public class ValidREIMesspunkt implements Rule {
             || !Site.SiteClassId.REI.equals(ort.getSiteClassId())
             || ort.getNuclFacilGrId() == null
             // Leave validation of extId up to other rule
-            || ort.getExtId() == null || ort.getExtId().length() < 4
+            || ort.getExtId() == null
+            || ort.getExtId().length() < NUCL_FACIL_EXT_ID_LENGTH
         ) {
             return null;
         }
 
-        final String nuclFacilGrIdKey = "nuclFacilGrId", extIdKey = "extId";
-        Violation violation = new Violation();
-
-        //Compare first 4 characters of Ort ID to stored KTAs
-        String ktaId = ort.getExtId().substring(0, 4);
-        NuclFacil kta = repository.entityManager().find(NuclFacil.class, ktaId);
-        if (kta == null) {
-            violation.addWarning(extIdKey, StatusCodes.ORT_ANLAGE_MISSING);
-            return violation;
-        }
-
+        // First 4 characters of extId should match a nuclear facility
+        // in given group
         QueryBuilder<NuclFacilGrMp> builder = repository
             .queryBuilder(NuclFacilGrMp.class)
-            .and(nuclFacilGrIdKey, ort.getNuclFacilGrId());
-        for (NuclFacilGrMp ktaGrMp : repository.filter(builder.getQuery())) {
-            if (!ktaId.equals(ktaGrMp.getNuclFacilExtId())) {
-                violation.addWarning(
-                    "nuclFacilGrId", StatusCodes.VALUE_NOT_MATCHING);
-            } else {
-                break;
-            }
-        }
-        if (violation.hasWarnings()) {
+            .and(NuclFacilGrMp_.NUCL_FACIL_EXT_ID,
+                ort.getExtId().substring(0, NUCL_FACIL_EXT_ID_LENGTH))
+            .and(NuclFacilGrMp_.NUCL_FACIL_GR_ID,
+                ort.getNuclFacilGrId());
+        if (repository.filter(builder.getQuery()).isEmpty()) {
+            Violation violation = new Violation();
+            violation.addWarning(
+                Site_.EXT_ID,
+                StatusCodes.VALUE_NOT_MATCHING);
+            violation.addWarning(
+                Site_.NUCL_FACIL_GR_ID,
+                StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
         return null;

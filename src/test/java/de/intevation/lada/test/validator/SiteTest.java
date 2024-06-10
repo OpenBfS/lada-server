@@ -255,7 +255,7 @@ public class SiteTest extends ValidatorBaseTest {
         assertHasWarnings(
             validator.validate(site),
             EXT_ID,
-            String.valueOf(StatusCodes.ORT_ANLAGE_MISSING));
+            String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
     }
 
     /**
