@@ -48,6 +48,7 @@ import de.intevation.lada.validation.constraints.IsAdminBorderKey;
 import de.intevation.lada.validation.constraints.IsReiComplete;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
+import de.intevation.lada.validation.constraints.ReiSiteExtIdMatchesNuclFacil;
 import de.intevation.lada.validation.constraints.SupportedSpatRefSysId;
 import de.intevation.lada.validation.constraints.Unique;
 import de.intevation.lada.validation.constraints.ValidCoordinates;
@@ -67,6 +68,7 @@ import de.intevation.lada.validation.groups.Warnings;
 @CoordinatesInAdminBorder(groups = Warnings.class)
 @IsReiComplete(groups = Warnings.class)
 @HasValidReiSiteExtId(groups = Warnings.class)
+@ReiSiteExtIdMatchesNuclFacil(groups = Warnings.class)
 public class Site extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 

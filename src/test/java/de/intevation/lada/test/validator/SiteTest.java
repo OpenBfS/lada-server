@@ -17,7 +17,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.intevation.lada.model.master.Site;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -71,6 +70,8 @@ public class SiteTest extends ValidatorBaseTest {
     private static final String GEO_POINT_OUTSIDE =
         "Coordintes outside of border of administrative unit";
     private static final String VALUE_MISSING = "A value must be provided";
+    private static final String EXT_ID_NOT_MATCHING_NUCL_FACIL =
+        "First four characters must match nuclear facility in given group";
     private static final String UNIQUE_PLACEHOLDER = "{fields}";
     private final String valMessageUniqueExtId;
     private final String valMessageCoords;
@@ -243,7 +244,7 @@ public class SiteTest extends ValidatorBaseTest {
     }
 
     /**
-     * Test REI site without nucl facils.
+     * Test REI site for which extId does not point to existing NuclFacil.
      */
     @Test
     public void reiSiteNoNuclFacils() {
@@ -255,12 +256,12 @@ public class SiteTest extends ValidatorBaseTest {
         assertHasWarnings(
             validator.validate(site),
             EXT_ID,
-            String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
+            EXT_ID_NOT_MATCHING_NUCL_FACIL);
     }
 
     /**
-     * Test REI site which ext id points to NuclFacil that is not connected to
-     * its nuclFacilGrId.
+     * Test REI site for which extId points to NuclFacil not connected to
+     * given nuclFacilGrId.
      */
     @Test
     public void reiSiteNuclFacilWithoutMappingEntry() {
@@ -271,8 +272,8 @@ public class SiteTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(site),
-            "nuclFacilGrId",
-            String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
+            EXT_ID,
+            EXT_ID_NOT_MATCHING_NUCL_FACIL);
     }
 
     /**
@@ -298,7 +299,7 @@ public class SiteTest extends ValidatorBaseTest {
         Site site = createMinimalSite();
         site.setSiteClassId(Site.SiteClassId.REI);
         site.setExtId("A1234");
-        site.setNuclFacilGrId(1);
+        site.setNuclFacilGrId(NUCL_FACIL_GR_ID_MAPPED);
 
         validator.validate(site);
         assertNoMessages(site);

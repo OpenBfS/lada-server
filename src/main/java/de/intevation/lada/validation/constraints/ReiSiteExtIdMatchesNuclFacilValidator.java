@@ -5,9 +5,12 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.validation.rules.ort;
+package de.intevation.lada.validation.constraints;
 
-import jakarta.inject.Inject;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.master.NuclFacilGrMp;
 import de.intevation.lada.model.master.NuclFacilGrMp_;
@@ -15,24 +18,26 @@ import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationRule;
-import de.intevation.lada.validation.rules.Rule;
 
 
-@ValidationRule("Ort")
-public class ValidREIMesspunkt implements Rule {
+/**
+ * Validates if extId is valid for REI site.
+ */
+public class ReiSiteExtIdMatchesNuclFacilValidator
+    implements ConstraintValidator<ReiSiteExtIdMatchesNuclFacil, Site> {
 
     private static final int NUCL_FACIL_EXT_ID_LENGTH = 4;
 
-    @Inject
-    private Repository repository;
+    private String message;
 
     @Override
-    public Violation execute(Object object) {
-        Site ort = (Site) object;
+    public void initialize(ReiSiteExtIdMatchesNuclFacil constraintAnnotation) {
+        this.message = constraintAnnotation.message();
+    }
 
+    @Transactional
+    @Override
+    public boolean isValid(Site ort, ConstraintValidatorContext ctx) {
         if (ort == null
             || !Site.SiteClassId.REI.equals(ort.getSiteClassId())
             || ort.getNuclFacilGrId() == null
@@ -40,11 +45,13 @@ public class ValidREIMesspunkt implements Rule {
             || ort.getExtId() == null
             || ort.getExtId().length() < NUCL_FACIL_EXT_ID_LENGTH
         ) {
-            return null;
+            return true;
         }
 
         // First 4 characters of extId should match a nuclear facility
         // in given group
+        Repository repository = CDI.current().getBeanContainer()
+            .createInstance().select(Repository.class).get();
         QueryBuilder<NuclFacilGrMp> builder = repository
             .queryBuilder(NuclFacilGrMp.class)
             .and(NuclFacilGrMp_.NUCL_FACIL_EXT_ID,
@@ -52,15 +59,12 @@ public class ValidREIMesspunkt implements Rule {
             .and(NuclFacilGrMp_.NUCL_FACIL_GR_ID,
                 ort.getNuclFacilGrId());
         if (repository.filter(builder.getQuery()).isEmpty()) {
-            Violation violation = new Violation();
-            violation.addWarning(
-                Site_.EXT_ID,
-                StatusCodes.VALUE_NOT_MATCHING);
-            violation.addWarning(
-                Site_.NUCL_FACIL_GR_ID,
-                StatusCodes.VALUE_NOT_MATCHING);
-            return violation;
+            ctx.disableDefaultConstraintViolation();
+            ctx.buildConstraintViolationWithTemplate(this.message)
+                .addPropertyNode(Site_.EXT_ID)
+                .addConstraintViolation();
+            return false;
         }
-        return null;
+        return true;
     }
 }
