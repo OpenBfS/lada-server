@@ -332,7 +332,7 @@
         text = "Testkommentar"
     />
     <!--Additional sample/geolocat data-->
-        <lada.sample
+    <lada.sample
         id = "2000"
         opr_mode_id = "1"
         regulation_id = "9"
@@ -352,6 +352,19 @@
         tree_mod = "2012-05-08 10:00:00"
         ext_id = "ext_id_2000"
     />
+    <lada.geolocat
+        id = "1010"
+        type_regulation = "U"
+        sample_id = "2000"
+        site_id = "1000"
+    />
+    <lada.geolocat
+        id = "1011"
+        type_regulation = "U"
+        sample_id = "2000"
+        site_id = "1001"
+    />
+
     <lada.sample
         id = "3000"
         opr_mode_id = "1"
@@ -388,6 +401,13 @@
         add_site_text = "Test"
         last_mod = "2012-05-07 09:00:00"
     />
+    <lada.geolocat
+        id = "1003"
+        type_regulation = "U"
+        sample_id = "3000"
+        site_id = "1000"
+    />
+
     <!--Samples/Measm for status validation testing-->
     <!--Valid REI sample-->
     <lada.sample

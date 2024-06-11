@@ -21,6 +21,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
 
@@ -74,6 +75,9 @@ public class ProbeTest extends ValidatorBaseTest {
 
     @Inject
     private Validator<Sample> validator;
+
+    @Inject
+    private Repository repository;
 
     //Expected validation messages
     private static final String MSG_NOT_NULL = "must not be null";
@@ -218,6 +222,35 @@ public class ProbeTest extends ValidatorBaseTest {
             GEOLOCATS,
             String.valueOf(StatusCodes.VALUE_MISSING));
     }
+
+    /**
+     * Non-unique site of origin: geolocats with type U and R.
+     */
+    @Test
+    public void hasGeolocatUAndR() {
+        final int sampleId = 3000;
+        Sample sample = repository.getById(Sample.class, sampleId);
+
+        assertHasWarnings(
+            validator.validate(sample),
+            GEOLOCATS,
+            String.valueOf(StatusCodes.ORT_SINGLE_UORT));
+    }
+
+    /**
+     * Non-unique site of origin: two geolocats with type U.
+     */
+    @Test
+    public void hasGeolocatTwoTimesU() {
+        final int sampleId = 2000;
+        Sample sample = repository.getById(Sample.class, sampleId);
+
+        assertHasWarnings(
+            validator.validate(sample),
+            GEOLOCATS,
+            String.valueOf(StatusCodes.ORT_SINGLE_UORT));
+    }
+
 
     /**
      * Test probenahmebegin.
