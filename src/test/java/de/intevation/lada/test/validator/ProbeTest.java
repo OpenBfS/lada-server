@@ -83,6 +83,8 @@ public class ProbeTest extends ValidatorBaseTest {
     private static final String MSG_NOT_NULL = "must not be null";
     private static final String MSG_NOT_BLANK = "must not be blank";
     private static final String MSG_VALUE_MISSING = "A value must be provided";
+    private static final String MSG_MULTIPLE_U_SITE =
+        "Only one single site of origin should be given";
     private static final String UNIQUE_PLACEHOLDER = "{fields}";
     private final String valMessageUniqueMainSampleIdMeasFacilId;
     private final String valMessageUniqueExtId;
@@ -234,7 +236,7 @@ public class ProbeTest extends ValidatorBaseTest {
         assertHasWarnings(
             validator.validate(sample),
             GEOLOCATS,
-            String.valueOf(StatusCodes.ORT_SINGLE_UORT));
+            MSG_MULTIPLE_U_SITE);
     }
 
     /**
@@ -248,7 +250,7 @@ public class ProbeTest extends ValidatorBaseTest {
         assertHasWarnings(
             validator.validate(sample),
             GEOLOCATS,
-            String.valueOf(StatusCodes.ORT_SINGLE_UORT));
+            MSG_MULTIPLE_U_SITE);
     }
 
 
