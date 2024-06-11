@@ -28,9 +28,6 @@ import de.intevation.lada.validation.rules.Rule;
 @ValidationRule("Sample")
 public class HasOneUrsprungsOrt implements Rule {
 
-    private static final int REG_REI_I = 4;
-    private static final int REG_REI_X = 3;
-
     @Inject
     private Repository repository;
 
@@ -39,12 +36,7 @@ public class HasOneUrsprungsOrt implements Rule {
         Sample probe = (Sample) object;
         Integer id = probe.getId();
 
-        final int regulation = probe.getRegulationId();
-        if (id == null
-            || probe.getReiAgGrId() != null
-            || regulation == REG_REI_X
-            || regulation == REG_REI_I
-        ) {
+        if (id == null) {
             return null;
         }
 
@@ -52,8 +44,7 @@ public class HasOneUrsprungsOrt implements Rule {
             .queryBuilder(Geolocat.class)
             .and("sampleId", id)
             .andIn("typeRegulation", List.of("U", "R"));
-        List<Geolocat> orte = repository.filter(builder.getQuery());
-        if (orte.size() > 1) {
+        if (repository.filter(builder.getQuery()).size() > 1) {
             Violation violation = new Violation();
             violation.addWarning("geolocats", StatusCodes.ORT_SINGLE_UORT);
             return violation;
