@@ -35,6 +35,8 @@
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "208" />
     <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
     <master.mmt id = "A3" />
+    <master.spat_ref_sys id = "4" />
+    <master.spat_ref_sys id = "5" />
     <master.state
         id = "0"
         ctry = "Deutschland"
@@ -42,6 +44,15 @@
         iso_3166 = "DE"
         coord_x_ext = "123123"
         coord_y_ext = "321321"
+    />
+    <master.state
+        id = "1"
+        ctry = "Belgien"
+        ctry_orig_id = "1"
+        iso_3166 = "BE"
+        spat_ref_sys_id = "4"
+        coord_x_ext = "5"
+        coord_y_ext = "51"
     />
     <master.admin_unit
         id = "11000000"
@@ -62,8 +73,6 @@
         is_rural_dist = "true"
         is_gov_dist = "false"
     />
-    <master.spat_ref_sys id = "4" />
-    <master.spat_ref_sys id = "5" />
     <master.regulation id = "2" />
     <master.sample_specif
         id = "A74"

@@ -37,6 +37,7 @@ public class OrtTest extends ServiceTest {
     private JsonObject create;
     private String testImage;
     private JsonObject createIncomplete;
+    private JsonObject createStateSite;
 
     @Override
     public void init(
@@ -64,7 +65,7 @@ public class OrtTest extends ServiceTest {
         // Load object to test POST request
         create = readJsonResource("/datasets/ort.json");
         createIncomplete = readJsonResource("/datasets/ort_incomplete.json");
-        Assert.assertNotNull(create);
+        createStateSite = readJsonResource("/datasets/ort_state.json");
 
         testImage = readTxtResource("/datasets/testImage.txt");
     }
@@ -139,6 +140,9 @@ public class OrtTest extends ServiceTest {
         /*Test creation of site objects without an admin unit
           which should be completed by the server*/
         create("rest/site", createIncomplete);
+
+        // Test creation of site object with a state given
+        create("rest/site", createStateSite);
 
         update("rest/site/" + createdId,
             "longText", "Langer Text", "Längerer Text");

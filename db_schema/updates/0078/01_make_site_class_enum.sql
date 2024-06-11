@@ -10,18 +10,21 @@ UPDATE master.base_query SET sql = replace(
     'LEFT JOIN master.site_class ON site.site_class_id = site_class.id',
     ' ');
 
--- Move to enum
-CREATE TYPE site_class AS ENUM ('DYN', 'GP', 'REI', 'VE', 'ST');
-CREATE CAST (varchar AS site_class) WITH INOUT AS ASSIGNMENT;
-
-ALTER TABLE master.site ADD site_class_id_ site_class;
+-- Move identifier
+ALTER TABLE master.site ADD site_class_id_ char(3);
 UPDATE master.site SET site_class_id_ = (
     SELECT ext_id FROM master.site_class WHERE id = site_class_id);
 ALTER TABLE master.site DROP site_class_id;
 ALTER TABLE master.site RENAME site_class_id_ TO site_class_id;
 ALTER TABLE master.site ALTER site_class_id SET NOT NULL;
 
-DROP TABLE master.site_class;
+ALTER TABLE master.site_class
+    DROP id,
+    DROP name,
+    ADD PRIMARY KEY (ext_id);
+
+ALTER TABLE master.site
+    ADD FOREIGN KEY (site_class_id) REFERENCES master.site_class;
 
 -- Recreate view
 CREATE VIEW stamm.ort AS SELECT
