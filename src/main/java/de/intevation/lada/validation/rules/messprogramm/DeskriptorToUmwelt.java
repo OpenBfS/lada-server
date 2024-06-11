@@ -33,7 +33,17 @@ public class DeskriptorToUmwelt extends DeskriptorToUmweltImpl {
         ) {
             return null;
         }
-        return doExecute(
+
+        // Downgrade warnings to notifications
+        Violation violation = doExecute(
             envDescripDisplay, envMediumId, messprogramm.getRegulationId());
+        if (violation != null && violation.hasWarnings()) {
+            Violation notifications = new Violation();
+            notifications.addErrors(violation.getErrors());
+            notifications.addNotifications(violation.getWarnings());
+            notifications.addNotifications(violation.getNotifications());
+            return notifications;
+        }
+        return violation;
     }
 }

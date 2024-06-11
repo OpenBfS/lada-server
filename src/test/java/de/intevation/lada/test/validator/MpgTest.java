@@ -13,10 +13,10 @@ import jakarta.inject.Inject;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
-import org.junit.Assert;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.Mpg;
+import de.intevation.lada.model.lada.Mpg_;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
@@ -443,13 +443,10 @@ public class MpgTest extends ValidatorBaseTest {
         mpg.setEnvDescripDisplay(EXAMPLE_ENV_DESCRIP_FROM_SAMPLE_DATA);
         mpg.setEnvMediumId("L54");
 
-        String warningKey = "envMediumId";
-        validator.validate(mpg);
-        Assert.assertTrue(mpg.hasWarnings());
-        Assert.assertTrue(mpg.getWarnings()
-            .containsKey(warningKey));
-        Assert.assertTrue(mpg.getWarnings().get(warningKey)
-            .contains(String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
+        assertHasNotifications(
+            validator.validate(mpg),
+            Mpg_.ENV_MEDIUM_ID,
+            String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
     }
 
     /**
