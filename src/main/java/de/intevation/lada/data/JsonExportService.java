@@ -22,6 +22,7 @@ import jakarta.ws.rs.Path;
 
 import org.apache.commons.io.IOUtils;
 
+import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
@@ -56,7 +57,7 @@ public class JsonExportService extends LadaService {
      */
     @Inject
     @ExportConfig(format = ExportFormat.JSON)
-    private Exporter exporter;
+    private Exporter<QueryExportParameters> exporter;
 
     /**
      * The authorization module.

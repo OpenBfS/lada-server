@@ -18,6 +18,7 @@ import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -31,6 +32,9 @@ import jakarta.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
 
+import de.intevation.lada.data.requests.CsvExportParameters;
+import de.intevation.lada.data.requests.LafExportParameters;
+import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.ExportJobManager;
 import de.intevation.lada.i18n.I18n;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -133,7 +137,7 @@ public class AsyncExportService extends LadaService {
     @POST
     @Path("csv")
     public Response createCsvExportJob(
-        JsonObject objects,
+        CsvExportParameters objects,
         @Context HttpServletRequest request
     ) {
         Charset encoding;
@@ -191,7 +195,8 @@ public class AsyncExportService extends LadaService {
     @POST
     @Path("laf")
     public Response createLafExportJob(
-        JsonObject objects,
+        @Valid
+        LafExportParameters objects,
         @Context HttpServletRequest request
     ) {
         Charset encoding;
@@ -202,12 +207,6 @@ public class AsyncExportService extends LadaService {
                 .entity((Object) "Invalid or unknown encoding requested")
                 .type(MediaType.TEXT_PLAIN)
                 .build();
-        }
-
-        //Check if requests contains either messung or probe ids
-        if (objects.getJsonArray("proben") == null
-            && objects.getJsonArray("messungen") == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
         }
 
         UserInfo userInfo = authorization.getInfo();
@@ -271,7 +270,7 @@ public class AsyncExportService extends LadaService {
     @POST
     @Path("json")
     public Response createJsonExportJob(
-        JsonObject objects,
+        QueryExportParameters objects,
         @Context HttpServletRequest request
     ) {
         UserInfo userInfo = authorization.getInfo();

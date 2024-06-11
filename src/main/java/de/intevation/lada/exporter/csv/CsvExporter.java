@@ -32,6 +32,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.jboss.logging.Logger;
 
+import de.intevation.lada.data.requests.CsvExportParameters;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
@@ -49,7 +50,7 @@ import de.intevation.lada.util.data.Repository;
  * @author <a href="mailto:awoestmann@intevation.de">Alexander Woestmann</a>
  */
 @ExportConfig(format = ExportFormat.CSV)
-public class CsvExporter implements Exporter {
+public class CsvExporter implements Exporter<CsvExportParameters> {
 
     @Inject Logger logger;
 
@@ -59,7 +60,7 @@ public class CsvExporter implements Exporter {
     /**
      * Enum storing all possible csv options.
      */
-    private enum CsvOptions {
+    public enum CsvOptions {
         comma(","), period("."), semicolon(";"), space(" "),
         singlequote("'"), doublequote("\""),
         linux("\n"), windows("\r\n");
@@ -158,7 +159,7 @@ public class CsvExporter implements Exporter {
     public InputStream export(
         Iterable<Map<String, Object>> queryResult,
         Charset encoding,
-        JsonObject options,
+        CsvExportParameters options,
         List<String> columnsToInclude,
         String subDataKey,
         Integer qId,
@@ -173,30 +174,15 @@ public class CsvExporter implements Exporter {
         //Parse options
         if (options != null) {
             try {
-                if (options.containsKey("csvOptions")) {
-                    JsonObject csvOptions = options.getJsonObject("csvOptions");
-                    decimalSeparator = CsvOptions.valueOf(
-                        csvOptions.containsKey("decimalSeparator")
-                        ? csvOptions.getString("decimalSeparator")
-                        : "period").getChar();
-                    fieldSeparator = CsvOptions.valueOf(
-                        csvOptions.containsKey("fieldSeparator")
-                        ? csvOptions.getString(
-                            "fieldSeparator") : "comma").getChar();
-                    rowDelimiter = CsvOptions.valueOf(
-                        csvOptions.containsKey("rowDelimiter")
-                        ? csvOptions.getString(
-                            "rowDelimiter") : "windows").getValue();
-                    quoteType = CsvOptions.valueOf(
-                        csvOptions.containsKey("quoteType")
-                        ? csvOptions.getString(
-                            "quoteType") : "doublequote").getChar();
-                }
-                final String subDataColumnNamesKey = "subDataColumnNames";
-                subDataColumnNames =
-                    options.containsKey(subDataColumnNamesKey)
-                    && !options.isNull(subDataColumnNamesKey)
-                    ? options.getJsonObject(subDataColumnNamesKey) : null;
+                decimalSeparator = options.getDecimalSeparator() != null
+                    ? options.getDecimalSeparator().getChar() : decimalSeparator;
+                fieldSeparator = options.getFieldSeparator() != null
+                    ? options.getFieldSeparator().getChar() : fieldSeparator;
+                rowDelimiter = options.getRowDelimiter() != null
+                    ? options.getRowDelimiter().getValue() : rowDelimiter;
+                quoteType = options.getQuoteType() != null
+                    ? options.getQuoteType().getChar() : quoteType;
+                subDataColumnNames = options.getSubDataColumnNames();
             } catch (IllegalArgumentException iae) {
                 logger.error(
                     String.format(

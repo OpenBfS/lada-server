@@ -7,6 +7,8 @@
  */
 package de.intevation.lada;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.CharacterCodingException;
@@ -373,10 +375,29 @@ public class ExporterTest extends BaseTest {
             .add("proben", Json.createArrayBuilder().add("xxx"))
             .add("invalidField", "xxx")
             .build();
-
         startExport(baseUrl, formatCsv, requestJson, Job.Status.ERROR);
         startExport(baseUrl, formatJson, requestJson, Job.Status.ERROR);
-        startExport(baseUrl, formatLaf, requestJson, Job.Status.ERROR);
+        exportRequest(baseUrl, formatLaf, requestJson,
+            Response.Status.BAD_REQUEST);
+    }
+
+    private Response exportRequest(
+            URL baseUrl, String format, JsonObject requestJson) {
+        return exportRequest(baseUrl, format, requestJson, Response.Status.OK);
+    }
+
+    private Response exportRequest(
+            URL baseUrl, String format, JsonObject requestJson,
+            Response.Status expectedStatus) {
+        Response response = client.target(
+            baseUrl + "data/asyncexport/" + format)
+            .request()
+            .header("X-SHIB-user", BaseTest.testUser)
+            .header("X-SHIB-roles", BaseTest.testRoles)
+            .post(Entity.entity(requestJson.toString(),
+                    MediaType.APPLICATION_JSON));
+        assertEquals(expectedStatus.getStatusCode(), response.getStatus());
+        return response;
     }
 
     private String startExport(
@@ -385,13 +406,7 @@ public class ExporterTest extends BaseTest {
         JsonObject requestJson,
         Job.Status expectedStatus
     ) throws InterruptedException {
-        Response exportCreated = client.target(
-            baseUrl + "data/asyncexport/" + format)
-            .request()
-            .header("X-SHIB-user", BaseTest.testUser)
-            .header("X-SHIB-roles", BaseTest.testRoles)
-            .post(Entity.entity(requestJson.toString(),
-                    MediaType.APPLICATION_JSON));
+        Response exportCreated = exportRequest(baseUrl, format, requestJson);
         JsonObject exportCreatedObject =
             parseResponse(exportCreated).asJsonObject();
 

@@ -12,20 +12,15 @@ import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import jakarta.json.JsonArray;
-import jakarta.json.JsonNumber;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonString;
-import jakarta.json.JsonValue;
-import jakarta.json.JsonValue.ValueType;
-
+import de.intevation.lada.data.requests.ExportParameters;
+import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
@@ -48,7 +43,7 @@ import de.intevation.lada.util.data.QueryBuilder;
 /**
  * Abstract class for an export of query results.
  */
-public abstract class QueryExportJob extends ExportJob {
+public abstract class QueryExportJob<T extends ExportParameters> extends ExportJob<T> {
 
     /**
      * True if subdata shall be fetched from the database and exported.
@@ -306,81 +301,42 @@ public abstract class QueryExportJob extends ExportJob {
 
     /**
      * Parse export parameters.
-     *
-     * @throws IllegalArgumentException if exportSubData is true but no
-     * subDataColumns arge given.
      */
     protected void parseExportParameters() {
-        if (exportParameters == null) {
+        if (exportParameters == null
+                || !(exportParameters instanceof QueryExportParameters)) {
             return;
         }
+        QueryExportParameters queryExportParameters = (QueryExportParameters) this.exportParameters;
         //Check if subdata shall be exported
-        this.exportSubdata = exportParameters.getBoolean(
-            "exportSubData", false);
+        this.exportSubdata = queryExportParameters.isExportSubData();
         //Get identifier type
-        this.idColumn = exportParameters.isNull("idField")
-            ? null : exportParameters.getString("idField");
+        this.idColumn = queryExportParameters.getIdField();
         //Get target timezone
-        final String timezoneKey = "timezone";
-        if (exportParameters.containsKey(timezoneKey)) {
+        if (queryExportParameters.getTimezone() != null) {
             this.dateFormat.setTimeZone(TimeZone.getTimeZone(
-                    exportParameters.getString(timezoneKey)));
-        }
-
-        //Check if sub data columns are present if subdata is exported
-        if (exportSubdata
-            && !exportParameters.containsKey("subDataColumns")
-        ) {
-            throw new IllegalArgumentException(
-                "Subdata is exported but no subdata columns are present");
+                queryExportParameters.getTimezone()));
         }
 
         //Get sub data columns
-        if (exportSubdata && exportParameters.containsKey("subDataColumns")) {
-            subDataColumns = new ArrayList<String>();
-            JsonArray columnJson =
-                exportParameters.getJsonArray("subDataColumns");
-            int columnCount = columnJson.size();
-            for (int i = 0; i < columnCount; i++) {
-                subDataColumns.add(columnJson.getString(i));
-            }
+        if (exportSubdata) {
+            subDataColumns = Arrays.asList(
+                queryExportParameters.getSubDataColumns());
         }
 
-        exportParameters.getJsonArray("columns").forEach(jsonValue -> {
-            JsonObject columnObj = (JsonObject) jsonValue;
-            GridColConf columnValue = new GridColConf();
-            columnValue.setGridColMpId(columnObj.getInt("gridColMpId"));
-            String sort = columnObj.get("sort") != null
-                && columnObj.get("sort").getValueType() == ValueType.STRING
-                ? columnObj.getString("sort") : null;
-            columnValue.setSort(sort);
-            Integer sortIndex = columnObj.get("sortIndex") != null
-                && columnObj.get("sortIndex").getValueType() == ValueType.NUMBER
-                ? columnObj.getInt("sortIndex") : null;
-            columnValue.setSortIndex(sortIndex);
-            columnValue.setFilterVal(
-                columnObj.getString("filterVal"));
-            columnValue.setIsFilterActive(
-                columnObj.getBoolean("isFilterActive"));
-            columnValue.setIsFilterNull(
-                columnObj.getBoolean("isFilterNull"));
-            columnValue.setIsFilterNegate(
-                columnObj.getBoolean("isFilterNegate"));
-            columnValue.setIsFilterRegex(
-                columnObj.getBoolean("isFilterRegex"));
+        queryExportParameters.getColumns().forEach(column -> {
             GridColMp gridColumn = repository.getById(
-                GridColMp.class, columnValue.getGridColMpId());
+                GridColMp.class, column.getGridColMpId());
 
-            columnValue.setGridColMp(gridColumn);
+            column.setGridColMp(gridColumn);
 
             //Check if the column contains the id
-            if (columnValue.getGridColMp().getDataIndex().equals(idColumn)) {
+            if (column.getGridColMp().getDataIndex().equals(idColumn)) {
                 // Get the column type
                 this.idType = gridColumn.getDisp().getName();
 
                 // Get IDs to filter result
-                JsonArray idsToExport = exportParameters
-                    .getJsonArray("idFilter");
+                List<String> idsToExport = queryExportParameters.getIdFilter();
 
                 if (idsToExport != null && idsToExport.size() > 0) {
                     // Prepare filtering by IDs
@@ -396,40 +352,18 @@ public abstract class QueryExportJob extends ExportJob {
                     //-> de.intevation.lada.model.stammdaten.Filter
                     repository.entityManager().detach(gridColumn);
 
-                    StringBuilder filterValue = new StringBuilder();
-                    for (
-                        Iterator<JsonValue> ids = idsToExport.iterator();
-                        ids.hasNext();
-                    ) {
-                        JsonValue id = ids.next();
-                        switch (id.getValueType()) {
-                        case NUMBER:
-                            filterValue.append(
-                                ((JsonNumber) id).toString());
-                            break;
-                        case STRING:
-                            filterValue.append(
-                                ((JsonString) id).getString());
-                            break;
-                        default:
-                            throw new IllegalArgumentException(
-                                "IDs must be number or string");
-                        }
-                        if (ids.hasNext()) {
-                            filterValue.append(",");
-                        }
-                    }
-                    columnValue.setFilterVal(filterValue.toString());
-                    columnValue.setIsFilterActive(true);
-                    columnValue.setIsFilterNull(false);
-                    columnValue.setIsFilterNegate(false);
-                    columnValue.setIsFilterRegex(false);
+                    String filterValue = String.join(",", idsToExport);
+                    column.setFilterVal(filterValue);
+                    column.setIsFilterActive(true);
+                    column.setIsFilterNull(false);
+                    column.setIsFilterNegate(false);
+                    column.setIsFilterRegex(false);
                 }
 
             }
-            columns.add(columnValue);
-            if (columnObj.getBoolean("export")) {
-                columnsToExport.add(columnValue.getGridColMp().getDataIndex());
+            columns.add(column);
+            if (column.isExport()) {
+                columnsToExport.add(column.getGridColMp().getDataIndex());
             }
         });
 
