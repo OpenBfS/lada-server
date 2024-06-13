@@ -15,7 +15,6 @@ public class StatusCodes {
     public static final int NOT_A_COMMENT = 607;
     public static final int ERROR_DB_CONNECTION = 603;
     public static final int ERROR_VALIDATION = 604;
-    public static final int VALUE_AMBIGOUS = 611;
     public static final int VALUE_MISSING = 631;
     public static final int VALUE_NOT_MATCHING = 632;
     public static final int VAL_DESK = 633;

@@ -42,9 +42,10 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @Unique(fields = {"typeRegulation", "sampleId", "siteId"},
     groups = DatabaseConstraints.class, clazz = Geolocat.class)
 @Unique(fields = {"sampleId"},
-    predicateFields = { "typeRegulation" }, predicateValues = { "E" },
+    predicateFields = { "typeRegulation" },
+    predicateValues = { "ANY (ARRAY['E', 'R'])" },
     propertyNodeName = "typeRegulation",
-    message = "{de.intevation.lada.validation.GeolocatUniqueTypeRegulationE}",
+    message = "{de.intevation.lada.validation.GeolocatUniqueSamplingLocation}",
     groups = DatabaseConstraints.class, clazz = Geolocat.class)
 public class Geolocat extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;

@@ -59,7 +59,11 @@ public @interface Unique {
     String[] predicateFields() default { };
 
     /**
-     * The values to be used with predicateFields.
+     * The values to be used with predicateFields given as literal SQL.
+     *
+     * Values must be any valid SQL expression that can be used at
+     * the right-hand side of the '=' operator to be compared with
+     * actual values of the matching predicate field.
      */
     String[] predicateValues() default { };
 

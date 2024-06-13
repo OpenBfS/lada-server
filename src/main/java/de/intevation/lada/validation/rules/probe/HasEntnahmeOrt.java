@@ -58,21 +58,11 @@ public class HasEntnahmeOrt implements Rule {
             .queryBuilder(Geolocat.class)
             .and("sampleId", id)
             .andIn("typeRegulation", expectedTypeRegs);
-        List<Geolocat> orte = repository.filter(builder.getQuery());
-
-        if (orte.size() > 1) {
+        if (repository.filter(builder.getQuery()).isEmpty()) {
             Violation violation = new Violation();
-            violation.addWarning("geolocats", StatusCodes.VALUE_AMBIGOUS);
+            violation.addWarning("geolocats", StatusCodes.VALUE_MISSING);
             return violation;
         }
-        // Continues only if there is at most one geolocat
-        if (!orte.isEmpty()) {
-            return null;
-        }
-
-        Violation violation = new Violation();
-        violation.addWarning("geolocats", StatusCodes.VALUE_MISSING);
-        return violation;
+        return null;
     }
-
 }

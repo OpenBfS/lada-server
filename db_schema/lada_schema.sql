@@ -328,7 +328,7 @@ CREATE TABLE geolocat (
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE(sample_id, site_id, type_regulation),
-    EXCLUDE (sample_id WITH =) WHERE (type_regulation = 'E')
+    EXCLUDE (sample_id WITH =) WHERE (type_regulation IN('E', 'R'))
 );
 CREATE TRIGGER last_mod_geolocat BEFORE UPDATE ON geolocat FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 CREATE TRIGGER tree_mod_geolocat BEFORE UPDATE ON geolocat FOR EACH ROW EXECUTE PROCEDURE update_tree_mod();
@@ -347,7 +347,7 @@ CREATE TABLE geolocat_mpg (
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     tree_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
     UNIQUE(mpg_id, site_id, type_regulation),
-    EXCLUDE (mpg_id WITH =) WHERE (type_regulation = 'E')
+    EXCLUDE (mpg_id WITH =) WHERE (type_regulation IN('E', 'R'))
 );
 CREATE TRIGGER last_mod_geolocat_mpg BEFORE UPDATE ON geolocat_mpg FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 

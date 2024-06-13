@@ -488,51 +488,6 @@
         is_scheduled = "true"
         tree_mod = "2012-05-09 12:00:00"
     />
-    <!-- Geolcat test data-->
-    <lada.mpg
-        id = "998"
-        is_test = "false"
-        meas_facil_id = "06010"
-        appr_lab_id = "06010"
-        regulation_id = "1"
-        admin_unit_id = "11000000"
-        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
-        env_medium_id = "L61"
-        sample_meth_id = "1"
-        sample_pd = "M"
-        sample_pd_start_date = "1"
-        sample_pd_end_date = "30"
-        sample_pd_offset = "0"
-        valid_start_date = "1"
-        valid_end_date = "365"
-        last_mod= "2015-03-01 12:00:00"
-    />
-    <lada.mpg
-        id = "999"
-        is_test = "false"
-        meas_facil_id = "06010"
-        appr_lab_id = "06010"
-        regulation_id = "1"
-        admin_unit_id = "11000000"
-        env_descrip_display = "D: 50 90 01 06 02 05 00 00 00 00 00 00"
-        env_medium_id = "L61"
-        sample_meth_id = "1"
-        sample_pd = "M"
-        sample_pd_start_date = "1"
-        sample_pd_end_date = "30"
-        sample_pd_offset = "0"
-        valid_start_date = "1"
-        valid_end_date = "365"
-        last_mod= "2015-03-01 12:00:00"
-    />
-    <lada.geolocat_mpg
-        id = "1000"
-        type_regulation = "E"
-        mpg_id = "999"
-        site_id = "1000"
-        add_site_text = "Test"
-        last_mod = "2012-05-07 09:00:00"
-    />
 
     <master.tag
         id = "1000"

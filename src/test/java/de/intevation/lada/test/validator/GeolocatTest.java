@@ -9,7 +9,6 @@ package de.intevation.lada.test.validator;
 
 import jakarta.inject.Inject;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.Geolocat;
@@ -24,14 +23,20 @@ public class GeolocatTest extends ValidatorBaseTest {
 
     // Other contstants
     public static final int SAMPLE_WITH_E_GEOLOCAT = 1000;
+    public static final int SAMPLE_WITH_R_GEOLOCAT = 25001;
     public static final int SAMPLE_WITHOUT_E_GEOLOCAT = 3000;
     public static final int MPG_WITH_E_GEOLOCAT = 999;
+    public static final int MPG_WITH_R_GEOLOCAT = 997;
     public static final int MPG_WITHOUT_E_GEOLOCAT = 998;
     public static final int REFERENCED_SITE_ID = 1000;
     public static final int EXISTING_SITE_ID = 1001;
 
     private static final String TYPE_REGULATION_E = "E";
+    private static final String TYPE_REGULATION_R = "R";
     private static final String TYPE_REGULATION_U = "U";
+
+    private static final String MSG_UNIQUE_SAMPLING_LOCATION =
+        "Sampling location (typeRegulation \"E\" or \"R\") must be unique";
 
     @Inject
     private Validator<Geolocat> sampleVal;
@@ -39,7 +44,15 @@ public class GeolocatTest extends ValidatorBaseTest {
     private Validator<GeolocatMpg> mpgVal;
 
     /**
-     * Test geolocat with sample which already has a E-Type geolocat.
+     * Constructor.
+     * Sets test dataset.
+     */
+    public GeolocatTest() {
+        this.testDatasetName = "datasets/dbUnit_geolocat_validator.xml";
+    }
+
+    /**
+     * Test adding E-type geolocat to sample which already has E-type geolocat.
      */
     @Test
     public void geolocatDuplicateETypeRegulation() {
@@ -52,7 +65,41 @@ public class GeolocatTest extends ValidatorBaseTest {
         assertHasErrors(
             loc,
             TYPE_REGULATION,
-            "Geolocation with typeRegulation \"E\" must be unique");
+            MSG_UNIQUE_SAMPLING_LOCATION);
+    }
+
+    /**
+     * Test adding R-type geolocat to sample which already has R-type geolocat.
+     */
+    @Test
+    public void geolocatDuplicateRTypeRegulation() {
+        Geolocat loc = new Geolocat();
+        loc.setTypeRegulation(TYPE_REGULATION_R);
+        loc.setSampleId(SAMPLE_WITH_R_GEOLOCAT);
+        loc.setSiteId(EXISTING_SITE_ID);
+
+        sampleVal.validate(loc);
+        assertHasErrors(
+            loc,
+            TYPE_REGULATION,
+            MSG_UNIQUE_SAMPLING_LOCATION);
+    }
+
+    /**
+     * Test adding R-type geolocat to sample which already has E-type geolocat.
+     */
+    @Test
+    public void geolocatDuplicateSamplingLocation() {
+        Geolocat loc = new Geolocat();
+        loc.setTypeRegulation(TYPE_REGULATION_R);
+        loc.setSampleId(SAMPLE_WITH_E_GEOLOCAT);
+        loc.setSiteId(EXISTING_SITE_ID);
+
+        sampleVal.validate(loc);
+        assertHasErrors(
+            loc,
+            TYPE_REGULATION,
+            MSG_UNIQUE_SAMPLING_LOCATION);
     }
 
     @Test
@@ -62,10 +109,8 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setSampleId(SAMPLE_WITH_E_GEOLOCAT);
         loc.setSiteId(REFERENCED_SITE_ID);
 
-        sampleVal.validate(loc);
-        Assert.assertTrue(loc.hasErrors());
         assertHasErrors(
-            loc,
+            sampleVal.validate(loc),
             TYPE_REGULATION,
             "Non-unique value combination for "
                 + "[typeRegulation, sampleId, siteId]");
@@ -81,8 +126,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setSampleId(SAMPLE_WITHOUT_E_GEOLOCAT);
         loc.setSiteId(EXISTING_SITE_ID);
 
-        sampleVal.validate(loc);
-        Assert.assertFalse(loc.hasErrors());
+        assertNoMessages(sampleVal.validate(loc));
     }
 
     /**
@@ -100,7 +144,7 @@ public class GeolocatTest extends ValidatorBaseTest {
     }
 
     /**
-     * Test geolocat with mpg which already has a E-Type geolocat.
+     * Test adding E-type geolocat to Mpg which already has E-type geolocat.
      */
     @Test
     public void geolocatMpgDuplicateETypeRegulation() {
@@ -113,7 +157,41 @@ public class GeolocatTest extends ValidatorBaseTest {
         assertHasErrors(
             loc,
             TYPE_REGULATION,
-            "Geolocation with typeRegulation \"E\" must be unique");
+            MSG_UNIQUE_SAMPLING_LOCATION);
+    }
+
+    /**
+     * Test adding R-type geolocat to Mpg which already has R-type geolocat.
+     */
+    @Test
+    public void geolocatMpgDuplicateRTypeRegulation() {
+        GeolocatMpg loc = new GeolocatMpg();
+        loc.setTypeRegulation(TYPE_REGULATION_R);
+        loc.setMpgId(MPG_WITH_R_GEOLOCAT);
+        loc.setSiteId(EXISTING_SITE_ID);
+
+        mpgVal.validate(loc);
+        assertHasErrors(
+            loc,
+            TYPE_REGULATION,
+            MSG_UNIQUE_SAMPLING_LOCATION);
+    }
+
+    /**
+     * Test adding R-type geolocat to Mpg which already has E-type geolocat.
+     */
+    @Test
+    public void geolocatMpgDuplicateSamplingLocation() {
+        GeolocatMpg loc = new GeolocatMpg();
+        loc.setTypeRegulation(TYPE_REGULATION_R);
+        loc.setMpgId(MPG_WITH_E_GEOLOCAT);
+        loc.setSiteId(EXISTING_SITE_ID);
+
+        mpgVal.validate(loc);
+        assertHasErrors(
+            loc,
+            TYPE_REGULATION,
+            MSG_UNIQUE_SAMPLING_LOCATION);
     }
 
     @Test
@@ -139,8 +217,8 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setTypeRegulation(TYPE_REGULATION_E);
         loc.setMpgId(MPG_WITHOUT_E_GEOLOCAT);
         loc.setSiteId(EXISTING_SITE_ID);
-        mpgVal.validate(loc);
-        Assert.assertFalse(loc.hasErrors());
+
+        assertNoMessages(mpgVal.validate(loc));
     }
 
     /**

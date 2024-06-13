@@ -14,9 +14,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.persistence.Id;
@@ -45,7 +47,6 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
     private boolean[] predicateIsNull;
 
     private Map<String, Method> fieldGetters = new HashMap<>();
-    private Map<String, Method> predicateGetters = new HashMap<>();
 
     private String idField;
     private Method idGetter;
@@ -66,14 +67,11 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
 
         try {
             // Getter methods for fields given in annotation
-            for (String field: this.fields) {
+            for (String field: Stream.concat(
+                    Arrays.stream(this.fields),
+                    Arrays.stream(this.predicateFields)).toList()
+            ) {
                 this.fieldGetters.put(
-                    field,
-                    new PropertyDescriptor(field, clazz).getReadMethod());
-            }
-
-            for (String field: this.predicateFields) {
-                this.predicateGetters.put(
                     field,
                     new PropertyDescriptor(field, clazz).getReadMethod());
             }
@@ -101,22 +99,33 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
             List<String> whereClauseParams = new ArrayList<>();
             for (int i = 0; i < fields.length; i++) {
                 whereClauseParams.add(NamingStrategy.camelToSnake(fields[i])
-                    + "=:" + fields[i]);
+                    + "=" + param(fields[i]));
             }
             whereClauseParams.add(
                 NamingStrategy.camelToSnake(idField)
-                + " IS DISTINCT FROM :" + idField);
+                + " IS DISTINCT FROM " + param(idField));
             for (int i = 0; i < this.predicateFields.length; i++) {
                 final String predicateFieldName =
                     NamingStrategy.camelToSnake(this.predicateFields[i]);
                 if (this.predicateIsNull.length > i
                     && this.predicateIsNull[i]
                 ) {
-                    whereClauseParams.add(predicateFieldName + " IS NULL");
+                    final String isNull = " IS NULL";
+                    whereClauseParams.add(predicateFieldName + isNull);
+                    // For partial constraint, only consider entities
+                    // matching predicate
+                    whereClauseParams.add(
+                        "CAST(" + param(this.predicateFields[i]) + " AS text)"
+                        + isNull);
                 } else {
                     whereClauseParams.add(
                         predicateFieldName
-                        + "='" + this.predicateValues[i] + "'");
+                        + "=" + this.predicateValues[i]);
+                    // For partial constraint, only consider entities
+                    // matching predicate
+                    whereClauseParams.add(
+                        param(this.predicateFields[i])
+                        + "=" + this.predicateValues[i]);
                 }
             }
             this.whereClause = String.join(" AND ", whereClauseParams);
@@ -136,23 +145,6 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
             return true;
         }
         try {
-            // For partial constraint, only consider entities matching predicate
-            for (int i = 0; i < this.predicateFields.length; i++) {
-                String entityPredicateVal = (String) this.predicateGetters
-                    .get(this.predicateFields[i]).invoke(entity);
-                if (this.predicateIsNull.length > i
-                    && this.predicateIsNull[i]
-                ) {
-                    if (entityPredicateVal != null) {
-                        return true;
-                    }
-                } else if (
-                    !this.predicateValues[i].equals(entityPredicateVal)
-                ) {
-                    return true;
-                }
-            }
-
             // Get instance programmatically because dependency injection
             // is not guaranteed to work in ConstraintValidator implementations
             Query exists = CDI.current().getBeanContainer().createInstance()
@@ -164,7 +156,7 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
                         this.whereClause),
                     Boolean.class);
             exists.setParameter(this.idField, this.idGetter.invoke(entity));
-            for (String field: this.fields) {
+            for (String field: this.fieldGetters.keySet()) {
                 exists.setParameter(
                     field, this.fieldGetters.get(field).invoke(entity));
             }
@@ -179,5 +171,10 @@ public class UniqueValidator implements ConstraintValidator<Unique, Object> {
         } catch (IllegalAccessException | InvocationTargetException e) {
             return false;
         }
+    }
+
+    private String param(String name) {
+        final String paramPrefix = ":";
+        return paramPrefix + name;
     }
 }
