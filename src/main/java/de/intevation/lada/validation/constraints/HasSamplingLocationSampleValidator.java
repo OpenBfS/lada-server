@@ -5,48 +5,60 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.validation.rules.probe;
+package de.intevation.lada.validation.constraints;
 
 import java.util.List;
 
-import jakarta.inject.Inject;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.validation.Violation;
-import de.intevation.lada.validation.annotation.ValidationRule;
-import de.intevation.lada.validation.rules.Rule;
+
 
 /**
- * Validation rule for probe.
- * Validates if the probe has a "entnahmeort".
+ * Validation rule for Sample.
+ * Validates if a sampling location is given.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-@ValidationRule("Sample")
-public class HasEntnahmeOrt implements Rule {
+public class HasSamplingLocationSampleValidator
+    implements ConstraintValidator<HasSamplingLocation, Sample> {
 
     private static final int REG_REI_I = 4;
     private static final int REG_REI_X = 3;
     private static final String TYPE_REG_E = "E";
     private static final String TYPE_REG_R = "R";
 
-    @Inject
-    private Repository repository;
+    private String message;
 
     @Override
-    public Violation execute(Object object) {
-        Sample probe = (Sample) object;
+    public void initialize(HasSamplingLocation constraintAnnotation) {
+        this.message = constraintAnnotation.message();
+    }
+
+    @Transactional
+    @Override
+    public boolean isValid(Sample probe, ConstraintValidatorContext ctx) {
+        if (probe == null || probe.getRegulationId() == null) {
+            return true;
+        }
         Integer id = probe.getId();
 
-        Violation violation = new Violation();
-        violation.addWarning("geolocats", StatusCodes.VALUE_MISSING);
+        ctx.disableDefaultConstraintViolation();
+        ctx.buildConstraintViolationWithTemplate(message)
+            .addPropertyNode("geolocats")
+            .addConstraintViolation();
         if (id == null) {
-            return violation;
+            return false;
         }
+
+        Repository repository = CDI.current().getBeanContainer()
+            .createInstance().select(Repository.class).get();
 
         final int regulation = probe.getRegulationId();
         final List<String> expectedTypeRegs =
@@ -60,8 +72,8 @@ public class HasEntnahmeOrt implements Rule {
             .and("sampleId", id)
             .andIn("typeRegulation", expectedTypeRegs);
         if (repository.filter(builder.getQuery()).isEmpty()) {
-            return violation;
+            return false;
         }
-        return null;
+        return true;
     }
 }
