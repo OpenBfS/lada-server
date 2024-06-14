@@ -39,6 +39,7 @@ abstract class HasMeasmStartDate {
         String message
     ) {
         if (messung != null
+            && messung.getSampleId() != null
             && messung.getMeasmStartDate() == null
         ) {
             ctx.disableDefaultConstraintViolation();
