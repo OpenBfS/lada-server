@@ -41,9 +41,10 @@ public class HasEntnahmeOrt implements Rule {
     public Violation execute(Object object) {
         Sample probe = (Sample) object;
         Integer id = probe.getId();
+
+        Violation violation = new Violation();
+        violation.addWarning("geolocats", StatusCodes.VALUE_MISSING);
         if (id == null) {
-            Violation violation = new Violation();
-            violation.addWarning("geolocats", StatusCodes.VALUE_MISSING);
             return violation;
         }
 
@@ -59,8 +60,6 @@ public class HasEntnahmeOrt implements Rule {
             .and("sampleId", id)
             .andIn("typeRegulation", expectedTypeRegs);
         if (repository.filter(builder.getQuery()).isEmpty()) {
-            Violation violation = new Violation();
-            violation.addWarning("geolocats", StatusCodes.VALUE_MISSING);
             return violation;
         }
         return null;
