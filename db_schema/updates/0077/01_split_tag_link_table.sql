@@ -90,3 +90,38 @@ UPDATE master.base_query
 */
 
 DROP TABLE tag_link;
+
+--
+-- Name: mv_tags_array; Type: MATERIALIZED VIEW; Schema: lada; Owner: postgres
+-- Prebuild tag array for sid and mid (sample and measurement) to avoid timeout error for selections
+
+CREATE MATERIALIZED VIEW lada.mv_tags_array AS
+ SELECT sample.id AS pid, measm.id as mid
+ , array_agg(tag.name) AS tags
+ FROM lada.sample
+ INNER JOIN lada.measm ON sample.id = measm.sample_id
+ LEFT OUTER JOIN lada.tag_link_measm ON measm.id = tag_link_measm.measm_id
+ LEFT OUTER JOIN lada.tag_link_sample ON sample.id = tag_link_sample.sample_id 
+ JOIN master.tag ON (tag_link_sample.tag_id = tag.id OR tag_link_measm.tag_id = tag.id)
+ GROUP BY sample.id, measm.id;
+ 
+CREATE UNIQUE INDEX mv_tags_array_idx ON lada.mv_tags_array (pid, mid);
+GRANT SELECT ON lada.mv_tags_array TO lada;
+
+CREATE OR REPLACE FUNCTION lada.refresh_mv_tags_array()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+    REFRESH MATERIALIZED VIEW CONCURRENTLY lada.mv_tags_array;
+    RETURN NULL;
+END;
+$$;
+
+CREATE TRIGGER mv_tags_array_update_sample
+AFTER INSERT OR UPDATE OR DELETE
+ON lada.tag_link_sample
+FOR EACH STATEMENT EXECUTE PROCEDURE lada.refresh_mv_tags_array();
+
+CREATE TRIGGER mv_tags_array_update_measm
+AFTER INSERT OR UPDATE OR DELETE
+ON lada.tag_link_measm
+FOR EACH STATEMENT EXECUTE PROCEDURE lada.refresh_mv_tags_array();
