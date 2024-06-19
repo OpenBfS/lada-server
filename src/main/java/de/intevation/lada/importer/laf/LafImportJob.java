@@ -24,9 +24,7 @@ import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
-import jakarta.json.JsonString;
-import jakarta.json.JsonValue;
-
+import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.ImportConf_;
 import de.intevation.lada.model.master.MeasFacil;
@@ -49,7 +47,7 @@ public class LafImportJob extends Job {
 
     private Map<String, Map<String, Object>> importData;
 
-    private JsonObject jsonInput;
+    private LafImportParameters importParams;
 
     private MeasFacil mst;
 
@@ -95,19 +93,9 @@ public class LafImportJob extends Job {
         logger.debug("Starting LAF import");
 
         //Get file content strings from input object
-        JsonObject filesObject = jsonInput.getJsonObject("files");
+        Map<String, String> filesMap = importParams.getFiles();
 
-        // TODO: handle this upfront in the service
-        Charset charset;
-        try {
-            charset = Charset.forName(jsonInput.getString("encoding"));
-        } catch (IllegalArgumentException e) {
-            result = createResult(
-                false,
-                StatusCodes.IMP_INVALID_VALUE,
-                "No valid encoding name given");
-            return;
-        }
+        Charset charset = Charset.forName(importParams.getEncoding());
 
         //Contains: fileName: fileContent as String
         Map<String, String> files = new HashMap<String, String>();
@@ -119,8 +107,8 @@ public class LafImportJob extends Job {
 
         // TODO: Handle this upfront in the service
         try {
-            for (Map.Entry<String, JsonValue> e : filesObject.entrySet()) {
-                String base64String = ((JsonString) e.getValue()).getString();
+            for (Map.Entry<String, String> e : filesMap.entrySet()) {
+                String base64String = e.getValue();
                 ByteBuffer decodedBytes = ByteBuffer.wrap(
                     Base64.getDecoder().decode(base64String));
                 String decodedContent = new String(
@@ -203,8 +191,8 @@ public class LafImportJob extends Job {
         logger.debug("Finished LAF import");
     }
 
-    public void setJsonInput(JsonObject jsonInput) {
-         this.jsonInput = jsonInput;
+    public void setImportParameters(LafImportParameters importParameters) {
+         this.importParams = importParameters;
     }
 
     public void setMst(MeasFacil mst) {

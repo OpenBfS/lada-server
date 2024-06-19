@@ -10,10 +10,9 @@ package de.intevation.lada.data;
 import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -23,6 +22,7 @@ import jakarta.ws.rs.core.Response;
 
 import org.jboss.logging.Logger;
 
+import de.intevation.lada.data.requests.LafImportParameters;
 import de.intevation.lada.importer.ImportJobManager;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -31,7 +31,6 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.JobManager.JobNotFoundException;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.util.data.Job.JobStatus;
 import de.intevation.lada.rest.LadaService;
 
@@ -80,25 +79,11 @@ public class AsyncImportService extends LadaService {
     @POST
     @Path("laf")
     public Response createAsyncImport(
-        JsonObject jsonInput,
+        @Valid LafImportParameters jsonInput,
         @Context HttpServletRequest request
     ) {
-        JsonObjectBuilder errBuilder = Json.createObjectBuilder()
-            .add("success", false)
-            .add("status", StatusCodes.NOT_ALLOWED);
-
-        String mstId = request.getHeader("X-LADA-MST");
-        if (mstId == null) {
-            errBuilder.add("data", "Missing header for messtelle.");
-            return Response.ok(errBuilder.build().toString()).build();
-        }
-        MeasFacil mst;
-        try {
-            mst = repository.getById(MeasFacil.class, mstId);
-        } catch (NotFoundException nfe) {
-            errBuilder.add("data", "Wrong header for messtelle.");
-            return Response.ok(errBuilder.build().toString()).build();
-        }
+        MeasFacil mst = repository.getById(
+                MeasFacil.class, jsonInput.getMeasFacilId());
 
         UserInfo userInfo = authorization.getInfo();
         String newJobId =

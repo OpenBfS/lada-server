@@ -710,6 +710,7 @@ public class ImporterTest extends BaseTest {
         /* Request asynchronous import */
         JsonObject requestJson = Json.createObjectBuilder()
             .add("encoding", "utf-8")
+            .add("measFacilId", mstId)
             .add("files", Json.createObjectBuilder()
                 .add(fileName, Base64.getEncoder().encodeToString(
                         lafData.getBytes(StandardCharsets.UTF_8))))
@@ -719,7 +720,6 @@ public class ImporterTest extends BaseTest {
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
-            .header("X-LADA-MST", mstId)
             .acceptLanguage(locale)
             .post(Entity.entity(requestJson.toString(),
                     MediaType.APPLICATION_JSON));
