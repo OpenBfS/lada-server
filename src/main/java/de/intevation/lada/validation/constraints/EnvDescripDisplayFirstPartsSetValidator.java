@@ -11,6 +11,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
 
 
 /**
@@ -50,7 +51,7 @@ public class EnvDescripDisplayFirstPartsSetValidator
         ) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
-                .addPropertyNode("envDescripDisplay")
+                .addPropertyNode(Sample_.ENV_DESCRIP_DISPLAY)
                 .addConstraintViolation();
             return false;
         }

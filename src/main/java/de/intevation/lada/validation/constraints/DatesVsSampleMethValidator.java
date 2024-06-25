@@ -13,6 +13,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
 
 
 /**
@@ -43,7 +44,7 @@ public class DatesVsSampleMethValidator
         ) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
-                .addPropertyNode("sampleMethId")
+                .addPropertyNode(Sample_.SAMPLE_METH_ID)
                 .addConstraintViolation();
             return false;
         }

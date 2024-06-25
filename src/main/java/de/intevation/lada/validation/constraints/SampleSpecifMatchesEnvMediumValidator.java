@@ -16,6 +16,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.model.master.EnvSpecifMp;
 import de.intevation.lada.model.master.EnvSpecifMp_;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -64,7 +65,7 @@ public class SampleSpecifMatchesEnvMediumValidator implements
             if (umwZus.isEmpty()) {
                 ctx.disableDefaultConstraintViolation();
                 ctx.buildConstraintViolationWithTemplate(this.message)
-                    .addPropertyNode("sampleSpecifId")
+                    .addPropertyNode(SampleSpecifMeasVal_.SAMPLE_SPECIF_ID)
                     .addConstraintViolation();
                 return false;
             }

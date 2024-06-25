@@ -15,6 +15,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.Repository;
 
@@ -64,7 +65,7 @@ public class MeasuringAfterSamplingValidator
         ) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
-                .addPropertyNode("measmStartDate")
+                .addPropertyNode(Measm_.MEASM_START_DATE)
                 .addConstraintViolation();
             return false;
         }

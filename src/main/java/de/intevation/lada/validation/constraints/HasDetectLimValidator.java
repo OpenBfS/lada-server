@@ -11,6 +11,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 
 
 /**
@@ -34,7 +35,7 @@ public class HasDetectLimValidator
             isValid = false;
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(HasDetectLim.MSG)
-                .addPropertyNode("detectLim")
+                .addPropertyNode(MeasVal_.DETECT_LIM)
                 .addConstraintViolation();
         }
         return isValid;

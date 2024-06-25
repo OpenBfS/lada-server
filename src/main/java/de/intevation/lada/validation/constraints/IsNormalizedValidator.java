@@ -16,6 +16,7 @@ import org.hibernate.validator.constraintvalidation.HibernateConstraintValidator
 import static org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel.BEAN_METHODS;
 
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.UnitConvers;
@@ -100,7 +101,7 @@ public class IsNormalizedValidator implements
         hibernateCtx.addExpressionVariable("convert", convert)
             .buildConstraintViolationWithTemplate(this.message)
             .enableExpressionLanguage(BEAN_METHODS)
-            .addPropertyNode("measUnitId")
+            .addPropertyNode(MeasVal_.MEAS_UNIT_ID)
             .addConstraintViolation();
         return false;
     }

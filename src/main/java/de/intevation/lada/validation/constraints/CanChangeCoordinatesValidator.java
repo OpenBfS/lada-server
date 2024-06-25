@@ -13,6 +13,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.util.data.Repository;
 
 
@@ -43,14 +44,14 @@ public class CanChangeCoordinatesValidator
             isValid = false;
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(CanChangeCoordinates.MSG)
-                .addPropertyNode("coordXExt")
+                .addPropertyNode(Site_.COORD_XEXT)
                 .addConstraintViolation();
         }
         if (!dbSite.getCoordYExt().equals(value.getCoordYExt())) {
             isValid = false;
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(CanChangeCoordinates.MSG)
-                .addPropertyNode("coordYExt")
+                .addPropertyNode(Site_.COORD_YEXT)
                 .addConstraintViolation();
         }
         return isValid;

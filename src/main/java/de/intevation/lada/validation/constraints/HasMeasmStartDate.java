@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.Repository;
 
@@ -44,7 +45,7 @@ abstract class HasMeasmStartDate {
         ) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(message)
-                .addPropertyNode("measmStartDate")
+                .addPropertyNode(Measm_.MEASM_START_DATE)
                 .addConstraintViolation();
 
             Sample probe = CDI.current().getBeanContainer()

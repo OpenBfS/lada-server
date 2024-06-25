@@ -11,6 +11,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.master.Tag;
+import de.intevation.lada.model.master.Tag_;
 
 
 /**
@@ -36,8 +37,8 @@ public class NetworkOrMeasFacilTagValidator
             return true;
         }
 
-        final String networkIdKey = "networkId",
-            measFacilIdKey = "measFacilId";
+        final String networkIdKey = Tag_.NETWORK_ID,
+            measFacilIdKey = Tag_.MEAS_FACIL_ID;
         ctx.disableDefaultConstraintViolation();
         ctx.buildConstraintViolationWithTemplate(this.message)
             .addPropertyNode(networkIdKey)

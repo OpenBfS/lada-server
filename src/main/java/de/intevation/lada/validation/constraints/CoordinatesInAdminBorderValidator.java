@@ -19,6 +19,7 @@ import org.locationtech.jts.geom.Point;
 import de.intevation.lada.model.master.AdminBorderView;
 import de.intevation.lada.model.master.AdminBorderView_;
 import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -71,10 +72,10 @@ public class CoordinatesInAdminBorderValidator
             }
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(message)
-                .addPropertyNode("coordXExt")
+                .addPropertyNode(Site_.COORD_XEXT)
                 .addConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(message)
-                .addPropertyNode("coordYExt")
+                .addPropertyNode(Site_.COORD_YEXT)
                 .addConstraintViolation();
             return false;
         }

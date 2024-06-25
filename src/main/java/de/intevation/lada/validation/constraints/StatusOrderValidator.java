@@ -70,7 +70,7 @@ public class StatusOrderValidator
         if (reihenfolge.isEmpty()) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
-                .addPropertyNode("statusMpId")
+                .addPropertyNode(StatusProt_.STATUS_MP_ID)
                 .addConstraintViolation();
             return false;
         }

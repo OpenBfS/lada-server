@@ -11,6 +11,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.Site_;
 
 
 /**
@@ -38,11 +39,11 @@ public class HasCoordsOrAdminUnitOrStateValidator
             .addConstraintViolation();
         ctx.buildConstraintViolationWithTemplate(
             HasCoordsOrAdminUnitOrState.MSG)
-            .addPropertyNode("adminUnitId")
+            .addPropertyNode(Site_.ADMIN_UNIT_ID)
             .addConstraintViolation();
         ctx.buildConstraintViolationWithTemplate(
             HasCoordsOrAdminUnitOrState.MSG)
-            .addPropertyNode("stateId")
+            .addPropertyNode(Site_.STATE_ID)
             .addConstraintViolation();
         return false;
     }

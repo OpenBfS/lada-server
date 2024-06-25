@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.Repository;
 
@@ -46,7 +47,7 @@ abstract class HasMeasPd {
         ) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(message)
-                .addPropertyNode("measPd")
+                .addPropertyNode(Measm_.MEAS_PD)
                 .addConstraintViolation();
 
             Sample probe = CDI.current().getBeanContainer()

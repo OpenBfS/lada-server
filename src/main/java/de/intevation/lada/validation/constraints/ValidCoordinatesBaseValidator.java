@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.validation.constraints;
 
+import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.KdaUtil.KDA;
 import de.intevation.lada.util.data.KdaUtil.Result;
@@ -40,10 +41,10 @@ public abstract class ValidCoordinatesBaseValidator<T>
         if (!valid) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(ValidCoordinates.MSG)
-                .addPropertyNode("coordXExt")
+                .addPropertyNode(Site_.COORD_XEXT)
                 .addConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(ValidCoordinates.MSG)
-                .addPropertyNode("coordYExt")
+                .addPropertyNode(Site_.COORD_YEXT)
                 .addConstraintViolation();
         }
         return valid;
