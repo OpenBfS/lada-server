@@ -15,17 +15,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.validation.Validator;
 
 
 public class MeasValTest extends ValidatorBaseTest {
-
-    //Validation keys
-    private static final String DETECT_LIM = "detectLim";
-    private static final String ERROR = "error";
-    private static final String MEASD_ID = "measdId";
-    private static final String MEAS_VAL = "measVal";
-    private static final String UNIT_ID = "measUnitId";
 
     //Other constants
     private static final int EXISTING_MEASM_ID = 1200;
@@ -62,7 +56,7 @@ public class MeasValTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(val),
-            ERROR,
+            MeasVal_.ERROR,
             VALUE_MISSING);
     }
 
@@ -76,7 +70,7 @@ public class MeasValTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(val),
-            ERROR,
+            MeasVal_.ERROR,
             VALUE_MISSING);
     }
 
@@ -92,7 +86,7 @@ public class MeasValTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(val),
-            ERROR,
+            MeasVal_.ERROR,
             "Uncertainty not allowed if < LOD");
     }
 
@@ -126,7 +120,7 @@ public class MeasValTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(val),
-            MEAS_VAL,
+            MeasVal_.MEAS_VAL,
             VALUE_MISSING);
     }
 
@@ -145,7 +139,7 @@ public class MeasValTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(val),
-            MEAS_VAL,
+            MeasVal_.MEAS_VAL,
             "Measured value not allowed if < LOD");
     }
 
@@ -196,7 +190,7 @@ public class MeasValTest extends ValidatorBaseTest {
 
         assertHasNotifications(
             validator.validate(val),
-            MEAS_VAL,
+            MeasVal_.MEAS_VAL,
             "must be greater than 0");
     }
 
@@ -214,7 +208,7 @@ public class MeasValTest extends ValidatorBaseTest {
 
         assertHasErrors(
             validator.validate(val),
-            DETECT_LIM,
+            MeasVal_.DETECT_LIM,
             VALUE_MISSING);
     }
 
@@ -264,7 +258,7 @@ public class MeasValTest extends ValidatorBaseTest {
 
         assertHasNotifications(
             validator.validate(val),
-            UNIT_ID,
+            MeasVal_.MEAS_UNIT_ID,
             VAL_SEC_UNIT);
     }
 
@@ -280,7 +274,7 @@ public class MeasValTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(val),
-            UNIT_ID,
+            MeasVal_.MEAS_UNIT_ID,
             "Please normalize values");
     }
 
@@ -296,7 +290,7 @@ public class MeasValTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(val),
-            UNIT_ID,
+            MeasVal_.MEAS_UNIT_ID,
             "Please normalize values");
     }
 
@@ -313,7 +307,7 @@ public class MeasValTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(val),
-            UNIT_ID,
+            MeasVal_.MEAS_UNIT_ID,
             "Unit does not match environmental medium");
     }
 
@@ -329,7 +323,7 @@ public class MeasValTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(val),
-            MEASD_ID,
+            MeasVal_.MEASD_ID,
             "Measurand does not match measuring method");
     }
 
@@ -360,7 +354,7 @@ public class MeasValTest extends ValidatorBaseTest {
 
         assertHasNotifications(
             validator.validate(val),
-            UNIT_ID,
+            MeasVal_.MEAS_UNIT_ID,
             VAL_SEC_UNIT);
     }
 
@@ -377,7 +371,7 @@ public class MeasValTest extends ValidatorBaseTest {
 
         assertHasNotifications(
             validator.validate(val),
-            UNIT_ID,
+            MeasVal_.MEAS_UNIT_ID,
             VAL_SEC_UNIT);
     }
 
@@ -396,8 +390,8 @@ public class MeasValTest extends ValidatorBaseTest {
         validator.validate(val);
         Assert.assertTrue(val.hasErrors());
         MatcherAssert.assertThat(val.getErrors().keySet(),
-            CoreMatchers.hasItem(MEASD_ID));
-        MatcherAssert.assertThat(val.getErrors().get(MEASD_ID),
+            CoreMatchers.hasItem(MeasVal_.MEASD_ID));
+        MatcherAssert.assertThat(val.getErrors().get(MeasVal_.MEASD_ID),
             CoreMatchers.hasItem(
                 "Non-unique value combination for [measdId, measmId]"));
     }

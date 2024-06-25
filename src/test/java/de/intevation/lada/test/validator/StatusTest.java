@@ -15,6 +15,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.StatusProt;
+import de.intevation.lada.model.lada.StatusProt_;
 import de.intevation.lada.validation.Validator;
 
 /**
@@ -22,9 +23,6 @@ import de.intevation.lada.validation.Validator;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class StatusTest extends ValidatorBaseTest {
-
-    //Validator keys
-    private static final String STATUS_MP_ID = "statusMpId";
 
     //Other constants
     private static final int ID1 = 1;
@@ -56,9 +54,9 @@ public class StatusTest extends ValidatorBaseTest {
         validator.validate(status);
         Assert.assertTrue(status.hasErrors());
         MatcherAssert.assertThat(status.getErrors().keySet(),
-            CoreMatchers.hasItem(STATUS_MP_ID));
+            CoreMatchers.hasItem(StatusProt_.STATUS_MP_ID));
         MatcherAssert.assertThat(
-            status.getErrors().get(STATUS_MP_ID),
+            status.getErrors().get(StatusProt_.STATUS_MP_ID),
             CoreMatchers.hasItem(
                 "'" + INVALID_STATUS_MP_ID + "' is no valid primary key"));
     }
@@ -86,7 +84,7 @@ public class StatusTest extends ValidatorBaseTest {
 
         assertHasErrors(
             validator.validate(status),
-            STATUS_MP_ID,
+            StatusProt_.STATUS_MP_ID,
             "Values do not match");
     }
 

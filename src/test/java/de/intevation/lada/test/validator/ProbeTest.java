@@ -21,6 +21,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
@@ -34,16 +35,6 @@ public class ProbeTest extends ValidatorBaseTest {
 
     //Validation keys
     private static final String GEOLOCATS = "geolocats";
-    private static final String ENV_DESCRIP_DISPLAY = "envDescripDisplay";
-    private static final String ENV_MEDIUM_ID = "envMediumId";
-    private static final String EXT_ID = "extId";
-    private static final String MAIN_SAMPLE_ID = "mainSampleId";
-    private static final String NUCL_FACIL_GR_ID = "nuclFacilGrId";
-    private static final String ORIG_DATE = "origDate";
-    private static final String REI_AG_GR_ID = "reiAgGrId";
-    private static final String SAMPLE_START_DATE = "sampleStartDate";
-    private static final String SAMPLE_END_DATE = "sampleEndDate";
-    private static final String SAMPLE_METH_ID = "sampleMethId";
 
     //Test data ids
     private static final String ENV_MEDIUM_L42 = "L42";
@@ -134,7 +125,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasNotifications(
             validator.validate(sample),
-            MAIN_SAMPLE_ID,
+            Sample_.MAIN_SAMPLE_ID,
             MSG_NOT_BLANK);
     }
 
@@ -149,9 +140,10 @@ public class ProbeTest extends ValidatorBaseTest {
 
         validator.validate(sample);
         Assert.assertTrue(sample.hasErrors());
-        Assert.assertTrue(sample.getErrors().containsKey(MAIN_SAMPLE_ID));
+        Assert.assertTrue(sample.getErrors()
+            .containsKey(Sample_.MAIN_SAMPLE_ID));
         MatcherAssert.assertThat(
-            sample.getErrors().get(MAIN_SAMPLE_ID),
+            sample.getErrors().get(Sample_.MAIN_SAMPLE_ID),
             CoreMatchers.hasItem(valMessageUniqueMainSampleIdMeasFacilId));
     }
 
@@ -194,9 +186,10 @@ public class ProbeTest extends ValidatorBaseTest {
 
         validator.validate(sample);
         Assert.assertTrue(sample.hasErrors());
-        Assert.assertTrue(sample.getErrors().containsKey(MAIN_SAMPLE_ID));
+        Assert.assertTrue(sample.getErrors()
+            .containsKey(Sample_.MAIN_SAMPLE_ID));
         MatcherAssert.assertThat(
-            sample.getErrors().get(MAIN_SAMPLE_ID),
+            sample.getErrors().get(Sample_.MAIN_SAMPLE_ID),
             CoreMatchers.hasItem(valMessageUniqueMainSampleIdMeasFacilId));
     }
 
@@ -280,7 +273,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            SAMPLE_START_DATE,
+            Sample_.SAMPLE_START_DATE,
             MSG_NOT_NULL);
     }
 
@@ -295,7 +288,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            SAMPLE_END_DATE,
+            Sample_.SAMPLE_END_DATE,
             MSG_VALUE_MISSING);
     }
 
@@ -312,7 +305,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            SAMPLE_END_DATE,
+            Sample_.SAMPLE_END_DATE,
             MSG_VALUE_MISSING);
     }
 
@@ -327,7 +320,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            SAMPLE_START_DATE,
+            Sample_.SAMPLE_START_DATE,
             "Begin must be before end");
     }
 
@@ -341,7 +334,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            SAMPLE_START_DATE,
+            Sample_.SAMPLE_START_DATE,
             "must be a date in the past or in the present");
     }
 
@@ -355,9 +348,10 @@ public class ProbeTest extends ValidatorBaseTest {
 
         validator.validate(sample);
         Assert.assertTrue(sample.hasWarnings());
-        Assert.assertTrue(sample.getWarnings().containsKey(ENV_MEDIUM_ID));
+        Assert.assertTrue(sample.getWarnings()
+            .containsKey(Sample_.ENV_MEDIUM_ID));
         MatcherAssert.assertThat(
-            sample.getWarnings().get(ENV_MEDIUM_ID),
+            sample.getWarnings().get(Sample_.ENV_MEDIUM_ID),
             CoreMatchers.hasItem(MSG_NOT_BLANK));
     }
 
@@ -371,7 +365,8 @@ public class ProbeTest extends ValidatorBaseTest {
 
         validator.validate(sample);
         Assert.assertTrue(sample.hasErrors());
-        Assert.assertTrue(sample.getErrors().containsKey(ENV_MEDIUM_ID));
+        Assert.assertTrue(sample.getErrors()
+            .containsKey(Sample_.ENV_MEDIUM_ID));
     }
 
     /**
@@ -403,7 +398,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            SAMPLE_METH_ID,
+            Sample_.SAMPLE_METH_ID,
             "Individual sample expects sample start date = sample end date");
     }
 
@@ -420,7 +415,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            ORIG_DATE,
+            Sample_.ORIG_DATE,
             "Time of origin must be before or equal to sampling time");
     }
 
@@ -449,7 +444,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            ENV_DESCRIP_DISPLAY,
+            Sample_.ENV_DESCRIP_DISPLAY,
             MSG_NOT_BLANK);
     }
 
@@ -463,7 +458,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            ENV_DESCRIP_DISPLAY,
+            Sample_.ENV_DESCRIP_DISPLAY,
             "At least S1 must be set");
     }
 
@@ -478,8 +473,9 @@ public class ProbeTest extends ValidatorBaseTest {
         validator.validate(sample);
         Assert.assertTrue(sample.hasErrors());
         MatcherAssert.assertThat(sample.getErrors().keySet(),
-            CoreMatchers.hasItem(ENV_DESCRIP_DISPLAY));
-        MatcherAssert.assertThat(sample.getErrors().get(ENV_DESCRIP_DISPLAY),
+            CoreMatchers.hasItem(Sample_.ENV_DESCRIP_DISPLAY));
+        MatcherAssert.assertThat(sample.getErrors()
+            .get(Sample_.ENV_DESCRIP_DISPLAY),
             CoreMatchers.hasItem("must match \"D:( [0-9][0-9]){12}\""));
     }
 
@@ -493,7 +489,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            ENV_DESCRIP_DISPLAY,
+            Sample_.ENV_DESCRIP_DISPLAY,
             "Invalid descriptor combination");
     }
 
@@ -505,7 +501,7 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidSample();
         sample.setEnvDescripDisplay(VALID_ENV_DESCRIP_DISPLAY_FOR_N71);
         sample.setEnvMediumId("L54");
-        String warningKey = ENV_MEDIUM_ID;
+        String warningKey = Sample_.ENV_MEDIUM_ID;
         validator.validate(sample);
         Assert.assertTrue(sample.hasWarnings());
         Assert.assertTrue(sample.getWarnings()
@@ -541,7 +537,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            SAMPLE_END_DATE,
+            Sample_.SAMPLE_END_DATE,
             MSG_VALUE_MISSING);
     }
 
@@ -570,8 +566,8 @@ public class ProbeTest extends ValidatorBaseTest {
 
         validator.validate(sample);
         final String expectedMsg = "Values do not match";
-        assertHasWarnings(sample, REI_AG_GR_ID, expectedMsg);
-        assertHasWarnings(sample, NUCL_FACIL_GR_ID, expectedMsg);
+        assertHasWarnings(sample, Sample_.REI_AG_GR_ID, expectedMsg);
+        assertHasWarnings(sample, Sample_.NUCL_FACIL_GR_ID, expectedMsg);
     }
 
     /**
@@ -583,8 +579,8 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setRegulationId(REGULATION_ID_REI);
 
         validator.validate(sample);
-        assertHasWarnings(sample, REI_AG_GR_ID, MSG_VALUE_MISSING);
-        assertHasWarnings(sample, NUCL_FACIL_GR_ID, MSG_VALUE_MISSING);
+        assertHasWarnings(sample, Sample_.REI_AG_GR_ID, MSG_VALUE_MISSING);
+        assertHasWarnings(sample, Sample_.NUCL_FACIL_GR_ID, MSG_VALUE_MISSING);
     }
 
     /**
@@ -597,7 +593,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(sample),
-            ENV_MEDIUM_ID,
+            Sample_.ENV_MEDIUM_ID,
             "Environmental medium does not match ReiAgGr");
     }
 
@@ -623,9 +619,9 @@ public class ProbeTest extends ValidatorBaseTest {
         validator.validate(sample);
         Assert.assertTrue(sample.hasErrors());
         Assert.assertTrue(sample.getErrors()
-            .containsKey(EXT_ID));
+            .containsKey(Sample_.EXT_ID));
         MatcherAssert.assertThat(
-            sample.getErrors().get(EXT_ID),
+            sample.getErrors().get(Sample_.EXT_ID),
             CoreMatchers.hasItem(valMessageUniqueExtId));
     }
 

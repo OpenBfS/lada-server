@@ -13,13 +13,10 @@ import org.junit.Test;
 
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
+import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.validation.Validator;
 
 public class GeolocatTest extends ValidatorBaseTest {
-
-    // Validation keys
-    private static final String TYPE_REGULATION = "typeRegulation";
-    private static final String SAMPLE_ID = "sampleId";
 
     // Other contstants
     public static final int SAMPLE_WITH_E_GEOLOCAT = 1000;
@@ -64,7 +61,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         sampleVal.validate(loc);
         assertHasErrors(
             loc,
-            TYPE_REGULATION,
+            Geolocat_.TYPE_REGULATION,
             MSG_UNIQUE_SAMPLING_LOCATION);
     }
 
@@ -81,7 +78,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         sampleVal.validate(loc);
         assertHasErrors(
             loc,
-            TYPE_REGULATION,
+            Geolocat_.TYPE_REGULATION,
             MSG_UNIQUE_SAMPLING_LOCATION);
     }
 
@@ -98,7 +95,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         sampleVal.validate(loc);
         assertHasErrors(
             loc,
-            TYPE_REGULATION,
+            Geolocat_.TYPE_REGULATION,
             MSG_UNIQUE_SAMPLING_LOCATION);
     }
 
@@ -111,7 +108,7 @@ public class GeolocatTest extends ValidatorBaseTest {
 
         assertHasErrors(
             sampleVal.validate(loc),
-            TYPE_REGULATION,
+            Geolocat_.TYPE_REGULATION,
             "Non-unique value combination for "
                 + "[typeRegulation, sampleId, siteId]");
     }
@@ -156,7 +153,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         mpgVal.validate(loc);
         assertHasErrors(
             loc,
-            TYPE_REGULATION,
+            Geolocat_.TYPE_REGULATION,
             MSG_UNIQUE_SAMPLING_LOCATION);
     }
 
@@ -173,7 +170,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         mpgVal.validate(loc);
         assertHasErrors(
             loc,
-            TYPE_REGULATION,
+            Geolocat_.TYPE_REGULATION,
             MSG_UNIQUE_SAMPLING_LOCATION);
     }
 
@@ -190,7 +187,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         mpgVal.validate(loc);
         assertHasErrors(
             loc,
-            TYPE_REGULATION,
+            Geolocat_.TYPE_REGULATION,
             MSG_UNIQUE_SAMPLING_LOCATION);
     }
 
@@ -204,7 +201,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         mpgVal.validate(loc);
         assertHasErrors(
             loc,
-            TYPE_REGULATION,
+            Geolocat_.TYPE_REGULATION,
             "Non-unique value combination for [typeRegulation, mpgId, siteId]");
     }
 

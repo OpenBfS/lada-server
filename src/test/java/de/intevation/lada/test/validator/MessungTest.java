@@ -21,6 +21,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.validation.Validator;
 
 
@@ -29,13 +30,6 @@ import de.intevation.lada.validation.Validator;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class MessungTest extends ValidatorBaseTest {
-
-    //Validation keys
-    private static final String MEAS_PD = "measPd";
-    private static final String MEASD_ID = "measdId";
-    private static final String MEASM_START_DATE = "measmStartDate";
-    private static final String MIN_SAMPLE_ID = "minSampleId";
-    private static final String MMT_ID_KEY = "mmtId";
 
     //ID constants from test dataset
     private static final int EXISTING_SAMPLE_ID = 1000;
@@ -79,7 +73,7 @@ public class MessungTest extends ValidatorBaseTest {
         measm.setMinSampleId(null);
         assertHasNotifications(
             validator.validate(measm),
-            MIN_SAMPLE_ID,
+            Measm_.MIN_SAMPLE_ID,
             "must not be blank");
     }
 
@@ -94,13 +88,13 @@ public class MessungTest extends ValidatorBaseTest {
         Assert.assertTrue(measm.hasErrors());
         MatcherAssert.assertThat(
             measm.getErrors().keySet(),
-            CoreMatchers.hasItem(MIN_SAMPLE_ID));
+            CoreMatchers.hasItem(Measm_.MIN_SAMPLE_ID));
         MatcherAssert.assertThat(
-            measm.getErrors().get(MIN_SAMPLE_ID),
+            measm.getErrors().get(Measm_.MIN_SAMPLE_ID),
             CoreMatchers.hasItem(
                 "size must be between 1 and 2147483647"));
         MatcherAssert.assertThat(
-            measm.getErrors().get(MIN_SAMPLE_ID),
+            measm.getErrors().get(Measm_.MIN_SAMPLE_ID),
             CoreMatchers.hasItem(
                 "must match \".*\\S+.*\""));
     }
@@ -117,9 +111,9 @@ public class MessungTest extends ValidatorBaseTest {
         Assert.assertTrue(messung.hasErrors());
         MatcherAssert.assertThat(
             messung.getErrors().keySet(),
-            CoreMatchers.hasItem(MIN_SAMPLE_ID));
+            CoreMatchers.hasItem(Measm_.MIN_SAMPLE_ID));
         MatcherAssert.assertThat(
-            messung.getErrors().get(MIN_SAMPLE_ID),
+            messung.getErrors().get(Measm_.MIN_SAMPLE_ID),
             CoreMatchers.hasItem(
                 "Non-unique value combination for [minSampleId, sampleId]"));
     }
@@ -170,7 +164,7 @@ public class MessungTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(measm),
-            MEASM_START_DATE,
+            Measm_.MEASM_START_DATE,
             "must be a date in the past or in the present");
     }
 
@@ -190,7 +184,7 @@ public class MessungTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(measm),
-            MEASM_START_DATE,
+            Measm_.MEASM_START_DATE,
             "Values do not match");
     }
 
@@ -203,7 +197,7 @@ public class MessungTest extends ValidatorBaseTest {
         measm.setMeasmStartDate(null);
         assertHasWarnings(
             validator.validate(measm),
-            MEASM_START_DATE,
+            Measm_.MEASM_START_DATE,
             MSG_VALUE_MISSING);
     }
 
@@ -218,7 +212,7 @@ public class MessungTest extends ValidatorBaseTest {
 
         assertHasNotifications(
             validator.validate(measm),
-            MEASM_START_DATE,
+            Measm_.MEASM_START_DATE,
             MSG_VALUE_MISSING);
     }
 
@@ -233,7 +227,7 @@ public class MessungTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(measm),
-            MEAS_PD,
+            Measm_.MEAS_PD,
             MSG_VALUE_MISSING);
     }
 
@@ -249,7 +243,7 @@ public class MessungTest extends ValidatorBaseTest {
 
         assertHasNotifications(
             validator.validate(measm),
-            MEAS_PD,
+            Measm_.MEAS_PD,
             MSG_VALUE_MISSING);
     }
 
@@ -264,7 +258,7 @@ public class MessungTest extends ValidatorBaseTest {
 
         assertHasNotifications(
             validator.validate(measm),
-            MEAS_PD,
+            Measm_.MEAS_PD,
             MSG_VALUE_MISSING);
     }
 
@@ -278,7 +272,7 @@ public class MessungTest extends ValidatorBaseTest {
 
         assertHasNotifications(
             validator.validate(measm),
-            MMT_ID_KEY,
+            Measm_.MMT_ID,
             MSG_VAL_OBL_MEASURE);
     }
 
@@ -292,7 +286,7 @@ public class MessungTest extends ValidatorBaseTest {
 
         assertHasNotifications(
             validator.validate(measm),
-            MMT_ID_KEY,
+            Measm_.MMT_ID,
             MSG_VAL_OBL_MEASURE);
     }
 
@@ -306,7 +300,7 @@ public class MessungTest extends ValidatorBaseTest {
 
         assertHasNotifications(
             validator.validate(measm),
-            MMT_ID_KEY,
+            Measm_.MMT_ID,
             MSG_VAL_OBL_MEASURE);
     }
 
@@ -320,7 +314,7 @@ public class MessungTest extends ValidatorBaseTest {
 
         assertHasNotifications(
             validator.validate(measm),
-            MMT_ID_KEY,
+            Measm_.MMT_ID,
             MSG_VAL_OBL_MEASURE);
     }
 
@@ -336,9 +330,9 @@ public class MessungTest extends ValidatorBaseTest {
         validator.validate(measm);
         MatcherAssert.assertThat(
             measm.getErrors().keySet(),
-            CoreMatchers.hasItem(MMT_ID_KEY));
+            CoreMatchers.hasItem(Measm_.MMT_ID));
         MatcherAssert.assertThat(
-            measm.getErrors().get(MMT_ID_KEY),
+            measm.getErrors().get(Measm_.MMT_ID),
             CoreMatchers.hasItem(
                 "'" + invalidKey + "' is no valid primary key"));
     }

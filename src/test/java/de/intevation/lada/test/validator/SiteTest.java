@@ -17,6 +17,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.validation.Validator;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -27,12 +28,6 @@ import org.locationtech.jts.geom.Point;
  * Test validation rules for Site objects.
  */
 public class SiteTest extends ValidatorBaseTest {
-    //Validator keys
-    private static final String COORD_X_EXT = "coordXExt";
-    private static final String COORD_Y_EXT = "coordYExt";
-    private static final String EXT_ID = "extId";
-    private static final String ADMIN_UNIT_ID = "adminUnitId";
-    private static final String SITE_CLASS_ID = "siteClassId";
 
     //Other constants
     private static final int SPAT_REF_SYS_ID = 5;
@@ -108,7 +103,7 @@ public class SiteTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(site),
-            ADMIN_UNIT_ID,
+            Site_.ADMIN_UNIT_ID,
             "No border of administrative unit found. Coordinates unchecked");
     }
 
@@ -143,8 +138,8 @@ public class SiteTest extends ValidatorBaseTest {
         site.setGeom(outsideBorder);
 
         validator.validate(site);
-        assertHasWarnings(site, COORD_X_EXT, GEO_POINT_OUTSIDE);
-        assertHasWarnings(site, COORD_Y_EXT, GEO_POINT_OUTSIDE);
+        assertHasWarnings(site, Site_.COORD_XEXT, GEO_POINT_OUTSIDE);
+        assertHasWarnings(site, Site_.COORD_YEXT, GEO_POINT_OUTSIDE);
     }
 
     /**
@@ -161,8 +156,8 @@ public class SiteTest extends ValidatorBaseTest {
         site.setGeom(justOutsideBorder);
 
         validator.validate(site);
-        assertHasWarnings(site, COORD_X_EXT, GEO_POINT_OUTSIDE);
-        assertHasWarnings(site, COORD_Y_EXT, GEO_POINT_OUTSIDE);
+        assertHasWarnings(site, Site_.COORD_XEXT, GEO_POINT_OUTSIDE);
+        assertHasWarnings(site, Site_.COORD_YEXT, GEO_POINT_OUTSIDE);
     }
 
     /**
@@ -209,9 +204,9 @@ public class SiteTest extends ValidatorBaseTest {
 
         validator.validate(site);
         Assert.assertTrue(site.hasErrors());
-        Assert.assertTrue(site.getErrors().containsKey(EXT_ID));
+        Assert.assertTrue(site.getErrors().containsKey(Site_.EXT_ID));
         MatcherAssert.assertThat(
-            site.getErrors().get(EXT_ID),
+            site.getErrors().get(Site_.EXT_ID),
             CoreMatchers.hasItem(valMessageUniqueExtId));
     }
 
@@ -239,7 +234,7 @@ public class SiteTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(site),
-            EXT_ID,
+            Site_.EXT_ID,
             "Must be between five and twelve characters long");
     }
 
@@ -255,7 +250,7 @@ public class SiteTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(site),
-            EXT_ID,
+            Site_.EXT_ID,
             EXT_ID_NOT_MATCHING_NUCL_FACIL);
     }
 
@@ -272,7 +267,7 @@ public class SiteTest extends ValidatorBaseTest {
 
         assertHasWarnings(
             validator.validate(site),
-            EXT_ID,
+            Site_.EXT_ID,
             EXT_ID_NOT_MATCHING_NUCL_FACIL);
     }
 
@@ -346,7 +341,7 @@ public class SiteTest extends ValidatorBaseTest {
         final String msg =
             "Either coordinates or adminUnitId or stateId must be given";
         assertHasErrors(site, "coordinates", msg);
-        assertHasErrors(site, ADMIN_UNIT_ID, msg);
+        assertHasErrors(site, Site_.ADMIN_UNIT_ID, msg);
         assertHasErrors(site, "stateId", msg);
     }
 
@@ -550,7 +545,7 @@ public class SiteTest extends ValidatorBaseTest {
     }
 
     private void assertCoordErrors(Site site) {
-        assertHasErrors(site, COORD_X_EXT, valMessageCoords);
-        assertHasErrors(site, COORD_Y_EXT, valMessageCoords);
+        assertHasErrors(site, Site_.COORD_XEXT, valMessageCoords);
+        assertHasErrors(site, Site_.COORD_YEXT, valMessageCoords);
     }
 }
