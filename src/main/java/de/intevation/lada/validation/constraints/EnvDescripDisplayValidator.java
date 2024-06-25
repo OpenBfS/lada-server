@@ -15,6 +15,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.master.EnvDescrip;
+import de.intevation.lada.model.master.EnvDescrip_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -74,10 +75,10 @@ public class EnvDescripDisplayValidator
             QueryBuilder<EnvDescrip> builder =
                 repository.queryBuilder(EnvDescrip.class);
             if (parent != null) {
-                builder.and("predId", parent);
+                builder.and(EnvDescrip_.predId, parent);
             }
-            builder.and("levVal", mediaDesk[i])
-                .and("lev", i - 1);
+            builder.and(EnvDescrip_.levVal, Integer.parseInt(mediaDesk[i]))
+                .and(EnvDescrip_.lev, i - 1);
             List<EnvDescrip> data = repository.filter(builder.getQuery());
             if (data.isEmpty()) {
                 return false;

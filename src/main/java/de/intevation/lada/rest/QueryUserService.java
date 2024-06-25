@@ -162,7 +162,7 @@ public class QueryUserService extends LadaService {
         query.setLadaUserId(userInfo.getUserId());
         QueryBuilder<QueryMeasFacilMp> builder = repository
             .queryBuilder(QueryMeasFacilMp.class)
-            .and(QueryMeasFacilMp_.QUERY_USER, query);
+            .and(QueryMeasFacilMp_.queryUser, query);
         List<QueryMeasFacilMp> qms =
             repository.filter(builder.getQuery());
         List<QueryMeasFacilMp> delete = new ArrayList<>();

@@ -43,15 +43,24 @@ import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.model.lada.CommMeasm;
+import de.intevation.lada.model.lada.CommMeasm_;
 import de.intevation.lada.model.lada.CommSample;
+import de.intevation.lada.model.lada.CommSample_;
 import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.StatusProt;
+import de.intevation.lada.model.lada.StatusProt_;
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.EnvDescrip;
+import de.intevation.lada.model.master.EnvDescrip_;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.MeasUnit;
@@ -233,7 +242,7 @@ public class JsonExporter implements Exporter {
     ) {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
         for (Integer id : messungsIds) {
-            builder.or("id", id);
+            builder.or(Measm_.id, id);
         }
         List<Measm> messungen =
             repository.filter(builder.getQuery());
@@ -290,7 +299,7 @@ public class JsonExporter implements Exporter {
     private String createJsonString(List<Integer> probeIds, UserInfo userInfo) {
         QueryBuilder<Sample> builder = repository.queryBuilder(Sample.class);
         for (Integer id : probeIds) {
-            builder.or("id", id);
+            builder.or(Sample_.id, id);
         }
         List<Sample> proben =
             repository.filter(builder.getQuery());
@@ -394,7 +403,7 @@ public class JsonExporter implements Exporter {
 
     private void addMessungen(JsonNode probe) {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
-        builder.and("sampleId", probe.get("id").asInt());
+        builder.and(Measm_.id, probe.get("id").asInt());
         List<Measm> messungen =
             repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
@@ -422,7 +431,7 @@ public class JsonExporter implements Exporter {
     private void addKommentare(JsonNode probe) {
         QueryBuilder<CommSample> builder =
             repository.queryBuilder(CommSample.class);
-        builder.and("sampleId", probe.get("id").asInt());
+        builder.and(CommSample_.id, probe.get("id").asInt());
         List<CommSample> kommentare =
             repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
@@ -448,7 +457,7 @@ public class JsonExporter implements Exporter {
     private void addZusatzwerte(JsonNode probe) {
         QueryBuilder<SampleSpecifMeasVal> builder =
             repository.queryBuilder(SampleSpecifMeasVal.class);
-        builder.and("sampleId", probe.get("id").asInt());
+        builder.and(SampleSpecifMeasVal_.sampleId, probe.get("id").asInt());
         List<SampleSpecifMeasVal> zusatzwerte =
             repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
@@ -496,10 +505,10 @@ public class JsonExporter implements Exporter {
                 repository.queryBuilder(EnvDescrip.class);
             String beschreibung = "";
             if (Integer.parseInt(parts[i + 1]) != 0) {
-                builder.and("lev", i);
-                builder.and("levVal", Integer.parseInt(parts[i + 1]));
+                builder.and(EnvDescrip_.lev, i);
+                builder.and(EnvDescrip_.levVal, Integer.parseInt(parts[i + 1]));
                 if (i != 0) {
-                    builder.and("predId", vorgaenger);
+                    builder.and(EnvDescrip_.predId, vorgaenger);
                 }
                 List<EnvDescrip> found =
                     repository.filter(builder.getQuery());
@@ -532,7 +541,7 @@ public class JsonExporter implements Exporter {
     private void addMesswerte(JsonNode node) {
         QueryBuilder<MeasVal> builder =
             repository.queryBuilder(MeasVal.class);
-        builder.and("measmId", node.get("id").asInt());
+        builder.and(MeasVal_.measmId, node.get("id").asInt());
         List<MeasVal> messwerte =
             repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
@@ -563,7 +572,7 @@ public class JsonExporter implements Exporter {
     private void addMessungsKommentare(JsonNode node) {
         QueryBuilder<CommMeasm> builder =
             repository.queryBuilder(CommMeasm.class);
-        builder.and("measmId", node.get("id").asInt());
+        builder.and(CommMeasm_.measmId, node.get("id").asInt());
         List<CommMeasm> kommentare =
             repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
@@ -589,7 +598,7 @@ public class JsonExporter implements Exporter {
     private void addStatusProtokoll(JsonNode node) {
         QueryBuilder<StatusProt> builder =
             repository.queryBuilder(StatusProt.class);
-        builder.and("measmId", node.get("id").asInt());
+        builder.and(StatusProt_.measmId, node.get("id").asInt());
         List<StatusProt> status =
             repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();
@@ -625,7 +634,7 @@ public class JsonExporter implements Exporter {
     private void addOrtszuordung(JsonNode node) {
         QueryBuilder<Geolocat> builder =
             repository.queryBuilder(Geolocat.class);
-        builder.and("sampleId", node.get("id").asInt());
+        builder.and(Geolocat_.sampleId, node.get("id").asInt());
         List<Geolocat> ortszuordnung =
             repository.filter(builder.getQuery());
         final ObjectMapper mapper = createObjectMapper();

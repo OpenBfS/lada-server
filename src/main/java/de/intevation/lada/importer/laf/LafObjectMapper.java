@@ -24,6 +24,7 @@ import java.util.Set;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.metamodel.SingularAttribute;
 
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
@@ -37,39 +38,66 @@ import de.intevation.lada.importer.IdentifierConfig;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.importer.ReportItem;
 import de.intevation.lada.model.lada.CommMeasm;
+import de.intevation.lada.model.lada.CommMeasm_;
 import de.intevation.lada.model.lada.CommSample;
+import de.intevation.lada.model.lada.CommSample_;
 import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.TagLinkMeasm;
+import de.intevation.lada.model.lada.TagLinkMeasm_;
 import de.intevation.lada.model.lada.TagLinkSample;
+import de.intevation.lada.model.lada.TagLinkSample_;
 import de.intevation.lada.model.master.AdminUnit;
+import de.intevation.lada.model.master.AdminUnit_;
 import de.intevation.lada.model.master.DatasetCreator;
+import de.intevation.lada.model.master.DatasetCreator_;
 import de.intevation.lada.model.master.EnvMedium;
+import de.intevation.lada.model.master.EnvMedium_;
 import de.intevation.lada.model.master.ImportConf;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.MeasUnit;
+import de.intevation.lada.model.master.MeasUnit_;
 import de.intevation.lada.model.master.Measd;
+import de.intevation.lada.model.master.Measd_;
 import de.intevation.lada.model.master.Mmt;
+import de.intevation.lada.model.master.Mmt_;
 import de.intevation.lada.model.master.MpgCateg;
+import de.intevation.lada.model.master.MpgCateg_;
 import de.intevation.lada.model.master.MpgTransf;
+import de.intevation.lada.model.master.MpgTransf_;
 import de.intevation.lada.model.master.NuclFacilGr;
+import de.intevation.lada.model.master.NuclFacilGr_;
 import de.intevation.lada.model.master.Poi;
 import de.intevation.lada.model.master.Regulation;
+import de.intevation.lada.model.master.Regulation_;
 import de.intevation.lada.model.master.ReiAgGr;
+import de.intevation.lada.model.master.ReiAgGr_;
 import de.intevation.lada.model.master.SampleMeth;
+import de.intevation.lada.model.master.SampleMeth_;
 import de.intevation.lada.model.master.SampleSpecif;
+import de.intevation.lada.model.master.SampleSpecif_;
 import de.intevation.lada.model.master.Sampler;
+import de.intevation.lada.model.master.Sampler_;
 import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.model.master.SpatRefSys;
+import de.intevation.lada.model.master.SpatRefSys_;
 import de.intevation.lada.model.master.State;
+import de.intevation.lada.model.master.State_;
 import de.intevation.lada.model.master.StatusAccessMpView;
+import de.intevation.lada.model.master.StatusAccessMpView_;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.model.master.Tag;
+import de.intevation.lada.model.master.Tag_;
 import de.intevation.lada.model.master.Tz;
+import de.intevation.lada.model.master.Tz_;
 import de.intevation.lada.util.auth.HeaderAuthorization;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.MesswertNormalizer;
@@ -204,7 +232,7 @@ public class LafObjectMapper {
         if (object.getAttributes().containsKey("ZEITBASIS")) {
             String attribute = object.getAttributes().get("ZEITBASIS");
             QueryBuilder<Tz> builder = repository.queryBuilder(Tz.class)
-                .and("name", attribute);
+                .and(Tz_.name, attribute);
             try {
                 currentZeitbasis = repository.getSingle(builder.getQuery())
                     .getId();
@@ -413,24 +441,24 @@ public class LafObjectMapper {
                     // Check if we have EOrte present
                     QueryBuilder<Geolocat> builderPresentEOrte = repository
                         .queryBuilder(Geolocat.class)
-                        .and("sampleId", newProbe.getId())
-                        .and("typeRegulation", "E");
+                        .and(Geolocat_.sampleId, newProbe.getId())
+                        .and(Geolocat_.typeRegulation, "E");
                     List<Geolocat> presentEOrte =
                         repository.filter(builderPresentEOrte.getQuery());
 
                     // Check if we have UOrte present
                     QueryBuilder<Geolocat> builderPresentUOrte = repository
                         .queryBuilder(Geolocat.class)
-                        .and("sampleId", newProbe.getId())
-                        .and("typeRegulation", "U");
+                        .and(Geolocat_.sampleId, newProbe.getId())
+                        .and(Geolocat_.typeRegulation, "U");
                     List<Geolocat> presentUOrte =
                         repository.filter(builderPresentUOrte.getQuery());
 
                     // Check if we have ROrte present
                     QueryBuilder<Geolocat> builderPresentROrte = repository
                         .queryBuilder(Geolocat.class)
-                        .and("sampleId", newProbe.getId())
-                        .and("typeRegulation", "R");
+                        .and(Geolocat_.sampleId, newProbe.getId())
+                        .and(Geolocat_.typeRegulation, "R");
                     List<Geolocat> presentROrte =
                         repository.filter(builderPresentROrte.getQuery());
 
@@ -522,8 +550,8 @@ public class LafObjectMapper {
                             //remove present U-Orte
                             QueryBuilder<Geolocat> builderUOrt = repository
                                 .queryBuilder(Geolocat.class)
-                                .and("sampleId", newProbe.getId())
-                                .and("typeRegulation", "U");
+                                .and(Geolocat_.sampleId, newProbe.getId())
+                                .and(Geolocat_.typeRegulation, "U");
                             List<Geolocat> uOrteProbe =
                                 repository.filter(builderUOrt.getQuery());
                             if (!uOrteProbe.isEmpty()) {
@@ -540,8 +568,8 @@ public class LafObjectMapper {
                             // we make an update.
                             QueryBuilder<Geolocat> builderUOrt = repository
                                 .queryBuilder(Geolocat.class)
-                                .and("sampleId", newProbe.getId())
-                                .and("typeRegulation", "R");
+                                .and(Geolocat_.sampleId, newProbe.getId())
+                                .and(Geolocat_.typeRegulation, "R");
                             List<Geolocat> uOrteProbe =
                                 repository.filter(builderUOrt.getQuery());
                             if (!uOrteProbe.isEmpty()) {
@@ -565,8 +593,8 @@ public class LafObjectMapper {
                             || presentUOrte.size() > 0) {
                             QueryBuilder<Geolocat> builderUOrt = repository
                                 .queryBuilder(Geolocat.class)
-                                .and("sampleId", newProbe.getId())
-                                .and("typeRegulation", "U");
+                                .and(Geolocat_.sampleId, newProbe.getId())
+                                .and(Geolocat_.typeRegulation, "U");
                             List<Geolocat> uOrteProbe =
                                 repository.filter(builderUOrt.getQuery());
                             if (!uOrteProbe.isEmpty()) {
@@ -583,8 +611,8 @@ public class LafObjectMapper {
                             // Clean-up entnahmeOrte before merge
                             QueryBuilder<Geolocat> builderEOrt = repository
                                 .queryBuilder(Geolocat.class)
-                                .and("sampleId", newProbe.getId())
-                                .and("typeRegulation", "E");
+                                .and(Geolocat_.sampleId, newProbe.getId())
+                                .and(Geolocat_.typeRegulation, "E");
                             List<Geolocat> eOrteProbe =
                                 repository.filter(builderEOrt.getQuery());
                             if (!eOrteProbe.isEmpty()) {
@@ -642,7 +670,7 @@ public class LafObjectMapper {
                 //assign to messung objects
                 QueryBuilder<Measm> builderMessung = repository
                     .queryBuilder(Measm.class)
-                    .and("sampleId", newProbe.getId());
+                    .and(Measm_.sampleId, newProbe.getId());
                 List<Measm> messungen =
                     repository.filter(builderMessung.getQuery());
                 for (Measm messung: messungen) {
@@ -877,7 +905,7 @@ public class LafObjectMapper {
         // and it should only be a notification here
         QueryBuilder<CommSample> kommentarBuilder = repository
             .queryBuilder(CommSample.class)
-            .and("sampleId", probe.getId());
+            .and(CommSample_.sampleId, probe.getId());
         List<CommSample> kommentarExist = repository.filter(
             kommentarBuilder.getQuery());
         // TODO: Should be the job of EXISTS and a WHERE-clause in database
@@ -970,9 +998,11 @@ public class LafObjectMapper {
             isId = true;
         }
 
+        SingularAttribute<SampleSpecif, String> field = isId
+            ? SampleSpecif_.id : SampleSpecif_.extId;
         QueryBuilder<SampleSpecif> builder = repository
             .queryBuilder(SampleSpecif.class)
-            .and(isId ? "id" : "extId", attribute);
+            .and(field, attribute);
         List<SampleSpecif> zusatz = repository.filter(builder.getQuery());
         if (zusatz == null || zusatz.isEmpty()) {
             currentWarnings.add(new ReportItem(
@@ -1025,7 +1055,7 @@ public class LafObjectMapper {
             }
 
             QueryBuilder<Measd> builder = repository.queryBuilder(Measd.class)
-                .and("name", messgroesseString);
+                .and(Measd_.name, messgroesseString);
             List<Measd> groesse = repository.filter(builder.getQuery());
             if (groesse == null || groesse.isEmpty()) {
                 currentWarnings.add(
@@ -1056,7 +1086,7 @@ public class LafObjectMapper {
             String attribute = attributes.get("MESSEINHEIT");
             QueryBuilder<MeasUnit> builder = repository
                 .queryBuilder(MeasUnit.class)
-                .and("unitSymbol", attribute);
+                .and(MeasUnit_.unitSymbol, attribute);
             List<MeasUnit> einheit = repository.filter(builder.getQuery());
             if (einheit == null || einheit.isEmpty()) {
                 currentWarnings.add(
@@ -1143,7 +1173,7 @@ public class LafObjectMapper {
         // and it should only be a notification here
         QueryBuilder<CommMeasm> kommentarBuilder = repository
             .queryBuilder(CommMeasm.class)
-            .and("measmId", messungsId);
+            .and(CommMeasm_.measmId, messungsId);
         List<CommMeasm> kommentarExist = repository.filter(
             kommentarBuilder.getQuery());
         // TODO: Should be the job of EXISTS and a WHERE-clause in database
@@ -1268,10 +1298,12 @@ public class LafObjectMapper {
         // check if erreichbar
         QueryBuilder<StatusAccessMpView> errFilter = repository
             .queryBuilder(StatusAccessMpView.class)
-            .and("statusLevId", statusStufe)
-            .and("statusValId", statusWert)
-            .and("curLevId", currentKombi.getStatusLev().getId())
-            .and("curValId", currentKombi.getStatusVal().getId());
+            .and(StatusAccessMpView_.statusLevId, statusStufe)
+            .and(StatusAccessMpView_.statusValId, statusWert)
+            .and(StatusAccessMpView_.curLevId,
+                currentKombi.getStatusLev().getId())
+            .and(StatusAccessMpView_.curValId,
+                currentKombi.getStatusVal().getId());
         List<StatusAccessMpView> erreichbar =
             repository.filter(errFilter.getQuery());
         if (erreichbar.isEmpty()) {
@@ -1286,7 +1318,7 @@ public class LafObjectMapper {
         //Cleanup Messwerte for Status 7
         QueryBuilder<MeasVal> builderMW = repository
             .queryBuilder(MeasVal.class)
-            .and("measmId", messung.getId());
+            .and(MeasVal_.measmId, messung.getId());
         List<MeasVal> messwerte =
             repository.filter(builderMW.getQuery());
         boolean hasValidMesswerte = false;
@@ -1391,7 +1423,7 @@ public class LafObjectMapper {
 
     private void createReiMesspunkt(LafRawData.Sample object, Sample probe) {
         QueryBuilder<Geolocat> builder = repository.queryBuilder(Geolocat.class)
-            .and("sampleId", probe.getId());
+            .and(Geolocat_.sampleId, probe.getId());
         List<Geolocat> zuordnungen =
             repository.filter(builder.getQuery());
         if (!zuordnungen.isEmpty()) {
@@ -1407,7 +1439,7 @@ public class LafObjectMapper {
             // Search for the ort in db
             Map<String, String> uo = uort.get(0);
             QueryBuilder<Site> builder1 = repository.queryBuilder(Site.class)
-                .and("extId", uo.get("U_ORTS_ZUSATZCODE"));
+                .and(Site_.extId, uo.get("U_ORTS_ZUSATZCODE"));
             List<Site> messpunkte =
                 repository.filter(builder1.getQuery());
             if (!messpunkte.isEmpty()) {
@@ -1425,7 +1457,7 @@ public class LafObjectMapper {
             } else if (uo.get("U_ORTS_ZUSATZCODE").length() == 4) {
                 QueryBuilder<NuclFacilGr> builderKta = repository
                     .queryBuilder(NuclFacilGr.class)
-                    .and("extId", uo.get("U_ORTS_ZUSATZCODE"));
+                    .and(NuclFacilGr_.extId, uo.get("U_ORTS_ZUSATZCODE"));
                 List<NuclFacilGr> ktaGrp =
                     repository.filter(builderKta.getQuery());
                 if (!ktaGrp.isEmpty()) {
@@ -1588,7 +1620,7 @@ public class LafObjectMapper {
             } else {
                 QueryBuilder<SpatRefSys> kdaBuilder = repository
                     .queryBuilder(SpatRefSys.class)
-                    .and("name", attributes.get(type + "KOORDINATEN_ART"));
+                    .and(SpatRefSys_.name, attributes.get(type + "KOORDINATEN_ART"));
                 List<SpatRefSys> arten =
                     repository.filter(kdaBuilder.getQuery());
                 if (arten == null || arten.isEmpty()) {
@@ -1609,7 +1641,7 @@ public class LafObjectMapper {
         if (attributes.get(type + "GEMEINDENAME") != null) {
             QueryBuilder<AdminUnit> builder = repository
                 .queryBuilder(AdminUnit.class)
-                .and("name", attributes.get(type + "GEMEINDENAME"));
+                .and(AdminUnit_.name, attributes.get(type + "GEMEINDENAME"));
             List<AdminUnit> ves =
                 repository.filter(builder.getQuery());
             if (ves == null || ves.size() == 0) {
@@ -1636,24 +1668,26 @@ public class LafObjectMapper {
         String key = "";
         String hLand = "";
         String staatFilter = "";
+        QueryBuilder<State> builderStaat = repository
+            .queryBuilder(State.class);
         if (attributes.get(type + "HERKUNFTSLAND_S") != null) {
             staatFilter = "id";
             key = "HERKUNFTSLAND_S";
             hLand = attributes.get(type + "HERKUNFTSLAND_S");
+            builderStaat = builderStaat.and(State_.id, Integer.parseInt(hLand));
         } else if (attributes.get(type + "HERKUNFTSLAND_KURZ") != null) {
             staatFilter = "intVehRegCode";
             key = "HERKUNFTSLAND_KURZ";
             hLand = attributes.get(type + "HERKUNFTSLAND_KURZ");
+            builderStaat = builderStaat.and(State_.intVehRegCode, hLand);
         } else if (attributes.get(type + "HERKUNFTSLAND_LANG") != null) {
             staatFilter = "ctry";
             key = "HERKUNFTSLAND_LANG";
             hLand = attributes.get(type + "HERKUNFTSLAND_LANG");
+            builderStaat = builderStaat.and(State_.ctry, hLand);
         }
 
         if (staatFilter.length() > 0) {
-            QueryBuilder<State> builderStaat = repository
-                .queryBuilder(State.class)
-                .and(staatFilter, hLand);
             List<State> staat =
                 repository.filter(builderStaat.getQuery());
             if (staat == null || staat.size() == 0) {
@@ -1727,8 +1761,7 @@ public class LafObjectMapper {
     //Assign global Tag based on LAF field SZENARIO
     private void assignGlobalTag(String szenario, Object object) {
         QueryBuilder<Tag> builderTag = repository.queryBuilder(Tag.class)
-            .and("name", szenario)
-            .and("tagType", "global");
+            .and(Tag_.name, szenario);
         List<Tag> globalTag = repository.filter(builderTag.getQuery());
 
         if (globalTag.isEmpty()) {
@@ -1743,7 +1776,7 @@ public class LafObjectMapper {
                 Sample probe = (Sample) object;
                 QueryBuilder<TagLinkSample> builderZuord = repository
                     .queryBuilder(TagLinkSample.class)
-                    .and("sampleId", probe.getId());
+                    .and(TagLinkSample_.sampleId, probe.getId());
                 List<TagLinkSample> globalTagZuord =
                     repository.filter(builderZuord.getQuery());
                 if (globalTagZuord.stream().anyMatch(
@@ -1763,7 +1796,7 @@ public class LafObjectMapper {
                 Measm messung = (Measm) object;
                 QueryBuilder<TagLinkMeasm> builderZuord = repository
                     .queryBuilder(TagLinkMeasm.class)
-                    .and("measmId", messung.getId());
+                    .and(TagLinkMeasm_.measmId, messung.getId());
                 List<TagLinkMeasm> globalTagZuord =
                     repository.filter(builderZuord.getQuery());
 
@@ -1819,7 +1852,7 @@ public class LafObjectMapper {
         ) {
             QueryBuilder<Regulation> builder = repository
                 .queryBuilder(Regulation.class)
-                .and("name", value);
+                .and(Regulation_.name, value);
             List<Regulation> datenbasis =
                 repository.filter(builder.getQuery());
             if (datenbasis == null || datenbasis.isEmpty()) {
@@ -1867,7 +1900,7 @@ public class LafObjectMapper {
         ) {
             QueryBuilder<MpgTransf> builder = repository
                 .queryBuilder(MpgTransf.class)
-                .and("extId", value);
+                .and(MpgTransf_.extId, value);
             List<MpgTransf> transfer = repository.filter(
                     builder.getQuery());
             if (transfer == null || transfer.isEmpty()) {
@@ -1884,7 +1917,7 @@ public class LafObjectMapper {
         if ("MESSPROGRAMM_C".equals(key)) {
             QueryBuilder<MpgTransf> builder = repository
                 .queryBuilder(MpgTransf.class)
-                .and("name", value);
+                .and(MpgTransf_.name, value);
             List<MpgTransf> transfer =
                 repository.filter(builder.getQuery());
             if (transfer == null || transfer.isEmpty()) {
@@ -1902,9 +1935,9 @@ public class LafObjectMapper {
         if ("ERZEUGER".equals(key)) {
             QueryBuilder<DatasetCreator> builder = repository
                 .queryBuilder(DatasetCreator.class)
-                .and("networkId", netzbetreiberId)
-                .and("measFacilId", probe.getMeasFacilId())
-                .and("extId", value);
+                .and(DatasetCreator_.networkId, netzbetreiberId)
+                .and(DatasetCreator_.measFacilId, probe.getMeasFacilId())
+                .and(DatasetCreator_.extId, value);
             List<DatasetCreator> datensatzErzeuger =
                 repository.filter(builder.getQuery());
             if (datensatzErzeuger == null || datensatzErzeuger.isEmpty()) {
@@ -1919,8 +1952,8 @@ public class LafObjectMapper {
         if ("MESSPROGRAMM_LAND".equals(key)) {
             QueryBuilder<MpgCateg> builder = repository
                 .queryBuilder(MpgCateg.class)
-                .and("networkId", netzbetreiberId)
-                .and("extId", value);
+                .and(MpgCateg_.networkId, netzbetreiberId)
+                .and(MpgCateg_.extId, value);
             List<MpgCateg> kategorie =
                 repository.filter(builder.getQuery());
             if (kategorie == null || kategorie.isEmpty()) {
@@ -1935,8 +1968,8 @@ public class LafObjectMapper {
         if ("PROBENAHMEINSTITUTION".equals(key)) {
             QueryBuilder<Sampler> builder = repository
                 .queryBuilder(Sampler.class)
-                .and("networkId", netzbetreiberId)
-                .and("extId", value);
+                .and(Sampler_.networkId, netzbetreiberId)
+                .and(Sampler_.extId, value);
             List<Sampler> prn = repository.filter(builder.getQuery());
             if (prn == null || prn.isEmpty()) {
                 currentWarnings.add(
@@ -1991,7 +2024,7 @@ public class LafObjectMapper {
                 : value.toString().length();
             QueryBuilder<EnvMedium> builder = repository
                 .queryBuilder(EnvMedium.class)
-                .and("name", value.toString().substring(0, length));
+                .and(EnvMedium_.name, value.toString().substring(0, length));
             List<EnvMedium> umwelt = repository.filter(builder.getQuery());
             if (umwelt == null || umwelt.isEmpty()) {
                 currentWarnings.add(
@@ -2040,7 +2073,7 @@ public class LafObjectMapper {
             || "REI_PROGRAMMPUNKT".equals(key)) {
             QueryBuilder<ReiAgGr> builder = repository
                 .queryBuilder(ReiAgGr.class)
-                .and("name", value.toString());
+                .and(ReiAgGr_.name, value.toString());
             List<ReiAgGr> list =
                 repository.filter(builder.getQuery());
             if (!list.isEmpty()) {
@@ -2059,7 +2092,7 @@ public class LafObjectMapper {
         if ("PROBENART".equals(key) && value != null) {
             QueryBuilder<SampleMeth> builder = repository
                 .queryBuilder(SampleMeth.class)
-                .and("extId", value);
+                .and(SampleMeth_.extId, value);
             List<SampleMeth> probenart =
                 repository.filter(builder.getQuery());
             if (probenart == null || probenart.isEmpty()) {
@@ -2107,7 +2140,7 @@ public class LafObjectMapper {
             }
         } else if ("MESSMETHODE_C".equals(key)) {
             QueryBuilder<Mmt> builder = repository.queryBuilder(Mmt.class)
-                .and("name", value.toString());
+                .and(Mmt_.name, value.toString());
             List<Mmt> mm = repository.filter(builder.getQuery());
             if (mm == null || mm.isEmpty()) {
                 ReportItem warn = new ReportItem();

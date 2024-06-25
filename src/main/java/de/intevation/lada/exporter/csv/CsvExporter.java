@@ -36,6 +36,7 @@ import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.model.master.GridColMp;
+import de.intevation.lada.model.master.GridColMp_;
 import de.intevation.lada.model.master.StatusLev;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.model.master.StatusVal;
@@ -109,8 +110,8 @@ public class CsvExporter implements Exporter {
 
             QueryBuilder<GridColMp> builder =
                 repository.queryBuilder(GridColMp.class)
-                .and("dataIndex", key)
-                .and("baseQueryId", qId);
+                .and(GridColMp_.dataIndex, key)
+                .and(GridColMp_.baseQueryId, qId);
             try {
                 GridColMp column =
                     repository.getSingle(builder.getQuery());

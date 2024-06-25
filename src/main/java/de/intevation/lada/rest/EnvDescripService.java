@@ -19,6 +19,7 @@ import jakarta.ws.rs.QueryParam;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.EnvDescrip;
+import de.intevation.lada.model.master.EnvDescrip_;
 
 /**
  * The services produce data in the application/json media type.
@@ -53,10 +54,10 @@ public class EnvDescripService extends LadaService {
     ) {
         QueryBuilder<EnvDescrip> builder =
             repository.queryBuilder(EnvDescrip.class);
-        builder.and("levVal", 0).not();
-        builder.and("lev", lev);
+        builder.and(EnvDescrip_.levVal, 0).not();
+        builder.and(EnvDescrip_.lev, lev);
         if (predIds != null && !predIds.isEmpty()) {
-            builder.andIn("predId", predIds);
+            builder.andIn(EnvDescrip_.predId, predIds);
         }
         return repository.filter(builder.getQuery());
     }

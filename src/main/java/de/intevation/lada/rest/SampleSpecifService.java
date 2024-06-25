@@ -19,6 +19,7 @@ import jakarta.ws.rs.QueryParam;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.SampleSpecif;
+import de.intevation.lada.model.master.SampleSpecif_;
 
 /**
  * REST service for SampleSpecif objects.
@@ -59,7 +60,7 @@ public class SampleSpecifService extends LadaService {
             if (!ids.isEmpty()) {
                 QueryBuilder<SampleSpecif> builder =
                     repository.queryBuilder(SampleSpecif.class)
-                    .orIn("id", ids);
+                    .orIn(SampleSpecif_.id, ids);
                 return repository.filter(builder.getQuery());
             }
         }

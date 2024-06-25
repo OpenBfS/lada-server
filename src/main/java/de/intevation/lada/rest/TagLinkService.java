@@ -9,6 +9,7 @@ package de.intevation.lada.rest;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.Query;
+import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.POST;
@@ -68,8 +69,9 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
     }
 
     protected abstract Boolean isExisting(T link);
-    protected abstract Object getTaggegObjectId(T link);
-    protected abstract String getTaggedObjectIdField();
+    protected abstract Integer getTaggegObjectId(T link);
+    protected abstract SingularAttribute<T, Integer> getTaggedObjectIdField();
+    protected abstract void deleteTagLink(T tagLink);
 
     /**
      * Check if a tag link already exists.
@@ -161,17 +163,8 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
                         tagLink));
                 continue;
             }
-
-            String taggedObjectIdField = getTaggedObjectIdField();
-            Object taggedObjectId = getTaggegObjectId(tagLink);
-
             // Delete existing entity
-            repository.delete(
-                repository.getSingle(repository
-                    .queryBuilder(tagLink.getClass())
-                    .and("tagId", tagLink.getTagId())
-                    .and(taggedObjectIdField, taggedObjectId)
-                    .getQuery()));
+            deleteTagLink(tagLink);
             responseList.add(new Response<T>(
                 true, StatusCodes.OK, tagLink));
         }

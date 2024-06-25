@@ -25,6 +25,7 @@ import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -74,7 +75,7 @@ public class GeolocatService extends LadaService {
     ) {
         QueryBuilder<Geolocat> builder = repository
             .queryBuilder(Geolocat.class)
-            .and("sampleId", sampleId);
+            .and(Geolocat_.sampleId, sampleId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
             Geolocat.class);

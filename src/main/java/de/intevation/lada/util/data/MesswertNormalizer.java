@@ -14,6 +14,7 @@ import jakarta.inject.Inject;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.UnitConvers;
+import de.intevation.lada.model.master.UnitConvers_;
 
 
 public class MesswertNormalizer {
@@ -37,8 +38,8 @@ public class MesswertNormalizer {
     ) {
         QueryBuilder<UnitConvers> builder = repository
             .queryBuilder(UnitConvers.class)
-            .and("toUnitId", mehIdTo)
-            .and("fromUnitId", mehIdFrom);
+            .and(UnitConvers_.toUnitId, mehIdTo)
+            .and(UnitConvers_.fromUnitId, mehIdFrom);
         return repository.filter(builder.getQuery());
     }
 

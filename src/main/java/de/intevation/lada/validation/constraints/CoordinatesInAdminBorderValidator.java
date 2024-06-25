@@ -17,6 +17,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import org.locationtech.jts.geom.Point;
 
 import de.intevation.lada.model.master.AdminBorderView;
+import de.intevation.lada.model.master.AdminBorderView_;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -52,7 +53,7 @@ public class CoordinatesInAdminBorderValidator
                 .createInstance().select(Repository.class).get();
             QueryBuilder<AdminBorderView> vg = repository
                 .queryBuilder(AdminBorderView.class)
-                .and("municId", gemId);
+                .and(AdminBorderView_.municId, gemId);
             List<AdminBorderView> vgs = repository.filter(vg.getQuery());
             if (vgs.isEmpty()) {
                 return true;

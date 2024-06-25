@@ -18,13 +18,20 @@ import jakarta.inject.Named;
 
 import de.intevation.lada.exporter.Creator;
 import de.intevation.lada.model.lada.CommMeasm;
+import de.intevation.lada.model.lada.CommMeasm_;
 import de.intevation.lada.model.lada.CommSample;
+import de.intevation.lada.model.lada.CommSample_;
 import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.model.lada.StatusProt;
+import de.intevation.lada.model.lada.StatusProt_;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.MeasUnit;
@@ -36,6 +43,7 @@ import de.intevation.lada.model.master.SampleMeth;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.auth.HeaderAuthorization;
 import de.intevation.lada.util.auth.UserInfo;
@@ -134,7 +142,7 @@ implements Creator {
     private String writeAttributes(Sample probe, List<Integer> messungen) {
         QueryBuilder<CommSample> kommBuilder = repository
             .queryBuilder(CommSample.class)
-            .and("sampleId", probe.getId());
+            .and(CommSample_.sampleId, probe.getId());
         List<CommSample> kommentare = repository.filter(
             kommBuilder.getQuery());
 
@@ -150,7 +158,7 @@ implements Creator {
 
         QueryBuilder<SampleSpecifMeasVal> zusatzBuilder = repository
             .queryBuilder(SampleSpecifMeasVal.class)
-            .and("sampleId", probe.getId());
+            .and(SampleSpecifMeasVal_.sampleId, probe.getId());
         List<SampleSpecifMeasVal> zusatzwerte =
             repository.filter(zusatzBuilder.getQuery());
 
@@ -295,7 +303,7 @@ implements Creator {
     private String writeOrt(Sample probe) {
         QueryBuilder<Geolocat> builder = repository
             .queryBuilder(Geolocat.class)
-            .and("sampleId", probe.getId());
+            .and(Geolocat_.sampleId, probe.getId());
         List<Geolocat> orte = repository.filter(builder.getQuery());
 
         String laf = "";
@@ -333,7 +341,7 @@ implements Creator {
 
         QueryBuilder<Site> oBuilder = repository
             .queryBuilder(Site.class)
-            .and("id", o.getSiteId());
+            .and(Site_.id, o.getSiteId());
         Site sOrt = repository.getSingle(oBuilder.getQuery());
 
         if (sOrt.getStateId() != null) {
@@ -416,9 +424,9 @@ implements Creator {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class);
         if (messungen.isEmpty()) {
             // Get all messungen
-            builder.and("sampleId", probe.getId());
+            builder.and(Measm_.sampleId, probe.getId());
         } else {
-            builder.andIn("id", messungen);
+            builder.andIn(Measm_.id, messungen);
         }
         List<Measm> mess = repository.filter(
             builder.getQuery());
@@ -428,12 +436,12 @@ implements Creator {
             laf += "%MESSUNG%\n";
             QueryBuilder<MeasVal> wertBuilder = repository
                 .queryBuilder(MeasVal.class)
-                .and("measmId", m.getId());
+                .and(MeasVal_.measmId, m.getId());
             List<MeasVal> werte = repository.filter(
                 wertBuilder.getQuery());
             QueryBuilder<CommMeasm> kommBuilder = repository
                 .queryBuilder(CommMeasm.class)
-                .and("measmId", m.getId());
+                .and(CommMeasm_.measmId, m.getId());
             List<CommMeasm> kommentare = repository.filter(
                 kommBuilder.getQuery());
             laf += lafLine("MESSUNGS_ID", m.getExtId().toString());
@@ -483,8 +491,8 @@ implements Creator {
         Integer[] status = {0, 0, 0};
         QueryBuilder<StatusProt> builder =
         repository.queryBuilder(StatusProt.class);
-            builder.and("measmId", messung.getId());
-        builder.orderBy("id", false);
+            builder.and(StatusProt_.measmId, messung.getId());
+        builder.orderBy(StatusProt_.id, false);
         List<StatusProt> statusHistory = repository.filter(
                 builder.getQuery());
         Integer stufe = 4;

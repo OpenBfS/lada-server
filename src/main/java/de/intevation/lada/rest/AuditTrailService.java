@@ -28,9 +28,13 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.model.lada.AuditTrailMeasmView;
+import de.intevation.lada.model.lada.AuditTrailMeasmView_;
 import de.intevation.lada.model.lada.AuditTrailMpgView;
+import de.intevation.lada.model.lada.AuditTrailMpgView_;
 import de.intevation.lada.model.lada.AuditTrailSampleView;
+import de.intevation.lada.model.lada.AuditTrailSampleView_;
 import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Sample;
@@ -171,7 +175,7 @@ public class AuditTrailService extends LadaService {
         //Get ort ids connected to this probe
         QueryBuilder<Geolocat> refBuilder = repository
             .queryBuilder(Geolocat.class)
-            .and("sampleId", pId);
+            .and(Geolocat_.sampleId, pId);
         List<Integer> ortIds = new LinkedList<Integer>();
         for (Geolocat zuordnung
             : repository.filter(refBuilder.getQuery())
@@ -182,13 +186,13 @@ public class AuditTrailService extends LadaService {
         // Get all entries for the probe and its sub objects.
         QueryBuilder<AuditTrailSampleView> builder = repository
             .queryBuilder(AuditTrailSampleView.class)
-            .and("objectId", pId)
-            .and("tableName", "sample")
-            .or("sampleId", pId);
+            .and(AuditTrailSampleView_.objectId, pId)
+            .and(AuditTrailSampleView_.tableName, "sample")
+            .or(AuditTrailSampleView_.sampleId, pId);
         if (ortIds.size() > 0) {
-            builder.orIn("siteId", ortIds);
+            builder.orIn(AuditTrailSampleView_.siteId, ortIds);
         }
-        builder.orderBy("tstamp", true);
+        builder.orderBy(AuditTrailSampleView_.tstamp, true);
         List<AuditTrailSampleView> audit =
             repository.filter(builder.getQuery());
 
@@ -318,10 +322,10 @@ public class AuditTrailService extends LadaService {
         UserInfo userInfo = authorization.getInfo();
         QueryBuilder<AuditTrailMeasmView> builder = repository
             .queryBuilder(AuditTrailMeasmView.class)
-            .and("objectId", mId)
-            .and("tableName", "measm")
-            .or("measmId", mId);
-        builder.orderBy("tstamp", true);
+            .and(AuditTrailMeasmView_.objectId, mId)
+            .and(AuditTrailMeasmView_.tableName, "measm")
+            .or(AuditTrailMeasmView_.measmId, mId);
+        builder.orderBy(AuditTrailMeasmView_.tstamp, true);
         List<AuditTrailMeasmView> audit =
             repository.filter(builder.getQuery());
 
@@ -391,10 +395,10 @@ public class AuditTrailService extends LadaService {
 
         QueryBuilder<AuditTrailMpgView> builder =
             repository.queryBuilder(AuditTrailMpgView.class);
-        builder.and("objectId", mpgId);
-        builder.and("tableName", "mpg");
-        builder.or("mpgId", mpgId);
-        builder.orderBy("tstamp", true);
+        builder.and(AuditTrailMpgView_.objectId, mpgId);
+        builder.and(AuditTrailMpgView_.tableName, "mpg");
+        builder.or(AuditTrailMpgView_.mpgId, mpgId);
+        builder.orderBy(AuditTrailMpgView_.tstamp, true);
         List<AuditTrailMpgView> audit =
             repository.filter(builder.getQuery());
 

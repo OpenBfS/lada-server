@@ -28,6 +28,7 @@ import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 
 import de.intevation.lada.model.master.ImportConf;
+import de.intevation.lada.model.master.ImportConf_;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Job;
@@ -158,7 +159,7 @@ public class LafImportJob extends Job {
             if (!"".equals(mstId)) {
                 QueryBuilder<ImportConf> builder =
                     repository.queryBuilder(ImportConf.class);
-                builder.and("measFacilId", mstId);
+                builder.and(ImportConf_.measFacilId, mstId);
                 config = repository.filter(builder.getQuery());
             }
             importer.doImport(content, userInfo, mstId, config, locale);

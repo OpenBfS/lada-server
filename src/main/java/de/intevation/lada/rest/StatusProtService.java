@@ -26,8 +26,10 @@ import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.StatusProt;
+import de.intevation.lada.model.lada.StatusProt_;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -80,7 +82,7 @@ public class StatusProtService extends LadaService {
     ) {
         QueryBuilder<StatusProt> builder = repository
             .queryBuilder(StatusProt.class)
-            .and("measmId", measmId);
+            .and(StatusProt_.measmId, measmId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
             StatusProt.class);
@@ -162,16 +164,16 @@ public class StatusProtService extends LadaService {
     ) {
         boolean hasValidMesswerte = repository.filter(repository
                 .queryBuilder(MeasVal.class)
-                .and("measVal", null)
-                .and("lessThanLOD", null)
+                .andIsNull(MeasVal_.measVal)
+                .andIsNull(MeasVal_.lessThanLOD)
                 .not()
-                .and("measmId", messung.getId())
+                .and(MeasVal_.measmId, messung.getId())
                 .getQuery()
             ).isEmpty();
         if (newKombi.getStatusVal().getId() == 7 && !hasValidMesswerte) {
             List<MeasVal> messwerte = repository.filter(repository
                 .queryBuilder(MeasVal.class)
-                .and("measmId", messung.getId())
+                .and(MeasVal_.measmId, messung.getId())
                 .getQuery());
             for (MeasVal measVal : messwerte) {
                 repository.delete(measVal);
@@ -226,8 +228,8 @@ public class StatusProtService extends LadaService {
         }
         QueryBuilder<StatusProt> lastFilter = repository
             .queryBuilder(StatusProt.class)
-            .and("measmId", newStatus.getMeasmId());
-        lastFilter.orderBy("date", true);
+            .and(StatusProt_.measmId, newStatus.getMeasmId());
+        lastFilter.orderBy(StatusProt_.date, true);
         List<StatusProt> proto = repository.filter(lastFilter.getQuery());
         // Find a status that has "status_stufe" = "old status_stufe - 1"
         int ndx = -1;

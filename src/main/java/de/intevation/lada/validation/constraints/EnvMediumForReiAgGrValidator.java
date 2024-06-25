@@ -10,12 +10,14 @@ package de.intevation.lada.validation.constraints;
 import java.util.List;
 
 import jakarta.enterprise.inject.spi.CDI;
+import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.ReiAgGrEnvMediumMp;
+import de.intevation.lada.model.master.ReiAgGrEnvMediumMp_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -54,17 +56,18 @@ public class EnvMediumForReiAgGrValidator
 
         Repository repository = CDI.current().getBeanContainer()
             .createInstance().select(Repository.class).get();
-        final String envMediumIdKey = "envMediumId";
+        final SingularAttribute<ReiAgGrEnvMediumMp, String> envMediumIdKey
+            = ReiAgGrEnvMediumMp_.envMediumId;
         QueryBuilder<ReiAgGrEnvMediumMp> builder = repository
             .queryBuilder(ReiAgGrEnvMediumMp.class)
-            .and("reiAgGrId", probe.getReiAgGrId())
+            .and(ReiAgGrEnvMediumMp_.reiAgGrId, probe.getReiAgGrId())
             .and(envMediumIdKey, probe.getEnvMediumId());
         List<ReiAgGrEnvMediumMp> zuord =
             repository.filter(builder.getQuery());
         if (zuord.isEmpty()) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
-                .addPropertyNode(envMediumIdKey)
+                .addPropertyNode(envMediumIdKey.getName())
                 .addConstraintViolation();
             return false;
         }

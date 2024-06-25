@@ -11,9 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.inject.Inject;
-
+import jakarta.persistence.metamodel.SingularAttribute;
 import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
+import de.intevation.lada.model.master.EnvDescrip_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -65,10 +66,10 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
             QueryBuilder<EnvDescrip> builder =
                 repository.queryBuilder(EnvDescrip.class);
             if (parent != null) {
-                builder.and("predId", parent);
+                builder.and(EnvDescrip_.predId, parent);
             }
-            builder.and("levVal", mediaDesk[i])
-                .and("lev", i - 1);
+            builder.and(EnvDescrip_.levVal, Integer.parseInt(mediaDesk[i]))
+                .and(EnvDescrip_.lev, i - 1);
             List<EnvDescrip> data = repository.filter(builder.getQuery());
 
             if (data.isEmpty()) {
@@ -106,7 +107,9 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
             repository.queryBuilder(EnvDescripEnvMediumMp.class);
 
         for (int i = 0; i < media.size(); i++) {
-            String field = "s" + (i > 9 ? i : "0" + i);
+            SingularAttribute<EnvDescripEnvMediumMp, Integer> field
+                = EnvDescripEnvMediumMp.getSXXAttributeByName(
+                    "s" + (i > 9 ? i : "0" + i));
             QueryBuilder<EnvDescripEnvMediumMp> tmp = builder.getEmptyBuilder();
             if (media.get(i) != -1) {
                 tmp.and(field, media.get(i));

@@ -14,6 +14,7 @@ import jakarta.inject.Inject;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -43,8 +44,8 @@ public class MessungIdentifier implements Identifier {
         if (messung.getExtId() == null
             && messung.getMinSampleId() != null
         ) {
-            builder.and("sampleId", messung.getSampleId());
-            builder.and("minSampleId", messung.getMinSampleId());
+            builder.and(Measm_.sampleId, messung.getSampleId());
+            builder.and(Measm_.minSampleId, messung.getMinSampleId());
             List<Measm> messungen =
                 repository.filter(builder.getQuery());
             if (messungen.size() > 1) {
@@ -57,8 +58,8 @@ public class MessungIdentifier implements Identifier {
                 //This may be a hibernate 6 bug, see:
                 //https://hibernate.atlassian.net/browse/HHH-15951
                 builder = repository.queryBuilder(Measm.class);
-                builder.and("sampleId", messung.getSampleId());
-                builder.and("mmtId", messung.getMmtId());
+                builder.and(Measm_.sampleId, messung.getSampleId());
+                builder.and(Measm_.mmtId, messung.getMmtId());
                 messungen =
                     repository.filter(builder.getQuery());
                 if (messungen.isEmpty()) {
@@ -77,8 +78,8 @@ public class MessungIdentifier implements Identifier {
             found = messungen.get(0);
             return Identified.UPDATE;
         } else if (messung.getExtId() != null) {
-            builder.and("sampleId", messung.getSampleId());
-            builder.and("extId", messung.getExtId());
+            builder.and(Measm_.sampleId, messung.getSampleId());
+            builder.and(Measm_.extId, messung.getExtId());
             List<Measm> messungen =
                 repository.filter(builder.getQuery());
             if (messungen.size() > 1) {
@@ -92,8 +93,8 @@ public class MessungIdentifier implements Identifier {
             found = messungen.get(0);
             return Identified.UPDATE;
         } else if (messung.getMmtId() != null) {
-            builder.and("sampleId", messung.getSampleId());
-            builder.and("mmtId", messung.getMmtId());
+            builder.and(Measm_.sampleId, messung.getSampleId());
+            builder.and(Measm_.mmtId, messung.getMmtId());
             List<Measm> messungen =
                 repository.filter(builder.getQuery());
             if (messungen.isEmpty()) {

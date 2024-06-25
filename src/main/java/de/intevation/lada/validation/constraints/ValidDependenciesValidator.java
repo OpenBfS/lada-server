@@ -20,8 +20,10 @@ import org.hibernate.validator.constraintvalidation.HibernateConstraintValidator
 import static org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel.BEAN_METHODS;
 
 import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.Site;
@@ -109,7 +111,7 @@ public class ValidDependenciesValidator
             //validate messwert objects
             QueryBuilder<MeasVal> builder = repository
                 .queryBuilder(MeasVal.class)
-                .and("measmId", messung.getId());
+                .and(MeasVal_.measmId, messung.getId());
             List<MeasVal> messwerte = repository.filter(
                 builder.getQuery());
             if (!messwerte.isEmpty()) {
@@ -136,7 +138,7 @@ public class ValidDependenciesValidator
             // validate orte
             QueryBuilder<Geolocat> ortBuilder = repository
                 .queryBuilder(Geolocat.class)
-                .and("sampleId", probe.getId());
+                .and(Geolocat_.sampleId, probe.getId());
             List<Geolocat> assignedOrte = repository.filter(
                 ortBuilder.getQuery());
             for (Geolocat o : assignedOrte) {

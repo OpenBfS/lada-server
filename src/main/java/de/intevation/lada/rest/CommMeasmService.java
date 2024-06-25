@@ -22,6 +22,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.lada.CommMeasm;
+import de.intevation.lada.model.lada.CommMeasm_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -71,7 +72,7 @@ public class CommMeasmService extends LadaService {
 
         QueryBuilder<CommMeasm> builder =
             repository.queryBuilder(CommMeasm.class);
-        builder.and("measmId", measmId);
+        builder.and(CommMeasm_.measmId, measmId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
             CommMeasm.class);

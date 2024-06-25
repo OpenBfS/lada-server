@@ -25,6 +25,7 @@ import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -74,7 +75,7 @@ public class SampleSpecifMeasValService extends LadaService {
     ) {
         QueryBuilder<SampleSpecifMeasVal> builder =
             repository.queryBuilder(SampleSpecifMeasVal.class);
-        builder.and("sampleId", sampleId);
+        builder.and(SampleSpecifMeasVal_.sampleId, sampleId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
             SampleSpecifMeasVal.class);

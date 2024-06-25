@@ -18,6 +18,7 @@ import org.locationtech.jts.geom.PrecisionModel;
 
 import de.intevation.lada.model.master.AdminUnit;
 import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.model.master.State;
 import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -64,21 +65,21 @@ public class OrtFactory {
 
         // Search for matching existing site and return it
         QueryBuilder<Site> builder = repository.queryBuilder(Site.class)
-            .and("networkId", ort.getNetworkId());
+            .and(Site_.networkId, ort.getNetworkId());
         if (ort.getSpatRefSysId() != null
             && ort.getCoordXExt() != null
             && ort.getCoordYExt() != null
         ) {
             hasKoord = true;
-            builder.and("spatRefSysId", ort.getSpatRefSysId())
-                .and("coordXExt", ort.getCoordXExt())
-                .and("coordYExt", ort.getCoordYExt());
+            builder.and(Site_.spatRefSysId, ort.getSpatRefSysId())
+                .and(Site_.coordXExt, ort.getCoordXExt())
+                .and(Site_.coordYExt, ort.getCoordYExt());
             List<Site> orte = repository.filter(builder.getQuery());
             if (!orte.isEmpty()) {
                 return orte.get(0);
             }
         } else if (ort.getAdminUnitId() != null) {
-            builder.and("adminUnitId", ort.getAdminUnitId());
+            builder.and(Site_.adminUnitId, ort.getAdminUnitId());
             List<Site> orte = repository.filter(builder.getQuery());
             if (!orte.isEmpty()) {
                 if (orte.size() == 1) {
@@ -99,8 +100,8 @@ public class OrtFactory {
                 }
             }
         } else  if (ort.getStateId() != null) {
-            builder.and("stateId", ort.getStateId())
-                .and("siteClassId", Site.SiteClassId.ST);
+            builder.and(Site_.stateId, ort.getStateId())
+                .and(Site_.siteClassId, Site.SiteClassId.ST);
             List<Site> orte = repository.filter(builder.getQuery());
             if (!orte.isEmpty()) {
                 return orte.get(0);
@@ -110,8 +111,8 @@ public class OrtFactory {
         if (ort.getAdminUnitId() != null && !hasKoord) {
             QueryBuilder<Site> builderExists =
                 repository.queryBuilder(Site.class)
-                .and("networkId", ort.getNetworkId())
-                .andLike("extId", "%" + ort.getAdminUnitId());
+                .and(Site_.networkId, ort.getNetworkId())
+                .andLike(Site_.extId, "%" + ort.getAdminUnitId());
             List<Site> ortExists = repository.filter(
                 builderExists.getQuery());
             if (!ortExists.isEmpty()) {

@@ -19,6 +19,7 @@ import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.master.EnvMedium;
 import de.intevation.lada.model.master.UnitConvers;
+import de.intevation.lada.model.master.UnitConvers_;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.QueryBuilder;
 
@@ -80,15 +81,15 @@ public class IsNormalizedValidator implements
         if (mehId != null && !mehId.equals(fromUnit)) {
             QueryBuilder<UnitConvers> builder = repository
                 .queryBuilder(UnitConvers.class)
-                .and("toUnitId", mehId)
-                .and("fromUnitId", fromUnit);
+                .and(UnitConvers_.toUnitId, mehId)
+                .and(UnitConvers_.fromUnitId, fromUnit);
             convert = !repository.filter(builder.getQuery()).isEmpty();
         }
         if (!convert && secMehId != null && !secMehId.equals(fromUnit)) {
             QueryBuilder<UnitConvers> builder = repository
                 .queryBuilder(UnitConvers.class)
-                .and("toUnitId", secMehId)
-                .and("fromUnitId", fromUnit);
+                .and(UnitConvers_.toUnitId, secMehId)
+                .and(UnitConvers_.fromUnitId, fromUnit);
             convert = !repository.filter(builder.getQuery()).isEmpty();
         }
 

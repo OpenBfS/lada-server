@@ -25,6 +25,7 @@ import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.MpgMmtMp;
+import de.intevation.lada.model.lada.MpgMmtMp_;
 import de.intevation.lada.model.master.Measd;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
@@ -68,7 +69,7 @@ public class MpgMmtMpService extends LadaService {
     ) {
         QueryBuilder<MpgMmtMp> builder =
             repository.queryBuilder(MpgMmtMp.class);
-        builder.and("mpgId", mpgId);
+        builder.and(MpgMmtMp_.mpgId, mpgId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
             MpgMmtMp.class);

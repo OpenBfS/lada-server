@@ -25,6 +25,7 @@ import jakarta.ws.rs.PathParam;
 
 import de.intevation.lada.factory.ProbeFactory;
 import de.intevation.lada.model.lada.Mpg;
+import de.intevation.lada.model.lada.Mpg_;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -161,7 +162,7 @@ public class MpgService extends LadaService {
         @Valid SetActive data
     ) throws BadRequestException {
         QueryBuilder<Mpg> builder = repository.queryBuilder(Mpg.class)
-            .orIn("id", data.getIds());
+            .orIn(Mpg_.id, data.getIds());
         List<Mpg> messprogramme =
             repository.filter(builder.getQuery());
 

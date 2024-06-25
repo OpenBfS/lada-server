@@ -24,7 +24,9 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Tag;
@@ -118,11 +120,12 @@ public class TagUtil {
 
         //Get given probe and messung records
         List<Sample> probes = repository.filter(
-            repository.queryBuilder(Sample.class).andIn("id", probeIds)
+            repository.queryBuilder(Sample.class).andIn(Sample_.id, probeIds)
             .getQuery());
         List<Measm> messungs = repository.filter(
-            repository.queryBuilder(Measm.class).andIn("sampleId", probeIds)
-            .getQuery());
+            repository.queryBuilder(Measm.class)
+                .andIn(Measm_.sampleId, probeIds)
+                .getQuery());
 
         //Set tags
         probes.forEach(probe -> {

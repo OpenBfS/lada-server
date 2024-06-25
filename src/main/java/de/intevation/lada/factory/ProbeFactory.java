@@ -16,20 +16,26 @@ import java.util.Map;
 import java.util.Set;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.metamodel.SingularAttribute;
 
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.lada.CommSample;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.GeolocatMpg;
+import de.intevation.lada.model.lada.GeolocatMpg_;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.MpgMmtMp;
+import de.intevation.lada.model.lada.MpgMmtMp_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
+import de.intevation.lada.model.master.EnvDescripEnvMediumMp_;
+import de.intevation.lada.model.master.EnvDescrip_;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -388,12 +394,12 @@ public class ProbeFactory {
     ) {
         QueryBuilder<MpgMmtMp> builder = repository
             .queryBuilder(MpgMmtMp.class)
-            .and("mpgId", messprogramm.getId());
+            .and(MpgMmtMp_.mpgId, messprogramm.getId());
         List<MpgMmtMp> mmts = repository.filter(builder.getQuery());
 
         QueryBuilder<GeolocatMpg> builderOrt = repository
             .queryBuilder(GeolocatMpg.class)
-            .and("mpgId", messprogramm.getId());
+            .and(GeolocatMpg_.mpgId, messprogramm.getId());
         List<GeolocatMpg> orte =
             repository.filter(builderOrt.getQuery());
 
@@ -414,9 +420,9 @@ public class ProbeFactory {
         // Check for existing matching entity
         QueryBuilder<Sample> builderProbe = repository
             .queryBuilder(Sample.class)
-            .and("mpgId", messprogramm.getId())
-            .and("schedStartDate", startDate)
-            .and("schedEndDate", endDate);
+            .and(Sample_.mpgId, messprogramm.getId())
+            .and(Sample_.schedStartDate, startDate)
+            .and(Sample_.schedEndDate, endDate);
         List<Sample> proben = repository.filter(builderProbe.getQuery());
 
         // Add informative transient attributes to existing entity
@@ -575,10 +581,10 @@ public class ProbeFactory {
             QueryBuilder<EnvDescrip> builder =
                 repository.queryBuilder(EnvDescrip.class);
             if (parent != null) {
-                builder.and("predId", parent);
+                builder.and(EnvDescrip_.predId, parent);
             }
-            builder.and("levVal", mediaDesk[i]);
-            builder.and("lev", i - 1);
+            builder.and(EnvDescrip_.levVal, Integer.parseInt(mediaDesk[i]));
+            builder.and(EnvDescrip_.lev, i - 1);
             List<EnvDescrip> data = repository.filter(builder.getQuery());
             if (data.isEmpty()) {
                 return null;
@@ -610,7 +616,9 @@ public class ProbeFactory {
 
         int size = 1;
         for (int i = 0; i < media.size(); i++) {
-            String field = "s" + (i > POS9 ? i : "0" + i);
+            SingularAttribute<EnvDescripEnvMediumMp, Integer> field
+                = EnvDescripEnvMediumMp.getSXXAttributeByName(
+                    "s" + (i > POS9 ? i : "0" + i));
             QueryBuilder<EnvDescripEnvMediumMp> tmp = builder.getEmptyBuilder();
             if (media.get(i) != -1) {
                 tmp.and(field, media.get(i));
@@ -763,7 +771,7 @@ public class ProbeFactory {
         String mediaDesk = "D:";
         QueryBuilder<EnvDescripEnvMediumMp> builder =
             repository.queryBuilder(EnvDescripEnvMediumMp.class);
-        builder.and("envMediumId", umwId);
+        builder.and(EnvDescripEnvMediumMp_.envMediumId, umwId);
         List<EnvDescripEnvMediumMp> data = repository.filter(builder.getQuery());
         if (data.isEmpty()) {
             logger.debug("getInitialMediaDesk - media_desk : D: 00 00 00 00 00 00 00 00 00 00 00 00");

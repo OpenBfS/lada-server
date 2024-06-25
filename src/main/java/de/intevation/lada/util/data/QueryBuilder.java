@@ -20,6 +20,7 @@ import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.persistence.metamodel.SingularAttribute;
 
 /**
  * A builder for criteria queries to query objects of a specified class.
@@ -72,13 +73,27 @@ public class QueryBuilder<T> {
     }
 
     /**
+     * Logical AND operation for null values.
+     * @param <X> Column datatype
+     *
+     * @param id    The database column name.
+     * @return The builder itself.
+     */
+    public <X> QueryBuilder<T> andIsNull(
+        SingularAttribute<? super T, X> id) {
+        return and(id, null);
+    }
+
+    /**
      * Logical AND operation.
+     * @param <X> Column datatype
      *
      * @param id    The database column name.
      * @param value The filter value
      * @return The builder itself.
      */
-    public QueryBuilder<T> and(String id, Object value) {
+    public <X> QueryBuilder<T> and(
+            SingularAttribute<? super T, X> id, X value) {
         Predicate p;
         if (value == null) {
             p = this.builder.isNull(this.root.get(id));
@@ -108,12 +123,12 @@ public class QueryBuilder<T> {
 
     /**
      * Logical AND with case insensitive LIKE operation.
-     *
      * @param id    The database column name.
      * @param value The filter value
      * @return The builder itself.
      */
-    public QueryBuilder<T> andLike(String id, String value) {
+    public QueryBuilder<T> andLike(
+            SingularAttribute<T, String> id, String value) {
         Path<String> path = this.root.get(id);
         Predicate p =
             this.builder.like(this.builder.lower(path), value.toLowerCase());
@@ -127,12 +142,13 @@ public class QueryBuilder<T> {
 
     /**
      * Logical OR operation.
+     * @param <X> Column datatype
      *
      * @param id    The database column name
      * @param value The filter value.
      * @return The builder itself.
      */
-    public QueryBuilder<T> or(String id, Object value) {
+    public <X> QueryBuilder<T> or(SingularAttribute<? super T, X> id, X value) {
         Predicate p;
         if (value == null) {
             p = this.builder.isNull(this.root.get(id));
@@ -154,7 +170,8 @@ public class QueryBuilder<T> {
      * @param value The filter value.
      * @return The builder itself.
      */
-    public QueryBuilder<T> orLike(String id, String value) {
+    public QueryBuilder<T> orLike(
+            SingularAttribute<T, String> id, String value) {
         Path<String> path = this.root.get(id);
         Predicate p =
             this.builder.like(this.builder.lower(path), value.toLowerCase());
@@ -174,7 +191,8 @@ public class QueryBuilder<T> {
      * @param values    Iterable of values.
      * @return The builder itself.
      */
-    public QueryBuilder<T> and(String id, Iterable<String> values) {
+    public QueryBuilder<T> and(
+            SingularAttribute<T, String> id, Iterable<String> values) {
         if (values == null) {
             Predicate p = this.builder.isNull(this.root.get(id));
             if (this.filter != null) {
@@ -196,7 +214,8 @@ public class QueryBuilder<T> {
      * @param values    Collection of values.
      * @return The builder itself.
      */
-    public QueryBuilder<T> or(String id, Collection<String> values) {
+    public QueryBuilder<T> or(
+            SingularAttribute<T, String> id, Collection<String> values) {
         if (values == null) {
             Predicate p = this.builder.isNull(this.root.get(id));
             if (this.filter != null) {
@@ -216,7 +235,8 @@ public class QueryBuilder<T> {
      * @param values    Iterable of values.
      * @return The builder itself.
      */
-    public QueryBuilder<T> orIntList(String id, Iterable<Integer> values) {
+    public QueryBuilder<T> orIntList(
+            SingularAttribute<T, Integer> id, Iterable<Integer> values) {
         for (Integer v: values) {
             this.or(id, v);
         }
@@ -273,7 +293,8 @@ public class QueryBuilder<T> {
      *
      * @return The current Querybuilder.
      */
-    public <M> QueryBuilder<T> orIn(String key, Collection<M> values) {
+    public <M> QueryBuilder<T> orIn(
+            SingularAttribute<T, M> key, Collection<M> values) {
         Expression<M> exp = this.root.get(key);
         Predicate p = exp.in(values);
         if (this.filter == null) {
@@ -294,7 +315,8 @@ public class QueryBuilder<T> {
      *
      * @return The current Querybuilder.
      */
-    public <M> QueryBuilder<T> andIn(String key, Collection<M> values) {
+    public <M> QueryBuilder<T> andIn(
+            SingularAttribute<T, M> key, Collection<M> values) {
         Expression<M> exp = this.root.get(key);
         Predicate p = exp.in(values);
         if (this.filter == null) {
@@ -314,12 +336,14 @@ public class QueryBuilder<T> {
 
     /**
      * Order result by the specified column name.
+     * @param <X> Column datatype
      *
      * @param id    The column name.
      * @param asc   Ascending(true), Descending(false).
      * @return The current Querybuilder.
      */
-    public QueryBuilder<T> orderBy(String id, boolean asc) {
+    public <X> QueryBuilder<T> orderBy(
+            SingularAttribute<T, X> id, boolean asc) {
         Order order;
         if (asc) {
             order = this.builder.asc(this.root.get(id));

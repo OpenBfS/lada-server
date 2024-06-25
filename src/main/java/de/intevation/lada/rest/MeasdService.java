@@ -20,6 +20,7 @@ import jakarta.ws.rs.QueryParam;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.Measd;
+import de.intevation.lada.model.master.Measd_;
 
 /**
  * REST service for Measd objects.
@@ -61,7 +62,7 @@ public class MeasdService extends LadaService {
         List<Integer> ids = query.getResultList();
         QueryBuilder<Measd> builder2 =
             repository.queryBuilder(Measd.class);
-        builder2.orIntList("id", ids);
+        builder2.orIntList(Measd_.id, ids);
         return repository.filter(builder2.getQuery());
     }
 

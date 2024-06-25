@@ -19,6 +19,7 @@ import jakarta.ws.rs.QueryParam;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.AdminUnit;
+import de.intevation.lada.model.master.AdminUnit_;
 
 /**
  * REST service for AdminUnit objects.
@@ -52,7 +53,7 @@ public class AdminUnitService extends LadaService {
         }
         QueryBuilder<AdminUnit> builder =
             repository.queryBuilder(AdminUnit.class);
-        builder.andLike("name", name + "%");
+        builder.andLike(AdminUnit_.name, name + "%");
         return repository.filter(builder.getQuery());
     }
 

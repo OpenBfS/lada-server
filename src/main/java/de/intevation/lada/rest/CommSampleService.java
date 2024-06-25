@@ -22,6 +22,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 
 import de.intevation.lada.model.lada.CommSample;
+import de.intevation.lada.model.lada.CommSample_;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -64,7 +65,7 @@ public class CommSampleService extends LadaService {
     ) {
         QueryBuilder<CommSample> builder =
             repository.queryBuilder(CommSample.class);
-        builder.and("sampleId", sampleId);
+        builder.and(CommSample_.sampleId, sampleId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
             CommSample.class);

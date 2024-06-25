@@ -52,6 +52,7 @@ import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.IdentifierConfig;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
@@ -437,7 +438,7 @@ public class ImporterTest extends BaseTest {
         merger.mergeMesswerte(messung, messwerte);
         QueryBuilder<MeasVal> builder =
             repository.queryBuilder(MeasVal.class);
-        builder.and("measmId", messung.getId());
+        builder.and(MeasVal_.measmId, messung.getId());
         List<MeasVal> dbWerte =
             repository.filter(builder.getQuery());
         Assert.assertEquals(1, dbWerte.size());

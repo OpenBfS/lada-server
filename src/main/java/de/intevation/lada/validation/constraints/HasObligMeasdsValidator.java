@@ -11,14 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.enterprise.inject.spi.CDI;
+import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.ObligMeasdMp;
+import de.intevation.lada.model.master.ObligMeasdMp_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -46,13 +49,15 @@ public class HasObligMeasdsValidator
             return true;
         }
 
-        final String mmtIdKey = "mmtId",
-            envMediumIdKey = "envMediumId",
-            regulationIdKey = "regulationId";
+        final SingularAttribute<ObligMeasdMp, String>
+            mmtIdKey = ObligMeasdMp_.mmtId,
+            envMediumIdKey = ObligMeasdMp_.envMediumId;
+        final SingularAttribute<ObligMeasdMp, Integer>
+            regulationIdKey = ObligMeasdMp_.regulationId;
 
         ctx.disableDefaultConstraintViolation();
         ctx.buildConstraintViolationWithTemplate(this.message)
-            .addPropertyNode(mmtIdKey)
+            .addPropertyNode(mmtIdKey.getName())
             .addConstraintViolation();
         // Short path if no measVals can be referenced
         if (messung.getId() == null) {
@@ -105,7 +110,7 @@ public class HasObligMeasdsValidator
 
         QueryBuilder<MeasVal> wertBuilder = repository
             .queryBuilder(MeasVal.class)
-            .and("measmId", messung.getId());
+            .and(MeasVal_.measmId, messung.getId());
         List<MeasVal> messwerte =
             repository.filter(wertBuilder.getQuery());
         List<ObligMeasdMp> tmp = new ArrayList<ObligMeasdMp>();

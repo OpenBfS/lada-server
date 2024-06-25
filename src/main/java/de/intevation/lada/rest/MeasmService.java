@@ -25,6 +25,7 @@ import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -71,7 +72,7 @@ public class MeasmService extends LadaService {
         @QueryParam("sampleId") @NotNull Integer sampleId
     ) {
         QueryBuilder<Measm> builder = repository.queryBuilder(Measm.class)
-            .and("sampleId", sampleId);
+            .and(Measm_.sampleId, sampleId);
         List<Measm> messungs = authorization.filter(
             repository.filter(builder.getQuery()),
             Measm.class);

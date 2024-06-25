@@ -28,6 +28,7 @@ import de.intevation.lada.lock.LockConfig;
 import de.intevation.lada.lock.LockType;
 import de.intevation.lada.lock.ObjectLocker;
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.master.EnvMedium;
@@ -94,7 +95,7 @@ public class MeasValService extends LadaService {
 
         QueryBuilder<MeasVal> builder = repository
             .queryBuilder(MeasVal.class)
-            .and("measmId", measmId);
+            .and(MeasVal_.measmId, measmId);
         return authorization.filter(
             repository.filter(builder.getQuery()),
             MeasVal.class);
@@ -193,7 +194,7 @@ public class MeasValService extends LadaService {
         //Get all Messwert objects to convert
         QueryBuilder<MeasVal> messwertBuilder =
             repository.queryBuilder(MeasVal.class);
-        messwertBuilder.and("measmId", measmId);
+        messwertBuilder.and(MeasVal_.measmId, measmId);
         List<MeasVal> messwerte = messwertNormalizer.normalizeMesswerte(
             repository.filter(messwertBuilder.getQuery()),
             umwelt.getId());

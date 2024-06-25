@@ -30,6 +30,7 @@ import org.jboss.logging.Logger;
 
 import de.intevation.lada.importer.laf.LafImporter;
 import de.intevation.lada.model.master.ImportConf;
+import de.intevation.lada.model.master.ImportConf_;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
@@ -104,7 +105,7 @@ public class LafImportService extends LadaService {
         if (!"".equals(mstId)) {
             QueryBuilder<ImportConf> builder =
                 repository.queryBuilder(ImportConf.class);
-            builder.and("measFacilId", mstId);
+            builder.and(ImportConf_.measFacilId, mstId);
             config = (List<ImportConf>) repository.filter(
                 builder.getQuery());
         }
