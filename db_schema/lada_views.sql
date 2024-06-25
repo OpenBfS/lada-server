@@ -78,7 +78,6 @@ CREATE MATERIALIZED VIEW lada.mv_tags_array AS
  GROUP BY sample.id, measm.id;
  
 CREATE UNIQUE INDEX mv_tags_array_idx ON lada.mv_tags_array (pid, mid);
-ALTER MATERIALIZED VIEW lada.mv_tags_array OWNER TO lada;
 
 CREATE OR REPLACE FUNCTION lada.refresh_mv_tags_array()
 RETURNS trigger LANGUAGE plpgsql AS $$
