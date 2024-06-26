@@ -30,6 +30,7 @@ import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Tag;
+import de.intevation.lada.model.master.Tag_;
 
 
 /**
@@ -66,8 +67,8 @@ public class TagUtil {
         CriteriaQuery<Tag> criteriaQuery = builder.createQuery(Tag.class);
         Root<Tag> tagRoot = criteriaQuery.from(Tag.class);
         Predicate nameFilter =
-            builder.like(tagRoot.get("name"), prefix + "!_" + today + "!_%", '!');
-        Order nameOrder = builder.asc(tagRoot.get("name"));
+            builder.like(tagRoot.get(Tag_.name), prefix + "!_" + today + "!_%", '!');
+        Order nameOrder = builder.asc(tagRoot.get(Tag_.name));
         criteriaQuery.where(nameFilter);
         criteriaQuery.orderBy(nameOrder);
         List<Tag> tags = repository.filter(criteriaQuery);

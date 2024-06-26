@@ -27,8 +27,11 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import de.intevation.lada.model.lada.TagLinkMeasm;
+import de.intevation.lada.model.lada.TagLinkMeasm_;
 import de.intevation.lada.model.lada.TagLinkSample;
+import de.intevation.lada.model.lada.TagLinkSample_;
 import de.intevation.lada.model.master.Tag;
+import de.intevation.lada.model.master.Tag_;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -88,32 +91,33 @@ public class TagService extends LadaService {
         if (!sampleIds.isEmpty()) {
             // Return only tags assigned to all given Sample or Messung objects
             Join<Tag, TagLinkSample> joinTagZuordnung =
-                root.join("tagLinkSamples");
+                root.join(Tag_.tagLinkSamples);
             // Work-around missing SQL INTERSECTION in JPA:
-            final String filterBy = "sampleId";
             final Iterator<Integer> filterIds = sampleIds.iterator();
             Predicate idFilter = builder.equal(
-                joinTagZuordnung.get(filterBy), filterIds.next());
+                joinTagZuordnung.get(TagLinkSample_.sampleId),
+                    filterIds.next());
             result = repository.filter(criteriaQuery.where(idFilter));
             while (!result.isEmpty() && filterIds.hasNext()) {
                 idFilter = builder.equal(
-                    joinTagZuordnung.get(filterBy), filterIds.next());
+                    joinTagZuordnung.get(TagLinkSample_.sampleId),
+                        filterIds.next());
                 result.retainAll(
                     repository.filter(criteriaQuery.where(idFilter)));
             }
         } else if (!measmIds.isEmpty()) {
             // Return only tags assigned to all given Sample or Messung objects
             Join<Tag, TagLinkMeasm> joinTagZuordnung =
-                root.join("tagLinkMeasms");
+                root.join(Tag_.tagLinkMeasms);
             // Work-around missing SQL INTERSECTION in JPA:
-            final String filterBy = "measmId";
             final Iterator<Integer> filterIds = measmIds.iterator();
             Predicate idFilter = builder.equal(
-                joinTagZuordnung.get(filterBy), filterIds.next());
+                joinTagZuordnung.get(TagLinkMeasm_.measmId), filterIds.next());
             result = repository.filter(criteriaQuery.where(idFilter));
             while (!result.isEmpty() && filterIds.hasNext()) {
                 idFilter = builder.equal(
-                    joinTagZuordnung.get(filterBy), filterIds.next());
+                    joinTagZuordnung.get(TagLinkMeasm_.measmId),
+                        filterIds.next());
                 result.retainAll(
                     repository.filter(criteriaQuery.where(idFilter)));
             }
