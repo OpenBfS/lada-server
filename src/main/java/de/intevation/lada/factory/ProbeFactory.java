@@ -589,18 +589,17 @@ public class ProbeFactory {
                 ndParent = data.get(0).getId();
             }
         }
-        return getUmwelt(mediaIds, zebs);
+        return getUmwelt(mediaIds);
     }
 
     /**
      * Find the umwelt id in the database using media deskriptor ids.
      *
      * @param   media   The list of media ids.
-     * @param   isZebs  Flag for type of the deskriptor.
      *
      * @return The umwelt id or an empty string.
      */
-    private String getUmwelt(List<Integer> media, boolean isZebs) {
+    private String getUmwelt(List<Integer> media) {
         QueryBuilder<EnvDescripEnvMediumMp> builder =
             repository.queryBuilder(EnvDescripEnvMediumMp.class);
 
