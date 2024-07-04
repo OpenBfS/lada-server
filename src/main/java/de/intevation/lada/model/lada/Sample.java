@@ -46,7 +46,6 @@ import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.validation.constraints.BeginBeforeEnd;
 import de.intevation.lada.validation.constraints.DatesVsSampleMeth;
 import de.intevation.lada.validation.constraints.EnvDescripDisplay;
-import de.intevation.lada.validation.constraints.EnvDescripDisplayFirstPartsSet;
 import de.intevation.lada.validation.constraints.EnvMediumForReiAgGr;
 import de.intevation.lada.validation.constraints.HasEndDate;
 import de.intevation.lada.validation.constraints.HasOneSiteOfOrigin;
@@ -73,7 +72,6 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @BeginBeforeEnd(groups = Warnings.class)
 @DatesVsSampleMeth(groups = Warnings.class)
 @OrigDateVsStartDate(groups = Warnings.class)
-@EnvDescripDisplayFirstPartsSet(groups = Warnings.class)
 @IsReiComplete(groups = Warnings.class)
 @NoUnnecessaryReiAttributes(groups = Warnings.class)
 @EnvMediumForReiAgGr(groups = Warnings.class)
@@ -124,6 +122,9 @@ public class Sample extends BaseModel implements Serializable {
     private String envDescripName;
 
     @Pattern(regexp = "D:( [0-9][0-9]){12}")
+    @Pattern(regexp = "D:( ([0-9][1-9]|[1-9][0-9])){2}.*",
+        message = "{de.intevation.lada.validation.EnvDescripDisplayFirstPartsSet.message}",
+        groups = Warnings.class)
     @NotBlank(groups = Warnings.class)
     @EnvDescripDisplay(groups = Warnings.class)
     private String envDescripDisplay;

@@ -16,18 +16,11 @@
     <master.sample_meth id = "1" ext_id = "E" eudf_sample_meth_id = "A" />
 
     <master.meas_unit id = "207" />
-    <master.meas_unit id = "208" />
 
-    <master.env_medium
-        id = "L6"
-        name = "Spurenmessung Luft"
-        unit_1 = "207"
-        unit_2 = "208"
-    />
     <master.env_medium
         id = "N71"
         name = "Reinwasser aus geschützten Rohwasservorkommen"
-        unit_1 = "208"
+        unit_1 = "207"
     />
 
     <master.rei_ag_gr id = "1" name = "rei_name" descr = "rei_descr" />
@@ -93,13 +86,13 @@
         opr_mode_id = "1"
         regulation_id = "9"
         env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
-        env_descrip_display = "D: 00 00 00 00 00 00 00 00 00 00 00 00"
+        env_descrip_display = "D: 01 01 00 00 00 00 00 00 00 00 00 00"
         meas_facil_id = "06010"
         appr_lab_id = "06010"
         sample_start_date = "2012-05-03 13:07:00"
         sample_meth_id = "1"
         is_test = "false"
-        env_medium_id = "L6"
+        env_medium_id = "N71"
         main_sample_id = "120510002"
         sampler_id = "726"
         sched_start_date = "2012-05-01 16:00:00"
@@ -199,7 +192,7 @@
         meas_val = "42.0"
         error = "3.3"
         detect_lim = "2.4"
-        meas_unit_id = "208"
+        meas_unit_id = "207"
     />
     <lada.status_prot
         id = "4200"

@@ -43,8 +43,18 @@
         to_unit_id = "208"
         factor = "2"
     />
+
+    <master.env_descrip id = "1" lev = "0" lev_val = "10" />
+    <master.env_descrip id = "2" lev = "1" lev_val = "11" pred_id = "1"/>
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "208" />
     <master.env_medium id = "A6" name = "Umweltbereich für test" />
+    <master.env_descrip_env_medium_mp
+        id = "1"
+        s00 = "1"
+        s01 = "2"
+        env_medium_id = "L6"
+    />
+
     <master.measd id = "56" name = "Mangan" />
     <master.measd id = "57" name = "Mangan" />
     <master.mmt id = "A3" />
@@ -150,7 +160,7 @@
         regulation_id = "9"
         last_mod = "2012-05-05 11:12:00"
         env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
-        env_descrip_display = "D: 00 00 00 00 00 00 00 00 00 00 00 00"
+        env_descrip_display = "D: 10 11 00 00 00 00 00 00 00 00 00 00"
         meas_facil_id = "06010"
         appr_lab_id = "06010"
         sample_start_date = "2012-05-03 13:07:00"
