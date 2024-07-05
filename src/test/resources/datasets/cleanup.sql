@@ -54,6 +54,8 @@ DELETE FROM rei_ag_gr;
 DELETE FROM audit_trail;
 DELETE FROM lada.audit_trail;
 DELETE FROM lada.status_prot;
+DELETE FROM nucl_facil_gr_mp;
+DELETE FROM nucl_facil_gr;
 
 -- Reset id sequences to prevent unique constraint violations while creating
 -- new objects during the tests

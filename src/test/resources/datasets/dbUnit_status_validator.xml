@@ -37,6 +37,7 @@
         descr = "test"
         short_text = "test"
     />
+    <master.nucl_facil_gr id = "1" ext_id = "A123" name = "nucl_facil_name" />
 
     <master.mmt id = "A3" />
     <master.measd id = "56" name = "Mangan" />
