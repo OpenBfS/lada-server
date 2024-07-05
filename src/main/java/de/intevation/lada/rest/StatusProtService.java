@@ -169,7 +169,7 @@ public class StatusProtService extends LadaService {
                 .not()
                 .and(MeasVal_.measmId, messung.getId())
                 .getQuery()
-            ).isEmpty();
+            ).size() > 0;
         if (newKombi.getStatusVal().getId() == 7 && !hasValidMesswerte) {
             List<MeasVal> messwerte = repository.filter(repository
                 .queryBuilder(MeasVal.class)
