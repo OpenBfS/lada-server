@@ -179,6 +179,8 @@ public class QueryBuilder<T> {
             Predicate p = this.builder.isNull(this.root.get(id));
             if (this.filter != null) {
                 this.filter = this.builder.and(this.filter, p);
+            } else {
+                this.filter = p;
             }
             return this;
         }
@@ -201,6 +203,8 @@ public class QueryBuilder<T> {
             Predicate p = this.builder.isNull(this.root.get(id));
             if (this.filter != null) {
                 this.filter = this.builder.or(this.filter, p);
+            } else {
+                this.filter = p;
             }
             return this;
         }
