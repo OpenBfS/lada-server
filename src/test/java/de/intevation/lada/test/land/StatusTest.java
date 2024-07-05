@@ -59,8 +59,10 @@ public class StatusTest extends ServiceTest {
 
         // Load objects to test POST requests
         create = readJsonResource("/datasets/status.json");
-        undeliverablePartiallyValid = readJsonResource("/datasets/status_undeliverable_partially_valid.json");
-        undeliverableInvalid = readJsonResource("/datasets/status_undeliverable_invalid.json");
+        undeliverablePartiallyValid = readJsonResource(
+            "/datasets/status_undeliverable_partially_valid.json");
+        undeliverableInvalid = readJsonResource(
+            "/datasets/status_undeliverable_invalid.json");
         Assert.assertNotNull(create);
         reset = readJsonResource("/datasets/status-reset.json");
     }

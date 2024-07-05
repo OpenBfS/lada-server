@@ -160,15 +160,15 @@ public class StatusProtService extends LadaService {
         StatusMp newKombi,
         Measm messung
     ) {
-        boolean hasValidMesswerte = repository.filter(repository
+        boolean hasNoValidMeasVals = repository.filter(repository
                 .queryBuilder(MeasVal.class)
                 .and("measVal", null)
                 .and("lessThanLOD", null)
                 .not()
                 .and("measmId", messung.getId())
                 .getQuery()
-            ).size() > 0;
-        if (newKombi.getStatusVal().getId() == 7 && !hasValidMesswerte) {
+            ).isEmpty();
+        if (newKombi.getStatusVal().getId() == 7 && hasNoValidMeasVals) {
             List<MeasVal> messwerte = repository.filter(repository
                 .queryBuilder(MeasVal.class)
                 .and("measmId", messung.getId())
