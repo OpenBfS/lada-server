@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.metamodel.SingularAttribute;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
 import de.intevation.lada.model.master.EnvDescrip_;
@@ -27,6 +29,8 @@ import de.intevation.lada.validation.Violation;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public abstract class DeskriptorToUmweltImpl implements Rule {
+
+    private static final String FIELD_NAME_TEMPLATE = "s%02d";
 
     @Inject
     private Repository repository;
@@ -44,46 +48,42 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
             return null;
         }
         List<Integer> mediaIds = new ArrayList<Integer>();
-        boolean zebs = false;
+        boolean zebs = "01".equals(mediaDesk[1]);
         Integer parent = null;
         Integer hdParent = null;
         Integer ndParent = null;
-        if ("01".equals(mediaDesk[1])) {
-            zebs = true;
-        }
         for (int i = 1; i < mediaDesk.length; i++) {
             if ("00".equals(mediaDesk[i])) {
                 mediaIds.add(-1);
                 continue;
             }
-            if (zebs && i < 5) {
-                parent = hdParent;
-            } else if (!zebs && i < 3) {
+            if (zebs && i < 5 || !zebs && i < 3) {
                 parent = hdParent;
             } else {
                 parent = ndParent;
             }
-            QueryBuilder<EnvDescrip> builder =
-                repository.queryBuilder(EnvDescrip.class);
+            QueryBuilder<EnvDescrip> builder = repository
+                .queryBuilder(EnvDescrip.class)
+                .and(EnvDescrip_.levVal, Integer.parseInt(mediaDesk[i]))
+                .and(EnvDescrip_.lev, i - 1);
             if (parent != null) {
                 builder.and(EnvDescrip_.predId, parent);
             }
-            builder.and(EnvDescrip_.levVal, Integer.parseInt(mediaDesk[i]))
-                .and(EnvDescrip_.lev, i - 1);
-            List<EnvDescrip> data = repository.filter(builder.getQuery());
-
-            if (data.isEmpty()) {
-                String deskript = "";
-                deskript = "s" + Integer.toString(i - 1);
+            try {
+                Integer envDescripId = repository.getSingle(builder.getQuery())
+                    .getId();
+                hdParent = envDescripId;
+                mediaIds.add(envDescripId);
+                if (i == 2) {
+                    ndParent = envDescripId;
+                }
+            } catch (NoResultException e) {
                 Violation violation = new Violation();
-                violation.addWarning("envDescripDisplay", StatusCodes.VAL_DESK);
-                violation.addWarning(deskript, StatusCodes.VALUE_NOT_MATCHING);
+                violation.addWarning(Sample_.ENV_DESCRIP_DISPLAY, StatusCodes.VAL_DESK);
+                violation.addWarning(
+                    String.format(FIELD_NAME_TEMPLATE, i - 1),
+                    StatusCodes.VALUE_NOT_MATCHING);
                 return violation;
-            }
-            hdParent = data.get(0).getId();
-            mediaIds.add(data.get(0).getId());
-            if (i == 2) {
-                ndParent = data.get(0).getId();
             }
         }
         Violation violation = validateUmwelt(
@@ -96,24 +96,18 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
         String umwId,
         Integer datenbasisId
     ) {
-        if (media.size() == 0) {
-            Violation violation = new Violation();
-            violation.addWarning(
-                "envMediumId", StatusCodes.VALUE_NOT_MATCHING);
-            return violation;
-        }
-
         QueryBuilder<EnvDescripEnvMediumMp> builder =
             repository.queryBuilder(EnvDescripEnvMediumMp.class);
 
         for (int i = 0; i < media.size(); i++) {
             SingularAttribute<EnvDescripEnvMediumMp, Integer> field
                 = EnvDescripEnvMediumMp.getSXXAttributeByName(
-                    "s" + (i > 9 ? i : "0" + i));
-            QueryBuilder<EnvDescripEnvMediumMp> tmp = builder.getEmptyBuilder();
+                    String.format(FIELD_NAME_TEMPLATE, i));
             if (media.get(i) != -1) {
-                tmp.and(field, media.get(i));
-                tmp.or(field, null);
+                QueryBuilder<EnvDescripEnvMediumMp> tmp = builder
+                    .getEmptyBuilder()
+                    .and(field, media.get(i))
+                    .or(field, null);
                 builder.and(tmp);
             } else {
                 if (datenbasisId != null

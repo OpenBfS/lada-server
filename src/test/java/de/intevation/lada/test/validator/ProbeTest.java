@@ -78,6 +78,7 @@ public class ProbeTest extends ValidatorBaseTest {
         "Only one single site of origin should be given";
     private static final String MSG_NO_SAMPLING_LOC =
         "A sampling location must be provided";
+    private static final String MSG_S1_NOT_SET = "At least S1 must be set";
     private static final String UNIQUE_PLACEHOLDER = "{fields}";
     private final String valMessageUniqueMainSampleIdMeasFacilId;
     private final String valMessageUniqueExtId;
@@ -449,17 +450,31 @@ public class ProbeTest extends ValidatorBaseTest {
     }
 
     /**
-     * Test sample with envDescripDisplay S1 not set.
+     * Test envDescripDisplay with no level set.
      */
     @Test
-    public void envDescripDisplayS1NotSet() {
-        Sample sample = createMinimumValidREISample();
+    public void envDescripDisplayNoLevelSet() {
+        Sample sample = createMinimumValidSample();
         sample.setEnvDescripDisplay("D: 00 00 00 00 00 00 00 00 00 00 00 00");
 
         assertHasWarnings(
             validator.validate(sample),
             Sample_.ENV_DESCRIP_DISPLAY,
-            "At least S1 must be set");
+            MSG_S1_NOT_SET);
+    }
+
+    /**
+     * Test sample with envDescripDisplay S1 not set.
+     */
+    @Test
+    public void envDescripDisplayS1NotSet() {
+        Sample sample = createMinimumValidSample();
+        sample.setEnvDescripDisplay("D: 01 00 00 00 00 00 00 00 00 00 00 00");
+
+        assertHasWarnings(
+            validator.validate(sample),
+            Sample_.ENV_DESCRIP_DISPLAY,
+            MSG_S1_NOT_SET);
     }
 
     /**
