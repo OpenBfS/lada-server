@@ -30,7 +30,9 @@ public class StatusTest extends ServiceTest {
     private JsonObject expectedById;
     private JsonObject create;
     private JsonObject reset;
-    private JsonObject undeliverable;
+
+    private JsonObject undeliverablePartiallyValid;
+    private JsonObject undeliverableInvalid;
 
     @Override
     public void init(
@@ -57,9 +59,10 @@ public class StatusTest extends ServiceTest {
 
         // Load objects to test POST requests
         create = readJsonResource("/datasets/status.json");
+        undeliverablePartiallyValid = readJsonResource("/datasets/status_undeliverable_partially_valid.json");
+        undeliverableInvalid = readJsonResource("/datasets/status_undeliverable_invalid.json");
         Assert.assertNotNull(create);
         reset = readJsonResource("/datasets/status-reset.json");
-        undeliverable = readJsonResource("/datasets/status-undeliverable.json");
     }
 
     /**
@@ -71,13 +74,20 @@ public class StatusTest extends ServiceTest {
         create("rest/statusprot", create);
         create("rest/statusprot", reset);
 
-        // Assert that measVals are deleted if status is set
-        // to "nicht lieferbar"
-        int measmId = undeliverable.getInt("measmId");
+        // Check cases where status is set to undeliverable
+        int measmId;
+        //Test for measm with partially valid measvals
+        //-> MeasVals should be kept
+        measmId = undeliverablePartiallyValid.getInt("measmId");
+        create("rest/statusprot", undeliverablePartiallyValid);
         Assert.assertTrue(
-            "Test data must provide measVals for deletion",
+            "measVals should have been kept",
             hasMeasVals(measmId));
-        create("rest/statusprot", undeliverable);
+
+        //Test for measm with invalid measvals
+        //-> expect MeasVals to be deleted
+        measmId = undeliverableInvalid.getInt("measmId");
+        create("rest/statusprot", undeliverableInvalid);
         Assert.assertFalse(
             "measVals should have been deleted",
             hasMeasVals(measmId));
