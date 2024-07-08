@@ -241,7 +241,7 @@ public class LafObjectMapper {
         factory.findMedia(probe);
         if (probe.getEnvMediumId() == null) {
             probe.setEnvMediumId(
-                factory.findUmwelt(probe.getEnvDescripDisplay()));
+                factory.findEnvMediumId(probe.getEnvDescripDisplay()));
         }
 
         // Check if the user is authorized to create the probe

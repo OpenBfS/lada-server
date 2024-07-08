@@ -88,6 +88,8 @@ public class ProbeTest extends ValidatorBaseTest {
     private static final String MSG_NO_SAMPLING_LOC =
         "A sampling location must be provided";
     private static final String MSG_S1_NOT_SET = "At least S1 must be set";
+    private static final String MSG_INVALID_DESC_TPL =
+        "Invalid descriptor combination: %s does not match";
     private static final String UNIQUE_PLACEHOLDER = "{fields}";
     private final String valMessageUniqueMainSampleIdMeasFacilId;
     private final String valMessageUniqueExtId;
@@ -125,6 +127,7 @@ public class ProbeTest extends ValidatorBaseTest {
         validator.validate(sample);
         assertNoMessages(sample);
     }
+
     /**
      * Test no hauptprobennr.
      */
@@ -499,17 +502,31 @@ public class ProbeTest extends ValidatorBaseTest {
     }
 
     /**
-     * Test sample with invalid parts of envDescripDisplay.
+     * Test sample with all parts of envDescripDisplay invalid.
      */
     @Test
-    public void envDescripDisplayInvalidParts() {
+    public void envDescripDisplayAllPartsInvalid() {
         Sample sample = createMinimumValidSample();
         sample.setEnvDescripDisplay("D: 77 88 99 00 77 88 99 00 77 88 99 00");
 
         assertHasWarnings(
             validator.validate(sample),
             ENV_DESCRIP_DISPLAY,
-            "Invalid descriptor combination");
+            String.format(MSG_INVALID_DESC_TPL, "s00"));
+    }
+
+    /**
+     * Test sample with invalid parts of envDescripDisplay.
+     */
+    @Test
+    public void envDescripDisplayInvalidParts() {
+        Sample sample = createMinimumValidSample();
+        sample.setEnvDescripDisplay("D: 10 11 99 00 77 88 99 00 77 88 99 00");
+
+        assertHasWarnings(
+            validator.validate(sample),
+            ENV_DESCRIP_DISPLAY,
+            String.format(MSG_INVALID_DESC_TPL, "s02"));
     }
 
     /**

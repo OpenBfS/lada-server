@@ -32,6 +32,7 @@ import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.model.master.Site;
+import de.intevation.lada.util.data.EnvMedia;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -47,10 +48,6 @@ public class ProbeFactory {
     private static final int LM12 = 12;
 
     private static final int POS9 = 9;
-
-    private static final int ZEBS3 = 3;
-
-    private static final int ZEBS5 = 5;
 
     private static final int SEC59 = 59;
 
@@ -293,6 +290,9 @@ public class ProbeFactory {
      */
     @Inject
     private Repository repository;
+
+    @Inject
+    private EnvMedia envMediaUtil;
 
     /**
      * Create a list of probe objects.
@@ -537,75 +537,22 @@ public class ProbeFactory {
     }
 
     /**
-     * Find the umwelt id for a given deskriptor.
+     * Find the envMediumId matching envDescripDisplay.
      *
-     * @param envDescripDisplay   The deskriptor string
+     * @param envDescripDisplay
      *
-     * @return The umwelt id, an empty string or null.
+     * @return The envMediumId or null
      */
-    public String findUmwelt(String envDescripDisplay) {
-        if (envDescripDisplay == null) {
-            return null;
-        }
-        String[] mediaDesk = envDescripDisplay.split(" ");
-        if (mediaDesk.length <= 1) {
+    public String findEnvMediumId(String envDescripDisplay) {
+        List<Integer> media;
+        try {
+            media = envMediaUtil.findEnvDescripIds(envDescripDisplay);
+        } catch (EnvMedia.InvalidEnvDescripDisplayException e) {
             return null;
         }
 
-        List<Integer> mediaIds = new ArrayList<Integer>();
-        boolean zebs = false;
-        Integer parent = null;
-        Integer hdParent = null;
-        Integer ndParent = null;
-        if ("01".equals(mediaDesk[1])) {
-            zebs = true;
-        }
-        for (int i = 1; i < mediaDesk.length; i++) {
-            if ("00".equals(mediaDesk[i])) {
-                mediaIds.add(-1);
-                continue;
-            }
-            if (zebs && i < ZEBS5) {
-                parent = hdParent;
-            } else if (!zebs && i < ZEBS3) {
-                parent = hdParent;
-            } else {
-                parent = ndParent;
-            }
-            QueryBuilder<EnvDescrip> builder =
-                repository.queryBuilder(EnvDescrip.class);
-            if (parent != null) {
-                builder.and("predId", parent);
-            }
-            builder.and("levVal", mediaDesk[i]);
-            builder.and("lev", i - 1);
-            List<EnvDescrip> data = repository.filter(builder.getQuery());
-            if (data.isEmpty()) {
-                return null;
-            }
-            hdParent = data.get(0).getId();
-            mediaIds.add(data.get(0).getId());
-            if (i == 2) {
-                ndParent = data.get(0).getId();
-            }
-        }
-        return getUmwelt(mediaIds);
-    }
-
-    /**
-     * Find the umwelt id in the database using media deskriptor ids.
-     *
-     * @param   media   The list of media ids.
-     *
-     * @return The umwelt id or an empty string.
-     */
-    private String getUmwelt(List<Integer> media) {
         QueryBuilder<EnvDescripEnvMediumMp> builder =
             repository.queryBuilder(EnvDescripEnvMediumMp.class);
-
-        if (media.size() == 0) {
-            return null;
-        }
 
         int size = 1;
         for (int i = 0; i < media.size(); i++) {

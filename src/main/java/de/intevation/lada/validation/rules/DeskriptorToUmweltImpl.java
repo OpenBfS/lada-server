@@ -7,14 +7,12 @@
  */
 package de.intevation.lada.validation.rules;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.inject.Inject;
-import jakarta.persistence.NoResultException;
 
-import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
+import de.intevation.lada.util.data.EnvMedia;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
@@ -33,67 +31,25 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
     @Inject
     private Repository repository;
 
+    @Inject
+    private EnvMedia envMediaUtil;
+
     @Override
     public abstract Violation execute(Object object);
 
     protected Violation doExecute(
         String envDescripDisplay,
-        String envMediumId,
-        Integer regulationId
-    ) {
-        String[] mediaDesk = envDescripDisplay.split(" ");
-        if (mediaDesk.length <= 1 || "00".equals(mediaDesk[1])) {
-            return null;
-        }
-        List<Integer> mediaIds = new ArrayList<Integer>();
-        boolean zebs = "01".equals(mediaDesk[1]);
-        Integer parent = null;
-        Integer hdParent = null;
-        Integer ndParent = null;
-        for (int i = 1; i < mediaDesk.length; i++) {
-            if ("00".equals(mediaDesk[i])) {
-                mediaIds.add(-1);
-                continue;
-            }
-            if (zebs && i < 5 || !zebs && i < 3) {
-                parent = hdParent;
-            } else {
-                parent = ndParent;
-            }
-            QueryBuilder<EnvDescrip> builder = repository
-                .queryBuilder(EnvDescrip.class)
-                .and("levVal", mediaDesk[i])
-                .and("lev", i - 1);
-            if (parent != null) {
-                builder.and("predId", parent);
-            }
-            try {
-                Integer envDescripId = repository.getSingle(builder.getQuery())
-                    .getId();
-                hdParent = envDescripId;
-                mediaIds.add(envDescripId);
-                if (i == 2) {
-                    ndParent = envDescripId;
-                }
-            } catch (NoResultException e) {
-                Violation violation = new Violation();
-                violation.addWarning("envDescripDisplay", StatusCodes.VAL_DESK);
-                violation.addWarning(
-                    String.format(FIELD_NAME_TEMPLATE, i - 1),
-                    StatusCodes.VALUE_NOT_MATCHING);
-                return violation;
-            }
-        }
-        Violation violation = validateUmwelt(
-            mediaIds, envMediumId, regulationId);
-        return violation;
-    }
-
-    private Violation validateUmwelt(
-        List<Integer> media,
         String umwId,
         Integer datenbasisId
     ) {
+        List<Integer> media;
+        try {
+            media = envMediaUtil.findEnvDescripIds(envDescripDisplay);
+        } catch (EnvMedia.InvalidEnvDescripDisplayException e) {
+            // Leave validation of combination of levels up to other constraint
+            return null;
+        }
+
         QueryBuilder<EnvDescripEnvMediumMp> builder =
             repository.queryBuilder(EnvDescripEnvMediumMp.class);
 
