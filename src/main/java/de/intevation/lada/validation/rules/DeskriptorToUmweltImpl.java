@@ -50,9 +50,10 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
             return null;
         }
 
+        final String violationKey = "envMediumId";
+
         QueryBuilder<EnvDescripEnvMediumMp> builder =
             repository.queryBuilder(EnvDescripEnvMediumMp.class);
-
         for (int i = 0; i < media.size(); i++) {
             String field = String.format(FIELD_NAME_TEMPLATE, i);
             if (media.get(i) != -1) {
@@ -75,7 +76,7 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
         if (data.isEmpty()) {
             Violation violation = new Violation();
             violation.addWarning(
-                "envMediumId", StatusCodes.VALUE_NOT_MATCHING);
+                violationKey, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
 
@@ -88,7 +89,7 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
         ) {
             Violation violation = new Violation();
             violation.addWarning(
-                "envMediumId", StatusCodes.VALUE_NOT_MATCHING);
+                violationKey, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         } else if (!unique && (datenbasisId == 4 || datenbasisId == 1)) {
             if (data.size() != data.stream().filter(
@@ -96,7 +97,7 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
             ) {
                 Violation violation = new Violation();
                 violation.addNotification(
-                    "envMediumId", StatusCodes.VALUE_NOT_MATCHING);
+                    violationKey, StatusCodes.VALUE_NOT_MATCHING);
                 return violation;
             } else {
                 return null;
@@ -277,7 +278,7 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
             }
             Violation violation = new Violation();
             violation.addWarning(
-                "envMediumId", StatusCodes.VALUE_NOT_MATCHING);
+                violationKey, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
     }
