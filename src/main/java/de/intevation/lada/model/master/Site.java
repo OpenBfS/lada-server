@@ -9,14 +9,17 @@ package de.intevation.lada.model.master;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -73,6 +76,36 @@ public class Site extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public enum SiteClassId { DYN, GP, REI, VE, ST }
+
+    @Converter
+    public static class SiteClassIdConverter
+        implements AttributeConverter<SiteClassId, Integer> {
+
+        // Keep in sync with database
+        private static final Map<SiteClassId, Integer> SITE_CLASS_TO_ID =
+            Map.of(
+                SiteClassId.DYN, 1,
+                SiteClassId.GP,  2,
+                SiteClassId.REI, 3,
+                SiteClassId.VE,  4,
+                SiteClassId.ST,  5);
+
+        private static final Map<Integer, SiteClassId> ID_TO_SITE_CLASS =
+            new HashMap<>();
+        static {
+            for (SiteClassId k: SITE_CLASS_TO_ID.keySet()) {
+                ID_TO_SITE_CLASS.put(SITE_CLASS_TO_ID.get(k), k);
+            }
+        }
+
+        public Integer convertToDatabaseColumn(SiteClassId value) {
+            return SITE_CLASS_TO_ID.get(value);
+        }
+
+        public SiteClassId convertToEntityAttribute(Integer value) {
+            return ID_TO_SITE_CLASS.get(value);
+        }
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -141,7 +174,7 @@ public class Site extends BaseModel implements Serializable {
     @NotEmptyNorWhitespace
     private String extId;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = SiteClassIdConverter.class)
     private SiteClassId siteClassId;
 
     @IsValidPrimaryKey(

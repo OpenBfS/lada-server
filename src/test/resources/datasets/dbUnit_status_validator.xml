@@ -73,7 +73,7 @@
         coord_x_ext = "49.83021"
         coord_y_ext = "8.81948"
         geom = "SRID=4326;POINT(49.83021 8.81948)"
-        site_class_id = "DYN"
+        site_class_id = "1"
         short_text = "kurz"
         rei_report_text = "bericht"
     />
