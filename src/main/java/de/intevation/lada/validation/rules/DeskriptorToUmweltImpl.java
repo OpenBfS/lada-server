@@ -79,7 +79,7 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
             return violation;
         }
 
-        boolean unique = isUnique(data);
+        boolean unique = EnvMedia.isUnique(data);
         if (unique && umwId.equals(data.get(0).getEnvMediumId())) {
             return null;
         } else if (unique
@@ -280,18 +280,5 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
                 "envMediumId", StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         }
-    }
-
-    private boolean isUnique(List<EnvDescripEnvMediumMp> list) {
-        if (list.isEmpty()) {
-            return false;
-        }
-        String element = list.get(0).getEnvMediumId();
-        for (int i = 1; i < list.size(); i++) {
-            if (!element.equals(list.get(i).getEnvMediumId())) {
-                return false;
-            }
-        }
-        return true;
     }
 }

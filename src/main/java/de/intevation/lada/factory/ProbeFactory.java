@@ -572,7 +572,7 @@ public class ProbeFactory {
             return null;
         }
 
-        boolean unique = isUnique(data);
+        boolean unique = EnvMedia.isUnique(data);
         if (unique) {
             return data.get(0).getEnvMediumId();
         } else {
@@ -672,26 +672,6 @@ public class ProbeFactory {
             }
             return null;
         }
-    }
-
-    /**
-     * Determine if the entries in the list have the same umwelt id.
-     *
-     * @param   list    A list of DescriptorUmwelt objects.
-     *
-     * @return true if the objects have the same umwelt id else false.
-     */
-    private boolean isUnique(List<EnvDescripEnvMediumMp> list) {
-        if (list.isEmpty()) {
-            return false;
-        }
-        String element = list.get(0).getEnvMediumId();
-        for (int i = 1; i < list.size(); i++) {
-            if (!element.equals(list.get(i).getEnvMediumId())) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
