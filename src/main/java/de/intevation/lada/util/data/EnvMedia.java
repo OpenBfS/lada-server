@@ -30,6 +30,11 @@ public class EnvMedia {
 
     public static final String ENV_DESCRIP_LEVEL_FIELD_TPL = "s%02d";
 
+    private static final int ENV_DESCRIP_LEVELS = 12;
+
+    public static final String ENV_DESCRIP_PATTERN =
+        "D:( [0-9][0-9]){" + ENV_DESCRIP_LEVELS + "}";
+
     private static final String ENV_DESCRIP_EMPTY = "00";
 
     private static final int ZEBS3 = 3;
@@ -40,8 +45,7 @@ public class EnvMedia {
         new HashMap<>();
     static {
         try {
-            final int nLevels = 12;
-            for (int lev = 0; lev < nLevels; lev++) {
+            for (int lev = 0; lev < ENV_DESCRIP_LEVELS; lev++) {
                 ENV_DESCRIP_LEVEL_GETTERS.put(
                     lev,
                     new PropertyDescriptor(

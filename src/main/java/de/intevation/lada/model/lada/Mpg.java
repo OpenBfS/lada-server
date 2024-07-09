@@ -48,6 +48,7 @@ import de.intevation.lada.model.master.ReiAgGr;
 import de.intevation.lada.model.master.SampleMeth;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.model.master.Sampler;
+import de.intevation.lada.util.data.EnvMedia;
 import de.intevation.lada.validation.constraints.BeginBeforeEnd;
 import de.intevation.lada.validation.constraints.EnvDescripDisplay;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
@@ -139,7 +140,7 @@ public class Mpg extends BaseModel implements Serializable {
     @Temporal(TIMESTAMP)
     private Date lastMod;
 
-    @Pattern(regexp = "D:( [0-9][0-9]){12}")
+    @Pattern(regexp = EnvMedia.ENV_DESCRIP_PATTERN)
     @EnvDescripDisplay(groups = Notifications.class)
     private String envDescripDisplay;
 
