@@ -2,7 +2,29 @@
 DROP VIEW stamm.ort;
 
 -- Re-introduce integer primary key
-ALTER TABLE master.site_class RENAME id TO ext_id;
+DO $$
+-- Rev. 5a4595811374904b23808959d431a305061312d4 accidentally introduced
+-- diverging primary key names in schema script respectively migration:
+DECLARE
+    pk_name text;
+BEGIN
+    SELECT column_name INTO STRICT pk_name
+        FROM information_schema.table_constraints
+            JOIN information_schema.key_column_usage
+                USING(table_catalog, table_schema, table_name,
+                    constraint_name)
+        WHERE table_catalog = current_catalog
+            AND table_schema = 'master'
+            AND table_name = 'site_class'
+            AND constraint_type = 'PRIMARY KEY';
+    IF pk_name = 'id' THEN
+        EXECUTE format(
+            'ALTER TABLE master.site_class RENAME %I TO ext_id',
+            pk_name
+        );
+    END IF;
+END;
+$$;
 ALTER TABLE master.site_class ADD id smallint;
 UPDATE master.site_class SET id = 1 WHERE ext_id = 'DYN';
 UPDATE master.site_class SET id = 2 WHERE ext_id = 'GP';
