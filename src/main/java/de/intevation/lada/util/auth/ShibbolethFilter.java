@@ -24,12 +24,17 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.jboss.logging.Logger;
 
+import de.intevation.lada.i18n.I18n;
+
 /** ServletFilter used for Shibboleth authentification. */
 @WebFilter({"/rest/*", "/data/*"})
 public class ShibbolethFilter implements Filter {
 
     @Inject
     private Logger logger = Logger.getLogger(ShibbolethFilter.class);
+
+    @Inject
+    private I18n i18n;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
@@ -48,26 +53,14 @@ public class ShibbolethFilter implements Filter {
         String roles = httpRequest.getHeader("X-SHIB-roles");
 
         if (user == null || "".equals(user)) {
-                httpResponse.reset();
-                httpResponse.setStatus(401);
-                httpResponse.getOutputStream().print(
-                    "{\"success\":false,\"message\":\"698\",\"data\":"
-                    + "\"No valid user found!\",\"errors\":{},\"warnings\":{},"
-                    + "\"readonly\":false,\"totalCount\":0}");
-                httpResponse.getOutputStream().flush();
-                return;
+            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                i18n.getString("no_valid_user_found"));
         }
 
         Set<String> rolesValue = extractRoles(roles);
         if (rolesValue == null || rolesValue.isEmpty()) {
-                httpResponse.reset();
-                httpResponse.setStatus(401);
-                httpResponse.getOutputStream().print(
-                    "{\"success\":false,\"message\":\"698\",\"data\":"
-                    + "\"No valid role found!\",\"errors\":{},\"warnings\":{},"
-                    + "\"readonly\":false,\"totalCount\":0}");
-                httpResponse.getOutputStream().flush();
-                return;
+            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                i18n.getString("no_valid_role_found"));
         }
 
         httpRequest.setAttribute("lada.user.roles", rolesValue);
