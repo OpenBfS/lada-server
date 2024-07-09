@@ -59,7 +59,8 @@ public class EnvMedia {
      * @param envDescripDisplay
      *
      * @return The list of EnvDescrip IDs matching the parameter or null
-     * in case the parameter is invalid.
+     * in case the parameter is invalid. For empty fields in the parameter
+     * ("00"), -1 is added to the list as a pseudo ID.
      * @throws InvalidEnvDescripDisplayException
      */
     public List<Integer> findEnvDescripIds(String envDescripDisplay)
