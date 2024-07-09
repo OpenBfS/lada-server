@@ -99,164 +99,163 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
                 violation.addNotification(
                     violationKey, StatusCodes.VALUE_NOT_MATCHING);
                 return violation;
-            } else {
-                return null;
             }
+            return null;
         } else {
-            int found = -1;
+            String found = null;
             int lastMatch = -12;
-            for (int i = 0; i < data.size(); i++) {
+            for (EnvDescripEnvMediumMp mp: data) {
                 int matches = -12;
                 for (int j = 0; j < 12; j++) {
                     switch (j) {
-                        case 0: if (media.get(0).equals(data.get(i).getS00())
+                        case 0: if (media.get(0).equals(mp.getS00())
                                     || media.get(0).equals(-1)
-                                    && data.get(i).getS00() == null
+                                    && mp.getS00() == null
                                 ) {
                                     matches += 1;
                                 } else if (!media.get(0).equals(-1)
-                                    && data.get(i).getS00() == null) {
+                                    && mp.getS00() == null) {
                                     break;
                                 } else {
                                     j = 12;
                                     matches = -12;
                                 }
                                 break;
-                        case 1: if (media.get(1).equals(data.get(i).getS01())
+                        case 1: if (media.get(1).equals(mp.getS01())
                                     || media.get(1).equals(-1)
-                                    && data.get(i).getS01() == null
+                                    && mp.getS01() == null
                                 ) {
                                     matches += 1;
                                 } else if (!media.get(1).equals(-1)
-                                    && data.get(i).getS01() == null) {
+                                    && mp.getS01() == null) {
                                     break;
                                 } else {
                                     j = 12;
                                     matches = -12;
                                 }
                                 break;
-                        case 2: if (media.get(2).equals(data.get(i).getS02())
+                        case 2: if (media.get(2).equals(mp.getS02())
                                     || media.get(2).equals(-1)
-                                    && data.get(i).getS02() == null
+                                    && mp.getS02() == null
                                 ) {
                                     matches += 1;
                                 } else if (!media.get(2).equals(-1)
-                                    && data.get(i).getS02() == null) {
+                                    && mp.getS02() == null) {
                                     break;
                                 } else {
                                     j = 12;
                                     matches = -12;
                                 }
                                 break;
-                        case 3: if (media.get(3).equals(data.get(i).getS03())
+                        case 3: if (media.get(3).equals(mp.getS03())
                                     || media.get(3).equals(-1)
-                                    && data.get(i).getS03() == null
+                                    && mp.getS03() == null
                                 ) {
                                     matches += 1;
                                 } else if (!media.get(3).equals(-1)
-                                    && data.get(i).getS03() == null) {
+                                    && mp.getS03() == null) {
                                     break;
                                 } else {
                                     j = 12; matches = -12;
                                 }
                                 break;
-                        case 4: if (media.get(4).equals(data.get(i).getS04())
+                        case 4: if (media.get(4).equals(mp.getS04())
                                     || media.get(4).equals(-1)
-                                    && data.get(i).getS04() == null
+                                    && mp.getS04() == null
                                 ) {
                                     matches += 1;
                                 } else if (!media.get(4).equals(-1)
-                                    && data.get(i).getS04() == null) {
+                                    && mp.getS04() == null) {
                                     break;
                                 } else {
                                     j = 12;
                                     matches = -12;
                                 }
                                 break;
-                        case 5: if (media.get(5).equals(data.get(i).getS05())
+                        case 5: if (media.get(5).equals(mp.getS05())
                                     || media.get(5).equals(-1)
-                                    && data.get(i).getS05() == null
+                                    && mp.getS05() == null
                                 ) {
                                     matches += 1;
                                 } else if (!media.get(5).equals(-1)
-                                    && data.get(i).getS05() == null) {
+                                    && mp.getS05() == null) {
                                     break;
                                 } else {
                                     j = 12;
                                     matches = -12;
                                 }
                                 break;
-                        case 6: if (media.get(6).equals(data.get(i).getS06())
+                        case 6: if (media.get(6).equals(mp.getS06())
                                     || media.get(6).equals(-1)
-                                    && data.get(i).getS06() == null
+                                    && mp.getS06() == null
                                 ) {
                                     matches += 1;
                                 } else if (!media.get(6).equals(-1)
-                                    && data.get(i).getS06() == null) {
+                                    && mp.getS06() == null) {
                                     break;
                                 } else {
                                     j = 12;
                                     matches = -12;
                                 }
                                 break;
-                        case 7: if (media.get(7).equals(data.get(i).getS07())
+                        case 7: if (media.get(7).equals(mp.getS07())
                                     || media.get(7).equals(-1)
-                                    && data.get(i).getS07() == null
+                                    && mp.getS07() == null
                                 ) {
                                     matches += 1;
                                 } else if (!media.get(7).equals(-1)
-                                    && data.get(i).getS07() == null) {
+                                    && mp.getS07() == null) {
                                     break;
                                 } else {
                                     j = 12;
                                     matches = -12;
                                 }
                                 break;
-                        case 8: if (media.get(8).equals(data.get(i).getS08())
+                        case 8: if (media.get(8).equals(mp.getS08())
                                     || media.get(8).equals(-1)
-                                    && data.get(i).getS08() == null
+                                    && mp.getS08() == null
                                 ) {
                                     matches += 1;
                                 } else if (!media.get(8).equals(-1)
-                                    && data.get(i).getS08() == null) {
+                                    && mp.getS08() == null) {
                                     break;
                                 } else {
                                     j = 12;
                                     matches = -12;
                                 }
                                 break;
-                        case 9: if (media.get(9).equals(data.get(i).getS09())
+                        case 9: if (media.get(9).equals(mp.getS09())
                                     || media.get(9).equals(-1)
-                                    && data.get(i).getS09() == null
+                                    && mp.getS09() == null
                                 ) {
                                     matches += 1;
                                 } else if (!media.get(9).equals(-1)
-                                    && data.get(i).getS09() == null) {
+                                    && mp.getS09() == null) {
                                     break;
                                 } else  {
                                     j = 12;
                                     matches = -12;
                                 }
                                 break;
-                        case 10: if (media.get(10).equals(data.get(i).getS10())
+                        case 10: if (media.get(10).equals(mp.getS10())
                                     || media.get(10).equals(-1)
-                                    && data.get(i).getS10() == null
+                                    && mp.getS10() == null
                                 ) {
                                     matches += 1;
                                 } else if (!media.get(10).equals(-1)
-                                    && data.get(i).getS10() == null) {
+                                    && mp.getS10() == null) {
                                     break;
                                 } else {
                                     j = 12; matches = -12;
                                 }
                                 break;
-                        case 11: if (media.get(11).equals(data.get(i).getS11())
+                        case 11: if (media.get(11).equals(mp.getS11())
                                     || media.get(11).equals(-1)
-                                    && data.get(i).getS11() == null
+                                    && mp.getS11() == null
                                 ) {
                                     matches += 1;
                                 } else if (!media.get(11).equals(-1)
-                                    && data.get(i).getS11() == null) {
+                                    && mp.getS11() == null) {
                                     break;
                                 } else {
                                     j = 12;
@@ -270,10 +269,10 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
                 }
                 if (matches > lastMatch) {
                     lastMatch = matches;
-                    found = i;
+                    found = mp.getEnvMediumId();
                 }
             }
-            if (found >= 0 && data.get(found).getEnvMediumId().equals(umwId)) {
+            if (umwId.equals(found)) {
                 return null;
             }
             Violation violation = new Violation();
