@@ -438,25 +438,6 @@ CREATE TABLE dataset_creator (
 );
 CREATE TRIGGER last_mod_dataset_creator BEFORE UPDATE ON dataset_creator FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
-CREATE TABLE env_descrip_env_medium_mp (
-    id serial PRIMARY KEY,
-    s00 integer NOT NULL,
-    s01 integer NOT NULL,
-    s02 integer,
-    s03 integer,
-    s04 integer,
-    s05 integer,
-    s06 integer,
-    s07 integer,
-    s08 integer,
-    s09 integer,
-    s10 integer,
-    s11 integer,
-    env_medium_id character varying(3) NOT NULL REFERENCES env_medium,
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
-);
-CREATE TRIGGER last_mod_env_descrip_env_medium_mp BEFORE UPDATE ON master.env_descrip_env_medium_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
-
 CREATE TABLE env_descrip (
     id serial PRIMARY KEY,
     pred_id integer REFERENCES env_descrip,
@@ -468,6 +449,25 @@ CREATE TABLE env_descrip (
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_env_descrip BEFORE UPDATE ON env_descrip FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
+
+CREATE TABLE env_descrip_env_medium_mp (
+    id serial PRIMARY KEY,
+    s00 integer NOT NULL REFERENCES env_descrip,
+    s01 integer NOT NULL REFERENCES env_descrip,
+    s02 integer REFERENCES env_descrip,
+    s03 integer REFERENCES env_descrip,
+    s04 integer REFERENCES env_descrip,
+    s05 integer REFERENCES env_descrip,
+    s06 integer REFERENCES env_descrip,
+    s07 integer REFERENCES env_descrip,
+    s08 integer REFERENCES env_descrip,
+    s09 integer REFERENCES env_descrip,
+    s10 integer REFERENCES env_descrip,
+    s11 integer REFERENCES env_descrip,
+    env_medium_id character varying(3) NOT NULL REFERENCES env_medium,
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+);
+CREATE TRIGGER last_mod_env_descrip_env_medium_mp BEFORE UPDATE ON master.env_descrip_env_medium_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE lada_user (
     id serial PRIMARY KEY,
