@@ -92,15 +92,10 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
                 violationKey, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         } else if (!unique && (datenbasisId == 4 || datenbasisId == 1)) {
-            if (data.size() != data.stream().filter(
-                    element -> element.getEnvMediumId().equals(umwId)).count()
-            ) {
-                Violation violation = new Violation();
-                violation.addNotification(
-                    violationKey, StatusCodes.VALUE_NOT_MATCHING);
-                return violation;
-            }
-            return null;
+            Violation violation = new Violation();
+            violation.addNotification(
+                violationKey, StatusCodes.VALUE_NOT_MATCHING);
+            return violation;
         } else {
             String found = null;
             int lastMatch = -12;
