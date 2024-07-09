@@ -553,14 +553,13 @@ public class ProbeFactory {
 
         QueryBuilder<EnvDescripEnvMediumMp> builder =
             repository.queryBuilder(EnvDescripEnvMediumMp.class);
-
-        int size = 1;
         for (int i = 0; i < media.size(); i++) {
-            String field = "s" + (i > POS9 ? i : "0" + i);
-            QueryBuilder<EnvDescripEnvMediumMp> tmp = builder.getEmptyBuilder();
+            String field = String.format("s%02d", i);
             if (media.get(i) != -1) {
-                tmp.and(field, media.get(i));
-                tmp.or(field, null);
+                QueryBuilder<EnvDescripEnvMediumMp> tmp = builder
+                    .getEmptyBuilder()
+                    .and(field, media.get(i))
+                    .or(field, null);
                 builder.and(tmp);
             } else {
                 builder.and(field, null);
@@ -576,84 +575,84 @@ public class ProbeFactory {
         if (unique) {
             return data.get(0).getEnvMediumId();
         } else {
-            int found = -1;
+            String found = null;
             int lastMatch = -LM12;
-            for (int i = 0; i < data.size(); i++) {
+            for (EnvDescripEnvMediumMp mp: data) {
                 int matches = -LM12;
-                for (int j = size; j < LM12; j++) {
+                for (int j = 1; j < LM12; j++) {
                     switch (j) {
-                        case 1: if (media.get(1).equals(data.get(i).getS01())
-                            || media.get(1).equals(-1) && data.get(i).getS01()
+                        case 1: if (media.get(1).equals(mp.getS01())
+                            || media.get(1).equals(-1) && mp.getS01()
                                 == null
                                 ) {
                                     matches += 1;
                                 }
                                 break;
-                        case 2: if (media.get(2).equals(data.get(i).getS02())
-                            || media.get(2).equals(-1) && data.get(i).getS02()
+                        case 2: if (media.get(2).equals(mp.getS02())
+                            || media.get(2).equals(-1) && mp.getS02()
                                 == null
                                 ) {
                                     matches += 1;
                                 }
                                 break;
-                        case 3: if (media.get(3).equals(data.get(i).getS03())
-                            || media.get(3).equals(-1) && data.get(i).getS03()
+                        case 3: if (media.get(3).equals(mp.getS03())
+                            || media.get(3).equals(-1) && mp.getS03()
                                 == null
                                 ) {
                                     matches += 1;
                                 }
                                 break;
-                        case 4: if (media.get(4).equals(data.get(i).getS04())
-                            || media.get(4).equals(-1) && data.get(i).getS04()
+                        case 4: if (media.get(4).equals(mp.getS04())
+                            || media.get(4).equals(-1) && mp.getS04()
                                 == null
                                 ) {
                                     matches += 1;
                                 }
                                 break;
-                        case 5: if (media.get(5).equals(data.get(i).getS05())
-                            || media.get(5).equals(-1) && data.get(i).getS05()
+                        case 5: if (media.get(5).equals(mp.getS05())
+                            || media.get(5).equals(-1) && mp.getS05()
                                 == null
                                 ) {
                                     matches += 1;
                                 }
                                 break;
-                        case 6: if (media.get(6).equals(data.get(i).getS06())
-                            || media.get(6).equals(-1) && data.get(i).getS06()
+                        case 6: if (media.get(6).equals(mp.getS06())
+                            || media.get(6).equals(-1) && mp.getS06()
                                 == null
                                 ) {
                                     matches += 1;
                                 }
                                 break;
-                        case 7: if (media.get(7).equals(data.get(i).getS07())
-                            || media.get(7).equals(-1) && data.get(i).getS07()
+                        case 7: if (media.get(7).equals(mp.getS07())
+                            || media.get(7).equals(-1) && mp.getS07()
                                 == null
                                 ) {
                                     matches += 1;
                                 }
                                 break;
-                        case 8: if (media.get(8).equals(data.get(i).getS08())
-                            || media.get(8).equals(-1) && data.get(i).getS08()
+                        case 8: if (media.get(8).equals(mp.getS08())
+                            || media.get(8).equals(-1) && mp.getS08()
                                 == null
                                 ) {
                                     matches += 1;
                                 }
                                 break;
-                        case 9: if (media.get(9).equals(data.get(i).getS09())
-                            || media.get(9).equals(-1) && data.get(i).getS09()
+                        case 9: if (media.get(9).equals(mp.getS09())
+                            || media.get(9).equals(-1) && mp.getS09()
                                 == null
                                 ) {
                                     matches += 1;
                                 }
                                 break;
-                        case 10: if (media.get(10).equals(data.get(i).getS10())
-                            || media.get(10).equals(-1) && data.get(i).getS10()
+                        case 10: if (media.get(10).equals(mp.getS10())
+                            || media.get(10).equals(-1) && mp.getS10()
                                 == null
                                 ) {
                                     matches += 1;
                                 }
                                 break;
-                        case 11: if (media.get(11).equals(data.get(i).getS11())
-                            || media.get(11).equals(-1) && data.get(i).getS11()
+                        case 11: if (media.get(11).equals(mp.getS11())
+                            || media.get(11).equals(-1) && mp.getS11()
                                 == null
                                 ) {
                                     matches += 1;
@@ -663,14 +662,11 @@ public class ProbeFactory {
                     }
                     if (matches > lastMatch) {
                         lastMatch = matches;
-                        found = i;
+                        found = mp.getEnvMediumId();
                     }
                 }
             }
-            if (found >= 0) {
-                return data.get(found).getEnvMediumId();
-            }
-            return null;
+            return found;
         }
     }
 
