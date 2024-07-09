@@ -28,6 +28,8 @@ import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
  */
 public class EnvMedia {
 
+    public static final String ENV_DESCRIP_LEVEL_FIELD_TPL = "s%02d";
+
     private static final String ENV_DESCRIP_EMPTY = "00";
 
     private static final int ZEBS3 = 3;
@@ -42,7 +44,8 @@ public class EnvMedia {
             for (int lev = 0; lev < nLevels; lev++) {
                 ENV_DESCRIP_LEVEL_GETTERS.put(
                     lev,
-                    new PropertyDescriptor(String.format("s%02d", lev),
+                    new PropertyDescriptor(
+                        String.format(ENV_DESCRIP_LEVEL_FIELD_TPL, lev),
                         EnvDescripEnvMediumMp.class).getReadMethod());
             }
         } catch (IntrospectionException e) {
@@ -127,7 +130,7 @@ public class EnvMedia {
                 }
             } catch (NoResultException e) {
                 throw new InvalidEnvDescripDisplayException(
-                    String.format("s%02d", i - 1));
+                    String.format(ENV_DESCRIP_LEVEL_FIELD_TPL, i - 1));
             }
         }
         return mediaIds;

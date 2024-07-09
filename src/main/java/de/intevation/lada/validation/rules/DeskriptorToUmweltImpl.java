@@ -26,8 +26,6 @@ import de.intevation.lada.validation.Violation;
  */
 public abstract class DeskriptorToUmweltImpl implements Rule {
 
-    private static final String FIELD_NAME_TEMPLATE = "s%02d";
-
     @Inject
     private Repository repository;
 
@@ -55,7 +53,8 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
         QueryBuilder<EnvDescripEnvMediumMp> builder =
             repository.queryBuilder(EnvDescripEnvMediumMp.class);
         for (int i = 0; i < media.size(); i++) {
-            String field = String.format(FIELD_NAME_TEMPLATE, i);
+            String field = String.format(
+                EnvMedia.ENV_DESCRIP_LEVEL_FIELD_TPL, i);
             if (media.get(i) != -1) {
                 QueryBuilder<EnvDescripEnvMediumMp> tmp = builder
                     .getEmptyBuilder()
