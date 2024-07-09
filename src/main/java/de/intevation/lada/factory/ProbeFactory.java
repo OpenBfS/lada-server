@@ -579,8 +579,15 @@ public class ProbeFactory {
             int lastMatch = -LM12;
             for (EnvDescripEnvMediumMp mp: data) {
                 int matches = -LM12;
-                for (int j = 1; j < LM12; j++) {
+                for (int j = 0; j < LM12; j++) {
                     switch (j) {
+                        case 0: if (media.get(0).equals(mp.getS00())
+                            || media.get(0).equals(-1) && mp.getS00()
+                                == null
+                                ) {
+                                    matches += 1;
+                                }
+                                break;
                         case 1: if (media.get(1).equals(mp.getS01())
                             || media.get(1).equals(-1) && mp.getS01()
                                 == null
