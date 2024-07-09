@@ -7,8 +7,14 @@
  */
 package de.intevation.lada.util.data;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
@@ -27,6 +33,22 @@ public class EnvMedia {
     private static final int ZEBS3 = 3;
 
     private static final int ZEBS5 = 5;
+
+    private static final Map<Integer, Method> ENV_DESCRIP_LEVEL_GETTERS =
+        new HashMap<>();
+    static {
+        try {
+            final int nLevels = 12;
+            for (int lev = 0; lev < nLevels; lev++) {
+                ENV_DESCRIP_LEVEL_GETTERS.put(
+                    lev,
+                    new PropertyDescriptor(String.format("s%02d", lev),
+                        EnvDescripEnvMediumMp.class).getReadMethod());
+            }
+        } catch (IntrospectionException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Inject
     private Repository repository;
@@ -126,5 +148,19 @@ public class EnvMedia {
             }
         }
         return true;
+    }
+
+    /**
+     * Get envDescrip ID referenced by given level and EnvDescripEnvMediumMp.
+     * @param lev level
+     * @param mp mapping
+     * @return envDescrip ID
+     */
+    public static Integer getEnvDescripId(int lev, EnvDescripEnvMediumMp mp) {
+        try {
+            return (Integer) ENV_DESCRIP_LEVEL_GETTERS.get(lev).invoke(mp);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

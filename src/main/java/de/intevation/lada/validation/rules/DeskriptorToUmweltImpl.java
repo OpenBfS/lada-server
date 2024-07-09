@@ -97,169 +97,23 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
                 violationKey, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         } else {
+            final int nLevels = 12;
             String found = null;
-            int lastMatch = -12;
+            int lastMatch = -nLevels;
             for (EnvDescripEnvMediumMp mp: data) {
-                int matches = -12;
-                for (int j = 0; j < 12; j++) {
-                    switch (j) {
-                        case 0: if (media.get(0).equals(mp.getS00())
-                                    || media.get(0).equals(-1)
-                                    && mp.getS00() == null
-                                ) {
-                                    matches += 1;
-                                } else if (!media.get(0).equals(-1)
-                                    && mp.getS00() == null) {
-                                    break;
-                                } else {
-                                    j = 12;
-                                    matches = -12;
-                                }
-                                break;
-                        case 1: if (media.get(1).equals(mp.getS01())
-                                    || media.get(1).equals(-1)
-                                    && mp.getS01() == null
-                                ) {
-                                    matches += 1;
-                                } else if (!media.get(1).equals(-1)
-                                    && mp.getS01() == null) {
-                                    break;
-                                } else {
-                                    j = 12;
-                                    matches = -12;
-                                }
-                                break;
-                        case 2: if (media.get(2).equals(mp.getS02())
-                                    || media.get(2).equals(-1)
-                                    && mp.getS02() == null
-                                ) {
-                                    matches += 1;
-                                } else if (!media.get(2).equals(-1)
-                                    && mp.getS02() == null) {
-                                    break;
-                                } else {
-                                    j = 12;
-                                    matches = -12;
-                                }
-                                break;
-                        case 3: if (media.get(3).equals(mp.getS03())
-                                    || media.get(3).equals(-1)
-                                    && mp.getS03() == null
-                                ) {
-                                    matches += 1;
-                                } else if (!media.get(3).equals(-1)
-                                    && mp.getS03() == null) {
-                                    break;
-                                } else {
-                                    j = 12; matches = -12;
-                                }
-                                break;
-                        case 4: if (media.get(4).equals(mp.getS04())
-                                    || media.get(4).equals(-1)
-                                    && mp.getS04() == null
-                                ) {
-                                    matches += 1;
-                                } else if (!media.get(4).equals(-1)
-                                    && mp.getS04() == null) {
-                                    break;
-                                } else {
-                                    j = 12;
-                                    matches = -12;
-                                }
-                                break;
-                        case 5: if (media.get(5).equals(mp.getS05())
-                                    || media.get(5).equals(-1)
-                                    && mp.getS05() == null
-                                ) {
-                                    matches += 1;
-                                } else if (!media.get(5).equals(-1)
-                                    && mp.getS05() == null) {
-                                    break;
-                                } else {
-                                    j = 12;
-                                    matches = -12;
-                                }
-                                break;
-                        case 6: if (media.get(6).equals(mp.getS06())
-                                    || media.get(6).equals(-1)
-                                    && mp.getS06() == null
-                                ) {
-                                    matches += 1;
-                                } else if (!media.get(6).equals(-1)
-                                    && mp.getS06() == null) {
-                                    break;
-                                } else {
-                                    j = 12;
-                                    matches = -12;
-                                }
-                                break;
-                        case 7: if (media.get(7).equals(mp.getS07())
-                                    || media.get(7).equals(-1)
-                                    && mp.getS07() == null
-                                ) {
-                                    matches += 1;
-                                } else if (!media.get(7).equals(-1)
-                                    && mp.getS07() == null) {
-                                    break;
-                                } else {
-                                    j = 12;
-                                    matches = -12;
-                                }
-                                break;
-                        case 8: if (media.get(8).equals(mp.getS08())
-                                    || media.get(8).equals(-1)
-                                    && mp.getS08() == null
-                                ) {
-                                    matches += 1;
-                                } else if (!media.get(8).equals(-1)
-                                    && mp.getS08() == null) {
-                                    break;
-                                } else {
-                                    j = 12;
-                                    matches = -12;
-                                }
-                                break;
-                        case 9: if (media.get(9).equals(mp.getS09())
-                                    || media.get(9).equals(-1)
-                                    && mp.getS09() == null
-                                ) {
-                                    matches += 1;
-                                } else if (!media.get(9).equals(-1)
-                                    && mp.getS09() == null) {
-                                    break;
-                                } else  {
-                                    j = 12;
-                                    matches = -12;
-                                }
-                                break;
-                        case 10: if (media.get(10).equals(mp.getS10())
-                                    || media.get(10).equals(-1)
-                                    && mp.getS10() == null
-                                ) {
-                                    matches += 1;
-                                } else if (!media.get(10).equals(-1)
-                                    && mp.getS10() == null) {
-                                    break;
-                                } else {
-                                    j = 12; matches = -12;
-                                }
-                                break;
-                        case 11: if (media.get(11).equals(mp.getS11())
-                                    || media.get(11).equals(-1)
-                                    && mp.getS11() == null
-                                ) {
-                                    matches += 1;
-                                } else if (!media.get(11).equals(-1)
-                                    && mp.getS11() == null) {
-                                    break;
-                                } else {
-                                    j = 12;
-                                    matches = -12;
-                                }
-                                break;
-                        default:
-                            // Should not happen
-                            throw new IndexOutOfBoundsException();
+                int matches = -nLevels;
+                for (int j = 0; j < nLevels; j++) {
+                    Integer medium = media.get(j);
+                    Integer envDescripId = EnvMedia.getEnvDescripId(j, mp);
+                    if (medium.equals(envDescripId)
+                        || medium.equals(-1) && envDescripId == null
+                    ) {
+                        matches += 1;
+                    } else if (!medium.equals(-1) && envDescripId == null) {
+                        continue;
+                    } else {
+                        matches = -nLevels;
+                        break;
                     }
                 }
                 if (matches > lastMatch) {
