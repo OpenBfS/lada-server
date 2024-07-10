@@ -54,7 +54,7 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
         QueryBuilder<EnvDescripEnvMediumMp> builder =
             repository.queryBuilder(EnvDescripEnvMediumMp.class);
         for (String field: media.keySet()) {
-            if (media.get(field) != -1) {
+            if (media.get(field) != null) {
                 QueryBuilder<EnvDescripEnvMediumMp> tmp = builder
                     .getEmptyBuilder()
                     .and(field, media.get(field))
@@ -102,11 +102,11 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
                 for (String field: media.keySet()) {
                     Integer medium = media.get(field);
                     Integer envDescripId = EnvMedia.getEnvDescripId(field, mp);
-                    if (medium.equals(envDescripId)
-                        || medium.equals(-1) && envDescripId == null
+                    if (medium != null && medium.equals(envDescripId)
+                        || medium == null && envDescripId == null
                     ) {
                         matches += 1;
-                    } else if (!medium.equals(-1) && envDescripId == null) {
+                    } else if (medium != null && envDescripId == null) {
                         continue;
                     } else {
                         matches = -EnvMedia.ENV_DESCRIP_LEVELS;

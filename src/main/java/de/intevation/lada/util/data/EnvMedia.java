@@ -92,7 +92,7 @@ public class EnvMedia {
      *
      * @return Map with level field names ("s00" ... "s11") as keys and
      * EnvDescrip IDs matching the parameter.
-     * For empty fields in the parameter ("00"), -1 is added as a pseudo ID.
+     * For empty fields in the parameter ("00"), null is added as ID.
      * @throws InvalidEnvDescripDisplayException
      */
     public Map<String, Integer> findEnvDescripIds(String envDescripDisplay)
@@ -118,7 +118,7 @@ public class EnvMedia {
         for (int i = 0; i < ENV_DESCRIP_LEVELS; i++) {
             final String field = envDescripLevelFieldName(i);
             if (ENV_DESCRIP_EMPTY.equals(mediaDesk[i])) {
-                mediaIds.put(field, -1);
+                mediaIds.put(field, null);
                 continue;
             }
             if (zebs && i < LEV_4 || !zebs && i < LEV_2) {

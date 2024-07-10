@@ -550,15 +550,11 @@ public class ProbeFactory {
         QueryBuilder<EnvDescripEnvMediumMp> builder =
             repository.queryBuilder(EnvDescripEnvMediumMp.class);
         for (String field: media.keySet()) {
-            if (media.get(field) != -1) {
-                QueryBuilder<EnvDescripEnvMediumMp> tmp = builder
-                    .getEmptyBuilder()
-                    .and(field, media.get(field))
-                    .or(field, null);
-                builder.and(tmp);
-            } else {
-                builder.and(field, null);
-            }
+            QueryBuilder<EnvDescripEnvMediumMp> tmp = builder
+                .getEmptyBuilder()
+                .and(field, media.get(field))
+                .or(field, null);
+            builder.and(tmp);
         }
         List<EnvDescripEnvMediumMp> data
             = repository.filter(builder.getQuery());
@@ -577,8 +573,8 @@ public class ProbeFactory {
                 for (String field: media.keySet()) {
                     Integer medium = media.get(field);
                     Integer envDescripId = EnvMedia.getEnvDescripId(field, mp);
-                    if (medium.equals(envDescripId)
-                        || medium.equals(-1) && envDescripId == null
+                    if (medium != null && medium.equals(envDescripId)
+                        || medium == null && envDescripId == null
                     ) {
                         matches += 1;
                     }
