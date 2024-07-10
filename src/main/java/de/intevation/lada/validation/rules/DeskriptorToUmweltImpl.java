@@ -14,8 +14,6 @@ import jakarta.inject.Inject;
 
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
 import de.intevation.lada.util.data.EnvMedia;
-import de.intevation.lada.util.data.QueryBuilder;
-import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Violation;
 
@@ -26,9 +24,6 @@ import de.intevation.lada.validation.Violation;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public abstract class DeskriptorToUmweltImpl implements Rule {
-
-    @Inject
-    private Repository repository;
 
     @Inject
     private EnvMedia envMediaUtil;
@@ -51,26 +46,10 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
 
         final String violationKey = "envMediumId";
 
-        QueryBuilder<EnvDescripEnvMediumMp> builder =
-            repository.queryBuilder(EnvDescripEnvMediumMp.class);
-        for (String field: media.keySet()) {
-            if (media.get(field) != null) {
-                QueryBuilder<EnvDescripEnvMediumMp> tmp = builder
-                    .getEmptyBuilder()
-                    .and(field, media.get(field))
-                    .or(field, null);
-                builder.and(tmp);
-            } else {
-                if (datenbasisId != null
-                    && datenbasisId != 4
-                    && datenbasisId != 1
-                ) {
-                    builder.and(field, null);
-                }
-            }
-        }
-        List<EnvDescripEnvMediumMp> data = repository.filter(
-            builder.getQuery());
+        List<EnvDescripEnvMediumMp> data =
+            envMediaUtil.findEnvDescripEnvMediumMps(
+                media,
+                datenbasisId != null && datenbasisId != 4 && datenbasisId != 1);
         if (data.isEmpty()) {
             Violation violation = new Violation();
             violation.addWarning(

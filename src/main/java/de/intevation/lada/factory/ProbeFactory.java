@@ -547,17 +547,8 @@ public class ProbeFactory {
             return null;
         }
 
-        QueryBuilder<EnvDescripEnvMediumMp> builder =
-            repository.queryBuilder(EnvDescripEnvMediumMp.class);
-        for (String field: media.keySet()) {
-            QueryBuilder<EnvDescripEnvMediumMp> tmp = builder
-                .getEmptyBuilder()
-                .and(field, media.get(field))
-                .or(field, null);
-            builder.and(tmp);
-        }
-        List<EnvDescripEnvMediumMp> data
-            = repository.filter(builder.getQuery());
+        List<EnvDescripEnvMediumMp> data =
+            envMediaUtil.findEnvDescripEnvMediumMps(media, true);
         if (data.isEmpty()) {
             return null;
         }

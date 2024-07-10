@@ -86,6 +86,41 @@ public class EnvMedia {
     }
 
     /**
+     * Find EnvDescripEnvMediumMp instances matching given map of levels
+     * with associated envDescripIds.
+     *
+     * An EnvDescripEnvMediumMp is considered a match, if it references
+     * the same or no EnvDescrip instance per level as the input.
+     *
+     * @param envDescripIds Map with level field names ("s00" ... "s11")
+     * as keys and EnvDescrip IDs as values as returned by findEnvDescripIds.
+     * @param matchEmpty If true, only those mappings are matched, which
+     * do not reference an EnvDescrip on levels where the input parameter
+     * does not reference one, i.e. has null values. Otherwise, a null value
+     * in the input matches anything.
+     * @return List of matching mappings
+     */
+    public List<EnvDescripEnvMediumMp> findEnvDescripEnvMediumMps(
+        Map<String, Integer> envDescripIds,
+        boolean matchEmpty
+    ) {
+        QueryBuilder<EnvDescripEnvMediumMp> builder =
+            repository.queryBuilder(EnvDescripEnvMediumMp.class);
+        for (String field: envDescripIds.keySet()) {
+            if (envDescripIds.get(field) != null) {
+                QueryBuilder<EnvDescripEnvMediumMp> tmp = builder
+                    .getEmptyBuilder()
+                    .and(field, envDescripIds.get(field))
+                    .or(field, null);
+                builder.and(tmp);
+            } else if (matchEmpty) {
+                builder.and(field, null);
+            }
+        }
+        return repository.filter(builder.getQuery());
+    }
+
+    /**
      * Find the EnvDescrip IDs for a given environment descriptor.
      *
      * @param envDescripDisplay
