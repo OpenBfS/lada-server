@@ -21,6 +21,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.util.data.EnvMedia;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
@@ -493,12 +494,10 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidSample();
         sample.setEnvDescripDisplay("77 88 99 00");
 
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasErrors());
-        MatcherAssert.assertThat(sample.getErrors().keySet(),
-            CoreMatchers.hasItem(ENV_DESCRIP_DISPLAY));
-        MatcherAssert.assertThat(sample.getErrors().get(ENV_DESCRIP_DISPLAY),
-            CoreMatchers.hasItem("must match \"D:( [0-9][0-9]){12}\""));
+        assertHasErrors(
+            validator.validate(sample),
+            ENV_DESCRIP_DISPLAY,
+            "must match \"" + EnvMedia.ENV_DESCRIP_PATTERN + "\"");
     }
 
     /**

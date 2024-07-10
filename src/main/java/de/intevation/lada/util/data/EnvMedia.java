@@ -11,10 +11,11 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.NoResultException;
@@ -28,28 +29,30 @@ import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
  */
 public class EnvMedia {
 
-    public static final String ENV_DESCRIP_LEVEL_FIELD_TPL = "s%02d";
-
-    private static final int ENV_DESCRIP_LEVELS = 12;
+    public static final int ENV_DESCRIP_LEVELS = 12;
 
     public static final String ENV_DESCRIP_PATTERN =
-        "D:( [0-9][0-9]){" + ENV_DESCRIP_LEVELS + "}";
+        "D:(( [0-9][0-9]){" + ENV_DESCRIP_LEVELS + "})";
+
+    private static final Pattern ENV_DESCRIP_PATTERN_COMPILED =
+        Pattern.compile(ENV_DESCRIP_PATTERN);
 
     private static final String ENV_DESCRIP_EMPTY = "00";
 
-    private static final int ZEBS3 = 3;
+    private static final int LEV_2 = 2;
 
-    private static final int ZEBS5 = 5;
+    private static final int LEV_4 = 4;
 
-    private static final Map<Integer, Method> ENV_DESCRIP_LEVEL_GETTERS =
-        new HashMap<>();
+    private static final Map<String, Method> ENV_DESCRIP_LEVEL_GETTERS =
+        new HashMap<>(ENV_DESCRIP_LEVELS);
     static {
         try {
             for (int lev = 0; lev < ENV_DESCRIP_LEVELS; lev++) {
+                String field = envDescripLevelFieldName(lev);
                 ENV_DESCRIP_LEVEL_GETTERS.put(
-                    lev,
+                    field,
                     new PropertyDescriptor(
-                        String.format(ENV_DESCRIP_LEVEL_FIELD_TPL, lev),
+                        field,
                         EnvDescripEnvMediumMp.class).getReadMethod());
             }
         } catch (IntrospectionException e) {
@@ -87,32 +90,38 @@ public class EnvMedia {
      *
      * @param envDescripDisplay
      *
-     * @return The list of EnvDescrip IDs matching the parameter or null
-     * in case the parameter is invalid. For empty fields in the parameter
-     * ("00"), -1 is added to the list as a pseudo ID.
+     * @return Map with level field names ("s00" ... "s11") as keys and
+     * EnvDescrip IDs matching the parameter.
+     * For empty fields in the parameter ("00"), -1 is added as a pseudo ID.
      * @throws InvalidEnvDescripDisplayException
      */
-    public List<Integer> findEnvDescripIds(String envDescripDisplay)
+    public Map<String, Integer> findEnvDescripIds(String envDescripDisplay)
         throws InvalidEnvDescripDisplayException {
         if (envDescripDisplay == null) {
             throw new InvalidEnvDescripDisplayException();
         }
-        String[] mediaDesk = envDescripDisplay.split(" ");
-        if (mediaDesk.length <= 1 || ENV_DESCRIP_EMPTY.equals(mediaDesk[1])) {
+        Matcher m = ENV_DESCRIP_PATTERN_COMPILED.matcher(envDescripDisplay);
+        if (!m.matches()) {
             throw new InvalidEnvDescripDisplayException();
         }
 
-        List<Integer> mediaIds = new ArrayList<Integer>();
-        boolean zebs = "01".equals(mediaDesk[1]);
+        String[] mediaDesk = m.group(1).strip().split(" ");
+        if (ENV_DESCRIP_EMPTY.equals(mediaDesk[0])) {
+            throw new InvalidEnvDescripDisplayException();
+        }
+
+        Map<String, Integer> mediaIds = new HashMap<>(ENV_DESCRIP_LEVELS);
+        boolean zebs = "01".equals(mediaDesk[0]);
         Integer parent = null;
         Integer hdParent = null;
         Integer ndParent = null;
-        for (int i = 1; i < mediaDesk.length; i++) {
+        for (int i = 0; i < ENV_DESCRIP_LEVELS; i++) {
+            final String field = envDescripLevelFieldName(i);
             if (ENV_DESCRIP_EMPTY.equals(mediaDesk[i])) {
-                mediaIds.add(-1);
+                mediaIds.put(field, -1);
                 continue;
             }
-            if (zebs && i < ZEBS5 || !zebs && i < ZEBS3) {
+            if (zebs && i < LEV_4 || !zebs && i < LEV_2) {
                 parent = hdParent;
             } else {
                 parent = ndParent;
@@ -120,7 +129,7 @@ public class EnvMedia {
             QueryBuilder<EnvDescrip> builder = repository
                 .queryBuilder(EnvDescrip.class)
                 .and("levVal", mediaDesk[i])
-                .and("lev", i - 1);
+                .and("lev", i);
             if (parent != null) {
                 builder.and("predId", parent);
             }
@@ -128,13 +137,13 @@ public class EnvMedia {
                 Integer envDescripId = repository.getSingle(builder.getQuery())
                     .getId();
                 hdParent = envDescripId;
-                mediaIds.add(envDescripId);
-                if (i == 2) {
+                mediaIds.put(field, envDescripId);
+                if (i == 1) {
                     ndParent = envDescripId;
                 }
             } catch (NoResultException e) {
                 throw new InvalidEnvDescripDisplayException(
-                    String.format(ENV_DESCRIP_LEVEL_FIELD_TPL, i - 1));
+                    envDescripLevelFieldName(i));
             }
         }
         return mediaIds;
@@ -158,16 +167,23 @@ public class EnvMedia {
     }
 
     /**
-     * Get envDescrip ID referenced by given level and EnvDescripEnvMediumMp.
-     * @param lev level
+     * Get envDescrip ID referenced by given field in EnvDescripEnvMediumMp.
+     * @param lev field name
      * @param mp mapping
      * @return envDescrip ID
      */
-    public static Integer getEnvDescripId(int lev, EnvDescripEnvMediumMp mp) {
+    public static Integer getEnvDescripId(
+        String lev,
+        EnvDescripEnvMediumMp mp
+    ) {
         try {
             return (Integer) ENV_DESCRIP_LEVEL_GETTERS.get(lev).invoke(mp);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String envDescripLevelFieldName(int lev) {
+        return String.format("s%02d", lev);
     }
 }

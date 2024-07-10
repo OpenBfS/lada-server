@@ -8,6 +8,7 @@
 package de.intevation.lada.validation.rules;
 
 import java.util.List;
+import java.util.Map;
 
 import jakarta.inject.Inject;
 
@@ -40,7 +41,7 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
         String umwId,
         Integer datenbasisId
     ) {
-        List<Integer> media;
+        Map<String, Integer> media;
         try {
             media = envMediaUtil.findEnvDescripIds(envDescripDisplay);
         } catch (EnvMedia.InvalidEnvDescripDisplayException e) {
@@ -52,13 +53,11 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
 
         QueryBuilder<EnvDescripEnvMediumMp> builder =
             repository.queryBuilder(EnvDescripEnvMediumMp.class);
-        for (int i = 0; i < media.size(); i++) {
-            String field = String.format(
-                EnvMedia.ENV_DESCRIP_LEVEL_FIELD_TPL, i);
-            if (media.get(i) != -1) {
+        for (String field: media.keySet()) {
+            if (media.get(field) != -1) {
                 QueryBuilder<EnvDescripEnvMediumMp> tmp = builder
                     .getEmptyBuilder()
-                    .and(field, media.get(i))
+                    .and(field, media.get(field))
                     .or(field, null);
                 builder.and(tmp);
             } else {
@@ -96,14 +95,13 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
                 violationKey, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         } else {
-            final int nLevels = 12;
             String found = null;
-            int lastMatch = -nLevels;
+            int lastMatch = -EnvMedia.ENV_DESCRIP_LEVELS;
             for (EnvDescripEnvMediumMp mp: data) {
-                int matches = -nLevels;
-                for (int j = 0; j < nLevels; j++) {
-                    Integer medium = media.get(j);
-                    Integer envDescripId = EnvMedia.getEnvDescripId(j, mp);
+                int matches = -EnvMedia.ENV_DESCRIP_LEVELS;
+                for (String field: media.keySet()) {
+                    Integer medium = media.get(field);
+                    Integer envDescripId = EnvMedia.getEnvDescripId(field, mp);
                     if (medium.equals(envDescripId)
                         || medium.equals(-1) && envDescripId == null
                     ) {
@@ -111,7 +109,7 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
                     } else if (!medium.equals(-1) && envDescripId == null) {
                         continue;
                     } else {
-                        matches = -nLevels;
+                        matches = -EnvMedia.ENV_DESCRIP_LEVELS;
                         break;
                     }
                 }

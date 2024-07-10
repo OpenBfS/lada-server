@@ -18,6 +18,7 @@ import org.junit.Test;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Mpg_;
 import de.intevation.lada.model.master.SampleSpecif;
+import de.intevation.lada.util.data.EnvMedia;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
 
@@ -426,12 +427,10 @@ public class MpgTest extends ValidatorBaseTest {
         mpg.setEnvMediumId("L42");
         mpg.setEnvDescripDisplay("77 88 99 00");
 
-        validator.validate(mpg);
-        assertHasErrors(mpg);
-        MatcherAssert.assertThat(mpg.getErrors().keySet(),
-            CoreMatchers.hasItem(ENV_DESCRIP_DISPLAY));
-        MatcherAssert.assertThat(mpg.getErrors().get(ENV_DESCRIP_DISPLAY),
-            CoreMatchers.hasItem("must match \"D:( [0-9][0-9]){12}\""));
+        assertHasErrors(
+            validator.validate(mpg),
+            ENV_DESCRIP_DISPLAY,
+            "must match \"" + EnvMedia.ENV_DESCRIP_PATTERN + "\"");
     }
 
     /**

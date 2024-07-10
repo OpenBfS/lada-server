@@ -45,10 +45,6 @@ import de.intevation.lada.util.data.Repository;
  */
 public class ProbeFactory {
 
-    private static final int LM12 = 12;
-
-    private static final int POS9 = 9;
-
     private static final int SEC59 = 59;
 
     private static final int MIN59 = 59;
@@ -544,7 +540,7 @@ public class ProbeFactory {
      * @return The envMediumId or null
      */
     public String findEnvMediumId(String envDescripDisplay) {
-        List<Integer> media;
+        Map<String, Integer> media;
         try {
             media = envMediaUtil.findEnvDescripIds(envDescripDisplay);
         } catch (EnvMedia.InvalidEnvDescripDisplayException e) {
@@ -553,12 +549,11 @@ public class ProbeFactory {
 
         QueryBuilder<EnvDescripEnvMediumMp> builder =
             repository.queryBuilder(EnvDescripEnvMediumMp.class);
-        for (int i = 0; i < media.size(); i++) {
-            String field = String.format("s%02d", i);
-            if (media.get(i) != -1) {
+        for (String field: media.keySet()) {
+            if (media.get(field) != -1) {
                 QueryBuilder<EnvDescripEnvMediumMp> tmp = builder
                     .getEmptyBuilder()
-                    .and(field, media.get(i))
+                    .and(field, media.get(field))
                     .or(field, null);
                 builder.and(tmp);
             } else {
@@ -576,12 +571,12 @@ public class ProbeFactory {
             return data.get(0).getEnvMediumId();
         } else {
             String found = null;
-            int lastMatch = -LM12;
+            int lastMatch = -EnvMedia.ENV_DESCRIP_LEVELS;
             for (EnvDescripEnvMediumMp mp: data) {
-                int matches = -LM12;
-                for (int j = 0; j < LM12; j++) {
-                    Integer medium = media.get(j);
-                    Integer envDescripId = EnvMedia.getEnvDescripId(j, mp);
+                int matches = -EnvMedia.ENV_DESCRIP_LEVELS;
+                for (String field: media.keySet()) {
+                    Integer medium = media.get(field);
+                    Integer envDescripId = EnvMedia.getEnvDescripId(field, mp);
                     if (medium.equals(envDescripId)
                         || medium.equals(-1) && envDescripId == null
                     ) {
