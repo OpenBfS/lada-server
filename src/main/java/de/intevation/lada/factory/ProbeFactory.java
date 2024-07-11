@@ -569,10 +569,10 @@ public class ProbeFactory {
                     ) {
                         matches += 1;
                     }
-                    if (matches > lastMatch) {
-                        lastMatch = matches;
-                        found = mp.getEnvMediumId();
-                    }
+                }
+                if (matches > lastMatch) {
+                    lastMatch = matches;
+                    found = mp.getEnvMediumId();
                 }
             }
             return found;
