@@ -85,10 +85,7 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
                         || medium == null && envDescripId == null
                     ) {
                         matches += 1;
-                    } else if (medium != null && envDescripId == null) {
-                        continue;
-                    } else {
-                        matches = -EnvMedia.ENV_DESCRIP_LEVELS;
+                    } else if (!(medium != null && envDescripId == null)) {
                         break;
                     }
                 }
