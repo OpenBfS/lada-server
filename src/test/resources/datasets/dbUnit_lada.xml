@@ -45,8 +45,9 @@
         factor = "2"
     />
 
-    <master.env_descrip id = "1" lev = "0" lev_val = "10" />
-    <master.env_descrip id = "2" lev = "1" lev_val = "11" pred_id = "1"/>
+    <master.env_descrip id = "1" lev = "0" lev_val = "10" name = "s00"/>
+    <master.env_descrip
+        id = "2" lev = "1" lev_val = "11" pred_id = "1" name = "s01"/>
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "208" />
     <master.env_medium id = "A6" name = "Umweltbereich für test" />
     <master.env_descrip_env_medium_mp

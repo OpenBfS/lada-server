@@ -44,8 +44,9 @@
     <master.measd_gr_mp measd_id = "56" measd_gr_id = "1" />
     <master.mmt_measd_gr_mp mmt_id = "A3" measd_gr_id = "1" />
 
-    <master.env_descrip id = "1" lev = "0" lev_val = "1"/>
-    <master.env_descrip id = "2" lev = "1" lev_val = "1" pred_id = "1"/>
+    <master.env_descrip id = "1" lev = "0" lev_val = "1" name = "s00"/>
+    <master.env_descrip
+        id = "2" lev = "1" lev_val = "1" pred_id = "1" name = "s01"/>
     <master.env_descrip_env_medium_mp
         id = "1"
         s00 = "1"

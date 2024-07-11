@@ -441,12 +441,15 @@ CREATE TRIGGER last_mod_dataset_creator BEFORE UPDATE ON dataset_creator FOR EAC
 CREATE TABLE env_descrip (
     id serial PRIMARY KEY,
     pred_id integer REFERENCES env_descrip,
-    lev smallint,
+    lev smallint NOT NULL CHECK(lev BETWEEN 0 AND 11),
     imis2_id serial,
-    lev_val smallint,
-    name character varying(100) CHECK (trim(both ' ' from name) <> ''),
+    lev_val smallint NOT NULL CHECK(lev_val BETWEEN 0 AND 99),
+    name character varying(100) NOT NULL CHECK (trim(both ' ' from name) <> ''),
     implication character varying(300) CHECK (trim(both ' ' from implication) <> ''),
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    CHECK(lev = 0 AND pred_id IS NULL OR lev > 0 AND pred_id IS NOT NULL),
+    UNIQUE(pred_id, lev, lev_val),
+    EXCLUDE(lev_val WITH =) WHERE (lev = 0)
 );
 CREATE TRIGGER last_mod_env_descrip BEFORE UPDATE ON env_descrip FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 

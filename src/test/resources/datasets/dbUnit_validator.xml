@@ -95,9 +95,11 @@
     <master.env_specif_mp id = "2" sample_specif_id = "A42" env_medium_id = "L42" />
     <master.env_specif_mp id = "3" sample_specif_id = "A74" env_medium_id = "N71" />
 
-    <master.env_descrip id = "1" lev = "0" lev_val = "10" />
-    <master.env_descrip id = "2" lev = "1" lev_val = "11" pred_id = "1"/>
-    <master.env_descrip id = "3" lev = "2" lev_val = "12" pred_id = "2"/>
+    <master.env_descrip id = "1" lev = "0" lev_val = "10" name = "s00"/>
+    <master.env_descrip
+        id = "2" lev = "1" lev_val = "11" pred_id = "1" name = "s01"/>
+    <master.env_descrip
+        id = "3" lev = "2" lev_val = "12" pred_id = "2" name = "s02"/>
     <master.env_descrip_env_medium_mp
         id = "1"
         s00 = "1"
