@@ -6,6 +6,7 @@
     <!--Master data-->
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
     <master.regulation id = "1" />
+    <master.regulation id = "2" />
     <master.regulation id = "4" />
     <master.regulation id = "9" />
     <master.type_regulation id = "E" />
@@ -22,12 +23,14 @@
     <master.unit_convers id = "208" from_unit_id = "207" to_unit_id = "208" factor = "1.0"/>
     <master.unit_convers id = "209" from_unit_id = "209" to_unit_id = "207" factor = "1.0"/>
     <master.unit_convers id = "210" from_unit_id = "210" to_unit_id = "208" factor = "1.0"/>
+
     <master.env_medium id = "L" name = "Luft"/>
     <master.env_medium id = "L6" name = "Spurenmessung Luft"/>
     <master.env_medium id = "L61" name = "Aerosole" unit_1 = "207" unit_2 = "208"/>
     <master.env_medium id = "L42" name = "Example env Medium" unit_1 = "207"/>
     <master.env_medium id = "L54" name = "Example env 2" unit_1 = "207"/>
     <master.env_medium id = "N71" name = "Reinwasser aus geschützten Rohwasservorkommen"/>
+
     <master.rei_ag_gr id = "1" name = "rei_name" descr = "rei_descr" />
     <master.nucl_facil ext_id = "A123" name = "nucl_facil_name" />
     <master.nucl_facil ext_id = "Othr" name = "nucl_facil_name" />
@@ -95,11 +98,18 @@
     <master.env_specif_mp id = "2" sample_specif_id = "A42" env_medium_id = "L42" />
     <master.env_specif_mp id = "3" sample_specif_id = "A74" env_medium_id = "N71" />
 
-    <master.env_descrip id = "1" lev = "0" lev_val = "10" name = "s00"/>
+    <master.env_descrip
+        id = "1" lev = "0" lev_val = "10" name = "s00"/>
+    <master.env_descrip
+        id = "11" lev = "0" lev_val = "2" name = "s00 2"/>
     <master.env_descrip
         id = "2" lev = "1" lev_val = "11" pred_id = "1" name = "s01"/>
     <master.env_descrip
+        id = "22" lev = "1" lev_val = "2" pred_id = "11" name = "s01 2"/>
+    <master.env_descrip
         id = "3" lev = "2" lev_val = "12" pred_id = "2" name = "s02"/>
+    <master.env_descrip
+        id = "42" lev = "2" lev_val = "42" pred_id = "22" name = "42"/>
     <master.env_descrip_env_medium_mp
         id = "1"
         s00 = "1"
@@ -107,6 +117,20 @@
         s02 = "3"
         env_medium_id = "N71"
     />
+    <master.env_descrip_env_medium_mp
+        id = "2"
+        s00 = "11"
+        s01 = "22"
+        env_medium_id = "L54"
+    />
+    <master.env_descrip_env_medium_mp
+        id = "3"
+        s00 = "11"
+        s01 = "22"
+        s02 = "42"
+        env_medium_id = "L42"
+    />
+
     <master.admin_unit
         id = "11000000"
         state_id = "11000000"
