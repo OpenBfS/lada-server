@@ -60,14 +60,6 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
         boolean unique = EnvMedia.isUnique(data);
         if (unique && umwId.equals(data.get(0).getEnvMediumId())) {
             return null;
-        } else if (unique
-            && !umwId.equals(data.get(0).getEnvMediumId())
-            && datenbasisId != 4
-        ) {
-            Violation violation = new Violation();
-            violation.addWarning(
-                violationKey, StatusCodes.VALUE_NOT_MATCHING);
-            return violation;
         } else if (!unique && (datenbasisId == 4 || datenbasisId == 1)) {
             Violation violation = new Violation();
             violation.addNotification(
