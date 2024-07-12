@@ -78,8 +78,6 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
                         || medium == null && envDescripId == null
                     ) {
                         matches += 1;
-                    } else if (!(medium != null && envDescripId == null)) {
-                        break;
                     }
                 }
                 if (matches > lastMatch) {
