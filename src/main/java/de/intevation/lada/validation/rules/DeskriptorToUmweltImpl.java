@@ -34,7 +34,7 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
     protected Violation doExecute(
         String envDescripDisplay,
         String umwId,
-        Integer datenbasisId
+        Integer regulationId
     ) {
         Map<String, Integer> media;
         try {
@@ -44,12 +44,13 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
             return null;
         }
 
+        final boolean isREIor161 = regulationId != null
+            && (regulationId == 4 || regulationId == 1);
+
         final String violationKey = "envMediumId";
 
         List<EnvDescripEnvMediumMp> data =
-            envMediaUtil.findEnvDescripEnvMediumMps(
-                media,
-                datenbasisId != null && datenbasisId != 4 && datenbasisId != 1);
+            envMediaUtil.findEnvDescripEnvMediumMps(media, !isREIor161);
         if (data.isEmpty()) {
             Violation violation = new Violation();
             violation.addWarning(
@@ -60,7 +61,7 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
         boolean unique = EnvMedia.isUnique(data);
         if (unique && umwId.equals(data.get(0).getEnvMediumId())) {
             return null;
-        } else if (!unique && (datenbasisId == 4 || datenbasisId == 1)) {
+        } else if (!unique && isREIor161) {
             Violation violation = new Violation();
             violation.addNotification(
                 violationKey, StatusCodes.VALUE_NOT_MATCHING);
