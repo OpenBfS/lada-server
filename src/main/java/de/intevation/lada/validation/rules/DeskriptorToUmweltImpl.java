@@ -67,25 +67,7 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
                 violationKey, StatusCodes.VALUE_NOT_MATCHING);
             return violation;
         } else {
-            String found = null;
-            int lastMatch = -EnvMedia.ENV_DESCRIP_LEVELS;
-            for (EnvDescripEnvMediumMp mp: data) {
-                int matches = -EnvMedia.ENV_DESCRIP_LEVELS;
-                for (String field: media.keySet()) {
-                    Integer medium = media.get(field);
-                    Integer envDescripId = EnvMedia.getEnvDescripId(field, mp);
-                    if (medium != null && medium.equals(envDescripId)
-                        || medium == null && envDescripId == null
-                    ) {
-                        matches += 1;
-                    }
-                }
-                if (matches > lastMatch) {
-                    lastMatch = matches;
-                    found = mp.getEnvMediumId();
-                }
-            }
-            if (umwId.equals(found)) {
+            if (umwId.equals(EnvMedia.findEnvMediumId(media, data))) {
                 return null;
             }
             Violation violation = new Violation();

@@ -557,25 +557,7 @@ public class ProbeFactory {
         if (unique) {
             return data.get(0).getEnvMediumId();
         } else {
-            String found = null;
-            int lastMatch = -EnvMedia.ENV_DESCRIP_LEVELS;
-            for (EnvDescripEnvMediumMp mp: data) {
-                int matches = -EnvMedia.ENV_DESCRIP_LEVELS;
-                for (String field: media.keySet()) {
-                    Integer medium = media.get(field);
-                    Integer envDescripId = EnvMedia.getEnvDescripId(field, mp);
-                    if (medium != null && medium.equals(envDescripId)
-                        || medium == null && envDescripId == null
-                    ) {
-                        matches += 1;
-                    }
-                }
-                if (matches > lastMatch) {
-                    lastMatch = matches;
-                    found = mp.getEnvMediumId();
-                }
-            }
-            return found;
+            return EnvMedia.findEnvMediumId(media, data);
         }
     }
 

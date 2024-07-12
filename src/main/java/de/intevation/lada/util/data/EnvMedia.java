@@ -86,11 +86,44 @@ public class EnvMedia {
     }
 
     /**
+     * Find EnvMedium ID referenced by EnvDescripEnvMediumMp, which
+     * has closest match to fiven map of EnvDescrip IDs.
+     *
+     * @param envDescripIds Map as returned by findEnvDescripIds
+     * @param mappings List of EnvDescripEnvMediumMp instances
+     * @return Found EnvMedium ID or null
+     */
+    public static String findEnvMediumId(
+        Map<String, Integer> envDescripIds,
+        List<EnvDescripEnvMediumMp> mappings
+    ) {
+        String found = null;
+        int lastMatch = -ENV_DESCRIP_LEVELS;
+        for (EnvDescripEnvMediumMp mp: mappings) {
+            int matches = -ENV_DESCRIP_LEVELS;
+            for (String field: envDescripIds.keySet()) {
+                Integer medium = envDescripIds.get(field);
+                Integer envDescripId = EnvMedia.getEnvDescripId(field, mp);
+                if (medium != null && medium.equals(envDescripId)
+                    || medium == null && envDescripId == null
+                ) {
+                    matches += 1;
+                }
+            }
+            if (matches > lastMatch) {
+                lastMatch = matches;
+                found = mp.getEnvMediumId();
+            }
+        }
+        return found;
+    }
+
+    /**
      * Find EnvDescripEnvMediumMp instances matching given map of levels
      * with associated envDescripIds.
      *
      * An EnvDescripEnvMediumMp is considered a match, if it references
-     * the same or no EnvDescrip instance per level as the input.
+     * the same or no EnvDescrip instance per level compared to the input.
      *
      * @param envDescripIds Map with level field names ("s00" ... "s11")
      * as keys and EnvDescrip IDs as values as returned by findEnvDescripIds.
