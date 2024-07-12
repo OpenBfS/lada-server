@@ -523,11 +523,24 @@ public class ProbeTest extends ValidatorBaseTest {
     }
 
     /**
-     * Test sample without matching envMediumId.
+     * Test §161 sample without matching envMediumId.
      */
     @Test
-    public void envDescripWithoutMatchingEnvMediumId() {
+    public void envDescripWithoutMatchingEnvMediumId161() {
+        envDescripWithoutMatchingEnvMediumId(1);
+    }
+
+    /**
+     * Test §162 sample without matching envMediumId.
+     */
+    @Test
+    public void envDescripWithoutMatchingEnvMediumId162() {
+        envDescripWithoutMatchingEnvMediumId(2);
+    }
+
+    private void envDescripWithoutMatchingEnvMediumId(int regulationId) {
         Sample sample = createMinimumValidSample();
+        sample.setRegulationId(regulationId);
         sample.setEnvDescripDisplay(VALID_ENV_DESCRIP_DISPLAY_FOR_N71);
         sample.setEnvMediumId("L54");
 
@@ -535,6 +548,42 @@ public class ProbeTest extends ValidatorBaseTest {
             validator.validate(sample),
             ENV_MEDIUM_ID,
             String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
+    }
+
+    /**
+     * Test §161 sample with ambiguous EnvMedium match.
+     */
+    @Test
+    public void envDescripAmbiguouslyMatchingEnvMediumId161() {
+        envDescripAmbiguouslyMatchingEnvMediumId(1, true);
+    }
+
+    /**
+     * Test §162 sample with ambiguous EnvMedium match.
+     */
+    @Test
+    public void envDescripAmbiguouslyMatchingEnvMediumId162() {
+        envDescripAmbiguouslyMatchingEnvMediumId(2, false);
+    }
+
+    private void envDescripAmbiguouslyMatchingEnvMediumId(
+        int regulationId, boolean notifyOnly
+    ) {
+        Sample sample = createMinimumValidSample();
+        sample.setRegulationId(regulationId);
+        sample.setEnvMediumId("L54");
+
+        // EnvMedia.findEnvDescripEnvMediumMps() returns to mappings
+        // with given test data:
+        sample.setEnvDescripDisplay("D: 02 02 42 00 00 00 00 00 00 00 00 00");
+
+        final String msg = String.valueOf(StatusCodes.VALUE_NOT_MATCHING);
+        validator.validate(sample);
+        if (notifyOnly) {
+            assertHasNotifications(sample, ENV_MEDIUM_ID, msg);
+        } else {
+            assertHasWarnings(sample, ENV_MEDIUM_ID, msg);
+        }
     }
 
     /**
