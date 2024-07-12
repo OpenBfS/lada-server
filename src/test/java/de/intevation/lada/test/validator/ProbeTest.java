@@ -52,7 +52,6 @@ public class ProbeTest extends ValidatorBaseTest {
     private static final Integer EXAMPLE_REI_AG_GR_ID = 1;
     private static final Integer EXAMPLE_NUCL_FACIL_ID = 1;
     private static final String MST_06010 = "06010";
-    private static final Integer REGULATION_ID_161 = 1;
     private static final Integer REGULATION_ID_REI = 4;
     private static final Integer SAMPLE_METH_ID_INDIVIDUAL = 1;
     private static final Integer SAMPLE_METH_ID_CONT = 9;
@@ -65,9 +64,6 @@ public class ProbeTest extends ValidatorBaseTest {
     private static final long TS3 = 2376287046511L;
     private static final int ID710 = 710;
     private static final int ID1000 = 1000;
-
-    private static final int SAMPLE_ID = 25000;
-    private static final int SAMPLE_ID_REI = 25001;
 
     private static final String EXISTING_MAIN_SAMPLE_ID = "120510002";
     private static final String NEW_MAIN_SAMPLE_ID = "4564567890";
@@ -181,7 +177,6 @@ public class ProbeTest extends ValidatorBaseTest {
     @Test
     public void uniqueHauptprobenNrUpdate() {
         Sample sample = createMinimumValidSample();
-        sample.setId(SAMPLE_ID);
         sample.setMainSampleId(NEW_MAIN_SAMPLE_ID);
 
         validator.validate(sample);
@@ -194,7 +189,6 @@ public class ProbeTest extends ValidatorBaseTest {
     @Test
     public void existingHauptprobenNrUpdate() {
         Sample sample = createMinimumValidSample();
-        sample.setId(SAMPLE_ID);
         sample.setMainSampleId(EXISTING_MAIN_SAMPLE_ID);
 
         validator.validate(sample);
@@ -536,13 +530,11 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidSample();
         sample.setEnvDescripDisplay(VALID_ENV_DESCRIP_DISPLAY_FOR_N71);
         sample.setEnvMediumId("L54");
-        String warningKey = ENV_MEDIUM_ID;
-        validator.validate(sample);
-        Assert.assertTrue(sample.hasWarnings());
-        Assert.assertTrue(sample.getWarnings()
-            .containsKey(warningKey));
-        Assert.assertTrue(sample.getWarnings().get(warningKey)
-            .contains(String.valueOf(StatusCodes.VALUE_NOT_MATCHING)));
+
+        assertHasWarnings(
+            validator.validate(sample),
+            ENV_MEDIUM_ID,
+            String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
     }
 
     /**
@@ -677,8 +669,10 @@ public class ProbeTest extends ValidatorBaseTest {
      * @return sample
      */
     private Sample createMinimumValidSample() {
+        final int sampleId = 25000;
+        final int regulationId = 1;
         Sample sample = new Sample();
-        sample.setId(SAMPLE_ID);
+        sample.setId(sampleId);
         sample.setMainSampleId("test");
         sample.setApprLabId(EXISTING_APPR_LAB_ID);
         sample.setMeasFacilId(MST_06010);
@@ -687,7 +681,7 @@ public class ProbeTest extends ValidatorBaseTest {
         sample.setEnvMediumId(ENV_MEDIUM_N71);
         sample.setSampleStartDate(new Date());
         sample.setSampleEndDate(new Date());
-        sample.setRegulationId(REGULATION_ID_161);
+        sample.setRegulationId(regulationId);
         sample.setSampleMethId(SAMPLE_METH_ID_CONT);
         sample.setIsTest(false);
         return sample;
@@ -698,8 +692,9 @@ public class ProbeTest extends ValidatorBaseTest {
      * @return sample
      */
     private Sample createMinimumValidREISample() {
+        final int sampleId = 25001;
         Sample sample = createMinimumValidSample();
-        sample.setId(SAMPLE_ID_REI);
+        sample.setId(sampleId);
         sample.setRegulationId(REGULATION_ID_REI);
         sample.setReiAgGrId(EXAMPLE_REI_AG_GR_ID);
         sample.setNuclFacilGrId(EXAMPLE_NUCL_FACIL_ID);
