@@ -663,17 +663,18 @@ CREATE TRIGGER last_mod_nucl_facil_gr_mp BEFORE UPDATE ON master.nucl_facil_gr_m
 
 CREATE TABLE site_class (
     id smallint PRIMARY KEY,
+    name VARCHAR(60),
     ext_id char(3) NOT NULL UNIQUE CHECK (trim(both ' ' from ext_id) <> ''),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_site_class BEFORE UPDATE ON master.site_class
     FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
-INSERT INTO site_class (id, ext_id) VALUES
-    (1, 'DYN'),
-    (2, 'GP'),
-    (3, 'REI'),
-    (4, 'VE'),
-    (5, 'ST');
+INSERT INTO site_class (id, name, ext_id) VALUES
+    (1, 'dynamischer Messpunkt (nicht vordefiniert)', 'DYN'),
+    (2, 'vordefinierter Messpunkt', 'GP'),
+    (3, 'REI-Messpunkt','REI'),
+    (4, 'Verwaltungseinheit','VE'),
+    (5, 'Staat', 'ST');
 
 CREATE TABLE poi (
     id character varying(7) PRIMARY KEY CHECK (trim(both ' ' from id) <> ''),
