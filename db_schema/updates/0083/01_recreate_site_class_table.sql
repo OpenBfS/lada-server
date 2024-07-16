@@ -80,7 +80,3 @@ CREATE VIEW stamm.ort AS SELECT
 	rei_ag_gr_id AS rei_progpunkt_grp_id,
 	munic_div_id AS gem_unt_id
 FROM master.site;
-
-GRANT SELECT ON TABLE stamm.ort TO imis_ro;
-GRANT ALL ON TABLE stamm.ort TO lada;
-GRANT SELECT ON TABLE stamm.ort TO readonly;
