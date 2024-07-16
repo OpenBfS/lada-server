@@ -47,33 +47,23 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
         final boolean isREIor161 = regulationId != null
             && (regulationId == 4 || regulationId == 1);
 
-        final String violationKey = "envMediumId";
+        Violation violation = new Violation();
+        violation.addWarning("envMediumId", StatusCodes.VALUE_NOT_MATCHING);
 
         List<EnvDescripEnvMediumMp> data =
             envMediaUtil.findEnvDescripEnvMediumMps(media, !isREIor161);
-        if (data.isEmpty()) {
-            Violation violation = new Violation();
-            violation.addWarning(
-                violationKey, StatusCodes.VALUE_NOT_MATCHING);
-            return violation;
-        }
-
-        boolean unique = EnvMedia.isUnique(data);
-        if (unique && umwId.equals(data.get(0).getEnvMediumId())) {
-            return null;
-        } else if (!unique && isREIor161) {
-            Violation violation = new Violation();
-            violation.addNotification(
-                violationKey, StatusCodes.VALUE_NOT_MATCHING);
-            return violation;
-        } else {
-            if (umwId.equals(EnvMedia.findEnvMediumId(media, data))) {
-                return null;
+        if (isREIor161) {
+            // Any mapping should match envMediumId
+            if (data.stream()
+                .filter(mp -> umwId.equals(mp.getEnvMediumId()))
+                .count() == 0
+            ) {
+                return violation;
             }
-            Violation violation = new Violation();
-            violation.addWarning(
-                violationKey, StatusCodes.VALUE_NOT_MATCHING);
+        } else if (!umwId.equals(EnvMedia.findEnvMediumId(media, data))) {
+            // The most closely matching mapping should match envMediumId
             return violation;
         }
+        return null;
     }
 }

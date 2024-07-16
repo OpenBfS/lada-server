@@ -48,6 +48,7 @@ public class ProbeTest extends ValidatorBaseTest {
 
     //Test data ids
     private static final String ENV_MEDIUM_L42 = "L42";
+    private static final String ENV_MEDIUM_L54 = "L54";
     private static final String ENV_MEDIUM_N71 = "N71";
     private static final Integer EXAMPLE_REI_AG_GR_ID = 1;
     private static final Integer EXAMPLE_NUCL_FACIL_ID = 1;
@@ -542,7 +543,7 @@ public class ProbeTest extends ValidatorBaseTest {
         Sample sample = createMinimumValidSample();
         sample.setRegulationId(regulationId);
         sample.setEnvDescripDisplay(VALID_ENV_DESCRIP_DISPLAY_FOR_N71);
-        sample.setEnvMediumId("L54");
+        sample.setEnvMediumId(ENV_MEDIUM_L54);
 
         assertHasWarnings(
             validator.validate(sample),
@@ -555,7 +556,26 @@ public class ProbeTest extends ValidatorBaseTest {
      */
     @Test
     public void envDescripAmbiguouslyMatchingEnvMediumId161() {
-        envDescripAmbiguouslyMatchingEnvMediumId(1, true);
+        Sample sample = envDescripAmbiguouslyMatchingEnvMediumId(
+            ENV_MEDIUM_L54, 1);
+        assertHasNotifications(sample, ENV_MEDIUM_ID,
+            "Environment description ambiguously matches environmental medium");
+        // Be sure the expected notification is not accompanied by a warning
+        Assert.assertFalse(
+            "Sample has unexpected warnings: " + sample.getWarnings().keySet(),
+            sample.hasWarnings());
+    }
+
+    /**
+     * Test §161 sample with no EnvMedium match but matching multiple
+     * EnvDescripEnvMediumMps.
+     */
+    @Test
+    public void envDescripAmbiguouslyNonMatchingEnvMediumId161() {
+        assertHasWarnings(
+            envDescripAmbiguouslyMatchingEnvMediumId(ENV_MEDIUM_N71, 1),
+            ENV_MEDIUM_ID,
+            String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
     }
 
     /**
@@ -563,27 +583,24 @@ public class ProbeTest extends ValidatorBaseTest {
      */
     @Test
     public void envDescripAmbiguouslyMatchingEnvMediumId162() {
-        envDescripAmbiguouslyMatchingEnvMediumId(2, false);
+        assertHasWarnings(
+            envDescripAmbiguouslyMatchingEnvMediumId(ENV_MEDIUM_L54, 2),
+            ENV_MEDIUM_ID,
+            String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
     }
 
-    private void envDescripAmbiguouslyMatchingEnvMediumId(
-        int regulationId, boolean notifyOnly
+    private Sample envDescripAmbiguouslyMatchingEnvMediumId(
+        String envMediumId, int regulationId
     ) {
         Sample sample = createMinimumValidSample();
         sample.setRegulationId(regulationId);
-        sample.setEnvMediumId("L54");
+        sample.setEnvMediumId(envMediumId);
 
         // EnvMedia.findEnvDescripEnvMediumMps() returns to mappings
         // with given test data:
         sample.setEnvDescripDisplay("D: 02 02 42 00 00 00 00 00 00 00 00 00");
 
-        final String msg = String.valueOf(StatusCodes.VALUE_NOT_MATCHING);
-        validator.validate(sample);
-        if (notifyOnly) {
-            assertHasNotifications(sample, ENV_MEDIUM_ID, msg);
-        } else {
-            assertHasWarnings(sample, ENV_MEDIUM_ID, msg);
-        }
+        return validator.validate(sample);
     }
 
     /**
