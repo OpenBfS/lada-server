@@ -218,23 +218,6 @@ public class EnvMedia {
     }
 
     /**
-     * Tests a list of EnvDescripEnvMediumMp instances for uniqueness
-     * of associated envMedium IDs.
-     * @param list List of EnvDescripEnvMediumMp instances
-     * @return True if all envMedium IDs are equal, else false
-     * @throws NullPointerException if list is empty
-     */
-    public static boolean isUnique(List<EnvDescripEnvMediumMp> list) {
-        String element = list.get(0).getEnvMediumId();
-        for (EnvDescripEnvMediumMp mp: list) {
-            if (!element.equals(mp.getEnvMediumId())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * Get envDescrip ID referenced by given field in EnvDescripEnvMediumMp.
      * @param lev field name
      * @param mp mapping

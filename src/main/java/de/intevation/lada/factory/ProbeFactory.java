@@ -547,18 +547,9 @@ public class ProbeFactory {
             return null;
         }
 
-        List<EnvDescripEnvMediumMp> data =
-            envMediaUtil.findEnvDescripEnvMediumMps(media, true);
-        if (data.isEmpty()) {
-            return null;
-        }
-
-        boolean unique = EnvMedia.isUnique(data);
-        if (unique) {
-            return data.get(0).getEnvMediumId();
-        } else {
-            return EnvMedia.findEnvMediumId(media, data);
-        }
+        return EnvMedia.findEnvMediumId(
+            media,
+            envMediaUtil.findEnvDescripEnvMediumMps(media, true));
     }
 
     /**
