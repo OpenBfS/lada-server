@@ -51,6 +51,7 @@ import de.intevation.lada.model.master.Sampler;
 import de.intevation.lada.util.data.EnvMedia;
 import de.intevation.lada.validation.constraints.BeginBeforeEnd;
 import de.intevation.lada.validation.constraints.EnvDescripDisplay;
+import de.intevation.lada.validation.constraints.EnvDescripMatchesEnvMedium;
 import de.intevation.lada.validation.constraints.EnvDescripMatchesEnvMediumReiOr161;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
@@ -64,6 +65,7 @@ import de.intevation.lada.validation.groups.Warnings;
 @GroupSequence({ Mpg.class, DatabaseConstraints.class })
 @BeginBeforeEnd
 @ValidSamplePd
+@EnvDescripMatchesEnvMedium(groups = Notifications.class)
 @EnvDescripMatchesEnvMediumReiOr161(groups = Notifications.class)
 public class Mpg extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;

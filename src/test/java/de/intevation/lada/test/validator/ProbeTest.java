@@ -23,7 +23,6 @@ import org.junit.Test;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.EnvMedia;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
 
 /**
@@ -86,6 +85,8 @@ public class ProbeTest extends ValidatorBaseTest {
     private static final String MSG_NO_SAMPLING_LOC =
         "A sampling location must be provided";
     private static final String MSG_S1_NOT_SET = "At least S1 must be set";
+    private static final String MSG_ENV_NOT_MATCHING =
+        "Environment description does not match environmental medium";
     private static final String MSG_INVALID_DESC_TPL =
         "Invalid descriptor combination: %s does not match";
     private static final String UNIQUE_PLACEHOLDER = "{fields}";
@@ -548,7 +549,7 @@ public class ProbeTest extends ValidatorBaseTest {
         assertHasWarnings(
             validator.validate(sample),
             ENV_MEDIUM_ID,
-            String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
+            MSG_ENV_NOT_MATCHING);
     }
 
     /**
@@ -575,7 +576,7 @@ public class ProbeTest extends ValidatorBaseTest {
         assertHasWarnings(
             envDescripAmbiguouslyMatchingEnvMediumId(ENV_MEDIUM_N71, 1),
             ENV_MEDIUM_ID,
-            String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
+            MSG_ENV_NOT_MATCHING);
     }
 
     /**
@@ -586,7 +587,7 @@ public class ProbeTest extends ValidatorBaseTest {
         assertHasWarnings(
             envDescripAmbiguouslyMatchingEnvMediumId(ENV_MEDIUM_L54, 2),
             ENV_MEDIUM_ID,
-            String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
+            MSG_ENV_NOT_MATCHING);
     }
 
     private Sample envDescripAmbiguouslyMatchingEnvMediumId(

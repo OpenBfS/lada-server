@@ -5,50 +5,71 @@
  * and comes with ABSOLUTELY NO WARRANTY! Check out
  * the documentation coming with IMIS-Labordaten-Application for details.
  */
-package de.intevation.lada.validation.rules;
+package de.intevation.lada.validation.constraints;
 
 import java.util.List;
 import java.util.Map;
 
-import jakarta.inject.Inject;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
 import de.intevation.lada.util.data.EnvMedia;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.validation.Violation;
 
 
 /**
- * Validates if the umwelt id fits the deskriptor string.
+ * Validates if envMediumId fits the descriptor string.
  *
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
-public abstract class DeskriptorToUmweltImpl implements Rule {
+public abstract class EnvDescripMatchesEnvMediumValidator<T>
+    implements ConstraintValidator<EnvDescripMatchesEnvMedium, T> {
 
-    @Inject
-    private EnvMedia envMediaUtil;
+    private static final int REG_161 = 1;
+    private static final int REG_REI = 4;
+
+    protected String message;
 
     @Override
-    public abstract Violation execute(Object object);
+    public void initialize(EnvDescripMatchesEnvMedium constraintAnnotation) {
+        this.message = constraintAnnotation.message();
+    }
 
-    protected Violation doExecute(
+    @Override
+    public abstract boolean isValid(T object, ConstraintValidatorContext ctx);
+
+    @Transactional
+    protected boolean doValidation(
+        ConstraintValidatorContext ctx,
+        String propertyNode,
         String envDescripDisplay,
         String umwId,
         Integer regulationId
     ) {
+        if (umwId == null) {
+            return true;
+        }
+
+        EnvMedia envMediaUtil = CDI.current().getBeanContainer()
+            .createInstance().select(EnvMedia.class).get();
+
         Map<String, Integer> media;
         try {
             media = envMediaUtil.findEnvDescripIds(envDescripDisplay);
         } catch (EnvMedia.InvalidEnvDescripDisplayException e) {
             // Leave validation of combination of levels up to other constraint
-            return null;
+            return true;
         }
 
         final boolean isREIor161 = regulationId != null
-            && (regulationId == 4 || regulationId == 1);
+            && (regulationId == REG_REI || regulationId == REG_161);
 
-        Violation violation = new Violation();
-        violation.addWarning("envMediumId", StatusCodes.VALUE_NOT_MATCHING);
+        ctx.disableDefaultConstraintViolation();
+        ctx.buildConstraintViolationWithTemplate(this.message)
+            .addPropertyNode(propertyNode)
+            .addConstraintViolation();
 
         List<EnvDescripEnvMediumMp> data =
             envMediaUtil.findEnvDescripEnvMediumMps(media, !isREIor161);
@@ -58,12 +79,12 @@ public abstract class DeskriptorToUmweltImpl implements Rule {
                 .filter(mp -> umwId.equals(mp.getEnvMediumId()))
                 .count() == 0
             ) {
-                return violation;
+                return false;
             }
         } else if (!umwId.equals(EnvMedia.findEnvMediumId(media, data))) {
             // The most closely matching mapping should match envMediumId
-            return violation;
+            return false;
         }
-        return null;
+        return true;
     }
 }

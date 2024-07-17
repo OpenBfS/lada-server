@@ -19,8 +19,8 @@ import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Mpg_;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.util.data.EnvMedia;
-import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
+
 
 /**
  * Test validation rules for Mpg objects.
@@ -445,7 +445,7 @@ public class MpgTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(mpg),
             Mpg_.ENV_MEDIUM_ID,
-            String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
+            "Environment description does not match environmental medium");
     }
 
     /**
