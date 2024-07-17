@@ -7,7 +7,11 @@
  */
 package de.intevation.lada.validation.constraints;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.CDI;
@@ -29,7 +33,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 
 /**
@@ -43,6 +46,12 @@ public class ValidDependenciesValidator
     private Repository repository;
 
     private Validator validator;
+
+    private Map<String, Set<String>> errors = new HashMap<>();
+
+    private Map<String, Set<String>> warnings = new HashMap<>();
+
+    private Map<String, Set<String>> notifications = new HashMap<>();
 
     @Override
     public void initialize(ValidDependencies constraintAnnotation) {
@@ -79,21 +88,20 @@ public class ValidDependenciesValidator
             || newStatusWert == 2
             || newStatusWert == 7
         ) {
-            Violation violationCollection = new Violation();
             Sample probe = repository.getById(
                 Sample.class, messung.getSampleId());
 
             // init violation_collection with probe validation
             validator.validate(probe);
-            violationCollection.addErrors(probe.getErrors());
-            violationCollection.addWarnings(probe.getWarnings());
-            violationCollection.addNotifications(probe.getNotifications());
+            addErrors(probe.getErrors());
+            addWarnings(probe.getWarnings());
+            addNotifications(probe.getNotifications());
 
             //validate messung object
             validator.validate(messung);
-            violationCollection.addErrors(messung.getErrors());
-            violationCollection.addWarnings(messung.getWarnings());
-            violationCollection.addNotifications(messung.getNotifications());
+            addErrors(messung.getErrors());
+            addWarnings(messung.getWarnings());
+            addNotifications(messung.getNotifications());
 
             //validate messwert objects
             QueryBuilder<MeasVal> builder = repository
@@ -107,19 +115,16 @@ public class ValidDependenciesValidator
                         && !(messwert.getMeasVal() == null
                             && messwert.getLessThanLOD() == null)
                     ) {
-                        violationCollection.addError(
-                            "status", StatusCodes.STATUS_RO);
+                        addError("status", StatusCodes.STATUS_RO);
                     }
 
                     validator.validate(messwert);
-                    violationCollection.addErrors(messwert.getErrors());
-                    violationCollection.addWarnings(messwert.getWarnings());
-                    violationCollection.addNotifications(
-                        messwert.getNotifications());
+                    addErrors(messwert.getErrors());
+                    addWarnings(messwert.getWarnings());
+                    addNotifications(messwert.getNotifications());
                 }
             } else if (newStatusWert != 7) {
-                violationCollection.addError(
-                    "measVal", StatusCodes.VALUE_MISSING);
+                addError("measVal", StatusCodes.VALUE_MISSING);
             }
 
             // validate orte
@@ -131,14 +136,13 @@ public class ValidDependenciesValidator
             for (Geolocat o : assignedOrte) {
                 Site site = repository.getById(Site.class, o.getSiteId());
                 validator.validate(site);
-                violationCollection.addErrors(site.getErrors());
-                violationCollection.addWarnings(site.getWarnings());
-                violationCollection.addNotifications(site.getNotifications());
+                addErrors(site.getErrors());
+                addWarnings(site.getWarnings());
+                addNotifications(site.getNotifications());
             }
 
             if (newStatusWert != 7
-                && (violationCollection.hasErrors()
-                    || violationCollection.hasWarnings())
+                && (!this.errors.isEmpty() || !this.warnings.isEmpty())
                 || newStatusWert == 7
                 && (probe.hasErrors() || probe.hasWarnings())
             ) {
@@ -146,12 +150,9 @@ public class ValidDependenciesValidator
                     HibernateConstraintValidatorContext.class
                 );
                 hibernateCtx.disableDefaultConstraintViolation();
-                hibernateCtx.addExpressionVariable(
-                        "errs", violationCollection.getErrors())
-                    .addExpressionVariable(
-                        "wrns", violationCollection.getWarnings())
-                    .addExpressionVariable(
-                        "nots", violationCollection.getNotifications())
+                hibernateCtx.addExpressionVariable("errs", this.errors)
+                    .addExpressionVariable("wrns", this.warnings)
+                    .addExpressionVariable("nots", this.notifications)
                     .buildConstraintViolationWithTemplate(this.message)
                     .enableExpressionLanguage(BEAN_METHODS)
                     .addPropertyNode("status")
@@ -160,5 +161,42 @@ public class ValidDependenciesValidator
             }
         }
         return true;
+    }
+
+    private void addError(String key, int value) {
+        if (!this.errors.containsKey(key)) {
+            this.errors.put(key, new HashSet<String>());
+        }
+        this.errors.get(key).add(String.valueOf(value));
+    }
+
+    private void addErrors(Map<String, Set<String>> e) {
+        for (String key: e.keySet()) {
+            if (this.errors.containsKey(key)) {
+                this.errors.get(key).addAll(e.get(key));
+            } else {
+                this.errors.put(key, e.get(key));
+            }
+        }
+    }
+
+    private void addWarnings(Map<String, Set<String>> w) {
+        for (String key: w.keySet()) {
+            if (this.warnings.containsKey(key)) {
+                this.warnings.get(key).addAll(w.get(key));
+            } else {
+                this.warnings.put(key, w.get(key));
+            }
+        }
+    }
+
+    private void addNotifications(Map<String, Set<String>> n) {
+        for (String key: n.keySet()) {
+            if (this.notifications.containsKey(key)) {
+                this.notifications.get(key).addAll(n.get(key));
+            } else {
+                this.notifications.put(key, n.get(key));
+            }
+        }
     }
 }
