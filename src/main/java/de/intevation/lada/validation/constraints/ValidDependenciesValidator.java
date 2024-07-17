@@ -11,7 +11,6 @@ import java.util.List;
 
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.CDI;
-import jakarta.enterprise.util.TypeLiteral;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -43,10 +42,7 @@ public class ValidDependenciesValidator
 
     private Repository repository;
 
-    private Validator<MeasVal> messwertValidator;
-    private Validator<Measm> messungValidator;
-    private Validator<Sample> probeValidator;
-    private Validator<Site> ortValidator;
+    private Validator validator;
 
     @Override
     public void initialize(ValidDependencies constraintAnnotation) {
@@ -68,14 +64,7 @@ public class ValidDependenciesValidator
         Instance<Object> inst =
             CDI.current().getBeanContainer().createInstance();
         this.repository = inst.select(Repository.class).get();
-        this.messwertValidator = inst.select(
-            new TypeLiteral<Validator<MeasVal>>() { }).get();
-        this.messungValidator = inst.select(
-            new TypeLiteral<Validator<Measm>>() { }).get();
-        this.probeValidator = inst.select(
-            new TypeLiteral<Validator<Sample>>() { }).get();
-        this.ortValidator = inst.select(
-            new TypeLiteral<Validator<Site>>() { }).get();
+        this.validator = inst.select(Validator.class).get();
 
         StatusMp newKombi = repository.entityManager().find(
             StatusMp.class, status.getStatusMpId());
@@ -95,13 +84,13 @@ public class ValidDependenciesValidator
                 Sample.class, messung.getSampleId());
 
             // init violation_collection with probe validation
-            probeValidator.validate(probe);
+            validator.validate(probe);
             violationCollection.addErrors(probe.getErrors());
             violationCollection.addWarnings(probe.getWarnings());
             violationCollection.addNotifications(probe.getNotifications());
 
             //validate messung object
-            messungValidator.validate(messung);
+            validator.validate(messung);
             violationCollection.addErrors(messung.getErrors());
             violationCollection.addWarnings(messung.getWarnings());
             violationCollection.addNotifications(messung.getNotifications());
@@ -122,7 +111,7 @@ public class ValidDependenciesValidator
                             "status", StatusCodes.STATUS_RO);
                     }
 
-                    messwertValidator.validate(messwert);
+                    validator.validate(messwert);
                     violationCollection.addErrors(messwert.getErrors());
                     violationCollection.addWarnings(messwert.getWarnings());
                     violationCollection.addNotifications(
@@ -141,7 +130,7 @@ public class ValidDependenciesValidator
                 ortBuilder.getQuery());
             for (Geolocat o : assignedOrte) {
                 Site site = repository.getById(Site.class, o.getSiteId());
-                ortValidator.validate(site);
+                validator.validate(site);
                 violationCollection.addErrors(site.getErrors());
                 violationCollection.addWarnings(site.getWarnings());
                 violationCollection.addNotifications(site.getNotifications());

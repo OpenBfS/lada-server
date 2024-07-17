@@ -21,7 +21,7 @@ import de.intevation.lada.validation.Validator;
 public class SampleSpecifMeasValTest extends ValidatorBaseTest {
 
     @Inject
-    private Validator<SampleSpecifMeasVal> validator;
+    private Validator validator;
 
     /**
      * Test validation of valid value.

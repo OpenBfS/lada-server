@@ -90,13 +90,7 @@ public class LafObjectMapper {
     private HeaderAuthorization authorizer;
 
     @Inject
-    private Validator<Sample> probeValidator;
-
-    @Inject
-    private Validator<Measm> messungValidator;
-
-    @Inject
-    private Validator<Site> ortValidator;
+    private Validator validator;
 
     @Inject
     @IdentifierConfig(type = "Sample")
@@ -105,18 +99,6 @@ public class LafObjectMapper {
     @Inject
     @IdentifierConfig(type = "Messung")
     private Identifier messungIdentifier;
-
-    @Inject
-    private Validator<MeasVal> messwertValidator;
-
-    @Inject
-    private Validator<StatusProt> statusValidator;
-
-    @Inject
-    private Validator<CommSample> commentPValidator;
-
-    @Inject
-    private Validator<CommMeasm> commentMValidator;
 
     @Inject
     private ObjectMerger merger;
@@ -319,7 +301,7 @@ public class LafObjectMapper {
                 return;
             } else if (i == Identified.NEW) {
                 // It is a brand new probe!
-                probeValidator.validate(probe);
+                validator.validate(probe);
                 if (!probe.hasErrors()) {
                     repository.create(probe);
                     newProbe = probe;
@@ -601,7 +583,7 @@ public class LafObjectMapper {
             }
 
             // Validate probe object
-            probeValidator.validate(newProbe);
+            validator.validate(newProbe);
             for (Entry<String, Set<String>> err
                      : newProbe.getErrors().entrySet()
             ) {
@@ -793,7 +775,7 @@ public class LafObjectMapper {
         merger.mergeMesswerte(newMessung, messwerte);
 
         // Check for warnings and errors for messung ...
-        messungValidator.validate(newMessung);
+        validator.validate(newMessung);
         for (Entry<String, Set<String>> err
                  : newMessung.getErrors().entrySet()
         ) {
@@ -820,7 +802,7 @@ public class LafObjectMapper {
         }
         // ... and messwerte
         for (MeasVal messwert: messwerte) {
-            messwertValidator.validate(messwert);
+            validator.validate(messwert);
             if (messwert.hasWarnings()) {
                 messwert.getWarnings().forEach((k, v) -> {
                     v.forEach((value) -> {
@@ -919,7 +901,7 @@ public class LafObjectMapper {
             return;
         }
 
-        commentPValidator.validate(kommentar);
+        validator.validate(kommentar);
         if (kommentar.hasErrors() || kommentar.hasWarnings()) {
             if (kommentar.hasErrors()) {
                 kommentar.getErrors().forEach((k, v) -> {
@@ -1170,7 +1152,7 @@ public class LafObjectMapper {
             return;
         }
 
-        commentMValidator.validate(kommentar);
+        validator.validate(kommentar);
         if (kommentar.hasErrors() || kommentar.hasWarnings()) {
             if (kommentar.hasErrors()) {
                 kommentar.getErrors().forEach((k, v) -> {
@@ -1326,7 +1308,7 @@ public class LafObjectMapper {
         newStatus.setMeasFacilId(mstId);
         newStatus.setStatusMpId(newKombi);
 
-        statusValidator.validate(newStatus);
+        validator.validate(newStatus);
         if (newStatus.hasWarnings()) {
             newStatus.getWarnings().forEach((k, v) -> {
                 v.forEach((value) -> {
@@ -1677,7 +1659,7 @@ public class LafObjectMapper {
         MeasFacil mst = repository.getById(
             MeasFacil.class, probe.getMeasFacilId());
         o.setNetworkId(mst.getNetworkId());
-        ortValidator.validate(o);
+        validator.validate(o);
         for (Entry<String, Set<String>> warn
                  : o.getWarnings().entrySet()
         ) {
@@ -2183,8 +2165,6 @@ public class LafObjectMapper {
      * @param locale Set locale for validation messages.
      */
     public void setLocale(Locale locale) {
-        this.probeValidator.setLocale(locale);
-        this.messungValidator.setLocale(locale);
-        this.ortValidator.setLocale(locale);
+        this.validator.setLocale(locale);
     }
 }

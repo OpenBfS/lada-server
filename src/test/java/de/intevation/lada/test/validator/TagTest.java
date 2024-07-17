@@ -24,7 +24,7 @@ public class TagTest extends ValidatorBaseTest {
     private static final String NETWORK_ID = "06";
 
     @Inject
-    private Validator<Tag> validator;
+    private Validator validator;
 
     /**
      * Test tag with Network and MeasFacil.

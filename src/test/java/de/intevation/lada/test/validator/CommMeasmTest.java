@@ -27,7 +27,7 @@ public class CommMeasmTest extends ValidatorBaseTest {
     private static final int EXISTING_MEASM_ID = 1200;
 
     @Inject
-    private Validator<CommMeasm> validator;
+    private Validator validator;
 
     /**
      * Test commMeasm with existing text.

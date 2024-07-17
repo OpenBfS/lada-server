@@ -48,7 +48,7 @@ public class MeasValTest extends ValidatorBaseTest {
     private static final String VAL_SEC_UNIT = "Secondary unit selected";
 
     @Inject
-    Validator<MeasVal> validator;
+    Validator validator;
 
     /**
      * Test measVal without error and lessThanLOD set.

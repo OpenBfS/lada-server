@@ -60,7 +60,7 @@ public class MessungTest extends ValidatorBaseTest {
         "Obligatory measurand missing";
 
     @Inject
-    private Validator<Measm> validator;
+    private Validator validator;
 
     /**
      * Test valid measm.

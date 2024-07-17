@@ -39,9 +39,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         "Sampling location (typeRegulation \"E\" or \"R\") must be unique";
 
     @Inject
-    private Validator<Geolocat> sampleVal;
-    @Inject
-    private Validator<GeolocatMpg> mpgVal;
+    private Validator validator;
 
     /**
      * Constructor.
@@ -61,7 +59,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setSampleId(SAMPLE_WITH_E_GEOLOCAT);
         loc.setSiteId(EXISTING_SITE_ID);
 
-        sampleVal.validate(loc);
+        validator.validate(loc);
         assertHasErrors(
             loc,
             TYPE_REGULATION,
@@ -78,7 +76,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setSampleId(SAMPLE_WITH_R_GEOLOCAT);
         loc.setSiteId(EXISTING_SITE_ID);
 
-        sampleVal.validate(loc);
+        validator.validate(loc);
         assertHasErrors(
             loc,
             TYPE_REGULATION,
@@ -95,7 +93,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setSampleId(SAMPLE_WITH_E_GEOLOCAT);
         loc.setSiteId(EXISTING_SITE_ID);
 
-        sampleVal.validate(loc);
+        validator.validate(loc);
         assertHasErrors(
             loc,
             TYPE_REGULATION,
@@ -110,7 +108,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setSiteId(REFERENCED_SITE_ID);
 
         assertHasErrors(
-            sampleVal.validate(loc),
+            validator.validate(loc),
             TYPE_REGULATION,
             "Non-unique value combination for "
                 + "[typeRegulation, sampleId, siteId]");
@@ -126,7 +124,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setSampleId(SAMPLE_WITHOUT_E_GEOLOCAT);
         loc.setSiteId(EXISTING_SITE_ID);
 
-        assertNoMessages(sampleVal.validate(loc));
+        assertNoMessages(validator.validate(loc));
     }
 
     /**
@@ -140,7 +138,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setSampleId(SAMPLE_WITH_E_GEOLOCAT);
         loc.setSiteId(EXISTING_SITE_ID);
 
-        assertNoMessages(sampleVal.validate(loc));
+        assertNoMessages(validator.validate(loc));
     }
 
     /**
@@ -153,7 +151,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setMpgId(MPG_WITH_E_GEOLOCAT);
         loc.setSiteId(EXISTING_SITE_ID);
 
-        mpgVal.validate(loc);
+        validator.validate(loc);
         assertHasErrors(
             loc,
             TYPE_REGULATION,
@@ -170,7 +168,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setMpgId(MPG_WITH_R_GEOLOCAT);
         loc.setSiteId(EXISTING_SITE_ID);
 
-        mpgVal.validate(loc);
+        validator.validate(loc);
         assertHasErrors(
             loc,
             TYPE_REGULATION,
@@ -187,7 +185,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setMpgId(MPG_WITH_E_GEOLOCAT);
         loc.setSiteId(EXISTING_SITE_ID);
 
-        mpgVal.validate(loc);
+        validator.validate(loc);
         assertHasErrors(
             loc,
             TYPE_REGULATION,
@@ -201,7 +199,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setMpgId(MPG_WITH_E_GEOLOCAT);
         loc.setSiteId(REFERENCED_SITE_ID);
 
-        mpgVal.validate(loc);
+        validator.validate(loc);
         assertHasErrors(
             loc,
             TYPE_REGULATION,
@@ -218,7 +216,7 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setMpgId(MPG_WITHOUT_E_GEOLOCAT);
         loc.setSiteId(EXISTING_SITE_ID);
 
-        assertNoMessages(mpgVal.validate(loc));
+        assertNoMessages(validator.validate(loc));
     }
 
     /**
@@ -232,6 +230,6 @@ public class GeolocatTest extends ValidatorBaseTest {
         loc.setMpgId(MPG_WITH_E_GEOLOCAT);
         loc.setSiteId(EXISTING_SITE_ID);
 
-        assertNoMessages(mpgVal.validate(loc));
+        assertNoMessages(validator.validate(loc));
     }
 }

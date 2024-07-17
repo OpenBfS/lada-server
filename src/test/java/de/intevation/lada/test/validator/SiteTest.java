@@ -64,7 +64,7 @@ public class SiteTest extends ValidatorBaseTest {
     private static final int SPAT_REF_SYS_ID_UTM_ED50 = 8;
 
     @Inject
-    private Validator<Site> validator;
+    private Validator validator;
 
     //Expected validation messages
     private static final String GEO_POINT_OUTSIDE =

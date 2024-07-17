@@ -58,7 +58,7 @@ public class MpgTest extends ValidatorBaseTest {
         "Value outside range of validity";
 
     @Inject
-    private Validator<Mpg> validator;
+    private Validator validator;
 
     /**
      * Test mpg objects with valid start and end date below minimum value.

@@ -71,7 +71,7 @@ public class ProbeTest extends ValidatorBaseTest {
         = "D: 10 11 12 00 00 00 00 00 00 00 00 00";
 
     @Inject
-    private Validator<Sample> validator;
+    private Validator validator;
 
     @Inject
     private Repository repository;
