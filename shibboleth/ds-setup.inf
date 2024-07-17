@@ -2,7 +2,7 @@
 AdminDomain =ladaidp
 ConfigDirectoryAdminID = admin
 ConfigDirectoryAdminPwd = admin
-ConfigDirectoryLdapURL = ldap://localhost:389/o=NetscapeRoot
+ConfigDirectoryLdapURL = ldap://lada-idp:389/o=NetscapeRoot
 FullMachineName = localhost
 ServerRoot = /usr/lib64/dirsrv
 SuiteSpotGroup = nobody
