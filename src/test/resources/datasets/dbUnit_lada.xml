@@ -61,8 +61,10 @@
     <master.measd id = "57" name = "Mangan" />
     <master.mmt id = "A3" />
     <master.mmt id = "B3" />
+
     <master.status_ord_mp id = "1" from_id = "1" to_id = "4" />
-    <master.status_ord_mp id = "2" from_id = "4" to_id = "14" />
+    <master.status_ord_mp id = "2" from_id = "1" to_id = "5" />
+    <master.status_ord_mp id = "3" from_id = "4" to_id = "14" />
 
     <master.sample_specif
         id = "A74"
@@ -236,15 +238,6 @@
         site_id = "1000"
         add_site_text = "Test"
         last_mod = "2012-05-09 09:00:00"
-    />
-    <lada.status_prot
-        id = "1000"
-        meas_facil_id = "06010"
-        date = "2012-05-08 11:00:00"
-        text = "Initialer Status"
-        measm_id = "1200"
-        status_mp_id = "1"
-        tree_mod = "2012-05-09 12:00:00"
     />
     <lada.sample_specif_meas_val
         id = "1000"

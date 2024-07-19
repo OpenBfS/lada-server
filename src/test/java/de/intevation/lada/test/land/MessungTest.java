@@ -26,7 +26,6 @@ import de.intevation.lada.test.ServiceTest;
  */
 public class MessungTest extends ServiceTest {
 
-    private static final int ID1000 = 1000;
     private static final long TS1 = 1450371851654L;
     private JsonObject expectedById;
     private JsonObject create;
@@ -52,7 +51,6 @@ public class MessungTest extends ServiceTest {
             .add("parentModified", TS1)
             .add("readonly", JsonValue.FALSE)
             .add("owner", JsonValue.TRUE)
-            .add("status", ID1000)
             .build();
         Assert.assertNotNull(expectedById);
 

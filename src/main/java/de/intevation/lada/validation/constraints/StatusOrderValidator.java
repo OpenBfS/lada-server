@@ -54,7 +54,7 @@ public class StatusOrderValidator
             .and("measmId", status.getMeasmId())
             .orderBy("id", false);
         List<StatusProt> protos =
-            repository.filter(lastFilter.getQuery(), 1, 1);
+            repository.filter(lastFilter.getQuery(), 0, 1);
         if (protos.isEmpty()) {
             return true;
         }
