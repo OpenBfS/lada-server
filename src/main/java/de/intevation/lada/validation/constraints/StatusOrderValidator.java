@@ -51,6 +51,7 @@ public class StatusOrderValidator
         // Get the previous status
         QueryBuilder<StatusProt> lastFilter = repository
             .queryBuilder(StatusProt.class)
+            .and("id", status.getId()).not()
             .and("measmId", status.getMeasmId())
             .orderBy("id", false);
         List<StatusProt> protos =
