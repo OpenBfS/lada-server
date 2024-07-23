@@ -218,6 +218,19 @@ public class EnvMedia {
     }
 
     /**
+     * Get envDescrip ID referenced at given level in EnvDescripEnvMediumMp.
+     * @param lev level
+     * @param mp mapping
+     * @return envDescrip ID
+     */
+    public static Integer getEnvDescripId(
+        int lev,
+        EnvDescripEnvMediumMp mp
+    ) {
+        return getEnvDescripId(envDescripLevelFieldName(lev), mp);
+    }
+
+    /**
      * Get envDescrip ID referenced by given field in EnvDescripEnvMediumMp.
      * @param lev field name
      * @param mp mapping
