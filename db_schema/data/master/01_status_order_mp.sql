@@ -136,6 +136,7 @@ COPY master.status_ord_mp (id, from_id, to_id) FROM stdin;
 139	17	4
 140	17	5
 141	17	14
+142	14	1
 \.
 
 
