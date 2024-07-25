@@ -22,6 +22,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 import static org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel.BEAN_METHODS;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.MeasVal;
@@ -92,16 +93,10 @@ public class ValidDependenciesValidator
                 Sample.class, messung.getSampleId());
 
             // init violation_collection with probe validation
-            validator.validate(probe);
-            addErrors(probe.getErrors());
-            addWarnings(probe.getWarnings());
-            addNotifications(probe.getNotifications());
+            addMessages(validator.validate(probe));
 
             //validate messung object
-            validator.validate(messung);
-            addErrors(messung.getErrors());
-            addWarnings(messung.getWarnings());
-            addNotifications(messung.getNotifications());
+            addMessages(validator.validate(messung));
 
             //validate messwert objects
             QueryBuilder<MeasVal> builder = repository
@@ -118,10 +113,7 @@ public class ValidDependenciesValidator
                         addError("status", StatusCodes.STATUS_RO);
                     }
 
-                    validator.validate(messwert);
-                    addErrors(messwert.getErrors());
-                    addWarnings(messwert.getWarnings());
-                    addNotifications(messwert.getNotifications());
+                    addMessages(validator.validate(messwert));
                 }
             } else if (newStatusWert != 7) {
                 addError("measVal", StatusCodes.VALUE_MISSING);
@@ -135,10 +127,7 @@ public class ValidDependenciesValidator
                 ortBuilder.getQuery());
             for (Geolocat o : assignedOrte) {
                 Site site = repository.getById(Site.class, o.getSiteId());
-                validator.validate(site);
-                addErrors(site.getErrors());
-                addWarnings(site.getWarnings());
-                addNotifications(site.getNotifications());
+                addMessages(validator.validate(site));
             }
 
             if (newStatusWert != 7
@@ -170,32 +159,21 @@ public class ValidDependenciesValidator
         this.errors.get(key).add(String.valueOf(value));
     }
 
-    private void addErrors(Map<String, Set<String>> e) {
-        for (String key: e.keySet()) {
-            if (this.errors.containsKey(key)) {
-                this.errors.get(key).addAll(e.get(key));
-            } else {
-                this.errors.put(key, e.get(key));
-            }
-        }
+    private void addMessages(BaseModel validated) {
+        addMessages(validated.getErrors(), this.errors);
+        addMessages(validated.getWarnings(), this.warnings);
+        addMessages(validated.getNotifications(), this.notifications);
     }
 
-    private void addWarnings(Map<String, Set<String>> w) {
-        for (String key: w.keySet()) {
-            if (this.warnings.containsKey(key)) {
-                this.warnings.get(key).addAll(w.get(key));
+    private void addMessages(
+        Map<String, Set<String>> from,
+        Map<String, Set<String>> to
+    ) {
+        for (String key: from.keySet()) {
+            if (to.containsKey(key)) {
+                to.get(key).addAll(from.get(key));
             } else {
-                this.warnings.put(key, w.get(key));
-            }
-        }
-    }
-
-    private void addNotifications(Map<String, Set<String>> n) {
-        for (String key: n.keySet()) {
-            if (this.notifications.containsKey(key)) {
-                this.notifications.get(key).addAll(n.get(key));
-            } else {
-                this.notifications.put(key, n.get(key));
+                to.put(key, from.get(key));
             }
         }
     }
