@@ -149,9 +149,6 @@ public class LafRawData {
         public String getIdentifier() {
             String identifier = this.getAttributes().get("PROBE_ID");
             identifier = identifier == null
-                ? this.getAttributes().get("PROBEN_NR")
-                : identifier;
-            identifier = identifier == null
                 ? this.getAttributes().get("HAUPTPROBENNUMMER")
                 : identifier;
             identifier = identifier == null
