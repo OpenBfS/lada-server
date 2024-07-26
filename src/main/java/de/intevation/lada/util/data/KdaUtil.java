@@ -68,18 +68,18 @@ public class KdaUtil {
 
     /* Expected format of projected input coordinates */
     public static final Pattern X_GK = Pattern.compile(
-        "\\d{7,9}(\\.\\d*)?");
+        "\\d{7,9}([\\.,]\\d*)?");
     public static final Pattern X_UTM = Pattern.compile(
-        "\\d{7,8}(\\.\\d*)?");
+        "\\d{7,8}([\\.,]\\d*)?");
     public static final Pattern Y = Pattern.compile(
-        "(\\+|-)?\\d{1,7}(\\.\\d*)?");
+        "(\\+|-)?\\d{1,7}([\\.,]\\d*)?");
 
     /* Expected format of sexagesimal input coordinates */
     // with decimal separator
     public static final Pattern LON_DEC = Pattern.compile(
-        "([+|\\-|W|E]?)(\\d{1,3})(\\d{2})(\\d{2})\\.(\\d{1,5})([W|E]?)");
+        "([+|\\-|W|E]?)(\\d{1,3})(\\d{2})(\\d{2})[\\.,](\\d{1,5})([W|E]?)");
     public static final Pattern LAT_DEC = Pattern.compile(
-        "([+|\\-|N|S]?)(\\d{1,2})(\\d{2})(\\d{2})\\.(\\d{1,5})([N|S]?)");
+        "([+|\\-|N|S]?)(\\d{1,2})(\\d{2})(\\d{2})[\\.,](\\d{1,5})([N|S]?)");
     // Without decimal separator, can include leading zeros
     public static final Pattern LON = Pattern.compile(
         "([+|\\-|W|E]?)(\\d{3})(\\d{0,2})(\\d{0,2})([W|E]?)");

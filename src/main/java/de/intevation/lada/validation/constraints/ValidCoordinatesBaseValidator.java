@@ -61,13 +61,15 @@ public abstract class ValidCoordinatesBaseValidator<T>
                 && KdaUtil.LAT.matcher(y).matches())) {
             return false;
         }
-        Result decimal = KdaUtil.arcToDegree(x, y);
+        Result decimal = KdaUtil.arcToDegree(
+            x.replace(",", "."), y.replace(",", "."));
         return validateGdCoordinates(decimal.getX(), decimal.getY());
     }
 
     private boolean validateGdCoordinates(String x, String y) {
         try {
-            double dX = Double.parseDouble(x), dY = Double.parseDouble(y);
+            double dX = Double.parseDouble(x.replace(",", ".")),
+                   dY = Double.parseDouble(y.replace(",", "."));
             if (Math.abs(dX) > KdaUtil.MAX_LON
                 || Math.abs(dY) > KdaUtil.MAX_LAT
             ) {
