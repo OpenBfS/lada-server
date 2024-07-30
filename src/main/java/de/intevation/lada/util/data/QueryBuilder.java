@@ -7,10 +7,7 @@
  */
 package de.intevation.lada.util.data;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -356,23 +353,6 @@ public class QueryBuilder<T> {
         }
         this.query.orderBy(order);
         return this;
-    }
-
-    /**
-     * Order result by the specified column name.
-     *
-     * @param ids   Map of column names and boolean for asc/desc.
-     */
-    public void orderBy(Map<String, Boolean> ids) {
-        List<Order> order = new ArrayList<Order>();
-        for (String id : ids.keySet()) {
-            if (ids.get(id)) {
-                order.add(this.builder.asc(this.root.get(id)));
-            } else {
-                order.add(this.builder.desc(this.root.get(id)));
-            }
-        }
-        this.query.orderBy(order);
     }
 
     /**
