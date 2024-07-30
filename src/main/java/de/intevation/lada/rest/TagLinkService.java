@@ -9,7 +9,6 @@ package de.intevation.lada.rest;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.Query;
-import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.POST;
@@ -69,8 +68,6 @@ public abstract class TagLinkService<T extends TagLink> extends LadaService {
     }
 
     protected abstract Boolean isExisting(T link);
-    protected abstract Integer getTaggegObjectId(T link);
-    protected abstract SingularAttribute<T, Integer> getTaggedObjectIdField();
     protected abstract void deleteTagLink(T tagLink);
 
     /**

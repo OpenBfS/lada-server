@@ -10,8 +10,8 @@ package de.intevation.lada.rest;
 import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.lada.TagLinkSample_;
 import de.intevation.lada.model.lada.TagLink_;
-import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.ws.rs.Path;
+
 
 @Path(LadaService.PATH_REST + "tag/taglinksample")
 public class TagLinkSampleService extends TagLinkService<TagLinkSample> {
@@ -23,23 +23,12 @@ public class TagLinkSampleService extends TagLinkService<TagLinkSample> {
     }
 
     @Override
-    protected Integer getTaggegObjectId(TagLinkSample link) {
-        return link.getSampleId();
-    }
-
-    @Override
-    protected SingularAttribute<TagLinkSample, Integer>
-            getTaggedObjectIdField() {
-        return TagLinkSample_.sampleId;
-    }
-
-    @Override
     protected void deleteTagLink(TagLinkSample tagLink) {
         repository.delete(
             repository.getSingle(repository
                 .queryBuilder(TagLinkSample.class)
                 .and(TagLink_.tagId, tagLink.getTagId())
-                .and(getTaggedObjectIdField(), getTaggegObjectId(tagLink))
+                .and(TagLinkSample_.sampleId, tagLink.getSampleId())
                 .getQuery()));
     }
 }
