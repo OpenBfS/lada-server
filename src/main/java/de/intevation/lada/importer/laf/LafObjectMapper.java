@@ -1667,27 +1667,23 @@ public class LafObjectMapper {
         }
         String key = "";
         String hLand = "";
-        String staatFilter = "";
         QueryBuilder<State> builderStaat = repository
             .queryBuilder(State.class);
         if (attributes.get(type + "HERKUNFTSLAND_S") != null) {
-            staatFilter = "id";
             key = "HERKUNFTSLAND_S";
             hLand = attributes.get(type + "HERKUNFTSLAND_S");
             builderStaat = builderStaat.and(State_.id, Integer.parseInt(hLand));
         } else if (attributes.get(type + "HERKUNFTSLAND_KURZ") != null) {
-            staatFilter = "intVehRegCode";
             key = "HERKUNFTSLAND_KURZ";
             hLand = attributes.get(type + "HERKUNFTSLAND_KURZ");
             builderStaat = builderStaat.and(State_.intVehRegCode, hLand);
         } else if (attributes.get(type + "HERKUNFTSLAND_LANG") != null) {
-            staatFilter = "ctry";
             key = "HERKUNFTSLAND_LANG";
             hLand = attributes.get(type + "HERKUNFTSLAND_LANG");
             builderStaat = builderStaat.and(State_.ctry, hLand);
         }
 
-        if (staatFilter.length() > 0) {
+        if (key.length() > 0) {
             List<State> staat =
                 repository.filter(builderStaat.getQuery());
             if (staat == null || staat.size() == 0) {
