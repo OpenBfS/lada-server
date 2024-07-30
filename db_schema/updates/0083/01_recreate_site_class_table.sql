@@ -28,18 +28,6 @@ ALTER TABLE IF EXISTS master.site
     ON UPDATE NO ACTION
     ON DELETE NO ACTION;
 
-ALTER TABLE IF EXISTS master.site_class
-    OWNER to lada;
-
-REVOKE ALL ON TABLE master.site_class FROM imis_ro;
-REVOKE ALL ON TABLE master.site_class FROM readonly;
-
-GRANT SELECT ON TABLE master.site_class TO imis_ro;
-
-GRANT ALL ON TABLE master.site_class TO lada;
-
-GRANT SELECT ON TABLE master.site_class TO readonly;
-
 -- Trigger: last_mod_site_class
 
 -- DROP TRIGGER IF EXISTS last_mod_site_class ON master.site_class;
