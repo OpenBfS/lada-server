@@ -76,7 +76,7 @@ public class QueryBuilder<T> {
      * Logical AND operation for null values.
      * @param <X> Column datatype
      *
-     * @param id    The database column name.
+     * @param id    The attribute to be used in predicate.
      * @return The builder itself.
      */
     public <X> QueryBuilder<T> andIsNull(
@@ -88,7 +88,7 @@ public class QueryBuilder<T> {
      * Logical AND operation.
      * @param <X> Column datatype
      *
-     * @param id    The database column name.
+     * @param id    The attribute to be used in predicate.
      * @param value The filter value
      * @return The builder itself.
      */
@@ -123,7 +123,7 @@ public class QueryBuilder<T> {
 
     /**
      * Logical AND with case insensitive LIKE operation.
-     * @param id    The database column name.
+     * @param id    The attribute to be used in predicate.
      * @param value The filter value
      * @return The builder itself.
      */
@@ -144,7 +144,7 @@ public class QueryBuilder<T> {
      * Logical OR operation.
      * @param <X> Column datatype
      *
-     * @param id    The database column name
+     * @param id    The attribute to be used in predicate
      * @param value The filter value.
      * @return The builder itself.
      */
@@ -166,7 +166,7 @@ public class QueryBuilder<T> {
     /**
      * Logical OR with case insensitive LIKE operation.
      *
-     * @param id    The database column name.
+     * @param id    The attribute to be used in predicate.
      * @param value The filter value.
      * @return The builder itself.
      */
@@ -187,7 +187,7 @@ public class QueryBuilder<T> {
      * Logical AND operation.
      * All elements in <i>values</i> will be concatenated with AND operator.
      *
-     * @param id        The database column name.
+     * @param id        The attribute to be used in predicate.
      * @param values    Iterable of values.
      * @return The builder itself.
      */
@@ -212,7 +212,7 @@ public class QueryBuilder<T> {
      * Logical OR operation.
      * All elements in <i>values</i> will be concatenated with OR operator.
      *
-     * @param id        The database column name.
+     * @param id        The attribute to be used in predicate.
      * @param values    Collection of values.
      * @return The builder itself.
      */
@@ -235,7 +235,7 @@ public class QueryBuilder<T> {
      * Logical OR operation.
      * All elements in <i>values</i> will be concatenated with OR operator.
      *
-     * @param id        The database column name.
+     * @param id        The attribute to be used in predicate.
      * @param values    Iterable of values.
      * @return The builder itself.
      */
@@ -292,7 +292,7 @@ public class QueryBuilder<T> {
      * Test whether result of 'key' is in a list of values.
      *
      * @param <M>   The type of the values.
-     * @param key   The database column.
+     * @param key   The attribute to be used in predicate.
      * @param values    The collection of values.
      *
      * @return The current Querybuilder.
@@ -314,7 +314,7 @@ public class QueryBuilder<T> {
      * Test whether result of 'key' is in a list of values.
      *
      * @param <M>   The type of the values.
-     * @param key   The database column.
+     * @param key   The attribute to be used in predicate.
      * @param values    The collection of values.
      *
      * @return The current Querybuilder.
@@ -339,10 +339,10 @@ public class QueryBuilder<T> {
     }
 
     /**
-     * Order result by the specified column name.
+     * Order result by the specified attribute.
      * @param <X> Column datatype
      *
-     * @param id    The column name.
+     * @param id    The attribute to be used for sorting.
      * @param asc   Ascending(true), Descending(false).
      * @return The current Querybuilder.
      */
