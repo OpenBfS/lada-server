@@ -143,7 +143,9 @@ public class EnvMedia {
             repository.queryBuilder(EnvDescripEnvMediumMp.class);
         for (String field: envDescripIds.keySet()) {
             SingularAttribute<EnvDescripEnvMediumMp, Integer> attr =
-                EnvDescripEnvMediumMp.getSXXAttributeByName(field);
+                repository.entityManager().getMetamodel()
+                .entity(EnvDescripEnvMediumMp.class)
+                .getDeclaredSingularAttribute(field, Integer.class);
             if (envDescripIds.get(field) != null) {
                 QueryBuilder<EnvDescripEnvMediumMp> tmp = builder
                     .getEmptyBuilder()

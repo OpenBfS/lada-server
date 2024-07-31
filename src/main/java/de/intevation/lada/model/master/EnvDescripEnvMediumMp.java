@@ -15,9 +15,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
-import jakarta.persistence.metamodel.SingularAttribute;
 
 import static jakarta.persistence.TemporalType.TIMESTAMP;
+
 
 @Entity
 @Table(schema = SchemaName.NAME)
@@ -190,30 +190,5 @@ public class EnvDescripEnvMediumMp implements Serializable {
 
     public void setLastMod(Date lastMod) {
         this.lastMod = lastMod;
-    }
-
-    /**
-     * Get the SXX field by the given name.
-     * @param name Field name to query for
-     * @return Field as SingularAttribute
-     * @throws IllegalArgumentException Thrown if an unkown field is given
-     */
-    public static SingularAttribute<EnvDescripEnvMediumMp, Integer>
-            getSXXAttributeByName(String name) throws IllegalArgumentException {
-        switch (name) {
-            default: throw new IllegalArgumentException("UnkownField");
-            case "s00": return EnvDescripEnvMediumMp_.s00;
-            case "s01": return EnvDescripEnvMediumMp_.s01;
-            case "s02": return EnvDescripEnvMediumMp_.s02;
-            case "s03": return EnvDescripEnvMediumMp_.s03;
-            case "s04": return EnvDescripEnvMediumMp_.s04;
-            case "s05": return EnvDescripEnvMediumMp_.s05;
-            case "s06": return EnvDescripEnvMediumMp_.s06;
-            case "s07": return EnvDescripEnvMediumMp_.s07;
-            case "s08": return EnvDescripEnvMediumMp_.s08;
-            case "s09": return EnvDescripEnvMediumMp_.s09;
-            case "s10": return EnvDescripEnvMediumMp_.s10;
-            case "s11": return EnvDescripEnvMediumMp_.s11;
-        }
     }
 }
