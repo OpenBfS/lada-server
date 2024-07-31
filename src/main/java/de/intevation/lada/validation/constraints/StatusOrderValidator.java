@@ -53,10 +53,11 @@ public class StatusOrderValidator
         // Get the previous status
         QueryBuilder<StatusProt> lastFilter = repository
             .queryBuilder(StatusProt.class)
+            .and(StatusProt_.id, status.getId()).not()
             .and(StatusProt_.measmId, status.getMeasmId())
             .orderBy(StatusProt_.id, false);
         List<StatusProt> protos =
-            repository.filter(lastFilter.getQuery(), 1, 1);
+            repository.filter(lastFilter.getQuery(), 0, 1);
         if (protos.isEmpty()) {
             return true;
         }

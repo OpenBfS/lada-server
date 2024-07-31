@@ -32,7 +32,7 @@ public class StatusTest extends ValidatorBaseTest {
     private static final int INVALID_STATUS_MP_ID = 42;
 
     @Inject
-    private Validator<StatusProt> validator;
+    private Validator validator;
 
     /**
      * Constructor.

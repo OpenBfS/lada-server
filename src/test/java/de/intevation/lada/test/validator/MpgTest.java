@@ -18,8 +18,9 @@ import org.junit.Test;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Mpg_;
 import de.intevation.lada.model.master.SampleSpecif;
-import de.intevation.lada.util.data.StatusCodes;
+import de.intevation.lada.util.data.EnvMedia;
 import de.intevation.lada.validation.Validator;
+
 
 /**
  * Test validation rules for Mpg objects.
@@ -51,7 +52,7 @@ public class MpgTest extends ValidatorBaseTest {
         "Value outside range of validity";
 
     @Inject
-    private Validator<Mpg> validator;
+    private Validator validator;
 
     /**
      * Test mpg objects with valid start and end date below minimum value.
@@ -421,13 +422,10 @@ public class MpgTest extends ValidatorBaseTest {
         mpg.setEnvMediumId("L42");
         mpg.setEnvDescripDisplay("77 88 99 00");
 
-        validator.validate(mpg);
-        assertHasErrors(mpg);
-        MatcherAssert.assertThat(mpg.getErrors().keySet(),
-            CoreMatchers.hasItem(Mpg_.ENV_DESCRIP_DISPLAY));
-        MatcherAssert.assertThat(mpg.getErrors()
-            .get(Mpg_.ENV_DESCRIP_DISPLAY),
-            CoreMatchers.hasItem("must match \"D:( [0-9][0-9]){12}\""));
+        assertHasErrors(
+            validator.validate(mpg),
+            Mpg_.ENV_DESCRIP_DISPLAY,
+            "must match \"" + EnvMedia.ENV_DESCRIP_PATTERN + "\"");
     }
 
     /**
@@ -442,7 +440,7 @@ public class MpgTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(mpg),
             Mpg_.ENV_MEDIUM_ID,
-            String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
+            "Environment description does not match environmental medium");
     }
 
     /**

@@ -17,10 +17,10 @@ import java.io.InputStreamReader;
 import java.util.stream.Collectors;
 
 import jakarta.json.Json;
-import jakarta.json.JsonException;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
+import jakarta.json.stream.JsonParsingException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.core.Response;
@@ -222,13 +222,44 @@ public class BaseTest {
         if (responseBody != null && !responseBody.isEmpty()) {
             try (JsonReader reader = Json.createReader(
                     new StringReader(responseBody))) {
-                return reader.readValue();
-            } catch (JsonException je) {
+                JsonValue json = reader.readValue();
+                return Response.Status.OK.equals(expectedStatus)
+                    // Successful response should not contain validation errors
+                    ? verifyResponseObject(json)
+                    : json;
+            } catch (JsonParsingException je) {
                 // Non-JSON response body
                 return null;
             }
         }
         return null;
+    }
+
+    /**
+     * Recursively check JSON document for errors.
+     * @param json The JSON document
+     * @return The unaltered document if no errors were found
+     */
+    private static JsonValue verifyResponseObject(JsonValue json) {
+        if (JsonValue.ValueType.OBJECT.equals(json.getValueType())) {
+            final String errKey = "errors";
+            JsonObject jo = json.asJsonObject();
+            if (jo.containsKey(errKey)
+                && JsonValue.ValueType.OBJECT.equals(
+                    jo.getValue("/" + errKey).getValueType())
+                && !JsonValue.EMPTY_JSON_OBJECT.equals(
+                    jo.getJsonObject(errKey))
+            ) {
+                Assert.fail(
+                    String.format("Response contains errors: %s",
+                        jo.getJsonObject(errKey)));
+            }
+        } else if (JsonValue.ValueType.ARRAY.equals(json.getValueType())) {
+            for (JsonValue jv: json.asJsonArray()) {
+                verifyResponseObject(jv);
+            }
+        }
+        return json;
     }
 
     /**

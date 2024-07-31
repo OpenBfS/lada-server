@@ -52,10 +52,13 @@ public class EnvDescripService extends LadaService {
         @QueryParam("lev") @NotNull Integer lev,
         @QueryParam("predId") List<Integer> predIds
     ) {
-        QueryBuilder<EnvDescrip> builder =
-            repository.queryBuilder(EnvDescrip.class);
-        builder.and(EnvDescrip_.levVal, 0).not();
-        builder.and(EnvDescrip_.lev, lev);
+        QueryBuilder<EnvDescrip> builder = repository
+            .queryBuilder(EnvDescrip.class)
+            // Entries with levVal 0 only serve as "headlines" for the list of
+            // other entries with the same predId and lev and should not be
+            // used as actual values by clients.
+            .and(EnvDescrip_.levVal, 0).not()
+            .and(EnvDescrip_.lev, lev);
         if (predIds != null && !predIds.isEmpty()) {
             builder.andIn(EnvDescrip_.predId, predIds);
         }

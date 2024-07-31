@@ -48,11 +48,16 @@ import de.intevation.lada.model.master.ReiAgGr;
 import de.intevation.lada.model.master.SampleMeth;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.model.master.Sampler;
+import de.intevation.lada.util.data.EnvMedia;
 import de.intevation.lada.validation.constraints.BeginBeforeEnd;
+import de.intevation.lada.validation.constraints.EnvDescripDisplay;
+import de.intevation.lada.validation.constraints.EnvDescripMatchesEnvMedium;
+import de.intevation.lada.validation.constraints.EnvDescripMatchesEnvMediumReiOr161;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.ValidSamplePd;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
+import de.intevation.lada.validation.groups.Notifications;
 import de.intevation.lada.validation.groups.Warnings;
 
 @Entity
@@ -60,6 +65,8 @@ import de.intevation.lada.validation.groups.Warnings;
 @GroupSequence({ Mpg.class, DatabaseConstraints.class })
 @BeginBeforeEnd
 @ValidSamplePd
+@EnvDescripMatchesEnvMedium(groups = Notifications.class)
+@EnvDescripMatchesEnvMediumReiOr161(groups = Notifications.class)
 public class Mpg extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -137,7 +144,8 @@ public class Mpg extends BaseModel implements Serializable {
     @Temporal(TIMESTAMP)
     private Date lastMod;
 
-    @Pattern(regexp = "D:( [0-9][0-9]){12}")
+    @Pattern(regexp = EnvMedia.ENV_DESCRIP_PATTERN)
+    @EnvDescripDisplay(groups = Notifications.class)
     private String envDescripDisplay;
 
     @NotBlank

@@ -7,11 +7,14 @@
  */
 package de.intevation.lada.validation.constraints;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.CDI;
-import jakarta.enterprise.util.TypeLiteral;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -19,6 +22,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 import static org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel.BEAN_METHODS;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Geolocat;
 import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.Measm;
@@ -32,7 +36,6 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 
 /**
@@ -45,10 +48,13 @@ public class ValidDependenciesValidator
 
     private Repository repository;
 
-    private Validator<MeasVal> messwertValidator;
-    private Validator<Measm> messungValidator;
-    private Validator<Sample> probeValidator;
-    private Validator<Site> ortValidator;
+    private Validator validator;
+
+    private Map<String, Set<String>> errors = new HashMap<>();
+
+    private Map<String, Set<String>> warnings = new HashMap<>();
+
+    private Map<String, Set<String>> notifications = new HashMap<>();
 
     @Override
     public void initialize(ValidDependencies constraintAnnotation) {
@@ -70,14 +76,7 @@ public class ValidDependenciesValidator
         Instance<Object> inst =
             CDI.current().getBeanContainer().createInstance();
         this.repository = inst.select(Repository.class).get();
-        this.messwertValidator = inst.select(
-            new TypeLiteral<Validator<MeasVal>>() { }).get();
-        this.messungValidator = inst.select(
-            new TypeLiteral<Validator<Measm>>() { }).get();
-        this.probeValidator = inst.select(
-            new TypeLiteral<Validator<Sample>>() { }).get();
-        this.ortValidator = inst.select(
-            new TypeLiteral<Validator<Site>>() { }).get();
+        this.validator = inst.select(Validator.class).get();
 
         StatusMp newKombi = repository.entityManager().find(
             StatusMp.class, status.getStatusMpId());
@@ -92,21 +91,14 @@ public class ValidDependenciesValidator
             || newStatusWert == 2
             || newStatusWert == 7
         ) {
-            Violation violationCollection = new Violation();
             Sample probe = repository.getById(
                 Sample.class, messung.getSampleId());
 
             // init violation_collection with probe validation
-            probeValidator.validate(probe);
-            violationCollection.addErrors(probe.getErrors());
-            violationCollection.addWarnings(probe.getWarnings());
-            violationCollection.addNotifications(probe.getNotifications());
+            addMessages(validator.validate(probe));
 
             //validate messung object
-            messungValidator.validate(messung);
-            violationCollection.addErrors(messung.getErrors());
-            violationCollection.addWarnings(messung.getWarnings());
-            violationCollection.addNotifications(messung.getNotifications());
+            addMessages(validator.validate(messung));
 
             //validate messwert objects
             QueryBuilder<MeasVal> builder = repository
@@ -120,19 +112,13 @@ public class ValidDependenciesValidator
                         && !(messwert.getMeasVal() == null
                             && messwert.getLessThanLOD() == null)
                     ) {
-                        violationCollection.addError(
-                            "status", StatusCodes.STATUS_RO);
+                        addError("status", StatusCodes.STATUS_RO);
                     }
 
-                    messwertValidator.validate(messwert);
-                    violationCollection.addErrors(messwert.getErrors());
-                    violationCollection.addWarnings(messwert.getWarnings());
-                    violationCollection.addNotifications(
-                        messwert.getNotifications());
+                    addMessages(validator.validate(messwert));
                 }
             } else if (newStatusWert != 7) {
-                violationCollection.addError(
-                    "measVal", StatusCodes.VALUE_MISSING);
+                addError("measVal", StatusCodes.VALUE_MISSING);
             }
 
             // validate orte
@@ -143,15 +129,11 @@ public class ValidDependenciesValidator
                 ortBuilder.getQuery());
             for (Geolocat o : assignedOrte) {
                 Site site = repository.getById(Site.class, o.getSiteId());
-                ortValidator.validate(site);
-                violationCollection.addErrors(site.getErrors());
-                violationCollection.addWarnings(site.getWarnings());
-                violationCollection.addNotifications(site.getNotifications());
+                addMessages(validator.validate(site));
             }
 
             if (newStatusWert != 7
-                && (violationCollection.hasErrors()
-                    || violationCollection.hasWarnings())
+                && (!this.errors.isEmpty() || !this.warnings.isEmpty())
                 || newStatusWert == 7
                 && (probe.hasErrors() || probe.hasWarnings())
             ) {
@@ -159,12 +141,9 @@ public class ValidDependenciesValidator
                     HibernateConstraintValidatorContext.class
                 );
                 hibernateCtx.disableDefaultConstraintViolation();
-                hibernateCtx.addExpressionVariable(
-                        "errs", violationCollection.getErrors())
-                    .addExpressionVariable(
-                        "wrns", violationCollection.getWarnings())
-                    .addExpressionVariable(
-                        "nots", violationCollection.getNotifications())
+                hibernateCtx.addExpressionVariable("errs", this.errors)
+                    .addExpressionVariable("wrns", this.warnings)
+                    .addExpressionVariable("nots", this.notifications)
                     .buildConstraintViolationWithTemplate(this.message)
                     .enableExpressionLanguage(BEAN_METHODS)
                     .addPropertyNode("status")
@@ -173,5 +152,31 @@ public class ValidDependenciesValidator
             }
         }
         return true;
+    }
+
+    private void addError(String key, int value) {
+        if (!this.errors.containsKey(key)) {
+            this.errors.put(key, new HashSet<String>());
+        }
+        this.errors.get(key).add(String.valueOf(value));
+    }
+
+    private void addMessages(BaseModel validated) {
+        addMessages(validated.getErrors(), this.errors);
+        addMessages(validated.getWarnings(), this.warnings);
+        addMessages(validated.getNotifications(), this.notifications);
+    }
+
+    private void addMessages(
+        Map<String, Set<String>> from,
+        Map<String, Set<String>> to
+    ) {
+        for (String key: from.keySet()) {
+            if (to.containsKey(key)) {
+                to.get(key).addAll(from.get(key));
+            } else {
+                to.put(key, from.get(key));
+            }
+        }
     }
 }

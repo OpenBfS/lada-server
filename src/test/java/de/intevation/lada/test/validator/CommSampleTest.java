@@ -26,7 +26,7 @@ public class CommSampleTest extends ValidatorBaseTest {
     private static final String EXISTING_MEAS_FACIL_ID = "06010";
 
     @Inject
-    private Validator<CommSample> validator;
+    private Validator validator;
 
     /**
      * Test commSample with existing text.

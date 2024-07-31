@@ -301,7 +301,7 @@ public class SampleService extends LadaService {
     private void setEnvAttrs(Sample probe) {
         if (probe.getEnvMediumId() == null) {
             probe.setEnvMediumId(
-                factory.findUmwelt(probe.getEnvDescripDisplay()));
+                factory.findEnvMediumId(probe.getEnvDescripDisplay()));
         } else if (probe.getEnvDescripDisplay() == null
             || "D: 00 00 00 00 00 00 00 00 00 00 00 00".equals(
                 probe.getEnvDescripDisplay())

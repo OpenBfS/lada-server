@@ -43,9 +43,12 @@ import de.intevation.lada.model.master.Regulation;
 import de.intevation.lada.model.master.ReiAgGr;
 import de.intevation.lada.model.master.SampleMeth;
 import de.intevation.lada.model.master.Sampler;
+import de.intevation.lada.util.data.EnvMedia;
 import de.intevation.lada.validation.constraints.BeginBeforeEnd;
 import de.intevation.lada.validation.constraints.DatesVsSampleMeth;
 import de.intevation.lada.validation.constraints.EnvDescripDisplay;
+import de.intevation.lada.validation.constraints.EnvDescripMatchesEnvMedium;
+import de.intevation.lada.validation.constraints.EnvDescripMatchesEnvMediumReiOr161;
 import de.intevation.lada.validation.constraints.EnvMediumForReiAgGr;
 import de.intevation.lada.validation.constraints.HasEndDate;
 import de.intevation.lada.validation.constraints.HasOneSiteOfOrigin;
@@ -78,6 +81,8 @@ import de.intevation.lada.validation.groups.DatabaseConstraints;
 @HasEndDate(groups = Warnings.class)
 @HasOneSiteOfOrigin(groups = Warnings.class)
 @HasSamplingLocation(groups = Warnings.class)
+@EnvDescripMatchesEnvMedium(groups = Warnings.class)
+@EnvDescripMatchesEnvMediumReiOr161(groups = Notifications.class)
 public class Sample extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -121,7 +126,7 @@ public class Sample extends BaseModel implements Serializable {
     @NotEmptyNorWhitespace
     private String envDescripName;
 
-    @Pattern(regexp = "D:( [0-9][0-9]){12}")
+    @Pattern(regexp = EnvMedia.ENV_DESCRIP_PATTERN)
     @Pattern(regexp = "D:( ([0-9][1-9]|[1-9][0-9])){2}.*",
         message = "{de.intevation.lada.validation.EnvDescripDisplayFirstPartsSet.message}",
         groups = Warnings.class)

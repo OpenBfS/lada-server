@@ -13,6 +13,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.lang.reflect.ParameterizedType;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -36,6 +37,7 @@ import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonReader;
 import jakarta.json.JsonStructure;
 import jakarta.json.JsonValue;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Table;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
@@ -167,30 +169,73 @@ public class ServiceTest {
                     } catch (NoSuchColumnException nsce) {
                         continue;
                     }
-                    Object value = table.getValue(row, columnName);
-                    if (value == null) {
+                    String rawValue = (String) table.getValue(row, columnName);
+                    if (rawValue == null) {
                         continue;
                     }
+
+                    // Get entity attribute type
                     Class<?> type =
                         column.getWriteMethod().getParameterTypes()[0];
+                    Object value;
+
+                    // Apply JPA conversion, if any
+                    Convert convert = clazz.getDeclaredField(key).getAnnotation(
+                        Convert.class);
+                    if (convert != null) {
+                        Class<?> converter = convert.converter();
+                        // Get database attribute type from AttributeConverter
+                        Class<?> attributeType = (Class<?>) (
+                            (ParameterizedType) converter
+                            .getGenericInterfaces()[0])
+                            .getActualTypeArguments()[1];
+                        value = converter
+                            .getMethod(
+                                "convertToEntityAttribute", attributeType)
+                            .invoke(
+                                converter.getDeclaredConstructor()
+                                    .newInstance(),
+                                parseXMLAttr(rawValue, attributeType));
+                    } else {
+                        value = parseXMLAttr(rawValue, type);
+                    }
+
                     if (type.isAssignableFrom(Integer.class)) {
-                        builder.add(key, Integer.parseInt((String) value));
+                        builder.add(key, (Integer) value);
                     } else if (type.isAssignableFrom(Double.class)
                         || type.isAssignableFrom(Float.class)
                     ) {
-                        builder.add(key, Double.parseDouble((String) value));
+                        builder.add(key, (Double) value);
                     } else if (type.isAssignableFrom(Boolean.class)) {
-                        builder.add(key, Boolean.parseBoolean((String) value));
+                        builder.add(key, (Boolean) value);
                     } else {
-                        builder.add(key, (String) value);
+                        builder.add(key, value.toString());
                     }
                 }
                 arrayBuilder.add(builder);
             }
             return arrayBuilder.build();
-        } catch (DataSetException | IntrospectionException e) {
+        } catch (DataSetException
+            | IntrospectionException
+            | ReflectiveOperationException e
+        ) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Object parseXMLAttr(String value, Class<?> type) {
+        if (type.isAssignableFrom(Integer.class)) {
+            return Integer.parseInt(value);
+        }
+        if (type.isAssignableFrom(Double.class)
+            || type.isAssignableFrom(Float.class)
+        ) {
+            return Double.parseDouble(value);
+        }
+        if (type.isAssignableFrom(Boolean.class)) {
+            return Boolean.parseBoolean(value);
+        }
+        return value;
     }
 
     /**

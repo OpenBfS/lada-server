@@ -7,6 +7,7 @@
  */
 package de.intevation.lada;
 
+import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.CharacterCodingException;
 import java.time.Duration;
@@ -274,16 +275,18 @@ public class ExporterTest extends BaseTest {
                 .add("messwerteCount"))
             .build();
 
-        String result = runExportTest(baseUrl, formatJson, requestJson);
+        JsonObject result = Json.createReader(new StringReader(
+                runExportTest(baseUrl, formatJson, requestJson))).readObject();
         Assert.assertEquals(
             "Unexpected JSON content",
-            "{\"1000\":"
-            + "{\"main_sample_id\":\"120510002\","
-            + "\"env_medium_id\":\"L6\","
-            + "\"is_test\":\"false\","
-            + "\"probeId\":1000,"
-            + "\"Messungen\":[{\"messwerteCount\":2,\"extId\":453},"
-            + "{\"messwerteCount\":0,\"extId\":454}]}}",
+            Json.createReader(new StringReader(
+                    "{\"1000\":"
+                    + "{\"main_sample_id\":\"120510002\","
+                    + "\"env_medium_id\":\"L6\","
+                    + "\"is_test\":\"false\","
+                    + "\"probeId\":1000,"
+                    + "\"Messungen\":[{\"messwerteCount\":2,\"extId\":453},"
+                    + "{\"messwerteCount\":0,\"extId\":454}]}}")).readObject(),
             result);
     }
 

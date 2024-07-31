@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 
 import jakarta.inject.Inject;
-import jakarta.persistence.metamodel.SingularAttribute;
 
 import org.jboss.logging.Logger;
 
@@ -35,9 +34,9 @@ import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.model.master.EnvDescrip;
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp;
 import de.intevation.lada.model.master.EnvDescripEnvMediumMp_;
-import de.intevation.lada.model.master.EnvDescrip_;
 import de.intevation.lada.model.master.SampleSpecif;
 import de.intevation.lada.model.master.Site;
+import de.intevation.lada.util.data.EnvMedia;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -49,14 +48,6 @@ import de.intevation.lada.util.data.Repository;
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class ProbeFactory {
-
-    private static final int LM12 = 12;
-
-    private static final int POS9 = 9;
-
-    private static final int ZEBS3 = 3;
-
-    private static final int ZEBS5 = 5;
 
     private static final int SEC59 = 59;
 
@@ -299,6 +290,9 @@ public class ProbeFactory {
      */
     @Inject
     private Repository repository;
+
+    @Inject
+    private EnvMedia envMediaUtil;
 
     /**
      * Create a list of probe objects.
@@ -543,216 +537,23 @@ public class ProbeFactory {
     }
 
     /**
-     * Find the umwelt id for a given deskriptor.
+     * Find the envMediumId matching envDescripDisplay.
      *
-     * @param envDescripDisplay   The deskriptor string
+     * @param envDescripDisplay
      *
-     * @return The umwelt id, an empty string or null.
+     * @return The envMediumId or null
      */
-    public String findUmwelt(String envDescripDisplay) {
-        if (envDescripDisplay == null) {
-            return null;
-        }
-        String[] mediaDesk = envDescripDisplay.split(" ");
-        if (mediaDesk.length <= 1) {
-            return null;
-        }
-
-        List<Integer> mediaIds = new ArrayList<Integer>();
-        boolean zebs = false;
-        Integer parent = null;
-        Integer hdParent = null;
-        Integer ndParent = null;
-        if ("01".equals(mediaDesk[1])) {
-            zebs = true;
-        }
-        for (int i = 1; i < mediaDesk.length; i++) {
-            if ("00".equals(mediaDesk[i])) {
-                mediaIds.add(-1);
-                continue;
-            }
-            if (zebs && i < ZEBS5) {
-                parent = hdParent;
-            } else if (!zebs && i < ZEBS3) {
-                parent = hdParent;
-            } else {
-                parent = ndParent;
-            }
-            QueryBuilder<EnvDescrip> builder =
-                repository.queryBuilder(EnvDescrip.class);
-            if (parent != null) {
-                builder.and(EnvDescrip_.predId, parent);
-            }
-            builder.and(EnvDescrip_.levVal, Integer.parseInt(mediaDesk[i]));
-            builder.and(EnvDescrip_.lev, i - 1);
-            List<EnvDescrip> data = repository.filter(builder.getQuery());
-            if (data.isEmpty()) {
-                return null;
-            }
-            hdParent = data.get(0).getId();
-            mediaIds.add(data.get(0).getId());
-            if (i == 2) {
-                ndParent = data.get(0).getId();
-            }
-        }
-        return getUmwelt(mediaIds);
-    }
-
-    /**
-     * Find the umwelt id in the database using media deskriptor ids.
-     *
-     * @param   media   The list of media ids.
-     *
-     * @return The umwelt id or an empty string.
-     */
-    private String getUmwelt(List<Integer> media) {
-        QueryBuilder<EnvDescripEnvMediumMp> builder =
-            repository.queryBuilder(EnvDescripEnvMediumMp.class);
-
-        if (media.size() == 0) {
+    public String findEnvMediumId(String envDescripDisplay) {
+        Map<String, Integer> media;
+        try {
+            media = envMediaUtil.findEnvDescripIds(envDescripDisplay);
+        } catch (EnvMedia.InvalidEnvDescripDisplayException e) {
             return null;
         }
 
-        int size = 1;
-        for (int i = 0; i < media.size(); i++) {
-            SingularAttribute<EnvDescripEnvMediumMp, Integer> field
-                = EnvDescripEnvMediumMp.getSXXAttributeByName(
-                    "s" + (i > POS9 ? i : "0" + i));
-            QueryBuilder<EnvDescripEnvMediumMp> tmp = builder.getEmptyBuilder();
-            if (media.get(i) != -1) {
-                tmp.and(field, media.get(i));
-                tmp.or(field, null);
-                builder.and(tmp);
-            } else {
-                builder.and(field, null);
-            }
-        }
-        List<EnvDescripEnvMediumMp> data
-            = repository.filter(builder.getQuery());
-        if (data.isEmpty()) {
-            return null;
-        }
-
-        boolean unique = isUnique(data);
-        if (unique) {
-            return data.get(0).getEnvMediumId();
-        } else {
-            int found = -1;
-            int lastMatch = -LM12;
-            for (int i = 0; i < data.size(); i++) {
-                int matches = -LM12;
-                for (int j = size; j < LM12; j++) {
-                    switch (j) {
-                        case 1: if (media.get(1).equals(data.get(i).getS01())
-                            || media.get(1).equals(-1) && data.get(i).getS01()
-                                == null
-                                ) {
-                                    matches += 1;
-                                }
-                                break;
-                        case 2: if (media.get(2).equals(data.get(i).getS02())
-                            || media.get(2).equals(-1) && data.get(i).getS02()
-                                == null
-                                ) {
-                                    matches += 1;
-                                }
-                                break;
-                        case 3: if (media.get(3).equals(data.get(i).getS03())
-                            || media.get(3).equals(-1) && data.get(i).getS03()
-                                == null
-                                ) {
-                                    matches += 1;
-                                }
-                                break;
-                        case 4: if (media.get(4).equals(data.get(i).getS04())
-                            || media.get(4).equals(-1) && data.get(i).getS04()
-                                == null
-                                ) {
-                                    matches += 1;
-                                }
-                                break;
-                        case 5: if (media.get(5).equals(data.get(i).getS05())
-                            || media.get(5).equals(-1) && data.get(i).getS05()
-                                == null
-                                ) {
-                                    matches += 1;
-                                }
-                                break;
-                        case 6: if (media.get(6).equals(data.get(i).getS06())
-                            || media.get(6).equals(-1) && data.get(i).getS06()
-                                == null
-                                ) {
-                                    matches += 1;
-                                }
-                                break;
-                        case 7: if (media.get(7).equals(data.get(i).getS07())
-                            || media.get(7).equals(-1) && data.get(i).getS07()
-                                == null
-                                ) {
-                                    matches += 1;
-                                }
-                                break;
-                        case 8: if (media.get(8).equals(data.get(i).getS08())
-                            || media.get(8).equals(-1) && data.get(i).getS08()
-                                == null
-                                ) {
-                                    matches += 1;
-                                }
-                                break;
-                        case 9: if (media.get(9).equals(data.get(i).getS09())
-                            || media.get(9).equals(-1) && data.get(i).getS09()
-                                == null
-                                ) {
-                                    matches += 1;
-                                }
-                                break;
-                        case 10: if (media.get(10).equals(data.get(i).getS10())
-                            || media.get(10).equals(-1) && data.get(i).getS10()
-                                == null
-                                ) {
-                                    matches += 1;
-                                }
-                                break;
-                        case 11: if (media.get(11).equals(data.get(i).getS11())
-                            || media.get(11).equals(-1) && data.get(i).getS11()
-                                == null
-                                ) {
-                                    matches += 1;
-                                }
-                                break;
-                        default: break;
-                    }
-                    if (matches > lastMatch) {
-                        lastMatch = matches;
-                        found = i;
-                    }
-                }
-            }
-            if (found >= 0) {
-                return data.get(found).getEnvMediumId();
-            }
-            return null;
-        }
-    }
-
-    /**
-     * Determine if the entries in the list have the same umwelt id.
-     *
-     * @param   list    A list of DescriptorUmwelt objects.
-     *
-     * @return true if the objects have the same umwelt id else false.
-     */
-    private boolean isUnique(List<EnvDescripEnvMediumMp> list) {
-        if (list.isEmpty()) {
-            return false;
-        }
-        String element = list.get(0).getEnvMediumId();
-        for (int i = 1; i < list.size(); i++) {
-            if (!element.equals(list.get(i).getEnvMediumId())) {
-                return false;
-            }
-        }
-        return true;
+        return EnvMedia.findEnvMediumId(
+            media,
+            envMediaUtil.findEnvDescripEnvMediumMps(media, true));
     }
 
     /**
@@ -767,137 +568,36 @@ public class ProbeFactory {
             return null;
         }
         logger.debug("getInitialMediaDesk - umw_id: " + umwId);
-        String mediaDesk = "D:";
-        QueryBuilder<EnvDescripEnvMediumMp> builder =
-            repository.queryBuilder(EnvDescripEnvMediumMp.class);
-        builder.and(EnvDescripEnvMediumMp_.envMediumId, umwId);
-        List<EnvDescripEnvMediumMp> data = repository.filter(builder.getQuery());
+        QueryBuilder<EnvDescripEnvMediumMp> builder = repository
+            .queryBuilder(EnvDescripEnvMediumMp.class)
+            .and(EnvDescripEnvMediumMp_.envMediumId, umwId);
+        List<EnvDescripEnvMediumMp> data =
+            repository.filter(builder.getQuery());
         if (data.isEmpty()) {
-            logger.debug("getInitialMediaDesk - media_desk : D: 00 00 00 00 00 00 00 00 00 00 00 00");
-            return "D: 00 00 00 00 00 00 00 00 00 00 00 00";
+            final String empty = "D: 00 00 00 00 00 00 00 00 00 00 00 00";
+            logger.debug("getInitialMediaDesk - media_desk : " + empty);
+            return empty;
         } else {
-            Integer s00 = data.get(0).getS00();
-            Integer s01 = data.get(0).getS01();
-            Integer s02 = data.get(0).getS02();
-            Integer s03 = data.get(0).getS03();
-            Integer s04 = data.get(0).getS04();
-            Integer s05 = data.get(0).getS05();
-            Integer s06 = data.get(0).getS06();
-            Integer s07 = data.get(0).getS07();
-            Integer s08 = data.get(0).getS08();
-            Integer s09 = data.get(0).getS09();
-            Integer s10 = data.get(0).getS10();
-            Integer s11 = data.get(0).getS11();
-            for (int i = 0; i < data.size(); i++) {
-                if (data.get(i).getS00() == null || !data.get(i).getS00().equals(s00)) {
-                    s00 = null;
-                }
-                if (data.get(i).getS01() == null || !data.get(i).getS01().equals(s01)) {
-                    s01 = null;
-                }
-                if (data.get(i).getS02() == null || !data.get(i).getS02().equals(s02)) {
-                    s02 = null;
-                }
-                if (data.get(i).getS03() == null || !data.get(i).getS03().equals(s03)) {
-                    s03 = null;
-                }
-                if (data.get(i).getS04() == null || !data.get(i).getS04().equals(s04)) {
-                    s04 = null;
-                }
-                if (data.get(i).getS05() == null || !data.get(i).getS05().equals(s05)) {
-                    s05 = null;
-                }
-                if (data.get(i).getS06() == null || !data.get(i).getS06().equals(s06)) {
-                    s06 = null;
-                }
-                if (data.get(i).getS07() == null || !data.get(i).getS07().equals(s07)) {
-                    s07 = null;
-                }
-                if (data.get(i).getS08() == null || !data.get(i).getS08().equals(s08)) {
-                    s08 = null;
-                }
-                if (data.get(i).getS09() == null || !data.get(i).getS09().equals(s09)) {
-                    s09 = null;
-                }
-                if (data.get(i).getS10() == null || !data.get(i).getS10().equals(s10)) {
-                    s10 = null;
-                }
-                if (data.get(i).getS11() == null || !data.get(i).getS11().equals(s11)) {
-                    s11 = null;
+            List<Integer> levels = new ArrayList<>(EnvMedia.ENV_DESCRIP_LEVELS);
+            for (int lev = 0; lev < EnvMedia.ENV_DESCRIP_LEVELS; lev++) {
+                levels.add(EnvMedia.getEnvDescripId(lev, data.get(0)));
+            }
+            for (EnvDescripEnvMediumMp mp : data) {
+                for (int lev = 0; lev < EnvMedia.ENV_DESCRIP_LEVELS; lev++) {
+                    Integer envDescripId = EnvMedia.getEnvDescripId(lev, mp);
+                    if (envDescripId == null
+                        || !envDescripId.equals(levels.get(lev))
+                    ) {
+                        levels.set(lev, null);
+                    }
                 }
             }
-            EnvDescrip d;
-            if (s00 == null) {
-                mediaDesk = mediaDesk + " 00";
-            } else {
-                d = repository.getById(EnvDescrip.class, s00);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
-            }
-            if (s01 == null) {
-                mediaDesk = mediaDesk + " 00";
-            } else {
-                d = repository.getById(EnvDescrip.class, s01);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
-            }
-            if (s02 == null) {
-                mediaDesk = mediaDesk + " 00";
-            } else {
-                d = repository.getById(EnvDescrip.class, s02);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
-            }
-            if (s03 == null) {
-                mediaDesk = mediaDesk + " 00";
-            } else {
-                d = repository.getById(EnvDescrip.class, s03);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
-            }
-            if (s04 == null) {
-                mediaDesk = mediaDesk + " 00";
-            } else {
-                d = repository.getById(EnvDescrip.class, s04);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
-            }
-            if (s05 == null) {
-                mediaDesk = mediaDesk + " 00";
-            } else {
-                d = repository.getById(EnvDescrip.class, s05);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
-            }
-            if (s06 == null) {
-                mediaDesk = mediaDesk + " 00";
-            } else {
-                d = repository.getById(EnvDescrip.class, s06);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
-            }
-            if (s07 == null) {
-                mediaDesk = mediaDesk + " 00";
-            } else {
-                d = repository.getById(EnvDescrip.class, s07);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
-            }
-            if (s08 == null) {
-                mediaDesk = mediaDesk + " 00";
-            } else {
-                d = repository.getById(EnvDescrip.class, s08);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
-            }
-            if (s09 == null) {
-                mediaDesk = mediaDesk + " 00";
-            } else {
-                d = repository.getById(EnvDescrip.class, s09);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
-            }
-            if (s10 == null) {
-                mediaDesk = mediaDesk + " 00";
-            } else {
-                d = repository.getById(EnvDescrip.class, s10);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
-            }
-            if (s11 == null) {
-                mediaDesk = mediaDesk + " 00";
-            } else {
-                d = repository.getById(EnvDescrip.class, s11);
-                mediaDesk = mediaDesk + String.format(SN_FORMAT,d.getLevVal());
+
+            String mediaDesk = "D:";
+            for (Integer levId: levels) {
+                mediaDesk += String.format(SN_FORMAT, levId == null
+                    ? 0
+                    : repository.getById(EnvDescrip.class, levId).getLevVal());
             }
             logger.debug("getInitialMediaDesk - umw_desk: " + mediaDesk);
             return mediaDesk;

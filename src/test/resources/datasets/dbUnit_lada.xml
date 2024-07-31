@@ -45,16 +45,15 @@
         factor = "2"
     />
 
-    <master.env_descrip id = "1" lev = "0" lev_val = "10" />
-    <master.env_descrip id = "2" lev = "1" lev_val = "11" pred_id = "1"/>
-    <master.env_descrip id = "3" lev = "2" lev_val = "12" pred_id = "2"/>
+    <master.env_descrip id = "1" lev = "0" lev_val = "10" name = "s00"/>
+    <master.env_descrip
+        id = "2" lev = "1" lev_val = "11" pred_id = "1" name = "s01"/>
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "208" />
     <master.env_medium id = "A6" name = "Umweltbereich für test" />
     <master.env_descrip_env_medium_mp
         id = "1"
         s00 = "1"
         s01 = "2"
-        s02 = "3"
         env_medium_id = "L6"
     />
 
@@ -62,9 +61,11 @@
     <master.measd id = "57" name = "Mangan" />
     <master.mmt id = "A3" />
     <master.mmt id = "B3" />
+
     <master.status_ord_mp id = "1" from_id = "1" to_id = "4" />
-    <master.status_ord_mp id = "2" from_id = "4" to_id = "14" />
-    <master.status_ord_mp id = "3" from_id = "1" to_id = "5" />
+    <master.status_ord_mp id = "2" from_id = "1" to_id = "5" />
+    <master.status_ord_mp id = "3" from_id = "4" to_id = "14" />
+    <master.status_ord_mp id = "4" from_id = "14" to_id = "1" />
 
     <master.sample_specif
         id = "A74"
@@ -118,7 +119,7 @@
         coord_y_ext = "8.81948"
         last_mod = "2015-03-01 12:00:00"
         geom = "SRID=4326;POINT(49.83021 8.81948)"
-        site_class_id = "DYN"
+        site_class_id = "1"
         short_text = "kurz"
         rei_report_text = "bericht"
     />
@@ -239,15 +240,6 @@
         add_site_text = "Test"
         last_mod = "2012-05-09 09:00:00"
     />
-    <lada.status_prot
-        id = "1000"
-        meas_facil_id = "06010"
-        date = "2012-05-08 11:00:00"
-        text = "Initialer Status"
-        measm_id = "1200"
-        status_mp_id = "1"
-        tree_mod = "2012-05-09 12:00:00"
-    />
     <lada.sample_specif_meas_val
         id = "1000"
         sample_id = "1000"
@@ -283,12 +275,40 @@
         is_completed = "false"
         is_scheduled = "true"
     />
+    <!-- Invalid measVal -->
     <lada.meas_val
         id = "10001"
         measm_id = "1201"
         measd_id = "56"
         error = "3.3"
         detect_lim = "2.4"
+        meas_unit_id = "207"
+    />
+    <!-- for setting status undeliverable without deletion of measVals -->
+    <lada.measm
+        id = "1400"
+        sample_id = "999"
+        min_sample_id = "T101"
+        ext_id = "461"
+        mmt_id = "A3"
+        meas_pd = "3600"
+        measm_start_date = "2012-05-06 14:00:00"
+        is_completed = "false"
+        is_scheduled = "true"
+    />
+    <!-- Valid measVal -->
+    <lada.meas_val
+        id = "104000"
+        measm_id = "1400"
+        measd_id = "56"
+        meas_val = "1"
+        meas_unit_id = "207"
+    />
+    <!-- Invalid measVal -->
+    <lada.meas_val
+        id = "104001"
+        measm_id = "1400"
+        measd_id = "57"
         meas_unit_id = "207"
     />
 
@@ -714,136 +734,5 @@
     <lada.mpg_sample_specif
         sample_specif_id = "A75"
         mpg_id = "1020"
-    />
-    <!--Status test data-->
-    <master.site
-        id = "1001"
-        network_id = "06"
-        ext_id = "D_00191a"
-        long_text = "Langer Text"
-        state_id = "0"
-        is_fuzzy = "true"
-        spat_ref_sys_id = "4"
-        coord_x_ext = "32487017"
-        coord_y_ext = "5519769"
-        last_mod = "2015-03-01 12:00:00"
-        geom = "SRID=4326;POINT(49.83021 8.81948)"
-        site_class_id = "DYN"
-        short_text = "kurz"
-        rei_report_text = "bericht"
-    />
-    <lada.sample
-        id = "1042"
-        opr_mode_id = "1"
-        regulation_id = "9"
-        last_mod = "2012-05-05 11:12:00"
-        env_descrip_name = "Trinkwasser Zentralversorgung Oberflächenwasser aufbereitet"
-        env_descrip_display = "D: 10 11 12 00 00 00 00 00 00 00 00 00"
-        meas_facil_id = "06010"
-        appr_lab_id = "06010"
-        sample_start_date = "2012-05-03 13:07:00"
-        sample_meth_id = "1"
-        is_test = "true"
-        env_medium_id ="L6"
-        main_sample_id = "120510003"
-        sampler_id = "726"
-        sched_start_date = "2012-05-01 16:00:00"
-        sched_end_date = "2012-05-05 16:00:00"
-        tree_mod = "2012-05-08 10:00:00"
-    />
-    <lada.geolocat
-        id = "1042"
-        sample_id = "1042"
-        site_id = "1001"
-        add_site_text = "Test"
-        last_mod = "2012-05-09 09:00:00"
-        type_regulation = "E"
-    />
-    <!--Measm still has a valid meas val-->
-    <lada.measm
-        id = "1400"
-        sample_id = "1042"
-        min_sample_id = "T100"
-        ext_id = "461"
-        mmt_id = "A3"
-        meas_pd = "3600"
-        measm_start_date = "2012-05-06 14:00:00"
-        is_completed = "false"
-        last_mod = "2012-05-08 12:00:00"
-        is_scheduled = "true"
-        tree_mod = "2012-05-09 12:00:00"
-    />
-    <lada.status_prot
-        id = "1400"
-        meas_facil_id = "06010"
-        date = "2012-05-08 11:00:00"
-        text = "Initialer Status"
-        measm_id = "1400"
-        status_mp_id = "1"
-        tree_mod = "2012-05-09 12:00:00"
-    />
-    <lada.meas_val
-        id = "104000"
-        measm_id = "1400"
-        measd_id = "56"
-        meas_val = "1"
-        error = "3.3"
-        detect_lim = "2.4"
-        meas_unit_id = "207"
-        is_threshold = "false"
-        last_mod = "2012-05-09 09:00:00"
-    />
-    <lada.meas_val
-        id = "104001"
-        measm_id = "1400"
-        measd_id = "57"
-        error = "3.3"
-        detect_lim = "2.4"
-        meas_unit_id = "207"
-        is_threshold = "false"
-        last_mod = "2012-05-09 09:00:00"
-    />
-    <!--Measm has no valid meas vali-->
-    <lada.measm
-        id = "1500"
-        sample_id = "1042"
-        min_sample_id = "T101"
-        ext_id = "462"
-        mmt_id = "B3"
-        meas_pd = "3600"
-        measm_start_date = "2012-05-06 14:00:00"
-        is_completed = "false"
-        last_mod = "2012-05-08 12:00:00"
-        is_scheduled = "true"
-        tree_mod = "2012-05-09 12:00:00"
-    />
-    <lada.status_prot
-        id = "1500"
-        meas_facil_id = "06010"
-        date = "2012-05-08 11:00:00"
-        text = "Initialer Status"
-        measm_id = "1500"
-        status_mp_id = "1"
-        tree_mod = "2012-05-09 12:00:00"
-    />
-    <lada.meas_val
-        id = "105000"
-        measm_id = "1500"
-        measd_id = "56"
-        error = "3.3"
-        detect_lim = "2.4"
-        meas_unit_id = "207"
-        is_threshold = "false"
-        last_mod = "2012-05-09 09:00:00"
-    />
-    <lada.meas_val
-        id = "105001"
-        measm_id = "1500"
-        measd_id = "57"
-        error = "3.3"
-        detect_lim = "2.4"
-        meas_unit_id = "207"
-        is_threshold = "false"
-        last_mod = "2012-05-09 09:00:00"
     />
 </dataset>
