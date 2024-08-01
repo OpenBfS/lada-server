@@ -33,6 +33,7 @@ import jakarta.ws.rs.core.Response.Status;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.data.requests.CsvExportParameters;
+import de.intevation.lada.data.requests.ExportParameters;
 import de.intevation.lada.data.requests.LafExportParameters;
 import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.ExportJobManager;
@@ -142,7 +143,7 @@ public class AsyncExportService extends LadaService {
     ) {
         Charset encoding;
         try {
-            encoding = getCharsetFromRequest(request);
+            encoding = getCharsetFromPayload(objects);
         } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
             return Response.status(Status.BAD_REQUEST)
                 .entity((Object) "Invalid or unknown encoding requested")
@@ -201,7 +202,7 @@ public class AsyncExportService extends LadaService {
     ) {
         Charset encoding;
         try {
-            encoding = getCharsetFromRequest(request);
+            encoding = getCharsetFromPayload(objects);
         } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
             return Response.status(Status.BAD_REQUEST)
                 .entity((Object) "Invalid or unknown encoding requested")
@@ -388,11 +389,9 @@ public class AsyncExportService extends LadaService {
             .build();
     }
 
-    private Charset getCharsetFromRequest(HttpServletRequest request) {
-        String encoding = request.getHeader("X-FILE-ENCODING");
-        if (encoding == null || encoding.equals("")) {
-            encoding = "iso-8859-15";
-        }
+    private Charset getCharsetFromPayload(ExportParameters objects) {
+        String encoding = objects.getEncoding();
+        encoding = encoding != null ? encoding : "iso-8859-15";
         return Charset.forName(encoding);
     }
 }

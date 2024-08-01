@@ -7,7 +7,11 @@
  */
 package de.intevation.lada.data.requests;
 
+import de.intevation.lada.validation.constraints.requests.IsValidCharsetString;
+
 public abstract class ExportParameters {
+    @IsValidCharsetString
+    private String encoding;
     private String filename;
 
     public String getFilename() {
@@ -16,5 +20,13 @@ public abstract class ExportParameters {
 
     public void setFilename(String filename) {
         this.filename = filename;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 }

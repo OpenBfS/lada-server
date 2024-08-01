@@ -17,6 +17,9 @@ public class IsValidCharsetStringValidator
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return true;
+        }
         try {
             Charset.forName(value);
         } catch (IllegalArgumentException e) {

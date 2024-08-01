@@ -173,22 +173,15 @@ public class CsvExporter implements Exporter<CsvExportParameters> {
         JsonObject subDataColumnNames = null;
         //Parse options
         if (options != null) {
-            try {
-                decimalSeparator = options.getDecimalSeparator() != null
-                    ? options.getDecimalSeparator().getChar() : decimalSeparator;
-                fieldSeparator = options.getFieldSeparator() != null
-                    ? options.getFieldSeparator().getChar() : fieldSeparator;
-                rowDelimiter = options.getRowDelimiter() != null
-                    ? options.getRowDelimiter().getValue() : rowDelimiter;
-                quoteType = options.getQuoteType() != null
-                    ? options.getQuoteType().getChar() : quoteType;
-                subDataColumnNames = options.getSubDataColumnNames();
-            } catch (IllegalArgumentException iae) {
-                logger.error(
-                    String.format(
-                        "Invalid CSV options: %s", options.toString()));
-                return null;
-            }
+            decimalSeparator = options.getDecimalSeparator() != null
+                ? options.getDecimalSeparator().getChar() : decimalSeparator;
+            fieldSeparator = options.getFieldSeparator() != null
+                ? options.getFieldSeparator().getChar() : fieldSeparator;
+            rowDelimiter = options.getRowDelimiter() != null
+                ? options.getRowDelimiter().getValue() : rowDelimiter;
+            quoteType = options.getQuoteType() != null
+                ? options.getQuoteType().getChar() : quoteType;
+            subDataColumnNames = options.getSubDataColumnNames();
         }
 
         DecimalFormat decimalFormat = new DecimalFormat("0.###E00");

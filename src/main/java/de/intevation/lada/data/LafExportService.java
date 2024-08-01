@@ -9,8 +9,6 @@ package de.intevation.lada.data;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.nio.charset.IllegalCharsetNameException;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.List;
 
 import jakarta.inject.Inject;
@@ -20,10 +18,8 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
-import jakarta.ws.rs.core.Response.Status;
 import de.intevation.lada.data.requests.LafExportParameters;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.ExportFormat;
@@ -95,19 +91,9 @@ public class LafExportService extends LadaService {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        String encoding = request.getHeader("X-FILE-ENCODING");
-        if (encoding == null || encoding.equals("")) {
-            encoding = "iso-8859-15";
-        }
-        Charset charset;
-        try {
-            charset = Charset.forName(encoding);
-        } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
-            return Response.status(Status.BAD_REQUEST)
-                .entity((Object) "Invalid or unknown encoding requested")
-                .type(MediaType.TEXT_PLAIN)
-                .build();
-        }
+        String encoding = objects.getEncoding();
+        encoding = encoding != null ? encoding : "iso-8859-15";
+        Charset charset = Charset.forName(encoding);
 
         UserInfo userInfo = authorization.getInfo();
         InputStream exported =
