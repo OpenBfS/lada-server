@@ -130,7 +130,7 @@ public class AsyncExportService extends LadaService {
      *   "refId": [String]
      * }
      * </pre>
-     * @param objects JSON Object containing the export parameters
+     * @param objects Export parameters object
      * @param request Request object
      * @return Response containing the new export ref id
      */
@@ -188,7 +188,7 @@ public class AsyncExportService extends LadaService {
      * }
      * </pre>
      *
-     * @param objects    JSON object with an array of probe or messung ids.
+     * @param objects    Export parameters object
      * @param request    The HTTP header containing authorization information.
      * @return The job identifier.
      */
@@ -263,7 +263,7 @@ public class AsyncExportService extends LadaService {
      *   "refId": [String]
      * }
      * </pre>
-     * @param objects JSON Object containing the export parameters
+     * @param objects Export parameters object
      * @param request Request object
      * @return Response containing the new export ref id
      */
