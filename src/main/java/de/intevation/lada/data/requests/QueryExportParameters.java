@@ -10,15 +10,20 @@ package de.intevation.lada.data.requests;
 import java.util.List;
 
 import de.intevation.lada.model.master.GridColConf;
+import de.intevation.lada.validation.constraints.requests.IsValidTimeZone;
+
+import jakarta.validation.Valid;
 
 public class QueryExportParameters extends ExportParameters {
     private boolean exportSubData;
     private String[] subDataColumns;
     private String idField;
     private List<String> idFilter;
+    @IsValidTimeZone
     private String timezone;
 
-    private List<GridColConf> columns;
+
+    private List<@Valid GridColConf> columns;
 
     public boolean isExportSubData() {
         return exportSubData;

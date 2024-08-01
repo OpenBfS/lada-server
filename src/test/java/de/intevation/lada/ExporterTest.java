@@ -72,7 +72,8 @@ public class ExporterTest extends BaseTest {
                 .add("isFilterNull", false)
                 .add("isFilterNegate", false)
                 .add("isFilterRegex", false)
-                .add("gridColMpId", 1))
+                .add("gridColMpId", 1)
+                .add("queryUserId", 1))
             .add(Json.createObjectBuilder()
                 .add("columnIndex", 1)
                 .add("export", true)
@@ -81,7 +82,8 @@ public class ExporterTest extends BaseTest {
                 .add("isFilterNull", false)
                 .add("isFilterNegate", false)
                 .add("isFilterRegex", false)
-                .add("gridColMpId", 2))
+                .add("gridColMpId", 2)
+                .add("queryUserId", 1))
             .add(Json.createObjectBuilder()
                 .add("columnIndex", 2)
                 .add("export", true)
@@ -90,7 +92,8 @@ public class ExporterTest extends BaseTest {
                 .add("isFilterNull", false)
                 .add("isFilterNegate", false)
                 .add("isFilterRegex", false)
-                .add("gridColMpId", 4))
+                .add("gridColMpId", 4)
+                .add("queryUserId", 1))
             .add(Json.createObjectBuilder()
                 .add("columnIndex", 3)
                 .add("export", true)
@@ -99,7 +102,8 @@ public class ExporterTest extends BaseTest {
                 .add("isFilterNull", false)
                 .add("isFilterNegate", false)
                 .add("isFilterRegex", false)
-                .add("gridColMpId", 5)));
+                .add("gridColMpId", 5)
+                .add("queryUserId", 1)));
 
     private final JsonObject measmRequestJson = Json.createObjectBuilder()
         .add("timezone", "UTC")
@@ -112,7 +116,8 @@ public class ExporterTest extends BaseTest {
                 .add("isFilterNull", false)
                 .add("isFilterNegate", false)
                 .add("isFilterRegex", false)
-                .add("gridColMpId", 6)))
+                .add("gridColMpId", 6)
+                .add("queryUserId", 1)))
         .add("idField", "messungId")
         .add("idFilter", Json.createArrayBuilder().add("1200"))
         .add("exportSubData", true)
@@ -370,14 +375,18 @@ public class ExporterTest extends BaseTest {
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
         /* Request asynchronous export */
-        JsonObject requestJson = Json.createObjectBuilder()
+        JsonObject lafJson = Json.createObjectBuilder()
             // Add arbitrary array to avoid 404 being returned for LAF
-            .add("proben", Json.createArrayBuilder().add("xxx"))
-            .add("invalidField", "xxx")
+            .add("proben", Json.createArrayBuilder().add("99999"))
             .build();
-        startExport(baseUrl, formatCsv, requestJson, Job.Status.ERROR);
-        startExport(baseUrl, formatJson, requestJson, Job.Status.ERROR);
-        exportRequest(baseUrl, formatLaf, requestJson,
+        JsonObject queryExportJson = Json.createObjectBuilder()
+            .add("timezone", "invalidTimezone")
+            .build();
+        exportRequest(baseUrl, formatLaf, lafJson,
+            Response.Status.BAD_REQUEST);
+        exportRequest(baseUrl, formatCsv, queryExportJson,
+            Response.Status.BAD_REQUEST);
+        exportRequest(baseUrl, formatJson, queryExportJson,
             Response.Status.BAD_REQUEST);
     }
 
