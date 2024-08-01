@@ -15,7 +15,6 @@ import de.intevation.lada.validation.constraints.requests.IsValidTimeZone;
 import jakarta.validation.Valid;
 
 public class QueryExportParameters extends ExportParameters {
-    private boolean exportSubData;
     private String[] subDataColumns;
     private String idField;
     private List<String> idFilter;
@@ -26,11 +25,7 @@ public class QueryExportParameters extends ExportParameters {
     private List<@Valid GridColConf> columns;
 
     public boolean isExportSubData() {
-        return exportSubData;
-    }
-
-    public void setExportSubData(boolean exportSubData) {
-        this.exportSubData = exportSubData;
+        return subDataColumns != null && subDataColumns.length > 0;
     }
 
     public String[] getSubDataColumns() {

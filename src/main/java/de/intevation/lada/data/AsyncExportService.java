@@ -86,7 +86,6 @@ public class AsyncExportService extends LadaService {
      *      column even if it will not be exported.
      * - A boolean that sets if related subdata should be exported too
      * - An optional list of subdata column names.
-     *      May only be set if "subData" is true
      * - The gridColumnId that contains the record id
      * - An optional id filter to limit the export data.
      *      If not set, the complete query result will be exported
@@ -107,7 +106,6 @@ public class AsyncExportService extends LadaService {
      *     "filterActive": [boolean],
      *     "export": [boolean]
      *   }],
-     *   "exportSubData": [boolean],
      *   "subDataColumns": [ [string] ]
      *   "idField": [string],
      *   idFilter: [ [number] ],
@@ -228,9 +226,7 @@ public class AsyncExportService extends LadaService {
      * whether the field should be export or not.
      *   Note: The column list must contain the record's id column even
      * if it will not be exported.
-     * - A boolean that sets if related subdata should be exported too
-     * - An optional list of subdata column names. May only be set if
-     * "subData" is true
+     * - An optional list of subdata column names.
      * - The gridColumnId that contains the record id
      * - An optional id filter to limit the export data. If not set, the
      * complete query result will be exported
@@ -249,7 +245,6 @@ public class AsyncExportService extends LadaService {
      *     "filterActive": [boolean],
      *     "export": [boolean]
      *   }],
-     *   "exportSubData": [boolean],
      *   "subDataColumns": [ [string] ]
      *   "idField": [number]
      *   idFilter: [ [number] ],
