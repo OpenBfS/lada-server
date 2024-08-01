@@ -7,18 +7,18 @@
  */
 package de.intevation.lada.data.requests;
 
+import java.util.Map;
+
 import de.intevation.lada.exporter.csv.CsvExporter.CsvOptions;
 
-import jakarta.json.JsonObject;
-
 public class CsvExportParameters extends QueryExportParameters {
-    private JsonObject subDataColumnNames;
+    private Map<String, String> subDataColumnNames;
     private CsvExportOptions csvOptions;
 
-    public JsonObject getSubDataColumnNames() {
+    public Map<String, String> getSubDataColumnNames() {
         return subDataColumnNames;
     }
-    public void setSubDataColumnNames(JsonObject subDataColumnNames) {
+    public void setSubDataColumnNames(Map<String, String> subDataColumnNames) {
         this.subDataColumnNames = subDataColumnNames;
     }
     public CsvExportOptions getCsvOptions() {
@@ -27,7 +27,6 @@ public class CsvExportParameters extends QueryExportParameters {
     public void setCsvOptions(CsvExportOptions csvOptions) {
         this.csvOptions = csvOptions;
     }
-
     public CsvOptions getDecimalSeparator() {
         return csvOptions != null ? csvOptions.getDecimalSeparator() : null;
     }

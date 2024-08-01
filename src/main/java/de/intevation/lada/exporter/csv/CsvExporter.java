@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Date;
 
 import jakarta.inject.Inject;
-import jakarta.json.JsonObject;
 import jakarta.persistence.NoResultException;
 
 import org.apache.commons.csv.CSVFormat;
@@ -101,7 +100,7 @@ public class CsvExporter implements Exporter<CsvExportParameters> {
      */
     private String[] getReadableColumnNames(
         Collection<String> keys,
-        JsonObject subDataColumnNames,
+        Map<String, String> subDataColumnNames,
         Integer qId
     ) {
         String[] names = new String[keys.size()];
@@ -120,7 +119,7 @@ public class CsvExporter implements Exporter<CsvExportParameters> {
             } catch (NoResultException e) {
                 name = subDataColumnNames != null
                     && subDataColumnNames.containsKey(key)
-                    ? subDataColumnNames.getString(key)
+                    ? subDataColumnNames.get(key)
                     : key;
             }
             names[index] = name;
@@ -170,7 +169,7 @@ public class CsvExporter implements Exporter<CsvExportParameters> {
         char fieldSeparator = CsvOptions.valueOf("comma").getChar();
         String rowDelimiter = CsvOptions.valueOf("windows").getValue();
         char quoteType = CsvOptions.valueOf("doublequote").getChar();
-        JsonObject subDataColumnNames = null;
+        Map<String, String> subDataColumnNames = null;
         //Parse options
         if (options != null) {
             decimalSeparator = options.getDecimalSeparator() != null
