@@ -137,7 +137,7 @@ public class AsyncExportService extends LadaService {
     @POST
     @Path("csv")
     public Response createCsvExportJob(
-        CsvExportParameters objects,
+        @Valid CsvExportParameters objects,
         @Context HttpServletRequest request
     ) {
         Charset encoding;
@@ -270,7 +270,7 @@ public class AsyncExportService extends LadaService {
     @POST
     @Path("json")
     public Response createJsonExportJob(
-        QueryExportParameters objects,
+        @Valid QueryExportParameters objects,
         @Context HttpServletRequest request
     ) {
         UserInfo userInfo = authorization.getInfo();
