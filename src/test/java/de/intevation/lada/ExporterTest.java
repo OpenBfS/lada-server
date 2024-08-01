@@ -7,8 +7,6 @@
  */
 package de.intevation.lada;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.CharacterCodingException;
@@ -382,22 +380,19 @@ public class ExporterTest extends BaseTest {
         JsonObject queryExportJson = Json.createObjectBuilder()
             .add("timezone", "invalidTimezone")
             .build();
-        exportRequest(baseUrl, formatLaf, lafJson,
+        parseResponse(
+            exportRequest(baseUrl, formatLaf, lafJson),
             Response.Status.BAD_REQUEST);
-        exportRequest(baseUrl, formatCsv, queryExportJson,
+        parseResponse(
+            exportRequest(baseUrl, formatCsv, queryExportJson),
             Response.Status.BAD_REQUEST);
-        exportRequest(baseUrl, formatJson, queryExportJson,
+        parseResponse(
+            exportRequest(baseUrl, formatJson, queryExportJson),
             Response.Status.BAD_REQUEST);
     }
 
     private Response exportRequest(
             URL baseUrl, String format, JsonObject requestJson) {
-        return exportRequest(baseUrl, format, requestJson, Response.Status.OK);
-    }
-
-    private Response exportRequest(
-            URL baseUrl, String format, JsonObject requestJson,
-            Response.Status expectedStatus) {
         Response response = client.target(
             baseUrl + "data/asyncexport/" + format)
             .request()
@@ -405,7 +400,6 @@ public class ExporterTest extends BaseTest {
             .header("X-SHIB-roles", BaseTest.testRoles)
             .post(Entity.entity(requestJson.toString(),
                     MediaType.APPLICATION_JSON));
-        assertEquals(expectedStatus.getStatusCode(), response.getStatus());
         return response;
     }
 
