@@ -105,14 +105,11 @@ public class ReportItem {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj instanceof ReportItem ri
+        return obj != null
+            && obj instanceof ReportItem ri
             && Objects.equals(key, ri.getKey())
             && Objects.equals(value, ri.getValue())
-            && Objects.equals(code, ri.getCode())
-        ) {
-            return true;
-        }
-        return false;
+            && Objects.equals(code, ri.getCode());
     }
 
     @Override
