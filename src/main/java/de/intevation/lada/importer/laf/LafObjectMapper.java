@@ -880,6 +880,8 @@ public class LafObjectMapper {
         }
         zusatzwert.setSampleSpecifId(zusatz.get(0).getId());
 
+        validate(zusatzwert, "validation#probe");
+
         return zusatzwert;
     }
 
