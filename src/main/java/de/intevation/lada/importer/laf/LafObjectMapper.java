@@ -331,10 +331,15 @@ public class LafObjectMapper {
                 return;
             } else if (i == Identified.NEW) {
                 // It is a brand new probe!
-                validate(probe, "validation#probe");
+                validator.validate(probe);
                 if (!probe.hasErrors()) {
                     repository.create(probe);
                     newProbe = probe;
+
+                    // Messages might be obsolete after importing other objects
+                    newProbe.clearMessages();
+                } else {
+                    validate(probe, "validation#probe", false, true);
                 }
             }
             if (newProbe != null) {
@@ -1069,7 +1074,7 @@ public class LafObjectMapper {
             return;
         }
 
-        validate(kommentar, "Status ", true);
+        validate(kommentar, "Status ", true, false);
         if (kommentar.hasErrors() || kommentar.hasWarnings()) {
             return;
         }
@@ -1536,7 +1541,7 @@ public class LafObjectMapper {
         MeasFacil mst = repository.getById(
             MeasFacil.class, probe.getMeasFacilId());
         o.setNetworkId(mst.getNetworkId());
-        validate(o, "validation", true);
+        validate(o, "validation", true, false);
         if (o.hasErrors()) {
             return null;
         }
@@ -1971,13 +1976,18 @@ public class LafObjectMapper {
     }
 
     private void validate(BaseModel object, String key) {
-        validate(object, key, false);
+        validate(object, key, false, false);
     }
 
     private void validate(
-        BaseModel object, String key, boolean errorsToWarnings
+        BaseModel object,
+        String key,
+        boolean errorsToWarnings,
+        boolean validated
     ) {
-        validator.validate(object);
+        if (!validated) {
+            validator.validate(object);
+        }
         object.getErrors().forEach((k, v) -> {
                 v.forEach((value) -> {
                         ReportItem err = new ReportItem(key, k, value);

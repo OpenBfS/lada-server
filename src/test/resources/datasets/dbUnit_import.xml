@@ -20,10 +20,15 @@
     <master.meas_unit id = "207" />
     <master.meas_unit id = "208" />
     <master.meas_unit id = "1" unit_symbol = "Bq/kgFM"/>
+
     <master.measd id = "56" name = "Mangan" />
     <master.measd id = "57" name = "Mangan" />
     <master.measd id = "1" name = "H-3" />
     <master.mmt id = "A3" />
+    <master.measd_gr id = "1" />
+    <master.measd_gr_mp measd_id = "1" measd_gr_id = "1" />
+    <master.mmt_measd_gr_mp mmt_id = "A3" measd_gr_id = "1" />
+
     <master.opr_mode id = "1" name = "Normal-/Routinebetrieb" />
     <master.regulation id = "1" name = "test" />
     <master.regulation id = "2" />
@@ -32,6 +37,17 @@
     <master.sample_meth id = "2" ext_id = "S" eudf_sample_meth_id = "B" />
     <master.env_medium id = "A6" name = "Umweltbereich für test" />
     <master.env_medium id = "L6" name = "Spurenmessung Luft" unit_1 = "208" />
+
+    <master.env_descrip id = "1" lev = "0" lev_val = "1" name = "s00"/>
+    <master.env_descrip
+        id = "2" lev = "1" lev_val = "1" pred_id = "1" name = "s01"/>
+    <master.env_descrip_env_medium_mp
+        id = "1"
+        s00 = "1"
+        s01 = "2"
+        env_medium_id = "A6"
+    />
+
     <master.sample_specif
         id = "A1"
         name = "test"
@@ -42,6 +58,8 @@
         name = "Volumenstrom"
         ext_id = "VOLSTR"
     />
+    <master.env_specif_mp id = "1" sample_specif_id = "A1" env_medium_id = "A6"/>
+
     <master.mpg_transf
         id = "1"
         ext_id = "1"
@@ -67,6 +85,10 @@
         is_gov_dist = "false"
         geom_center = "POINT(32487017 5519769)"
     />
+
+    <master.spat_ref_sys id = "4"/>
+    <master.type_regulation id = "E"/>
+
     <master.sampler
         id = "726"
         network_id = "06"
