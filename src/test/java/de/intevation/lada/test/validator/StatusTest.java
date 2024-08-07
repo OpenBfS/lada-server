@@ -31,6 +31,8 @@ public class StatusTest extends ValidatorBaseTest {
 
     private static final int INVALID_STATUS_MP_ID = 42;
 
+    private static final String MSG_KEY = "status";
+
     @Inject
     private Validator validator;
 
@@ -123,7 +125,7 @@ public class StatusTest extends ValidatorBaseTest {
         status.setMeasmId(invalidMeasmId);
         assertHasErrors(
             validator.validate(status),
-            "status",
+            MSG_KEY,
             "Operation not possible due to constraint violations\n"
             + "Errors:\n"
             + "- measVal: [631]\n"
@@ -145,6 +147,41 @@ public class StatusTest extends ValidatorBaseTest {
         status.setStatusMpId(notPlausible);
         status.setMeasmId(invalidMeasmId);
         assertNoMessages(validator.validate(status));
+    }
+
+    /**
+     * Test status of measm with warning and notification at measm.
+     */
+    @Test
+    public void measmWithWarnings() {
+        StatusProt status = minimalStatusProt();
+        final int invalidMeasmId = 1202;
+        status.setMeasmId(invalidMeasmId);
+        assertHasErrors(
+            validator.validate(status),
+            MSG_KEY,
+            "Operation not possible due to constraint violations\n"
+            + "Warnings:\n"
+            + "- measmStartDate: [A value must be provided]\n"
+            + "Notifications:\n"
+            + "- minSampleId: [must not be blank]"
+        );
+    }
+
+    /**
+     * Test status of measm with notification at measm.
+     */
+    @Test
+    public void measmWithNotifications() {
+        StatusProt status = minimalStatusProt();
+        final int measmId = 1203;
+        status.setMeasmId(measmId);
+        assertHasNotifications(
+            validator.validate(status),
+            MSG_KEY,
+            "Notifications:\n"
+            + "- minSampleId: [must not be blank]"
+        );
     }
 
     private StatusProt minimalStatusProt() {
