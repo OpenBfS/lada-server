@@ -80,6 +80,7 @@
     />
 
     <master.status_ord_mp id = "1" from_id = "1" to_id = "2" />
+    <master.status_ord_mp id = "2" from_id = "1" to_id = "4" />
 
     <!--Sample data-->
     <lada.sample
@@ -146,6 +147,12 @@
         meas_pd = "3600"
         is_completed = "false"
         is_scheduled = "true"
+    />
+    <lada.status_prot
+        id = "1001"
+        meas_facil_id = "06010"
+        measm_id = "1201"
+        status_mp_id = "1"
     />
 
     <!--Valid REI sample-->
