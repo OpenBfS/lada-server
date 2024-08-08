@@ -24,7 +24,7 @@ import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.util.data.EnvMedia;
 import de.intevation.lada.util.data.Repository;
-import de.intevation.lada.validation.Validator;
+
 
 /**
  * Test sample validations.
@@ -60,9 +60,6 @@ public class ProbeTest extends ValidatorBaseTest {
     private static final String NEW_MAIN_SAMPLE_ID = "4564567890";
     private static final String VALID_ENV_DESCRIP_DISPLAY_FOR_N71
         = "D: 10 11 12 00 00 00 00 00 00 00 00 00";
-
-    @Inject
-    private Validator validator;
 
     @Inject
     private Repository repository;

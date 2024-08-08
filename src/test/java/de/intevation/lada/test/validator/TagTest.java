@@ -7,12 +7,9 @@
  */
 package de.intevation.lada.test.validator;
 
-import jakarta.inject.Inject;
-
 import org.junit.Test;
 
 import de.intevation.lada.model.master.Tag;
-import de.intevation.lada.validation.Validator;
 
 
 /**
@@ -22,9 +19,6 @@ public class TagTest extends ValidatorBaseTest {
 
     private static final String MEAS_FACIL = "06010";
     private static final String NETWORK_ID = "06";
-
-    @Inject
-    private Validator validator;
 
     /**
      * Test tag with Network and MeasFacil.

@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.test.validator;
 
-import jakarta.inject.Inject;
-
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
@@ -16,7 +14,7 @@ import org.junit.Test;
 
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.StatusProt_;
-import de.intevation.lada.validation.Validator;
+
 
 /**
  * Test Status entities.
@@ -32,9 +30,6 @@ public class StatusTest extends ValidatorBaseTest {
     private static final int INVALID_STATUS_MP_ID = 42;
 
     private static final String MSG_KEY = "status";
-
-    @Inject
-    private Validator validator;
 
     /**
      * Constructor.
