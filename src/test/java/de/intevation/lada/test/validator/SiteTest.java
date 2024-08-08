@@ -7,8 +7,6 @@
  */
 package de.intevation.lada.test.validator;
 
-import jakarta.inject.Inject;
-
 import java.util.ResourceBundle;
 
 import org.hamcrest.CoreMatchers;
@@ -18,7 +16,6 @@ import org.junit.Test;
 
 import de.intevation.lada.model.master.Site;
 import de.intevation.lada.model.master.Site_;
-import de.intevation.lada.validation.Validator;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -57,9 +54,6 @@ public class SiteTest extends ValidatorBaseTest {
     private static final int SPAT_REF_SYS_ID_UTM_WGS_84 = 5;
     private static final int SPAT_REF_SYS_ID_UTM_ETRS89 = 6;
     private static final int SPAT_REF_SYS_ID_UTM_ED50 = 8;
-
-    @Inject
-    private Validator validator;
 
     //Expected validation messages
     private static final String GEO_POINT_OUTSIDE =

@@ -13,8 +13,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-import jakarta.inject.Inject;
-
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
@@ -22,7 +20,6 @@ import org.junit.Test;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Measm_;
-import de.intevation.lada.validation.Validator;
 
 
 /**
@@ -52,9 +49,6 @@ public class MessungTest extends ValidatorBaseTest {
     private static final String MSG_VALUE_MISSING = "A value must be provided";
     private static final String MSG_VAL_OBL_MEASURE =
         "Obligatory measurand missing";
-
-    @Inject
-    private Validator validator;
 
     /**
      * Test valid measm.

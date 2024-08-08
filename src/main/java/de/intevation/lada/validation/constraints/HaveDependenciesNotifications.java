@@ -19,15 +19,17 @@ import jakarta.validation.Payload;
 
 /**
  * Validation rule for status.
+ * A StatusProt is considered invalid for certain statusMpIds, if validation
+ * of any related Sample, Measm, MeasVal or Site returns notificactions.
  */
 @Target({ TYPE })
 @Retention(RUNTIME)
-@Constraint(validatedBy = { ValidDependenciesValidator.class })
+@Constraint(validatedBy = { HaveDependenciesNotificationsValidator.class })
 @Documented
-public @interface ValidDependencies {
+public @interface HaveDependenciesNotifications {
 
     static final String MSG =
-        "{de.intevation.lada.validation.constraints.ValidDependencies.message}";
+        "{de.intevation.lada.validation.constraints.HaveDependenciesNotifications.message}";
 
     String message() default MSG;
 

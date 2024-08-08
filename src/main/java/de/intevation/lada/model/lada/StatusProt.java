@@ -30,14 +30,17 @@ import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.NotEmptyNorWhitespace;
 import de.intevation.lada.validation.constraints.StatusOrder;
-import de.intevation.lada.validation.constraints.ValidDependencies;
+import de.intevation.lada.validation.constraints.HaveDependenciesNotifications;
+import de.intevation.lada.validation.constraints.ValidDependenciesFinalStatus;
 import de.intevation.lada.validation.groups.DatabaseConstraints;
+import de.intevation.lada.validation.groups.Notifications;
 
 
 @Entity
 @Table(schema = SchemaName.NAME)
 @GroupSequence({ StatusProt.class, DatabaseConstraints.class })
-@ValidDependencies(groups = DatabaseConstraints.class)
+@ValidDependenciesFinalStatus(groups = DatabaseConstraints.class)
+@HaveDependenciesNotifications(groups = Notifications.class)
 @StatusOrder(groups = DatabaseConstraints.class)
 public class StatusProt extends BaseModel implements Serializable {
     private static final long serialVersionUID = 1L;

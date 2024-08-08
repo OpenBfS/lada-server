@@ -7,12 +7,10 @@
  */
 package de.intevation.lada.test.validator;
 
-import jakarta.inject.Inject;
-
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.CommMeasm;
-import de.intevation.lada.validation.Validator;
+
 
 /**
  * Test validation rules for CommMeasm objects.
@@ -25,9 +23,6 @@ public class CommMeasmTest extends ValidatorBaseTest {
     private static final String COMMENT_TEXT_EXISTING = "Testkommentar";
     private static final String COMMENT_TEXT_NEW = "UniqueComment42";
     private static final int EXISTING_MEASM_ID = 1200;
-
-    @Inject
-    private Validator validator;
 
     /**
      * Test commMeasm with existing text.

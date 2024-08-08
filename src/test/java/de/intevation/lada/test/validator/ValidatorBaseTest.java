@@ -9,6 +9,8 @@ package de.intevation.lada.test.validator;
 
 import java.sql.SQLException;
 
+import jakarta.inject.Inject;
+
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.jboss.arquillian.junit.Arquillian;
@@ -19,6 +21,8 @@ import org.junit.runner.RunWith;
 
 import de.intevation.lada.BaseTest;
 import de.intevation.lada.model.BaseModel;
+import de.intevation.lada.validation.Validator;
+
 
 /**
  * Baseclass for ValidatorTests.
@@ -26,6 +30,9 @@ import de.intevation.lada.model.BaseModel;
 @RunWith(Arquillian.class)
 @Transactional
 public abstract class ValidatorBaseTest extends BaseTest {
+
+    @Inject
+    protected Validator validator;
 
     /**
      * Constructor.

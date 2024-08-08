@@ -7,12 +7,10 @@
  */
 package de.intevation.lada.test.validator;
 
-import jakarta.inject.Inject;
-
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.CommSample;
-import de.intevation.lada.validation.Validator;
+
 
 /**
  * Test validation rules for CommSample objects.
@@ -24,9 +22,6 @@ public class CommSampleTest extends ValidatorBaseTest {
     private static final String COMMENT_TEXT_NEW = "UniqueComment42";
     private static final int EXISTING_SAMPLE_ID = 1000;
     private static final String EXISTING_MEAS_FACIL_ID = "06010";
-
-    @Inject
-    private Validator validator;
 
     /**
      * Test commSample with existing text.
