@@ -27,7 +27,6 @@ import de.intevation.lada.model.master.BaseQuery;
 import de.intevation.lada.model.master.Filter;
 import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.model.master.GridColMp;
-import de.intevation.lada.model.master.Tag;
 import de.intevation.lada.util.data.Repository;
 
 /**
@@ -380,12 +379,7 @@ public class QueryTools {
                     int tagNumber = tagIds.length;
                     String param = filter.getParam();
                     for (int i = 0; i < tagNumber; i++) {
-                        String tag =
-                            repository.getById(
-                                Tag.class,
-                                Integer.parseInt(tagIds[i])
-                            ).getName();
-                        this.filterValues.add(param + i, tag);
+                        this.filterValues.add(param + i, tagIds[i]);
                     }
                     continue;
                 }
