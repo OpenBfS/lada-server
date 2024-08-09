@@ -10,15 +10,15 @@ package de.intevation.lada.test.land;
 import java.net.URL;
 import java.util.Arrays;
 
+import jakarta.json.Json;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
-import jakarta.json.JsonValue;
 import jakarta.ws.rs.client.Client;
 
 import org.junit.Assert;
 
-import de.intevation.lada.model.lada.StatusProt;
+import de.intevation.lada.model.lada.StatusProt_;
 import de.intevation.lada.test.ServiceTest;
+
 
 /**
  * Test status entities.
@@ -27,7 +27,6 @@ import de.intevation.lada.test.ServiceTest;
 public class StatusTest extends ServiceTest {
 
     private static final long TS1 = 1450371851654L;
-    private JsonObject expectedById;
     private JsonObject create;
     private JsonObject reset;
 
@@ -46,17 +45,6 @@ public class StatusTest extends ServiceTest {
             "treeMod"
         });
 
-        // Prepare expected object
-        JsonObject status =
-            readXmlResource("datasets/dbUnit_lada.xml", StatusProt.class)
-            .getJsonObject(0);
-        JsonObjectBuilder builder = convertObject(status);
-        builder.add("parentModified", TS1);
-        builder.add("readonly", JsonValue.FALSE);
-        builder.add("owner", JsonValue.TRUE);
-        expectedById = builder.build();
-        Assert.assertNotNull(expectedById);
-
         // Load objects to test POST requests
         create = readJsonResource("/datasets/status.json");
         undeliverablePartiallyValid = readJsonResource(
@@ -71,25 +59,34 @@ public class StatusTest extends ServiceTest {
      * Execute the tests.
      */
     public final void execute() {
-        get("rest/statusprot?measmId=1000");
-        getById("rest/statusprot/1000", expectedById);
-        create("rest/statusprot", create);
-        create("rest/statusprot", reset);
+        final String url = "rest/statusprot/";
+        final int expectedMeasmId = 1200;
+        int id = get(url + "?measmId=" + expectedMeasmId).asJsonArray()
+            .getJsonObject(0).getInt("id");
+
+        getById(url + id,
+            Json.createObjectBuilder()
+            .add(StatusProt_.MEASM_ID, expectedMeasmId)
+            .add(StatusProt_.STATUS_MP_ID, 1)
+            .build());
+
+        create(url, create);
+        create(url, reset);
 
         // Check cases where status is set to undeliverable
         int measmId;
         //Test for measm with partially valid measvals
         //-> MeasVals should be kept
-        measmId = undeliverablePartiallyValid.getInt("measmId");
-        create("rest/statusprot", undeliverablePartiallyValid);
+        measmId = undeliverablePartiallyValid.getInt(StatusProt_.MEASM_ID);
+        create(url, undeliverablePartiallyValid);
         Assert.assertTrue(
             "measVals should have been kept",
             hasMeasVals(measmId));
 
         //Test for measm with invalid measvals
         //-> expect MeasVals to be deleted
-        measmId = undeliverableInvalid.getInt("measmId");
-        create("rest/statusprot", undeliverableInvalid);
+        measmId = undeliverableInvalid.getInt(StatusProt_.MEASM_ID);
+        create(url, undeliverableInvalid);
         Assert.assertFalse(
             "measVals should have been deleted",
             hasMeasVals(measmId));

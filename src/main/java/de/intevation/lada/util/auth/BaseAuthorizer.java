@@ -10,6 +10,7 @@ package de.intevation.lada.util.auth;
 import java.util.List;
 
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.StatusMp;
@@ -52,7 +53,7 @@ public abstract class BaseAuthorizer implements Authorizer {
     public boolean isProbeReadOnly(Integer probeId) {
         QueryBuilder<Measm> builder = repository
             .queryBuilder(Measm.class)
-            .and("sampleId", probeId);
+            .and(Measm_.sampleId, probeId);
         List<Measm> messungen = repository.filter(builder.getQuery());
         for (int i = 0; i < messungen.size(); i++) {
             if (messungen.get(i).getStatus() == null) {

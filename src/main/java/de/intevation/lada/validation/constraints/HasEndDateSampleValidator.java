@@ -11,6 +11,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
 
 
 /**
@@ -44,7 +45,7 @@ public class HasEndDateSampleValidator
         ) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(message)
-                .addPropertyNode("sampleEndDate")
+                .addPropertyNode(Sample_.SAMPLE_END_DATE)
                 .addConstraintViolation();
             return false;
         }

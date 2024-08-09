@@ -15,6 +15,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -69,8 +70,8 @@ public class HasSamplingLocationSampleValidator
             : List.of(TYPE_REG_E, TYPE_REG_R);
         QueryBuilder<Geolocat> builder = repository
             .queryBuilder(Geolocat.class)
-            .and("sampleId", id)
-            .andIn("typeRegulation", expectedTypeRegs);
+            .and(Geolocat_.sampleId, id)
+            .andIn(Geolocat_.typeRegulation, expectedTypeRegs);
         if (repository.filter(builder.getQuery()).isEmpty()) {
             return false;
         }

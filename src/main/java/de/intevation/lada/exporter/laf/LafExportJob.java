@@ -18,7 +18,9 @@ import jakarta.json.JsonValue;
 import de.intevation.lada.exporter.ExportConfig;
 import de.intevation.lada.exporter.Exporter;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.exporter.ExportFormat;
 import de.intevation.lada.exporter.ExportJob;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -75,7 +77,7 @@ public class LafExportJob extends ExportJob {
         if (!probeIds.isEmpty()) {
             QueryBuilder<Sample> pBuilder = repository.queryBuilder(
                 Sample.class);
-            pBuilder.andIn("id", probeIds);
+            pBuilder.andIn(Sample_.id, probeIds);
             List<Sample> pObjects = repository.filter(
                 pBuilder.getQuery());
             for (Sample p : pObjects) {
@@ -87,7 +89,7 @@ public class LafExportJob extends ExportJob {
         if (!messungIds.isEmpty()) {
             QueryBuilder<Measm> mBuilder = repository.queryBuilder(
                 Measm.class);
-            mBuilder.andIn("id", messungIds);
+            mBuilder.andIn(Measm_.id, messungIds);
             List<Measm> mObjects = repository.filter(
                 mBuilder.getQuery());
             for (Measm m : mObjects) {

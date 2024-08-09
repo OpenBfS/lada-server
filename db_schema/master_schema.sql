@@ -438,36 +438,39 @@ CREATE TABLE dataset_creator (
 );
 CREATE TRIGGER last_mod_dataset_creator BEFORE UPDATE ON dataset_creator FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
+CREATE TABLE env_descrip (
+    id serial PRIMARY KEY,
+    pred_id integer REFERENCES env_descrip,
+    lev smallint NOT NULL CHECK(lev BETWEEN 0 AND 11),
+    imis2_id serial,
+    lev_val smallint NOT NULL CHECK(lev_val BETWEEN 0 AND 99),
+    name character varying(100) NOT NULL CHECK (trim(both ' ' from name) <> ''),
+    implication character varying(300) CHECK (trim(both ' ' from implication) <> ''),
+    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc'),
+    CHECK(lev = 0 AND pred_id IS NULL OR lev > 0 AND pred_id IS NOT NULL),
+    UNIQUE(pred_id, lev, lev_val),
+    EXCLUDE(lev_val WITH =) WHERE (lev = 0)
+);
+CREATE TRIGGER last_mod_env_descrip BEFORE UPDATE ON env_descrip FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
+
 CREATE TABLE env_descrip_env_medium_mp (
     id serial PRIMARY KEY,
-    s00 integer NOT NULL,
-    s01 integer NOT NULL,
-    s02 integer,
-    s03 integer,
-    s04 integer,
-    s05 integer,
-    s06 integer,
-    s07 integer,
-    s08 integer,
-    s09 integer,
-    s10 integer,
-    s11 integer,
+    s00 integer NOT NULL REFERENCES env_descrip,
+    s01 integer NOT NULL REFERENCES env_descrip,
+    s02 integer REFERENCES env_descrip,
+    s03 integer REFERENCES env_descrip,
+    s04 integer REFERENCES env_descrip,
+    s05 integer REFERENCES env_descrip,
+    s06 integer REFERENCES env_descrip,
+    s07 integer REFERENCES env_descrip,
+    s08 integer REFERENCES env_descrip,
+    s09 integer REFERENCES env_descrip,
+    s10 integer REFERENCES env_descrip,
+    s11 integer REFERENCES env_descrip,
     env_medium_id character varying(3) NOT NULL REFERENCES env_medium,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_env_descrip_env_medium_mp BEFORE UPDATE ON master.env_descrip_env_medium_mp FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
-
-CREATE TABLE env_descrip (
-    id serial PRIMARY KEY,
-    pred_id integer REFERENCES env_descrip,
-    lev smallint,
-    imis2_id serial,
-    lev_val smallint,
-    name character varying(100) CHECK (trim(both ' ' from name) <> ''),
-    implication character varying(300) CHECK (trim(both ' ' from implication) <> ''),
-    last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
-);
-CREATE TRIGGER last_mod_env_descrip BEFORE UPDATE ON env_descrip FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
 
 CREATE TABLE lada_user (
     id serial PRIMARY KEY,
@@ -511,7 +514,7 @@ INSERT INTO filter_type VALUES(4, 'listtext', true);
 INSERT INTO filter_type VALUES(5, 'listnumber', true);
 INSERT INTO filter_type VALUES(6, 'listdatetime', true);
 INSERT INTO filter_type VALUES(7, 'generictext', false);
-INSERT INTO filter_type VALUES(8, 'name', true);
+INSERT INTO filter_type VALUES(8, 'tag', true);
 /* Used to filter result returned from base_query.sql by any unique identifier,
  * e.g. for export of selected entries (see QueryExportJob.createIdListFilter): */
 INSERT INTO filter_type VALUES(9, 'genericid', true);
@@ -660,17 +663,18 @@ CREATE TRIGGER last_mod_nucl_facil_gr_mp BEFORE UPDATE ON master.nucl_facil_gr_m
 
 CREATE TABLE site_class (
     id smallint PRIMARY KEY,
+    name VARCHAR(60),
     ext_id char(3) NOT NULL UNIQUE CHECK (trim(both ' ' from ext_id) <> ''),
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_site_class BEFORE UPDATE ON master.site_class
     FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
-INSERT INTO site_class (id, ext_id) VALUES
-    (1, 'DYN'),
-    (2, 'GP'),
-    (3, 'REI'),
-    (4, 'VE'),
-    (5, 'ST');
+INSERT INTO site_class (id, name, ext_id) VALUES
+    (1, 'dynamischer Messpunkt (nicht vordefiniert)', 'DYN'),
+    (2, 'vordefinierter Messpunkt', 'GP'),
+    (3, 'REI-Messpunkt','REI'),
+    (4, 'Verwaltungseinheit','VE'),
+    (5, 'Staat', 'ST');
 
 CREATE TABLE poi (
     id character varying(7) PRIMARY KEY CHECK (trim(both ' ' from id) <> ''),

@@ -18,8 +18,10 @@ import jakarta.ws.rs.QueryParam;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.StatusAccessMpView;
+import de.intevation.lada.model.master.StatusAccessMpView_;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.model.master.StatusVal;
+import de.intevation.lada.model.master.StatusVal_;
 import de.intevation.lada.util.annotation.AuthorizationConfig;
 import de.intevation.lada.util.auth.Authorization;
 import de.intevation.lada.util.auth.AuthorizationType;
@@ -92,16 +94,17 @@ public class StatusValService extends LadaService {
 
         QueryBuilder<StatusAccessMpView> errFilter = repository
             .queryBuilder(StatusAccessMpView.class)
-            .andIn("statusLevId", authorization.getInfo().getFunktionen())
-            .and("curLevId", kombi.getStatusLev().getId())
-            .and("curValId", kombi.getStatusVal().getId());
+            .andIn(StatusAccessMpView_.statusLevId,
+                authorization.getInfo().getFunktionen())
+            .and(StatusAccessMpView_.curLevId, kombi.getStatusLev().getId())
+            .and(StatusAccessMpView_.curValId, kombi.getStatusVal().getId());
         List<StatusAccessMpView> erreichbare = repository.filter(
             errFilter.getQuery());
 
         QueryBuilder<StatusVal> werteFilter =
             repository.queryBuilder(StatusVal.class);
         for (StatusAccessMpView erreichbar: erreichbare) {
-            werteFilter.or("id", erreichbar.getStatusValId());
+            werteFilter.or(StatusVal_.id, erreichbar.getStatusValId());
         }
         return repository.filter(werteFilter.getQuery());
     }

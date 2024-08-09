@@ -13,6 +13,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.master.AdminBorderView;
+import de.intevation.lada.model.master.AdminBorderView_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -33,7 +34,7 @@ public class IsAdminBorderKeyValidator
             .createInstance().select(Repository.class).get();
         QueryBuilder<AdminBorderView> vg = repository
             .queryBuilder(AdminBorderView.class)
-            .and("municId", val);
+            .and(AdminBorderView_.municId, val);
         return !repository.filter(vg.getQuery()).isEmpty();
     }
 }

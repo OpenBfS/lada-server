@@ -7,24 +7,20 @@
  */
 package de.intevation.lada.test.validator;
 
-import jakarta.inject.Inject;
-
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.StatusProt;
-import de.intevation.lada.validation.Validator;
+import de.intevation.lada.model.lada.StatusProt_;
+
 
 /**
  * Test Status entities.
  * @author <a href="mailto:rrenkert@intevation.de">Raimund Renkert</a>
  */
 public class StatusTest extends ValidatorBaseTest {
-
-    //Validator keys
-    private static final String STATUS_MP_ID = "statusMpId";
 
     //Other constants
     private static final int ID1 = 1;
@@ -33,8 +29,7 @@ public class StatusTest extends ValidatorBaseTest {
 
     private static final int INVALID_STATUS_MP_ID = 42;
 
-    @Inject
-    private Validator<StatusProt> validator;
+    private static final String MSG_KEY = "status";
 
     /**
      * Constructor.
@@ -56,9 +51,9 @@ public class StatusTest extends ValidatorBaseTest {
         validator.validate(status);
         Assert.assertTrue(status.hasErrors());
         MatcherAssert.assertThat(status.getErrors().keySet(),
-            CoreMatchers.hasItem(STATUS_MP_ID));
+            CoreMatchers.hasItem(StatusProt_.STATUS_MP_ID));
         MatcherAssert.assertThat(
-            status.getErrors().get(STATUS_MP_ID),
+            status.getErrors().get(StatusProt_.STATUS_MP_ID),
             CoreMatchers.hasItem(
                 "'" + INVALID_STATUS_MP_ID + "' is no valid primary key"));
     }
@@ -86,7 +81,7 @@ public class StatusTest extends ValidatorBaseTest {
 
         assertHasErrors(
             validator.validate(status),
-            STATUS_MP_ID,
+            StatusProt_.STATUS_MP_ID,
             "Values do not match");
     }
 
@@ -115,7 +110,8 @@ public class StatusTest extends ValidatorBaseTest {
     }
 
     /**
-     * Test status of measm with error, warning and notification at measm.
+     * Test setting status "plausible" of measm with error, warning
+     * and notification at measm.
      */
     @Test
     public void measmWithMessages() {
@@ -124,13 +120,61 @@ public class StatusTest extends ValidatorBaseTest {
         status.setMeasmId(invalidMeasmId);
         assertHasErrors(
             validator.validate(status),
-            "status",
+            MSG_KEY,
             "Operation not possible due to constraint violations\n"
             + "Errors:\n"
             + "- measVal: [631]\n"
             + "Warnings:\n"
             + "- measmStartDate: [A value must be provided]\n"
             + "Notifications:\n"
+            + "- minSampleId: [must not be blank]"
+        );
+    }
+
+    /**
+     * Test setting status "not plausible" of measm with error, warning
+     * and notification at measm.
+     */
+    @Test
+    public void measmWithMessagesNotPlausible() {
+        StatusProt status = minimalStatusProt();
+        final int notPlausible = 4, invalidMeasmId = 1201;
+        status.setStatusMpId(notPlausible);
+        status.setMeasmId(invalidMeasmId);
+        assertNoMessages(validator.validate(status));
+    }
+
+    /**
+     * Test status of measm with warning and notification at measm.
+     */
+    @Test
+    public void measmWithWarnings() {
+        StatusProt status = minimalStatusProt();
+        final int invalidMeasmId = 1202;
+        status.setMeasmId(invalidMeasmId);
+        assertHasErrors(
+            validator.validate(status),
+            MSG_KEY,
+            "Operation not possible due to constraint violations\n"
+            + "Warnings:\n"
+            + "- measmStartDate: [A value must be provided]\n"
+            + "Notifications:\n"
+            + "- minSampleId: [must not be blank]"
+        );
+    }
+
+    /**
+     * Test status of measm with notification at measm.
+     */
+    @Test
+    public void measmWithNotifications() {
+        StatusProt status = minimalStatusProt();
+        final int measmId = 1203;
+        status.setMeasmId(measmId);
+        assertHasNotifications(
+            validator.validate(status),
+            MSG_KEY,
+            "Notifications:\n"
             + "- minSampleId: [must not be blank]"
         );
     }

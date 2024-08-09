@@ -15,10 +15,13 @@ import jakarta.persistence.PersistenceException;
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -155,8 +158,9 @@ public class ObjectMerger {
         QueryBuilder<SampleSpecifMeasVal> builder =
             repository.queryBuilder(SampleSpecifMeasVal.class);
         for (int i = 0; i < zusatzwerte.size(); i++) {
-            builder.and("sampleId", target.getId());
-            builder.and("sampleSpecifId", zusatzwerte.get(i).getSampleSpecifId());
+            builder.and(SampleSpecifMeasVal_.sampleId, target.getId());
+            builder.and(SampleSpecifMeasVal_.sampleSpecifId,
+                zusatzwerte.get(i).getSampleSpecifId());
             List<SampleSpecifMeasVal> found =
                 repository.filter(builder.getQuery());
             if (found.isEmpty()) {
@@ -193,7 +197,7 @@ public class ObjectMerger {
     ) {
         QueryBuilder<MeasVal> builder =
             repository.queryBuilder(MeasVal.class);
-        builder.and("measmId", target.getId());
+        builder.and(MeasVal_.measmId, target.getId());
         List<MeasVal> found =
             repository.filter(builder.getQuery());
         if (found.isEmpty()) {
@@ -234,8 +238,8 @@ public class ObjectMerger {
     ) {
         QueryBuilder<Geolocat> builder =
             repository.queryBuilder(Geolocat.class);
-        builder.and("sampleId", probeId);
-        builder.and("typeRegulation", "E");
+        builder.and(Geolocat_.sampleId, probeId);
+        builder.and(Geolocat_.typeRegulation, "E");
         List<Geolocat> found =
             repository.filter(builder.getQuery());
         if (found.isEmpty()) {
@@ -273,9 +277,9 @@ public class ObjectMerger {
         QueryBuilder<Geolocat> builder =
             repository.queryBuilder(Geolocat.class);
         for (int i = 0; i < orte.size(); i++) {
-            builder.and("sampleId", probeId);
-            builder.and("typeRegulation", "U");
-            builder.and("siteId", orte.get(i).getSiteId());
+            builder.and(Geolocat_.sampleId, probeId);
+            builder.and(Geolocat_.typeRegulation, "U");
+            builder.and(Geolocat_.siteId, orte.get(i).getSiteId());
             List<Geolocat> found =
                 repository.filter(builder.getQuery());
             if (found.isEmpty()) {

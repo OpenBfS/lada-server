@@ -11,6 +11,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 
 
 /**
@@ -35,7 +36,7 @@ public class HasNotErrorAndLessThanLODValidator
         ) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
-                .addPropertyNode("error")
+                .addPropertyNode(MeasVal_.ERROR)
                 .addConstraintViolation();
             return false;
         }

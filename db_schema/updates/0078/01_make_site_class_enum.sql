@@ -11,6 +11,7 @@ UPDATE master.base_query SET sql = replace(
     ' ');
 
 -- Move identifier
+ALTER TABLE master.site DISABLE TRIGGER last_mod_site;
 ALTER TABLE master.site ADD site_class_id_ char(3);
 UPDATE master.site SET site_class_id_ = (
     SELECT ext_id FROM master.site_class WHERE id = site_class_id);
@@ -25,6 +26,7 @@ ALTER TABLE master.site_class
 
 ALTER TABLE master.site
     ADD FOREIGN KEY (site_class_id) REFERENCES master.site_class;
+ALTER TABLE master.site ENABLE TRIGGER last_mod_site;
 
 -- Recreate view
 CREATE VIEW stamm.ort AS SELECT

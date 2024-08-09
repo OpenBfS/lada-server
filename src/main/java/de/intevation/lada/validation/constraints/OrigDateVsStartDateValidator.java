@@ -13,6 +13,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
 
 
 /**
@@ -36,7 +37,7 @@ public class OrigDateVsStartDateValidator
         if (uZeit != null && begin != null && uZeit.after(begin)) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
-                .addPropertyNode("origDate")
+                .addPropertyNode(Sample_.ORIG_DATE)
                 .addConstraintViolation();
             return false;
         }

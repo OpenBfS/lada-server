@@ -15,7 +15,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
+
 import static jakarta.persistence.TemporalType.TIMESTAMP;
+
 
 @Entity
 @Table(schema = SchemaName.NAME)
@@ -189,5 +191,4 @@ public class EnvDescripEnvMediumMp implements Serializable {
     public void setLastMod(Date lastMod) {
         this.lastMod = lastMod;
     }
-
 }

@@ -11,6 +11,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Mpg;
+import de.intevation.lada.model.lada.Mpg_;
 
 
 /**
@@ -39,10 +40,10 @@ public class BeginBeforeEndMpgValidator
             isValid = false;
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(BeginBeforeEnd.MSG)
-                .addPropertyNode("samplePdStartDate")
+                .addPropertyNode(Mpg_.SAMPLE_PD_START_DATE)
                 .addConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(BeginBeforeEnd.MSG)
-                .addPropertyNode("samplePdEndDate")
+                .addPropertyNode(Mpg_.SAMPLE_PD_END_DATE)
                 .addConstraintViolation();
         }
 

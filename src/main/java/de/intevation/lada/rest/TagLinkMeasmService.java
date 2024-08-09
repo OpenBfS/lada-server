@@ -8,7 +8,10 @@
 package de.intevation.lada.rest;
 
 import de.intevation.lada.model.lada.TagLinkMeasm;
+import de.intevation.lada.model.lada.TagLinkMeasm_;
+import de.intevation.lada.model.lada.TagLink_;
 import jakarta.ws.rs.Path;
+
 
 @Path(LadaService.PATH_REST + "tag/taglinkmeasm")
 public class TagLinkMeasmService extends TagLinkService<TagLinkMeasm> {
@@ -19,12 +22,12 @@ public class TagLinkMeasmService extends TagLinkService<TagLinkMeasm> {
     }
 
     @Override
-    protected String getTaggedObjectIdField() {
-        return "measmId";
-    }
-
-    @Override
-    protected Object getTaggegObjectId(TagLinkMeasm link) {
-        return link.getMeasmId();
+    protected void deleteTagLink(TagLinkMeasm tagLink) {
+        repository.delete(
+            repository.getSingle(repository
+                .queryBuilder(TagLinkMeasm.class)
+                .and(TagLink_.tagId, tagLink.getTagId())
+                .and(TagLinkMeasm_.measmId, tagLink.getMeasmId())
+                .getQuery()));
     }
 }

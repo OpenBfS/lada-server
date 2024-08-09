@@ -13,6 +13,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Mpg;
+import de.intevation.lada.model.lada.Mpg_;
 
 
 /**
@@ -57,9 +58,9 @@ public class ValidSamplePdValidator
         }
 
         boolean isValid = true;
-        final String startDateKey = "samplePdStartDate",
-            endDateKey = "samplePdEndDate",
-            offsetKey = "samplePdOffset";
+        final String startDateKey = Mpg_.SAMPLE_PD_START_DATE,
+            endDateKey = Mpg_.SAMPLE_PD_END_DATE,
+            offsetKey = Mpg_.SAMPLE_PD_OFFSET;
         if (Mpg.YEARLY.equals(probenintervall)) {
             if (teilVon < gueltigVon || teilVon > gueltigBis) {
                 isValid = false;

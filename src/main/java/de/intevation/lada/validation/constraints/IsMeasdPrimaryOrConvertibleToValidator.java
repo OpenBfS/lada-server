@@ -80,8 +80,8 @@ public class IsMeasdPrimaryOrConvertibleToValidator
         // Check if the measVal is convertable into the primary unit
         QueryBuilder<UnitConvers> primaryBuilder = repository
             .queryBuilder(UnitConvers.class)
-            .and(UnitConvers_.FROM_UNIT_ID, selectedUnit)
-            .and(UnitConvers_.TO_UNIT_ID, umwelt.getUnit1());
+            .and(UnitConvers_.fromUnitId, selectedUnit)
+            .and(UnitConvers_.toUnitId, umwelt.getUnit1());
         if (!repository.filter(primaryBuilder.getQuery()).isEmpty()) {
             return true;
         }
@@ -89,8 +89,8 @@ public class IsMeasdPrimaryOrConvertibleToValidator
         // Check if the measVal is convertable into the secondary unit
         QueryBuilder<UnitConvers> secondaryBuilder = repository
             .queryBuilder(UnitConvers.class)
-            .and(UnitConvers_.FROM_UNIT_ID, selectedUnit)
-            .and(UnitConvers_.TO_UNIT_ID, secMehId);
+            .and(UnitConvers_.fromUnitId, selectedUnit)
+            .and(UnitConvers_.toUnitId, secMehId);
         if (!repository.filter(secondaryBuilder.getQuery()).isEmpty()) {
             return false;
         }

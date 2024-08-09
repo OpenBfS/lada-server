@@ -15,7 +15,9 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.StatusProt;
+import de.intevation.lada.model.lada.StatusProt_;
 import de.intevation.lada.model.master.StatusOrdMp;
+import de.intevation.lada.model.master.StatusOrdMp_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -51,24 +53,25 @@ public class StatusOrderValidator
         // Get the previous status
         QueryBuilder<StatusProt> lastFilter = repository
             .queryBuilder(StatusProt.class)
-            .and("measmId", status.getMeasmId())
-            .orderBy("id", false);
+            .and(StatusProt_.id, status.getId()).not()
+            .and(StatusProt_.measmId, status.getMeasmId())
+            .orderBy(StatusProt_.id, false);
         List<StatusProt> protos =
-            repository.filter(lastFilter.getQuery(), 1, 1);
+            repository.filter(lastFilter.getQuery(), 0, 1);
         if (protos.isEmpty()) {
             return true;
         }
         StatusProt last = protos.get(0);
         QueryBuilder<StatusOrdMp> folgeFilter = repository
             .queryBuilder(StatusOrdMp.class)
-            .and("fromId", last.getStatusMpId())
-            .and("toId", status.getStatusMpId());
+            .and(StatusOrdMp_.fromId, last.getStatusMpId())
+            .and(StatusOrdMp_.toId, status.getStatusMpId());
         List<StatusOrdMp> reihenfolge =
             repository.filter(folgeFilter.getQuery());
         if (reihenfolge.isEmpty()) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
-                .addPropertyNode("statusMpId")
+                .addPropertyNode(StatusProt_.STATUS_MP_ID)
                 .addConstraintViolation();
             return false;
         }

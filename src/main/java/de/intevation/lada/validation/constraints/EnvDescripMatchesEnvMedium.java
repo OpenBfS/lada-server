@@ -17,19 +17,20 @@ import java.lang.annotation.Target;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
+
 /**
- * Validation rule for status.
+ * Validates if envMediumId fits the descriptor string.
  */
 @Target({ TYPE })
 @Retention(RUNTIME)
-@Constraint(validatedBy = { ValidDependenciesValidator.class })
+@Constraint(validatedBy = {
+        EnvDescripMatchesEnvMediumSampleValidator.class,
+        EnvDescripMatchesEnvMediumMpgValidator.class })
 @Documented
-public @interface ValidDependencies {
+public @interface EnvDescripMatchesEnvMedium {
 
-    static final String MSG =
-        "{de.intevation.lada.validation.constraints.ValidDependencies.message}";
-
-    String message() default MSG;
+    String message() default
+        "{de.intevation.lada.validation.constraints.EnvDescripMatchesEnvMedium.message}";
 
     Class<?>[] groups() default { };
 

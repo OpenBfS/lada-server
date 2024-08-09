@@ -7,6 +7,9 @@
  */
 package de.intevation.lada.importer;
 
+import java.util.Objects;
+
+
 /**
  * Container for error or warning messages send to the client.
  *
@@ -98,5 +101,19 @@ public class ReportItem {
      */
     public void setCode(Integer code) {
         this.code = code.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj != null
+            && obj instanceof ReportItem ri
+            && Objects.equals(key, ri.getKey())
+            && Objects.equals(value, ri.getValue())
+            && Objects.equals(code, ri.getCode());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(key, value, code);
     }
 }

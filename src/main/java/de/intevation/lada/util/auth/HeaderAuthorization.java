@@ -35,8 +35,10 @@ import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.lada.TagLinkMeasm;
 import de.intevation.lada.model.lada.TagLinkSample;
 import de.intevation.lada.model.master.Auth;
+import de.intevation.lada.model.master.Auth_;
 import de.intevation.lada.model.master.DatasetCreator;
 import de.intevation.lada.model.master.LadaUser;
+import de.intevation.lada.model.master.LadaUser_;
 import de.intevation.lada.model.master.MpgCateg;
 import de.intevation.lada.model.master.MunicDiv;
 import de.intevation.lada.model.master.Sampler;
@@ -79,13 +81,13 @@ public class HeaderAuthorization implements Authorization {
         String[] mst = request.getAttribute("lada.user.roles").toString()
             .replace("[", "").replace("]", "").replace(" ", "").split(",");
         QueryBuilder<Auth> authBuilder = repository.queryBuilder(Auth.class);
-        authBuilder.andIn("ldapGr", Arrays.asList(mst));
+        authBuilder.andIn(Auth_.ldapGr, Arrays.asList(mst));
         List<Auth> auth = repository.filter(authBuilder.getQuery());
 
         // The user's ID
         QueryBuilder<LadaUser> uIdBuilder =
             repository.queryBuilder(LadaUser.class);
-        uIdBuilder.and("name", name);
+        uIdBuilder.and(LadaUser_.name, name);
         LadaUser user;
         try {
             user = repository.getSingle(uIdBuilder.getQuery());

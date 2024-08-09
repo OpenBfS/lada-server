@@ -54,9 +54,9 @@ public class ReiSiteExtIdMatchesNuclFacilValidator
             .createInstance().select(Repository.class).get();
         QueryBuilder<NuclFacilGrMp> builder = repository
             .queryBuilder(NuclFacilGrMp.class)
-            .and(NuclFacilGrMp_.NUCL_FACIL_EXT_ID,
+            .and(NuclFacilGrMp_.nuclFacilExtId,
                 ort.getExtId().substring(0, NUCL_FACIL_EXT_ID_LENGTH))
-            .and(NuclFacilGrMp_.NUCL_FACIL_GR_ID,
+            .and(NuclFacilGrMp_.nuclFacilGrId,
                 ort.getNuclFacilGrId());
         if (repository.filter(builder.getQuery()).isEmpty()) {
             ctx.disableDefaultConstraintViolation();

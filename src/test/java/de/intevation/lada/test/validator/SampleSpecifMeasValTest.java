@@ -7,21 +7,15 @@
  */
 package de.intevation.lada.test.validator;
 
-import jakarta.inject.Inject;
-
 import org.junit.Test;
 
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
-import de.intevation.lada.validation.Validator;
 
 
 /**
  * Test SampleSpecifMeasVal validation.
  */
 public class SampleSpecifMeasValTest extends ValidatorBaseTest {
-
-    @Inject
-    private Validator<SampleSpecifMeasVal> validator;
 
     /**
      * Test validation of valid value.

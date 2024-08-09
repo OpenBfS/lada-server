@@ -34,9 +34,12 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.auth.UserInfo;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.GridColConf;
+import de.intevation.lada.model.master.GridColConf_;
 import de.intevation.lada.model.master.GridColMp;
 import de.intevation.lada.model.master.MeasFacil;
+import de.intevation.lada.model.master.QueryMeasFacilMp_;
 import de.intevation.lada.model.master.QueryUser;
+import de.intevation.lada.model.master.QueryUser_;
 
 
 /**
@@ -71,19 +74,19 @@ public class GridColConfService extends LadaService {
             builder.createQuery(GridColConf.class);
         Root<GridColConf> root = criteriaQuery.from(GridColConf.class);
         Join<GridColConf, QueryUser> value =
-            root.join("queryUser", jakarta.persistence.criteria.JoinType.LEFT);
+            root.join(GridColConf_.queryUser, jakarta.persistence.criteria.JoinType.LEFT);
         Join<MeasFacil, QueryUser> mess =
-            value.join("messStelles", jakarta.persistence.criteria.JoinType.LEFT);
-        Predicate filter = builder.equal(root.get("queryUser").get("id"), queryUser);
-        Predicate uId = builder.equal(root.get("ladaUserId"), userInfo.getUserId());
-        Predicate zeroIdFilter = builder.equal(root.get("ladaUserId"), "0");
+            value.join(QueryUser_.MESS_STELLES, jakarta.persistence.criteria.JoinType.LEFT);
+        Predicate filter = builder.equal(root.get(GridColConf_.queryUser).get(QueryUser_.id), queryUser);
+        Predicate uId = builder.equal(root.get(GridColConf_.ladaUserId), userInfo.getUserId());
+        Predicate zeroIdFilter = builder.equal(root.get(GridColConf_.ladaUserId), "0");
         Predicate userFilter = builder.or(uId, zeroIdFilter);
         if (userInfo.getMessstellen() != null
             && !userInfo.getMessstellen().isEmpty()
         ) {
             userFilter = builder.or(
                 userFilter,
-                mess.get("measFacilId").in(userInfo.getMessstellen()));
+                mess.get(QueryMeasFacilMp_.MEAS_FACIL_ID).in(userInfo.getMessstellen()));
         }
         filter = builder.and(filter, userFilter);
         criteriaQuery.where(filter).distinct(true);

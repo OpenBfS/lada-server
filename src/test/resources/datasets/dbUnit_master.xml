@@ -177,10 +177,10 @@
         short_text = "kurz"
         site_class_id = "1"
     />
+
     <!-- Env descrip data-->
-    <master.env_descrip
-        id = "1000"
-    />
+    <master.env_descrip id = "1000" lev = "0" lev_val = "1" name = "s00" />
+
     <!--Pep gen data-->
     <lada.mpg
         id = "1000"

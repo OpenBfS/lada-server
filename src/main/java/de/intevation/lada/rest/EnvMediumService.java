@@ -19,7 +19,9 @@ import jakarta.ws.rs.QueryParam;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.EnvMedium;
+import de.intevation.lada.model.master.EnvMedium_;
 import de.intevation.lada.model.master.ReiAgGrEnvMediumMp;
+import de.intevation.lada.model.master.ReiAgGrEnvMediumMp_;
 
 /**
  * REST service for EnvMedium objects.
@@ -51,7 +53,7 @@ public class EnvMediumService extends LadaService {
         }
         QueryBuilder<ReiAgGrEnvMediumMp> builder =
             repository.queryBuilder(ReiAgGrEnvMediumMp.class);
-        builder.and("reiAgGrId", reiAgGrId);
+        builder.and(ReiAgGrEnvMediumMp_.reiAgGrId, reiAgGrId);
         List<ReiAgGrEnvMediumMp> zuord =
             repository.filter(builder.getQuery());
         if (zuord.isEmpty()) {
@@ -63,7 +65,7 @@ public class EnvMediumService extends LadaService {
         for (int i = 0; i < zuord.size(); i++) {
             ids.add(zuord.get(i).getEnvMediumId());
         }
-        builder1.orIn("id", ids);
+        builder1.orIn(EnvMedium_.id, ids);
         return repository.filter(builder1.getQuery());
     }
 

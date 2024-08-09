@@ -14,6 +14,7 @@ import jakarta.inject.Inject;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -44,8 +45,8 @@ public class ProbeIdentifier implements Identifier {
             && probe.getMainSampleId() != null
             && probe.getMeasFacilId() != null
         ) {
-            builder.and("measFacilId", probe.getMeasFacilId());
-            builder.and("mainSampleId", probe.getMainSampleId());
+            builder.and(Sample_.measFacilId, probe.getMeasFacilId());
+            builder.and(Sample_.mainSampleId, probe.getMainSampleId());
             List<Sample> proben =
                 repository.filter(builder.getQuery());
             if (proben.size() > 1) {
@@ -62,7 +63,7 @@ public class ProbeIdentifier implements Identifier {
             && (probe.getMainSampleId() == null
                 || probe.getMeasFacilId() == null)
         ) {
-            builder.and("extId", probe.getExtId());
+            builder.and(Sample_.extId, probe.getExtId());
             List<Sample> proben =
                 repository.filter(builder.getQuery());
             if (proben.size() > 1) {
@@ -76,7 +77,7 @@ public class ProbeIdentifier implements Identifier {
             found = proben.get(0);
             return Identified.UPDATE;
         } else {
-            builder.and("extId", probe.getExtId());
+            builder.and(Sample_.extId, probe.getExtId());
             List<Sample> proben =
                 repository.filter(builder.getQuery());
             if (proben.size() > 1) {

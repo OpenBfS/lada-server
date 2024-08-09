@@ -9,8 +9,6 @@ package de.intevation.lada.test.validator;
 
 import java.util.Set;
 
-import jakarta.inject.Inject;
-
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
@@ -18,8 +16,8 @@ import org.junit.Test;
 import de.intevation.lada.model.lada.Mpg;
 import de.intevation.lada.model.lada.Mpg_;
 import de.intevation.lada.model.master.SampleSpecif;
-import de.intevation.lada.util.data.StatusCodes;
-import de.intevation.lada.validation.Validator;
+import de.intevation.lada.util.data.EnvMedia;
+
 
 /**
  * Test validation rules for Mpg objects.
@@ -27,13 +25,7 @@ import de.intevation.lada.validation.Validator;
 public class MpgTest extends ValidatorBaseTest {
 
     //Validation keys
-    private static final String ENV_DESCRIP_DISPLAY = "envDescripDisplay";
-    private static final String SAMPLE_PD_OFFSET = "samplePdOffset";
-    private static final String SAMPLE_PD_END_DATE = "samplePdEndDate";
-    private static final String SAMPLE_PD_START_DATE = "samplePdStartDate";
     private static final String SAMPLE_SPECIFS_FK_ARRAY = "sampleSpecifs[].id";
-    private static final String VALID_END_DATE = "validEndDate";
-    private static final String VALID_START_DATE = "validStartDate";
 
     //Other constants
     private static final String EXISTING_MEAS_FACIL_ID = "06010";
@@ -56,8 +48,6 @@ public class MpgTest extends ValidatorBaseTest {
     private static final String VALUE_OUTSIDE_RANGE =
         "Value outside range of validity";
 
-    @Inject
-    private Validator<Mpg> validator;
 
     /**
      * Test mpg objects with valid start and end date below minimum value.
@@ -88,10 +78,10 @@ public class MpgTest extends ValidatorBaseTest {
         validator.validate(mpg);
         assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
-            CoreMatchers.hasItems(VALID_START_DATE, VALID_END_DATE));
-        MatcherAssert.assertThat(mpg.getErrors().get(VALID_START_DATE),
+            CoreMatchers.hasItems(Mpg_.VALID_START_DATE, Mpg_.VALID_END_DATE));
+        MatcherAssert.assertThat(mpg.getErrors().get(Mpg_.VALID_START_DATE),
             CoreMatchers.hasItem(expectedError));
-        MatcherAssert.assertThat(mpg.getErrors().get(VALID_END_DATE),
+        MatcherAssert.assertThat(mpg.getErrors().get(Mpg_.VALID_END_DATE),
             CoreMatchers.hasItem(expectedError));
     }
 
@@ -138,8 +128,8 @@ public class MpgTest extends ValidatorBaseTest {
         validator.validate(mpg);
         assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
-            CoreMatchers.hasItem(SAMPLE_PD_START_DATE));
-        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_START_DATE),
+            CoreMatchers.hasItem(Mpg_.SAMPLE_PD_START_DATE));
+        MatcherAssert.assertThat(mpg.getErrors().get(Mpg_.SAMPLE_PD_START_DATE),
             CoreMatchers.hasItem(VALUE_OUTSIDE_RANGE));
     }
 
@@ -176,8 +166,8 @@ public class MpgTest extends ValidatorBaseTest {
         validator.validate(mpg);
         assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
-            CoreMatchers.hasItem(SAMPLE_PD_END_DATE));
-        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_END_DATE),
+            CoreMatchers.hasItem(Mpg_.SAMPLE_PD_END_DATE));
+        MatcherAssert.assertThat(mpg.getErrors().get(Mpg_.SAMPLE_PD_END_DATE),
             CoreMatchers.hasItem(VALUE_OUTSIDE_RANGE));
     }
 
@@ -197,8 +187,8 @@ public class MpgTest extends ValidatorBaseTest {
         validator.validate(mpg);
         assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
-            CoreMatchers.hasItem(SAMPLE_PD_OFFSET));
-        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_OFFSET),
+            CoreMatchers.hasItem(Mpg_.SAMPLE_PD_OFFSET));
+        MatcherAssert.assertThat(mpg.getErrors().get(Mpg_.SAMPLE_PD_OFFSET),
             CoreMatchers.hasItem(VALUE_OUTSIDE_RANGE));
     }
 
@@ -233,8 +223,8 @@ public class MpgTest extends ValidatorBaseTest {
         validator.validate(mpg);
         assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
-            CoreMatchers.hasItem(SAMPLE_PD_START_DATE));
-        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_START_DATE),
+            CoreMatchers.hasItem(Mpg_.SAMPLE_PD_START_DATE));
+        MatcherAssert.assertThat(mpg.getErrors().get(Mpg_.SAMPLE_PD_START_DATE),
             CoreMatchers.hasItem(GREATER_OR_EQUAL_ONE));
     }
 
@@ -253,8 +243,8 @@ public class MpgTest extends ValidatorBaseTest {
         validator.validate(mpg);
         assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
-            CoreMatchers.hasItem(SAMPLE_PD_END_DATE));
-        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_END_DATE),
+            CoreMatchers.hasItem(Mpg_.SAMPLE_PD_END_DATE));
+        MatcherAssert.assertThat(mpg.getErrors().get(Mpg_.SAMPLE_PD_END_DATE),
             CoreMatchers.hasItem(GREATER_OR_EQUAL_ONE));
     }
 
@@ -275,8 +265,8 @@ public class MpgTest extends ValidatorBaseTest {
         validator.validate(mpg);
         assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
-            CoreMatchers.hasItem(SAMPLE_PD_OFFSET));
-        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_OFFSET),
+            CoreMatchers.hasItem(Mpg_.SAMPLE_PD_OFFSET));
+        MatcherAssert.assertThat(mpg.getErrors().get(Mpg_.SAMPLE_PD_OFFSET),
             CoreMatchers.hasItem("must be greater than or equal to 0"));
     }
 
@@ -311,8 +301,8 @@ public class MpgTest extends ValidatorBaseTest {
         validator.validate(mpg);
         assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
-            CoreMatchers.hasItem(SAMPLE_PD_START_DATE));
-        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_START_DATE),
+            CoreMatchers.hasItem(Mpg_.SAMPLE_PD_START_DATE));
+        MatcherAssert.assertThat(mpg.getErrors().get(Mpg_.SAMPLE_PD_START_DATE),
             CoreMatchers.hasItem(VALUE_OUTSIDE_RANGE));
     }
 
@@ -331,8 +321,8 @@ public class MpgTest extends ValidatorBaseTest {
         validator.validate(mpg);
         assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
-            CoreMatchers.hasItem(SAMPLE_PD_END_DATE));
-        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_END_DATE),
+            CoreMatchers.hasItem(Mpg_.SAMPLE_PD_END_DATE));
+        MatcherAssert.assertThat(mpg.getErrors().get(Mpg_.SAMPLE_PD_END_DATE),
             CoreMatchers.hasItem(VALUE_OUTSIDE_RANGE));
     }
 
@@ -352,8 +342,8 @@ public class MpgTest extends ValidatorBaseTest {
         validator.validate(mpg);
         assertHasErrors(mpg);
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
-            CoreMatchers.hasItem(SAMPLE_PD_OFFSET));
-        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_OFFSET),
+            CoreMatchers.hasItem(Mpg_.SAMPLE_PD_OFFSET));
+        MatcherAssert.assertThat(mpg.getErrors().get(Mpg_.SAMPLE_PD_OFFSET),
             CoreMatchers.hasItem(VALUE_OUTSIDE_RANGE));
     }
 
@@ -373,11 +363,12 @@ public class MpgTest extends ValidatorBaseTest {
         assertHasErrors(mpg);
 
         MatcherAssert.assertThat(mpg.getErrors().keySet(),
-            CoreMatchers.hasItems(SAMPLE_PD_START_DATE, SAMPLE_PD_END_DATE));
+            CoreMatchers.hasItems(Mpg_.SAMPLE_PD_START_DATE,
+                Mpg_.SAMPLE_PD_END_DATE));
         String errorMsg = "Begin must be before end";
-        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_START_DATE),
+        MatcherAssert.assertThat(mpg.getErrors().get(Mpg_.SAMPLE_PD_START_DATE),
             CoreMatchers.hasItem(errorMsg));
-        MatcherAssert.assertThat(mpg.getErrors().get(SAMPLE_PD_END_DATE),
+        MatcherAssert.assertThat(mpg.getErrors().get(Mpg_.SAMPLE_PD_END_DATE),
             CoreMatchers.hasItem(errorMsg));
     }
 
@@ -426,12 +417,10 @@ public class MpgTest extends ValidatorBaseTest {
         mpg.setEnvMediumId("L42");
         mpg.setEnvDescripDisplay("77 88 99 00");
 
-        validator.validate(mpg);
-        assertHasErrors(mpg);
-        MatcherAssert.assertThat(mpg.getErrors().keySet(),
-            CoreMatchers.hasItem(ENV_DESCRIP_DISPLAY));
-        MatcherAssert.assertThat(mpg.getErrors().get(ENV_DESCRIP_DISPLAY),
-            CoreMatchers.hasItem("must match \"D:( [0-9][0-9]){12}\""));
+        assertHasErrors(
+            validator.validate(mpg),
+            Mpg_.ENV_DESCRIP_DISPLAY,
+            "must match \"" + EnvMedia.ENV_DESCRIP_PATTERN + "\"");
     }
 
     /**
@@ -446,7 +435,7 @@ public class MpgTest extends ValidatorBaseTest {
         assertHasNotifications(
             validator.validate(mpg),
             Mpg_.ENV_MEDIUM_ID,
-            String.valueOf(StatusCodes.VALUE_NOT_MATCHING));
+            "Environment description does not match environmental medium");
     }
 
     /**

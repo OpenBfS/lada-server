@@ -17,6 +17,7 @@ import jakarta.ws.rs.QueryParam;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.Auth;
+import de.intevation.lada.model.master.Auth_;
 
 /**
  * REST service for Auth objects.
@@ -40,10 +41,10 @@ public class AuthService extends LadaService {
         @QueryParam("networkId") List<String> networkIds
     ) {
         QueryBuilder<Auth> mstMlQuery = repository.queryBuilder(Auth.class);
-        mstMlQuery.orIntList("authFunctId", List.of(0, 1));
+        mstMlQuery.orIntList(Auth_.authFunctId, List.of(0, 1));
 
         if (networkIds != null && !networkIds.isEmpty()) {
-            mstMlQuery.andIn("networkId", networkIds);
+            mstMlQuery.andIn(Auth_.networkId, networkIds);
         }
 
         return repository.filter(mstMlQuery.getQuery());

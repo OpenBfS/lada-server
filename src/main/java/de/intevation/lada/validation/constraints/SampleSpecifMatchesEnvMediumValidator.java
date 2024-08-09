@@ -16,7 +16,9 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
+import de.intevation.lada.model.lada.SampleSpecifMeasVal_;
 import de.intevation.lada.model.master.EnvSpecifMp;
+import de.intevation.lada.model.master.EnvSpecifMp_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -56,14 +58,14 @@ public class SampleSpecifMatchesEnvMediumValidator implements
 
             QueryBuilder<EnvSpecifMp> builderUmwZus = repository
                 .queryBuilder(EnvSpecifMp.class)
-                .and("sampleSpecifId", zusW.getSampleSpecifId())
-                .and("envMediumId", probe.getEnvMediumId());
+                .and(EnvSpecifMp_.sampleSpecifId, zusW.getSampleSpecifId())
+                .and(EnvSpecifMp_.envMediumId, probe.getEnvMediumId());
             List<EnvSpecifMp> umwZus = repository.filter(
                 builderUmwZus.getQuery());
             if (umwZus.isEmpty()) {
                 ctx.disableDefaultConstraintViolation();
                 ctx.buildConstraintViolationWithTemplate(this.message)
-                    .addPropertyNode("sampleSpecifId")
+                    .addPropertyNode(SampleSpecifMeasVal_.SAMPLE_SPECIF_ID)
                     .addConstraintViolation();
                 return false;
             }

@@ -75,7 +75,7 @@ public class SiteService extends LadaService {
     private OrtFactory ortFactory;
 
     @Inject
-    private Validator<Site> validator;
+    private Validator validator;
 
     public static class Response {
         private List<Site> data;

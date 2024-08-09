@@ -27,10 +27,13 @@ import jakarta.json.JsonValue;
 import jakarta.json.JsonValue.ValueType;
 
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
+import de.intevation.lada.model.lada.Measm_;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.Filter;
 import de.intevation.lada.model.master.FilterType;
+import de.intevation.lada.model.master.FilterType_;
 import de.intevation.lada.model.master.GridColConf;
 import de.intevation.lada.model.master.GridColMp;
 import de.intevation.lada.model.master.MeasUnit;
@@ -107,7 +110,7 @@ public abstract class QueryExportJob extends ExportJob {
         //Get Filter type from db
         QueryBuilder<FilterType> builder =
             repository.queryBuilder(FilterType.class);
-        builder.and("type", "genericid");
+        builder.and(FilterType_.type, "genericid");
         FilterType filterType =
             repository.filter(builder.getQuery()).get(0);
 
@@ -195,7 +198,7 @@ public abstract class QueryExportJob extends ExportJob {
                 case "messwerteCount":
                     QueryBuilder<MeasVal> builder = repository
                         .queryBuilder(MeasVal.class)
-                        .and("measmId", measm.getId());
+                        .and(MeasVal_.measmId, measm.getId());
                     // TODO: A nice example of ORM-induced database misuse:
                     fieldValue = repository.filter(builder.getQuery())
                         .size();
@@ -260,14 +263,14 @@ public abstract class QueryExportJob extends ExportJob {
             case "probeId":
                 QueryBuilder<Measm> messungBuilder = repository
                     .queryBuilder(Measm.class)
-                    .andIn("sampleId", idMap.keySet());
+                    .andIn(Measm_.sampleId, idMap.keySet());
                 return mergeMessungData(
                     idMap,
                     repository.filter(messungBuilder.getQuery()));
             case "messungId":
                 QueryBuilder<MeasVal> messwertBuilder = repository
                     .queryBuilder(MeasVal.class)
-                    .andIn("measmId", idMap.keySet());
+                    .andIn(MeasVal_.measmId, idMap.keySet());
                 return mergeMesswertData(
                     idMap,
                     repository.filter(messwertBuilder.getQuery()));

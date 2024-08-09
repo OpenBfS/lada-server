@@ -13,6 +13,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
 
 
 /**
@@ -46,10 +47,10 @@ public class BeginBeforeEndSampleValidator
         if (begin.after(end)) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
-                .addPropertyNode("sampleStartDate")
+                .addPropertyNode(Sample_.SAMPLE_START_DATE)
                 .addConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
-                .addPropertyNode("sampleEndDate")
+                .addPropertyNode(Sample_.SAMPLE_END_DATE)
                 .addConstraintViolation();
             return false;
         }

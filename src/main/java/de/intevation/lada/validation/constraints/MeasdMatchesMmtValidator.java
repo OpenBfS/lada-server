@@ -8,6 +8,7 @@
 package de.intevation.lada.validation.constraints;
 
 import jakarta.enterprise.inject.spi.CDI;
+import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -15,6 +16,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import de.intevation.lada.model.lada.MeasVal;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.master.MmtMeasdView;
+import de.intevation.lada.model.master.MmtMeasdView_;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 
@@ -50,15 +52,16 @@ public class MeasdMatchesMmtValidator
             return true;
         }
 
-        final String measdIdKey = "measdId";
+        final SingularAttribute<MmtMeasdView, Integer> measdIdKey
+            = MmtMeasdView_.measdId;
         QueryBuilder<MmtMeasdView> mmtBuilder = repository
             .queryBuilder(MmtMeasdView.class)
-            .and("mmtId", messung.getMmtId())
+            .and(MmtMeasdView_.mmtId, messung.getMmtId())
             .and(measdIdKey, messwert.getMeasdId());
         if (repository.filter(mmtBuilder.getQuery()).isEmpty()) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
-                .addPropertyNode(measdIdKey)
+                .addPropertyNode(measdIdKey.getName())
                 .addConstraintViolation();
             return false;
         }

@@ -11,6 +11,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.master.Site;
+import de.intevation.lada.model.master.Site_;
 
 
 /**
@@ -35,7 +36,7 @@ public class IsReiCompleteSiteValidator
         ) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)
-                .addPropertyNode("nuclFacilGrId")
+                .addPropertyNode(Site_.NUCL_FACIL_GR_ID)
                 .addConstraintViolation();
             return false;
         }

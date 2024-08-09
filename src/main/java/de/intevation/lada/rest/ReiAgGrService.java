@@ -21,7 +21,10 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.ReiAgGr;
 import de.intevation.lada.model.master.ReiAgGrEnvMediumMp;
+import de.intevation.lada.model.master.ReiAgGrEnvMediumMp_;
 import de.intevation.lada.model.master.ReiAgGrMp;
+import de.intevation.lada.model.master.ReiAgGrMp_;
+import de.intevation.lada.model.master.ReiAgGr_;
 
 /**
  * REST service for ReiAgGr objects.
@@ -58,7 +61,7 @@ public class ReiAgGrService extends LadaService {
         if (reiAgId != null) {
             QueryBuilder<ReiAgGrMp> builder =
                 repository.queryBuilder(ReiAgGrMp.class);
-            builder.and("reiAgId", reiAgId);
+            builder.and(ReiAgGrMp_.reiAgId, reiAgId);
             List<ReiAgGrMp> zuord =
                 repository.filter(builder.getQuery());
             if (zuord.isEmpty()) {
@@ -70,12 +73,12 @@ public class ReiAgGrService extends LadaService {
             for (int i = 0; i < zuord.size(); i++) {
                 ids.add(zuord.get(i).getReiAgGrId());
             }
-            builder1.orIn("id", ids);
+            builder1.orIn(ReiAgGr_.id, ids);
             list = repository.filter(builder1.getQuery());
         } else if (envMediumId != null) {
             QueryBuilder<ReiAgGrEnvMediumMp> builder =
                 repository.queryBuilder(ReiAgGrEnvMediumMp.class);
-            builder.and("envMediumId", envMediumId);
+            builder.and(ReiAgGrEnvMediumMp_.envMediumId, envMediumId);
             List<ReiAgGrEnvMediumMp> zuord =
                 repository.filter(builder.getQuery());
             if (zuord.isEmpty()) {
@@ -87,7 +90,7 @@ public class ReiAgGrService extends LadaService {
             for (int i = 0; i < zuord.size(); i++) {
                 ids.add(zuord.get(i).getReiAgGrId());
             }
-            builder1.orIn("id", ids);
+            builder1.orIn(ReiAgGr_.id, ids);
             list = repository.filter(builder1.getQuery());
         }
 

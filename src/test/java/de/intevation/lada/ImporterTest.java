@@ -52,6 +52,7 @@ import de.intevation.lada.importer.Identifier;
 import de.intevation.lada.importer.IdentifierConfig;
 import de.intevation.lada.importer.ObjectMerger;
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.SampleSpecifMeasVal;
@@ -100,6 +101,8 @@ public class ImporterTest extends BaseTest {
         + "MESSPROGRAMM_S 1\n"
         + "DATENBASIS \"%s\"\n"
         + "PZB_S \"%s\" 42 \"\" 5.0\n"
+        + "PROBENAHME_DATUM_UHRZEIT_A 20120510 0900\n"
+        + "DESKRIPTOREN \"010100000000000000000000\"\n"
         + "%s"
         + "%%MESSUNG%%\n"
         + "MESSMETHODE_S \"A3\"\n"
@@ -437,7 +440,7 @@ public class ImporterTest extends BaseTest {
         merger.mergeMesswerte(messung, messwerte);
         QueryBuilder<MeasVal> builder =
             repository.queryBuilder(MeasVal.class);
-        builder.and("measmId", messung.getId());
+        builder.and(MeasVal_.measmId, messung.getId());
         List<MeasVal> dbWerte =
             repository.filter(builder.getQuery());
         Assert.assertEquals(1, dbWerte.size());
@@ -495,8 +498,8 @@ public class ImporterTest extends BaseTest {
             baseUrl, laf, lafSampleId, true);
         JsonObject expectedWarning = Json.createObjectBuilder()
             .add("key", "validation#probe")
-            .add("value", "sampleStartDate")
-            .add("code", "must not be null")
+            .add("value", "geolocats")
+            .add("code", "A sampling location must be provided")
             .build();
         MatcherAssert.assertThat(
             report.getJsonObject("warnings").getJsonArray(lafSampleId),
@@ -625,6 +628,33 @@ public class ImporterTest extends BaseTest {
                 "", measd, measUnit),
             lafSampleId,
             true);
+    }
+
+    /**
+     * Test asynchronous import including sampling location.
+     * Ensure that no false warning about missing sampling location occurs.
+     */
+    @Test
+    @RunAsClient
+    public final void testAsyncImportSampleGeolocatE(
+        @ArquillianResource URL baseUrl
+    ) throws InterruptedException, CharacterCodingException {
+        final String lafSampleId = randomProbeId();
+        JsonObject response = testAsyncImportProbe(
+            baseUrl,
+            String.format(
+                lafTemplate, lafSampleId,
+                regulation, sampleSpecifId,
+                "P_KOORDINATEN_S 04 \"7.1\" \"50.4\"\n",
+                measd, measUnit),
+            lafSampleId,
+            true);
+        final String warningsKey = "warnings";
+        if (response.containsKey(warningsKey)) {
+            Assert.fail("Unexpected warnings: "
+                + response.getJsonObject(warningsKey)
+                .getJsonArray(lafSampleId));
+        }
     }
 
     /**

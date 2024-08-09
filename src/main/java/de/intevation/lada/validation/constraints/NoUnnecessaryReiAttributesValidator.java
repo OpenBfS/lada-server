@@ -11,6 +11,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Sample;
+import de.intevation.lada.model.lada.Sample_;
 
 
 /**
@@ -42,14 +43,14 @@ public class NoUnnecessaryReiAttributesValidator
             if (probe.getReiAgGrId() != null) {
                 ctx.disableDefaultConstraintViolation();
                 ctx.buildConstraintViolationWithTemplate(this.message)
-                    .addPropertyNode("reiAgGrId")
+                    .addPropertyNode(Sample_.REI_AG_GR_ID)
                     .addConstraintViolation();
                 isValid = false;
             }
             if (probe.getNuclFacilGrId() != null) {
                 ctx.disableDefaultConstraintViolation();
                 ctx.buildConstraintViolationWithTemplate(this.message)
-                    .addPropertyNode("nuclFacilGrId")
+                    .addPropertyNode(Sample_.NUCL_FACIL_GR_ID)
                     .addConstraintViolation();
                 isValid = false;
             }

@@ -21,6 +21,7 @@ import de.intevation.lada.util.auth.AuthorizationType;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.model.master.GridColMp;
+import de.intevation.lada.model.master.GridColMp_;
 
 /**
  * REST-Service for preconfigured columns.
@@ -47,7 +48,7 @@ public class GridColMpService extends LadaService {
 
         QueryBuilder<GridColMp> builder =
             repository.queryBuilder(GridColMp.class);
-        builder.and("baseQueryId", baseQuery);
+        builder.and(GridColMp_.baseQueryId, baseQuery);
 
         return repository.filter(builder.getQuery());
     }

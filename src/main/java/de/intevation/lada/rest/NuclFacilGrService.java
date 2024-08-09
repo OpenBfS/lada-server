@@ -20,6 +20,8 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.model.master.NuclFacilGr;
 import de.intevation.lada.model.master.NuclFacilGrMp;
+import de.intevation.lada.model.master.NuclFacilGrMp_;
+import de.intevation.lada.model.master.NuclFacilGr_;
 
 /**
  * REST service for NuclFacilGr objects.
@@ -50,7 +52,7 @@ public class NuclFacilGrService extends LadaService {
         }
         QueryBuilder<NuclFacilGrMp> builder =
             repository.queryBuilder(NuclFacilGrMp.class);
-        builder.and("nuclFacilId", nuclFacilId);
+        builder.and(NuclFacilGrMp_.nuclFacilGrId, nuclFacilId);
         List<NuclFacilGrMp> zuord =
             repository.filter(builder.getQuery());
         if (zuord.isEmpty()) {
@@ -62,7 +64,7 @@ public class NuclFacilGrService extends LadaService {
         for (int i = 0; i < zuord.size(); i++) {
             ids.add(zuord.get(i).getNuclFacilGrId());
         }
-        builder1.orIn("id", ids);
+        builder1.orIn(NuclFacilGr_.id, ids);
         return repository.filter(builder1.getQuery());
     }
 

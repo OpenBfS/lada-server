@@ -14,6 +14,7 @@ import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.AuthCoordOfcEnvMediumMp;
+import de.intevation.lada.model.master.AuthCoordOfcEnvMediumMp_;
 import de.intevation.lada.model.master.MeasFacil;
 import de.intevation.lada.model.master.StatusMp;
 import de.intevation.lada.util.data.QueryBuilder;
@@ -164,11 +165,14 @@ public class MessungAuthorizer extends BaseAuthorizer {
         ) {
             QueryBuilder<AuthCoordOfcEnvMediumMp> lstFilter =
                 repository.queryBuilder(AuthCoordOfcEnvMediumMp.class);
-            lstFilter.or("measFacilId", userInfo.getMessstellen());
+            lstFilter.or(
+                AuthCoordOfcEnvMediumMp_.measFacilId,
+                userInfo.getMessstellen());
             List<AuthCoordOfcEnvMediumMp> lsts =
                 repository.filter(lstFilter.getQuery());
             for (int i = 0; i < lsts.size(); i++) {
-                if (lsts.get(i).getEnvMediumId().equals(probe.getEnvMediumId())) {
+                if (lsts.get(i).getEnvMediumId()
+                        .equals(probe.getEnvMediumId())) {
                     messung.setStatusEditLst(true);
                 }
                 if (messung.getStatusEditLst()) {

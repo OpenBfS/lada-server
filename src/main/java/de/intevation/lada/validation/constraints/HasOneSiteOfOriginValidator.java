@@ -15,6 +15,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
@@ -48,8 +49,8 @@ public class HasOneSiteOfOriginValidator
             .createInstance().select(Repository.class).get();
         QueryBuilder<Geolocat> builder = repository
             .queryBuilder(Geolocat.class)
-            .and("sampleId", id)
-            .andIn("typeRegulation", List.of("U", "R"));
+            .and(Geolocat_.sampleId, id)
+            .andIn(Geolocat_.typeRegulation, List.of("U", "R"));
         if (repository.filter(builder.getQuery()).size() > 1) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(this.message)

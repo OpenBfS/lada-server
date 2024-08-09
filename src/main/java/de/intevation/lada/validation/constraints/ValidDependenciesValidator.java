@@ -7,21 +7,25 @@
  */
 package de.intevation.lada.validation.constraints;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.CDI;
-import jakarta.enterprise.util.TypeLiteral;
-import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 import static org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel.BEAN_METHODS;
 
+import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.model.lada.Geolocat;
+import de.intevation.lada.model.lada.Geolocat_;
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.MeasVal;
+import de.intevation.lada.model.lada.MeasVal_;
 import de.intevation.lada.model.lada.Sample;
 import de.intevation.lada.model.lada.StatusProt;
 import de.intevation.lada.model.master.Site;
@@ -30,32 +34,19 @@ import de.intevation.lada.util.data.QueryBuilder;
 import de.intevation.lada.util.data.Repository;
 import de.intevation.lada.util.data.StatusCodes;
 import de.intevation.lada.validation.Validator;
-import de.intevation.lada.validation.Violation;
 
 
 /**
  * Validation rule for status.
  */
-public class ValidDependenciesValidator
-    implements ConstraintValidator<ValidDependencies, StatusProt> {
+public abstract class ValidDependenciesValidator {
 
-    private String message;
-
-    private Repository repository;
-
-    private Validator<MeasVal> messwertValidator;
-    private Validator<Measm> messungValidator;
-    private Validator<Sample> probeValidator;
-    private Validator<Site> ortValidator;
-
-    @Override
-    public void initialize(ValidDependencies constraintAnnotation) {
-        this.message = constraintAnnotation.message();
-    }
-
-    @Override
-    @Transactional
-    public boolean isValid(StatusProt status, ConstraintValidatorContext ctx) {
+    protected boolean doValidation(
+        StatusProt status,
+        ConstraintValidatorContext ctx,
+        String message,
+        boolean checkNotifications
+    ) {
         if (status == null
             || status.getStatusMpId() == null
             || status.getMeasmId() == null
@@ -67,15 +58,8 @@ public class ValidDependenciesValidator
         // is not guaranteed to work in ConstraintValidator implementations
         Instance<Object> inst =
             CDI.current().getBeanContainer().createInstance();
-        this.repository = inst.select(Repository.class).get();
-        this.messwertValidator = inst.select(
-            new TypeLiteral<Validator<MeasVal>>() { }).get();
-        this.messungValidator = inst.select(
-            new TypeLiteral<Validator<Measm>>() { }).get();
-        this.probeValidator = inst.select(
-            new TypeLiteral<Validator<Sample>>() { }).get();
-        this.ortValidator = inst.select(
-            new TypeLiteral<Validator<Site>>() { }).get();
+        Repository repository = inst.select(Repository.class).get();
+        Validator validator = inst.select(Validator.class).get();
 
         StatusMp newKombi = repository.entityManager().find(
             StatusMp.class, status.getStatusMpId());
@@ -90,26 +74,25 @@ public class ValidDependenciesValidator
             || newStatusWert == 2
             || newStatusWert == 7
         ) {
-            Violation violationCollection = new Violation();
             Sample probe = repository.getById(
                 Sample.class, messung.getSampleId());
 
-            // init violation_collection with probe validation
-            probeValidator.validate(probe);
-            violationCollection.addErrors(probe.getErrors());
-            violationCollection.addWarnings(probe.getWarnings());
-            violationCollection.addNotifications(probe.getNotifications());
+            Map<String, Set<String>> errors = new HashMap<>();
+            Map<String, Set<String>> warnings = new HashMap<>();
+            Map<String, Set<String>> notifications = new HashMap<>();
 
-            //validate messung object
-            messungValidator.validate(messung);
-            violationCollection.addErrors(messung.getErrors());
-            violationCollection.addWarnings(messung.getWarnings());
-            violationCollection.addNotifications(messung.getNotifications());
+            // Validate sample
+            addMessages(
+                validator.validate(probe), errors, warnings, notifications);
 
-            //validate messwert objects
+            // Validate Measm
+            addMessages(
+                validator.validate(messung), errors, warnings, notifications);
+
+            // Validate measVals
             QueryBuilder<MeasVal> builder = repository
                 .queryBuilder(MeasVal.class)
-                .and("measmId", messung.getId());
+                .and(MeasVal_.measmId, messung.getId());
             List<MeasVal> messwerte = repository.filter(
                 builder.getQuery());
             if (!messwerte.isEmpty()) {
@@ -118,58 +101,88 @@ public class ValidDependenciesValidator
                         && !(messwert.getMeasVal() == null
                             && messwert.getLessThanLOD() == null)
                     ) {
-                        violationCollection.addError(
-                            "status", StatusCodes.STATUS_RO);
+                        addError("status", StatusCodes.STATUS_RO, errors);
                     }
 
-                    messwertValidator.validate(messwert);
-                    violationCollection.addErrors(messwert.getErrors());
-                    violationCollection.addWarnings(messwert.getWarnings());
-                    violationCollection.addNotifications(
-                        messwert.getNotifications());
+                    addMessages(
+                        validator.validate(messwert),
+                        errors,
+                        warnings,
+                        notifications);
                 }
             } else if (newStatusWert != 7) {
-                violationCollection.addError(
-                    "measVal", StatusCodes.VALUE_MISSING);
+                addError("measVal", StatusCodes.VALUE_MISSING, errors);
             }
 
-            // validate orte
+            // Validate sites
             QueryBuilder<Geolocat> ortBuilder = repository
                 .queryBuilder(Geolocat.class)
-                .and("sampleId", probe.getId());
+                .and(Geolocat_.sampleId, probe.getId());
             List<Geolocat> assignedOrte = repository.filter(
                 ortBuilder.getQuery());
             for (Geolocat o : assignedOrte) {
                 Site site = repository.getById(Site.class, o.getSiteId());
-                ortValidator.validate(site);
-                violationCollection.addErrors(site.getErrors());
-                violationCollection.addWarnings(site.getWarnings());
-                violationCollection.addNotifications(site.getNotifications());
+                addMessages(
+                    validator.validate(site),
+                    errors,
+                    warnings,
+                    notifications);
             }
 
-            if (newStatusWert != 7
-                && (violationCollection.hasErrors()
-                    || violationCollection.hasWarnings())
-                || newStatusWert == 7
-                && (probe.hasErrors() || probe.hasWarnings())
-            ) {
-                HibernateConstraintValidatorContext hibernateCtx = ctx.unwrap(
-                    HibernateConstraintValidatorContext.class
-                );
-                hibernateCtx.disableDefaultConstraintViolation();
-                hibernateCtx.addExpressionVariable(
-                        "errs", violationCollection.getErrors())
-                    .addExpressionVariable(
-                        "wrns", violationCollection.getWarnings())
-                    .addExpressionVariable(
-                        "nots", violationCollection.getNotifications())
-                    .buildConstraintViolationWithTemplate(this.message)
-                    .enableExpressionLanguage(BEAN_METHODS)
-                    .addPropertyNode("status")
-                    .addConstraintViolation();
-                return false;
+            HibernateConstraintValidatorContext hibernateCtx = ctx.unwrap(
+                HibernateConstraintValidatorContext.class
+            );
+            hibernateCtx.disableDefaultConstraintViolation();
+            hibernateCtx.addExpressionVariable("errs", errors)
+                .addExpressionVariable("wrns", warnings)
+                .addExpressionVariable("nots", notifications)
+                .buildConstraintViolationWithTemplate(message)
+                .enableExpressionLanguage(BEAN_METHODS)
+                .addPropertyNode("status")
+                .addConstraintViolation();
+
+            if (checkNotifications) {
+                return notifications.isEmpty();
             }
+
+            return !(newStatusWert != 7
+                && (!errors.isEmpty() || !warnings.isEmpty())
+                || newStatusWert == 7
+                && (probe.hasErrors() || probe.hasWarnings()));
         }
         return true;
+    }
+
+    private void addError(
+        String key, int value, Map<String, Set<String>> errors
+    ) {
+        if (!errors.containsKey(key)) {
+            errors.put(key, new HashSet<String>());
+        }
+        errors.get(key).add(String.valueOf(value));
+    }
+
+    private void addMessages(
+        BaseModel validated,
+        Map<String, Set<String>> errors,
+        Map<String, Set<String>> warnings,
+        Map<String, Set<String>> notifications
+    ) {
+        addMessages(validated.getErrors(), errors);
+        addMessages(validated.getWarnings(), warnings);
+        addMessages(validated.getNotifications(), notifications);
+    }
+
+    private void addMessages(
+        Map<String, Set<String>> from,
+        Map<String, Set<String>> to
+    ) {
+        for (String key: from.keySet()) {
+            if (to.containsKey(key)) {
+                to.get(key).addAll(from.get(key));
+            } else {
+                to.put(key, from.get(key));
+            }
+        }
     }
 }

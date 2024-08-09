@@ -7,6 +7,7 @@
  */
 package de.intevation.lada.validation.constraints;
 
+import de.intevation.lada.model.master.Site_;
 import de.intevation.lada.util.data.KdaUtil;
 import de.intevation.lada.util.data.KdaUtil.KDA;
 import de.intevation.lada.util.data.KdaUtil.Result;
@@ -40,10 +41,10 @@ public abstract class ValidCoordinatesBaseValidator<T>
         if (!valid) {
             ctx.disableDefaultConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(ValidCoordinates.MSG)
-                .addPropertyNode("coordXExt")
+                .addPropertyNode(Site_.COORD_XEXT)
                 .addConstraintViolation();
             ctx.buildConstraintViolationWithTemplate(ValidCoordinates.MSG)
-                .addPropertyNode("coordYExt")
+                .addPropertyNode(Site_.COORD_YEXT)
                 .addConstraintViolation();
         }
         return valid;
@@ -61,13 +62,15 @@ public abstract class ValidCoordinatesBaseValidator<T>
                 && KdaUtil.LAT.matcher(y).matches())) {
             return false;
         }
-        Result decimal = KdaUtil.arcToDegree(x, y);
+        Result decimal = KdaUtil.arcToDegree(
+            x.replace(",", "."), y.replace(",", "."));
         return validateGdCoordinates(decimal.getX(), decimal.getY());
     }
 
     private boolean validateGdCoordinates(String x, String y) {
         try {
-            double dX = Double.parseDouble(x), dY = Double.parseDouble(y);
+            double dX = Double.parseDouble(x.replace(",", ".")),
+                   dY = Double.parseDouble(y.replace(",", "."));
             if (Math.abs(dX) > KdaUtil.MAX_LON
                 || Math.abs(dY) > KdaUtil.MAX_LAT
             ) {
