@@ -123,6 +123,16 @@ mittels Port-Forwarding erreichbar gemacht werden, z.B.:
 Die Shibboleth-authentifizierte Anwendung ist dann unter
 "http://localhost:8185" im lokalen Browser erreichbar.
 
+Bei der Nutzung von Shibboleth stehen folgende Nutzer zur Verfügung:
+
+testnull (keine Gruppen)
+testeins (mst_06010, mst_11010)
+testzwei (mst_06010, mst_12010)
+testdrei (mst_06060, mst_11010)
+testvier (mst_06060, mst_12010)
+
+Das Passwort für alle Nutzer ist im Entwicklungssetup: `password`.
+
 Tests und Debugging
 -------------------
 Die auf Arquillian basierenden Tests erfordern einen vollständig konfigurierten
