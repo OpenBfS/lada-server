@@ -52,8 +52,6 @@ public class ImportJobManager extends JobManager {
         newJob.setUserInfo(userInfo);
         newJob.setMst(mst);
         newJob.setLocale(locale);
-
-        newJob.setFuture(executor.submit(newJob));
         return addJob(newJob);
     }
 
