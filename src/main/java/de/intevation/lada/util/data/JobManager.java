@@ -36,7 +36,7 @@ public abstract class JobManager {
     protected Logger logger = Logger.getLogger(this.getClass());
 
     @Resource
-    protected ManagedExecutorService executor;
+    private ManagedExecutorService executor;
 
     private ConcurrentMap<String, Job> activeJobs = new ConcurrentHashMap<>();
 
@@ -101,6 +101,9 @@ public abstract class JobManager {
      * @return New identifier as String
      */
     protected synchronized String addJob(Job newJob) {
+        newJob.setFuture(executor.submit(newJob));
+
+        // Create job identifier
         identifier.next();
         String id = identifier.toString();
         logger.debug(String.format("Creating new job: %s", id));
