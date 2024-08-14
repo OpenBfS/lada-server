@@ -134,6 +134,7 @@ public class BaseTest {
             .importCompileAndRuntimeDependencies().resolve()
             .withTransitivity().asFile();
 
+        final String beansXmlResource = "META-INF/beans.xml";
         WebArchive archive = ShrinkWrap.create(WebArchive.class, archiveName)
             .addPackages(true, ClassLoader.getSystemClassLoader()
                 .getDefinedPackage("de.intevation.lada"))
@@ -143,8 +144,7 @@ public class BaseTest {
             .addAsLibraries(compileAndRuntimeDeps)
             .addAsResource("META-INF/test-persistence.xml",
                 "META-INF/persistence.xml")
-            .addAsResource("META-INF/test-beans.xml",
-                "META-INF/beans.xml")
+            .addAsResource(beansXmlResource, beansXmlResource)
             //Add cleanup script and datasets for container mode tests
             .addAsResource(DATASETS_DIR, DATASETS_DIR);
         //Add additional test dependencies
