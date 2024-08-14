@@ -1918,6 +1918,7 @@ public class LafObjectMapper {
             probe.setSampleMethId(probenart.get(0).getId());
         }
     }
+
     /**
      * Add an attribute to the given LMessung object.
      *
@@ -1925,7 +1926,7 @@ public class LafObjectMapper {
      * @param messung   The entity object.
      * @return The updated entity object.
      */
-    public Measm addMessungAttribute(
+    private Measm addMessungAttribute(
         Entry<String, String> attribute,
         Measm messung
     ) {
