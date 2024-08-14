@@ -1,32 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
-  ~ JBoss, Home of Professional Open Source.
-  ~ Copyright 2022, Red Hat, Inc., and individual contributors
-  ~ as indicated by the @author tags. See the copyright.txt file in the
-  ~ distribution for a full listing of individual contributors.
-  ~
-  ~ This is free software; you can redistribute it and/or modify it
-  ~ under the terms of the GNU Lesser General Public License as
-  ~ published by the Free Software Foundation; either version 2.1 of
-  ~ the License, or (at your option) any later version.
-  ~
-  ~ This software is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  ~ Lesser General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU Lesser General Public
-  ~ License along with this software; if not, write to the Free
-  ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-  ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  ~ Copyright The WildFly Authors
+  ~ SPDX-License-Identifier: Apache-2.0
   -->
+<!-- Represents Hibernate ORM 6  -->
 <module name="org.hibernate" xmlns="urn:jboss:module:1.9">
 
     <resources>
-        <!--Resources shipped with wildfly-->
-        <resource-root path="hibernate-core-6.2.6.Final.jar"/>
-        <resource-root path="hibernate-envers-6.2.6.Final.jar"/>
+        <resource-root path="hibernate-core-6.4.4.Final.jar"/>
+        <resource-root path="hibernate-envers-6.4.4.Final.jar"/>
         <!--Custom entries-->
         <resource-root path="hibernate-spatial.jar"/>
         <resource-root path="jts-core.jar"/>
@@ -34,23 +16,26 @@
     </resources>
 
     <dependencies>
-        <!-- Dependencies shipped with wildfly -->
         <module name="java.desktop"/>
         <module name="java.instrument"/>
         <module name="java.management"/>
         <module name="java.naming"/>
         <module name="java.sql"/>
         <module name="com.fasterxml.classmate"/>
-        <module name="javax.annotation.api"/>
-        <module name="javax.enterprise.api"/>
+        <module name="com.fasterxml.jackson.core.jackson-core" optional="true"/>
+        <module name="com.fasterxml.jackson.core.jackson-databind" optional="true"/>
+        <module name="jakarta.annotation.api"/>
+        <module name="jakarta.enterprise.api"/>
+        <module name="jakarta.json.bind.api"/>
         <module name="jakarta.persistence.api"/>
-        <module name="javax.transaction.api"/>
-        <module name="javax.validation.api"/>
-        <module name="javax.xml.bind.api"/>
+        <module name="jakarta.transaction.api"/>
+        <module name="jakarta.validation.api"/>
+        <module name="jakarta.xml.bind.api"/>
         <module name="org.glassfish.jaxb"/>
         <module name="org.antlr"/>
+        <module name="org.eclipse.yasson" optional="true"/>
         <module name="org.jboss.as.jpa.spi"/>
-        <module name="org.jboss.jandex"/>
+        <module name="io.smallrye.jandex"/>
         <module name="org.jboss.logging"/>
         <module name="org.hibernate.commons-annotations"/>
         <module name="org.hibernate.jipijapa-hibernate6" services="import"/>
@@ -61,10 +46,16 @@
         <module name="com.oracle.ojdbc" optional="true"/>
         <!-- If the PostgreSQL JDBC driver classes are accessible, Hibernate ORM will use them to tailor PostgresDialect and CockroachDialect behavior -->
         <module name="org.postgresql.jdbc" optional="true"/>
-
         <!-- Custom entries -->
         <module name="org.postgres"/>
         <module name="org.slf4j"/>
         <module name="jakarta.json.bind.api"/>
     </dependencies>
+
+    <provides>
+        <service name="org.hibernate.bytecode.spi.BytecodeProvider">
+            <with-class name="org.hibernate.bytecode.internal.bytebuddy.BytecodeProviderImpl"/>
+        </service>
+    </provides>
+
 </module>
