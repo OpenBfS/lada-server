@@ -12,15 +12,13 @@ import java.util.List;
 
 import de.intevation.lada.model.lada.Measm;
 import de.intevation.lada.model.lada.Sample;
-import de.intevation.lada.validation.constraints.IsValidPrimaryKeyList;
+import de.intevation.lada.validation.constraints.IsValidPrimaryKey;
 import de.intevation.lada.validation.constraints.requests.HasEitherSamplesOrMeasm;
 
 @HasEitherSamplesOrMeasm
 public class LafExportParameters extends ExportParameters {
-    @IsValidPrimaryKeyList(clazz = Sample.class)
-    private List<Integer> proben;
-    @IsValidPrimaryKeyList(clazz = Measm.class)
-    private List<Integer> messungen;
+    private List<@IsValidPrimaryKey(clazz = Sample.class) Integer> proben;
+    private List<@IsValidPrimaryKey(clazz = Measm.class)Integer> messungen;
 
     public LafExportParameters() {
         proben = new ArrayList<>();
