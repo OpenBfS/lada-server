@@ -9,14 +9,21 @@ package de.intevation.lada;
 
 import java.io.StringReader;
 import java.sql.SQLException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import jakarta.json.JsonValue;
@@ -304,6 +311,26 @@ public class BaseTest {
             "Response does not contain expected key '" + key + "': "
             + json.toString(),
             json.containsKey(key));
+    }
+
+    protected static void assertJsonContainsValidationMessage(JsonObject json,
+            String expectedPath, String expectedMessage) {
+        assertNotNull("JSON must not be null", json);
+        JsonArray violations = json.getJsonArray("parameterViolations");
+        AtomicBoolean containsPath = new AtomicBoolean(false);
+        violations.forEach(violation -> {
+            String path = violation.asJsonObject().getString("path", null);
+            String message = violation.asJsonObject()
+                .getString("message", null);
+            if (path.equals(expectedPath)) {
+                containsPath.set(true);
+                assertEquals(
+                    "Validation messages do not match",
+                    expectedMessage, message);
+            }
+        });
+        assertTrue("Found no validation message for the given path",
+            containsPath.get());
     }
 
     private void doDbOperation(

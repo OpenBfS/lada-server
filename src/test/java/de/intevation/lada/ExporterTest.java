@@ -372,23 +372,51 @@ public class ExporterTest extends BaseTest {
     public final void testAsyncExportFailure(
         @ArquillianResource URL baseUrl
     ) throws InterruptedException, CharacterCodingException {
+        /* Test values */
+        String sampleValue = "99999";
+        String samplePath = "createLafExportJob.arg0.proben[0].<list element>";
+        String sampleMessage = String.format(
+            "'%s' is no valid primary key", sampleValue);
+
+        String timezoneValue = "invalidTimezone";
+        String timezonePath = "createCsvExportJob.arg0.timezone";
+        String timezoneMessage = String.format(
+            "'%s' is not a valid time zone", timezoneValue);
+
+        String encodingValue = "invalidEncoding";
+        String encodingPath = "createJsonExportJob.arg0.encoding";
+        String encodingMessage = String.format(
+            "'%s' is not a valid encoding", encodingValue
+        );
         /* Request asynchronous export */
         JsonObject lafJson = Json.createObjectBuilder()
-            // Add arbitrary array to avoid 404 being returned for LAF
-            .add("proben", Json.createArrayBuilder().add("99999"))
+            .add("proben", Json.createArrayBuilder().add(sampleValue))
             .build();
-        JsonObject queryExportJson = Json.createObjectBuilder()
-            .add("timezone", "invalidTimezone")
+        JsonObject csvExportJson = Json.createObjectBuilder()
+            .add("timezone", timezoneValue)
             .build();
-        parseResponse(
-            exportRequest(baseUrl, formatLaf, lafJson),
-            Response.Status.BAD_REQUEST);
-        parseResponse(
-            exportRequest(baseUrl, formatCsv, queryExportJson),
-            Response.Status.BAD_REQUEST);
-        parseResponse(
-            exportRequest(baseUrl, formatJson, queryExportJson),
-            Response.Status.BAD_REQUEST);
+        JsonObject jsonExportJson = Json.createObjectBuilder()
+            .add("encoding", encodingValue)
+            .build();
+
+        assertJsonContainsValidationMessage(
+            parseResponse(
+                exportRequest(baseUrl, formatLaf, lafJson),
+                Response.Status.BAD_REQUEST)
+                .asJsonObject(),
+            samplePath, sampleMessage);
+        assertJsonContainsValidationMessage(
+            parseResponse(
+                exportRequest(baseUrl, formatCsv, csvExportJson),
+                Response.Status.BAD_REQUEST)
+                .asJsonObject(),
+            timezonePath, timezoneMessage);
+        assertJsonContainsValidationMessage(
+            parseResponse(
+                exportRequest(baseUrl, formatJson, jsonExportJson),
+                Response.Status.BAD_REQUEST)
+            .asJsonObject(),
+            encodingPath, encodingMessage);
     }
 
     private Response exportRequest(
@@ -398,6 +426,7 @@ public class ExporterTest extends BaseTest {
             .request()
             .header("X-SHIB-user", BaseTest.testUser)
             .header("X-SHIB-roles", BaseTest.testRoles)
+            .header("Accept", MediaType.APPLICATION_JSON)
             .post(Entity.entity(requestJson.toString(),
                     MediaType.APPLICATION_JSON));
         return response;
