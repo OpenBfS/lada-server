@@ -18,7 +18,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -119,7 +118,6 @@ public class LafObjectMapper {
 
     private HeaderAuthorization authorizer;
 
-    @Inject
     private Validator validator;
 
     @Inject
@@ -166,6 +164,7 @@ public class LafObjectMapper {
      * @param data the raw data from laf parser
      */
     public void mapObjects(LafRawData data) {
+        validator = new Validator();
         errors = new HashMap<>();
         warnings = new HashMap<>();
         notifications = new HashMap<>();
@@ -2062,12 +2061,5 @@ public class LafObjectMapper {
      */
     public void setMeasFacilId(String measFacilId) {
         this.measFacilId = measFacilId;
-    }
-
-    /**
-     * @param locale Set locale for validation messages.
-     */
-    public void setLocale(Locale locale) {
-        this.validator.setLocale(locale);
     }
 }

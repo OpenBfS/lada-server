@@ -135,6 +135,8 @@ public class BaseTest {
             .withTransitivity().asFile();
 
         final String beansXmlResource = "META-INF/beans.xml";
+        final String threadContextProviderResource = "META-INF/services/"
+            + "jakarta.enterprise.concurrent.spi.ThreadContextProvider";
         WebArchive archive = ShrinkWrap.create(WebArchive.class, archiveName)
             .addPackages(true, ClassLoader.getSystemClassLoader()
                 .getDefinedPackage("de.intevation.lada"))
@@ -145,6 +147,8 @@ public class BaseTest {
             .addAsResource("META-INF/test-persistence.xml",
                 "META-INF/persistence.xml")
             .addAsResource(beansXmlResource, beansXmlResource)
+            .addAsResource(threadContextProviderResource,
+                threadContextProviderResource)
             //Add cleanup script and datasets for container mode tests
             .addAsResource(DATASETS_DIR, DATASETS_DIR);
         //Add additional test dependencies

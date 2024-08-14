@@ -8,16 +8,14 @@
 package de.intevation.lada.validation;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
-import jakarta.inject.Inject;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 
 import org.hibernate.validator.HibernateValidator;
 
+import de.intevation.lada.context.ThreadLocale;
 import de.intevation.lada.model.BaseModel;
 import de.intevation.lada.validation.groups.Notifications;
 import de.intevation.lada.validation.groups.Warnings;
@@ -32,21 +30,18 @@ public class Validator {
 
     private jakarta.validation.Validator beanValidator;
 
-    @Inject
-    Validator(HttpServletRequest request) {
-        Locale locale = request != null
-            ? request.getLocale()
-            : Locale.getDefault();
-        this.setLocale(locale);
-    }
-
     /**
-     * @param locale Set locale for message localization.
+     * Create Validator instance interpolating messages with locale
+     * provided by ThreadLocale.
+     *
+     * Attention should be paid to create instances after ThreadLocale
+     * has been set if a locale other than default should be used.
+     * This might not be the case e.g. for dependency injection.
      */
-    public void setLocale(Locale locale) {
+    public Validator() {
         this.beanValidator = Validation.byProvider(HibernateValidator.class)
             .configure()
-            .defaultLocale(locale)
+            .defaultLocale(ThreadLocale.get())
             .buildValidatorFactory()
             .getValidator();
     }
