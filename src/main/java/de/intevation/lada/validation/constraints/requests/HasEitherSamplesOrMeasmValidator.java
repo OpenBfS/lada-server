@@ -16,6 +16,8 @@ public class HasEitherSamplesOrMeasmValidator
 
     @Override
     public boolean isValid(LafExportParameters value, ConstraintValidatorContext context) {
-        return value.getMessungen() != null || value.getProben() != null;
+        return value == null
+            || value.getMessungen() != null
+            || value.getProben() != null;
     }
 }

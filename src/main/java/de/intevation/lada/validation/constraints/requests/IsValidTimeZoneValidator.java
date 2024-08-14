@@ -17,6 +17,6 @@ public class IsValidTimeZoneValidator
         implements ConstraintValidator<IsValidTimeZone, String> {
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return value != null && Set.of(TimeZone.getAvailableIDs()).contains(value);
+        return value == null || Set.of(TimeZone.getAvailableIDs()).contains(value);
     }
 }
