@@ -208,7 +208,7 @@ public class AuditTrailService extends LadaService {
             //If audit entry shows a messwert, do not show if:
             // - StatusKombi is 1 (MST - nicht vergeben)
             // - User is not owner of the messung
-            if (a.getTableName().equals("messwert")) {
+            if (a.getTableName().equals("meas_val")) {
                 Measm messung = repository.entityManager().find(
                     Measm.class, a.getMeasmId());
                 if (messung != null) {
