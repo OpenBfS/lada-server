@@ -57,7 +57,7 @@ public class ExportJobManager extends JobManager {
      */
     public String createExportJob(
         String format,
-        Charset encoding,
+        String encoding,
         ExportParameters params,
         ResourceBundle bundle,
         UserInfo userInfo
@@ -84,9 +84,10 @@ public class ExportJobManager extends JobManager {
             params.getFilename() != null && !params.getFilename().isBlank()
                 ? params.getFilename()
                 : String.format("export.%s", format);
-
+        Charset charset = Charset.forName(
+            encoding != null ? encoding : "iso-8859-15");
         newJob.setDownloadFileName(downloadFileName);
-        newJob.setEncoding(encoding);
+        newJob.setEncoding(charset);
         newJob.setExportParameter(params);
         newJob.setUserInfo(userInfo);
         newJob.setFuture(executor.submit(newJob));

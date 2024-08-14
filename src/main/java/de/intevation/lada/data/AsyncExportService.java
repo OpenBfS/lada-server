@@ -9,10 +9,6 @@ package de.intevation.lada.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.charset.IllegalCharsetNameException;
-import java.nio.charset.UnsupportedCharsetException;
 
 import jakarta.inject.Inject;
 import jakarta.json.Json;
@@ -28,12 +24,10 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.Response.Status;
 
 import org.jboss.logging.Logger;
 
 import de.intevation.lada.data.requests.CsvExportParameters;
-import de.intevation.lada.data.requests.ExportParameters;
 import de.intevation.lada.data.requests.LafExportParameters;
 import de.intevation.lada.data.requests.QueryExportParameters;
 import de.intevation.lada.exporter.ExportJobManager;
@@ -139,20 +133,11 @@ public class AsyncExportService extends LadaService {
         @Valid CsvExportParameters objects,
         @Context HttpServletRequest request
     ) {
-        Charset encoding;
-        try {
-            encoding = getCharsetFromPayload(objects);
-        } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
-            return Response.status(Status.BAD_REQUEST)
-                .entity((Object) "Invalid or unknown encoding requested")
-                .type(MediaType.TEXT_PLAIN)
-                .build();
-        }
-
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
-                "csv", encoding, objects, i18n.getResourceBundle(), userInfo);
+                "csv", objects.getEncoding(), objects,
+                i18n.getResourceBundle(), userInfo);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
@@ -198,20 +183,10 @@ public class AsyncExportService extends LadaService {
         LafExportParameters objects,
         @Context HttpServletRequest request
     ) {
-        Charset encoding;
-        try {
-            encoding = getCharsetFromPayload(objects);
-        } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
-            return Response.status(Status.BAD_REQUEST)
-                .entity((Object) "Invalid or unknown encoding requested")
-                .type(MediaType.TEXT_PLAIN)
-                .build();
-        }
-
         UserInfo userInfo = authorization.getInfo();
         String newJobId =
             exportJobManager.createExportJob(
-                "laf", encoding, objects, i18n.getResourceBundle(), userInfo);
+                "laf", objects.getEncoding(), objects, i18n.getResourceBundle(), userInfo);
         JsonObject responseJson = Json.createObjectBuilder()
             .add("refId", newJobId)
             .build();
@@ -273,7 +248,7 @@ public class AsyncExportService extends LadaService {
         String newJobId =
             exportJobManager.createExportJob(
                 "json",
-                StandardCharsets.UTF_8,
+                "UTF-8",
                 objects,
                 i18n.getResourceBundle(),
                 userInfo);
@@ -382,11 +357,5 @@ public class AsyncExportService extends LadaService {
                 HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + filename + "\"")
             .build();
-    }
-
-    private Charset getCharsetFromPayload(ExportParameters objects) {
-        String encoding = objects.getEncoding();
-        encoding = encoding != null ? encoding : "iso-8859-15";
-        return Charset.forName(encoding);
     }
 }
