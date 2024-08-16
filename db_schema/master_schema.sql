@@ -330,8 +330,8 @@ CREATE TABLE state (
     iso_3166 character varying(2) UNIQUE CHECK (trim(both ' ' from iso_3166) <> ''),
     int_veh_reg_code character varying(5) UNIQUE CHECK (trim(both ' ' from int_veh_reg_code) <> ''),
     is_eu_country boolean NOT NULL DEFAULT false,
-    coord_x_ext character varying(22) CHECK (trim(both ' ' from coord_x_ext) <> ''),
-    coord_y_ext character varying(22) CHECK (trim(both ' ' from coord_y_ext) <> ''),
+    coord_x_ext character varying(22) NOT NULL CHECK (trim(both ' ' from coord_x_ext) <> ''),
+    coord_y_ext character varying(22) NOT NULL CHECK (trim(both ' ' from coord_y_ext) <> ''),
     spat_ref_sys_id integer REFERENCES spat_ref_sys,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
