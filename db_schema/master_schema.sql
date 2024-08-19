@@ -332,7 +332,7 @@ CREATE TABLE state (
     is_eu_country boolean NOT NULL DEFAULT false,
     coord_x_ext character varying(22) NOT NULL CHECK (trim(both ' ' from coord_x_ext) <> ''),
     coord_y_ext character varying(22) NOT NULL CHECK (trim(both ' ' from coord_y_ext) <> ''),
-    spat_ref_sys_id integer REFERENCES spat_ref_sys,
+    spat_ref_sys_id integer NOT NULL REFERENCES spat_ref_sys,
     last_mod timestamp without time zone DEFAULT (now() AT TIME ZONE 'utc')
 );
 CREATE TRIGGER last_mod_state BEFORE UPDATE ON master.state FOR EACH ROW EXECUTE PROCEDURE update_last_mod();
